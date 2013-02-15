@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="vertical" >
+
+    <com.lateralthoughts.vue.ui.ScaleImageView
+        android:id="@+id/imageView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@null" />
+
+    <LinearLayout
+        android:id="@id/aisle_descriptor"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="#CCCCCC"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@id/profile_icon_descriptor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:cropToPadding="true"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/profile_thumb_default" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_gravity="left" >
+
+        	<TextView
+        	    android:id="@id/descriptor_aisle_owner_name"
+        	    android:layout_width="wrap_content"
+        	    android:layout_height="wrap_content"
+        	    android:layout_gravity="left"
+        	    android:gravity="left"
+        	    android:text="Profile Owner" />
+
+        	<TextView
+        	    android:id="@id/descriptor_aisle_context"
+        	    android:layout_width="wrap_content"
+        	    android:layout_height="wrap_content"
+        	    android:layout_gravity="left"
+        	    android:text="Middle Earth visit" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
