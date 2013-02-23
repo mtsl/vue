@@ -4,11 +4,11 @@
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical" >
 
-    <com.lateralthoughts.vue.ui.ScaleImageView
-        android:id="@+id/imageView1"
+    <ViewFlipper android:id="@+id/aisle_content_flipper"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@null" />
+        android:layout_height="match_parent">
+
+    </ViewFlipper>
 
     <LinearLayout
         android:id="@id/aisle_descriptor"
@@ -47,6 +47,7 @@
         	    android:layout_width="wrap_content"
         	    android:layout_height="wrap_content"
         	    android:layout_gravity="left"
+        	    android:textSize="12sp"
         	    android:text="Middle Earth visit" />
 
         </LinearLayout>

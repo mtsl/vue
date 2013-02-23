@@ -27,7 +27,7 @@ public class StaggeredViewAdapter extends ArrayAdapter<String> {
 			LayoutInflater layoutInflator = LayoutInflater.from(getContext());
 			convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
 			holder = new ViewHolder();
-			holder.imageView = (ScaleImageView) convertView .findViewById(R.id.imageView1);
+			//holder.imageView = (ScaleImageView) convertView .findViewById(R.id.imageView1);
 			convertView.setTag(holder);
 		}
 
