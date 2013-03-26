@@ -71,7 +71,7 @@ public class VueContentGateway {
         //String baseUri = VUE_CONTENT_PROVIDER_BASE_URI;
         //we want to get the current trending aisles
         baseUri.append(mTrendingAislesTag);
-        Log.e("Jaws","uri we are sending = " + baseUri.toString());
+        //Log.e("Jaws","uri we are sending = " + baseUri.toString());
         
         Intent intent = new Intent(mContext, VueContentRestService.class);
         intent.putExtra("url",baseUri.toString());

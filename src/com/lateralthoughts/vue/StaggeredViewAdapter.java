@@ -33,7 +33,7 @@ public class StaggeredViewAdapter extends ArrayAdapter<String> {
 
 		holder = (ViewHolder) convertView.getTag();
 
-		mLoader.DisplayImage(getItem(position), holder.imageView);
+		mLoader.displayImage(getItem(position), holder.imageView);
 
 		return convertView;
 	}

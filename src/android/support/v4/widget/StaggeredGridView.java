@@ -1056,7 +1056,22 @@ public class StaggeredGridView extends ViewGroup {
                 child.measure(widthSpec, heightSpec);
             }
 
-            int childTop = mItemBottoms[col] > Integer.MIN_VALUE ? mItemBottoms[col] + mItemMargin : child.getTop();
+            //int childTop = mItemBottoms[col] > Integer.MIN_VALUE ? mItemBottoms[col] + mItemMargin : child.getTop();
+            int childTop = -1;
+            if(mItemBottoms[col] > Integer.MIN_VALUE){
+            	childTop = mItemBottoms[col] + mItemMargin;
+            	if(0 == i || 1 == i){
+            		Log.e("Jaws","setting childTop as a factor of itemBottoms for position = " + i + " childTop = " + childTop);
+            	}
+            }else{
+            	childTop = child.getTop();
+            	if(0 == i || 1 == i){
+            		Log.e("Jaws","setting childTop as child.top for position = " + i + " childTop = " + childTop);
+            	}
+            }
+            if(0 == i || 1 == i){
+            	//Log.e("Jaws","Just finished setting childTop for position = " + i + " childTop = " + childTop);
+            }
             
             if (span > 1) {
                 int lowest = childTop;
@@ -1066,7 +1081,12 @@ public class StaggeredGridView extends ViewGroup {
                         lowest = bottom;
                     }
                 }
+
                 childTop = lowest;
+            }
+            if(0 == i || 1 == i){
+            	if(childTop > 8)
+            		childTop = 8;
             }
             final int childHeight = child.getMeasuredHeight();
             final int childBottom = childTop + childHeight;
@@ -1074,6 +1094,9 @@ public class StaggeredGridView extends ViewGroup {
             final int childRight = childLeft + child.getMeasuredWidth();
             child.layout(childLeft, childTop, childRight, childBottom);
 
+            if(0 == i || 1 == i){
+            	Log.e("Jaw","childTop = " + childTop + " for item at position = " + i);
+            }
             for (int j = col; j < col + span; j++) {
                 mItemBottoms[j] = childBottom;
             }

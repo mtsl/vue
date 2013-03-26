@@ -82,6 +82,7 @@ public class VueMemoryCache<T> {
             while(iter.hasNext()){
                 Entry<String, T> entry=iter.next();
                 size-=getSizeInBytes(entry.getValue());
+                Log.e("Jaws","running out of cache - about to remove an item now");
                 iter.remove();
                 if(size<=limit)
                     break;

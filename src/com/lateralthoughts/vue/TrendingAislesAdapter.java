@@ -29,15 +29,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.content.Context;
 import android.os.ResultReceiver;
 import android.view.LayoutInflater;
+import android.view.View.OnTouchListener;
 import android.util.Log;
 
 //java util imports
@@ -91,11 +94,17 @@ public class TrendingAislesAdapter extends BaseAdapter {
 	private static final String USER_IMAGE_STORE_TAG = "store";
 	private static final String USER_IMAGE_TITLE_TAG = "title";
 	
-	private HashMap<String, AisleWindowContent> mAisleContentMap;
+	private ArrayList<AisleWindowContent> mAisleContentList;
 	private ContentLoader mLoader;
-	private static final int TRENDING_AISLES_SAMPLE_SIZE = 50;
+	private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
 	private static final int TRENDING_AISLES_BATCH_SIZE = 5;
 	
+	private static final boolean DEBUG = false;
+	
+	public int firstX;
+	public int lastX;
+	public static final int SWIPE_MIN_DISTANCE = 30;
+	public boolean mAnimationInProgress;
 	//========================== END OF PARSING TAGS =========================================================
 	
     public TrendingAislesAdapter(Context c, ArrayList<AisleWindowContent> content) {
@@ -106,31 +115,22 @@ public class TrendingAislesAdapter extends BaseAdapter {
         mVueContentGateway = VueContentGateway.getInstance();
         mLimit = TRENDING_AISLES_BATCH_SIZE;
         mOffset = 0;
-        mAisleContentMap = new HashMap<String, AisleWindowContent>();
+        mAisleContentList = new ArrayList<AisleWindowContent>();
         mVueContentGateway.getTrendingAisles(mLimit, mOffset, mTrendingAislesContentParser);
         mLoader = new ContentLoader(mContext);
         mCurrentParsingCategory = UNKNOWN_CATEGORY;        
     }
 
     public int getCount() {
-    	if(null != mAisleContentMap){
-    		Log.e("Jaws","Adapter size is being asked. Size = " + mAisleContentMap.size());
-    		return mAisleContentMap.size();
+    	if(null != mAisleContentList){
+    		//Log.e("Jaws","Adapter size is being asked. Size = " + mAisleContentMap.size());
+    		return mAisleContentList.size();
     	}
     	return 0;
     }
 
     public AisleWindowContent getItem(int position) {
-    	int index = 0;
-    	HashMap.Entry<String, AisleWindowContent> entry = null;
-    	Iterator<HashMap.Entry<String, AisleWindowContent>> entries = mAisleContentMap.entrySet().iterator();
-    	while (entries.hasNext()) {
-    		entry = entries.next();
-    		if(position == index)
-    			break;    	    
-    	    index++;
-    	}
-        return entry.getValue();
+    	return mAisleContentList.get(position);
     }
 
     public long getItemId(int position) {
@@ -139,43 +139,136 @@ public class TrendingAislesAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
+    	//View superView = super.getView(position, convertView, parent);
+    	
 		ViewHolder holder;
 		AisleWindowContent content;
 		StringBuilder sb = new StringBuilder();
+		final int position2 = position;
 
+		//Log.e("Jaws","getView at position = " + position + " convertView = " + convertView);
 		if (convertView == null) {
 			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
 			convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
 			holder = new ViewHolder();
 			holder.viewFlipper = (ViewFlipper) convertView .findViewById(R.id.aisle_content_flipper);
 			//holder.viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.right_out));
-			holder.viewFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.left_in));
+			//holder.viewFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.left_in));
 			convertView.setTag(holder);
-			holder.viewFlipper.setOnClickListener(new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					ViewFlipper flipper = (ViewFlipper)v;
-		            flipper.showNext();
-				}
-			});
+			if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position = " + position);
+			holder.viewFlipper.setOnTouchListener(new OnTouchListener() {
+		        public boolean onTouch(View v, MotionEvent event) {
+		        	final ViewFlipper viewFlipper = (ViewFlipper)v;
+
+		            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+		            	mAnimationInProgress= false;
+		                firstX = (int) event.getX();
+		            }
+
+		            if(event.getAction() == MotionEvent.ACTION_MOVE){
+		            	lastX = (int)event.getX();
+		                lastX = (int) event.getX();
+
+		                //Log.e("Jaws","firstX = " + firstX + " lastX = " + lastX);
+		                if (firstX - lastX > SWIPE_MIN_DISTANCE) {
+		                	if(false == mAnimationInProgress){
+		                		Log.e("Jaws","mAnimationInProgress is not true...setting one now!");
+		                		Animation currentGoLeft = AnimationUtils.loadAnimation(mContext, R.anim.right_out);
+		                		final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
+		                		mAnimationInProgress = true;
+		                		currentGoLeft.setAnimationListener(new Animation.AnimationListener(){
+			                		public void onAnimationEnd(Animation animation) {
+			                			//mAnimationInProgress = false;
+			                			Log.e("Jaws","onAnimationEnd is invoked and we are calling showNext! position = " + position2);
+			                			viewFlipper.showNext();
+			                			viewFlipper.getCurrentView().startAnimation(nextFadeIn);
+			                		}
+			                		public void onAnimationStart(Animation animation) {
+			                			
+			                		}
+			                		public void onAnimationRepeat(Animation animation) {
+			                			
+			                		}
+			                	});
+		                		nextFadeIn.setAnimationListener(new Animation.AnimationListener(){
+			                		public void onAnimationEnd(Animation animation) {		                			
+			                		}
+			                		public void onAnimationStart(Animation animation) {
+			                			
+			                		}
+			                		public void onAnimationRepeat(Animation animation) {
+			                			
+			                		}
+			                	});
+		                		
+		                		viewFlipper.getCurrentView().startAnimation(currentGoLeft);
+		                		return true;
+		                	}		                	
+		                } else if (lastX - firstX > SWIPE_MIN_DISTANCE) {
+		                	if(false == mAnimationInProgress){
+		                		Log.e("Jaws","mAnimationInProgress is not true...setting one now!");
+		                		Animation currentGoRight = AnimationUtils.loadAnimation(mContext, R.anim.left_in);
+		                		final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
+		                		mAnimationInProgress = true;
+		                		currentGoRight.setAnimationListener(new Animation.AnimationListener(){
+			                		public void onAnimationEnd(Animation animation) {
+			                			mAnimationInProgress = false;
+			                			Log.e("Jaws","onAnimationEnd is invoked and we are calling showPrevious!");
+			                			viewFlipper.showPrevious();
+			                			viewFlipper.getCurrentView().startAnimation(nextFadeIn);
+			                		}
+			                		public void onAnimationStart(Animation animation) {
+			                			
+			                		}
+			                		public void onAnimationRepeat(Animation animation) {
+			                			
+			                		}
+			                	});
+		                		nextFadeIn.setAnimationListener(new Animation.AnimationListener(){
+			                		public void onAnimationEnd(Animation animation) {		                			
+			                		}
+			                		public void onAnimationStart(Animation animation) {
+			                			
+			                		}
+			                		public void onAnimationRepeat(Animation animation) {
+			                			
+			                		}
+			                	});
+		                		
+		                		viewFlipper.getCurrentView().startAnimation(currentGoRight);
+		                		return true;
+		                	}
+		                }
+		            }
+		            if (event.getAction() == MotionEvent.ACTION_UP) {
+		            	mAnimationInProgress = false;		            	
+		            }
+		            return true;
+		        }
+		    });
 		}
 
 		holder = (ViewHolder) convertView.getTag();
+		View currentValidView = holder.viewFlipper.getCurrentView();
+		int restoreIndex = holder.viewFlipper.indexOfChild(currentValidView);
+		//if(1 == position /*holder.viewFlipper.getChildCount() > 0*/){
+			//Log.e("Jaws","Looks like we are looking at a valid child. restoreIndex = " + restoreIndex
+			//		+ " position = " + position);
+		//}
+		holder.viewFlipper.removeAllViews();
+		
 		TextView ownerNameView = (TextView)convertView.findViewById(R.id.descriptor_aisle_owner_name);
 		TextView contextView = (TextView)convertView.findViewById(R.id.descriptor_aisle_context);
-		if(holder.viewFlipper.getChildCount() < 3){
-			Log.e("Jaws","getView at position = " + position + " for flipper = " + holder.viewFlipper);
-			content = getItem(position);
+		content = getItem(position);
 			
-			mLoader.DisplayContent(getItem(position), holder.viewFlipper);
-			AisleContext context = content.getAisleContext();
-			sb.append(context.mFirstName).append(" ").append(context.mLastName);
-			ownerNameView.setText(sb.toString());
-			StringBuilder contextBuilder = new StringBuilder();
-			contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem);
-			contextView.setText(contextBuilder.toString());
-		}
+		mLoader.displayContent(position, getItem(position), holder.viewFlipper);
+		//holder.viewFlipper.setDisplayedChild(restoreIndex);
+		AisleContext context = content.getAisleContext();
+		sb.append(context.mFirstName).append(" ").append(context.mLastName);
+		ownerNameView.setText(sb.toString());
+		StringBuilder contextBuilder = new StringBuilder();
+		contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem);
+		contextView.setText(contextBuilder.toString());
 		return convertView;
     }
 
@@ -205,6 +298,11 @@ public class TrendingAislesAdapter extends BaseAdapter {
 				//start displaying stuff!
 				//mAdapterState = AISLE_TRENDING_CONTENT_DATA; //we are no longer waiting for list!
 				parseTrendingAislesResultData(resultData.getString("result"));
+				//if(0 == mOffset){
+					//if this is the first set of data we are receiving go ahead
+					//notify the data set changed
+				//	notifyDataSetChanged();
+				//}
 				mOffset += TRENDING_AISLES_BATCH_SIZE;
 				if(mOffset < TRENDING_AISLES_SAMPLE_SIZE){
 					mVueContentGateway.getTrendingAisles(mLimit, mOffset, this);
@@ -253,12 +351,14 @@ public class TrendingAislesAdapter extends BaseAdapter {
 					JSONObject contentItem = contentArray.getJSONObject(i);
 					category = contentItem.getString(ITEM_CATEGORY_TAG);
 					aisleId = contentItem.getString(CONTENT_ID_TAG);
+					//Log.e("Jaws","aisleId = " + aisleId);
 					JSONArray imagesArray = contentItem.getJSONArray(USER_IMAGES_TAG);
 					
 					//within the content item we have a user object
 					JSONObject user = contentItem.getJSONObject(USER_OBJECT_TAG);
 					userInfo.mFirstName = user.getString(USER_FIRST_NAME_TAG);
 					userInfo.mLastName = user.getString(USER_LAST_NAME_TAG);
+
 					
 					userInfo.mLookingForItem = contentItem.getString(LOOKING_FOR_TAG);
 					userInfo.mOccasion = contentItem.getString(OCCASION_TAG);
@@ -275,9 +375,12 @@ public class TrendingAislesAdapter extends BaseAdapter {
 					}
 					
 					aisleItem = getAisleItem(aisleId);
+					//Log.e("Jaws","urls for user: " + userInfo.mFirstName + 
+					//		" " + userInfo.mLastName + " will be added at position " + mAisleContentList.size());
 					aisleItem.addAisleContent(userInfo,  imageItemsArray);
+					notifyDataSetChanged();
 					imageItemsArray.clear();
-					notifyDataSetChanged();					
+										
 				}
 			}catch(JSONException ex1){
 				
@@ -288,11 +391,8 @@ public class TrendingAislesAdapter extends BaseAdapter {
 	
 	private AisleWindowContent getAisleItem(String aisleId){
 		AisleWindowContent aisleItem = null;
-		aisleItem = mAisleContentMap.get(aisleId);
-		if(null == aisleItem){
-			aisleItem = new AisleWindowContent(aisleId);
-			mAisleContentMap.put(aisleId, aisleItem);
-		}
+		aisleItem = new AisleWindowContent(aisleId);
+		mAisleContentList.add(aisleItem);
 		return aisleItem;
 		
 	}

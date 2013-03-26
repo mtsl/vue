@@ -62,20 +62,24 @@ public class ContentLoader {
         mAisleImagesCache = VueApplication.getInstance().getAisleImagesMemCache();
     }
     
-    public void DisplayImage(String url, ImageView imageView)
+    public void displayImage(String url, ImageView imageView)
     {
         imageViews.put(imageView, url);
         Bitmap bitmap = mAisleImagesCache.get(url);
         if(null != bitmap)
             imageView.setImageBitmap(bitmap);
-        else
-        {
-        	//loadBitmap(url, imageView);
+        else{
             imageView.setImageDrawable(null);
         }
     }
     
-    public void DisplayContent(AisleWindowContent content, ViewFlipper viewFlipper)
+    /**
+     * 
+     * @param position - this parameter is being sent in just for debugging purposes and is otherwise not used
+     * @param content
+     * @param viewFlipper
+     */
+    public synchronized void displayContent(int position, AisleWindowContent content, ViewFlipper viewFlipper)
     {
     	String url = null;
     	int count = 0;
@@ -86,33 +90,26 @@ public class ContentLoader {
     	if(null == content)
     		return;
     	
-    	int size = content.getSize();
-		//TODO: this is just for debugging now
-		//Currently am loading just 3 images per aisle to ensure we don't
-		//run out of memory. We should however load more items on demand
-    	if(size > 5)
-    		size = 5;
-		//END OF DEBUG CODE =============================================================	
     	imageDetailsArr = content.getImageList();
     	if(null != imageDetailsArr){
     		count = imageDetailsArr.size();
-    		//TODO: this is just for debugging now
-    		//Currently am loading just 3 images per aisle to ensure we don't
-    		//run out of memory. We should however load more items on demand
-    		if(count > 3)
-    			count = 3;
-    		//END OF DEBUG CODE =============================================================
     		
     		for(int j=0;j<count;j++){
     			itemDetails = imageDetailsArr.get(j);
     			imageView = new ScaleImageView(mContext);
-    			//url = itemDetails.mImageUrl;
     			imageViews.put(imageView, itemDetails.mCustomImageUrl);
     			Bitmap bitmap = mAisleImagesCache.get(itemDetails.mCustomImageUrl);
-    			if(bitmap!=null)
+    			if(0 == position || 1 == position){
+    				if(null != bitmap){
+    					//Log.e("Jaws","bitmap at position " + position + " is needed. Looks like we have the bitmap in the cache");
+    				}else{
+    					//Log.e("Jaws","bitmap at position " + position + " is needed. But we are going to have to fetch it!");
+    				}
+    			}
+    			if(bitmap!=null){
     				imageView.setImageBitmap(bitmap);
-    				//TODO: also need to set meta-data such as profile owner,
-    				//context etc
+    				viewFlipper.addView(imageView);
+    			}
     			else{
     				loadBitmap(itemDetails.mCustomImageUrl, viewFlipper, imageView);
     				imageView.setImageDrawable(null);
@@ -178,10 +175,6 @@ public class ContentLoader {
                 height_tmp/=2;
                 scale*=2;
             }
-            
-            /*if(scale>=2){
-            	scale/=2;
-            }*/
             
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
