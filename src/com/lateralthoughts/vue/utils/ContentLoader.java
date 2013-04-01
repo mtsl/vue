@@ -18,6 +18,9 @@ import android.widget.ViewFlipper;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,8 +65,7 @@ public class ContentLoader {
         mAisleImagesCache = VueApplication.getInstance().getAisleImagesMemCache();
     }
     
-    public void displayImage(String url, ImageView imageView)
-    {
+    public void displayImage(String url, ImageView imageView){
         imageViews.put(imageView, url);
         Bitmap bitmap = mAisleImagesCache.get(url);
         if(null != bitmap)
@@ -79,9 +81,7 @@ public class ContentLoader {
      * @param content
      * @param viewFlipper
      */
-    public synchronized void displayContent(int position, AisleWindowContent content, ViewFlipper viewFlipper)
-    {
-    	String url = null;
+    public void displayContent(int position, AisleWindowContent content, ViewFlipper viewFlipper){
     	int count = 0;
     	ScaleImageView imageView = null;
     	ArrayList<AisleImageDetails> imageDetailsArr = null;
@@ -99,28 +99,26 @@ public class ContentLoader {
     			imageView = new ScaleImageView(mContext);
     			imageViews.put(imageView, itemDetails.mCustomImageUrl);
     			Bitmap bitmap = mAisleImagesCache.get(itemDetails.mCustomImageUrl);
-    			if(0 == position || 1 == position){
-    				if(null != bitmap){
-    					//Log.e("Jaws","bitmap at position " + position + " is needed. Looks like we have the bitmap in the cache");
-    				}else{
-    					//Log.e("Jaws","bitmap at position " + position + " is needed. But we are going to have to fetch it!");
-    				}
-    			}
+    			
     			if(bitmap!=null){
     				imageView.setImageBitmap(bitmap);
     				viewFlipper.addView(imageView);
     			}
     			else{
     				loadBitmap(itemDetails.mCustomImageUrl, viewFlipper, imageView);
-    				imageView.setImageDrawable(null);
+    				//imageView.setImageDrawable(new DownloadDrawable());
     			}
             }
         }
     }
     
     public void loadBitmap(String loc, ViewFlipper flipper, ImageView imageView) {
-        BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView);
-        task.execute(loc);
+        if (cancelPotentialDownload(loc, imageView)) {
+            BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView);
+            DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
+            imageView.setImageDrawable(downloadedDrawable);
+            task.execute(loc);
+        }
     }
     
     private Bitmap getBitmap(String url) 
@@ -197,17 +195,46 @@ public class ContentLoader {
         fileCache.clear();
     }
     
+    private static boolean cancelPotentialDownload(String url, ImageView imageView) {
+        BitmapWorkerTask bitmapDownloaderTask = getBitmapWorkerTask(imageView);
+
+        if (bitmapDownloaderTask != null) {
+            String bitmapUrl = bitmapDownloaderTask.url;
+            if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+                bitmapDownloaderTask.cancel(true);
+            } else {
+                // The same URL is already being downloaded.
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    static class DownloadedDrawable extends ColorDrawable {
+        private final WeakReference<BitmapWorkerTask> bitmapWorkerReference;
+
+        public DownloadedDrawable(BitmapWorkerTask bitmapWorkerTask) {
+            super(Color.BLACK);
+            bitmapWorkerReference =
+                new WeakReference<BitmapWorkerTask>(bitmapWorkerTask);
+        }
+
+        public BitmapWorkerTask getBitmapWorkerTask() {
+            return bitmapWorkerReference.get();
+        }
+    }
+    
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
         private final WeakReference<ViewFlipper>viewFlipperReference;
-        private final ImageView mImageView; //imageViewReference;
+        //private final ImageView mImageView; //imageViewReference;
         private String url = null;
 
         public BitmapWorkerTask(ViewFlipper vFlipper, ImageView imageView) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             viewFlipperReference = new WeakReference<ViewFlipper>(vFlipper); 
-            mImageView = imageView;
+            //mImageView = imageView;
         }
 
         // Decode image in background.
@@ -228,15 +255,27 @@ public class ContentLoader {
             		imageViewReference != null && bitmap != null) {
                 final ImageView imageView = imageViewReference.get();
                 final ViewFlipper vFlipper = viewFlipperReference.get();
-                count = vFlipper.getChildCount();
-                if (mImageView != null) {
-                	mImageView.setImageBitmap(bitmap);
-                    vFlipper.addView(mImageView, count);
+                BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+                
+                if (this == bitmapWorkerTask) {
+                    imageView.setImageBitmap(bitmap);
+                    vFlipper.addView(imageView);
                 }else{
                 	Log.e("Jaws","imageView is NULL! vFlipper = " + vFlipper);
                 }
             }
         }
+    }
+    
+    private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+        if (imageView != null) {
+            Drawable drawable = imageView.getDrawable();
+            if (drawable instanceof DownloadedDrawable) {
+                DownloadedDrawable downloadedDrawable = (DownloadedDrawable)drawable;
+                return downloadedDrawable.getBitmapWorkerTask();
+            }
+        }
+        return null;
     }
 }
 
