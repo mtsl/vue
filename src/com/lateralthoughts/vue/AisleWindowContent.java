@@ -26,8 +26,8 @@ public class AisleWindowContent
 	private String mImageFormatSpecifier = "._SX%d_SY%d.jpg";
 	
 	//these two should be based on device with & height
-	private int mDesiredImageWidth = 380;
-	private int mDesiredImageHeight = 540;
+	private int mDesiredImageWidth = 240;
+	private int mDesiredImageHeight = 400;
 	private String mAisleId;
 	
     public AisleWindowContent(String aisleId){ 
@@ -72,7 +72,7 @@ public class AisleWindowContent
     			customFittedSizePart = String.format(mImageFormatSpecifier, mDesiredImageWidth, mDesiredImageHeight);  
     			sb.append(customFittedSizePart);
     			imageDetails.mCustomImageUrl = sb.toString();
-    			imageDetails.mCustomImageUrl = regularUrl;
+    			//imageDetails.mCustomImageUrl = regularUrl;
     		}else{
     			imageDetails.mCustomImageUrl = regularUrl;
     		}

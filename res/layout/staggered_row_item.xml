@@ -4,17 +4,17 @@
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical" >
 
-    <ViewFlipper android:id="@+id/aisle_content_flipper"
+    <com.lateralthoughts.vue.ui.AisleContentBrowser android:id="@+id/aisle_content_flipper"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </ViewFlipper>
+    </com.lateralthoughts.vue.ui.AisleContentBrowser>
 
     <LinearLayout
         android:id="@id/aisle_descriptor"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:background="#CCCCCC"
+        android:visibility="invisible"
         android:orientation="horizontal" >
 
         <ImageView

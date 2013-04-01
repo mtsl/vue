@@ -33,6 +33,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 import android.view.animation.Animation;
@@ -57,6 +58,7 @@ import com.lateralthoughts.vue.VueContentGateway;
 import com.lateralthoughts.vue.StaggeredViewAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.ContentLoader;
+import com.lateralthoughts.vue.ui.AisleContentBrowser;
 
 public class TrendingAislesAdapter extends BaseAdapter {
     private Context mContext;
@@ -97,7 +99,7 @@ public class TrendingAislesAdapter extends BaseAdapter {
 	private ArrayList<AisleWindowContent> mAisleContentList;
 	private ContentLoader mLoader;
 	private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
-	private static final int TRENDING_AISLES_BATCH_SIZE = 5;
+	private static final int TRENDING_AISLES_BATCH_SIZE = 10;
 	
 	private static final boolean DEBUG = false;
 	
@@ -123,7 +125,6 @@ public class TrendingAislesAdapter extends BaseAdapter {
 
     public int getCount() {
     	if(null != mAisleContentList){
-    		//Log.e("Jaws","Adapter size is being asked. Size = " + mAisleContentMap.size());
     		return mAisleContentList.size();
     	}
     	return 0;
@@ -134,31 +135,28 @@ public class TrendingAislesAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return 0; //mContent;
+        return 0;
     }
 
     // create a new ImageView for each item referenced by the Adapter
-    public View getView(int position, View convertView, ViewGroup parent) {
-    	//View superView = super.getView(position, convertView, parent);
-    	
+    public View getView(int position, View convertView, ViewGroup parent) {    	
 		ViewHolder holder;
 		AisleWindowContent content;
 		StringBuilder sb = new StringBuilder();
 		final int position2 = position;
 
-		//Log.e("Jaws","getView at position = " + position + " convertView = " + convertView);
-		if (convertView == null) {
+		if (null == convertView) {
 			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
 			convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
 			holder = new ViewHolder();
-			holder.viewFlipper = (ViewFlipper) convertView .findViewById(R.id.aisle_content_flipper);
-			//holder.viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.right_out));
-			//holder.viewFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.left_in));
+			holder.aisleContentBrowser = (AisleContentBrowser) convertView .findViewById(R.id.aisle_content_flipper);
+			holder.aisleDescriptor = (LinearLayout) convertView .findViewById(R.id.aisle_descriptor);
 			convertView.setTag(holder);
 			if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position = " + position);
-			holder.viewFlipper.setOnTouchListener(new OnTouchListener() {
+			
+			holder.aisleContentBrowser.setOnTouchListener(new OnTouchListener() {
 		        public boolean onTouch(View v, MotionEvent event) {
-		        	final ViewFlipper viewFlipper = (ViewFlipper)v;
+		        	final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)v;
 
 		            if (event.getAction() == MotionEvent.ACTION_DOWN) {
 		            	mAnimationInProgress= false;
@@ -180,8 +178,8 @@ public class TrendingAislesAdapter extends BaseAdapter {
 			                		public void onAnimationEnd(Animation animation) {
 			                			//mAnimationInProgress = false;
 			                			Log.e("Jaws","onAnimationEnd is invoked and we are calling showNext! position = " + position2);
-			                			viewFlipper.showNext();
-			                			viewFlipper.getCurrentView().startAnimation(nextFadeIn);
+			                			aisleContentBrowser.showNext();
+			                			aisleContentBrowser.getCurrentView().startAnimation(nextFadeIn);
 			                		}
 			                		public void onAnimationStart(Animation animation) {
 			                			
@@ -201,7 +199,7 @@ public class TrendingAislesAdapter extends BaseAdapter {
 			                		}
 			                	});
 		                		
-		                		viewFlipper.getCurrentView().startAnimation(currentGoLeft);
+		                		aisleContentBrowser.getCurrentView().startAnimation(currentGoLeft);
 		                		return true;
 		                	}		                	
 		                } else if (lastX - firstX > SWIPE_MIN_DISTANCE) {
@@ -214,8 +212,8 @@ public class TrendingAislesAdapter extends BaseAdapter {
 			                		public void onAnimationEnd(Animation animation) {
 			                			mAnimationInProgress = false;
 			                			Log.e("Jaws","onAnimationEnd is invoked and we are calling showPrevious!");
-			                			viewFlipper.showPrevious();
-			                			viewFlipper.getCurrentView().startAnimation(nextFadeIn);
+			                			aisleContentBrowser.showPrevious();
+			                			aisleContentBrowser.getCurrentView().startAnimation(nextFadeIn);
 			                		}
 			                		public void onAnimationStart(Animation animation) {
 			                			
@@ -235,7 +233,7 @@ public class TrendingAislesAdapter extends BaseAdapter {
 			                		}
 			                	});
 		                		
-		                		viewFlipper.getCurrentView().startAnimation(currentGoRight);
+		                		aisleContentBrowser.getCurrentView().startAnimation(currentGoRight);
 		                		return true;
 		                	}
 		                }
@@ -247,23 +245,19 @@ public class TrendingAislesAdapter extends BaseAdapter {
 		        }
 		    });
 		}
+		AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
 
 		holder = (ViewHolder) convertView.getTag();
-		View currentValidView = holder.viewFlipper.getCurrentView();
-		int restoreIndex = holder.viewFlipper.indexOfChild(currentValidView);
-		//if(1 == position /*holder.viewFlipper.getChildCount() > 0*/){
-			//Log.e("Jaws","Looks like we are looking at a valid child. restoreIndex = " + restoreIndex
-			//		+ " position = " + position);
-		//}
-		holder.viewFlipper.removeAllViews();
+		View currentValidView = holder.aisleContentBrowser.getCurrentView();
+		int restoreIndex = holder.aisleContentBrowser.indexOfChild(currentValidView);
+		holder.aisleContentBrowser.removeAllViews();
 		
-		TextView ownerNameView = (TextView)convertView.findViewById(R.id.descriptor_aisle_owner_name);
+		TextView ownerNameView = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_owner_name);
 		TextView contextView = (TextView)convertView.findViewById(R.id.descriptor_aisle_context);
-		content = getItem(position);
-			
-		mLoader.displayContent(position, getItem(position), holder.viewFlipper);
-		//holder.viewFlipper.setDisplayedChild(restoreIndex);
-		AisleContext context = content.getAisleContext();
+		
+		holder.aisleContentBrowser.setUniqueId(windowContent.getAisleId());
+		mLoader.displayContent(position, windowContent, holder.aisleContentBrowser);
+		AisleContext context = windowContent.getAisleContext();
 		sb.append(context.mFirstName).append(" ").append(context.mLastName);
 		ownerNameView.setText(sb.toString());
 		StringBuilder contextBuilder = new StringBuilder();
@@ -273,13 +267,9 @@ public class TrendingAislesAdapter extends BaseAdapter {
     }
 
 	static class ViewHolder {
-		ViewFlipper viewFlipper;
+		AisleContentBrowser aisleContentBrowser;
+		LinearLayout aisleDescriptor;
 	}
-	
-    public void loadBitmap(String loc, ImageView imageView) {
-        //BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-        //task.execute(loc);
-    }
     
 	private class TrendingAislesContentParser extends ResultReceiver {
 		public TrendingAislesContentParser(Handler handler){
