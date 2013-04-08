@@ -57,8 +57,11 @@ public class BitmapLoaderUtils {
         
         //from SD cache
         Bitmap b = decodeFile(f);
-        if(b!=null)
+        if(b != null){
+            if(cacheBitmap)
+                mAisleImagesCache.put(url, b);
             return b;
+        }
         
         //from web
         try {

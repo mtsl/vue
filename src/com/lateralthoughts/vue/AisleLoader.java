@@ -116,8 +116,6 @@ public class AisleLoader {
     		holder.aisleContentBrowser.setUniqueId(desiredContentId);
     		holder.aisleContentBrowser.setScrollIndex(scrollIndex);
     		holder.uniqueContentId = desiredContentId;
-    		//holder.aisleContentBrowser.setAdapter(null);
-    		//holder.aisleContentBrowser.getAdapter();
     	}    	
     	
     	imageDetailsArr = windowContent.getImageList();

@@ -91,7 +91,7 @@ public class TrendingAislesAdapter extends BaseAdapter {
 	private AisleLoader mLoader;
 	private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
 	private static final int TRENDING_AISLES_BATCH_SIZE = 5;
-	private static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
+	private static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 5;
 	private static final int NOTIFICATION_THRESHOLD = 1;
 	
 	private static final boolean DEBUG = false;
