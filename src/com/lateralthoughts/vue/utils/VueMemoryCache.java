@@ -43,7 +43,7 @@ public class VueMemoryCache<T> {
 
     public VueMemoryCache(){
         //by default we will set the limit at 5% of max heap
-        setLimit(5);
+        setLimit(20);
     }
     
     public void setLimit(int percentOfMax){    	

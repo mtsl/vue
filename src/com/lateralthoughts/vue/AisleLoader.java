@@ -2,40 +2,30 @@ package com.lateralthoughts.vue;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
-import android.widget.ViewFlipper;
 
 import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
+import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.VueMemoryCache;
+import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
 public class AisleLoader {
-    VueMemoryCache<Bitmap> mAisleImagesCache; // = new MemoryCache();
     private static final boolean DEBUG = false;
-    FileCache fileCache;
-    private Map<ImageView, String> imageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     //ExecutorService executorService;
     Handler handler = new Handler();//handler to display images in UI thread
-    private int mScreenWidth;
-    private int mScreenHeight;
-    private VueMemoryCache<Bitmap> mVueImageMemoryCache;
     private Context mContext;
     
     private static AisleLoader sAisleLoaderInstance = null;
+    private ScaledImageViewFactory mViewFactory = null;
+    private BitmapLoaderUtils mBitmapLoaderUtils;
     //Design Notes: The SGV is powered by data from the TrendingAislesAdapter. This adapter starts
     //the information flow by requesting top aisles in batches. As the aisle 
     //details start coming through the adapter notifies the view of changes in
@@ -75,11 +65,8 @@ public class AisleLoader {
     	//instead use a factory pattern and return an instance using a
     	//static method
     	mContext = context;
-        fileCache = new FileCache(mContext);
-        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-        mScreenWidth = metrics.widthPixels;
-        mScreenHeight = metrics.heightPixels; 
-        mAisleImagesCache = VueApplication.getInstance().getAisleImagesMemCache();
+        mViewFactory = ScaledImageViewFactory.getInstance(context);
+        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
     }
     
     //This method adds the intelligence to fetch the contents of this aisle window and
@@ -95,55 +82,83 @@ public class AisleLoader {
     //start an async task and use a standard DownloadedDrawable object to keep track of the task
     //When the task completes check to make sure that the url for which the task was started is still
     //valid. If so, add the downloaded image to the view object
-    public void getAisleContentIntoView(AisleWindowContent content, ViewHolder holder){
-       	int count = 0;
+    public void getAisleContentIntoView(AisleWindowContent windowContent, final ViewHolder holder,
+    		int scrollIndex, int position){
     	ScaleImageView imageView = null;
     	ArrayList<AisleImageDetails> imageDetailsArr = null;
     	AisleImageDetails itemDetails = null;
+    	AisleContentBrowser contentBrowser = null;
     	
-    	if(null == content)
+    	if(null == windowContent || null == holder)
     		return;
+		
+    	//String currentContentId = holder.aisleContentBrowser.getUniqueId();
+    	String desiredContentId = windowContent.getAisleId();
+    	contentBrowser = holder.aisleContentBrowser;
+		if(1 == position){
+			if(DEBUG) Log.e("Vinodh","position = " + position + " currentId = " + holder.uniqueContentId + 
+							" desired id = " + desiredContentId);
+		}
+		
+    	//if(currentContentId.equals(desiredContentId)){
+		if(holder.uniqueContentId.equals(desiredContentId)){
+    		//we are looking at a visual object that has either not been used
+    		//before or has to be filled with same content. Either way, no need
+    		//to worry about cleaning up anything!
+    		return;
+    	}else{
+    		//we are going to re-use an existing object to show some new content
+    		//lets release the scaleimageviews first
+    		for(int i=0;i<contentBrowser.getChildCount();i++){
+    			mViewFactory.returnUsedImageView((ScaleImageView)contentBrowser.getChildAt(i));
+    		}
+    		holder.aisleContentBrowser.removeAllViews();
+    		holder.aisleContentBrowser.setUniqueId(desiredContentId);
+    		holder.aisleContentBrowser.setScrollIndex(scrollIndex);
+    		holder.uniqueContentId = desiredContentId;
+    		//holder.aisleContentBrowser.setAdapter(null);
+    		//holder.aisleContentBrowser.getAdapter();
+    	}    	
     	
-    	imageDetailsArr = content.getImageList();
-    	if(null != imageDetailsArr){
-    		count = imageDetailsArr.size();
-    		
-    		for(int j=0;j<count;j++){
-    			itemDetails = imageDetailsArr.get(j);
-    			imageView = new ScaleImageView(mContext);
-    			imageViews.put(imageView, itemDetails.mCustomImageUrl);
-    			Bitmap bitmap = mAisleImagesCache.get(itemDetails.mCustomImageUrl);
-    			
-    			if(bitmap!=null){
-    				imageView.setImageBitmap(bitmap);
-    				//viewFlipper.addView(imageView);
-    			}
-    			else{
-    				//loadBitmap(itemDetails.mCustomImageUrl, viewFlipper, imageView);
-    			}
-            }
+    	imageDetailsArr = windowContent.getImageList();
+    	if(null != imageDetailsArr){    		
+    		itemDetails = imageDetailsArr.get(0);
+			
+			//imageView = mViewFactory.getEmptyImageView();
+			imageView = mViewFactory.getPreconfiguredImageView(position);
+			imageView.setContainerObject(holder);
+			Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
+			
+			if(bitmap!=null){
+				imageView.setImageBitmap(bitmap);
+				contentBrowser.addView(imageView);    				
+			}
+			else{
+				contentBrowser.setBackgroundColor(Color.WHITE);
+				loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView);
+			}
+			prefetchImages(imageDetailsArr, 1);
         }
     }
     
-    public void loadBitmap(String loc, ViewFlipper flipper, ImageView imageView) {
-        if (cancelPotentialDownload(loc, imageView)) {
+    public void loadBitmap(String loc, AisleContentBrowser flipper, ImageView imageView) {
+        if (cancelPotentialDownload(loc, imageView)) {        	
             BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView);
-            DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
-            imageView.setImageDrawable(downloadedDrawable);
+            ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
             task.execute(loc);
         }
     }
     
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
-        private final WeakReference<ViewFlipper>viewFlipperReference;
+        private final WeakReference<AisleContentBrowser>viewFlipperReference;
         //private final ImageView mImageView; //imageViewReference;
         private String url = null;
 
-        public BitmapWorkerTask(ViewFlipper vFlipper, ImageView imageView) {
+        public BitmapWorkerTask(AisleContentBrowser vFlipper, ImageView imageView) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
-            viewFlipperReference = new WeakReference<ViewFlipper>(vFlipper); 
+            viewFlipperReference = new WeakReference<AisleContentBrowser>(vFlipper); 
             //mImageView = imageView;
         }
 
@@ -152,24 +167,32 @@ public class AisleLoader {
         protected Bitmap doInBackground(String... params) {
             url = params[0];
             Bitmap bmp = null;            
-            //bmp = getBitmap(url); 
-            mAisleImagesCache.put(url, bmp);
+            //we want to get the bitmap and also add it into the memory cache
+            bmp = mBitmapLoaderUtils.getBitmap(url, true); 
             return bmp;            
         }
 
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-        	int count = 0;
             if (viewFlipperReference != null && 
             		imageViewReference != null && bitmap != null) {
                 final ImageView imageView = imageViewReference.get();
-                final ViewFlipper vFlipper = viewFlipperReference.get();
+                final AisleContentBrowser vFlipper = viewFlipperReference.get();
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
                 
                 if (this == bitmapWorkerTask) {
-                    imageView.setImageBitmap(bitmap);
-                    vFlipper.addView(imageView);
+                	ViewHolder holder = (ViewHolder)((ScaleImageView)imageView).getContainerObject();
+                	if(null != holder){
+                		holder.aisleContext.setVisibility(View.VISIBLE);
+                		holder.aisleOwnersName.setVisibility(View.VISIBLE);
+                		holder.profileThumbnail.setVisibility(View.VISIBLE);
+                		holder.aisleDescriptor.setVisibility(View.VISIBLE);
+                	}
+                	imageView.setImageBitmap(bitmap);
+                	vFlipper.addView(imageView);
+                	
+                    vFlipper.setDisplayedChild(holder.aisleContentBrowser.getScrollIndex());
                 }else{
                 	Log.e("Jaws","imageView is NULL! vFlipper = " + vFlipper);
                 }
@@ -180,32 +203,18 @@ public class AisleLoader {
     //utility functions to keep track of all the async tasks that we instantiate
     private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
         if (imageView != null) {
-            Drawable drawable = imageView.getDrawable();
-            if (drawable instanceof DownloadedDrawable) {
-                DownloadedDrawable downloadedDrawable = (DownloadedDrawable)drawable;
-                return downloadedDrawable.getBitmapWorkerTask();
+        	Object task = ((ScaleImageView)imageView).getOpaqueWorkerObject();
+            if (task instanceof BitmapWorkerTask) {
+                BitmapWorkerTask workerTask = (BitmapWorkerTask)task;
+                return workerTask;
             }
         }
         return null;
     }
     
-    static class DownloadedDrawable extends ColorDrawable {
-        private final WeakReference<BitmapWorkerTask> bitmapWorkerReference;
-
-        public DownloadedDrawable(BitmapWorkerTask bitmapWorkerTask) {
-            super(Color.BLACK);
-            bitmapWorkerReference =
-                new WeakReference<BitmapWorkerTask>(bitmapWorkerTask);
-        }
-
-        public BitmapWorkerTask getBitmapWorkerTask() {
-            return bitmapWorkerReference.get();
-        }
-    }
-    
     private static boolean cancelPotentialDownload(String url, ImageView imageView) {
         BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
+        
         if (bitmapWorkerTask != null) {
             String bitmapUrl = bitmapWorkerTask.url;
             if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
@@ -216,6 +225,70 @@ public class AisleLoader {
             }
         }
         return true;
+    }
+    
+    @SuppressWarnings("unchecked")
+	public void prefetchImages(ArrayList<AisleWindowContent> sourceForFetch, int startIndex, int length){
+    	if(null == sourceForFetch)
+    		return;
+    	
+    	if(startIndex < 0)
+    		return;
+    	
+    	if(length < 0)
+    		return;
+    	
+    	int size = sourceForFetch.size();
+    	if(size < (startIndex + length))
+    		return;
+    	
+    	AisleWindowContent content = null;
+    	for(int i=startIndex; i<startIndex+length; i++){
+    		content = sourceForFetch.get(i);
+    		BitmapPrefetcherTask task = new BitmapPrefetcherTask();
+    		task.execute(content.getImageList());    		
+    	}
+    }
+    
+    @SuppressWarnings("unchecked")
+	public void prefetchImages(ArrayList<AisleImageDetails> imageSources, int startIndex){
+    	if(null == imageSources)
+    		return;
+    	
+    	if(startIndex < 0)
+    		return;
+    	
+    	if(startIndex < imageSources.size())
+    		return;
+    	BitmapPrefetcherTask task = new BitmapPrefetcherTask();
+    	task.execute(imageSources);
+    }
+    
+    class BitmapPrefetcherTask extends AsyncTask<ArrayList<AisleImageDetails>, Void, Bitmap> {
+        private ArrayList<AisleImageDetails> prefetchImageList;
+
+        public BitmapPrefetcherTask() {
+            // Use a WeakReference to ensure the ImageView can be garbage collected
+        }
+
+        // Decode image in background.
+        @Override
+        protected Bitmap doInBackground(ArrayList<AisleImageDetails>... params) {
+        	prefetchImageList = params[0];
+            String url = null;
+            for(int i=0;i<prefetchImageList.size();i++){
+            	url = prefetchImageList.get(i).mCustomImageUrl;
+            	Log.e("Smartie Pants","about to invoke get bitmap for url = " + url);
+            	mBitmapLoaderUtils.getBitmap(url, false);
+            }
+            return null;            
+        }
+
+        // Once complete, see if ImageView is still around and set bitmap.
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+        	
+        }
     }
     
 }

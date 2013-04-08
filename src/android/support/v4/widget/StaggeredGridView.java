@@ -22,7 +22,6 @@ package android.support.v4.widget;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import android.R;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -54,7 +53,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.ListAdapter;
-import android.widget.ViewFlipper;
 
 /**
  * ListView and GridView just not complex enough? Try StaggeredGridView!
@@ -135,7 +133,7 @@ public class StaggeredGridView extends ViewGroup {
     private int mActivePointerId;
     private int mMotionPosition;
     private int mColWidth;
-    private int mNumCols;
+    //private int mNumCols;
     private long mFirstAdapterId;
     private boolean mBeginClick;
     
@@ -1274,8 +1272,6 @@ public class StaggeredGridView extends ViewGroup {
             }
             rec.height = childHeight;
             
-            int itemTop = mItemTops[nextCol];
-            
             final int startFrom;
             if (span > 1) {
                 int highest = mItemTops[nextCol];
@@ -1506,7 +1502,7 @@ public class StaggeredGridView extends ViewGroup {
     /**
      * for debug purposes
      */
-    private void displayMapping(){
+    /*private void displayMapping(){
     	Log.w("Jaws", "MAP ****************");
     	StringBuilder sb = new StringBuilder();
     	int col = 0;
@@ -1523,7 +1519,7 @@ public class StaggeredGridView extends ViewGroup {
     		col++;
     	}
     	Log.w("Jaws", "MAP END ****************");
-    }
+    }*/
     
     /**
      * @return column that the next view filling upwards should occupy. This is the bottom-most

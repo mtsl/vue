@@ -35,19 +35,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.content.Context;
-import android.os.ResultReceiver;
-import android.view.LayoutInflater;
 import android.view.View.OnTouchListener;
 import android.util.Log;
 
 //java util imports
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,9 +51,6 @@ import org.json.JSONObject;
 
 //internal imports
 import com.lateralthoughts.vue.VueContentGateway;
-import com.lateralthoughts.vue.StaggeredViewAdapter.ViewHolder;
-import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.ContentLoader;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 
 public class TrendingAislesAdapter extends BaseAdapter {
@@ -69,14 +62,12 @@ public class TrendingAislesAdapter extends BaseAdapter {
 	private int mAdapterState;
 	//this variable above is usually set to one of the following values
 	private final int AISLE_TRENDING_LIST_DATA = 1;
-	private final int AISLE_TRENDING_CONTENT_DATA = 2;
+	//private final int AISLE_TRENDING_CONTENT_DATA = 2;
 	//====== End of state variables ========================================================================
 	
 	private int mLimit;
 	private int mOffset;
 	private VueContentGateway mVueContentGateway;
-	private static final String UNKNOWN_CATEGORY = "CategoryUnknown";
-	private String mCurrentParsingCategory;	
 	
 	//========================= START OF PARSING TAGS ========================================================
 	//the following strings are pre-defined to help with JSON parsing
@@ -97,9 +88,11 @@ public class TrendingAislesAdapter extends BaseAdapter {
 	private static final String USER_IMAGE_TITLE_TAG = "title";
 	
 	private ArrayList<AisleWindowContent> mAisleContentList;
-	private ContentLoader mLoader;
+	private AisleLoader mLoader;
 	private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
-	private static final int TRENDING_AISLES_BATCH_SIZE = 10;
+	private static final int TRENDING_AISLES_BATCH_SIZE = 5;
+	private static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
+	private static final int NOTIFICATION_THRESHOLD = 1;
 	
 	private static final boolean DEBUG = false;
 	
@@ -107,7 +100,9 @@ public class TrendingAislesAdapter extends BaseAdapter {
 	public int lastX;
 	public static final int SWIPE_MIN_DISTANCE = 30;
 	public boolean mAnimationInProgress;
-	//========================== END OF PARSING TAGS =========================================================
+	
+	private HashMap<String, Integer> mAisleWindowIndex = new HashMap<String,Integer>();
+ 	//========================== END OF PARSING TAGS =========================================================
 	
     public TrendingAislesAdapter(Context c, ArrayList<AisleWindowContent> content) {
         mContext = c;
@@ -115,12 +110,11 @@ public class TrendingAislesAdapter extends BaseAdapter {
         mTrendingAislesContentParser = new TrendingAislesContentParser(mResultsHandler);
         mAdapterState = AISLE_TRENDING_LIST_DATA;
         mVueContentGateway = VueContentGateway.getInstance();
-        mLimit = TRENDING_AISLES_BATCH_SIZE;
+        mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE; //TRENDING_AISLES_BATCH_SIZE;
         mOffset = 0;
         mAisleContentList = new ArrayList<AisleWindowContent>();
         mVueContentGateway.getTrendingAisles(mLimit, mOffset, mTrendingAislesContentParser);
-        mLoader = new ContentLoader(mContext);
-        mCurrentParsingCategory = UNKNOWN_CATEGORY;        
+        mLoader = AisleLoader.getInstance(mContext);        
     }
 
     public int getCount() {
@@ -138,10 +132,13 @@ public class TrendingAislesAdapter extends BaseAdapter {
         return 0;
     }
 
+    public boolean hasStableIds(){
+    	return true;
+    }
+    
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {    	
 		ViewHolder holder;
-		AisleWindowContent content;
 		StringBuilder sb = new StringBuilder();
 		final int position2 = position;
 
@@ -151,6 +148,10 @@ public class TrendingAislesAdapter extends BaseAdapter {
 			holder = new ViewHolder();
 			holder.aisleContentBrowser = (AisleContentBrowser) convertView .findViewById(R.id.aisle_content_flipper);
 			holder.aisleDescriptor = (LinearLayout) convertView .findViewById(R.id.aisle_descriptor);
+			holder.profileThumbnail = (ImageView)holder.aisleDescriptor.findViewById(R.id.profile_icon_descriptor);
+			holder.aisleOwnersName = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_owner_name);
+			holder.aisleContext = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_context);
+			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			convertView.setTag(holder);
 			if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position = " + position);
 			
@@ -179,6 +180,9 @@ public class TrendingAislesAdapter extends BaseAdapter {
 			                			//mAnimationInProgress = false;
 			                			Log.e("Jaws","onAnimationEnd is invoked and we are calling showNext! position = " + position2);
 			                			aisleContentBrowser.showNext();
+			                			setContentBrowserIndexForId(aisleContentBrowser.getUniqueId(),
+			                					aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView()));
+			                			
 			                			aisleContentBrowser.getCurrentView().startAnimation(nextFadeIn);
 			                		}
 			                		public void onAnimationStart(Animation animation) {
@@ -213,6 +217,8 @@ public class TrendingAislesAdapter extends BaseAdapter {
 			                			mAnimationInProgress = false;
 			                			Log.e("Jaws","onAnimationEnd is invoked and we are calling showPrevious!");
 			                			aisleContentBrowser.showPrevious();
+			                			setContentBrowserIndexForId(aisleContentBrowser.getUniqueId(),
+			                					aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView()));
 			                			aisleContentBrowser.getCurrentView().startAnimation(nextFadeIn);
 			                		}
 			                		public void onAnimationStart(Animation animation) {
@@ -248,26 +254,23 @@ public class TrendingAislesAdapter extends BaseAdapter {
 		AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
 
 		holder = (ViewHolder) convertView.getTag();
-		View currentValidView = holder.aisleContentBrowser.getCurrentView();
-		int restoreIndex = holder.aisleContentBrowser.indexOfChild(currentValidView);
-		holder.aisleContentBrowser.removeAllViews();
-		
-		TextView ownerNameView = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_owner_name);
-		TextView contextView = (TextView)convertView.findViewById(R.id.descriptor_aisle_context);
-		
-		holder.aisleContentBrowser.setUniqueId(windowContent.getAisleId());
-		mLoader.displayContent(position, windowContent, holder.aisleContentBrowser);
+		int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
+		mLoader.getAisleContentIntoView(windowContent, holder, scrollIndex, position);
 		AisleContext context = windowContent.getAisleContext();
 		sb.append(context.mFirstName).append(" ").append(context.mLastName);
-		ownerNameView.setText(sb.toString());
+		holder.aisleOwnersName.setText(sb.toString());
 		StringBuilder contextBuilder = new StringBuilder();
 		contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem);
-		contextView.setText(contextBuilder.toString());
+		holder.aisleContext.setText(contextBuilder.toString());
 		return convertView;
     }
 
 	static class ViewHolder {
 		AisleContentBrowser aisleContentBrowser;
+		TextView aisleOwnersName;
+		TextView aisleContext;
+		ImageView profileThumbnail;
+		String uniqueContentId;
 		LinearLayout aisleDescriptor;
 	}
     
@@ -288,12 +291,36 @@ public class TrendingAislesAdapter extends BaseAdapter {
 				//start displaying stuff!
 				//mAdapterState = AISLE_TRENDING_CONTENT_DATA; //we are no longer waiting for list!
 				parseTrendingAislesResultData(resultData.getString("result"));
-				//if(0 == mOffset){
+				if(mOffset > NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_INITIAL_SIZE){
 					//if this is the first set of data we are receiving go ahead
 					//notify the data set changed
-				//	notifyDataSetChanged();
-				//}
-				mOffset += TRENDING_AISLES_BATCH_SIZE;
+					Log.e("Smartie Pants","Notifying that the data set has changed...");
+					notifyDataSetChanged();
+					mOffset += TRENDING_AISLES_BATCH_SIZE;
+				}else{
+					//trying to be a bit clever here about the experience. When the app
+					//loads up we inevitably need a little time to set everything up
+					//properly. We need to download all these aisle content and the moment
+					//we indicate content is available the view system is going to start
+					//pounding us with request for view data.
+					//We have part of the view data but the other half (image content, bitmaps)
+					//we will still get them on the fly. Let's start the background download
+					//of images here. The idea is to do a file cache of the images so that
+					//when the GridView starts asking for view at position <n> we don't have to
+					//make a round trip network request - we can just get it from file!
+					/*AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
+
+					holder = (ViewHolder) convertView.getTag();
+					int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
+					mLoader.getAisleContentIntoView(windowContent, holder, scrollIndex, position);*/
+					int startIndex = mOffset;
+					int length = TRENDING_AISLES_BATCH_INITIAL_SIZE;
+					mLoader.prefetchImages(mAisleContentList, startIndex, length);
+					
+					mOffset += TRENDING_AISLES_BATCH_INITIAL_SIZE;
+					
+				}
+				
 				if(mOffset < TRENDING_AISLES_SAMPLE_SIZE){
 					mVueContentGateway.getTrendingAisles(mLimit, mOffset, this);
 				}
@@ -368,7 +395,6 @@ public class TrendingAislesAdapter extends BaseAdapter {
 					//Log.e("Jaws","urls for user: " + userInfo.mFirstName + 
 					//		" " + userInfo.mLastName + " will be added at position " + mAisleContentList.size());
 					aisleItem.addAisleContent(userInfo,  imageItemsArray);
-					notifyDataSetChanged();
 					imageItemsArray.clear();
 										
 				}
@@ -385,5 +411,18 @@ public class TrendingAislesAdapter extends BaseAdapter {
 		mAisleContentList.add(aisleItem);
 		return aisleItem;
 		
+	}
+	
+	//inside the trending aisles grid view, each grid item is a scrollable list
+	//of images. When a user scrolls through content we want to remember the last 
+	//position they were looking at. We will store it in this using a map
+	/*private int getContentBrowserIndexForId(String aisleId){
+		if(null == aisleId || null == mAisleWindowIndex)
+			return 0;
+		return mAisleWindowIndex.get(aisleId);		
+	}*/
+	
+	private void setContentBrowserIndexForId(String aisleId, int index){
+		mAisleWindowIndex.put(aisleId, Integer.valueOf(index));
 	}
 }

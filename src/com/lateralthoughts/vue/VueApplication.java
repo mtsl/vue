@@ -31,6 +31,8 @@ public class VueApplication extends Application {
 		mVueAisleOwnerNamesCache.setLimit(5);
 		mVueAisleContextInfoCache = new VueMemoryCache<String>();
 		mVueAisleContextInfoCache.setLimit(5);
+		ScaledImageViewFactory.getInstance(this);
+		
 		// create the JSONObject.  (Do not forget to import org.json.JSONObject!)
 		JSONObject crittercismConfig = new JSONObject();
 		try
@@ -39,7 +41,7 @@ public class VueApplication extends Application {
 		}
 		catch (JSONException je){}
 
-		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID, crittercismConfig);
+		//Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID, crittercismConfig);
 	}
 	
 	public static VueApplication getInstance(){

@@ -14,17 +14,15 @@ import android.os.Bundle;
 import java.io.*;
 
 //android utilities
-import org.apache.http.message.BasicNameValuePair;
-import android.util.Log;
 import java.util.ArrayList;
 
 //http related object imports
-import org.apache.http.HttpRequest;
+//import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+//import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -47,6 +45,8 @@ public class VueContentRestService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent){
+    	if(null == intent)
+    		return;
         mParams = intent.getParcelableArrayListExtra("params");
         mHeaders = intent.getParcelableArrayListExtra("headers");
         mUrl = intent.getStringExtra("url");
@@ -100,8 +100,8 @@ public class VueContentRestService extends IntentService {
 
         try {
             httpResponse = client.execute(mRequest);
-            int responseCode = httpResponse.getStatusLine().getStatusCode();
-            String message = httpResponse.getStatusLine().getReasonPhrase();
+            //int responseCode = httpResponse.getStatusLine().getStatusCode();
+            //String message = httpResponse.getStatusLine().getReasonPhrase();
 
             HttpEntity entity = httpResponse.getEntity();
 

@@ -10,24 +10,17 @@
  */
 package com.lateralthoughts.vue;
 
-import com.lateralthoughts.vue.VueApplication;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
-
-import android.util.Pair;
 
 public class AisleWindowContent
 {
+	public static final String EMPTY_AISLE_CONTENT_ID = "EmptyAisleWindow";
 	private static final String IMAGE_RES_SPEC_REGEX = "._S"; //this is the string pattern we look for
 	private String mImageFormatSpecifier = "._SX%d_SY%d.jpg";
 	
 	//these two should be based on device with & height
-	private int mDesiredImageWidth = 240;
-	private int mDesiredImageHeight = 400;
+	private int mDesiredImageWidth = 360;
+	private int mDesiredImageHeight = 360;
 	private String mAisleId;
 	
     public AisleWindowContent(String aisleId){ 
@@ -37,7 +30,8 @@ public class AisleWindowContent
     public AisleWindowContent(AisleContext context, ArrayList<AisleImageDetails> items){    	
     }
     
-    public void addAisleContent(AisleContext context, ArrayList<AisleImageDetails> items){
+    @SuppressWarnings("unchecked")
+	public void addAisleContent(AisleContext context, ArrayList<AisleImageDetails> items){
     	mAisleImagesList = (ArrayList<AisleImageDetails>)items.clone();
     	mContext = context;
     	//lets parse through the image urls and update the image resolution

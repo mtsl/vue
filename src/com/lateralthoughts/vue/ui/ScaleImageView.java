@@ -130,5 +130,24 @@ public class ScaleImageView extends ImageView {
 
 		}
 	}
+	
+	public void setOpaqueWorkerObject(Object object){
+		mObject = object;
+	}
+	
+	public Object getOpaqueWorkerObject(){
+		return mObject;
+	}
+	
+	public void setContainerObject(Object object){
+		mContainer = object;
+	}
+	
+	public Object getContainerObject(){
+		return mContainer;
+	}
+	
+	private Object mObject;
+	private Object mContainer;
 
 }

@@ -14,7 +14,9 @@
         android:id="@id/aisle_descriptor"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
+        android:layout_marginTop="1dp"
         android:visibility="invisible"
+        android:background="#FFFFFF"
         android:orientation="horizontal" >
 
         <ImageView
@@ -26,12 +28,14 @@
             android:paddingBottom="2dp"
             android:paddingTop="2dp"
             android:scaleType="centerInside"
-            android:src="@drawable/profile_thumb_default" />
+            android:src="@drawable/profile_thumb_default"
+            android:contentDescription="@string/aisle_owner_profile_desc"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:orientation="vertical"
+            android:paddingTop="4dp"
             android:layout_gravity="left" >
 
         	<TextView
@@ -40,7 +44,7 @@
         	    android:layout_height="wrap_content"
         	    android:layout_gravity="left"
         	    android:gravity="left"
-        	    android:text="Profile Owner" />
+        	    android:text="@string/profile_owner" />
 
         	<TextView
         	    android:id="@id/descriptor_aisle_context"
@@ -48,7 +52,7 @@
         	    android:layout_height="wrap_content"
         	    android:layout_gravity="left"
         	    android:textSize="12sp"
-        	    android:text="Middle Earth visit" />
+        	    android:text="@string/middle_earth" />
 
         </LinearLayout>
     </LinearLayout>

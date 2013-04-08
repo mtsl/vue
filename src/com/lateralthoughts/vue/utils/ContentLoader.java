@@ -23,20 +23,17 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import android.os.AsyncTask;
 import java.lang.ref.WeakReference;
 
 import com.lateralthoughts.vue.AisleImageDetails;
-import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.Pair;
 
 /**
  * Using LazyList via https://github.com/thest1/LazyList/tree/master/src/com/fedorvlasov/lazylist
@@ -53,15 +50,12 @@ public class ContentLoader {
     Handler handler = new Handler();//handler to display images in UI thread
     private Context mContext;
     private int mScreenWidth;
-    private int mScreenHeight;
-    private VueMemoryCache<Bitmap> mVueImageMemoryCache;
     
     public ContentLoader(Context context){
     	mContext = context;
         fileCache = new FileCache(context);
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        mScreenWidth = metrics.widthPixels;
-        mScreenHeight = metrics.heightPixels; 
+        mScreenWidth = metrics.widthPixels; 
         mAisleImagesCache = VueApplication.getInstance().getAisleImagesMemCache();
     }
     
@@ -250,7 +244,6 @@ public class ContentLoader {
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-        	int count = 0;
             if (viewFlipperReference != null && 
             		imageViewReference != null && bitmap != null) {
                 final ImageView imageView = imageViewReference.get();

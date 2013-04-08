@@ -12,9 +12,7 @@ package com.lateralthoughts.vue;
 
 import android.content.Context;
 import android.content.Intent;
-import android.app.IntentService;
 import android.os.ResultReceiver;
-import android.os.Bundle;
 import android.util.Log;
 
 //internal imports
@@ -27,6 +25,7 @@ import java.util.ArrayList;
 
 public class VueContentGateway {
 	private final String TAG = "VueContentGateway";
+	private final boolean DEBUG = false;
 	private static VueContentGateway sInstance;
 	private Context mContext; //application context;
 	
@@ -71,7 +70,7 @@ public class VueContentGateway {
         //String baseUri = VUE_CONTENT_PROVIDER_BASE_URI;
         //we want to get the current trending aisles
         baseUri.append(mTrendingAislesTag);
-        //Log.e("Jaws","uri we are sending = " + baseUri.toString());
+        if(DEBUG) Log.e(TAG,"uri we are sending = " + baseUri.toString());
         
         Intent intent = new Intent(mContext, VueContentRestService.class);
         intent.putExtra("url",baseUri.toString());
@@ -85,6 +84,7 @@ public class VueContentGateway {
     private void initializeHttpFields(){
         mHeaders = new ArrayList<ParcelableNameValuePair>();
         mParams = new ArrayList<ParcelableNameValuePair>();
+        addHeaders("Accept-Encoding", "gzip");
         addHeaders("Content-Type","application/json");
     }
     
