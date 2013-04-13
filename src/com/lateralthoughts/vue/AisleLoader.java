@@ -2,10 +2,13 @@ package com.lateralthoughts.vue;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -26,6 +29,9 @@ public class AisleLoader {
     private static AisleLoader sAisleLoaderInstance = null;
     private ScaledImageViewFactory mViewFactory = null;
     private BitmapLoaderUtils mBitmapLoaderUtils;
+    private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
+    private Drawable mColorDrawable;
+    
     //Design Notes: The SGV is powered by data from the TrendingAislesAdapter. This adapter starts
     //the information flow by requesting top aisles in batches. As the aisle 
     //details start coming through the adapter notifies the view of changes in
@@ -67,6 +73,7 @@ public class AisleLoader {
     	mContext = context;
         mViewFactory = ScaledImageViewFactory.getInstance(context);
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
+        mColorDrawable = new ColorDrawable(Color.WHITE);
     }
     
     //This method adds the intelligence to fetch the contents of this aisle window and
@@ -82,16 +89,19 @@ public class AisleLoader {
     //start an async task and use a standard DownloadedDrawable object to keep track of the task
     //When the task completes check to make sure that the url for which the task was started is still
     //valid. If so, add the downloaded image to the view object
-    public void getAisleContentIntoView(AisleWindowContent windowContent, final ViewHolder holder,
+    public void getAisleContentIntoView(final ViewHolder holder,
     		int scrollIndex, int position){
     	ScaleImageView imageView = null;
     	ArrayList<AisleImageDetails> imageDetailsArr = null;
     	AisleImageDetails itemDetails = null;
     	AisleContentBrowser contentBrowser = null;
     	
-    	if(null == windowContent || null == holder)
+    	if(null == holder)
     		return;
-		
+    	AisleWindowContent windowContent = holder.mWindowContent;
+    	if(null == windowContent)
+    		return;
+    	
     	//String currentContentId = holder.aisleContentBrowser.getUniqueId();
     	String desiredContentId = windowContent.getAisleId();
     	contentBrowser = holder.aisleContentBrowser;
@@ -105,6 +115,10 @@ public class AisleLoader {
     		//we are looking at a visual object that has either not been used
     		//before or has to be filled with same content. Either way, no need
     		//to worry about cleaning up anything!
+    		holder.aisleContext.setVisibility(View.VISIBLE);
+    		holder.aisleOwnersName.setVisibility(View.VISIBLE);
+    		holder.profileThumbnail.setVisibility(View.VISIBLE);
+    		holder.aisleDescriptor.setVisibility(View.VISIBLE);
     		return;
     	}else{
     		//we are going to re-use an existing object to show some new content
@@ -116,10 +130,12 @@ public class AisleLoader {
     		holder.aisleContentBrowser.setUniqueId(desiredContentId);
     		holder.aisleContentBrowser.setScrollIndex(scrollIndex);
     		holder.uniqueContentId = desiredContentId;
+    		mContentViewMap.put(holder.uniqueContentId, holder);
     	}    	
     	
     	imageDetailsArr = windowContent.getImageList();
-    	if(null != imageDetailsArr){    		
+    	
+    	if(null != imageDetailsArr && imageDetailsArr.size() != 0){    		
     		itemDetails = imageDetailsArr.get(0);
 			
 			//imageView = mViewFactory.getEmptyImageView();
@@ -132,10 +148,55 @@ public class AisleLoader {
 				contentBrowser.addView(imageView);    				
 			}
 			else{
-				contentBrowser.setBackgroundColor(Color.WHITE);
+				
+				if(position % 2 == 0){
+					mColorDrawable.setBounds(0, 0, 240, 400);
+				}else{
+					mColorDrawable.setBounds(0, 0, 240, 320);
+				}
+				imageView.setBackground(mColorDrawable);
+				contentBrowser.addView(imageView);
+				//contentBrowser.setBackgroundColor(Color.WHITE);
 				loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView);
 			}
-			prefetchImages(imageDetailsArr, 1);
+			//prefetchImages(imageDetailsArr, 1);
+        }
+    }
+    
+    public void fillAisleContentBrowser(String aisleId){
+    	ScaleImageView imageView = null;
+    	ArrayList<AisleImageDetails> imageDetailsArr = null;
+    	AisleImageDetails itemDetails = null;
+		
+    	//String currentContentId = holder.aisleContentBrowser.getUniqueId();
+    	
+    	AisleWindowContent windowContent = null;
+    	ViewHolder holder = (ViewHolder)mContentViewMap.get(aisleId);
+    	windowContent = holder.mWindowContent;
+    	if(null == windowContent)
+    		return;
+
+    	AisleContentBrowser contentBrowser = holder.aisleContentBrowser;
+    	
+    	imageDetailsArr = windowContent.getImageList();
+    	
+    	if(null != imageDetailsArr){    		
+    		//itemDetails = imageDetailsArr.get(0);
+			
+    		for(int i=1; i<imageDetailsArr.size();i++){
+    			itemDetails = imageDetailsArr.get(i);
+    			imageView = mViewFactory.getEmptyImageView();
+    			imageView.setContainerObject(holder);
+    			Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
+    			if(bitmap!=null){
+    				imageView.setImageBitmap(bitmap);
+    				contentBrowser.addView(imageView);    				
+    			}
+    			else{
+    				contentBrowser.setBackgroundColor(Color.WHITE);
+    				loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView);
+    			}
+    		}
         }
     }
     
@@ -187,12 +248,11 @@ public class AisleLoader {
                 		holder.profileThumbnail.setVisibility(View.VISIBLE);
                 		holder.aisleDescriptor.setVisibility(View.VISIBLE);
                 	}
+                	imageView.setBackground(null);
                 	imageView.setImageBitmap(bitmap);
-                	vFlipper.addView(imageView);
+                	//vFlipper.addView(imageView);
                 	
-                    vFlipper.setDisplayedChild(holder.aisleContentBrowser.getScrollIndex());
-                }else{
-                	Log.e("Jaws","imageView is NULL! vFlipper = " + vFlipper);
+                    //vFlipper.setDisplayedChild(holder.aisleContentBrowser.getScrollIndex());
                 }
             }
         }
@@ -276,7 +336,6 @@ public class AisleLoader {
             String url = null;
             for(int i=0;i<prefetchImageList.size();i++){
             	url = prefetchImageList.get(i).mCustomImageUrl;
-            	Log.e("Smartie Pants","about to invoke get bitmap for url = " + url);
             	mBitmapLoaderUtils.getBitmap(url, false);
             }
             return null;            

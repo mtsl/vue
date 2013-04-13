@@ -33,13 +33,16 @@ public class VueLandingPageActivity extends FragmentActivity {
 	            @Override
 	            public void onCompleted(GraphUser user, Response response) {
 	              if (user != null) {
-	            	  Log.e("jaws","User = " + user);
 	              }
 	            }
 	          });
 	        }
 	      }
 	    });
+	    
+        Intent i = new Intent();
+        i.setClass(this, SplashScreen.class);
+        startActivityForResult(i, 0);
 	}
 	
 	@Override

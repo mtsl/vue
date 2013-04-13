@@ -10,8 +10,11 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.ResultReceiver;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.io.*;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 //android utilities
 import java.util.ArrayList;
@@ -22,10 +25,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.client.methods.HttpGet;
-//import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
+
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 
 //internal imports
@@ -33,6 +37,15 @@ import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 
 public class VueContentRestService extends IntentService {
 
+	public static final String PARAMS_FIELD = "params";
+	public static final String HEADERS_FIELD = "headers";
+	public static final String RECEIVER_FIELD = "receiver";
+	public static final String URL_FIELD = "url";
+	public static final String BATCH_DATA_FLAG = "BATCH_DATA";
+	public static final String LIMIT_DATA_FIELD = "LIMIT_DATA";
+	public static final String BATCH_SIZE_FIELD = "BATCH_SIZE";
+	public static final String STARTING_OFFSET_FIELD = "STARTING_OFFSET";
+	private HttpClient mHttpClient;
     public VueContentRestService(){
         super("VueContentRestService");
     }
@@ -40,6 +53,7 @@ public class VueContentRestService extends IntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         super.onStartCommand(intent, flags, startId);
+        mHttpClient = new DefaultHttpClient();
         return START_STICKY;
     }
 
@@ -47,15 +61,23 @@ public class VueContentRestService extends IntentService {
     protected void onHandleIntent(Intent intent){
     	if(null == intent)
     		return;
-        mParams = intent.getParcelableArrayListExtra("params");
-        mHeaders = intent.getParcelableArrayListExtra("headers");
-        mUrl = intent.getStringExtra("url");
-        mReceiver = (ResultReceiver) intent.getParcelableExtra("receiver");
-
-        try {
-            go();
-        } catch (Exception e) {
-            e.printStackTrace();
+        mParams = intent.getParcelableArrayListExtra(PARAMS_FIELD);
+        mHeaders = intent.getParcelableArrayListExtra(HEADERS_FIELD);
+        mUrl = intent.getStringExtra(URL_FIELD);
+        mReceiver = (ResultReceiver) intent.getParcelableExtra(RECEIVER_FIELD);
+        
+        mBatchData = intent.getBooleanExtra(BATCH_DATA_FLAG,false);
+        
+        if(mBatchData){
+        	mOffset = intent.getIntExtra(STARTING_OFFSET_FIELD, 0);
+        	mLimit = intent.getIntExtra(LIMIT_DATA_FIELD, -1);
+        	mBatchSize = intent.getIntExtra(BATCH_SIZE_FIELD, 1);
+        }else{
+        	try{
+        		go();
+        	}catch (Exception e) {
+        		e.printStackTrace();
+        	}
         }
     }
 
@@ -92,35 +114,31 @@ public class VueContentRestService extends IntentService {
         executeRequest();
     }
 
-
     private void executeRequest(){
-        HttpClient client = new DefaultHttpClient();
-
+        
         HttpResponse httpResponse;
 
         try {
-            httpResponse = client.execute(mRequest);
+            httpResponse = mHttpClient.execute(mRequest);
             //int responseCode = httpResponse.getStatusLine().getStatusCode();
             //String message = httpResponse.getStatusLine().getReasonPhrase();
 
             HttpEntity entity = httpResponse.getEntity();
 
             if (entity != null) {
-
                 InputStream instream = entity.getContent();
                 String response = convertStreamToString(instream);
                 Bundle responseBundle = new Bundle();
                 responseBundle.putString("result", response);
                 mReceiver.send(1, responseBundle);
                 instream.close();
-
             }
 
         } catch (ClientProtocolException e)  {
-            client.getConnectionManager().shutdown();
+            mHttpClient.getConnectionManager().shutdown();
             e.printStackTrace();
         } catch (IOException e) {
-            client.getConnectionManager().shutdown();
+            mHttpClient.getConnectionManager().shutdown();
             e.printStackTrace();
         }
 
@@ -150,6 +168,11 @@ public class VueContentRestService extends IntentService {
     ArrayList <ParcelableNameValuePair> mHeaders;
     private String mUrl;
     private ResultReceiver mReceiver;
+    private boolean mBatchData;
+    
+    private int mOffset;
+    private int mLimit;
+    private int mBatchSize;
 
     //http related objects that we need for the service
     HttpRequestBase mRequest;

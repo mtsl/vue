@@ -16,7 +16,7 @@ public class AisleWindowContent
 {
 	public static final String EMPTY_AISLE_CONTENT_ID = "EmptyAisleWindow";
 	private static final String IMAGE_RES_SPEC_REGEX = "._S"; //this is the string pattern we look for
-	private String mImageFormatSpecifier = "._SX%d_SY%d.jpg";
+	private String mImageFormatSpecifier = "._SX%d.jpg";
 	
 	//these two should be based on device with & height
 	private int mDesiredImageWidth = 300;
@@ -27,11 +27,29 @@ public class AisleWindowContent
     	mAisleId = aisleId;
     }
     
+    public AisleWindowContent(String aisleId, boolean createPlaceHolders){ 
+    	mAisleId = aisleId;
+    	if(createPlaceHolders){
+    		mContext = new AisleContext();
+    		mAisleImagesList = new ArrayList<AisleImageDetails>();
+    	}
+    }
+    
     public AisleWindowContent(AisleContext context, ArrayList<AisleImageDetails> items){    	
+    }
+    
+    public void setAisleId(String aisleId){
+    	mAisleId = aisleId;
     }
     
     @SuppressWarnings("unchecked")
 	public void addAisleContent(AisleContext context, ArrayList<AisleImageDetails> items){
+    	if(null != mAisleImagesList){
+    		mAisleImagesList = null;
+    	}
+    	if(null != mContext){
+    		mContext = null;
+    	}
     	mAisleImagesList = (ArrayList<AisleImageDetails>)items.clone();
     	mContext = context;
     	//lets parse through the image urls and update the image resolution
@@ -63,7 +81,7 @@ public class AisleWindowContent
     			//we have a match
     			urlReusablePart = regularUrl.split(IMAGE_RES_SPEC_REGEX)[0];
     			sb.append(urlReusablePart);
-    			customFittedSizePart = String.format(mImageFormatSpecifier, mDesiredImageWidth, mDesiredImageHeight);  
+    			customFittedSizePart = String.format(mImageFormatSpecifier, mDesiredImageWidth);  
     			sb.append(customFittedSizePart);
     			imageDetails.mCustomImageUrl = sb.toString();
     			//imageDetails.mCustomImageUrl = regularUrl;

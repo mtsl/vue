@@ -44,6 +44,7 @@ public class VueLandingAislesFragment extends Fragment {
 		if(null == mVueContentGateway){
 			//assert here: this is a no go!
 		}		
+		//mContentAdapter = VueApplication.getInstance().getTrendingAislesAdapter();
 		mContentAdapter = new TrendingAislesAdapter(mContext, null);
 	}
 	

@@ -1054,8 +1054,8 @@ public class StaggeredGridView extends ViewGroup {
                 child.measure(widthSpec, heightSpec);
             }
 
-            //int childTop = mItemBottoms[col] > Integer.MIN_VALUE ? mItemBottoms[col] + mItemMargin : child.getTop();
-            int childTop = -1;
+            int childTop = mItemBottoms[col] > Integer.MIN_VALUE ? mItemBottoms[col] + mItemMargin : child.getTop();
+            //int childTop = -1;
             if(mItemBottoms[col] > Integer.MIN_VALUE){
             	childTop = mItemBottoms[col] + mItemMargin;
             	if(0 == i || 1 == i){

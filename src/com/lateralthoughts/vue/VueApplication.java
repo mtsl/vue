@@ -18,6 +18,7 @@ public class VueApplication extends Application {
 	private VueMemoryCache<String> mVueAisleOwnerNamesCache;
 	private VueMemoryCache<String> mVueAisleContextInfoCache;
 	private static final String CRITTERCISM_APP_ID = "5153c41e558d6a2403000009";
+	private TrendingAislesAdapter mContentAdapter;
 	
 	@Override
 	public void onCreate(){
@@ -32,6 +33,8 @@ public class VueApplication extends Application {
 		mVueAisleContextInfoCache = new VueMemoryCache<String>();
 		mVueAisleContextInfoCache.setLimit(5);
 		ScaledImageViewFactory.getInstance(this);
+		AisleWindowContentFactory.getInstance(this);
+		//mContentAdapter = new TrendingAislesAdapter(this, null);
 		
 		// create the JSONObject.  (Do not forget to import org.json.JSONObject!)
 		JSONObject crittercismConfig = new JSONObject();
@@ -41,7 +44,7 @@ public class VueApplication extends Application {
 		}
 		catch (JSONException je){}
 
-		//Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID, crittercismConfig);
+		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID, crittercismConfig);
 	}
 	
 	public static VueApplication getInstance(){
@@ -50,6 +53,10 @@ public class VueApplication extends Application {
 	
 	public VueMemoryCache<Bitmap> getAisleImagesMemCache(){
 		return mVueAisleImagesCache;
+	}
+	
+	public TrendingAislesAdapter getTrendingAislesAdapter(){
+		return mContentAdapter;
 	}
 
 }

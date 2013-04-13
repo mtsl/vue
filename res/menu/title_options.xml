@@ -3,7 +3,7 @@
     <item android:id="@+id/menu_search"
           android:icon="@drawable/lookingfor"
           android:showAsAction="ifRoom|collapseActionView"
-          android:actionViewClass="android.widget.SearchView" />
+          android:actionViewClass="android.widget.SearchView"/>
     <item android:id="@+id/menu_my_profile"
           android:icon="@drawable/profile"
           android:showAsAction="ifRoom|collapseActionView"/>
