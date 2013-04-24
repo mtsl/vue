@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class AisleWindowContent
 {
 	public static final String EMPTY_AISLE_CONTENT_ID = "EmptyAisleWindow";
-	private static final String IMAGE_RES_SPEC_REGEX = "._S"; //this is the string pattern we look for
+	private static final String IMAGE_RES_SPEC_REGEX = ".jpg"; //this is the string pattern we look for
 	private String mImageFormatSpecifier = "._SX%d.jpg";
 	
 	//these two should be based on device with & height
@@ -84,7 +84,6 @@ public class AisleWindowContent
     			customFittedSizePart = String.format(mImageFormatSpecifier, mDesiredImageWidth);  
     			sb.append(customFittedSizePart);
     			imageDetails.mCustomImageUrl = sb.toString();
-    			//imageDetails.mCustomImageUrl = regularUrl;
     		}else{
     			imageDetails.mCustomImageUrl = regularUrl;
     		}

@@ -8,6 +8,9 @@ import com.lateralthoughts.vue.utils.VueMemoryCache;
 
 //import crittercism sdk
 import com.crittercism.app.Crittercism;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +22,8 @@ public class VueApplication extends Application {
 	private VueMemoryCache<String> mVueAisleContextInfoCache;
 	private static final String CRITTERCISM_APP_ID = "5153c41e558d6a2403000009";
 	private TrendingAislesAdapter mContentAdapter;
+	private HttpClient mHttpClient;
+	private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	
 	@Override
 	public void onCreate(){
@@ -34,7 +39,9 @@ public class VueApplication extends Application {
 		mVueAisleContextInfoCache.setLimit(5);
 		ScaledImageViewFactory.getInstance(this);
 		AisleWindowContentFactory.getInstance(this);
-		//mContentAdapter = new TrendingAislesAdapter(this, null);
+		mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(this);
+
+		mHttpClient = new DefaultHttpClient();
 		
 		// create the JSONObject.  (Do not forget to import org.json.JSONObject!)
 		JSONObject crittercismConfig = new JSONObject();
@@ -57,6 +64,10 @@ public class VueApplication extends Application {
 	
 	public TrendingAislesAdapter getTrendingAislesAdapter(){
 		return mContentAdapter;
+	}
+	
+	public HttpClient getHttpClient(){
+	    return mHttpClient;
 	}
 
 }

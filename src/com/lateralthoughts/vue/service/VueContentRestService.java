@@ -33,6 +33,7 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 
 //internal imports
+import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 
 public class VueContentRestService extends IntentService {
@@ -53,7 +54,9 @@ public class VueContentRestService extends IntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         super.onStartCommand(intent, flags, startId);
-        mHttpClient = new DefaultHttpClient();
+        VueApplication app = VueApplication.getInstance();
+        mHttpClient = app.getHttpClient();
+        //mHttpClient = new DefaultHttpClient();
         return START_STICKY;
     }
 
