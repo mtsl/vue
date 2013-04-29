@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 public class VueTrendingAislesDataModel {
 	
+    private static final boolean DEBUG = true;
 	private Context mContext;
 	private static VueTrendingAislesDataModel sVueTrendingAislesDataModel;
 	private ArrayList<IAisleDataObserver> mAisleDataObserver;
@@ -46,6 +47,7 @@ public class VueTrendingAislesDataModel {
     private static final int TRENDING_AISLES_BATCH_SIZE = 5;
     private static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
     private static final int NOTIFICATION_THRESHOLD = 4;
+    private boolean mMoreDataAvailable;
     
     //===== The following set of variables are used for state management ==================================
     private int mState;
@@ -76,6 +78,7 @@ public class VueTrendingAislesDataModel {
         mState = AISLE_TRENDING_LIST_DATA;
         mAisleContentList = new ArrayList<AisleWindowContent>();
         //initializeTrendingAisleContent();
+        mMoreDataAvailable = true;
         mVueContentGateway.getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
 	}
 	
@@ -103,25 +106,31 @@ public class VueTrendingAislesDataModel {
 	            //mAdapterState = AISLE_TRENDING_CONTENT_DATA; //we are no longer waiting for list!
 	            long elapsed = System.currentTimeMillis() - mRequestStartTime;
 	            if(mAisleDataRequested){
-	                Log.e(TAG,"It took " + elapsed + " seconds for first request to return");
+	                if(DEBUG) Log.e(TAG,"It took " + elapsed + " seconds for first request to return");
 	                mAisleDataRequested = false;
 	            }
-	            parseTrendingAislesResultData(resultData.getString("result"));
-	            //if(mOffset > NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_INITIAL_SIZE){
-	            //if this is the first set of data we are receiving go ahead
-	            //notify the data set changed
-	            for(IAisleDataObserver observer : mAisleDataObserver){
-	                observer.onAisleDataUpdated(mAisleContentList.size());
-	            }
-	            //notifyDataSetChanged();
-	            if(mOffset < NOTIFICATION_THRESHOLD*TRENDING_AISLES_BATCH_SIZE)
-	                mOffset += mLimit;
-	            else{
-	                mOffset += mLimit;
-	                mLimit = TRENDING_AISLES_BATCH_SIZE;
+	            if(!mMoreDataAvailable){
+	                if(DEBUG) Log.e(TAG,"No more data is available. mOffset = " + mOffset);
+	            }else{
+	                
+	                parseTrendingAislesResultData(resultData.getString("result"));
+	                //if(mOffset > NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_INITIAL_SIZE){
+	                //if this is the first set of data we are receiving go ahead
+	                //notify the data set changed
+	                for(IAisleDataObserver observer : mAisleDataObserver){
+	                    observer.onAisleDataUpdated(mAisleContentList.size());
+	                }
+	                //notifyDataSetChanged();
+	                if(mOffset < NOTIFICATION_THRESHOLD*TRENDING_AISLES_BATCH_SIZE)
+	                    mOffset += mLimit;
+	                else{
+	                    mOffset += mLimit;
+	                    mLimit = TRENDING_AISLES_BATCH_SIZE;
+	                }
+	                if(DEBUG) Log.e(TAG,"There is more data to parse. offset = " + mOffset);
 	            }
 
-	            if(mOffset < TRENDING_AISLES_SAMPLE_SIZE){
+	            if(mMoreDataAvailable){
 	                mVueContentGateway.getTrendingAisles(mLimit, mOffset, this);
 	            }
 	            break;
@@ -160,7 +169,7 @@ public class VueTrendingAislesDataModel {
 	            JSONArray contentArray = new JSONArray(resultString);
 
 	            if(0 == contentArray.length()){
-	                //oops!?
+	                mMoreDataAvailable = false;
 	            }
 
 	            for (int i = 0; i < contentArray.length(); i++) {
