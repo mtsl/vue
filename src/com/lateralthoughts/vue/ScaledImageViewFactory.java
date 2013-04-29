@@ -6,6 +6,7 @@ import java.util.ArrayList;
 //android imports
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 //vue internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
@@ -31,7 +32,7 @@ public class ScaledImageViewFactory {
 	private ArrayList<ScaleImageView> mObjectsInUse = null;
 	
 	private final int POOL_SIZE = 500;
-	//private final int POOL_STEP_SIZE = 200;
+	private final int POOL_STEP_SIZE = 200;
 	private final int POOL_MAX_SIZE = 2000;
 	
 	private Context mContext;
@@ -68,17 +69,15 @@ public class ScaledImageViewFactory {
 		ScaleImageView imageView = null;
 		
 		if(mAvailableObjects.isEmpty()){
-			//try{
-				expandPoolOrDie();
-			//}catch (java.lang.OutOfMemoryError mem){
-				
-			//}
+		    expandPoolOrDie();
 		}
 		
 		synchronized(this){	
 			if(!mAvailableObjects.isEmpty()){
 				imageView = mAvailableObjects.remove(mAvailableObjects.size()-1);
 				mObjectsInUse.add(imageView);
+				Log.e("ImageViewFactory","get an empty image view. mAvailableObjects.size() = " + mAvailableObjects.size());
+				
 			}
 		}
 		return imageView;
@@ -111,10 +110,9 @@ public class ScaledImageViewFactory {
 		
 		synchronized(this){
 			view = mObjectsInUse.remove(index);
-			//view = null;
-			//ScaleImageView newView = new ScaleImageView(mContext);
 			view.setImageBitmap(null);
-			mAvailableObjects.add(view);			
+			mAvailableObjects.add(view);
+			Log.e("ImageViewFactory","return used image view. mAvailableObjects.size() = " + mAvailableObjects.size());
 			
 			//TODO: we have a way to expand the pool once the initial objects get used up - should
 			//we have an equivalent to free up some of the objects?
@@ -130,6 +128,11 @@ public class ScaledImageViewFactory {
 		
 		int numObjectsToAllocate = POOL_MAX_SIZE - mObjectsInUse.size();
 		synchronized(this){
+		    if (POOL_STEP_SIZE > POOL_MAX_SIZE - mObjectsInUse.size())
+		        numObjectsToAllocate = POOL_MAX_SIZE - mObjectsInUse.size();
+		    else
+		        numObjectsToAllocate = POOL_STEP_SIZE;
+		    
 			for(int i=0;i<numObjectsToAllocate;i++){
 				mAvailableObjects.add(new ScaleImageView(mContext));
 			}

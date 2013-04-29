@@ -246,16 +246,6 @@ public class TrendingAislesAdapter extends BaseAdapter implements IAisleDataObse
 		holder.aisleContext.setText(contextBuilder.toString());
 		return convertView;
     }
-
-	static class ViewHolder {
-		AisleContentBrowser aisleContentBrowser;
-		TextView aisleOwnersName;
-		TextView aisleContext;
-		ImageView profileThumbnail;
-		String uniqueContentId;
-		LinearLayout aisleDescriptor;
-		AisleWindowContent mWindowContent;
-	}
 	
 	@Override
 	public void onAisleDataUpdated(int newCount){

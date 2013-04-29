@@ -10,7 +10,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import com.lateralthoughts.vue.AisleImageDetails;
+import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.VueApplication;
 
 import android.content.Context;
@@ -18,6 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.ImageView;
 
 public class BitmapLoaderUtils {
 
@@ -26,15 +32,18 @@ public class BitmapLoaderUtils {
     private FileCache mFileCache;
     private VueMemoryCache<Bitmap> mAisleImagesCache;
     private int mScreenWidth;
+    private ExecutorService mExecutorService;
     
     private final boolean DEBUG = false;
     
 	private BitmapLoaderUtils(Context context){
 		mContext = context;
-        mFileCache = new FileCache(mContext);
+        mFileCache = VueApplication.getInstance().getFileCache();
         mAisleImagesCache = VueApplication.getInstance().getAisleImagesMemCache();
         DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
         mScreenWidth = metrics.widthPixels;
+        
+        mExecutorService = Executors.newFixedThreadPool(5);
 	}
 	
 	public static BitmapLoaderUtils getInstance(Context context){
@@ -83,7 +92,7 @@ public class BitmapLoaderUtils {
         } catch (Throwable ex){
            ex.printStackTrace();
            if(ex instanceof OutOfMemoryError)
-        	   mAisleImagesCache.clear();
+              mAisleImagesCache.clear();
            return null;
         }
     }
@@ -94,7 +103,7 @@ public class BitmapLoaderUtils {
             //decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
-            FileInputStream stream1=new FileInputStream(f);
+            FileInputStream stream1 = new FileInputStream(f);
             BitmapFactory.decodeStream(stream1,null,o);
             stream1.close();
             
@@ -134,5 +143,4 @@ public class BitmapLoaderUtils {
     	mAisleImagesCache.clear();
     	mFileCache.clear();
     }
-
 }

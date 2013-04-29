@@ -2,7 +2,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center_vertical|center_horizontal"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:layout_marginBottom="5dp" >
 
     <com.lateralthoughts.vue.ui.AisleContentBrowser android:id="@+id/aisle_content_flipper"
         android:layout_width="match_parent"
@@ -15,7 +16,6 @@
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_marginTop="1dp"
-        android:visibility="invisible"
         android:background="#FFFFFF"
         android:orientation="horizontal" >
 
@@ -33,7 +33,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingTop="4dp"
             android:layout_gravity="left" >

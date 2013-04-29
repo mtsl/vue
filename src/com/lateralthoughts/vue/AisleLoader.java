@@ -13,18 +13,24 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
+//import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
 public class AisleLoader {
     private static final boolean DEBUG = false;
-    //ExecutorService executorService;
-    Handler handler = new Handler();//handler to display images in UI thread
+    private static final String TAG = "AisleLoader";
+    Handler handler = new Handler();
     private Context mContext;
+    private ContentAdapterFactory mContentAdapterFactory;
     
     private static AisleLoader sAisleLoaderInstance = null;
     private ScaledImageViewFactory mViewFactory = null;
@@ -74,6 +80,7 @@ public class AisleLoader {
         mViewFactory = ScaledImageViewFactory.getInstance(context);
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
         mColorDrawable = new ColorDrawable(Color.WHITE);
+        mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
     }
     
     //This method adds the intelligence to fetch the contents of this aisle window and
@@ -89,7 +96,7 @@ public class AisleLoader {
     //start an async task and use a standard DownloadedDrawable object to keep track of the task
     //When the task completes check to make sure that the url for which the task was started is still
     //valid. If so, add the downloaded image to the view object
-    public void getAisleContentIntoView(final ViewHolder holder,
+    public void getAisleContentIntoView(ViewHolder holder,
     		int scrollIndex, int position){
     	ScaleImageView imageView = null;
     	ArrayList<AisleImageDetails> imageDetailsArr = null;
@@ -99,6 +106,7 @@ public class AisleLoader {
     	if(null == holder)
     		return;
     	AisleWindowContent windowContent = holder.mWindowContent;
+    	
     	if(null == windowContent)
     		return;
     	
@@ -106,7 +114,7 @@ public class AisleLoader {
     	String desiredContentId = windowContent.getAisleId();
     	contentBrowser = holder.aisleContentBrowser;
 		if(1 == position){
-			if(DEBUG) Log.e("Vinodh","position = " + position + " currentId = " + holder.uniqueContentId + 
+			if(DEBUG) Log.e(TAG,"position = " + position + " currentId = " + holder.uniqueContentId + 
 							" desired id = " + desiredContentId);
 		}
 		
@@ -124,31 +132,43 @@ public class AisleLoader {
     		//we are going to re-use an existing object to show some new content
     		//lets release the scaleimageviews first
     		for(int i=0;i<contentBrowser.getChildCount();i++){
+    		    ((ScaleImageView)contentBrowser.getChildAt(i)).setContainerObject(null);
     			mViewFactory.returnUsedImageView((ScaleImageView)contentBrowser.getChildAt(i));
     		}
+    		IAisleContentAdapter adapter = mContentAdapterFactory.getAisleContentAdapter();
+    		mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser.getCustomAdapter());
+    		holder.aisleContentBrowser.setCustomAdapter(null);
+    		adapter.setContentSource(desiredContentId, holder.mWindowContent);
+    		
     		holder.aisleContentBrowser.removeAllViews();
     		holder.aisleContentBrowser.setUniqueId(desiredContentId);
     		holder.aisleContentBrowser.setScrollIndex(scrollIndex);
+    		holder.aisleContentBrowser.setCustomAdapter(adapter);
     		holder.uniqueContentId = desiredContentId;
     		mContentViewMap.put(holder.uniqueContentId, holder);
+            //Animation startUpAnimation = AnimationUtils.loadAnimation(mContext, R.anim.aisle_start_animation);
+
+            //holder.aisleContentBrowser.setAnimation(startUpAnimation);
+            //holder.aisleContentBrowser.animate();
+            //vFlipper.setAnimation(startUpAnimation);
+            //vFlipper.animate();
     	}    	
     	
     	imageDetailsArr = windowContent.getImageList();
     	
     	if(null != imageDetailsArr && imageDetailsArr.size() != 0){    		
     		itemDetails = imageDetailsArr.get(0);
-			
-			//imageView = mViewFactory.getEmptyImageView();
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
 			Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
 			
-			if(bitmap!=null){
+			if(bitmap != null){
 				imageView.setImageBitmap(bitmap);
+				//Log.e("AisleLoader","hmmm....we do have the image");
 				contentBrowser.addView(imageView);    				
 			}
 			else{
-				
+			    //Log.e("AisleLoader","there is no bitmap in the memory cache...lets go fetch one");
 				if(position % 2 == 0){
 					mColorDrawable.setBounds(0, 0, 240, 400);
 				}else{
@@ -156,7 +176,6 @@ public class AisleLoader {
 				}
 				imageView.setBackground(mColorDrawable);
 				contentBrowser.addView(imageView);
-				//contentBrowser.setBackgroundColor(Color.WHITE);
 				loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView);
 			}
 			//prefetchImages(imageDetailsArr, 1);
@@ -167,9 +186,6 @@ public class AisleLoader {
     	ScaleImageView imageView = null;
     	ArrayList<AisleImageDetails> imageDetailsArr = null;
     	AisleImageDetails itemDetails = null;
-		
-    	//String currentContentId = holder.aisleContentBrowser.getUniqueId();
-    	
     	AisleWindowContent windowContent = null;
     	ViewHolder holder = (ViewHolder)mContentViewMap.get(aisleId);
     	windowContent = holder.mWindowContent;
@@ -177,26 +193,91 @@ public class AisleLoader {
     		return;
 
     	AisleContentBrowser contentBrowser = holder.aisleContentBrowser;
-    	
     	imageDetailsArr = windowContent.getImageList();
     	
-    	if(null != imageDetailsArr){    		
-    		//itemDetails = imageDetailsArr.get(0);
-			
+    	if(null != imageDetailsArr){
     		for(int i=1; i<imageDetailsArr.size();i++){
     			itemDetails = imageDetailsArr.get(i);
     			imageView = mViewFactory.getEmptyImageView();
     			imageView.setContainerObject(holder);
     			Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
-    			if(bitmap!=null){
+    			int currentCount = contentBrowser.getChildCount();
+    			for(int j=1;i<currentCount;i++){
+    			    //if(null != contentBrowser.getChildAt(j))
+    			    //contentBrowser.removeViewAt(j);
+    			}
+    			if(bitmap != null){
     				imageView.setImageBitmap(bitmap);
     				contentBrowser.addView(imageView);    				
     			}
     			else{
-    				contentBrowser.setBackgroundColor(Color.WHITE);
+    			    //Log.e("AisleLoader","there is no bitmap in the memory cache...lets go fetch one");
+    				//contentBrowser.setBackgroundColor(Color.WHITE);
     				loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView);
     			}
     		}
+        }
+    }
+    
+    public void loadAisleContentBrowser(String aisleId, int currentIndex, boolean scrollForward){
+        ScaleImageView imageView = null;
+        ArrayList<AisleImageDetails> imageDetailsArr = null;
+        AisleImageDetails itemDetails = null;
+        AisleWindowContent windowContent = null;
+        ViewHolder holder = (ViewHolder)mContentViewMap.get(aisleId);
+        windowContent = holder.mWindowContent;
+        if(null == windowContent)
+            return;
+
+        AisleContentBrowser contentBrowser = holder.aisleContentBrowser;
+        imageDetailsArr = windowContent.getImageList();
+        
+        if(null != imageDetailsArr){
+            int indexToGet = -1;
+            if(scrollForward){
+                indexToGet = currentIndex + 1;
+            }else{
+                indexToGet = currentIndex - 1;
+            }
+            itemDetails = imageDetailsArr.get(indexToGet);
+            if(null == itemDetails)
+                return;
+            
+            imageView = mViewFactory.getEmptyImageView();
+            imageView.setContainerObject(holder);
+            Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
+            
+            if(bitmap != null){
+                imageView.setImageBitmap(bitmap);
+                contentBrowser.addView(imageView);                  
+            }
+            else{
+                //Log.e("AisleLoader","there is no bitmap in the memory cache...lets go fetch one");
+                //contentBrowser.setBackgroundColor(Color.WHITE);
+                loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView);
+            }
+            
+            //prefetchImages(imageDetailsArr, currentIndex);
+            /*for(int i=currentIndex; i<imageDetailsArr.size();i++){
+                itemDetails = imageDetailsArr.get(i);
+                imageView = mViewFactory.getEmptyImageView();
+                imageView.setContainerObject(holder);
+                Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
+                int currentCount = contentBrowser.getChildCount();
+                for(int j=1;i<currentCount;i++){
+                    //if(null != contentBrowser.getChildAt(j))
+                    //contentBrowser.removeViewAt(j);
+                }
+                if(bitmap != null){
+                    imageView.setImageBitmap(bitmap);
+                    contentBrowser.addView(imageView);                  
+                }
+                else{
+                    Log.e("AisleLoader","there is no bitmap in the memory cache...lets go fetch one");
+                    //contentBrowser.setBackgroundColor(Color.WHITE);
+                    loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView);
+                }
+            }*/
         }
     }
     
@@ -211,14 +292,12 @@ public class AisleLoader {
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
         private final WeakReference<AisleContentBrowser>viewFlipperReference;
-        //private final ImageView mImageView; //imageViewReference;
         private String url = null;
 
         public BitmapWorkerTask(AisleContentBrowser vFlipper, ImageView imageView) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             viewFlipperReference = new WeakReference<AisleContentBrowser>(vFlipper); 
-            //mImageView = imageView;
         }
 
         // Decode image in background.
@@ -248,11 +327,11 @@ public class AisleLoader {
                 		holder.profileThumbnail.setVisibility(View.VISIBLE);
                 		holder.aisleDescriptor.setVisibility(View.VISIBLE);
                 	}
-                	imageView.setBackground(null);
+
+                	//Animation startUpAnimation = AnimationUtils.loadAnimation(mContext, R.anim.aisle_start_animation);
                 	imageView.setImageBitmap(bitmap);
-                	//vFlipper.addView(imageView);
-                	
-                    //vFlipper.setDisplayedChild(holder.aisleContentBrowser.getScrollIndex());
+                    //vFlipper.setAnimation(startUpAnimation);
+                    //vFlipper.animate();
                 }
             }
         }
@@ -285,7 +364,7 @@ public class AisleLoader {
         return true;
     }
     
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
 	public void prefetchImages(ArrayList<AisleWindowContent> sourceForFetch, int startIndex, int length){
     	if(null == sourceForFetch)
     		return;
@@ -304,9 +383,10 @@ public class AisleLoader {
     	for(int i=startIndex; i<startIndex+length; i++){
     		content = sourceForFetch.get(i);
     		BitmapPrefetcherTask task = new BitmapPrefetcherTask();
-    		task.execute(content.getImageList());    		
+    		task.execute(content.getImageList());
+    	    mBitmapLoaderUtils.queueImagePrefetch(content.getImageList());
     	}
-    }
+    }*/
     
     @SuppressWarnings("unchecked")
 	public void prefetchImages(ArrayList<AisleImageDetails> imageSources, int startIndex){
@@ -318,8 +398,10 @@ public class AisleLoader {
     	
     	if(startIndex < imageSources.size())
     		return;
-    	BitmapPrefetcherTask task = new BitmapPrefetcherTask();
-    	task.execute(imageSources);
+    	
+    	//BitmapPrefetcherTask task = new BitmapPrefetcherTask();
+    	//task.execute(imageSources);
+    	//mBitmapLoaderUtils.queueImagePrefetch(imageSources, startIndex);
     }
     
     class BitmapPrefetcherTask extends AsyncTask<ArrayList<AisleImageDetails>, Void, Bitmap> {
