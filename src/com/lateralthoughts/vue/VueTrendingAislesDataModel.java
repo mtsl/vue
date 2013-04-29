@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 public class VueTrendingAislesDataModel {
 	
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 	private Context mContext;
 	private static VueTrendingAislesDataModel sVueTrendingAislesDataModel;
 	private ArrayList<IAisleDataObserver> mAisleDataObserver;
@@ -204,6 +204,7 @@ public class VueTrendingAislesDataModel {
 
 	            }
 	        }catch(JSONException ex1){
+	            if(DEBUG) Log.e(TAG,"Some exception is caught? ex1 = " + ex1.toString());
 
 	        }
 

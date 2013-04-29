@@ -73,7 +73,7 @@ public class TrendingAislesLeftColumnAdapter extends BaseAdapter implements IAis
         int actualPosition = 0;
         if(0 != position)
             actualPosition = (position*2);
-        Log.e("LeftColumnAisles","position asked for = " + position + " position fetching = " + actualPosition);
+        //Log.e("LeftColumnAisles","position asked for = " + position + " position fetching = " + actualPosition);
         return mVueTrendingAislesDataModel.getAisleAt(actualPosition);
     }
 

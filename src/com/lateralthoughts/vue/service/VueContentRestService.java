@@ -135,6 +135,8 @@ public class VueContentRestService extends IntentService {
                 responseBundle.putString("result", response);
                 mReceiver.send(1, responseBundle);
                 instream.close();
+            }else{
+                Log.e("VueTrendingAislesDataModel","looks like we don't have anything more?");
             }
 
         } catch (ClientProtocolException e)  {

@@ -33,6 +33,8 @@ public class AisleContentBrowser extends ViewFlipper {
     public static final int SWIPE_MIN_DISTANCE = 30;
     private AisleLoader mLoader;
     private IAisleContentAdapter mSpecialNeedsAdapter;
+    private Animation mCantWrapRight;
+    private Animation mCantWrapLeft;
     
     public int mFirstX;
     public int mLastX;
@@ -45,6 +47,8 @@ public class AisleContentBrowser extends ViewFlipper {
 		mAisleUniqueId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 		mScrollIndex = 0;
 		mCustomTouchListener = new AisleContentTouchListener();
+		mCantWrapRight = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right);
+		mCantWrapLeft = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left);
 		this.setOnTouchListener(mCustomTouchListener);
 	}
 	
@@ -117,8 +121,25 @@ public class AisleContentBrowser extends ViewFlipper {
 	                            Log.e("AisleContentAdapter","Hey look! We are trying to go to the next view and " +
 	                            		"    it looks like an imageview is already present there? currentIndex = " + currentIndex);
 	                        }
-	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex+1, true))
+	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex+1, true)){
+	                            mAnimationInProgress = true;
+	                            Animation cantWrapRight = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right);
+	                            
+	                            cantWrapRight.setAnimationListener(new Animation.AnimationListener(){
+	                                public void onAnimationEnd(Animation animation) {
+	                                    Animation cantWrapRightPart2 = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right2);
+	                                    aisleContentBrowser.getCurrentView().startAnimation(cantWrapRightPart2);
+	                                }
+	                                public void onAnimationStart(Animation animation) {
+
+	                                }
+	                                public void onAnimationRepeat(Animation animation) {
+
+	                                }
+	                            });
+	                            aisleContentBrowser.getCurrentView().startAnimation(cantWrapRight);
 	                            return false;
+	                        }
 	                    }
 	                    Animation currentGoLeft = AnimationUtils.loadAnimation(mContext, R.anim.right_out);
 	                    final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
@@ -128,15 +149,31 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    aisleContentBrowser.showNext();
 	                    return true;
 	                }                           
-	            } else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE) {
+	            } else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE){
 	                requestDisallowInterceptTouchEvent(true);
 	                if(false == mAnimationInProgress){
 	                       int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
 	                       ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex-1);
 	                        
 	                        if(null != mSpecialNeedsAdapter && null == nextView){
-	                            if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex-1, true))
+	                            if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex-1, true)){
+	                                Animation cantWrapLeft = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left);
+	                                
+	                                cantWrapLeft.setAnimationListener(new Animation.AnimationListener(){
+	                                    public void onAnimationEnd(Animation animation) {
+	                                        Animation cantWrapLeftPart2 = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left2);
+	                                        aisleContentBrowser.getCurrentView().startAnimation(cantWrapLeftPart2);
+	                                    }
+	                                    public void onAnimationStart(Animation animation) {
+
+	                                    }
+	                                    public void onAnimationRepeat(Animation animation) {
+
+	                                    }
+	                                });
+	                                aisleContentBrowser.getCurrentView().startAnimation(cantWrapLeft);
 	                                return false;
+	                            }
 	                        }
 	                    Animation currentGoRight = AnimationUtils.loadAnimation(mContext, R.anim.left_in);
 	                    final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
