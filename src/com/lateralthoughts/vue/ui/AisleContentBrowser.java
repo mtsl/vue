@@ -115,12 +115,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex+1);
 	                    
 	                    if(null != mSpecialNeedsAdapter && null == nextView){
-	                        if(null == nextView){
-	                            Log.e("AisleContentAdapter","we want the next image which isn't available. currentIndex = " + currentIndex);
-	                        }else{
-	                            Log.e("AisleContentAdapter","Hey look! We are trying to go to the next view and " +
-	                            		"    it looks like an imageview is already present there? currentIndex = " + currentIndex);
-	                        }
 	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex+1, true)){
 	                            mAnimationInProgress = true;
 	                            Animation cantWrapRight = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right);
