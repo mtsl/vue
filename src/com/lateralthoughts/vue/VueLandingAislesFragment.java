@@ -1,7 +1,10 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
+//import com.lateralthoughts.vue.ui.MultiColumnListView;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,14 +31,12 @@ import android.support.v4.widget.StaggeredGridView;
 public class VueLandingAislesFragment extends Fragment {
 	private Context mContext;
 	private VueContentGateway mVueContentGateway;
-	
-	private StaggeredGridView mTrendingAislesContentView;
-	private TrendingAislesAdapter mContentAdapter;
 	private TrendingAislesLeftColumnAdapter mLeftColumnAdapter;
 	private TrendingAislesRightColumnAdapter mRightColumnAdapter;
 	
 	private ListView mLeftColumnView;
 	private ListView mRightColumnView;
+	//private MultiColumnListView mView;
 	
 	int[] mLeftViewsHeights;
 	int[] mRightViewsHeights;
@@ -50,15 +51,13 @@ public class VueLandingAislesFragment extends Fragment {
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
 		mContext = activity;
-		mTrendingAislesContentView = null;
 		
 		//without much ado lets get started with retrieving the trending aisles list
 		mVueContentGateway = VueContentGateway.getInstance();
 		if(null == mVueContentGateway){
 			//assert here: this is a no go!
 		}		
-		//mContentAdapter = VueApplication.getInstance().getTrendingAislesAdapter();
-		mContentAdapter = new TrendingAislesAdapter(mContext, null);
+
 		mLeftColumnAdapter = new TrendingAislesLeftColumnAdapter(mContext, null);
 		mRightColumnAdapter = new TrendingAislesRightColumnAdapter(mContext, null);
 	}
@@ -72,34 +71,30 @@ public class VueLandingAislesFragment extends Fragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-		/*View v = inflater.inflate(R.layout.aisles_view_fragment, container, false);
-		mTrendingAislesContentView = (StaggeredGridView) v.findViewById(R.id.aisles_grid);
-		
-		int margin = getResources().getDimensionPixelSize(R.dimen.margin);
-		
-		mTrendingAislesContentView.setItemMargin(margin); // set the GridView margin
-		
-		mTrendingAislesContentView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well 
-		mTrendingAislesContentView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		mTrendingAislesContentView.setAdapter(mContentAdapter);*/
 	    
 	    //synchronized list view approach
 	    View v = inflater.inflate(R.layout.aisles_view_fragment2, container, false);
-	    mLeftColumnView = (ListView)v.findViewById(R.id.list_view_left);
 	    
+	    mLeftColumnView = (ListView)v.findViewById(R.id.list_view_left);	    
 	    mRightColumnView = (ListView)v.findViewById(R.id.list_view_right);
+	    
 	    mLeftColumnView.setAdapter(mLeftColumnAdapter);
 	    mRightColumnView.setAdapter(mRightColumnAdapter);
 	    
+	    mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+	    mRightColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 	    mLeftColumnView.setOnTouchListener(touchListener);
 	    mRightColumnView.setOnTouchListener(touchListener);        
 	    mLeftColumnView.setOnScrollListener(scrollListener);
 	    mRightColumnView.setOnScrollListener(scrollListener);
 	    
 	    mLeftViewsHeights = new int[1000];
-	    mRightViewsHeights = new int[1000]; 
+	    mRightViewsHeights = new int[1000];
 	    
-        return v;		
+	   /* View v = inflater.inflate(R.layout.aisles_view_fragment3, container, false);
+	    mView = (MultiColumnListView)v.findViewById(R.id.multi_column_view);
+	    mView.setAdapter(mLeftColumnAdapter);*/
+        return v;
 	}
 	
 	   // Passing the touch event to the opposite list

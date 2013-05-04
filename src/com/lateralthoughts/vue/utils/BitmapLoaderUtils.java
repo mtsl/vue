@@ -60,12 +60,12 @@ public class BitmapLoaderUtils {
      * just want to have the bitmap. This is a utility function and is public because it is to 
      * be shared by other components in the internal implementation.   
      */
-    public Bitmap getBitmap(String url, boolean cacheBitmap) 
+    public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
     {
         File f = mFileCache.getFile(url);
         
         //from SD cache
-        Bitmap b = decodeFile(f);
+        Bitmap b = decodeFile(f, bestHeight);
         if(b != null){
             if(cacheBitmap)
                 mAisleImagesCache.put(url, b);
@@ -84,7 +84,7 @@ public class BitmapLoaderUtils {
             OutputStream os = new FileOutputStream(f);
             Utils.CopyStream(is, os);
             os.close();
-            bitmap = decodeFile(f);
+            bitmap = decodeFile(f, bestHeight);
             if(cacheBitmap)
             	mAisleImagesCache.put(url, bitmap);
             
@@ -98,7 +98,7 @@ public class BitmapLoaderUtils {
     }
 
     //decodes image and scales it to reduce memory consumption
-    private Bitmap decodeFile(File f){
+    private Bitmap decodeFile(File f, int bestHeight){
         try {
             //decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -109,14 +109,25 @@ public class BitmapLoaderUtils {
             
             //Find the correct scale value. It should be the power of 2.
             final int REQUIRED_SIZE = mScreenWidth/2;
-            int width_tmp=o.outWidth, height_tmp=o.outHeight;
+            int width_tmp=o.outWidth, height=o.outHeight;
             int scale=1;
-            while(true){
+            /*while(true){
                 if(width_tmp < REQUIRED_SIZE || height_tmp < REQUIRED_SIZE)
                     break;
                 width_tmp/=2;
                 height_tmp/=2;
                 scale*=2;
+            }*/
+            if (height > bestHeight) {
+
+                // Calculate ratios of height and width to requested height and width
+                final int heightRatio = Math.round((float) height / (float) bestHeight);
+               // final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+                // Choose the smallest ratio as inSampleSize value, this will guarantee
+                // a final image with both dimensions larger than or equal to the
+                // requested height and width.
+                scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
             }
             
             //decode with inSampleSize

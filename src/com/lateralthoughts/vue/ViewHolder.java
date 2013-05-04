@@ -6,7 +6,8 @@ import android.widget.TextView;
 
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 
-public class ViewHolder {
+/*
+public static class ViewHolder {
     AisleContentBrowser aisleContentBrowser;
     TextView aisleOwnersName;
     TextView aisleContext;
@@ -14,4 +15,4 @@ public class ViewHolder {
     String uniqueContentId;
     LinearLayout aisleDescriptor;
     AisleWindowContent mWindowContent;
-}
+}*/

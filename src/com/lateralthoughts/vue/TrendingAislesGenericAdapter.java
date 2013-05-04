@@ -25,20 +25,13 @@
 package com.lateralthoughts.vue;
 
 import android.widget.BaseAdapter;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.content.Context;
-import android.view.View.OnTouchListener;
 import android.util.Log;
 
 //java util imports
@@ -46,47 +39,53 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 //internal imports
-import com.lateralthoughts.vue.VueContentGateway;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 
-public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapter {
+public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleDataObserver {
     private Context mContext;
     
-    private final String TAG = "TrendingAislesRightColumnAdapter";
+    private final String TAG = "TrendingAislesGenericAdapter";
     
-    private AisleLoader mLoader;
+    protected AisleLoader mLoader;
     
     private static final boolean DEBUG = false;
     
     public int firstX;
     public int lastX;
+    public boolean mAnimationInProgress;
     
-    public TrendingAislesRightColumnAdapter(Context c, ArrayList<AisleWindowContent> content) {
-        super(c,content);
+    protected VueTrendingAislesDataModel mVueTrendingAislesDataModel;
+    
+    public TrendingAislesGenericAdapter(Context c, ArrayList<AisleWindowContent> content) {
         mContext = c;
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
+        mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
+        mVueTrendingAislesDataModel.registerAisleDataObserver(this);
         mLoader = AisleLoader.getInstance(mContext);        
     }
 
-    @Override
     public int getCount(){
         return mVueTrendingAislesDataModel.getAisleCount()/2;
     }
 
-    @Override
-    public AisleWindowContent getItem(int position){
-        int positionFactor = 2;
-        int actualPosition = 1;
-        if(0 != position)
-            actualPosition = (positionFactor*position)+actualPosition;
-        
-        return mVueTrendingAislesDataModel.getAisleAt(actualPosition);
+    public AisleWindowContent getItem(int position){     
+        return mVueTrendingAislesDataModel.getAisleAt(position);
+    }
+
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    public boolean hasStableIds(){
+        return false;
     }
     
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {     
         ViewHolder holder;
         StringBuilder sb = new StringBuilder();
+
+        int actualPosition = calculateActualPosition(position);
 
         if (null == convertView) {
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
@@ -103,10 +102,11 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         }
         //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
 
+        
         holder = (ViewHolder) convertView.getTag();
-        holder.mWindowContent = (AisleWindowContent)getItem(position);
-        int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
-        mLoader.getAisleContentIntoView(holder, scrollIndex, position);
+        holder.mWindowContent = (AisleWindowContent)getItem(actualPosition);
+        int scrollIndex = 0;
+        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition);
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);
@@ -116,10 +116,27 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         holder.aisleContext.setText(contextBuilder.toString());
         return convertView;
     }
-
+    
     @Override
     public void onAisleDataUpdated(int newCount){
         notifyDataSetChanged();
     }
-
+    
+    private int calculateActualPosition(int viewPosition){
+        int actualPosition = 0;
+        if(0 != viewPosition)
+            actualPosition = (viewPosition*2); 
+        
+        return actualPosition;
+    }
+    
+    static class ViewHolder {
+        AisleContentBrowser aisleContentBrowser;
+        TextView aisleOwnersName;
+        TextView aisleContext;
+        ImageView profileThumbnail;
+        String uniqueContentId;
+        LinearLayout aisleDescriptor;
+        AisleWindowContent mWindowContent;
+    }
 }

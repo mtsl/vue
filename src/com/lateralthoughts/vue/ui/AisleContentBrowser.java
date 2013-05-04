@@ -7,6 +7,8 @@ import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.IAisleContentAdapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -40,6 +42,7 @@ public class AisleContentBrowser extends ViewFlipper {
     public int mLastX;
     public int mFirstY;
     public int mLastY;
+    private ColorDrawable mColorDrawable;
     
 	public AisleContentBrowser(Context context){
 		super(context);
@@ -61,6 +64,8 @@ public class AisleContentBrowser extends ViewFlipper {
 		mCustomTouchListener = new AisleContentTouchListener();
 		this.setOnTouchListener(mCustomTouchListener);
 		mLoader = AisleLoader.getInstance(mContext);
+		mColorDrawable = new ColorDrawable(Color.WHITE);
+		this.setBackgroundColor(Color.WHITE);
 	}
 	
 	public void setUniqueId(String id){
@@ -79,6 +84,12 @@ public class AisleContentBrowser extends ViewFlipper {
 		return mScrollIndex;
 	}
 	
+	@Override
+	public void onAnimationEnd(){
+	    super.onAnimationEnd();
+	    Log.e("AisleContentAdapter","onAnimationEnd is called!");
+	}
+	
 	class AisleContentTouchListener implements View.OnTouchListener {
 	    
 	    @Override
@@ -88,8 +99,13 @@ public class AisleContentBrowser extends ViewFlipper {
 	            mAnimationInProgress= false;
 	            mFirstX = (int) event.getX();
 	            mFirstY = (int)event.getY();
+	            mDownPressStartTime = System.currentTimeMillis();
 	        }else if(event.getAction() == MotionEvent.ACTION_UP){
-	            long tapElapsed = System.currentTimeMillis() - mDownPressStartTime;
+	            long elapsedTimeFromDown = System.currentTimeMillis() - mDownPressStartTime;
+	            if(elapsedTimeFromDown <= MAX_ELAPSED_DURATION_FOR_TAP){
+	                
+	            }
+	            mAnimationInProgress = false;
 	        }
 
 	        if(event.getAction() == MotionEvent.ACTION_MOVE){
@@ -99,10 +115,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    mLastY - mFirstY > SWIPE_MIN_DISTANCE){
 	                return false;
 	            }
-
-	            /*if(1 == aisleContentBrowser.getChildCount()){
-	                mLoader.fillAisleContentBrowser(aisleContentBrowser.getUniqueId());
-                }*/
 
 	            if (mFirstX - mLastX > SWIPE_MIN_DISTANCE) {
 	                
@@ -115,7 +127,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex+1);
 	                    
 	                    if(null != mSpecialNeedsAdapter && null == nextView){
-	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex+1, true)){
+	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, null, currentIndex, currentIndex+1, true)){
 	                            mAnimationInProgress = true;
 	                            Animation cantWrapRight = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right);
 	                            
@@ -140,8 +152,20 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    mAnimationInProgress = true;
 	                    aisleContentBrowser.setInAnimation(nextFadeIn);
 	                    aisleContentBrowser.setOutAnimation(currentGoLeft);
-	                    aisleContentBrowser.showNext();
-	                    return true;
+	                    currentGoLeft.setAnimationListener(new Animation.AnimationListener(){
+                            public void onAnimationEnd(Animation animation) {
+                                Log.e("AisleContentAdapter","End of go left animtation");
+                            }
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+	                    aisleContentBrowser.setDisplayedChild(currentIndex+1);
+	                    //aisleContentBrowser.invalidate();
+	                    return false;
 	                }                           
 	            } else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE){
 	                requestDisallowInterceptTouchEvent(true);
@@ -174,8 +198,19 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    mAnimationInProgress = true;
 	                    aisleContentBrowser.setInAnimation(nextFadeIn);
 	                    aisleContentBrowser.setOutAnimation(currentGoRight);
-	                    aisleContentBrowser.showPrevious();
-	                    return true;
+	                    currentGoRight.setAnimationListener(new Animation.AnimationListener(){
+                            public void onAnimationEnd(Animation animation) {
+                                Log.e("AisleContentAdapter","End of go right animtation");
+                            }
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+	                    aisleContentBrowser.setDisplayedChild(currentIndex-1);
+	                    return false;
 	                }
 	            }
 	            

@@ -38,7 +38,9 @@ public class ScaleImageView extends ImageView {
 	}
 
 	private void init(){
-		this.setScaleType(ScaleType.CENTER_INSIDE);
+	    //this.setScaleType(ScaleType.CENTER_CROP);
+	    //this.setScaleType(ScaleType.FIT_CENTER);
+		this.setScaleType(ScaleType.CENTER);
 	}
 
 	@Override
@@ -81,10 +83,6 @@ public class ScaleImageView extends ImageView {
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int height = MeasureSpec.getSize(heightMeasureSpec);
 		
-		/**
-		 * if both width and height are set scale width first. modify in future if necessary
-		 */
-		
 		if(widthMode == MeasureSpec.EXACTLY || widthMode == MeasureSpec.AT_MOST){
 			scaleToWidth = true;
 		}else if(heightMode == MeasureSpec.EXACTLY || heightMode == MeasureSpec.AT_MOST){
@@ -107,7 +105,7 @@ public class ScaleImageView extends ImageView {
 					width = heightC*iw/ih;
 				}
 				
-				this.setScaleType(ScaleType.CENTER_CROP);
+				this.setScaleType(ScaleType.CENTER);
 				setMeasuredDimension(width, heightC);
 				
 			}else{
@@ -129,6 +127,7 @@ public class ScaleImageView extends ImageView {
 			}
 
 		}
+	    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 	
 	public void setOpaqueWorkerObject(Object object){

@@ -6,8 +6,8 @@
     android:layout_marginBottom="5dp" >
 
     <com.lateralthoughts.vue.ui.AisleContentBrowser android:id="@+id/aisle_content_flipper"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
     </com.lateralthoughts.vue.ui.AisleContentBrowser>
 
@@ -27,7 +27,7 @@
             android:cropToPadding="true"
             android:paddingBottom="2dp"
             android:paddingTop="2dp"
-            android:scaleType="centerInside"
+            android:scaleType="center"
             android:src="@drawable/profile_thumb_default"
             android:contentDescription="@string/aisle_owner_profile_desc"/>
 

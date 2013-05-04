@@ -88,7 +88,7 @@ public class ContentAdapterFactory {
         
         synchronized(this){
             AisleContentAdapter ac = mObjectsInUse.remove(index);
-            ac.releaseContentSource();
+            //ac.releaseContentSource();
             mAvailableObjects.add(ac);            
             //TODO: we have a way to expand the pool once the initial objects get used up - should
             //we have an equivalent to free up some of the objects?

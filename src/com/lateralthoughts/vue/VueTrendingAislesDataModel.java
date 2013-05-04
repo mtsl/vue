@@ -39,6 +39,8 @@ public class VueTrendingAislesDataModel {
     private static final String USER_IMAGE_URL_TAG = "imageUrl";
     private static final String USER_IMAGE_STORE_TAG = "store";
     private static final String USER_IMAGE_TITLE_TAG = "title";
+    private static final String IMAGE_HEIGHT_TAG = "height";
+    private static final String IMAGE_WIDTH_TAG = "width";
     
     private ArrayList<AisleWindowContent> mAisleContentList;
     private HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
@@ -195,6 +197,8 @@ public class VueTrendingAislesDataModel {
 	                    imageItemDetails.mStore = imageItem.getString(USER_IMAGE_STORE_TAG);
 	                    imageItemDetails.mTitle = imageItem.getString(USER_IMAGE_TITLE_TAG);
 	                    imageItemDetails.mImageUrl = imageItem.getString(USER_IMAGE_URL_TAG);
+	                    imageItemDetails.mAvailableHeight = imageItem.getInt(IMAGE_HEIGHT_TAG);
+	                    imageItemDetails.mAvailableWidth = imageItem.getInt(IMAGE_WIDTH_TAG);
 	                    imageItemsArray.add(imageItemDetails);                      
 	                }
 
@@ -243,15 +247,6 @@ public class VueTrendingAislesDataModel {
 	public AisleWindowContent getAisleAt(int position){
 	    return mAisleContentList.get(position);
 	}
-
-	/*private void initializeTrendingAisleContent(){
-	    AisleWindowContent aisleItem = null;
-	    for(int i=0; i<TRENDING_AISLES_SAMPLE_SIZE;i++){
-	        aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
-	        mAisleContentListMap.put(mAisleWindowContentFactory.EMPTY_AISLE_ID, aisleItem);
-	        mAisleContentList.add(aisleItem);
-	    }
-	}*/
 	
 	public static VueTrendingAislesDataModel getInstance(Context context){
 		if(null == sVueTrendingAislesDataModel){

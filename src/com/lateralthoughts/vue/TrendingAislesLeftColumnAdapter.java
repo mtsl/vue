@@ -41,54 +41,45 @@ import java.util.HashMap;
 //internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 
-public class TrendingAislesLeftColumnAdapter extends BaseAdapter implements IAisleDataObserver {
+public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
     
     private final String TAG = "TrendingAislesLeftColumnAdapter";
-    
-    private AisleLoader mLoader;
-    
     private static final boolean DEBUG = false;
     
     public int firstX;
     public int lastX;
-    public static final int SWIPE_MIN_DISTANCE = 30;
-    public boolean mAnimationInProgress;
-    
-    private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
-    
+
     public TrendingAislesLeftColumnAdapter(Context c, ArrayList<AisleWindowContent> content) {
+        super(c, content);
         mContext = c;
+        
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
-        mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
-        mVueTrendingAislesDataModel.registerAisleDataObserver(this);
-        mLoader = AisleLoader.getInstance(mContext);        
+        //mVueTrendingAislesDataModel.registerAisleDataObserver(this);       
     }
 
+    @Override
     public int getCount(){
+        Log.e("AndroidRuntime","left adapter; total count = " + mVueTrendingAislesDataModel.getAisleCount()/2);
         return mVueTrendingAislesDataModel.getAisleCount()/2;
     }
 
-    public AisleWindowContent getItem(int position){
+    @Override
+    public AisleWindowContent getItem(int position){     
         int actualPosition = 0;
         if(0 != position)
             actualPosition = (position*2);
-        //Log.e("LeftColumnAisles","position asked for = " + position + " position fetching = " + actualPosition);
+        
+        Log.e("AndroidRuntime","left adapter; position sought = " + position);
         return mVueTrendingAislesDataModel.getAisleAt(actualPosition);
-    }
-
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    public boolean hasStableIds(){
-        return true;
     }
     
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {     
         ViewHolder holder;
         StringBuilder sb = new StringBuilder();
+
+        int actualPosition = calculateActualPosition(position);
 
         if (null == convertView) {
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
@@ -105,10 +96,11 @@ public class TrendingAislesLeftColumnAdapter extends BaseAdapter implements IAis
         }
         //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
 
+        
         holder = (ViewHolder) convertView.getTag();
         holder.mWindowContent = (AisleWindowContent)getItem(position);
-        int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
-        mLoader.getAisleContentIntoView(holder, scrollIndex, position);
+        int scrollIndex = 0;
+        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition);
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);
@@ -118,19 +110,12 @@ public class TrendingAislesLeftColumnAdapter extends BaseAdapter implements IAis
         holder.aisleContext.setText(contextBuilder.toString());
         return convertView;
     }
-
-    /*static class ViewHolder {
-        AisleContentBrowser aisleContentBrowser;
-        TextView aisleOwnersName;
-        TextView aisleContext;
-        ImageView profileThumbnail;
-        String uniqueContentId;
-        LinearLayout aisleDescriptor;
-        AisleWindowContent mWindowContent;
-    }*/
     
-    @Override
-    public void onAisleDataUpdated(int newCount){
-        notifyDataSetChanged();
+    private int calculateActualPosition(int viewPosition){
+        int actualPosition = 0;
+        if(0 != viewPosition)
+            actualPosition = (viewPosition*2); 
+        
+        return actualPosition;
     }
 }

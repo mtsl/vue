@@ -16,12 +16,15 @@ public class AisleWindowContent
 {
 	public static final String EMPTY_AISLE_CONTENT_ID = "EmptyAisleWindow";
 	private static final String IMAGE_RES_SPEC_REGEX = ".jpg"; //this is the string pattern we look for
-	private String mImageFormatSpecifier = "._SX%d.jpg";
+	private String mImageFormatSpecifier = "._SY%d.jpg";
 	
 	//these two should be based on device with & height
 	private int mDesiredImageWidth = 300;
 	private int mDesiredImageHeight = 240;
 	private String mAisleId;
+	
+    private int mWindowSmallestHeight = 0;
+    private int mWindowSmallestWidth = 0;
 	
     public AisleWindowContent(String aisleId){ 
     	mAisleId = aisleId;
@@ -72,6 +75,13 @@ public class AisleWindowContent
     	int index = -1;
     	StringBuilder sb;
     	AisleImageDetails imageDetails;
+
+    	for (int i=0;i<mAisleImagesList.size();i++){
+    		
+    		imageDetails = mAisleImagesList.get(i);
+    		if(imageDetails.mAvailableHeight < mWindowSmallestHeight || mWindowSmallestHeight == 0)
+    		    mWindowSmallestHeight = imageDetails.mAvailableHeight;
+    	}
     	for (int i=0;i<mAisleImagesList.size();i++){
     		sb = new StringBuilder();
     		imageDetails = mAisleImagesList.get(i);
@@ -81,7 +91,7 @@ public class AisleWindowContent
     			//we have a match
     			urlReusablePart = regularUrl.split(IMAGE_RES_SPEC_REGEX)[0];
     			sb.append(urlReusablePart);
-    			customFittedSizePart = String.format(mImageFormatSpecifier, mDesiredImageWidth);  
+    			customFittedSizePart = String.format(mImageFormatSpecifier, mWindowSmallestHeight);  
     			sb.append(customFittedSizePart);
     			imageDetails.mCustomImageUrl = sb.toString();
     		}else{
@@ -99,6 +109,9 @@ public class AisleWindowContent
     	return mAisleId;
     }
     
+    public int getBestHeightForWindow(){
+        return mWindowSmallestHeight;
+    }
     private AisleContext mContext;
     private ArrayList<AisleImageDetails> mAisleImagesList;
 }

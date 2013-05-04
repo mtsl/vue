@@ -2,8 +2,10 @@ package com.lateralthoughts.vue;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 //internal imports
+import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.VueMemoryCache;
 
@@ -23,10 +25,10 @@ public class VueApplication extends Application {
 	private VueMemoryCache<String> mVueAisleOwnerNamesCache;
 	private VueMemoryCache<String> mVueAisleContextInfoCache;
 	private static final String CRITTERCISM_APP_ID = "5153c41e558d6a2403000009";
-	private TrendingAislesAdapter mContentAdapter;
 	private HttpClient mHttpClient;
 	private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	private FileCache mFileCache;
+	private ScaleImageView mEmptyImageView;
 	
 	@Override
 	public void onCreate(){
@@ -35,7 +37,7 @@ public class VueApplication extends Application {
 		sInstance = this;
 		
 		mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
-		mVueAisleImagesCache.setLimit(25);
+		mVueAisleImagesCache.setLimit(40);
 		mVueAisleOwnerNamesCache = new VueMemoryCache<String>();
 		mVueAisleOwnerNamesCache.setLimit(1);
 		mVueAisleContextInfoCache = new VueMemoryCache<String>();
@@ -60,19 +62,24 @@ public class VueApplication extends Application {
 		}
 		catch (JSONException je){}
 
+		mEmptyImageView = new ScaleImageView(this);
+		Drawable d = getResources().getDrawable(R.drawable.aisle_content_empty);
+		mEmptyImageView.setImageDrawable(d);
+		
+		//R.drawable.aisle_content_empty;
 		//Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID, crittercismConfig);
 	}
 	
+	public ScaleImageView getEmptyImageView(){
+	    return mEmptyImageView;
+	    
+	}
 	public static VueApplication getInstance(){
 		return sInstance;
 	}
 	
 	public VueMemoryCache<Bitmap> getAisleImagesMemCache(){
 		return mVueAisleImagesCache;
-	}
-	
-	public TrendingAislesAdapter getTrendingAislesAdapter(){
-		return mContentAdapter;
 	}
 	
 	public HttpClient getHttpClient(){

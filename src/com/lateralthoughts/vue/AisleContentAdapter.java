@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -98,13 +99,16 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         mAisleId = uniqueAisleId;
         
         //lets file cache the first two items in the list
-        queueImagePrefetch(mAisleImageDetails, 1,2);
+        queueImagePrefetch(mAisleImageDetails, mWindowContent.getBestHeightForWindow(), 1,2);
     }
     
     @Override
     public void releaseContentSource() {
         // TODO Auto-generated method stub
         mCurrentPivotIndex = -1;
+        mAisleImageDetails.clear();
+        mWindowContent = null;
+        mAisleId = null;
         
     }
 
@@ -131,8 +135,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     //========================= Methods from the inherited IAisleContentAdapter ========================//
     
     
-    public void queueImagePrefetch(ArrayList<AisleImageDetails> imageList, int startIndex, int count){
-        BitmapsToFetch p = new BitmapsToFetch(imageList, startIndex, count);
+    public void queueImagePrefetch(ArrayList<AisleImageDetails> imageList, int bestHeight, int startIndex, int count){
+        BitmapsToFetch p = new BitmapsToFetch(imageList, bestHeight, startIndex, count);
         mExecutorService.submit(new ImagePrefetcher(p));
     }
     
@@ -142,10 +146,13 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         public ArrayList<AisleImageDetails> mImagesList;
         public int mStartIndex;
         private int mCount;
-        public BitmapsToFetch(ArrayList<AisleImageDetails> imagesList, int startIndex, int count){
+        public int mBestHeight;
+        
+        public BitmapsToFetch(ArrayList<AisleImageDetails> imagesList, int bestHeight, int startIndex, int count){
             mImagesList = imagesList; 
             mStartIndex = startIndex;
             mCount = count;
+            mBestHeight = bestHeight;
         }
     }
     
@@ -164,17 +171,17 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             
             for(int i = startIndex; i<count+startIndex; i++){
                 //Log.e("FileCacher","about to cache file for index = " + mBitmapsToFetch.mImagesList.get(i).mCustomImageUrl);
-                cacheBitmapToLocal(mBitmapsToFetch.mImagesList.get(i).mCustomImageUrl);
+                cacheBitmapToLocal(mBitmapsToFetch.mImagesList.get(i).mCustomImageUrl, mBitmapsToFetch.mBestHeight);
             }
         }
     }
     
     
-    public void cacheBitmapToLocal(String url) 
+    public void cacheBitmapToLocal(String url, int bestHeight) 
     {
         File f = mFileCache.getFile(url);        
         //from SD cache
-        if(isBitmapCachedLocally(f)){
+        if(isBitmapCachedLocally(f, bestHeight)){
             return;
         }
         
@@ -199,7 +206,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     }
 
     //decodes image and scales it to reduce memory consumption
-    private boolean isBitmapCachedLocally(File f){
+    private boolean isBitmapCachedLocally(File f, int bestHeight){
         try {
             //decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -210,14 +217,26 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             
             //Find the correct scale value. It should be the power of 2.
             final int REQUIRED_SIZE = mScreenWidth/2;
-            int width_tmp = o.outWidth, height_tmp=o.outHeight;
+            int width_tmp = o.outWidth, height=o.outHeight;
             int scale = 1;
-            while(true){
+            
+            /*while(true){
                 if(width_tmp < REQUIRED_SIZE || height_tmp < REQUIRED_SIZE)
                     break;
                 width_tmp/=2;
                 height_tmp/=2;
                 scale*=2;
+            }*/
+            if (height > bestHeight) {
+
+                // Calculate ratios of height and width to requested height and width
+                final int heightRatio = Math.round((float) height / (float) bestHeight);
+               // final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+                // Choose the smallest ratio as inSampleSize value, this will guarantee
+                // a final image with both dimensions larger than or equal to the
+                // requested height and width.
+                scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
             }
             
             //decode with inSampleSize
@@ -243,6 +262,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         }
     }
     
+    public int getAisleItemsCount(){
+        return mAisleImageDetails.size();
+    }
+    
     @Override
     public boolean setAisleContent(AisleContentBrowser contentBrowser,ScaleImageView reuseView, int currentIndex, int wantedIndex, 
                                             boolean shiftPivot){
@@ -257,27 +280,21 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         
         if(null != mAisleImageDetails && mAisleImageDetails.size() != 0){         
             itemDetails = mAisleImageDetails.get(wantedIndex);
-            if(null == reuseView)
-                imageView = mImageViewFactory.getEmptyImageView();
-            else
-                imageView = reuseView;
-            
-            imageView.setContainerObject(contentBrowser);            
+            imageView = mImageViewFactory.getPreconfiguredImageView(1); //getEmptyImageView();
+
             Bitmap bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
             
             if(bitmap != null){
-                //Log.e("AisleContentAdapter","Bitmap is cached so we will just set it and add it to the imageview");
+                Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);
-                imageView.invalidate();
-                //loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView);
             }
-            else{                
-                mColorDrawable.setBounds(0, 0, 240, 400);
-                imageView.setBackground(mColorDrawable);
-                //Log.e("AisleContentAdapter","Adding the imageview now...the bitmap needs to be fetched. wantedIndex = " + wantedIndex);
+            else{
+                mColorDrawable.setBounds(0, 0, 300, 300);
+                imageView.setImageDrawable(mColorDrawable);             
+                Log.e("AisleContentAdapter","Getting the bitmap. wantedIndex = " + wantedIndex);
+                loadBitmap(itemDetails.mCustomImageUrl, mWindowContent.getBestHeightForWindow(),contentBrowser, imageView);
                 contentBrowser.addView(imageView);
-                loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView);
             }
         }
         return true;
@@ -287,9 +304,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         return mContentImagesCache.get(url);      
     }
     
-    public void loadBitmap(String loc, AisleContentBrowser flipper, ImageView imageView) {
+    public void loadBitmap(String loc, int bestHeight, AisleContentBrowser flipper, ImageView imageView) {
         if (cancelPotentialDownload(loc, imageView)) {          
-            BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView);
+            BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
             task.execute(loc);
         }
@@ -299,11 +316,13 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         private final WeakReference<ImageView> imageViewReference;
         private final WeakReference<AisleContentBrowser>viewFlipperReference;
         private String url = null;
+        private int mBestHeightForImage;
 
-        public BitmapWorkerTask(AisleContentBrowser vFlipper, ImageView imageView) {
+        public BitmapWorkerTask(AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             viewFlipperReference = new WeakReference<AisleContentBrowser>(vFlipper); 
+            mBestHeightForImage = bestHeight;
         }
 
         // Decode image in background.
@@ -312,7 +331,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             url = params[0];
             Bitmap bmp = null;            
             //we want to get the bitmap and also add it into the memory cache
-            bmp = getBitmap(url, true); 
+            bmp = getBitmap(url, true, mBestHeightForImage); 
             return bmp;            
         }
 
@@ -333,6 +352,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                         holder.profileThumbnail.setVisibility(View.VISIBLE);
                         holder.aisleDescriptor.setVisibility(View.VISIBLE);
                     }*/
+                    Log.e("AisleContentAdapter","post execute for bitmap. End of loop");
                     imageView.setImageBitmap(bitmap);
                 }
             }
@@ -373,15 +393,15 @@ public class AisleContentAdapter implements IAisleContentAdapter {
      * just want to have the bitmap. This is a utility function and is public because it is to 
      * be shared by other components in the internal implementation.   
      */
-    public Bitmap getBitmap(String url, boolean cacheBitmap) 
+    public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
     {
         File f = mFileCache.getFile(url);
         
         //from SD cache
-        Bitmap b = decodeFile(f);
+        Bitmap b = decodeFile(f, bestHeight);
         if(b != null){
-            //if(cacheBitmap)
-                mContentImagesCache.put(url, b);
+            Log.e("AisleContentAdapter","found file in file cache");
+            mContentImagesCache.put(url, b);
             return b;
         }
         
@@ -398,7 +418,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             OutputStream os = new FileOutputStream(f);
             Utils.CopyStream(is, os);
             os.close();
-            bitmap = decodeFile(f);
+            bitmap = decodeFile(f, bestHeight);
             //if(cacheBitmap)
                 mContentImagesCache.put(url, bitmap);
             
@@ -412,7 +432,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     }
 
     //decodes image and scales it to reduce memory consumption
-    private Bitmap decodeFile(File f){
+    private Bitmap decodeFile(File f, int bestHeight){
         try {
             //decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -423,19 +443,24 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             
             //Find the correct scale value. It should be the power of 2.
             final int REQUIRED_SIZE = mScreenWidth/2;
-            int width_tmp=o.outWidth, height_tmp=o.outHeight;
+            int width_tmp=o.outWidth, height=o.outHeight;
             int scale=1;
-            while(true){
-                if(width_tmp < REQUIRED_SIZE || height_tmp < REQUIRED_SIZE)
-                    break;
-                width_tmp/=2;
-                height_tmp/=2;
-                scale*=2;
+            bestHeight = mWindowContent.getBestHeightForWindow();
+            if (height > bestHeight) {
+
+                // Calculate ratios of height and width to requested height and width
+                final int heightRatio = Math.round((float) height / (float) bestHeight);
+               // final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+                // Choose the smallest ratio as inSampleSize value, this will guarantee
+                // a final image with both dimensions larger than or equal to the
+                // requested height and width.
+                scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
             }
             
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize=scale;
+            o2.inSampleSize=1;
             FileInputStream stream2=new FileInputStream(f);
             Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);
             stream2.close();

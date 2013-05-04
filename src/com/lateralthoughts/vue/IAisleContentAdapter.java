@@ -17,5 +17,7 @@ public interface IAisleContentAdapter {
     
     public void unregisterAisleDataObserver(IAisleDataObserver observer);
     
+    public int getAisleItemsCount();
+    
     public boolean setAisleContent(AisleContentBrowser contentBrowser,ScaleImageView reuseImageView, int currentIndex, int wantedIndex, boolean shiftPivot);
 }
