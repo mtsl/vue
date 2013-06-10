@@ -44,8 +44,8 @@ public class VueTrendingAislesDataModel {
     
     private ArrayList<AisleWindowContent> mAisleContentList;
     private HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
-    private AisleLoader mLoader;
-    private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
+
+    //private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
     private static final int TRENDING_AISLES_BATCH_SIZE = 5;
     private static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
     private static final int NOTIFICATION_THRESHOLD = 4;
@@ -87,6 +87,9 @@ public class VueTrendingAislesDataModel {
 	public void registerAisleDataObserver(IAisleDataObserver observer){
 		if(!mAisleDataObserver.contains(observer))
 			mAisleDataObserver.add(observer);
+		
+		//but if we already have the data we should notify right away
+		observer.onAisleDataUpdated(mAisleContentList.size());
 	}
 	
 	//this class is used to handle the aisle parsing

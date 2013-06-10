@@ -36,7 +36,6 @@ import android.util.Log;
 
 //java util imports
 import java.util.ArrayList;
-import java.util.HashMap;
 
 //internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -53,6 +52,13 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
     public int firstX;
     public int lastX;
     public boolean mAnimationInProgress;
+    protected boolean mIsScrolling;
+    protected View.OnClickListener mClickListener;
+    
+    protected String mPossibleOccasions[] = {"Pool Party", "Birthday", "Wedding", "Anniversary",
+                                           "Winter Ball", "Disney Land", "Cocktail"};
+    protected String mPossibleCategories[] = {"Dress", "Shoes", "Ear Rings", "Necklaces",
+            "Jewelry", "Sunglasses", "Trousers"};
     
     protected VueTrendingAislesDataModel mVueTrendingAislesDataModel;
     
@@ -61,7 +67,18 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
-        mLoader = AisleLoader.getInstance(mContext);        
+        mLoader = AisleLoader.getInstance(mContext);  
+        mIsScrolling = false;
+    }
+    
+    public TrendingAislesGenericAdapter(Context c, View.OnClickListener listener, ArrayList<AisleWindowContent> content) {
+        mContext = c;
+        if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
+        mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
+        mVueTrendingAislesDataModel.registerAisleDataObserver(this);
+        mLoader = AisleLoader.getInstance(mContext);  
+        mIsScrolling = false;
+        mClickListener = listener;
     }
 
     public int getCount(){
@@ -100,13 +117,11 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
             convertView.setTag(holder);
             if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position = " + position);
         }
-        //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
-
         
         holder = (ViewHolder) convertView.getTag();
         holder.mWindowContent = (AisleWindowContent)getItem(actualPosition);
         int scrollIndex = 0;
-        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition);
+        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);
@@ -128,6 +143,10 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
             actualPosition = (viewPosition*2); 
         
         return actualPosition;
+    }
+    
+    public void setIsScrolling(boolean isScrolling){
+        //mIsScrolling = isScrolling;
     }
     
     static class ViewHolder {

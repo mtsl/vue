@@ -2,7 +2,6 @@ package com.lateralthoughts.vue;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.content.Intent;
 import android.view.MotionEvent;
 
 public class SplashScreen extends Activity {
@@ -18,7 +17,7 @@ public class SplashScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
-        final SplashScreen sPlashScreen = this; 
+        //final SplashScreen sPlashScreen = this; 
 
         // thread for displaying the SplashScreen
         mSplashTread = new Thread() {

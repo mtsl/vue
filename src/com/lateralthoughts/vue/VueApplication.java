@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.DisplayMetrics;
 
 //internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
@@ -26,9 +27,11 @@ public class VueApplication extends Application {
 	private VueMemoryCache<String> mVueAisleContextInfoCache;
 	private static final String CRITTERCISM_APP_ID = "5153c41e558d6a2403000009";
 	private HttpClient mHttpClient;
-	private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	private FileCache mFileCache;
 	private ScaleImageView mEmptyImageView;
+	
+	private int mScreenHeight;
+	private int mScreenWidth;
 	
 	@Override
 	public void onCreate(){
@@ -44,7 +47,6 @@ public class VueApplication extends Application {
 		mVueAisleContextInfoCache.setLimit(1);
 		ScaledImageViewFactory.getInstance(this);
 		AisleWindowContentFactory.getInstance(this);
-		mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(this);
 
 		mAisleContentCache = new VueMemoryCache<Bitmap>();
 		mAisleContentCache.setLimit(10);
@@ -66,14 +68,14 @@ public class VueApplication extends Application {
 		Drawable d = getResources().getDrawable(R.drawable.aisle_content_empty);
 		mEmptyImageView.setImageDrawable(d);
 		
+		DisplayMetrics dm = getResources().getDisplayMetrics();
+		mScreenHeight = dm.heightPixels;
+		mScreenWidth = dm.widthPixels;
+		
 		//R.drawable.aisle_content_empty;
 		//Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID, crittercismConfig);
 	}
 	
-	public ScaleImageView getEmptyImageView(){
-	    return mEmptyImageView;
-	    
-	}
 	public static VueApplication getInstance(){
 		return sInstance;
 	}
@@ -91,8 +93,15 @@ public class VueApplication extends Application {
 	}
 	
 	public FileCache getFileCache(){
-	    return mFileCache;
-	    
+	    return mFileCache;   
 	}
+
+	public int getScreenHeight(){
+	    return mScreenHeight;   
+	}
+	
+    public int getScreenWidth(){
+        return mScreenWidth;   
+    }
 
 }

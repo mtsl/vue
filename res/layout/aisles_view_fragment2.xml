@@ -3,6 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
+    android:layout_marginTop="2dp"
     android:background="#CCCCCC"
     android:paddingLeft="5dp"
     android:paddingRight="5dp" >
@@ -15,7 +16,7 @@
         android:paddingRight="3dp"
         android:scrollbars="none"
         android:divider="@android:color/transparent"
-        android:dividerHeight="10.0sp" >
+        android:dividerHeight="6.0sp" >
     </ListView>
 
     <ListView
@@ -26,7 +27,7 @@
         android:paddingLeft="3dp"
         android:scrollbars="none"
         android:divider="@android:color/transparent"
-        android:dividerHeight="10.0sp">
+        android:dividerHeight="6.0sp">
     </ListView>
 
 </LinearLayout>

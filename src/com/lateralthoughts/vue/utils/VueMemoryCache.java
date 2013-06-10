@@ -48,7 +48,7 @@ public class VueMemoryCache<T> {
     
     public void setLimit(int percentOfMax){    	
         limit = (Runtime.getRuntime().maxMemory()*percentOfMax)/100;
-        Log.i(TAG, "MemoryCache will use up to " + limit/1024./1024.+"MB");
+        //Log.i(TAG, "MemoryCache will use up to " + limit/1024./1024.+"MB");
     }
 
     public T get(String id){
@@ -76,18 +76,18 @@ public class VueMemoryCache<T> {
     }
     
     private void checkSize() {
-        Log.i(TAG, "cache size="+size+" length="+cache.size());
+        //Log.i(TAG, "cache size="+size+" length="+cache.size());
         if(size>limit){
             Iterator<Entry<String, T>> iter=cache.entrySet().iterator();//least recently accessed item will be the first one iterated  
             while(iter.hasNext()){
                 Entry<String, T> entry=iter.next();
                 size-=getSizeInBytes(entry.getValue());
-                Log.e("Jaws","running out of cache - about to remove an item now");
+                //Log.e("Jaws","running out of cache - about to remove an item now");
                 iter.remove();
                 if(size<=limit)
                     break;
             }
-            Log.i(TAG, "Clean cache. New size "+cache.size());
+            //Log.i(TAG, "Clean cache. New size "+cache.size());
         }
     }
 

@@ -38,6 +38,7 @@ public class ScaledImageViewFactory {
 	private Context mContext;
 	public Drawable mEvenColumnBackground;
 	public Drawable mOddColumnBackground;
+	private static final boolean DEBUG = false;
 	
 	private ScaledImageViewFactory(Context context){
 		mAvailableObjects = new ArrayList<ScaleImageView>();
@@ -76,7 +77,7 @@ public class ScaledImageViewFactory {
 			if(!mAvailableObjects.isEmpty()){
 				imageView = mAvailableObjects.remove(mAvailableObjects.size()-1);
 				mObjectsInUse.add(imageView);
-				Log.e("ImageViewFactory","get an empty image view. mAvailableObjects.size() = " + mAvailableObjects.size());
+				if(DEBUG) Log.e("ImageViewFactory","get an empty image view. mAvailableObjects.size() = " + mAvailableObjects.size());
 				
 			}
 		}

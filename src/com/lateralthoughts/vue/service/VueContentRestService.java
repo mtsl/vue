@@ -13,8 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import java.io.*;
-import java.net.URL;
-import java.net.MalformedURLException;
 
 //android utilities
 import java.util.ArrayList;
@@ -23,13 +21,10 @@ import java.util.ArrayList;
 //import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
-
-import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 
 //internal imports
@@ -68,19 +63,10 @@ public class VueContentRestService extends IntentService {
         mHeaders = intent.getParcelableArrayListExtra(HEADERS_FIELD);
         mUrl = intent.getStringExtra(URL_FIELD);
         mReceiver = (ResultReceiver) intent.getParcelableExtra(RECEIVER_FIELD);
-        
-        mBatchData = intent.getBooleanExtra(BATCH_DATA_FLAG,false);
-        
-        if(mBatchData){
-        	mOffset = intent.getIntExtra(STARTING_OFFSET_FIELD, 0);
-        	mLimit = intent.getIntExtra(LIMIT_DATA_FIELD, -1);
-        	mBatchSize = intent.getIntExtra(BATCH_SIZE_FIELD, 1);
-        }else{
-        	try{
-        		go();
-        	}catch (Exception e) {
-        		e.printStackTrace();
-        	}
+        try{
+            go();
+        }catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -173,11 +159,10 @@ public class VueContentRestService extends IntentService {
     ArrayList <ParcelableNameValuePair> mHeaders;
     private String mUrl;
     private ResultReceiver mReceiver;
-    private boolean mBatchData;
     
-    private int mOffset;
-    private int mLimit;
-    private int mBatchSize;
+    //private int mOffset;
+    //private int mLimit;
+    //private int mBatchSize;
 
     //http related objects that we need for the service
     HttpRequestBase mRequest;

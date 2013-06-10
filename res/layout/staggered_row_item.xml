@@ -3,7 +3,7 @@
     android:layout_height="fill_parent"
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical"
-    android:layout_marginBottom="5dp" >
+    android:layout_marginBottom="1dp">
 
     <com.lateralthoughts.vue.ui.AisleContentBrowser android:id="@+id/aisle_content_flipper"
         android:layout_width="fill_parent"
@@ -25,17 +25,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:cropToPadding="true"
-            android:paddingBottom="2dp"
-            android:paddingTop="2dp"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:scaleType="center"
-            android:src="@drawable/profile_thumb_default"
+            android:src="@drawable/profile_thumbnail"
             android:contentDescription="@string/aisle_owner_profile_desc"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="4dp"
             android:layout_gravity="left" >
 
         	<TextView

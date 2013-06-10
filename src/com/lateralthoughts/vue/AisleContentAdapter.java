@@ -13,18 +13,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.os.AsyncTask;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 
 //java imports
@@ -33,10 +27,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 //internal imports
-import com.lateralthoughts.vue.AisleLoader.BitmapWorkerTask;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ScaledImageViewFactory;
+import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.VueMemoryCache;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -66,27 +60,24 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private VueMemoryCache<Bitmap> mContentImagesCache;
     private ArrayList<AisleImageDetails> mAisleImageDetails;
     private AisleWindowContent mWindowContent;
-    private int mCurrentPivotIndex;
-    private String mAisleId;
     
-    private int mScreenWidth;
     private ExecutorService mExecutorService;
     private Context mContext;
     private FileCache mFileCache;
     private ScaledImageViewFactory mImageViewFactory;
     private ColorDrawable mColorDrawable;
+    private int mCurrentPivotIndex;
+    private BitmapLoaderUtils mBitmapLoaderUtils;
     
     public AisleContentAdapter(Context context){
         mContext = context;
         mContentImagesCache = VueApplication.getInstance().getAisleContentCache();
         mFileCache = VueApplication.getInstance().getFileCache();
         mCurrentPivotIndex = -1;
-        mImageViewFactory  = ScaledImageViewFactory.getInstance(mContext);
-        
-        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-        mScreenWidth = metrics.widthPixels;        
+        mImageViewFactory  = ScaledImageViewFactory.getInstance(mContext);     
         mExecutorService = Executors.newFixedThreadPool(5);
         mColorDrawable = new ColorDrawable(Color.WHITE);
+        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
     }
     
     //========================= Methods from the inherited IAisleContentAdapter ========================//
@@ -96,7 +87,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         // TODO Auto-generated method stub
         mWindowContent = windowContent;
         mAisleImageDetails = mWindowContent.getImageList();
-        mAisleId = uniqueAisleId;
+        
         
         //lets file cache the first two items in the list
         queueImagePrefetch(mAisleImageDetails, mWindowContent.getBestHeightForWindow(), 1,2);
@@ -108,7 +99,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         mCurrentPivotIndex = -1;
         mAisleImageDetails.clear();
         mWindowContent = null;
-        mAisleId = null;
         
     }
 
@@ -216,17 +206,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             stream1.close();
             
             //Find the correct scale value. It should be the power of 2.
-            final int REQUIRED_SIZE = mScreenWidth/2;
-            int width_tmp = o.outWidth, height=o.outHeight;
+            //final int REQUIRED_SIZE = mScreenWidth/2;
+            int height=o.outHeight;
             int scale = 1;
-            
-            /*while(true){
-                if(width_tmp < REQUIRED_SIZE || height_tmp < REQUIRED_SIZE)
-                    break;
-                width_tmp/=2;
-                height_tmp/=2;
-                scale*=2;
-            }*/
+
             if (height > bestHeight) {
 
                 // Calculate ratios of height and width to requested height and width
@@ -280,19 +263,16 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         
         if(null != mAisleImageDetails && mAisleImageDetails.size() != 0){         
             itemDetails = mAisleImageDetails.get(wantedIndex);
-            imageView = mImageViewFactory.getPreconfiguredImageView(1); //getEmptyImageView();
+            imageView = mImageViewFactory.getEmptyImageView();
 
             Bitmap bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
             
             if(bitmap != null){
-                Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
+                //Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);
             }
             else{
-                mColorDrawable.setBounds(0, 0, 300, 300);
-                imageView.setImageDrawable(mColorDrawable);             
-                Log.e("AisleContentAdapter","Getting the bitmap. wantedIndex = " + wantedIndex);
                 loadBitmap(itemDetails.mCustomImageUrl, mWindowContent.getBestHeightForWindow(),contentBrowser, imageView);
                 contentBrowser.addView(imageView);
             }
@@ -331,7 +311,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             url = params[0];
             Bitmap bmp = null;            
             //we want to get the bitmap and also add it into the memory cache
-            bmp = getBitmap(url, true, mBestHeightForImage); 
+            //bmp = getBitmap(url, true, mBestHeightForImage); 
+            bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeightForImage);
             return bmp;            
         }
 
@@ -345,14 +326,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
                 
                 if (this == bitmapWorkerTask) {
-                    /*ViewHolder holder = (ViewHolder)((ScaleImageView)imageView).getContainerObject();
-                    if(null != holder){
-                        holder.aisleContext.setVisibility(View.VISIBLE);
-                        holder.aisleOwnersName.setVisibility(View.VISIBLE);
-                        holder.profileThumbnail.setVisibility(View.VISIBLE);
-                        holder.aisleDescriptor.setVisibility(View.VISIBLE);
-                    }*/
-                    Log.e("AisleContentAdapter","post execute for bitmap. End of loop");
+                    vFlipper.invalidate();
                     imageView.setImageBitmap(bitmap);
                 }
             }
@@ -400,7 +374,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight);
         if(b != null){
-            Log.e("AisleContentAdapter","found file in file cache");
+            //Log.e("AisleContentAdapter","found file in file cache");
             mContentImagesCache.put(url, b);
             return b;
         }
@@ -442,8 +416,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             stream1.close();
             
             //Find the correct scale value. It should be the power of 2.
-            final int REQUIRED_SIZE = mScreenWidth/2;
-            int width_tmp=o.outWidth, height=o.outHeight;
+            //final int REQUIRED_SIZE = mScreenWidth/2;
+            int height=o.outHeight;
             int scale=1;
             bestHeight = mWindowContent.getBestHeightForWindow();
             if (height > bestHeight) {
@@ -460,7 +434,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize=1;
+            o2.inSampleSize=scale;
             FileInputStream stream2=new FileInputStream(f);
             Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);
             stream2.close();

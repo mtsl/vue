@@ -18,14 +18,12 @@ public class AisleWindowContentFactory {
 	private final int POOL_MAX_SIZE = 500;
 	public final String EMPTY_AISLE_ID="-1";
 	
-	private Context mContext;
-	
 	private AisleWindowContentFactory(Context context){
 		mAvailableObjects = new ArrayList<AisleWindowContent>();
 		mObjectsInUse = new ArrayList<AisleWindowContent>();
 		
 		//TODO: assert if context is null
-		mContext = context;
+		//mContext = context;
 		
 		//at construction time - lets go ahead and create the pool
 		//of scaleimageview objects

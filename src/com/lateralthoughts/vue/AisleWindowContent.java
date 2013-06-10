@@ -19,12 +19,9 @@ public class AisleWindowContent
 	private String mImageFormatSpecifier = "._SY%d.jpg";
 	
 	//these two should be based on device with & height
-	private int mDesiredImageWidth = 300;
-	private int mDesiredImageHeight = 240;
 	private String mAisleId;
 	
     private int mWindowSmallestHeight = 0;
-    private int mWindowSmallestWidth = 0;
 	
     public AisleWindowContent(String aisleId){ 
     	mAisleId = aisleId;

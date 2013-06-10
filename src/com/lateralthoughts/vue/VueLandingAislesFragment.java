@@ -1,8 +1,6 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
-//import com.lateralthoughts.vue.ui.MultiColumnListView;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,17 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.Context;
 import android.widget.ListView;
 import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.view.MotionEvent;
 
 //java utils
-
-//goodies from support libs
-import android.support.v4.widget.StaggeredGridView;
 
 //as soon as this fragment attaches to the activity we will go ahead and pull up the
 //the list of current trending aisles.
@@ -36,6 +34,7 @@ public class VueLandingAislesFragment extends Fragment {
 	
 	private ListView mLeftColumnView;
 	private ListView mRightColumnView;
+	private View.OnClickListener mAisleClickListener;
 	//private MultiColumnListView mView;
 	
 	int[] mLeftViewsHeights;
@@ -58,7 +57,17 @@ public class VueLandingAislesFragment extends Fragment {
 			//assert here: this is a no go!
 		}		
 
-		mLeftColumnAdapter = new TrendingAislesLeftColumnAdapter(mContext, null);
+	      mAisleClickListener = new View.OnClickListener() {
+	            
+	            @Override
+	            public void onClick(View v) {
+	                // TODO Auto-generated method stub
+	                Log.e("Vinodh","onclick listener in fragment");
+	                
+	            }
+	        };
+	        
+		mLeftColumnAdapter = new TrendingAislesLeftColumnAdapter(mContext, mAisleClickListener, null);
 		mRightColumnAdapter = new TrendingAislesRightColumnAdapter(mContext, null);
 	}
 	
@@ -88,15 +97,30 @@ public class VueLandingAislesFragment extends Fragment {
 	    mLeftColumnView.setOnScrollListener(scrollListener);
 	    mRightColumnView.setOnScrollListener(scrollListener);
 	    
+	    mLeftColumnView.setClickable(true);
+	    /*mLeftColumnView.setOnItemClickListener(new OnItemClickListener(){
+	        public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+                Intent intent = new Intent();
+                intent.setClass(VueApplication.getInstance(), AisleDetailsViewActivity.class);
+                mContext.startActivity(intent);
+	         }
+	    });
+	    
+	    mRightColumnView.setOnItemClickListener(new OnItemClickListener(){
+	            public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+	                //MyClass selItem = (MyClass) adapter.getItem(position);
+	                Intent intent = new Intent();
+	                intent.setClass(VueApplication.getInstance(), AisleDetailsViewActivity.class);
+	                mContext.startActivity(intent);
+	             }
+	        });*/
+	    
 	    mLeftViewsHeights = new int[1000];
 	    mRightViewsHeights = new int[1000];
+	    Log.d("VueLandingAislesFragment","Get ready to displayed staggered view");
 	    
-	   /* View v = inflater.inflate(R.layout.aisles_view_fragment3, container, false);
-	    mView = (MultiColumnListView)v.findViewById(R.id.multi_column_view);
-	    mView.setAdapter(mLeftColumnAdapter);*/
         return v;
 	}
-	
 	   // Passing the touch event to the opposite list
     OnTouchListener touchListener = new OnTouchListener() {                 
         boolean dispatched = false;
@@ -122,9 +146,19 @@ public class VueLandingAislesFragment extends Fragment {
      * sum_heights(opposite invisible screens) - sum_heights(invisible screens) + distance from top of the first visible child
      */
     OnScrollListener scrollListener = new OnScrollListener() {
-        
         @Override
-        public void onScrollStateChanged(AbsListView v, int scrollState) {  
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            mLeftColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
+            mRightColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
+            
+            int first = view.getFirstVisiblePosition();
+            int count = view.getChildCount();
+
+            if (scrollState == SCROLL_STATE_IDLE || (first + count > mLeftColumnAdapter.getCount())
+                    || (first + count > mRightColumnAdapter.getCount())) {
+                mLeftColumnView.invalidateViews();
+                mRightColumnView.invalidateViews();
+            }
         }
         
         @Override

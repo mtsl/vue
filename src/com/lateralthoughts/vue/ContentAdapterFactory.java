@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 //vue internal imports
-import com.lateralthoughts.vue.ui.ScaleImageView;
 
 //Factory class for ScaledImageView to manage memory more efficiently.
 //the idea is to create a pool of pre-allocated ScaledImageView objects

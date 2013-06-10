@@ -24,7 +24,6 @@
 
 package com.lateralthoughts.vue;
 
-import android.widget.BaseAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,6 @@ import android.util.Log;
 
 //java util imports
 import java.util.ArrayList;
-import java.util.HashMap;
 
 //internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -58,9 +56,17 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         //mVueTrendingAislesDataModel.registerAisleDataObserver(this);       
     }
 
+    public TrendingAislesLeftColumnAdapter(Context c, View.OnClickListener listener, ArrayList<AisleWindowContent> content) {
+        super(c, listener, content);
+        mContext = c;
+        
+        if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
+        //mVueTrendingAislesDataModel.registerAisleDataObserver(this);       
+    }
+
+    
     @Override
     public int getCount(){
-        Log.e("AndroidRuntime","left adapter; total count = " + mVueTrendingAislesDataModel.getAisleCount()/2);
         return mVueTrendingAislesDataModel.getAisleCount()/2;
     }
 
@@ -70,7 +76,6 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         if(0 != position)
             actualPosition = (position*2);
         
-        Log.e("AndroidRuntime","left adapter; position sought = " + position);
         return mVueTrendingAislesDataModel.getAisleAt(actualPosition);
     }
     
@@ -80,7 +85,7 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         StringBuilder sb = new StringBuilder();
 
         int actualPosition = calculateActualPosition(position);
-
+        
         if (null == convertView) {
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
             convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
@@ -100,14 +105,32 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         holder = (ViewHolder) convertView.getTag();
         holder.mWindowContent = (AisleWindowContent)getItem(position);
         int scrollIndex = 0;
-        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition);
+        
+            mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);
         holder.aisleOwnersName.setText(sb.toString());
         StringBuilder contextBuilder = new StringBuilder();
         contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem);
-        holder.aisleContext.setText(contextBuilder.toString());
+        
+        //TODO: this is just temporary: currently the occasion and context info is
+        //coming out as occasion_clothing and lookingfor_clothing and stuff like that.
+        //just display something a little more realistic so we can see what the app
+        //actually look like
+        int index = position/mPossibleOccasions.length;
+        if(index >= mPossibleOccasions.length)
+            index = 0;
+        
+        String occasion = mPossibleOccasions[index];
+        index = position/mPossibleCategories.length;
+        if(index >= mPossibleCategories.length)
+            index = 0;
+        String lookingFor = mPossibleCategories[index];
+        //holder.aisleContext.setText(contextBuilder.toString());
+        holder.aisleContext.setText(occasion + " : " + lookingFor);
+        //((ViewGroup)(convertView)).setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        //convertView.setOnClickListener(mClickListener);
         return convertView;
     }
     

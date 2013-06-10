@@ -17,11 +17,17 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Color;
 
 public class ScaleImageView extends ImageView {
 	private ImageChangeListener imageChangeListener;
 	private boolean scaleToWidth = false; // this flag determines if should measure height manually dependent of width
 
+	private Rect mRect;
+	private Paint mPaint;
+	
 	public ScaleImageView(Context context) {
 		super(context);
 		init();
@@ -38,8 +44,6 @@ public class ScaleImageView extends ImageView {
 	}
 
 	private void init(){
-	    //this.setScaleType(ScaleType.CENTER_CROP);
-	    //this.setScaleType(ScaleType.FIT_CENTER);
 		this.setScaleType(ScaleType.CENTER);
 	}
 
@@ -111,12 +115,12 @@ public class ScaleImageView extends ImageView {
 			}else{
 				// need to scale to height instead
 				int marg = 0;
-				if(getParent()!=null){
+				/*if(getParent()!=null){
 					if(getParent().getParent()!=null){
 						marg+= ((RelativeLayout) getParent().getParent()).getPaddingTop();
 						marg+= ((RelativeLayout) getParent().getParent()).getPaddingBottom();
 					}
-				}
+				}*/
 				
 				int iw = this.getDrawable().getIntrinsicWidth();
 				int ih = this.getDrawable().getIntrinsicHeight();

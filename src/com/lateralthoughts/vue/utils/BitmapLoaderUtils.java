@@ -10,40 +10,31 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import com.lateralthoughts.vue.AisleImageDetails;
-import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.VueApplication;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.widget.ImageView;
 
 public class BitmapLoaderUtils {
 
-	private Context mContext;
+	//private Context mContext;
 	private static BitmapLoaderUtils sBitmapLoaderUtils;
     private FileCache mFileCache;
     private VueMemoryCache<Bitmap> mAisleImagesCache;
-    private int mScreenWidth;
-    private ExecutorService mExecutorService;
+    //private int mScreenWidth;
     
-    private final boolean DEBUG = false;
+    //private final boolean DEBUG = false;
     
 	private BitmapLoaderUtils(Context context){
-		mContext = context;
+		//mContext = context;
         mFileCache = VueApplication.getInstance().getFileCache();
         mAisleImagesCache = VueApplication.getInstance().getAisleImagesMemCache();
-        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-        mScreenWidth = metrics.widthPixels;
+        //DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+        //mScreenWidth = metrics.widthPixels;
         
-        mExecutorService = Executors.newFixedThreadPool(5);
+        //mExecutorService = Executors.newFixedThreadPool(5);
 	}
 	
 	public static BitmapLoaderUtils getInstance(Context context){
@@ -108,16 +99,10 @@ public class BitmapLoaderUtils {
             stream1.close();
             
             //Find the correct scale value. It should be the power of 2.
-            final int REQUIRED_SIZE = mScreenWidth/2;
-            int width_tmp=o.outWidth, height=o.outHeight;
+            //final int REQUIRED_SIZE = mScreenWidth/2;
+            int height=o.outHeight;
             int scale=1;
-            /*while(true){
-                if(width_tmp < REQUIRED_SIZE || height_tmp < REQUIRED_SIZE)
-                    break;
-                width_tmp/=2;
-                height_tmp/=2;
-                scale*=2;
-            }*/
+            
             if (height > bestHeight) {
 
                 // Calculate ratios of height and width to requested height and width
@@ -132,8 +117,8 @@ public class BitmapLoaderUtils {
             
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize=scale;
-            if(DEBUG) Log.d("Jaws","using inSampleSizeScale = " + scale + " original width = " + o.outWidth + "screen width = " + mScreenWidth);
+            o2.inSampleSize = scale;
+            //if(DEBUG) Log.d("Jaws","using inSampleSizeScale = " + scale + " original width = " + o.outWidth + "screen width = " + mScreenWidth);
             FileInputStream stream2=new FileInputStream(f);
             Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);
             stream2.close();

@@ -4,7 +4,6 @@ package com.lateralthoughts.vue;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 
 import com.facebook.Request;

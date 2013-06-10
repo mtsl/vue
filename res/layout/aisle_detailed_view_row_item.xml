@@ -1,0 +1,35 @@
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#EEEEEE">
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/showpiece_container" >    
+    	<com.lateralthoughts.vue.ui.AisleContentBrowser android:id="@+id/showpiece"
+        	android:layout_width="fill_parent"
+        	android:layout_height="fill_parent"
+        	android:layout_gravity="center">
+    	</com.lateralthoughts.vue.ui.AisleContentBrowser>
+    	<ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_marginRight="12dp"
+            android:src="@drawable/thumb_up"/>  
+    </FrameLayout>
+    
+    <HorizontalScrollView android:id="@+id/thumbnail_scroller_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"        
+        android:scrollbars="none">
+    	<LinearLayout android:id="@+id/thumbnail_scroller"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"       	
+        	android:gravity="bottom"
+        	android:orientation="horizontal">       
+    	</LinearLayout>        
+    </HorizontalScrollView>
+</LinearLayout>

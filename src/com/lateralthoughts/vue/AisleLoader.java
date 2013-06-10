@@ -6,21 +6,13 @@ import java.util.HashMap;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 //import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
@@ -37,7 +29,6 @@ public class AisleLoader {
     private ScaledImageViewFactory mViewFactory = null;
     private BitmapLoaderUtils mBitmapLoaderUtils;
     private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
-    private Drawable mColorDrawable;
     
     //Design Notes: The SGV is powered by data from the TrendingAislesAdapter. This adapter starts
     //the information flow by requesting top aisles in batches. As the aisle 
@@ -80,8 +71,8 @@ public class AisleLoader {
     	mContext = context;
         mViewFactory = ScaledImageViewFactory.getInstance(context);
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
-        mColorDrawable = new ColorDrawable(Color.WHITE);
         mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
+        if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
     
     //This method adds the intelligence to fetch the contents of this aisle window and
@@ -98,7 +89,7 @@ public class AisleLoader {
     //When the task completes check to make sure that the url for which the task was started is still
     //valid. If so, add the downloaded image to the view object
     public void getAisleContentIntoView(ViewHolder holder,
-    		int scrollIndex, int position){
+    		int scrollIndex, int position, boolean placeholderOnly){
     	ScaleImageView imageView = null;
     	ArrayList<AisleImageDetails> imageDetailsArr = null;
     	AisleImageDetails itemDetails = null;
@@ -155,7 +146,8 @@ public class AisleLoader {
 			}
 			else{
 				contentBrowser.addView(imageView);
-				loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView, bestHeight);
+				if(!placeholderOnly)
+				    loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView, bestHeight);
 			}
         }
     }
@@ -197,7 +189,7 @@ public class AisleLoader {
             if (viewFlipperReference != null && 
             		imageViewReference != null && bitmap != null) {
                 final ImageView imageView = imageViewReference.get();
-                final AisleContentBrowser vFlipper = viewFlipperReference.get();
+                //final AisleContentBrowser vFlipper = viewFlipperReference.get();
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
                 
                 if (this == bitmapWorkerTask) {

@@ -24,29 +24,19 @@
 
 package com.lateralthoughts.vue;
 
-import android.widget.BaseAdapter;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.content.Context;
-import android.view.View.OnTouchListener;
 import android.util.Log;
 
 //java util imports
 import java.util.ArrayList;
-import java.util.HashMap;
 
 //internal imports
-import com.lateralthoughts.vue.VueContentGateway;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 
 public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapter {
@@ -87,7 +77,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     public View getView(int position, View convertView, ViewGroup parent) {     
         ViewHolder holder;
         StringBuilder sb = new StringBuilder();
-
+        
         if (null == convertView) {
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
             convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
@@ -106,14 +96,29 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         holder = (ViewHolder) convertView.getTag();
         holder.mWindowContent = (AisleWindowContent)getItem(position);
         int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
-        mLoader.getAisleContentIntoView(holder, scrollIndex, position);
+        //if(!mIsScrolling)
+            mLoader.getAisleContentIntoView(holder, scrollIndex, position, false);
+        
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);
         holder.aisleOwnersName.setText(sb.toString());
         StringBuilder contextBuilder = new StringBuilder();
         contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem);
-        holder.aisleContext.setText(contextBuilder.toString());
+        //TODO: this is just temporary: currently the occasion and context info is
+        //coming out as occasion_clothing and lookingfor_clothing and stuff like that.
+        //just display something a little more realistic so we can see what the app
+        //actually look like
+        int index = position/mPossibleOccasions.length;
+        if(index >= mPossibleOccasions.length)
+            index = 0;
+        String occasion = mPossibleOccasions[index];
+        index = position/mPossibleCategories.length;
+        if(index >= mPossibleCategories.length)
+            index = 0;
+        String lookingFor = mPossibleCategories[index];
+        holder.aisleContext.setText(occasion + " : " + lookingFor);
+        //holder.aisleContext.setText(contextBuilder.toString());
         return convertView;
     }
 
