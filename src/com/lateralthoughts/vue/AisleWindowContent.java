@@ -12,6 +12,10 @@ package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
 
+import com.lateralthoughts.vue.utils.Utils;
+
+import android.util.Log;
+
 public class AisleWindowContent
 {
 	public static final String EMPTY_AISLE_CONTENT_ID = "EmptyAisleWindow";
@@ -94,6 +98,7 @@ public class AisleWindowContent
     		}else{
     			imageDetails.mCustomImageUrl = regularUrl;
     		}
+    		imageDetails.mCustomImageUrl = Utils.addImageInfo(imageDetails.mCustomImageUrl,imageDetails.mAvailableWidth,imageDetails.mAvailableHeight);
     	}
     	return true;
     }

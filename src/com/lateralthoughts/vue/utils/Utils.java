@@ -20,4 +20,14 @@ public class Utils {
         }
         catch(Exception ex){}
     }
+    public static String addImageInfo(String url,int width,int height) {
+		if(url.contains("width")&& url.contains("height")) {
+			return url;
+		}
+    	StringBuilder modifiedUrl = new StringBuilder(url);
+    	modifiedUrl.append("?width="+width);
+    	modifiedUrl.append("&height="+height);
+    	return modifiedUrl.toString();
+    	
+    }
 }
