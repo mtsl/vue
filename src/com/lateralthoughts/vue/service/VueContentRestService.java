@@ -96,8 +96,7 @@ public class VueContentRestService extends IntentService {
         mRequest = new HttpGet(mUrl + consolidatedParams);
 
         //add headers
-        for(ParcelableNameValuePair h : mHeaders)
-        {
+        for(ParcelableNameValuePair h : mHeaders){
             mRequest.addHeader(h.getName(), h.getValue());
         }
         executeRequest();
@@ -109,8 +108,6 @@ public class VueContentRestService extends IntentService {
 
         try {
             httpResponse = mHttpClient.execute(mRequest);
-            //int responseCode = httpResponse.getStatusLine().getStatusCode();
-            //String message = httpResponse.getStatusLine().getReasonPhrase();
 
             HttpEntity entity = httpResponse.getEntity();
 

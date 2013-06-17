@@ -17,6 +17,8 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.view.MotionEvent;
+import android.widget.AdapterView;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 
 //java utils
 
@@ -34,7 +36,7 @@ public class VueLandingAislesFragment extends Fragment {
 	
 	private ListView mLeftColumnView;
 	private ListView mRightColumnView;
-	private View.OnClickListener mAisleClickListener;
+	private AisleClickListener mAisleClickListener;
 	//private MultiColumnListView mView;
 	
 	int[] mLeftViewsHeights;
@@ -55,20 +57,11 @@ public class VueLandingAislesFragment extends Fragment {
 		mVueContentGateway = VueContentGateway.getInstance();
 		if(null == mVueContentGateway){
 			//assert here: this is a no go!
-		}		
-
-	      mAisleClickListener = new View.OnClickListener() {
-	            
-	            @Override
-	            public void onClick(View v) {
-	                // TODO Auto-generated method stub
-	                Log.e("Vinodh","onclick listener in fragment");
-	                
-	            }
-	        };
+		}
 	        
+		mAisleClickListener = new AisleClickListener();
 		mLeftColumnAdapter = new TrendingAislesLeftColumnAdapter(mContext, mAisleClickListener, null);
-		mRightColumnAdapter = new TrendingAislesRightColumnAdapter(mContext, null);
+		mRightColumnAdapter = new TrendingAislesRightColumnAdapter(mContext, mAisleClickListener, null);
 	}
 	
 	@Override
@@ -114,7 +107,14 @@ public class VueLandingAislesFragment extends Fragment {
 	                mContext.startActivity(intent);
 	             }
 	        });*/
-	    
+	       mLeftColumnView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+	            @Override
+	            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+	                Log.e("Vinodh Clicks","ok...we are getting item clicks!!");
+	                
+	            }
+	        });
+	       
 	    mLeftViewsHeights = new int[1000];
 	    mRightViewsHeights = new int[1000];
 	    Log.d("VueLandingAislesFragment","Get ready to displayed staggered view");
@@ -202,5 +202,15 @@ public class VueLandingAislesFragment extends Fragment {
             
         }
     };
+    
+    private class AisleClickListener implements AisleContentClickListener{
+        @Override
+        public void onAisleClicked(String id){
+            Log.e("Vinodh Clicks Fragment","item click came through! id = " + id);
+            Intent intent = new Intent();
+            intent.setClass(VueApplication.getInstance(), AisleDetailsViewActivity.class);
+            startActivity(intent);
+        }
+    }
 
 }

@@ -3,7 +3,6 @@ package com.lateralthoughts.vue.ui;
 //android imports
 import com.lateralthoughts.vue.AisleDetailsViewActivity;
 import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.IAisleContentAdapter;
 import com.lateralthoughts.vue.VueApplication;
 
@@ -21,6 +20,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.GestureDetector;
 
 public class AisleContentBrowser extends ViewFlipper {
     private String mAisleUniqueId;
@@ -41,6 +42,7 @@ public class AisleContentBrowser extends ViewFlipper {
     public int mLastY;
     private boolean mTouchMoved;
     private int mTapTimeout;
+    private GestureDetector mDetector;
     
 	public AisleContentBrowser(Context context){
 		super(context);
@@ -55,18 +57,18 @@ public class AisleContentBrowser extends ViewFlipper {
 		mScrollIndex = 0;
 		mAnimationInProgress = false;
 		mContext = context;
-	    /*this.setOnClickListener(new OnClickListener(){
+	    this.setOnClickListener(new OnClickListener(){
 	            @Override
 	            public void onClick(View v){
 	                //Intent intent = new Intent();
 	                //intent.setClass(VueApplication.getInstance(), AisleDetailsViewActivity.class);
-	                Log.e("VinodhTouch","Do we have a click?");
 	                //callOnClick();
 	                //mContext.startActivity(intent);
   	            }           
-	        });*/
+	        });
 	    mTapTimeout = ViewConfiguration.getTapTimeout();
 		this.setBackgroundColor(Color.WHITE);
+		mDetector = new GestureDetector(AisleContentBrowser.this.getContext(), new mListener());
 	}
 	
 	public void setUniqueId(String id){
@@ -93,8 +95,8 @@ public class AisleContentBrowser extends ViewFlipper {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
-	        boolean consumed = true;
 	        final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
+	        boolean result = mDetector.onTouchEvent(event);
 	        if (event.getAction() == MotionEvent.ACTION_DOWN) {
 	            mAnimationInProgress= false;
 	            mFirstX = (int) event.getX();
@@ -119,7 +121,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	            mLastY = (int)event.getY();
 	            if(mFirstY - mLastY > SWIPE_MIN_DISTANCE ||
 	                    mLastY - mFirstY > SWIPE_MIN_DISTANCE){
-	                consumed = true;
 	                return super.onTouchEvent(event);
 	            }
 
@@ -234,4 +235,28 @@ public class AisleContentBrowser extends ViewFlipper {
 	public IAisleContentAdapter getCustomAdapter(){
 	    return mSpecialNeedsAdapter;
 	}
+	
+	class mListener extends GestureDetector.SimpleOnGestureListener {
+	    @Override
+	    public boolean onDown(MotionEvent e) {
+	        return true;
+	    }
+	    
+	    @Override
+	    public boolean onSingleTapConfirmed(MotionEvent event){
+	        Log.e("Vinodh Clicks","ok...we are getting item clicks!!");
+	        mClickListener.onAisleClicked(mAisleUniqueId);
+	        return true;
+	    }
+	 }
+	
+	public interface AisleContentClickListener{
+	    public void onAisleClicked(String id);
+	}
+	
+	public void setAisleContentClickListener(AisleContentClickListener listener){
+	    mClickListener = listener;
+	}
+	
+	private AisleContentClickListener mClickListener;
 }
