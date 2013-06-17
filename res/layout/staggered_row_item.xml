@@ -3,11 +3,13 @@
     android:layout_height="fill_parent"
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical"
-    android:layout_marginBottom="1dp">
+    android:layout_marginBottom="1dp"
+    android:focusable="true">
 
     <com.lateralthoughts.vue.ui.AisleContentBrowser android:id="@+id/aisle_content_flipper"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:focusable="true">
 
     </com.lateralthoughts.vue.ui.AisleContentBrowser>
 

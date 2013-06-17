@@ -34,11 +34,13 @@ import android.widget.TextView;
 import android.content.Context;
 import android.util.Log;
 
+
 //java util imports
 import java.util.ArrayList;
 
 //internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 
 public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleDataObserver {
     private Context mContext;
@@ -53,7 +55,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
     public int lastX;
     public boolean mAnimationInProgress;
     protected boolean mIsScrolling;
-    protected View.OnClickListener mClickListener;
+    protected AisleContentClickListener mClickListener;
     
     protected String mPossibleOccasions[] = {"Pool Party", "Birthday", "Wedding", "Anniversary",
                                            "Winter Ball", "Disney Land", "Cocktail"};
@@ -71,7 +73,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         mIsScrolling = false;
     }
     
-    public TrendingAislesGenericAdapter(Context c, View.OnClickListener listener, ArrayList<AisleWindowContent> content) {
+    public TrendingAislesGenericAdapter(Context c, AisleContentClickListener listener, ArrayList<AisleWindowContent> content) {
         mContext = c;
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
@@ -119,6 +121,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         }
         
         holder = (ViewHolder) convertView.getTag();
+        //holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         holder.mWindowContent = (AisleWindowContent)getItem(actualPosition);
         int scrollIndex = 0;
         mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);

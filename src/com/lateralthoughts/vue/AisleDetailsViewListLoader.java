@@ -51,7 +51,6 @@ public class AisleDetailsViewListLoader {
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
         mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
         DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
-        //mBestHeight = Math.round((float) dm.heightPixels * .75f);
         mBitmapLoaderUtils.clearCache();
         if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
