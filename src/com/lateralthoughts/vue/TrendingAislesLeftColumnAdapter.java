@@ -38,6 +38,7 @@ import java.util.ArrayList;
 
 //internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 
 public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
@@ -56,7 +57,7 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         //mVueTrendingAislesDataModel.registerAisleDataObserver(this);       
     }
 
-    public TrendingAislesLeftColumnAdapter(Context c, View.OnClickListener listener, ArrayList<AisleWindowContent> content) {
+    public TrendingAislesLeftColumnAdapter(Context c, AisleContentClickListener listener, ArrayList<AisleWindowContent> content) {
         super(c, listener, content);
         mContext = c;
         
@@ -103,6 +104,7 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
 
         
         holder = (ViewHolder) convertView.getTag();
+        holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         holder.mWindowContent = (AisleWindowContent)getItem(position);
         int scrollIndex = 0;
         
