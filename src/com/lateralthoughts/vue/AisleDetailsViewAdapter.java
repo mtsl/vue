@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 //internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 
 public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
@@ -36,6 +37,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     public int firstX;
     public int lastX;
     private AisleDetailsViewListLoader mViewLoader;
+    private AisleDetailSwipeListener mswipeListner;
     
     //we need to customize the layout depending on screen height & width which
     //we will get on the fly
@@ -46,11 +48,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     private int mThumbnailsHeight;
     private int mActionBarHeight;
 
-    public AisleDetailsViewAdapter(Context c, ArrayList<AisleWindowContent> content) {
+    public AisleDetailsViewAdapter(Context c,AisleDetailSwipeListener swipeListner, ArrayList<AisleWindowContent> content) {
         super(c, content);
         mContext = c;
         mViewLoader = AisleDetailsViewListLoader.getInstance(mContext);
-        
+        mswipeListner = swipeListner;
         mScreenHeight = VueApplication.getInstance().getScreenHeight();
         mScreenWidth = VueApplication.getInstance().getScreenWidth();
         float scale = mContext.getResources().getDisplayMetrics().density;
@@ -73,7 +75,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
     @Override
     public int getCount(){
-        return mVueTrendingAislesDataModel.getAisleCount();
+       // return mVueTrendingAislesDataModel.getAisleCount();
+    	return 1;
     }
 
     @Override
@@ -97,17 +100,17 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
             holder.aisleContentBrowser = (AisleContentBrowser) convertView.findViewById(R.id.showpiece);
             FrameLayout fl = (FrameLayout) convertView.findViewById(R.id.showpiece_container);
             //holder.thumbnailContainer = (HorizontalScrollView)convertView.findViewById(R.id.thumbnail_scroller_container);
-            holder.thumbnailScroller = (LinearLayout)convertView.findViewById(R.id.thumbnail_scroller);
+            //holder.thumbnailScroller = (LinearLayout)convertView.findViewById(R.id.thumbnail_scroller);
             FrameLayout.LayoutParams showpieceParams = 
                     new FrameLayout.LayoutParams(mShowPieceWidth, mShowPieceHeight);
             LinearLayout.LayoutParams containerParams = 
                     new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             
             holder.aisleContentBrowser.setLayoutParams(showpieceParams);
-            
+            holder.aisleContentBrowser.setAisleDetailSwipeListener(mswipeListner);
             FrameLayout.LayoutParams thumbnailParams = 
                     new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, mThumbnailsHeight);
-            holder.thumbnailScroller.setLayoutParams(thumbnailParams);
+           // holder.thumbnailScroller.setLayoutParams(thumbnailParams);
             
             holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
             convertView.setTag(holder);
@@ -123,7 +126,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     static class ViewHolder{
         AisleContentBrowser aisleContentBrowser;
         HorizontalScrollView thumbnailContainer;
-        LinearLayout thumbnailScroller;
+      //  LinearLayout thumbnailScroller;
         TextView aisleOwnersName;
         TextView aisleContext;
         ImageView profileThumbnail;
