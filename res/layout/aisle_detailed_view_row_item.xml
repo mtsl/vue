@@ -20,7 +20,7 @@
             android:src="@drawable/thumb_up"/>  
     </FrameLayout>
     
-    <HorizontalScrollView android:id="@+id/thumbnail_scroller_container"
+ <!--    <HorizontalScrollView android:id="@+id/thumbnail_scroller_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"        
@@ -31,5 +31,5 @@
         	android:gravity="bottom"
         	android:orientation="horizontal">       
     	</LinearLayout>        
-    </HorizontalScrollView>
+    </HorizontalScrollView> -->
 </LinearLayout>
