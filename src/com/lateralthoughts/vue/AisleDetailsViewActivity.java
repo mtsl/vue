@@ -4,13 +4,17 @@ package com.lateralthoughts.vue;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 
 public class AisleDetailsViewActivity extends FragmentActivity {
+	
     @Override
     public void onCreate(Bundle icicle){
         super.onCreate(icicle);
         setContentView(R.layout.aisle_details_activity_landing);
+        
+      
     }
     
     @Override
@@ -28,7 +32,7 @@ public class AisleDetailsViewActivity extends FragmentActivity {
       public void onActivityResult(int requestCode, int resultCode, Intent data) {
           super.onActivityResult(requestCode, resultCode, data);
       }
-      
+     
       /*@Override
       public boolean onCreateOptionsMenu(Menu menu) {
           getMenuInflater().inflate(R.menu.title_options, menu);

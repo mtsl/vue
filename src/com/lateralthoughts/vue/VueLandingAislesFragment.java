@@ -205,10 +205,12 @@ public class VueLandingAislesFragment extends Fragment {
     
     private class AisleClickListener implements AisleContentClickListener{
         @Override
-        public void onAisleClicked(String id){
+        public void onAisleClicked(String id,int count){
             Log.e("Vinodh Clicks Fragment","item click came through! id = " + id);
             Intent intent = new Intent();
             intent.setClass(VueApplication.getInstance(), AisleDetailsViewActivity.class);
+            VueApplication.getInstance().setClickedWindowID(id);
+            VueApplication.getInstance().setClickedWindowCount(count);
             startActivity(intent);
         }
     }

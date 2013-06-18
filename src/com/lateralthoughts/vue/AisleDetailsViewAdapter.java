@@ -105,7 +105,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
                     new FrameLayout.LayoutParams(mShowPieceWidth, mShowPieceHeight);
             LinearLayout.LayoutParams containerParams = 
                     new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            
+             LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT,android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+             //showpieceParams.setMargins(0, 15, 0, 0);
+             // fl.setLayoutParams(linearParams);
             holder.aisleContentBrowser.setLayoutParams(showpieceParams);
             holder.aisleContentBrowser.setAisleDetailSwipeListener(mswipeListner);
             FrameLayout.LayoutParams thumbnailParams = 
@@ -118,6 +120,14 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         
         holder = (ViewHolder) convertView.getTag();
         holder.mWindowContent = (AisleWindowContent)getItem(position);
+        for(int i = 0;i<mVueTrendingAislesDataModel.getAisleCount();i++){
+        	 holder.mWindowContent = (AisleWindowContent)getItem(i);
+        	 if(holder.mWindowContent.getAisleId().equalsIgnoreCase(VueApplication.getInstance().getClickedWindowID())){
+        		 holder.mWindowContent = (AisleWindowContent)getItem(i);
+        		 break;
+        	 }
+        }
+       
         int scrollIndex = 0;
         mViewLoader.getAisleContentIntoView(holder, scrollIndex, position);
         return convertView;

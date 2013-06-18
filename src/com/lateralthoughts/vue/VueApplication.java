@@ -29,6 +29,8 @@ public class VueApplication extends Application {
 	private HttpClient mHttpClient;
 	private FileCache mFileCache;
 	private ScaleImageView mEmptyImageView;
+	private String mWindowID;
+	private int mWindowCount;
 	
 	private int mScreenHeight;
 	private int mScreenWidth;
@@ -103,5 +105,16 @@ public class VueApplication extends Application {
     public int getScreenWidth(){
         return mScreenWidth;   
     }
-
+    public void setClickedWindowID(String id) {
+    	mWindowID = id;
+    }
+    public String getClickedWindowID() {
+    	return mWindowID;
+    }
+    public void setClickedWindowCount(int count) {
+    	mWindowCount = count;
+    }
+    public int getClickedWindowCount() {
+    	return mWindowCount;
+    }
 }

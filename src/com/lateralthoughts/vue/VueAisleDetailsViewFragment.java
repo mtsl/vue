@@ -36,7 +36,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
     AisleDetailsSwipeListner mSwipeListener;
     IndicatorView mIndicatorView;
     private int mCurrentScreen;
-    private int  mTotalScreenCount = 5;
+    private int  mTotalScreenCount ;
     private String mScreenDirection;
 
     //TODO: define a public interface that can be implemented by the parent
@@ -54,9 +54,12 @@ public class VueAisleDetailsViewFragment extends Fragment {
         mVueContentGateway = VueContentGateway.getInstance();
         if(null == mVueContentGateway){
             //assert here: this is a no go!
-        }       
+        }  
+        Log.i("windowID", "windowID: receivedd  "+ VueApplication.getInstance().getClickedWindowID());
         mSwipeListener = new AisleDetailsSwipeListner();
         mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener, null);
+      
+        
     }
     
     @Override
@@ -77,17 +80,17 @@ public class VueAisleDetailsViewFragment extends Fragment {
         final LinearLayout dot_indicator_bg = (LinearLayout)v.findViewById(R.id.dot_indicator_bg);
         RelativeLayout vue_image_indicator = (RelativeLayout)v.findViewById(R.id.vue_image_indicator);
         mIndicatorView = new IndicatorView(getActivity());
-   /*     RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 15);
-        vue_image_indicator.setLayoutParams(relParams);
+        RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+  
         relParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         relParams.addRule(RelativeLayout.CENTER_VERTICAL);
-        mIndicatorView.setLayoutParams(relParams);*/
+        mIndicatorView.setLayoutParams(relParams);
         vue_image_indicator.addView(mIndicatorView);
         
         mIndicatorView.setDrawables(R.drawable.number_active,
         R.drawable.bullets_bg, R.drawable.number_inactive);
         mCurrentScreen = 1;
-        
+        mTotalScreenCount = VueApplication.getInstance().getClickedWindowCount();
         mIndicatorView.setNumberofScreens(mTotalScreenCount);
         mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
         
@@ -99,7 +102,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
+				// TODO need to invisible this view in a smooth way
 				dot_indicator_bg.setVisibility(View.GONE);
 			}
 		}, 5000);
@@ -116,6 +119,12 @@ public class VueAisleDetailsViewFragment extends Fragment {
         Log.d("VueAisleDetailsViewFragment","Get ready to display details view");
         return v;
     }
+    /**
+     * 
+     * @author raju
+     *while swiping the views inside the AisleContentWindow onAisleSwipe method will be
+     *called to idicate the current position of the image.
+     */
     private class AisleDetailsSwipeListner implements AisleDetailSwipeListener {
 
 		@Override

@@ -252,14 +252,17 @@ public class AisleContentBrowser extends ViewFlipper {
 	    @Override
 	    public boolean onSingleTapConfirmed(MotionEvent event){
 	        Log.e("Vinodh Clicks","ok...we are getting item clicks!!");
-	        if(mClickListener != null)
-	        mClickListener.onAisleClicked(mAisleUniqueId);
+	        if(mClickListener != null && null != mSpecialNeedsAdapter) {
+	        mClickListener.onAisleClicked(mAisleUniqueId,mSpecialNeedsAdapter.getAisleItemsCount());
+	          
+	        }
+	        
 	        return true;
 	    }
 	 }
 	
 	public interface AisleContentClickListener{
-	    public void onAisleClicked(String id);
+	    public void onAisleClicked(String id,int count);
 	}
 	
 	public void setAisleContentClickListener(AisleContentClickListener listener){

@@ -136,8 +136,8 @@ activeIndicatorBitmap = BitmapFactory.decodeResource(
 context.getResources(), R.drawable.number_active);
 movingDot = context.getResources().getDrawable(
 R.drawable.number_active);
-movingDot.setBounds(0, 0, activeIndicatorBitmap.getWidth(),
-activeIndicatorBitmap.getHeight());
+movingDot.setBounds(0, 0, activeIndicatorBitmap.getWidth()/2,
+activeIndicatorBitmap.getHeight()/2);
 setFocusable(true);
 setFocusableInTouchMode(true);
 this.setBackgroundResource(R.drawable.bullets_bg);
