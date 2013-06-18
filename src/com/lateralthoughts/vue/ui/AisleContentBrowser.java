@@ -4,6 +4,7 @@ package com.lateralthoughts.vue.ui;
 import com.lateralthoughts.vue.AisleDetailsViewActivity;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
+import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 
 import android.content.Context;
@@ -134,7 +135,9 @@ public class AisleContentBrowser extends ViewFlipper {
 	                if(false == mAnimationInProgress){
 	                    int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
 	                    ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex+1);
-	                    
+	                    if(mSwipeListener != null) {
+                        	mSwipeListener.onAisleSwipe("Left");
+                        }
 	                    if(null != mSpecialNeedsAdapter && null == nextView){
 	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, null, currentIndex, currentIndex+1, true)){
 	                            mAnimationInProgress = true;
@@ -144,6 +147,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                                public void onAnimationEnd(Animation animation) {
 	                                    Animation cantWrapRightPart2 = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right2);
 	                                    aisleContentBrowser.getCurrentView().startAnimation(cantWrapRightPart2);
+	                                 
 	                                }
 	                                public void onAnimationStart(Animation animation) {
 
@@ -182,7 +186,9 @@ public class AisleContentBrowser extends ViewFlipper {
 	                if(false == mAnimationInProgress){
 	                       int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
 	                       ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex-1);
-	                        
+	                       if(mSwipeListener != null) {
+                           	mSwipeListener.onAisleSwipe("Right");
+                           }
 	                        if(null != mSpecialNeedsAdapter && null == nextView){
 	                            if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex-1, true)){
 	                                Animation cantWrapLeft = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left);
@@ -191,6 +197,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                                    public void onAnimationEnd(Animation animation) {
 	                                        Animation cantWrapLeftPart2 = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left2);
 	                                        aisleContentBrowser.getCurrentView().startAnimation(cantWrapLeftPart2);
+	                                       
 	                                    }
 	                                    public void onAnimationStart(Animation animation) {
 
@@ -245,6 +252,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	    @Override
 	    public boolean onSingleTapConfirmed(MotionEvent event){
 	        Log.e("Vinodh Clicks","ok...we are getting item clicks!!");
+	        if(mClickListener != null)
 	        mClickListener.onAisleClicked(mAisleUniqueId);
 	        return true;
 	    }
@@ -257,6 +265,13 @@ public class AisleContentBrowser extends ViewFlipper {
 	public void setAisleContentClickListener(AisleContentClickListener listener){
 	    mClickListener = listener;
 	}
-	
+	public interface AisleDetailSwipeListener{
+	    public void onAisleSwipe(String id);
+	    public void onReceiveImageCount(int count);
+	}
+	public void setAisleDetailSwipeListener(AisleDetailSwipeListener swipListener) {
+		mSwipeListener = swipListener; 
+	}
 	private AisleContentClickListener mClickListener;
+	public AisleDetailSwipeListener mSwipeListener;
 }

@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 
-import com.facebook.Request;
+/*import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
-import com.facebook.model.GraphUser;
+import com.facebook.model.GraphUser;*/
 
 public class VueLandingPageActivity extends FragmentActivity {
 	@Override
@@ -18,7 +18,7 @@ public class VueLandingPageActivity extends FragmentActivity {
 		super.onCreate(icicle);
 		setContentView(R.layout.vue_landing_main);
 	    // start Facebook Login
-	    Session.openActiveSession(this, true, new Session.StatusCallback() {
+/*	    Session.openActiveSession(this, true, new Session.StatusCallback() {
 
 	      // callback when session changes state
 	      @Override
@@ -37,7 +37,7 @@ public class VueLandingPageActivity extends FragmentActivity {
 	          });
 	        }
 	      }
-	    });
+	    });*/
 	    
         Intent i = new Intent();
         i.setClass(this, SplashScreen.class);
@@ -58,7 +58,7 @@ public class VueLandingPageActivity extends FragmentActivity {
 	  @Override
 	  public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	      super.onActivityResult(requestCode, resultCode, data);
-	      Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+	     // Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 	  }
 	  
 	  @Override

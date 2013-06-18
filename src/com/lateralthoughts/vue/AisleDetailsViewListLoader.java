@@ -90,10 +90,10 @@ public class AisleDetailsViewListLoader {
             holder.aisleContentBrowser.setCustomAdapter(null);
             adapter.setContentSource(desiredContentId, holder.mWindowContent);
             
-            for(int i=0;i<holder.thumbnailScroller.getChildCount();i++){
+          /*  for(int i=0;i<holder.thumbnailScroller.getChildCount();i++){
                 mViewFactory.returnUsedImageView((ScaleImageView)holder.thumbnailScroller.getChildAt(i));
-            }
-            holder.thumbnailScroller.removeAllViews();
+            }*/
+           // holder.thumbnailScroller.removeAllViews();
             holder.aisleContentBrowser.removeAllViews();
             holder.aisleContentBrowser.setUniqueId(desiredContentId);
             holder.aisleContentBrowser.setScrollIndex(scrollIndex);
@@ -103,7 +103,8 @@ public class AisleDetailsViewListLoader {
         
         imageDetailsArr = windowContent.getImageList();
         
-        if(null != imageDetailsArr && imageDetailsArr.size() != 0){         
+        if(null != imageDetailsArr && imageDetailsArr.size() != 0){  
+        	 holder.aisleContentBrowser.mSwipeListener.onReceiveImageCount(imageDetailsArr.size());
             itemDetails = imageDetailsArr.get(0);
             imageView = mViewFactory.getEmptyImageView();
             LinearLayout.LayoutParams params = 
@@ -121,7 +122,7 @@ public class AisleDetailsViewListLoader {
                 loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView, windowContent.getBestHeightForWindow());
             }
             
-            for(int k=0;k<imageDetailsArr.size();k++){
+     /*       for(int k=0;k<imageDetailsArr.size();k++){
                 itemDetails = imageDetailsArr.get(k);
                 imageView = mViewFactory.getPreconfiguredImageView(position);
                 //LinearLayout.LayoutParams params = 
@@ -140,7 +141,7 @@ public class AisleDetailsViewListLoader {
                     imageView.setScaleY(0.9f);
                     loadBitmap(itemDetails.mCustomImageUrl, null, imageView, 400);
                 }
-            }            
+            } */           
         }        
         //we also need to set up the horizontal image views
     }
