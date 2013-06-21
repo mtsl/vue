@@ -101,7 +101,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
     
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {     
-        ViewHolder holder;
+/*        ViewHolder holder;
         StringBuilder sb = new StringBuilder();
 
         int actualPosition = calculateActualPosition(position);
@@ -131,7 +131,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         holder.aisleOwnersName.setText(sb.toString());
         StringBuilder contextBuilder = new StringBuilder();
         contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem);
-        holder.aisleContext.setText(contextBuilder.toString());
+        holder.aisleContext.setText(contextBuilder.toString());*/
         return convertView;
     }
     
