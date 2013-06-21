@@ -35,7 +35,7 @@ initialize(context);
 
     }
     
-    
+    //test commit for checking
     public void setNumberofScreens(int numberOfScreens){
 TOTAL_SCREEN_NUMBER = numberOfScreens;
     }
