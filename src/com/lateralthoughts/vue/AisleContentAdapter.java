@@ -271,6 +271,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                 //Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);
+                
+                Log.i("bitmaptest", "bitmaptest1: width "+bitmap.getWidth()+" height: "+bitmap.getHeight());
             }
             else{
                 loadBitmap(itemDetails.mCustomImageUrl, mWindowContent.getBestHeightForWindow(),contentBrowser, imageView);
@@ -328,6 +330,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                 if (this == bitmapWorkerTask) {
                     vFlipper.invalidate();
                     imageView.setImageBitmap(bitmap);
+                    Log.i("bitmaptest", "bitmaptest2: width "+bitmap.getWidth()+" height: "+bitmap.getHeight());
                 }
             }
         }

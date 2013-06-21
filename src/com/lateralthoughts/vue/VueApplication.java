@@ -34,6 +34,7 @@ public class VueApplication extends Application {
 	
 	private int mScreenHeight;
 	private int mScreenWidth;
+	private int mTextSize = 18;
 	
 	@Override
 	public void onCreate(){
@@ -117,4 +118,7 @@ public class VueApplication extends Application {
     public int getClickedWindowCount() {
     	return mWindowCount;
     }
+    public int getmTextSize() {
+		return mTextSize;
+	}
 }

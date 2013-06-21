@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 //java utils
@@ -32,12 +33,13 @@ public class VueAisleDetailsViewFragment extends Fragment {
     private Context mContext;
     private VueContentGateway mVueContentGateway;
     private AisleDetailsViewAdapter mAisleDetailsAdapter;  
-    private ListView mAisleDetailsList;
+    private ScrollView mAisleDetailsList;
     AisleDetailsSwipeListner mSwipeListener;
     IndicatorView mIndicatorView;
     private int mCurrentScreen;
     private int  mTotalScreenCount ;
     private String mScreenDirection;
+    private LinearLayout mVueDetailsContainer;
 
     //TODO: define a public interface that can be implemented by the parent
     //activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -58,7 +60,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         Log.i("windowID", "windowID: receivedd  "+ VueApplication.getInstance().getClickedWindowID());
         mSwipeListener = new AisleDetailsSwipeListner();
         mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener, null);
-      
+        mVueDetailsContainer = mAisleDetailsAdapter.prepareDetailsVue();
         
     }
     
@@ -73,10 +75,12 @@ public class VueAisleDetailsViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.aisles_detailed_view_fragment, container, false);
         
-        mAisleDetailsList = (ListView)v.findViewById(R.id.aisle_details_list);  
+        mAisleDetailsList = (ScrollView)v.findViewById(R.id.aisle_details_list);  
         mAisleDetailsList.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
-        mAisleDetailsAdapter.notifyDataSetChanged();
+        mAisleDetailsAdapter.addComments(mVueDetailsContainer.findViewById(R.id.vuewndow_user_comments_lay));
+        mAisleDetailsList.addView(mVueDetailsContainer);
+       // mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+       // mAisleDetailsAdapter.notifyDataSetChanged();
         final LinearLayout dot_indicator_bg = (LinearLayout)v.findViewById(R.id.dot_indicator_bg);
         RelativeLayout vue_image_indicator = (RelativeLayout)v.findViewById(R.id.vue_image_indicator);
         mIndicatorView = new IndicatorView(getActivity());
@@ -130,13 +134,13 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		@Override
 		public void onAisleSwipe(String direction) {
 			// TODO Auto-generated method stub
-			Toast.makeText(getActivity(), "swipe: "+direction, Toast.LENGTH_LONG).show();
+			//Toast.makeText(getActivity(), "swipe: "+direction, Toast.LENGTH_LONG).show();
 			mIndicatorView.switchToScreen(mCurrentScreen,
 					 checkScreenBoundaries(direction,mCurrentScreen));
 		}
     	public void onReceiveImageCount(int count) {
     		mTotalScreenCount = count;
-    		Toast.makeText(getActivity(), "swipe image Count: "+count, Toast.LENGTH_LONG).show();
+    		//Toast.makeText(getActivity(), "swipe image Count: "+count, Toast.LENGTH_LONG).show();
     	}
     }
     private int checkScreenBoundaries(String direction,int mCurrentScreen){

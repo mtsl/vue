@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="24dp"
+    android:layout_marginLeft="12dp"
+    android:layout_marginRight="12dp"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/vuewndow_comment_img"
+        style="@style/vue_comeents_imgalign"
+        android:src="@drawable/comment" />
+
+    <TextView
+        android:id="@+id/vuewndow_comment_count"
+        style="@style/vue_comeents_text_align"
+        android:layout_marginLeft="4dp"
+        android:layout_toRightOf="@+id/vuewndow_comment_img"
+        android:text="5 comments" />
+
+    <ImageView
+        android:id="@+id/vuewndow_bookmark_img"
+        style="@style/vue_comeents_imgalign"
+        android:layout_toLeftOf="@+id/vuewndow_bookmark_count"
+        android:src="@drawable/addimage01" />
+
+    <TextView
+        android:id="@+id/vuewndow_bookmark_count"
+        style="@style/vue_comeents_text_align"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_toLeftOf="@+id/vuewndow_lik_img"
+        android:text="12" />
+
+    <ImageView
+        android:id="@+id/vuewndow_lik_img"
+        style="@style/vue_comeents_imgalign"
+        android:layout_toLeftOf="@+id/vuewndow_lik_count"
+        android:src="@drawable/thumb_up" />
+
+    <TextView
+        android:id="@+id/vuewndow_lik_count"
+        style="@style/vue_comeents_text_align"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="12dp"
+        android:text="52" />
+
+</RelativeLayout>
