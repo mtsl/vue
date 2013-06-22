@@ -13,9 +13,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.HorizontalScrollView;
 import android.widget.Toast;
@@ -98,8 +100,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		LinearLayout vue_details_container = null;
 		if (null == convertView) {
 			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
-			AbsListView.LayoutParams params = new AbsListView.LayoutParams(
-					mScreenWidth, mScreenHeight - 156);
+	/*		AbsListView.LayoutParams params = new AbsListView.LayoutParams(
+					mScreenWidth, mScreenHeight - 156);*/
 			convertView = layoutInflator.inflate(
 					R.layout.aisle_detailed_view_row_item, null);
 			vue_details_container = (LinearLayout) convertView
@@ -130,6 +132,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		holder = (ViewHolder) convertView.getTag();
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
+	
+		
+		
 		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
 			holder.mWindowContent = (AisleWindowContent) getItem(i);
 			if (holder.mWindowContent.getAisleId().equalsIgnoreCase(
@@ -139,7 +144,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				break;
 			}
 		}
-
+		 AisleContext context = holder.mWindowContent.getAisleContext();
+		 StringBuilder contextBuilder = new StringBuilder();
+	        contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem).append("\n"+context.mFirstName);
+	        holder.aisleDescription.setText(contextBuilder.toString());
 		int scrollIndex = 0;
 		mViewLoader.getAisleContentIntoView(holder, scrollIndex, position);
 		return vue_details_container;
@@ -151,6 +159,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     * TODO: need to used the pooled views to avoid the unnecessary garbage collection
     */
 	public void addComments(View view) {
+		ListView list = (ListView) view.findViewById(R.id.commentsList);
+		list.setAdapter(new Comments());
+		
+		/*
+		ListView list = (ListView) view.findViewById(R.id.commentsList);
 		LayoutInflater layoutInflator = LayoutInflater.from(mContext);
 		for (int i = 0; i < 5; i++) {
 			View commentView = layoutInflator.inflate(R.layout.comments, null);
@@ -176,5 +189,54 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			}
 			((ViewGroup) view).addView(commentView);
 		}
+	*/}
+	private class Comments extends BaseAdapter {
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return 5;
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			Log.i("screenno", "screenno list calledsfsdfsdf");
+			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
+			convertView = layoutInflator.inflate(R.layout.comments, null);
+			ImageView userImage = (ImageView) convertView
+					.findViewById(R.id.vue_user_img);
+			TextView userComment = (TextView) convertView
+					.findViewById(R.id.vue_user_comment);
+			userComment.setTextSize(VueApplication.getInstance().getmTextSize());
+			if (position == 4) {
+				TextView addComment = (TextView) convertView
+						.findViewById(R.id.vue_user_entercomment);
+				addComment.setVisibility(View.VISIBLE);
+				addComment.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Toast.makeText(mContext, "clicked", Toast.LENGTH_SHORT)
+								.show();
+
+					}
+				});
+
+			}
+			return convertView;
+		}
+		
 	}
 }

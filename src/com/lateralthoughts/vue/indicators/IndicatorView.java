@@ -1,14 +1,18 @@
 package com.lateralthoughts.vue.indicators;
 
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -23,7 +27,8 @@ public class IndicatorView extends LinearLayout {
     private AnimateDrawable mDrawable;
     Context context;
 
-    private int TOTAL_SCREEN_NUMBER = 4;
+    private int TOTAL_SCREEN_NUMBER = VueApplication.getInstance().getClickedWindowCount();
+      
     private int CURRENTSCREEN = 1;
     private int NEXT_SCREEN = 2;
     private int indicatorBitmapWidth,indicatorBitmapHeigt;
@@ -34,16 +39,22 @@ this.context = context;
 initialize(context);
 
     }
-    
+    @Override
+    public void setId(int id) {
+    	 
+    	super.setId(id);
+    }
     
     public void setNumberofScreens(int numberOfScreens){
 TOTAL_SCREEN_NUMBER = numberOfScreens;
+//indicatorBitmap = getNewBitmap(indicatorBitmap);
     }
     
     public void setDrawables(int movingDot,int backGround,int inactiveDots ){
 
 indicatorBitmap = BitmapFactory.decodeResource(context.getResources(),
 backGround);
+//indicatorBitmap = getNewBitmap(indicatorBitmap);
 inactiveIndicatorBitmap = BitmapFactory.decodeResource(
 context.getResources(), inactiveDots);
 activeIndicatorBitmap = BitmapFactory.decodeResource(
@@ -60,6 +71,8 @@ indicatorBitmapHeigt = indicatorBitmap.getHeight();
     }
     
     public void switchToScreen(int sourceScreenNumber,int destScreennumber){
+ 
+     
 CURRENTSCREEN = sourceScreenNumber;
 NEXT_SCREEN = destScreennumber;
 
@@ -106,8 +119,9 @@ initialize(context);
 
     @Override
     protected void onDraw(Canvas canvas) {
-//Log.e("I m here","I m here");
+ 
 int distance = indicatorBitmap.getWidth() / TOTAL_SCREEN_NUMBER;
+
 
 int i =1;
 while(i<=TOTAL_SCREEN_NUMBER){
@@ -126,10 +140,12 @@ mDrawable.draw(canvas);
 invalidate();
     }
 
-    private void initialize(Context context) {
+    @SuppressWarnings("deprecation")
+	private void initialize(Context context) {
 
 indicatorBitmap = BitmapFactory.decodeResource(context.getResources(),
 R.drawable.bullets_bg);
+//indicatorBitmap = getNewBitmap(indicatorBitmap);
 inactiveIndicatorBitmap = BitmapFactory.decodeResource(
 context.getResources(), R.drawable.number_inactive);
 activeIndicatorBitmap = BitmapFactory.decodeResource(
@@ -140,9 +156,22 @@ movingDot.setBounds(0, 0, activeIndicatorBitmap.getWidth()/2,
 activeIndicatorBitmap.getHeight()/2);
 setFocusable(true);
 setFocusableInTouchMode(true);
-this.setBackgroundResource(R.drawable.bullets_bg);
- 
+//this.setBackgroundResource(R.drawable.bullets_bg);
+ Drawable d = getResources().getDrawable(R.drawable.bullets_bg);
+ d = new BitmapDrawable(getResources(), indicatorBitmap); 
+ this.setBackgroundDrawable(d);
 
     }
-
+ 
+/*private Bitmap getNewBitmap(Bitmap bitmap) {
+	int bgSize = 200;
+	Log.i("screenno", "screenno called TOTAL_SCREEN_NUMBER: "+TOTAL_SCREEN_NUMBER);
+    	if(TOTAL_SCREEN_NUMBER <= 5) {
+    		Log.i("screenno", "screenno called");
+    		bgSize = 100;
+    	}
+    	return Bitmap.createScaledBitmap(bitmap, bgSize, 20, true);
+		 
+    	
+    }*/
 }

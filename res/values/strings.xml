@@ -8,6 +8,7 @@
     <string name="middle_earth">Visiting Middle Earth</string>
     <string name="profile_owner">Profile Owner</string>
     <string name="aisle_owner_profile_desc">Profile of the aisle owner</string>
+ 
     <!-- End of API endpoint tags -->
     
     <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string>-->

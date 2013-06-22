@@ -33,6 +33,18 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="5dp"
         android:background="@android:color/white" >
+     <!--    <TextView android:layout_width="wrap_content"
+                  android:id="@+id/leftgo"
+                  android:layout_height="wrap_content"
+                  
+                  android:layout_alignParentLeft="true"
+                  android:text=">"/>
+                <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                   android:id="@+id/rightgo"
+                  
+                  android:layout_alignParentRight="true"
+                  android:text=">"/> -->
     </RelativeLayout>
 
     <LinearLayout

@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:background="#EEEEEE"
     android:id="@+id/vue_details_container"
     android:orientation="vertical" >
@@ -46,32 +46,14 @@
     <LinearLayout android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
+        android:layout_weight="3"
         android:layout_marginTop="4dp"
         android:orientation="vertical">
         <include layout="@layout/vuedetails_comment_window"/>
-        <LinearLayout android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:id="@+id/vuewndow_user_comments_lay"
-            android:orientation="vertical">
-            
-        </LinearLayout>
-    </LinearLayout>
  
-    <!--
-    <HorizontalScrollView android:id="@+id/thumbnail_scroller_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"        
-        android:scrollbars="none">
-    	<LinearLayout android:id="@+id/thumbnail_scroller"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"       	
-        	android:gravity="bottom"
-        	android:orientation="horizontal">       
-    	</LinearLayout>        
-    </HorizontalScrollView>
-    -->
-
+            <ListView android:layout_width="fill_parent"
+                      android:layout_height="fill_parent"
+                      android:id="@+id/commentsList"></ListView>
+ 
+    </LinearLayout>
 </LinearLayout>

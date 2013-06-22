@@ -3,22 +3,31 @@ package com.lateralthoughts.vue;
 //generic android & java goodies
 import com.lateralthoughts.vue.indicators.IndicatorView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
+import com.lateralthoughts.vue.utils.Helper;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.support.v4.app.Fragment;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.webkit.WebView.FindListener;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 //java utils
@@ -77,25 +86,73 @@ public class VueAisleDetailsViewFragment extends Fragment {
         
         mAisleDetailsList = (ScrollView)v.findViewById(R.id.aisle_details_list);  
         mAisleDetailsList.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        mAisleDetailsAdapter.addComments(mVueDetailsContainer.findViewById(R.id.vuewndow_user_comments_lay));
+       // mAisleDetailsAdapter.addComments(mVueDetailsContainer.findViewById(R.id.vuewndow_user_comments_lay));
+        ListView list = (ListView) mVueDetailsContainer.findViewById(R.id.commentsList);
+        list.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+		list.setAdapter(new Comments());
+        
+        Helper.getListViewSize(list);
+        list.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				int action = event.getAction();
+				switch(action) {
+				 case MotionEvent.ACTION_DOWN:
+		                // Disallow ScrollView to intercept touch events.
+		                v.getParent().requestDisallowInterceptTouchEvent(true);
+		                break;
+
+		            case MotionEvent.ACTION_UP:
+		                // Allow ScrollView to intercept touch events.
+		                v.getParent().requestDisallowInterceptTouchEvent(false);
+		                break;
+		            }
+
+		            // Handle ListView touch events.
+		            v.onTouchEvent(event);
+		            return true;
+		 
+			}
+		});
         mAisleDetailsList.addView(mVueDetailsContainer);
        // mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
        // mAisleDetailsAdapter.notifyDataSetChanged();
         final LinearLayout dot_indicator_bg = (LinearLayout)v.findViewById(R.id.dot_indicator_bg);
         RelativeLayout vue_image_indicator = (RelativeLayout)v.findViewById(R.id.vue_image_indicator);
+   /*     TextView  leftGo = (TextView) v.findViewById(R.id.leftgo);
+        TextView  rightGo = (TextView) v.findViewById(R.id.rightgo);*/
+        
         mIndicatorView = new IndicatorView(getActivity());
+        mIndicatorView.setId(1234);
         RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-  
+         
         relParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         relParams.addRule(RelativeLayout.CENTER_VERTICAL);
         mIndicatorView.setLayoutParams(relParams);
         vue_image_indicator.addView(mIndicatorView);
-        
+        RelativeLayout.LayoutParams relParams1 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        relParams1.addRule(RelativeLayout.CENTER_VERTICAL);
+        relParams1.addRule(RelativeLayout.LEFT_OF, mIndicatorView.getId());
+       // leftGo.setLayoutParams(relParams1);
+        RelativeLayout.LayoutParams relParams2 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        relParams2.addRule(RelativeLayout.RIGHT_OF, mIndicatorView.getId());
+        relParams2.addRule(RelativeLayout.CENTER_VERTICAL);
+       
+       // rightGo.setLayoutParams(relParams2);
+        mIndicatorView.setNumberofScreens(mTotalScreenCount);
         mIndicatorView.setDrawables(R.drawable.number_active,
         R.drawable.bullets_bg, R.drawable.number_inactive);
         mCurrentScreen = 1;
         mTotalScreenCount = VueApplication.getInstance().getClickedWindowCount();
-        mIndicatorView.setNumberofScreens(mTotalScreenCount);
+       
         mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
         
         
@@ -135,8 +192,11 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		public void onAisleSwipe(String direction) {
 			// TODO Auto-generated method stub
 			//Toast.makeText(getActivity(), "swipe: "+direction, Toast.LENGTH_LONG).show();
-			mIndicatorView.switchToScreen(mCurrentScreen,
-					 checkScreenBoundaries(direction,mCurrentScreen));
+			//int x = checkScreenBoundaries(direction,mCurrentScreen);
+			
+			//Log.i("screenswitch", "screenswitch x: "+x);
+			mIndicatorView.switchToScreen(mCurrentScreen,checkScreenBoundaries(direction,mCurrentScreen)
+					 );
 		}
     	public void onReceiveImageCount(int count) {
     		mTotalScreenCount = count;
@@ -167,4 +227,67 @@ public class VueAisleDetailsViewFragment extends Fragment {
     	return mCurrentScreen;
     	
     }
+	private class Comments extends BaseAdapter {
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return 5;
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+		    CommentsHolder commentHolder;
+		    if(convertView == null) {
+		    	commentHolder = new CommentsHolder();
+		    	LayoutInflater layoutInflator = LayoutInflater.from(mContext);
+		    	convertView = layoutInflator.inflate(R.layout.comments, null);
+		    	commentHolder. userPic = (ImageView) convertView
+						.findViewById(R.id.vue_user_img);
+		    	commentHolder.userComment = (TextView) convertView
+						.findViewById(R.id.vue_user_comment);
+		    	commentHolder.userComment.setTextSize(VueApplication.getInstance().getmTextSize());
+		    	commentHolder. enterComment = (TextView) convertView
+						.findViewById(R.id.vue_user_entercomment);
+		    	
+		    	convertView.setTag(commentHolder);
+		    }
+			commentHolder = (CommentsHolder) convertView.getTag();
+			
+		
+		
+			if (position == 4) {
+			
+				commentHolder. enterComment.setVisibility(View.VISIBLE);
+				commentHolder. enterComment.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Toast.makeText(mContext, "clicked", Toast.LENGTH_SHORT)
+								.show();
+
+					}
+				});
+
+			}
+			return convertView;
+		}
+		
+	}
+  private class CommentsHolder {
+	  TextView userComment,enterComment;
+	  ImageView userPic;
+  }
 }
