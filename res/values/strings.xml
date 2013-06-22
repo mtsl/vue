@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Vue</string>
+    <string name="app_id">127551770751077</string>
+    <!-- the following string are tags used in API endpoints -->
+    <string name="trending_aisles_tag">aisle/trending</string>
+    <string name="limit_tag">limit</string>
+    <string name="offset_tag">offset</string>
+    <string name="middle_earth">Visiting Middle Earth</string>
+    <string name="profile_owner">Profile Owner</string>
+    <string name="aisle_owner_profile_desc">Profile of the aisle owner</string>
+    <!-- End of API endpoint tags -->
+    
+    <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string>-->
+</resources>
