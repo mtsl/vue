@@ -69,8 +69,8 @@
         android:background="#CCCCCC"
         android:id="@+id/vue_bottom_bar"
             android:layout_height="48dp">
-        <ImageView android:layout_width="24dp"
-                   android:layout_height="24dp"
+        <ImageView android:layout_width="32dp"
+                   android:layout_height="48dp"
                    android:layout_marginLeft="4dp"
                    android:scaleType="fitCenter"
                    android:id="@+id/vue_user_pic"
@@ -84,34 +84,34 @@
                   android:layout_centerVertical="true"/>
         
            <ImageView android:layout_width="32dp"
-                   android:layout_height="32dp"
+                   android:layout_height="48dp"
                    android:id="@+id/vue_creat_aisle"
                    android:layout_centerInParent="true"
                    android:src="@drawable/add"/>
-          <ImageView android:layout_width="24dp"
-                   android:layout_height="24dp"
+          <ImageView android:layout_width="32dp"
+                   android:layout_height="48dp"
                    android:id="@+id/vue_aisle"
                    android:layout_toLeftOf="@+id/vue_share"
-                   android:layout_marginRight="8dp"
+                   android:layout_marginRight="32dp"
                    android:layout_centerVertical="true"
                    android:src="@drawable/aisleinfo"
                    />
-            <ImageView android:layout_width="24dp"
-                   android:layout_height="24dp"
+            <ImageView android:layout_width="32dp"
+                   android:layout_height="48dp"
                    android:id="@+id/vue_share"
-                   android:layout_marginRight="8dp"
-                   android:layout_toLeftOf="@+id/vue_show_aisle"
+                    android:layout_alignParentRight="true"
+                     android:layout_marginRight="12dp"
                    android:layout_centerVertical="true"
                    android:src="@drawable/share"
                    />
-                <ImageView android:layout_width="24dp"
-                   android:layout_height="24dp"
+             <!--    <ImageView android:layout_width="48dp"
+                   android:layout_height="48dp"
                    android:id="@+id/vue_show_aisle"
-                   android:layout_alignParentRight="true"
+                  
                    android:layout_centerVertical="true"
-                   android:layout_marginRight="20dp"
+                 
                    android:src="@drawable/aisleinfo"
                    
-                   />
+                   /> -->
     </RelativeLayout>
 </RelativeLayout>

@@ -232,7 +232,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return 5;
+			return 10;
 		}
 
 		@Override
@@ -268,7 +268,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			
 		
 		
-			if (position == 4) {
+			if (position == 9) {
 			
 				commentHolder. enterComment.setVisibility(View.VISIBLE);
 				commentHolder. enterComment.setOnClickListener(new OnClickListener() {

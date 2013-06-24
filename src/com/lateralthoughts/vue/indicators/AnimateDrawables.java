@@ -11,7 +11,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
 public class AnimateDrawables extends Activity {
-
+//test commit
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

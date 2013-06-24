@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
@@ -22,6 +24,11 @@ import android.widget.TextView;
 import android.widget.HorizontalScrollView;
 import android.widget.Toast;
 import android.content.Context;
+import android.os.Handler;
+import android.text.Layout;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.util.TypedValue;
 
@@ -51,6 +58,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     private int mShowPieceWidth;
     private int mThumbnailsHeight;
     private int mActionBarHeight;
+    ViewHolder holder;
+	private SpannableString spannableString;;
 
     public AisleDetailsViewAdapter(Context c,AisleDetailSwipeListener swipeListner, ArrayList<AisleWindowContent> content) {
         super(c, content);
@@ -94,7 +103,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     }
     
 	public LinearLayout prepareDetailsVue() {
-		ViewHolder holder;
+	
 		View convertView = null;
 		int position = 0;
 		LinearLayout vue_details_container = null;
@@ -132,8 +141,53 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		holder = (ViewHolder) convertView.getTag();
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
-	
-		
+	  Layout layout = holder.aisleDescription.getLayout();
+	  
+	    new Handler().postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+
+		           Layout layout =  holder.aisleDescription.getLayout();  
+		     	  int start = 0;
+		    	  int end;
+		    	  String tot = null;
+		    	 
+		    	  String s = holder.aisleDescription.getText().toString();
+		    	  if(layout.getLineCount()>2)
+		    		
+		    		for(int j = 0;j<2;j++){
+		    			end = layout.getLineEnd(j);
+		    			
+		    			String temp = s.substring(start, end);
+		    			Log.i("LINE", "LINEa: "+temp);
+		    			int count =temp.length();
+		    			if(j == 0) {
+		    			tot = temp;
+		    			} else {
+		    				tot = tot +temp.substring(0,count - 10);
+		    				tot = tot +"... more";
+		    				  spannableString = new SpannableString(tot);
+		    				  int pos = tot.length();
+		    				  spannableString.setSpan(new ClickableSpan() {
+								
+								@Override
+								public void onClick(View widget) {
+									// TODO Auto-generated method stub
+					 
+								}
+							},pos-4,pos,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		    				holder.aisleDescription.setText(spannableString);
+		    			}
+		    			start = end;
+		    		}
+		        
+				
+			}
+		}, 1000);
+ 
+	  
+
 		
 		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
 			holder.mWindowContent = (AisleWindowContent) getItem(i);
@@ -144,10 +198,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				break;
 			}
 		}
-		 AisleContext context = holder.mWindowContent.getAisleContext();
+		 /*AisleContext context = holder.mWindowContent.getAisleContext();
 		 StringBuilder contextBuilder = new StringBuilder();
 	        contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem).append("\n"+context.mFirstName);
-	        holder.aisleDescription.setText(contextBuilder.toString());
+	        holder.aisleDescription.setText(contextBuilder.toString());*/
 		int scrollIndex = 0;
 		mViewLoader.getAisleContentIntoView(holder, scrollIndex, position);
 		return vue_details_container;

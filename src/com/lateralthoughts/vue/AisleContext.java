@@ -10,4 +10,5 @@ public class AisleContext {
 	public String mOccasion;
 	public String mLookingForItem;
 
+	
 }

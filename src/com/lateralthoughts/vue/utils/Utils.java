@@ -6,6 +6,10 @@ import java.io.OutputStream;
 import android.graphics.Bitmap;
 
 public class Utils {
+	public static final int LARGE_TEXT_SIZE = 20;
+	public static final int MEDIUM_TEXT_SIZE = 18;
+	public static final int SMALL_TEXT_SIZE = 16;
+	
     public static void CopyStream(InputStream is, OutputStream os)
     {
         final int buffer_size=1024;
