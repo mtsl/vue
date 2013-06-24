@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    >
+    
+    <ImageView
+        android:id="@+id/vue_list_fragment_iconImageview"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerVertical="true"
+    	android:layout_alignParentLeft="true"
+    	android:layout_marginLeft="8dp"
+    	android:contentDescription="@string/image_contentDescription"
+        />
+     <TextView 
+        android:id="@+id/vue_list_fragment_itemTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:layout_toRightOf="@+id/vue_list_fragment_iconImageview"
+        android:layout_marginLeft="12dp"
+    	android:textColor="@android:color/black"
+    	android:textStyle="bold"
+         />
+     <View 
+         android:layout_width="match_parent"
+         android:layout_height="1dp"
+         android:background="#D8D8D8"
+         android:layout_alignParentBottom="true"
+         android:layout_marginLeft="16dp"
+         android:layout_marginRight="16dp"
+         />
+</RelativeLayout>

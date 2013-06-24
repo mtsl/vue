@@ -12,4 +12,54 @@
     <!-- End of API endpoint tags -->
     
     <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string>-->
+    <string name="image_contentDescription">image</string>
+    <string name="fontsize">Font Size</string>
+    <string name="wifyonly">Wi-Fi only</string>
+    <string name="connectivity_management">Connectivity Management</string>
+    <string name="hint_search">Search</string>
+    <string name="sidemenu_option_My_Aisles">My Aisles</string>
+    <string name="sidemenu_option_Categories">Categories</string>
+    <string name="sidemeun_option_Settings">Settings</string>
+    <string name="sidemenu_option_Profile">Profile</string>
+    <string name="sidemenu_option_Invite_Friends">Invite Friends</string>
+    <string name="sidemenu_option_Help">Help</string>
+    <string name="sidemenu_option_About">About</string>
+    <string name="sidemenu_option_FeedBack">Feedback</string>
+    <string name="sidemenu_sub_option_Apparel">Apparel</string>
+    <string name="sidemenu_sub_option_Beauty">Beauty</string>
+    <string name="sidemenu_sub_option_Electronics">Electronics</string>
+    <string name="sidemenu_sub_option_Entertainment">Entertainment</string>
+    <string name="sidemenu_sub_option_Events">Events</string>
+    <string name="sidemenu_sub_option_Food">Food</string>
+    <string name="sidemenu_sub_option_Home">Home</string>
+    <string name="sidemenu_sub_option_Facebook">Facebook</string>
+    <string name="sidemenu_sub_option_Twitter">Twitter</string>
+    <string name="sidemenu_sub_option_Gmail">Gmail</string>
+    <string name="about_Vue">About Vue</string>
+    <string name="contact_us">Contact us</string>
+    <string name="contact_us_text">Please provide feedback by writing to us at</string>
+    <string name="email_id">vue@thesilverlabs.com</string>
+    <string name="vue_content">Private Policy</string>
+    <string name="about_tabel_Content_text">1. Introduction \n2. Private Policy \n3. Contact us</string>
+    <string name="feedback_form_text_info">Please write to us about how we might improve fashionwrap to suit your needs. Whether you would like us to cover more topics, improve the user experiences, or do something else better, please write to us. We will appreciate it very much!</string>
+    <string name="aboutedittext">Type your message here</string>
+    <string name="clear">Clear</string>
+    <string name="send">Send</string>
+    <string name="abouttextfedbacktext">\nPlease write to us about how we might improve</string>
+    <string name="abouttextfedbacktexttwo">to suit your needs. We will appreciate it very much!</string>
+    <string name="abouttextfedbacktextt">Email will be sent using gmail. Your phone model, dimensions, resolutions and OS version are included with this message.</string>
+    <string name="about_content">Welcome to Android application development!
+
+This class teaches you how to build your first Android app. You’ll learn how to create an Android project and run a debuggable version of the app. You\'ll also learn some fundamentals of Android app design, including how to build a simple user interface and handle user input.
+
+Before you start this class, be sure you have your development environment set up. You need to:
+
+    Download the Android SDK.
+    Install the ADT plugin for Eclipse (if you’ll use the Eclipse IDE).
+    Download the latest SDK tools and platforms using the SDK Manager.
+
+If you haven\'t already done these tasks, start by downloading the Android SDK and following the install steps. Once you\'ve finished the setup, you\'re ready to begin this class.
+
+This class uses a tutorial format that incrementally builds a small Android app that teaches you some fundamental concepts about Android development, so it\'s important that you follow each step.</string>
+
 </resources>

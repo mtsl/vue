@@ -4,7 +4,11 @@ package com.lateralthoughts.vue;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
 
 /*import com.facebook.Request;
 import com.facebook.Response;
@@ -12,7 +16,10 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;*/
 
-public class VueLandingPageActivity extends FragmentActivity {
+public class VueLandingPageActivity extends BaseActivity/*FragmentActivity*/ {
+	
+	//public static boolean isFriendsListVisible = false;
+	
 	@Override
 	public void onCreate(Bundle icicle){
 		super.onCreate(icicle);
@@ -64,7 +71,26 @@ public class VueLandingPageActivity extends FragmentActivity {
 	  @Override
 	  public boolean onCreateOptionsMenu(Menu menu) {
 	      getMenuInflater().inflate(R.menu.title_options, menu);
+	      ImageView icon = (ImageView) findViewById(android.R.id.home);
+			icon.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					getSlidingMenu().toggle();
+				}
+			});
 	      // Configure the search info and add any event listeners
 	      return super.onCreateOptionsMenu(menu);
 	  }
+	  
+	  @Override
+		public boolean onKeyUp(int keyCode, KeyEvent event) {
+		    if(keyCode == KeyEvent.KEYCODE_BACK) {
+		    	/*if(isFriendsListVisible) {
+		    		isFriendsListVisible = false;*/
+		    		mFrag.listener.onBackPressed();
+		    	//}
+		    }
+			return false;
+		}
 }
