@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -20,6 +21,7 @@ import android.widget.LinearLayout;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 
 public class AisleDetailsViewListLoader {
@@ -114,6 +116,8 @@ public class AisleDetailsViewListLoader {
             imageView.setContainerObject(holder);
             Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
             if(bitmap != null){
+            	 setParams(holder.aisleContentBrowser, imageView, bitmap);
+            	// bitmap = Utils.getScaledBitMap(bitmap, VueApplication.getInstance().getScreenWidth(), VueApplication.getInstance().getScreenHeight());
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);                  
             }
@@ -159,11 +163,13 @@ public class AisleDetailsViewListLoader {
         //private final WeakReference<AisleContentBrowser>viewFlipperReference;
         private String url = null;
         private int mBestHeight;
+        AisleContentBrowser aisleContentBrowser ;
 
         public BitmapWorkerTask(AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             mBestHeight = bestHeight;
+            aisleContentBrowser = vFlipper;
         }
 
         // Decode image in background.
@@ -185,6 +191,8 @@ public class AisleDetailsViewListLoader {
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
                 
                 if (this == bitmapWorkerTask) {
+                	//aisleContentBrowser.addView(imageView);
+                	 setParams( aisleContentBrowser, imageView, bitmap);
                     imageView.setImageBitmap(bitmap);
                 }
             }
@@ -216,5 +224,15 @@ public class AisleDetailsViewListLoader {
             }
         }
         return true;
-    }    
+    }  
+    private void setParams(AisleContentBrowser vFlipper,ImageView imageView,Bitmap bitmap) {
+    	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+				VueApplication.getInstance().getScreenWidth(), bitmap.getHeight());
+    	vFlipper.setLayoutParams(showpieceParams);
+    	
+    	FrameLayout.LayoutParams params = 
+                new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        params.gravity = Gravity.CENTER;
+        imageView.setLayoutParams(params);
+    }
 }

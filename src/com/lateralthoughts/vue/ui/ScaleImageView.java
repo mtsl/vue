@@ -11,6 +11,9 @@
  */
 package com.lateralthoughts.vue.ui;
 
+import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.utils.Utils;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;

@@ -1,16 +1,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:background="#EEEEEE"
+    android:id="@+id/vue_details_container"
     android:orientation="vertical" >
 
     <FrameLayout
         android:id="@+id/showpiece_container"
+         android:layout_marginTop="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
         <com.lateralthoughts.vue.ui.AisleContentBrowser
             android:id="@+id/showpiece"
+           
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center" >
@@ -26,39 +29,31 @@
     </FrameLayout>
     <LinearLayout  android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
         android:background="@android:color/white"
         android:layout_marginTop="4dp">
     <TextView
+        android:id="@+id/vue_details_descreption"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginLeft="12dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginRight="12dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        android:text="Dressing up for a pool party during the coming weekend. I like greens whites and flowers.This is one idea, but would like to see more ideas" />
+        android:maxLines="2"
+        android:text="Dressing up for a pool party during the coming weekend. I like greens whites and flowers.This is one idea, but would like to see more ideas." />
    
     </LinearLayout>
-    <RelativeLayout android:layout_width="fill_parent"
+    <LinearLayout android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
         android:background="@android:color/white"
-        android:layout_marginTop="4dp">
-        
-    </RelativeLayout>
-    <!--
-    <HorizontalScrollView android:id="@+id/thumbnail_scroller_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"        
-        android:scrollbars="none">
-    	<LinearLayout android:id="@+id/thumbnail_scroller"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"       	
-        	android:gravity="bottom"
-        	android:orientation="horizontal">       
-    	</LinearLayout>        
-    </HorizontalScrollView>
-    -->
-
+        android:layout_weight="3"
+        android:layout_marginTop="4dp"
+        android:orientation="vertical">
+        <include layout="@layout/vuedetails_comment_window"/>
+ 
+            <ListView android:layout_width="fill_parent"
+                      android:layout_height="fill_parent"
+                      android:id="@+id/commentsList"></ListView>
+ 
+    </LinearLayout>
 </LinearLayout>
