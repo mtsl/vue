@@ -2,4 +2,8 @@
 <resources>
  <color name="black">#000000</color>
   <color name="indicatorbg">#CCCCCC</color>
+  
+   <color name="orange">#CD3700</color>
+   <color name="red">#d93a3a</color>
+   <color name="white">#ffffff</color>
 </resources>
