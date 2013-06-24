@@ -1,6 +1,10 @@
 package com.lateralthoughts.vue.utils;
 
+import com.lateralthoughts.vue.VueApplication;
+
+import android.content.res.Resources;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -21,9 +25,13 @@ public class Helper {
             totalHeight += listItem.getMeasuredHeight();
         }
       //setting listview item in adapter
+
+          int pixel = VueApplication.getInstance().getPixel(100);   
         
         ViewGroup.LayoutParams params = myListView.getLayoutParams();
-        params.height = totalHeight + (myListView.getDividerHeight() * (myListAdapter.getCount() - 1));
+        params.height = totalHeight + (myListView.getDividerHeight() * (myListAdapter.getCount() - 1))- pixel;
+        //params.height = 200;
+      //  params.height = VueApplication.getInstance().getScreenHeight() - (VueApplication.getInstance().getScreenHeight()*( 60/100)) -VueApplication.getInstance().getPixel(72);
         myListView.setLayoutParams(params);
         // print height of adapter on log
         Log.i("height of listItem:", String.valueOf(totalHeight));

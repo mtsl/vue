@@ -30,7 +30,7 @@
     <LinearLayout  android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="2dp">
     <TextView
         android:id="@+id/vue_details_descreption"
         android:layout_width="fill_parent"
@@ -43,17 +43,19 @@
         android:text="Dressing up for a pool party during the coming weekend. I like greens whites and flowers.This is one idea, but would like to see more ideas." />
    
     </LinearLayout>
-    <LinearLayout android:layout_width="fill_parent"
+    <RelativeLayout android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:layout_weight="3"
-        android:layout_marginTop="4dp"
-        android:orientation="vertical">
-        <include layout="@layout/vuedetails_comment_window"/>
+        android:layout_marginTop="2dp"
+        >
+        <include layout="@layout/vuedetails_comment_window"
+                 android:id="@+id/commentlay"/>
  
             <ListView android:layout_width="fill_parent"
                       android:layout_height="fill_parent"
+                      android:layout_below="@+id/commentlay"
+                      android:layout_marginBottom="48dp"
                       android:id="@+id/commentsList"></ListView>
- 
-    </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

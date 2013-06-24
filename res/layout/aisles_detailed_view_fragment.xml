@@ -22,7 +22,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="5dp"
-         android:layout_above="@+id/vue_bottom_bar"
+        android:layout_marginBottom="48dp"
         android:divider="@android:color/transparent"
         android:scrollbars="none" ></ScrollView>
     <RelativeLayout
