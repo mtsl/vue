@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 //generic android & java goodies
 import com.lateralthoughts.vue.indicators.IndicatorView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
+import com.lateralthoughts.vue.ui.MyCustomAnimation;
 import com.lateralthoughts.vue.utils.Helper;
 
 import android.os.Bundle;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.support.v4.app.Fragment;
 import android.app.Activity;
 import android.content.Context;
@@ -21,6 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.webkit.WebView.FindListener;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -85,9 +89,41 @@ public class VueAisleDetailsViewFragment extends Fragment {
         View v = inflater.inflate(R.layout.aisles_detailed_view_fragment, container, false);
         
         mAisleDetailsList = (ScrollView)v.findViewById(R.id.aisle_details_list);  
-        mAisleDetailsList.setOverScrollMode(View.OVER_SCROLL_NEVER);
+       // mAisleDetailsList.setOverScrollMode(View.OVER_SCROLL_NEVER);
        // mAisleDetailsAdapter.addComments(mVueDetailsContainer.findViewById(R.id.vuewndow_user_comments_lay));
         ListView list = (ListView) mVueDetailsContainer.findViewById(R.id.commentsList);
+        LayoutInflater layoutInflator = LayoutInflater.from(mContext);
+    	View headerView = layoutInflator.inflate(R.layout.addcomment, null);
+         final EditText edtcomment = (EditText)headerView.findViewById(R.id.edtcomment);
+         TextView enterComment = (TextView) headerView.findViewById(R.id.vue_user_entercomment);
+         
+         
+         
+         
+         enterComment.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+		         MyCustomAnimation a = new MyCustomAnimation(
+						 getActivity(), edtcomment,
+						500, MyCustomAnimation.EXPAND);
+				a.setHeight(100); 
+				edtcomment.setVisibility(View.VISIBLE);
+				edtcomment.startAnimation(a);
+				edtcomment.setFocusable(true);
+
+		         if(edtcomment.requestFocus()) {
+		        	 ((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+		        	}
+				
+			}
+		});
+         list.addHeaderView(headerView);
+        
+
+         
+         
         list.setOnTouchListener(new OnTouchListener() {
 			
 			@Override
@@ -262,15 +298,15 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		    	commentHolder. enterComment = (TextView) convertView
 						.findViewById(R.id.vue_user_entercomment);
 		    	
+		    	
 		    	convertView.setTag(commentHolder);
 		    }
 			commentHolder = (CommentsHolder) convertView.getTag();
-			
+		 
 		
 		
 			if (position == 9) {
-			
-				commentHolder. enterComment.setVisibility(View.VISIBLE);
+ 
 				commentHolder. enterComment.setOnClickListener(new OnClickListener() {
 
 					@Override

@@ -1,9 +1,11 @@
 package com.lateralthoughts.vue;
 
 import android.app.Application;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 //internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
@@ -121,4 +123,10 @@ public class VueApplication extends Application {
     public int getmTextSize() {
 		return mTextSize;
 	}
+    public int getPixel(int dp) {
+    	Resources r = getResources();
+    	int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+    	return px;
+    	     
+    }
 }

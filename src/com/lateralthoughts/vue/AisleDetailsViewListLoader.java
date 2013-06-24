@@ -116,7 +116,7 @@ public class AisleDetailsViewListLoader {
             imageView.setContainerObject(holder);
             Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
             if(bitmap != null){
-            	 setParams(holder.aisleContentBrowser, imageView, bitmap);
+            	bitmap =  setParams(holder.aisleContentBrowser, imageView, bitmap);
             	// bitmap = Utils.getScaledBitMap(bitmap, VueApplication.getInstance().getScreenWidth(), VueApplication.getInstance().getScreenHeight());
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);                  
@@ -192,7 +192,7 @@ public class AisleDetailsViewListLoader {
                 
                 if (this == bitmapWorkerTask) {
                 	//aisleContentBrowser.addView(imageView);
-                	 setParams( aisleContentBrowser, imageView, bitmap);
+                	bitmap =  setParams( aisleContentBrowser, imageView, bitmap);
                     imageView.setImageBitmap(bitmap);
                 }
             }
@@ -225,14 +225,22 @@ public class AisleDetailsViewListLoader {
         }
         return true;
     }  
-    private void setParams(AisleContentBrowser vFlipper,ImageView imageView,Bitmap bitmap) {
+    private Bitmap setParams(AisleContentBrowser vFlipper,ImageView imageView,Bitmap bitmap) {
+    	int imgCardHeight =   VueApplication.getInstance().getScreenHeight() *60 /100;
     	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-				VueApplication.getInstance().getScreenWidth(), bitmap.getHeight());
+				VueApplication.getInstance().getScreenWidth(), imgCardHeight);
     	vFlipper.setLayoutParams(showpieceParams);
+    	  if(bitmap.getHeight() > imgCardHeight || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
+    		  Log.i("width & height", "reqWidth1: Bitmap is greater than card size" );
+    		 bitmap =  Utils.getScaledBitMap(bitmap, VueApplication.getInstance().getScreenWidth(), imgCardHeight);
+    	  } else {
+    		  Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
+    	  }
     	
     	FrameLayout.LayoutParams params = 
                 new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         params.gravity = Gravity.CENTER;
         imageView.setLayoutParams(params);
+        return bitmap;
     }
 }

@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 public class Utils {
 	public static final int LARGE_TEXT_SIZE = 20;
@@ -41,22 +42,27 @@ public class Utils {
     	int newWidth,newHeight;
     	bitmapwidth  = bitmap.getWidth();
     	bitmapheight = bitmap.getHeight();
+    	Log.i("width & height", "reqWidth old: "+bitmapwidth+" reqHeight2: "+bitmapheight);
     	if(bitmapwidth > reqWidth) {
-    		newWidth = bitmapwidth * (reqWidth/bitmapwidth);
-    		newHeight = bitmapheight * (reqWidth/bitmapwidth);
+    		 
+    		newWidth = (bitmapwidth * reqWidth)/bitmapwidth;
+    		newHeight = (bitmapheight * reqWidth)/bitmapwidth;
     	} else {
     		newWidth = reqWidth;
-    		newHeight = bitmapheight;
+    		newHeight = reqHeight;
     	}
     	if(newHeight > reqHeight) {
-    		newHeight = bitmapheight * (reqHeight/bitmapheight);
-    		newWidth = bitmapwidth * (reqHeight/bitmapheight);
+    		newHeight = (bitmapheight * reqHeight)/bitmapheight;
+    		newWidth = (bitmapwidth * reqHeight)/bitmapheight;
+    		 
     	}  
-		return createBitmap(bitmap,newWidth,newHeight);
     	 
+		return createBitmap(bitmap,newWidth,newHeight);
+    	// return bitmap;
     }
     private static  Bitmap createBitmap(Bitmap bitmap,int width,int height) {
-    	Bitmap bmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+    	Bitmap bmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+    	Log.i("width & height", "reqWidth new: "+bmap.getWidth()+" reqHeight2: "+bmap.getHeight());
 		return bmap;
     	
     }
