@@ -7,4 +7,10 @@
         android:id="@+id/aisles_view_fragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
+     <ImageView
+         android:id="@+id/trendingbg"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent"
+         android:layout_marginTop="-60dip"
+         android:background="@drawable/trendingbg"/>
 </LinearLayout>
