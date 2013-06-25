@@ -34,12 +34,9 @@
     <TextView
         android:id="@+id/vue_details_descreption"
         android:layout_width="fill_parent"
-        android:layout_height="48dp"
+        android:layout_height="96dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:maxLines="2"
         android:text="Dressing up for a pool party during the coming weekend. I like greens whites and flowers.This is one idea, but would like to see more ideas." />
    
     </LinearLayout>
