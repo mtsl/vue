@@ -5,6 +5,7 @@ import com.lateralthoughts.vue.indicators.IndicatorView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.MyCustomAnimation;
 import com.lateralthoughts.vue.utils.Helper;
+import com.lateralthoughts.vue.utils.Utils;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -89,6 +90,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
         View v = inflater.inflate(R.layout.aisles_detailed_view_fragment, container, false);
         
         mAisleDetailsList = (ScrollView)v.findViewById(R.id.aisle_details_list);  
+        TextView vue_user_name = (TextView) v.findViewById(R.id.vue_user_name);
+           vue_user_name.setTextSize(Utils.MEDIUM_TEXT_SIZE);
        // mAisleDetailsList.setOverScrollMode(View.OVER_SCROLL_NEVER);
        // mAisleDetailsAdapter.addComments(mVueDetailsContainer.findViewById(R.id.vuewndow_user_comments_lay));
         ListView list = (ListView) mVueDetailsContainer.findViewById(R.id.commentsList);
@@ -96,7 +99,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
     	View headerView = layoutInflator.inflate(R.layout.addcomment, null);
          final EditText edtcomment = (EditText)headerView.findViewById(R.id.edtcomment);
          TextView enterComment = (TextView) headerView.findViewById(R.id.vue_user_entercomment);
-         
+         enterComment.setTextSize(Utils.SMALL_TEXT_SIZE);
          
          
          
@@ -119,19 +122,11 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				
 			}
 		});
-         list.addHeaderView(headerView);
+         
         
-
+          list.addFooterView(headerView);
          
-         
-        list.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-		});
+       
 		list.setAdapter(new Comments());
         
         Helper.getListViewSize(list);
@@ -162,6 +157,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
        // mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
        // mAisleDetailsAdapter.notifyDataSetChanged();
         final LinearLayout dot_indicator_bg = (LinearLayout)v.findViewById(R.id.dot_indicator_bg);
+        
+          TextView vue_aisle_heading = (TextView)v.findViewById(R.id.vue_aisle_heading);
+          vue_aisle_heading.setTextSize(Utils.LARGE_TEXT_SIZE);
         RelativeLayout vue_image_indicator = (RelativeLayout)v.findViewById(R.id.vue_image_indicator);
    /*     TextView  leftGo = (TextView) v.findViewById(R.id.leftgo);
         TextView  rightGo = (TextView) v.findViewById(R.id.rightgo);*/
@@ -295,29 +293,15 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		    	commentHolder.userComment = (TextView) convertView
 						.findViewById(R.id.vue_user_comment);
 		    	commentHolder.userComment.setTextSize(VueApplication.getInstance().getmTextSize());
-		    	commentHolder. enterComment = (TextView) convertView
-						.findViewById(R.id.vue_user_entercomment);
+		    	 
+		    	commentHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
 		    	
 		    	
 		    	convertView.setTag(commentHolder);
 		    }
 			commentHolder = (CommentsHolder) convertView.getTag();
 		 
-		
-		
-			if (position == 9) {
- 
-				commentHolder. enterComment.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						Toast.makeText(mContext, "clicked", Toast.LENGTH_SHORT)
-								.show();
-
-					}
-				});
-
-			}
+	 
 			return convertView;
 		}
 		

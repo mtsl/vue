@@ -38,6 +38,7 @@ import java.util.ArrayList;
 //internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
@@ -120,7 +121,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			holder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.showpiece);
 			holder.aisleDescription = (TextView) convertView.findViewById(R.id.vue_details_descreption);
-			holder.aisleDescription.setTextSize(VueApplication.getInstance().getmTextSize());
+			holder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
 			FrameLayout fl = (FrameLayout) convertView
 					.findViewById(R.id.showpiece_container);
 			FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
@@ -146,7 +147,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	    new Handler().postDelayed(new Runnable() {
 			
 			@Override
-			public void run() {
+			public void run() {/*
 
 		           Layout layout =  holder.aisleDescription.getLayout();  
 		     	  int start = 0;
@@ -183,7 +184,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		    		}
 		        
 				
-			}
+			*/}
 		}, 1000);
  
 	  
