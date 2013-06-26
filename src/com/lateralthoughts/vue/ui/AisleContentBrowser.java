@@ -271,6 +271,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	public interface AisleDetailSwipeListener{
 	    public void onAisleSwipe(String id);
 	    public void onReceiveImageCount(int count);
+	    public void onResetAdapter();
 	}
 	public void setAisleDetailSwipeListener(AisleDetailSwipeListener swipListener) {
 		mSwipeListener = swipListener; 
