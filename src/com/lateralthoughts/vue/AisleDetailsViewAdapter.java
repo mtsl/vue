@@ -148,6 +148,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	    new Handler().postDelayed(new Runnable() {
 			
 			@Override
+ 
 			public void run() {
 				int lineCount = holder.aisleDescription.getLineCount();
 				int eachLineHeight = holder.aisleDescription .getLineHeight();
@@ -169,7 +170,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 					 for(int j = 0;j<howMany;j++){
 						 end = layout.getLineEnd(j);
 						 String temp = s.substring(start, end);
-						 if(tot == null) {
+						 if(tot == null) {  
 							 tot = temp;
 						 } else {
 							 tot = tot + temp;
@@ -199,6 +200,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	    				holder.aisleDescription.setMovementMethod(LinkMovementMethod.getInstance());
 				}
  }
+ 
 		}, 1000);
  
 	  

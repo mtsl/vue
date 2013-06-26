@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue;
 
 //generic android goodies
+import java.io.IOException;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
@@ -62,6 +64,7 @@ public class VueLandingPageActivity extends BaseActivity
 		mSignInFragment = PlusClientFragment.getPlusClientFragment(
 				VueLandingPageActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
 
+		
 		// Checking wheather app is opens for first time or not?
 		sharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -187,7 +190,13 @@ public class VueLandingPageActivity extends BaseActivity
 							public void call(Session session,
 									SessionState state, Exception exception) {
 								if (session.isOpened()) {
-
+									
+										SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+										editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN, session.getAccessToken());
+										editor.putString(VueConstants.VUELOGIN, VueConstants.FACEBOOK);
+										editor.commit();
+									
+									
 									// make request to the /me API
 									Request.executeMeRequestAsync(session,
 											new Request.GraphUserCallback() {
@@ -278,6 +287,7 @@ public class VueLandingPageActivity extends BaseActivity
 		try {
 			Session.getActiveSession().onActivityResult(this, requestCode,
 					resultCode, data);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -300,22 +310,14 @@ public class VueLandingPageActivity extends BaseActivity
 		// Details or other screens.
 		VueLandingPageActivity.plusClient = plusClient;
 
-		// Code for getting Google+ friends list
-		/*
-		 * plusClient.loadPeople(new OnPeopleLoadedListener() {
-		 * 
-		 * @Override public void onPeopleLoaded(ConnectionResult status,
-		 * PersonBuffer personBuffer, String nextPageToken) {
-		 * 
-		 * if ( ConnectionResult.SUCCESS == status.getErrorCode() ) {
-		 * Log.v("g+", "Fetched the list of friends"); for ( Person p :
-		 * personBuffer ) {
-		 * Log.v("g+",p.getObjectType()+"...."+p.getImage()+"...."+
-		 * p.getDisplayName()); } } } }, Person.Collection.VISIBLE);
-		 */
-
+		
 		// To show Google+ App install dialog after login with Google+
 		if (googleplusloggedinDialogFlag) {
+			SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+			editor.putString(VueConstants.VUELOGIN,
+					VueConstants.GOOGLEPLUS);
+			editor.commit();
+			
 			Toast.makeText(this,
 					plusClient.getAccountName() + " is connected.",
 					Toast.LENGTH_LONG).show();
@@ -345,5 +347,26 @@ public class VueLandingPageActivity extends BaseActivity
 	// VueLandingPageActivity.mSignInFragment.share(VueLandingPageActivity.plusClient,
 	// getActivity(),
 	// "This is krishna posted from Android Test app from his mobile.","/sdcard/hi.jpg");
+
+
+	// The below code is used to get the Facebook friends information.
+	/*final VueShare obj = new VueShare();
+	Thread thread=new Thread(new Runnable() {
+					
+					@Override
+					public void run() {			
+								
+					
+				try {
+					obj.getFacebookFriends(VueLandingPageActivity.this);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+					}
+	});thread.start();*/
+	
+	/*// Code for getting Google+ friends list
+	new VueShare().getGooglePlusFriends(VueLandingPageActivity.plusClient);*/
 
 }
