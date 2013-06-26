@@ -16,6 +16,7 @@
         style="@style/vue_comeents_text_align"
         android:layout_marginLeft="4dp"
         android:layout_toRightOf="@+id/vuewndow_comment_img"
+        android:textColor="@color/grey"
         android:text="5 comments" />
 
     <ImageView
@@ -30,6 +31,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_toLeftOf="@+id/vuewndow_lik_img"
+        android:textColor="@color/grey"
         android:text="12" />
 
     <ImageView
@@ -44,6 +46,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="12dp"
+        android:textColor="@color/grey"
         android:text="52" />
 
 </RelativeLayout>

@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.util.TypedValue;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 //internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
@@ -120,7 +122,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			holder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.showpiece);
 			holder.aisleDescription = (TextView) convertView.findViewById(R.id.vue_details_descreption);
-			holder.aisleDescription.setTextSize(VueApplication.getInstance().getmTextSize());
+			holder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
 			FrameLayout fl = (FrameLayout) convertView
 					.findViewById(R.id.showpiece_container);
 			FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
@@ -147,43 +149,56 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			
 			@Override
 			public void run() {
-
-		           Layout layout =  holder.aisleDescription.getLayout();  
-		     	  int start = 0;
-		    	  int end;
-		    	  String tot = null;
-		    	 
-		    	  String s = holder.aisleDescription.getText().toString();
-		    	  if(layout.getLineCount()>2)
-		    		
-		    		for(int j = 0;j<2;j++){
-		    			end = layout.getLineEnd(j);
-		    			
-		    			String temp = s.substring(start, end);
-		    			Log.i("LINE", "LINEa: "+temp);
-		    			int count =temp.length();
-		    			if(j == 0) {
-		    			tot = temp;
-		    			} else {
-		    				tot = tot +temp.substring(0,count - 10);
-		    				tot = tot +"... more";
-		    				  spannableString = new SpannableString(tot);
-		    				  int pos = tot.length();
-		    				  spannableString.setSpan(new ClickableSpan() {
-								
-								@Override
-								public void onClick(View widget) {
-									// TODO Auto-generated method stub
+				int lineCount = holder.aisleDescription.getLineCount();
+				int eachLineHeight = holder.aisleDescription .getLineHeight();
+				int defaultTxtViewHeight =  holder.aisleDescription.getHeight();
+				LinearLayout.LayoutParams params;
+				if((lineCount * eachLineHeight) < defaultTxtViewHeight) {
+					params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+					params.setMargins(VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(10), VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(10));
+					 holder.aisleDescription.setLayoutParams(params);
+					Log.i("descr", "descr txtViewHeight if: ");
+				} else {
+					
+					int howMany = defaultTxtViewHeight/eachLineHeight;
+					 Layout layout =  holder.aisleDescription.getLayout();
+					 int end;
+					 int start = 0;
+					 String tot = null;
+					 final String s = holder.aisleDescription.getText().toString();
+					 for(int j = 0;j<howMany;j++){
+						 end = layout.getLineEnd(j);
+						 String temp = s.substring(start, end);
+						 if(tot == null) {
+							 tot = temp;
+						 } else {
+							 tot = tot + temp;
+						 }
+						 start = end;
+					 }
+					 tot = tot.substring(0,tot.length()-10);
+					 tot = tot+"... more";
 					 
-								}
-							},pos-4,pos,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		    				holder.aisleDescription.setText(spannableString);
-		    			}
-		    			start = end;
-		    		}
-		        
-				
-			}
+					 holder.aisleDescription.setText(null);
+					 holder.aisleDescription.setText(tot);
+					 params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+						params.setMargins(VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(10), VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(10));
+						 holder.aisleDescription.setLayoutParams(params);
+						 
+						  spannableString = new SpannableString(tot);
+						  holder.aisleDescription.setText(spannableString);
+	    				  int pos = tot.length();
+	    				  spannableString.setSpan(new ClickableSpan() {
+							
+							@Override
+							public void onClick(View widget) {
+								holder.aisleDescription.setText(s);
+							}
+						},pos-4,pos,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+	    				holder.aisleDescription.setText(spannableString);
+	    				holder.aisleDescription.setMovementMethod(LinkMovementMethod.getInstance());
+				}
+ }
 		}, 1000);
  
 	  

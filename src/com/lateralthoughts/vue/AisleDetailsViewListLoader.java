@@ -228,7 +228,7 @@ public class AisleDetailsViewListLoader {
     private Bitmap setParams(AisleContentBrowser vFlipper,ImageView imageView,Bitmap bitmap) {
     	int imgCardHeight =   VueApplication.getInstance().getScreenHeight() *60 /100;
     	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-				VueApplication.getInstance().getScreenWidth(), imgCardHeight);
+				VueApplication.getInstance().getScreenWidth(), bitmap.getHeight());
     	vFlipper.setLayoutParams(showpieceParams);
     	  if(bitmap.getHeight() > imgCardHeight || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
     		  Log.i("width & height", "reqWidth1: Bitmap is greater than card size" );

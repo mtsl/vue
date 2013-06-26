@@ -7,9 +7,9 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 public class Utils {
-	public static final int LARGE_TEXT_SIZE = 20;
+	public static final int LARGE_TEXT_SIZE = 22;
 	public static final int MEDIUM_TEXT_SIZE = 18;
-	public static final int SMALL_TEXT_SIZE = 16;
+	public static final int SMALL_TEXT_SIZE = 14;
 	
     public static void CopyStream(InputStream is, OutputStream os)
     {
