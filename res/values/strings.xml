@@ -43,14 +43,9 @@
     <string name="com_facebook_requesterror_reconnect">An error occurred when connecting with Facebook, please reconnect the app with Facebook.</string>
     <string name="alert_Dialog_Network">No Network Connection: Check Network Settings</string>
     <string name="com_facebook_requesterror_permissions">An app connection with Facebook failed due to insufficient permissions, please grant the app permissions to perform the operation.</string>
-<<<<<<< HEAD
-
-=======
-     
     <string name="cancel">Cancel</string>
-  	<string name="Image">Image</string>
-      <string name="gmail">Gmail</string>
->>>>>>> e2716a47d819215b6dfe1c3f0002bf74f8dfe845
+    <string name="Image">Image</string>
+    <string name="gmail">Gmail</string>
     <!-- End of API endpoint tags -->
 
 
