@@ -59,8 +59,8 @@
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:id="@+id/vue_aisle_heading"
             android:gravity="center"
-             android:layout_marginTop="8dp"
             android:textColor="@android:color/white"
             android:text="Dress for pool party"/>
     </LinearLayout>
@@ -80,7 +80,9 @@
                   android:layout_width="wrap_content"
                   android:layout_toRightOf="@+id/vue_user_pic"
                   android:layout_marginLeft="4dp"
+                  android:id="@+id/vue_user_name"
                   android:text="Mare Jane"
+                  android:textColor="@android:color/white"
                   android:layout_centerVertical="true"/>
         
            <ImageView android:layout_width="32dp"
