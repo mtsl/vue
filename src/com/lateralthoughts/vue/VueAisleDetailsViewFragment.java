@@ -47,13 +47,14 @@ public class VueAisleDetailsViewFragment extends Fragment {
     private Context mContext;
     private VueContentGateway mVueContentGateway;
     private AisleDetailsViewAdapter mAisleDetailsAdapter;  
-    private ScrollView mAisleDetailsList;
+    private ListView mAisleDetailsList;
     AisleDetailsSwipeListner mSwipeListener;
     IndicatorView mIndicatorView;
     private int mCurrentScreen;
     private int  mTotalScreenCount ;
     private String mScreenDirection;
     private LinearLayout mVueDetailsContainer;
+    int mlistCount = 3;
 
     //TODO: define a public interface that can be implemented by the parent
     //activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -73,8 +74,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
         }  
         Log.i("windowID", "windowID: receivedd  "+ VueApplication.getInstance().getClickedWindowID());
         mSwipeListener = new AisleDetailsSwipeListner();
-        mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener, null);
-        mVueDetailsContainer = mAisleDetailsAdapter.prepareDetailsVue();
+        mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mlistCount ,null);
+        //mVueDetailsContainer = mAisleDetailsAdapter.prepareDetailsVue();
         
     }
     
@@ -88,13 +89,14 @@ public class VueAisleDetailsViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.aisles_detailed_view_fragment, container, false);
-        
-        mAisleDetailsList = (ScrollView)v.findViewById(R.id.aisle_details_list);  
+        mAisleDetailsList = (ListView)v.findViewById(R.id.aisle_details_list); 
+        mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+      //  mAisleDetailsList.setAdapter(new Comments());
         TextView vue_user_name = (TextView) v.findViewById(R.id.vue_user_name);
            vue_user_name.setTextSize(Utils.MEDIUM_TEXT_SIZE);
        // mAisleDetailsList.setOverScrollMode(View.OVER_SCROLL_NEVER);
        // mAisleDetailsAdapter.addComments(mVueDetailsContainer.findViewById(R.id.vuewndow_user_comments_lay));
-        ListView list = (ListView) mVueDetailsContainer.findViewById(R.id.commentsList);
+ /*       ListView list = (ListView) mVueDetailsContainer.findViewById(R.id.commentsList);
         LayoutInflater layoutInflator = LayoutInflater.from(mContext);
     	View headerView = layoutInflator.inflate(R.layout.addcomment, null);
          final EditText edtcomment = (EditText)headerView.findViewById(R.id.edtcomment);
@@ -121,16 +123,16 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		        	}
 				
 			}
-		});
+		});*/
          
         
-          list.addFooterView(headerView);
+         // list.addFooterView(headerView);
          
        
-		list.setAdapter(new Comments());
+		//list.setAdapter(new Comments());
         
-        Helper.getListViewSize(list);
-        list.setOnTouchListener(new OnTouchListener() {
+       // Helper.getListViewSize(list);
+     /*   list.setOnTouchListener(new OnTouchListener() {
 			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -152,8 +154,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		            return true;
 		 
 			}
-		});
-        mAisleDetailsList.addView(mVueDetailsContainer);
+		});*/
+      //  mAisleDetailsList.addView(mVueDetailsContainer);
        // mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
        // mAisleDetailsAdapter.notifyDataSetChanged();
         final LinearLayout dot_indicator_bg = (LinearLayout)v.findViewById(R.id.dot_indicator_bg);
@@ -186,7 +188,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         R.drawable.bullets_bg, R.drawable.number_inactive);
         mCurrentScreen = 1;
         mTotalScreenCount = VueApplication.getInstance().getClickedWindowCount();
-       
+        mIndicatorView.setNumberofScreens(mTotalScreenCount);
         mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
         
         
@@ -214,6 +216,11 @@ public class VueAisleDetailsViewFragment extends Fragment {
         Log.d("VueAisleDetailsViewFragment","Get ready to display details view");
         return v;
     }
+    @Override
+    public void onResume() {
+    	super.onResume();
+    	mAisleDetailsAdapter.notifyDataSetChanged();
+    }
     /**
      * 
      * @author raju
@@ -236,6 +243,13 @@ public class VueAisleDetailsViewFragment extends Fragment {
     		mTotalScreenCount = count;
     		//Toast.makeText(getActivity(), "swipe image Count: "+count, Toast.LENGTH_LONG).show();
     	}
+		@Override
+		public void onResetAdapter() {
+			mlistCount = 10;
+			 mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mlistCount ,null);
+			 mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+			
+		}
     }
     private int checkScreenBoundaries(String direction,int mCurrentScreen){
 		  if(direction.equalsIgnoreCase("left")) {
@@ -261,53 +275,4 @@ public class VueAisleDetailsViewFragment extends Fragment {
     	return mCurrentScreen;
     	
     }
-	private class Comments extends BaseAdapter {
-
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return 10;
-		}
-
-		@Override
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-		    CommentsHolder commentHolder;
-		    if(convertView == null) {
-		    	commentHolder = new CommentsHolder();
-		    	LayoutInflater layoutInflator = LayoutInflater.from(mContext);
-		    	convertView = layoutInflator.inflate(R.layout.comments, null);
-		    	commentHolder. userPic = (ImageView) convertView
-						.findViewById(R.id.vue_user_img);
-		    	commentHolder.userComment = (TextView) convertView
-						.findViewById(R.id.vue_user_comment);
-		    	commentHolder.userComment.setTextSize(VueApplication.getInstance().getmTextSize());
-		    	 
-		    	commentHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
-		    	
-		    	
-		    	convertView.setTag(commentHolder);
-		    }
-			commentHolder = (CommentsHolder) convertView.getTag();
-		 
-	 
-			return convertView;
-		}
-		
-	}
-  private class CommentsHolder {
-	  TextView userComment,enterComment;
-	  ImageView userPic;
-  }
 }

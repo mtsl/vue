@@ -4,18 +4,19 @@
     android:layout_height="fill_parent"
     android:background="#CCCCCC" >
 
- <!--    <ListView
+    <ListView
         android:id="@+id/aisle_details_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="5dp"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="12.0sp"
+        android:background="@color/white"
+        android:layout_above="@+id/vue_bottom_bar"
+        android:divider="@null"
         android:scrollbars="none" >
-    </ListView> -->
-<ScrollView 
+    </ListView>
+<!-- <ScrollView 
     android:id="@+id/aisle_details_list"
      android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -24,7 +25,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="48dp"
         android:divider="@android:color/transparent"
-        android:scrollbars="none" ></ScrollView>
+        android:scrollbars="none" ></ScrollView> -->
     <RelativeLayout
         android:id="@+id/vue_image_indicator"
         android:layout_width="fill_parent"

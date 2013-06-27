@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popupbg"
+    android:layout_width="fill_parent"
+    android:layout_height="48dip" >
+
+   
+    <LinearLayout 
+    android:orientation="horizontal"
+    style="@style/textviewwrapcontent" >
+    <ImageView
+        android:id="@+id/launchericon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/Image"
+        style="@style/marging_left" />
+       
+
+    <TextView
+        android:id="@+id/gmail"
+        style="@style/textviewwrapcontent"
+        android:layout_marginLeft="12dp"
+        android:layout_gravity="center_vertical"
+        android:text="@string/gmail"
+        android:textColor="@color/grey"
+        android:textStyle="bold" />
+</LinearLayout>
+ 
+</RelativeLayout>

@@ -76,7 +76,9 @@ indicatorBitmapHeigt = indicatorBitmap.getHeight();
      
 CURRENTSCREEN = sourceScreenNumber;
 NEXT_SCREEN = destScreennumber;
-
+if(TOTAL_SCREEN_NUMBER == 0) {
+	TOTAL_SCREEN_NUMBER = 4;
+}
 int distance = indicatorBitmapWidth / TOTAL_SCREEN_NUMBER;
 int travelTo = 0;
 int start;

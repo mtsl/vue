@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue;
 
 //generic android goodies
+import java.io.IOException;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;

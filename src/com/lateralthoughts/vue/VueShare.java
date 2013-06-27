@@ -131,7 +131,6 @@ public class VueShare {
 			for (int i = 0; i < dataArray.length(); i++) {
 
 				JSONObject jsonObj = dataArray.getJSONObject(i);
-
 				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(
 						jsonObj.getString("name"), jsonObj
 								.getJSONObject("picture").getJSONObject("data")
