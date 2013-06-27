@@ -60,10 +60,15 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     private int mShowPieceWidth;
     private int mThumbnailsHeight;
     private int mActionBarHeight;
+    private int mListCount;
+    String mTempComments[] = {"Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.",
+    		"Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.",
+    		"Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.",
+    		"Love love love the dress! Simple and fabulous.",};
     ViewHolder holder;
-	private SpannableString spannableString;;
+	
 
-    public AisleDetailsViewAdapter(Context c,AisleDetailSwipeListener swipeListner, ArrayList<AisleWindowContent> content) {
+    public AisleDetailsViewAdapter(Context c,AisleDetailSwipeListener swipeListner,int listCount, ArrayList<AisleWindowContent> content) {
         super(c, content);
         mContext = c;
         mViewLoader = AisleDetailsViewListLoader.getInstance(mContext);
@@ -84,7 +89,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         mShowPieceWidth = (int)(mScreenWidth);
         //the thumbnail item would occupy about 25% of the screen
         mThumbnailsHeight = (int)(mScreenHeight - (mShowPieceHeight + mActionBarHeight)); //(int)(mScreenHeight*0.30f);
-        
+        mListCount = listCount;
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");      
     }
     @Override
@@ -97,217 +102,163 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       //  LinearLayout thumbnailScroller;
         TextView aisleDescription;
         TextView aisleOwnersName;
-        TextView aisleContext;
+        TextView aisleContext,commentCount;
         ImageView profileThumbnail;
         String uniqueContentId;
         LinearLayout aisleDescriptor;
         AisleWindowContent mWindowContent;
+        LinearLayout imgContentlay,commentContentlay;
+  	  TextView userComment,enterComment;
+  	  ImageView userPic,commentImg;
+    }
+    @Override
+    public int getCount() {
+    	return  mListCount;
+    }
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+    	ViewHolder viewHolder;
+    	 if(convertView == null) {
+    		 viewHolder = new ViewHolder();
+    		 LayoutInflater layoutInflator = LayoutInflater.from(mContext);
+				convertView = layoutInflator.inflate(R.layout.vue_details_adapter, null);
+				
+				viewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
+						.findViewById(R.id.showpiece);
+				viewHolder.imgContentlay = (LinearLayout) convertView.findViewById(R.id.vueimagcontent);
+				viewHolder.commentContentlay = (LinearLayout) convertView.findViewById(R.id.vue_user_coment_lay);
+				viewHolder.aisleDescription = (TextView) convertView.findViewById(R.id.vue_details_descreption);
+				viewHolder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
+				
+				
+				viewHolder. userPic = (ImageView) convertView
+							.findViewById(R.id.vue_user_img);
+				viewHolder.userComment = (TextView) convertView
+							.findViewById(R.id.vue_user_comment);
+				viewHolder.commentCount = (TextView) convertView
+						.findViewById(R.id.vuewndow_bookmark_count);
+				
+				viewHolder.commentImg = (ImageView) convertView.findViewById(R.id.vuewndow_bookmark_img);
+				viewHolder.userComment.setTextSize(VueApplication.getInstance().getmTextSize());
+			    	 
+				viewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
+				
+				
+				FrameLayout fl = (FrameLayout) convertView
+						.findViewById(R.id.showpiece_container);
+				FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+						mShowPieceWidth, mShowPieceHeight);
+				LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
+						android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+						android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+				viewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+				viewHolder.aisleContentBrowser
+						.setAisleDetailSwipeListener(mswipeListner);
+				FrameLayout.LayoutParams thumbnailParams = new FrameLayout.LayoutParams(
+						FrameLayout.LayoutParams.WRAP_CONTENT, mThumbnailsHeight);
+				viewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+				
+				convertView.setTag(viewHolder);
+    	 }
+    	
+    	 viewHolder = (ViewHolder) convertView.getTag();
+    	 viewHolder.imgContentlay.setVisibility(View.VISIBLE);
+    		if(position == 0) {
+    			viewHolder.commentContentlay.setVisibility(View.GONE);
+    			
+    			for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
+    				viewHolder.mWindowContent = (AisleWindowContent) getItem(i);
+    				if (viewHolder.mWindowContent.getAisleId().equalsIgnoreCase(
+    						VueApplication.getInstance().getClickedWindowID())) {
+    					viewHolder.mWindowContent = (AisleWindowContent) getItem(i);
+    					position = i;
+    					break;
+    				}
+    			}  
+    			int scrollIndex = 0;
+    			mViewLoader.getAisleContentIntoView(viewHolder, scrollIndex, position);
+    		
+    			
+				//gone comment layoutgone
+			} else {
+				viewHolder.imgContentlay.setVisibility(View.GONE);
+				//image content gone
+			}
+    		setText(viewHolder.aisleDescription,10);
+    		setText(viewHolder.userComment,4);
+    		viewHolder.commentImg.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Log.i("listexpand", "listexpand clicked");
+					 mswipeListner.onResetAdapter();
+					
+				}
+			});
+    	return convertView;
     }
     
-	public LinearLayout prepareDetailsVue() {
-	
-		View convertView = null;
-		int position = 0;
-		LinearLayout vue_details_container = null;
-		if (null == convertView) {
-			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
-	/*		AbsListView.LayoutParams params = new AbsListView.LayoutParams(
-					mScreenWidth, mScreenHeight - 156);*/
-			convertView = layoutInflator.inflate(
-					R.layout.aisle_detailed_view_row_item, null);
-			vue_details_container = (LinearLayout) convertView
-					.findViewById(R.id.vue_details_container);
-			//convertView.setLayoutParams(params);
-			holder = new ViewHolder();
-			holder.aisleContentBrowser = (AisleContentBrowser) convertView
-					.findViewById(R.id.showpiece);
-			holder.aisleDescription = (TextView) convertView.findViewById(R.id.vue_details_descreption);
-			holder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
-			FrameLayout fl = (FrameLayout) convertView
-					.findViewById(R.id.showpiece_container);
-			FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-					mShowPieceWidth, mShowPieceHeight);
-			LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
-					android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
-					android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
-			holder.aisleContentBrowser.setLayoutParams(showpieceParams);
-			holder.aisleContentBrowser
-					.setAisleDetailSwipeListener(mswipeListner);
-			FrameLayout.LayoutParams thumbnailParams = new FrameLayout.LayoutParams(
-					FrameLayout.LayoutParams.WRAP_CONTENT, mThumbnailsHeight);
-			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-			convertView.setTag(holder);
-		}
-
-		holder = (ViewHolder) convertView.getTag();
-		holder.mWindowContent = (AisleWindowContent) getItem(position);
-	  Layout layout = holder.aisleDescription.getLayout();
-	  
-	    new Handler().postDelayed(new Runnable() {
-			
-			@Override
  
-			public void run() {
-				int lineCount = holder.aisleDescription.getLineCount();
-				int eachLineHeight = holder.aisleDescription .getLineHeight();
-				int defaultTxtViewHeight =  holder.aisleDescription.getHeight();
-				LinearLayout.LayoutParams params;
-				if((lineCount * eachLineHeight) < defaultTxtViewHeight) {
-					params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-					params.setMargins(VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(10), VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(10));
-					 holder.aisleDescription.setLayoutParams(params);
-					Log.i("descr", "descr txtViewHeight if: ");
-				} else {
-					
-					int howMany = defaultTxtViewHeight/eachLineHeight;
-					 Layout layout =  holder.aisleDescription.getLayout();
-					 int end;
-					 int start = 0;
-					 String tot = null;
-					 final String s = holder.aisleDescription.getText().toString();
-					 for(int j = 0;j<howMany;j++){
-						 end = layout.getLineEnd(j);
-						 String temp = s.substring(start, end);
-						 if(tot == null) {  
-							 tot = temp;
-						 } else {
-							 tot = tot + temp;
+	private void setText( final TextView descView,int margin_BT) {
+		  SpannableString spannableString; 
+					int lineCount = descView.getLineCount();
+					int eachLineHeight =descView .getLineHeight();
+					int defaultTxtViewHeight =  descView.getHeight();
+					Log.i("descr", "descr txtViewHeight sdfif: "+descView.getText().toString());
+					LinearLayout.LayoutParams params;
+					if((lineCount * eachLineHeight) < defaultTxtViewHeight) {
+						params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+						params.setMargins(VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(margin_BT), VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(margin_BT));
+						descView.setLayoutParams(params);
+						
+					} else {
+						
+						int howMany = defaultTxtViewHeight/eachLineHeight;
+						 Layout layout =  descView.getLayout();
+						 int end;
+						 int start = 0;
+						 String tot = null;
+						 final String s = descView.getText().toString();
+						 for(int j = 0;j<howMany;j++){
+							 end = layout.getLineEnd(j);
+							 String temp = s.substring(start, end);
+							 if(tot == null) {  
+								 tot = temp;
+							 } else {
+								 tot = tot + temp;
+							 }
+							 start = end;
 						 }
-						 start = end;
-					 }
-					 tot = tot.substring(0,tot.length()-10);
-					 tot = tot+"... more";
-					 
-					 holder.aisleDescription.setText(null);
-					 holder.aisleDescription.setText(tot);
-					 params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-						params.setMargins(VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(10), VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(10));
-						 holder.aisleDescription.setLayoutParams(params);
+						 if(tot == null) {
+							 return;
+						 }
+						 tot = tot.substring(0,tot.length()-10);
+						 tot = tot+"... more";
 						 
-						  spannableString = new SpannableString(tot);
-						  holder.aisleDescription.setText(spannableString);
-	    				  int pos = tot.length();
-	    				  spannableString.setSpan(new ClickableSpan() {
-							
-							@Override
-							public void onClick(View widget) {
-								holder.aisleDescription.setText(s);
-							}
-						},pos-4,pos,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-	    				holder.aisleDescription.setText(spannableString);
-	    				holder.aisleDescription.setMovementMethod(LinkMovementMethod.getInstance());
-				}
- }
- 
-		}, 1000);
- 
-	  
-
-		
-		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
-			holder.mWindowContent = (AisleWindowContent) getItem(i);
-			if (holder.mWindowContent.getAisleId().equalsIgnoreCase(
-					VueApplication.getInstance().getClickedWindowID())) {
-				holder.mWindowContent = (AisleWindowContent) getItem(i);
-				position = i;
-				break;
-			}
-		}
-		 /*AisleContext context = holder.mWindowContent.getAisleContext();
-		 StringBuilder contextBuilder = new StringBuilder();
-	        contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem).append("\n"+context.mFirstName);
-	        holder.aisleDescription.setText(contextBuilder.toString());*/
-		int scrollIndex = 0;
-		mViewLoader.getAisleContentIntoView(holder, scrollIndex, position);
-		return vue_details_container;
-
-	}
-   /**
-    * 
-    * @param view
-    * TODO: need to used the pooled views to avoid the unnecessary garbage collection
-    */
-	public void addComments(View view) {
-		ListView list = (ListView) view.findViewById(R.id.commentsList);
-		list.setAdapter(new Comments());
-		
-		/*
-		ListView list = (ListView) view.findViewById(R.id.commentsList);
-		LayoutInflater layoutInflator = LayoutInflater.from(mContext);
-		for (int i = 0; i < 5; i++) {
-			View commentView = layoutInflator.inflate(R.layout.comments, null);
-			ImageView userImage = (ImageView) commentView
-					.findViewById(R.id.vue_user_img);
-			TextView userComment = (TextView) commentView
-					.findViewById(R.id.vue_user_comment);
-			userComment.setTextSize(VueApplication.getInstance().getmTextSize());
-			if (i == 4) {
-				TextView addComment = (TextView) commentView
-						.findViewById(R.id.vue_user_entercomment);
-				addComment.setVisibility(View.VISIBLE);
-				addComment.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						Toast.makeText(mContext, "clicked", Toast.LENGTH_SHORT)
-								.show();
-
+						 descView.setText(null);
+						 descView.setText(tot);
+						 params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+							params.setMargins(VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(margin_BT), VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(margin_BT));
+							descView.setLayoutParams(params);
+							 
+							  spannableString = new SpannableString(tot);
+							  descView.setText(spannableString);
+		    				  int pos = tot.length();
+		    				  spannableString.setSpan(new ClickableSpan() {
+								
+								@Override
+								public void onClick(View widget) {
+									descView.setText(s);
+								}
+							},pos-4,pos,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		    				  descView.setText(spannableString);
+		    				  descView.setMovementMethod(LinkMovementMethod.getInstance());
 					}
-				});
-
-			}
-			((ViewGroup) view).addView(commentView);
-		}
-	*/}
-	private class Comments extends BaseAdapter {
-
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return 5;
-		}
-
-		@Override
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			Log.i("screenno", "screenno list calledsfsdfsdf");
-			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
-			convertView = layoutInflator.inflate(R.layout.comments, null);
-			ImageView userImage = (ImageView) convertView
-					.findViewById(R.id.vue_user_img);
-			TextView userComment = (TextView) convertView
-					.findViewById(R.id.vue_user_comment);
-			userComment.setTextSize(VueApplication.getInstance().getmTextSize());
-			if (position == 4) {
-				TextView addComment = (TextView) convertView
-						.findViewById(R.id.vue_user_entercomment);
-				addComment.setVisibility(View.VISIBLE);
-				addComment.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						Toast.makeText(mContext, "clicked", Toast.LENGTH_SHORT)
-								.show();
-
-					}
-				});
-
-			}
-			return convertView;
-		}
-		
-	}
+	 }
+	 
+	 
+ 
+ 
 }
