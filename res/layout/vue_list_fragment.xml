@@ -30,20 +30,20 @@
             android:layout_toRightOf="@+id/list_cancle"
             android:focusableInTouchMode="true"
             android:gravity="center_vertical"
+            android:hint="@string/hint_search"
             android:imeOptions="actionSearch"
             android:singleLine="true"
-            android:textColor="#ff0000"
-            android:hint="@string/hint_search" />
+            android:textColor="#ff0000" />
     </RelativeLayout>
 
     <ExpandableListView
         android:id="@+id/vue_list_fragment_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/vue_list_fragment_sidemenu_actionbar"
         android:divider="@null"
         android:fadingEdge="none"
         android:groupIndicator="@null"
-        android:layout_below="@+id/vue_list_fragment_sidemenu_actionbar"
         android:scrollbars="none" />
 
     <LinearLayout
@@ -51,8 +51,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:visibility="gone"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:visibility="gone" >
 
         <!-- android:background="@drawable/appbg" -->
 
@@ -64,8 +64,8 @@
             android:background="@color/red"
             android:gravity="left|center_vertical"
             android:paddingLeft="12dp"
-            android:textColor="#ffffff"
-            android:text="@string/fontsize" />
+            android:text="@string/fontsize"
+            android:textColor="#ffffff" />
 
         <RelativeLayout
             android:id="@+id/fontSize_small"
@@ -107,7 +107,7 @@
             android:clickable="false" >
 
             <TextView
-                android:id="@+id/mediumid"
+                android:id="@+id/vue_mediumid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -169,6 +169,7 @@
             android:textColor="@color/white" />
 
         <RelativeLayout
+            android:id="@+id/vue_list_fragment_wifi_layout"
             android:layout_width="fill_parent"
             android:layout_height="48dp"
             android:layout_marginLeft="24dp"
@@ -187,8 +188,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                 />
+                android:layout_centerVertical="true" />
         </RelativeLayout>
 
         <LinearLayout
@@ -266,12 +266,13 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-<LinearLayout
+
+    <LinearLayout
         android:id="@+id/aboutlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:visibility="gone" >
 
         <ScrollView
             android:layout_width="fill_parent"
@@ -285,20 +286,24 @@
 
                 <include
                     android:id="@+id/bannerid"
-                    layout="@layout/feedbacktext" />
+                    layout="@layout/feedbacktext"
+                    android:layout_marginBottom="10dp"
+                     />
+
                 <RelativeLayout
                     android:id="@+id/aboutdonelayout"
                     android:layout_width="match_parent"
-                    android:gravity="center_horizontal"
                     android:layout_height="42dp"
-                    android:layout_marginBottom="8dp"
                     android:background="@drawable/buton_rounded_corners"
+                    android:gravity="center_horizontal"
                     android:orientation="horizontal" >
 
-                    <!--android:layout_marginLeft="8dp"
+                    <!--
+                    android:layout_marginLeft="8dp"
                     android:layout_marginRight="12dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/lemon" -->
+                    android:background="@color/lemon"
+                    -->
 
                     <TextView
                         android:id="@+id/aboutdone"
@@ -306,27 +311,31 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center"
-                        android:text="Done"
-                        android:textColor="#000000"
+                        android:text="@string/done"
+                        android:textColor="#ffffff"
                         android:textSize="16sp" />
                 </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
             </LinearLayout>
         </ScrollView>
 
         <!-- about screen add -->
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/vue_list_fragment_invite_friendsLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/vue_list_fragment_sidemenu_actionbar"
-        android:visibility="gone"
-        >
-        
+        android:visibility="gone" >
+
         <ListView
             android:id="@+id/vue_list_fragment_Invitefriends_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-             />
-        </LinearLayout>
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 </RelativeLayout>

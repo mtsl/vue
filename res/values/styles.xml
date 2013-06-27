@@ -30,4 +30,22 @@
            parent="android:Theme.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
+    <style name="textviewwrapcontent">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="marging_left">
+        <item name="android:layout_marginLeft">12dp</item>
+    </style>
+
+    <style name="marging_right">
+        <item name="android:layout_marginRight">12dp</item>
+    </style>
+
+    <style name="popupbottom">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">60dp</item>
+    </style>
+
 </resources>

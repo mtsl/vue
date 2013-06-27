@@ -6,25 +6,11 @@
 
 package com.lateralthoughts.vue;
 
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.AbsListView;
-import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.HorizontalScrollView;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Activity;
 import android.content.Context;
-import android.os.Handler;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -32,11 +18,17 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-//java util imports
-import java.util.ArrayList;
-
-//internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -61,6 +53,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     private int mThumbnailsHeight;
     private int mActionBarHeight;
     private int mListCount;
+    AisleWindowContent mWindowContent_temp;
     String mTempComments[] = {"Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.",
     		"Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.",
     		"Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.",
@@ -107,6 +100,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         String uniqueContentId;
         LinearLayout aisleDescriptor;
         AisleWindowContent mWindowContent;
+       
         LinearLayout imgContentlay,commentContentlay;
   	  TextView userComment,enterComment;
   	  ImageView userPic,commentImg;
@@ -178,6 +172,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     				}
     			}  
     			int scrollIndex = 0;
+    			mWindowContent_temp = viewHolder.mWindowContent;
     			mViewLoader.getAisleContentIntoView(viewHolder, scrollIndex, position);
     		
     			
@@ -259,6 +254,29 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	 }
 	 
 	 
- 
+	 /**
+     * By Krishna.V
+     * Sharing content
+     */
+  public void share(Context context, Activity activity)
+  {
+      ShareDialog share = new ShareDialog(context, activity);
+      
+      List<String> imageUrlList = new ArrayList<String>();
+      
+      if(mWindowContent_temp.getImageList() != null && mWindowContent_temp.getImageList().size() > 0)
+      {
+          for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
+              imageUrlList.add(mWindowContent_temp.getImageList().get(i).mDetalsUrl);
+          }
+          
+          share.share(imageUrlList, mWindowContent_temp.getAisleContext().mOccasion, (mWindowContent_temp.getAisleContext().mFirstName + " " +mWindowContent_temp.getAisleContext().mLastName) );
+      }
+      
+      
+      
+      
+  }
+
  
 }
