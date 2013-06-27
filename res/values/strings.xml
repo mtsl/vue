@@ -45,7 +45,9 @@
        <string name="alert_Dialog_Network">No Network Connection: Check Network Settings</string>
     <string name="com_facebook_requesterror_permissions">An app connection with Facebook failed due to insufficient permissions, please grant the app permissions to perform the operation.</string>
      
- 
+    <string name="cancel">Cancel</string>
+  	<string name="Image">Image</string>
+      <string name="gmail">Gmail</string>
     <!-- End of API endpoint tags -->
     
     <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string>-->
