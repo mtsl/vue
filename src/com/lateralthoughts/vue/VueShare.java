@@ -15,15 +15,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.plus.PlusClient;
-import com.google.android.gms.plus.PlusClient.OnPeopleLoadedListener;
-import com.google.android.gms.plus.model.people.Person;
-import com.google.android.gms.plus.model.people.PersonBuffer;
-import com.lateralthoughts.vue.utils.FacebookFriendsDetails;
-import com.lateralthoughts.vue.utils.GooglePlusFriendsDetails;
+import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
 /**
  * This is common class for all Vue sharing functionality.
@@ -32,41 +24,6 @@ import com.lateralthoughts.vue.utils.GooglePlusFriendsDetails;
  */
 public class VueShare {
 	
-	List<GooglePlusFriendsDetails> googlePlusFriendsDetailsList = null;
-	
-	/**
-	 * By Krishna.V
-	 * This method is used to get the Google+ friends information.
-	 * @param plusClientObj
-	 */
-	public List<GooglePlusFriendsDetails> getGooglePlusFriends(PlusClient plusClientObj)
-	{
-
-		googlePlusFriendsDetailsList = null;
-
-		plusClientObj.loadPeople(new OnPeopleLoadedListener() {
-
-			@Override
-			public void onPeopleLoaded(ConnectionResult status,
-					PersonBuffer personBuffer, String nextPageToken) {
-
-				if (ConnectionResult.SUCCESS == status.getErrorCode()) {
-					if (personBuffer != null && personBuffer.getCount() > 0) {
-						googlePlusFriendsDetailsList = new ArrayList<GooglePlusFriendsDetails>();
-						for (Person p : personBuffer) {
-							GooglePlusFriendsDetails googlePlusFriendsDetailsObj = new GooglePlusFriendsDetails(
-									p.getDisplayName(), p.getImage().getUrl());
-
-							googlePlusFriendsDetailsList
-									.add(googlePlusFriendsDetailsObj);
-
-						}
-					}
-				}
-			}
-		}, Person.Collection.VISIBLE);
-		return googlePlusFriendsDetailsList;
-	}
 	
 	
 	
@@ -78,9 +35,9 @@ public class VueShare {
 	 * @throws IOException 
 	 * @throws JSONException 
 	 */
-	public List<FacebookFriendsDetails> getFacebookFriends(Context context) throws IOException, JSONException {
+	public List<FbGPlusDetails> getFacebookFriends(Context context) throws IOException, JSONException {
 		
-		List<FacebookFriendsDetails> facebookFriendsDetailsList = null;
+		List<FbGPlusDetails> facebookFriendsDetailsList = null;
 		
 		SharedPreferences sharedPreferencesObj = context.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
 		
@@ -119,20 +76,19 @@ public class VueShare {
 	 * @return
 	 * @throws JSONException
 	 */
-	private List<FacebookFriendsDetails> JsonParsing(String jsonString) throws JSONException
+	private List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException
 	{
-		List<FacebookFriendsDetails> facebookFriendsDetailsList = null;
+		List<FbGPlusDetails> facebookFriendsDetailsList = null;
 
 		JSONObject mainJsonObj = new JSONObject(jsonString);
 		JSONArray dataArray = mainJsonObj.getJSONArray("data");
 		if (dataArray != null && dataArray.length() > 0) {
-			facebookFriendsDetailsList = new ArrayList<FacebookFriendsDetails>();
+			facebookFriendsDetailsList = new ArrayList<FbGPlusDetails>();
 
 			for (int i = 0; i < dataArray.length(); i++) {
 
 				JSONObject jsonObj = dataArray.getJSONObject(i);
-
-				FacebookFriendsDetails objFacebookFriendsDetails = new FacebookFriendsDetails(
+				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(
 						jsonObj.getString("name"), jsonObj
 								.getJSONObject("picture").getJSONObject("data")
 								.getString("url"));

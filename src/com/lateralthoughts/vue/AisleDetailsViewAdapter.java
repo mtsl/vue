@@ -6,14 +6,12 @@
 
 package com.lateralthoughts.vue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.os.Handler;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -26,8 +24,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -36,6 +32,7 @@ import android.widget.TextView;
 
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
+import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
@@ -307,21 +304,24 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
   {
       ShareDialog share = new ShareDialog(context, activity);
       
-      List<String> imageUrlList = new ArrayList<String>();
+      FileCache ObjFileCache = new FileCache(context);
+      
+      List<File> imageUrlList = new ArrayList<File>();
       
       if(mWindowContent_temp.getImageList() != null && mWindowContent_temp.getImageList().size() > 0)
       {
           for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
-              imageUrlList.add(mWindowContent_temp.getImageList().get(i).mDetalsUrl);
+              imageUrlList.add(ObjFileCache.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl));
           }
           
-         // share.share(imageUrlList, mWindowContent_temp.getAisleContext().mOccasion, (mWindowContent_temp.getAisleContext().mFirstName + " " +mWindowContent_temp.getAisleContext().mLastName) );
+          share.share(imageUrlList, mWindowContent_temp.getAisleContext().mOccasion, (mWindowContent_temp.getAisleContext().mFirstName + " " +mWindowContent_temp.getAisleContext().mLastName) );
       }
       
       
       
       
   }
+
 
  
 }

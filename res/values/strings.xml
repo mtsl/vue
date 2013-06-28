@@ -1,6 +1,7 @@
 <resources>
+
     <string name="app_name">Vue</string>
-    <string name="app_id">127551770751077</string>
+  <string name="app_id">288419657969615</string> <!-- Krishna id - 288419657969615 ; Vinodh id -  127551770751077   -->
     <!-- the following string are tags used in API endpoints -->
     <string name="trending_aisles_tag">aisle/trending</string>
     <string name="limit_tag">limit</string>
@@ -8,16 +9,14 @@
     <string name="middle_earth">Visiting Middle Earth</string>
     <string name="profile_owner">Profile Owner</string>
     <string name="aisle_owner_profile_desc">Profile of the aisle owner</string>
-     <string name="progress_message">Signing in to Google&#8230;</string>
+    <string name="progress_message">Signing in to Google&#8230;</string>
     <string name="googleplus_app_installation_dialog">Enable Share via Google+ ?</string>
     <string name="plus_example_deep_link_id">/+/mobile/android/</string>
-    <string name="plus_example_deep_link_url">
-        https://developers.google.com/+/mobile/android/
-    </string>
-     <string name="googleplus_button_text">Sign In with Google</string>
-      <string name="facebook_button_text">Sign In with Facebook</string>
-       <string name="cancel_button_text">No Thanks</string>
-        <string name="com_facebook_dialogloginactivity_ok_button">OK</string>
+    <string name="plus_example_deep_link_url">        https://developers.google.com/+/mobile/android/</string>
+    <string name="googleplus_button_text">Sign In with Google</string>
+    <string name="facebook_button_text">Sign In with Facebook</string>
+    <string name="cancel_button_text">No Thanks</string>
+    <string name="com_facebook_dialogloginactivity_ok_button">OK</string>
     <string name="com_facebook_loginview_log_out_button">Log Out</string>
     <string name="com_facebook_loginview_log_in_button">Log In</string>
     <string name="com_facebook_loginview_logged_in_as">Logged in as: %1$s</string>
@@ -36,21 +35,21 @@
     <string name="com_facebook_nearby">Nearby</string>
     <string name="com_facebook_loading">Loading...</string>
     <string name="com_facebook_internet_permission_error_title">AndroidManifest Error</string>
-      <string name="switchtotwog">No Wi-Fi Network: Switch To 2G/3G?</string>
+    <string name="switchtotwog">No Wi-Fi Network: Switch To 2G/3G?</string>
     <string name="com_facebook_internet_permission_error_message">WebView login requires INTERNET permission</string>
     <string name="com_facebook_requesterror_web_login">Please log in via https://www.facebook.com or https://m.facebook.com to re-enable the app to connect with Facebook.</string>
     <string name="com_facebook_requesterror_relogin">The app is not connected with Facebook, please log in and reconnect this app.</string>
     <string name="com_facebook_requesterror_password_changed">Your password on Facebook has changed, please reconnect the app with Facebook.</string>
     <string name="com_facebook_requesterror_reconnect">An error occurred when connecting with Facebook, please reconnect the app with Facebook.</string>
-       <string name="alert_Dialog_Network">No Network Connection: Check Network Settings</string>
+    <string name="alert_Dialog_Network">No Network Connection: Check Network Settings</string>
     <string name="com_facebook_requesterror_permissions">An app connection with Facebook failed due to insufficient permissions, please grant the app permissions to perform the operation.</string>
-     
     <string name="cancel">Cancel</string>
-  	<string name="Image">Image</string>
-      <string name="gmail">Gmail</string>
+    <string name="Image">Image</string>
+    <string name="gmail">Gmail</string>
     <!-- End of API endpoint tags -->
-    
-    <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string>-->
+
+
+    <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string> -->
     <string name="image_contentDescription">image</string>
     <string name="fontsize">Font Size</string>
     <string name="wifyonly">Wi-Fi only</string>
@@ -73,7 +72,8 @@
     <string name="sidemenu_sub_option_Home">Home</string>
     <string name="sidemenu_sub_option_Facebook">Facebook</string>
     <string name="sidemenu_sub_option_Twitter">Twitter</string>
-    <string name="sidemenu_sub_option_Gmail">Gmail</string>
+    <string name="sidemenu_sub_option_Gmail">Google Plus</string>
+    <string name="done">Done</string>
     <string name="about_Vue">About Vue</string>
     <string name="contact_us">Contact us</string>
     <string name="contact_us_text">Please provide feedback by writing to us at</string>
@@ -84,6 +84,7 @@
     <string name="aboutedittext">Type your message here</string>
     <string name="clear">Clear</string>
     <string name="send">Send</string>
+    <string name="add">Add</string>
     <string name="abouttextfedbacktext">\nPlease write to us about how we might improve</string>
     <string name="abouttextfedbacktexttwo">to suit your needs. We will appreciate it very much!</string>
     <string name="abouttextfedbacktextt">Email will be sent using gmail. Your phone model, dimensions, resolutions and OS version are included with this message.</string>

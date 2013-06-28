@@ -3,12 +3,12 @@
  
  
  <stroke android:width="2dip" android:color="#2f5a86" />
-    <gradient 
+   <!--  <gradient 
         android:startColor="#9accff"
         android:centerColor="#437ab4"
         android:endColor="#3269a4"
         android:angle="270"
-        />
+        /> -->
     <!--LIGHT BLUE <stroke android:width="2dip" android:color="#83a5c8" />
     <gradient 
         android:startColor="#d7edff"
@@ -32,5 +32,5 @@
         /> -->
     
     <corners android:radius="6dip"/>
-    <!-- <solid android:color="#77bd0c"/> -->
+    <solid android:color="@color/red"/>
 </shape>

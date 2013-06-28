@@ -1,5 +1,6 @@
 package com.lateralthoughts.vue;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,7 @@ public class ShareDialog {
 	public Dialog dialog;
 	
 	String aisleTitle, name;
-	List<String> imagePathArray;
+	List<File> imagePathArray;
 	
 	/**
 	 * 
@@ -88,7 +89,7 @@ public class ShareDialog {
 
 	
 
-	public void share(List<String> imagePathArray, String aisleTitle, String name) {
+	public void share(List<File> imagePathArray, String aisleTitle, String name) {
 		
 		this.imagePathArray = imagePathArray;
 		this.aisleTitle = aisleTitle;
@@ -210,92 +211,191 @@ public class ShareDialog {
 
 	private void shareIntent(int position)
  {
-		Log.e("sharedialog", "method called");
+		try {
+			Log.e("sharedialog", "method called");
 
-		if (listmessages.get(position).equalsIgnoreCase("facebook")) {
+			/*if (listmessages.get(position).equalsIgnoreCase("facebook")) {
+
+				ArrayList<Uri> imageUris = new ArrayList<Uri>();
+
+				if (imagePathArray != null && imagePathArray.size() > 0) {
+					for (int i = 0; i < imagePathArray.size(); i++) {
+						Log.e("Share", imagePathArray.get(i).getPath());
+						Uri screenshotUri = Uri.fromFile(imagePathArray.get(i));
+						imageUris.add(screenshotUri);
+					}
+				}
+
+
+				String shareText = "Your friend "
+						+ name
+						+ " wants your opinion - get Vue to see the full details and help "
+						+ name + " out.";
+				sendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+				//sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
+
+				sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
+						imageUris);
+
+				ResolveInfo info = (ResolveInfo) currentDisp.get(position);
+				sendIntent.setClassName(info.activityInfo.packageName,
+						info.activityInfo.name);
+
+				screenDialog.setCancelable(true);
+				context.startActivity(sendIntent);
+
+				dialog.dismiss();
+			}
+			*/
+
+			 if (listmessages.get(position).equalsIgnoreCase("Google+")) {
+				Log.e("Share", "Google+");
+				/*String path = null;
+				path = Images.Media.insertImage(context.getContentResolver(),
+						BitmapFactory.decodeResource(context.getResources(),
+								R.drawable.vue_launcher_icon), aisleTitle, null);*/
+
+				String shareText = "Your friend "
+						+ name
+						+ " wants your opinion - get Vue to see the full details and help "
+						+ name + " out.";
+
+				VueLandingPageActivity.mSignInFragment.share(
+						VueLandingPageActivity.plusClient, activity, shareText,
+						imagePathArray);
+
+				dialog.dismiss();
+			}
+
+/*	else if (listmessages.get(position).equalsIgnoreCase("twitter")) {
+				String shareText = "Your friend "
+						+ name
+						+ " wants your opinion - get Vue to see the full details and help "
+						+ name + " out.";
+				sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
+
+				ResolveInfo info = (ResolveInfo) currentDisp.get(position);
+				sendIntent.setClassName(info.activityInfo.packageName,
+						info.activityInfo.name);
+
+				screenDialog.setCancelable(true);
+				context.startActivity(sendIntent);
+
+				dialog.dismiss();
+			}*/ else if(listmessages.get(position).equals("Gmail")){
+
+				
+					ArrayList<Uri> imageUris = new ArrayList<Uri>();
+
+					if (imagePathArray != null && imagePathArray.size() > 0) {
+						for (int i = 0; i < imagePathArray.size(); i++) {
+							Log.e("Share", imagePathArray.get(i).getPath());
+							Uri screenshotUri = Uri.fromFile(imagePathArray.get(i));
+							imageUris.add(screenshotUri);
+						}
+					}
+
+/*	ArrayList<Uri> imageUris = new ArrayList<Uri>();
+
+					String path = null;
+					path = Images.Media.insertImage(context.getContentResolver(),
+							BitmapFactory.decodeResource(context.getResources(),
+									R.drawable.vue_launcher_icon), aisleTitle, null);
+					Uri screenshotUri = Uri.parse(path);
+					imageUris.add(screenshotUri);
+
+					String path1 = null;
+					path1 = Images.Media.insertImage(context.getContentResolver(),
+							BitmapFactory.decodeResource(context.getResources(),
+									R.drawable.background), aisleTitle, null);
+					Uri screenshotUri1 = Uri.parse(path1);
+					imageUris.add(screenshotUri1);
+
+					String path11 = null;
+					path11 = Images.Media.insertImage(context.getContentResolver(),
+							BitmapFactory.decodeResource(context.getResources(),
+									R.drawable.vue_launcher_icon), aisleTitle, null);
+					Uri screenshotUri11 = Uri.parse(path11);
+					imageUris.add(screenshotUri11);*/
+					String shareText = "Your friend "
+							+ name
+							+ " wants your opinion - get Vue to see the full details and help "
+							+ name + " out.";
+					sendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+					sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("mailto:"));
+					
+					sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
+
+					sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
+							imageUris);
+
+					ResolveInfo info = (ResolveInfo) currentDisp.get(position);
+					sendIntent.setClassName(info.activityInfo.packageName,
+							info.activityInfo.name);
+
+					screenDialog.setCancelable(true);
+					context.startActivity(sendIntent);
+
+					dialog.dismiss();
+				
+
+			}
+			 
+			else
+			{
+				String shareText = "Your friend "
+						+ name
+						+ " wants your opinion - get Vue to see the full details and help "
+						+ name + " out.";
+				sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
+
+				ResolveInfo info = (ResolveInfo) currentDisp.get(position);
+				sendIntent.setClassName(info.activityInfo.packageName,
+						info.activityInfo.name);
+
+				screenDialog.setCancelable(true);
+				context.startActivity(sendIntent);
+
+				dialog.dismiss();
+			}
+			 
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			
-		}
-
-		else if (listmessages.get(position).equalsIgnoreCase("Google+")) {
-			String path = null;
-			path = Images.Media.insertImage(context.getContentResolver(),
-					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.vue_launcher_icon), aisleTitle, null);
-
-			String shareText = "Your friend "
-					+ name
-					+ " wants your opinion - get Vue to see the full details and help "
-					+ name + " out.";
-
-			VueLandingPageActivity.mSignInFragment.share(
-					VueLandingPageActivity.plusClient, activity, shareText,
-					path);
-
-			dialog.dismiss();
-		}
-
-		else if (listmessages.get(position).equalsIgnoreCase("twitter")) {
-			String shareText = "Your friend "
-					+ name
-					+ " wants your opinion - get Vue to see the full details and help "
-					+ name + " out.";
-			sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
-
-			ResolveInfo info = (ResolveInfo) currentDisp.get(position);
-			sendIntent.setClassName(info.activityInfo.packageName,
-					info.activityInfo.name);
-
-			screenDialog.setCancelable(true);
-			context.startActivity(sendIntent);
-
-			dialog.dismiss();
-		} else {
-
-			ArrayList<Uri> imageUris = new ArrayList<Uri>();
-
-			String path = null;
-			path = Images.Media.insertImage(context.getContentResolver(),
-					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.vue_launcher_icon), aisleTitle, null);
-			Uri screenshotUri = Uri.parse(path);
-			imageUris.add(screenshotUri);
-
-			String path1 = null;
-			path1 = Images.Media.insertImage(context.getContentResolver(),
-					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.background), aisleTitle, null);
-			Uri screenshotUri1 = Uri.parse(path1);
-			imageUris.add(screenshotUri1);
-
-			String path11 = null;
-			path11 = Images.Media.insertImage(context.getContentResolver(),
-					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.vue_launcher_icon), aisleTitle, null);
-			Uri screenshotUri11 = Uri.parse(path11);
-			imageUris.add(screenshotUri11);
-
-			String shareText = "Your friend "
-					+ name
-					+ " wants your opinion - get Vue to see the full details and help "
-					+ name + " out.";
-			sendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-			sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
-
-			sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
-					imageUris);
-
-			ResolveInfo info = (ResolveInfo) currentDisp.get(position);
-			sendIntent.setClassName(info.activityInfo.packageName,
-					info.activityInfo.name);
-
-			screenDialog.setCancelable(true);
-			context.startActivity(sendIntent);
-
-			dialog.dismiss();
-
+			showAlertMessageShareError(listmessages.get(position));
 		}
 
 	}
+	
+	private void showAlertMessageShareError(String appName) {
+
+	    final Dialog gplusdialog = new Dialog(context,
+	        R.style.Theme_Dialog_Translucent);
+	    gplusdialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	    gplusdialog.setContentView(R.layout.googleplusappinstallationdialog);
+	    TextView messagetext = (TextView) gplusdialog.findViewById(R.id.messagetext);
+	    
+	    messagetext.setText("Unable to Share content to "+ appName);
+	    
+	    TextView noButton = (TextView) gplusdialog.findViewById(R.id.nobutton);
+	    
+	    noButton.setVisibility(View.GONE);
+	    
+	    TextView okButton = (TextView) gplusdialog.findViewById(R.id.okbutton);
+	    okButton.setText("OK");
+	    okButton.setOnClickListener(new OnClickListener() {
+
+	      public void onClick(View v) {
+	        gplusdialog.dismiss();
+	     
+	      }
+	    });
+	   
+
+	    gplusdialog.show();
+
+	  }
 	
 	private void prepareShareIntentData() {
 		/*
