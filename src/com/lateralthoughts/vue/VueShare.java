@@ -15,15 +15,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.plus.PlusClient;
-import com.google.android.gms.plus.PlusClient.OnPeopleLoadedListener;
-import com.google.android.gms.plus.model.people.Person;
-import com.google.android.gms.plus.model.people.PersonBuffer;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
-import com.lateralthoughts.vue.utils.GooglePlusFriendsDetails;
 
 /**
  * This is common class for all Vue sharing functionality.
@@ -32,41 +24,6 @@ import com.lateralthoughts.vue.utils.GooglePlusFriendsDetails;
  */
 public class VueShare {
 	
-	List<FbGPlusDetails> googlePlusFriendsDetailsList = null;
-	
-	/**
-	 * By Krishna.V
-	 * This method is used to get the Google+ friends information.
-	 * @param plusClientObj
-	 */
-	public List<FbGPlusDetails> getGooglePlusFriends(PlusClient plusClientObj)
-	{
-
-		googlePlusFriendsDetailsList = null;
-
-		plusClientObj.loadPeople(new OnPeopleLoadedListener() {
-
-			@Override
-			public void onPeopleLoaded(ConnectionResult status,
-					PersonBuffer personBuffer, String nextPageToken) {
-
-				if (ConnectionResult.SUCCESS == status.getErrorCode()) {
-					if (personBuffer != null && personBuffer.getCount() > 0) {
-						googlePlusFriendsDetailsList = new ArrayList<FbGPlusDetails>();
-						for (Person p : personBuffer) {
-							FbGPlusDetails googlePlusFriendsDetailsObj = new FbGPlusDetails(
-									p.getDisplayName(), p.getImage().getUrl());
-
-							googlePlusFriendsDetailsList
-									.add(googlePlusFriendsDetailsObj);
-
-						}
-					}
-				}
-			}
-		}, Person.Collection.VISIBLE);
-		return googlePlusFriendsDetailsList;
-	}
 	
 	
 	

@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name">Vue</string>
-    <string name="app_id">127551770751077</string>
+  <string name="app_id">288419657969615</string> <!-- Krishna id - 288419657969615 ; Vinodh id -  127551770751077   -->
     <!-- the following string are tags used in API endpoints -->
     <string name="trending_aisles_tag">aisle/trending</string>
     <string name="limit_tag">limit</string>
@@ -72,7 +72,7 @@
     <string name="sidemenu_sub_option_Home">Home</string>
     <string name="sidemenu_sub_option_Facebook">Facebook</string>
     <string name="sidemenu_sub_option_Twitter">Twitter</string>
-    <string name="sidemenu_sub_option_Gmail">Gmail</string>
+    <string name="sidemenu_sub_option_Gmail">Google Plus</string>
     <string name="done">Done</string>
     <string name="about_Vue">About Vue</string>
     <string name="contact_us">Contact us</string>

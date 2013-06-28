@@ -2,6 +2,7 @@ package com.googleplus;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -552,7 +553,7 @@ public final class PlusClientFragment extends Fragment
         }
     }
     
-    private Intent getInteractivePostIntent(PlusClient plusClient, Activity activity, String post, String filePath) {
+    private Intent getInteractivePostIntent(PlusClient plusClient, Activity activity, String post, List<File> fileList) {
         // Create an interactive post with the "VIEW_ITEM" label. This will
         // create an enhanced share dialog when the post is shared on Google+.
         // When the user clicks on the deep link, ParseDeepLinkActivity will
@@ -576,19 +577,27 @@ public final class PlusClientFragment extends Fragment
 
         // Set the pre-filled message.
         builder.setText(post);
-
-                if (filePath != null) {
-                        builder.setStream(Uri.fromFile(new File(filePath)));
+        
+        
+        
+        if(fileList != null)
+        {
+        	for (int i = 0; i < fileList.size(); i++) {
+        		   builder.setStream(Uri.fromFile(fileList.get(i)));
+			}
+        }
+        
+                     
                         builder.setType("image/*");
-                }
+                
                
 
         return builder.getIntent();
     }
     
-    public void share(PlusClient plusClient, Activity activity, String post, String filePath)
+    public void share(PlusClient plusClient, Activity activity, String post, List<File> fileList)
     {
-        startActivityForResult(getInteractivePostIntent(plusClient, activity, post, filePath),
+        startActivityForResult(getInteractivePostIntent(plusClient, activity, post, fileList),
                 REQUEST_CODE_INTERACTIVE_POST);
     }
 }

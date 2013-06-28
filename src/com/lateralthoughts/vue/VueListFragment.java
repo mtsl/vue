@@ -44,7 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class VueListFragment extends Fragment {
-
+ // public static final String TAG = "VueListFragment";
   private ExpandableListView expandListView;
   private LinearLayout customlayout, aboutlayout, invitefriendsLayout;
   private RelativeLayout donelayout, cancellayout, fontSize_small,
@@ -162,7 +162,11 @@ public class VueListFragment extends Fragment {
       @Override
       public boolean onChildClick(ExpandableListView parent, View v,
           int groupPosition, int childPosition, long id) {
-        progress = ProgressDialog.show(getActivity(), "", "Plase wait...");
+    	  TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
+    	  String s = textView.getText().toString();
+    	  getFriendsList(s);
+
+  /*      progress = ProgressDialog.show(getActivity(), "", "Plase wait...");
         TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
         String s = textView.getText().toString();
         Log.e(getTag(), "SURU : Value of s : " + s);
@@ -206,8 +210,9 @@ public class VueListFragment extends Fragment {
             } else if (loginStatus.equals(VueConstants.GOOGLEPLUS)) {
               List<FbGPlusDetails> fbGPlusFriends = share
                   .getGooglePlusFriends(VueLandingPageActivity.plusClient);
+            	VueLandingPageActivity activity = (VueLandingPageActivity)getActivity();
               inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(
-                  getActivity(), R.layout.invite_friends, fbGPlusFriends));
+                  getActivity(), R.layout.invite_friends, activity.googlePlusFriendsDetailsList));
               expandListView.setVisibility(View.GONE);
               invitefriendsLayout.setVisibility(View.VISIBLE);
               invitefriendsLayout.startAnimation(animUp);
@@ -230,7 +235,7 @@ public class VueListFragment extends Fragment {
           Toast.makeText(getActivity(), "Please login using G+ or Facebook",
               Toast.LENGTH_LONG).show();
         }
-
+*/
         return false;
       }
     });
@@ -608,7 +613,13 @@ public class VueListFragment extends Fragment {
 
     @Override
     public int getCount() {
-      return items.size();
+      try {
+		return items.size();
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return 0;
     }
   }
   private static class InviteFriendHolder {
@@ -620,4 +631,116 @@ public class VueListFragment extends Fragment {
 
     public boolean onBackPressed();
   }
+  
+  public void getFriendsList(String s) {
+
+	    progress = ProgressDialog.show(getActivity(), "", "Plase wait...");
+	    Log.e(getTag(), "SURU : Value of s : " + s);
+	    String loginStatus = sharedPreferencesObj.getString(VueConstants.VUELOGIN,
+	        null);
+	    if (s.equals("Facebook")) {
+
+	      if (loginStatus != null) {
+	        final VueShare share = new VueShare();
+	        if (loginStatus.equals(VueConstants.FACEBOOK)) {
+	          fbFriendsList(share);
+	        }  else {
+		        if (progress.isShowing()) {
+			          progress.dismiss();
+			        }
+			        if (getActivity() instanceof VueLandingPageActivity) {
+			          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
+			          activity.showLogInDialog(false, VueConstants.FACEBOOK);
+			        }
+			      }
+	      } else {
+	        if (progress.isShowing()) {
+	          progress.dismiss();
+	        }
+	        if (getActivity() instanceof VueLandingPageActivity) {
+	          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
+	          activity.showLogInDialog(false, VueConstants.FACEBOOK);
+	        }
+	      }
+	    } else if (s.equals("Google Plus")) {
+	      if (loginStatus != null) {
+	        if (loginStatus.equals(VueConstants.GOOGLEPLUS)) {
+	        	 Log.e(getTag(), "GOOGLEPLUS : Value of s : 1" );
+	          getGPlusFriendsList();
+	        } else {
+		        if (progress.isShowing()) {
+			          progress.dismiss();
+			        }
+		        Log.e(getTag(), "GOOGLEPLUS : Value of s : 2" );
+			        if (getActivity() instanceof VueLandingPageActivity) {
+			        	 Log.e(getTag(), "GOOGLEPLUS : Value of s : 3" );
+			          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
+			          activity.showLogInDialog(false, VueConstants.GOOGLEPLUS);
+			        }
+			      }
+	      } else {
+	        if (progress.isShowing()) {
+	          progress.dismiss();
+	        }
+	        if (getActivity() instanceof VueLandingPageActivity) {
+	          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
+	          activity.showLogInDialog(false, VueConstants.GOOGLEPLUS);
+	        }
+	      }
+	    }
+	    else {
+			if (progress.isShowing()) {
+				progress.dismiss();
+			}
+		}
+	  }
+
+	  // Pull and display fb friends from facebook.com
+	  private void fbFriendsList(final VueShare share) {
+	    Thread t = new Thread(new Runnable() {
+
+	      @Override
+	      public void run() {
+	        try {
+	          final List<FbGPlusDetails> fbGPlusFriends = share
+	              .getFacebookFriends(getActivity());
+	          getActivity().runOnUiThread(new Runnable() {
+
+	            @Override
+	            public void run() {
+	              inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(
+	                  getActivity(), R.layout.invite_friends, fbGPlusFriends));
+	              expandListView.setVisibility(View.GONE);
+	              invitefriendsLayout.setVisibility(View.VISIBLE);
+	              invitefriendsLayout.startAnimation(animUp);
+	              if (progress.isShowing()) {
+	                progress.dismiss();
+	              }
+	            }
+	          });
+	        } catch (IOException e) {
+	          e.printStackTrace();
+	        } catch (JSONException e) {
+	          e.printStackTrace();
+	        }
+	      }
+	    });
+	    t.start();
+	  }
+
+
+	  // Pull and display G+ friends from plus.google.com.
+	  private void getGPlusFriendsList() {
+	    VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
+	    inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(getActivity(),
+	        R.layout.invite_friends, activity.googlePlusFriendsDetailsList));
+	    expandListView.setVisibility(View.GONE);
+	    invitefriendsLayout.setVisibility(View.VISIBLE);
+	    invitefriendsLayout.startAnimation(animUp);
+	    if (progress.isShowing()) {
+	      progress.dismiss();
+	    }
+
+	  }
+
 }
