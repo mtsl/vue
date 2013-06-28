@@ -38,7 +38,7 @@ import com.google.android.gms.plus.model.people.PersonBuffer;
 import com.googleplus.MomentUtil;
 import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
-import com.lateralthoughts.vue.utils.ExceptionHandler;
+ 
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
 public class VueLandingPageActivity extends BaseActivity
@@ -68,8 +68,8 @@ public class VueLandingPageActivity extends BaseActivity
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
     
-    Thread.setDefaultUncaughtExceptionHandler(new
-    		ExceptionHandler(this));
+  /*  Thread.setDefaultUncaughtExceptionHandler(new
+    		ExceptionHandler(this));*/
     
     
     setContentView(R.layout.vue_landing_main);

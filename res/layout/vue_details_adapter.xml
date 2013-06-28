@@ -49,23 +49,24 @@
         android:text="Dressing up for a pool party during the coming weekend. I like greens whites and flowers.This is one idea, but would like to see more ideas." />
    
     </LinearLayout>
-      <LinearLayout android:layout_width="fill_parent"
+    </LinearLayout>
+         <LinearLayout android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
+        android:id="@+id/vue_comment_header"
         android:layout_weight="3"
         android:layout_marginTop="1dp"
         >  
         <include layout="@layout/vuedetails_comment_window"
                  android:id="@+id/commentlay"/>
  
-      </LinearLayout>  
-    </LinearLayout>
+      </LinearLayout> 
     <LinearLayout  
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
      android:background="@android:color/white"
      android:id="@+id/vue_user_coment_lay"
-    android:orientation="horizontal" >
+    android:orientation="vertical" >
   
   <LinearLayout  
     android:layout_width="match_parent"
@@ -90,9 +91,11 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:text="Love love love the dress! Simple and fabulous. It was a randomevents. My friend had been working fir Donna karan in NY managing her studion in west village" />
+            android:text="Love love love the dress! Simple and fabulous. It was a randomevents. My friend had been working for Donna karan in NY managing her studion in west village" />
 </LinearLayout>
 </LinearLayout>
+ <include layout="@layout/addcomment"
+                 android:id="@+id/addcommentlay"/>
   <LinearLayout  
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -100,6 +103,7 @@
     android:orientation="horizontal" >
      <View android:layout_width="fill_parent"
               android:layout_height="1dp"
+              android:id="@+id/separator"
               android:layout_marginLeft="12dp"
               android:layout_marginRight="12dp"
               android:background="#EEEEEE"/>
