@@ -42,6 +42,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -549,10 +550,18 @@ public class ShareDialog {
 			// Post photo....
 			if (articlebitmapList != null) {
 
-			/*	Bundle parameters = new Bundle(1);
-				parameters.putString("picture",  imagePathArray.get(0).getImageUrl());
-				parameters.putString("message", articledesc + "");*/
-
+				Bundle parameters = new Bundle(1);
+			//	parameters.putString("picture",  imagePathArray.get(0).getImageUrl());
+				parameters.putString("message", articledesc + "");
+				ParcelFileDescriptor descriptor = null;
+				try {
+					descriptor = ParcelFileDescriptor.open(imagePathArray.get(0).getFile(), ParcelFileDescriptor.MODE_READ_ONLY);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				parameters.putParcelable("picture", descriptor);
+				
 				Callback callback = new Request.Callback() {
 
 					public void onCompleted(Response response) {
@@ -564,12 +573,12 @@ public class ShareDialog {
 					}
 				};
 
-				/*Request request = new Request(Session.getActiveSession(),
+				Request request = new Request(Session.getActiveSession(),
 						"me/photos", parameters, HttpMethod.POST, callback);
 
-				request.executeAsync();*/
+				request.executeAsync();
 			
-				Request request6 = null;
+				/*Request request6 = null;
 				try {
 					request6 = Request.newUploadPhotoRequest(
 							Session.getActiveSession(),
@@ -579,7 +588,7 @@ public class ShareDialog {
 					e.printStackTrace();
 				}
 			    RequestAsyncTask task6 = new RequestAsyncTask(request6);
-			    task6.execute();
+			    task6.execute();*/
 			
 			
 			}

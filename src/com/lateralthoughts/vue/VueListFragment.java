@@ -153,6 +153,11 @@ public class VueListFragment extends Fragment {
         } else if (s.equals(getString(R.string.sidemenu_option_FeedBack))) {
           startActivity(new Intent(getActivity(), FeedbackForm.class));
         }
+        else if(s.equals(getString(R.string.sidemenu_option_Login)))
+        {
+        	 VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
+	          activity.showLogInDialog(false, null, true);
+        }
         return false;
       }
     });
@@ -374,6 +379,9 @@ public class VueListFragment extends Fragment {
     item = new ListOptionItem(getString(R.string.sidemenu_option_FeedBack),
         R.drawable.vue_launcher_icon, null);
     groups.add(item);
+    item = new ListOptionItem(getString(R.string.sidemenu_option_Login),
+            R.drawable.vue_launcher_icon, null);
+        groups.add(item);
     return groups;
   }
 
@@ -651,7 +659,7 @@ public class VueListFragment extends Fragment {
 			        }
 			        if (getActivity() instanceof VueLandingPageActivity) {
 			          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
-			          activity.showLogInDialog(false, VueConstants.FACEBOOK);
+			          activity.showLogInDialog(false, VueConstants.FACEBOOK, false);
 			        }
 			      }
 	       
@@ -667,7 +675,7 @@ public class VueListFragment extends Fragment {
 			        if (getActivity() instanceof VueLandingPageActivity) {
 			        	 Log.e(getTag(), "GOOGLEPLUS : Value of s : 3" );
 			          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
-			          activity.showLogInDialog(false, VueConstants.GOOGLEPLUS);
+			          activity.showLogInDialog(false, VueConstants.GOOGLEPLUS, false);
 			        }
 			      }
 	    }

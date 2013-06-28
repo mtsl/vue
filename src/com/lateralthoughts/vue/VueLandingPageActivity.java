@@ -39,7 +39,7 @@ import com.google.android.gms.plus.model.people.PersonBuffer;
 import com.googleplus.MomentUtil;
 import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
-import com.lateralthoughts.vue.utils.ExceptionHandler;
+ 
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
 public class VueLandingPageActivity extends BaseActivity
@@ -69,8 +69,8 @@ public class VueLandingPageActivity extends BaseActivity
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
     
-    Thread.setDefaultUncaughtExceptionHandler(new
-    		ExceptionHandler(this));
+  /*  Thread.setDefaultUncaughtExceptionHandler(new
+    		ExceptionHandler(this));*/
     
     
     setContentView(R.layout.vue_landing_main);
@@ -103,7 +103,7 @@ public class VueLandingPageActivity extends BaseActivity
       editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG, false);
       editor.commit();
 
-      showLogInDialog(false, null);
+      showLogInDialog(false, null, false);
 
     }
     // Check the CreatedAisleCount and Comments count
@@ -115,7 +115,7 @@ public class VueLandingPageActivity extends BaseActivity
 
       if (createdaislecount == VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
           || commentscount == VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
-        showLogInDialog(true, null);
+        showLogInDialog(true, null, false);
       }
 
     }
@@ -156,14 +156,19 @@ public class VueLandingPageActivity extends BaseActivity
     return false;
   }
 
-  public void showLogInDialog(boolean hideCancelButton, String from) {
+  public void showLogInDialog(boolean hideCancelButton, String from, boolean fromMenu) {
    
 	  // From Invite Friends
 	  if(from != null)
 	  {
 	        mFrom = null;
-		  renderDialogForSocailNetworkingIntegration(hideCancelButton, from);
+		  renderDialogForSocailNetworkingIntegration(hideCancelButton, from,fromMenu);
 	      trendingbg.setVisibility(View.VISIBLE);   
+	  }
+	  else if(fromMenu)
+	  {
+		  renderDialogForSocailNetworkingIntegration(hideCancelButton, from, fromMenu);
+	      trendingbg.setVisibility(View.VISIBLE);  
 	  }
 	  else
 	  {
@@ -172,16 +177,15 @@ public class VueLandingPageActivity extends BaseActivity
 	  
 		  if(!vueloginfalg)
 		  {
-			  renderDialogForSocailNetworkingIntegration(hideCancelButton, from);
+			  renderDialogForSocailNetworkingIntegration(hideCancelButton, from, fromMenu);
 		      trendingbg.setVisibility(View.VISIBLE);  
 		  }
-	  
 	  }
    
   }
 
   private void renderDialogForSocailNetworkingIntegration(
-      boolean hideCancelButton, final String from) {
+      boolean hideCancelButton, final String from, boolean fromMenu) {
     // Select Image Dialog...
     loginDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
     loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -200,6 +204,11 @@ public class VueLandingPageActivity extends BaseActivity
       cancellayout.setVisibility(View.GONE);
     }
     
+
+	boolean fbloginfalg = sharedPreferencesObj.getBoolean(
+	          VueConstants.FACEBOOK_LOGIN, false);
+	boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
+	          VueConstants.GOOGLEPLUS_LOGIN, false);
     
     if(from != null)
     {
@@ -212,6 +221,13 @@ public class VueLandingPageActivity extends BaseActivity
     		fblog_in_buttonlayout.setVisibility(View.GONE);
     	}
     }
+    else if(fromMenu)
+    {
+    	if(fbloginfalg) fblog_in_buttonlayout.setVisibility(View.GONE);
+    	else if(googleplusloginfalg) googleplusign_in_buttonlayout.setVisibility(View.GONE);
+    
+    }
+    	
 
     googleplusign_in_buttonlayout.setOnClickListener(new OnClickListener() {
 
@@ -286,7 +302,18 @@ public class VueLandingPageActivity extends BaseActivity
 
       }
     });
-    loginDialog.show();
+  
+    if(fromMenu && fbloginfalg && googleplusloginfalg)
+    {
+    	 	// nothing...
+    	 trendingbg.setVisibility(View.GONE);
+    }
+    else
+    {
+    	 loginDialog.show();
+    }
+    
+   
 
     loginDialog.setOnDismissListener(new OnDismissListener() {
 
