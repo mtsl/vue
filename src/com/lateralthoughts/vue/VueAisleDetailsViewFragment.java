@@ -3,7 +3,6 @@ package com.lateralthoughts.vue;
 //generic android & java goodies
 import com.lateralthoughts.vue.indicators.IndicatorView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
- 
 import com.lateralthoughts.vue.ui.MyCustomAnimation;
 import com.lateralthoughts.vue.utils.Helper;
 import com.lateralthoughts.vue.utils.Utils;

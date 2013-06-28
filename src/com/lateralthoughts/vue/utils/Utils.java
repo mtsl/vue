@@ -12,7 +12,7 @@ import android.util.Log;
 
 public class Utils {
 	private static final String CURRENT_FONT_SIZE = "currentFontSize";
-	private static final String NETWORK_SETTINGS = "networkSettings";
+	public static final String NETWORK_SETTINGS = "networkSettings";
 	public static final int LARGE_TEXT_SIZE = 22;
 	public static final int MEDIUM_TEXT_SIZE = 18;
 	public static final int SMALL_TEXT_SIZE = 14;

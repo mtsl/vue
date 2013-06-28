@@ -63,6 +63,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	public String vue_user_name;
 
 	int mDescriptionDefaultHeight;
+ 
 	ViewHolder viewHolder;
 	String mTempComments[] = {
 			"Love love love the dress! Simple and fabulous.",

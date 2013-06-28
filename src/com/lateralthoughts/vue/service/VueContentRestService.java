@@ -30,6 +30,7 @@ import java.net.URLEncoder;
 //internal imports
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
+import com.lateralthoughts.vue.utils.VueConnectivityManager;
 
 public class VueContentRestService extends IntentService {
 
@@ -44,6 +45,7 @@ public class VueContentRestService extends IntentService {
 	private HttpClient mHttpClient;
     public VueContentRestService(){
         super("VueContentRestService");
+        Log.e("VueContentRestService", "network connection VueContentRestService()");
     }
 
     @Override
@@ -52,6 +54,7 @@ public class VueContentRestService extends IntentService {
         VueApplication app = VueApplication.getInstance();
         mHttpClient = app.getHttpClient();
         //mHttpClient = new DefaultHttpClient();
+        Log.e("VueContentRestService", "network connection onStartCommand()");
         return START_STICKY;
     }
 
@@ -59,6 +62,10 @@ public class VueContentRestService extends IntentService {
     protected void onHandleIntent(Intent intent){
     	if(null == intent)
     		return;
+    	 if(!VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
+           Log.e("VueContentRestService", "network connection No");
+           return;
+         }
         mParams = intent.getParcelableArrayListExtra(PARAMS_FIELD);
         mHeaders = intent.getParcelableArrayListExtra(HEADERS_FIELD);
         mUrl = intent.getStringExtra(URL_FIELD);

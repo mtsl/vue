@@ -8,14 +8,16 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 
-public class AisleDetailsViewActivity extends FragmentActivity {
+public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/ {
 	
     @SuppressLint("NewApi")
 	@Override
     public void onCreate(Bundle icicle){
         super.onCreate(icicle);
         setContentView(R.layout.aisle_details_activity_landing);
+ 
        getActionBar().hide();
+ 
       
     }
     

@@ -126,6 +126,10 @@ public class AisleDetailsViewListLoader {
             }
             else{
                 contentBrowser.addView(imageView);
+                if(!VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
+                  Log.e("VueContentRestService", "network connection No");
+                  return;
+                }
                 loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView, windowContent.getBestHeightForWindow());
             }
             
