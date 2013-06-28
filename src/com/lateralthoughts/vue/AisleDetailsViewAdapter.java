@@ -11,6 +11,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.os.Handler;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -23,6 +26,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -54,12 +59,17 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     private int mActionBarHeight;
     private int mListCount;
     AisleWindowContent mWindowContent_temp;
+    int mComentTextDefaultHeight;
+
+	int mDescriptionDefaultHeight;
+    ViewHolder viewHolder;
     String mTempComments[] = {"Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.",
     		"Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.",
     		"Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.","Love love love the dress! Simple and fabulous.",
     		"Love love love the dress! Simple and fabulous.",};
     ViewHolder holder;
-	
+
+    static boolean flags[]={false,false,false,false,false,false,false,false,false,false};
 
     public AisleDetailsViewAdapter(Context c,AisleDetailSwipeListener swipeListner,int listCount, ArrayList<AisleWindowContent> content) {
         super(c, content);
@@ -83,6 +93,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         //the thumbnail item would occupy about 25% of the screen
         mThumbnailsHeight = (int)(mScreenHeight - (mShowPieceHeight + mActionBarHeight)); //(int)(mScreenHeight*0.30f);
         mListCount = listCount;
+        mComentTextDefaultHeight = VueApplication.getInstance().getPixel(32);
+        mDescriptionDefaultHeight = VueApplication.getInstance().getPixel(50);
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");      
     }
     @Override
@@ -111,7 +123,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-    	ViewHolder viewHolder;
+    	
     	 if(convertView == null) {
     		 viewHolder = new ViewHolder();
     		 LayoutInflater layoutInflator = LayoutInflater.from(mContext);
@@ -154,10 +166,17 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 						FrameLayout.LayoutParams.WRAP_CONTENT, mThumbnailsHeight);
 				viewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 				
+			
+				
 				convertView.setTag(viewHolder);
     	 }
-    	
+    	 Log.i("lines", "lines: flag " +flags[position]);
+     
     	 viewHolder = (ViewHolder) convertView.getTag();
+ 
+    	 
+    	 
+    	 
     	 viewHolder.imgContentlay.setVisibility(View.VISIBLE);
     		if(position == 0) {
     			viewHolder.commentContentlay.setVisibility(View.GONE);
@@ -181,8 +200,20 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				viewHolder.imgContentlay.setVisibility(View.GONE);
 				//image content gone
 			}
-    		setText(viewHolder.aisleDescription,10);
-    		setText(viewHolder.userComment,4);
+ 
+    
+      
+    	/*	        setText(viewHolder.aisleDescription,10,mDescriptionDefaultHeight);
+    		        setText(viewHolder.userComment,4,mComentTextDefaultHeight); */
+    		         
+    		 
+    		     if(viewHolder.aisleDescription.getLayout() != null){
+    		    	 int h = viewHolder.aisleDescription.getLayout().getHeight();
+    		    	
+    		     }
+     
+    		    
+    		
     		viewHolder.commentImg.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -192,30 +223,45 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 					
 				}
 			});
+    		viewHolder.commentCount.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					 mswipeListner.onResetAdapter();
+				}
+			});
+     
+					
+			 
     	return convertView;
     }
     
  
-	private void setText( final TextView descView,int margin_BT) {
+	void setText( final TextView descView,int margin_BT,int defaultHeight) {
 		  SpannableString spannableString; 
 					int lineCount = descView.getLineCount();
 					int eachLineHeight =descView .getLineHeight();
 					int defaultTxtViewHeight =  descView.getHeight();
-					Log.i("descr", "descr txtViewHeight sdfif: "+descView.getText().toString());
+			 
+				
 					LinearLayout.LayoutParams params;
 					if((lineCount * eachLineHeight) < defaultTxtViewHeight) {
+		 
 						params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
 						params.setMargins(VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(margin_BT), VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(margin_BT));
 						descView.setLayoutParams(params);
+					 
 						
 					} else {
-						
+						//Log.i("descr", "descr  IN ELSE CONDITIONS ");
 						int howMany = defaultTxtViewHeight/eachLineHeight;
 						 Layout layout =  descView.getLayout();
 						 int end;
 						 int start = 0;
 						 String tot = null;
 						 final String s = descView.getText().toString();
+						// Log.i("descr", "descr  IN ELSE CONDITIONS s "+s);
 						 for(int j = 0;j<howMany;j++){
 							 end = layout.getLineEnd(j);
 							 String temp = s.substring(start, end);
@@ -227,6 +273,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 							 start = end;
 						 }
 						 if(tot == null) {
+							 //Log.i("descr", "descr  IN ELSE CONDITIONS RETURN ");
 							 return;
 						 }
 						 tot = tot.substring(0,tot.length()-10);
@@ -248,11 +295,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 									descView.setText(s);
 								}
 							},pos-4,pos,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		    				 // Log.i("descr", "descr  IN ELSE CONDITIONS SETTEXT "+spannableString.toString());
 		    				  descView.setText(spannableString);
 		    				  descView.setMovementMethod(LinkMovementMethod.getInstance());
 					}
 	 }
-	 
+	  
 	 
 	 /**
      * By Krishna.V
@@ -270,7 +318,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
               imageUrlList.add(mWindowContent_temp.getImageList().get(i).mDetalsUrl);
           }
           
-          share.share(imageUrlList, mWindowContent_temp.getAisleContext().mOccasion, (mWindowContent_temp.getAisleContext().mFirstName + " " +mWindowContent_temp.getAisleContext().mLastName) );
+         // share.share(imageUrlList, mWindowContent_temp.getAisleContext().mOccasion, (mWindowContent_temp.getAisleContext().mFirstName + " " +mWindowContent_temp.getAisleContext().mLastName) );
       }
       
       
