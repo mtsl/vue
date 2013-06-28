@@ -21,7 +21,7 @@
         android:layout_marginLeft="4dp"
         android:layout_toRightOf="@+id/vuewndow_comment_img"
         android:textColor="@color/grey"
-        android:text="5 comments" />
+        android:text="9 comments" />
 
     <ImageView
         android:id="@+id/vuewndow_bookmark_img"
