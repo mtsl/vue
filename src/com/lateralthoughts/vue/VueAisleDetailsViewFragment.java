@@ -135,8 +135,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         mTotalScreenCount = VueApplication.getInstance().getClickedWindowCount();
         mIndicatorView.setNumberofScreens(mTotalScreenCount);
         mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
-        
-        /////////////////////////////////////////////////////////////////////////////////////////
+   
         
         mAisleDetailsList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -171,14 +170,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			 }
 			}
 		});
-        
-        
-        
-        
-        
-        
-        
-        ///////////////////////////////////////////////////////////////////////////////////////////////
+         
         
         
         dot_indicator_bg.getBackground().setAlpha(45);
@@ -191,15 +183,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			}
 		}, 5000);
         
-        /*mAisleDetailsList.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Log.e("VinoTouchFragment","onClick in fragment. Id = " + v.getId());
-                
-            }
-        });*/
+     
         Log.d("VueAisleDetailsViewFragment","Get ready to display details view");
         
         ImageView vue_share = (ImageView) v.findViewById(R.id.vue_share);
