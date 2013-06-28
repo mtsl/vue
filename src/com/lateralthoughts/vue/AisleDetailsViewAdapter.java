@@ -57,6 +57,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     private int mListCount;
     AisleWindowContent mWindowContent_temp;
     int mComentTextDefaultHeight;
+    public String vue_user_name;
 
 	int mDescriptionDefaultHeight;
     ViewHolder viewHolder;
@@ -187,6 +188,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     					break;
     				}
     			}  
+    			vue_user_name  = viewHolder.mWindowContent.getAisleContext().mFirstName;
     			int scrollIndex = 0;
     			mWindowContent_temp = viewHolder.mWindowContent;
     			mViewLoader.getAisleContentIntoView(viewHolder, scrollIndex, position);
@@ -198,11 +200,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				//image content gone
 			}
  
-    
-      
-    	/*	        setText(viewHolder.aisleDescription,10,mDescriptionDefaultHeight);
-    		        setText(viewHolder.userComment,4,mComentTextDefaultHeight); */
-    		         
     		 
     		     if(viewHolder.aisleDescription.getLayout() != null){
     		    	 int h = viewHolder.aisleDescription.getLayout().getHeight();
