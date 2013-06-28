@@ -256,15 +256,32 @@ public class AisleContentBrowser extends ViewFlipper {
 	        mClickListener.onAisleClicked(mAisleUniqueId,mSpecialNeedsAdapter.getAisleItemsCount());
 	          
 	        }
+	        if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
+	        	detailImgClickListenr.onImageClicked();
+	        }
 	        
 	        return true;
+	    }
+	    @Override
+	    public void onLongPress(MotionEvent e) {
+	    	  if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
+		        	detailImgClickListenr.onImageLongPress();
+		        }
+	    	super.onLongPress(e);
 	    }
 	 }
 	
 	public interface AisleContentClickListener{
 	    public void onAisleClicked(String id,int count);
 	}
-	
+	public interface DetailClickListener{
+	    public void onImageClicked();
+	    public void onImageLongPress();
+	}
+	DetailClickListener detailImgClickListenr;
+	public  void setDetailImageClickListener(DetailClickListener detailLestener) {
+		detailImgClickListenr = detailLestener;
+	}
 	public void setAisleContentClickListener(AisleContentClickListener listener){
 	    mClickListener = listener;
 	}

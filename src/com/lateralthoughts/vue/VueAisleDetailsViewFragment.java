@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 //generic android & java goodies
 import com.lateralthoughts.vue.indicators.IndicatorView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
+import com.lateralthoughts.vue.ui.Framevue_Activity;
 import com.lateralthoughts.vue.ui.MyCustomAnimation;
 import com.lateralthoughts.vue.utils.Helper;
 import com.lateralthoughts.vue.utils.Utils;
@@ -17,10 +18,12 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.support.v4.app.Fragment;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.webkit.WebView.FindListener;
@@ -58,7 +61,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
     private int  mTotalScreenCount ;
     private String mScreenDirection;
     private LinearLayout mVueDetailsContainer;
-    int mlistCount = 3;
+    int mlistCount =5;
     int mFirstVisibleItem;
     int mVisibleItemCount;
 
@@ -97,6 +100,18 @@ public class VueAisleDetailsViewFragment extends Fragment {
         View v = inflater.inflate(R.layout.aisles_detailed_view_fragment, container, false);
         mAisleDetailsList = (ListView)v.findViewById(R.id.aisle_details_list); 
         mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+        ImageView vue_aisle = (ImageView) v.findViewById(R.id.vue_aisle);
+        vue_aisle.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				 Intent intent = new Intent();
+		            intent.setClass(VueApplication.getInstance(), Framevue_Activity.class);
+		          
+		            startActivity(intent);
+				
+			}
+		});
       
         TextView vue_user_name = (TextView) v.findViewById(R.id.vue_user_name);
            vue_user_name.setTextSize(Utils.MEDIUM_TEXT_SIZE);
@@ -142,32 +157,60 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-			 if(arg2 != 0) {
-				TextView v = (TextView) arg1.findViewById(R.id.vue_user_comment);
-				int x = v.getLineCount();
-				if(x == 2){
-				  LinearLayout.LayoutParams params;
-	    		  params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-					params.setMargins(VueApplication.getInstance().getPixel(4), VueApplication.getInstance().getPixel(4), VueApplication.getInstance().getPixel(4), VueApplication.getInstance().getPixel(4));
-					v .setLayoutParams(params);
-					v.setMaxLines(Integer.MAX_VALUE);
-				} else {
-					v.setMaxLines(2);
-				}
-			 } else {
-				 
-				 TextView v = (TextView) arg1.findViewById(R.id.vue_details_descreption);
-				 int x = v.getLineCount();
-					if(x == 3){
-						  LinearLayout.LayoutParams params;
-			    		  params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-							params.setMargins(VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(4), VueApplication.getInstance().getPixel(12), VueApplication.getInstance().getPixel(4));
-							v .setLayoutParams(params);
+				if (arg2 != 0 && arg2 != 1) {
+					if (mlistCount - 1 == arg2) {
+		 
+						TextView v = (TextView) arg1
+						.findViewById(R.id.vue_user_entercomment);
+						EditText vue_edt = (EditText)arg1.findViewById(R.id.edtcomment);
+						vue_edt.setVisibility(View.VISIBLE);
+						MyCustomAnimation manim = new MyCustomAnimation(getActivity(), vue_edt, 500, MyCustomAnimation.EXPAND);
+						vue_edt.startAnimation(manim);
+						vue_edt.setFocusable(true);
+						mAisleDetailsAdapter.notifyDataSetChanged();
+						 
+					} else {
+
+						TextView v = (TextView) arg1
+								.findViewById(R.id.vue_user_comment);
+						int x = v.getLineCount();
+						if (x == 2) {
+							LinearLayout.LayoutParams params;
+							params = new LinearLayout.LayoutParams(
+									LayoutParams.MATCH_PARENT,
+									LayoutParams.WRAP_CONTENT);
+							params.setMargins(VueApplication.getInstance()
+									.getPixel(4), VueApplication.getInstance()
+									.getPixel(4), VueApplication.getInstance()
+									.getPixel(4), VueApplication.getInstance()
+									.getPixel(4));
+							v.setLayoutParams(params);
 							v.setMaxLines(Integer.MAX_VALUE);
 						} else {
-							v.setMaxLines(3);
+							v.setMaxLines(2);
 						}
-			 }
+					}
+				} else if (arg2 == 0) {
+
+					TextView v = (TextView) arg1
+							.findViewById(R.id.vue_details_descreption);
+					int x = v.getLineCount();
+					if (x == 3) {
+						LinearLayout.LayoutParams params;
+						params = new LinearLayout.LayoutParams(
+								LayoutParams.MATCH_PARENT,
+								LayoutParams.WRAP_CONTENT);
+						params.setMargins(VueApplication.getInstance()
+								.getPixel(12), VueApplication.getInstance()
+								.getPixel(4), VueApplication.getInstance()
+								.getPixel(12), VueApplication.getInstance()
+								.getPixel(4));
+						v.setLayoutParams(params);
+						v.setMaxLines(Integer.MAX_VALUE);
+					} else {
+						v.setMaxLines(3);
+					}
+				}
 			}
 		});
  
@@ -261,7 +304,11 @@ public class VueAisleDetailsViewFragment extends Fragment {
     	}
 		@Override
 		public void onResetAdapter() {
+			if(mlistCount == 5){
 			mlistCount = 10;
+			} else {
+				mlistCount = 5;
+			}
 			 mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mlistCount ,null);
 			 mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
 			

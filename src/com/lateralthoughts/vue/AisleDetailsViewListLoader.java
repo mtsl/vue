@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 
 //import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.Utils;
@@ -58,7 +59,7 @@ public class AisleDetailsViewListLoader {
     }
 
     public void getAisleContentIntoView(AisleDetailsViewAdapter.ViewHolder holder,
-            int scrollIndex, int position){
+            int scrollIndex, int position,DetailClickListener detailListener){
         ScaleImageView imageView = null;
         ArrayList<AisleImageDetails> imageDetailsArr = null;
         AisleImageDetails itemDetails = null;
@@ -100,6 +101,7 @@ public class AisleDetailsViewListLoader {
             holder.aisleContentBrowser.setUniqueId(desiredContentId);
             holder.aisleContentBrowser.setScrollIndex(scrollIndex);
             holder.aisleContentBrowser.setCustomAdapter(adapter);
+            holder.aisleContentBrowser.setDetailImageClickListener(detailListener);
             holder.uniqueContentId = desiredContentId;
         }       
         
@@ -114,6 +116,7 @@ public class AisleDetailsViewListLoader {
             params.gravity = Gravity.CENTER;
             imageView.setLayoutParams(params);
             imageView.setContainerObject(holder);
+           // imgConnectivity.setImageClick(imageView);
             Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
             if(bitmap != null){
             	bitmap =  setParams(holder.aisleContentBrowser, imageView, bitmap);
