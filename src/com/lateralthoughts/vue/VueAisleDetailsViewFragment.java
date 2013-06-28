@@ -97,10 +97,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
         View v = inflater.inflate(R.layout.aisles_detailed_view_fragment, container, false);
         mAisleDetailsList = (ListView)v.findViewById(R.id.aisle_details_list); 
         mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
-      //  mAisleDetailsList.setAdapter(new Comments());
+      
         TextView vue_user_name = (TextView) v.findViewById(R.id.vue_user_name);
            vue_user_name.setTextSize(Utils.MEDIUM_TEXT_SIZE);
-         
+           vue_user_name.setText(mAisleDetailsAdapter.vue_user_name);
  
      
         final LinearLayout dot_indicator_bg = (LinearLayout)v.findViewById(R.id.dot_indicator_bg);
@@ -135,7 +135,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         mTotalScreenCount = VueApplication.getInstance().getClickedWindowCount();
         mIndicatorView.setNumberofScreens(mTotalScreenCount);
         mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
-   
+ 
         
         mAisleDetailsList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -170,7 +170,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			 }
 			}
 		});
-         
+ 
         
         
         dot_indicator_bg.getBackground().setAlpha(45);
