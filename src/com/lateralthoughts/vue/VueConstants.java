@@ -9,9 +9,7 @@ public class VueConstants {
 
         public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
         public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
-       // public static final String VUELOGIN = "VueLoginFlag";
-        public static final String FACEBOOK_LOGIN = "FacebookLoginFlag";
-        public static final String GOOGLEPLUS_LOGIN = "GoogleplusLoginFlag";
+        public static final String VUELOGIN = "VueLogin";
         public static final String FACEBOOK = "Facebook";
         public static final String GOOGLEPLUS = "Googleplus";
         public static final String FIRSTTIME_LOGIN_PREFRENCE_FLAG = "firstTimeLoginPrefrenceFlag";

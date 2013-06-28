@@ -229,7 +229,7 @@ public class VueLandingPageActivity extends BaseActivity
                   editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
                       session.getAccessToken());
                   editor
-                      .putBoolean(VueConstants.FACEBOOK_LOGIN, true);
+                      .putString(VueConstants.VUELOGIN, VueConstants.FACEBOOK);
                   editor.commit();
                   if (from != null && from.equals(VueConstants.FACEBOOK)) {
                 	  mFrag.getFriendsList(getResources().getString(
@@ -351,7 +351,7 @@ public class VueLandingPageActivity extends BaseActivity
 
 
     SharedPreferences.Editor editor = sharedPreferencesObj.edit();
-    editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, true);
+    editor.putString(VueConstants.VUELOGIN, VueConstants.GOOGLEPLUS);
     editor.commit();
 
     Toast.makeText(this, plusClient.getAccountName() + " is connected.",
