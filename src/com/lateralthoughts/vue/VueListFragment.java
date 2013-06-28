@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -56,6 +57,7 @@ public class VueListFragment extends Fragment {
   private ListView inviteFrirendsListView;
   public FriendsListener listener;
   private SharedPreferences sharedPreferencesObj;
+  private SharedPreferences pref;
   private AsyncImageLoader imageLoader;
   private ProgressDialog progress;
 
@@ -63,6 +65,7 @@ public class VueListFragment extends Fragment {
       Bundle savedInstanceState) {
     sharedPreferencesObj = getActivity().getSharedPreferences(
         VueConstants.SHAREDPREFERENCE_NAME, 0);
+    pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     listener = new FriendsListener() {
       @Override
       public boolean onBackPressed() {
@@ -136,6 +139,8 @@ public class VueListFragment extends Fragment {
     animDown = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_down);
     animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_up);
 
+    wifich.setChecked(pref.getBoolean(Utils.NETWORK_SETTINGS, false));
+    
     expandListView.setOnGroupClickListener(new OnGroupClickListener() {
 
       @Override
@@ -704,15 +709,18 @@ public class VueListFragment extends Fragment {
 	        try {
 	          final List<FbGPlusDetails> fbGPlusFriends = share
 	              .getFacebookFriends(getActivity());
+	          
 	          getActivity().runOnUiThread(new Runnable() {
 
 	            @Override
 	            public void run() {
+	              if(fbGPlusFriends != null) {
 	              inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(
 	                  getActivity(), R.layout.invite_friends, fbGPlusFriends));
 	              expandListView.setVisibility(View.GONE);
 	              invitefriendsLayout.setVisibility(View.VISIBLE);
 	              invitefriendsLayout.startAnimation(animUp);
+	              }
 	              if (progress.isShowing()) {
 	                progress.dismiss();
 	              }
@@ -732,8 +740,10 @@ public class VueListFragment extends Fragment {
 	  // Pull and display G+ friends from plus.google.com.
 	  private void getGPlusFriendsList() {
 	    VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
+	    if(activity.googlePlusFriendsDetailsList != null) {
 	    inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(getActivity(),
 	        R.layout.invite_friends, activity.googlePlusFriendsDetailsList));
+	    }
 	    expandListView.setVisibility(View.GONE);
 	    invitefriendsLayout.setVisibility(View.VISIBLE);
 	    invitefriendsLayout.startAnimation(animUp);
