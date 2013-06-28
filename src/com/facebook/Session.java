@@ -26,6 +26,7 @@ import android.util.Log;
 import com.facebook.internal.SessionAuthorizationType;
 import com.facebook.internal.Utility;
 import com.facebook.internal.Validate;
+import com.lateralthoughts.vue.VueLandingPageActivity;
 
 import java.io.*;
 import java.lang.ref.WeakReference;

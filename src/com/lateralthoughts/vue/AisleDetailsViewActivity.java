@@ -15,7 +15,7 @@ public class AisleDetailsViewActivity extends FragmentActivity {
     public void onCreate(Bundle icicle){
         super.onCreate(icicle);
         setContentView(R.layout.aisle_details_activity_landing);
-        getActionBar().hide();
+      // getActionBar().hide();
       
     }
     

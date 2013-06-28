@@ -46,6 +46,13 @@
     <string name="cancel">Cancel</string>
     <string name="Image">Image</string>
     <string name="gmail">Gmail</string>
+        <string name="success">Success</string>
+    <string name="successfully_posted_post">Successfully posted.</string>
+    <string name="error">Error</string>
+        <string name="photo_post">Photo Post</string>
+        <string name="duplicatepostmesg">This message was already shared.</string>
+            	 <string name="facebookwarningmesg">This Message Contains Blocked Content: Some content in this message has been reported as abusive by Facebook users.</string>
+        
     <!-- End of API endpoint tags -->
 
 

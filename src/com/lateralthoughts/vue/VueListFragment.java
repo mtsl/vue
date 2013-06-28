@@ -636,13 +636,14 @@ public class VueListFragment extends Fragment {
 
 	    progress = ProgressDialog.show(getActivity(), "", "Plase wait...");
 	    Log.e(getTag(), "SURU : Value of s : " + s);
-	    String loginStatus = sharedPreferencesObj.getString(VueConstants.VUELOGIN,
-	        null);
+	    boolean facebookloginflag = sharedPreferencesObj.getBoolean(VueConstants.FACEBOOK_LOGIN,
+	        false);
+	    boolean googleplusloginflag = sharedPreferencesObj.getBoolean(VueConstants.GOOGLEPLUS_LOGIN,
+		        false);
 	    if (s.equals("Facebook")) {
 
-	      if (loginStatus != null) {
 	        final VueShare share = new VueShare();
-	        if (loginStatus.equals(VueConstants.FACEBOOK)) {
+	        if (facebookloginflag) {
 	          fbFriendsList(share);
 	        }  else {
 		        if (progress.isShowing()) {
@@ -653,18 +654,9 @@ public class VueListFragment extends Fragment {
 			          activity.showLogInDialog(false, VueConstants.FACEBOOK);
 			        }
 			      }
-	      } else {
-	        if (progress.isShowing()) {
-	          progress.dismiss();
-	        }
-	        if (getActivity() instanceof VueLandingPageActivity) {
-	          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
-	          activity.showLogInDialog(false, VueConstants.FACEBOOK);
-	        }
-	      }
+	       
 	    } else if (s.equals("Google Plus")) {
-	      if (loginStatus != null) {
-	        if (loginStatus.equals(VueConstants.GOOGLEPLUS)) {
+	        if (googleplusloginflag) {
 	        	 Log.e(getTag(), "GOOGLEPLUS : Value of s : 1" );
 	          getGPlusFriendsList();
 	        } else {
@@ -678,15 +670,6 @@ public class VueListFragment extends Fragment {
 			          activity.showLogInDialog(false, VueConstants.GOOGLEPLUS);
 			        }
 			      }
-	      } else {
-	        if (progress.isShowing()) {
-	          progress.dismiss();
-	        }
-	        if (getActivity() instanceof VueLandingPageActivity) {
-	          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
-	          activity.showLogInDialog(false, VueConstants.GOOGLEPLUS);
-	        }
-	      }
 	    }
 	    else {
 			if (progress.isShowing()) {

@@ -2,31 +2,47 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
 import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
+import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
-
+import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.clsShare;
+import com.facebook.Request.Callback;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.MediaStore.Images;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,7 +89,15 @@ public class ShareDialog {
 	public Dialog dialog;
 	
 	String aisleTitle, name;
-	List<File> imagePathArray;
+	List<clsShare> imagePathArray;
+	
+	enum PendingAction {
+		NONE, POST_PHOTO, POST_STATUS_UPDATE
+	}
+	
+	private final List<String> PERMISSIONS = Arrays.asList("publish_actions");
+	
+	ProgressDialog fbprogressdialog;
 	
 	/**
 	 * 
@@ -85,11 +109,17 @@ public class ShareDialog {
 		this.activity = activity;
 		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		resouces = context.getResources();
+		
+		fbprogressdialog = ProgressDialog.show(
+				context, "Facebook", "Sharing....",
+				true);
+
+		fbprogressdialog.dismiss();
 	}
 
 	
 
-	public void share(List<File> imagePathArray, String aisleTitle, String name) {
+	public void share(List<clsShare> imagePathArray, String aisleTitle, String name) {
 		
 		this.imagePathArray = imagePathArray;
 		this.aisleTitle = aisleTitle;
@@ -209,166 +239,112 @@ public class ShareDialog {
 
 	}
 
-	private void shareIntent(int position)
+	private void shareIntent(final int position)
  {
 		try {
-			Log.e("sharedialog", "method called");
 
-			/*if (listmessages.get(position).equalsIgnoreCase("facebook")) {
-
-				ArrayList<Uri> imageUris = new ArrayList<Uri>();
-
-				if (imagePathArray != null && imagePathArray.size() > 0) {
-					for (int i = 0; i < imagePathArray.size(); i++) {
-						Log.e("Share", imagePathArray.get(i).getPath());
-						Uri screenshotUri = Uri.fromFile(imagePathArray.get(i));
-						imageUris.add(screenshotUri);
-					}
-				}
-
-
-				String shareText = "Your friend "
-						+ name
-						+ " wants your opinion - get Vue to see the full details and help "
-						+ name + " out.";
-				sendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-				//sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
-
-				sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
-						imageUris);
-
-				ResolveInfo info = (ResolveInfo) currentDisp.get(position);
-				sendIntent.setClassName(info.activityInfo.packageName,
-						info.activityInfo.name);
-
-				screenDialog.setCancelable(true);
-				context.startActivity(sendIntent);
-
-				dialog.dismiss();
-			}
-			*/
-
-			 if (listmessages.get(position).equalsIgnoreCase("Google+")) {
-				Log.e("Share", "Google+");
-				/*String path = null;
-				path = Images.Media.insertImage(context.getContentResolver(),
-						BitmapFactory.decodeResource(context.getResources(),
-								R.drawable.vue_launcher_icon), aisleTitle, null);*/
-
-				String shareText = "Your friend "
-						+ name
-						+ " wants your opinion - get Vue to see the full details and help "
-						+ name + " out.";
-
-				VueLandingPageActivity.mSignInFragment.share(
-						VueLandingPageActivity.plusClient, activity, shareText,
-						imagePathArray);
-
-				dialog.dismiss();
-			}
-
-/*	else if (listmessages.get(position).equalsIgnoreCase("twitter")) {
-				String shareText = "Your friend "
-						+ name
-						+ " wants your opinion - get Vue to see the full details and help "
-						+ name + " out.";
-				sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
-
-				ResolveInfo info = (ResolveInfo) currentDisp.get(position);
-				sendIntent.setClassName(info.activityInfo.packageName,
-						info.activityInfo.name);
-
-				screenDialog.setCancelable(true);
-				context.startActivity(sendIntent);
-
-				dialog.dismiss();
-			}*/ else if(listmessages.get(position).equals("Gmail")){
-
+			if (listmessages.get(position).equalsIgnoreCase(
+					VueConstants.FACEBOOK_APP_NAME)) {
 				
-					ArrayList<Uri> imageUris = new ArrayList<Uri>();
-
-					if (imagePathArray != null && imagePathArray.size() > 0) {
-						for (int i = 0; i < imagePathArray.size(); i++) {
-							Log.e("Share", imagePathArray.get(i).getPath());
-							Uri screenshotUri = Uri.fromFile(imagePathArray.get(i));
-							imageUris.add(screenshotUri);
-						}
-					}
-
-/*	ArrayList<Uri> imageUris = new ArrayList<Uri>();
-
-					String path = null;
-					path = Images.Media.insertImage(context.getContentResolver(),
-							BitmapFactory.decodeResource(context.getResources(),
-									R.drawable.vue_launcher_icon), aisleTitle, null);
-					Uri screenshotUri = Uri.parse(path);
-					imageUris.add(screenshotUri);
-
-					String path1 = null;
-					path1 = Images.Media.insertImage(context.getContentResolver(),
-							BitmapFactory.decodeResource(context.getResources(),
-									R.drawable.background), aisleTitle, null);
-					Uri screenshotUri1 = Uri.parse(path1);
-					imageUris.add(screenshotUri1);
-
-					String path11 = null;
-					path11 = Images.Media.insertImage(context.getContentResolver(),
-							BitmapFactory.decodeResource(context.getResources(),
-									R.drawable.vue_launcher_icon), aisleTitle, null);
-					Uri screenshotUri11 = Uri.parse(path11);
-					imageUris.add(screenshotUri11);*/
-					String shareText = "Your friend "
+				
+				dialog.dismiss();
+				
+				  final SharedPreferences sharedPreferencesObj = activity.getSharedPreferences(
+					        VueConstants.SHAREDPREFERENCE_NAME, 0);
+				  
+				  boolean facebookloginflag = sharedPreferencesObj.getBoolean(
+					        VueConstants.FACEBOOK_LOGIN, false);
+				
+				  final String shareText = "Your friend "
 							+ name
 							+ " wants your opinion - get Vue to see the full details and help "
 							+ name + " out.";
-					sendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-					sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("mailto:"));
-					
-					sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
+				  
+				  ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
+				  
+				  final Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
+                          R.drawable.vue_launcher_icon);
+				  
+				  bitmapList.add(bitmap);
+				  
+				  final Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(),
+                          R.drawable.vue_title_icon);
+				  
+				  bitmapList.add(bitmap1);
+				  
+				  if(facebookloginflag)
+				  {
+					  shareToFacebook(bitmapList, shareText);
+				  }
+				  else
+				  {
+					  showAlertMessageShareError("Please Login to Facebook from Mainscreen to Share content to Facebook" , true);
+					  
+					  /*	// start Facebook Login
+						Session.openActiveSession(VueLandingPageActivity.mainActivityContext, true,
+								new Session.StatusCallback() {
 
-					sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
-							imageUris);
+									// callback when session changes state
+									@Override
+									public void call(Session session,
+											SessionState state, Exception exception) {
+										if (session.isOpened()) {
 
-					ResolveInfo info = (ResolveInfo) currentDisp.get(position);
-					sendIntent.setClassName(info.activityInfo.packageName,
-							info.activityInfo.name);
+											   Session.setActiveSession(session);
+											
+											   SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+											      editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
+											    		  session.getAccessToken());
+											      editor
+											          .putBoolean(VueConstants.VUE_LOGIN, true);
+											      editor
+											      .putBoolean(VueConstants.FACEBOOK_LOGIN, true);
+											      editor.commit();
+											
+											shareToFacebook(bitmap, shareText);
 
-					screenDialog.setCancelable(true);
-					context.startActivity(sendIntent);
+											// make request to the /me API
+											Request.executeMeRequestAsync(session,
+													new Request.GraphUserCallback() {
 
-					dialog.dismiss();
+														// callback after Graph API
+														// response with user object
+														@Override
+														public void onCompleted(
+																GraphUser user,
+																Response response) {
+															if (user != null) {
+															}
+														}
+													});
+										}
+									}
+								});*/
+				  }
 				
-
 			}
-			 
-			else
-			{
-				String shareText = "Your friend "
-						+ name
-						+ " wants your opinion - get Vue to see the full details and help "
-						+ name + " out.";
-				sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
 
-				ResolveInfo info = (ResolveInfo) currentDisp.get(position);
-				sendIntent.setClassName(info.activityInfo.packageName,
-						info.activityInfo.name);
-
-				screenDialog.setCancelable(true);
-				context.startActivity(sendIntent);
-
-				dialog.dismiss();
+			else if (listmessages.get(position).equalsIgnoreCase(
+					VueConstants.GOOGLEPLUS_APP_NAME)) {
+				shareImageAndText(position);
+			} else if (listmessages.get(position).equalsIgnoreCase(
+					VueConstants.GMAIL_APP_NAME)) {
+				shareImageAndText(position);
+			} else if (listmessages.get(position).equalsIgnoreCase(
+					VueConstants.TWITTER_APP_NAME)) {
+				shareText(position);
 			}
-			 
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
-			showAlertMessageShareError(listmessages.get(position));
+			showAlertMessageShareError(listmessages.get(position), false);
 		}
 
 	}
 	
-	private void showAlertMessageShareError(String appName) {
+	private void showAlertMessageShareError(String appName, boolean fberror) {
 
 	    final Dialog gplusdialog = new Dialog(context,
 	        R.style.Theme_Dialog_Translucent);
@@ -376,8 +352,8 @@ public class ShareDialog {
 	    gplusdialog.setContentView(R.layout.googleplusappinstallationdialog);
 	    TextView messagetext = (TextView) gplusdialog.findViewById(R.id.messagetext);
 	    
-	    messagetext.setText("Unable to Share content to "+ appName);
-	    
+	   if(!fberror) messagetext.setText("Unable to Share content to "+ appName);
+	   else messagetext.setText(appName);
 	    TextView noButton = (TextView) gplusdialog.findViewById(R.id.nobutton);
 	    
 	    noButton.setVisibility(View.GONE);
@@ -398,14 +374,7 @@ public class ShareDialog {
 	  }
 	
 	private void prepareShareIntentData() {
-		/*
-		 * sendIntent = new Intent(android.content.Intent.ACTION_SEND);
-		 * sendIntent.setType("text/plain");
-		 * sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-		 * this.articleHeadline);
-		 * sendIntent.putExtra(android.content.Intent.EXTRA_HTML_TEXT, "<b>" +
-		 * articleText + "</b>");
-		 */
+		
 
 		if (shareintentObj == null) {
 			InstalledPackageRetriever shareintentObjtemp = new InstalledPackageRetriever(
@@ -432,5 +401,270 @@ public class ShareDialog {
 		RelativeLayout popupbg;
 	}
 	
+	private void downloadImage(String url, File f)
+	{
+	      try {
+			URL imageUrl = new URL(url);
+			  HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
+			  conn.setConnectTimeout(30000);
+			  conn.setReadTimeout(30000);
+			  conn.setInstanceFollowRedirects(true);
+			  InputStream is=conn.getInputStream();
+			  OutputStream os = new FileOutputStream(f);
+			  Utils.CopyStream(is, os);
+			  os.close();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	private void shareImageAndText(final int position)
+	{
+		
+		final ProgressDialog progress = ProgressDialog.show(activity, "", "Sharing...");
+		
+		
+		
+		   Thread t = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                
+
+    				ArrayList<Uri> imageUris = new ArrayList<Uri>();
+
+    				
+    				if (imagePathArray != null && imagePathArray.size() > 0) {
+    					for (int i = 0; i < imagePathArray.size(); i++) {
+    						
+    						
+    						if(!imagePathArray.get(i).getFile().exists()) downloadImage(imagePathArray.get(i).getImageUrl(), imagePathArray.get(i).getFile());
+    						
+    						Uri screenshotUri = Uri.fromFile(imagePathArray.get(i).getFile());
+    						imageUris.add(screenshotUri);
+    					}
+    				}
+                	
+                	String shareText = "Your friend "
+    						+ name
+    						+ " wants your opinion - get Vue to see the full details and help "
+    						+ name + " out.";
+    				sendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+    				sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("mailto:"));
+    				
+    				sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
+
+    				sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
+    						imageUris);
+
+    				ResolveInfo info = (ResolveInfo) currentDisp.get(position);
+    				sendIntent.setClassName(info.activityInfo.packageName,
+    						info.activityInfo.name);
+
+                	
+                	activity.runOnUiThread(new Runnable() {
+
+                      @Override
+                      public void run() {
+                    	  progress.dismiss();
+                    		screenDialog.setCancelable(true);
+            				context.startActivity(sendIntent);
+
+            				dialog.dismiss();
+                      }
+                    });
+                  } 
+                });t.start();
+		
+	}
+	
+	private void shareText(int position)
+	{
+		dialog.dismiss();
+		
+		String shareText = "Your friend "
+				+ name
+				+ " wants your opinion - get Vue to see the full details and help "
+				+ name + " out.";
+		sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
+
+		ResolveInfo info = (ResolveInfo) currentDisp.get(position);
+		sendIntent.setClassName(info.activityInfo.packageName,
+				info.activityInfo.name);
+
+		screenDialog.setCancelable(true);
+		context.startActivity(sendIntent);
+
+	}
+	
+	public void shareToFacebook(ArrayList<Bitmap> articlebitmapList, String articledesc) {
+		Log.e("share", "f1");
+		performPublish(PendingAction.POST_PHOTO, articlebitmapList, articledesc);
+	}
+	
+	void performPublish(PendingAction action, ArrayList<Bitmap> articlebitmapList,
+			String articledesc) {
+		Log.e("share", "f2");
+		Session session = Session.getActiveSession();
+		if (session != null) {
+			if (hasPublishPermission()) {
+				Log.e("share", "f4");
+				// We can do the action right away.
+				handlePendingAction(articlebitmapList, articledesc);
+			} else {
+				Log.e("share", "f5");
+				// We need to get new permissions, then complete the action when
+				// we get called back.
+				session.requestNewPublishPermissions(new Session.NewPermissionsRequest(
+						activity, PERMISSIONS));
+			}
+		}
+	}
+	
+	boolean hasPublishPermission() {
+		Log.e("share", "f3");
+		Session session = Session.getActiveSession();
+		return session != null
+				&& session.getPermissions().contains("publish_actions");
+	}
+	
+	void handlePendingAction(ArrayList<Bitmap> articlebitmapList, String articledesc) {
+		Log.e("share", "f6");
+			postPhoto(articlebitmapList, articledesc);
+	}
+
+	void postPhoto(ArrayList<Bitmap> articlebitmapList, String articledesc) {
+		Log.e("share", "fw");
+		
+		if (hasPublishPermission()) {
+			fbprogressdialog.show();
+
+			// Post photo....
+			if (articlebitmapList != null) {
+
+			/*	Bundle parameters = new Bundle(1);
+				parameters.putString("picture",  imagePathArray.get(0).getImageUrl());
+				parameters.putString("message", articledesc + "");*/
+
+				Callback callback = new Request.Callback() {
+
+					public void onCompleted(Response response) {
+						fbprogressdialog.dismiss();
+						showPublishResult(
+								activity
+										.getString(R.string.photo_post),
+								response.getGraphObject(), response.getError());
+					}
+				};
+
+				/*Request request = new Request(Session.getActiveSession(),
+						"me/photos", parameters, HttpMethod.POST, callback);
+
+				request.executeAsync();*/
+			
+				Request request6 = null;
+				try {
+					request6 = Request.newUploadPhotoRequest(
+							Session.getActiveSession(),
+					        imagePathArray.get(0).getFile(), callback);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			    RequestAsyncTask task6 = new RequestAsyncTask(request6);
+			    task6.execute();
+			
+			
+			}
+			// post text...
+			else if (articledesc != null) {
+				Bundle parameters = new Bundle(1);
+				parameters.putString("message", articledesc + "");
+
+				Callback callback = new Request.Callback() {
+
+					public void onCompleted(Response response) {
+						fbprogressdialog.dismiss();
+
+						showPublishResult(
+								activity
+										.getString(R.string.photo_post),
+								response.getGraphObject(), response.getError());
+					}
+				};
+
+				Request request = new Request(Session.getActiveSession(),
+						"me/feed", parameters, HttpMethod.POST, callback);
+
+				request.executeAsync();
+
+			} else {
+				fbprogressdialog.dismiss();
+			}
+
+		}
+	}
+	private void showPublishResult(String message, GraphObject result,
+			FacebookRequestError error) {
+		// String title = null;
+		String alertMessage = null;
+		if (error == null) {
+			// title = activity.getString(R.string.success);
+			alertMessage = activity
+					.getString(R.string.successfully_posted_post);
+		} else {
+
+			if (error.getErrorCode() == 506) {
+				// title = activity.getString(R.string.alerttitle);
+				alertMessage = activity
+						.getString(R.string.duplicatepostmesg);
+			} else if (error.getErrorCode() == 368) {
+				// title = activity.getString(R.string.fbwarningmesgtitle);
+				alertMessage = activity
+						.getString(R.string.facebookwarningmesg);
+			} else {
+				// title = activity.getString(R.string.error);
+				alertMessage = error.getErrorMessage();
+			}
+		}
+		final Dialog dialog = new Dialog(activity, R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.networkdialogue);
+		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+		TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
+
+		okbutton.setVisibility(View.GONE);
+
+		View networkdialogline = dialog.findViewById(R.id.networkdialogline);
+		networkdialogline.setVisibility(View.GONE);
+
+		TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
+		
+		nobutton.setText("ok");
+		messagetext.setText(alertMessage);
+
+		nobutton.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.setOnCancelListener(new OnCancelListener() {
+
+			public void onCancel(DialogInterface dialog) {
+
+			}
+		});
+		dialog.show();
+
+	}
+
+
 }

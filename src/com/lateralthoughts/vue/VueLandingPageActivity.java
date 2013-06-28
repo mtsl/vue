@@ -13,6 +13,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources.NotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -75,6 +76,8 @@ public class VueLandingPageActivity extends BaseActivity
     setContentView(R.layout.vue_landing_main);
 
     
+    
+    
     mainActivityContext = this;
     
     trendingbg = (ImageView) findViewById(R.id.trendingbg);
@@ -82,6 +85,9 @@ public class VueLandingPageActivity extends BaseActivity
 
     mSignInFragment = PlusClientFragment.getPlusClientFragment(
         VueLandingPageActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
+    
+    
+  
 
 
     // Checking wheather app is opens for first time or not?
@@ -152,8 +158,25 @@ public class VueLandingPageActivity extends BaseActivity
 
   public void showLogInDialog(boolean hideCancelButton, String from) {
    
-    renderDialogForSocailNetworkingIntegration(hideCancelButton, from);
-      trendingbg.setVisibility(View.VISIBLE);
+	  // From Invite Friends
+	  if(from != null)
+	  {
+	        mFrom = null;
+		  renderDialogForSocailNetworkingIntegration(hideCancelButton, from);
+	      trendingbg.setVisibility(View.VISIBLE);   
+	  }
+	  else
+	  {
+		  boolean vueloginfalg = sharedPreferencesObj.getBoolean(
+		          VueConstants.VUE_LOGIN, false);
+	  
+		  if(!vueloginfalg)
+		  {
+			  renderDialogForSocailNetworkingIntegration(hideCancelButton, from);
+		      trendingbg.setVisibility(View.VISIBLE);  
+		  }
+	  
+	  }
    
   }
 
@@ -215,6 +238,11 @@ public class VueLandingPageActivity extends BaseActivity
 
         loginDialog.dismiss();
 
+
+        mFrom = null;
+    	  
+  	  mFrom = from;
+        
         // start Facebook Login
         Session.openActiveSession(VueLandingPageActivity.this, true,
             new Session.StatusCallback() {
@@ -225,16 +253,9 @@ public class VueLandingPageActivity extends BaseActivity
                   Exception exception) {
                 if (session.isOpened()) {
 
-                  SharedPreferences.Editor editor = sharedPreferencesObj.edit();
-                  editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
-                      session.getAccessToken());
-                  editor
-                      .putString(VueConstants.VUELOGIN, VueConstants.FACEBOOK);
-                  editor.commit();
-                  if (from != null && from.equals(VueConstants.FACEBOOK)) {
-                	  mFrag.getFriendsList(getResources().getString(
-                	  R.string.sidemenu_sub_option_Facebook));
-                  }
+                      Session.setActiveSession(session);
+                	
+                saveFBLoginDetails(session.getAccessToken());
 
                   // make request to the /me API
                   Request.executeMeRequestAsync(session,
@@ -310,6 +331,14 @@ public class VueLandingPageActivity extends BaseActivity
   @Override
   public void onResume() {
     super.onResume();
+    
+ /*   Session session = Session.getActiveSession();
+	
+	if(session != null && session.isOpened())
+	{
+		saveFBLoginDetails(session);
+	}
+    */
   }
 
   @Override
@@ -326,6 +355,8 @@ public class VueLandingPageActivity extends BaseActivity
       Session.getActiveSession().onActivityResult(this, requestCode,
           resultCode, data);
 
+      
+      
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -351,7 +382,8 @@ public class VueLandingPageActivity extends BaseActivity
 
 
     SharedPreferences.Editor editor = sharedPreferencesObj.edit();
-    editor.putString(VueConstants.VUELOGIN, VueConstants.GOOGLEPLUS);
+    editor.putBoolean(VueConstants.VUE_LOGIN, true);
+    editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, true);
     editor.commit();
 
     Toast.makeText(this, plusClient.getAccountName() + " is connected.",
@@ -415,6 +447,43 @@ public void onPeopleLoaded(ConnectionResult status,
 		}
 	}
 
+}
+
+@Override
+protected void onRestart() {
+	// TODO Auto-generated method stub
+	super.onRestart();
+	
+	/*Session session = Session.getActiveSession();
+	
+	if(session != null && session.isOpened())
+	{
+		saveFBLoginDetails(session);
+	}*/
+	
+}
+/**
+ * By Krishna.V
+ * This method saves the Login details in Preferences file.
+ */
+void saveFBLoginDetails(String accessToken)
+{
+	  SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+      editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
+    		  accessToken);
+      editor
+          .putBoolean(VueConstants.VUE_LOGIN, true);
+      editor
+      .putBoolean(VueConstants.FACEBOOK_LOGIN, true);
+      editor.commit();
+      if (mFrom != null && mFrom.equals(VueConstants.FACEBOOK)) {
+    	  mFrom = null;
+    	  try {
+			mFrag.getFriendsList(getResources().getString(
+			  R.string.sidemenu_sub_option_Facebook));
+		} catch (Exception e) {
+		}
+      }
 }
 
 

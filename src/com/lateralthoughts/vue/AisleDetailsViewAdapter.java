@@ -34,6 +34,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.clsShare;
 
 public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
@@ -83,10 +84,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         
         TypedValue tv = new TypedValue();
         mContext.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
-        int actionBarHeight = mContext.getResources().getDimensionPixelSize(tv.resourceId);
+     //   int actionBarHeight = mContext.getResources().getDimensionPixelSize(tv.resourceId);
         
         //the show piece item would occupy about 60% of the screen
-        mShowPieceHeight = (int)((mScreenHeight-actionBarHeight)*0.60f);
+       // mShowPieceHeight = (int)((mScreenHeight-actionBarHeight)*0.60f);
         mShowPieceWidth = (int)(mScreenWidth);
         //the thumbnail item would occupy about 25% of the screen
         mThumbnailsHeight = (int)(mScreenHeight - (mShowPieceHeight + mActionBarHeight)); //(int)(mScreenHeight*0.30f);
@@ -188,10 +189,15 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     					break;
     				}
     			}  
-    			vue_user_name  = viewHolder.mWindowContent.getAisleContext().mFirstName;
-    			int scrollIndex = 0;
-    			mWindowContent_temp = viewHolder.mWindowContent;
-    			mViewLoader.getAisleContentIntoView(viewHolder, scrollIndex, position);
+    			try {
+					vue_user_name  = viewHolder.mWindowContent.getAisleContext().mFirstName;
+					int scrollIndex = 0;
+					mWindowContent_temp = viewHolder.mWindowContent;
+					mViewLoader.getAisleContentIntoView(viewHolder, scrollIndex, position);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     		
     			
 				//gone comment layoutgone
@@ -306,12 +312,16 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       
       FileCache ObjFileCache = new FileCache(context);
       
-      List<File> imageUrlList = new ArrayList<File>();
+      List<clsShare> imageUrlList = new ArrayList<clsShare>();
       
       if(mWindowContent_temp.getImageList() != null && mWindowContent_temp.getImageList().size() > 0)
       {
           for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
-              imageUrlList.add(ObjFileCache.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl));
+              
+        	  clsShare obj = new clsShare(mWindowContent_temp.getImageList().get(i).mCustomImageUrl,
+        			  ObjFileCache.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl));
+        	  
+        	  imageUrlList.add(obj);
           }
           
           share.share(imageUrlList, mWindowContent_temp.getAisleContext().mOccasion, (mWindowContent_temp.getAisleContext().mFirstName + " " +mWindowContent_temp.getAisleContext().mLastName) );

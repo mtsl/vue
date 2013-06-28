@@ -19,9 +19,11 @@ package com.facebook;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueLandingPageActivity;
 
 /**
  * This Activity is a necessary part of the overall Facebook login process
@@ -133,6 +135,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         authorizationClient.onActivityResult(requestCode, resultCode, data);
+     
     }
 
     static Bundle populateIntentExtras(AuthorizationClient.AuthorizationRequest request) {
