@@ -49,7 +49,7 @@
     </activity>
     
            <activity
-            android:name="com.lateralthoughts.vue.ui.Framevue_Activity"
+            android:name="com.lateralthoughts.vue.VueComparisionActivity"
              />
        <activity
             android:name=".CrashActivity"

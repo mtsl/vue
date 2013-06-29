@@ -232,6 +232,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			}
 		
 			vue_user_name = viewHolder.mWindowContent.getAisleContext().mFirstName;
+			Log.i("name", "name: "+vue_user_name);
 			int scrollIndex = 0;
 			mWindowContent_temp = viewHolder.mWindowContent;
 			mViewLoader.getAisleContentIntoView(viewHolder, scrollIndex,

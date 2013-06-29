@@ -3,7 +3,6 @@ package com.lateralthoughts.vue;
 //generic android & java goodies
 import com.lateralthoughts.vue.indicators.IndicatorView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
-import com.lateralthoughts.vue.ui.Framevue_Activity;
 import com.lateralthoughts.vue.ui.MyCustomAnimation;
 import com.lateralthoughts.vue.utils.Helper;
 import com.lateralthoughts.vue.utils.Utils;
@@ -17,6 +16,8 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
@@ -64,6 +65,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
     int mlistCount =5;
     int mFirstVisibleItem;
     int mVisibleItemCount;
+    TextView vue_user_name;
 
     //TODO: define a public interface that can be implemented by the parent
     //activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -106,16 +108,16 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				 Intent intent = new Intent();
-		            intent.setClass(VueApplication.getInstance(), Framevue_Activity.class);
+		            intent.setClass(VueApplication.getInstance(), VueComparisionActivity.class);
 		          
 		            startActivity(intent);
 				
 			}
 		});
       
-        TextView vue_user_name = (TextView) v.findViewById(R.id.vue_user_name);
+          vue_user_name = (TextView) v.findViewById(R.id.vue_user_name);
            vue_user_name.setTextSize(Utils.MEDIUM_TEXT_SIZE);
-           vue_user_name.setText(mAisleDetailsAdapter.vue_user_name);
+      
  
      
         final LinearLayout dot_indicator_bg = (LinearLayout)v.findViewById(R.id.dot_indicator_bg);
@@ -247,6 +249,20 @@ public class VueAisleDetailsViewFragment extends Fragment {
     public void onResume() {
     	super.onResume();
     	mAisleDetailsAdapter.notifyDataSetChanged();
+    	
+    	 
+    	ViewTreeObserver vto = vue_user_name.getViewTreeObserver(); 
+    	vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
+    	    @Override 
+    	    public void onGlobalLayout() { 
+    	        vue_user_name.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
+    	     
+    	        vue_user_name.setText(mAisleDetailsAdapter.vue_user_name);
+    	    } 
+    	});
+    	
+    	
+    	
 /*        mAisleDetailsList.setOnScrollListener(new OnScrollListener() {
 			
  			@Override
