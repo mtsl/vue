@@ -236,7 +236,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
             public void onClick(View arg0) {
                 // TODO Auto-generated method stub
             
-                mAisleDetailsAdapter.share(getActivity(), getActivity());
+               mAisleDetailsAdapter.share(getActivity(), getActivity());
+            	
             }
         });
         

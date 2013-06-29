@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.webkit.CookieSyncManager;
 
 import com.facebook.internal.ServerProtocol;
@@ -139,7 +140,9 @@ class AuthorizationClient implements Serializable {
     }
 
     boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+    	 Log.e("fb", "74");
         if (requestCode == pendingRequest.getRequestCode()) {
+        	 Log.e("fb", "75");
             return currentHandler.onActivityResult(requestCode, resultCode, data);
         }
         return false;
@@ -585,6 +588,11 @@ class AuthorizationClient implements Serializable {
 
         @Override
         boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+        	 Log.e("fb", "76");
+        	 
+        	 if(data != null)
+        	 {
+        	 
             if (NativeProtocol.isServiceDisabledResult20121101(data)) {
                 tryNextHandler();
             } else {
@@ -607,10 +615,16 @@ class AuthorizationClient implements Serializable {
                     tryNextHandler();
                 }
             }
+        	 }
+        	 else
+        	 {
+        		 tryNextHandler();
+        	 }
             return true;
         }
 
         private Result handleResultOk(Intent data) {
+        	 Log.e("fb", "100");
             Bundle extras = data.getExtras();
             String errorType = extras.getString(NativeProtocol.STATUS_ERROR_TYPE);
             if (errorType == null) {
@@ -641,7 +655,7 @@ class AuthorizationClient implements Serializable {
         boolean onActivityResult(int requestCode, int resultCode, Intent data) {
             // Handle stuff
             Result outcome = null;
-
+            Log.e("fb", "77");
             if (resultCode == Activity.RESULT_CANCELED) {
                 outcome = Result.createCancelResult(data.getStringExtra("error"));
             } else if (resultCode != Activity.RESULT_OK) {

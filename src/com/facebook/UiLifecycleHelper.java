@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 /**
  * This class helps to create, automatically open (if applicable), save, and
@@ -66,6 +67,9 @@ public class UiLifecycleHelper {
      * @param savedInstanceState the previously saved state
      */
     public void onCreate(Bundle savedInstanceState) {
+    	
+    	 Log.e("fb", "17");
+    	
         Session session = Session.getActiveSession();
         if (session == null) {
             if (savedInstanceState != null) {
@@ -111,8 +115,10 @@ public class UiLifecycleHelper {
      * @param data the result data
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	 Log.e("fb", "78");
         Session session = Session.getActiveSession();
         if (session != null) {
+        	 Log.e("fb", "79");
             session.onActivityResult(activity, requestCode, resultCode, data);
         }
     }

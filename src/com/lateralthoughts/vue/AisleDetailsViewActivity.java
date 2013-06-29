@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
 
-public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/ {
+public class AisleDetailsViewActivity extends /*BaseActivity*/FragmentActivity {
 	
     @SuppressLint("NewApi")
 	@Override
@@ -16,7 +19,11 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/ {
         super.onCreate(icicle);
         setContentView(R.layout.aisle_details_activity_landing);
  
-       getActionBar().hide();
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion >= 11){
+        	 getActionBar().hide();
+        } 
+ 
  
       
     }

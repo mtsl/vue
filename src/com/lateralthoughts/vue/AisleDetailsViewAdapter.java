@@ -97,11 +97,20 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		TypedValue tv = new TypedValue();
 		mContext.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv,
 				true);
-		int actionBarHeight = mContext.getResources().getDimensionPixelSize(
-				tv.resourceId);
+		
+		
+		 int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+	        if (currentapiVersion >= 11){
+	        	int actionBarHeight = mContext.getResources().getDimensionPixelSize(
+	    				tv.resourceId);
+	        	mShowPieceHeight = (int) ((mScreenHeight - actionBarHeight) * 0.60f);
+	        } 
+		
+		
+		
 
 		// the show piece item would occupy about 60% of the screen
-		mShowPieceHeight = (int) ((mScreenHeight - actionBarHeight) * 0.60f);
+		
 		mShowPieceWidth = (int) (mScreenWidth);
 		// the thumbnail item would occupy about 25% of the screen
 		mThumbnailsHeight = (int) (mScreenHeight - (mShowPieceHeight + mActionBarHeight)); // (int)(mScreenHeight*0.30f);
@@ -228,11 +237,16 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				}
 			}
 		
-			vue_user_name = viewHolder.mWindowContent.getAisleContext().mFirstName;
-			int scrollIndex = 0;
-			mWindowContent_temp = viewHolder.mWindowContent;
-			mViewLoader.getAisleContentIntoView(viewHolder, scrollIndex,
-					position,new DetailImageClickListener());
+			try {
+				vue_user_name = viewHolder.mWindowContent.getAisleContext().mFirstName;
+				int scrollIndex = 0;
+				mWindowContent_temp = viewHolder.mWindowContent;
+				mViewLoader.getAisleContentIntoView(viewHolder, scrollIndex,
+						position,new DetailImageClickListener());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			// gone comment layoutgone
 		} else if (position == 1) {

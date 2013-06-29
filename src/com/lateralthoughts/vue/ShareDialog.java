@@ -261,7 +261,7 @@ public class ShareDialog {
 							+ " wants your opinion - get Vue to see the full details and help "
 							+ name + " out.";
 				  
-				  ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
+				  final ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
 				  
 				  final Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
                           R.drawable.vue_launcher_icon);
@@ -280,8 +280,10 @@ public class ShareDialog {
 				  else
 				  {
 					  showAlertMessageShareError("Please Login to Facebook from Mainscreen to Share content to Facebook" , true);
+					  /*
+					  //showAlertMessageShareError("Please Login to Facebook from Mainscreen to Share content to Facebook" , true);
 					  
-					  /*	// start Facebook Login
+					  	// start Facebook Login
 						Session.openActiveSession(VueLandingPageActivity.mainActivityContext, true,
 								new Session.StatusCallback() {
 
@@ -289,7 +291,9 @@ public class ShareDialog {
 									@Override
 									public void call(Session session,
 											SessionState state, Exception exception) {
+										  Log.e("fb", "63"+session);
 										if (session.isOpened()) {
+						                	Log.e("fb", "64");
 
 											   Session.setActiveSession(session);
 											
@@ -302,7 +306,7 @@ public class ShareDialog {
 											      .putBoolean(VueConstants.FACEBOOK_LOGIN, true);
 											      editor.commit();
 											
-											shareToFacebook(bitmap, shareText);
+											shareToFacebook(bitmapList, shareText);
 
 											// make request to the /me API
 											Request.executeMeRequestAsync(session,
@@ -314,13 +318,19 @@ public class ShareDialog {
 														public void onCompleted(
 																GraphUser user,
 																Response response) {
+										                	Log.e("fb", "65");
+
 															if (user != null) {
 															}
 														}
 													});
 										}
 									}
-								});*/
+								});
+				  */
+					
+					 // VueLandingPageActivity.fbLogin();
+				  
 				  }
 				
 			}

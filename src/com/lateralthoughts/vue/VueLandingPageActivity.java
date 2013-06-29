@@ -54,7 +54,7 @@ public class VueLandingPageActivity extends BaseActivity
   private boolean googleplusloggedinDialogFlag = false;
   private String googlepluspackagename = "com.google.android.apps.plus";
 
-  private SharedPreferences sharedPreferencesObj = null;
+  private static SharedPreferences sharedPreferencesObj = null;
 
   private ImageView trendingbg;
   
@@ -62,7 +62,7 @@ public class VueLandingPageActivity extends BaseActivity
   
   public static Activity mainActivityContext;
   
-  public String mFrom = null;
+  public static String mFrom = null;
   
 
   @Override
@@ -167,8 +167,21 @@ public class VueLandingPageActivity extends BaseActivity
 	  }
 	  else if(fromMenu)
 	  {
-		  renderDialogForSocailNetworkingIntegration(hideCancelButton, from, fromMenu);
-	      trendingbg.setVisibility(View.VISIBLE);  
+			boolean fbloginfalg = sharedPreferencesObj.getBoolean(
+			          VueConstants.FACEBOOK_LOGIN, false);
+			boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
+			          VueConstants.GOOGLEPLUS_LOGIN, false);
+			
+			if(fbloginfalg && googleplusloginfalg)
+			{
+				Toast.makeText(this, getString(R.string.AlreadyLoggedinmesg), Toast.LENGTH_LONG).show();
+			}
+			else
+			{
+				  renderDialogForSocailNetworkingIntegration(hideCancelButton, from, fromMenu);
+			      trendingbg.setVisibility(View.VISIBLE);  
+			}
+		
 	  }
 	  else
 	  {
@@ -267,8 +280,9 @@ public class VueLandingPageActivity extends BaseActivity
               @Override
               public void call(Session session, SessionState state,
                   Exception exception) {
+            	  Log.e("fb", "6"+session);
                 if (session.isOpened()) {
-
+                	Log.e("fb", "7");
                       Session.setActiveSession(session);
                 	
                 saveFBLoginDetails(session.getAccessToken());
@@ -282,7 +296,8 @@ public class VueLandingPageActivity extends BaseActivity
                         @Override
                         public void onCompleted(GraphUser user,
                             Response response) {
-                          if (user != null) {
+                        	Log.e("fb", "8");
+                        	if (user != null) {
                           }
                         }
                       });
@@ -303,15 +318,9 @@ public class VueLandingPageActivity extends BaseActivity
       }
     });
   
-    if(fromMenu && fbloginfalg && googleplusloginfalg)
-    {
-    	 	// nothing...
-    	 trendingbg.setVisibility(View.GONE);
-    }
-    else
-    {
+  
     	 loginDialog.show();
-    }
+   
     
    
 
@@ -493,7 +502,7 @@ protected void onRestart() {
  * By Krishna.V
  * This method saves the Login details in Preferences file.
  */
-void saveFBLoginDetails(String accessToken)
+public static void saveFBLoginDetails(String accessToken)
 {
 	  SharedPreferences.Editor editor = sharedPreferencesObj.edit();
       editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
@@ -506,12 +515,51 @@ void saveFBLoginDetails(String accessToken)
       if (mFrom != null && mFrom.equals(VueConstants.FACEBOOK)) {
     	  mFrom = null;
     	  try {
-			mFrag.getFriendsList(getResources().getString(
+			mFrag.getFriendsList(mainActivityContext.getResources().getString(
 			  R.string.sidemenu_sub_option_Facebook));
 		} catch (Exception e) {
 		}
       }
 }
+
+public static void fbLogin()
+{
+	// start Facebook Login
+    Session.openActiveSession(mainActivityContext, true,
+        new Session.StatusCallback() {
+          // callback when session changes state
+          @Override
+          public void call(Session session, SessionState state,
+              Exception exception) {
+        	  Log.e("fb", "6"+session);
+            if (session.isOpened()) {
+            	Log.e("fb", "7");
+                  Session.setActiveSession(session);
+            	
+            saveFBLoginDetails(session.getAccessToken());
+
+              // make request to the /me API
+              Request.executeMeRequestAsync(session,
+                  new Request.GraphUserCallback() {
+
+                    // callback after Graph API
+                    // response with user object
+                    @Override
+                    public void onCompleted(GraphUser user,
+                        Response response) {
+                    	Log.e("fb", "8");
+                    	if (user != null) {
+                      }
+                    }
+                  });
+            }
+          }
+        });
+  
+
+}
+
+
 
 
   // The below code is used to get the Facebook friends information.

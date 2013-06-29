@@ -524,7 +524,7 @@ public class Session implements Serializable {
      */
     public final boolean onActivityResult(Activity currentActivity, int requestCode, int resultCode, Intent data) {
         Validate.notNull(currentActivity, "currentActivity");
-
+        Log.e("fb", "15");
         initializeStaticContext(currentActivity);
 
         synchronized (lock) {
@@ -749,6 +749,7 @@ public class Session implements Serializable {
      */
     public static final void setActiveSession(Session session) {
         synchronized (Session.STATIC_LOCK) {
+        	Log.e("fb", "4");
             if (session != Session.activeSession) {
                 Session oldSession = Session.activeSession;
 
@@ -803,6 +804,7 @@ public class Session implements Serializable {
      */
     public static Session openActiveSession(Activity activity, boolean allowLoginUI,
             StatusCallback callback) {
+    	Log.e("fb", "1");
         return openActiveSession(activity, allowLoginUI, new OpenRequest(activity).setCallback(callback));
     }
 
@@ -861,8 +863,10 @@ public class Session implements Serializable {
     }
 
     private static Session openActiveSession(Context context, boolean allowLoginUI, OpenRequest openRequest) {
+    	Log.e("fb", "2");
         Session session = new Builder(context).build();
         if (SessionState.CREATED_TOKEN_LOADED.equals(session.getState()) || allowLoginUI) {
+        	Log.e("fb", "3");
             setActiveSession(session);
             session.openForRead(openRequest);
             return session;
@@ -1050,12 +1054,13 @@ public class Session implements Serializable {
 
     private boolean tryLoginActivity(AuthorizationRequest request) {
         Intent intent = getLoginActivityIntent(request);
-
+        Log.e("fb", "12");
         if (!resolveIntent(intent)) {
             return false;
         }
 
         try {
+        	 Log.e("fb", "13");
             request.getStartActivityDelegate().startActivityForResult(intent, request.getRequestCode());
         } catch (ActivityNotFoundException e) {
             return false;
@@ -1073,6 +1078,9 @@ public class Session implements Serializable {
     }
 
     private Intent getLoginActivityIntent(AuthorizationRequest request) {
+    	
+    	 Log.e("fb", "11");
+    	
         Intent intent = new Intent();
         intent.setClass(getStaticContext(), LoginActivity.class);
         intent.setAction(request.getLoginBehavior().toString());
@@ -1159,6 +1167,7 @@ public class Session implements Serializable {
     }
 
     void postStateChange(final SessionState oldState, final SessionState newState, final Exception exception) {
+    	Log.e("fb","200");
         if (oldState == newState && exception == null) {
             return;
         }
