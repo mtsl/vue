@@ -114,7 +114,7 @@ public class AisleDetailsViewListLoader {
             params.gravity = Gravity.CENTER;
             imageView.setLayoutParams(params);
             imageView.setContainerObject(holder);
-            Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
+            Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
             if(bitmap != null){
             	bitmap =  setParams(holder.aisleContentBrowser, imageView, bitmap);
             	// bitmap = Utils.getScaledBitMap(bitmap, VueApplication.getInstance().getScreenWidth(), VueApplication.getInstance().getScreenHeight());
@@ -123,31 +123,9 @@ public class AisleDetailsViewListLoader {
             }
             else{
                 contentBrowser.addView(imageView);
-                loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView, windowContent.getBestHeightForWindow());
-            }
-            
-     /*       for(int k=0;k<imageDetailsArr.size();k++){
-                itemDetails = imageDetailsArr.get(k);
-                imageView = mViewFactory.getPreconfiguredImageView(position);
-                //LinearLayout.LayoutParams params = 
-                //        new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                imageView.setLayoutParams(params);
-                imageView.setPadding(3, 3, 3, 3);
-                imageView.setContainerObject(holder);
-                Bitmap b = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
-                if(bitmap != null){
-                    imageView.setImageBitmap(b);
-                    holder.thumbnailScroller.addView(imageView);                  
-                }
-                else{
-                    holder.thumbnailScroller.addView(imageView);
-                    imageView.setScaleX(0.9f);
-                    imageView.setScaleY(0.9f);
-                    loadBitmap(itemDetails.mCustomImageUrl, null, imageView, 400);
-                }
-            } */           
+                loadBitmap(itemDetails.mImageUrl, contentBrowser, imageView, windowContent.getBestHeightForWindow());
+            }          
         }        
-        //we also need to set up the horizontal image views
     }
     
     public void loadBitmap(String loc, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
@@ -178,7 +156,7 @@ public class AisleDetailsViewListLoader {
             url = params[0];
             Bitmap bmp = null;            
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeight); 
+            bmp = mBitmapLoaderUtils.getBitmap(url, true, 0); 
             return bmp;            
         }
 
