@@ -3,6 +3,8 @@ package com.lateralthoughts.vue.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lateralthoughts.vue.VueConstants;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -73,16 +75,16 @@ public class InstalledPackageRetriever {
 		String networkName = null;
 		for (int i = 0; i < listmessages.size(); i++) {
 			networkName = listmessages.get(i);
-			if (networkName.equalsIgnoreCase("Facebook")
-					|| networkName.equalsIgnoreCase("Gmail")
-					|| networkName.equalsIgnoreCase("Email")
-					|| networkName.equalsIgnoreCase("Twitter")) {
+			if (networkName.equalsIgnoreCase(VueConstants.FACEBOOK_APP_NAME)
+					|| networkName.equalsIgnoreCase(VueConstants.GMAIL_APP_NAME)
+					|| networkName.equalsIgnoreCase(VueConstants.GOOGLEPLUS_APP_NAME)
+					|| networkName.equalsIgnoreCase(VueConstants.TWITTER_APP_NAME)) {
 				listmessagesDummy.add(listmessages.get(i));
 				currentDispDummy.add(currentDisp.get(i));
 				drawblesDummy.add(drawbles.get(i));
 			}
 		}
-		for (int i = 0; i < listmessages.size(); i++) {
+		/*for (int i = 0; i < listmessages.size(); i++) {
 			networkName = listmessages.get(i);
 			if (!(networkName.equalsIgnoreCase("Facebook")
 					|| networkName.equalsIgnoreCase("Gmail")
@@ -92,7 +94,7 @@ public class InstalledPackageRetriever {
 				currentDispDummy.add(currentDisp.get(i));
 				drawblesDummy.add(drawbles.get(i));
 			}
-		}
+		}*/
 		listmessages.clear();
 		currentDisp.clear();
 		drawbles.clear();

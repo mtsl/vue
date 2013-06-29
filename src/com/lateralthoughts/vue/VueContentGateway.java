@@ -80,7 +80,7 @@ public class VueContentGateway {
         mContext.startService(intent);
 		return status;		
 	}
-	
+
     private void initializeHttpFields(){
         mHeaders = new ArrayList<ParcelableNameValuePair>();
         mParams = new ArrayList<ParcelableNameValuePair>();

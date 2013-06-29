@@ -24,6 +24,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.Utils;
+ 
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 
 public class AisleDetailsViewListLoader {
@@ -196,6 +197,10 @@ public class AisleDetailsViewListLoader {
             }
             else{
                 contentBrowser.addView(imageView);
+                if(!VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
+                  Log.e("VueContentRestService", "network connection No");
+                  return;
+                }
                 loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView, windowContent.getBestHeightForWindow());
             }
             

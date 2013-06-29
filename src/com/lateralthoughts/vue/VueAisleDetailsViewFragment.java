@@ -107,17 +107,17 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
+ 
 				 Intent intent = new Intent();
 		            intent.setClass(VueApplication.getInstance(), VueComparisionActivity.class);
-		          
-		            startActivity(intent);
+		            startActivity(intent); 
 				
 			}
 		});
       
           vue_user_name = (TextView) v.findViewById(R.id.vue_user_name);
            vue_user_name.setTextSize(Utils.MEDIUM_TEXT_SIZE);
-      
+ 
  
      
         final LinearLayout dot_indicator_bg = (LinearLayout)v.findViewById(R.id.dot_indicator_bg);
@@ -239,7 +239,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
             public void onClick(View arg0) {
                 // TODO Auto-generated method stub
             
-                mAisleDetailsAdapter.share(getActivity(), getActivity());
+               mAisleDetailsAdapter.share(getActivity(), getActivity());
+            	
             }
         });
         

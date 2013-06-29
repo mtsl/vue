@@ -46,13 +46,23 @@
     <string name="cancel">Cancel</string>
     <string name="Image">Image</string>
     <string name="gmail">Gmail</string>
+        <string name="success">Success</string>
+    <string name="successfully_posted_post">Successfully posted.</string>
+    <string name="error">Error</string>
+        <string name="photo_post">Photo Post</string>
+        <string name="duplicatepostmesg">This message was already shared.</string>
+            	 <string name="facebookwarningmesg">This Message Contains Blocked Content: Some content in this message has been reported as abusive by Facebook users.</string>
+        
     <!-- End of API endpoint tags -->
 
 
     <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string> -->
+    <string name="no_network">No network, check network settings</string>
+     <string name="no_wifi">No wifi connection, check wifi settings</string>
     <string name="image_contentDescription">image</string>
     <string name="fontsize">Font Size</string>
     <string name="wifyonly">Wi-Fi only</string>
+     <string name=" AlreadyLoggedinmesg"> Already Logged in</string>
     <string name="connectivity_management">Connectivity Management</string>
     <string name="hint_search">Search</string>
     <string name="sidemenu_option_My_Aisles">My Aisles</string>
@@ -63,6 +73,7 @@
     <string name="sidemenu_option_Help">Help</string>
     <string name="sidemenu_option_About">About</string>
     <string name="sidemenu_option_FeedBack">Feedback</string>
+    <string name="sidemenu_option_Login">Login</string>
     <string name="sidemenu_sub_option_Apparel">Apparel</string>
     <string name="sidemenu_sub_option_Beauty">Beauty</string>
     <string name="sidemenu_sub_option_Electronics">Electronics</string>
