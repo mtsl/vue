@@ -66,6 +66,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
     int mFirstVisibleItem;
     int mVisibleItemCount;
     TextView vue_user_name;
+    
+    int mCurentIndPosition;
+    static final int MAX_DOTS_TO_SHOW = 3;
+    int mPrevPosition;
 
     //TODO: define a public interface that can be implemented by the parent
     //activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -108,9 +112,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
  
-				 Intent intent = new Intent();
+				/* Intent intent = new Intent();
 		            intent.setClass(VueApplication.getInstance(), VueComparisionActivity.class);
-		            startActivity(intent); 
+		            startActivity(intent); */
 				
 			}
 		});
@@ -312,7 +316,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			//int x = checkScreenBoundaries(direction,mCurrentScreen);
 			
 			//Log.i("screenswitch", "screenswitch x: "+x);
-			mIndicatorView.switchToScreen(mCurrentScreen,checkScreenBoundaries(direction,mCurrentScreen)
+			mPrevPosition = mCurrentScreen;
+			mIndicatorView.switchToScreen(mPrevPosition,checkScreenBoundaries(direction,mCurrentScreen)
 					 );
 		}
     	public void onReceiveImageCount(int count) {
@@ -337,7 +342,13 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				  this.mCurrentScreen = mTotalScreenCount;
 				  return this.mCurrentScreen;
 			  } else if(mCurrentScreen < mTotalScreenCount){
+				/*  if(mCurrentScreen < MAX_DOTS_TO_SHOW) {
+					  this.mCurrentScreen++;
+				  } else {
+					  this.mCurrentScreen = getHighlightPosition(mCurrentScreen);
+				  }*/
 				  this.mCurrentScreen++;
+				  
 				  return this.mCurrentScreen;
 			  }
 		  } else {
@@ -354,5 +365,21 @@ public class VueAisleDetailsViewFragment extends Fragment {
     	
     	return mCurrentScreen;
     	
+    }
+    
+    private int getHighlightPosition(int cur_pos) {
+    	mCurentIndPosition = cur_pos;
+    	int highlightPosition;
+    	if(mCurentIndPosition <= mTotalScreenCount) {
+    		if(mCurentIndPosition+MAX_DOTS_TO_SHOW > mTotalScreenCount) {
+    			int temp = mTotalScreenCount - mCurentIndPosition;
+    			  highlightPosition = MAX_DOTS_TO_SHOW - temp;
+    		} else {
+    			int temp = mCurentIndPosition % MAX_DOTS_TO_SHOW;
+    			highlightPosition = temp;
+    		}
+    		return highlightPosition;
+    	}
+		return mCurentIndPosition;
     }
 }

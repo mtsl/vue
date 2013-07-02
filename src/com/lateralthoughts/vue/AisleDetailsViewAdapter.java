@@ -27,6 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -75,9 +76,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			"Love love love the dress! Simple and fabulous.",
 			"Love love love the dress! Simple and fabulous.",
 			"Love love love the dress! Simple and fabulous.",
-			"Love love love the dress! Simple and fabulous.",
-			"Love love love the dress! Simple and fabulous.",
-			"Love love love the dress! Simple and fabulous.", };
+			  };
+	String mTempComments2[] = {	"Love love love the dress! Simple and fabulous.",
+			"Love love love the dress! Simple and fabulous."};
 	ViewHolder holder;
 
 	public AisleDetailsViewAdapter(Context c,
@@ -143,6 +144,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		TextView userComment, enterComment;
 		TextView vue_user_enterComment;
 		ImageView userPic, commentImg;
+		RelativeLayout exapandholder;
 		View separator;
 	}
 
@@ -179,6 +181,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			viewHolder.likeCount = (TextView) convertView.findViewById(R.id.vuewndow_lik_count);
 			viewHolder.addCommentlay = (LinearLayout) convertView.findViewById(R.id.addcommentlay);
 			
+			viewHolder.exapandholder = (RelativeLayout) convertView.findViewById(R.id.exapandholder);
+			
 			viewHolder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
 
 			viewHolder.userPic = (ImageView) convertView
@@ -210,6 +214,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			FrameLayout.LayoutParams thumbnailParams = new FrameLayout.LayoutParams(
 					FrameLayout.LayoutParams.WRAP_CONTENT, mThumbnailsHeight);
 			viewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+			   
 
 			convertView.setTag(viewHolder);
 		}
@@ -277,23 +282,37 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		}
 
-		viewHolder.commentImg.setOnClickListener(new OnClickListener() {
+		viewHolder.exapandholder.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				Log.i("listexpand", "listexpand clicked");
-				mswipeListner.onResetAdapter();
+				//mswipeListner.onResetAdapter();
+				if(mTempComments2.length <= 2){
+					mTempComments2 = new String[mTempComments.length];
+					for(int i = 0;i<mTempComments.length;i++) {
+						mTempComments2[i] = mTempComments[i];
+					}
+					mListCount = mTempComments2.length;
+				} else {
+					mTempComments2 = new String[2];
+					for(int i = 0;i<2;i++) {
+						mTempComments2[i] = mTempComments[i];
+					}
+					mListCount = 5;
+				}
+				notifyDataSetChanged();
 
 			}
 		});
-		viewHolder.commentCount.setOnClickListener(new OnClickListener() {
+	/*	viewHolder.commentCount.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				mswipeListner.onResetAdapter();
 			}
-		});
+		});*/
 
 		return convertView;
 	}
