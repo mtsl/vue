@@ -196,7 +196,9 @@ public final class PlusClientFragment extends Fragment
           /*  Activity activity = getActivity();
             if (activity instanceof OnSignedInListener) {
                 ((OnSignedInListener) activity).onSignedIn(mPlusClient);
-            }*/
+            }
+            
+            signIn(0);*/
         }
     }
 
