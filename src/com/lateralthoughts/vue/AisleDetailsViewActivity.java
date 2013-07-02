@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
-public class AisleDetailsViewActivity extends /*BaseActivity*/FragmentActivity {
+public class AisleDetailsViewActivity extends /*BaseActivity*/FragmentActivity  {
 	
     @SuppressLint("NewApi")
 	@Override
@@ -43,7 +45,7 @@ public class AisleDetailsViewActivity extends /*BaseActivity*/FragmentActivity {
       public void onActivityResult(int requestCode, int resultCode, Intent data) {
           super.onActivityResult(requestCode, resultCode, data);
       }
-     
+ 
       /*@Override
       public boolean onCreateOptionsMenu(Menu menu) {
           getMenuInflater().inflate(R.menu.title_options, menu);
