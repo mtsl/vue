@@ -8,22 +8,24 @@
     android:layout_marginBottom="10dp"
     android:layout_marginRight="12dp"
     android:orientation="horizontal" >
-    
+    <RelativeLayout android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/exapandholder">
     <ImageView
         android:id="@+id/vuewndow_comment_img"
         style="@style/vue_comeents_imgalign"
-        android:layout_marginBottom="10dp"
+        android:layout_centerVertical="true"
         android:src="@drawable/comment" />
 
     <TextView
         android:id="@+id/vuewndow_comment_count"
         style="@style/vue_comeents_text_align"
         android:layout_marginLeft="4dp"
+        android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/vuewndow_comment_img"
         android:textColor="@color/grey"
-         
         android:text="9 comments" />
-
+</RelativeLayout>
     <ImageView
         android:id="@+id/vuewndow_bookmark_img"
         style="@style/vue_comeents_imgalign"
