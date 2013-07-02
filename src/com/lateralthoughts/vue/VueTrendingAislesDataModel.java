@@ -1,12 +1,19 @@
 package com.lateralthoughts.vue;
 
 //android imports
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 //java imports
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +21,8 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.lateralthoughts.vue.connectivity.DbHelper;
 
 public class VueTrendingAislesDataModel {
 	
@@ -182,12 +191,14 @@ public class VueTrendingAislesDataModel {
 	                JSONObject contentItem = contentArray.getJSONObject(i);
 	                category = contentItem.getString(ITEM_CATEGORY_TAG);
 	                aisleId = contentItem.getString(CONTENT_ID_TAG);
+	                userInfo.mAisleId = contentItem.getString(CONTENT_ID_TAG);
 	                JSONArray imagesArray = contentItem.getJSONArray(USER_IMAGES_TAG);
 
 	                //within the content item we have a user object
 	                JSONObject user = contentItem.getJSONObject(USER_OBJECT_TAG);
 	                userInfo.mFirstName = user.getString(USER_FIRST_NAME_TAG);
 	                userInfo.mLastName = user.getString(USER_LAST_NAME_TAG);
+	                userInfo.mUserId= user.getString(CONTENT_ID_TAG);
 
 	                userInfo.mLookingForItem = contentItem.getString(LOOKING_FOR_TAG);
 	                userInfo.mOccasion = contentItem.getString(OCCASION_TAG);
@@ -207,6 +218,7 @@ public class VueTrendingAislesDataModel {
 
 	                aisleItem = getAisleItem(aisleId);
 	                aisleItem.addAisleContent(userInfo,  imageItemsArray);
+	                addAislesToDb(userInfo, imageItemsArray);
 	                imageItemsArray.clear();
 
 	            }
@@ -258,4 +270,56 @@ public class VueTrendingAislesDataModel {
 		return sVueTrendingAislesDataModel;		
 	}
 
+	private void addAislesToDb(AisleContext info, ArrayList<AisleImageDetails> imageItemsArray) {
+		DbHelper helper = new DbHelper(mContext);
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		ContentValues values = new ContentValues();
+		values.put(VueConstants.FIRST_NAME, info.mFirstName);
+		values.put(VueConstants.LAST_NAME, info.mLastName);
+		values.put(VueConstants.JOIN_TIME, info.mLastName);
+		values.put(VueConstants.JOIN_TIME, info.mLookingForItem);
+		values.put(VueConstants.OCCASION, info.mOccasion);
+		values.put(VueConstants.USER_ID, info.mUserId);
+		values.put(VueConstants.AISLE_ID, info.mAisleId);
+		db.insert(DbHelper.DATABASE_TABLE_AISLES, null, values);
+		for(AisleImageDetails imageDetails : imageItemsArray) {
+			ContentValues imgValues = new ContentValues();
+			imgValues.put(VueConstants.TITLE, imageDetails.mTitle);
+			imgValues.put(VueConstants.IMAGE_URL, imageDetails.mImageUrl);
+			imgValues.put(VueConstants.DETAILS_URL, imageDetails.mDetalsUrl);
+			imgValues.put(VueConstants.HEIGHT, imageDetails.mAvailableHeight);
+			imgValues.put(VueConstants.WIDTH, imageDetails.mAvailableWidth);
+			imgValues.put(VueConstants.STORE, imageDetails.mStore);
+			imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
+			imgValues.put(VueConstants.USER_ID, info.mUserId);
+			imgValues.put(VueConstants.AISLE_ID, info.mAisleId);
+			db.insert(DbHelper.DATABASE_TABLE_AISLES_IMAGES, null, imgValues);
+		}
+		db.setTransactionSuccessful();
+		db.endTransaction();
+		db.close();
+	}
+	private void copyDB() {
+		try {
+	        File sd = Environment.getExternalStorageDirectory();
+	        File data = Environment.getDataDirectory();
+
+	        if (sd.canWrite()) {
+	            String currentDBPath = "//data//{package name}//databases//{database name}";
+	            String backupDBPath = "{database name}";
+	            File currentDB = new File(data, currentDBPath);
+	            File backupDB = new File(sd, backupDBPath);
+
+	            if (currentDB.exists()) {
+	                FileChannel src = new FileInputStream(currentDB).getChannel();
+	                FileChannel dst = new FileOutputStream(backupDB).getChannel();
+	                dst.transferFrom(src, 0, src.size());
+	                src.close();
+	                dst.close();
+	            }
+	        }
+	    } catch (Exception e) {
+	    }
+	}
 }

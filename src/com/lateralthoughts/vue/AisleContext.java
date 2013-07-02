@@ -9,6 +9,8 @@ public class AisleContext {
 	public String mContext;
 	public String mOccasion;
 	public String mLookingForItem;
+	public String mAisleId;
+	public String mUserId;
 
 	
 }
