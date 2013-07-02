@@ -90,15 +90,9 @@ public class ShareDialog {
 	public Dialog dialog;
 	
 	String aisleTitle, name;
-	List<clsShare> imagePathArray;
+	ArrayList<clsShare> imagePathArray;
 	
-	enum PendingAction {
-		NONE, POST_PHOTO, POST_STATUS_UPDATE
-	}
 	
-	private final List<String> PERMISSIONS = Arrays.asList("publish_actions");
-	
-	ProgressDialog fbprogressdialog;
 	
 	/**
 	 * 
@@ -111,16 +105,12 @@ public class ShareDialog {
 		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		resouces = context.getResources();
 		
-		fbprogressdialog = ProgressDialog.show(
-				context, "Facebook", "Sharing....",
-				true);
-
-		fbprogressdialog.dismiss();
+		
 	}
 
 	
 
-	public void share(List<clsShare> imagePathArray, String aisleTitle, String name) {
+	public void share(ArrayList<clsShare> imagePathArray, String aisleTitle, String name) {
 		
 		this.imagePathArray = imagePathArray;
 		this.aisleTitle = aisleTitle;
@@ -250,16 +240,30 @@ public class ShareDialog {
 				
 				dialog.dismiss();
 				
-				  final SharedPreferences sharedPreferencesObj = activity.getSharedPreferences(
+				  String shareText = "Your friend "
+							+ name
+							+ " wants your opinion - get Vue to see the full details and help "
+							+ name + " out.";
+				
+				 Intent i = new Intent(context, VueLoginActivity.class);
+				  Bundle b = new Bundle();
+				  b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+				  b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+				  b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, true);
+				  b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+				  b.putString(VueConstants.FBPOST_TEXT, shareText);
+				  b.putParcelableArrayList(VueConstants.FBPOST_IMAGEURLS, imagePathArray);
+				  i.putExtras(b);
+				  context.startActivity(i);
+				
+				
+				 /* final SharedPreferences sharedPreferencesObj = activity.getSharedPreferences(
 					        VueConstants.SHAREDPREFERENCE_NAME, 0);
 				  
 				  boolean facebookloginflag = sharedPreferencesObj.getBoolean(
 					        VueConstants.FACEBOOK_LOGIN, false);
 				
-				  final String shareText = "Your friend "
-							+ name
-							+ " wants your opinion - get Vue to see the full details and help "
-							+ name + " out.";
+				
 				  
 				  final ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
 				  
@@ -279,12 +283,11 @@ public class ShareDialog {
 				  }
 				  else
 				  {
+					  
 					  showAlertMessageShareError("Please Login to Facebook from Mainscreen to Share content to Facebook" , true);
-					  /*
-					  //showAlertMessageShareError("Please Login to Facebook from Mainscreen to Share content to Facebook" , true);
 					  
 					  	// start Facebook Login
-						Session.openActiveSession(VueLandingPageActivity.mainActivityContext, true,
+						Session.openActiveSession(activity, true,
 								new Session.StatusCallback() {
 
 									// callback when session changes state
@@ -327,11 +330,12 @@ public class ShareDialog {
 										}
 									}
 								});
-				  */
-					
-					 // VueLandingPageActivity.fbLogin();
 				  
-				  }
+					
+					  VueApplication.getInstance().fbsharingflag = true;
+					  VueLandingPageActivity.fbLogin();
+				  */
+				//  }
 				
 			}
 
@@ -455,10 +459,11 @@ public class ShareDialog {
     				if (imagePathArray != null && imagePathArray.size() > 0) {
     					for (int i = 0; i < imagePathArray.size(); i++) {
     						
+    						File f = new File(imagePathArray.get(i).getFilepath());
     						
-    						if(!imagePathArray.get(i).getFile().exists()) downloadImage(imagePathArray.get(i).getImageUrl(), imagePathArray.get(i).getFile());
+    						if(!f.exists()) downloadImage(imagePathArray.get(i).getImageUrl(), f);
     						
-    						Uri screenshotUri = Uri.fromFile(imagePathArray.get(i).getFile());
+    						Uri screenshotUri = Uri.fromFile(f);
     						imageUris.add(screenshotUri);
     					}
     				}
@@ -515,175 +520,6 @@ public class ShareDialog {
 
 	}
 	
-	public void shareToFacebook(ArrayList<Bitmap> articlebitmapList, String articledesc) {
-		Log.e("share", "f1");
-		performPublish(PendingAction.POST_PHOTO, articlebitmapList, articledesc);
-	}
 	
-	void performPublish(PendingAction action, ArrayList<Bitmap> articlebitmapList,
-			String articledesc) {
-		Log.e("share", "f2");
-		Session session = Session.getActiveSession();
-		if (session != null) {
-			if (hasPublishPermission()) {
-				Log.e("share", "f4");
-				// We can do the action right away.
-				handlePendingAction(articlebitmapList, articledesc);
-			} else {
-				Log.e("share", "f5");
-				// We need to get new permissions, then complete the action when
-				// we get called back.
-				session.requestNewPublishPermissions(new Session.NewPermissionsRequest(
-						activity, PERMISSIONS));
-			}
-		}
-	}
-	
-	boolean hasPublishPermission() {
-		Log.e("share", "f3");
-		Session session = Session.getActiveSession();
-		return session != null
-				&& session.getPermissions().contains("publish_actions");
-	}
-	
-	void handlePendingAction(ArrayList<Bitmap> articlebitmapList, String articledesc) {
-		Log.e("share", "f6");
-			postPhoto(articlebitmapList, articledesc);
-	}
-
-	void postPhoto(ArrayList<Bitmap> articlebitmapList, String articledesc) {
-		Log.e("share", "fw");
-		
-		if (hasPublishPermission()) {
-			fbprogressdialog.show();
-
-			// Post photo....
-			if (articlebitmapList != null) {
-
-				Bundle parameters = new Bundle(1);
-			//	parameters.putString("picture",  imagePathArray.get(0).getImageUrl());
-				parameters.putString("message", articledesc + "");
-				ParcelFileDescriptor descriptor = null;
-				try {
-					descriptor = ParcelFileDescriptor.open(imagePathArray.get(0).getFile(), ParcelFileDescriptor.MODE_READ_ONLY);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				parameters.putParcelable("picture", descriptor);
-				
-				Callback callback = new Request.Callback() {
-
-					public void onCompleted(Response response) {
-						fbprogressdialog.dismiss();
-						showPublishResult(
-								activity
-										.getString(R.string.photo_post),
-								response.getGraphObject(), response.getError());
-					}
-				};
-
-				Request request = new Request(Session.getActiveSession(),
-						"me/photos", parameters, HttpMethod.POST, callback);
-
-				request.executeAsync();
-			
-				/*Request request6 = null;
-				try {
-					request6 = Request.newUploadPhotoRequest(
-							Session.getActiveSession(),
-					        imagePathArray.get(0).getFile(), callback);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			    RequestAsyncTask task6 = new RequestAsyncTask(request6);
-			    task6.execute();*/
-			
-			
-			}
-			// post text...
-			else if (articledesc != null) {
-				Bundle parameters = new Bundle(1);
-				parameters.putString("message", articledesc + "");
-
-				Callback callback = new Request.Callback() {
-
-					public void onCompleted(Response response) {
-						fbprogressdialog.dismiss();
-
-						showPublishResult(
-								activity
-										.getString(R.string.photo_post),
-								response.getGraphObject(), response.getError());
-					}
-				};
-
-				Request request = new Request(Session.getActiveSession(),
-						"me/feed", parameters, HttpMethod.POST, callback);
-
-				request.executeAsync();
-
-			} else {
-				fbprogressdialog.dismiss();
-			}
-
-		}
-	}
-	private void showPublishResult(String message, GraphObject result,
-			FacebookRequestError error) {
-		// String title = null;
-		String alertMessage = null;
-		if (error == null) {
-			// title = activity.getString(R.string.success);
-			alertMessage = activity
-					.getString(R.string.successfully_posted_post);
-		} else {
-
-			if (error.getErrorCode() == 506) {
-				// title = activity.getString(R.string.alerttitle);
-				alertMessage = activity
-						.getString(R.string.duplicatepostmesg);
-			} else if (error.getErrorCode() == 368) {
-				// title = activity.getString(R.string.fbwarningmesgtitle);
-				alertMessage = activity
-						.getString(R.string.facebookwarningmesg);
-			} else {
-				// title = activity.getString(R.string.error);
-				alertMessage = error.getErrorMessage();
-			}
-		}
-		final Dialog dialog = new Dialog(activity, R.style.Theme_Dialog_Translucent);
-		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.networkdialogue);
-		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-		TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
-
-		okbutton.setVisibility(View.GONE);
-
-		View networkdialogline = dialog.findViewById(R.id.networkdialogline);
-		networkdialogline.setVisibility(View.GONE);
-
-		TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-		
-		nobutton.setText("ok");
-		messagetext.setText(alertMessage);
-
-		nobutton.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
-		dialog.setOnCancelListener(new OnCancelListener() {
-
-			public void onCancel(DialogInterface dialog) {
-
-			}
-		});
-		dialog.show();
-
-	}
-
 
 }

@@ -52,9 +52,11 @@
         <string name="photo_post">Photo Post</string>
         <string name="duplicatepostmesg">This message was already shared.</string>
             	 <string name="facebookwarningmesg">This Message Contains Blocked Content: Some content in this message has been reported as abusive by Facebook users.</string>
-        
+        <string name="pendingActionBundleKey">com.example.learnfb:PendingAction</string>
     <!-- End of API endpoint tags -->
-
+    <string name="cancelled">Cancelled</string>
+    <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
+    <string name="ok">Ok</string>
 
     <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string> -->
     <string name="no_network">No network, check network settings</string>

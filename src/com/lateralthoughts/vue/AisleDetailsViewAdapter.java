@@ -23,13 +23,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.MyCustomAnimation;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -57,13 +61,14 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	private int mActionBarHeight;
 	private int mListCount;
 	private int mLikes = 5;
+	private boolean isImageClciked = false;
 	 
 	AisleWindowContent mWindowContent_temp;
 	int mComentTextDefaultHeight;
 	public String vue_user_name;
 
 	int mDescriptionDefaultHeight;
- 
+
 	ViewHolder viewHolder;
 	String mTempComments[] = {
 			"Love love love the dress! Simple and fabulous.",
@@ -75,9 +80,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			"Love love love the dress! Simple and fabulous.",
 			"Love love love the dress! Simple and fabulous.",
 			"Love love love the dress! Simple and fabulous.",
-			"Love love love the dress! Simple and fabulous.",
-			"Love love love the dress! Simple and fabulous.",
-			"Love love love the dress! Simple and fabulous.", };
+			  };
+	String mTempComments2[] = {	"Love love love the dress! Simple and fabulous.",
+			"Love love love the dress! Simple and fabulous."};
 	ViewHolder holder;
 
 	public AisleDetailsViewAdapter(Context c,
@@ -142,7 +147,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		LinearLayout vueCommentheader,addCommentlay;
 		TextView userComment, enterComment;
 		TextView vue_user_enterComment;
-		ImageView userPic, commentImg;
+		ImageView userPic, commentImg,likeimg;
+		RelativeLayout exapandholder;
 		View separator;
 	}
 
@@ -176,8 +182,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			viewHolder.vue_user_enterComment = (TextView) convertView
 					.findViewById(R.id.vue_user_entercomment);
 			
+			viewHolder.likeimg = (ImageView) convertView.findViewById(R.id.vuewndow_lik_img);
+			
 			viewHolder.likeCount = (TextView) convertView.findViewById(R.id.vuewndow_lik_count);
 			viewHolder.addCommentlay = (LinearLayout) convertView.findViewById(R.id.addcommentlay);
+			
+			viewHolder.exapandholder = (RelativeLayout) convertView.findViewById(R.id.exapandholder);
 			
 			viewHolder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
 
@@ -210,9 +220,15 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			FrameLayout.LayoutParams thumbnailParams = new FrameLayout.LayoutParams(
 					FrameLayout.LayoutParams.WRAP_CONTENT, mThumbnailsHeight);
 			viewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+			   
 
 			convertView.setTag(viewHolder);
 		}
+	
+		
+		
+		
+		
 		
 		viewHolder.likeCount.setText(""+mLikes);
 		viewHolder = (ViewHolder) convertView.getTag();
@@ -252,6 +268,13 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 			// gone comment layoutgone
 		} else if (position == 1) {
+			Log.i("isImageClciked", "isImageClciked: "+isImageClciked);
+			if(isImageClciked) {
+				Log.i("isImageClciked", "isImageClciked: getview if");
+				isImageClciked = false;
+			Animation rotate = AnimationUtils.loadAnimation(mContext, R.anim.bounce);
+			viewHolder.likeimg.startAnimation(rotate);
+			}
 			viewHolder.imgContentlay.setVisibility(View.GONE);
 			viewHolder.commentContentlay.setVisibility(View.GONE);
 			viewHolder.addCommentlay.setVisibility(View.GONE);
@@ -277,28 +300,42 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		}
 
-		viewHolder.commentImg.setOnClickListener(new OnClickListener() {
+		viewHolder.exapandholder.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				Log.i("listexpand", "listexpand clicked");
-				mswipeListner.onResetAdapter();
+				//mswipeListner.onResetAdapter();
+				if(mTempComments2.length <= 2){
+					mTempComments2 = new String[mTempComments.length];
+					for(int i = 0;i<mTempComments.length;i++) {
+						mTempComments2[i] = mTempComments[i];
+					}
+					mListCount = mTempComments2.length;
+				} else {
+					mTempComments2 = new String[2];
+					for(int i = 0;i<2;i++) {
+						mTempComments2[i] = mTempComments[i];
+					}
+					mListCount = 5;
+				}
+				notifyDataSetChanged();
 
 			}
 		});
-		viewHolder.commentCount.setOnClickListener(new OnClickListener() {
+	/*	viewHolder.commentCount.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				mswipeListner.onResetAdapter();
 			}
-		});
+		});*/
 
 		return convertView;
 	}
 
-	void setText(final TextView descView, int margin_BT, int defaultHeight) {
+/*	void setText(final TextView descView, int margin_BT, int defaultHeight) {
 		SpannableString spannableString;
 		int lineCount = descView.getLineCount();
 		int eachLineHeight = descView.getLineHeight();
@@ -366,7 +403,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			descView.setText(spannableString);
 			descView.setMovementMethod(LinkMovementMethod.getInstance());
 		}
-	}
+	}*/
 
 	private void notifyAdapter() {
 		this.notifyDataSetChanged();
@@ -381,14 +418,14 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       
       FileCache ObjFileCache = new FileCache(context);
       
-      List<clsShare> imageUrlList = new ArrayList<clsShare>();
+      ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
       
       if(mWindowContent_temp.getImageList() != null && mWindowContent_temp.getImageList().size() > 0)
       {
           for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
               
         	  clsShare obj = new clsShare(mWindowContent_temp.getImageList().get(i).mCustomImageUrl,
-        			  ObjFileCache.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl));
+        			  ObjFileCache.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl).getPath());
         	  
         	  imageUrlList.add(obj);
           }
@@ -400,22 +437,27 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       
       
   }
-	
+	/**
+	 * 
+	 * @author raju
+	 *To handle the click and long press event on the imageview in the aisle content
+	 */
 	   private class DetailImageClickListener implements DetailClickListener{
 
 		@Override
 		public void onImageClicked() {
 			mLikes += 1;
+			isImageClciked = true;
+			
+			Log.i("isImageClciked", "isImageClciked: onclick "+isImageClciked);
 			notifyAdapter();
-			
-			
 		}
 
 		@Override
 		public void onImageLongPress() {
 			if(mLikes != 0)
 			 mLikes -= 1;
-			 
+			isImageClciked = true;
 			notifyAdapter();
 			 
 			

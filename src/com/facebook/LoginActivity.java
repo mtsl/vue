@@ -113,14 +113,19 @@ public class LoginActivity extends Activity {
     public void onResume() {
         super.onResume();
 
-        // If the calling package is null, this generally means that the callee was started
-        // with a launchMode of singleInstance. Unfortunately, Android does not allow a result
-        // to be set when the callee is a singleInstance, so we throw an exception here.
-        if (callingPackage == null) {
-            throw new FacebookException(NULL_CALLING_PKG_ERROR_MSG);
-        }
+        try {
+			// If the calling package is null, this generally means that the callee was started
+			// with a launchMode of singleInstance. Unfortunately, Android does not allow a result
+			// to be set when the callee is a singleInstance, so we throw an exception here.
+			if (callingPackage == null) {
+			    throw new FacebookException(NULL_CALLING_PKG_ERROR_MSG);
+			}
 
-        authorizationClient.startOrContinueAuth(request);
+			authorizationClient.startOrContinueAuth(request);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     @Override
