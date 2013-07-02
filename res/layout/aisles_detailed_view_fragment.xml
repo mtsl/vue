@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#CCCCCC" >
+
+    <ListView
+        android:id="@+id/aisle_details_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/white"
+        android:layout_above="@+id/vue_bottom_bar"
+        android:divider="@null"
+        android:scrollbars="none" >
+    </ListView>
+<!-- <ScrollView 
+    android:id="@+id/aisle_details_list"
+     android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="48dp"
+        android:divider="@android:color/transparent"
+        android:scrollbars="none" ></ScrollView> -->
+    <RelativeLayout
+        android:id="@+id/vue_image_indicator"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/white" >
+     <!--    <TextView android:layout_width="wrap_content"
+                  android:id="@+id/leftgo"
+                  android:layout_height="wrap_content"
+                  
+                  android:layout_alignParentLeft="true"
+                  android:text=">"/>
+                <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                   android:id="@+id/rightgo"
+                  
+                  android:layout_alignParentRight="true"
+                  android:text=">"/> -->
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/dot_indicator_bg"
+        android:layout_width="fill_parent"
+        android:layout_height="32dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/black"
+        android:orientation="vertical" >
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/vue_aisle_heading"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="Dress for pool party"/>
+    </LinearLayout>
+    <RelativeLayout android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:background="#CCCCCC"
+        android:id="@+id/vue_bottom_bar"
+            android:layout_height="48dp">
+        <ImageView android:layout_width="32dp"
+                   android:layout_height="48dp"
+                   android:layout_marginLeft="4dp"
+                   android:scaleType="fitCenter"
+                   android:id="@+id/vue_user_pic"
+                   android:src="@drawable/profile_thumbnail"
+                   android:layout_centerVertical="true"/>
+        <TextView android:layout_height="wrap_content"
+                  android:layout_width="wrap_content"
+                  android:layout_toRightOf="@+id/vue_user_pic"
+                  android:layout_marginLeft="4dp"
+                  android:id="@+id/vue_user_name"
+                  android:text="Mare Jane"
+                  android:textColor="@android:color/white"
+                  android:layout_centerVertical="true"/>
+        
+           <ImageView android:layout_width="32dp"
+                   android:layout_height="48dp"
+                   android:id="@+id/vue_creat_aisle"
+                   android:layout_centerInParent="true"
+                   android:src="@drawable/add"/>
+          <ImageView android:layout_width="32dp"
+                   android:layout_height="48dp"
+                   android:id="@+id/vue_aisle"
+                   android:layout_toLeftOf="@+id/vue_share"
+                   android:layout_marginRight="32dp"
+                   android:layout_centerVertical="true"
+                   android:src="@drawable/aisleinfo"
+                   />
+            <ImageView android:layout_width="32dp"
+                   android:layout_height="48dp"
+                   android:id="@+id/vue_share"
+                    android:layout_alignParentRight="true"
+                     android:layout_marginRight="12dp"
+                   android:layout_centerVertical="true"
+                   android:src="@drawable/share"
+                   />
+             <!--    <ImageView android:layout_width="48dp"
+                   android:layout_height="48dp"
+                   android:id="@+id/vue_show_aisle"
+                  
+                   android:layout_centerVertical="true"
+                 
+                   android:src="@drawable/aisleinfo"
+                   
+                   /> -->
+    </RelativeLayout>
+</RelativeLayout>

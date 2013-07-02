@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="margin">8dp</dimen>
+    <dimen name="descriptor_icon_margin">2dp</dimen>
+    
+    <!-- for bezel swipe  -->
+    <!-- sliding options -->
+    <dimen name="shadow_width">15dp</dimen>
+    <dimen name="slidingmenu_offset">48dp</dimen>
+
+    <dimen name="menu_item_padding">10dp</dimen>
+    <dimen name="menu_header_padding_top">8dp</dimen>
+    <dimen name="menu_header_line">3dp</dimen>
+    <dimen name="menu_icon_side">40dp</dimen>
+    
+</resources>

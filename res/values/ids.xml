@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <item type="id" name="aisle_descriptor"/>
+    <item type="id" name="profile_icon_descriptor"/>
+    <item type="id" name="descriptor_aisle_owner_name"/> 
+    <item type="id" name="descriptor_aisle_context"/>
+    <item type="id" name="selected_view"/>  
+</resources>
