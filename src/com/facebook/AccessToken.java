@@ -25,6 +25,8 @@ import android.util.Log;
 import com.facebook.internal.Utility;
 import com.facebook.internal.Validate;
 import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.VueLoginActivity;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -235,11 +237,21 @@ public final class AccessToken implements Serializable {
         if (Utility.isNullOrEmpty(accessToken) || (expires == null)) {
             return createEmptyToken(requestedPermissions);
         } else {
-        	VueLandingPageActivity.saveFBLoginDetails(accessToken);
+        	/*if(VueLoginActivity.mfblogincompletedListener != null) {
+        		VueLoginActivity.mfblogincompletedListener.onLoginCompleted(accessToken);
+    	          
+    	        }*/
             return new AccessToken(accessToken, expires, requestedPermissions, source, new Date());
         }
     }
 
+    public interface FacebookLoginListener{
+	    public void onLoginCompleted(String acessToken);
+	}
+   
+    
+   
+    
     static AccessToken createFromCache(Bundle bundle) {
         // Copy the list so we can guarantee immutable
         List<String> originalPermissions = bundle.getStringArrayList(TokenCachingStrategy.PERMISSIONS_KEY);

@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -37,12 +38,17 @@ public class VueApplication extends Application {
 	private int mScreenHeight;
 	private int mScreenWidth;
 	private int mTextSize = 18;
+	public Context vueApplicationContext;
+	
+	public boolean fbsharingflag = false;
 	
 	@Override
 	public void onCreate(){
 		super.onCreate();
 		
 		sInstance = this;
+		
+		vueApplicationContext = this;
 		
 		mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
 		mVueAisleImagesCache.setLimit(40);

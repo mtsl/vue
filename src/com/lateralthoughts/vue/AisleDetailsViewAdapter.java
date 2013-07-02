@@ -379,14 +379,14 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       
       FileCache ObjFileCache = new FileCache(context);
       
-      List<clsShare> imageUrlList = new ArrayList<clsShare>();
+      ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
       
       if(mWindowContent_temp.getImageList() != null && mWindowContent_temp.getImageList().size() > 0)
       {
           for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
               
         	  clsShare obj = new clsShare(mWindowContent_temp.getImageList().get(i).mCustomImageUrl,
-        			  ObjFileCache.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl));
+        			  ObjFileCache.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl).getPath());
         	  
         	  imageUrlList.add(obj);
           }

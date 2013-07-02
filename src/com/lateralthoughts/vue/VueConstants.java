@@ -27,5 +27,11 @@ public class VueConstants {
         public static final String TWITTER_APP_NAME = "Twitter";
         public static final String GMAIL_APP_NAME = "Gmail";
         public static final String GOOGLEPLUS_APP_NAME = "Google+";
-
+        
+        public static final String CANCEL_BTN_DISABLE_FLAG = "cancelbuttondisableflag";
+        public static final String FROM_INVITEFRIENDS = "frominvitefriends";
+        public static final String FROM_BEZELMENU_LOGIN = "frombezelmenulogin";
+        public static final String FBLOGIN_FROM_DETAILS_SHARE = "FBLOGIN_FROM_DETAILS_SHARE";
+        public static final String FBPOST_TEXT = "FBPOSTTEXT";
+        public static final String FBPOST_IMAGEURLS = "FBPOSTIMAGEURLS";
 }

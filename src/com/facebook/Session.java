@@ -26,6 +26,7 @@ import android.util.Log;
 import com.facebook.internal.SessionAuthorizationType;
 import com.facebook.internal.Utility;
 import com.facebook.internal.Validate;
+import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 
 import java.io.*;
@@ -879,10 +880,12 @@ public class Session implements Serializable {
     }
 
     static void initializeStaticContext(Context currentContext) {
-        if ((currentContext != null) && (staticContext == null)) {
+    /*    if ((currentContext != null) && (staticContext == null)) {
             Context applicationContext = currentContext.getApplicationContext();
             staticContext = (applicationContext != null) ? applicationContext : currentContext;
-        }
+        }*/
+    	
+    	staticContext = VueApplication.getInstance().vueApplicationContext;
     }
 
     void authorize(AuthorizationRequest request) {
@@ -992,8 +995,10 @@ public class Session implements Serializable {
     private void validateLoginBehavior(AuthorizationRequest request) {
         if (request != null && !request.isLegacy) {
             Intent intent = new Intent();
+            Log.e("fb", "300");
             intent.setClass(getStaticContext(), LoginActivity.class);
             if (!resolveIntent(intent)) {
+            	Log.e("fb", "301");
                 throw new FacebookException(String.format(
                         "Cannot use SessionLoginBehavior %s when %s is not declared as an activity in AndroidManifest.xml",
                         request.getLoginBehavior(), LoginActivity.class.getName()));
@@ -1094,14 +1099,19 @@ public class Session implements Serializable {
     }
 
     private boolean tryLegacyAuth(final AuthorizationRequest request) {
-        authorizationClient = new AuthorizationClient();
+    	Log.e("fb", "402");
+    	authorizationClient = new AuthorizationClient();
+        Log.e("fb", "403");
         authorizationClient.setOnCompletedListener(new AuthorizationClient.OnCompletedListener() {
             @Override
             public void onCompleted(AuthorizationClient.Result result) {
-                handleAuthorizationResult(Activity.RESULT_OK, result);
+            	Log.e("fb", "404");
+            	handleAuthorizationResult(Activity.RESULT_OK, result);
             }
         });
+        Log.e("fb", "400");
         authorizationClient.setContext(getStaticContext());
+        Log.e("fb", "401");
         authorizationClient.startOrContinueAuth(request.getAuthorizationClientRequest());
 
         return true;
