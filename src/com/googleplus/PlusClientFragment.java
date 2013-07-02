@@ -193,6 +193,10 @@ public final class PlusClientFragment extends Fragment
             mRequestCode = INVALID_REQUEST_CODE;
         } else {
             mRequestCode = savedInstanceState.getInt(STATE_REQUEST_CODE, INVALID_REQUEST_CODE);
+          /*  Activity activity = getActivity();
+            if (activity instanceof OnSignedInListener) {
+                ((OnSignedInListener) activity).onSignedIn(mPlusClient);
+            }*/
         }
     }
 

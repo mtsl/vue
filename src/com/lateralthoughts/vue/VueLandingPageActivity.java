@@ -1,95 +1,41 @@
 package com.lateralthoughts.vue;
 
-//generic android goodies
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.res.Resources.NotFoundException;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.model.GraphUser;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.plus.PlusClient;
-import com.google.android.gms.plus.model.people.Person;
-import com.google.android.gms.plus.model.people.PersonBuffer;
-import com.googleplus.MomentUtil;
-import com.googleplus.PlusClientFragment;
-import com.googleplus.PlusClientFragment.OnSignedInListener;
- 
+import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
-public class VueLandingPageActivity extends BaseActivity
-/* FragmentActivity */implements OnSignedInListener, PlusClient.OnPeopleLoadedListener {
+public class VueLandingPageActivity extends BaseActivity {
 
-  private Dialog loginDialog;
-
-  // Google+ integration
-  public static final int REQUEST_CODE_PLUS_CLIENT_FRAGMENT = 0;
-  public static PlusClientFragment mSignInFragment;
-  public static PlusClient plusClient;
-  private boolean googleplusloggedinDialogFlag = false;
-  private String googlepluspackagename = "com.google.android.apps.plus";
-
-  private static SharedPreferences sharedPreferencesObj = null;
-
-  private ImageView trendingbg;
+ 
+ 
+	SharedPreferences sharedPreferencesObj;
   
-  public List<FbGPlusDetails> googlePlusFriendsDetailsList = null;
-  
-  public static Activity mainActivityContext;
-  
-  public static String mFrom = null;
-  
+	public static PlusClient plusClient;
+	
+	 public static List<FbGPlusDetails> googlePlusFriendsDetailsList = null;
 
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
     
-  /*  Thread.setDefaultUncaughtExceptionHandler(new
-    		ExceptionHandler(this));*/
+    Thread.setDefaultUncaughtExceptionHandler(new
+    		ExceptionHandler(this));
     
     
     setContentView(R.layout.vue_landing_main);
 
     
-    
-    
-    mainActivityContext = this;
-    
-    trendingbg = (ImageView) findViewById(R.id.trendingbg);
-    trendingbg.setVisibility(View.GONE);
-
-    mSignInFragment = PlusClientFragment.getPlusClientFragment(
-        VueLandingPageActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
-    
-    
-  
-
-
     // Checking wheather app is opens for first time or not?
     sharedPreferencesObj = this.getSharedPreferences(
         VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -103,7 +49,7 @@ public class VueLandingPageActivity extends BaseActivity
       editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG, false);
       editor.commit();
 
-      showLogInDialog(false, null, false);
+      showLogInDialog(false);
 
     }
     // Check the CreatedAisleCount and Comments count
@@ -115,16 +61,11 @@ public class VueLandingPageActivity extends BaseActivity
 
       if (createdaislecount == VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
           || commentscount == VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
-        showLogInDialog(true, null, false);
+        showLogInDialog(true);
       }
 
     }
 
-    // No need to show splash screen
-    /*
-     * Intent i = new Intent(); i.setClass(this, SplashScreen.class);
-     * startActivity(i);
-     */
   }
 
   @Override
@@ -156,225 +97,25 @@ public class VueLandingPageActivity extends BaseActivity
     return false;
   }
 
-  public void showLogInDialog(boolean hideCancelButton, String from, boolean fromMenu) {
-   
-	  // From Invite Friends
-	  if(from != null)
-	  {
-	        mFrom = null;
-		  renderDialogForSocailNetworkingIntegration(hideCancelButton, from,fromMenu);
-	      trendingbg.setVisibility(View.VISIBLE);   
-	  }
-	  else if(fromMenu)
-	  {
-			boolean fbloginfalg = sharedPreferencesObj.getBoolean(
-			          VueConstants.FACEBOOK_LOGIN, false);
-			boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
-			          VueConstants.GOOGLEPLUS_LOGIN, false);
-			
-			if(fbloginfalg && googleplusloginfalg)
-			{
-				Toast.makeText(this, getString(R.string.AlreadyLoggedinmesg), Toast.LENGTH_LONG).show();
-			}
-			else
-			{
-				  renderDialogForSocailNetworkingIntegration(hideCancelButton, from, fromMenu);
-			      trendingbg.setVisibility(View.VISIBLE);  
-			}
-		
-	  }
-	  else
-	  {
-		  boolean vueloginfalg = sharedPreferencesObj.getBoolean(
-		          VueConstants.VUE_LOGIN, false);
+  public void showLogInDialog(boolean hideCancelButton) {
 	  
-		  if(!vueloginfalg)
-		  {
-			  renderDialogForSocailNetworkingIntegration(hideCancelButton, from, fromMenu);
-		      trendingbg.setVisibility(View.VISIBLE);  
-		  }
-	  }
+	  Intent i = new Intent(this, VueLoginActivity.class);
+	  Bundle b = new Bundle();
+	  b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, hideCancelButton);
+	  b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+	  b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+	  b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+	  i.putExtras(b);
+	  startActivity(i);
    
   }
 
-  private void renderDialogForSocailNetworkingIntegration(
-      boolean hideCancelButton, final String from, boolean fromMenu) {
-    // Select Image Dialog...
-    loginDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-    loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-    loginDialog.setContentView(R.layout.socialnetworkingloginscreen);
 
-    RelativeLayout googleplusign_in_buttonlayout = (RelativeLayout) loginDialog
-        .findViewById(R.id.googleplusign_in_buttonlayout);
-
-    RelativeLayout fblog_in_buttonlayout = (RelativeLayout) loginDialog
-        .findViewById(R.id.fblog_in_buttonlayout);
-
-    RelativeLayout cancellayout = (RelativeLayout) loginDialog
-        .findViewById(R.id.cancellayout);
-
-    if (hideCancelButton) {
-      cancellayout.setVisibility(View.GONE);
-    }
-    
-
-	boolean fbloginfalg = sharedPreferencesObj.getBoolean(
-	          VueConstants.FACEBOOK_LOGIN, false);
-	boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
-	          VueConstants.GOOGLEPLUS_LOGIN, false);
-    
-    if(from != null)
-    {
-    	if(from.equals(VueConstants.FACEBOOK))
-    	{
-    		googleplusign_in_buttonlayout.setVisibility(View.GONE);
-    	}
-    	if(from.equals(VueConstants.GOOGLEPLUS))
-    	{
-    		fblog_in_buttonlayout.setVisibility(View.GONE);
-    	}
-    }
-    else if(fromMenu)
-    {
-    	if(fbloginfalg) fblog_in_buttonlayout.setVisibility(View.GONE);
-    	else if(googleplusloginfalg) googleplusign_in_buttonlayout.setVisibility(View.GONE);
-    
-    }
-    	
-
-    googleplusign_in_buttonlayout.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View arg0) {
-        // TODO Auto-generated method stub
-    	  
-    	  mFrom = null;
-    	  
-    	  mFrom = from;
-
-        googleplusloggedinDialogFlag = true;
-
-        mSignInFragment.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
-
-      }
-    });
-
-    fblog_in_buttonlayout.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View arg0) {
-        // TODO Auto-generated method stub
-
-        loginDialog.dismiss();
-
-
-        mFrom = null;
-    	  
-  	  mFrom = from;
-        
-        // start Facebook Login
-        Session.openActiveSession(VueLandingPageActivity.this, true,
-            new Session.StatusCallback() {
-
-              // callback when session changes state
-              @Override
-              public void call(Session session, SessionState state,
-                  Exception exception) {
-            	  Log.e("fb", "6"+session);
-                if (session.isOpened()) {
-                	Log.e("fb", "7");
-                      Session.setActiveSession(session);
-                	
-                saveFBLoginDetails(session.getAccessToken());
-
-                  // make request to the /me API
-                  Request.executeMeRequestAsync(session,
-                      new Request.GraphUserCallback() {
-
-                        // callback after Graph API
-                        // response with user object
-                        @Override
-                        public void onCompleted(GraphUser user,
-                            Response response) {
-                        	Log.e("fb", "8");
-                        	if (user != null) {
-                          }
-                        }
-                      });
-                }
-              }
-            });
-      }
-    });
-
-    cancellayout.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View arg0) {
-        // TODO Auto-generated method stub
-
-        loginDialog.dismiss();
-
-      }
-    });
-  
-  
-    	 loginDialog.show();
-   
-    
-   
-
-    loginDialog.setOnDismissListener(new OnDismissListener() {
-
-      @Override
-      public void onDismiss(DialogInterface arg0) {
-        trendingbg.setVisibility(View.GONE);
-      }
-    });
-
-    loginDialog.setCancelable(false);
-  }
-
-  private void showAlertMessageForGoolgePlusAppInstalation() {
-
-    final Dialog gplusdialog = new Dialog(this,
-        R.style.Theme_Dialog_Translucent);
-    gplusdialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-    gplusdialog.setContentView(R.layout.googleplusappinstallationdialog);
-    TextView noButton = (TextView) gplusdialog.findViewById(R.id.nobutton);
-    TextView okButton = (TextView) gplusdialog.findViewById(R.id.okbutton);
-    okButton.setOnClickListener(new OnClickListener() {
-
-      public void onClick(View v) {
-        gplusdialog.dismiss();
-
-        Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
-            .parse("market://details?id=" + googlepluspackagename));
-        startActivity(goToMarket);
-      }
-    });
-    noButton.setOnClickListener(new OnClickListener() {
-
-      public void onClick(View v) {
-        gplusdialog.dismiss();
-      }
-    });
-
-    gplusdialog.show();
-
-  }
 
   @Override
   public void onResume() {
     super.onResume();
-    
- /*   Session session = Session.getActiveSession();
-	
-	if(session != null && session.isOpened())
-	{
-		saveFBLoginDetails(session);
-	}
-    */
+
   }
 
   @Override
@@ -383,201 +124,6 @@ public class VueLandingPageActivity extends BaseActivity
 
   }
 
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-
-    try {
-      Session.getActiveSession().onActivityResult(this, requestCode,
-          resultCode, data);
-
-      
-      
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    try {
-      mSignInFragment.handleOnActivityResult(requestCode, resultCode, data);
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-  }
-
-  @Override
-  public void onSignedIn(PlusClient plusClient) {
-    // TODO Auto-generated method stub
-
-    // VueLandingPageActivity.plusClient is used to share to Google+ from
-    // Details or other screens.
-    VueLandingPageActivity.plusClient = plusClient;
-    
-    VueLandingPageActivity.plusClient.loadPeople(this, Person.Collection.VISIBLE);
-
-
-    SharedPreferences.Editor editor = sharedPreferencesObj.edit();
-    editor.putBoolean(VueConstants.VUE_LOGIN, true);
-    editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, true);
-    editor.commit();
-
-    Toast.makeText(this, plusClient.getAccountName() + " is connected.",
-        Toast.LENGTH_LONG).show();
-
-    // To show Google+ App install dialog after login with Google+
-    if (googleplusloggedinDialogFlag) {
-    
-      boolean installed = appInstalledOrNot(googlepluspackagename);
-      if (!installed) showAlertMessageForGoolgePlusAppInstalation();
-    }
-
-    if (loginDialog != null) loginDialog.dismiss();
-
-    loginDialog = null;
-  }
-
-  private boolean appInstalledOrNot(String uri) {
-    PackageManager pm = getPackageManager();
-    boolean app_installed = false;
-    try {
-      pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
-      app_installed = true;
-    } catch (PackageManager.NameNotFoundException e) {
-      app_installed = false;
-    }
-    return app_installed;
-  }
-  // Test code for sharing image and text to google+
-  // VueLandingPageActivity.mSignInFragment.share(VueLandingPageActivity.plusClient,
-  // getActivity(),
-  // "This is krishna posted from Android Test app from his mobile.","/sdcard/hi.jpg");
-
-@Override
-public void onPeopleLoaded(ConnectionResult status,
-		PersonBuffer personBuffer, String nextPageToken) {
-	
-
-
-	Log.e("VueShare", "google friends called on people loaded");
-	
-	if (ConnectionResult.SUCCESS == status.getErrorCode()) {
-		Log.e("VueShare", "google friends called sucess");
-		if (personBuffer != null && personBuffer.getCount() > 0) {
-			Log.e("VueShare", "google friends called count greater then 0");
-			googlePlusFriendsDetailsList = new ArrayList<FbGPlusDetails>();
-			for (Person p : personBuffer) {
-				Log.e("VueShare", "google friends called person bug");
-				FbGPlusDetails googlePlusFriendsDetailsObj = new FbGPlusDetails(
-						p.getDisplayName(), p.getImage().getUrl());
-
-				googlePlusFriendsDetailsList
-						.add(googlePlusFriendsDetailsObj);
-
-			}
-			 if (mFrom != null && mFrom.equals(VueConstants.GOOGLEPLUS)) {
-				 mFrom = null;
-           	  mFrag.getFriendsList(getResources().getString(
-           	  R.string.sidemenu_sub_option_Gmail));
-             }
-		}
-	}
-
-}
-
-@Override
-protected void onRestart() {
-	// TODO Auto-generated method stub
-	super.onRestart();
-	
-	/*Session session = Session.getActiveSession();
-	
-	if(session != null && session.isOpened())
-	{
-		saveFBLoginDetails(session);
-	}*/
-	
-}
-/**
- * By Krishna.V
- * This method saves the Login details in Preferences file.
- */
-public static void saveFBLoginDetails(String accessToken)
-{
-	  SharedPreferences.Editor editor = sharedPreferencesObj.edit();
-      editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
-    		  accessToken);
-      editor
-          .putBoolean(VueConstants.VUE_LOGIN, true);
-      editor
-      .putBoolean(VueConstants.FACEBOOK_LOGIN, true);
-      editor.commit();
-      if (mFrom != null && mFrom.equals(VueConstants.FACEBOOK)) {
-    	  mFrom = null;
-    	  try {
-			mFrag.getFriendsList(mainActivityContext.getResources().getString(
-			  R.string.sidemenu_sub_option_Facebook));
-		} catch (Exception e) {
-		}
-      }
-}
-
-public static void fbLogin()
-{
-	// start Facebook Login
-    Session.openActiveSession(mainActivityContext, true,
-        new Session.StatusCallback() {
-          // callback when session changes state
-          @Override
-          public void call(Session session, SessionState state,
-              Exception exception) {
-        	  Log.e("fb", "6"+session);
-            if (session.isOpened()) {
-            	Log.e("fb", "7");
-                  Session.setActiveSession(session);
-            	
-            saveFBLoginDetails(session.getAccessToken());
-
-              // make request to the /me API
-              Request.executeMeRequestAsync(session,
-                  new Request.GraphUserCallback() {
-
-                    // callback after Graph API
-                    // response with user object
-                    @Override
-                    public void onCompleted(GraphUser user,
-                        Response response) {
-                    	Log.e("fb", "8");
-                    	if (user != null) {
-                      }
-                    }
-                  });
-            }
-          }
-        });
-  
-
-}
-
-
-
-
-  // The below code is used to get the Facebook friends information.
-  /*
-   * final VueShare obj = new VueShare(); Thread thread=new Thread(new
-   * Runnable() {
-   * 
-   * @Override public void run() {
-   * 
-   * 
-   * try { obj.getFacebookFriends(VueLandingPageActivity.this); } catch
-   * (Exception e) { // TODO Auto-generated catch block e.printStackTrace(); } }
-   * });thread.start();
-   */
-
-  /*
-   * // Code for getting Google+ friends list new
-   * VueShare().getGooglePlusFriends(VueLandingPageActivity.plusClient);
-   */
+ 
 
 }

@@ -1,12 +1,43 @@
 package com.lateralthoughts.vue.utils;
 
-import java.io.File;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class clsShare {
+public class clsShare implements Parcelable{
+	
+	
+	 @SuppressWarnings("rawtypes")
+		public static final Parcelable.Creator CREATOR =
+			new Parcelable.Creator() {
+		        @Override
+				public clsShare createFromParcel(Parcel in) {
+		            return new clsShare(in);
+		        }
+		
+		        @Override
+				public clsShare[] newArray(int size) {
+		            return new clsShare[size];
+		        }
+		    };
+	
+		    public clsShare(Parcel in)
+		    {
+		    	readFromParcel(in);
+		    }
+		    
+		    
+
+	private void readFromParcel(Parcel in) {
+
+		imageUrl = in.readString();
+		filepath = in.readString();
+
+	}
+	
 private String imageUrl;
-public clsShare(String imageUrl, File file) {
+public clsShare(String imageUrl, String filepath) {
 	this.imageUrl = imageUrl;
-	this.file = file;
+	this.filepath = filepath;
 }
 public String getImageUrl() {
 	return imageUrl;
@@ -14,11 +45,30 @@ public String getImageUrl() {
 public void setImageUrl(String imageUrl) {
 	this.imageUrl = imageUrl;
 }
-public File getFile() {
-	return file;
+
+private String filepath;
+public String getFilepath() {
+	return filepath;
 }
-public void setFile(File file) {
-	this.file = file;
+
+
+
+public void setFilepath(String filepath) {
+	this.filepath = filepath;
 }
-private File file;
+
+
+
+@Override
+public int describeContents() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+@Override
+public void writeToParcel(Parcel dest, int flags) {
+	// TODO Auto-generated method stub
+	
+	dest.writeString(imageUrl);
+    dest.writeString(filepath);
+}
 }
