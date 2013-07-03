@@ -1,7 +1,7 @@
 package com.lateralthoughts.vue;
 
 import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueframeAdapter;
+//import com.lateralthoughts.vue.VueframeAdapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
