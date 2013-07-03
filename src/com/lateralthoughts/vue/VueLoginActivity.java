@@ -159,7 +159,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			Log.e("fb", "on saved instance state" + session);
 
 			if (session != null) {
-				Log.e("fb", "opened" + session.isOpened());
+				Log.e("fb", "opened" + session.isOpened()+ " token "+ session.getAccessToken());
 
 				socialintegrationmainlayotu.setVisibility(View.GONE);
 				
