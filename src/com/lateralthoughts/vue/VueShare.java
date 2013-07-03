@@ -15,6 +15,8 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
 /**
@@ -58,7 +60,7 @@ public class VueShare {
          }
          in.close();
          String result = sb.toString();
-        // Log.v("My Response :: ", result);
+    //    Log.v("My Response :: ", result);
 
 			if (result != null) {
 				facebookFriendsDetailsList = JsonParsing(result);
@@ -88,7 +90,7 @@ public class VueShare {
 			for (int i = 0; i < dataArray.length(); i++) {
 
 				JSONObject jsonObj = dataArray.getJSONObject(i);
-				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(
+				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(jsonObj.getString("id"),
 						jsonObj.getString("name"), jsonObj
 								.getJSONObject("picture").getJSONObject("data")
 								.getString("url"));

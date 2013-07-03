@@ -1,10 +1,12 @@
 package com.lateralthoughts.vue;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -12,6 +14,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -77,7 +85,8 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	private boolean dontCallUserInfoChangesMethod = false;
 	private boolean fromInvitefriendsgoogleplus = false;
 	private boolean facebookflag = false;
-	
+	private String fb_friend_id = null;
+	private String fb_friend_name = null;
 	static SharedPreferences sharedPreferencesObj;
 	
 	  // Google+ integration
@@ -136,7 +145,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	    
 	    RelativeLayout cancellayout = (RelativeLayout) findViewById(R.id.cancellayout);
 	
-		if (savedInstanceState != null) {/*
+		if (savedInstanceState != null) {
 			String name = savedInstanceState
 					.getString(PENDING_ACTION_BUNDLE_KEY);
 			pendingAction = PendingAction.valueOf(name);
@@ -146,7 +155,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			Log.e("fb", "on saved instance state" + session);
 
 			if (session != null) {
-				Log.e("fb", "opened" + session.isOpened());
+				Log.e("fb", "opened" + session.isOpened()+ " token "+ session.getAccessToken());
 
 				socialintegrationmainlayotu.setVisibility(View.GONE);
 				
@@ -162,7 +171,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 				}
 			}
 
-		*/}
+		}
 	
 	
 	context = this;
@@ -194,9 +203,24 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 		from_bezelmenu_login = bundle.getBoolean(VueConstants.FROM_BEZELMENU_LOGIN);
 		from_invitefriends = bundle.getString(VueConstants.FROM_INVITEFRIENDS);
 		from_details_fbshare = bundle.getBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE);
+		fb_friend_id = bundle.getString(VueConstants.FB_FRIEND_ID);
+		fb_friend_name = bundle.getString(VueConstants.FB_FRIEND_NAME);
 	}
 	
+	
+	if(fb_friend_id != null)
+	{
+		 socialintegrationmainlayotu.setVisibility(View.GONE);
+			ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
+			
+			trendingbg.setVisibility(View.GONE);
+			
+			publishFeedDialog(fb_friend_id, fb_friend_name);
+	}
   
+	
+	else
+	{
 	
 	if(from_details_fbshare)
 	{
@@ -312,6 +336,9 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 
 	      }
 	    });
+	    
+	    
+	}
 	}
 
 	
@@ -450,7 +477,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 				VueLandingPageActivity.googlePlusFriendsDetailsList = new ArrayList<FbGPlusDetails>();
 				for (Person p : personBuffer) {
 					Log.e("VueShare", "google friends called person bug");
-					FbGPlusDetails googlePlusFriendsDetailsObj = new FbGPlusDetails(
+					FbGPlusDetails googlePlusFriendsDetailsObj = new FbGPlusDetails(null,
 							p.getDisplayName(), p.getImage().getUrl());
 
 					VueLandingPageActivity.googlePlusFriendsDetailsList
@@ -774,5 +801,194 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 		}
 		
 		
+		 private void publishFeedDialog(String friend_uid, String friendname) {/*
+			 
+			 
+			 Log.e("fb", "id..."+friend_uid+" ..."+sharedPreferencesObj.getString(
+			          VueConstants.FACEBOOK_ACCESSTOKEN, null)+"...."+getString(R.string.app_id));
+			 
+		//	 https://graph.facebook.com/1612877716/feed?access_token=288419657969615|4a220d33e14f6dc7d4d79ebbe334504a&message=%22test%20message%22
+				 
+			   Thread t = new Thread(new Runnable() {
 
+	                @Override
+	                public void run() {
+	                
+
+				// Create a new HttpClient and Post Header
+			        HttpClient httpclient = new DefaultHttpClient();
+			         
+			         login.php returns true if username and password is equal to saranga 
+			        HttpPost httppost = new HttpPost("https://graph.facebook.com/1612877716/feed?access_token=288419657969615&message='testmessage'");
+			 
+			        try {
+			            // Add user name and password
+			       
+			          
+			            // Execute HTTP Post Request
+			            Log.w("SENCIDE", "Execute HTTP Post Request");
+			            HttpResponse response = httpclient.execute(httppost);
+			             
+			            String str = inputStreamToString(response.getEntity().getContent()).toString();
+			            Log.w("SENCIDE", str);
+			             
+			         
+			 
+			        } catch (ClientProtocolException e) {
+			         e.printStackTrace();
+			        } catch (IOException e) {
+			         e.printStackTrace();
+			        }
+				 
+	                } 
+               });t.start();
+				 
+			 
+			final ProgressDialog inviteDialog = ProgressDialog.show(
+						context, "Facebook", "Inviting "+friendname+" to "+getString(R.string.app_name),
+						true);
+			
+			
+			 
+				Bundle parameters = new Bundle();
+				//parameters.putString("to", friend_uid);
+  				parameters.putString("message", "Krishna saying about vue application.");
+  					
+  					Callback callback = new Request.Callback() {
+
+  						public void onCompleted(Response response) {
+  							inviteDialog.dismiss();
+  							showPublishResult(
+  									VueLoginActivity.this
+  											.getString(R.string.photo_post),
+  									response.getGraphObject(), response.getError());
+  						}
+  					};
+
+  					Request request = new Request(Session.getActiveSession(),
+  							friend_uid + "/feed", parameters, HttpMethod.POST, callback);
+
+  					request.executeAsync();
+			 
+			 
+			 
+			 Bundle postStatusMessage = new Bundle();
+
+			// ADD THE STATUS MESSAGE TO THE BUNDLE
+			postStatusMessage.putString("message", "hi from Vue");
+
+			Utility.mAsyncRunner.request(userID + "/feed", postStatusMessage, "POST", new StatusUpdateListener(), null);
+			 
+			 
+			 
+			 
+	            Bundle params = new Bundle();
+	            //This is what you need to post to a friend's wall
+	          //  params.putString("from", "" + user.getId());
+	            params.putString("to", friend_uid);
+	            //up to this
+
+	             Bitmap bitmap = BitmapFactory.decodeResource(VueLoginActivity.this.getResources(),
+                     R.drawable.vue_launcher_icon);
+				  
+	             params.putString("message", "Learn how to make your Android apps social");
+	             params.putString("data",
+	                     "{\"badge_of_awesomeness\":\"1\"," +
+	                     "\"social_karma\":\"5\"}");
+	             
+	           params.putString("name", "Krishna Android");
+	            params.putString("caption", "Vue");
+	            params.putString("description", "About Vue Application.");
+	           // params.putString("link", "https://developers.facebook.com/android");
+	       //     params.putParcelable("picture", bitmap);
+	            WebDialog feedDialog = (new WebDialog.FeedDialogBuilder(VueLoginActivity.this, Session.getActiveSession(), params))
+	                    .setOnCompleteListener(new OnCompleteListener() {
+
+	                    @Override
+	                    public void onComplete(Bundle values, FacebookException error) {
+	                        if (error == null) {
+	                            // When the story is posted, echo the success
+	                            // and the post Id.
+	                            final String postId = values.getString("post_id");
+	                            if (postId != null) {
+	                                Toast.makeText(VueLoginActivity.this,
+	                                    "Posted story, id: "+postId,
+	                                    Toast.LENGTH_SHORT).show();
+	                            } else {
+	                                // User clicked the Cancel button
+	                                Toast.makeText(VueLoginActivity.this, 
+	                                    "Publish cancelled", 
+	                                    Toast.LENGTH_SHORT).show();
+	                            }
+	                        } else if (error instanceof FacebookOperationCanceledException) {
+	                            // User clicked the "x" button
+	                            Toast.makeText(VueLoginActivity.this, 
+	                                "Publish cancelled", 
+	                                Toast.LENGTH_SHORT).show();
+	                        } else {
+	                            // Generic, ex: network error
+	                            Toast.makeText(VueLoginActivity.this, 
+	                                "Error posting story", 
+	                                Toast.LENGTH_SHORT).show();
+	                        }
+	                    }
+
+	                }).build();
+	            feedDialog.show();
+	    */}
+		 
+		/* public void connectToFb() throws XMPPException {
+
+			 ConnectionConfiguration config = new ConnectionConfiguration("chat.facebook.com", 5222);
+			 config.setSASLAuthenticationEnabled(true);
+			 config.setSecurityMode(SecurityMode.required);
+			 config.setRosterLoadedAtLogin(true);
+			 config.setTruststorePath("/system/etc/security/cacerts.bks");
+			 config.setTruststorePassword("changeit");
+			 config.setTruststoreType("bks");
+			 config.setSendPresence(false);
+			 try {
+			     SSLContext sc = SSLContext.getInstance("TLS");
+			     sc.init(null, MemorizingTrustManager.getInstanceList(this), new java.security.SecureRandom());
+			     config.setCustomSSLContext(sc);
+			 } catch (GeneralSecurityException e) {
+			     Log.w("TAG", "Unable to use MemorizingTrustManager", e);
+			 }
+			 XMPPConnection xmpp = new XMPPConnection(config);
+			 try {
+			     xmpp.connect();
+			     xmpp.login("facebookusername", "****"); // Here you have to used only facebookusername from facebookusername@chat.facebook.com
+			     Roster roster = xmpp.getRoster();
+			     Collection<RosterEntry> entries = roster.getEntries();
+			     System.out.println("Connected!");
+			     System.out.println("\n\n" + entries.size() + " buddy(ies):");
+			     // shows first time onliners---->
+			     String temp[] = new String[50];
+			     int i = 0;
+			     for (RosterEntry entry : entries) {
+			         String user = entry.getUser();
+			         Log.i("TAG", user);
+			     }
+			 } catch (XMPPException e) {
+			     xmpp.disconnect();
+			     e.printStackTrace();
+			 }
+			 }*/
+
+		 private StringBuilder inputStreamToString(InputStream is) {
+		     String line = "";
+		     StringBuilder total = new StringBuilder();
+		     // Wrap a BufferedReader around the InputStream
+		     BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		     // Read response until the end
+		     try {
+		      while ((line = rd.readLine()) != null) {
+		        total.append(line);
+		      }
+		     } catch (IOException e) {
+		      e.printStackTrace();
+		     }
+		     // Return full string
+		     return total;
+		    }
 }
