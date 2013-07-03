@@ -83,7 +83,7 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
     public void onAttach(Activity activity){
         super.onAttach(activity);
         mContext = activity;
-        
+        // adding test comment
         //without much ado lets get started with retrieving the trending aisles list
         mVueContentGateway = VueContentGateway.getInstance();
         if(null == mVueContentGateway){
