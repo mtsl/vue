@@ -14,14 +14,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 import android.util.Log;
+import android.os.Bundle;
 
 //internal imports
+import com.android.volley.AuthFailureError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.service.VueContentRestService;
 
+//volley imports
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+import com.android.volley.VolleyError;
+
 //java lang utils
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class VueContentGateway {
 	private final String TAG = "VueContentGateway";
@@ -59,7 +75,7 @@ public class VueContentGateway {
 	 * getTrendingAisles - This API is used to get a list of the current Trending Aisles.
 	 * The ResultReceiver object will be notified when the list is available
 	 */
-	public boolean getTrendingAisles(int limit, int offset, ResultReceiver receiver){
+	public boolean getTrendingAisles(int limit, int offset, final ResultReceiver receiver){
 		boolean status = true;
         mParams.clear();
         StringBuilder baseUri = new StringBuilder();
@@ -77,7 +93,42 @@ public class VueContentGateway {
         intent.putParcelableArrayListExtra("headers", mHeaders);
         intent.putParcelableArrayListExtra("params",mParams);
         intent.putExtra("receiver", receiver);
-        mContext.startService(intent);
+
+        String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI + "aisle/trending?limit=%s&offset=%s";
+        String requestUrl = String.format(requestUrlBase, limit, offset);
+        Response.Listener listener = new Response.Listener<JSONArray>(){
+            @Override
+            public void onResponse(JSONArray jsonArray){
+                if(null != jsonArray){
+                    Bundle responseBundle = new Bundle();
+                    responseBundle.putString("result",jsonArray.toString());
+                    receiver.send(1,responseBundle);
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error){
+                Log.e("VueNetworkError","Vue encountered network operations error. Error = " + error.networkResponse);
+            }
+        };
+
+
+        JsonArrayRequest vueRequest =
+                new JsonArrayRequest(requestUrl, listener, errorListener ){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError{
+                HashMap<String, String> headersMap = new HashMap<String, String>();
+                headersMap.put("Accept-Encoding", "gzip");
+                headersMap.put("Content-Type","application/json");
+                return headersMap;
+            }
+        };
+
+        VueApplication.getInstance().getRequestQueue().add(vueRequest);
+
+        //mContext.startService(intent);
 		return status;		
 	}
 

@@ -7,6 +7,10 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.android.volley.RequestQueue;
+
 
 //internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
@@ -41,7 +45,7 @@ public class VueApplication extends Application {
 	public Context vueApplicationContext;
 	
 	public boolean fbsharingflag = false;
-	
+	private RequestQueue mVolleyRequestQueue;
 	@Override
 	public void onCreate(){
 		super.onCreate();
@@ -82,7 +86,8 @@ public class VueApplication extends Application {
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		mScreenHeight = dm.heightPixels;
 		mScreenWidth = dm.widthPixels;
-		
+        mVolleyRequestQueue = Volley.newRequestQueue(this);
+
 		//R.drawable.aisle_content_empty;
 		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID, crittercismConfig);
 	}
@@ -134,5 +139,13 @@ public class VueApplication extends Application {
     	int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     	return px;
     	     
+    }
+
+    public RequestQueue getRequestQueue() {
+        if (mVolleyRequestQueue != null) {
+            return mVolleyRequestQueue;
+        } else {
+            throw new IllegalStateException("RequestQueue not initialized");
+        }
     }
 }
