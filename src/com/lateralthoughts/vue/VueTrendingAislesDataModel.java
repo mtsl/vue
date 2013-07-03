@@ -50,7 +50,7 @@ public class VueTrendingAislesDataModel {
     private static final String USER_IMAGE_TITLE_TAG = "title";
     private static final String IMAGE_HEIGHT_TAG = "height";
     private static final String IMAGE_WIDTH_TAG = "width";
-    
+
     private ArrayList<AisleWindowContent> mAisleContentList;
     private HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
 
@@ -92,7 +92,7 @@ public class VueTrendingAislesDataModel {
         mMoreDataAvailable = true;
         mVueContentGateway.getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
 	}
-	
+
 	public void registerAisleDataObserver(IAisleDataObserver observer){
 		if(!mAisleDataObserver.contains(observer))
 			mAisleDataObserver.add(observer);
