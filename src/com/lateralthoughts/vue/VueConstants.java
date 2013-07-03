@@ -34,4 +34,24 @@ public class VueConstants {
         public static final String FBLOGIN_FROM_DETAILS_SHARE = "FBLOGIN_FROM_DETAILS_SHARE";
         public static final String FBPOST_TEXT = "FBPOSTTEXT";
         public static final String FBPOST_IMAGEURLS = "FBPOSTIMAGEURLS";
+        
+        // Column names for aisles table.
+        public static final String ID = "_id";
+        public static final String CATEGORY = "category";
+        public static final String FIRST_NAME = "firstName";
+        public static final String LAST_NAME = "lastName";
+        public static final String JOIN_TIME = "joinTime";
+        public static final String USER_ID = "userId";
+        public static final String LOOKING_FOR = "lookingFor";
+        public static final String OCCASION = "occasion";
+        public static final String AISLE_ID = "aisleId";
+        
+        // Column names for aisles images.
+        public static final String TITLE = "title";
+        public static final String IMAGE_URL = "imageUrl";
+        public static final String HEIGHT = "height";
+        public static final String WIDTH = "width";
+        public static final String DETAILS_URL = "detailsUrl";
+        public static final String IMAGE_ID = "id";
+        public static final String STORE = "store";
 }
