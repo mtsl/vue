@@ -719,7 +719,6 @@ public class VueListFragment extends Fragment {
 		        if (progress.isShowing()) {
 			          progress.dismiss();
 			        }
-			        if (getActivity() instanceof VueLandingPageActivity) {
 			        	
 			          Intent i = new Intent(getActivity(), VueLoginActivity.class);
 			       	  Bundle b = new Bundle();
@@ -730,7 +729,7 @@ public class VueListFragment extends Fragment {
 			       	  i.putExtras(b);
 			       	  startActivity(i);
 			         
-			        }
+			       
 			      }
 	       
 	    } else if (s.equals("Google Plus")) {
@@ -742,7 +741,6 @@ public class VueListFragment extends Fragment {
 			          progress.dismiss();
 			        }
 		        Log.e(getTag(), "GOOGLEPLUS : Value of s : 2" );
-			        if (getActivity() instanceof VueLandingPageActivity) {
 			        	 Log.e(getTag(), "GOOGLEPLUS : Value of s : 3" );
 			          Intent i = new Intent(getActivity(), VueLoginActivity.class);
 			       	  Bundle b = new Bundle();
@@ -753,7 +751,7 @@ public class VueListFragment extends Fragment {
 			       	  i.putExtras(b);
 			       	  startActivity(i);
 			        }
-			      }
+			      
 	    }
 	    else {
 			if (progress.isShowing()) {

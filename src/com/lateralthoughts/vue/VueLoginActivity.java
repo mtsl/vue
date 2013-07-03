@@ -1,27 +1,25 @@
 package com.lateralthoughts.vue;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import javax.net.ssl.SSLContext;
-
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -58,8 +56,6 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.chat.MemorizingTrustManager;
-import com.facebook.internal.Utility;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
@@ -805,10 +801,50 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 		}
 		
 		
-		 private void publishFeedDialog(String friend_uid, String friendname) {
+		 private void publishFeedDialog(String friend_uid, String friendname) {/*
 			 
 			 
-		/*	final ProgressDialog inviteDialog = ProgressDialog.show(
+			 Log.e("fb", "id..."+friend_uid+" ..."+sharedPreferencesObj.getString(
+			          VueConstants.FACEBOOK_ACCESSTOKEN, null)+"...."+getString(R.string.app_id));
+			 
+		//	 https://graph.facebook.com/1612877716/feed?access_token=288419657969615|4a220d33e14f6dc7d4d79ebbe334504a&message=%22test%20message%22
+				 
+			   Thread t = new Thread(new Runnable() {
+
+	                @Override
+	                public void run() {
+	                
+
+				// Create a new HttpClient and Post Header
+			        HttpClient httpclient = new DefaultHttpClient();
+			         
+			         login.php returns true if username and password is equal to saranga 
+			        HttpPost httppost = new HttpPost("https://graph.facebook.com/1612877716/feed?access_token=288419657969615&message='testmessage'");
+			 
+			        try {
+			            // Add user name and password
+			       
+			          
+			            // Execute HTTP Post Request
+			            Log.w("SENCIDE", "Execute HTTP Post Request");
+			            HttpResponse response = httpclient.execute(httppost);
+			             
+			            String str = inputStreamToString(response.getEntity().getContent()).toString();
+			            Log.w("SENCIDE", str);
+			             
+			         
+			 
+			        } catch (ClientProtocolException e) {
+			         e.printStackTrace();
+			        } catch (IOException e) {
+			         e.printStackTrace();
+			        }
+				 
+	                } 
+               });t.start();
+				 
+			 
+			final ProgressDialog inviteDialog = ProgressDialog.show(
 						context, "Facebook", "Inviting "+friendname+" to "+getString(R.string.app_name),
 						true);
 			
@@ -833,19 +869,19 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
   							friend_uid + "/feed", parameters, HttpMethod.POST, callback);
 
   					request.executeAsync();
-			 */
 			 
 			 
-			/* Bundle postStatusMessage = new Bundle();
+			 
+			 Bundle postStatusMessage = new Bundle();
 
 			// ADD THE STATUS MESSAGE TO THE BUNDLE
 			postStatusMessage.putString("message", "hi from Vue");
 
-			Utility.mAsyncRunner.request(userID + "/feed", postStatusMessage, "POST", new StatusUpdateListener(), null);*/
+			Utility.mAsyncRunner.request(userID + "/feed", postStatusMessage, "POST", new StatusUpdateListener(), null);
 			 
 			 
 			 
-		/*	 
+			 
 	            Bundle params = new Bundle();
 	            //This is what you need to post to a friend's wall
 	          //  params.putString("from", "" + user.getId());
@@ -855,12 +891,16 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	             Bitmap bitmap = BitmapFactory.decodeResource(VueLoginActivity.this.getResources(),
                      R.drawable.vue_launcher_icon);
 				  
-	            
+	             params.putString("message", "Learn how to make your Android apps social");
+	             params.putString("data",
+	                     "{\"badge_of_awesomeness\":\"1\"," +
+	                     "\"social_karma\":\"5\"}");
+	             
 	           params.putString("name", "Krishna Android");
 	            params.putString("caption", "Vue");
 	            params.putString("description", "About Vue Application.");
 	           // params.putString("link", "https://developers.facebook.com/android");
-	            params.putParcelable("picture", bitmap);
+	       //     params.putParcelable("picture", bitmap);
 	            WebDialog feedDialog = (new WebDialog.FeedDialogBuilder(VueLoginActivity.this, Session.getActiveSession(), params))
 	                    .setOnCompleteListener(new OnCompleteListener() {
 
@@ -894,8 +934,8 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	                    }
 
 	                }).build();
-	            feedDialog.show();*/
-	    }
+	            feedDialog.show();
+	    */}
 		 
 		/* public void connectToFb() throws XMPPException {
 
@@ -935,5 +975,20 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			 }
 			 }*/
 
-	
+		 private StringBuilder inputStreamToString(InputStream is) {
+		     String line = "";
+		     StringBuilder total = new StringBuilder();
+		     // Wrap a BufferedReader around the InputStream
+		     BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		     // Read response until the end
+		     try {
+		      while ((line = rd.readLine()) != null) {
+		        total.append(line);
+		      }
+		     } catch (IOException e) {
+		      e.printStackTrace();
+		     }
+		     // Return full string
+		     return total;
+		    }
 }
