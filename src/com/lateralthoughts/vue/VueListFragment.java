@@ -6,14 +6,12 @@ import java.util.List;
 
 import org.json.JSONException;
 
-import com.lateralthoughts.vue.utils.AsyncImageLoader;
-import com.lateralthoughts.vue.utils.FbGPlusDetails;
-import com.lateralthoughts.vue.utils.Utils;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -31,18 +29,27 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ListView;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.ProgressBar;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.Session;
+import com.facebook.widget.WebDialog;
+import com.facebook.widget.WebDialog.OnCompleteListener;
+import com.lateralthoughts.vue.utils.AsyncImageLoader;
+import com.lateralthoughts.vue.utils.FbGPlusDetails;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class VueListFragment extends Fragment {
  // public static final String TAG = "VueListFragment";
@@ -637,6 +644,9 @@ public class VueListFragment extends Fragment {
             .findViewById(R.id.invite_friends_imageView);
         holder.name = (TextView) convertView
             .findViewById(R.id.invite_friends_name);
+        
+        holder.invite_friends_addFriends = (Button) convertView.findViewById(R.id.invite_friends_addFriends);
+        
         convertView.setTag(holder);
       } else {
         holder = (InviteFriendHolder) convertView.getTag();
@@ -644,6 +654,25 @@ public class VueListFragment extends Fragment {
       holder.name.setText(items.get(position).getName());
       holder.imageView.setImageBitmap(imageLoader.loadImage(context,
           items.get(position).getProfile_image_url(), holder.imageView));
+      
+      final int index = position;
+      
+      holder.invite_friends_addFriends .setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+				if(items.get(index).getId() != null)
+					{
+					Intent i = new Intent(getActivity(), VueLoginActivity.class);
+					Bundle b = new Bundle();
+					b.putString(VueConstants.FB_FRIEND_ID, items.get(index).getId());
+					b.putString(VueConstants.FB_FRIEND_NAME, items.get(index).getName());
+					i.putExtras(b);
+					startActivity(i);
+					}
+				}
+			});
+      
       return convertView;
     }
 
@@ -661,6 +690,7 @@ public class VueListFragment extends Fragment {
   private static class InviteFriendHolder {
     ImageView imageView;
     TextView name;
+    Button invite_friends_addFriends;
   }
 
   public interface FriendsListener {
@@ -783,5 +813,6 @@ public class VueListFragment extends Fragment {
 	    }
 
 	  }
-
+	  
+		
 }
