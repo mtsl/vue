@@ -2,8 +2,11 @@ package com.lateralthoughts.vue;
 
 //generic android goodies
 import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
 public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity*/  {
 	
@@ -36,6 +39,14 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity*/ 
       @Override
       public void onActivityResult(int requestCode, int resultCode, Intent data) {
           super.onActivityResult(requestCode, resultCode, data);
+          Log.e("share+", "details activity result"+requestCode+resultCode);
+       
+      /*	if(requestCode == 2)
+        {
+      	 View v = findViewById(R.id.aisle_details_view_fragment);
+      	 Fragment frg = (Fragment)v;
+         mAisleDetailsAdapter.share.dismisDialog();
+        }*/
       }
  
       /*@Override

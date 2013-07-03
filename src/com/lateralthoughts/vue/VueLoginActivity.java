@@ -94,7 +94,6 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	  public PlusClientFragment mSignInFragment;
 	  
 	  private boolean googleplusloggedinDialogFlag = false;
-	  private String googlepluspackagename = "com.google.android.apps.plus";
 	  
 	  Activity context;
 	 
@@ -145,7 +144,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	    
 	    RelativeLayout cancellayout = (RelativeLayout) findViewById(R.id.cancellayout);
 	
-		if (savedInstanceState != null) {
+		if (savedInstanceState != null) {/*
 			String name = savedInstanceState
 					.getString(PENDING_ACTION_BUNDLE_KEY);
 			pendingAction = PendingAction.valueOf(name);
@@ -171,7 +170,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 				}
 			}
 
-		}
+		*/}
 	
 	
 	context = this;
@@ -437,7 +436,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	    // To show Google+ App install dialog after login with Google+
 	    if (googleplusloggedinDialogFlag) {
 	    
-	      boolean installed = appInstalledOrNot(googlepluspackagename);
+	      boolean installed = appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME);
 	      if (!installed)
 	    	  {
 	    	  if(gplusdialog != null && gplusdialog.isShowing()) gplusdialog.dismiss();
@@ -509,7 +508,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	        gplusdialog.dismiss();
 
 	        Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
-	            .parse("market://details?id=" + googlepluspackagename));
+	            .parse("market://details?id=" + VueConstants.GOOGLEPLUS_PACKAGE_NAME));
 	        startActivity(goToMarket);
 	      }
 	    });
@@ -580,8 +579,12 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			
 			if(from_details_fbshare)
 				{
-				from_details_fbshare = false;
-				shareToFacebook(null, "hi android");
+				try {
+					ArrayList<clsShare> filePathList = bundle.getParcelableArrayList(VueConstants.FBPOST_IMAGEURLS);
+					 shareToFacebook(filePathList, bundle.getString(VueConstants.FBPOST_TEXT));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				}
 			}
 			
@@ -666,12 +669,16 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 					      					Callback callback = new Request.Callback() {
 
 					      						public void onCompleted(Response response) {
+					      							if(index == fileList.size()-1)
+					      							{
+					      							
 					      							fbprogressdialog.dismiss();
 					      							showPublishResult(
 					      									VueLoginActivity.this
 					      											.getString(R.string.photo_post),
 					      									response.getGraphObject(), response.getError());
-					      						}
+					      							}
+					      							}
 					      					};
 
 					      					Request request = new Request(Session.getActiveSession(),

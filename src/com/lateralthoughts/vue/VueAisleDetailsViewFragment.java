@@ -97,6 +97,17 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
     }
     
     @Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+	
+		Log.e("share+", "fragment activity result"+requestCode+resultCode);
+		
+	
+    
+    }
+
+	@Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         //TODO: any particular state that we want to restore?
@@ -247,14 +258,15 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
      
         Log.d("VueAisleDetailsViewFragment","Get ready to display details view");
         
-        ImageView vue_share = (ImageView) v.findViewById(R.id.vue_share);
+        RelativeLayout vuesharelayout = (RelativeLayout) v.findViewById(R.id.vuesharelayout);
         
-        vue_share.setOnClickListener(new OnClickListener() {
+        vuesharelayout.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View arg0) {
                 // TODO Auto-generated method stub
             
+            	Log.e("share click", "1");
                mAisleDetailsAdapter.share(getActivity(), getActivity());
             	
             }
