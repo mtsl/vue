@@ -21,7 +21,7 @@ public class VueConstants {
         public static final int COMMENTS_LIMIT_FOR_LOGIN = 10;
         
         public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
-        public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=name,picture"; 
+        public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture"; 
         
         public static final String FACEBOOK_APP_NAME = "Facebook";
         public static final String TWITTER_APP_NAME = "Twitter";
@@ -34,6 +34,10 @@ public class VueConstants {
         public static final String FBLOGIN_FROM_DETAILS_SHARE = "FBLOGIN_FROM_DETAILS_SHARE";
         public static final String FBPOST_TEXT = "FBPOSTTEXT";
         public static final String FBPOST_IMAGEURLS = "FBPOSTIMAGEURLS";
+
+        public static final String FB_FRIEND_ID = "FBFRIENDID";
+        public static final String FB_FRIEND_NAME = "FBFRIENDNAME";
+
         
         // Column names for aisles table.
         public static final String ID = "_id";
@@ -54,4 +58,5 @@ public class VueConstants {
         public static final String DETAILS_URL = "detailsUrl";
         public static final String IMAGE_ID = "id";
         public static final String STORE = "store";
+
 }

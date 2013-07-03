@@ -9,6 +9,13 @@ public class FbGPlusDetails {
 	private String name = null;
 	private String profile_image_url = null;
 
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	private String id = null;
 	public String getName() {
 		return name;
 	}
@@ -21,9 +28,10 @@ public class FbGPlusDetails {
 	public void setProfile_image_url(String profile_image_url) {
 		this.profile_image_url = profile_image_url;
 	}
-	public FbGPlusDetails(String name, String profile_image_url) {
+	public FbGPlusDetails(String id, String name, String profile_image_url) {
 		this.name = name;
 		this.profile_image_url = profile_image_url;
+		this.id = id;
 	}
 
 }
