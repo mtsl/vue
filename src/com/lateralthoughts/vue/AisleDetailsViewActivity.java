@@ -4,6 +4,7 @@ package com.lateralthoughts.vue;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity*/  {
 	
@@ -38,6 +39,20 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity*/ 
           super.onActivityResult(requestCode, resultCode, data);
       }
  
+      @Override
+      public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+          if (getSlidingMenu().isMenuShowing()) {
+            if (!mFrag.listener.onBackPressed()) {
+              getSlidingMenu().toggle();
+            }
+          } else {
+            super.onBackPressed();
+          }
+        }
+        return false;
+      }
+      
       /*@Override
       public boolean onCreateOptionsMenu(Menu menu) {
           getMenuInflater().inflate(R.menu.title_options, menu);
