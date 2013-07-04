@@ -42,12 +42,13 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity*/ 
           super.onActivityResult(requestCode, resultCode, data);
           Log.e("share+", "details activity result"+requestCode+resultCode);
        
-      /*	if(requestCode == 2)
+      	if(requestCode == VueConstants.SHARE_INTENT_REQUEST_CODE)
         {
-      	 View v = findViewById(R.id.aisle_details_view_fragment);
-      	 Fragment frg = (Fragment)v;
-         mAisleDetailsAdapter.share.dismisDialog();
-        }*/
+      		 VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager().findFragmentById(R.id.aisle_details_view_fragment);
+
+
+      	    fragment.mAisleDetailsAdapter.share.dismisDialog();
+        }
       }
  
       @Override

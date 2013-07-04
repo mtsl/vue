@@ -101,6 +101,7 @@ public class AisleDetailsViewListLoader {
           
           //imageView1.setPadding(3, 3, 3, 3);
           imageView1.setContainerObject(holder);
+          
           params.setMargins(pixel, 0, pixel, 0);
           params1.setMargins(pixel, 0,pixel, 0);
           params.gravity = Gravity.CENTER;
@@ -113,12 +114,14 @@ public class AisleDetailsViewListLoader {
           if(bitmap != null){
         	  int width = imageView.getWidth();
         	  int height = imageView.getHeight();
-        	   if(bitmap.getHeight() >  VueApplication.getInstance().getScreenHeight()/3 || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
+        	 //  if(bitmap.getHeight() >  VueApplication.getInstance().getScreenHeight()/3 || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
            		  Log.i("width & height", "reqWidth1: Bitmap is greater than card size21" );
-           		 bitmap =  Utils.getScaledBitMap(bitmap,VueApplication.getInstance().getPixel(220),  VueApplication.getInstance().getPixel(220));
-           	  }
+           		 bitmap =  Utils.getScaledBitMap(bitmap,(VueApplication.getInstance().getScreenWidth() * 10)/100,  (VueApplication.getInstance().getScreenHeight()* 10)/100);
+           	 // }
         	  toplay.addView(imageView);
         	  bottomlay.addView(imageView1);
+        	  imageView.setScaleType(ScaleType.CENTER_INSIDE);
+        	  imageView1.setScaleType(ScaleType.CENTER_INSIDE);
               imageView.setImageBitmap(bitmap);
               imageView1.setImageBitmap(bitmap);
               holder.topScroller.addView(toplay);  
@@ -130,7 +133,9 @@ public class AisleDetailsViewListLoader {
               holder.topScroller.addView(toplay);
               holder.bottomScroller.addView(bottomlay);
               imageView.setScaleX(0.9f);
-              imageView.setScaleY(0.9f);
+              imageView1.setScaleY(0.9f);
+        	  imageView.setScaleType(ScaleType.CENTER_INSIDE);
+        	  imageView1.setScaleType(ScaleType.CENTER_INSIDE);
               loadBitmap(itemDetails.mCustomImageUrl, null, imageView, 400);
               loadBitmap(itemDetails.mCustomImageUrl, null, imageView1, 400);
           }
@@ -198,6 +203,7 @@ public class AisleDetailsViewListLoader {
            // imgConnectivity.setImageClick(imageView);
             Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
             if(bitmap != null){
+            	 Log.i("width & height", "reqWidth1: Bitmap  set directly here" );
             	bitmap =  setParams(holder.aisleContentBrowser, imageView, bitmap);
             	// bitmap = Utils.getScaledBitMap(bitmap, VueApplication.getInstance().getScreenWidth(), VueApplication.getInstance().getScreenHeight());
                 imageView.setImageBitmap(bitmap);
@@ -313,18 +319,18 @@ public class AisleDetailsViewListLoader {
     }  
     private Bitmap setParams(AisleContentBrowser vFlipper,ImageView imageView,Bitmap bitmap) {
     	Log.i("width & height", "reqWidth1: Bitmap is greater than card size0" );
-    	int imgCardHeight =   VueApplication.getInstance().getScreenHeight() *60 /100;
+    	int imgCardHeight =   (VueApplication.getInstance().getScreenHeight() *60) /100;
     	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-				VueApplication.getInstance().getScreenWidth(), bitmap.getHeight());
+				VueApplication.getInstance().getScreenWidth(),imgCardHeight);
     	showpieceParams.setMargins(0, 50, 0, 50);
     	if(vFlipper != null)
     	vFlipper.setLayoutParams(showpieceParams);
-    	  if(bitmap.getHeight() > imgCardHeight || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
-    		  
-    		// bitmap =  Utils.getScaledBitMap(bitmap, VueApplication.getInstance().getScreenWidth(), imgCardHeight);
-    	  } else {
+    	 /* if(bitmap.getHeight() > imgCardHeight || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {*/
+    	 Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
+    		 bitmap =  Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*90)/100, (imgCardHeight*90)/100);
+    	/*  } else {
     		  Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
-    	  }
+    	  }*/
     	if(vFlipper != null) {
     	FrameLayout.LayoutParams params = 
                 new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -332,16 +338,18 @@ public class AisleDetailsViewListLoader {
         imageView.setLayoutParams(params);
     	} else {
     		LinearLayout.LayoutParams params = 
-                    new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+                    new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER;
             //params.setMargins(100, 0, 100, 100);
              imageView.setScaleType(ScaleType.CENTER_INSIDE);
             imageView.setLayoutParams(params);
+      	  imageView.setScaleType(ScaleType.CENTER_INSIDE);
+    	   
             Log.i("width & height", "reqWidth1: Bitmap is greater than card size1" );
-            if(bitmap.getHeight() >  VueApplication.getInstance().getScreenHeight()/3 || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
+           // if(bitmap.getHeight() >  VueApplication.getInstance().getScreenHeight()/3 || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
       		  Log.i("width & height", "reqWidth1: Bitmap is greater than card size2" );
-      		 bitmap =  Utils.getScaledBitMap(bitmap,VueApplication.getInstance().getPixel(220),  VueApplication.getInstance().getPixel(220));
-      	  }
+      		 bitmap =  Utils.getScaledBitMap(bitmap,(VueApplication.getInstance().getScreenWidth() * 10)/100,  (VueApplication.getInstance().getScreenHeight()* 10)/100);
+      	 // }
     	}
         return bitmap;
     }

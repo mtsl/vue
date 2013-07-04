@@ -23,6 +23,8 @@ public class VueConstants {
         public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
         public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture"; 
         
+        public static final int SHARE_INTENT_REQUEST_CODE = 1;
+        
         public static final String FACEBOOK_APP_NAME = "Facebook";
         public static final String TWITTER_APP_NAME = "Twitter";
         public static final String GMAIL_APP_NAME = "Gmail";

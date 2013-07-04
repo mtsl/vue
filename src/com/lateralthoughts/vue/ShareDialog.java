@@ -536,7 +536,7 @@ public class ShareDialog {
                       public void run() {
                     	 
                     		screenDialog.setCancelable(true);
-                    		activity.startActivityForResult(sendIntent, 2);
+                    		activity.startActivityForResult(sendIntent, VueConstants.SHARE_INTENT_REQUEST_CODE);
             				// shareDialog.dismiss();
                     		
                     		
@@ -581,7 +581,7 @@ public class ShareDialog {
 
 
 		screenDialog.setCancelable(true);
-		activity.startActivityForResult(sendIntent, 2);
+		activity.startActivityForResult(sendIntent, VueConstants.SHARE_INTENT_REQUEST_CODE);
 
 		//shareDialog.dismiss();
 		

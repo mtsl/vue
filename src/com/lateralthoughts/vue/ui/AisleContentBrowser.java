@@ -15,6 +15,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 //android UI & graphics imports
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import android.view.MotionEvent;
@@ -143,9 +145,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, null, currentIndex, currentIndex+1, true)){
 	                            mAnimationInProgress = true;
 	                            Animation cantWrapRight = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right);
-	                            Intent intent = new Intent();
-            		            intent.setClass(VueApplication.getInstance(), VueComparisionActivity.class);
-            		            mContext.startActivity(intent); 
 	                            cantWrapRight.setAnimationListener(new Animation.AnimationListener(){
 	                                public void onAnimationEnd(Animation animation) {
 	                                    Animation cantWrapRightPart2 = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right2);
@@ -160,7 +159,7 @@ public class AisleContentBrowser extends ViewFlipper {
 
 	                                }
 	                            });
-	                           // aisleContentBrowser.getCurrentView().startAnimation(cantWrapRight);
+	                            aisleContentBrowser.getCurrentView().startAnimation(cantWrapRight);
 	                            return super.onTouchEvent(event);
 	                        }
 	                    }
@@ -293,6 +292,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	    public void onAisleSwipe(String id);
 	    public void onReceiveImageCount(int count);
 	    public void onResetAdapter();
+	    public void onAddCommentClick(TextView view,EditText editText);
 	}
 	public void setAisleDetailSwipeListener(AisleDetailSwipeListener swipListener) {
 		mSwipeListener = swipListener; 
