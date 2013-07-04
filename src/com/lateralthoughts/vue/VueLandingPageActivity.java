@@ -4,8 +4,6 @@ import java.util.List;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -30,15 +28,12 @@ public class VueLandingPageActivity extends BaseActivity {
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
-    
- 
+
     Thread.setDefaultUncaughtExceptionHandler(new
     		ExceptionHandler(this));
-    
-    
+
     setContentView(R.layout.vue_landing_main);
 
-    
     // Checking wheather app is opens for first time or not?
     sharedPreferencesObj = this.getSharedPreferences(
         VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -109,7 +104,6 @@ public class VueLandingPageActivity extends BaseActivity {
 	  b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
 	  i.putExtras(b);
 	  startActivity(i);
-   
   }
 
 
