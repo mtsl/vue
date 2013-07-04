@@ -4,7 +4,6 @@ package com.lateralthoughts.vue;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -12,7 +11,7 @@ import com.slidingmenu.lib.SlidingMenu;
 
 public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity*/  {
 	
-	Fragment mFragRight;
+  VueComparisionFragment mFragRight;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -25,17 +24,15 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity*/ 
         	 getActionBar().hide();
         } 
  
-        mFragRight=  new VueComparisionFragment();
+/*    mFragRight = new VueComparisionFragment();
 
-        getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-        final SlidingMenu sm = getSlidingMenu();
-        sm.setMode(SlidingMenu.LEFT_RIGHT);
-        sm.setSecondaryMenu(R.layout.menu_frame_two);
-       getSupportFragmentManager()
-        .beginTransaction()
-        .replace(R.id.menu_frame_two, mFragRight)
-        .commit();
-       sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+    getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+    final SlidingMenu sm = getSlidingMenu();
+    sm.setMode(SlidingMenu.LEFT_RIGHT);
+    sm.setSecondaryMenu(R.layout.menu_frame_two);
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.menu_frame_two, mFragRight).commit();
+    sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);*/
       
     }
     

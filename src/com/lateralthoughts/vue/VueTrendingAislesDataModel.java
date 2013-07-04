@@ -198,38 +198,38 @@ public class VueTrendingAislesDataModel {
 	                aisleId = contentItem.getString(CONTENT_ID_TAG);
 	                Cursor c = db.query(DbHelper.DATABASE_TABLE_AISLES, new String[] {VueConstants.AISLE_ID}, VueConstants.AISLE_ID + "=?",
 	                    new String[] {aisleId}, null, null, null);
-	                if(c.getCount() == 0) {
-	                  userInfo.mAisleId = contentItem.getString(CONTENT_ID_TAG);
-	                  JSONArray imagesArray = contentItem.getJSONArray(USER_IMAGES_TAG);
-
-	                  //within the content item we have a user object
-	                  JSONObject user = contentItem.getJSONObject(USER_OBJECT_TAG);
-	                  userInfo.mFirstName = user.getString(USER_FIRST_NAME_TAG);
-	                  userInfo.mLastName = user.getString(USER_LAST_NAME_TAG);
-	                  userInfo.mUserId= user.getString(CONTENT_ID_TAG);
-
-	                  userInfo.mLookingForItem = contentItem.getString(LOOKING_FOR_TAG);
-	                  userInfo.mOccasion = contentItem.getString(OCCASION_TAG);
-	                  userInfo.mJoinTime = Long.parseLong(user.getString(USER_JOIN_TIME_TAG));                    
-	                  for(int j=0; j<imagesArray.length(); j++){
-	                      imageItemDetails = new AisleImageDetails();
-	                      imageItem = imagesArray.getJSONObject(j);
-	                      imageItemDetails.mDetalsUrl = imageItem.getString(USER_IMAGE_DETALS_TAG);
-	                      imageItemDetails.mId = imageItem.getString(USER_IMAGE_ID_TAG);
-	                      imageItemDetails.mStore = imageItem.getString(USER_IMAGE_STORE_TAG);
-	                      imageItemDetails.mTitle = imageItem.getString(USER_IMAGE_TITLE_TAG);
-	                      imageItemDetails.mImageUrl = imageItem.getString(USER_IMAGE_URL_TAG);
-	                      imageItemDetails.mAvailableHeight = imageItem.getInt(IMAGE_HEIGHT_TAG);
-	                      imageItemDetails.mAvailableWidth = imageItem.getInt(IMAGE_WIDTH_TAG);
-	                      imageItemsArray.add(imageItemDetails);                      
-	                  }
-
-	                  aisleItem = getAisleItem(aisleId);
-	                  aisleItem.addAisleContent(userInfo,  imageItemsArray);
-	                  addAislesToDb(userInfo, imageItemsArray);
-	                  imageItemsArray.clear();
+	                if(c.getCount() != 0) {
+	                  db.delete(DbHelper.DATABASE_TABLE_AISLES,  VueConstants.AISLE_ID + "=?", new String[] {aisleId});
+	                  db.delete(DbHelper.DATABASE_TABLE_AISLES_IMAGES,  VueConstants.AISLE_ID + "=?", new String[] {aisleId});
 	                }
-                    c.close();
+	                userInfo.mAisleId = contentItem.getString(CONTENT_ID_TAG);
+	                JSONArray imagesArray = contentItem.getJSONArray(USER_IMAGES_TAG);
+
+	                //within the content item we have a user object
+	                JSONObject user = contentItem.getJSONObject(USER_OBJECT_TAG);
+	                userInfo.mFirstName = user.getString(USER_FIRST_NAME_TAG);
+	                userInfo.mLastName = user.getString(USER_LAST_NAME_TAG);
+	                userInfo.mUserId= user.getString(CONTENT_ID_TAG);
+                    userInfo.mLookingForItem = contentItem.getString(LOOKING_FOR_TAG);
+	                userInfo.mOccasion = contentItem.getString(OCCASION_TAG);
+	                userInfo.mJoinTime = Long.parseLong(user.getString(USER_JOIN_TIME_TAG));                    
+	                for(int j=0; j<imagesArray.length(); j++){
+	                    imageItemDetails = new AisleImageDetails();
+	                    imageItem = imagesArray.getJSONObject(j);
+	                    imageItemDetails.mDetalsUrl = imageItem.getString(USER_IMAGE_DETALS_TAG);
+	                    imageItemDetails.mId = imageItem.getString(USER_IMAGE_ID_TAG);
+	                    imageItemDetails.mStore = imageItem.getString(USER_IMAGE_STORE_TAG);
+	                    imageItemDetails.mTitle = imageItem.getString(USER_IMAGE_TITLE_TAG);
+	                    imageItemDetails.mImageUrl = imageItem.getString(USER_IMAGE_URL_TAG);
+	                    imageItemDetails.mAvailableHeight = imageItem.getInt(IMAGE_HEIGHT_TAG);
+	                    imageItemDetails.mAvailableWidth = imageItem.getInt(IMAGE_WIDTH_TAG);
+	                    imageItemsArray.add(imageItemDetails);                      
+	                }
+                  aisleItem = getAisleItem(aisleId);
+                  aisleItem.addAisleContent(userInfo,  imageItemsArray);
+                  addAislesToDb(userInfo, imageItemsArray);
+	              imageItemsArray.clear();
+                  c.close();
 	            }
 	            db.close();
 	        }catch(JSONException ex1){
@@ -283,13 +283,6 @@ public class VueTrendingAislesDataModel {
 	private void addAislesToDb(AisleContext info, ArrayList<AisleImageDetails> imageItemsArray) {
 		DbHelper helper = new DbHelper(mContext);
 		SQLiteDatabase db = helper.getWritableDatabase();
-		Cursor c = db.query(DbHelper.DATABASE_TABLE_AISLES, new String[] {VueConstants.AISLE_ID}, VueConstants.AISLE_ID + "=?",
-		    new String[] {info.mAisleId}, null, null, null);
-		if(c.getCount() != 0) {
-		  c.close();
-		  db.close();
-		  return;
-		}
 		db.beginTransaction();
 		ContentValues values = new ContentValues();
 		values.put(VueConstants.FIRST_NAME, info.mFirstName);

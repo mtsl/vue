@@ -181,7 +181,7 @@ public class VueConnectivityManager {
     }
     return isNetworkConnected;
   }
-  
+
   public static boolean isNetworkConnected(Context context) {
     boolean isConneted = false;
     SharedPreferences pref = PreferenceManager

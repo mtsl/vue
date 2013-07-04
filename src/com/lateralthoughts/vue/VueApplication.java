@@ -41,6 +41,7 @@ public class VueApplication extends Application {
 	public Context vueApplicationContext;
 	
 	public boolean fbsharingflag = false;
+	public int totalDataDownload = 0;
 	
 	@Override
 	public void onCreate(){
