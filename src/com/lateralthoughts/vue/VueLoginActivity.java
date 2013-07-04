@@ -15,12 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -31,6 +25,8 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -47,6 +43,7 @@ import android.widget.Toast;
 
 import com.facebook.AccessToken.FacebookLoginListener;
 import com.facebook.FacebookAuthorizationException;
+import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
@@ -59,6 +56,8 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.facebook.widget.WebDialog;
+import com.facebook.widget.WebDialog.OnCompleteListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.plus.PlusClient;
 import com.google.android.gms.plus.PlusClient.OnPeopleLoadedListener;
@@ -144,7 +143,10 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	    
 	    RelativeLayout cancellayout = (RelativeLayout) findViewById(R.id.cancellayout);
 	
-		if (savedInstanceState != null) {/*
+		if (savedInstanceState != null) {
+			
+			
+			/*
 			String name = savedInstanceState
 					.getString(PENDING_ACTION_BUNDLE_KEY);
 			pendingAction = PendingAction.valueOf(name);
@@ -477,7 +479,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 				Log.e("VueShare", "google friends called count greater then 0");
 				VueLandingPageActivity.googlePlusFriendsDetailsList = new ArrayList<FbGPlusDetails>();
 				for (Person p : personBuffer) {
-					Log.e("VueShare", "google friends called person bug");
+					
 					FbGPlusDetails googlePlusFriendsDetailsObj = new FbGPlusDetails(null,
 							p.getDisplayName(), p.getImage().getUrl());
 
@@ -685,6 +687,8 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 
 					      					Request request = new Request(Session.getActiveSession(),
 					      							"me/photos", parameters, HttpMethod.POST, callback);
+					      					
+					                      
 
 					      					request.executeAsync();
 					      				
@@ -719,7 +723,6 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 
 			}
 		}
-		
 		
 		private void downloadImage(String url, File f)
 		{
@@ -810,10 +813,74 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 		}
 		
 		
-		 private void publishFeedDialog(String friend_uid, String friendname) {/*
+		 private void publishFeedDialog(String friend_uid, String friendname) {
 			 
 			 
-			 Log.e("fb", "id..."+friend_uid+" ..."+sharedPreferencesObj.getString(
+			 
+			 
+	            Bundle params = new Bundle();
+	            //This is what you need to post to a friend's wall
+	          //  params.putString("from", "" + user.getId());
+	            params.putString("to", friend_uid);
+	            //up to this
+
+	             
+	             params.putString("message", "Learn how to make your Android apps social");
+	             params.putString("data",
+	                     "{\"badge_of_awesomeness\":\"1\"," +
+	                     "\"social_karma\":\"5\"}");
+	             
+	           params.putString("name", "Krishna Android");
+	            params.putString("caption", "Vue");
+	            params.putString("description", "About Vue Application.");
+	           // params.putString("link", "https://developers.facebook.com/android");
+	       //     params.putParcelable("picture", bitmap);
+	            WebDialog feedDialog = (new WebDialog.FeedDialogBuilder(VueLoginActivity.this, Session.getActiveSession(), params))
+	                    .setOnCompleteListener(new OnCompleteListener() {
+
+	                    @Override
+	                    public void onComplete(Bundle values, FacebookException error) {
+	                        if (error == null) {
+	                            // When the story is posted, echo the success
+	                            // and the post Id.
+	                            final String postId = values.getString("post_id");
+	                            if (postId != null) {
+	                                Toast.makeText(VueLoginActivity.this,
+	                                    "Posted story, id: "+postId,
+	                                    Toast.LENGTH_SHORT).show();
+	                            } else {
+	                                // User clicked the Cancel button
+	                                Toast.makeText(VueLoginActivity.this, 
+	                                    "Publish cancelled", 
+	                                    Toast.LENGTH_SHORT).show();
+	                            }
+	                        } else if (error instanceof FacebookOperationCanceledException) {
+	                            // User clicked the "x" button
+	                            Toast.makeText(VueLoginActivity.this, 
+	                                "Publish cancelled", 
+	                                Toast.LENGTH_SHORT).show();
+	                        } else {
+	                            // Generic, ex: network error
+	                            Toast.makeText(VueLoginActivity.this, 
+	                                "Error posting story", 
+	                                Toast.LENGTH_SHORT).show();
+	                        }
+	                    }
+
+	                }).build();
+	            feedDialog.show();
+	            
+	            feedDialog.setOnDismissListener(new OnDismissListener() {
+					
+					@Override
+					public void onDismiss(DialogInterface arg0) {
+						// TODO Auto-generated method stub
+						
+						finish();
+					}
+				});
+			 
+	/*		 Log.e("fb", "id..."+friend_uid+" ..."+sharedPreferencesObj.getString(
 			          VueConstants.FACEBOOK_ACCESSTOKEN, null)+"...."+getString(R.string.app_id));
 			 
 		//	 https://graph.facebook.com/1612877716/feed?access_token=288419657969615|4a220d33e14f6dc7d4d79ebbe334504a&message=%22test%20message%22
