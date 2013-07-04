@@ -2,8 +2,11 @@ package com.lateralthoughts.vue;
 
 //generic android goodies
 import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.view.KeyEvent;
 
 public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity*/  {
@@ -37,6 +40,15 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity*/ 
       @Override
       public void onActivityResult(int requestCode, int resultCode, Intent data) {
           super.onActivityResult(requestCode, resultCode, data);
+          Log.e("share+", "details activity result"+requestCode+resultCode);
+       
+      	if(requestCode == VueConstants.SHARE_INTENT_REQUEST_CODE)
+        {
+      		 VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager().findFragmentById(R.id.aisle_details_view_fragment);
+
+
+      	    fragment.mAisleDetailsAdapter.share.dismisDialog();
+        }
       }
  
       @Override

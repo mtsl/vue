@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,10 +54,10 @@ import android.widget.Toast;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueAisleDetailsViewFragment extends Fragment implements OnGestureListener{
+public class VueAisleDetailsViewFragment extends Fragment {
     private Context mContext;
     private VueContentGateway mVueContentGateway;
-    private AisleDetailsViewAdapter mAisleDetailsAdapter;  
+    AisleDetailsViewAdapter mAisleDetailsAdapter;  
     private ListView mAisleDetailsList;
     AisleDetailsSwipeListner mSwipeListener;
     IndicatorView mIndicatorView;
@@ -83,7 +84,7 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
     public void onAttach(Activity activity){
         super.onAttach(activity);
         mContext = activity;
-        
+        // adding test comment
         //without much ado lets get started with retrieving the trending aisles list
         mVueContentGateway = VueContentGateway.getInstance();
         if(null == mVueContentGateway){
@@ -111,6 +112,7 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
         
         mAisleDetailsList.setOnTouchListener(new OnTouchListener() {
             public boolean onTouch(View view, MotionEvent e) {
+            	if(detector != null)
                 detector.onTouchEvent(e);
                 return false;
             }
@@ -247,9 +249,9 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
      
         Log.d("VueAisleDetailsViewFragment","Get ready to display details view");
         
-        ImageView vue_share = (ImageView) v.findViewById(R.id.vue_share);
+        RelativeLayout vuesharelayout = (RelativeLayout) v.findViewById(R.id.vuesharelayout);
         
-        vue_share.setOnClickListener(new OnClickListener() {
+        vuesharelayout.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View arg0) {
@@ -279,7 +281,7 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
     	});
  
     }
-    GestureDetector detector = new GestureDetector(mContext,this);
+    GestureDetector detector = new GestureDetector(mContext,new CustomListenr());
     /**
      * 
      * @author raju
@@ -306,6 +308,18 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
 			}
 			 mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mlistCount ,null);
 			 mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+			
+		}
+		@Override
+		public void onAddCommentClick(TextView view, EditText editText) {
+			mAisleDetailsList.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+			 InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+			    inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0); 
+			 editText.setVisibility(View.VISIBLE);
+			 editText.requestFocus();
+			 editText.setFocusable(true);
+			 view.setVisibility(View.GONE);
+
 			
 		}
     }
@@ -355,7 +369,7 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
     	}
 		return mCurentIndPosition;
     }
-
+private class CustomListenr implements OnGestureListener{
 	@Override
 	public boolean onDown(MotionEvent e) {
 		// TODO Auto-generated method stub
@@ -368,6 +382,9 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
 			float velocityY) {
 		if(e1 == null) {
 			e1 = mLastOnDownEvent;
+		}
+		if(e1 == null || e2 == null) {
+			return false;
 		}
 		  int dx = (int) (e1.getX() - e2.getX());
           // don't accept the fling if it's too short
@@ -410,4 +427,5 @@ public class VueAisleDetailsViewFragment extends Fragment implements OnGestureLi
 	public boolean onSingleTapUp(MotionEvent e) {
 		return false;
 	}
+}
 }

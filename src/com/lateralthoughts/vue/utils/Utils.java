@@ -62,17 +62,40 @@ public class Utils {
     		newWidth = (bitmapwidth * reqHeight)/bitmapheight;
     		 
     	}  
-    	 
+    	  int aspect = bitmapwidth / bitmapheight;
+          int xnew,ynew;
+          if(aspect < 1) {
+                   ynew = reqHeight;
+                    xnew = reqHeight * aspect;
+
+          } else {
+                  xnew = reqWidth;
+                   ynew = reqWidth/aspect;
+          }
+
 		return createBitmap(bitmap,newWidth,newHeight);
     	// return bitmap;
     }
 
-    private static  Bitmap createBitmap(Bitmap bitmap,int width,int height) {
-    	Bitmap bmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-    	Log.i("width & height", "reqWidth new: "+bmap.getWidth()+" reqHeight2: "+bmap.getHeight());
-		return bmap;
+	private static  Bitmap createBitmap(Bitmap bitmap,int width,int height) {
+        if(width > 0 && height > 0) {
+                try {
+          Bitmap bmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+          
+          return bmap;
+                }catch(Exception e){
+                        e.printStackTrace();
 
+                } catch(Throwable e){
+
+                }
+        }
+
+
+        return bitmap;
     }
+
+    
 
     /**
      * To get the CURRENT_FONT_SIZE value stored in SharedPreferences.

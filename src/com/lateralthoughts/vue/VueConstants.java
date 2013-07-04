@@ -23,10 +23,22 @@ public class VueConstants {
         public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
         public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture"; 
         
+        public static final int SHARE_INTENT_REQUEST_CODE = 1;
+        
         public static final String FACEBOOK_APP_NAME = "Facebook";
         public static final String TWITTER_APP_NAME = "Twitter";
         public static final String GMAIL_APP_NAME = "Gmail";
         public static final String GOOGLEPLUS_APP_NAME = "Google+";
+        
+        public static final String FACEBOOK_PACKAGE_NAME = "com.facebook.android";
+        public static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
+        public static final String GMAIL_PACKAGE_NAME = "com.google.android.gm";
+        public static final String GOOGLEPLUS_PACKAGE_NAME = "com.google.android.apps.plus";
+        
+        public static final String TWITTER_ACTIVITY_NAME = "com.twitter.android.PostActivity";
+        public static final String GMAIL_ACTIVITY_NAME = "com.google.android.gm.ComposeActivityGmail";
+        public static final String GOOGLEPLUS_ACTIVITY_NAME = "com.google.android.apps.plus.phone.SignOnActivity";
+        
         
         public static final String CANCEL_BTN_DISABLE_FLAG = "cancelbuttondisableflag";
         public static final String FROM_INVITEFRIENDS = "frominvitefriends";

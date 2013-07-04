@@ -4,6 +4,8 @@ import java.util.List;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -29,6 +31,7 @@ public class VueLandingPageActivity extends BaseActivity {
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
     
+ 
     Thread.setDefaultUncaughtExceptionHandler(new
     		ExceptionHandler(this));
     
@@ -50,7 +53,6 @@ public class VueLandingPageActivity extends BaseActivity {
       editor.commit();
 
       showLogInDialog(false);
-
     }
     // Check the CreatedAisleCount and Comments count
     else {

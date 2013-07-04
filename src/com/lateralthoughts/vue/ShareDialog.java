@@ -32,6 +32,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
@@ -71,8 +72,8 @@ public class ShareDialog {
 	LayoutInflater inflater;
 	AlertDialog.Builder screenDialog;
 
-	ArrayList<String> listmessages = new ArrayList<String>();
-	ArrayList<ResolveInfo> currentDisp = new ArrayList<ResolveInfo>();
+	ArrayList<String> appNames = new ArrayList<String>();
+	ArrayList<String> packageNames = new ArrayList<String>();
 	ArrayList<Drawable> drawbles = new ArrayList<Drawable>();
 
 	List<ResolveInfo> activities;
@@ -92,8 +93,13 @@ public class ShareDialog {
 	String aisleTitle, name;
 	ArrayList<clsShare> imagePathArray;
 	
+	ProgressDialog shareDialog;
 	
-	
+	 public void dismisDialog()
+	 {
+		 shareDialog.dismiss();
+	 }
+	 
 	/**
 	 * 
 	 * @param context
@@ -104,8 +110,6 @@ public class ShareDialog {
 		this.activity = activity;
 		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		resouces = context.getResources();
-		
-		
 	}
 
 	
@@ -115,22 +119,31 @@ public class ShareDialog {
 		this.imagePathArray = imagePathArray;
 		this.aisleTitle = aisleTitle;
 		this.name = name;
-		
+		Log.e("share click", "7");
 		prepareShareIntentData();
-
+		Log.e("share click", "8");
 		openScreenDialog();
+		Log.e("share click", "20");
 	}
 
 	/** to show pop-up */
 	private void openScreenDialog() {
 	 
+		
+		  shareDialog = ProgressDialog.show(
+					context, context.getString(R.string.app_name), "Sharing....",
+					true);
+		
+		  shareDialog.dismiss();
+		  
+		Log.e("share click", "21");
 		  dialog = new Dialog(context, R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.sharedialogue);
 		ListView listview = (ListView) dialog.findViewById(R.id.networklist);
 		TextView okbuton = (TextView) dialog.findViewById(R.id.shownetworkok);
 		listview.setAdapter(new CustomAdapter());
-		
+		Log.e("share click", "22");
 		
 		listview.setOnItemClickListener(new OnItemClickListener(){
 	        public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
@@ -141,6 +154,16 @@ public class ShareDialog {
 	         }
 	    });
 	    
+		dialog.setOnDismissListener(new OnDismissListener() {
+			
+			@Override
+			public void onDismiss(DialogInterface arg0) {
+				// TODO Auto-generated method stub
+				
+				shareintentObj = null;
+			}
+		});
+		
 	
 		dialog.show();
 		okbuton.setOnClickListener(new OnClickListener() {
@@ -156,7 +179,7 @@ public class ShareDialog {
 		
 		screenDialog = new AlertDialog.Builder(context);
 		screenDialog.setTitle("SHARE VIA");
-
+		Log.e("share click", "23");
 
 	}
 
@@ -171,7 +194,7 @@ public class ShareDialog {
 		 * @return int
 		 */
 		public int getCount() {
-			return listmessages.size();
+			return appNames.size();
 		}
 
 		/**
@@ -210,7 +233,6 @@ public class ShareDialog {
 				holderView.network = (TextView) convertView
 						.findViewById(R.id.gmail);
 				holderView.launcheicon=(ImageView) convertView.findViewById(R.id.launchericon);
-				holderView.popupbg = (RelativeLayout) convertView.findViewById(R.id.popupbg);
 				
 				convertView.setTag(holderView);
 			} else {
@@ -220,7 +242,7 @@ public class ShareDialog {
 			holderView.launcheicon.setImageDrawable(drawbles.get(position));
 		
  
-			holderView.network.setText(listmessages.get(position));
+			holderView.network.setText(appNames.get(position));
 			
 	
 			
@@ -232,13 +254,19 @@ public class ShareDialog {
 
 	private void shareIntent(final int position)
  {
+		
+		shareDialog.show();
+		
+		
 		try {
 
-			if (listmessages.get(position).equalsIgnoreCase(
+			if (appNames.get(position).equalsIgnoreCase(
 					VueConstants.FACEBOOK_APP_NAME)) {
 				
 				
 				dialog.dismiss();
+				
+				shareDialog.dismiss();
 				
 				  String shareText = "Your friend "
 							+ name
@@ -339,13 +367,13 @@ public class ShareDialog {
 				
 			}
 
-			else if (listmessages.get(position).equalsIgnoreCase(
+			else if (appNames.get(position).equalsIgnoreCase(
 					VueConstants.GOOGLEPLUS_APP_NAME)) {
 				shareImageAndText(position);
-			} else if (listmessages.get(position).equalsIgnoreCase(
+			} else if (appNames.get(position).equalsIgnoreCase(
 					VueConstants.GMAIL_APP_NAME)) {
 				shareImageAndText(position);
-			} else if (listmessages.get(position).equalsIgnoreCase(
+			} else if (appNames.get(position).equalsIgnoreCase(
 					VueConstants.TWITTER_APP_NAME)) {
 				shareText(position);
 			}
@@ -354,7 +382,11 @@ public class ShareDialog {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
-			showAlertMessageShareError(listmessages.get(position), false);
+			dialog.dismiss();
+			
+			shareDialog.dismiss();
+			
+			showAlertMessageShareError(appNames.get(position), false);
 		}
 
 	}
@@ -392,19 +424,19 @@ public class ShareDialog {
 		
 
 		if (shareintentObj == null) {
-			InstalledPackageRetriever shareintentObjtemp = new InstalledPackageRetriever(
+			Log.e("share click", "9");
+			shareintentObj = new InstalledPackageRetriever(
 					context);
-			shareintentObjtemp.createIntent();
-			shareintentObjtemp.getInstalledPackages();
-			shareintentObjtemp.makeShorList();
-			shareintentObj = shareintentObjtemp;
+			Log.e("share click", "11");
+			shareintentObj.getInstalledPackages();
+			
+			appNames = shareintentObj.getAppNames();
+			packageNames = shareintentObj.getpackageNames();
+			drawbles = shareintentObj.getDrawables();
+			
+			sendIntent = new Intent(android.content.Intent.ACTION_SEND);
+			sendIntent.setType("text/plain");
 		}
-
-		listmessages.addAll(shareintentObj.getListMessages());
-		currentDisp.addAll(shareintentObj.getDisplayPackages());
-		drawbles.addAll(shareintentObj.getDrawables());
-		sendIntent = shareintentObj.getShareIntent();
-
 	}
 
 	
@@ -413,7 +445,6 @@ public class ShareDialog {
 	private class Holder {
 		TextView network;
 		ImageView launcheicon;
-		RelativeLayout popupbg;
 	}
 	
 	private void downloadImage(String url, File f)
@@ -442,9 +473,9 @@ public class ShareDialog {
 	
 	private void shareImageAndText(final int position)
 	{
+		dialog.dismiss();
 		
-		final ProgressDialog progress = ProgressDialog.show(activity, "", "Sharing...");
-		
+		shareDialog.show();
 		
 		
 		   Thread t = new Thread(new Runnable() {
@@ -480,20 +511,36 @@ public class ShareDialog {
     				sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
     						imageUris);
 
-    				ResolveInfo info = (ResolveInfo) currentDisp.get(position);
-    				sendIntent.setClassName(info.activityInfo.packageName,
-    						info.activityInfo.name);
+    				String activityname = null;
+    				
+    				if(appNames.get(position).equals(VueConstants.GMAIL_APP_NAME))
+    				{
+    					activityname = VueConstants.GMAIL_ACTIVITY_NAME;
+    				}
+    				else if(appNames.get(position).equals(VueConstants.GOOGLEPLUS_APP_NAME))
+    				{
+    					activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
+    				}
+    				else if(appNames.get(position).equals(VueConstants.TWITTER_APP_NAME))
+    				{
+    					activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+    				}
+    				
+    				sendIntent.setClassName(packageNames.get(position),
+    						activityname);
 
                 	
                 	activity.runOnUiThread(new Runnable() {
 
                       @Override
                       public void run() {
-                    	  progress.dismiss();
+                    	 
                     		screenDialog.setCancelable(true);
-            				context.startActivity(sendIntent);
-
-            				dialog.dismiss();
+                    		activity.startActivityForResult(sendIntent, VueConstants.SHARE_INTENT_REQUEST_CODE);
+            				// shareDialog.dismiss();
+                    		
+                    		
+            				
                       }
                     });
                   } 
@@ -505,19 +552,39 @@ public class ShareDialog {
 	{
 		dialog.dismiss();
 		
+		shareDialog.show();
+		
 		String shareText = "Your friend "
 				+ name
 				+ " wants your opinion - get Vue to see the full details and help "
 				+ name + " out.";
 		sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
 
-		ResolveInfo info = (ResolveInfo) currentDisp.get(position);
-		sendIntent.setClassName(info.activityInfo.packageName,
-				info.activityInfo.name);
+		
+		String activityname = null;
+		if(appNames.get(position).equals(VueConstants.TWITTER_APP_NAME))
+		{
+			activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+		}
+		else if(appNames.get(position).equals(VueConstants.GMAIL_APP_NAME))
+		{
+			activityname = VueConstants.GMAIL_ACTIVITY_NAME;
+		}
+		else if(appNames.get(position).equals(VueConstants.GOOGLEPLUS_APP_NAME))
+		{
+			activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
+		}
+		
+		
+		sendIntent.setClassName(packageNames.get(position),
+				activityname);
+
 
 		screenDialog.setCancelable(true);
-		context.startActivity(sendIntent);
+		activity.startActivityForResult(sendIntent, VueConstants.SHARE_INTENT_REQUEST_CODE);
 
+		//shareDialog.dismiss();
+		
 	}
 	
 	
