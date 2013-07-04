@@ -87,6 +87,7 @@ public class ShareDialog {
 	public final static int TWITER_TITLE_BUDGET = 76;
 	Bitmap articleBitmap;
 	
+	boolean shareIntentCalled = false;
 
 	public Dialog dialog;
 	
@@ -110,12 +111,13 @@ public class ShareDialog {
 		this.activity = activity;
 		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		resouces = context.getResources();
+		
 	}
 
 	
 
 	public void share(ArrayList<clsShare> imagePathArray, String aisleTitle, String name) {
-		
+		shareIntentCalled = false; 
 		this.imagePathArray = imagePathArray;
 		this.aisleTitle = aisleTitle;
 		this.name = name;
@@ -475,6 +477,8 @@ public class ShareDialog {
 	{
 		dialog.dismiss();
 		
+		shareIntentCalled = true;
+		
 		shareDialog.show();
 		
 		
@@ -551,6 +555,8 @@ public class ShareDialog {
 	private void shareText(int position)
 	{
 		dialog.dismiss();
+		
+		shareIntentCalled = true;
 		
 		shareDialog.show();
 		

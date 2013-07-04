@@ -53,7 +53,7 @@ public class InstalledPackageRetriever {
 	    
 		for (int i = 0; i < sharePackageNames.length; i++) {
 			
-			Log.e("share click", "32..."+i);
+			Log.e("share click", "32...");
 			
 			try {
 			     PackageInfo pmo = pm.getPackageInfo(sharePackageNames[i], PackageManager.GET_ACTIVITIES);

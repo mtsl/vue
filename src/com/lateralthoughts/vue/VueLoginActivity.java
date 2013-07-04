@@ -307,6 +307,8 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 
 	       googleplusloggedinDialogFlag = true;
 
+	       if(fromInvitefriendsgoogleplus) gplusdialog.show();
+	       
 	        mSignInFragment.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
 
 	      }
@@ -416,7 +418,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	  public void onSignedIn(PlusClient plusClient) {
 	    // TODO Auto-generated method stub
 
-		if(fromInvitefriendsgoogleplus) gplusdialog.show();
+		
 		 
 	    // VueLandingPageActivity.plusClient is used to share to Google+ from
 	    // Details or other screens.
@@ -998,4 +1000,18 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 		     // Return full string
 		     return total;
 		    }
+
+		@Override
+		public void onSignedFail() {
+			
+			boolean fbloginflag = sharedPreferencesObj.getBoolean(VueConstants.FACEBOOK_LOGIN, false);
+			
+				SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+			   if(!fbloginflag) editor.putBoolean(VueConstants.VUE_LOGIN, false);
+			    editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, false);
+			    editor.commit();
+			
+			if(gplusdialog != null && gplusdialog.isShowing()) gplusdialog.dismiss();
+	finish();
+		}
 }
