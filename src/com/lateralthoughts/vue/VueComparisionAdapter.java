@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
@@ -26,6 +27,9 @@ public AisleWindowContent getItem(int position) {
 	 ViewHolder viewHolder = new ViewHolder();
 	 viewHolder.topScroller  = topScroller;
 	 viewHolder.bottomScroller = bottomScroller;
+	 Log.i("scrollwidth", "viewHolder.topScroller_width:  "+viewHolder.topScroller.getWidth());
+	 Log.i("scrollwidth", "viewHolder.topScroller_height:  "+viewHolder.topScroller.getHeight());
+	 
 	 int position = 0;
 	 viewHolder.mWindowContent = getItem(position);
 	 for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {

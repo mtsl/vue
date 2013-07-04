@@ -12,7 +12,12 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.view.Gravity;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ImageView.ScaleType;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.content.Context;
@@ -269,6 +274,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             
             if(bitmap != null){
                 //Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
+            	setParams(contentBrowser,imageView,bitmap);
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);
                 
@@ -299,12 +305,14 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         private final WeakReference<AisleContentBrowser>viewFlipperReference;
         private String url = null;
         private int mBestHeightForImage;
+        AisleContentBrowser aisleContentBrowser ;
 
         public BitmapWorkerTask(AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             viewFlipperReference = new WeakReference<AisleContentBrowser>(vFlipper); 
             mBestHeightForImage = bestHeight;
+            aisleContentBrowser = vFlipper;
         }
 
         // Decode image in background.
@@ -329,6 +337,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                 
                 if (this == bitmapWorkerTask) {
                     vFlipper.invalidate();
+                    bitmap = setParams(aisleContentBrowser, imageView, bitmap);
                     imageView.setImageBitmap(bitmap);
                     Log.i("bitmaptest", "bitmaptest2: width "+bitmap.getWidth()+" height: "+bitmap.getHeight());
                 }
@@ -448,5 +457,41 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    
+    private Bitmap setParams(AisleContentBrowser vFlipper,ImageView imageView,Bitmap bitmap) {
+    	Log.i("width & height", "reqWidth1: Bitmap is greater than card size0" );
+    	int imgCardHeight =   (VueApplication.getInstance().getScreenHeight() *60) /100;
+    	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+				VueApplication.getInstance().getScreenWidth(),imgCardHeight);
+    	showpieceParams.setMargins(0, 50, 0, 50);
+    	if(vFlipper != null)
+    	vFlipper.setLayoutParams(showpieceParams);
+    	 /* if(bitmap.getHeight() > imgCardHeight || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {*/
+    	 Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
+    		 bitmap =  Utils.getScaledBitMap(bitmap, ((VueApplication.getInstance().getScreenWidth()*90)/100), (imgCardHeight*90)/100);
+    	/*  } else {
+    		  Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
+    	  }*/
+    	if(vFlipper != null) {
+    	FrameLayout.LayoutParams params = 
+                new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        params.gravity = Gravity.CENTER;
+        imageView.setLayoutParams(params);
+    	} else {
+    		LinearLayout.LayoutParams params = 
+                    new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            params.gravity = Gravity.CENTER;
+            //params.setMargins(100, 0, 100, 100);
+             imageView.setScaleType(ScaleType.CENTER_INSIDE);
+            imageView.setLayoutParams(params);
+            Log.i("width & height", "reqWidth1: Bitmap is greater than card size1" );
+            if(bitmap.getHeight() >  VueApplication.getInstance().getScreenHeight()/3 || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
+      		  Log.i("width & height", "reqWidth1: Bitmap is greater than card size2" );
+      		 bitmap =  Utils.getScaledBitMap(bitmap,VueApplication.getInstance().getPixel(220),  VueApplication.getInstance().getPixel(220));
+      	  }
+    	}
+        return bitmap;
     }
 }

@@ -48,7 +48,8 @@ public class Utils {
     	int newWidth,newHeight;
     	bitmapwidth  = bitmap.getWidth();
     	bitmapheight = bitmap.getHeight();
-    	Log.i("width & height", "reqWidth old: "+bitmapwidth+" reqHeight2: "+bitmapheight);
+    	Log.i("width & height", "reqWidth1 original: "+bitmapwidth+" reqHeight2: "+bitmapheight);
+    	Log.i("width & height", "reqWidth12 original: "+reqWidth+" reqHeight2: "+reqHeight);
     	if(bitmapwidth > reqWidth) {
     		 
     		newWidth = (bitmapwidth * reqWidth)/bitmapwidth;
@@ -63,15 +64,58 @@ public class Utils {
     		 
     	}  
     	 
-		return createBitmap(bitmap,newWidth,newHeight);
+    	int aspect = bitmapwidth / bitmapheight;
+    	int xnew,ynew;
+    	if(aspect < 1) {
+    		 ynew = reqHeight;
+    		  xnew = reqHeight * aspect;
+  				   
+    	} else {
+    		xnew = reqWidth;
+    		 ynew = reqWidth/aspect;
+    	}
+    	
+    	
+		//return createBitmap(bitmap,newWidth,newHeight);
+		
+    	return createBitmap(bitmap,xnew,ynew);
+		
+		
+	/*	float aspect = xgiven/ygiven
+
+				if aspect < 1
+
+				    xnew = yrequired * aspect
+				    ynew = yrequired
+				    
+				else
+
+				    ynew = xrequired/aspect
+				    xnew = xrequired*/
+
+		
+		
+		
+		
     	// return bitmap;
     }
 
     private static  Bitmap createBitmap(Bitmap bitmap,int width,int height) {
-    	Bitmap bmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-    	Log.i("width & height", "reqWidth new: "+bmap.getWidth()+" reqHeight2: "+bmap.getHeight());
-		return bmap;
-
+    	if(width > 0 && height > 0) {
+    		try { 
+    	  Bitmap bmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+    	  Log.i("width & height", "reqWidth1 new: "+bmap.getWidth()+" reqHeight2: "+bmap.getHeight());
+    	  return bmap;
+    		}catch(Exception e){
+    			e.printStackTrace();
+    			
+    		} catch(Throwable e){
+    			
+    		}
+    	}
+    	
+		
+    	return bitmap;
     }
 
     /**

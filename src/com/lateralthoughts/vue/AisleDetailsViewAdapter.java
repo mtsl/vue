@@ -25,12 +25,14 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.MyCustomAnimation;
@@ -149,6 +151,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		TextView vue_user_enterComment;
 		ImageView userPic, commentImg,likeimg;
 		RelativeLayout exapandholder;
+		EditText edtcomment;
 		View separator;
 	}
 
@@ -181,6 +184,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 					.findViewById(R.id.separator);
 			viewHolder.vue_user_enterComment = (TextView) convertView
 					.findViewById(R.id.vue_user_entercomment);
+			viewHolder.edtcomment = (EditText) convertView.findViewById(R.id.edtcomment);
 			
 			viewHolder.likeimg = (ImageView) convertView.findViewById(R.id.vuewndow_lik_img);
 			
@@ -208,7 +212,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			FrameLayout fl = (FrameLayout) convertView
 					.findViewById(R.id.showpiece_container);
 			FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-					mShowPieceWidth, mShowPieceHeight);
+					VueApplication.getInstance().getScreenWidth(),  (VueApplication.getInstance().getScreenHeight() *60) /100);
 			LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
@@ -284,6 +288,14 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			viewHolder.vueCommentheader.setVisibility(View.GONE);
 			viewHolder.commentContentlay.setVisibility(View.GONE);
 			viewHolder.addCommentlay.setVisibility(View.VISIBLE);
+			viewHolder.vue_user_enterComment.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					 Toast.makeText(mContext, "comment added", 500).show();
+					 mswipeListner.onAddCommentClick(viewHolder.vue_user_enterComment, viewHolder.edtcomment);
+				}
+			});
 			 
 		}
 		
@@ -335,75 +347,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		return convertView;
 	}
 
-/*	void setText(final TextView descView, int margin_BT, int defaultHeight) {
-		SpannableString spannableString;
-		int lineCount = descView.getLineCount();
-		int eachLineHeight = descView.getLineHeight();
-		int defaultTxtViewHeight = descView.getHeight();
-
-		LinearLayout.LayoutParams params;
-		if ((lineCount * eachLineHeight) < defaultTxtViewHeight) {
-
-			params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-					LayoutParams.WRAP_CONTENT);
-			params.setMargins(VueApplication.getInstance().getPixel(12),
-					VueApplication.getInstance().getPixel(margin_BT),
-					VueApplication.getInstance().getPixel(12), VueApplication
-							.getInstance().getPixel(margin_BT));
-			descView.setLayoutParams(params);
-
-		} else {
-			// Log.i("descr", "descr  IN ELSE CONDITIONS ");
-			int howMany = defaultTxtViewHeight / eachLineHeight;
-			Layout layout = descView.getLayout();
-			int end;
-			int start = 0;
-			String tot = null;
-			final String s = descView.getText().toString();
-			// Log.i("descr", "descr  IN ELSE CONDITIONS s "+s);
-			for (int j = 0; j < howMany; j++) {
-				end = layout.getLineEnd(j);
-				String temp = s.substring(start, end);
-				if (tot == null) {
-					tot = temp;
-				} else {
-					tot = tot + temp;
-				}
-				start = end;
-			}
-			if (tot == null) {
-				// Log.i("descr", "descr  IN ELSE CONDITIONS RETURN ");
-				return;
-			}
-			tot = tot.substring(0, tot.length() - 10);
-			tot = tot + "... more";
-
-			descView.setText(null);
-			descView.setText(tot);
-			params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-					LayoutParams.WRAP_CONTENT);
-			params.setMargins(VueApplication.getInstance().getPixel(12),
-					VueApplication.getInstance().getPixel(margin_BT),
-					VueApplication.getInstance().getPixel(12), VueApplication
-							.getInstance().getPixel(margin_BT));
-			descView.setLayoutParams(params);
-
-			spannableString = new SpannableString(tot);
-			descView.setText(spannableString);
-			int pos = tot.length();
-			spannableString.setSpan(new ClickableSpan() {
-
-				@Override
-				public void onClick(View widget) {
-					descView.setText(s);
-				}
-			}, pos - 4, pos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			// Log.i("descr",
-			// "descr  IN ELSE CONDITIONS SETTEXT "+spannableString.toString());
-			descView.setText(spannableString);
-			descView.setMovementMethod(LinkMovementMethod.getInstance());
-		}
-	}*/
+ 
 
 	private void notifyAdapter() {
 		this.notifyDataSetChanged();

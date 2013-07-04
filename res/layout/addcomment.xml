@@ -7,11 +7,12 @@
     android:visibility="gone"
     android:orientation="vertical" >
         <EditText android:layout_width="match_parent"
-              android:layout_height="50dp"
+              android:layout_height="100dp"
                    android:layout_marginLeft="12dp"
         android:layout_marginRight="22dp"
         android:visibility="gone"
         android:imeOptions="actionDone"
+        android:hint = "Add Comment"
         android:id="@+id/edtcomment"/>
     <TextView
         android:id="@+id/vue_user_entercomment"
@@ -20,7 +21,7 @@
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="22dp"
-        android:background="#cccccc"
+        android:textColor="#cccccc"
         android:gravity="center"
         android:text="Add Comment"
   />

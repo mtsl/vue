@@ -481,6 +481,9 @@ public class ShareDialog {
     						imageUris);
 
     				ResolveInfo info = (ResolveInfo) currentDisp.get(position);
+    				
+    				
+    				
     				sendIntent.setClassName(info.activityInfo.packageName,
     						info.activityInfo.name);
 
@@ -512,6 +515,9 @@ public class ShareDialog {
 		sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
 
 		ResolveInfo info = (ResolveInfo) currentDisp.get(position);
+		
+		Log.e("share", info.activityInfo.packageName + "..."+ info.activityInfo.name);
+		
 		sendIntent.setClassName(info.activityInfo.packageName,
 				info.activityInfo.name);
 
