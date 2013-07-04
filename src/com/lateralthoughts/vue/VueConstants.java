@@ -30,7 +30,7 @@ public class VueConstants {
         public static final String GMAIL_APP_NAME = "Gmail";
         public static final String GOOGLEPLUS_APP_NAME = "Google+";
         
-        public static final String FACEBOOK_PACKAGE_NAME = "com.facebook.android";
+        public static final String FACEBOOK_PACKAGE_NAME = "com.facebook.katana";
         public static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
         public static final String GMAIL_PACKAGE_NAME = "com.google.android.gm";
         public static final String GOOGLEPLUS_PACKAGE_NAME = "com.google.android.apps.plus";

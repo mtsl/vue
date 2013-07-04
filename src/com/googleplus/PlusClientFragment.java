@@ -92,11 +92,14 @@ public final class PlusClientFragment extends Fragment
     // A handler to post callbacks (rather than call them in a potentially reentrant way.)
     private Handler mHandler;
 
+    private int signInRetryCount;
+    
     /**
      * Local handler to send callbacks on sign in.
      */
     private final class PlusClientFragmentHandler extends Handler {
         public static final int WHAT_SIGNED_IN = 1;
+        public static final int WHAT_SIGNED_FAIL = 1;
 
         public PlusClientFragmentHandler() {
             super(Looper.getMainLooper());
@@ -104,11 +107,18 @@ public final class PlusClientFragment extends Fragment
 
         @Override
         public void handleMessage(Message msg) {
+        	
+        	 Activity activity = getActivity();
+        	
             if (msg.what != WHAT_SIGNED_IN) {
-                return;
+               
+            	if(activity instanceof OnSignedInListener)
+            	{
+            		((OnSignedInListener) activity).onSignedFail();
+            	}
             }
 
-            Activity activity = getActivity();
+           
             if (mPlusClient.isConnected() && activity instanceof OnSignedInListener) {
                 ((OnSignedInListener) activity).onSignedIn(mPlusClient);
             }
@@ -126,6 +136,7 @@ public final class PlusClientFragment extends Fragment
          * @param plusClient The connected {@link PlusClient} to make requests on.
          */
         void onSignedIn(PlusClient plusClient);
+        void onSignedFail();
     }
 
     /**
@@ -260,8 +271,33 @@ public final class PlusClientFragment extends Fragment
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         mLastConnectionResult = connectionResult;
+       // Reconnect...
+        if(connectionResult.getErrorCode() == ConnectionResult.INTERNAL_ERROR)
+        {
+        	signInRetryCount++;
+
+        	if(signInRetryCount > 6)
+        	{
+        	 // Reconnect to get a new mPlusClient.
+            mLastConnectionResult = null;
+            // Cancel sign in.
+            mRequestCode = INVALID_REQUEST_CODE;
+
+            // Reconnect to fetch the sign-in (account chooser) intent from the plus client.
+            connectPlusClient();
+        	}
+        	else
+        	{
+        		Activity activity = getActivity();
+                if (activity instanceof OnSignedInListener) {
+                    ((OnSignedInListener) activity).onSignedFail();
+                }
+        	}
+        	
+        
+        	}
         // On a failed connection try again.
-        if (isResumed() && mRequestCode != INVALID_REQUEST_CODE) {
+        else if (isResumed() && mRequestCode != INVALID_REQUEST_CODE) {
             resolveLastResult();
         }
     }
@@ -283,6 +319,10 @@ public final class PlusClientFragment extends Fragment
         // Let new activities know the signed-in state.
         if (mPlusClient.isConnected()) {
             mHandler.sendEmptyMessage(PlusClientFragmentHandler.WHAT_SIGNED_IN);
+        }
+        else
+        {
+        	 mHandler.sendEmptyMessage(PlusClientFragmentHandler.WHAT_SIGNED_FAIL);
         }
     }
 
