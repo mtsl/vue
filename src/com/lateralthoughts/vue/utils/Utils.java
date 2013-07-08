@@ -75,7 +75,7 @@ public class Utils {
     		 ynew = reqWidth/aspect;
     	}
     	
-    	
+    	//test commit
 		//return createBitmap(bitmap,newWidth,newHeight);
 		
     	return createBitmap(bitmap,xnew,ynew);
