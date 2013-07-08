@@ -32,7 +32,7 @@ public class VueShare {
 	
 	
 	
-	/**
+	/**Un Used Code.....
 	 * By Krishna.V 
 	 * This is method will get the list of Facebook friends information.
 	 * @param context
@@ -80,8 +80,7 @@ public class VueShare {
 	 * @return
 	 * @throws JSONException
 	 */
-	@SuppressWarnings("unchecked")
-	private List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException
+	@SuppressWarnings("unchecked") List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException
 	{
 		List<FbGPlusDetails> facebookFriendsDetailsList = null;
 

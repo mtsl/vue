@@ -10,23 +10,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import com.android.volley.toolbox.ImageRequest;
-import com.facebook.FacebookRequestError;
-import com.facebook.HttpMethod;
-import com.facebook.Request;
-import com.facebook.RequestAsyncTask;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.model.GraphObject;
-import com.facebook.model.GraphUser;
-import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
-import com.lateralthoughts.vue.utils.Utils;
-import com.lateralthoughts.vue.utils.clsShare;
-import com.facebook.Request.Callback;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -35,31 +20,32 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
+import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.clsShare;
 /**
  * 
  * @author raju common class for share functionality capable of handling
@@ -95,6 +81,8 @@ public class ShareDialog {
 	ArrayList<clsShare> imagePathArray;
 	
 	ProgressDialog shareDialog;
+	
+	private static final String TAG = "ShareDialog";
 	
 	 public void dismisDialog()
 	 {
@@ -449,7 +437,7 @@ public class ShareDialog {
 		ImageView launcheicon;
 	}
 	
-	private void downloadImage(String url, File f)
+/*	private void downloadImage(String url, File f)
 	{
 	      try {
 			URL imageUrl = new URL(url);
@@ -471,7 +459,7 @@ public class ShareDialog {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	private void shareImageAndText(final int position)
 	{
@@ -494,37 +482,40 @@ public class ShareDialog {
     				if (imagePathArray != null && imagePathArray.size() > 0) {
     					for (int i = 0; i < imagePathArray.size(); i++) {
     						
-    						File f = new File(imagePathArray.get(i).getFilepath());
+    						final File f = new File(imagePathArray.get(i).getFilepath());
     						
 						if (!f.exists()) {
-							// downloadImage(imagePathArray.get(i).getImageUrl(),
-							// f);
 							
-						//	ImageRequest i =new 
+							@SuppressWarnings("rawtypes")
+							Response.Listener listener = new Response.Listener<InputStream>() {
 							
-							Response.Listener listener = new Response.Listener<Bi>() {
 								@Override
-								public void onResponse(JSONArray jsonArray) {
-									if (null != jsonArray) {
-										Bundle responseBundle = new Bundle();
-										responseBundle.putString("result",
-												jsonArray.toString());
-										receiver.send(1, responseBundle);
+								public void onResponse(InputStream is) {
+									
+									  OutputStream os = null;
+									try {
+										os = new FileOutputStream(f);
+									} catch (FileNotFoundException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
 									}
+									  Utils.CopyStream(is, os);
 								}
 							};
 
 							Response.ErrorListener errorListener = new Response.ErrorListener() {
+							
 								@Override
-								public void onErrorResponse(VolleyError error) {
-									Log.e("VueNetworkError",
-											"Vue encountered network operations error. Error = "
-													+ error.networkResponse);
+								public void onErrorResponse(VolleyError arg0) {
+									Log.e(TAG, arg0.getMessage());
 								}
 							};
+							
+							ImageRequest imagerequestObj = new ImageRequest(imagePathArray.get(i).getImageUrl(), listener, 0, 0, null, errorListener);
+
 									
 									
-							//VueApplication.getInstance().getRequestQueue().add(arg0)
+							VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
 
 						}
     						

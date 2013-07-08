@@ -1,17 +1,15 @@
 package com.lateralthoughts.vue;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -42,12 +40,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.FacebookException;
-import com.facebook.FacebookOperationCanceledException;
-import com.facebook.Session;
-import com.facebook.widget.WebDialog;
-import com.facebook.widget.WebDialog.OnCompleteListener;
-import com.lateralthoughts.vue.utils.AsyncImageLoader;
+import com.android.volley.Request.Method;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.StringRequest;
+import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -65,7 +64,8 @@ public class VueListFragment extends Fragment {
   public FriendsListener listener;
   private SharedPreferences sharedPreferencesObj;
   private SharedPreferences pref;
-  private AsyncImageLoader imageLoader;
+  //private AsyncImageLoader imageLoader;
+  private ImageLoader mImageLoader;
   private ProgressDialog progress;
 
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -627,9 +627,8 @@ public class VueListFragment extends Fragment {
       super(context, textViewResourceId, objects);
       this.context = context;
       items = objects;
-      if (imageLoader == null) {
-        imageLoader = new AsyncImageLoader(context);
-      }
+      mImageLoader = new ImageLoader(VueApplication.getInstance().getRequestQueue(), new BitmapLruCache(1024));
+
     }
 
     @Override
@@ -639,7 +638,7 @@ public class VueListFragment extends Fragment {
         convertView = LayoutInflater.from(getActivity()).inflate(
             R.layout.invite_friends, null);
         holder = new InviteFriendHolder();
-        holder.imageView = (ImageView) convertView
+        holder.friendprifilepic = (NetworkImageView) convertView
             .findViewById(R.id.invite_friends_imageView);
         holder.name = (TextView) convertView
             .findViewById(R.id.invite_friends_name);
@@ -651,8 +650,12 @@ public class VueListFragment extends Fragment {
         holder = (InviteFriendHolder) convertView.getTag();
       }
       holder.name.setText(items.get(position).getName());
-      holder.imageView.setImageBitmap(imageLoader.loadImage(context,
-          items.get(position).getProfile_image_url(), holder.imageView));
+    /*  holder.imageView.setImageBitmap(imageLoader.loadImage(context,
+          items.get(position).getProfile_image_url(), holder.imageView));*/
+      
+      holder.friendprifilepic.setImageUrl(items.get(position).getProfile_image_url(), mImageLoader);
+
+      
       
       final int index = position;
       
@@ -704,7 +707,7 @@ public class VueListFragment extends Fragment {
     }
   }
   private static class InviteFriendHolder {
-    ImageView imageView;
+	  NetworkImageView friendprifilepic;
     TextView name;
     Button invite_friends_addFriends;
   }
@@ -778,38 +781,77 @@ public class VueListFragment extends Fragment {
 
 	  // Pull and display fb friends from facebook.com
 	  private void fbFriendsList(final VueShare share) {
-	    Thread t = new Thread(new Runnable() {
+	  
+	       
+	        
+	        SharedPreferences sharedPreferencesObj = getActivity().getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+	  		
+	  		String accessToken = sharedPreferencesObj.getString(VueConstants.FACEBOOK_ACCESSTOKEN, null);
+	  		
+	  		if(accessToken != null)
+	  		{
+	  		String mainURL = VueConstants.FACEBOOK_GETFRIENDS_URL+accessToken+VueConstants.FACEBOOK_FRIENDS_DETAILS;
+	  		
+	  		    Response.Listener listener = new Response.Listener<String>(){
+	  	    
+	  			
+					@Override
+					public void onResponse(String response) {
+						// TODO Auto-generated method stub
+	  						List<FbGPlusDetails> fbGPlusFriends;
+							try {
+								fbGPlusFriends = share.JsonParsing(response);
+								if(fbGPlusFriends != null) {
+			  			              inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(
+			  			                  getActivity(), R.layout.invite_friends, fbGPlusFriends));
+			  			              expandListView.setVisibility(View.GONE);
+			  			              invitefriendsLayout.setVisibility(View.VISIBLE);
+			  			              invitefriendsLayout.startAnimation(animUp);
+			  			              }
+			  			              if (progress.isShowing()) {
+			  			                progress.dismiss();
+			  			              }
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								if (progress.isShowing()) {
+		  			                progress.dismiss();
+		  			              }
+							}
+	  					  
+	  				
+					}
+	  	        };
 
-	      @Override
-	      public void run() {
-	        try {
-	          final List<FbGPlusDetails> fbGPlusFriends = share
-	              .getFacebookFriends(getActivity());
-	          
-	          getActivity().runOnUiThread(new Runnable() {
+	  	        Response.ErrorListener errorListener = new Response.ErrorListener(){
+	  	            @Override
+	  	            public void onErrorResponse(VolleyError error){
+	  	                Log.e("VueNetworkError","Vue encountered network operations error. Error = " + error.networkResponse);
+	  	              if (progress.isShowing()) {
+			                progress.dismiss();
+			              }
+	  	            }
+	  	        };
+	  	        
+	  	      StringRequest myReq = new StringRequest(Method.GET,
+                      mainURL,
+                      listener,
+                      errorListener);
+	  	        
+	  	    /*  JsonArrayRequest vueRequest =
+	  	                new JsonArrayRequest(mainURL, listener, errorListener );*/
 
-	            @Override
-	            public void run() {
-	              if(fbGPlusFriends != null) {
-	              inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(
-	                  getActivity(), R.layout.invite_friends, fbGPlusFriends));
-	              expandListView.setVisibility(View.GONE);
-	              invitefriendsLayout.setVisibility(View.VISIBLE);
-	              invitefriendsLayout.startAnimation(animUp);
-	              }
-	              if (progress.isShowing()) {
-	                progress.dismiss();
-	              }
-	            }
-	          });
-	        } catch (IOException e) {
-	          e.printStackTrace();
-	        } catch (JSONException e) {
-	          e.printStackTrace();
-	        }
-	      }
-	    });
-	    t.start();
+	  	        VueApplication.getInstance().getRequestQueue().add(myReq);
+	  		
+	  		}
+
+	  		else
+	  		{
+	  			 if (progress.isShowing()) {
+		                progress.dismiss();
+		              }
+	  		}
+	   
 	  }
 
 

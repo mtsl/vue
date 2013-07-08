@@ -41,7 +41,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.facebook.AccessToken.FacebookLoginListener;
 import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookException;
@@ -50,7 +52,7 @@ import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Request.Callback;
-import com.facebook.Response;
+
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -72,6 +74,7 @@ import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
+
 
 
 
@@ -111,7 +114,8 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	 
 	
 	 Bundle bundle = null;
-	 
+	
+	 private static final String TAG = "VueLoginActivity"; 
 	
 		
 		private final List<String> PERMISSIONS = Arrays.asList("publish_actions");
@@ -708,8 +712,44 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			                @Override
 			                public void run() {
 			                	for (int i = 0; i < fileList.size(); i++) {
-									File f = new File(fileList.get(i).getFilepath());
-									if(!f.exists()) downloadImage(fileList.get(i).getImageUrl(), f);
+									final File f = new File(fileList.get(i).getFilepath());
+									if(!f.exists())
+										{
+										//downloadImage(fileList.get(i).getImageUrl(), f);
+										
+										@SuppressWarnings("rawtypes")
+										Response.Listener listener = new Response.Listener<InputStream>() {
+										
+											@Override
+											public void onResponse(InputStream is) {
+												
+												  OutputStream os = null;
+												try {
+													os = new FileOutputStream(f);
+												} catch (FileNotFoundException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
+												  Utils.CopyStream(is, os);
+											}
+										};
+
+										Response.ErrorListener errorListener = new Response.ErrorListener() {
+										
+											@Override
+											public void onErrorResponse(VolleyError arg0) {
+												Log.e(TAG, arg0.getMessage());
+											}
+										};
+										
+										ImageRequest imagerequestObj = new ImageRequest(fileList.get(i).getImageUrl(), listener, 0, 0, null, errorListener);
+
+												
+												
+										VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
+										
+										
+										}
 									final int index = i;
 									VueLoginActivity.this.runOnUiThread(new Runnable() {
 
@@ -732,7 +772,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 					      					
 					      					Callback callback = new Request.Callback() {
 
-					      						public void onCompleted(Response response) {
+					      						public void onCompleted(com.facebook.Response response) {
 					      							if(index == fileList.size()-1)
 					      							{
 					      							
@@ -784,7 +824,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			}
 		}
 		
-		private void downloadImage(String url, File f)
+	/*	private void downloadImage(String url, File f)
 		{
 		      try {
 				URL imageUrl = new URL(url);
@@ -807,7 +847,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 				e.printStackTrace();
 			}
 		}
-		
+		*/
 		private void showPublishResult(String message, GraphObject result,
 				FacebookRequestError error) {
 			// String title = null;
