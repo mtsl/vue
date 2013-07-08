@@ -60,8 +60,10 @@ public class AisleDetailsViewListLoader {
         if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
     public void getContentIntoCompareview(VueComparisionAdapter.ViewHolder holder){
-    	  ScaleImageView imageView = null;
-    	  ScaleImageView imageView1 = null;
+   /* 	  ScaleImageView imageView = null;
+    	  ScaleImageView imageView1 = null;*/
+    	ImageView imageView,imageView1;
+    	
           ArrayList<AisleImageDetails> imageDetailsArr = null;
           AisleImageDetails itemDetails = null;
           int position = 0;
@@ -77,14 +79,16 @@ public class AisleDetailsViewListLoader {
           if(null != imageDetailsArr && imageDetailsArr.size() != 0){  
                  for(int k=0;k<imageDetailsArr.size();k++){
           itemDetails = imageDetailsArr.get(k);
-          imageView = mViewFactory.getPreconfiguredImageView(position);
-          imageView1 = mViewFactory.getPreconfiguredImageView(position+5);
+        /*  imageView = mViewFactory.getPreconfiguredImageView(position);
+          imageView1 = mViewFactory.getPreconfiguredImageView(position+5);*/
+          imageView = new ImageView(mContext);
+          imageView1 = new ImageView(mContext);
           
           LinearLayout.LayoutParams params = 
                   new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, VueApplication.getInstance().getScreenHeight());
         
          // imageView.setPadding(3, 3, 3, 3);
-          imageView.setContainerObject(holder);
+         // imageView.setContainerObject(holder);
           
           imageView1 = mViewFactory.getPreconfiguredImageView(position);
           LinearLayout.LayoutParams params1 = 
@@ -100,7 +104,7 @@ public class AisleDetailsViewListLoader {
           
           
           //imageView1.setPadding(3, 3, 3, 3);
-          imageView1.setContainerObject(holder);
+          //imageView1.setContainerObject(holder);
           
           params.setMargins(pixel, 0, pixel, 0);
           params1.setMargins(pixel, 0,pixel, 0);

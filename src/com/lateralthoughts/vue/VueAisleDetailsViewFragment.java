@@ -390,9 +390,9 @@ private class CustomListenr implements OnGestureListener{
           // don't accept the fling if it's too short
           
           if (dx > 100 && Math.abs(velocityX) > Math.abs(velocityY)) {
-        	  Intent intent = new Intent();
+       /* 	  Intent intent = new Intent();
 	            intent.setClass(VueApplication.getInstance(), VueComparisionActivity.class);
-	            startActivity(intent);
+	            startActivity(intent);*/
         	  
             /*  if (velocityX > 0) {
             	  Toast.makeText(mContext, "fling called", 500).show();

@@ -274,7 +274,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             
             if(bitmap != null){
                 //Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
-            	setParams(contentBrowser,imageView,bitmap);
+            	//setParams(contentBrowser,imageView,bitmap);
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);
                 
@@ -337,9 +337,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                 
                 if (this == bitmapWorkerTask) {
                     vFlipper.invalidate();
-                    bitmap = setParams(aisleContentBrowser, imageView, bitmap);
+                   // bitmap = setParams(aisleContentBrowser, imageView, bitmap);
                     imageView.setImageBitmap(bitmap);
-                    Log.i("bitmaptest", "bitmaptest2: width "+bitmap.getWidth()+" height: "+bitmap.getHeight());
                 }
             }
         }
@@ -418,49 +417,53 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     }
 
     //decodes image and scales it to reduce memory consumption
-    private Bitmap decodeFile(File f, int bestHeight){
-        try {
-            //decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            FileInputStream stream1 = new FileInputStream(f);
-            BitmapFactory.decodeStream(stream1,null,o);
-            stream1.close();
-            
-            //Find the correct scale value. It should be the power of 2.
-            //final int REQUIRED_SIZE = mScreenWidth/2;
-            int height=o.outHeight;
-            int scale=1;
-            bestHeight = mWindowContent.getBestHeightForWindow();
-            if (height > bestHeight) {
+	private Bitmap decodeFile(File f, int bestHeight) {
+		try {
+			// decode image size
+			BitmapFactory.Options o = new BitmapFactory.Options();
+			o.inJustDecodeBounds = true;
+			FileInputStream stream1 = new FileInputStream(f);
+			BitmapFactory.decodeStream(stream1, null, o);
+			stream1.close();
 
-                // Calculate ratios of height and width to requested height and width
-                final int heightRatio = Math.round((float) height / (float) bestHeight);
-               // final int widthRatio = Math.round((float) width / (float) reqWidth);
+			// Find the correct scale value. It should be the power of 2.
+			// final int REQUIRED_SIZE = mScreenWidth/2;
+			int height = o.outHeight;
+			int scale = 1;
+			bestHeight = mWindowContent.getBestHeightForWindow();
+			if (height > bestHeight) {
 
-                // Choose the smallest ratio as inSampleSize value, this will guarantee
-                // a final image with both dimensions larger than or equal to the
-                // requested height and width.
-                scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
-            }
-            
-            //decode with inSampleSize
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize=scale;
-            FileInputStream stream2=new FileInputStream(f);
-            Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);
-            stream2.close();
-            return bitmap;
-        } catch (FileNotFoundException e) {
-        } 
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+				// Calculate ratios of height and width to requested height and
+				// width
+				final int heightRatio = Math.round((float) height
+						/ (float) bestHeight);
+				// final int widthRatio = Math.round((float) width / (float)
+				// reqWidth);
+
+				// Choose the smallest ratio as inSampleSize value, this will
+				// guarantee
+				// a final image with both dimensions larger than or equal to
+				// the
+				// requested height and width.
+				scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
+			}
+
+			// decode with inSampleSize
+			BitmapFactory.Options o2 = new BitmapFactory.Options();
+			o2.inSampleSize = scale;
+			FileInputStream stream2 = new FileInputStream(f);
+			Bitmap bitmap = BitmapFactory.decodeStream(stream2, null, o2);
+			stream2.close();
+			return bitmap;
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
     
     
-    private Bitmap setParams(AisleContentBrowser vFlipper,ImageView imageView,Bitmap bitmap) {
+    /*private Bitmap setParams(AisleContentBrowser vFlipper,ImageView imageView,Bitmap bitmap) {
     	Log.i("width & height", "reqWidth1: Bitmap is greater than card size0" );
     	int imgCardHeight =   (VueApplication.getInstance().getScreenHeight() *60) /100;
     	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
@@ -468,12 +471,12 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     	showpieceParams.setMargins(0, 50, 0, 50);
     	if(vFlipper != null)
     	vFlipper.setLayoutParams(showpieceParams);
-    	 /* if(bitmap.getHeight() > imgCardHeight || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {*/
+    	  if(bitmap.getHeight() > imgCardHeight || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
     	 Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
     		 bitmap =  Utils.getScaledBitMap(bitmap, ((VueApplication.getInstance().getScreenWidth()*90)/100), (imgCardHeight*90)/100);
-    	/*  } else {
+    	  } else {
     		  Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
-    	  }*/
+    	  }
     	if(vFlipper != null) {
     	FrameLayout.LayoutParams params = 
                 new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -493,5 +496,5 @@ public class AisleContentAdapter implements IAisleContentAdapter {
       	  }
     	}
         return bitmap;
-    }
+    }*/
 }

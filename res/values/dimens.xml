@@ -8,6 +8,7 @@
     <!-- sliding options -->
     <dimen name="shadow_width">15dp</dimen>
     <dimen name="slidingmenu_offset">48dp</dimen>
+     <dimen name="slidingmenu_offset_right">0dp</dimen>
 
     <dimen name="menu_item_padding">10dp</dimen>
     <dimen name="menu_header_padding_top">8dp</dimen>

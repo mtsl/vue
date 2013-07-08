@@ -1,10 +1,15 @@
 package com.lateralthoughts.vue;
 
 //generic android goodies
+import com.slidingmenu.lib.SlidingMenu;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -13,8 +18,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
-public class AisleDetailsViewActivity extends /*BaseActivity*/FragmentActivity  {
-	
+public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  {
+	VueComparisionFragment mFragRight;
     @SuppressLint("NewApi")
 	@Override
     public void onCreate(Bundle icicle){
@@ -26,7 +31,27 @@ public class AisleDetailsViewActivity extends /*BaseActivity*/FragmentActivity  
         	 getActionBar().hide();
         } 
  
+        
+       
+      
  
+        
+        
+        mFragRight=  new VueComparisionFragment();
+        
+        getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+        final SlidingMenu sm = getSlidingMenu();
+        sm.setMode(SlidingMenu.LEFT_RIGHT);
+        sm.setSecondaryMenu(R.layout.menu_frame_two);
+       getSupportFragmentManager()
+        .beginTransaction()
+        .replace(R.id.menu_frame_two, mFragRight)
+        .commit();
+       sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+       
+	 
+        //sm.setSecondaryShadowDrawable(R.drawable.shadowright);
+       // sm.setShadowDrawable(R.drawable.shadow);
       
     }
     
