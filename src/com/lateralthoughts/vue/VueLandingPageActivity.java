@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -21,8 +22,7 @@ public class VueLandingPageActivity extends BaseActivity {
  
 	SharedPreferences sharedPreferencesObj;
   
-	public static PlusClient plusClient;
-	
+
 	 public static List<FbGPlusDetails> googlePlusFriendsDetailsList = null;
 
   @Override
@@ -76,10 +76,26 @@ public class VueLandingPageActivity extends BaseActivity {
         getSlidingMenu().toggle();
       }
     });
+    
+    
     // Configure the search info and add any event listeners
     return super.onCreateOptionsMenu(menu);
   }
 
+/*  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+      // Handle item selection
+      switch (item.getItemId()) {
+      case R.id.menu_create_aisles:
+         Intent intent = new Intent(VueLandingPageActivity.this, CreateAisleActivity.class);
+         startActivity(intent);
+          return true;
+      default:
+          return super.onOptionsItemSelected(item);
+      }
+  }*/
+  
+  
   @Override
   public boolean onKeyUp(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK) {

@@ -1,4 +1,7 @@
 package com.lateralthoughts.vue.utils;
+
+import com.google.android.gms.plus.model.people.Person;
+
 /**
  * This is class is used to store the facebook friends information.
  * @author krishna
@@ -6,6 +9,14 @@ package com.lateralthoughts.vue.utils;
  */
 public class FbGPlusDetails {
 
+	private Person googleplusFriend;
+	
+	public Person getGoogleplusFriend() {
+		return googleplusFriend;
+	}
+	public void setGoogleplusFriend(Person googleplusFriend) {
+		this.googleplusFriend = googleplusFriend;
+	}
 	private String name = null;
 	private String profile_image_url = null;
 
@@ -28,10 +39,11 @@ public class FbGPlusDetails {
 	public void setProfile_image_url(String profile_image_url) {
 		this.profile_image_url = profile_image_url;
 	}
-	public FbGPlusDetails(String id, String name, String profile_image_url) {
+	public FbGPlusDetails(String id, String name, String profile_image_url, Person googleplusFriend) {
 		this.name = name;
 		this.profile_image_url = profile_image_url;
 		this.id = id;
+		this.googleplusFriend = googleplusFriend;
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.googleplus;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.plus.PlusClient;
 import com.google.android.gms.plus.PlusClient.OnAccessRevokedListener;
 import com.google.android.gms.plus.PlusShare;
+import com.google.android.gms.plus.model.people.Person;
 import com.lateralthoughts.vue.R;
 
 /**
@@ -339,12 +341,14 @@ public final class PlusClientFragment extends Fragment
             throw new IllegalArgumentException("A non-negative request code is required.");
         }
 
+        if(mPlusClient != null)
+        {
         if (mPlusClient.isConnected()) {
             // Already connected!  Schedule callback.
             mHandler.sendEmptyMessage(PlusClientFragmentHandler.WHAT_SIGNED_IN);
             return;
         }
-
+        }
         if (mRequestCode != INVALID_REQUEST_CODE) {
             // We're already signing in.
             return;
@@ -599,51 +603,53 @@ public final class PlusClientFragment extends Fragment
         }
     }
     
-    private Intent getInteractivePostIntent(PlusClient plusClient, Activity activity, String post, List<File> fileList) {
-        // Create an interactive post with the "VIEW_ITEM" label. This will
-        // create an enhanced share dialog when the post is shared on Google+.
-        // When the user clicks on the deep link, ParseDeepLinkActivity will
-        // immediately parse the deep link, and route to the appropriate resource.
-        String action = "/?view=true";
-        Uri callToActionUrl = Uri.parse(getString(R.string.plus_example_deep_link_url) + action);
-        String callToActionDeepLinkId = getString(R.string.plus_example_deep_link_id) + action;
+	private Intent getInteractivePostIntent(PlusClient plusClient,
+			Activity activity, String post, Person googlefriend) {
+		// Create an interactive post with the "VIEW_ITEM" label. This will
+		// create an enhanced share dialog when the post is shared on Google+.
+		// When the user clicks on the deep link, ParseDeepLinkActivity will
+		// immediately parse the deep link, and route to the appropriate
+		// resource.
+		String action = "/?view=true";
+		Uri callToActionUrl = Uri
+				.parse(getString(R.string.plus_example_deep_link_url) + action);
+		String callToActionDeepLinkId = getString(R.string.plus_example_deep_link_id)
+				+ action;
 
-        // Create an interactive post builder.
-        PlusShare.Builder builder = new PlusShare.Builder(activity, plusClient);
+		// Create an interactive post builder.
+		PlusShare.Builder builder = new PlusShare.Builder(activity, plusClient);
 
-        // Set call-to-action metadata.
-        builder.addCallToAction(LABEL_VIEW_ITEM, callToActionUrl, callToActionDeepLinkId);
+		// Set call-to-action metadata.
+		builder.addCallToAction(LABEL_VIEW_ITEM, callToActionUrl,
+				callToActionDeepLinkId);
 
-        // Set the target url (for desktop use).
-        builder.setContentUrl(Uri.parse(getString(R.string.plus_example_deep_link_url)));
+		// Set the target url (for desktop use).
+		builder.setContentUrl(Uri
+				.parse(getString(R.string.plus_example_deep_link_url)));
 
-        // Set the target deep-link ID (for mobile use).
-        builder.setContentDeepLinkId(getString(R.string.plus_example_deep_link_id),
-                null, null, null);
+		// Set the target deep-link ID (for mobile use).
+		builder.setContentDeepLinkId(
+				getString(R.string.plus_example_deep_link_id), null, null, null);
 
-        // Set the pre-filled message.
-        builder.setText(post);
-        
-        
-        
-        if(fileList != null)
-        {
-        	for (int i = 0; i < fileList.size(); i++) {
-        		   builder.setStream(Uri.fromFile(fileList.get(i)));
-			}
-        }
-        
-                     
-                        builder.setType("image/*");
-                
-               
+		List<Person> googlefriendList = new ArrayList<Person>();
 
-        return builder.getIntent();
-    }
+		googlefriendList.add(googlefriend);
+
+		builder.setRecipients(googlefriendList);
+
+		// Set the pre-filled message.
+		builder.setText(post);
+
+		builder.setType("text/plain");
+		
+		
+
+		return builder.getIntent();
+	}
     
-    public void share(PlusClient plusClient, Activity activity, String post, List<File> fileList)
+    public void share(PlusClient plusClient, Activity activity, String post, Person googleplusFriend)
     {
-        startActivityForResult(getInteractivePostIntent(plusClient, activity, post, fileList),
+        startActivityForResult(getInteractivePostIntent(plusClient, activity, post, googleplusFriend),
                 REQUEST_CODE_INTERACTIVE_POST);
     }
 }

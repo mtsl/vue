@@ -43,8 +43,6 @@ import com.facebook.Session;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
-import com.facebook.fishwraplisner.NotifiShowAlert;
-import com.facebook.fishwraplisner.SingletonFb;
 import com.facebook.internal.SessionAuthorizationType;
 import com.facebook.internal.SessionTracker;
 import com.facebook.internal.Utility;

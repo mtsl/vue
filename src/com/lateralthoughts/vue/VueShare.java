@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -15,9 +17,9 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
+import com.lateralthoughts.vue.utils.SortBasedOnName;
 
 /**
  * This is common class for all Vue sharing functionality.
@@ -78,6 +80,7 @@ public class VueShare {
 	 * @return
 	 * @throws JSONException
 	 */
+	@SuppressWarnings("unchecked")
 	private List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException
 	{
 		List<FbGPlusDetails> facebookFriendsDetailsList = null;
@@ -93,11 +96,15 @@ public class VueShare {
 				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(jsonObj.getString("id"),
 						jsonObj.getString("name"), jsonObj
 								.getJSONObject("picture").getJSONObject("data")
-								.getString("url"));
+								.getString("url"), null);
 
 				facebookFriendsDetailsList.add(objFacebookFriendsDetails);
 			}
 		}
+		
+		Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
+		
+		
 		return facebookFriendsDetailsList;
 	}
 	

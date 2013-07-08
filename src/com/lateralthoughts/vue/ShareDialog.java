@@ -514,6 +514,8 @@ public class ShareDialog {
 
     				sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
     						imageUris);
+    				
+    				
 
     				String activityname = null;
     				

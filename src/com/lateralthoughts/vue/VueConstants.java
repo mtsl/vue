@@ -25,6 +25,8 @@ public class VueConstants {
         
         public static final int SHARE_INTENT_REQUEST_CODE = 1;
         
+        public static final String GOOGLEPLUS_AUTOMATIC_LOGIN = "googleplusautomaticlogin";
+        
         public static final String FACEBOOK_APP_NAME = "Facebook";
         public static final String TWITTER_APP_NAME = "Twitter";
         public static final String GMAIL_APP_NAME = "Gmail";
@@ -49,6 +51,8 @@ public class VueConstants {
 
         public static final String FB_FRIEND_ID = "FBFRIENDID";
         public static final String FB_FRIEND_NAME = "FBFRIENDNAME";
+        public static final String GOOGLEPLUS_FRIEND_INVITE = "GOOGLEPLUS_FRIEND_INVITE";
+        public static final String GOOGLEPLUS_FRIEND_INDEX = "GOOGLEPLUS_FRIEND_INDEX";
 
         
         // Column names for aisles table.

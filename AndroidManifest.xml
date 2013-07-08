@@ -43,6 +43,12 @@
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
     
+        <!--   <activity android:name=".CreateAisleActivity" 
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity> -->
+        
     <activity android:name=".SplashScreen" android:label="@string/app_name">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
