@@ -206,7 +206,7 @@ public class VueListFragment extends Fragment {
     	  String s = textView.getText().toString();
     	  getFriendsList(s);
 
-  /*      progress = ProgressDialog.show(getActivity(), "", "Plase wait...");
+  /*    progress = ProgressDialog.show(getActivity(), "", "Plase wait...");
         TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
         String s = textView.getText().toString();
         Log.e(getTag(), "SURU : Value of s : " + s);
@@ -274,8 +274,7 @@ public class VueListFragment extends Fragment {
           }
           Toast.makeText(getActivity(), "Please login using G+ or Facebook",
               Toast.LENGTH_LONG).show();
-        }
-*/
+        }*/
         return false;
       }
     });
@@ -325,7 +324,7 @@ public class VueListFragment extends Fragment {
         mediumid.setTextSize(Utils.MEDIUM_TEXT_SIZE);
         fontsize_Large_t.setTextSize(Utils.MEDIUM_TEXT_SIZE);
         wifiid_t.setTextSize(Utils.MEDIUM_TEXT_SIZE);
-        
+
       }
     });
     fontSize_large.setOnClickListener(new OnClickListener() {
