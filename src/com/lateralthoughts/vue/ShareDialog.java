@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.android.volley.toolbox.ImageRequest;
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
@@ -59,7 +60,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 /**
  * 
  * @author raju common class for share functionality capable of handling
@@ -496,7 +496,37 @@ public class ShareDialog {
     						
     						File f = new File(imagePathArray.get(i).getFilepath());
     						
-    						if(!f.exists()) downloadImage(imagePathArray.get(i).getImageUrl(), f);
+						if (!f.exists()) {
+							// downloadImage(imagePathArray.get(i).getImageUrl(),
+							// f);
+							
+						//	ImageRequest i =new 
+							
+							Response.Listener listener = new Response.Listener<Bi>() {
+								@Override
+								public void onResponse(JSONArray jsonArray) {
+									if (null != jsonArray) {
+										Bundle responseBundle = new Bundle();
+										responseBundle.putString("result",
+												jsonArray.toString());
+										receiver.send(1, responseBundle);
+									}
+								}
+							};
+
+							Response.ErrorListener errorListener = new Response.ErrorListener() {
+								@Override
+								public void onErrorResponse(VolleyError error) {
+									Log.e("VueNetworkError",
+											"Vue encountered network operations error. Error = "
+													+ error.networkResponse);
+								}
+							};
+									
+									
+							//VueApplication.getInstance().getRequestQueue().add(arg0)
+
+						}
     						
     						Uri screenshotUri = Uri.fromFile(f);
     						imageUris.add(screenshotUri);
