@@ -107,7 +107,6 @@ public class VueLandingPageActivity extends BaseActivity {
   }
 
 
-
   @Override
   public void onResume() {
     super.onResume();

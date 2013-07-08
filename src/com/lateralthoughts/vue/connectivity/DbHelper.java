@@ -11,6 +11,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	 public static final String DATABASE_NAME = "Vue.db";
 	 public static final String DATABASE_TABLE_AISLES = "aisles";
 	 public static final String DATABASE_TABLE_AISLES_IMAGES = "aisleImages";
+	 public static final String DATABASE_TABLE_DATA_TO_SYNC = "dataToSync";
 	 public static final int DATABASE_VERSION = 1;
 	 
      private String createAislesTable = "create table if not exists " + DATABASE_TABLE_AISLES
@@ -36,7 +37,11 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.HEIGHT + " text, "
      + VueConstants.WIDTH + " text);";
      
-     
+     private String createQueuedDataToSyncTable = "create table if not exists " + DATABASE_TABLE_DATA_TO_SYNC
+     + " ("+ VueConstants.ID + " integer primary key, "
+     + VueConstants.COMMENT + " text, "
+     + VueConstants.AISLE_ID + " text, "
+     + VueConstants.IMAGE_ID + " text);";
 
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -46,7 +51,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(createAislesTable);
 		db.execSQL(createAisleImagesTable);
-		
+		db.execSQL(createQueuedDataToSyncTable);
 	}
 
 	@Override

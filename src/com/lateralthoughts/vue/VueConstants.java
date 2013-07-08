@@ -70,5 +70,7 @@ public class VueConstants {
         public static final String DETAILS_URL = "detailsUrl";
         public static final String IMAGE_ID = "id";
         public static final String STORE = "store";
-
+        
+        // Column names for dataToSync table.
+        public static final String COMMENT = "comment";
 }

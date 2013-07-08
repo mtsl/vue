@@ -58,6 +58,7 @@ public class AisleWindowContent
     	mContext = context;
     	//lets parse through the image urls and update the image resolution
     	//VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
+    	Log.e("AisleWindowContent", "SURU SURU Line call check");
     	udpateImageUrlsForDevice();
     }
     
@@ -76,7 +77,7 @@ public class AisleWindowContent
     	int index = -1;
     	StringBuilder sb;
     	AisleImageDetails imageDetails;
-
+    	Log.e("AisleWindowContent", "SURU SURU Line call check udpateImageUrlsForDevice()");
     	for (int i=0;i<mAisleImagesList.size();i++){
     		
     		imageDetails = mAisleImagesList.get(i);
@@ -98,11 +99,12 @@ public class AisleWindowContent
     		}else{
     			imageDetails.mCustomImageUrl = regularUrl;
     		}
+    		Log.e("AisleWindowContent", "SURU SURU Line call check udpateImageUrlsForDevice() imageDetails.mCustomImageUrl : " + imageDetails.mCustomImageUrl);
     		imageDetails.mCustomImageUrl = Utils.addImageInfo(imageDetails.mCustomImageUrl,imageDetails.mAvailableWidth,imageDetails.mAvailableHeight);
     	}
     	return true;
     }
-    
+
     public AisleContext getAisleContext(){
     	return mContext;
     }
