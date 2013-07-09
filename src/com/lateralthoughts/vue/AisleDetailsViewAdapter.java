@@ -63,6 +63,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	private int mActionBarHeight;
 	private int mListCount;
 	private int mLikes = 5;
+	private boolean mallowLike = true,mallowDisLike = true;
 	private boolean isImageClciked = false;
 	 
 	AisleWindowContent mWindowContent_temp;
@@ -292,7 +293,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					 Toast.makeText(mContext, "comment added", 500).show();
 					 mswipeListner.onAddCommentClick(viewHolder.vue_user_enterComment, viewHolder.edtcomment);
 				}
 			});
@@ -390,7 +390,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		@Override
 		public void onImageClicked() {
+			if(mallowLike) {
 			mLikes += 1;
+			mallowLike = false;
+			mallowDisLike = true;
+			}
 			isImageClciked = true;
 			
 			Log.i("isImageClciked", "isImageClciked: onclick "+isImageClciked);
@@ -399,8 +403,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		@Override
 		public void onImageLongPress() {
-			if(mLikes != 0)
+			if(mLikes != 0 && mallowDisLike) {
 			 mLikes -= 1;
+			 mallowDisLike = false;
+			 mallowLike = true;
+			}
 			isImageClciked = true;
 			notifyAdapter();
 			 

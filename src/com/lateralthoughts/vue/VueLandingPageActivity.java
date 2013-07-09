@@ -4,11 +4,15 @@ import java.util.List;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
@@ -63,6 +67,8 @@ public class VueLandingPageActivity extends BaseActivity {
 
     }
 
+
+    
   }
 
   @Override
@@ -126,7 +132,22 @@ public class VueLandingPageActivity extends BaseActivity {
   @Override
   public void onResume() {
     super.onResume();
-
+    
+    new Handler().postDelayed(new Runnable() {
+		
+		@Override
+		public void run() {
+		   	 Rect rect= new Rect();
+		   	 Window window=  VueLandingPageActivity.this.getWindow();
+		   	 window.getDecorView().getWindowVisibleDisplayFrame(rect);
+		   	 int statusBarHeight= rect.top;
+	/*	   	 int contentViewTop= 
+		   	     window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+		   	 int titleBarHeight= contentViewTop - statusBarHeight;*/
+		    VueApplication.getInstance().setmStatusBarHeight(statusBarHeight);
+			
+		}
+	}, 500);
   }
 
   @Override
