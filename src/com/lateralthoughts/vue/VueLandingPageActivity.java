@@ -1,12 +1,19 @@
 package com.lateralthoughts.vue;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.Signature;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -35,8 +42,13 @@ public class VueLandingPageActivity extends BaseActivity {
 
     Thread.setDefaultUncaughtExceptionHandler(new
     		ExceptionHandler(this));
+    
 
     setContentView(R.layout.vue_landing_main);
+    
+ 
+    
+    
 
     // Checking wheather app is opens for first time or not?
     sharedPreferencesObj = this.getSharedPreferences(
