@@ -99,6 +99,7 @@
     <string name="aboutedittext">Type your message here</string>
     <string name="clear">Clear</string>
     <string name="send">Send</string>
+     <string name="no_camera_label">Sorry, Threre is no camera in this device.</string>
     <string name="add">Add</string>
     <string name="abouttextfedbacktext">\nPlease write to us about how we might improve</string>
     <string name="abouttextfedbacktexttwo">to suit your needs. We will appreciate it very much!</string>

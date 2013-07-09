@@ -57,7 +57,7 @@ import android.widget.Toast;
 public class VueAisleDetailsViewFragment extends Fragment {
     private Context mContext;
     private VueContentGateway mVueContentGateway;
-    private AisleDetailsViewAdapter mAisleDetailsAdapter;  
+    AisleDetailsViewAdapter mAisleDetailsAdapter;  
     private ListView mAisleDetailsList;
     AisleDetailsSwipeListner mSwipeListener;
     IndicatorView mIndicatorView;

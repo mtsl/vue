@@ -486,21 +486,12 @@ public class ShareDialog {
     						
 						if (!f.exists()) {
 							
-							@SuppressWarnings("rawtypes")
-							Response.Listener listener = new Response.Listener<InputStream>() {
-							
+							Response.Listener listener = new Response.Listener<Bitmap>() {
+								
 								@Override
-								public void onResponse(InputStream is) {
-									
-									  OutputStream os = null;
-									try {
-										os = new FileOutputStream(f);
-									} catch (FileNotFoundException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-									  Utils.CopyStream(is, os);
-								}
+								public void onResponse(Bitmap bmp) {
+									Utils.saveBitmap(bmp, f);
+							}
 							};
 
 							Response.ErrorListener errorListener = new Response.ErrorListener() {

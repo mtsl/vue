@@ -109,6 +109,20 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.e("share+", "details activity result"+requestCode+resultCode);
+     
+        try {
+			VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager().findFragmentById(R.id.aisle_details_view_fragment);
+			  
+			if(fragment.mAisleDetailsAdapter.share.shareIntentCalled)
+			{
+				fragment.mAisleDetailsAdapter.share.shareIntentCalled = false;
+			    fragment.mAisleDetailsAdapter.share.dismisDialog();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
  
       /*@Override
