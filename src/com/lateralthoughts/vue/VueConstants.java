@@ -23,10 +23,24 @@ public class VueConstants {
         public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
         public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture"; 
         
+        public static final int SHARE_INTENT_REQUEST_CODE = 1;
+        
+        public static final String GOOGLEPLUS_AUTOMATIC_LOGIN = "googleplusautomaticlogin";
+        
         public static final String FACEBOOK_APP_NAME = "Facebook";
         public static final String TWITTER_APP_NAME = "Twitter";
         public static final String GMAIL_APP_NAME = "Gmail";
         public static final String GOOGLEPLUS_APP_NAME = "Google+";
+        
+        public static final String FACEBOOK_PACKAGE_NAME = "com.facebook.katana";
+        public static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
+        public static final String GMAIL_PACKAGE_NAME = "com.google.android.gm";
+        public static final String GOOGLEPLUS_PACKAGE_NAME = "com.google.android.apps.plus";
+        
+        public static final String TWITTER_ACTIVITY_NAME = "com.twitter.android.PostActivity";
+        public static final String GMAIL_ACTIVITY_NAME = "com.google.android.gm.ComposeActivityGmail";
+        public static final String GOOGLEPLUS_ACTIVITY_NAME = "com.google.android.apps.plus.phone.SignOnActivity";
+        
         
         public static final String CANCEL_BTN_DISABLE_FLAG = "cancelbuttondisableflag";
         public static final String FROM_INVITEFRIENDS = "frominvitefriends";
@@ -37,6 +51,8 @@ public class VueConstants {
 
         public static final String FB_FRIEND_ID = "FBFRIENDID";
         public static final String FB_FRIEND_NAME = "FBFRIENDNAME";
+        public static final String GOOGLEPLUS_FRIEND_INVITE = "GOOGLEPLUS_FRIEND_INVITE";
+        public static final String GOOGLEPLUS_FRIEND_INDEX = "GOOGLEPLUS_FRIEND_INDEX";
 
         
         // Column names for aisles table.
@@ -58,5 +74,7 @@ public class VueConstants {
         public static final String DETAILS_URL = "detailsUrl";
         public static final String IMAGE_ID = "id";
         public static final String STORE = "store";
-
+        
+        // Column names for dataToSync table.
+        public static final String COMMENT = "comment";
 }

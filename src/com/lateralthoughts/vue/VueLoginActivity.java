@@ -1,27 +1,20 @@
 package com.lateralthoughts.vue;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-
-import javax.net.ssl.SSLContext;
-
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,6 +26,8 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -46,25 +41,29 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.facebook.AccessToken.FacebookLoginListener;
 import com.facebook.FacebookAuthorizationException;
+import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Request.Callback;
-import com.facebook.Response;
+
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.chat.MemorizingTrustManager;
-import com.facebook.internal.Utility;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.facebook.widget.WebDialog;
+import com.facebook.widget.WebDialog.OnCompleteListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.plus.PlusClient;
+import com.google.android.gms.plus.PlusShare;
 import com.google.android.gms.plus.PlusClient.OnPeopleLoadedListener;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.model.people.PersonBuffer;
@@ -72,8 +71,10 @@ import com.googleplus.MomentUtil;
 import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
+import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
+
 
 
 
@@ -91,23 +92,30 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	private boolean facebookflag = false;
 	private String fb_friend_id = null;
 	private String fb_friend_name = null;
-	static SharedPreferences sharedPreferencesObj;
+	private boolean googleplus_friend_invite = false;
+	private boolean googleplusAutomaticLogin = false;
+	SharedPreferences sharedPreferencesObj;
+	
+	
+	 /** The button should say "View item" in English. */
+    private static final String LABEL_VIEW_ITEM = "VIEW_ITEM";
 	
 	  // Google+ integration
 	  public static final int REQUEST_CODE_PLUS_CLIENT_FRAGMENT = 0;
 	  public PlusClientFragment mSignInFragment;
 	  
 	  private boolean googleplusloggedinDialogFlag = false;
-	  private String googlepluspackagename = "com.google.android.apps.plus";
+	  
+	  private static final int REQUEST_CODE_INTERACTIVE_POST = 3;
 	  
 	  Activity context;
 	 
 	 LinearLayout socialintegrationmainlayotu;
 	 
-	 public static FacebookLoginCompletedListener mfblogincompletedListener;
 	
 	 Bundle bundle = null;
-	 
+	
+	 private static final String TAG = "VueLoginActivity"; 
 	
 		
 		private final List<String> PERMISSIONS = Arrays.asList("publish_actions");
@@ -150,6 +158,9 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	    RelativeLayout cancellayout = (RelativeLayout) findViewById(R.id.cancellayout);
 	
 		if (savedInstanceState != null) {
+			
+            //session = Session.restoreSession(this, null, new SessionCallback(), savedInstanceState);
+			/*
 			String name = savedInstanceState
 					.getString(PENDING_ACTION_BUNDLE_KEY);
 			pendingAction = PendingAction.valueOf(name);
@@ -159,7 +170,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			Log.e("fb", "on saved instance state" + session);
 
 			if (session != null) {
-				Log.e("fb", "opened" + session.isOpened());
+				Log.e("fb", "opened" + session.isOpened()+ " token "+ session.getAccessToken());
 
 				socialintegrationmainlayotu.setVisibility(View.GONE);
 				
@@ -175,13 +186,10 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 				}
 			}
 
-		}
+		*/}
 	
 	
 	context = this;
-	
-	   mfblogincompletedListener = new FacebookLoginCompletedListener();
-	
 	
 	
     sharedPreferencesObj = this.getSharedPreferences(
@@ -200,6 +208,8 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	fbprogressdialog.dismiss();
     
 	
+	
+	
 	bundle = getIntent().getExtras();
 	if(bundle != null)
 	{
@@ -209,11 +219,15 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 		from_details_fbshare = bundle.getBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE);
 		fb_friend_id = bundle.getString(VueConstants.FB_FRIEND_ID);
 		fb_friend_name = bundle.getString(VueConstants.FB_FRIEND_NAME);
+		googleplus_friend_invite = bundle.getBoolean(VueConstants.GOOGLEPLUS_FRIEND_INVITE);
+		googleplusAutomaticLogin = bundle.getBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN);
 	}
 	
-	
+	// Facebook Invite friend
 	if(fb_friend_id != null)
 	{
+		
+		
 		 socialintegrationmainlayotu.setVisibility(View.GONE);
 			ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
 			
@@ -221,7 +235,46 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			
 			publishFeedDialog(fb_friend_id, fb_friend_name);
 	}
-  
+	
+	// Google+ invite friend
+	else if(googleplus_friend_invite)
+	{
+		
+		
+		 	socialintegrationmainlayotu.setVisibility(View.GONE);
+			ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
+			
+			trendingbg.setVisibility(View.GONE);
+			
+			gplusdialog.show();
+			
+			dontCallUserInfoChangesMethod = true;
+			
+			mSignInFragment = PlusClientFragment.getPlusClientFragment(
+			        VueLoginActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
+
+	}
+	
+	else if(googleplusAutomaticLogin)
+	{
+		
+		 	socialintegrationmainlayotu.setVisibility(View.GONE);
+			ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
+			
+			trendingbg.setVisibility(View.GONE);
+			
+			gplusdialog.show();
+			
+			dontCallUserInfoChangesMethod = true;
+		
+		mSignInFragment = PlusClientFragment.getPlusClientFragment(
+		        VueLoginActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
+		
+		  mSignInFragment.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
+		  
+		  
+
+	}
 	
 	else
 	{
@@ -256,9 +309,9 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	}
 	else
 	{
-		 mSignInFragment = PlusClientFragment.getPlusClientFragment(
-			        VueLoginActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
-			    
+		 	    
+		mSignInFragment = PlusClientFragment.getPlusClientFragment(
+		        VueLoginActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
 
 	 
 
@@ -312,6 +365,8 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 
 	       googleplusloggedinDialogFlag = true;
 
+	       if(fromInvitefriendsgoogleplus) gplusdialog.show();
+	       
 	        mSignInFragment.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
 
 	      }
@@ -401,10 +456,18 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	 @Override
 	  public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
+	    
+	    // From Googleplus app to send the invitation to friend
+	    if(requestCode ==  REQUEST_CODE_INTERACTIVE_POST)
+	    {
+	    	if(gplusdialog != null) if(gplusdialog.isShowing()) gplusdialog.dismiss();
+	    	finish();
+	    }
+	    
 	    Log.e("fb","onactivityresult");
 	    try {
 	    	uiHelper.onActivityResult(requestCode, resultCode, data);
-	    	updateUI();
+	    if(!dontCallUserInfoChangesMethod)	updateUI();
 	    } catch (Exception e) {
 	      // TODO Auto-generated catch block
 	      e.printStackTrace();
@@ -421,37 +484,38 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	  public void onSignedIn(PlusClient plusClient) {
 	    // TODO Auto-generated method stub
 
-		if(fromInvitefriendsgoogleplus) gplusdialog.show();
-		 
-	    // VueLandingPageActivity.plusClient is used to share to Google+ from
-	    // Details or other screens.
-	    VueLandingPageActivity.plusClient = plusClient;
-	    
-	    
-
-
+		
 	    SharedPreferences.Editor editor = sharedPreferencesObj.edit();
 	    editor.putBoolean(VueConstants.VUE_LOGIN, true);
 	    editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, true);
 	    editor.commit();
 
+	    
+	    if(!googleplus_friend_invite && !facebookflag && !googleplusAutomaticLogin)
+	    {
 	    Toast.makeText(this, plusClient.getAccountName() + " is connected.",
 	        Toast.LENGTH_LONG).show();
-
+	    }
 	    // To show Google+ App install dialog after login with Google+
 	    if (googleplusloggedinDialogFlag) {
 	    
-	      boolean installed = appInstalledOrNot(googlepluspackagename);
+	      boolean installed = appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME);
 	      if (!installed)
 	    	  {
 	    	  if(gplusdialog != null && gplusdialog.isShowing()) gplusdialog.dismiss();
 	    	  showAlertMessageForGoolgePlusAppInstalation();
 	    	  }
 	    }
-	    
-	    VueLandingPageActivity.plusClient.loadPeople(this, Person.Collection.VISIBLE);
 
-	
+	    
+	    if(googleplus_friend_invite)
+	    {
+			share(plusClient, this, "Invitation from Vue application.", VueLandingPageActivity.googlePlusFriendsDetailsList.get(bundle.getInt(VueConstants.GOOGLEPLUS_FRIEND_INDEX)).getGoogleplusFriend());
+	    }
+	    else
+	    {
+	    	plusClient.loadPeople(this, Person.Collection.VISIBLE);
+	    }
 	  }
 
 	  private boolean appInstalledOrNot(String uri) {
@@ -466,36 +530,43 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	    return app_installed;
 	  }
 	 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onPeopleLoaded(ConnectionResult status,
 			PersonBuffer personBuffer, String nextPageToken) {
-		
-
 
 		Log.e("VueShare", "google friends called on people loaded");
 		
 		if (ConnectionResult.SUCCESS == status.getErrorCode()) {
+			
+			VueLandingPageActivity.googlePlusFriendsDetailsList = new ArrayList<FbGPlusDetails>();
+			
 			Log.e("VueShare", "google friends called sucess");
 			if (personBuffer != null && personBuffer.getCount() > 0) {
 				Log.e("VueShare", "google friends called count greater then 0");
-				VueLandingPageActivity.googlePlusFriendsDetailsList = new ArrayList<FbGPlusDetails>();
 				for (Person p : personBuffer) {
-					Log.e("VueShare", "google friends called person bug");
-					FbGPlusDetails googlePlusFriendsDetailsObj = new FbGPlusDetails(null,
-							p.getDisplayName(), p.getImage().getUrl());
+					FbGPlusDetails googlePlusFriendsDetailsObj = new FbGPlusDetails(
+							null, p.getDisplayName(), p.getImage().getUrl(), p);
 
 					VueLandingPageActivity.googlePlusFriendsDetailsList
 							.add(googlePlusFriendsDetailsObj);
 
 				}
-				 if (from_invitefriends != null && from_invitefriends.equals(VueConstants.GOOGLEPLUS)) {
-				  BaseActivity.mFrag.getFriendsList(getResources().getString(
-	           	  R.string.sidemenu_sub_option_Gmail));
-	             }
+				
+				Collections.sort(VueLandingPageActivity.googlePlusFriendsDetailsList, new SortBasedOnName());
+				
+				if (from_invitefriends != null
+						&& from_invitefriends.equals(VueConstants.GOOGLEPLUS)) {
+					BaseActivity.mFrag.getFriendsList(getResources().getString(
+							R.string.sidemenu_sub_option_Gmail));
+				}
+
 			}
 		}
-		 if(gplusdialog != null && gplusdialog.isShowing()) gplusdialog.dismiss();
-		if(!facebookflag)finish();
+		if (gplusdialog != null && gplusdialog.isShowing())
+			gplusdialog.dismiss();
+		if (!facebookflag)
+			finish();
 
 	}
 	
@@ -513,7 +584,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	        gplusdialog.dismiss();
 
 	        Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
-	            .parse("market://details?id=" + googlepluspackagename));
+	            .parse("market://details?id=" + VueConstants.GOOGLEPLUS_PACKAGE_NAME));
 	        startActivity(goToMarket);
 	      }
 	    });
@@ -564,16 +635,8 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
        if(!from_details_fbshare)  finish();
 	}
 	
-	  public class FacebookLoginCompletedListener implements FacebookLoginListener{
-
-		@Override
-		public void onLoginCompleted(String acessToken) {
-			// TODO Auto-generated method stub
-			
-			saveFBLoginDetails(acessToken);
-		}
-	      
-	    }
+	
+	    
 	  private void updateUI() {
 		  
 		  Session session = Session.getActiveSession();
@@ -584,8 +647,12 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			
 			if(from_details_fbshare)
 				{
-				from_details_fbshare = false;
-				shareToFacebook(null, "hi android");
+				try {
+					ArrayList<clsShare> filePathList = bundle.getParcelableArrayList(VueConstants.FBPOST_IMAGEURLS);
+					 shareToFacebook(filePathList, bundle.getString(VueConstants.FBPOST_TEXT));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				}
 			}
 			
@@ -645,8 +712,44 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			                @Override
 			                public void run() {
 			                	for (int i = 0; i < fileList.size(); i++) {
-									File f = new File(fileList.get(i).getFilepath());
-									if(!f.exists()) downloadImage(fileList.get(i).getImageUrl(), f);
+									final File f = new File(fileList.get(i).getFilepath());
+									if(!f.exists())
+										{
+										//downloadImage(fileList.get(i).getImageUrl(), f);
+										
+										@SuppressWarnings("rawtypes")
+										Response.Listener listener = new Response.Listener<InputStream>() {
+										
+											@Override
+											public void onResponse(InputStream is) {
+												
+												  OutputStream os = null;
+												try {
+													os = new FileOutputStream(f);
+												} catch (FileNotFoundException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
+												  Utils.CopyStream(is, os);
+											}
+										};
+
+										Response.ErrorListener errorListener = new Response.ErrorListener() {
+										
+											@Override
+											public void onErrorResponse(VolleyError arg0) {
+												Log.e(TAG, arg0.getMessage());
+											}
+										};
+										
+										ImageRequest imagerequestObj = new ImageRequest(fileList.get(i).getImageUrl(), listener, 0, 0, null, errorListener);
+
+												
+												
+										VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
+										
+										
+										}
 									final int index = i;
 									VueLoginActivity.this.runOnUiThread(new Runnable() {
 
@@ -669,17 +772,23 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 					      					
 					      					Callback callback = new Request.Callback() {
 
-					      						public void onCompleted(Response response) {
+					      						public void onCompleted(com.facebook.Response response) {
+					      							if(index == fileList.size()-1)
+					      							{
+					      							
 					      							fbprogressdialog.dismiss();
 					      							showPublishResult(
 					      									VueLoginActivity.this
 					      											.getString(R.string.photo_post),
 					      									response.getGraphObject(), response.getError());
-					      						}
+					      							}
+					      							}
 					      					};
 
 					      					Request request = new Request(Session.getActiveSession(),
 					      							"me/photos", parameters, HttpMethod.POST, callback);
+					      					
+					                      
 
 					      					request.executeAsync();
 					      				
@@ -715,8 +824,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			}
 		}
 		
-		
-		private void downloadImage(String url, File f)
+	/*	private void downloadImage(String url, File f)
 		{
 		      try {
 				URL imageUrl = new URL(url);
@@ -739,7 +847,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 				e.printStackTrace();
 			}
 		}
-		
+		*/
 		private void showPublishResult(String message, GraphObject result,
 				FacebookRequestError error) {
 			// String title = null;
@@ -808,59 +916,25 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 		 private void publishFeedDialog(String friend_uid, String friendname) {
 			 
 			 
-		/*	final ProgressDialog inviteDialog = ProgressDialog.show(
-						context, "Facebook", "Inviting "+friendname+" to "+getString(R.string.app_name),
-						true);
-			
-			
-			 
-				Bundle parameters = new Bundle();
-				//parameters.putString("to", friend_uid);
-  				parameters.putString("message", "Krishna saying about vue application.");
-  					
-  					Callback callback = new Request.Callback() {
-
-  						public void onCompleted(Response response) {
-  							inviteDialog.dismiss();
-  							showPublishResult(
-  									VueLoginActivity.this
-  											.getString(R.string.photo_post),
-  									response.getGraphObject(), response.getError());
-  						}
-  					};
-
-  					Request request = new Request(Session.getActiveSession(),
-  							friend_uid + "/feed", parameters, HttpMethod.POST, callback);
-
-  					request.executeAsync();
-			 */
 			 
 			 
-			/* Bundle postStatusMessage = new Bundle();
-
-			// ADD THE STATUS MESSAGE TO THE BUNDLE
-			postStatusMessage.putString("message", "hi from Vue");
-
-			Utility.mAsyncRunner.request(userID + "/feed", postStatusMessage, "POST", new StatusUpdateListener(), null);*/
-			 
-			 
-			 
-		/*	 
 	            Bundle params = new Bundle();
 	            //This is what you need to post to a friend's wall
 	          //  params.putString("from", "" + user.getId());
-	            params.putString("to", friend_uid);
+	           params.putString("to", friend_uid);
 	            //up to this
 
-	             Bitmap bitmap = BitmapFactory.decodeResource(VueLoginActivity.this.getResources(),
-                     R.drawable.vue_launcher_icon);
-				  
-	            
-	           params.putString("name", "Krishna Android");
-	            params.putString("caption", "Vue");
-	            params.putString("description", "About Vue Application.");
+	             
+	           /*  params.putString("message", "Learn how to make your Android apps social");
+	             params.putString("data",
+	                     "{\"badge_of_awesomeness\":\"1\"," +
+	                     "\"social_karma\":\"5\"}");*/
+	             
+	         //  params.putString("name", "Krishna Android");
+	        //    params.putString("caption", "Vue");
+	          //  params.putString("description", "About Vue Application.");
 	           // params.putString("link", "https://developers.facebook.com/android");
-	            params.putParcelable("picture", bitmap);
+	           // params.putParcelable("picture", bitmap);
 	            WebDialog feedDialog = (new WebDialog.FeedDialogBuilder(VueLoginActivity.this, Session.getActiveSession(), params))
 	                    .setOnCompleteListener(new OnCompleteListener() {
 
@@ -894,8 +968,149 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	                    }
 
 	                }).build();
-	            feedDialog.show();*/
-	    }
+	            feedDialog.show();
+	            
+	            feedDialog.setOnDismissListener(new OnDismissListener() {
+					
+					@Override
+					public void onDismiss(DialogInterface arg0) {
+						// TODO Auto-generated method stub
+						finish();
+					}
+				});
+			 
+	/*		 Log.e("fb", "id..."+friend_uid+" ..."+sharedPreferencesObj.getString(
+			          VueConstants.FACEBOOK_ACCESSTOKEN, null)+"...."+getString(R.string.app_id));
+			 
+		//	 https://graph.facebook.com/1612877716/feed?access_token=288419657969615|4a220d33e14f6dc7d4d79ebbe334504a&message=%22test%20message%22
+				 
+			   Thread t = new Thread(new Runnable() {
+
+	                @Override
+	                public void run() {
+	                
+
+				// Create a new HttpClient and Post Header
+			        HttpClient httpclient = new DefaultHttpClient();
+			         
+			         login.php returns true if username and password is equal to saranga 
+			        HttpPost httppost = new HttpPost("https://graph.facebook.com/1612877716/feed?access_token=288419657969615&message='testmessage'");
+			 
+			        try {
+			            // Add user name and password
+			       
+			          
+			            // Execute HTTP Post Request
+			            Log.w("SENCIDE", "Execute HTTP Post Request");
+			            HttpResponse response = httpclient.execute(httppost);
+			             
+			            String str = inputStreamToString(response.getEntity().getContent()).toString();
+			            Log.w("SENCIDE", str);
+			             
+			         
+			 
+			        } catch (ClientProtocolException e) {
+			         e.printStackTrace();
+			        } catch (IOException e) {
+			         e.printStackTrace();
+			        }
+				 
+	                } 
+               });t.start();
+				 
+			 
+			final ProgressDialog inviteDialog = ProgressDialog.show(
+						context, "Facebook", "Inviting "+friendname+" to "+getString(R.string.app_name),
+						true);
+			
+			
+			 
+				Bundle parameters = new Bundle();
+				//parameters.putString("to", friend_uid);
+  				parameters.putString("message", "Krishna saying about vue application.");
+  					
+  					Callback callback = new Request.Callback() {
+
+  						public void onCompleted(Response response) {
+  							inviteDialog.dismiss();
+  							showPublishResult(
+  									VueLoginActivity.this
+  											.getString(R.string.photo_post),
+  									response.getGraphObject(), response.getError());
+  						}
+  					};
+
+  					Request request = new Request(Session.getActiveSession(),
+  							friend_uid + "/feed", parameters, HttpMethod.POST, callback);
+
+  					request.executeAsync();
+			 
+			 
+			 
+			 Bundle postStatusMessage = new Bundle();
+
+			// ADD THE STATUS MESSAGE TO THE BUNDLE
+			postStatusMessage.putString("message", "hi from Vue");
+
+			Utility.mAsyncRunner.request(userID + "/feed", postStatusMessage, "POST", new StatusUpdateListener(), null);
+			 
+			 
+			 
+			 
+	            Bundle params = new Bundle();
+	            //This is what you need to post to a friend's wall
+	          //  params.putString("from", "" + user.getId());
+	            params.putString("to", friend_uid);
+	            //up to this
+
+	             Bitmap bitmap = BitmapFactory.decodeResource(VueLoginActivity.this.getResources(),
+                     R.drawable.vue_launcher_icon);
+				  
+	             params.putString("message", "Learn how to make your Android apps social");
+	             params.putString("data",
+	                     "{\"badge_of_awesomeness\":\"1\"," +
+	                     "\"social_karma\":\"5\"}");
+	             
+	           params.putString("name", "Krishna Android");
+	            params.putString("caption", "Vue");
+	            params.putString("description", "About Vue Application.");
+	           // params.putString("link", "https://developers.facebook.com/android");
+	       //     params.putParcelable("picture", bitmap);
+	            WebDialog feedDialog = (new WebDialog.FeedDialogBuilder(VueLoginActivity.this, Session.getActiveSession(), params))
+	                    .setOnCompleteListener(new OnCompleteListener() {
+
+	                    @Override
+	                    public void onComplete(Bundle values, FacebookException error) {
+	                        if (error == null) {
+	                            // When the story is posted, echo the success
+	                            // and the post Id.
+	                            final String postId = values.getString("post_id");
+	                            if (postId != null) {
+	                                Toast.makeText(VueLoginActivity.this,
+	                                    "Posted story, id: "+postId,
+	                                    Toast.LENGTH_SHORT).show();
+	                            } else {
+	                                // User clicked the Cancel button
+	                                Toast.makeText(VueLoginActivity.this, 
+	                                    "Publish cancelled", 
+	                                    Toast.LENGTH_SHORT).show();
+	                            }
+	                        } else if (error instanceof FacebookOperationCanceledException) {
+	                            // User clicked the "x" button
+	                            Toast.makeText(VueLoginActivity.this, 
+	                                "Publish cancelled", 
+	                                Toast.LENGTH_SHORT).show();
+	                        } else {
+	                            // Generic, ex: network error
+	                            Toast.makeText(VueLoginActivity.this, 
+	                                "Error posting story", 
+	                                Toast.LENGTH_SHORT).show();
+	                        }
+	                    }
+
+	                }).build();
+	            feedDialog.show();
+	    */}
 		 
 		/* public void connectToFb() throws XMPPException {
 
@@ -935,5 +1150,86 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			 }
 			 }*/
 
-	
+		 private StringBuilder inputStreamToString(InputStream is) {
+		     String line = "";
+		     StringBuilder total = new StringBuilder();
+		     // Wrap a BufferedReader around the InputStream
+		     BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		     // Read response until the end
+		     try {
+		      while ((line = rd.readLine()) != null) {
+		        total.append(line);
+		      }
+		     } catch (IOException e) {
+		      e.printStackTrace();
+		     }
+		     // Return full string
+		     return total;
+		    }
+
+		@Override
+		public void onSignedFail() {
+			
+			boolean fbloginflag = sharedPreferencesObj.getBoolean(VueConstants.FACEBOOK_LOGIN, false);
+			
+				SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+			   if(!fbloginflag) editor.putBoolean(VueConstants.VUE_LOGIN, false);
+			    editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, false);
+			    editor.commit();
+			
+			if(gplusdialog != null && gplusdialog.isShowing()) gplusdialog.dismiss();
+	finish();
+		}
+		
+		
+		private Intent getInteractivePostIntent(PlusClient plusClient,
+				Activity activity, String post, Person googlefriend) {
+			// Create an interactive post with the "VIEW_ITEM" label. This will
+			// create an enhanced share dialog when the post is shared on Google+.
+			// When the user clicks on the deep link, ParseDeepLinkActivity will
+			// immediately parse the deep link, and route to the appropriate
+			// resource.
+			String action = "/?view=true";
+			Uri callToActionUrl = Uri
+					.parse(getString(R.string.plus_example_deep_link_url) + action);
+			String callToActionDeepLinkId = getString(R.string.plus_example_deep_link_id)
+					+ action;
+
+			// Create an interactive post builder.
+			PlusShare.Builder builder = new PlusShare.Builder(activity, plusClient);
+
+			// Set call-to-action metadata.
+			builder.addCallToAction(LABEL_VIEW_ITEM, callToActionUrl,
+					callToActionDeepLinkId);
+
+			// Set the target url (for desktop use).
+			builder.setContentUrl(Uri
+					.parse(getString(R.string.plus_example_deep_link_url)));
+
+			// Set the target deep-link ID (for mobile use).
+			builder.setContentDeepLinkId(
+					getString(R.string.plus_example_deep_link_id), null, null, null);
+
+			List<Person> googlefriendList = new ArrayList<Person>();
+
+			googlefriendList.add(googlefriend);
+
+			builder.setRecipients(googlefriendList);
+
+			// Set the pre-filled message.
+			builder.setText(post);
+
+			builder.setType("text/plain");
+			
+			
+
+			return builder.getIntent();
+		}
+	    
+	    public void share(PlusClient plusClient, Activity activity, String post, Person googleplusFriend)
+	    {
+	        startActivityForResult(getInteractivePostIntent(plusClient, activity, post, googleplusFriend),
+	                REQUEST_CODE_INTERACTIVE_POST);
+	    }
+		
 }
