@@ -43,7 +43,7 @@ public class VueApplication extends Application {
 	private int mScreenWidth;
 	private int mTextSize = 18;
 	public Context vueApplicationContext;
-	
+	public int totalDataDownload = 0;
 	public boolean fbsharingflag = false;
 	private RequestQueue mVolleyRequestQueue;
 	@Override

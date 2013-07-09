@@ -247,20 +247,22 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		}, 5000);
         
      
-        Log.d("VueAisleDetailsViewFragment","Get ready to display details view");
-        
-        ImageView vue_share = (ImageView) v.findViewById(R.id.vue_share);
-        
-        vue_share.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-            
-               mAisleDetailsAdapter.share(getActivity(), getActivity());
-            	
-            }
-        });
+		Log.d("VueAisleDetailsViewFragment",
+				"Get ready to display details view");
+
+		RelativeLayout vuesharelayout = (RelativeLayout) v
+				.findViewById(R.id.vuesharelayout);
+
+		vuesharelayout.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+
+				mAisleDetailsAdapter.share(getActivity(), getActivity());
+
+			}
+		});
         
         return v;
     }

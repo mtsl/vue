@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lateralthoughts.vue"
-    android:versionCode="122"
+    android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
@@ -14,7 +14,8 @@
     <uses-permission android:name="android.permission.NETWORK"/>
     <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/> 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/> 
 
     <application
         android:allowBackup="true"
@@ -43,6 +44,12 @@
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
     
+          <activity android:name=".CreateAisleActivity" 
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
+        
     <activity android:name=".SplashScreen" android:label="@string/app_name">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
@@ -66,6 +73,13 @@
     <activity android:name="com.facebook.LoginActivity" android:label="@string/app_name"/>
     <activity android:windowSoftInputMode="adjustResize|" android:name=".FeedbackForm" android:label="@string/app_name"/>
     <service android:name="com.lateralthoughts.vue.service.VueContentRestService"/>
+    <receiver android:name="com.lateralthoughts.vue.connectivity.NetworkStateChangeReciver" android:label="@string/app_name">
+        <intent-filter>
+            <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+            <action android:name="android.net.wifi.STATE_CHANGE"/>
+            <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+        </intent-filter>
+    </receiver>
     </application>
 
 </manifest>

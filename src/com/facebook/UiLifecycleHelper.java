@@ -134,7 +134,6 @@ public class UiLifecycleHelper {
 
     /**
      * To be called from an Activity or Fragment's onPause method.
-     * by krishna
      */
     public void onPause() {
         if (callback != null) {

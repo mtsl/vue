@@ -10,34 +10,29 @@
  */
 package com.lateralthoughts.vue;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.ResultReceiver;
-import android.util.Log;
-import android.os.Bundle;
-
-//internal imports
-import com.android.volley.AuthFailureError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
-import com.lateralthoughts.vue.service.VueContentRestService;
-
-//volley imports
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.toolbox.Volley;
-import com.android.volley.VolleyError;
-
-//java lang utils
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import org.json.JSONArray;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.ResultReceiver;
+import android.util.Log;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.lateralthoughts.vue.connectivity.VueBatteryManager;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.service.VueContentRestService;
+import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
+//internal imports
+//volley imports
+//java lang utils
 
 public class VueContentGateway {
 	private final String TAG = "VueContentGateway";
@@ -88,47 +83,61 @@ public class VueContentGateway {
         baseUri.append(mTrendingAislesTag);
         if(DEBUG) Log.e(TAG,"uri we are sending = " + baseUri.toString());
         
-        Intent intent = new Intent(mContext, VueContentRestService.class);
-        intent.putExtra("url",baseUri.toString());
-        intent.putParcelableArrayListExtra("headers", mHeaders);
-        intent.putParcelableArrayListExtra("params",mParams);
-        intent.putExtra("receiver", receiver);
+        
+        boolean isConnection = VueConnectivityManager.isNetworkConnected(mContext);
+        if(!isConnection) {
+            Log.e("VueContentRestService", "network connection No");
+            return status;
+          } else if(isConnection && (VueBatteryManager.isConnected(mContext) || VueBatteryManager
+              .batteryLevel(mContext) > VueBatteryManager.MINIMUM_BATTERY_LEVEL) && VueApplication
+              .getInstance().totalDataDownload < 1024) {
+        	  Intent intent = new Intent(mContext, VueContentRestService.class);
+              intent.putExtra("url",baseUri.toString());
+              intent.putParcelableArrayListExtra("headers", mHeaders);
+              intent.putParcelableArrayListExtra("params",mParams);
+              intent.putExtra("receiver", receiver);
 
-        String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI + "aisle/trending?limit=%s&offset=%s";
-        String requestUrl = String.format(requestUrlBase, limit, offset);
-        Response.Listener listener = new Response.Listener<JSONArray>(){
-            @Override
-            public void onResponse(JSONArray jsonArray){
-                if(null != jsonArray){
-                    Bundle responseBundle = new Bundle();
-                    responseBundle.putString("result",jsonArray.toString());
-                    receiver.send(1,responseBundle);
-                }
-            }
-        };
+              String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI + "aisle/trending?limit=%s&offset=%s";
+              String requestUrl = String.format(requestUrlBase, limit, offset);
+              Response.Listener listener = new Response.Listener<JSONArray>(){
+                  @Override
+                  public void onResponse(JSONArray jsonArray){
+                      if(null != jsonArray){
+                          Bundle responseBundle = new Bundle();
+                          responseBundle.putString("result",jsonArray.toString());
+                          receiver.send(1,responseBundle);
+                      }
+                  }
+              };
 
-        Response.ErrorListener errorListener = new Response.ErrorListener(){
-            @Override
-            public void onErrorResponse(VolleyError error){
-                Log.e("VueNetworkError","Vue encountered network operations error. Error = " + error.networkResponse);
-            }
-        };
+              Response.ErrorListener errorListener = new Response.ErrorListener(){
+                  @Override
+                  public void onErrorResponse(VolleyError error){
+                      Log.e("VueNetworkError","Vue encountered network operations error. Error = " + error.networkResponse);
+                  }
+              };
 
 
-        JsonArrayRequest vueRequest =
-                new JsonArrayRequest(requestUrl, listener, errorListener ){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError{
-                HashMap<String, String> headersMap = new HashMap<String, String>();
-                headersMap.put("Accept-Encoding", "gzip");
-                headersMap.put("Content-Type","application/json");
-                return headersMap;
-            }
-        };
+              JsonArrayRequest vueRequest =
+                      new JsonArrayRequest(requestUrl, listener, errorListener ){
+                  @Override
+                  public Map<String, String> getHeaders() throws AuthFailureError{
+                      HashMap<String, String> headersMap = new HashMap<String, String>();
+                      headersMap.put("Accept-Encoding", "gzip");
+                      headersMap.put("Content-Type","application/json");
+                      return headersMap;
+                  }
+              };
 
-        VueApplication.getInstance().getRequestQueue().add(vueRequest);
+              VueApplication.getInstance().getRequestQueue().add(vueRequest);
 
-        //mContext.startService(intent);
+              //mContext.startService(intent);
+          }
+        
+        
+        
+        
+       
 		return status;		
 	}
 

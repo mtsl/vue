@@ -6,31 +6,34 @@
  */
 package com.lateralthoughts.vue.service;
 
-import android.app.IntentService;
-import android.content.Intent;
-import android.os.ResultReceiver;
-import android.os.Bundle;
-import android.util.Log;
-
-import java.io.*;
-
-//android utilities
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
-//http related object imports
-//import org.apache.http.HttpRequest;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
-import java.net.URLEncoder;
 
-//internal imports
+import android.app.IntentService;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.ResultReceiver;
+import android.util.Log;
+
 import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
-import com.lateralthoughts.vue.utils.VueConnectivityManager;
+//android utilities
+//http related object imports
+//import org.apache.http.HttpRequest;
+//internal imports
 
 public class VueContentRestService extends IntentService {
 
