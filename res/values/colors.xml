@@ -24,4 +24,15 @@
    <color name="lightgreen">#C5D000</color>
    <color name="lightblack">#383838</color>
    <color name="grey">#666666</color>
-</resources>
+   <color name="offwhitebg">#ebebeb</color>
+   <color name="dataentrytextcolor">#606060</color>
+   <color name="yellowbgcolor">#f8db7a</color>
+   <color name="popupbgcolor">#c0c0c0</color>
+    <color name="dataentrylistbordercolor">#b6b6b6</color>
+      <color name="dataentrylistshadowbordercolor1">#292822</color>
+      <color name="dataentrylistshadowbordercolor2">#35342c</color>
+      <color name="dataentrylistshadowbordercolor3">#656556</color>
+</resources>  
+                            
+                               
+                               

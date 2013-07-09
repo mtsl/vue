@@ -1,13 +1,21 @@
 package com.lateralthoughts.vue;
 
+import java.io.File;
+
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
-public class CreateAisleActivity extends BaseActivity{
+public class CreateAisleActivity extends /*BaseActivity*/ FragmentActivity{
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -15,19 +23,7 @@ public class CreateAisleActivity extends BaseActivity{
 		setContentView(R.layout.create_aisle_main);
 	}
 	
-	 @Override
-	  public boolean onKeyUp(int keyCode, KeyEvent event) {
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	      if (getSlidingMenu().isMenuShowing()) {
-	        if (!mFrag.listener.onBackPressed()) {
-	          getSlidingMenu().toggle();
-	        }
-	      } else {
-	        super.onBackPressed();
-	      }
-	    }
-	    return false;
-	  }
+	
 	 @Override
 	  public boolean onCreateOptionsMenu(Menu menu) {
 	    getMenuInflater().inflate(R.menu.title_options, menu);
@@ -36,12 +32,72 @@ public class CreateAisleActivity extends BaseActivity{
 
 	      @Override
 	      public void onClick(View arg0) {
-	        getSlidingMenu().toggle();
+	     //   getSlidingMenu().toggle();
 	      }
 	    });
 	  
 	    // Configure the search info and add any event listeners
 	    return super.onCreateOptionsMenu(menu);
 	  }
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		// From Gallery...
+		if(requestCode == VueConstants.SELECT_PICTURE)
+		{
+			/*Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+ 
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+ 
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();*/
+			
+			Uri selectedImageUri = data.getData();
+
+			//OI FILE Manager
+			String filemanagerstring = selectedImageUri.getPath();
+
+			//MEDIA GALLERY
+			String selectedImagePath = getPath(selectedImageUri);
+             
+            try {
+            	CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager().findFragmentById(R.id.create_aisles_view_fragment);
+    			  
+    			fragment.setGalleryImage(selectedImagePath);
+    				
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+			
+		}
+		
+		// From Camera...
+		else if(requestCode == VueConstants.CAMERA_REQUEST)
+		{
+			CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager().findFragmentById(R.id.create_aisles_view_fragment);
+			
+			 
+	         fragment.setCameraImage();
+		}
+	}
+
+	// Getting Image file path from URI.
+	public String getPath(Uri uri) {
+		String[] projection = { MediaColumns.DATA };
+		Cursor cursor = managedQuery(uri, projection, null, null, null);
+		int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
+	}
 
 }

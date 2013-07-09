@@ -1,5 +1,8 @@
 package com.lateralthoughts.vue.utils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -232,5 +235,28 @@ public class Utils {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		return pref.getBoolean(NETWORK_SETTINGS, false);
+	}
+	
+	/**
+	 * By Krishna.v
+	 * This method is used to save image to sdcard.
+	 * @param bmp
+	 * @param file
+	 */
+	public static void saveBitmap(Bitmap bmp, File file)
+	{
+		FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.PNG,100, fos);
+            fos.flush();
+            fos.close();
+        }catch (FileNotFoundException e) {
+
+            e.printStackTrace();
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
 	}
 }

@@ -6,16 +6,20 @@
 
 package com.lateralthoughts.vue;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.Layout;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -34,8 +38,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
-import com.lateralthoughts.vue.ui.MyCustomAnimation;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -68,7 +74,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	AisleWindowContent mWindowContent_temp;
 	int mComentTextDefaultHeight;
 	public String vue_user_name;
-
+	ShareDialog share ;
 	int mDescriptionDefaultHeight;
 
 	ViewHolder viewHolder;
@@ -356,31 +362,73 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
      * By Krishna.V
      * Sharing content
      */
-  public void share(Context context, Activity activity)
+  public void share(final Context context, Activity activity)
   {
-      ShareDialog share = new ShareDialog(context, activity);
+	  Log.e("share click", "2");
+       share = new ShareDialog(context, activity);
       
       FileCache ObjFileCache = new FileCache(context);
-      
+      Log.e("share click", "3");
       ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
       
       if(mWindowContent_temp.getImageList() != null && mWindowContent_temp.getImageList().size() > 0)
       {
+    	  Log.e("share click", "4");
           for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
               
+        	  Log.e("share click", "5");
         	  clsShare obj = new clsShare(mWindowContent_temp.getImageList().get(i).mCustomImageUrl,
         			  ObjFileCache.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl).getPath());
         	  
         	  imageUrlList.add(obj);
           }
-          
+          Log.e("share click", "6");
           share.share(imageUrlList, mWindowContent_temp.getAisleContext().mOccasion, (mWindowContent_temp.getAisleContext().mFirstName + " " +mWindowContent_temp.getAisleContext().mLastName) );
       }
       
-      
+   
+        	  if(mWindowContent_temp.getImageList() != null && mWindowContent_temp.getImageList().size() > 0)
+              {
+        		  
+        		  FileCache ObjFileCache1 = new FileCache(context);
+        		  
+        		  for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
+        			  
+        			  final File f = ObjFileCache1.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl);
+        			  
+        			  if(!f.exists())
+        				  {
+							Response.Listener listener = new Response.Listener<Bitmap>() {
+							
+								@Override
+								public void onResponse(Bitmap bmp) {
+									Utils.saveBitmap(bmp, f);
+							}
+							};
+
+							Response.ErrorListener errorListener = new Response.ErrorListener() {
+							
+								@Override
+								public void onErrorResponse(VolleyError arg0) {
+									Log.e(TAG, arg0.getMessage());
+								}
+							};
+							
+							ImageRequest imagerequestObj = new ImageRequest(mWindowContent_temp.getImageList().get(i).mCustomImageUrl, listener, 0, 0, null, errorListener);
+
+									
+									
+							VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
+        				  }
+        		  }
+              }
+        
       
       
   }
+ 
+
+
 	/**
 	 * 
 	 * @author raju
