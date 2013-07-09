@@ -1,17 +1,28 @@
 package com.lateralthoughts.vue;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.Signature;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.plus.PlusClient;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
@@ -31,8 +42,13 @@ public class VueLandingPageActivity extends BaseActivity {
 
     Thread.setDefaultUncaughtExceptionHandler(new
     		ExceptionHandler(this));
+    
 
     setContentView(R.layout.vue_landing_main);
+    
+ 
+    
+    
 
     // Checking wheather app is opens for first time or not?
     sharedPreferencesObj = this.getSharedPreferences(
@@ -63,21 +79,14 @@ public class VueLandingPageActivity extends BaseActivity {
 
     }
 
+
+    
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.title_options, menu);
-    ImageView icon = (ImageView) findViewById(android.R.id.home);
-    icon.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View arg0) {
-        getSlidingMenu().toggle();
-      }
-    });
-    
-    
+    getSupportMenuInflater().inflate(R.menu.title_options, menu);
+    getSupportActionBar().setHomeButtonEnabled(true); 
     // Configure the search info and add any event listeners
     return super.onCreateOptionsMenu(menu);
   }
@@ -90,12 +99,14 @@ public class VueLandingPageActivity extends BaseActivity {
          Intent intent = new Intent(VueLandingPageActivity.this, CreateAisleActivity.class);
          startActivity(intent);
           return true;
+      case android.R.id.home:
+        getSlidingMenu().toggle();
+        return true;
       default:
           return super.onOptionsItemSelected(item);
       }
   }
-  
-  
+
   @Override
   public boolean onKeyUp(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -126,7 +137,22 @@ public class VueLandingPageActivity extends BaseActivity {
   @Override
   public void onResume() {
     super.onResume();
-
+    
+    new Handler().postDelayed(new Runnable() {
+		
+		@Override
+		public void run() {
+		   	 Rect rect= new Rect();
+		   	 Window window=  VueLandingPageActivity.this.getWindow();
+		   	 window.getDecorView().getWindowVisibleDisplayFrame(rect);
+		   	 int statusBarHeight= rect.top;
+	/*	   	 int contentViewTop= 
+		   	     window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+		   	 int titleBarHeight= contentViewTop - statusBarHeight;*/
+		    VueApplication.getInstance().setmStatusBarHeight(statusBarHeight);
+			
+		}
+	}, 500);
   }
 
   @Override

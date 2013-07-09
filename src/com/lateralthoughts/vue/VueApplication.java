@@ -38,7 +38,15 @@ public class VueApplication extends Application {
 	private ScaleImageView mEmptyImageView;
 	private String mWindowID;
 	private int mWindowCount;
-	
+	private int mStatusBarHeight;
+	public int getmStatusBarHeight() {
+		return mStatusBarHeight;
+	}
+
+	public void setmStatusBarHeight(int mStatusBarHeight) {
+		this.mStatusBarHeight = mStatusBarHeight;
+	}
+
 	private int mScreenHeight;
 	private int mScreenWidth;
 	private int mTextSize = 18;
