@@ -20,8 +20,13 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+
 import com.facebook.internal.Utility;
 import com.facebook.internal.Validate;
+import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.VueLoginActivity;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -59,6 +64,7 @@ public final class AccessToken implements Serializable {
     private final Date lastRefresh;
 
     AccessToken(String token, Date expires, List<String> permissions, AccessTokenSource source, Date lastRefresh) {
+    	 Log.e("fb", "105");
         if (permissions == null) {
             permissions = Collections.emptyList();
         }
@@ -191,6 +197,7 @@ public final class AccessToken implements Serializable {
     }
 
     static AccessToken createFromNativeLogin(Bundle bundle, AccessTokenSource source) {
+   	 Log.e("fb", "101");
         Date expires = getBundleLongAsDate(
                 bundle, NativeProtocol.EXTRA_EXPIRES_SECONDS_SINCE_EPOCH, new Date(0));
         ArrayList<String> permissions = bundle.getStringArrayList(NativeProtocol.EXTRA_PERMISSIONS);
@@ -226,13 +233,25 @@ public final class AccessToken implements Serializable {
 
     private static AccessToken createNew(
             List<String> requestedPermissions, String accessToken, Date expires, AccessTokenSource source) {
+    	 Log.e("fb", "102");
         if (Utility.isNullOrEmpty(accessToken) || (expires == null)) {
             return createEmptyToken(requestedPermissions);
         } else {
+        	/*if(VueLoginActivity.mfblogincompletedListener != null) {
+        		VueLoginActivity.mfblogincompletedListener.onLoginCompleted(accessToken);
+    	          
+    	        }*/
             return new AccessToken(accessToken, expires, requestedPermissions, source, new Date());
         }
     }
 
+    public interface FacebookLoginListener{
+	    public void onLoginCompleted(String acessToken);
+	}
+   
+    
+   
+    
     static AccessToken createFromCache(Bundle bundle) {
         // Copy the list so we can guarantee immutable
         List<String> originalPermissions = bundle.getStringArrayList(TokenCachingStrategy.PERMISSIONS_KEY);

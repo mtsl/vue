@@ -43,8 +43,6 @@ import com.facebook.Session;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
-import com.facebook.fishwraplisner.NotifiShowAlert;
-import com.facebook.fishwraplisner.SingletonFb;
 import com.facebook.internal.SessionAuthorizationType;
 import com.facebook.internal.SessionTracker;
 import com.facebook.internal.Utility;
@@ -69,8 +67,8 @@ public class LoginButton extends Button {
     private SessionTracker sessionTracker;
     private GraphUser user = null;
     private Session userInfoSession = null; // the Session used to fetch the current user info
-    private boolean confirmLogout;
-    private boolean fetchUserInfo;
+    private boolean confirmLogout = false;
+    private boolean fetchUserInfo = true;
     private String loginText;
     private String logoutText;
     private UserInfoChangedCallback userInfoChangedCallback;
@@ -598,8 +596,8 @@ public class LoginButton extends Button {
 
         @Override
         public void onClick(View v) {
-        	NotifiShowAlert notifyInstance = SingletonFb.getSingleInstance().getNotifyAlertInstance();
-			if (!notifyInstance.checkConnection()) {
+        	//NotifiShowAlert notifyInstance = SingletonFb.getSingleInstance().getNotifyAlertInstance();
+			/*if (!notifyInstance.checkConnection()) {
 
 				if (notifyInstance.checkAnyNetConection()) {
 					showAlertToChangeLocalSettings(getResources().getString(
@@ -607,7 +605,7 @@ public class LoginButton extends Button {
 				} else {
 					notifyInstance.callShowAlert();
 				}
-			} else {
+			} else {*/
             Context context = getContext();
             final Session openSession = sessionTracker.getOpenSession();
             if (openSession != null) {
@@ -665,7 +663,7 @@ public class LoginButton extends Button {
                 }
             }
         }
-        }
+       // }
     }
 
     void showAlertToChangeLocalSettings(final String message) {

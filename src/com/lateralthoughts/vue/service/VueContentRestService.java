@@ -30,6 +30,7 @@ import java.net.URLEncoder;
 //internal imports
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
+import com.lateralthoughts.vue.utils.VueConnectivityManager;
 
 public class VueContentRestService extends IntentService {
 
@@ -44,6 +45,7 @@ public class VueContentRestService extends IntentService {
 	private HttpClient mHttpClient;
     public VueContentRestService(){
         super("VueContentRestService");
+        Log.e("VueContentRestService", "network connection VueContentRestService()");
     }
 
     @Override
@@ -52,6 +54,7 @@ public class VueContentRestService extends IntentService {
         VueApplication app = VueApplication.getInstance();
         mHttpClient = app.getHttpClient();
         //mHttpClient = new DefaultHttpClient();
+        Log.e("VueContentRestService", "network connection onStartCommand()");
         return START_STICKY;
     }
 
@@ -113,7 +116,8 @@ public class VueContentRestService extends IntentService {
 
             if (entity != null) {
                 InputStream instream = entity.getContent();
-                String response = convertStreamToString(instream);
+                
+                String response = convertStreamToString(dataSize(instream));
                 Bundle responseBundle = new Bundle();
                 responseBundle.putString("result", response);
                 mReceiver.send(1, responseBundle);
@@ -131,6 +135,7 @@ public class VueContentRestService extends IntentService {
         }
 
     }
+
     private static String convertStreamToString(InputStream is) {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -163,6 +168,26 @@ public class VueContentRestService extends IntentService {
 
     //http related objects that we need for the service
     HttpRequestBase mRequest;
-
+    // private long timedifference = 0;
+    
+    private InputStream dataSize(InputStream is) throws IOException {
+      int size = 0;
+      byte[] resultBuff = new byte[0];
+      byte[] buff = new byte[1024];
+      int k = -1;
+      while ((k = is.read(buff, 0, buff.length)) > -1) {
+          byte[] tbuff = new byte[resultBuff.length + k]; // temp buffer size = bytes already read + bytes last read
+          System.arraycopy(resultBuff, 0, tbuff, 0, resultBuff.length); // copy previous bytes
+          System.arraycopy(buff, 0, tbuff, resultBuff.length, k); // copy current lot
+          resultBuff = tbuff; // call the temp buffer as your result buff
+      }
+      size = 0;
+      size = resultBuff.length;
+      size = size / 1024;
+      System.out.println(size  + " KB read.");
+      VueApplication.getInstance().totalDataDownload = VueApplication.getInstance().totalDataDownload + size;
+      System.out.println("totalSize " + VueApplication.getInstance().totalDataDownload  + " KB read.");
+      return new ByteArrayInputStream(resultBuff);
+  }
 }
 

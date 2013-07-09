@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,8 @@ import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.VueMemoryCache;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 //import crittercism sdk
 import com.crittercism.app.Crittercism;
 
@@ -37,12 +40,20 @@ public class VueApplication extends Application {
 	private int mScreenHeight;
 	private int mScreenWidth;
 	private int mTextSize = 18;
+	public Context vueApplicationContext;
+	
+	public boolean fbsharingflag = false;
+	public int totalDataDownload = 0;
+	
+	private RequestQueue requestQueue;
 	
 	@Override
 	public void onCreate(){
 		super.onCreate();
 		
 		sInstance = this;
+		
+		vueApplicationContext = this;
 		
 		mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
 		mVueAisleImagesCache.setLimit(40);
@@ -76,6 +87,8 @@ public class VueApplication extends Application {
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		mScreenHeight = dm.heightPixels;
 		mScreenWidth = dm.widthPixels;
+		
+		requestQueue = Volley.newRequestQueue(this);
 		
 		//R.drawable.aisle_content_empty;
 		//Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID, crittercismConfig);
@@ -128,5 +141,10 @@ public class VueApplication extends Application {
     	int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     	return px;
     	     
+    }
+    
+    public RequestQueue getRequestQueue()
+    {
+    	return requestQueue;
     }
 }

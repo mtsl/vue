@@ -1,11 +1,12 @@
 package com.lateralthoughts.vue.utils;
 
 import java.util.ArrayList;
-import java.util.List;
+import com.lateralthoughts.vue.VueConstants;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
@@ -15,14 +16,10 @@ import android.util.Log;
  * 
  */
 public class InstalledPackageRetriever {
-	Intent sendIntent;
-	List<ResolveInfo> activities;
 	ArrayList<Drawable> drawbles = new ArrayList<Drawable>();
-	ArrayList<ResolveInfo> currentDisp = new ArrayList<ResolveInfo>();
-	ArrayList<String> listmessages = new ArrayList<String>();
+	ArrayList<String> packageNames = new ArrayList<String>();
+	ArrayList<String> appNames = new ArrayList<String>();
 	Context context;
-	String fbpackageName;
-	Drawable fbdrawble;
 
 	/**
 	 * 
@@ -33,39 +30,72 @@ public class InstalledPackageRetriever {
 		this.context = context;
 	}
 
-	/**
-	 * 
-	 */
-	public void createIntent() {
-		sendIntent = new Intent(android.content.Intent.ACTION_SEND);
-		sendIntent.setType("text/plain");
-	}
+	
 
 	/**
 	 * this method will give all the installed applications
 	 */
 	public void getInstalledPackages() {
-		activities = context.getPackageManager().queryIntentActivities(
+		Log.e("share click", "30");
+		/*activities = context.getPackageManager().queryIntentActivities(
 				sendIntent, 0);
-
+		Log.e("share click", "31");
 		final Object a[] = activities.toArray();
-		for (int i = 0; i < activities.size(); i++) {
-			Drawable appicon;
-			String temp = ((ResolveInfo) a[i]).activityInfo.applicationInfo
-					.loadLabel(context.getPackageManager()).toString();
-			appicon = ((ResolveInfo) a[i]).activityInfo.applicationInfo
-					.loadIcon(context.getPackageManager());
-			listmessages.add(temp);
-			currentDisp.add((ResolveInfo) a[i]);
-			drawbles.add(appicon);
+		Log.e("share click", "32");*/
+		
+		String[] sharePackageNames = {VueConstants.TWITTER_PACKAGE_NAME, VueConstants.FACEBOOK_PACKAGE_NAME, VueConstants.GOOGLEPLUS_PACKAGE_NAME, VueConstants.GMAIL_PACKAGE_NAME };
+		String[] shareAppNames = {VueConstants.TWITTER_APP_NAME, VueConstants.FACEBOOK_APP_NAME, VueConstants.GOOGLEPLUS_APP_NAME, VueConstants.GMAIL_APP_NAME };
 
+		
+	    PackageManager pm = context.getPackageManager();
+		
+	    Log.e("share click", "31");
+	    
+		for (int i = 0; i < sharePackageNames.length; i++) {
+			
+			Log.e("share click", "32...");
+			
+			try {
+			     PackageInfo pmo = pm.getPackageInfo(sharePackageNames[i], PackageManager.GET_ACTIVITIES);
+				appNames.add(shareAppNames[i]);
+				packageNames.add(sharePackageNames[i]);
+				drawbles.add(pmo.applicationInfo.loadIcon(pm));
+			    } catch (PackageManager.NameNotFoundException e) {
+			    e.printStackTrace();
+			    }
 		}
+		
+		
+		
+		
+		
+		/*int  count = 0;
+		for (int i = 0; i < activities.size(); i++) {
+			Log.e("share click", "33..."+i);
+			String networkName = ((ResolveInfo) a[i]).activityInfo.applicationInfo
+					.loadLabel(context.getPackageManager()).toString();
+			if (networkName.equalsIgnoreCase(VueConstants.FACEBOOK_APP_NAME)
+					|| networkName.equalsIgnoreCase(VueConstants.GMAIL_APP_NAME)
+					|| networkName.equalsIgnoreCase(VueConstants.GOOGLEPLUS_APP_NAME)
+					|| networkName.equalsIgnoreCase(VueConstants.TWITTER_APP_NAME)) {
+				count ++;
+				//Drawable appicon;
+			
+				appicon = ((ResolveInfo) a[i]).activityInfo.applicationInfo
+						.loadIcon(context.getPackageManager());
+				listmessages.add(networkName);
+				currentDisp.add((ResolveInfo) a[i]);
+				//drawbles.add(appicon);
+			}
+			
+			if(count == 4) break;
+		}*/
 
 	}
 
-	/**
+/*	*//**
 	 * short list the network names. to display in dialogue.
-	 */
+	 *//*
 	public void makeShorList() {
 		ArrayList<String> listmessagesDummy = new ArrayList<String>();
 		ArrayList<ResolveInfo> currentDispDummy = new ArrayList<ResolveInfo>();
@@ -73,10 +103,10 @@ public class InstalledPackageRetriever {
 		String networkName = null;
 		for (int i = 0; i < listmessages.size(); i++) {
 			networkName = listmessages.get(i);
-			if (networkName.equalsIgnoreCase("Facebook")
-					|| networkName.equalsIgnoreCase("Gmail")
-					|| networkName.equalsIgnoreCase("Email")
-					|| networkName.equalsIgnoreCase("Twitter")) {
+			if (networkName.equalsIgnoreCase(VueConstants.FACEBOOK_APP_NAME)
+					|| networkName.equalsIgnoreCase(VueConstants.GMAIL_APP_NAME)
+					|| networkName.equalsIgnoreCase(VueConstants.GOOGLEPLUS_APP_NAME)
+					|| networkName.equalsIgnoreCase(VueConstants.TWITTER_APP_NAME)) {
 				listmessagesDummy.add(listmessages.get(i));
 				currentDispDummy.add(currentDisp.get(i));
 				drawblesDummy.add(drawbles.get(i));
@@ -100,11 +130,11 @@ public class InstalledPackageRetriever {
 		currentDisp = currentDispDummy;
 		drawbles = drawblesDummy;
 
-	}
+	}*/
 
-	/**
+/*	*//**
 	 * 
-	 */
+	 *//*
 	public void setFaceBookIcons() {
 		for (int index = 0; index < listmessages.size(); index++) {
 			String temp = listmessages.get(index);
@@ -116,11 +146,11 @@ public class InstalledPackageRetriever {
 			}
 		}
 	}
-
+*/
 	/**
 	 * 
 	 * @return Drawable
-	 */
+	 *//*
 	public Drawable getFacebookIcon() {
 		if (fbdrawble == null) {
 			getInstalledPackages();
@@ -128,15 +158,13 @@ public class InstalledPackageRetriever {
 		}
 		return fbdrawble;
 	}
-
+*/
 	/**
 	 * 
 	 * @return ArrayList<String>
 	 */
-	public ArrayList<String> getListMessages() {
-
-		return listmessages;
-
+	public ArrayList<String> getAppNames() {
+		return appNames;
 	}
 
 	/**
@@ -145,24 +173,14 @@ public class InstalledPackageRetriever {
 	 */
 	public ArrayList<Drawable> getDrawables() {
 		return drawbles;
-
 	}
 
 	/**
 	 * 
 	 * @return ArrayList<ResolveInfo>
 	 */
-	public ArrayList<ResolveInfo> getDisplayPackages() {
-		return currentDisp;
-	}
-
-	/**
-	 * 
-	 * @return Intent
-	 */
-	public Intent getShareIntent() {
-		return sendIntent;
-
+	public ArrayList<String> getpackageNames() {
+		return packageNames;
 	}
 
 }

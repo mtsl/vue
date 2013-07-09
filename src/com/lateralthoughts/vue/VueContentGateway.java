@@ -18,6 +18,8 @@ import android.util.Log;
 //internal imports
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
+import com.lateralthoughts.vue.utils.VueConnectivityManager;
+import com.lateralthoughts.vue.connectivity.VueBatteryManager;
 import com.lateralthoughts.vue.service.VueContentRestService;
 
 //java lang utils
@@ -71,16 +73,23 @@ public class VueContentGateway {
         //we want to get the current trending aisles
         baseUri.append(mTrendingAislesTag);
         if(DEBUG) Log.e(TAG,"uri we are sending = " + baseUri.toString());
-        
-        Intent intent = new Intent(mContext, VueContentRestService.class);
-        intent.putExtra("url",baseUri.toString());
-        intent.putParcelableArrayListExtra("headers", mHeaders);
-        intent.putParcelableArrayListExtra("params",mParams);
-        intent.putExtra("receiver", receiver);
-        mContext.startService(intent);
+        boolean isConnection = VueConnectivityManager.isNetworkConnected(mContext);
+        if(!isConnection) {
+          Log.e("VueContentRestService", "network connection No");
+          return status;
+        } else if(isConnection && (VueBatteryManager.isConnected(mContext) || VueBatteryManager
+            .batteryLevel(mContext) > VueBatteryManager.MINIMUM_BATTERY_LEVEL) && VueApplication
+            .getInstance().totalDataDownload < 1024) {
+          Intent intent = new Intent(mContext, VueContentRestService.class);
+          intent.putExtra("url",baseUri.toString());
+          intent.putParcelableArrayListExtra("headers", mHeaders);
+          intent.putParcelableArrayListExtra("params",mParams);
+          intent.putExtra("receiver", receiver);
+          mContext.startService(intent);          
+        }
 		return status;		
 	}
-	
+
     private void initializeHttpFields(){
         mHeaders = new ArrayList<ParcelableNameValuePair>();
         mParams = new ArrayList<ParcelableNameValuePair>();

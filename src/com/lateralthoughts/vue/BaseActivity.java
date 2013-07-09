@@ -1,14 +1,8 @@
 package com.lateralthoughts.vue;
 
- 
-
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
- 
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
 import com.slidingmenu.lib.SlidingMenu;
@@ -18,7 +12,7 @@ import com.slidingmenu.lib.app.SlidingFragmentActivity;
 public class BaseActivity extends SlidingFragmentActivity {
 
   private int mTitleRes = 0;
-  protected VueListFragment mFrag;
+  protected static VueListFragment mFrag;
   //private OnBackHandle onBackHandle;
   //private boolean isBaseStarts = true;
   

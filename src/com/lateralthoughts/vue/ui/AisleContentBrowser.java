@@ -6,6 +6,7 @@ import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueComparisionActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 //android UI & graphics imports
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import android.view.MotionEvent;
@@ -142,11 +145,11 @@ public class AisleContentBrowser extends ViewFlipper {
 	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, null, currentIndex, currentIndex+1, true)){
 	                            mAnimationInProgress = true;
 	                            Animation cantWrapRight = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right);
-	                            
 	                            cantWrapRight.setAnimationListener(new Animation.AnimationListener(){
 	                                public void onAnimationEnd(Animation animation) {
 	                                    Animation cantWrapRightPart2 = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right2);
 	                                    aisleContentBrowser.getCurrentView().startAnimation(cantWrapRightPart2);
+	                                  
 	                                 
 	                                }
 	                                public void onAnimationStart(Animation animation) {
@@ -256,15 +259,32 @@ public class AisleContentBrowser extends ViewFlipper {
 	        mClickListener.onAisleClicked(mAisleUniqueId,mSpecialNeedsAdapter.getAisleItemsCount());
 	          
 	        }
+	        if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
+	        	detailImgClickListenr.onImageClicked();
+	        }
 	        
 	        return true;
+	    }
+	    @Override
+	    public void onLongPress(MotionEvent e) {
+	    	  if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
+		        	detailImgClickListenr.onImageLongPress();
+		        }
+	    	super.onLongPress(e);
 	    }
 	 }
 	
 	public interface AisleContentClickListener{
 	    public void onAisleClicked(String id,int count);
 	}
-	
+	public interface DetailClickListener{
+	    public void onImageClicked();
+	    public void onImageLongPress();
+	}
+	DetailClickListener detailImgClickListenr;
+	public  void setDetailImageClickListener(DetailClickListener detailLestener) {
+		detailImgClickListenr = detailLestener;
+	}
 	public void setAisleContentClickListener(AisleContentClickListener listener){
 	    mClickListener = listener;
 	}
@@ -272,6 +292,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	    public void onAisleSwipe(String id);
 	    public void onReceiveImageCount(int count);
 	    public void onResetAdapter();
+	    public void onAddCommentClick(TextView view,EditText editText);
 	}
 	public void setAisleDetailSwipeListener(AisleDetailSwipeListener swipListener) {
 		mSwipeListener = swipListener; 

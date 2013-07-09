@@ -1,7 +1,9 @@
 package com.googleplus;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -27,6 +29,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.plus.PlusClient;
 import com.google.android.gms.plus.PlusClient.OnAccessRevokedListener;
 import com.google.android.gms.plus.PlusShare;
+import com.google.android.gms.plus.model.people.Person;
 import com.lateralthoughts.vue.R;
 
 /**
@@ -91,11 +94,14 @@ public final class PlusClientFragment extends Fragment
     // A handler to post callbacks (rather than call them in a potentially reentrant way.)
     private Handler mHandler;
 
+    private int signInRetryCount;
+    
     /**
      * Local handler to send callbacks on sign in.
      */
     private final class PlusClientFragmentHandler extends Handler {
         public static final int WHAT_SIGNED_IN = 1;
+        public static final int WHAT_SIGNED_FAIL = 1;
 
         public PlusClientFragmentHandler() {
             super(Looper.getMainLooper());
@@ -103,11 +109,18 @@ public final class PlusClientFragment extends Fragment
 
         @Override
         public void handleMessage(Message msg) {
+        	
+        	 Activity activity = getActivity();
+        	
             if (msg.what != WHAT_SIGNED_IN) {
-                return;
+               
+            	if(activity instanceof OnSignedInListener)
+            	{
+            		((OnSignedInListener) activity).onSignedFail();
+            	}
             }
 
-            Activity activity = getActivity();
+           
             if (mPlusClient.isConnected() && activity instanceof OnSignedInListener) {
                 ((OnSignedInListener) activity).onSignedIn(mPlusClient);
             }
@@ -125,6 +138,7 @@ public final class PlusClientFragment extends Fragment
          * @param plusClient The connected {@link PlusClient} to make requests on.
          */
         void onSignedIn(PlusClient plusClient);
+        void onSignedFail();
     }
 
     /**
@@ -192,6 +206,12 @@ public final class PlusClientFragment extends Fragment
             mRequestCode = INVALID_REQUEST_CODE;
         } else {
             mRequestCode = savedInstanceState.getInt(STATE_REQUEST_CODE, INVALID_REQUEST_CODE);
+          /*  Activity activity = getActivity();
+            if (activity instanceof OnSignedInListener) {
+                ((OnSignedInListener) activity).onSignedIn(mPlusClient);
+            }
+            
+            signIn(0);*/
         }
     }
 
@@ -253,8 +273,33 @@ public final class PlusClientFragment extends Fragment
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         mLastConnectionResult = connectionResult;
+       // Reconnect...
+        if(connectionResult.getErrorCode() == ConnectionResult.INTERNAL_ERROR)
+        {
+        	signInRetryCount++;
+
+        	if(signInRetryCount > 6)
+        	{
+        	 // Reconnect to get a new mPlusClient.
+            mLastConnectionResult = null;
+            // Cancel sign in.
+            mRequestCode = INVALID_REQUEST_CODE;
+
+            // Reconnect to fetch the sign-in (account chooser) intent from the plus client.
+            connectPlusClient();
+        	}
+        	else
+        	{
+        		Activity activity = getActivity();
+                if (activity instanceof OnSignedInListener) {
+                    ((OnSignedInListener) activity).onSignedFail();
+                }
+        	}
+        	
+        
+        	}
         // On a failed connection try again.
-        if (isResumed() && mRequestCode != INVALID_REQUEST_CODE) {
+        else if (isResumed() && mRequestCode != INVALID_REQUEST_CODE) {
             resolveLastResult();
         }
     }
@@ -277,6 +322,10 @@ public final class PlusClientFragment extends Fragment
         if (mPlusClient.isConnected()) {
             mHandler.sendEmptyMessage(PlusClientFragmentHandler.WHAT_SIGNED_IN);
         }
+        else
+        {
+        	 mHandler.sendEmptyMessage(PlusClientFragmentHandler.WHAT_SIGNED_FAIL);
+        }
     }
 
     @Override
@@ -292,12 +341,14 @@ public final class PlusClientFragment extends Fragment
             throw new IllegalArgumentException("A non-negative request code is required.");
         }
 
+        if(mPlusClient != null)
+        {
         if (mPlusClient.isConnected()) {
             // Already connected!  Schedule callback.
             mHandler.sendEmptyMessage(PlusClientFragmentHandler.WHAT_SIGNED_IN);
             return;
         }
-
+        }
         if (mRequestCode != INVALID_REQUEST_CODE) {
             // We're already signing in.
             return;
@@ -552,43 +603,53 @@ public final class PlusClientFragment extends Fragment
         }
     }
     
-    private Intent getInteractivePostIntent(PlusClient plusClient, Activity activity, String post, String filePath) {
-        // Create an interactive post with the "VIEW_ITEM" label. This will
-        // create an enhanced share dialog when the post is shared on Google+.
-        // When the user clicks on the deep link, ParseDeepLinkActivity will
-        // immediately parse the deep link, and route to the appropriate resource.
-        String action = "/?view=true";
-        Uri callToActionUrl = Uri.parse(getString(R.string.plus_example_deep_link_url) + action);
-        String callToActionDeepLinkId = getString(R.string.plus_example_deep_link_id) + action;
+	private Intent getInteractivePostIntent(PlusClient plusClient,
+			Activity activity, String post, Person googlefriend) {
+		// Create an interactive post with the "VIEW_ITEM" label. This will
+		// create an enhanced share dialog when the post is shared on Google+.
+		// When the user clicks on the deep link, ParseDeepLinkActivity will
+		// immediately parse the deep link, and route to the appropriate
+		// resource.
+		String action = "/?view=true";
+		Uri callToActionUrl = Uri
+				.parse(getString(R.string.plus_example_deep_link_url) + action);
+		String callToActionDeepLinkId = getString(R.string.plus_example_deep_link_id)
+				+ action;
 
-        // Create an interactive post builder.
-        PlusShare.Builder builder = new PlusShare.Builder(activity, plusClient);
+		// Create an interactive post builder.
+		PlusShare.Builder builder = new PlusShare.Builder(activity, plusClient);
 
-        // Set call-to-action metadata.
-        builder.addCallToAction(LABEL_VIEW_ITEM, callToActionUrl, callToActionDeepLinkId);
+		// Set call-to-action metadata.
+		builder.addCallToAction(LABEL_VIEW_ITEM, callToActionUrl,
+				callToActionDeepLinkId);
 
-        // Set the target url (for desktop use).
-        builder.setContentUrl(Uri.parse(getString(R.string.plus_example_deep_link_url)));
+		// Set the target url (for desktop use).
+		builder.setContentUrl(Uri
+				.parse(getString(R.string.plus_example_deep_link_url)));
 
-        // Set the target deep-link ID (for mobile use).
-        builder.setContentDeepLinkId(getString(R.string.plus_example_deep_link_id),
-                null, null, null);
+		// Set the target deep-link ID (for mobile use).
+		builder.setContentDeepLinkId(
+				getString(R.string.plus_example_deep_link_id), null, null, null);
 
-        // Set the pre-filled message.
-        builder.setText(post);
+		List<Person> googlefriendList = new ArrayList<Person>();
 
-                if (filePath != null) {
-                        builder.setStream(Uri.fromFile(new File(filePath)));
-                        builder.setType("image/*");
-                }
-               
+		googlefriendList.add(googlefriend);
 
-        return builder.getIntent();
-    }
+		builder.setRecipients(googlefriendList);
+
+		// Set the pre-filled message.
+		builder.setText(post);
+
+		builder.setType("text/plain");
+		
+		
+
+		return builder.getIntent();
+	}
     
-    public void share(PlusClient plusClient, Activity activity, String post, String filePath)
+    public void share(PlusClient plusClient, Activity activity, String post, Person googleplusFriend)
     {
-        startActivityForResult(getInteractivePostIntent(plusClient, activity, post, filePath),
+        startActivityForResult(getInteractivePostIntent(plusClient, activity, post, googleplusFriend),
                 REQUEST_CODE_INTERACTIVE_POST);
     }
 }

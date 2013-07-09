@@ -19,9 +19,11 @@ package com.facebook;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueLandingPageActivity;
 
 /**
  * This Activity is a necessary part of the overall Facebook login process
@@ -54,11 +56,15 @@ public class LoginActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.com_facebook_login_activity_layout);
+        
+        Log.e("fb", "19");
 
         if (savedInstanceState != null) {
+        	  Log.e("fb", "20");
             callingPackage = savedInstanceState.getString(SAVED_CALLING_PKG_KEY);
             authorizationClient = (AuthorizationClient) savedInstanceState.getSerializable(SAVED_AUTH_CLIENT);
         } else {
+        	  Log.e("fb", "21");
             callingPackage = getCallingPackage();
             authorizationClient = new AuthorizationClient();
             request = (AuthorizationClient.AuthorizationRequest) getIntent().getSerializableExtra(EXTRA_REQUEST);
@@ -68,25 +74,28 @@ public class LoginActivity extends Activity {
         authorizationClient.setOnCompletedListener(new AuthorizationClient.OnCompletedListener() {
             @Override
             public void onCompleted(AuthorizationClient.Result outcome) {
+            	  Log.e("fb", "22");
                 onAuthClientCompleted(outcome);
             }
         });
         authorizationClient.setBackgroundProcessingListener(new AuthorizationClient.BackgroundProcessingListener() {
             @Override
             public void onBackgroundProcessingStarted() {
-                findViewById(R.id.com_facebook_login_activity_progress_bar).setVisibility(View.VISIBLE);
+            	  Log.e("fb", "23");
+            	findViewById(R.id.com_facebook_login_activity_progress_bar).setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onBackgroundProcessingStopped() {
-                findViewById(R.id.com_facebook_login_activity_progress_bar).setVisibility(View.GONE);
+            	  Log.e("fb", "24");
+            	findViewById(R.id.com_facebook_login_activity_progress_bar).setVisibility(View.GONE);
             }
         });
     }
 
     private void onAuthClientCompleted(AuthorizationClient.Result outcome) {
         request = null;
-
+        Log.e("fb", "25");
         int resultCode = (outcome.code == AuthorizationClient.Result.Code.CANCEL) ?
                 RESULT_CANCELED : RESULT_OK;
 
@@ -104,14 +113,19 @@ public class LoginActivity extends Activity {
     public void onResume() {
         super.onResume();
 
-        // If the calling package is null, this generally means that the callee was started
-        // with a launchMode of singleInstance. Unfortunately, Android does not allow a result
-        // to be set when the callee is a singleInstance, so we throw an exception here.
-        if (callingPackage == null) {
-            throw new FacebookException(NULL_CALLING_PKG_ERROR_MSG);
-        }
+        try {
+			// If the calling package is null, this generally means that the callee was started
+			// with a launchMode of singleInstance. Unfortunately, Android does not allow a result
+			// to be set when the callee is a singleInstance, so we throw an exception here.
+			if (callingPackage == null) {
+			    throw new FacebookException(NULL_CALLING_PKG_ERROR_MSG);
+			}
 
-        authorizationClient.startOrContinueAuth(request);
+			authorizationClient.startOrContinueAuth(request);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     @Override
@@ -132,7 +146,9 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	Log.e("fb", "72");
         authorizationClient.onActivityResult(requestCode, resultCode, data);
+        Log.e("fb", "73");
     }
 
     static Bundle populateIntentExtras(AuthorizationClient.AuthorizationRequest request) {

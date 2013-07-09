@@ -70,6 +70,9 @@
         android:background="#CCCCCC"
         android:id="@+id/vue_bottom_bar"
             android:layout_height="48dp">
+        <View android:layout_width="fill_parent"
+              android:layout_height="1dp"
+              android:background="@android:color/white"/>
         <ImageView android:layout_width="32dp"
                    android:layout_height="48dp"
                    android:layout_marginLeft="4dp"
@@ -94,19 +97,23 @@
           <ImageView android:layout_width="32dp"
                    android:layout_height="48dp"
                    android:id="@+id/vue_aisle"
-                   android:layout_toLeftOf="@+id/vue_share"
-                   android:layout_marginRight="32dp"
+                   android:layout_toLeftOf="@+id/vuesharelayout"
+                   android:layout_marginRight="16dp"
                    android:layout_centerVertical="true"
+                   
                    android:src="@drawable/aisleinfo"
                    />
+          <RelativeLayout android:layout_width="48dip"
+                android:layout_alignParentRight="true"
+                android:id="@+id/vuesharelayout"
+            android:layout_height="48dp">
             <ImageView android:layout_width="32dp"
-                   android:layout_height="48dp"
+                   android:layout_height="32dp"
                    android:id="@+id/vue_share"
-                    android:layout_alignParentRight="true"
-                     android:layout_marginRight="12dp"
-                   android:layout_centerVertical="true"
+                  android:layout_centerInParent="true"
                    android:src="@drawable/share"
                    />
+             </RelativeLayout>
              <!--    <ImageView android:layout_width="48dp"
                    android:layout_height="48dp"
                    android:id="@+id/vue_show_aisle"
