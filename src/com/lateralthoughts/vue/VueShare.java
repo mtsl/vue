@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -15,7 +17,9 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
+import com.lateralthoughts.vue.utils.SortBasedOnName;
 
 /**
  * This is common class for all Vue sharing functionality.
@@ -28,7 +32,7 @@ public class VueShare {
 	
 	
 	
-	/**
+	/**Un Used Code.....
 	 * By Krishna.V 
 	 * This is method will get the list of Facebook friends information.
 	 * @param context
@@ -58,7 +62,7 @@ public class VueShare {
          }
          in.close();
          String result = sb.toString();
-        // Log.v("My Response :: ", result);
+    //    Log.v("My Response :: ", result);
 
 			if (result != null) {
 				facebookFriendsDetailsList = JsonParsing(result);
@@ -76,7 +80,7 @@ public class VueShare {
 	 * @return
 	 * @throws JSONException
 	 */
-	private List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException
+	@SuppressWarnings("unchecked") List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException
 	{
 		List<FbGPlusDetails> facebookFriendsDetailsList = null;
 
@@ -88,14 +92,18 @@ public class VueShare {
 			for (int i = 0; i < dataArray.length(); i++) {
 
 				JSONObject jsonObj = dataArray.getJSONObject(i);
-				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(
+				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(jsonObj.getString("id"),
 						jsonObj.getString("name"), jsonObj
 								.getJSONObject("picture").getJSONObject("data")
-								.getString("url"));
+								.getString("url"), null);
 
 				facebookFriendsDetailsList.add(objFacebookFriendsDetails);
 			}
 		}
+		
+		Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
+		
+		
 		return facebookFriendsDetailsList;
 	}
 	

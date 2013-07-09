@@ -17,6 +17,8 @@ import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.VueMemoryCache;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 //import crittercism sdk
 import com.crittercism.app.Crittercism;
 
@@ -46,6 +48,9 @@ public class VueApplication extends Application {
 	
 	public boolean fbsharingflag = false;
 	private RequestQueue mVolleyRequestQueue;
+	public int totalDataDownload = 0;
+	
+	
 	@Override
 	public void onCreate(){
 		super.onCreate();
@@ -140,12 +145,10 @@ public class VueApplication extends Application {
     	return px;
     	     
     }
-
     public RequestQueue getRequestQueue() {
         if (mVolleyRequestQueue != null) {
             return mVolleyRequestQueue;
         } else {
             throw new IllegalStateException("RequestQueue not initialized");
         }
-    }
 }

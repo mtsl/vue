@@ -1,6 +1,7 @@
-package com.lateralthoughts.vue.utils;
+package com.lateralthoughts.vue.connectivity;
 
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.utils.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -181,7 +182,7 @@ public class VueConnectivityManager {
     }
     return isNetworkConnected;
   }
-
+  
   public static boolean isNetworkConnected(Context context) {
     boolean isConneted = false;
     SharedPreferences pref = PreferenceManager

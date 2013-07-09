@@ -103,7 +103,7 @@ public class BitmapLoaderUtils {
             int height=o.outHeight;
             int scale=1;
             
-            if (height > bestHeight) {
+            if (height > bestHeight && 0 != bestHeight) {
 
                 // Calculate ratios of height and width to requested height and width
                 final int heightRatio = Math.round((float) height / (float) bestHeight);

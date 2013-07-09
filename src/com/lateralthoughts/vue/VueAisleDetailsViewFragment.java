@@ -57,7 +57,7 @@ import android.widget.Toast;
 public class VueAisleDetailsViewFragment extends Fragment {
     private Context mContext;
     private VueContentGateway mVueContentGateway;
-    private AisleDetailsViewAdapter mAisleDetailsAdapter;  
+    AisleDetailsViewAdapter mAisleDetailsAdapter;  
     private ListView mAisleDetailsList;
     AisleDetailsSwipeListner mSwipeListener;
     IndicatorView mIndicatorView;
@@ -249,9 +249,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
      
         Log.d("VueAisleDetailsViewFragment","Get ready to display details view");
         
-        ImageView vue_share = (ImageView) v.findViewById(R.id.vue_share);
+        RelativeLayout vuesharelayout = (RelativeLayout) v.findViewById(R.id.vuesharelayout);
         
-        vue_share.setOnClickListener(new OnClickListener() {
+        vuesharelayout.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View arg0) {

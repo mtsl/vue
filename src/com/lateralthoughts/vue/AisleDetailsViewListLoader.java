@@ -104,7 +104,7 @@ public class AisleDetailsViewListLoader {
           
           
           //imageView1.setPadding(3, 3, 3, 3);
-          //imageView1.setContainerObject(holder);
+          imageView1.setContainerObject(holder);
           
           params.setMargins(pixel, 0, pixel, 0);
           params1.setMargins(pixel, 0,pixel, 0);
@@ -204,8 +204,8 @@ public class AisleDetailsViewListLoader {
             params.gravity = Gravity.CENTER;
             imageView.setLayoutParams(params);
             imageView.setContainerObject(holder);
+            Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
            // imgConnectivity.setImageClick(imageView);
-            Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
             if(bitmap != null){
             	 Log.i("width & height", "reqWidth1: Bitmap  set directly here" );
             	bitmap =  setParams(holder.aisleContentBrowser, imageView, bitmap);
@@ -215,6 +215,8 @@ public class AisleDetailsViewListLoader {
             }
             else{
                 contentBrowser.addView(imageView);
+                loadBitmap(itemDetails.mImageUrl, contentBrowser, imageView, windowContent.getBestHeightForWindow());
+            }          
              /*   if(!VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
                   Log.e("VueContentRestService", "network connection No");
                   return;
@@ -243,7 +245,6 @@ public class AisleDetailsViewListLoader {
                 }
             } */           
         }        
-        //we also need to set up the horizontal image views
     }
     
     public void loadBitmap(String loc, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
@@ -274,7 +275,7 @@ public class AisleDetailsViewListLoader {
             url = params[0];
             Bitmap bmp = null;            
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeight); 
+            bmp = mBitmapLoaderUtils.getBitmap(url, true, 0); 
             return bmp;            
         }
 

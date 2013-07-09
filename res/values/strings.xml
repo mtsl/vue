@@ -12,7 +12,7 @@
     <string name="progress_message">Signing in to Google&#8230;</string>
     <string name="googleplus_app_installation_dialog">Enable Share via Google+ ?</string>
     <string name="plus_example_deep_link_id">/+/mobile/android/</string>
-    <string name="plus_example_deep_link_url">        https://developers.google.com/+/mobile/android/</string>
+    <string name="plus_example_deep_link_url">https://developers.google.com/+/mobile/android/</string>
     <string name="googleplus_button_text">Sign In with Google</string>
     <string name="facebook_button_text">Sign In with Facebook</string>
     <string name="cancel_button_text">No Thanks</string>
@@ -57,7 +57,11 @@
     <string name="cancelled">Cancelled</string>
     <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
     <string name="ok">Ok</string>
-
+  <string name="mtm_accept_cert">Accept Unknown Certificate?</string>
+    <string name="mtm_decision_always">Always</string>
+    <string name="mtm_decision_once">Once</string>
+    <string name="mtm_decision_abort">Abort</string>
+    <string name="mtm_notification">Certificate Verification</string>
     <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string> -->
     <string name="no_network">No network, check network settings</string>
      <string name="no_wifi">No wifi connection, check wifi settings</string>
@@ -98,6 +102,7 @@
     <string name="clear">Clear</string>
     <string name="send">Send</string>
     <string name="add">Add</string>
+     <string name="invite">Invite</string>
     <string name="abouttextfedbacktext">\nPlease write to us about how we might improve</string>
     <string name="abouttextfedbacktexttwo">to suit your needs. We will appreciate it very much!</string>
     <string name="abouttextfedbacktextt">Email will be sent using gmail. Your phone model, dimensions, resolutions and OS version are included with this message.</string>

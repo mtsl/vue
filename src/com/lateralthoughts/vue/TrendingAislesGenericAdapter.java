@@ -134,7 +134,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         holder.aisleContext.setText(contextBuilder.toString());*/
         return convertView;
     }
-    
+
     @Override
     public void onAisleDataUpdated(int newCount){
         notifyDataSetChanged();

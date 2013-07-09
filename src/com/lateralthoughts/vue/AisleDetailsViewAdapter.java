@@ -6,6 +6,15 @@
 
 package com.lateralthoughts.vue;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +80,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 	int mDescriptionDefaultHeight;
 
+	ShareDialog share ;
+	
 	ViewHolder viewHolder;
 	String mTempComments[] = {
 			"Love love love the dress! Simple and fabulous.",
@@ -356,28 +367,48 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
      * By Krishna.V
      * Sharing content
      */
-  public void share(Context context, Activity activity)
+  public void share(final Context context, Activity activity)
   {
-      ShareDialog share = new ShareDialog(context, activity);
+	  Log.e("share click", "2");
+       share = new ShareDialog(context, activity);
       
       FileCache ObjFileCache = new FileCache(context);
-      
+      Log.e("share click", "3");
       ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
       
       if(mWindowContent_temp.getImageList() != null && mWindowContent_temp.getImageList().size() > 0)
       {
+    	  Log.e("share click", "4");
           for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
               
+        	  Log.e("share click", "5");
         	  clsShare obj = new clsShare(mWindowContent_temp.getImageList().get(i).mCustomImageUrl,
         			  ObjFileCache.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl).getPath());
         	  
         	  imageUrlList.add(obj);
           }
-          
+          Log.e("share click", "6");
           share.share(imageUrlList, mWindowContent_temp.getAisleContext().mOccasion, (mWindowContent_temp.getAisleContext().mFirstName + " " +mWindowContent_temp.getAisleContext().mLastName) );
       }
       
-      
+      Thread t = new Thread(new Runnable() {
+
+          @Override
+          public void run() {
+        	  if(mWindowContent_temp.getImageList() != null && mWindowContent_temp.getImageList().size() > 0)
+              {
+        		  
+        		  FileCache ObjFileCache1 = new FileCache(context);
+        		  
+        		  for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
+        			  
+        			  File f = ObjFileCache1.getFile(mWindowContent_temp.getImageList().get(i).mCustomImageUrl);
+        			  
+        			  if(!f.exists()) downloadImage(mWindowContent_temp.getImageList().get(i).mCustomImageUrl, f);
+        		  }
+              }
+          }
+      });t.start();
       
       
   }
@@ -408,6 +439,30 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		}
 	       
 	    }
+	   
+		private void downloadImage(String url, File f)
+		{
+		      try {
+				URL imageUrl = new URL(url);
+				  HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
+				  conn.setConnectTimeout(30000);
+				  conn.setReadTimeout(30000);
+				  conn.setInstanceFollowRedirects(true);
+				  InputStream is=conn.getInputStream();
+				  OutputStream os = new FileOutputStream(f);
+				  Utils.CopyStream(is, os);
+				  os.close();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	
 	
  
