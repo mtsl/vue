@@ -68,7 +68,7 @@ public class VueComparisionFragment extends Fragment {
         mCoparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight - VueApplication.getInstance().getPixel(30);
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
-        
+
       		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
       			 mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel.getAisleAt(i);
       			if (mWindowContent.getAisleId().equalsIgnoreCase(
