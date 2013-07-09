@@ -89,12 +89,6 @@ public class VueContentGateway {
         //we want to get the current trending aisles
         baseUri.append(mTrendingAislesTag);
         if(DEBUG) Log.e(TAG,"uri we are sending = " + baseUri.toString());
-        
-        Intent intent = new Intent(mContext, VueContentRestService.class);
-        intent.putExtra("url",baseUri.toString());
-        intent.putParcelableArrayListExtra("headers", mHeaders);
-        intent.putParcelableArrayListExtra("params",mParams);
-        intent.putExtra("receiver", receiver);
 
         String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI + "aisle/trending?limit=%s&offset=%s";
         String requestUrl = String.format(requestUrlBase, limit, offset);

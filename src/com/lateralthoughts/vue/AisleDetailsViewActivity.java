@@ -12,9 +12,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
-
-public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  {
-	VueComparisionFragment mFragRight;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity*/  {

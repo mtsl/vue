@@ -151,4 +151,5 @@ public class VueApplication extends Application {
         } else {
             throw new IllegalStateException("RequestQueue not initialized");
         }
+    }
 }
