@@ -5,6 +5,9 @@ import com.lateralthoughts.vue.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Rect;
+import android.util.Log;
+import android.view.Window;
 import android.widget.LinearLayout;
 
 public class VueComparisionActivity extends Activity {
@@ -19,6 +22,10 @@ public class VueComparisionActivity extends Activity {
 	vueframe_bottom = (LinearLayout)findViewById(R.id.vue_bottom_scroller);
 		VueframeAdapter frameAdapter = new VueframeAdapter(this, null, null);
 	frameAdapter.setImageViews(vuefame_top, vueframe_bottom);*/
+	 
+	 
+	 
+
 	 
  };
  @Override

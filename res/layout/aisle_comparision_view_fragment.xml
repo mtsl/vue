@@ -2,40 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    
-    android:background="#EEEEEE"
+   android:background="#EEEEEE"
+
     android:orientation="vertical" >
 
-    <HorizontalScrollView
+    <com.lateralthoughts.vue.ui.HorizontalListView
+        android:id="@+id/topscroller"
+  android:background="#EEEEEE"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
-        android:layout_weight="2"
+        android:layout_marginTop="10dp"
+       android:layout_weight="2"
         android:scrollbars="none" >
+    </com.lateralthoughts.vue.ui.HorizontalListView>
 
-        <LinearLayout
-            android:id="@+id/vue_top_scroller"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-        </LinearLayout>
-    </HorizontalScrollView>
-
-    <HorizontalScrollView
+    <com.lateralthoughts.vue.ui.HorizontalListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginTop="5dp"
      android:layout_marginBottom="10dp"
-        android:layout_weight="2"
+          android:background="#EEEEEE"
+    android:layout_weight="2"
+        android:id="@+id/bottomscroller"
         android:scrollbars="none" >
-
-        <LinearLayout
-            android:id="@+id/vue_bottom_scroller"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-        </LinearLayout>
-    </HorizontalScrollView>
+ 
+    </com.lateralthoughts.vue.ui.HorizontalListView>
 
 </LinearLayout>
