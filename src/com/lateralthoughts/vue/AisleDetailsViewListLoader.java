@@ -60,9 +60,9 @@ public class AisleDetailsViewListLoader {
         if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
     public void getContentIntoCompareview(VueComparisionAdapter.ViewHolder holder){
-   /* 	  ScaleImageView imageView = null;
-    	  ScaleImageView imageView1 = null;*/
-    	ImageView imageView,imageView1;
+    	  ScaleImageView imageView = null;
+    	  ScaleImageView imageView1 = null;
+    	 
     	
           ArrayList<AisleImageDetails> imageDetailsArr = null;
           AisleImageDetails itemDetails = null;
@@ -79,16 +79,15 @@ public class AisleDetailsViewListLoader {
           if(null != imageDetailsArr && imageDetailsArr.size() != 0){  
                  for(int k=0;k<imageDetailsArr.size();k++){
           itemDetails = imageDetailsArr.get(k);
-        /*  imageView = mViewFactory.getPreconfiguredImageView(position);
-          imageView1 = mViewFactory.getPreconfiguredImageView(position+5);*/
-          imageView = new ImageView(mContext);
-          imageView1 = new ImageView(mContext);
+          imageView = mViewFactory.getPreconfiguredImageView(position);
+          imageView1 = mViewFactory.getPreconfiguredImageView(position+5);
+       
           
           LinearLayout.LayoutParams params = 
                   new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, VueApplication.getInstance().getScreenHeight());
         
-         // imageView.setPadding(3, 3, 3, 3);
-         // imageView.setContainerObject(holder);
+          imageView.setPadding(3, 3, 3, 3);
+          imageView.setContainerObject(holder);
           
           imageView1 = mViewFactory.getPreconfiguredImageView(position);
           LinearLayout.LayoutParams params1 = 
@@ -103,8 +102,8 @@ public class AisleDetailsViewListLoader {
           bottomlay.setBackgroundColor(Color.parseColor("#ffffff"));
           
           
-          //imageView1.setPadding(3, 3, 3, 3);
-          //imageView1.setContainerObject(holder);
+          imageView1.setPadding(3, 3, 3, 3);
+          imageView1.setContainerObject(holder);
           
           params.setMargins(pixel, 0, pixel, 0);
           params1.setMargins(pixel, 0,pixel, 0);
@@ -164,6 +163,7 @@ public class AisleDetailsViewListLoader {
         contentBrowser = holder.aisleContentBrowser;
         
         if(holder.uniqueContentId.equals(desiredContentId)){
+        	Log.i("bitmaptest", "bitmaptest: call  return from here: ");
             //we are looking at a visual object that has either not been used
             //before or has to be filled with same content. Either way, no need
             //to worry about cleaning up anything!
@@ -207,13 +207,14 @@ public class AisleDetailsViewListLoader {
            // imgConnectivity.setImageClick(imageView);
             Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
             if(bitmap != null){
-            	 Log.i("width & height", "reqWidth1: Bitmap  set directly here" );
+            	Log.i("bitmaptest", "bitmaptest: call when bitmap not null: ");
             	bitmap =  setParams(holder.aisleContentBrowser, imageView, bitmap);
-            	// bitmap = Utils.getScaledBitMap(bitmap, VueApplication.getInstance().getScreenWidth(), VueApplication.getInstance().getScreenHeight());
+            	 bitmap = Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*80)/100, (VueApplication.getInstance().getScreenHeight()*60)/100);
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);                  
             }
             else{
+            	Log.i("bitmaptest", "bitmaptest: call when bitmap is null: ");
                 contentBrowser.addView(imageView);
              /*   if(!VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
                   Log.e("VueContentRestService", "network connection No");
@@ -330,8 +331,8 @@ public class AisleDetailsViewListLoader {
     	if(vFlipper != null)
     	vFlipper.setLayoutParams(showpieceParams);
     	 /* if(bitmap.getHeight() > imgCardHeight || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {*/
-    	 Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
-    		 bitmap =  Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*90)/100, (imgCardHeight*90)/100);
+    	Log.i("bitmaptest", "bitmaptest: call when bitmap is null: ");
+    		 bitmap =   Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*80)/100, (VueApplication.getInstance().getScreenHeight()*60)/100);
     	/*  } else {
     		  Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
     	  }*/
@@ -352,7 +353,7 @@ public class AisleDetailsViewListLoader {
             Log.i("width & height", "reqWidth1: Bitmap is greater than card size1" );
            // if(bitmap.getHeight() >  VueApplication.getInstance().getScreenHeight()/3 || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
       		  Log.i("width & height", "reqWidth1: Bitmap is greater than card size2" );
-      		 bitmap =  Utils.getScaledBitMap(bitmap,(VueApplication.getInstance().getScreenWidth() * 10)/100,  (VueApplication.getInstance().getScreenHeight()* 10)/100);
+      		 bitmap =  Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*80)/100, (VueApplication.getInstance().getScreenHeight()*60)/100);
       	 // }
     	}
         return bitmap;

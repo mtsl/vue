@@ -23,11 +23,32 @@ public class AisleDetailsViewActivity extends /*BaseActivity*/FragmentActivity  
 
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
         if (currentapiVersion >= 11){
-            getActionBar().hide();
-        }
-
-
-
+        	 getActionBar().hide();
+        } 
+ 
+        
+       
+      
+ 
+        
+        /*
+        mFragRight=  new VueComparisionFragment();
+        
+        getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+        final SlidingMenu sm = getSlidingMenu();
+        sm.setMode(SlidingMenu.LEFT_RIGHT);
+        sm.setSecondaryMenu(R.layout.menu_frame_two);
+       getSupportFragmentManager()
+        .beginTransaction()
+        .replace(R.id.menu_frame_two, mFragRight)
+        .commit();
+       sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);*/
+       
+	 
+        //sm.setSecondaryShadowDrawable(R.drawable.shadowright);
+       // sm.setShadowDrawable(R.drawable.shadow);
+      
+ 
     }
 
     @Override
