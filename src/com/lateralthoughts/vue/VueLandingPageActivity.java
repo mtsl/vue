@@ -16,13 +16,13 @@ import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.plus.PlusClient;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
@@ -85,17 +85,8 @@ public class VueLandingPageActivity extends BaseActivity {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.title_options, menu);
-    ImageView icon = (ImageView) findViewById(android.R.id.home);
-    icon.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View arg0) {
-        getSlidingMenu().toggle();
-      }
-    });
-    
-    
+    getSupportMenuInflater().inflate(R.menu.title_options, menu);
+    getSupportActionBar().setHomeButtonEnabled(true); 
     // Configure the search info and add any event listeners
     return super.onCreateOptionsMenu(menu);
   }
@@ -108,12 +99,14 @@ public class VueLandingPageActivity extends BaseActivity {
          Intent intent = new Intent(VueLandingPageActivity.this, CreateAisleActivity.class);
          startActivity(intent);
           return true;
+      case android.R.id.home:
+        getSlidingMenu().toggle();
+        return true;
       default:
           return super.onOptionsItemSelected(item);
       }
   }
-  
-  
+
   @Override
   public boolean onKeyUp(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK) {
