@@ -82,15 +82,14 @@ public class VueContentGateway {
         //we want to get the current trending aisles
         baseUri.append(mTrendingAislesTag);
         if(DEBUG) Log.e(TAG,"uri we are sending = " + baseUri.toString());
-        
-        
+
         boolean isConnection = VueConnectivityManager.isNetworkConnected(mContext);
         if(!isConnection) {
-            Log.e("VueContentRestService", "network connection No");
+            Log.e(TAG, "network connection No");
             return status;
-          } else if(isConnection && (VueBatteryManager.isConnected(mContext) || VueBatteryManager
-              .batteryLevel(mContext) > VueBatteryManager.MINIMUM_BATTERY_LEVEL) && VueApplication
-              .getInstance().totalDataDownload < 1024) {
+          } else if(isConnection && (VueBatteryManager.isConnected(mContext) || (isConnection && VueBatteryManager
+              .batteryLevel(mContext) > VueBatteryManager.MINIMUM_BATTERY_LEVEL)) || (isConnection && VueApplication
+              .getInstance().totalDataDownload < 1024)) {
         	  Intent intent = new Intent(mContext, VueContentRestService.class);
               intent.putExtra("url",baseUri.toString());
               intent.putParcelableArrayListExtra("headers", mHeaders);

@@ -18,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.view.MotionEvent;
 import android.widget.AdapterView;
+
+import com.actionbarsherlock.app.SherlockFragment;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 
 //java utils
@@ -28,7 +30,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueLandingAislesFragment extends Fragment {
+public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 	private Context mContext;
 	private VueContentGateway mVueContentGateway;
 	private TrendingAislesLeftColumnAdapter mLeftColumnAdapter;

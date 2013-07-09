@@ -1,8 +1,10 @@
 package com.lateralthoughts.vue;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -30,18 +32,24 @@ public class CreateAisleActivity extends BaseActivity{
 	  }
 	 @Override
 	  public boolean onCreateOptionsMenu(Menu menu) {
-	    getMenuInflater().inflate(R.menu.title_options, menu);
-	    ImageView icon = (ImageView) findViewById(android.R.id.home);
-	    icon.setOnClickListener(new OnClickListener() {
-
-	      @Override
-	      public void onClick(View arg0) {
-	        getSlidingMenu().toggle();
-	      }
-	    });
+	    getSupportMenuInflater().inflate(R.menu.title_options2, menu);
+	    getSupportActionBar().setHomeButtonEnabled(true); 
 	  
 	    // Configure the search info and add any event listeners
 	    return super.onCreateOptionsMenu(menu);
 	  }
 
+	 
+	 @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	// Handle item selection
+	      switch (item.getItemId()) {
+	        case android.R.id.home:
+	          getSlidingMenu().toggle();
+	          break;
+	        case R.id.menu_cancel:
+	          finish();
+	      }
+	return super.onOptionsItemSelected(item);
+	}
 }
