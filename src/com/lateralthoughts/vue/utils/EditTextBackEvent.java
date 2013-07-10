@@ -50,7 +50,7 @@ public class EditTextBackEvent extends EditText {
     try {
 		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
 		  onInterceptListenr.onInterceptTouch();
-		  return true;
+		  return false;
 		}
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
