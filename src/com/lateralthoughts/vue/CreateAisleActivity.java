@@ -49,21 +49,26 @@ public class CreateAisleActivity extends BaseActivity /*FragmentActivity*/{
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 
-		if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
-			Bundle b = data.getExtras();
+		try {
+			if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
+				Bundle b = data.getExtras();
 
-			if (b != null) {
+				if (b != null) {
 
-				String imagePath = b
-						.getString(VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+					String imagePath = b
+							.getString(VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 
-				Log.e("CreateAilseActivty", "bundle cvalled" + imagePath);
+					Log.e("CreateAilseActivty", "bundle cvalled" + imagePath);
 
-				CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.create_aisles_view_fragment);
+					CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.create_aisles_view_fragment);
 
-				fragment.setGalleryImage(imagePath);
+					fragment.setGalleryImage(imagePath);
+				}
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
