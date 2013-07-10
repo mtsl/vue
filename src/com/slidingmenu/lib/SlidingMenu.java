@@ -213,9 +213,14 @@ public static final int POSITION_OPEN = 0;
 public static final int POSITION_CLOSE = 1;
 
 public void onPageScrolled(int position, float positionOffset,
-int positionOffsetPixels) { }
+int positionOffsetPixels) {
+	 
+	
+	
+}
 
 public void onPageSelected(int position) {
+	Log.i("current mode", "current mode onPageSelected : "+position );
 if (position == POSITION_OPEN && mOpenListener != null) {
 mOpenListener.onOpen();
 } else if (position == POSITION_CLOSE && mCloseListener != null) {
@@ -463,7 +468,7 @@ showMenu(true);
 */
 public void showMenu(boolean animate) {
 //place 0 for the right slide place 2 for the left slide
-	Log.i("homeclick", "homeclick in lib toggle  5");
+	 
 mViewAbove.setCurrentItem(0, animate);
 }
 
@@ -508,12 +513,10 @@ mViewAbove.setCurrentItem(1, animate);
 public void toggle() {
 //toggle(true);
 	//modified by raju true means aniamte the view flase means close immediately
-	 Log.i("homeclick", "homeclick in lib toggle  3");
 	toggle(true);
 }
 //written by raju
 public void toggleFromHomeClick() {
-	Log.i("homeclick", "homeclick for home indicator 3.1");
 	toggle(false);
 }
 /**
@@ -526,7 +529,6 @@ public void toggle(boolean animate) {
 if (isMenuShowing()) {
 showContent(animate);
 } else {
-	Log.i("homeclick", "homeclick in lib toggle  4");
  showMenu(animate);
 }
 }
@@ -573,7 +575,7 @@ public void setBehindOffsetRes(int resID) {
 int i = (int) getContext().getResources().getDimension(resID);
 setBehindOffset(i);
 }
-
+ 
 /**
 * Sets the above offset.
 *

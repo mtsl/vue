@@ -271,14 +271,29 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             imageView = mImageViewFactory.getEmptyImageView();
 
             Bitmap bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
-            
+           
             if(bitmap != null){
+            	 Log.i("bitmaptest", "bitmaptest1 aisleContentAdapter: originalwidth "+bitmap.getWidth()+" height: "+bitmap.getHeight());
                 //Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
             	//setParams(contentBrowser,imageView,bitmap);
+            	if (contentBrowser.getHolderName() != null
+						&& contentBrowser
+								.getHolderName()
+								.equalsIgnoreCase(
+										VueAisleDetailsViewFragment.SCREEN_NAME)) {
+					bitmap = Utils
+							.getScaledBitMap(bitmap,
+									(VueApplication.getInstance()
+											.getScreenWidth() * 80) / 100,
+									(VueApplication.getInstance()
+											.getScreenHeight() * 60) / 100);
+					 Log.i("bitmaptest", "bitmaptest1 aisleContentAdapter: width "+bitmap.getWidth()+" height: "+bitmap.getHeight());
+				}
+            	
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);
                 
-                Log.i("bitmaptest", "bitmaptest1: width "+bitmap.getWidth()+" height: "+bitmap.getHeight());
+               
             }
             else{
                 loadBitmap(itemDetails.mCustomImageUrl, mWindowContent.getBestHeightForWindow(),contentBrowser, imageView);
@@ -331,6 +346,22 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         protected void onPostExecute(Bitmap bitmap) {
             if (viewFlipperReference != null && 
                     imageViewReference != null && bitmap != null) {
+            	 Log.i("bitmaptest", "bitmaptest1 aisleContentAdapter doin: originalwidth "+bitmap.getWidth()+" height: "+bitmap.getHeight());
+				if (aisleContentBrowser.getHolderName() != null
+						&& aisleContentBrowser
+								.getHolderName()
+								.equalsIgnoreCase(
+										VueAisleDetailsViewFragment.SCREEN_NAME)) {
+					bitmap = Utils
+							.getScaledBitMap(bitmap,
+									(VueApplication.getInstance()
+											.getScreenWidth() * 80) / 100,
+									(VueApplication.getInstance()
+											.getScreenHeight() * 60) / 100);
+					 Log.i("bitmaptest", "bitmaptest1 aisleContentAdapter doin:  width "+bitmap.getWidth()+" height: "+bitmap.getHeight());
+				}
+            	
+            	
                 final ImageView imageView = imageViewReference.get();
                 final AisleContentBrowser vFlipper = viewFlipperReference.get();
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);

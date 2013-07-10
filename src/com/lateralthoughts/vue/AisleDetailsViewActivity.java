@@ -2,7 +2,9 @@ package com.lateralthoughts.vue;
 
 //generic android goodies
 
+import com.slidingmenu.lib.CustomViewAbove.OnPageChangeListener;
 import com.slidingmenu.lib.SlidingMenu;
+import com.slidingmenu.lib.SlidingMenu.OnOpenListener;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -19,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  {
     Fragment mFragRight;
@@ -57,6 +60,8 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
         .replace(R.id.menu_frame_two, mFragRight)
         .commit();
        sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+        
+    
        
 	 
         //sm.setSecondaryShadowDrawable(R.drawable.shadowright);
