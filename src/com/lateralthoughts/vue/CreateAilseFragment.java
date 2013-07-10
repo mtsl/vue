@@ -84,6 +84,8 @@ public class CreateAilseFragment extends Fragment{
 		
 		lookingforbigtext = (TextView) v.findViewById(R.id.lookingforbigtext);
 		
+		lookingforbigtext.setBackgroundColor(getResources().getColor(R.color.yellowbgcolor));
+		
 		occassionbigtext = (TextView) v.findViewById(R.id.occassionbigtext);
 		
 		ocassionlistview = (ListView) v.findViewById(R.id.ocassionlistview);

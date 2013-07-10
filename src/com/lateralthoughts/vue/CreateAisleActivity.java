@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.MediaColumns;
+
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 
@@ -16,6 +18,15 @@ public class CreateAisleActivity extends BaseActivity /*FragmentActivity*/{
 		setContentView(R.layout.create_aisle_main);
 	}
 
+	 @Override
+	  public boolean onCreateOptionsMenu(Menu menu) {
+	    getSupportMenuInflater().inflate(R.menu.title_options2, menu);
+	    getSupportActionBar().setHomeButtonEnabled(true); 
+	  
+	    // Configure the search info and add any event listeners
+	    return super.onCreateOptionsMenu(menu);
+	  }
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
