@@ -6,12 +6,16 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
 public class Utils {
@@ -259,4 +263,16 @@ public class Utils {
             e.printStackTrace();
         }
 	}
+	
+
+	// Getting Image file path from URI.
+	public static String getPath(Uri uri, Activity activity) {
+		String[] projection = { MediaColumns.DATA };
+		Cursor cursor = activity.managedQuery(uri, projection, null, null, null);
+		int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
+	}
+	 
 }

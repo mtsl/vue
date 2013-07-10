@@ -80,4 +80,10 @@ public class VueConstants {
         
         // Column names for dataToSync table.
         public static final String COMMENT = "comment";
+        
+        public static final String 	CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY";
+
+        public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
+        public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
+
 }

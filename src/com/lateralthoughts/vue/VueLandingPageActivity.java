@@ -96,7 +96,7 @@ public class VueLandingPageActivity extends BaseActivity {
       // Handle item selection
       switch (item.getItemId()) {
       case R.id.menu_create_aisles:
-         Intent intent = new Intent(VueLandingPageActivity.this, CreateAisleActivity.class);
+         Intent intent = new Intent(VueLandingPageActivity.this, CreateAisleSelectionActivity.class);
          startActivity(intent);
           return true;
       case android.R.id.home:

@@ -551,6 +551,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 					VueLandingPageActivity.googlePlusFriendsDetailsList
 							.add(googlePlusFriendsDetailsObj);
 
+					
 				}
 				
 				Collections.sort(VueLandingPageActivity.googlePlusFriendsDetailsList, new SortBasedOnName());

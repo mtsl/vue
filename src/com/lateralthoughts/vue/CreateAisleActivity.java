@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.MediaColumns;
+import android.util.Log;
+import android.view.KeyEvent;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -16,6 +18,21 @@ public class CreateAisleActivity extends BaseActivity /*FragmentActivity*/{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_aisle_main);
+		
+		Bundle b = getIntent().getExtras();
+		
+		if(b != null)
+		{
+			
+			
+			String imagePath = b.getString(VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+			
+			Log.e("CreateAilseActivty", "bundle cvalled"+imagePath);
+			
+			CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager().findFragmentById(R.id.create_aisles_view_fragment);
+			  
+			fragment.setGalleryImage(imagePath);
+		}
 	}
 
 	 @Override
@@ -31,61 +48,27 @@ public class CreateAisleActivity extends BaseActivity /*FragmentActivity*/{
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		
-		// From Gallery...
-		if(requestCode == VueConstants.SELECT_PICTURE)
-		{
-			/*Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
- 
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
- 
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();*/
-			
-			Uri selectedImageUri = data.getData();
 
-			//OI FILE Manager
-			String filemanagerstring = selectedImageUri.getPath();
+		if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
+			Bundle b = data.getExtras();
 
-			//MEDIA GALLERY
-			String selectedImagePath = getPath(selectedImageUri);
-             
-            try {
-            	CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager().findFragmentById(R.id.create_aisles_view_fragment);
-    			  
-    			fragment.setGalleryImage(selectedImagePath);
-    				
-    		} catch (Exception e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-			
+			if (b != null) {
+
+				String imagePath = b
+						.getString(VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+
+				Log.e("CreateAilseActivty", "bundle cvalled" + imagePath);
+
+				CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.create_aisles_view_fragment);
+
+				fragment.setGalleryImage(imagePath);
+			}
 		}
-		
-		// From Camera...
-		else if(requestCode == VueConstants.CAMERA_REQUEST)
-		{
-			CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager().findFragmentById(R.id.create_aisles_view_fragment);
-			
-			 
-	         fragment.setCameraImage();
-		}
+
 	}
 
-	// Getting Image file path from URI.
-	public String getPath(Uri uri) {
-		String[] projection = { MediaColumns.DATA };
-		Cursor cursor = managedQuery(uri, projection, null, null, null);
-		int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
-
-		cursor.moveToFirst();
-		return cursor.getString(column_index);
-	}
-	 
+	
 	 @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	// Handle item selection
@@ -98,5 +81,4 @@ public class CreateAisleActivity extends BaseActivity /*FragmentActivity*/{
 	      }
 	return super.onOptionsItemSelected(item);
 	}
-	 
 }
