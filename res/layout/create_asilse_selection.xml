@@ -1,0 +1,183 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+android:background="#90000000"
+     >
+    
+     
+ <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dip"
+    android:layout_alignParentRight="true"
+     >
+     
+     <LinearLayout
+    android:layout_width="96dip"
+    android:id="@+id/boxwithcirclelayout"
+    android:layout_height="wrap_content"
+     android:layout_centerHorizontal="true"
+    android:orientation="vertical"
+     >
+       
+     
+     
+    <View android:layout_width="42dip"
+        android:id="@+id/box"
+        android:layout_gravity="center_horizontal"
+         android:background="@drawable/verticalsqure"
+        android:layout_height="120dip"/>
+    
+     <RelativeLayout
+            android:id="@+id/circle"
+              android:layout_width="96dip"
+                android:layout_height="96dip"
+            android:background="@drawable/circle" >
+
+       
+          <ImageView
+        android:id="@+id/createaisel_bg"
+        android:layout_width="48dip"
+        android:layout_height="48dip"
+        android:layout_centerInParent="true"
+        android:background="@drawable/createaisle" />
+         
+            
+        </RelativeLayout>
+     
+    
+    
+  
+    </LinearLayout>
+     <RelativeLayout
+            android:id="@+id/topleftgreencircle"
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:layout_marginBottom="80dip"
+            android:layout_alignBottom="@+id/boxwithcirclelayout"
+            android:layout_toLeftOf="@+id/boxwithcirclelayout"
+            android:background="@drawable/whitecircle" >
+
+       
+         
+            <View
+                android:layout_width="56dip"
+                android:layout_height="56dip"
+                android:layout_centerInParent="true"
+                android:background="@drawable/graycircle" />
+              <TextView
+     android:id="@+id/textView1"
+     android:text="Gallery"
+     android:textColor="@android:color/white"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+     />
+        </RelativeLayout>
+     
+     <RelativeLayout
+   android:layout_width="60dip"
+          android:id="@+id/toprightgreencircle"
+          android:layout_marginBottom="80dip"
+            android:layout_alignBottom="@+id/boxwithcirclelayout"
+            android:layout_toRightOf="@+id/boxwithcirclelayout"
+         android:background="@drawable/whitecircle"
+        android:layout_height="60dip"
+     >
+            <View android:layout_width="56dip"
+         android:background="@drawable/graycircle"
+         android:layout_centerInParent="true"
+        android:layout_height="56dip"/>
+            <TextView
+     android:id="@+id/textView1"
+     android:text="Amazon"
+     android:textColor="@android:color/white"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+     />
+      </RelativeLayout>
+      
+     
+        <View android:layout_width="8dip"
+          android:layout_centerHorizontal="true"
+          android:id="@+id/emtyview"
+        android:layout_height="64dip"/>
+          <RelativeLayout
+ android:layout_width="60dip"
+          android:id="@+id/bottomleftgreencircle"
+   android:layout_toLeftOf="@+id/boxwithcirclelayout"
+         android:background="@drawable/whitecircle"
+         android:layout_marginRight="32dip"
+        android:layout_marginTop="170dip"
+        android:layout_height="60dip"
+     >
+            <View android:layout_width="56dip"
+         android:background="@drawable/graycircle"
+         android:layout_centerInParent="true"
+        android:layout_height="56dip"/>
+                      <TextView
+     android:id="@+id/textView1"
+     android:text="Camera"
+     android:textColor="@android:color/white"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+     />
+      </RelativeLayout>
+        
+          
+            <RelativeLayout
+ android:layout_width="60dip"
+          android:id="@+id/totalbottom"
+          android:layout_marginTop="8dip"
+ android:layout_centerHorizontal="true"
+ android:layout_below="@+id/bottomleftgreencircle"
+         android:background="@drawable/whitecircle"
+       
+        android:layout_height="60dip"
+     >
+            <View android:layout_width="56dip"
+         android:background="@drawable/graycircle"
+         android:layout_centerInParent="true"
+        android:layout_height="56dip"/>
+                      <TextView
+     android:id="@+id/textView1"
+     android:text="Etsy"
+     android:textColor="@android:color/white"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+     />
+      </RelativeLayout>
+          
+          <RelativeLayout
+android:layout_width="60dip"
+          android:id="@+id/bottomrightgreencircle"
+     android:layout_toRightOf="@+id/boxwithcirclelayout"
+     android:layout_marginLeft="32dip"
+     android:layout_marginTop="170dip"
+         android:background="@drawable/whitecircle"
+        android:layout_height="60dip"
+     >
+            <View android:layout_width="56dip"
+         android:background="@drawable/graycircle"
+         android:layout_centerInParent="true"
+        android:layout_height="56dip"/>
+            
+              <TextView
+     android:id="@+id/textView1"
+     android:text="Extra"
+     android:textColor="@android:color/white"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+     />
+      </RelativeLayout>
+      
+        
+        </RelativeLayout>
+
+ 
+</RelativeLayout>
