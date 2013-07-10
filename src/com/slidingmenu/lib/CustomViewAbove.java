@@ -152,6 +152,7 @@ public class CustomViewAbove extends ViewGroup {
 
     public void onPageScrollStateChanged(int state) {
       // This space for rent
+    	 
     }
 
   }
@@ -241,12 +242,15 @@ public class CustomViewAbove extends ViewGroup {
     }
 
     item = mCustomViewBehind.getMenuPage(item);
-
+    
+    
+    
     final boolean dispatchSelected = mCurItem != item;
     mCurItem = item;
     final int destX = getDestScrollX(mCurItem);
     if (dispatchSelected && mOnPageChangeListener != null) {
       mOnPageChangeListener.onPageSelected(item);
+      
     }
     if (dispatchSelected && mInternalPageChangeListener != null) {
       mInternalPageChangeListener.onPageSelected(item);
@@ -542,6 +546,10 @@ public class CustomViewAbove extends ViewGroup {
    * @param offsetPixels Value in pixels indicating the offset from position.
    */
   protected void onPageScrolled(int position, float offset, int offsetPixels) {
+	 
+	  
+	  
+	  
     if (mOnPageChangeListener != null) {
       mOnPageChangeListener.onPageScrolled(position, offset, offsetPixels);
     }
@@ -552,8 +560,6 @@ public class CustomViewAbove extends ViewGroup {
   }
 
   private void completeScroll() {
-    // Log.i("homeclick",
-    // "homeclick in lib toggle  completeScroll() method 13");
     boolean needPopulate = mScrolling;
     if (needPopulate) {
       // Done with scroll, no longer want to cache view drawing.

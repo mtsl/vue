@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.lateralthoughts.vue.connectivity.DbHelper;
+import com.lateralthoughts.vue.connectivity.VueBatteryManager;
 
 public class VueTrendingAislesDataModel {
 	
@@ -77,6 +78,7 @@ public class VueTrendingAislesDataModel {
     private TrendingAislesContentParser mTrendingAislesParser;
     
     private final String TAG = "VueTrendingAislesModel";
+    public boolean loadOnRequest = false;
     
 	private VueTrendingAislesDataModel(Context context){
 		mContext = context;
@@ -91,7 +93,9 @@ public class VueTrendingAislesDataModel {
         mAisleContentList = new ArrayList<AisleWindowContent>();
         getAislesFromDb();
         //initializeTrendingAisleContent();
-        mMoreDataAvailable = true;
+        
+        mMoreDataAvailable = true;  
+
         mVueContentGateway.getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
 	}
 
@@ -113,6 +117,7 @@ public class VueTrendingAislesDataModel {
 	    protected void onReceiveResult(int resultCode, Bundle resultData){  
 	        switch(mState){
 	        case AISLE_TRENDING_LIST_DATA:
+	          Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 4");
 	            //we were expecting a list of currently trending aisles list
 	            //parse and get this result
 	            //If onCreateView was already invoked before we got this call we should
@@ -126,6 +131,7 @@ public class VueTrendingAislesDataModel {
 	                mAisleDataRequested = false;
 	            }
 	            if(!mMoreDataAvailable){
+	              Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 5");
 	                if(DEBUG) Log.e(TAG,"No more data is available. mOffset = " + mOffset);
 	            }else{
 	                
@@ -144,6 +150,11 @@ public class VueTrendingAislesDataModel {
 	                    mLimit = TRENDING_AISLES_BATCH_SIZE;
 	                }
 	                if(DEBUG) Log.e(TAG,"There is more data to parse. offset = " + mOffset);
+                    if (!VueBatteryManager.isConnected(mContext)
+                         && VueBatteryManager.batteryLevel(mContext) < VueBatteryManager.MINIMUM_BATTERY_LEVEL) {
+	                  mMoreDataAvailable = false;
+	                  loadOnRequest = true;
+	                }
 	            }
 
 	            if(mMoreDataAvailable){
@@ -183,7 +194,7 @@ public class VueTrendingAislesDataModel {
 
 	        try{
 	            JSONArray contentArray = new JSONArray(resultString);
-
+                Log.e("VueTrendingAislesDataModel", "JSONArray size(): " + contentArray.length());
 	            if(0 == contentArray.length()){
 	                mMoreDataAvailable = false;
 	            }
@@ -355,7 +366,19 @@ public class VueTrendingAislesDataModel {
       aislesCursor.close();
       db.close();
 	}
-	
+
+  public void loadMoreAisles() {
+    mMoreDataAvailable = true;
+    loadOnRequest = false;
+    if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
+      mOffset += mLimit;
+    else {
+      mOffset += mLimit;
+      mLimit = TRENDING_AISLES_BATCH_SIZE;
+    }
+    Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 6 ++ mOffset: " + mOffset + ", mLimit" + mLimit);
+    mVueContentGateway.getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
+  }
 	
 	private void copyDB() {
 		try {

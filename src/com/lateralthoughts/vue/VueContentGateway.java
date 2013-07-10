@@ -65,7 +65,7 @@ public class VueContentGateway {
 		mTrendingAislesTag = mContext.getResources().getString(R.string.trending_aisles_tag);
 		mLimitTag = mContext.getResources().getString(R.string.limit_tag);
 		mOffsetTag = mContext.getResources().getString(R.string.offset_tag);}
-	
+
 	/*
 	 * getTrendingAisles - This API is used to get a list of the current Trending Aisles.
 	 * The ResultReceiver object will be notified when the list is available
@@ -88,8 +88,8 @@ public class VueContentGateway {
             Log.e(TAG, "network connection No");
             return status;
           } else if(isConnection && (VueBatteryManager.isConnected(mContext) || (isConnection && VueBatteryManager
-              .batteryLevel(mContext) > VueBatteryManager.MINIMUM_BATTERY_LEVEL)) || (isConnection && VueApplication
-              .getInstance().totalDataDownload < 1024)) {
+              .batteryLevel(mContext) > VueBatteryManager.MINIMUM_BATTERY_LEVEL))) {
+            Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 1");
         	  Intent intent = new Intent(mContext, VueContentRestService.class);
               intent.putExtra("url",baseUri.toString());
               intent.putParcelableArrayListExtra("headers", mHeaders);
@@ -101,7 +101,9 @@ public class VueContentGateway {
               Response.Listener listener = new Response.Listener<JSONArray>(){
                   @Override
                   public void onResponse(JSONArray jsonArray){
+                    Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 2");
                       if(null != jsonArray){
+                        Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 3");
                           Bundle responseBundle = new Bundle();
                           responseBundle.putString("result",jsonArray.toString());
                           receiver.send(1,responseBundle);

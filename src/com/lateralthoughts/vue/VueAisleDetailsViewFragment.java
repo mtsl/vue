@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.webkit.WebView.FindListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -44,6 +46,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 //java utils
@@ -56,6 +59,7 @@ import android.widget.Toast;
 
 public class VueAisleDetailsViewFragment extends Fragment {
     private Context mContext;
+    public  static final  String  SCREEN_NAME = "DETAILS_SCREEN";
     private VueContentGateway mVueContentGateway;
     AisleDetailsViewAdapter mAisleDetailsAdapter;  
     private ListView mAisleDetailsList;
@@ -313,13 +317,36 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			
 		}
 		@Override
-		public void onAddCommentClick(TextView view, EditText editText) {
+		public void onAddCommentClick(final TextView view, final EditText editText) {
 			mAisleDetailsList.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-			 InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+			 final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 			    inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0); 
 			 editText.setVisibility(View.VISIBLE);
+			 editText.setCursorVisible(true);
+			 editText.setTextColor(Color.parseColor("#000000"));
 			 editText.requestFocus();
 			 editText.setFocusable(true);
+			 editText.setOnEditorActionListener(new OnEditorActionListener() {
+				
+				@Override
+				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+					 inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0); 
+					 mAisleDetailsAdapter.mTempComments2 =  new String[mAisleDetailsAdapter.mTempComments.length+1];
+					 mAisleDetailsAdapter.mTempComments2[0] = v.getText().toString();
+					 for(int i =0;i< mAisleDetailsAdapter.mTempComments.length;i++) {
+					 mAisleDetailsAdapter.mTempComments2[i+1]= mAisleDetailsAdapter.mTempComments[i];
+					 }
+					 mAisleDetailsAdapter.mTempComments =  new String[mAisleDetailsAdapter.mTempComments.length+1];
+					 for(int i =0;i< mAisleDetailsAdapter.mTempComments2.length;i++) {
+						 mAisleDetailsAdapter.mTempComments[i]= mAisleDetailsAdapter.mTempComments2[i];
+						 }
+					 editText.setVisibility(View.GONE);
+					 editText.setText("");
+					 view.setVisibility(View.VISIBLE);
+					 mAisleDetailsAdapter.notifyDataSetChanged();
+					return false;
+				}
+			});
 			 view.setVisibility(View.GONE);
 
 			

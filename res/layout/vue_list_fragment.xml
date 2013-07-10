@@ -64,10 +64,50 @@
             android:background="@color/red"
             android:gravity="left|center_vertical"
             android:paddingLeft="12dp"
-            android:text="@string/fontsize"
+            android:text="@string/profile"
             android:textColor="#ffffff" />
-
-        <RelativeLayout
+      <RelativeLayout 
+            android:id="@+id/user_info"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            >
+            <ImageView
+                android:id="@+id/user_profilePic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@string/image_contentDescription"
+                />
+          <TextView
+              android:id="@+id/user_name"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Name:"
+              android:layout_below="@+id/user_profilePic"              
+              />
+          <TextView
+              android:id="@+id/user_date_Of_birth"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="DOB:"
+              android:layout_below="@+id/user_name"
+              />
+          <TextView
+              android:id="@+id/user_gender"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Gender:"
+              android:layout_below="@+id/user_date_Of_birth"
+              />
+          <TextView
+              android:id="@+id/user_current_location"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Current Location:"
+              android:layout_below="@+id/user_gender"
+              />
+      </RelativeLayout>
+      <!--   <RelativeLayout
             android:id="@+id/fontSize_small"
             android:layout_width="fill_parent"
             android:layout_height="48dp"
@@ -189,7 +229,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true" />
-        </RelativeLayout>
+        </RelativeLayout>-->
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -197,7 +237,7 @@
             android:layout_gravity="bottom"
             android:orientation="horizontal" >
 
-            <!-- android:layout_gravity="center|center" -->
+           <!--  android:layout_gravity="center|center" -->
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -216,7 +256,7 @@
                     android:background="#ffffff"
                     android:orientation="horizontal" >
 
-                    <!-- android:background="@color/lemon" -->
+                   <!--  android:background="@color/lemon" -->
 
                     <TextView
                         android:id="@+id/done"
@@ -230,14 +270,14 @@
                         android:textSize="16sp" />
                 </RelativeLayout>
 
-                <!--
-                 <View
+                
+                <!--  <View
                 android:id="@+id/deffview"
                 android:layout_width="2dp"
                 android:layout_height="42dp"
                 android:layout_gravity="bottom"
                 android:background="@color/orange" />
-                -->
+               
 
                 <RelativeLayout
                     android:id="@+id/cancellayout"
@@ -249,7 +289,7 @@
                     android:background="#ffffff"
                     android:orientation="horizontal" >
 
-                    <!-- android:background="@color/lemon" -->
+                    android:background="@color/lemon"
 
                     <TextView
                         android:id="@+id/cancel"
@@ -262,10 +302,10 @@
                         android:text="Cancel"
                         android:textColor="#000000"
                         android:textSize="16sp" />
-                </RelativeLayout>
+                </RelativeLayout> -->
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </LinearLayout> 
 
     <LinearLayout
         android:id="@+id/aboutlayout"

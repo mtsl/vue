@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.view.inputmethod.InputMethodManager;
 
@@ -13,6 +14,7 @@ public class BaseActivity extends SlidingFragmentActivity {
 
   private int mTitleRes = 0;
   protected static VueListFragment mFrag;
+  boolean isBaseOnResumeCalled = false;
   //private OnBackHandle onBackHandle;
   //private boolean isBaseStarts = true;
   
@@ -32,18 +34,7 @@ public class BaseActivity extends SlidingFragmentActivity {
       setTitle(mTitleRes);
     }
 
-    // customize the SlidingMenu
-    SlidingMenu sm = getSlidingMenu();
-    sm.setShadowWidthRes(R.dimen.shadow_width);
-    sm.setShadowDrawable(R.drawable.shadow);
-    sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-    sm.setFadeDegree(0.35f);
-    sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-    FragmentTransaction t = BaseActivity.this.getSupportFragmentManager().beginTransaction();
-    mFrag = new VueListFragment();
-    //mFrag.setListClass(new ListClass());
-    t.replace(R.id.menu_frame, mFrag);
-    t.commit();
+    
      //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
   }
 
@@ -51,21 +42,28 @@ public class BaseActivity extends SlidingFragmentActivity {
   @Override
 	protected void onResume() {
 		super.onResume();
-		/*if(isBaseStarts) {
-			isBaseStarts = false;
-		new Handler().postDelayed(new Runnable() {
-			
-			public void run() {
-				  FragmentTransaction t = BaseActivity.this.getSupportFragmentManager().beginTransaction();
-				    mFrag = new SampleListFragment();
-				    mFrag.setListClass(new ListClass());
-				    t.replace(R.id.menu_frame, mFrag);
-				    t.commit();
-				
-			}
-		}, 50);
-		}*/
-	  
+		if(!isBaseOnResumeCalled) {
+		  final SlidingMenu sm = getSlidingMenu();
+          sm.setShadowWidthRes(R.dimen.shadow_width);
+          sm.setShadowDrawable(R.drawable.shadow);
+          sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+          sm.setFadeDegree(0.35f);
+          sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+		  isBaseOnResumeCalled = true;
+		  new Handler().postDelayed(new Runnable() {
+	          
+	          @Override
+	          public void run() {
+	         // customize the SlidingMenu
+	            
+	            FragmentTransaction t = BaseActivity.this.getSupportFragmentManager().beginTransaction();
+	            mFrag = new VueListFragment();
+	            //mFrag.setListClass(new ListClass());
+	            t.replace(R.id.menu_frame, mFrag);
+	            t.commit();
+	          }
+	        }, 50); 
+		}
 	}
 
   public void disp(String catname, int no, String tag) {
