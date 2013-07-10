@@ -5,7 +5,7 @@
     android:background="@color/offwhitebg"
     android:orientation="vertical" >
 
-    <com.lateralthoughts.vue.utils.AutoResizeTextView
+    <TextView
         android:id="@+id/dataentryitemname"
         android:layout_width="wrap_content"
         android:layout_margin="8dip"

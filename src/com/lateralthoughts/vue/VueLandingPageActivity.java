@@ -39,16 +39,9 @@ public class VueLandingPageActivity extends BaseActivity {
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
-
     Thread.setDefaultUncaughtExceptionHandler(new
     		ExceptionHandler(this));
-    
-
     setContentView(R.layout.vue_landing_main);
-    
- 
-    
-    
 
     // Checking wheather app is opens for first time or not?
     sharedPreferencesObj = this.getSharedPreferences(

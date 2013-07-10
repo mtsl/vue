@@ -11,7 +11,7 @@
  <color name="brown">#A52A2A</color>
    <color name="yellow">#FFFF00</color> 
    <color name="homecolor">#A0CFEC</color>
-   <color name="red">#d93a3a</color>
+   <color name="red">#b91c20</color>
    <color name="redtwo">#ea7171</color>
    <color name="orange">#CD3700</color>
    <color name="lemon">#FFFBD0</color>
@@ -28,10 +28,10 @@
    <color name="dataentrytextcolor">#606060</color>
    <color name="yellowbgcolor">#f8db7a</color>
    <color name="popupbgcolor">#c0c0c0</color>
-    <color name="dataentrylistbordercolor">#b6b6b6</color>
-      <color name="dataentrylistshadowbordercolor1">#292822</color>
-      <color name="dataentrylistshadowbordercolor2">#35342c</color>
-      <color name="dataentrylistshadowbordercolor3">#656556</color>
+   <color name="dataentrylistbordercolor">#b6b6b6</color>
+   <color name="dataentrylistshadowbordercolor1">#292822</color>
+   <color name="dataentrylistshadowbordercolor2">#35342c</color>
+   <color name="dataentrylistshadowbordercolor3">#656556</color>
 </resources>  
                             
                                

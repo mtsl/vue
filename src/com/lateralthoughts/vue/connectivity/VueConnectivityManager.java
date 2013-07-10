@@ -182,12 +182,19 @@ public class VueConnectivityManager {
     }
     return isNetworkConnected;
   }
-  
+
   public static boolean isNetworkConnected(Context context) {
-    boolean isConneted = false;
-    SharedPreferences pref = PreferenceManager
-        .getDefaultSharedPreferences(context);
-    if(!pref.getBoolean(Utils.NETWORK_SETTINGS, false) && !VueConnectivityManager
+    boolean isConneted = true;
+   /* SharedPreferences pref = PreferenceManager
+        .getDefaultSharedPreferences(context);*/
+    if(!VueConnectivityManager.checkConnection(context, false)) {
+      isConneted = false;
+      if(!isTostShown) {
+        isTostShown = true;
+      Toast.makeText(context, R.string.no_network, Toast.LENGTH_SHORT).show();
+      }
+    }
+    /*if(!pref.getBoolean(Utils.NETWORK_SETTINGS, false) && !VueConnectivityManager
         .checkConnection(context, false)) {
       isConneted = false;
       if(!isTostShown) {
@@ -204,7 +211,7 @@ public class VueConnectivityManager {
     } else {
       isConneted = true;
       isTostShown = false;
-    }
+    }*/
     return isConneted;
   }
 }
