@@ -161,6 +161,7 @@ public class AisleDetailsViewListLoader {
 
         String desiredContentId = windowContent.getAisleId();
         contentBrowser = holder.aisleContentBrowser;
+        contentBrowser.setHolderName(VueAisleDetailsViewFragment.SCREEN_NAME);
         
         if(holder.uniqueContentId.equals(desiredContentId)){
         	Log.i("bitmaptest", "bitmaptest: call  return from here: ");

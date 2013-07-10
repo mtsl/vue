@@ -46,7 +46,15 @@ public class AisleContentBrowser extends ViewFlipper {
     public int mLastY;
     private boolean mTouchMoved;
     private int mTapTimeout;
-    private GestureDetector mDetector;
+    private String holderName;
+    public String getHolderName() {
+		return holderName;
+	}
+
+	public void setHolderName(String holderName) {
+		this.holderName = holderName;
+	}
+	private GestureDetector mDetector;
     
 	public AisleContentBrowser(Context context){
 		super(context);

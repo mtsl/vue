@@ -291,10 +291,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			viewHolder.addCommentlay.setVisibility(View.GONE);
 			// image content gone
 		} else if(position == mListCount-1){
+			viewHolder.separator.setVisibility(View.GONE);
 			viewHolder.imgContentlay.setVisibility(View.GONE);
 			viewHolder.vueCommentheader.setVisibility(View.GONE);
 			viewHolder.commentContentlay.setVisibility(View.GONE);
 			viewHolder.addCommentlay.setVisibility(View.VISIBLE);
+			 
 			viewHolder.vue_user_enterComment.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -307,9 +309,15 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		
 		
 		else {
+			viewHolder.userComment.setText(mTempComments2[position - 2]);
 			viewHolder.imgContentlay.setVisibility(View.GONE);
 			viewHolder.vueCommentheader.setVisibility(View.GONE);
 			viewHolder.addCommentlay.setVisibility(View.GONE);
+			viewHolder.separator.setVisibility(View.VISIBLE);
+			if(position == mListCount-2) {
+				viewHolder.separator.setVisibility(View.GONE);
+			}
+			
 		}
  
 		
@@ -323,6 +331,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			@Override
 			public void onClick(View v) {
 				Log.i("listexpand", "listexpand clicked");
+				 
 				//mswipeListner.onResetAdapter();
 				if(mTempComments2.length <= 2){
 					mTempComments2 = new String[mTempComments.length];

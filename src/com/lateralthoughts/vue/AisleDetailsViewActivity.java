@@ -1,8 +1,6 @@
 package com.lateralthoughts.vue;
 
 //generic android goodies
-
-import com.actionbarsherlock.view.Window;
 import com.slidingmenu.lib.SlidingMenu;
 
 import android.annotation.SuppressLint;
@@ -36,11 +34,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);*/
-       
-      
- 
-        
-        
+
     mFragRight = new VueComparisionFragment();
     getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
     final SlidingMenu sm = getSlidingMenu();
@@ -49,6 +43,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.menu_frame_two, mFragRight).commit();
     sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+
        
 	 
         //sm.setSecondaryShadowDrawable(R.drawable.shadowright);
