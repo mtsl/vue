@@ -74,7 +74,7 @@ public class AisleDetailsViewListLoader {
         contentBrowser = holder.aisleContentBrowser;
         contentBrowser.setHolderName(VueAisleDetailsViewFragment.SCREEN_NAME);
         if(holder.uniqueContentId.equals(desiredContentId)){
-        	Log.i("bitmaptest", "bitmaptest: call  return from here: ");
+           Log.i("bitmaptest", "bitmaptest: call  return from here: ");
             //we are looking at a visual object that has either not been used
             //before or has to be filled with same content. Either way, no need
             //to worry about cleaning up anything!
@@ -101,7 +101,7 @@ public class AisleDetailsViewListLoader {
         }       
         imageDetailsArr = windowContent.getImageList();
         if(null != imageDetailsArr && imageDetailsArr.size() != 0){  
-        	 holder.aisleContentBrowser.mSwipeListener.onReceiveImageCount(imageDetailsArr.size());
+            holder.aisleContentBrowser.mSwipeListener.onReceiveImageCount(imageDetailsArr.size());
             itemDetails = imageDetailsArr.get(0);
             imageView = mViewFactory.getEmptyImageView();
             LinearLayout.LayoutParams params = 
@@ -112,9 +112,9 @@ public class AisleDetailsViewListLoader {
            // imgConnectivity.setImageClick(imageView);
             Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
             if(bitmap != null){
-            	bitmap =  setParams(holder.aisleContentBrowser, imageView, bitmap);
-            /*	 bitmap = Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*80)/100,
-            			 (VueApplication.getInstance().getScreenHeight()*60)/100);*/
+               bitmap =  setParams(holder.aisleContentBrowser, imageView, bitmap);
+            /*    bitmap = Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*80)/100,
+                      (VueApplication.getInstance().getScreenHeight()*60)/100);*/
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);                  
             }
@@ -170,8 +170,8 @@ public class AisleDetailsViewListLoader {
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
                 
                 if (this == bitmapWorkerTask) {
-                	//aisleContentBrowser.addView(imageView);
-                	bitmap =  setParams( aisleContentBrowser, imageView, bitmap);
+                   //aisleContentBrowser.addView(imageView);
+                   bitmap =  setParams( aisleContentBrowser, imageView, bitmap);
                     imageView.setImageBitmap(bitmap);
                 }
             }
@@ -205,38 +205,38 @@ public class AisleDetailsViewListLoader {
         return true;
     }  
 
-	private Bitmap setParams(AisleContentBrowser vFlipper, ImageView imageView,
-			Bitmap bitmap) {
-		int imgCardHeight = (VueApplication.getInstance().getScreenHeight() * 60) / 100;
-		FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-				VueApplication.getInstance().getScreenWidth(), imgCardHeight);
+   private Bitmap setParams(AisleContentBrowser vFlipper, ImageView imageView,
+         Bitmap bitmap) {
+      int imgCardHeight = (VueApplication.getInstance().getScreenHeight() * 60) / 100;
+      FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+            VueApplication.getInstance().getScreenWidth(), imgCardHeight);
 
-		if (vFlipper != null)
-			vFlipper.setLayoutParams(showpieceParams);
-		/*
-		 * bitmap = Utils.getScaledBitMap(bitmap,
-		 * (VueApplication.getInstance().getScreenWidth()*80)/100,
-		 * (VueApplication.getInstance().getScreenHeight()*60)/100);
-		 */
+      if (vFlipper != null)
+         vFlipper.setLayoutParams(showpieceParams);
+      /*
+       * bitmap = Utils.getScaledBitMap(bitmap,
+       * (VueApplication.getInstance().getScreenWidth()*80)/100,
+       * (VueApplication.getInstance().getScreenHeight()*60)/100);
+       */
 
-		if (vFlipper != null) {
-			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-			params.gravity = Gravity.CENTER;
-			imageView.setLayoutParams(params);
-		} else {
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			params.gravity = Gravity.CENTER;
-			imageView.setScaleType(ScaleType.CENTER_INSIDE);
-			imageView.setLayoutParams(params);
-			imageView.setScaleType(ScaleType.CENTER_INSIDE);
-			/*
-			 * bitmap = Utils.getScaledBitMap(bitmap,
-			 * (VueApplication.getInstance().getScreenWidth()*80)/100,
-			 * (VueApplication.getInstance().getScreenHeight()*60)/100);
-			 */
-		}
-		return bitmap;
-	}
+      if (vFlipper != null) {
+         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+               LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+         params.gravity = Gravity.CENTER;
+         imageView.setLayoutParams(params);
+      } else {
+         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+               LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+         params.gravity = Gravity.CENTER;
+         imageView.setScaleType(ScaleType.CENTER_INSIDE);
+         imageView.setLayoutParams(params);
+         imageView.setScaleType(ScaleType.CENTER_INSIDE);
+         /*
+          * bitmap = Utils.getScaledBitMap(bitmap,
+          * (VueApplication.getInstance().getScreenWidth()*80)/100,
+          * (VueApplication.getInstance().getScreenHeight()*60)/100);
+          */
+      }
+      return bitmap;
+   }
 }

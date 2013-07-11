@@ -6,7 +6,6 @@ import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueComparisionActivity;
 
 import android.content.Context;
 import android.content.Intent;

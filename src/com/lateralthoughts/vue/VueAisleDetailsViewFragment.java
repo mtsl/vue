@@ -148,103 +148,103 @@ public class VueAisleDetailsViewFragment extends Fragment {
         mTotalScreenCount = VueApplication.getInstance().getClickedWindowCount();
         mIndicatorView.setNumberofScreens(mTotalScreenCount);
         mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
-		mAisleDetailsList.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				if (arg2 != 0 && arg2 != 1) {
-					if (mListCount - 1 == arg2) {
-						TextView v = (TextView) arg1
-								.findViewById(R.id.vue_user_entercomment);
-						EditText vueEdt = (EditText) arg1
-								.findViewById(R.id.edtcomment);
-						vueEdt.setVisibility(View.VISIBLE);
-						MyCustomAnimation manim = new MyCustomAnimation(
-								getActivity(), vueEdt,ANIM_SPEED_EDITEXPAND ,
-								MyCustomAnimation.EXPAND);
-						vueEdt.startAnimation(manim);
-						vueEdt.setFocusable(true);
-						mAisleDetailsAdapter.notifyDataSetChanged();
+        mAisleDetailsList.setOnItemClickListener(new OnItemClickListener() {
+         @Override
+         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+               long arg3) {
+            if (arg2 != 0 && arg2 != 1) {
+               if (mListCount - 1 == arg2) {
+                  TextView v = (TextView) arg1
+                        .findViewById(R.id.vue_user_entercomment);
+                  EditText vueEdt = (EditText) arg1
+                        .findViewById(R.id.edtcomment);
+                  vueEdt.setVisibility(View.VISIBLE);
+                  MyCustomAnimation manim = new MyCustomAnimation(
+                        getActivity(), vueEdt,ANIM_SPEED_EDITEXPAND ,
+                        MyCustomAnimation.EXPAND);
+                  vueEdt.startAnimation(manim);
+                  vueEdt.setFocusable(true);
+                  mAisleDetailsAdapter.notifyDataSetChanged();
 
-					} else {
+               } else {
 
-						TextView v = (TextView) arg1
-								.findViewById(R.id.vue_user_comment);
-						int x = v.getLineCount();
-						if (x == 2) {
-							LinearLayout.LayoutParams params;
-							params = new LinearLayout.LayoutParams(
-									LayoutParams.MATCH_PARENT,
-									LayoutParams.WRAP_CONTENT);
-							params.setMargins(
-									VueApplication.getInstance().getPixel(
-											USER_COMMENT_MARIGIN),
-									VueApplication.getInstance().getPixel(
-											USER_COMMENT_MARIGIN),
-									VueApplication.getInstance().getPixel(
-											USER_COMMENT_MARIGIN),
-									VueApplication.getInstance().getPixel(
-											USER_COMMENT_MARIGIN));
-							v.setLayoutParams(params);
-							v.setMaxLines(Integer.MAX_VALUE);
-						} else {
-							v.setMaxLines(2);
-						}
-					}
-				} else if (arg2 == 0) {
+                  TextView v = (TextView) arg1
+                        .findViewById(R.id.vue_user_comment);
+                  int x = v.getLineCount();
+                  if (x == 2) {
+                     LinearLayout.LayoutParams params;
+                     params = new LinearLayout.LayoutParams(
+                           LayoutParams.MATCH_PARENT,
+                           LayoutParams.WRAP_CONTENT);
+                     params.setMargins(
+                           VueApplication.getInstance().getPixel(
+                                 USER_COMMENT_MARIGIN),
+                           VueApplication.getInstance().getPixel(
+                                 USER_COMMENT_MARIGIN),
+                           VueApplication.getInstance().getPixel(
+                                 USER_COMMENT_MARIGIN),
+                           VueApplication.getInstance().getPixel(
+                                 USER_COMMENT_MARIGIN));
+                     v.setLayoutParams(params);
+                     v.setMaxLines(Integer.MAX_VALUE);
+                  } else {
+                     v.setMaxLines(2);
+                  }
+               }
+            } else if (arg2 == 0) {
 
-					TextView v = (TextView) arg1
-							.findViewById(R.id.vue_details_descreption);
-					int x = v.getLineCount();
-					if (x == 3) {
-						LinearLayout.LayoutParams params;
-						params = new LinearLayout.LayoutParams(
-								LayoutParams.MATCH_PARENT,
-								LayoutParams.WRAP_CONTENT);
-						params.setMargins(VueApplication.getInstance()
-								.getPixel(12), VueApplication.getInstance()
-								.getPixel(4), VueApplication.getInstance()
-								.getPixel(12), VueApplication.getInstance()
-								.getPixel(4));
-						v.setLayoutParams(params);
-						v.setMaxLines(Integer.MAX_VALUE);
-					} else {
-						v.setMaxLines(3);
-					}
-				}
-			}
-		});
+               TextView v = (TextView) arg1
+                     .findViewById(R.id.vue_details_descreption);
+               int x = v.getLineCount();
+               if (x == 3) {
+                  LinearLayout.LayoutParams params;
+                  params = new LinearLayout.LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT);
+                  params.setMargins(VueApplication.getInstance()
+                        .getPixel(12), VueApplication.getInstance()
+                        .getPixel(4), VueApplication.getInstance()
+                        .getPixel(12), VueApplication.getInstance()
+                        .getPixel(4));
+                  v.setLayoutParams(params);
+                  v.setMaxLines(Integer.MAX_VALUE);
+               } else {
+                  v.setMaxLines(3);
+               }
+            }
+         }
+      });
         dotIndicatorBg.getBackground().setAlpha(45);
-		new Handler().postDelayed(new Runnable() {
+      new Handler().postDelayed(new Runnable() {
 
-			@Override
-			public void run() {
-				// TODO need to invisible this view in a smooth way
-				dotIndicatorBg.setVisibility(View.GONE);
-			}
-		},AISLE_HEADER_SHOW_TIME);
-		RelativeLayout vuesharelayout = (RelativeLayout) v
-				.findViewById(R.id.vuesharelayout);
-		vuesharelayout.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				mAisleDetailsAdapter.share(getActivity(), getActivity());
-			}
-		});
+         @Override
+         public void run() {
+            // TODO need to invisible this view in a smooth way
+            dotIndicatorBg.setVisibility(View.GONE);
+         }
+      },AISLE_HEADER_SHOW_TIME);
+      RelativeLayout vuesharelayout = (RelativeLayout) v
+            .findViewById(R.id.vuesharelayout);
+      vuesharelayout.setOnClickListener(new OnClickListener() {
+         @Override
+         public void onClick(View arg0) {
+            mAisleDetailsAdapter.share(getActivity(), getActivity());
+         }
+      });
         return v;
     }
     @Override
     public void onResume() {
-    	super.onResume();
-    	mAisleDetailsAdapter.notifyDataSetChanged();
-    	ViewTreeObserver vto = mVueUserName.getViewTreeObserver(); 
-    	vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
-    	    @Override 
-    	    public void onGlobalLayout() { 
-    	        mVueUserName.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-    	        mVueUserName.setText(mAisleDetailsAdapter.mVueusername);
-    	    } 
-    	});
+       super.onResume();
+       mAisleDetailsAdapter.notifyDataSetChanged();
+       ViewTreeObserver vto = mVueUserName.getViewTreeObserver(); 
+       vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
+           @Override 
+           public void onGlobalLayout() { 
+               mVueUserName.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
+               mVueUserName.setText(mAisleDetailsAdapter.mVueusername);
+           } 
+       });
     }
     /**
      * 
@@ -254,101 +254,101 @@ public class VueAisleDetailsViewFragment extends Fragment {
      */
     private class AisleDetailsSwipeListner implements AisleDetailSwipeListener {
 
-		@Override
-		public void onAisleSwipe(String direction) {
-			mPrevPosition = mCurrentScreen;
-			mIndicatorView.switchToScreen(mPrevPosition,checkScreenBoundaries(direction,mCurrentScreen)
-					 );
-		}
-    	public void onReceiveImageCount(int count) {
-    		mTotalScreenCount = count;
-    	}
-		@Override
-		public void onResetAdapter() {
-			//TODO: need to remove these counts when original comments available.
-			if(mListCount == 5){
-			mListCount = 10;
-			} else {
-				mListCount = 5;
-			}
-			 mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mListCount ,null);
-			 mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
-			
-		}
-		/**
-		 * when user enters the comment it will be added to the comment list at the top.
-		 */
-		@Override
-		public void onAddCommentClick(final TextView view, final EditText editText) {
-			mAisleDetailsList.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-			 final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-			    inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0); 
-			 editText.setVisibility(View.VISIBLE);
-			 editText.setCursorVisible(true);
-			 editText.setTextColor(Color.parseColor(getResources().getString(R.color.black)));
-			 editText.requestFocus();
-			 editText.setFocusable(true);
-			 editText.setOnEditorActionListener(new OnEditorActionListener() {
-				@Override
-				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-					 inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0); 
-					 mAisleDetailsAdapter.mTempComments2 =  new String[mAisleDetailsAdapter.mTempComments.length+1];
-					 mAisleDetailsAdapter.mTempComments2[0] = v.getText().toString();
-					 for(int i =0;i< mAisleDetailsAdapter.mTempComments.length;i++) {
-					 mAisleDetailsAdapter.mTempComments2[i+1]= mAisleDetailsAdapter.mTempComments[i];
-					 }
-					 mAisleDetailsAdapter.mTempComments =  new String[mAisleDetailsAdapter.mTempComments.length+1];
-					 for(int i =0;i< mAisleDetailsAdapter.mTempComments2.length;i++) {
-						 mAisleDetailsAdapter.mTempComments[i]= mAisleDetailsAdapter.mTempComments2[i];
-						 }
-					 editText.setVisibility(View.GONE);
-					 editText.setText("");
-					 view.setVisibility(View.VISIBLE);
-					 mAisleDetailsAdapter.notifyDataSetChanged();
-					return false;
-				}
-			});
-			 view.setVisibility(View.GONE);
+      @Override
+      public void onAisleSwipe(String direction) {
+         mPrevPosition = mCurrentScreen;
+         mIndicatorView.switchToScreen(mPrevPosition,checkScreenBoundaries(direction,mCurrentScreen)
+                );
+      }
+       public void onReceiveImageCount(int count) {
+          mTotalScreenCount = count;
+       }
+      @Override
+      public void onResetAdapter() {
+         //TODO: need to remove these counts when original comments available.
+         if(mListCount == 5){
+         mListCount = 10;
+         } else {
+            mListCount = 5;
+         }
+          mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mListCount ,null);
+          mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+         
+      }
+      /**
+       * when user enters the comment it will be added to the comment list at the top.
+       */
+      @Override
+      public void onAddCommentClick(final TextView view, final EditText editText) {
+         mAisleDetailsList.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+          final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+             inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0); 
+          editText.setVisibility(View.VISIBLE);
+          editText.setCursorVisible(true);
+          editText.setTextColor(Color.parseColor(getResources().getString(R.color.black)));
+          editText.requestFocus();
+          editText.setFocusable(true);
+          editText.setOnEditorActionListener(new OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0); 
+                mAisleDetailsAdapter.mTempComments2 =  new String[mAisleDetailsAdapter.mTempComments.length+1];
+                mAisleDetailsAdapter.mTempComments2[0] = v.getText().toString();
+                for(int i =0;i< mAisleDetailsAdapter.mTempComments.length;i++) {
+                mAisleDetailsAdapter.mTempComments2[i+1]= mAisleDetailsAdapter.mTempComments[i];
+                }
+                mAisleDetailsAdapter.mTempComments =  new String[mAisleDetailsAdapter.mTempComments.length+1];
+                for(int i =0;i< mAisleDetailsAdapter.mTempComments2.length;i++) {
+                   mAisleDetailsAdapter.mTempComments[i]= mAisleDetailsAdapter.mTempComments2[i];
+                   }
+                editText.setVisibility(View.GONE);
+                editText.setText("");
+                view.setVisibility(View.VISIBLE);
+                mAisleDetailsAdapter.notifyDataSetChanged();
+               return false;
+            }
+         });
+          view.setVisibility(View.GONE);
 
-			
-		}
+         
+      }
     }
     private int checkScreenBoundaries(String direction,int mCurrentScreen){
-		  if(direction.equalsIgnoreCase("left")) {
-			  if(mCurrentScreen == mTotalScreenCount){
-				  this.mCurrentScreen = mTotalScreenCount;
-				  return this.mCurrentScreen;
-			  } else if(mCurrentScreen < mTotalScreenCount){
-				  this.mCurrentScreen++;
-				  return this.mCurrentScreen;
-			  }
-		  } else {
-			    if(direction.equalsIgnoreCase("right")) {
-			    	if(mCurrentScreen == 1){
-			    		this.mCurrentScreen = 1;
-			    		return this.mCurrentScreen;
-			    	} else {
-			    		this.mCurrentScreen--;
-			    		return this.mCurrentScreen;
-			    	}
-			    }
-		  }
-    	return mCurrentScreen;
+        if(direction.equalsIgnoreCase("left")) {
+           if(mCurrentScreen == mTotalScreenCount){
+              this.mCurrentScreen = mTotalScreenCount;
+              return this.mCurrentScreen;
+           } else if(mCurrentScreen < mTotalScreenCount){
+              this.mCurrentScreen++;
+              return this.mCurrentScreen;
+           }
+        } else {
+             if(direction.equalsIgnoreCase("right")) {
+                if(mCurrentScreen == 1){
+                   this.mCurrentScreen = 1;
+                   return this.mCurrentScreen;
+                } else {
+                   this.mCurrentScreen--;
+                   return this.mCurrentScreen;
+                }
+             }
+        }
+       return mCurrentScreen;
     }
     protected MotionEvent mLastOnDownEvent = null;
     private int getHighlightPosition(int cur_pos) {
-    	mCurentIndPosition = cur_pos;
-    	int highlightPosition;
-    	if(mCurentIndPosition <= mTotalScreenCount) {
-    		if(mCurentIndPosition+MAX_DOTS_TO_SHOW > mTotalScreenCount) {
-    			int temp = mTotalScreenCount - mCurentIndPosition;
-    			  highlightPosition = MAX_DOTS_TO_SHOW - temp;
-    		} else {
-    			int temp = mCurentIndPosition % MAX_DOTS_TO_SHOW;
-    			highlightPosition = temp;
-    		}
-    		return highlightPosition;
-    	}
-		return mCurentIndPosition;
+       mCurentIndPosition = cur_pos;
+       int highlightPosition;
+       if(mCurentIndPosition <= mTotalScreenCount) {
+          if(mCurentIndPosition+MAX_DOTS_TO_SHOW > mTotalScreenCount) {
+             int temp = mTotalScreenCount - mCurentIndPosition;
+               highlightPosition = MAX_DOTS_TO_SHOW - temp;
+          } else {
+             int temp = mCurentIndPosition % MAX_DOTS_TO_SHOW;
+             highlightPosition = temp;
+          }
+          return highlightPosition;
+       }
+      return mCurentIndPosition;
     }
 }
