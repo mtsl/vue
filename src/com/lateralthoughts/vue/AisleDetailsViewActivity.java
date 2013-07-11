@@ -1,16 +1,27 @@
 package com.lateralthoughts.vue;
 
 //generic android goodies
+
+import com.slidingmenu.lib.CustomViewAbove.OnPageChangeListener;
 import com.slidingmenu.lib.SlidingMenu;
+import com.slidingmenu.lib.SlidingMenu.OnOpenListener;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  {
     Fragment mFragRight;
@@ -22,28 +33,35 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
         super.onCreate(icicle);
        // setContentView(R.layout.vuedetails_frag);
         setContentView(R.layout.aisle_details_activity_landing);
-        getSupportActionBar().hide();
-        
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-       /* int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
         if (currentapiVersion >= 11){
-        
-        } */
+        	 getActionBar().hide();
+        } 
  
    /* 	mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);*/
-
-    mFragRight = new VueComparisionFragment();
-    getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-    final SlidingMenu sm = getSlidingMenu();
-    sm.setMode(SlidingMenu.LEFT_RIGHT);
-    sm.setSecondaryMenu(R.layout.menu_frame_two);
-    getSupportFragmentManager().beginTransaction()
-        .replace(R.id.menu_frame_two, mFragRight).commit();
-    sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-
+       
+      
+ 
+        
+        
+    /*    mFragRight=  new VueComparisionFragment();
+        
+        getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+        final SlidingMenu sm = getSlidingMenu();
+        sm.setMode(SlidingMenu.LEFT_RIGHT);
+        sm.setSecondaryMenu(R.layout.menu_frame_two);
+       getSupportFragmentManager()
+        .beginTransaction()
+        .replace(R.id.menu_frame_two, mFragRight)
+        .commit();
+       sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);*/
+       
+ 
        
 	 
         //sm.setSecondaryShadowDrawable(R.drawable.shadowright);
@@ -101,10 +119,10 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
         try {
 			VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager().findFragmentById(R.id.aisle_details_view_fragment);
 			  
-			if(fragment.mAisleDetailsAdapter.share.shareIntentCalled)
+			if(fragment.mAisleDetailsAdapter.mShare.shareIntentCalled)
 			{
-				fragment.mAisleDetailsAdapter.share.shareIntentCalled = false;
-			    fragment.mAisleDetailsAdapter.share.dismisDialog();
+				fragment.mAisleDetailsAdapter.mShare.shareIntentCalled = false;
+			    fragment.mAisleDetailsAdapter.mShare.dismisDialog();
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

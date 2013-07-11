@@ -3,8 +3,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+    <FrameLayout
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:layout_gravity="center"
+>
     <fragment android:name="com.lateralthoughts.vue.VueAisleDetailsViewFragment"
         android:id="@+id/aisle_details_view_fragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
+    
+    <SlidingDrawer
+android:id="@+id/drawer2"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:handle="@+id/handler2"
+android:content="@+id/content2"
+android:orientation="horizontal"
+>
+
+	<LinearLayout
+	android:id="@+id/handler2" 
+ 	android:layout_width="10dip"
+ 	android:layout_height="fill_parent" 
+ 	 
+ 	android:background="#90000000">
+ 	
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        
+        android:layout_height="wrap_content"
+     android:layout_centerInParent="true"
+        android:textColor="@android:color/white"
+        android:text="Move this bar to left side to see the animation." />
+	 </LinearLayout>
+	    
+	<LinearLayout
+	android:id="@id/content2"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:background="#ffffff"
+	>
+		<ImageView
+		android:id="@+id/handlerss2" 
+ 		android:layout_width="fill_parent"
+ 		android:layout_height="wrap_content" 
+ 		android:src="@drawable/thumb_up" 
+ 		/>
+	
+	</LinearLayout>
+	
+</SlidingDrawer>
+    </FrameLayout>
 </LinearLayout>

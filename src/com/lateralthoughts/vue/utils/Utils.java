@@ -101,14 +101,14 @@ public class Utils {
 
 	}
     public static Bitmap getScaledBitMap(Bitmap bitmap,int reqWidth,int reqHeight) {
-    	Log.i("bitmaptest", "bitmaptest12: coming reqWidth: "+reqWidth);
+  /*  	Log.i("bitmaptest", "bitmaptest12: coming reqWidth: "+reqWidth);
     	Log.i("bitmaptest", "bitmaptest12: coming reqHeight: "+reqHeight);
     	bitmap = getResizedBitmap(bitmap, reqWidth, reqHeight);
-    	return bitmap;
+    	return bitmap;*/
     	
-    	/*
-    	int bitmapwidth,bitmapheight;
-    	int newWidth,newHeight;
+    	
+    	float bitmapwidth,bitmapheight;
+    	float newWidth,newHeight;
     	bitmapwidth  = bitmap.getWidth();
     	bitmapheight = bitmap.getHeight();
     	Log.i("width & height", "reqWidth1 original: "+bitmapwidth+" reqHeight2: "+bitmapheight);
@@ -127,8 +127,8 @@ public class Utils {
     		 
     	}  
     	 
-    	int aspect = bitmapwidth / bitmapheight;
-    	int xnew,ynew;
+    /*	float aspect = bitmapwidth / bitmapheight;
+    	float xnew,ynew;
     	if(aspect < 1) {
     		 ynew = reqHeight;
     		  xnew = reqHeight * aspect;
@@ -137,11 +137,13 @@ public class Utils {
     		xnew = reqWidth;
     		 ynew = reqWidth/aspect;
     	}
-    	
+    	*/
     	//test commit
-		//return createBitmap(bitmap,newWidth,newHeight);
+    	int x = Math.round(newWidth);
+    	int y = Math.round(newHeight);
+		return createBitmap(bitmap,x,y);
 		
-    	return createBitmap(bitmap,xnew,ynew);
+    	//return createBitmap(bitmap,xnew,ynew);
 		
 		
 //		float aspect = xgiven/ygiven
@@ -161,7 +163,7 @@ public class Utils {
 		
 		
     	// return bitmap;
-    */}
+    }
 
     private static  Bitmap createBitmap(Bitmap bitmap,int width,int height) {
     	if(width > 0 && height > 0) {
@@ -258,5 +260,38 @@ public class Utils {
 
             e.printStackTrace();
         }
+	}
+	
+	
+	private void dummmyfun(Bitmap bitmap, float rw,float rh) {
+	 
+		float gw = 0,gh;
+		float nw,nh;
+		float scaleFactor;
+		gw =bitmap.getWidth();
+		gh = bitmap.getHeight();
+		 
+		if(rw/gw < 1){
+			//scale down the image 
+			//means bitmap size needs to be increase
+			
+			scaleFactor = Math.min(rw/gw, rh/gh);
+			nw = gw * scaleFactor;
+			nh = gh * scaleFactor;
+			
+		} else {
+			//scale up the image
+			 if(rw/gw > 1 && rh/gh > 1) {
+				 scaleFactor = Math.min(rw/gw, rh/gh);
+				 nw = gw *scaleFactor;
+				 nh = gh * scaleFactor;
+			 } else {
+				 // in this case image may crop in some times.
+				 //if we dont want to crop then we should not scale up the image.
+				 scaleFactor = Math.max(rw/gw, rh/gh);
+				 nw = gw * scaleFactor;
+				 nh = gh * scaleFactor;
+			 }
+		}
 	}
 }

@@ -60,6 +60,9 @@ import android.widget.Toast;
 public class VueAisleDetailsViewFragment extends Fragment {
     private Context mContext;
     public  static final  String  SCREEN_NAME = "DETAILS_SCREEN";
+    private static final int AISLE_HEADER_SHOW_TIME = 5000;
+    private static final int ANIM_SPEED_EDITEXPAND = 500;
+    private static final int USER_COMMENT_MARIGIN = 4;
     private VueContentGateway mVueContentGateway;
     AisleDetailsViewAdapter mAisleDetailsAdapter;  
     private ListView mAisleDetailsList;
@@ -69,11 +72,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
     private int  mTotalScreenCount ;
     private String mScreenDirection;
     private LinearLayout mVueDetailsContainer;
-    int mlistCount =5;
+    int mListCount =5;
     int mFirstVisibleItem;
     int mVisibleItemCount;
-    TextView vue_user_name;
-    
+    TextView mVueUserName;
     int mCurentIndPosition;
     static final int MAX_DOTS_TO_SHOW = 3;
     int mPrevPosition;
@@ -94,9 +96,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
         if(null == mVueContentGateway){
             //assert here: this is a no go!
         }  
-        Log.i("windowID", "windowID: receivedd  "+ VueApplication.getInstance().getClickedWindowID());
         mSwipeListener = new AisleDetailsSwipeListner();
-        mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mlistCount ,null);
+        mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mListCount ,null);
         //mVueDetailsContainer = mAisleDetailsAdapter.prepareDetailsVue();
         
     }
@@ -113,51 +114,25 @@ public class VueAisleDetailsViewFragment extends Fragment {
         View v = inflater.inflate(R.layout.aisles_detailed_view_fragment, container, false);
         mAisleDetailsList = (ListView)v.findViewById(R.id.aisle_details_list); 
         mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
-        
-        mAisleDetailsList.setOnTouchListener(new OnTouchListener() {
-            public boolean onTouch(View view, MotionEvent e) {
-            	if(detector != null)
-                detector.onTouchEvent(e);
-                return false;
-            }
-        });
-        
-        
-        
-        ImageView vue_aisle = (ImageView) v.findViewById(R.id.vue_aisle);
-        vue_aisle.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
- 
-				/* Intent intent = new Intent();
-		            intent.setClass(VueApplication.getInstance(), VueComparisionActivity.class);
-		            startActivity(intent); */
-				
-			}
-		});
- 
-          vue_user_name = (TextView) v.findViewById(R.id.vue_user_name);
-           vue_user_name.setTextSize(Utils.MEDIUM_TEXT_SIZE);
+          mVueUserName = (TextView) v.findViewById(R.id.vue_user_name);
+           mVueUserName.setTextSize(Utils.MEDIUM_TEXT_SIZE);
  
  
      
-        final LinearLayout dot_indicator_bg = (LinearLayout)v.findViewById(R.id.dot_indicator_bg);
+        final LinearLayout dotIndicatorBg = (LinearLayout)v.findViewById(R.id.dot_indicator_bg);
         
-          TextView vue_aisle_heading = (TextView)v.findViewById(R.id.vue_aisle_heading);
-          vue_aisle_heading.setTextSize(Utils.LARGE_TEXT_SIZE);
-        RelativeLayout vue_image_indicator = (RelativeLayout)v.findViewById(R.id.vue_image_indicator);
+          TextView vueAisleHeading = (TextView)v.findViewById(R.id.vue_aisle_heading);
+          vueAisleHeading.setTextSize(Utils.LARGE_TEXT_SIZE);
+        RelativeLayout mVueImageIndicator = (RelativeLayout)v.findViewById(R.id.vue_image_indicator);
    /*     TextView  leftGo = (TextView) v.findViewById(R.id.leftgo);
         TextView  rightGo = (TextView) v.findViewById(R.id.rightgo);*/
-        
         mIndicatorView = new IndicatorView(getActivity());
         mIndicatorView.setId(1234);
         RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-         
         relParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         relParams.addRule(RelativeLayout.CENTER_VERTICAL);
         mIndicatorView.setLayoutParams(relParams);
-        vue_image_indicator.addView(mIndicatorView);
+        mVueImageIndicator.addView(mIndicatorView);
         RelativeLayout.LayoutParams relParams1 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         relParams1.addRule(RelativeLayout.CENTER_VERTICAL);
         relParams1.addRule(RelativeLayout.LEFT_OF, mIndicatorView.getId());
@@ -165,7 +140,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
         RelativeLayout.LayoutParams relParams2 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         relParams2.addRule(RelativeLayout.RIGHT_OF, mIndicatorView.getId());
         relParams2.addRule(RelativeLayout.CENTER_VERTICAL);
-       
        // rightGo.setLayoutParams(relParams2);
         mIndicatorView.setNumberofScreens(mTotalScreenCount);
         mIndicatorView.setDrawables(R.drawable.number_active,
@@ -174,25 +148,24 @@ public class VueAisleDetailsViewFragment extends Fragment {
         mTotalScreenCount = VueApplication.getInstance().getClickedWindowCount();
         mIndicatorView.setNumberofScreens(mTotalScreenCount);
         mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
- 
-        
-        mAisleDetailsList.setOnItemClickListener(new OnItemClickListener() {
-
+		mAisleDetailsList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				if (arg2 != 0 && arg2 != 1) {
-					if (mlistCount - 1 == arg2) {
-		 
+					if (mListCount - 1 == arg2) {
 						TextView v = (TextView) arg1
-						.findViewById(R.id.vue_user_entercomment);
-						EditText vue_edt = (EditText)arg1.findViewById(R.id.edtcomment);
-						vue_edt.setVisibility(View.VISIBLE);
-						MyCustomAnimation manim = new MyCustomAnimation(getActivity(), vue_edt, 500, MyCustomAnimation.EXPAND);
-						vue_edt.startAnimation(manim);
-						vue_edt.setFocusable(true);
+								.findViewById(R.id.vue_user_entercomment);
+						EditText vueEdt = (EditText) arg1
+								.findViewById(R.id.edtcomment);
+						vueEdt.setVisibility(View.VISIBLE);
+						MyCustomAnimation manim = new MyCustomAnimation(
+								getActivity(), vueEdt,ANIM_SPEED_EDITEXPAND ,
+								MyCustomAnimation.EXPAND);
+						vueEdt.startAnimation(manim);
+						vueEdt.setFocusable(true);
 						mAisleDetailsAdapter.notifyDataSetChanged();
-						 
+
 					} else {
 
 						TextView v = (TextView) arg1
@@ -203,11 +176,15 @@ public class VueAisleDetailsViewFragment extends Fragment {
 							params = new LinearLayout.LayoutParams(
 									LayoutParams.MATCH_PARENT,
 									LayoutParams.WRAP_CONTENT);
-							params.setMargins(VueApplication.getInstance()
-									.getPixel(4), VueApplication.getInstance()
-									.getPixel(4), VueApplication.getInstance()
-									.getPixel(4), VueApplication.getInstance()
-									.getPixel(4));
+							params.setMargins(
+									VueApplication.getInstance().getPixel(
+											USER_COMMENT_MARIGIN),
+									VueApplication.getInstance().getPixel(
+											USER_COMMENT_MARIGIN),
+									VueApplication.getInstance().getPixel(
+											USER_COMMENT_MARIGIN),
+									VueApplication.getInstance().getPixel(
+											USER_COMMENT_MARIGIN));
 							v.setLayoutParams(params);
 							v.setMaxLines(Integer.MAX_VALUE);
 						} else {
@@ -237,60 +214,41 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				}
 			}
 		});
- 
-        
-        
-        dot_indicator_bg.getBackground().setAlpha(45);
-        new Handler().postDelayed(new Runnable() {
-			
+        dotIndicatorBg.getBackground().setAlpha(45);
+		new Handler().postDelayed(new Runnable() {
+
 			@Override
 			public void run() {
 				// TODO need to invisible this view in a smooth way
-				dot_indicator_bg.setVisibility(View.GONE);
+				dotIndicatorBg.setVisibility(View.GONE);
 			}
-		}, 5000);
-        
-     
-		Log.d("VueAisleDetailsViewFragment",
-				"Get ready to display details view");
-
+		},AISLE_HEADER_SHOW_TIME);
 		RelativeLayout vuesharelayout = (RelativeLayout) v
 				.findViewById(R.id.vuesharelayout);
-
 		vuesharelayout.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-
 				mAisleDetailsAdapter.share(getActivity(), getActivity());
-
 			}
 		});
-        
         return v;
     }
     @Override
     public void onResume() {
     	super.onResume();
     	mAisleDetailsAdapter.notifyDataSetChanged();
-    	
-    	 
-    	ViewTreeObserver vto = vue_user_name.getViewTreeObserver(); 
+    	ViewTreeObserver vto = mVueUserName.getViewTreeObserver(); 
     	vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
     	    @Override 
     	    public void onGlobalLayout() { 
-    	        vue_user_name.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-    	     
-    	        vue_user_name.setText(mAisleDetailsAdapter.vue_user_name);
+    	        mVueUserName.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
+    	        mVueUserName.setText(mAisleDetailsAdapter.mVueusername);
     	    } 
     	});
- 
     }
-    GestureDetector detector = new GestureDetector(mContext,new CustomListenr());
     /**
      * 
-     * @author raju
+     *  
      *while swiping the views inside the AisleContentWindow onAisleSwipe method will be
      *called to indicate the current position of the image.
      */
@@ -307,15 +265,19 @@ public class VueAisleDetailsViewFragment extends Fragment {
     	}
 		@Override
 		public void onResetAdapter() {
-			if(mlistCount == 5){
-			mlistCount = 10;
+			//TODO: need to remove these counts when original comments available.
+			if(mListCount == 5){
+			mListCount = 10;
 			} else {
-				mlistCount = 5;
+				mListCount = 5;
 			}
-			 mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mlistCount ,null);
+			 mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mListCount ,null);
 			 mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
 			
 		}
+		/**
+		 * when user enters the comment it will be added to the comment list at the top.
+		 */
 		@Override
 		public void onAddCommentClick(final TextView view, final EditText editText) {
 			mAisleDetailsList.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
@@ -323,11 +285,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			    inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0); 
 			 editText.setVisibility(View.VISIBLE);
 			 editText.setCursorVisible(true);
-			 editText.setTextColor(Color.parseColor("#000000"));
+			 editText.setTextColor(Color.parseColor(getResources().getString(R.color.black)));
 			 editText.requestFocus();
 			 editText.setFocusable(true);
 			 editText.setOnEditorActionListener(new OnEditorActionListener() {
-				
 				@Override
 				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 					 inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0); 
@@ -358,13 +319,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				  this.mCurrentScreen = mTotalScreenCount;
 				  return this.mCurrentScreen;
 			  } else if(mCurrentScreen < mTotalScreenCount){
-				/*  if(mCurrentScreen < MAX_DOTS_TO_SHOW) {
-					  this.mCurrentScreen++;
-				  } else {
-					  this.mCurrentScreen = getHighlightPosition(mCurrentScreen);
-				  }*/
 				  this.mCurrentScreen++;
-				  
 				  return this.mCurrentScreen;
 			  }
 		  } else {
@@ -378,9 +333,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			    	}
 			    }
 		  }
-    	
     	return mCurrentScreen;
-    	
     }
     protected MotionEvent mLastOnDownEvent = null;
     private int getHighlightPosition(int cur_pos) {
@@ -398,63 +351,4 @@ public class VueAisleDetailsViewFragment extends Fragment {
     	}
 		return mCurentIndPosition;
     }
-private class CustomListenr implements OnGestureListener{
-	@Override
-	public boolean onDown(MotionEvent e) {
-		// TODO Auto-generated method stub
-		mLastOnDownEvent = e;
-		return false;
-	}
-
-	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-			float velocityY) {
-		if(e1 == null) {
-			e1 = mLastOnDownEvent;
-		}
-		if(e1 == null || e2 == null) {
-			return false;
-		}
-		  int dx = (int) (e1.getX() - e2.getX());
-          // don't accept the fling if it's too short
-          
-          if (dx > 100 && Math.abs(velocityX) > Math.abs(velocityY)) {
-       /* 	  Intent intent = new Intent();
-	            intent.setClass(VueApplication.getInstance(), VueComparisionActivity.class);
-	            startActivity(intent);*/
-        	  
-            /*  if (velocityX > 0) {
-            	  Toast.makeText(mContext, "fling called", 500).show();
-              } else {
-            	  Toast.makeText(mContext, "fling called2", 500).show();
-              }*/
-              return true;
-          } else {
-              return false;
-          }
-		
-		 
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e) {
-		
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-			float distanceY) {
-		return false;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent e) {
-		
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent e) {
-		return false;
-	}
-}
 }
