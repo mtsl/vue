@@ -10,6 +10,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -44,6 +45,7 @@ import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.lateralthoughts.vue.utils.BitmapLruCache;
@@ -138,10 +140,7 @@ public class VueListFragment extends Fragment {
         TextView textView = (TextView) v
             .findViewById(R.id.vue_list_fragment_itemTextview);
         String s = textView.getText().toString();
-        if (s.equals(getString(R.string.sidemeun_option_Settings))) {
-          customlayout.setVisibility(View.VISIBLE);
-          customlayout.startAnimation(animUp);
-        } else if (s.equals(getString(R.string.sidemenu_option_About))) {
+        if (s.equals(getString(R.string.sidemenu_option_About))) {
           aboutlayout.setVisibility(View.VISIBLE);
           aboutlayout.startAnimation(animUp);
         } else if (s.equals(getString(R.string.sidemenu_option_FeedBack))) {
@@ -186,6 +185,13 @@ public class VueListFragment extends Fragment {
           int groupPosition, int childPosition, long id) {
     	  TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
     	  String s = textView.getText().toString();
+    	  if(s.equals(getString(R.string.sidemenu_option_Profile))) {
+    	  //  if (s.equals(getString(R.string.sidemeun_option_Settings))) {
+              customlayout.setVisibility(View.VISIBLE);
+              customlayout.startAnimation(animUp);
+              getUserInfo();
+           // } else
+    	  }
     	  getFriendsList(s);
         return false;
       }
@@ -253,7 +259,7 @@ public class VueListFragment extends Fragment {
         R.drawable.category, getCategoriesChildren());
     groups.add(item);
     item = new ListOptionItem(getString(R.string.sidemeun_option_Settings),
-        R.drawable.settings01, null);
+        R.drawable.settings01, getSettingsChildren());
     groups.add(item);
     /*item = new ListOptionItem(getString(R.string.sidemenu_option_Profile),
         R.drawable.profile, null);
@@ -330,6 +336,14 @@ public class VueListFragment extends Fragment {
     inviteFriendsChildren.add(item);
     return inviteFriendsChildren;
   }
+  
+  private List<ListOptionItem> getSettingsChildren() {
+    List<ListOptionItem> settingsChildren = new ArrayList<VueListFragment.ListOptionItem>();
+    ListOptionItem item = new ListOptionItem(getString(R.string.sidemenu_option_Profile),
+        R.drawable.profile, null);
+    settingsChildren.add(item);
+    return settingsChildren;
+  }
 
   /***/
   private class ListOptionItem {
@@ -405,7 +419,8 @@ public class VueListFragment extends Fragment {
     public int getChildrenCount(int groupPosition) {
       if (groups.get(groupPosition).tag.equals("Categories")
           || (groups.get(groupPosition).tag
-              .equals(getString(R.string.sidemenu_option_Invite_Friends)))) {
+              .equals(getString(R.string.sidemenu_option_Invite_Friends)))
+              || groups.get(groupPosition).tag.equals("Settings")) {
         return groups.get(groupPosition).children.size();
       }
       return 0;
@@ -756,5 +771,32 @@ public class VueListFragment extends Fragment {
       String dob = userDateOfBirth.getText().toString();
       String gender = userGender.getText().toString();
       String location = userCurrentLocation.toString();
-    }
+      name = "Name: " + sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "");
+      dob = "DOB: " + sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_DOB, "");
+      gender = "Gender: " + sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_GENDER, "");
+      location = "Location: " + sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_LOCATION, "");
+      String profilePicUrl = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_PROFILE_PICTURE, null);
+      userName.setText(name);
+      userDateOfBirth.setText(dob);
+      userGender.setText(gender);
+      userCurrentLocation.setText(location);
+      if(profilePicUrl != null) {
+        Response.Listener listener = new Response.Listener<Bitmap>() {
+          @Override
+          public void onResponse(Bitmap bmp) {
+            userProfilePic.setImageBitmap(bmp);
+          }
+        };
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+           @Override
+           public void onErrorResponse(VolleyError arg0) {
+               Log.e("VueListFragment", arg0.getMessage());
+           }
+         };
+        ImageRequest imagerequestObj = new ImageRequest(profilePicUrl, listener, 0,
+            0, null, errorListener);       
+        VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
+      }
+     }
+      
 }

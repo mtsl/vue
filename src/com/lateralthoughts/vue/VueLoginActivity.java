@@ -16,6 +16,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -57,6 +61,7 @@ import com.facebook.Request.GraphUserCallback;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphLocation;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
@@ -644,6 +649,24 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 				// TODO Auto-generated method stub
 				if (user != null) {
 
+				  String location = "";
+			      try {
+				    /*GraphLocation gLocation = user.getLocation();
+				    location = (gLocation.getCity() != null) ? gLocation.getCity() : "";
+				    location = ", " + (gLocation.getState() != null) != null ? gLocation.getState(): "";
+				    location = ", " + (gLocation.getCountry() != null) != null ? gLocation.getCountry() : "";*/
+			        JSONObject contentArray = null;
+				    Log.e("VueLoginActivity", "User Location : " + user.getLocation());
+                         contentArray = new JSONObject(user.getLocation() + "");
+                        for (int i = 0; i < contentArray.length(); i++) {
+                              location = contentArray.getJSONArray("state")
+                              .getJSONObject(1).getString("name");
+                        }
+                        Log.e("VueLoginActivity", "User Location : " + location);
+                  } catch (JSONException e1) {
+                      e1.printStackTrace();
+                  }
+
 					editor.putString(
 							VueConstants.FACEBOOK_USER_PROFILE_PICTURE,
 							VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
@@ -658,7 +681,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 					editor.putString(VueConstants.FACEBOOK_USER_GENDER,
 							user.getProperty("gender") + "");
 					editor.putString(VueConstants.FACEBOOK_USER_LOCATION,
-							user.getLocation() + "");
+					    location);
 					 editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
 				         		session.getAccessToken());
 				         editor

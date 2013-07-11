@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_search"
+    <!-- <item android:id="@+id/menu_search"
           android:icon="@drawable/lookingfor"
           android:showAsAction="ifRoom|collapseActionView"
-          android:actionViewClass="android.widget.SearchView"/>
-
+          android:actionViewClass="android.widget.SearchView"/> -->
     <item android:id="@+id/menu_my_profile"
           android:icon="@drawable/profile"
           android:title="@string/profile"
           android:showAsAction="always"/>
-
-    <item android:id="@+id/menu_create_aisles"
+     <item android:id="@+id/menu_create_aisles"
           android:icon="@drawable/createaisle"
           android:title="@string/create_aisle"
           android:showAsAction="always"/>
