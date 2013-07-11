@@ -23,6 +23,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -76,6 +78,8 @@ public class CreateAilseFragment extends Fragment{
 	
 	String previouslookingfor = null, previousocasion = null, previoussaysomething = null;
 	
+	public static boolean create_ailse_keyboard_hidden_shown_flag = false;
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -93,6 +97,7 @@ public class CreateAilseFragment extends Fragment{
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		
+		create_ailse_keyboard_hidden_shown_flag = true;
 		
 		View v = inflater.inflate(R.layout.create_aisleview_fragment, container, false);
 		
@@ -162,7 +167,7 @@ public class CreateAilseFragment extends Fragment{
 			@Override
 			public boolean onEditorAction(TextView arg0, int arg1, KeyEvent arg2) {
 				// TODO Auto-generated method stub
-				
+				create_ailse_keyboard_hidden_shown_flag = false;
 				previoussaysomething = saysomethingaboutaisle.getText().toString();
 				inputMethodManager.hideSoftInputFromWindow(saysomethingaboutaisle.getWindowToken(), 0);
 	 			inputMethodManager.hideSoftInputFromWindow(occasiontext.getWindowToken(), 0);
@@ -176,8 +181,31 @@ public class CreateAilseFragment extends Fragment{
 			@Override
 			public void onInterceptTouch() {
 				// TODO Auto-generated method stub
+				create_ailse_keyboard_hidden_shown_flag = false;
 				inputMethodManager.hideSoftInputFromWindow(saysomethingaboutaisle.getWindowToken(), 0);
 			saysomethingaboutaisle.setText(previoussaysomething);	
+			}
+		});
+		
+		saysomethingaboutaisle.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+				// TODO Auto-generated method stub
+				 create_ailse_keyboard_hidden_shown_flag = true;
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		
@@ -189,7 +217,7 @@ public class CreateAilseFragment extends Fragment{
 				// TODO Auto-generated method stub
 				
 				
-				
+				create_ailse_keyboard_hidden_shown_flag = false;
 				
 						lookingforbigtext.setBackgroundColor(Color.TRANSPARENT);
 					
@@ -205,6 +233,7 @@ public class CreateAilseFragment extends Fragment{
 
 						if(!dontgotonextforlookup)
 						{
+							create_ailse_keyboard_hidden_shown_flag = true;
 						occassionbigtext.setBackgroundColor(getResources()
 								.getColor(R.color.yellowbgcolor));
 						
@@ -221,6 +250,7 @@ public class CreateAilseFragment extends Fragment{
 		
 		lookingfortext.setonInterceptListen(new OnInterceptListener() {
 	          public void onInterceptTouch() {
+	        	  create_ailse_keyboard_hidden_shown_flag = false;
 	        	  lookingforpopup.setVisibility(View.GONE);
 	 			 ocassionpopup.setVisibility(View.GONE);
 	 			
@@ -240,6 +270,7 @@ public class CreateAilseFragment extends Fragment{
 			public boolean onEditorAction(TextView arg0, int actionId, KeyEvent arg2) {
 				// TODO Auto-generated method stub
 				
+				create_ailse_keyboard_hidden_shown_flag = false;
 						inputMethodManager.hideSoftInputFromWindow(occasiontext.getWindowToken(), 0);
 			
 						occassionbigtext.setBackgroundColor(Color.TRANSPARENT);
@@ -249,6 +280,7 @@ public class CreateAilseFragment extends Fragment{
 			            
 			            if(!dontgotonextforoccasion)
 			            {
+			            	create_ailse_keyboard_hidden_shown_flag = true;
 			            categorylistview.setVisibility(View.VISIBLE);
 						categorylistviewlayout.setVisibility(View.VISIBLE);
 						categoerypopup.setVisibility(View.VISIBLE);
@@ -263,6 +295,8 @@ public class CreateAilseFragment extends Fragment{
 		
 		occasiontext.setonInterceptListen(new OnInterceptListener() {
 	          public void onInterceptTouch() {
+	        	  create_ailse_keyboard_hidden_shown_flag = false;
+	        	  
 	        	  lookingforpopup.setVisibility(View.GONE);
 	 			 ocassionpopup.setVisibility(View.GONE);
 	 			occasiontext.setText(previousocasion);
@@ -281,6 +315,8 @@ public class CreateAilseFragment extends Fragment{
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				
+				 create_ailse_keyboard_hidden_shown_flag = true;
 			
 				dontgotonextforlookup = true;
 				
@@ -309,6 +345,8 @@ public class CreateAilseFragment extends Fragment{
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 			
+				 create_ailse_keyboard_hidden_shown_flag = true;
+				
 				dontgotonextforoccasion = true;
 				
 				 ocassionpopup.setVisibility(View.VISIBLE);

@@ -52,6 +52,7 @@ import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Request.Callback;
+import com.facebook.Request.GraphUserCallback;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -63,6 +64,7 @@ import com.facebook.widget.WebDialog;
 import com.facebook.widget.WebDialog.OnCompleteListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.plus.PlusClient;
+import com.google.android.gms.plus.PlusClient.OnPersonLoadedListener;
 import com.google.android.gms.plus.PlusShare;
 import com.google.android.gms.plus.PlusClient.OnPeopleLoadedListener;
 import com.google.android.gms.plus.model.people.Person;
@@ -80,7 +82,7 @@ import com.lateralthoughts.vue.utils.clsShare;
 
 
 
-public class VueLoginActivity extends FragmentActivity implements OnSignedInListener, OnPeopleLoadedListener{
+public class VueLoginActivity extends FragmentActivity implements OnSignedInListener, OnPeopleLoadedListener, OnPersonLoadedListener{
 
 	
 	private boolean hide_cancelbtn = false;
@@ -118,7 +120,9 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	 private static final String TAG = "VueLoginActivity"; 
 	
 		
-		private final List<String> PERMISSIONS = Arrays.asList("publish_actions");
+		private final List<String> PERMISSIONS = new ArrayList<String>();
+		
+		 /*Arrays.asList("publish_actions", );*/
 		
 		ProgressDialog fbprogressdialog, gplusdialog;
 		
@@ -143,6 +147,10 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	setContentView(R.layout.socialnetworkingloginscreen);
 	
 	Log.e("fb","oncreate");
+	
+	PERMISSIONS.add("publish_actions");
+	PERMISSIONS.add("email");
+	PERMISSIONS.add("user_birthday");
 	
 	// Below code for FB... By Krishna.V
 	uiHelper = new UiLifecycleHelper(this, callback);
@@ -488,7 +496,13 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	    SharedPreferences.Editor editor = sharedPreferencesObj.edit();
 	    editor.putBoolean(VueConstants.VUE_LOGIN, true);
 	    editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, true);
+	    editor.putString(VueConstants.GOOGLEPLUS_USER_EMAIL, plusClient.getAccountName());
 	    editor.commit();
+
+	  
+	    
+	    plusClient.loadPerson(this, "me");
+
 
 	    
 	    if(!googleplus_friend_invite && !facebookflag && !googleplusAutomaticLogin)
@@ -611,29 +625,95 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	  }
 	
 	
-	public void saveFBLoginDetails(String accessToken)
+	public void saveFBLoginDetails(final Session session)
 	{
+		
+		
+	
+
+		
 		sharedPreferencesObj = this.getSharedPreferences(
     	        VueConstants.SHAREDPREFERENCE_NAME, 0);
-		 SharedPreferences.Editor editor = sharedPreferencesObj.edit();
-         editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
-         		accessToken);
-         editor
-             .putBoolean(VueConstants.VUE_LOGIN, true);
-         editor
-         .putBoolean(VueConstants.FACEBOOK_LOGIN, true);
-         editor.commit();
-         if (from_invitefriends != null && from_invitefriends.equals(VueConstants.FACEBOOK)) {
-        	 from_invitefriends = null;
-       	  try {
-   			BaseActivity.mFrag.getFriendsList(context.getResources().getString(
-   			  R.string.sidemenu_sub_option_Facebook));
-   		} catch (Exception e) {
-   			e.printStackTrace();
-   		}
-         }
-         
-       if(!from_details_fbshare)  finish();
+		 final SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+		 
+		Request.executeMeRequestAsync(session, new GraphUserCallback() {
+
+			@Override
+			public void onCompleted(GraphUser user,
+					com.facebook.Response response) {
+				// TODO Auto-generated method stub
+				if (user != null) {
+
+					editor.putString(
+							VueConstants.FACEBOOK_USER_PROFILE_PICTURE,
+							VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
+									+ user.getId()
+									+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL);
+					editor.putString(VueConstants.FACEBOOK_USER_EMAIL,
+							user.getProperty("email") + "");
+					editor.putString(VueConstants.FACEBOOK_USER_NAME,
+							user.getName());
+					editor.putString(VueConstants.FACEBOOK_USER_DOB,
+							user.getBirthday());
+					editor.putString(VueConstants.FACEBOOK_USER_GENDER,
+							user.getProperty("gender") + "");
+					editor.putString(VueConstants.FACEBOOK_USER_LOCATION,
+							user.getLocation() + "");
+					 editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
+				         		session.getAccessToken());
+				         editor
+				             .putBoolean(VueConstants.VUE_LOGIN, true);
+				         editor
+				         .putBoolean(VueConstants.FACEBOOK_LOGIN, true);
+				         editor.commit();
+				         if (from_invitefriends != null && from_invitefriends.equals(VueConstants.FACEBOOK)) {
+				        	 from_invitefriends = null;
+				       	  try {
+				   			BaseActivity.mFrag.getFriendsList(context.getResources().getString(
+				   			  R.string.sidemenu_sub_option_Facebook));
+				   		} catch (Exception e) {
+				   			e.printStackTrace();
+				   		}
+				         }
+				         
+				       if(!from_details_fbshare)  finish();
+
+				}
+				else
+				{
+					 editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
+				         		session.getAccessToken());
+				         editor
+				             .putBoolean(VueConstants.VUE_LOGIN, true);
+				         editor
+				         .putBoolean(VueConstants.FACEBOOK_LOGIN, true);
+				         editor.commit();
+				         if (from_invitefriends != null && from_invitefriends.equals(VueConstants.FACEBOOK)) {
+				        	 from_invitefriends = null;
+				       	  try {
+				   			BaseActivity.mFrag.getFriendsList(context.getResources().getString(
+				   			  R.string.sidemenu_sub_option_Facebook));
+				   		} catch (Exception e) {
+				   			e.printStackTrace();
+				   		}
+				         }
+				         
+				       if(!from_details_fbshare)  finish();
+				}
+
+			}
+		});
+
+		 try {
+			socialintegrationmainlayotu.setVisibility(View.GONE);
+				ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
+				
+				trendingbg.setVisibility(View.GONE);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+     
 	}
 	
 	
@@ -644,7 +724,7 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 			boolean fbloggedin = (session != null && session.isOpened());
 
 			if (fbloggedin) {
-				saveFBLoginDetails(session.getAccessToken());
+				saveFBLoginDetails(session);
 			
 			if(from_details_fbshare)
 				{
@@ -1232,5 +1312,20 @@ public class VueLoginActivity extends FragmentActivity implements OnSignedInList
 	        startActivityForResult(getInteractivePostIntent(plusClient, activity, post, googleplusFriend),
 	                REQUEST_CODE_INTERACTIVE_POST);
 	    }
+
+		@Override
+		public void onPersonLoaded(ConnectionResult connectionresult, Person person) {
+			// TODO Auto-generated method stub
+			
+			if(connectionresult.getErrorCode() == ConnectionResult.SUCCESS)
+			{
+				
+				  SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+				  editor.putString(VueConstants.GOOGLEPLUS_USER_NAME, person.getDisplayName());
+				  editor.putString(VueConstants.GOOGLEPLUS_USER_PROFILE_PICTURE, person.getImage().getUrl());
+				  editor.commit();
+				
+		}
+		}
 		
 }

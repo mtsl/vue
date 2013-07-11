@@ -202,7 +202,7 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
                 
             }
             
-            if(VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest) {
+          /*  if(VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest) {
               int lastVisiblePosition = firstVisibleItem + visibleItemCount;
               int totalItems = 0;
               if (view.equals(mLeftColumnView) ){
@@ -213,7 +213,7 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
               if((totalItems - lastVisiblePosition) < 5) {
                 VueTrendingAislesDataModel.getInstance(mContext).loadMoreAisles();
               }
-            }
+            }*/
             
         }
     };

@@ -48,7 +48,7 @@ public class CreateAisleActivity extends BaseActivity /*FragmentActivity*/{
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-
+		Log.e("CreateAilseActivty", "onactivti result" + requestCode+resultCode);
 		try {
 			if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
 				Bundle b = data.getExtras();

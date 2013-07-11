@@ -1,5 +1,8 @@
 package com.lateralthoughts.vue.utils;
 
+import com.android.volley.RetryPolicy;
+import com.lateralthoughts.vue.CreateAilseFragment;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -50,7 +53,17 @@ public class EditTextBackEvent extends EditText {
     try {
 		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
 		  onInterceptListenr.onInterceptTouch();
-		  return false;
+		/*
+		  if(CreateAilseFragment.create_ailse_keyboard_hidden_shown_flag)
+		  {
+			  return true;
+		  }
+		  else
+		  {
+			 return false;
+		  }*/
+		  return true;
+
 		}
 	} catch (Exception e) {
 		// TODO Auto-generated catch block

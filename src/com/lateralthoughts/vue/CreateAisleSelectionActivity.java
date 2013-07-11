@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
@@ -206,10 +207,11 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 				}
 				else 
 				{
+					Log.e("CreateSelectionActivty", "onactivti result if" + requestCode+resultCode);
 					Intent intent = new Intent();
 					Bundle b = new Bundle();
 				    b.putString(VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY, selectedImagePath);
-				    intent.putExtras(data);
+				    intent.putExtras(b);
 				    setResult(VueConstants.CREATE_AILSE_ACTIVITY_RESULT, intent);
 				    finish();
 				}
