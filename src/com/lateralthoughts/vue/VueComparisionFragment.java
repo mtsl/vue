@@ -39,9 +39,9 @@ public class VueComparisionFragment extends Fragment {
      int mScreenTotalHeight;
      int mCoparisionScreenHeight;
      Context mContext;
- 	AisleWindowContent mWindowContent;
- 	 ArrayList<AisleImageDetails> mimageDetailsArr = null;
- 	AisleImageDetails mitemDetails = null;
+     AisleWindowContent mWindowContent;
+ 	 ArrayList<AisleImageDetails> mImageDetailsArr = null;
+ 	AisleImageDetails mItemDetails = null;
      private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
      private BitmapLoaderUtils mBitmapLoaderUtils;
     @Override
@@ -56,39 +56,31 @@ public class VueComparisionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mContext = getActivity();
-     
         View v = inflater.inflate(R.layout.aisle_comparision_view_fragment, container, false);
-    
+        
+        
         mTopScroller = (HorizontalListView) v.findViewById(R.id.topscroller);
         mBottomScroller = (HorizontalListView) v.findViewById(R.id.bottomscroller);
-      //  VueComparisionAdapter vcAdapter = new VueComparisionAdapter(getActivity(), null, null);
-       // vcAdapter.setUpImages(mTopScroller,mBottomScroller);
         mStatusbarHeight = VueApplication.getInstance().getmStatusBarHeight();
         mScreenTotalHeight = VueApplication.getInstance().getScreenHeight();
         mCoparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight - VueApplication.getInstance().getPixel(30);
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
-
-      		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
-      			 mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel.getAisleAt(i);
-      			if (mWindowContent.getAisleId().equalsIgnoreCase(
-      					VueApplication.getInstance().getClickedWindowID())) {
-      				 mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel.getAisleAt(i);
-      				break;
-      			}
-      		}
-      		mimageDetailsArr = mWindowContent.getImageList();
-      		 if(null != mimageDetailsArr && mimageDetailsArr.size() != 0){ 
-      			 
+        for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
+			mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel
+					.getAisleAt(i);
+			if (mWindowContent.getAisleId().equalsIgnoreCase(
+					VueApplication.getInstance().getClickedWindowID())) {
+				mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel
+						.getAisleAt(i);
+				break;
+			}
+		}
+      		mImageDetailsArr = mWindowContent.getImageList();
+      		 if(null != mImageDetailsArr && mImageDetailsArr.size() != 0){ 
       		 }
-        
         mTopScroller.setAdapter(new ComparisionAdapter(mContext));
         mBottomScroller.setAdapter(new ComparisionAdapter(mContext));
-        
-        
-       
-       
-
         
         return v;
     }
@@ -103,49 +95,52 @@ class ComparisionAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
-		return mimageDetailsArr.size();
+		return mImageDetailsArr.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
 		return position;
 	}
 
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return position;
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		 ViewHolder viewHolder;
-		 mitemDetails = mimageDetailsArr.get(position);
-		 Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(mitemDetails.mCustomImageUrl);
-		  if(convertView == null) {
-			  viewHolder = new ViewHolder();
-					  convertView = minflater.inflate(R.layout.vuecompareimg, null);
-					  viewHolder.img = (ImageView) convertView.findViewById(R.id.vue_compareimg);
-					  RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mCoparisionScreenHeight/2, mCoparisionScreenHeight/2);
-					  params.addRule(RelativeLayout.CENTER_IN_PARENT);
-					  params.setMargins(VueApplication.getInstance().getPixel(10), 0, 0, 0);
-					  viewHolder.img.setLayoutParams(params);
-					  viewHolder.img.setBackgroundColor(Color.parseColor("#FFFFFF"));
-					  convertView.setTag(viewHolder);
-		  }
-		  viewHolder =   (ViewHolder) convertView.getTag();
-		  if(bitmap != null)
-		  viewHolder.img.setImageBitmap(bitmap); 
-		  else {
-			  viewHolder.img.setImageResource(R.drawable.ic_launcher);
-			  BitmapWorkerTask task = new BitmapWorkerTask(null, viewHolder.img, mCoparisionScreenHeight/2);
-			  task.execute(mitemDetails.mCustomImageUrl);
-			 
-		  }
-		return convertView;
-	}
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder viewHolder;
+			mItemDetails = mImageDetailsArr.get(position);
+			Bitmap bitmap = mBitmapLoaderUtils
+					.getCachedBitmap(mItemDetails.mCustomImageUrl);
+			if (convertView == null) {
+				viewHolder = new ViewHolder();
+				convertView = minflater.inflate(R.layout.vuecompareimg, null);
+				viewHolder.img = (ImageView) convertView
+						.findViewById(R.id.vue_compareimg);
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						mCoparisionScreenHeight / 2,
+						mCoparisionScreenHeight / 2);
+				params.addRule(RelativeLayout.CENTER_IN_PARENT);
+				params.setMargins(VueApplication.getInstance().getPixel(10), 0,
+						0, 0);
+				viewHolder.img.setLayoutParams(params);
+				viewHolder.img.setBackgroundColor(Color.parseColor("#FFFFFF"));
+				convertView.setTag(viewHolder);
+			}
+			viewHolder = (ViewHolder) convertView.getTag();
+			if (bitmap != null)
+				viewHolder.img.setImageBitmap(bitmap);
+			else {
+				viewHolder.img.setImageResource(R.drawable.ic_launcher);
+				BitmapWorkerTask task = new BitmapWorkerTask(null,
+						viewHolder.img, mCoparisionScreenHeight / 2);
+				task.execute(mItemDetails.mCustomImageUrl);
+
+			}
+			return convertView;
+		}
 	
 	private class ViewHolder {
 		ImageView img;

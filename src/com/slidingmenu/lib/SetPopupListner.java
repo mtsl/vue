@@ -3,7 +3,7 @@ package com.slidingmenu.lib;
 
 /**
  * 
- * @author raju
+ *  
  *
  */
 public interface SetPopupListner {

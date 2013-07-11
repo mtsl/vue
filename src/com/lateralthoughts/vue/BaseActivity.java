@@ -42,27 +42,24 @@ public class BaseActivity extends SlidingFragmentActivity {
   @Override
 	protected void onResume() {
 		super.onResume();
-		if(!isBaseOnResumeCalled) {
-		  final SlidingMenu sm = getSlidingMenu();
-          sm.setShadowWidthRes(R.dimen.shadow_width);
-          sm.setShadowDrawable(R.drawable.shadow);
-          sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-          sm.setFadeDegree(0.35f);
-          sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-		  isBaseOnResumeCalled = true;
-		  new Handler().postDelayed(new Runnable() {
-	          
-	          @Override
-	          public void run() {
-	         // customize the SlidingMenu
-	            
-	            FragmentTransaction t = BaseActivity.this.getSupportFragmentManager().beginTransaction();
-	            mFrag = new VueListFragment();
-	            //mFrag.setListClass(new ListClass());
-	            t.replace(R.id.menu_frame, mFrag);
-	            t.commit();
-	          }
-	        }, 20); 
+		if (!isBaseOnResumeCalled) {
+			final SlidingMenu sm = getSlidingMenu();
+			sm.setShadowWidthRes(R.dimen.shadow_width);
+			sm.setShadowDrawable(R.drawable.shadow);
+			sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+			sm.setFadeDegree(0.35f);
+			sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+			isBaseOnResumeCalled = true;
+
+			// customize the SlidingMenu
+
+			FragmentTransaction t = BaseActivity.this
+					.getSupportFragmentManager().beginTransaction();
+			mFrag = new VueListFragment();
+			// mFrag.setListClass(new ListClass());
+			t.replace(R.id.menu_frame, mFrag);
+			t.commit();
+
 		}
 	}
 

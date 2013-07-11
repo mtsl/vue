@@ -41,7 +41,7 @@ public AisleWindowContent getItem(int position) {
 				break;
 			}
 		}
-	 mViewLoader.getContentIntoCompareview(viewHolder);
+	 //mViewLoader.getContentIntoCompareview(viewHolder);
 	 
  }
  class ViewHolder {

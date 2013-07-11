@@ -1,10 +1,12 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -50,6 +52,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
+import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class VueListFragment extends Fragment {
@@ -604,9 +607,8 @@ public class VueListFragment extends Fragment {
 		        false);
 	    if (s.equals("Facebook")) {
 
-	        final VueShare share = new VueShare();
 	        if (facebookloginflag) {
-	          fbFriendsList(share);
+	          fbFriendsList();
 	        }  else {
 		        if (progress.isShowing()) {
 			          progress.dismiss();
@@ -653,7 +655,7 @@ public class VueListFragment extends Fragment {
 	  }
 
 	  // Pull and display fb friends from facebook.com
-  private void fbFriendsList(final VueShare share) {
+  private void fbFriendsList() {
 
 
 
@@ -675,7 +677,7 @@ public class VueListFragment extends Fragment {
           // TODO Auto-generated method stub
           List<FbGPlusDetails> fbGPlusFriends;
           try {
-            fbGPlusFriends = share.JsonParsing(response);
+            fbGPlusFriends = JsonParsing(response);
             if (fbGPlusFriends != null) {
               inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(
                   getActivity(), R.layout.invite_friends, fbGPlusFriends));
@@ -797,6 +799,37 @@ public class VueListFragment extends Fragment {
             0, null, errorListener);       
         VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
       }
-     }
-      
+    }
+    
+    /**
+	 *  
+	 * @param jsonString
+	 * @return
+	 * @throws JSONException
+	 */
+	@SuppressWarnings("unchecked")
+	List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException {
+		List<FbGPlusDetails> facebookFriendsDetailsList = null;
+
+		JSONObject mainJsonObj = new JSONObject(jsonString);
+		JSONArray dataArray = mainJsonObj.getJSONArray("data");
+		if (dataArray != null && dataArray.length() > 0) {
+			facebookFriendsDetailsList = new ArrayList<FbGPlusDetails>();
+
+			for (int i = 0; i < dataArray.length(); i++) {
+
+				JSONObject jsonObj = dataArray.getJSONObject(i);
+				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(
+						jsonObj.getString("id"), jsonObj.getString("name"),
+						jsonObj.getJSONObject("picture").getJSONObject("data")
+								.getString("url"), null);
+
+				facebookFriendsDetailsList.add(objFacebookFriendsDetails);
+			}
+		}
+
+		Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
+
+		return facebookFriendsDetailsList;
+	}
 }
