@@ -62,7 +62,7 @@ public class BaseActivity extends SlidingFragmentActivity {
 	            t.replace(R.id.menu_frame, mFrag);
 	            t.commit();
 	          }
-	        }, 50); 
+	        }, 20); 
 		}
 	}
 

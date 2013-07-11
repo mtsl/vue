@@ -86,4 +86,20 @@ public class VueConstants {
         public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
         public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
 
+        public static final String FACEBOOK_USER_PROFILE_PICTURE = "FACEBOOK_USER_PROFILE_PICTURE";
+        public static final String FACEBOOK_USER_EMAIL = "FACEBOOK_USER_EMAIL";
+        public static final String FACEBOOK_USER_NAME = "FACEBOOK_USER_NAME";
+        public static final String FACEBOOK_USER_DOB = "FACEBOOK_USER_DOB";
+        public static final String FACEBOOK_USER_GENDER = "FACEBOOK_USER_GENDER";
+        public static final String FACEBOOK_USER_LOCATION = "FACEBOOK_USER_LOCATION";
+        
+        public static final String FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL = "https://graph.facebook.com/";
+        public static final String FACEBOOK_USER_PROFILE_PICTURE_SUB_URL = "/picture";
+        
+        public static final String GOOGLEPLUS_USER_PROFILE_PICTURE = "GOOGLEPLUS_USER_PROFILE_PICTURE";
+        public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
+        public static final String GOOGLEPLUS_USER_NAME = "GOOGLEPLUS_USER_NAME";
+        public static final String GOOGLEPLUS_USER_DOB = "GOOGLEPLUS_USER_DOB";
+        public static final String GOOGLEPLUS_USER_GENDER = "GOOGLEPLUS_USER_GENDER";
+        public static final String GOOGLEPLUS_USER_LOCATION = "GOOGLEPLUS_USER_LOCATION";
 }
