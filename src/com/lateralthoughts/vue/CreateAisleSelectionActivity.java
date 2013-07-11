@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 
 import android.animation.AnimatorSet;
@@ -40,8 +41,8 @@ public class CreateAisleSelectionActivity extends Activity {
 	boolean fromCreateAilseScreenflag = false;
 
 	float screenHeight = 0, screenWidth = 0;
-	
-	Uri cameraImageUri = null;
+
+	String cameraImageName = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -201,11 +202,12 @@ public class CreateAisleSelectionActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 
+				cameraImageName = Utils
+						.vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
+				File cameraImageFile = new File(cameraImageName);
 				Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-				File photo = new File(
-						Environment.getExternalStorageDirectory(), "cameraPic.jpg");
-				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
-				cameraImageUri = Uri.fromFile(photo);
+				intent.putExtra(MediaStore.EXTRA_OUTPUT,
+						Uri.fromFile(cameraImageFile));
 				startActivityForResult(intent, VueConstants.CAMERA_REQUEST);
 
 			}
@@ -261,45 +263,43 @@ public class CreateAisleSelectionActivity extends Activity {
 				}
 
 			}
-			
+
 			// From Camera...
-			else if(requestCode == VueConstants.CAMERA_REQUEST)
-			{
-				Log.e("camera", "if called");
+			else if (requestCode == VueConstants.CAMERA_REQUEST) {
 
-				Log.e("camera", "if called " + cameraImageUri);
+				Log.e("camera", "if called " + cameraImageName);
 
-				// MEDIA GALLERY
-				String selectedImagePath = Utils
-						.getPath(cameraImageUri, this);
+				File cameraImageFile = new File(cameraImageName);
 
-				Log.e("camera", "if called" + selectedImagePath);
+				if (cameraImageFile.exists()) {
 
-				Log.e("screenHeight", screenHeight + "" + screenWidth);
-				Utils.saveImage(new File(selectedImagePath), screenHeight,
-						screenWidth);
+					Log.e("screenHeight", screenHeight + "" + screenWidth);
+					Utils.saveImage(cameraImageFile, screenHeight, screenWidth);
 
-				if (!fromCreateAilseScreenflag) {
-					Intent intent = new Intent(this, CreateAisleActivity.class);
-					Bundle b = new Bundle();
-					b.putString(
-							VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY,
-							selectedImagePath);
-					intent.putExtras(b);
-					startActivity(intent);
+					if (!fromCreateAilseScreenflag) {
+						Intent intent = new Intent(this,
+								CreateAisleActivity.class);
+						Bundle b = new Bundle();
+						b.putString(
+								VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+								cameraImageName);
+						intent.putExtras(b);
+						startActivity(intent);
 
-					finish();
-				} else {
-					Log.e("CreateSelectionActivty", "onactivti result if"
-							+ requestCode + resultCode);
-					Intent intent = new Intent();
-					Bundle b = new Bundle();
-					b.putString(
-							VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY,
-							selectedImagePath);
-					intent.putExtras(b);
-					setResult(VueConstants.CREATE_AILSE_ACTIVITY_RESULT, intent);
-					finish();
+						finish();
+					} else {
+						Log.e("CreateSelectionActivty", "onactivti result if"
+								+ requestCode + resultCode);
+						Intent intent = new Intent();
+						Bundle b = new Bundle();
+						b.putString(
+								VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+								cameraImageName);
+						intent.putExtras(b);
+						setResult(VueConstants.CREATE_AILSE_ACTIVITY_RESULT,
+								intent);
+						finish();
+					}
 				}
 			}
 		} catch (Exception e) {

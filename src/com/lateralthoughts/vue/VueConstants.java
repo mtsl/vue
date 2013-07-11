@@ -102,4 +102,5 @@ public class VueConstants {
         public static final String GOOGLEPLUS_USER_DOB = "GOOGLEPLUS_USER_DOB";
         public static final String GOOGLEPLUS_USER_GENDER = "GOOGLEPLUS_USER_GENDER";
         public static final String GOOGLEPLUS_USER_LOCATION = "GOOGLEPLUS_USER_LOCATION";
+        public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
 }

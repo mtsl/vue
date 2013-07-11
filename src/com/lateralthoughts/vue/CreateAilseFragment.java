@@ -718,21 +718,6 @@ public class CreateAilseFragment extends Fragment{
 				createaisel_bg.setImageURI(Uri.fromFile(new File(picturePath)));
 		}
 		
-		public void setCameraImage()
-		{
-			   getActivity().getContentResolver().notifyChange(selectedCameraImage, null);
-	            ContentResolver cr = getActivity().getContentResolver();
-	            Bitmap bitmap;
-	            try {
-	                 bitmap = android.provider.MediaStore.Images.Media
-	                 .getBitmap(cr, selectedCameraImage);
-
-	                createaisel_bg.setImageBitmap(bitmap);
-	                
-	            } catch (Exception e) {
-	                
-	                Log.e("Camera", e.toString());
-	            }
-		}
+	
 		
 }
