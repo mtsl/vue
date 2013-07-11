@@ -1,8 +1,10 @@
 package com.lateralthoughts.vue.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -12,6 +14,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.preference.PreferenceManager;
@@ -273,6 +276,59 @@ public class Utils {
 
 		cursor.moveToFirst();
 		return cursor.getString(column_index);
+	}
+	
+	public static void saveImage(File f, float screenHeight, float screenWidth)
+	{
+		 try {
+	            //decode image size
+	            BitmapFactory.Options o = new BitmapFactory.Options();
+	            o.inJustDecodeBounds = true;
+	            FileInputStream stream1 = new FileInputStream(f);
+	            BitmapFactory.decodeStream(stream1,null,o);
+	            stream1.close();
+	            
+	            //Find the correct scale value. It should be the power of 2.
+	            //final int REQUIRED_SIZE = mScreenWidth/2;
+	            int height=o.outHeight;
+	            int width = o.outWidth;
+	            int scale = 1;
+	            int heightRatio = 0;
+	            int widthRatio = 0;
+
+	            if (height > screenHeight) {
+	                // Calculate ratios of height and width to requested height and width
+	                heightRatio = Math.round((float) height / (float) screenHeight);
+	            }
+	            
+	            if(width > screenWidth)
+	            {
+	                // Calculate ratios of height and width to requested height and width
+	                widthRatio = Math.round((float) width / (float) screenWidth);
+	            }
+	           
+	            // Choose the smallest ratio as inSampleSize value, this will guarantee
+                // a final image with both dimensions larger than or equal to the
+                // requested height and width.
+	            scale = heightRatio < widthRatio ? heightRatio : widthRatio;
+	            
+	            //decode with inSampleSize
+	            BitmapFactory.Options o2 = new BitmapFactory.Options();
+	            o2.inSampleSize = scale;
+	            FileInputStream stream2 = new FileInputStream(f);
+	           Bitmap resizedbitmap = BitmapFactory.decodeStream(stream2, null, o2);
+	           stream2.close();
+	           FileOutputStream out = new FileOutputStream(f);
+	           resizedbitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+	           out.flush();
+	           out.close();
+	           resizedbitmap.recycle();
+	           
+	        } catch (FileNotFoundException e) {
+	        } 
+	        catch (IOException e) {
+	            e.printStackTrace();
+	        }
 	}
 	 
 }

@@ -2,37 +2,26 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 
-import com.lateralthoughts.vue.utils.EditTextBackEvent;
-import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.OnInterceptListener;
-
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.MediaStore.MediaColumns;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -41,7 +30,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
+
+import com.lateralthoughts.vue.utils.EditTextBackEvent;
+import com.lateralthoughts.vue.utils.OnInterceptListener;
+import com.lateralthoughts.vue.utils.Utils;
 
 /**
  * Fragment for creating Aisle
@@ -80,6 +72,8 @@ public class CreateAilseFragment extends Fragment{
 	
 	public static boolean create_ailse_keyboard_hidden_shown_flag = false;
 	
+	
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -96,6 +90,9 @@ public class CreateAilseFragment extends Fragment{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+		
+		
+		
 		
 		create_ailse_keyboard_hidden_shown_flag = true;
 		
@@ -718,9 +715,7 @@ public class CreateAilseFragment extends Fragment{
 		public void setGalleryImage(String picturePath)
 		{
 			
-			Log.e("CreateAilseActivty", "set gallery image called"+picturePath);
-			
-			  createaisel_bg.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+				createaisel_bg.setImageURI(Uri.fromFile(new File(picturePath)));
 		}
 		
 		public void setCameraImage()
