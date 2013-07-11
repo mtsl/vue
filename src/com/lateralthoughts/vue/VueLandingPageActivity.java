@@ -32,7 +32,7 @@ public class VueLandingPageActivity extends BaseActivity {
  
  
 	SharedPreferences sharedPreferencesObj;
-  
+    private static final int DELAY_TIME = 500;
 
 	 public static List<FbGPlusDetails> googlePlusFriendsDetailsList = null;
 
@@ -145,7 +145,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		    VueApplication.getInstance().setmStatusBarHeight(statusBarHeight);
 			
 		}
-	}, 500);
+	}, DELAY_TIME);
   }
 
   @Override

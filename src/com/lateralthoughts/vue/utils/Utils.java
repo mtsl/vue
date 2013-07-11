@@ -57,28 +57,19 @@ public class Utils {
 
 	private static Bitmap getResizedBitmap(Bitmap bm, int reqWidth,
 			int reqHeight) {
-		Log.i("bitmaptest", "bitmaptest: reqWidth: "+reqWidth);
-		Log.i("bitmaptest", "bitmaptest: reqHeight: "+reqHeight);
 		int originalWidth = bm.getWidth();
 		int originalHeight = bm.getHeight();
-		
-		Log.i("bitmaptest", "bitmaptest: originalWidth: "+originalWidth);
-		Log.i("bitmaptest", "bitmaptest: originalHeight: "+originalHeight);
-		
 		float scaleWidth;
 		float scaleHeight = 0;
 		float aspect = (float) originalWidth / originalHeight;
 		if (originalWidth > reqWidth) {
-			Log.i("bitmaptest", "bitmaptest: condition1: "+originalWidth);
 			scaleWidth = reqWidth;
 			scaleHeight = scaleWidth / aspect;
 		} else if (originalHeight > reqHeight) {
-			Log.i("bitmaptest", "bitmaptest: condition2: "+originalWidth);
 			scaleHeight = reqHeight;
 			scaleWidth = scaleHeight / aspect;
 		} else {
 			// expand the image to the screen size
-			Log.i("bitmaptest", "bitmaptest: condition3: "+originalWidth);
 			scaleWidth = reqWidth;
 			scaleHeight = scaleWidth / aspect;
 			while (scaleHeight > reqHeight) {
@@ -92,36 +83,25 @@ public class Utils {
 		}
 		// create a matrix for the manipulation
 		Matrix matrix = new Matrix();
-
 		// resize the bit map
-
 		matrix.postScale(scaleWidth / originalWidth, scaleHeight / originalHeight);
-
 		// recreate the new Bitmap
   System.gc();
 		Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, originalWidth, originalHeight,
 				matrix, true);
 		//bm.recycle();
-		Log.i("bitmaptest", "bitmaptest: final width: "+resizedBitmap.getWidth());
-		Log.i("bitmaptest", "bitmaptest: final height: "+resizedBitmap.getHeight());
 		return resizedBitmap;
-
 	}
     public static Bitmap getScaledBitMap(Bitmap bitmap,int reqWidth,int reqHeight) {
-    	Log.i("bitmaptest", "bitmaptest12: coming reqWidth: "+reqWidth);
+  /*  	Log.i("bitmaptest", "bitmaptest12: coming reqWidth: "+reqWidth);
     	Log.i("bitmaptest", "bitmaptest12: coming reqHeight: "+reqHeight);
     	bitmap = getResizedBitmap(bitmap, reqWidth, reqHeight);
-    	return bitmap;
-    	
-    	/*
-    	int bitmapwidth,bitmapheight;
-    	int newWidth,newHeight;
+    	return bitmap;*/
+    	float bitmapwidth,bitmapheight;
+    	float newWidth,newHeight;
     	bitmapwidth  = bitmap.getWidth();
     	bitmapheight = bitmap.getHeight();
-    	Log.i("width & height", "reqWidth1 original: "+bitmapwidth+" reqHeight2: "+bitmapheight);
-    	Log.i("width & height", "reqWidth12 original: "+reqWidth+" reqHeight2: "+reqHeight);
     	if(bitmapwidth > reqWidth) {
-    		 
     		newWidth = (bitmapwidth * reqWidth)/bitmapwidth;
     		newHeight = (bitmapheight * reqWidth)/bitmapwidth;
     	} else {
@@ -131,50 +111,18 @@ public class Utils {
     	if(newHeight > reqHeight) {
     		newHeight = (bitmapheight * reqHeight)/bitmapheight;
     		newWidth = (bitmapwidth * reqHeight)/bitmapheight;
-    		 
     	}  
-    	 
-    	int aspect = bitmapwidth / bitmapheight;
-    	int xnew,ynew;
-    	if(aspect < 1) {
-    		 ynew = reqHeight;
-    		  xnew = reqHeight * aspect;
-  				   
-    	} else {
-    		xnew = reqWidth;
-    		 ynew = reqWidth/aspect;
-    	}
-    	
-    	//test commit
-		//return createBitmap(bitmap,newWidth,newHeight);
-		
-    	return createBitmap(bitmap,xnew,ynew);
-		
-		
-//		float aspect = xgiven/ygiven
-//
-//				if aspect < 1
-//
-//				    xnew = yrequired * aspect
-//				    ynew = yrequired
-//				    
-//				else
-//
-//				    ynew = xrequired/aspect
-//				    xnew = xrequired
-
-		
-		
-		
-		
+    	int x = Math.round(newWidth);
+    	int y = Math.round(newHeight);
+		return createBitmap(bitmap,x,y);
+    	//return createBitmap(bitmap,xnew,ynew);
     	// return bitmap;
-    */}
+    }
 
     private static  Bitmap createBitmap(Bitmap bitmap,int width,int height) {
     	if(width > 0 && height > 0) {
     		try { 
     	  Bitmap bmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-    	  Log.i("width & height", "reqWidth1 new: "+bmap.getWidth()+" reqHeight2: "+bmap.getHeight());
     	  return bmap;
     		}catch(Exception e){
     			e.printStackTrace();
@@ -183,8 +131,6 @@ public class Utils {
     			
     		}
     	}
-    	
-		
     	return bitmap;
     }
 
@@ -266,8 +212,6 @@ public class Utils {
             e.printStackTrace();
         }
 	}
-	
-
 	// Getting Image file path from URI.
 	public static String getPath(Uri uri, Activity activity) {
 		String[] projection = { MediaColumns.DATA };
@@ -277,7 +221,7 @@ public class Utils {
 		cursor.moveToFirst();
 		return cursor.getString(column_index);
 	}
-	
+
 	public static void saveImage(File f, float screenHeight, float screenWidth)
 	{
 		 try {
@@ -330,5 +274,5 @@ public class Utils {
 	            e.printStackTrace();
 	        }
 	}
-	 
+
 }

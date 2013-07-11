@@ -3,8 +3,68 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+    <FrameLayout
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:layout_gravity="center"
+>
     <fragment android:name="com.lateralthoughts.vue.VueAisleDetailsViewFragment"
         android:id="@+id/aisle_details_view_fragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
+    
+    <SlidingDrawer
+android:id="@+id/drawer2"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:handle="@+id/handler2"
+android:content="@+id/content2"
+android:orientation="horizontal"
+>
+
+	<LinearLayout
+	android:id="@+id/handler2" 
+ 	android:layout_width="5dip"
+ 	android:layout_height="fill_parent" 
+ 	android:orientation="vertical"
+ 	android:visibility="invisible"
+  >
+ 	
+  
+	 </LinearLayout>
+	    
+	<LinearLayout
+	android:id="@id/content2"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:background="#EEEEEE"
+	>
+    
+    <com.lateralthoughts.vue.ui.HorizontalListView
+        android:id="@+id/topscroller"
+  android:background="#EEEEEE"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
+       android:layout_weight="2"
+        android:scrollbars="none" >
+    </com.lateralthoughts.vue.ui.HorizontalListView>
+		    <com.lateralthoughts.vue.ui.HorizontalListView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="5dp"
+     android:layout_marginBottom="10dp"
+         android:background="#EEEEEE"
+    android:layout_weight="2"
+        android:id="@+id/bottomscroller"
+        android:scrollbars="none" >
+ 
+    </com.lateralthoughts.vue.ui.HorizontalListView>
+	
+	</LinearLayout>
+	
+</SlidingDrawer>
+    </FrameLayout>
 </LinearLayout>

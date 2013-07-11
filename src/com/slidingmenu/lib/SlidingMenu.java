@@ -512,10 +512,10 @@ mViewAbove.setCurrentItem(1, animate);
 */
 public void toggle() {
 //toggle(true);
-	//modified by raju true means aniamte the view flase means close immediately
+	//modified by neemdev true means aniamte the view flase means close immediately
 	toggle(true);
 }
-//written by raju
+//written by neemdev
 public void toggleFromHomeClick() {
 	toggle(false);
 }
