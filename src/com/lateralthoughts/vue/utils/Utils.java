@@ -109,17 +109,6 @@ public class Utils {
     		newHeight = (bitmapheight * reqHeight)/bitmapheight;
     		newWidth = (bitmapwidth * reqHeight)/bitmapheight;
     	}  
-    /*	float aspect = bitmapwidth / bitmapheight;
-    	float xnew,ynew;
-    	if(aspect < 1) {
-    		 ynew = reqHeight;
-    		  xnew = reqHeight * aspect;
-  				   
-    	} else {
-    		xnew = reqWidth;
-    		 ynew = reqWidth/aspect;
-    	}
-    	*/
     	int x = Math.round(newWidth);
     	int y = Math.round(newHeight);
 		return createBitmap(bitmap,x,y);
@@ -131,7 +120,6 @@ public class Utils {
     	if(width > 0 && height > 0) {
     		try { 
     	  Bitmap bmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-    	  Log.i("width & height", "reqWidth1 new: "+bmap.getWidth()+" reqHeight2: "+bmap.getHeight());
     	  return bmap;
     		}catch(Exception e){
     			e.printStackTrace();

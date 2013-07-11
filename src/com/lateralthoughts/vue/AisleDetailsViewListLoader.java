@@ -59,77 +59,6 @@ public class AisleDetailsViewListLoader {
         mBitmapLoaderUtils.clearCache();
         if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
-    public void getContentIntoCompareview(VueComparisionAdapter.ViewHolder holder){
-    	  ScaleImageView imageView = null;
-    	  ScaleImageView imageView1 = null;
-          ArrayList<AisleImageDetails> imageDetailsArr = null;
-          AisleImageDetails itemDetails = null;
-          int position = 0;
-          AisleContentBrowser contentBrowser = null;
-          if(null == holder)
-              return;
-          AisleWindowContent windowContent = holder.mWindowContent;
-          if(null == windowContent)
-              return;
-          imageDetailsArr = windowContent.getImageList();
-           int pixel = VueApplication.getInstance().getPixel(5);
-          if(null != imageDetailsArr && imageDetailsArr.size() != 0){  
-                 for(int k=0;k<imageDetailsArr.size();k++){
-          itemDetails = imageDetailsArr.get(k);
-          imageView = mViewFactory.getPreconfiguredImageView(position);
-          imageView1 = mViewFactory.getPreconfiguredImageView(position+5);
-          LinearLayout.LayoutParams params = 
-                  new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, VueApplication.getInstance().getScreenHeight());
-          imageView.setPadding(3, 3, 3, 3);
-          imageView.setContainerObject(holder);
-          imageView1 = mViewFactory.getPreconfiguredImageView(position);
-          LinearLayout.LayoutParams params1 = 
-                  new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, VueApplication.getInstance().getScreenHeight());
-          LinearLayout toplay = new LinearLayout(mContext);
-          LinearLayout bottomlay = new LinearLayout(mContext);
-          toplay.setLayoutParams(params);
-          bottomlay.setLayoutParams(params1);
-          toplay.setBackgroundColor(Color.parseColor("#ffffff"));
-          bottomlay.setBackgroundColor(Color.parseColor("#ffffff"));
-          imageView1.setPadding(3, 3, 3, 3);
-          imageView1.setContainerObject(holder);
-          params.setMargins(pixel, 0, pixel, 0);
-          params1.setMargins(pixel, 0,pixel, 0);
-          params.gravity = Gravity.CENTER;
-          params1.gravity = Gravity.CENTER;
-          imageView1.setLayoutParams(params1);
-          imageView.setLayoutParams(params);
-          Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
-          if(bitmap != null){
-        	  int width = imageView.getWidth();
-        	  int height = imageView.getHeight();
-        	 //  if(bitmap.getHeight() >  VueApplication.getInstance().getScreenHeight()/3 || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
-           		 bitmap =  Utils.getScaledBitMap(bitmap,(VueApplication.getInstance().getScreenWidth() * 10)/100,  (VueApplication.getInstance().getScreenHeight()* 10)/100);
-           	 // }
-        	  toplay.addView(imageView);
-        	  bottomlay.addView(imageView1);
-        	  imageView.setScaleType(ScaleType.CENTER_INSIDE);
-        	  imageView1.setScaleType(ScaleType.CENTER_INSIDE);
-              imageView.setImageBitmap(bitmap);
-              imageView1.setImageBitmap(bitmap);
-              holder.topScroller.addView(toplay);  
-              holder.bottomScroller.addView(bottomlay);
-          }
-          else{
-        	  toplay.addView(imageView);
-        	  bottomlay.addView(imageView1);
-              holder.topScroller.addView(toplay);
-              holder.bottomScroller.addView(bottomlay);
-              imageView.setScaleX(0.9f);
-              imageView1.setScaleY(0.9f);
-        	  imageView.setScaleType(ScaleType.CENTER_INSIDE);
-        	  imageView1.setScaleType(ScaleType.CENTER_INSIDE);
-              loadBitmap(itemDetails.mCustomImageUrl, null, imageView, 400);
-              loadBitmap(itemDetails.mCustomImageUrl, null, imageView1, 400);
-          }
-      }  
-          }
-    }
     public void getAisleContentIntoView(AisleDetailsViewAdapter.ViewHolder holder,
             int scrollIndex, int position,DetailClickListener detailListener){
         ScaleImageView imageView = null;
@@ -184,7 +113,8 @@ public class AisleDetailsViewListLoader {
             Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
             if(bitmap != null){
             	bitmap =  setParams(holder.aisleContentBrowser, imageView, bitmap);
-            	 bitmap = Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*80)/100, (VueApplication.getInstance().getScreenHeight()*60)/100);
+            /*	 bitmap = Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*80)/100,
+            			 (VueApplication.getInstance().getScreenHeight()*60)/100);*/
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);                  
             }
@@ -274,35 +204,39 @@ public class AisleDetailsViewListLoader {
         }
         return true;
     }  
-    private Bitmap setParams(AisleContentBrowser vFlipper,ImageView imageView,Bitmap bitmap) {
-    	int imgCardHeight =   (VueApplication.getInstance().getScreenHeight() *60) /100;
-    	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-				VueApplication.getInstance().getScreenWidth(),imgCardHeight);
-    	 
-    	if(vFlipper != null)
-    	vFlipper.setLayoutParams(showpieceParams);
-    	 /* if(bitmap.getHeight() > imgCardHeight || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {*/
-    		 bitmap =   Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*80)/100, (VueApplication.getInstance().getScreenHeight()*60)/100);
-    	/*  } else {
-    		  Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
-    	  }*/
-    	if(vFlipper != null) {
-    	FrameLayout.LayoutParams params = 
-                new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        params.gravity = Gravity.CENTER;
-        imageView.setLayoutParams(params);
-    	} else {
-    		LinearLayout.LayoutParams params = 
-                    new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.CENTER;
-            //params.setMargins(100, 0, 100, 100);
-             imageView.setScaleType(ScaleType.CENTER_INSIDE);
-            imageView.setLayoutParams(params);
-      	  imageView.setScaleType(ScaleType.CENTER_INSIDE);
-           // if(bitmap.getHeight() >  VueApplication.getInstance().getScreenHeight()/3 || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
-      		 bitmap =  Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*80)/100, (VueApplication.getInstance().getScreenHeight()*60)/100);
-      	 // }
-    	}
-        return bitmap;
-    }
+
+	private Bitmap setParams(AisleContentBrowser vFlipper, ImageView imageView,
+			Bitmap bitmap) {
+		int imgCardHeight = (VueApplication.getInstance().getScreenHeight() * 60) / 100;
+		FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+				VueApplication.getInstance().getScreenWidth(), imgCardHeight);
+
+		if (vFlipper != null)
+			vFlipper.setLayoutParams(showpieceParams);
+		/*
+		 * bitmap = Utils.getScaledBitMap(bitmap,
+		 * (VueApplication.getInstance().getScreenWidth()*80)/100,
+		 * (VueApplication.getInstance().getScreenHeight()*60)/100);
+		 */
+
+		if (vFlipper != null) {
+			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+			params.gravity = Gravity.CENTER;
+			imageView.setLayoutParams(params);
+		} else {
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			params.gravity = Gravity.CENTER;
+			imageView.setScaleType(ScaleType.CENTER_INSIDE);
+			imageView.setLayoutParams(params);
+			imageView.setScaleType(ScaleType.CENTER_INSIDE);
+			/*
+			 * bitmap = Utils.getScaledBitMap(bitmap,
+			 * (VueApplication.getInstance().getScreenWidth()*80)/100,
+			 * (VueApplication.getInstance().getScreenHeight()*60)/100);
+			 */
+		}
+		return bitmap;
+	}
 }

@@ -57,6 +57,8 @@ public class VueComparisionFragment extends Fragment {
                              Bundle savedInstanceState) {
         mContext = getActivity();
         View v = inflater.inflate(R.layout.aisle_comparision_view_fragment, container, false);
+        
+        
         mTopScroller = (HorizontalListView) v.findViewById(R.id.topscroller);
         mBottomScroller = (HorizontalListView) v.findViewById(R.id.bottomscroller);
         mStatusbarHeight = VueApplication.getInstance().getmStatusBarHeight();
@@ -79,6 +81,7 @@ public class VueComparisionFragment extends Fragment {
       		 }
         mTopScroller.setAdapter(new ComparisionAdapter(mContext));
         mBottomScroller.setAdapter(new ComparisionAdapter(mContext));
+        
         return v;
     }
 
