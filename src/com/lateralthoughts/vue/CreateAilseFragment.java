@@ -2,11 +2,14 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 
+import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.OnInterceptListener;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -21,16 +24,21 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 /**
@@ -44,19 +52,29 @@ public class CreateAilseFragment extends Fragment{
 	
 	LinearLayout lookingforpopup = null, lookingforlistviewlayout = null, ocassionlistviewlayout = null, ocassionpopup = null, categoerypopup = null, categorylistviewlayout = null;
 	
-	TextView lookingfortext = null, lookingforbigtext = null, occassionbigtext = null, occasiontext = null, categorytext = null;
+	TextView  touchtochangeimage = null, lookingforbigtext = null, occassionbigtext = null,categorytext = null;
+	
+	com.lateralthoughts.vue.utils.EditTextBackEvent lookingfortext = null,  occasiontext = null, saysomethingaboutaisle = null;
 	
 	private static final String lookingforitemsArray[] = {"LivingRoomSet", "Dress", "Shoes", "Belt", "Tie"};
 	
 	private static final String occasionitemsArray[] = {"Redecoration", "Vacation", "Wedding", "Birthday", "Party"};
 	
-	private static final String categoryitemsArray[] = {"Home", "Office", "Resturant", "Theater", "Kichen"};
+	private static final String categoryitemsArray[] = { "Apparel", "Beauty", "Electronics", "Entertainment", "Events", "Food", "Home"};
 	
 	private Drawable listdivider = null;
 	
-	ImageView createaisel_bg = null;
+	ImageView createaisel_bg = null, categoeryicon = null;
 	
 	Uri selectedCameraImage = null;
+	
+	InputMethodManager inputMethodManager;
+	
+	int categorycurrentselectedposition = 0;
+	
+	boolean dontgotonextforlookup = false, dontgotonextforoccasion = false;
+	
+	String previouslookingfor = null, previousocasion = null, previoussaysomething = null;
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -78,9 +96,11 @@ public class CreateAilseFragment extends Fragment{
 		
 		View v = inflater.inflate(R.layout.create_aisleview_fragment, container, false);
 		
+		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		
 		lookingforlistview = (ListView) v.findViewById(R.id.lookingforlistview);
 		
-		lookingfortext = (TextView) v.findViewById(R.id.lookingfortext);
+		lookingfortext = (EditTextBackEvent) v.findViewById(R.id.lookingfortext);
 		
 		lookingforbigtext = (TextView) v.findViewById(R.id.lookingforbigtext);
 		
@@ -94,17 +114,17 @@ public class CreateAilseFragment extends Fragment{
 		
 		ocassionpopup = (LinearLayout) v.findViewById(R.id.ocassionpopup);
 		
-		occasiontext = (TextView) v.findViewById(R.id.occasiontext);
+		occasiontext = (EditTextBackEvent) v.findViewById(R.id.occasiontext);
 		
 		lookingforlistviewlayout = (LinearLayout) v.findViewById(R.id.lookingforlistviewlayout);
 		
 		lookingforpopup = (LinearLayout) v.findViewById(R.id.lookingforpopup);
 		
-		lookingfortext.setText(lookingforitemsArray[0]);
+		touchtochangeimage = (TextView) v.findViewById(R.id.touchtochangeimage);
 		
+		saysomethingaboutaisle = (EditTextBackEvent) v.findViewById(R.id.saysomethingaboutaisle);
 		
-		occasiontext.setText(occasionitemsArray[0]);
-		
+		categoeryicon = (ImageView) v.findViewById(R.id.categoeryicon);
 	
 		lookingforlistview.setAdapter(new LookingForAdapter(getActivity()));
 		
@@ -122,7 +142,230 @@ public class CreateAilseFragment extends Fragment{
 		
 		lookingforlistview.setDivider(listdivider);
 		
+		lookingforlistviewlayout.setVisibility(View.GONE);
+		
+		lookingforlistview.setVisibility(View.GONE);
+		
 		createaisel_bg = (ImageView) v.findViewById(R.id.createaisel_bg);
+		
+		
+		categorylistview.setAdapter(new CategoryAdapter(getActivity()));
+		
+		categorylistview.setDivider(listdivider);
+		
+		previouslookingfor = lookingfortext.getText().toString();
+		previousocasion = occasiontext.getText().toString();
+		previoussaysomething = saysomethingaboutaisle.getText().toString();
+		
+		saysomethingaboutaisle.setOnEditorActionListener(new OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView arg0, int arg1, KeyEvent arg2) {
+				// TODO Auto-generated method stub
+				
+				previoussaysomething = saysomethingaboutaisle.getText().toString();
+				inputMethodManager.hideSoftInputFromWindow(saysomethingaboutaisle.getWindowToken(), 0);
+	 			inputMethodManager.hideSoftInputFromWindow(occasiontext.getWindowToken(), 0);
+	 			inputMethodManager.hideSoftInputFromWindow(lookingfortext.getWindowToken(), 0);
+				return true;
+			}
+		});
+		
+		saysomethingaboutaisle.setonInterceptListen(new OnInterceptListener() {
+			
+			@Override
+			public void onInterceptTouch() {
+				// TODO Auto-generated method stub
+				inputMethodManager.hideSoftInputFromWindow(saysomethingaboutaisle.getWindowToken(), 0);
+			saysomethingaboutaisle.setText(previoussaysomething);	
+			}
+		});
+		
+		lookingfortext.setOnEditorActionListener(
+		        new EditText.OnEditorActionListener() {
+
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				// TODO Auto-generated method stub
+				
+				
+				
+				
+						lookingforbigtext.setBackgroundColor(Color.TRANSPARENT);
+					
+
+						lookingforbigtext.setText(lookingfortext.getText()
+								.toString());
+						
+						
+						previouslookingfor = lookingfortext.getText().toString();
+						
+						lookingforpopup.setVisibility(View.GONE);
+						inputMethodManager.hideSoftInputFromWindow(lookingfortext.getWindowToken(), 0);
+
+						if(!dontgotonextforlookup)
+						{
+						occassionbigtext.setBackgroundColor(getResources()
+								.getColor(R.color.yellowbgcolor));
+						
+						ocassionpopup.setVisibility(View.VISIBLE);
+						occasiontext.requestFocus();
+						
+						inputMethodManager.showSoftInput(occasiontext, 0);
+						}
+			            return true;
+			       
+			}
+		});
+		
+		
+		lookingfortext.setonInterceptListen(new OnInterceptListener() {
+	          public void onInterceptTouch() {
+	        	  lookingforpopup.setVisibility(View.GONE);
+	 			 ocassionpopup.setVisibility(View.GONE);
+	 			
+	 			 lookingfortext.setText(previouslookingfor);
+	 			 
+	 			occassionbigtext.setBackgroundColor(Color.TRANSPARENT);
+	 			lookingforbigtext.setBackgroundColor(Color.TRANSPARENT);
+	 			inputMethodManager.hideSoftInputFromWindow(saysomethingaboutaisle.getWindowToken(), 0);
+	 			inputMethodManager.hideSoftInputFromWindow(occasiontext.getWindowToken(), 0);
+	 			inputMethodManager.hideSoftInputFromWindow(lookingfortext.getWindowToken(), 0);
+	          }
+	        });
+		
+		occasiontext.setOnEditorActionListener(new OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView arg0, int actionId, KeyEvent arg2) {
+				// TODO Auto-generated method stub
+				
+						inputMethodManager.hideSoftInputFromWindow(occasiontext.getWindowToken(), 0);
+			
+						occassionbigtext.setBackgroundColor(Color.TRANSPARENT);
+				         occassionbigtext.setText(" "+occasiontext.getText().toString());
+				         previousocasion = occasiontext.getText().toString();
+			            ocassionpopup.setVisibility(View.GONE);
+			            
+			            if(!dontgotonextforoccasion)
+			            {
+			            categorylistview.setVisibility(View.VISIBLE);
+						categorylistviewlayout.setVisibility(View.VISIBLE);
+						categoerypopup.setVisibility(View.VISIBLE);
+			            }
+						
+			            
+			            return true;
+			        
+			};
+		});
+		
+		
+		occasiontext.setonInterceptListen(new OnInterceptListener() {
+	          public void onInterceptTouch() {
+	        	  lookingforpopup.setVisibility(View.GONE);
+	 			 ocassionpopup.setVisibility(View.GONE);
+	 			occasiontext.setText(previousocasion);
+	 			occassionbigtext.setBackgroundColor(Color.TRANSPARENT);
+	 			lookingforbigtext.setBackgroundColor(Color.TRANSPARENT);
+
+	 			inputMethodManager.hideSoftInputFromWindow(saysomethingaboutaisle.getWindowToken(), 0);
+	 			inputMethodManager.hideSoftInputFromWindow(occasiontext.getWindowToken(), 0);
+	 			inputMethodManager.hideSoftInputFromWindow(lookingfortext.getWindowToken(), 0);
+	          }
+	        });
+		
+		
+		lookingforbigtext.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+			
+				dontgotonextforlookup = true;
+				
+				 lookingforpopup.setVisibility(View.VISIBLE);
+				
+				occassionbigtext.setBackgroundColor(Color.TRANSPARENT);
+				lookingforbigtext.setBackgroundColor(getResources()
+						.getColor(R.color.yellowbgcolor));
+
+				  ocassionpopup.setVisibility(View.GONE);
+				lookingfortext.requestFocus();
+				inputMethodManager.hideSoftInputFromWindow(occasiontext.getWindowToken(), 0);
+				inputMethodManager.showSoftInput(lookingfortext, 0);
+				
+				 categorylistview.setVisibility(View.GONE);
+					categorylistviewlayout.setVisibility(View.GONE);
+					categoerypopup.setVisibility(View.GONE);
+				
+			}
+		});
+		
+		
+	occassionbigtext.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+			
+				dontgotonextforoccasion = true;
+				
+				 ocassionpopup.setVisibility(View.VISIBLE);
+				
+				  lookingforpopup.setVisibility(View.GONE);
+				
+				lookingforbigtext.setBackgroundColor(Color.TRANSPARENT);
+				occassionbigtext.setBackgroundColor(getResources()
+						.getColor(R.color.yellowbgcolor));
+
+			
+				occasiontext.requestFocus();
+				inputMethodManager.hideSoftInputFromWindow(lookingfortext.getWindowToken(), 0);
+				inputMethodManager.showSoftInput(occasiontext, 0);
+				
+				 categorylistview.setVisibility(View.GONE);
+					categorylistviewlayout.setVisibility(View.GONE);
+					categoerypopup.setVisibility(View.GONE);
+					
+				
+				
+			}
+		});
+		
+	
+	categoeryicon.setOnClickListener(new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			
+			 lookingforpopup.setVisibility(View.GONE);
+			 ocassionpopup.setVisibility(View.GONE);
+			
+			occassionbigtext.setBackgroundColor(Color.TRANSPARENT);
+			lookingforbigtext.setBackgroundColor(Color.TRANSPARENT);
+
+			inputMethodManager.hideSoftInputFromWindow(occasiontext.getWindowToken(), 0);
+			inputMethodManager.hideSoftInputFromWindow(lookingfortext.getWindowToken(), 0);
+			
+			categorylistview.setVisibility(View.VISIBLE);
+			categorylistviewlayout.setVisibility(View.VISIBLE);
+			categoerypopup.setVisibility(View.VISIBLE);
+		}
+	});
+	
+	touchtochangeimage.setOnClickListener(new OnClickListener() {
+		
+		@Override
+		public void onClick(View arg0) {
+			 Intent intent = new Intent(getActivity(), CreateAisleSelectionActivity.class);
+	         Bundle b = new Bundle();
+	         b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
+	         intent.putExtras(b);
+			 getActivity().startActivityForResult(intent, VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
+		}
+	});
 		
 		return v;
 	}
@@ -302,10 +545,7 @@ public class CreateAilseFragment extends Fragment{
 					categorylistviewlayout.setVisibility(View.VISIBLE);
 					categoerypopup.setVisibility(View.VISIBLE);
 					
-					categorylistview.setAdapter(new CategoryAdapter(getActivity()));
-					
-					categorylistview.setDivider(listdivider);
-					
+										
 				}
 			});
 			
@@ -380,7 +620,7 @@ public class CreateAilseFragment extends Fragment{
 					holder = (ViewHolder) rowView.getTag();
 				}
 			
-				if (position == 0) {
+				if (position == categorycurrentselectedposition) {
 					holder.dataentryitemname.setTextColor(getResources().getColor(
 							R.color.black));
 					holder.dataentryitemname.setTypeface(null, Typeface.BOLD);
@@ -398,13 +638,14 @@ public class CreateAilseFragment extends Fragment{
 					public void onClick(View arg0) {
 						// TODO Auto-generated method stub
 						
+						categorycurrentselectedposition = position;
+						
 						categorytext.setText(categoryitemsArray[position]);
 						
 						categorylistview.setVisibility(View.GONE);
 						categoerypopup.setVisibility(View.GONE);
 						categorylistviewlayout.setVisibility(View.GONE);
 						
-						showAlertMessageForChoosingImage();
 						
 					}
 				});
@@ -436,90 +677,11 @@ public class CreateAilseFragment extends Fragment{
 		}
 
 	
-		private void showAlertMessageForChoosingImage() {
-
-		    final Dialog gplusdialog = new Dialog(getActivity(),
-		        R.style.Theme_Dialog_Translucent);
-		    gplusdialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		    gplusdialog.setContentView(R.layout.googleplusappinstallationdialog);
-		    
-		    TextView messagetext = (TextView) gplusdialog.findViewById(R.id.messagetext);
-		    messagetext.setText("Select Image From");
-		    
-		    TextView noButton = (TextView) gplusdialog.findViewById(R.id.nobutton);
-		    TextView okButton = (TextView) gplusdialog.findViewById(R.id.okbutton);
-		    
-		    okButton.setText("Camera");
-		    noButton.setText("Gallery");
-		    
-		    
-		    
-		    // Camera....
-		    okButton.setOnClickListener(new OnClickListener() {
-
-		      public void onClick(View v) {
-		        gplusdialog.dismiss();
-
-		        Toast.makeText(getActivity(), "In Progress...", Toast.LENGTH_LONG).show();
-		        
-		       /* try{
-		        	Intent intent = new Intent("android.provider.MediaStore.ACTION_IMAGE_CAPTURE");
-		            File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
-		            try {
-						photo.createNewFile();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-		            intent.putExtra(MediaStore.EXTRA_OUTPUT,
-		                    Uri.fromFile(photo));
-		            selectedCameraImage = Uri.fromFile(photo);
-		            getActivity().startActivityForResult(intent, VueConstants.CAMERA_REQUEST);
-		        	
-		        	Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		    		
-		        	FileCache obj = new FileCache(getActivity());
-		        	
-		        
-		     
-		    		selectedCameraImage = Uri.fromFile(obj.getFile("test"));
-		    		intent.putExtra(MediaStore.EXTRA_OUTPUT, selectedCameraImage);
-		    		getActivity().startActivityForResult(intent, VueConstants.CAMERA_REQUEST);
-				}catch(Exception e)
-				{
-					//showAlertMessage(getString(R.string.no_camera_label),getActivity());
-				}*/
-		     
-		      }
-		    });
-		    
-		    // Gallery....
-		    noButton.setOnClickListener(new OnClickListener() {
-
-		      public void onClick(View v) {
-		        gplusdialog.dismiss();
-		        
-		        Intent i = new Intent(
-                        Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                 
-		        
-		      /* Intent intent = new Intent();
-				intent.setType("image/*");
-				intent.setAction(Intent.ACTION_GET_CONTENT);*/
-				getActivity().startActivityForResult(Intent.createChooser(i,
-				"Select Picture"), VueConstants.SELECT_PICTURE);
-		      }
-		    });
-
-		    gplusdialog.show();
-		    
-		  
-
-		  }
-
 		public void setGalleryImage(String picturePath)
 		{
+			
+			Log.e("CreateAilseActivty", "set gallery image called"+picturePath);
+			
 			  createaisel_bg.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 		}
 		

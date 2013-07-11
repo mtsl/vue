@@ -6,12 +6,16 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
 public class Utils {
@@ -50,28 +54,19 @@ public class Utils {
 
 	private static Bitmap getResizedBitmap(Bitmap bm, int reqWidth,
 			int reqHeight) {
-		Log.i("bitmaptest", "bitmaptest: reqWidth: "+reqWidth);
-		Log.i("bitmaptest", "bitmaptest: reqHeight: "+reqHeight);
 		int originalWidth = bm.getWidth();
 		int originalHeight = bm.getHeight();
-		
-		Log.i("bitmaptest", "bitmaptest: originalWidth: "+originalWidth);
-		Log.i("bitmaptest", "bitmaptest: originalHeight: "+originalHeight);
-		
 		float scaleWidth;
 		float scaleHeight = 0;
 		float aspect = (float) originalWidth / originalHeight;
 		if (originalWidth > reqWidth) {
-			Log.i("bitmaptest", "bitmaptest: condition1: "+originalWidth);
 			scaleWidth = reqWidth;
 			scaleHeight = scaleWidth / aspect;
 		} else if (originalHeight > reqHeight) {
-			Log.i("bitmaptest", "bitmaptest: condition2: "+originalWidth);
 			scaleHeight = reqHeight;
 			scaleWidth = scaleHeight / aspect;
 		} else {
 			// expand the image to the screen size
-			Log.i("bitmaptest", "bitmaptest: condition3: "+originalWidth);
 			scaleWidth = reqWidth;
 			scaleHeight = scaleWidth / aspect;
 			while (scaleHeight > reqHeight) {
@@ -85,36 +80,25 @@ public class Utils {
 		}
 		// create a matrix for the manipulation
 		Matrix matrix = new Matrix();
-
 		// resize the bit map
-
 		matrix.postScale(scaleWidth / originalWidth, scaleHeight / originalHeight);
-
 		// recreate the new Bitmap
   System.gc();
 		Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, originalWidth, originalHeight,
 				matrix, true);
 		//bm.recycle();
-		Log.i("bitmaptest", "bitmaptest: final width: "+resizedBitmap.getWidth());
-		Log.i("bitmaptest", "bitmaptest: final height: "+resizedBitmap.getHeight());
 		return resizedBitmap;
-
 	}
     public static Bitmap getScaledBitMap(Bitmap bitmap,int reqWidth,int reqHeight) {
   /*  	Log.i("bitmaptest", "bitmaptest12: coming reqWidth: "+reqWidth);
     	Log.i("bitmaptest", "bitmaptest12: coming reqHeight: "+reqHeight);
     	bitmap = getResizedBitmap(bitmap, reqWidth, reqHeight);
     	return bitmap;*/
-    	
-    	
     	float bitmapwidth,bitmapheight;
     	float newWidth,newHeight;
     	bitmapwidth  = bitmap.getWidth();
     	bitmapheight = bitmap.getHeight();
-    	Log.i("width & height", "reqWidth1 original: "+bitmapwidth+" reqHeight2: "+bitmapheight);
-    	Log.i("width & height", "reqWidth12 original: "+reqWidth+" reqHeight2: "+reqHeight);
     	if(bitmapwidth > reqWidth) {
-    		 
     		newWidth = (bitmapwidth * reqWidth)/bitmapwidth;
     		newHeight = (bitmapheight * reqWidth)/bitmapwidth;
     	} else {
@@ -124,9 +108,7 @@ public class Utils {
     	if(newHeight > reqHeight) {
     		newHeight = (bitmapheight * reqHeight)/bitmapheight;
     		newWidth = (bitmapwidth * reqHeight)/bitmapheight;
-    		 
     	}  
-    	 
     /*	float aspect = bitmapwidth / bitmapheight;
     	float xnew,ynew;
     	if(aspect < 1) {
@@ -138,30 +120,10 @@ public class Utils {
     		 ynew = reqWidth/aspect;
     	}
     	*/
-    	//test commit
     	int x = Math.round(newWidth);
     	int y = Math.round(newHeight);
 		return createBitmap(bitmap,x,y);
-		
     	//return createBitmap(bitmap,xnew,ynew);
-		
-		
-//		float aspect = xgiven/ygiven
-//
-//				if aspect < 1
-//
-//				    xnew = yrequired * aspect
-//				    ynew = yrequired
-//				    
-//				else
-//
-//				    ynew = xrequired/aspect
-//				    xnew = xrequired
-
-		
-		
-		
-		
     	// return bitmap;
     }
 
@@ -178,8 +140,6 @@ public class Utils {
     			
     		}
     	}
-    	
-		
     	return bitmap;
     }
 
@@ -261,37 +221,13 @@ public class Utils {
             e.printStackTrace();
         }
 	}
-	
-	
-	private void dummmyfun(Bitmap bitmap, float rw,float rh) {
-	 
-		float gw = 0,gh;
-		float nw,nh;
-		float scaleFactor;
-		gw =bitmap.getWidth();
-		gh = bitmap.getHeight();
-		 
-		if(rw/gw < 1){
-			//scale down the image 
-			//means bitmap size needs to be increase
-			
-			scaleFactor = Math.min(rw/gw, rh/gh);
-			nw = gw * scaleFactor;
-			nh = gh * scaleFactor;
-			
-		} else {
-			//scale up the image
-			 if(rw/gw > 1 && rh/gh > 1) {
-				 scaleFactor = Math.min(rw/gw, rh/gh);
-				 nw = gw *scaleFactor;
-				 nh = gh * scaleFactor;
-			 } else {
-				 // in this case image may crop in some times.
-				 //if we dont want to crop then we should not scale up the image.
-				 scaleFactor = Math.max(rw/gw, rh/gh);
-				 nw = gw * scaleFactor;
-				 nh = gh * scaleFactor;
-			 }
-		}
+	// Getting Image file path from URI.
+	public static String getPath(Uri uri, Activity activity) {
+		String[] projection = { MediaColumns.DATA };
+		Cursor cursor = activity.managedQuery(uri, projection, null, null, null);
+		int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
 	}
 }

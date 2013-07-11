@@ -73,6 +73,12 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
 
              />
+            <activity
+            android:name="com.lateralthoughts.vue.CreateAisleSelectionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+
+             />
        <activity
             android:name=".CrashActivity"
             android:theme="@android:style/Theme.Dialog" />

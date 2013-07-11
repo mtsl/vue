@@ -9,8 +9,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="@drawable/vue_dataentry_bg" />
+        />
 
+    <TextView
+                android:id="@+id/touchtochangeimage"
+                android:layout_width="100dip"
+                android:layout_marginRight="8dip"
+                android:background="#90000000"
+                android:layout_height="wrap_content"
+                android:text="Touch To Change Image"
+                android:clickable="true"
+                android:layout_centerInParent="true"
+                android:layout_alignParentRight="true"
+               android:padding="8dip"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
@@ -29,6 +43,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/yellowbgcolor"
                 android:text="Looking"
+                android:clickable="true"
                 android:textColor="@color/dataentrytextcolor"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -46,6 +61,7 @@
                 android:id="@+id/occassionbigtext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
                 android:text=" Occasion"
                 android:textColor="@color/dataentrytextcolor"
                 android:textSize="18sp"
@@ -54,7 +70,7 @@
  
         <LinearLayout
             android:id="@+id/lookingforpopup"
-            android:layout_width="wrap_content"
+            android:layout_width="200dip"
             android:layout_height="wrap_content"
             android:visibility="visible"
           android:layout_alignParentLeft="true"
@@ -89,18 +105,19 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dip"
                 android:background="@color/white" >
 
-                <TextView
+                <com.lateralthoughts.vue.utils.EditTextBackEvent
                     android:id="@+id/lookingfortext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_margin="8dip"
-                    android:text="Living Room Set"
+                    android:layout_margin="4dip"
+                    android:singleLine="true"
+                    android:hint="Looking for"
                     android:textColor="@color/dataentrytextcolor"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -109,7 +126,7 @@
         <LinearLayout
             android:layout_width="150dip"
             android:layout_height="256dip"
-            android:visibility="visible"
+            android:visibility="gone"
                android:id="@+id/lookingforlistviewlayout"
              android:layout_below="@+id/mainheadingrow"
                 android:layout_toRightOf="@+id/lookingforpopup"
@@ -126,7 +143,7 @@
        
         <LinearLayout
             android:id="@+id/ocassionpopup"
-            android:layout_width="wrap_content"
+            android:layout_width="200dip"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:layout_alignParentRight="true"
@@ -160,18 +177,19 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dip"
                 android:background="@color/white" >
 
-                <TextView
+                <com.lateralthoughts.vue.utils.EditTextBackEvent
                     android:id="@+id/occasiontext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_margin="8dip"
-                    android:text="Redecoration"
+                    android:layout_margin="4dip"
+                    android:hint="Occasion"
+                    android:singleLine="true"
                     android:textColor="@color/dataentrytextcolor"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -198,7 +216,7 @@
         
         <LinearLayout
             android:id="@+id/categoerypopup"
-            android:layout_width="wrap_content"
+            android:layout_width="150dip"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:layout_marginRight="8dip"
@@ -233,7 +251,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dip"
                 android:id="@+id/bootmbar"
@@ -244,8 +262,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_margin="8dip"
+                    android:layout_margin="4dip"
                     android:text="Home"
+                    android:singleLine="true"
                     android:textColor="@color/dataentrytextcolor"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -276,24 +295,39 @@
      android:orientation="horizontal"
      android:layout_alignParentBottom="true"
      android:background="@color/popupbgcolor"
-     android:gravity="right"
      android:layout_alignParentRight="true"
-        android:layout_height="wrap_content" >
-            
+        android:layout_height="48dip" >
+               <com.lateralthoughts.vue.utils.EditTextBackEvent
+                    android:id="@+id/saysomethingaboutaisle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Say something about the aisle"
+                    android:singleLine="true"
+                    android:layout_gravity="center_vertical"
+                  android:textColor="@color/white"
+                    android:textSize="15sp" />
+               
+                  <LinearLayout
+        android:layout_width="match_parent"
+     android:orientation="horizontal"
+     android:layout_gravity="right"
+        android:layout_height="match_parent" >
                     <ImageView
         android:id="@+id/categoeryicon"
         android:layout_width="36dip"
         android:layout_height="36dip"
-        android:layout_marginTop="12dip"
-        android:layout_marginBottom="12dip"
+        android:clickable="true"
+        android:layout_marginLeft="8dip"
+android:layout_gravity="center_vertical"
         android:background="@drawable/category" />
             <ImageView
         android:id="@+id/normalicon"
         android:layout_width="36dip"
         android:layout_height="36dip"
-        android:layout_margin="12dip"
+        android:layout_marginLeft="8dip"
+        android:layout_gravity="center_vertical"
         android:background="@drawable/finditat" />
-            
+         </LinearLayout>
      
     </LinearLayout>
          </RelativeLayout>
