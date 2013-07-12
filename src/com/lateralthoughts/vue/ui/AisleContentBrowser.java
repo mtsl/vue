@@ -15,6 +15,8 @@ import android.util.Log;
 
 //android UI & graphics imports
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -299,7 +301,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	    public void onAisleSwipe(String id);
 	    public void onReceiveImageCount(int count);
 	    public void onResetAdapter();
-	    public void onAddCommentClick(TextView view,EditText editText);
+	    public void onAddCommentClick(TextView view,EditText editText,ImageView commentSend,FrameLayout editLay);
 	}
 	public void setAisleDetailSwipeListener(AisleDetailSwipeListener swipListener) {
 		mSwipeListener = swipListener; 

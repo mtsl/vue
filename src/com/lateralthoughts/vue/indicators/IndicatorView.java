@@ -21,160 +21,154 @@ import android.widget.LinearLayout;
 
 public class IndicatorView extends LinearLayout {
 
-    private Bitmap indicatorBitmap;
-    private Bitmap inactiveIndicatorBitmap;
-    private Bitmap activeIndicatorBitmap;
+    private Bitmap mIndicatorBitmap;
+    private Bitmap mInactiveIndicatorBitmap;
+    private Bitmap mActiveIndicatorBitmap;
     private AnimateDrawable mDrawable;
-    Context context;
+    Context mContext;
 
-    private int TOTAL_SCREEN_NUMBER = VueApplication.getInstance().getClickedWindowCount();
+    private int mTotalScreenNo = VueApplication.getInstance().getClickedWindowCount();
       
-    private int CURRENTSCREEN = 1;
-    private int NEXT_SCREEN = 2;
-    private int indicatorBitmapWidth,indicatorBitmapHeigt;
-    Drawable movingDot;
-    public IndicatorView(Context context) {
-super(context);
-this.context = context;
-initialize(context);
+    private int mCurrentScreen = 1;
+    private int mNextScreen = 2;
+    private int mIndicatorBitmapWidth,mIndicatorBitmapHeigt;
+    private int mIndicatorBgwidth = 50;
+ 
+    Drawable mMovingDot;
 
-    }
+	public IndicatorView(Context context) {
+		super(context);
+		this.mContext = context;
+		initialize(context);
+
+	}
  
     @Override
     public void setId(int id) {
-    	 
-    	super.setId(id);
+        
+       super.setId(id);
     }
  
-    public void setNumberofScreens(int numberOfScreens){
-TOTAL_SCREEN_NUMBER = numberOfScreens;
-//indicatorBitmap = getNewBitmap(indicatorBitmap);
-    }
+   public void setNumberofScreens(int numberOfScreens) {
+      mTotalScreenNo = numberOfScreens;
     
-    public void setDrawables(int movingDot,int backGround,int inactiveDots ){
-
-indicatorBitmap = BitmapFactory.decodeResource(context.getResources(),
-backGround);
-//indicatorBitmap = getNewBitmap(indicatorBitmap);
-inactiveIndicatorBitmap = BitmapFactory.decodeResource(
-context.getResources(), inactiveDots);
-activeIndicatorBitmap = BitmapFactory.decodeResource(
-context.getResources(), movingDot);
-this.movingDot = context.getResources().getDrawable(movingDot);
-this.movingDot.setBounds(0, 0, activeIndicatorBitmap.getWidth(),
-activeIndicatorBitmap.getHeight());
-setFocusable(true);
-setFocusableInTouchMode(true);
-indicatorBitmapWidth = indicatorBitmap.getWidth();
-indicatorBitmapHeigt = indicatorBitmap.getHeight();
-/*this.setBackgroundResource(backGround);*/
-
-    }
+   }
     
-    public void switchToScreen(int sourceScreenNumber,int destScreennumber){
- 
-     
-CURRENTSCREEN = sourceScreenNumber;
-NEXT_SCREEN = destScreennumber;
-if(TOTAL_SCREEN_NUMBER == 0) {
-	TOTAL_SCREEN_NUMBER = 4;
-}
-int distance = indicatorBitmapWidth / TOTAL_SCREEN_NUMBER;
-int travelTo = 0;
-int start;
-start = (CURRENTSCREEN * distance) - (distance / 2)
-- (activeIndicatorBitmap.getWidth() / 2);
-if((NEXT_SCREEN==1 && CURRENTSCREEN==1)||(NEXT_SCREEN==TOTAL_SCREEN_NUMBER && CURRENTSCREEN==TOTAL_SCREEN_NUMBER))
-travelTo = start;
-else
-if(CURRENTSCREEN<NEXT_SCREEN)
-travelTo = start + distance;
-else
-travelTo = start - distance;
+	public void setDrawables(int movingDot, int backGround, int inactiveDots) {
+		mIndicatorBitmap = BitmapFactory.decodeResource(
+				mContext.getResources(), backGround);
+		mInactiveIndicatorBitmap = BitmapFactory.decodeResource(
+				mContext.getResources(), inactiveDots);
+		mIndicatorBgwidth = getIndicatorBgWidht(
+				mInactiveIndicatorBitmap.getWidth() * 2, mTotalScreenNo);
+		mIndicatorBitmap = getNewBitmap(mIndicatorBitmap, mIndicatorBgwidth);
+		mActiveIndicatorBitmap = BitmapFactory.decodeResource(
+				mContext.getResources(), movingDot);
+		this.mMovingDot = mContext.getResources().getDrawable(movingDot);
+		this.mMovingDot.setBounds(0, 0, mActiveIndicatorBitmap.getWidth(),
+				mActiveIndicatorBitmap.getHeight());
+		setFocusable(true);
+		setFocusableInTouchMode(true);
+		mIndicatorBitmapWidth = mIndicatorBitmap.getWidth();
+		mIndicatorBitmapHeigt = mIndicatorBitmap.getHeight();
+		/* this.setBackgroundResource(backGround); */
 
-Animation an;
-if(CURRENTSCREEN<NEXT_SCREEN)
-an = new TranslateAnimation(start, travelTo,
-		indicatorBitmapHeigt/ 2
-- (activeIndicatorBitmap.getHeight() / 2),
-indicatorBitmapHeigt / 2
-- (activeIndicatorBitmap.getHeight() / 2));
-else
-an = new TranslateAnimation(start, travelTo,
-		indicatorBitmapHeigt/ 2
-- (activeIndicatorBitmap.getHeight() / 2),
-indicatorBitmapHeigt/ 2
-- (activeIndicatorBitmap.getHeight() / 2));
+	}
+    
+	public void switchToScreen(int sourceScreenNumber, int destScreennumber) {
+		mCurrentScreen = sourceScreenNumber;
+		mNextScreen = destScreennumber;
+		if (mTotalScreenNo == 0) {
+			mTotalScreenNo = 4;
+		}
+		int distance = mIndicatorBitmapWidth / mTotalScreenNo;
+		int travelTo = 0;
+		int start;
+		start = (mCurrentScreen * distance) - (distance / 2)
+				- (mActiveIndicatorBitmap.getWidth() / 2);
+		if ((mNextScreen == 1 && mCurrentScreen == 1)
+				|| (mNextScreen == mTotalScreenNo && mCurrentScreen == mTotalScreenNo))
+			travelTo = start;
+		else if (mCurrentScreen < mNextScreen)
+			travelTo = start + distance;
+		else
+			travelTo = start - distance;
+		Animation an;
+		if (mCurrentScreen < mNextScreen)
+			an = new TranslateAnimation(start, travelTo, mIndicatorBitmapHeigt
+					/ 2 - (mActiveIndicatorBitmap.getHeight() / 2),
+					mIndicatorBitmapHeigt / 2
+							- (mActiveIndicatorBitmap.getHeight() / 2));
+		else
+			an = new TranslateAnimation(start, travelTo, mIndicatorBitmapHeigt
+					/ 2 - (mActiveIndicatorBitmap.getHeight() / 2),
+					mIndicatorBitmapHeigt / 2
+							- (mActiveIndicatorBitmap.getHeight() / 2));
 
-an.setInterpolator(new AccelerateDecelerateInterpolator());
-an.setDuration(300);
-an.setRepeatCount(0);
-an.initialize(0, 0, 100, 100);
-mDrawable = new AnimateDrawable(movingDot, an);
-an.startNow();
-    }
+		an.setInterpolator(new AccelerateDecelerateInterpolator());
+		an.setDuration(300);
+		an.setRepeatCount(0);
+		an.initialize(0, 0, 100, 100);
+		mDrawable = new AnimateDrawable(mMovingDot, an);
+		an.startNow();
+	}
 
     public IndicatorView(Context context, AttributeSet attrs) {
-super(context, attrs);
-initialize(context);
-
+     super(context, attrs);
+      initialize(context);
     }
-
     @Override
     protected void onDraw(Canvas canvas) {
- 
-int distance = indicatorBitmap.getWidth() / TOTAL_SCREEN_NUMBER;
+    int distance = mIndicatorBitmap.getWidth() / mTotalScreenNo;
+    int i =1;
+    while(i<=mTotalScreenNo){
+    int start = (i * distance) - (distance / 2)
+      - (mActiveIndicatorBitmap.getWidth() / 2);
+      canvas.drawBitmap(
+      mInactiveIndicatorBitmap,
+     start,
+    mIndicatorBitmapHeigt / 2
+    - (mInactiveIndicatorBitmap.getHeight() / 2), null);
+    i++;
+    }
 
-
-int i =1;
-while(i<=TOTAL_SCREEN_NUMBER){
-int start = (i * distance) - (distance / 2)
-- (activeIndicatorBitmap.getWidth() / 2);
-
-canvas.drawBitmap(
-inactiveIndicatorBitmap,
-start,
-indicatorBitmapHeigt / 2
-- (inactiveIndicatorBitmap.getHeight() / 2), null);
-i++;
-}
-
-mDrawable.draw(canvas);
-invalidate();
+    mDrawable.draw(canvas);
+   invalidate();
     }
 
     @SuppressWarnings("deprecation")
 	private void initialize(Context context) {
+		mIndicatorBitmap = BitmapFactory.decodeResource(context.getResources(),
+				R.drawable.bullets_bg);
+		// indicatorBitmap = getNewBitmap(indicatorBitmap);
+		mInactiveIndicatorBitmap = BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.number_inactive);
+		mActiveIndicatorBitmap = BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.number_active);
+		mMovingDot = context.getResources().getDrawable(
+				R.drawable.number_active);
+		mMovingDot.setBounds(0, 0, mActiveIndicatorBitmap.getWidth() / 2,
+				mActiveIndicatorBitmap.getHeight() / 2);
+		setFocusable(true);
+		setFocusableInTouchMode(true);
+		// this.setBackgroundResource(R.drawable.bullets_bg);
+		mIndicatorBgwidth = getIndicatorBgWidht(
+				mActiveIndicatorBitmap.getWidth() * 2, mTotalScreenNo);
+		Bitmap newBitmap = getNewBitmap(mIndicatorBitmap, mIndicatorBgwidth);
+		Drawable d = getResources().getDrawable(R.drawable.bullets_bg);
+		d = new BitmapDrawable(getResources(), mIndicatorBitmap);
+		this.setBackgroundDrawable(d);
+	}
 
-indicatorBitmap = BitmapFactory.decodeResource(context.getResources(),
-R.drawable.bullets_bg);
-//indicatorBitmap = getNewBitmap(indicatorBitmap);
-inactiveIndicatorBitmap = BitmapFactory.decodeResource(
-context.getResources(), R.drawable.number_inactive);
-activeIndicatorBitmap = BitmapFactory.decodeResource(
-context.getResources(), R.drawable.number_active);
-movingDot = context.getResources().getDrawable(
-R.drawable.number_active);
-movingDot.setBounds(0, 0, activeIndicatorBitmap.getWidth()/2,
-activeIndicatorBitmap.getHeight()/2);
-setFocusable(true);
-setFocusableInTouchMode(true);
-//this.setBackgroundResource(R.drawable.bullets_bg);
- Drawable d = getResources().getDrawable(R.drawable.bullets_bg);
- d = new BitmapDrawable(getResources(), indicatorBitmap); 
- this.setBackgroundDrawable(d);
+	private Bitmap getNewBitmap(Bitmap bitmap, int newWidth) {
+		return Bitmap.createScaledBitmap(bitmap, newWidth, 20, true);
+	}
 
-    }
- 
-/*private Bitmap getNewBitmap(Bitmap bitmap) {
-	int bgSize = 200;
-	Log.i("screenno", "screenno called TOTAL_SCREEN_NUMBER: "+TOTAL_SCREEN_NUMBER);
-    	if(TOTAL_SCREEN_NUMBER <= 5) {
-    		Log.i("screenno", "screenno called");
-    		bgSize = 100;
-    	}
-    	return Bitmap.createScaledBitmap(bitmap, bgSize, 20, true);
-		 
-    	
-    }*/
+	private int getIndicatorBgWidht(int eachDotWidht, int totalDots) {
+		return eachDotWidht * totalDots;
+	}
+
+	public int getIndicatorBgWidht() {
+		return mIndicatorBgwidth;
+	}
 }
