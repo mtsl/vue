@@ -87,14 +87,13 @@ public class VueContentGateway {
         if(!isConnection) {
             Log.e(TAG, "network connection No");
             return status;
-          } else if(isConnection && (VueBatteryManager.isConnected(mContext) || (isConnection && VueBatteryManager
-              .batteryLevel(mContext) > VueBatteryManager.MINIMUM_BATTERY_LEVEL))) {
-            Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 1");
-        	  Intent intent = new Intent(mContext, VueContentRestService.class);
+          } else if(isConnection && (VueBatteryManager.isConnected(mContext))) {
+              Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 1");
+        	 /* Intent intent = new Intent(mContext, VueContentRestService.class);
               intent.putExtra("url",baseUri.toString());
               intent.putParcelableArrayListExtra("headers", mHeaders);
               intent.putParcelableArrayListExtra("params",mParams);
-              intent.putExtra("receiver", receiver);
+              intent.putExtra("receiver", receiver);*/
 
               String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI + "aisle/trending?limit=%s&offset=%s";
               String requestUrl = String.format(requestUrlBase, limit, offset);
@@ -110,15 +109,12 @@ public class VueContentGateway {
                       }
                   }
               };
-
               Response.ErrorListener errorListener = new Response.ErrorListener(){
                   @Override
                   public void onErrorResponse(VolleyError error){
                       Log.e("VueNetworkError","Vue encountered network operations error. Error = " + error.networkResponse);
                   }
               };
-
-
               JsonArrayRequest vueRequest =
                       new JsonArrayRequest(requestUrl, listener, errorListener ){
                   @Override
@@ -134,12 +130,7 @@ public class VueContentGateway {
 
               //mContext.startService(intent);
           }
-        
-        
-        
-        
-       
-		return status;		
+        return status;		
 	}
 
     private void initializeHttpFields(){

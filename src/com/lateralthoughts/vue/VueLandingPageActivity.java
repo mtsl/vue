@@ -1,29 +1,18 @@
 package com.lateralthoughts.vue;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.Signature;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.Window;
-import android.view.View.OnClickListener;
-import android.widget.ImageView;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.android.gms.plus.PlusClient;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
@@ -38,11 +27,14 @@ public class VueLandingPageActivity extends BaseActivity {
 
   @Override
   public void onCreate(Bundle icicle) {
+    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreate() Start Before super call");
     super.onCreate(icicle);
+    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreate() After super call");
     Thread.setDefaultUncaughtExceptionHandler(new
     		ExceptionHandler(this));
+    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreate() Before setContentView(R.layout.vue_landing_main) call");
     setContentView(R.layout.vue_landing_main);
-
+    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreate() After setContentView(R.layout.vue_landing_main) call");
     // Checking wheather app is opens for first time or not?
     sharedPreferencesObj = this.getSharedPreferences(
         VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -71,15 +63,15 @@ public class VueLandingPageActivity extends BaseActivity {
       }
 
     }
-
-
-    
+    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreate() End");
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
+    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreateOptionsMenu() Start");
     getSupportMenuInflater().inflate(R.menu.title_options, menu);
-    getSupportActionBar().setHomeButtonEnabled(true); 
+    getSupportActionBar().setHomeButtonEnabled(true);
+    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreateOptionsMenu() End");
     // Configure the search info and add any event listeners
     return super.onCreateOptionsMenu(menu);
   }

@@ -152,7 +152,7 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
         public void onScrollStateChanged(AbsListView view, int scrollState) {
             mLeftColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
             mRightColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
-            
+
             int first = view.getFirstVisiblePosition();
             int count = view.getChildCount();
 
