@@ -220,20 +220,21 @@ public class VueAisleDetailsViewFragment extends Fragment {
         dotIndicatorBg.getBackground().setAlpha(45);
       new Handler().postDelayed(new Runnable() {
 
-         @Override
-         public void run() {
-            // TODO need to invisible this view in a smooth way
-            dotIndicatorBg.setVisibility(View.GONE);
-         }
-      },AISLE_HEADER_SHOW_TIME);
-      RelativeLayout vuesharelayout = (RelativeLayout) v
-            .findViewById(R.id.vuesharelayout);
-      vuesharelayout.setOnClickListener(new OnClickListener() {
-         @Override
-         public void onClick(View arg0) {
-            mAisleDetailsAdapter.share(getActivity(), getActivity());
-         }
-      });
+ 
+			@Override
+			public void run() {
+				// TODO need to invisible this view in a smooth way
+				dotIndicatorBg.setVisibility(View.GONE);
+			}
+		},AISLE_HEADER_SHOW_TIME);
+		RelativeLayout vueShareLayout = (RelativeLayout) v
+				.findViewById(R.id.vuesharelayout);
+		vueShareLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mAisleDetailsAdapter.share(getActivity(), getActivity());
+			}
+		});
         return v;
     }
     @Override

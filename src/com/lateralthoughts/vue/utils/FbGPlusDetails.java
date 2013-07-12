@@ -4,7 +4,6 @@ import com.google.android.gms.plus.model.people.Person;
 
 /**
  * This is class is used to store the facebook friends information.
- * @author krishna
  *
  */
 public class FbGPlusDetails {
