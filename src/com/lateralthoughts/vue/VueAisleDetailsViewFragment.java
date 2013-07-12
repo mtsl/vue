@@ -218,7 +218,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				}
 			}
 		});
-		//dotIndicatorBg.getBackground().setAlpha(45);
+		dotIndicatorBg.getBackground().setAlpha(45);
 		new Handler().postDelayed(new Runnable() {
 
 			@Override
