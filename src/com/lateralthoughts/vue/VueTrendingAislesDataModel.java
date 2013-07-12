@@ -92,17 +92,17 @@ public class VueTrendingAislesDataModel {
         mState = AISLE_TRENDING_LIST_DATA;
         mAisleContentList = new ArrayList<AisleWindowContent>();
         getAislesFromDb();
-        //initializeTrendingAisleContent();
-        
-        mMoreDataAvailable = true;  
-
+        // initializeTrendingAisleContent();
+        mMoreDataAvailable = true;
+        Log.e("Profiling", "Profiling VueTrendingAislesDataModel.VueTrendingAislesDataModel() Before getTrendingAisles() calling");
         mVueContentGateway.getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
+        Log.e("Profiling", "Profiling VueTrendingAislesDataModel.VueTrendingAislesDataModel() after getTrendingAisles() calling");
 	}
 
 	public void registerAisleDataObserver(IAisleDataObserver observer){
 		if(!mAisleDataObserver.contains(observer))
 			mAisleDataObserver.add(observer);
-		
+
 		//but if we already have the data we should notify right away
 		observer.onAisleDataUpdated(mAisleContentList.size());
 	}
@@ -197,6 +197,7 @@ public class VueTrendingAislesDataModel {
                 Log.e("VueTrendingAislesDataModel", "JSONArray size(): " + contentArray.length());
 	            if(0 == contentArray.length()){
 	                mMoreDataAvailable = false;
+	                addAislesToDb();
 	            }
 	            DbHelper helper = new DbHelper(mContext);
 	            SQLiteDatabase db = helper.getWritableDatabase();
@@ -238,7 +239,7 @@ public class VueTrendingAislesDataModel {
 	                }
                   aisleItem = getAisleItem(aisleId);
                   aisleItem.addAisleContent(userInfo,  imageItemsArray);
-                  addAislesToDb(userInfo, imageItemsArray);
+                  // addAislesToDb(userInfo, imageItemsArray);
 	              imageItemsArray.clear();
                   c.close();
 	            }
@@ -291,38 +292,46 @@ public class VueTrendingAislesDataModel {
 		return sVueTrendingAislesDataModel;		
 	}
 
-	private void addAislesToDb(AisleContext info, ArrayList<AisleImageDetails> imageItemsArray) {
+	private void addAislesToDb() {
+	    Log.e("Profiling", "Profiling VueTrendingAislesDataModel.addAislesToDb() Start");
 		DbHelper helper = new DbHelper(mContext);
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
-		ContentValues values = new ContentValues();
-		values.put(VueConstants.FIRST_NAME, info.mFirstName);
-		values.put(VueConstants.LAST_NAME, info.mLastName);
-		values.put(VueConstants.JOIN_TIME, info.mJoinTime);
-		values.put(VueConstants.LOOKING_FOR, info.mLookingForItem);
-		values.put(VueConstants.OCCASION, info.mOccasion);
-		values.put(VueConstants.USER_ID, info.mUserId);
-		values.put(VueConstants.AISLE_ID, info.mAisleId);
-		db.insert(DbHelper.DATABASE_TABLE_AISLES, null, values);
-		for(AisleImageDetails imageDetails : imageItemsArray) {
-			ContentValues imgValues = new ContentValues();
-			imgValues.put(VueConstants.TITLE, imageDetails.mTitle);
-			imgValues.put(VueConstants.IMAGE_URL, imageDetails.mImageUrl);
-			imgValues.put(VueConstants.DETAILS_URL, imageDetails.mDetalsUrl);
-			imgValues.put(VueConstants.HEIGHT, imageDetails.mAvailableHeight);
-			imgValues.put(VueConstants.WIDTH, imageDetails.mAvailableWidth);
-			imgValues.put(VueConstants.STORE, imageDetails.mStore);
-			imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
-			imgValues.put(VueConstants.USER_ID, info.mUserId);
-			imgValues.put(VueConstants.AISLE_ID, info.mAisleId);
-			db.insert(DbHelper.DATABASE_TABLE_AISLES_IMAGES, null, imgValues);
+		for(int i = 0; i < getAisleCount(); i++) {
+          AisleWindowContent content = getAisleAt(i);
+          AisleContext info = content.getAisleContext();
+          ArrayList<AisleImageDetails> imageItemsArray = content.getImageList();
+		  ContentValues values = new ContentValues();
+		  values.put(VueConstants.FIRST_NAME, info.mFirstName);
+		  values.put(VueConstants.LAST_NAME, info.mLastName);
+		  values.put(VueConstants.JOIN_TIME, info.mJoinTime);
+		  values.put(VueConstants.LOOKING_FOR, info.mLookingForItem);
+		  values.put(VueConstants.OCCASION, info.mOccasion);
+		  values.put(VueConstants.USER_ID, info.mUserId);
+		  values.put(VueConstants.AISLE_ID, info.mAisleId);
+		  db.insert(DbHelper.DATABASE_TABLE_AISLES, null, values);
+		  for(AisleImageDetails imageDetails : imageItemsArray) {
+			  ContentValues imgValues = new ContentValues();
+			  imgValues.put(VueConstants.TITLE, imageDetails.mTitle);
+			  imgValues.put(VueConstants.IMAGE_URL, imageDetails.mImageUrl);
+			  imgValues.put(VueConstants.DETAILS_URL, imageDetails.mDetalsUrl);
+			  imgValues.put(VueConstants.HEIGHT, imageDetails.mAvailableHeight);
+			  imgValues.put(VueConstants.WIDTH, imageDetails.mAvailableWidth);
+			  imgValues.put(VueConstants.STORE, imageDetails.mStore);
+			  imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
+			  imgValues.put(VueConstants.USER_ID, info.mUserId);
+			  imgValues.put(VueConstants.AISLE_ID, info.mAisleId);
+			  db.insert(DbHelper.DATABASE_TABLE_AISLES_IMAGES, null, imgValues);
+		  }
 		}
 		db.setTransactionSuccessful();
 		db.endTransaction();
 		db.close();
+		Log.e("Profiling", "Profiling VueTrendingAislesDataModel.addAislesToDb() End");
 	}
-	
+
 	private void getAislesFromDb() {
+	  Log.e("Profiling", "Profiling VueTrendingAislesDataModel.getAislesFromDb() Start");
 	  AisleContext userInfo;
 	  AisleImageDetails imageItemDetails;
 	  AisleWindowContent aisleItem = null;
@@ -365,12 +374,13 @@ public class VueTrendingAislesDataModel {
       }
       aislesCursor.close();
       db.close();
+      Log.e("Profiling", "Profiling VueTrendingAislesDataModel.getAislesFromDb() End");
 	}
 
   public void loadMoreAisles() {
     mMoreDataAvailable = true;
     loadOnRequest = false;
-    if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
+    if(mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
       mOffset += mLimit;
     else {
       mOffset += mLimit;
@@ -379,7 +389,7 @@ public class VueTrendingAislesDataModel {
     Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 6 ++ mOffset: " + mOffset + ", mLimit" + mLimit);
     mVueContentGateway.getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
   }
-	
+
 	private void copyDB() {
 		try {
 	        File sd = Environment.getExternalStorageDirectory();
