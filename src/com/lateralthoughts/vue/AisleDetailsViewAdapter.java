@@ -310,78 +310,56 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	private void notifyAdapter() {
 		this.notifyDataSetChanged();
 	}
-	 
-  public void share(final Context context, Activity activity)
- {
-		Log.e("share click", "2");
+
+	public void share(final Context context, Activity activity) {
 		mShare = new ShareDialog(context, activity);
-
 		FileCache ObjFileCache = new FileCache(context);
-		Log.e("share click", "3");
 		ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
-
 		if (mWindowContent_temp.getImageList() != null
 				&& mWindowContent_temp.getImageList().size() > 0) {
-			Log.e("share click", "4");
 			for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
-
-				Log.e("share click", "5");
 				clsShare obj = new clsShare(mWindowContent_temp.getImageList()
 						.get(i).mCustomImageUrl,
 						ObjFileCache
 								.getFile(
 										mWindowContent_temp.getImageList().get(
 												i).mCustomImageUrl).getPath());
-
 				imageUrlList.add(obj);
 			}
-			Log.e("share click", "6");
 			mShare.share(
 					imageUrlList,
 					mWindowContent_temp.getAisleContext().mOccasion,
 					(mWindowContent_temp.getAisleContext().mFirstName + " " + mWindowContent_temp
 							.getAisleContext().mLastName));
 		}
-
 		if (mWindowContent_temp.getImageList() != null
 				&& mWindowContent_temp.getImageList().size() > 0) {
-
 			FileCache ObjFileCache1 = new FileCache(context);
-
 			for (int i = 0; i < mWindowContent_temp.getImageList().size(); i++) {
-
 				final File f = ObjFileCache1.getFile(mWindowContent_temp
 						.getImageList().get(i).mCustomImageUrl);
-
 				if (!f.exists()) {
 					Response.Listener listener = new Response.Listener<Bitmap>() {
-
 						@Override
 						public void onResponse(Bitmap bmp) {
 							Utils.saveBitmap(bmp, f);
 						}
 					};
-
 					Response.ErrorListener errorListener = new Response.ErrorListener() {
-
 						@Override
 						public void onErrorResponse(VolleyError arg0) {
 							Log.e(TAG, arg0.getMessage());
 						}
 					};
-
 					ImageRequest imagerequestObj = new ImageRequest(
 							mWindowContent_temp.getImageList().get(i).mCustomImageUrl,
 							listener, 0, 0, null, errorListener);
-
 					VueApplication.getInstance().getRequestQueue()
 							.add(imagerequestObj);
 				}
 			}
 		}
-
-	}
- 
+	} 
 
 
 	/**

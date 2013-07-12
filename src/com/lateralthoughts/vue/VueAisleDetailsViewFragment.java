@@ -223,9 +223,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				dotIndicatorBg.setVisibility(View.GONE);
 			}
 		},AISLE_HEADER_SHOW_TIME);
-		RelativeLayout vuesharelayout = (RelativeLayout) v
+		RelativeLayout vueShareLayout = (RelativeLayout) v
 				.findViewById(R.id.vuesharelayout);
-		vuesharelayout.setOnClickListener(new OnClickListener() {
+		vueShareLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				mAisleDetailsAdapter.share(getActivity(), getActivity());

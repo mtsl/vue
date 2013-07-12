@@ -28,7 +28,6 @@ public class ProxyDrawable extends Drawable {
     public void draw(Canvas canvas) {
         if (mProxy != null) {
             mProxy.draw(canvas);
-          //test code raju fromkrishna
         }
     }
 

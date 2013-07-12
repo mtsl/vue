@@ -14,7 +14,7 @@
          android:textCursorDrawable="@null"
          android:cursorVisible="true"
         android:imeOptions="actionDone"
-      
+     android:inputType="textMultiLine"
         android:id="@+id/edtcomment"/>
     <TextView
         android:id="@+id/vue_user_entercomment"

@@ -201,7 +201,6 @@ public class Utils {
 	}
 
 	/**
-	 * By Krishna.v This method is used to save image to sdcard.
 	 * 
 	 * @param bmp
 	 * @param file
@@ -254,19 +253,20 @@ public class Utils {
 				// Calculate ratios of height and width to requested height and
 				// width
 				heightRatio = Math.round((float) height / (float) screenHeight);
+			scale = heightRatio;
 			}
 
-			if (width > screenWidth) {
+			/*if (width > screenWidth) {
 				// Calculate ratios of height and width to requested height and
 				// width
 				widthRatio = Math.round((float) width / (float) screenWidth);
-			}
+			}*/
 
 			// Choose the smallest ratio as inSampleSize value, this will
 			// guarantee
 			// a final image with both dimensions larger than or equal to the
 			// requested height and width.
-			scale = heightRatio < widthRatio ? heightRatio : widthRatio;
+		//	scale = heightRatio < widthRatio ? heightRatio : widthRatio;
 
 			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
