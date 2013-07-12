@@ -16,9 +16,8 @@
          android:scrollbars="vertical"
          android:textCursorDrawable="@null"
          android:cursorVisible="true"
-         android:imeOptions="actionGo"
+         android:imeOptions="actionDone"
          android:id="@+id/edtcomment"/>
- 
     <TextView
         android:id="@+id/vue_user_entercomment"
         android:layout_width="match_parent"
