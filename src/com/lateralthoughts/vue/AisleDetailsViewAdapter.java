@@ -140,6 +140,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       RelativeLayout exapandHolder;
       EditText edtComment;
       View separator;
+      FrameLayout edtCommentLay;
+      ImageView commentSend;
    }
 
    @Override
@@ -188,6 +190,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
                .findViewById(R.id.vuewndow_comment_count);
          mViewHolder.commentImg = (ImageView) convertView
                .findViewById(R.id.vuewndow_comment_img);
+         mViewHolder.commentSend = (ImageView) convertView.findViewById(R.id.sendcomment);
+         
+         mViewHolder.edtCommentLay = (FrameLayout) convertView.findViewById(R.id.edtcommentlay);
          mViewHolder.userComment.setTextSize(VueApplication.getInstance()
                .getmTextSize());
          mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
@@ -215,11 +220,13 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
       mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
       mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
+     // mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
       if (position == 0) {
          mViewHolder.commentContentlay.setVisibility(View.GONE);
          mViewHolder.vueCommentheader.setVisibility(View.GONE);
          mViewHolder.addCommentlay.setVisibility(View.GONE);
          mViewHolder.separator.setVisibility(View.GONE);
+         mViewHolder.edtCommentLay.setVisibility(View.GONE);
          for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
             mViewHolder.mWindowContent = (AisleWindowContent) getItem(i);
             if (mViewHolder.mWindowContent.getAisleId().equalsIgnoreCase(
@@ -249,21 +256,25 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          mViewHolder.imgContentlay.setVisibility(View.GONE);
          mViewHolder.commentContentlay.setVisibility(View.GONE);
          mViewHolder.addCommentlay.setVisibility(View.GONE);
+         mViewHolder.edtCommentLay.setVisibility(View.GONE);
          // image content gone
       } else if (position == mListCount - 1) {
             mViewHolder.separator.setVisibility(View.GONE);
             mViewHolder.imgContentlay.setVisibility(View.GONE);
             mViewHolder.vueCommentheader.setVisibility(View.GONE);
           mViewHolder.commentContentlay.setVisibility(View.GONE);
-           mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
+          // mViewHolder.edtCommentLay.setVisibility(View.GONE);
           mViewHolder.vue_user_enterComment
                .setOnClickListener(new OnClickListener() {
 
                   @Override
                   public void onClick(View v) {
+                	  mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
+                	  mViewHolder.vue_user_enterComment.setVisibility(View.GONE);
                      mswipeListner.onAddCommentClick(
                            mViewHolder.vue_user_enterComment,
-                           mViewHolder.edtComment);
+                           mViewHolder.edtComment,mViewHolder.commentSend, mViewHolder.edtCommentLay);
+                    
                   }
                });
       }
