@@ -7,15 +7,17 @@
     
     android:orientation="vertical" >
         <EditText android:layout_width="match_parent"
-              android:layout_height="100dp"
-                   android:layout_marginLeft="12dp"
-        android:layout_marginRight="22dp"
+         android:layout_height="100dp"
+         android:layout_marginLeft="12dp"
+         android:layout_marginRight="22dp"
          android:visibility="gone"
+         android:inputType="text|textMultiLine"
+         android:maxLines="4"
+         android:scrollbars="vertical"
          android:textCursorDrawable="@null"
          android:cursorVisible="true"
-        android:imeOptions="actionDone"
-      
-        android:id="@+id/edtcomment"/>
+         android:imeOptions="actionGo"
+         android:id="@+id/edtcomment"/>
     <TextView
         android:id="@+id/vue_user_entercomment"
         android:layout_width="match_parent"

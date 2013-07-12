@@ -9,6 +9,7 @@ import com.lateralthoughts.vue.utils.Utils;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -24,6 +25,7 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.support.v4.app.Fragment;
 import android.app.Activity;
@@ -45,6 +47,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
+import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -288,9 +291,47 @@ public class VueAisleDetailsViewFragment extends Fragment {
           editText.setTextColor(Color.parseColor(getResources().getString(R.color.black)));
           editText.requestFocus();
           editText.setFocusable(true);
+          editText.setImeOptions(EditorInfo.IME_ACTION_GO);
+          editText.setScroller(new Scroller(getActivity()));
+          editText.setVerticalScrollBarEnabled(true);
+          editText.setMovementMethod(new ScrollingMovementMethod());
           editText.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            	
+            	
+            	editText.setOnTouchListener(new OnTouchListener() {
+            	       public boolean onTouch(View view, MotionEvent event) {
+            	            // TODO Auto-generated method stub
+            	            if (view.getId() == R.id.edtcomment) {
+            	            	mAisleDetailsList.requestDisallowInterceptTouchEvent(true);
+            	                switch (event.getAction()&MotionEvent.ACTION_MASK){
+            	                case MotionEvent.ACTION_UP:
+            	                	mAisleDetailsList.requestDisallowInterceptTouchEvent(false);
+            	                    break;
+            	                
+            	                }
+            	            }
+            	            return false;
+            	        }
+            	    });
+            	
+            	
+            	
+            	
+            	
+            	
+            	
+            	
+            	
+            	 if(actionId == EditorInfo.IME_ACTION_DONE) {
+            		 
+            	 } else if(actionId == EditorInfo.IME_ACTION_GO) {
+            		 
+            	 } else if(actionId == EditorInfo.IME_ACTION_NEXT) {
+            		 
+            	 }
+            	 
                 inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0); 
                 mAisleDetailsAdapter.mTempComments2 =  new String[mAisleDetailsAdapter.mTempComments.length+1];
                 mAisleDetailsAdapter.mTempComments2[0] = v.getText().toString();

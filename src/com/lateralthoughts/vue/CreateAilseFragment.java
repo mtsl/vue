@@ -185,6 +185,18 @@ public class CreateAilseFragment extends Fragment{
 				inputMethodManager.hideSoftInputFromWindow(saysomethingaboutaisle.getWindowToken(), 0);
 			saysomethingaboutaisle.setText(previoussaysomething);	
 			}
+
+			@Override
+			public void setFlag(boolean flag) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean getFlag() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		});
 		
 		saysomethingaboutaisle.addTextChangedListener(new TextWatcher() {
@@ -262,6 +274,18 @@ public class CreateAilseFragment extends Fragment{
 	 			inputMethodManager.hideSoftInputFromWindow(occasiontext.getWindowToken(), 0);
 	 			inputMethodManager.hideSoftInputFromWindow(lookingfortext.getWindowToken(), 0);
 	          }
+
+			@Override
+			public void setFlag(boolean flag) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean getFlag() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 	        });
 		
 		occasiontext.setOnEditorActionListener(new OnEditorActionListener() {
@@ -307,6 +331,18 @@ public class CreateAilseFragment extends Fragment{
 	 			inputMethodManager.hideSoftInputFromWindow(occasiontext.getWindowToken(), 0);
 	 			inputMethodManager.hideSoftInputFromWindow(lookingfortext.getWindowToken(), 0);
 	          }
+
+			@Override
+			public void setFlag(boolean flag) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean getFlag() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 	        });
 		
 		
