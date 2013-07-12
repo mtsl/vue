@@ -16,16 +16,6 @@
         android:divider="@null"
         android:scrollbars="none" >
     </ListView>
-<!-- <ScrollView 
-    android:id="@+id/aisle_details_list"
-     android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="48dp"
-        android:divider="@android:color/transparent"
-        android:scrollbars="none" ></ScrollView> -->
     <RelativeLayout
         android:id="@+id/vue_image_indicator"
         android:layout_width="fill_parent"
@@ -34,18 +24,6 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="5dp"
         android:background="@android:color/white" >
-     <!--    <TextView android:layout_width="wrap_content"
-                  android:id="@+id/leftgo"
-                  android:layout_height="wrap_content"
-                  
-                  android:layout_alignParentLeft="true"
-                  android:text=">"/>
-                <TextView android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                   android:id="@+id/rightgo"
-                  
-                  android:layout_alignParentRight="true"
-                  android:text=">"/> -->
     </RelativeLayout>
 
     <LinearLayout
@@ -67,12 +45,11 @@
     </LinearLayout>
     <RelativeLayout android:layout_width="fill_parent"
         android:layout_alignParentBottom="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:background="#bcbcbc"
         android:id="@+id/vue_bottom_bar"
             android:layout_height="48dp">
-     <!--    <View android:layout_width="fill_parent"
-              android:layout_height="1dp"
-              android:background="@android:color/white"/> -->
         <ImageView android:layout_width="32dp"
                    android:layout_height="48dp"
                    android:layout_marginLeft="4dp"
@@ -114,15 +91,5 @@
                    android:src="@drawable/share"
                    />
              </RelativeLayout>
-            
-             <!--    <ImageView android:layout_width="48dp"
-                   android:layout_height="48dp"
-                   android:id="@+id/vue_show_aisle"
-                  
-                   android:layout_centerVertical="true"
-                 
-                   android:src="@drawable/aisleinfo"
-                   
-                   /> -->
     </RelativeLayout>
 </RelativeLayout>

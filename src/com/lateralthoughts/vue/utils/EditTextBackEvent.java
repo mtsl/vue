@@ -1,8 +1,5 @@
 package com.lateralthoughts.vue.utils;
 
-import com.android.volley.RetryPolicy;
-import com.lateralthoughts.vue.CreateAilseFragment;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -10,7 +7,7 @@ import android.widget.EditText;
 
 /**
  * 
- * @author raju EditText Custom class for EditText to hanled the events
+ *EditText Custom class for EditText to hanled the events
  */
 public class EditTextBackEvent extends EditText {
   Context context;
@@ -66,7 +63,6 @@ public class EditTextBackEvent extends EditText {
 
 		}
 	} catch (Exception e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 
@@ -81,12 +77,7 @@ public class EditTextBackEvent extends EditText {
   public void setOnEditTextImeBackListener(EditTextImeBackListener listener) {
     //mOnImeBack = listener;
   }
-
-  /**
-   * 
-   * @author raju
-   * 
-   */
+ 
   public interface EditTextImeBackListener {
 
     /**

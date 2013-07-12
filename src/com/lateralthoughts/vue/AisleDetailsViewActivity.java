@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,7 @@ import com.slidingmenu.lib.SlidingMenu;
 
 public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  {
     Fragment mFragRight;
-    ViewPager mViewPager;
+    
     HorizontalListView mTopScroller,mBottomScroller;
     int mStatusbarHeight;
     int mScreenTotalHeight;
@@ -40,145 +39,136 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
     Context mContext;
     AisleWindowContent mWindowContent;
     private SlidingDrawer mSlidingDrawer;
-	 ArrayList<AisleImageDetails> mImageDetailsArr = null;
-	AisleImageDetails mItemDetails = null;
+    ArrayList<AisleImageDetails> mImageDetailsArr = null;
+   AisleImageDetails mItemDetails = null;
     private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
     private BitmapLoaderUtils mBitmapLoaderUtils;
     @SuppressWarnings("deprecation")
-	@SuppressLint("NewApi")
+   @SuppressLint("NewApi")
     @Override
-	public void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
-		// setContentView(R.layout.vuedetails_frag);
-		setContentView(R.layout.aisle_details_activity_landing);
+   public void onCreate(Bundle icicle) {
+      super.onCreate(icicle);
+      // setContentView(R.layout.vuedetails_frag);
+      setContentView(R.layout.aisle_details_activity_landing);
 
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-		if (currentapiVersion >= 11) {
-			getActionBar().hide();
-		}
+      int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+      if (currentapiVersion >= 11) {
+         getActionBar().hide();
+      }
 
         mSlidingDrawer = (SlidingDrawer) findViewById(R.id.drawer2);
         mSlidingDrawer
-				.setOnDrawerScrollListener(new SlidingDrawer.OnDrawerScrollListener() {
-					private Runnable mRunnable = new Runnable() {
-						@Override
-						public void run() {
-							// While the SlidingDrawer is moving; do nothing.
-							while (mSlidingDrawer.isMoving()) {
-								// Allow another thread to process its
-								// instructions.
-								Thread.yield();
-							}
+            .setOnDrawerScrollListener(new SlidingDrawer.OnDrawerScrollListener() {
+               private Runnable mRunnable = new Runnable() {
+                  @Override
+                  public void run() {
+                     // While the SlidingDrawer is moving; do nothing.
+                     while (mSlidingDrawer.isMoving()) {
+                        // Allow another thread to process its
+                        // instructions.
+                        Thread.yield();
+                     }
 
-							// When the SlidingDrawer is no longer moving;
-							// trigger mHandler.
-							mHandler.sendEmptyMessage(0);
-						}
-					};
+                     // When the SlidingDrawer is no longer moving;
+                     // trigger mHandler.
+                     mHandler.sendEmptyMessage(0);
+                  }
+               };
+               @Override
+               public void onScrollStarted() {
 
-					@Override
-					public void onScrollStarted() {
+                  getSlidingMenu().setTouchModeAbove(
+                        SlidingMenu.TOUCHMODE_NONE);
+               }
+               @Override
+               public void onScrollEnded() {
+                  new Thread(mRunnable).start();
+               }
+            });
+        mTopScroller = (HorizontalListView) findViewById(R.id.topscroller);
+        mBottomScroller = (HorizontalListView) findViewById(R.id.bottomscroller);
+        mStatusbarHeight = VueApplication.getInstance().getmStatusBarHeight();
+        mScreenTotalHeight = VueApplication.getInstance().getScreenHeight();
+        mCoparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight
+            - VueApplication.getInstance().getPixel(30);
+        mVueTrendingAislesDataModel = VueTrendingAislesDataModel
+            .getInstance(mContext);
+        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
+      for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
+         mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel
+               .getAisleAt(i);
+         if (mWindowContent.getAisleId().equalsIgnoreCase(
+               VueApplication.getInstance().getClickedWindowID())) {
+            mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel
+                  .getAisleAt(i);
+            break;
+         }
+      }
+        mImageDetailsArr = mWindowContent.getImageList();
+      if (null != mImageDetailsArr && mImageDetailsArr.size() != 0) {
+      }
+        mTopScroller.setAdapter(new ComparisionAdapter(
+            AisleDetailsViewActivity.this));
+        mBottomScroller.setAdapter(new ComparisionAdapter(
+            AisleDetailsViewActivity.this));
 
-						getSlidingMenu().setTouchModeAbove(
-								SlidingMenu.TOUCHMODE_NONE);
-					}
-
-					@Override
-					public void onScrollEnded() {
-
-						new Thread(mRunnable).start();
-
-					}
-				});
-
-		mTopScroller = (HorizontalListView) findViewById(R.id.topscroller);
-		mBottomScroller = (HorizontalListView) findViewById(R.id.bottomscroller);
-		mStatusbarHeight = VueApplication.getInstance().getmStatusBarHeight();
-		mScreenTotalHeight = VueApplication.getInstance().getScreenHeight();
-		mCoparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight
-				- VueApplication.getInstance().getPixel(30);
-		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
-				.getInstance(mContext);
-		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
-		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
-			mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel
-					.getAisleAt(i);
-			if (mWindowContent.getAisleId().equalsIgnoreCase(
-					VueApplication.getInstance().getClickedWindowID())) {
-				mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel
-						.getAisleAt(i);
-				break;
-			}
-		}
-		mImageDetailsArr = mWindowContent.getImageList();
-		if (null != mImageDetailsArr && mImageDetailsArr.size() != 0) {
-		}
-		mTopScroller.setAdapter(new ComparisionAdapter(
-				AisleDetailsViewActivity.this));
-		mBottomScroller.setAdapter(new ComparisionAdapter(
-				AisleDetailsViewActivity.this));
-
-	}
+   }
    
-	class ComparisionAdapter extends BaseAdapter {
+   class ComparisionAdapter extends BaseAdapter {
         LayoutInflater minflater;
-    	public ComparisionAdapter(Context context) {
-    		   minflater = (LayoutInflater)
-    				   getSystemService(context.LAYOUT_INFLATER_SERVICE);
-    	}
+       public ComparisionAdapter(Context context) {
+             minflater = (LayoutInflater)
+                   getSystemService(context.LAYOUT_INFLATER_SERVICE);
+       }
+       @Override
+       public int getCount() {
+          return mImageDetailsArr.size();
+       }
+       @Override
+       public Object getItem(int position) {
+          return position;
+       }
+       @Override
+       public long getItemId(int position) {
+          return position;
+       }
+       @Override
+          public View getView(int position, View convertView, ViewGroup parent) {
+             ViewHolder viewHolder;
+             mItemDetails = mImageDetailsArr.get(position);
+             Bitmap bitmap = mBitmapLoaderUtils
+                   .getCachedBitmap(mItemDetails.mCustomImageUrl);
+             if (convertView == null) {
+                viewHolder = new ViewHolder();
+                convertView = minflater.inflate(R.layout.vuecompareimg, null);
+                viewHolder.img = (ImageView) convertView
+                      .findViewById(R.id.vue_compareimg);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                      mCoparisionScreenHeight / 2,
+                      mCoparisionScreenHeight / 2);
+                params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                params.setMargins(VueApplication.getInstance().getPixel(10), 0,
+                      0, 0);
+                viewHolder.img.setLayoutParams(params);
+                viewHolder.img.setBackgroundColor(Color.parseColor(getResources().getString(R.color.white)));
+                convertView.setTag(viewHolder);
+             }
+             viewHolder = (ViewHolder) convertView.getTag();
+             if (bitmap != null)
+                viewHolder.img.setImageBitmap(bitmap);
+             else {
+                viewHolder.img.setImageResource(R.drawable.ic_launcher);
+                BitmapWorkerTask task = new BitmapWorkerTask(null,
+                      viewHolder.img, mCoparisionScreenHeight / 2);
+                task.execute(mItemDetails.mCustomImageUrl);
 
-    	@Override
-    	public int getCount() {
-    		return mImageDetailsArr.size();
-    	}
-
-    	@Override
-    	public Object getItem(int position) {
-    		return position;
-    	}
-
-    	@Override
-    	public long getItemId(int position) {
-    		return position;
-    	}
-
-    	@Override
-    		public View getView(int position, View convertView, ViewGroup parent) {
-    			ViewHolder viewHolder;
-    			mItemDetails = mImageDetailsArr.get(position);
-    			Bitmap bitmap = mBitmapLoaderUtils
-    					.getCachedBitmap(mItemDetails.mCustomImageUrl);
-    			if (convertView == null) {
-    				viewHolder = new ViewHolder();
-    				convertView = minflater.inflate(R.layout.vuecompareimg, null);
-    				viewHolder.img = (ImageView) convertView
-    						.findViewById(R.id.vue_compareimg);
-    				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-    						mCoparisionScreenHeight / 2,
-    						mCoparisionScreenHeight / 2);
-    				params.addRule(RelativeLayout.CENTER_IN_PARENT);
-    				params.setMargins(VueApplication.getInstance().getPixel(10), 0,
-    						0, 0);
-    				viewHolder.img.setLayoutParams(params);
-    				viewHolder.img.setBackgroundColor(Color.parseColor("#FFFFFF"));
-    				convertView.setTag(viewHolder);
-    			}
-    			viewHolder = (ViewHolder) convertView.getTag();
-    			if (bitmap != null)
-    				viewHolder.img.setImageBitmap(bitmap);
-    			else {
-    				viewHolder.img.setImageResource(R.drawable.ic_launcher);
-    				BitmapWorkerTask task = new BitmapWorkerTask(null,
-    						viewHolder.img, mCoparisionScreenHeight / 2);
-    				task.execute(mItemDetails.mCustomImageUrl);
-
-    			}
-    			return convertView;
-    		}
-    	
-    	private class ViewHolder {
-    		ImageView img;
-    	}
+             }
+             return convertView;
+          }
+       
+       private class ViewHolder {
+          ImageView img;
+       }
     }
     @Override
     public void onResume(){
@@ -192,7 +182,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
             if (mSlidingDrawer.isOpened()) {
             }
             else {
-            	getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+               getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
             }
         }
     };
@@ -208,17 +198,17 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
         Log.e("share+", "details activity result"+requestCode+resultCode);
      
         try {
-			VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment)
-					getSupportFragmentManager().findFragmentById(R.id.aisle_details_view_fragment);
-			  
-			if(fragment.mAisleDetailsAdapter.mShare.shareIntentCalled)
-			{
-				fragment.mAisleDetailsAdapter.mShare.shareIntentCalled = false;
-			    fragment.mAisleDetailsAdapter.mShare.dismisDialog();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+         VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment)
+               getSupportFragmentManager().findFragmentById(R.id.aisle_details_view_fragment);
+           
+         if(fragment.mAisleDetailsAdapter.mShare.shareIntentCalled)
+         {
+            fragment.mAisleDetailsAdapter.mShare.shareIntentCalled = false;
+             fragment.mAisleDetailsAdapter.mShare.dismisDialog();
+         }
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
     }
 
 class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {

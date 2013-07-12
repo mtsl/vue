@@ -128,6 +128,18 @@ public class CreateAilseFragment extends Fragment {
 						saySomethingAboutAisle.getWindowToken(), 0);
 				saySomethingAboutAisle.setText(previousSaySomething);
 			}
+
+			@Override
+			public void setFlag(boolean flag) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean getFlag() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		});
 		saySomethingAboutAisle.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -185,7 +197,20 @@ public class CreateAilseFragment extends Fragment {
 				inputMethodManager.hideSoftInputFromWindow(
 						lookingForText.getWindowToken(), 0);
 			}
+
+			@Override
+			public void setFlag(boolean flag) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean getFlag() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		});
+ 
 		occasionText.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView arg0, int actionId,
@@ -221,6 +246,18 @@ public class CreateAilseFragment extends Fragment {
 						occasionText.getWindowToken(), 0);
 				inputMethodManager.hideSoftInputFromWindow(
 						lookingForText.getWindowToken(), 0);
+			}
+
+			@Override
+			public void setFlag(boolean flag) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean getFlag() {
+				// TODO Auto-generated method stub
+				return false;
 			}
 		});
 		lookingForBigText.setOnClickListener(new OnClickListener() {
