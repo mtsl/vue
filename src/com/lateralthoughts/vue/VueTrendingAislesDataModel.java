@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.os.ResultReceiver;
 import android.util.Log;
 
@@ -18,6 +19,8 @@ import java.nio.channels.FileChannel;
 //java imports
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,7 +94,15 @@ public class VueTrendingAislesDataModel {
         mOffset = 0;
         mState = AISLE_TRENDING_LIST_DATA;
         mAisleContentList = new ArrayList<AisleWindowContent>();
-        getAislesFromDb();
+        Thread t = new Thread(new Runnable() {
+
+          @Override
+          public void run() {
+            getAislesFromDb();     
+          }
+        });
+        t.start();
+       
         // initializeTrendingAisleContent();
         mMoreDataAvailable = true;
         Log.e("Profiling", "Profiling VueTrendingAislesDataModel.VueTrendingAislesDataModel() Before getTrendingAisles() calling");
@@ -201,8 +212,6 @@ public class VueTrendingAislesDataModel {
 	            }
 	            DbHelper helper = new DbHelper(mContext);
 	            SQLiteDatabase db = helper.getWritableDatabase();
-	            
-	            
 	            for (int i = 0; i < contentArray.length(); i++) {
 	                userInfo  = new AisleContext();
 	                JSONObject contentItem = contentArray.getJSONObject(i);
@@ -330,52 +339,102 @@ public class VueTrendingAislesDataModel {
 		Log.e("Profiling", "Profiling VueTrendingAislesDataModel.addAislesToDb() End");
 	}
 
-	private void getAislesFromDb() {
-	  Log.e("Profiling", "Profiling VueTrendingAislesDataModel.getAislesFromDb() Start");
-	  AisleContext userInfo;
-	  AisleImageDetails imageItemDetails;
-	  AisleWindowContent aisleItem = null;
-      ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
-	  DbHelper helper = new DbHelper(mContext);
-      SQLiteDatabase db = helper.getWritableDatabase();
-      Cursor aislesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES, null, null, null, null, null, VueConstants.ID + " ASC");
-      if(aislesCursor.moveToFirst()) {
-       do {
-        userInfo  = new AisleContext();
-        userInfo.mAisleId = aislesCursor.getString(aislesCursor.getColumnIndex(VueConstants.AISLE_ID));
-        userInfo.mUserId = aislesCursor.getString(aislesCursor.getColumnIndex(VueConstants.USER_ID));
-        userInfo.mFirstName = aislesCursor.getString(aislesCursor.getColumnIndex(VueConstants.FIRST_NAME));
-        userInfo.mLastName = aislesCursor.getString(aislesCursor.getColumnIndex(VueConstants.LAST_NAME));
-        userInfo.mJoinTime = Long.parseLong(aislesCursor.getString(aislesCursor.getColumnIndex(VueConstants.JOIN_TIME)));
-        userInfo.mLookingForItem = aislesCursor.getString(aislesCursor.getColumnIndex(VueConstants.LOOKING_FOR));
-        userInfo.mOccasion = aislesCursor.getString(aislesCursor.getColumnIndex(VueConstants.OCCASION));
-        Cursor aisleImagesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES_IMAGES, null, VueConstants.AISLE_ID + "=?",
-            new String[] {userInfo.mAisleId}, null, null, VueConstants.ID + " ASC");
-        if(aisleImagesCursor.moveToFirst()) {
+  private void getAislesFromDb() {
+    Log.e("Profiling",
+        "Profiling VueTrendingAislesDataModel.getAislesFromDb() Start");
+    AisleContext userInfo;
+    AisleImageDetails imageItemDetails;
+    AisleWindowContent aisleItem = null;
+    HashMap<String, AisleContext> map = new HashMap<String, AisleContext>();
+    ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
+    ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
+    DbHelper helper = new DbHelper(mContext);
+    SQLiteDatabase db = helper.getReadableDatabase();
+    Cursor aislesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES, null, null,
+        null, null, null, VueConstants.ID + " ASC");
+   
+    if (aislesCursor.moveToFirst()) {
+      do {
+        userInfo = new AisleContext();
+        userInfo.mAisleId = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.AISLE_ID));
+        userInfo.mUserId = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.USER_ID));
+        userInfo.mFirstName = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.FIRST_NAME));
+        userInfo.mLastName = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.LAST_NAME));
+        userInfo.mJoinTime = Long.parseLong(aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.JOIN_TIME)));
+        userInfo.mLookingForItem = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.LOOKING_FOR));
+        userInfo.mOccasion = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.OCCASION));
+        map.put(userInfo.mAisleId, userInfo);
+      } while (aislesCursor.moveToNext());
+      
+      Cursor aisleImagesCursor = db.query(
+          DbHelper.DATABASE_TABLE_AISLES_IMAGES, null, null, null, null, null,
+          VueConstants.ID + " ASC");
+      Iterator it = map.entrySet().iterator();
+      while (it.hasNext()) {
+        Map.Entry pairs = (Map.Entry)it.next();
+        System.out.println(pairs.getKey() + " = " + pairs.getValue());
+
+      if (aisleImagesCursor.moveToFirst()) {
           do {
-            imageItemDetails = new AisleImageDetails();
-            imageItemDetails.mTitle = aisleImagesCursor.getString(aisleImagesCursor.getColumnIndex(VueConstants.TITLE));
-            imageItemDetails.mImageUrl = aisleImagesCursor.getString(aisleImagesCursor.getColumnIndex(VueConstants.IMAGE_URL));
-            imageItemDetails.mDetalsUrl = aisleImagesCursor.getString(aisleImagesCursor.getColumnIndex(VueConstants.DETAILS_URL));
-            imageItemDetails.mStore = aisleImagesCursor.getString(aisleImagesCursor.getColumnIndex(VueConstants.STORE));
-            imageItemDetails.mId = aisleImagesCursor.getString(aisleImagesCursor.getColumnIndex(VueConstants.IMAGE_ID));
-            imageItemDetails.mAvailableHeight = Integer.parseInt(aisleImagesCursor.getString(aisleImagesCursor
-                .getColumnIndex(VueConstants.HEIGHT)));
-            imageItemDetails.mAvailableWidth = Integer.parseInt(aisleImagesCursor.getString(aisleImagesCursor
-                .getColumnIndex(VueConstants.WIDTH)));
-            imageItemsArray.add(imageItemDetails);
-          } while(aisleImagesCursor.moveToNext());
-        }
-        aisleItem = getAisleItem(userInfo.mAisleId);
-        aisleItem.addAisleContent(userInfo,  imageItemsArray);
-        imageItemsArray.clear();
-        aisleImagesCursor.close();
-       } while(aislesCursor.moveToNext());
+            if (aisleImagesCursor.getString(
+                aisleImagesCursor.getColumnIndex(VueConstants.AISLE_ID))
+                .equals((String) pairs.getKey())) {
+              imageItemDetails = new AisleImageDetails();
+              imageItemDetails.mTitle = aisleImagesCursor
+                  .getString(aisleImagesCursor
+                      .getColumnIndex(VueConstants.TITLE));
+              imageItemDetails.mImageUrl = aisleImagesCursor
+                  .getString(aisleImagesCursor
+                      .getColumnIndex(VueConstants.IMAGE_URL));
+              imageItemDetails.mDetalsUrl = aisleImagesCursor
+                  .getString(aisleImagesCursor
+                      .getColumnIndex(VueConstants.DETAILS_URL));
+              imageItemDetails.mStore = aisleImagesCursor
+                  .getString(aisleImagesCursor
+                      .getColumnIndex(VueConstants.STORE));
+              imageItemDetails.mId = aisleImagesCursor
+                  .getString(aisleImagesCursor
+                      .getColumnIndex(VueConstants.IMAGE_ID));
+              imageItemDetails.mAvailableHeight = Integer
+                  .parseInt(aisleImagesCursor.getString(aisleImagesCursor
+                      .getColumnIndex(VueConstants.HEIGHT)));
+              imageItemDetails.mAvailableWidth = Integer
+                  .parseInt(aisleImagesCursor.getString(aisleImagesCursor
+                      .getColumnIndex(VueConstants.WIDTH)));
+              imageItemsArray.add(imageItemDetails);
+            }
+          } while (aisleImagesCursor.moveToNext());
       }
-      aislesCursor.close();
-      db.close();
-      Log.e("Profiling", "Profiling VueTrendingAislesDataModel.getAislesFromDb() End");
-	}
+      aisleItem = new AisleWindowContent(userInfo.mAisleId);
+      aisleItem.addAisleContent(userInfo, imageItemsArray);
+      aisleContentArray.add(aisleItem);
+      imageItemsArray.clear();
+      it.remove(); // avoids a ConcurrentModificationException
+    }
+      aisleImagesCursor.close();
+    }
+    
+    /*aisleItem = new AisleWindowContent(userInfo.mAisleId);
+    aisleItem.addAisleContent(userInfo, imageItemsArray);
+    aisleContentArray.add(aisleItem);
+    imageItemsArray.clear();
+    aisleImagesCursor.close();*/
+    
+    aislesCursor.close();
+    db.close();
+    Message msg = new Message();
+    msg.obj = aisleContentArray;
+    mHandler.sendMessage(msg);
+    Log.e("Profiling",
+        "Profiling VueTrendingAislesDataModel.getAislesFromDb() End");
+  }
 
   public void loadMoreAisles() {
     mMoreDataAvailable = true;
@@ -390,6 +449,17 @@ public class VueTrendingAislesDataModel {
     mVueContentGateway.getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
   }
 
+  Handler mHandler = new Handler() {
+    public void handleMessage(android.os.Message msg) {      
+      @SuppressWarnings("unchecked")
+      ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
+      for(AisleWindowContent content : aisleContentArray) {
+        AisleWindowContent aisleItem = getAisleItem(content.getAisleId()/*userInfo.mAisleId*/);
+        aisleItem.addAisleContent(content.getAisleContext(),  content.getImageList()); 
+      }
+    };
+  };
+  
 	private void copyDB() {
 		try {
 	        File sd = Environment.getExternalStorageDirectory();
