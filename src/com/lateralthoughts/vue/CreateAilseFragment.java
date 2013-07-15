@@ -162,7 +162,7 @@ public class CreateAilseFragment extends Fragment {
 				});
 		saySomethingAboutAisle.setonInterceptListen(new OnInterceptListener() {
 			@Override
-			public void onInterceptTouch() {
+			public void onKeyBackPressed() {
 				createAilseKeyboardHiddenShownFlag = false;
 				inputMethodManager.hideSoftInputFromWindow(
 						saySomethingAboutAisle.getWindowToken(), 0);
@@ -223,7 +223,7 @@ public class CreateAilseFragment extends Fragment {
 					}
 				});
 		lookingForText.setonInterceptListen(new OnInterceptListener() {
-			public void onInterceptTouch() {
+			public void onKeyBackPressed() {
 				createAilseKeyboardHiddenShownFlag = false;
 				lookingForPopup.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
@@ -275,7 +275,7 @@ public class CreateAilseFragment extends Fragment {
 			};
 		});
 		occasionText.setonInterceptListen(new OnInterceptListener() {
-			public void onInterceptTouch() {
+			public void onKeyBackPressed() {
 				createAilseKeyboardHiddenShownFlag = false;
 				lookingForPopup.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);

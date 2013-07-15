@@ -91,6 +91,7 @@ public class AisleDetailsViewListLoader {
             mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser.getCustomAdapter());
             holder.aisleContentBrowser.setCustomAdapter(null);
             adapter.setContentSource(desiredContentId, holder.mWindowContent);
+            adapter.setSourceName(holder.tag);
            // holder.thumbnailScroller.removeAllViews();
             holder.aisleContentBrowser.removeAllViews();
             holder.aisleContentBrowser.setUniqueId(desiredContentId);
@@ -112,26 +113,23 @@ public class AisleDetailsViewListLoader {
            // imgConnectivity.setImageClick(imageView);
             Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
             if(bitmap != null){
-               bitmap =  setParams(holder.aisleContentBrowser, imageView, bitmap);
-            /*    bitmap = Utils.getScaledBitMap(bitmap, (VueApplication.getInstance().getScreenWidth()*80)/100,
-                      (VueApplication.getInstance().getScreenHeight()*60)/100);*/
+              setParams(holder.aisleContentBrowser, imageView);
+               bitmap = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
+               
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);                  
             }
             else{
                 contentBrowser.addView(imageView);
-             /*   if(!VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
-                  Log.e("VueContentRestService", "network connection No");
-                  return;
-                }*/
-                loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView, windowContent.getBestHeightForWindow());
+               loadBitmap(itemDetails, contentBrowser, imageView, windowContent.getBestHeightForWindow());
             }
         }        
     }
     
-    public void loadBitmap(String loc, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
+    public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
+    	String loc = itemDetails.mCustomImageUrl;
         if (cancelPotentialDownload(loc, imageView)) {          
-            BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView, bestHeight);
+            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
             task.execute(loc);
         }
@@ -143,12 +141,15 @@ public class AisleDetailsViewListLoader {
         private String url = null;
         private int mBestHeight;
         AisleContentBrowser aisleContentBrowser ;
+        int mAvailabeWidth,mAvailableHeight;
 
-        public BitmapWorkerTask(AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
+        public BitmapWorkerTask(AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             mBestHeight = bestHeight;
             aisleContentBrowser = vFlipper;
+            mAvailabeWidth = itemDetails.mAvailableWidth;
+            mAvailableHeight = itemDetails.mAvailableHeight;
         }
 
         // Decode image in background.
@@ -171,7 +172,12 @@ public class AisleDetailsViewListLoader {
                 
                 if (this == bitmapWorkerTask) {
                    //aisleContentBrowser.addView(imageView);
-                   bitmap =  setParams( aisleContentBrowser, imageView, bitmap);
+                  setParams( aisleContentBrowser, imageView);
+                  Log.i("bitmapfirst", "bitmapfirst width before: "+bitmap.getWidth());
+                  Log.i("bitmapfirst", "bitmapfirst height before: "+bitmap.getHeight());
+                   bitmap = Utils.getScalledImage(bitmap, mAvailabeWidth,mAvailableHeight);
+                   Log.i("bitmapfirst", "bitmapfirst width after: "+bitmap.getWidth());
+                   Log.i("bitmapfirst", "bitmapfirst height after: "+bitmap.getHeight());
                     imageView.setImageBitmap(bitmap);
                 }
             }
@@ -205,8 +211,8 @@ public class AisleDetailsViewListLoader {
         return true;
     }  
 
-   private Bitmap setParams(AisleContentBrowser vFlipper, ImageView imageView,
-         Bitmap bitmap) {
+   private void setParams(AisleContentBrowser vFlipper, ImageView imageView 
+          ) {
       int imgCardHeight = (VueApplication.getInstance().getScreenHeight() * 60) / 100;
       FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
             VueApplication.getInstance().getScreenWidth(), imgCardHeight);
@@ -237,6 +243,6 @@ public class AisleDetailsViewListLoader {
           * (VueApplication.getInstance().getScreenHeight()*60)/100);
           */
       }
-      return bitmap;
+       
    }
 }

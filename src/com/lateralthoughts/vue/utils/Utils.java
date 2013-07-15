@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.lateralthoughts.vue.CreateAisleSelectionActivity;
+import com.lateralthoughts.vue.VueApplication;
 
 import android.app.Activity;
 import android.content.Context;
@@ -54,92 +55,6 @@ public class Utils {
 		return modifiedUrl.toString();
 
 	}
-
-	private static Bitmap getResizedBitmap(Bitmap bm, int reqWidth,
-			int reqHeight) {
-		int originalWidth = bm.getWidth();
-		int originalHeight = bm.getHeight();
-		float scaleWidth;
-		float scaleHeight = 0;
-		float aspect = (float) originalWidth / originalHeight;
-		if (originalWidth > reqWidth) {
-			scaleWidth = reqWidth;
-			scaleHeight = scaleWidth / aspect;
-		} else if (originalHeight > reqHeight) {
-			scaleHeight = reqHeight;
-			scaleWidth = scaleHeight / aspect;
-		} else {
-			// expand the image to the screen size
-			scaleWidth = reqWidth;
-			scaleHeight = scaleWidth / aspect;
-			while (scaleHeight > reqHeight) {
-				// if the imagewidht is very less then image height may increase
-				// to large number to make sure
-				// the height is always below the reqired hieght.
-				reqWidth = reqWidth - 10;
-				scaleWidth = reqWidth;
-				scaleHeight = scaleWidth / aspect;
-			}
-		}
-		// create a matrix for the manipulation
-		Matrix matrix = new Matrix();
-		// resize the bit map
-		matrix.postScale(scaleWidth / originalWidth, scaleHeight
-				/ originalHeight);
-		// recreate the new Bitmap
-		System.gc();
-		Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, originalWidth,
-				originalHeight, matrix, true);
-		// bm.recycle();
-		return resizedBitmap;
-	}
-
-	public static Bitmap getScaledBitMap(Bitmap bitmap, int reqWidth,
-			int reqHeight) {
-		/*
-		 * Log.i("bitmaptest", "bitmaptest12: coming reqWidth: "+reqWidth);
-		 * Log.i("bitmaptest", "bitmaptest12: coming reqHeight: "+reqHeight);
-		 * bitmap = getResizedBitmap(bitmap, reqWidth, reqHeight); return
-		 * bitmap;
-		 */
-		float bitmapwidth, bitmapheight;
-		float newWidth, newHeight;
-		bitmapwidth = bitmap.getWidth();
-		bitmapheight = bitmap.getHeight();
-		if (bitmapwidth > reqWidth) {
-			newWidth = (bitmapwidth * reqWidth) / bitmapwidth;
-			newHeight = (bitmapheight * reqWidth) / bitmapwidth;
-		} else {
-			newWidth = reqWidth;
-			newHeight = reqHeight;
-		}
-		if (newHeight > reqHeight) {
-			newHeight = (bitmapheight * reqHeight) / bitmapheight;
-			newWidth = (bitmapwidth * reqHeight) / bitmapheight;
-		}
-		int x = Math.round(newWidth);
-		int y = Math.round(newHeight);
-		return createBitmap(bitmap, x, y);
-		// return createBitmap(bitmap,xnew,ynew);
-		// return bitmap;
-	}
-
-	private static Bitmap createBitmap(Bitmap bitmap, int width, int height) {
-		if (width > 0 && height > 0) {
-			try {
-				Bitmap bmap = Bitmap.createScaledBitmap(bitmap, width, height,
-						true);
-				return bmap;
-			} catch (Exception e) {
-				e.printStackTrace();
-
-			} catch (Throwable e) {
-
-			}
-		}
-		return bitmap;
-	}
-
 	/**
 	 * To get the CURRENT_FONT_SIZE value stored in SharedPreferences. it will
 	 * return default value which is MEDIUM_TEXT_SIZE (18sp) if not value is
@@ -298,5 +213,61 @@ public class Utils {
 
 		return fileCacheObj.getVueAppCameraPictureFile(1 + "").getPath();
 	}
-
+	public static Bitmap getScalledImage(Bitmap bitmap,int availableWidth,int availableHeight) {
+		//Log.i("bitmap1", "bitmap1 before availableWidth "+availableWidth);
+		//Log.i("bitmap1", "bitmap1 before availableHeight "+availableHeight);
+		float requiredWidth,requiredHeight;
+		float bitmapOriginalWidth = bitmap.getWidth();
+		float bitmapOriginalHeight = bitmap.getHeight();
+		float scaleFactor;
+		requiredHeight = availableHeight;
+		if(availableWidth > VueApplication.getInstance().getVueDetailsCardWidth()) {
+			requiredWidth = VueApplication.getInstance().getVueDetailsCardWidth();
+		} else {
+			requiredWidth = availableWidth;
+			//requiredWidth = VueApplication.getInstance().getVueDetailsCardWidth();
+		}
+		float temp = requiredWidth/bitmapOriginalWidth;
+		if(temp <= 1) {
+			//reduce the image size to the smallest one of given dimensions
+			scaleFactor = Math.min(requiredWidth/bitmapOriginalWidth, requiredHeight/bitmapOriginalHeight);
+			requiredHeight = Math.round(bitmapOriginalHeight * scaleFactor);
+			requiredWidth = Math.round(bitmapOriginalWidth  * scaleFactor);
+		} else {
+			//increase the image size to required width increase the height proportioned to width
+			scaleFactor = requiredWidth/bitmapOriginalWidth;
+			requiredHeight = Math.round(bitmapOriginalHeight * scaleFactor);
+			requiredWidth = Math.round(bitmapOriginalWidth * scaleFactor);
+		}
+		if(requiredHeight > VueApplication.getInstance().getVueDetailsCardHeight()) {
+			// decrease the image to card height and decrease the imageWidht proportioned to height 
+			  scaleFactor =VueApplication.getInstance().getVueDetailsCardHeight()/ requiredHeight;
+			  requiredHeight = Math.round(requiredHeight * scaleFactor);
+			  requiredWidth = Math.round(requiredWidth * scaleFactor);
+		}
+		//Log.i("bitmap1", "bitmap1 before width "+bitmap.getWidth());
+		//Log.i("bitmap1", "bitmap1 before height "+bitmap.getHeight());
+		bitmap = createBitmap(bitmap, (int)requiredWidth, (int)requiredHeight);
+		//Log.i("bitmap1", "bitmap1 after width "+bitmap.getWidth());
+		//Log.i("bitmap1", "bitmap1 after height "+bitmap.getHeight());
+		return bitmap;
+		
+	}
+	private static Bitmap createBitmap(Bitmap bitmap, int width, int height) {
+		if (width > 0 && height > 0) {
+			try {
+				Bitmap bmap = Bitmap.createScaledBitmap(bitmap, width, height,
+						true);
+				return bmap;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.i("bitmap1", "bitmap1 before exception "+bitmap.getWidth());
+				e.printStackTrace();
+			} catch (Throwable e) {
+				Log.i("bitmap1", "bitmap1 before exception Throwable "+bitmap.getWidth());
+				e.printStackTrace();
+			}
+		}
+		return bitmap;
+	}
 }
