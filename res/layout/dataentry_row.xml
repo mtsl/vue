@@ -8,15 +8,17 @@
     <TextView
         android:id="@+id/dataentryitemname"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_margin="8dip"
         android:singleLine="true"
-        android:layout_gravity="center_horizontal"
+        android:text="Redecoration"
         android:textColor="@color/dataentrytextcolor"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:text="Redecoration" />
-   <!--  <View android:layout_width="match_parent"
+        android:textSize="15sp" />
+    <!--
+         <View android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:background="@color/dataentrylistbordercolor"/> -->
+        android:background="@color/dataentrylistbordercolor"/>
+    -->
 
 </LinearLayout>
