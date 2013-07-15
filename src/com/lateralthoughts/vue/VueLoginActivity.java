@@ -20,6 +20,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources.NotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -92,6 +93,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	private boolean googleplusLoggedinDialogFlag = false;
 	private static final int REQUEST_CODE_INTERACTIVE_POST = 3;
 	Activity context;
+	private boolean dataentryFacebookInviteFriendsListFlag = false;
 	LinearLayout socialIntegrationMainLayout;
 	Bundle bundle = null;
 	private static final String TAG = "VueLoginActivity";
@@ -134,8 +136,8 @@ public class VueLoginActivity extends FragmentActivity implements
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
 		facebookProgressialog = ProgressDialog.show(context, "Facebook",
 				"Sharing....", true);
-		googlePlusProgressDialog = ProgressDialog.show(context, "Google+", "Loading....",
-				true);
+		googlePlusProgressDialog = ProgressDialog.show(context, "Google+",
+				"Loading....", true);
 		googlePlusProgressDialog.dismiss();
 		facebookProgressialog.dismiss();
 
@@ -155,6 +157,8 @@ public class VueLoginActivity extends FragmentActivity implements
 					.getBoolean(VueConstants.GOOGLEPLUS_FRIEND_INVITE);
 			googleplusAutomaticLogin = bundle
 					.getBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN);
+			dataentryFacebookInviteFriendsListFlag = bundle
+					.getBoolean(VueConstants.DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG);
 		}
 
 		// Facebook Invite friend
@@ -349,7 +353,8 @@ public class VueLoginActivity extends FragmentActivity implements
 
 			boolean installed = appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME);
 			if (!installed) {
-				if (googlePlusProgressDialog != null && googlePlusProgressDialog.isShowing())
+				if (googlePlusProgressDialog != null
+						&& googlePlusProgressDialog.isShowing())
 					googlePlusProgressDialog.dismiss();
 				showAlertMessageForGoolgePlusAppInstalation();
 			}
@@ -403,7 +408,8 @@ public class VueLoginActivity extends FragmentActivity implements
 				}
 			}
 		}
-		if (googlePlusProgressDialog != null && googlePlusProgressDialog.isShowing())
+		if (googlePlusProgressDialog != null
+				&& googlePlusProgressDialog.isShowing())
 			googlePlusProgressDialog.dismiss();
 		if (!facebookFlag)
 			finish();
@@ -485,12 +491,17 @@ public class VueLoginActivity extends FragmentActivity implements
 							&& fromInviteFriends.equals(VueConstants.FACEBOOK)) {
 						fromInviteFriends = null;
 						try {
-							BaseActivity.mFrag
-									.getFriendsList(context
-											.getResources()
-											.getString(
-													R.string.sidemenu_sub_option_Facebook));
-						} catch (Exception e) {
+							if (dataentryFacebookInviteFriendsListFlag) {
+
+							} else {
+								BaseActivity.mFrag
+										.getFriendsList(context
+												.getResources()
+												.getString(
+														R.string.sidemenu_sub_option_Facebook));
+							}
+						} catch (NotFoundException e) {
+							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -764,11 +775,12 @@ public class VueLoginActivity extends FragmentActivity implements
 			editor.putBoolean(VueConstants.VUE_LOGIN, false);
 		editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, false);
 		editor.commit();
-		if (googlePlusProgressDialog != null && googlePlusProgressDialog.isShowing())
+		if (googlePlusProgressDialog != null
+				&& googlePlusProgressDialog.isShowing())
 			googlePlusProgressDialog.dismiss();
 		finish();
 	}
-	
+
 	private Intent getInteractivePostIntent(PlusClient plusClient,
 			Activity activity, String post, Person googlefriend) {
 		String action = "/?view=true";

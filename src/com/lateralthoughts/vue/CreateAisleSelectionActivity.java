@@ -179,7 +179,7 @@ public class CreateAisleSelectionActivity extends Activity {
 					Intent intent = new Intent(this, CreateAisleActivity.class);
 					Bundle b = new Bundle();
 					b.putString(
-							VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+							VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 							selectedImagePath);
 					intent.putExtras(b);
 					startActivity(intent);
@@ -188,7 +188,7 @@ public class CreateAisleSelectionActivity extends Activity {
 					Intent intent = new Intent();
 					Bundle b = new Bundle();
 					b.putString(
-							VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+							VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 							selectedImagePath);
 					intent.putExtras(b);
 					setResult(VueConstants.CREATE_AILSE_ACTIVITY_RESULT, intent);
@@ -205,7 +205,7 @@ public class CreateAisleSelectionActivity extends Activity {
 								CreateAisleActivity.class);
 						Bundle b = new Bundle();
 						b.putString(
-								VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+								VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 								cameraImageName);
 						intent.putExtras(b);
 						startActivity(intent);
@@ -214,7 +214,7 @@ public class CreateAisleSelectionActivity extends Activity {
 						Intent intent = new Intent();
 						Bundle b = new Bundle();
 						b.putString(
-								VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+								VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 								cameraImageName);
 						intent.putExtras(b);
 						setResult(VueConstants.CREATE_AILSE_ACTIVITY_RESULT,
