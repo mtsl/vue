@@ -382,7 +382,7 @@ public class CreateAilseFragment extends Fragment {
 
 					@Override
 					public void onClick(View v) {
-
+						getFriendsList(getActivity().getResources().getString(R.string.sidemenu_sub_option_Facebook));
 					}
 				});
 		return v;
@@ -498,7 +498,7 @@ public class CreateAilseFragment extends Fragment {
 				VueConstants.FACEBOOK_LOGIN, false);
 		boolean googleplusloginflag = sharedPreferencesObj.getBoolean(
 				VueConstants.GOOGLEPLUS_LOGIN, false);
-		if (s.equals("Facebook")) {
+		if (s.equals(getActivity().getResources().getString(R.string.sidemenu_sub_option_Facebook))) {
 
 			if (facebookloginflag) {
 				fbFriendsList();
