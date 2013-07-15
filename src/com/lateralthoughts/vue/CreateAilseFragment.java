@@ -1,9 +1,19 @@
 package com.lateralthoughts.vue;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -12,6 +22,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +34,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.Request.Method;
+import com.android.volley.toolbox.StringRequest;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
+import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
+import com.lateralthoughts.vue.utils.SortBasedOnName;
 
 /**
  * Fragment for creating Aisle
@@ -52,7 +71,16 @@ public class CreateAilseFragment extends Fragment {
 	boolean dontGoToNextlookingFor = false, dontGoToNextForOccasion = false;
 	String previousLookingfor = null, previousOcasion = null,
 			previousSaySomething = null;
+	String imagePath = null;
+	LinearLayout mainheadingrow = null, dataentry_bottom_bottom_layout = null;
+	RelativeLayout dataentry_bottom_top_layout = null,
+			dataentry_invite_friends_layout = null,
+			dataentry_invite_friends_popup_layout = null,
+			dataentry_invitefriends_facebooklayout = null;
 	public static boolean createAilseKeyboardHiddenShownFlag = false;
+	ProgressDialog dataentryInviteFriendsProgressdialog = null;
+	SharedPreferences sharedPreferencesObj = null;
+	ListView dataEntryInviteFriendsList = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -74,9 +102,19 @@ public class CreateAilseFragment extends Fragment {
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		lookingForText = (EditTextBackEvent) v
 				.findViewById(R.id.lookingfortext);
+		dataentry_bottom_bottom_layout = (LinearLayout) v
+				.findViewById(R.id.dataentry_bottom_bottom_layout);
 		lookingForBigText = (TextView) v.findViewById(R.id.lookingforbigtext);
 		lookingForBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
+		dataEntryInviteFriendsList = (ListView) v
+				.findViewById(R.id.data_entry_Invitefriends_list);
+		dataentry_bottom_top_layout = (RelativeLayout) v
+				.findViewById(R.id.dataentry_bottom_top_layout);
+		dataentry_invitefriends_facebooklayout = (RelativeLayout) v
+				.findViewById(R.id.dataentry_invitefriends_facebooklayout);
+		dataentry_invite_friends_popup_layout = (RelativeLayout) v
+				.findViewById(R.id.dataentry_invite_friends_popup_layout);
 		occassionBigText = (TextView) v.findViewById(R.id.occassionbigtext);
 		ocassionListviewLayout = (LinearLayout) v
 				.findViewById(R.id.ocassionlistviewlayout);
@@ -95,11 +133,13 @@ public class CreateAilseFragment extends Fragment {
 		categoryListview = (ListView) v.findViewById(R.id.categorylistview);
 		categoryListviewLayout = (LinearLayout) v
 				.findViewById(R.id.categorylistviewlayout);
+		mainheadingrow = (LinearLayout) v.findViewById(R.id.mainheadingrow);
 		listDivider = getResources().getDrawable(R.drawable.list_divider_line);
 		lookingForListviewLayout.setVisibility(View.GONE);
 		createaisleBg = (ImageView) v.findViewById(R.id.createaisel_bg);
-		categoryListview.setAdapter(new CategoryAdapter(getActivity()));
 		categoryListview.setDivider(listDivider);
+		dataentry_invite_friends_layout = (RelativeLayout) v
+				.findViewById(R.id.dataentry_invite_friends_layout);
 		previousLookingfor = lookingForText.getText().toString();
 		previousOcasion = occasionText.getText().toString();
 		previousSaySomething = saySomethingAboutAisle.getText().toString();
@@ -122,7 +162,7 @@ public class CreateAilseFragment extends Fragment {
 				});
 		saySomethingAboutAisle.setonInterceptListen(new OnInterceptListener() {
 			@Override
-			public void onInterceptTouch() {
+			public void onKeyBackPressed() {
 				createAilseKeyboardHiddenShownFlag = false;
 				inputMethodManager.hideSoftInputFromWindow(
 						saySomethingAboutAisle.getWindowToken(), 0);
@@ -132,7 +172,7 @@ public class CreateAilseFragment extends Fragment {
 			@Override
 			public void setFlag(boolean flag) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
@@ -183,7 +223,7 @@ public class CreateAilseFragment extends Fragment {
 					}
 				});
 		lookingForText.setonInterceptListen(new OnInterceptListener() {
-			public void onInterceptTouch() {
+			public void onKeyBackPressed() {
 				createAilseKeyboardHiddenShownFlag = false;
 				lookingForPopup.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
@@ -201,7 +241,7 @@ public class CreateAilseFragment extends Fragment {
 			@Override
 			public void setFlag(boolean flag) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
@@ -210,7 +250,7 @@ public class CreateAilseFragment extends Fragment {
 				return false;
 			}
 		});
- 
+
 		occasionText.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView arg0, int actionId,
@@ -226,6 +266,8 @@ public class CreateAilseFragment extends Fragment {
 				if (!dontGoToNextForOccasion) {
 					createAilseKeyboardHiddenShownFlag = true;
 					categoryListview.setVisibility(View.VISIBLE);
+					categoryListview.setAdapter(new CategoryAdapter(
+							getActivity()));
 					categoryListviewLayout.setVisibility(View.VISIBLE);
 					categoeryPopup.setVisibility(View.VISIBLE);
 				}
@@ -233,7 +275,7 @@ public class CreateAilseFragment extends Fragment {
 			};
 		});
 		occasionText.setonInterceptListen(new OnInterceptListener() {
-			public void onInterceptTouch() {
+			public void onKeyBackPressed() {
 				createAilseKeyboardHiddenShownFlag = false;
 				lookingForPopup.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
@@ -251,7 +293,6 @@ public class CreateAilseFragment extends Fragment {
 			@Override
 			public void setFlag(boolean flag) {
 				// TODO Auto-generated method stub
-				
 			}
 
 			@Override
@@ -310,6 +351,7 @@ public class CreateAilseFragment extends Fragment {
 				inputMethodManager.hideSoftInputFromWindow(
 						lookingForText.getWindowToken(), 0);
 				categoryListview.setVisibility(View.VISIBLE);
+				categoryListview.setAdapter(new CategoryAdapter(getActivity()));
 				categoryListviewLayout.setVisibility(View.VISIBLE);
 				categoeryPopup.setVisibility(View.VISIBLE);
 			}
@@ -326,6 +368,23 @@ public class CreateAilseFragment extends Fragment {
 						VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
 			}
 		});
+		dataentry_invite_friends_layout
+				.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View arg0) {
+						dataentry_invite_friends_popup_layout
+								.setVisibility(View.VISIBLE);
+					}
+				});
+		dataentry_invitefriends_facebooklayout
+				.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						getFriendsList(getActivity().getResources().getString(R.string.sidemenu_sub_option_Facebook));
+					}
+				});
 		return v;
 	}
 
@@ -397,7 +456,227 @@ public class CreateAilseFragment extends Fragment {
 		}
 	}
 
-	public void setGalleryImage(String picturePath) {
-		categoeryIcon.setImageURI(Uri.fromFile(new File(picturePath)));
+	public void setGalleryORCameraImage(String picturePath) {
+		imagePath = picturePath;
+		createaisleBg.setImageURI(Uri.fromFile(new File(picturePath)));
+	}
+
+	public void addAisleToServer() {
+		// Input parameters for Adding Aisle to server request...
+		String category = categoryText.getText().toString();
+		String lookingFor = lookingForBigText.getText().toString();
+		String occasion = occassionBigText.getText().toString();
+		String imageUrl = imagePath; // This path is image location stored in
+										// locally when user selects from Camera
+										// OR Gallery.
+		String title = ""; // For Camera and Gallery we don't have title.
+		String store = ""; // For Camera and Gallery we don't have store.
+		renderUIAfterAddingAisleToServer();
+	}
+
+	public void renderUIAfterAddingAisleToServer() {
+		mainheadingrow.setVisibility(View.GONE);
+		touchToChangeImage.setVisibility(View.GONE);
+		dataentry_bottom_bottom_layout.setVisibility(View.GONE);
+		lookingForPopup.setVisibility(View.GONE);
+		ocassionPopup.setVisibility(View.GONE);
+		categoeryPopup.setVisibility(View.GONE);
+		categoryListviewLayout.setVisibility(View.GONE);
+		dataentry_bottom_top_layout.setVisibility(View.VISIBLE);
+	}
+
+	public void getFriendsList(String s) {
+
+		dataentryInviteFriendsProgressdialog = ProgressDialog.show(
+				getActivity(), "", "Plase wait...");
+		Log.e(getTag(), "SURU : Value of s : " + s);
+
+		sharedPreferencesObj = getActivity().getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+
+		boolean facebookloginflag = sharedPreferencesObj.getBoolean(
+				VueConstants.FACEBOOK_LOGIN, false);
+		boolean googleplusloginflag = sharedPreferencesObj.getBoolean(
+				VueConstants.GOOGLEPLUS_LOGIN, false);
+		if (s.equals(getActivity().getResources().getString(R.string.sidemenu_sub_option_Facebook))) {
+
+			if (facebookloginflag) {
+				fbFriendsList();
+			} else {
+				if (dataentryInviteFriendsProgressdialog.isShowing()) {
+					dataentryInviteFriendsProgressdialog.dismiss();
+				}
+
+				Intent i = new Intent(getActivity(), VueLoginActivity.class);
+				Bundle b = new Bundle();
+				b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+				b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+				b.putString(VueConstants.FROM_INVITEFRIENDS,
+						VueConstants.FACEBOOK);
+				b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+				b.putBoolean(
+						VueConstants.DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG,
+						true);
+				i.putExtras(b);
+				startActivity(i);
+
+			}
+
+		} else if (s.equals("Google Plus")) {
+			if (googleplusloginflag) {
+				Log.e(getTag(), "GOOGLEPLUS : Value of s : 1");
+				getGPlusFriendsList();
+			} else {
+				if (dataentryInviteFriendsProgressdialog.isShowing()) {
+					dataentryInviteFriendsProgressdialog.dismiss();
+				}
+				Log.e(getTag(), "GOOGLEPLUS : Value of s : 2");
+				Log.e(getTag(), "GOOGLEPLUS : Value of s : 3");
+				Intent i = new Intent(getActivity(), VueLoginActivity.class);
+				Bundle b = new Bundle();
+				b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+				b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+				b.putString(VueConstants.FROM_INVITEFRIENDS,
+						VueConstants.GOOGLEPLUS);
+				b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+				i.putExtras(b);
+				startActivity(i);
+			}
+
+		} else {
+			if (dataentryInviteFriendsProgressdialog.isShowing()) {
+				dataentryInviteFriendsProgressdialog.dismiss();
+			}
+		}
+	}
+
+	// Pull and display fb friends from facebook.com
+	private void fbFriendsList() {
+
+		SharedPreferences sharedPreferencesObj = getActivity()
+				.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+
+		String accessToken = sharedPreferencesObj.getString(
+				VueConstants.FACEBOOK_ACCESSTOKEN, null);
+
+		if (accessToken != null) {
+			String mainURL = VueConstants.FACEBOOK_GETFRIENDS_URL + accessToken
+					+ VueConstants.FACEBOOK_FRIENDS_DETAILS;
+
+			Response.Listener listener = new Response.Listener<String>() {
+
+				@Override
+				public void onResponse(String response) {
+					// TODO Auto-generated method stub
+					List<FbGPlusDetails> fbGPlusFriends;
+					try {
+						fbGPlusFriends = JsonParsing(response);
+						if (fbGPlusFriends != null) {
+							dataEntryInviteFriendsList.setVisibility(View.VISIBLE);
+							dataEntryInviteFriendsList
+									.setAdapter(new InviteFriendsAdapter(
+											getActivity(),
+											R.layout.invite_friends,
+											fbGPlusFriends));
+						}
+						if (dataentryInviteFriendsProgressdialog.isShowing()) {
+							dataentryInviteFriendsProgressdialog.dismiss();
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						if (dataentryInviteFriendsProgressdialog.isShowing()) {
+							dataentryInviteFriendsProgressdialog.dismiss();
+						}
+					}
+
+				}
+			};
+
+			Response.ErrorListener errorListener = new Response.ErrorListener() {
+				@Override
+				public void onErrorResponse(VolleyError error) {
+					Log.e("VueNetworkError",
+							"Vue encountered network operations error. Error = "
+									+ error.networkResponse);
+					if (dataentryInviteFriendsProgressdialog.isShowing()) {
+						dataentryInviteFriendsProgressdialog.dismiss();
+					}
+				}
+			};
+
+			StringRequest myReq = new StringRequest(Method.GET, mainURL,
+					listener, errorListener);
+
+			VueApplication.getInstance().getRequestQueue().add(myReq);
+
+		}
+
+		else {
+			if (dataentryInviteFriendsProgressdialog.isShowing()) {
+				dataentryInviteFriendsProgressdialog.dismiss();
+			}
+		}
+
+	}
+
+	// Pull and display G+ friends from plus.google.com.
+	private void getGPlusFriendsList() {
+		if (VueLandingPageActivity.googlePlusFriendsDetailsList != null) {
+			dataEntryInviteFriendsList.setVisibility(View.VISIBLE);
+			dataEntryInviteFriendsList.setAdapter(new InviteFriendsAdapter(
+					getActivity(), R.layout.invite_friends,
+					VueLandingPageActivity.googlePlusFriendsDetailsList));
+			if (dataentryInviteFriendsProgressdialog.isShowing()) {
+				dataentryInviteFriendsProgressdialog.dismiss();
+			}
+		} else {
+			if (dataentryInviteFriendsProgressdialog.isShowing()) {
+				dataentryInviteFriendsProgressdialog.dismiss();
+			}
+			Intent i = new Intent(getActivity(), VueLoginActivity.class);
+			Bundle b = new Bundle();
+			b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+			b.putBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN, true);
+			b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+			b.putString(VueConstants.FROM_INVITEFRIENDS,
+					VueConstants.GOOGLEPLUS);
+			b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+			i.putExtras(b);
+			startActivity(i);
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param jsonString
+	 * @return
+	 * @throws JSONException
+	 */
+	@SuppressWarnings("unchecked")
+	List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException {
+		List<FbGPlusDetails> facebookFriendsDetailsList = null;
+
+		JSONObject mainJsonObj = new JSONObject(jsonString);
+		JSONArray dataArray = mainJsonObj.getJSONArray("data");
+		if (dataArray != null && dataArray.length() > 0) {
+			facebookFriendsDetailsList = new ArrayList<FbGPlusDetails>();
+
+			for (int i = 0; i < dataArray.length(); i++) {
+
+				JSONObject jsonObj = dataArray.getJSONObject(i);
+				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(
+						jsonObj.getString("id"), jsonObj.getString("name"),
+						jsonObj.getJSONObject("picture").getJSONObject("data")
+								.getString("url"), null);
+
+				facebookFriendsDetailsList.add(objFacebookFriendsDetails);
+			}
+		}
+
+		Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
+
+		return facebookFriendsDetailsList;
 	}
 }

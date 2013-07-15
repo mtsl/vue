@@ -5,7 +5,7 @@ package com.lateralthoughts.vue;
  * 
  */
 public class VueConstants {
-	
+
 	public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
 	public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
 	public static final String VUE_LOGIN = "VueLoginFlag";
@@ -65,7 +65,7 @@ public class VueConstants {
 	public static final String STORE = "store";
 	// Column names for dataToSync table.
 	public static final String COMMENT = "comment";
-	public static final String CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY";
+	public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
 	public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
 	public static final String FACEBOOK_USER_PROFILE_PICTURE = "FACEBOOK_USER_PROFILE_PICTURE";
@@ -84,4 +84,5 @@ public class VueConstants {
 	public static final String GOOGLEPLUS_USER_LOCATION = "GOOGLEPLUS_USER_LOCATION";
 	public static final String USER_lOCATION = "name";
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
+	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
 }

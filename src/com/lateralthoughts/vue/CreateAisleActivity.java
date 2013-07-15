@@ -14,10 +14,10 @@ public class CreateAisleActivity extends BaseActivity {
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			String imagePath = b
-					.getString(VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+					.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 			CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.create_aisles_view_fragment);
-			fragment.setGalleryImage(imagePath);
+			fragment.setGalleryORCameraImage(imagePath);
 		}
 	}
 
@@ -38,10 +38,10 @@ public class CreateAisleActivity extends BaseActivity {
 				Bundle b = data.getExtras();
 				if (b != null) {
 					String imagePath = b
-							.getString(VueConstants.CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+							.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 					CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.create_aisles_view_fragment);
-					fragment.setGalleryImage(imagePath);
+					fragment.setGalleryORCameraImage(imagePath);
 				}
 			}
 		} catch (Exception e) {
@@ -54,6 +54,11 @@ public class CreateAisleActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			getSlidingMenu().toggle();
+			break;
+		case R.id.menu_create_aisles:
+			CreateAilseFragment fragment = (CreateAilseFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			fragment.addAisleToServer();
 			break;
 		case R.id.menu_cancel:
 			finish();

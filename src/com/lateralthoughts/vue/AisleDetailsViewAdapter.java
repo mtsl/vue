@@ -42,7 +42,7 @@ import com.lateralthoughts.vue.utils.clsShare;
 public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    private Context mContext;
 
-   private final String TAG = "AisleDetailsViewAdapter";
+   public static final String TAG = "AisleDetailsViewAdapter";
    private static final boolean DEBUG = false;
 
  
@@ -142,6 +142,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       View separator;
       FrameLayout edtCommentLay;
       ImageView commentSend;
+      String tag;
    }
 
    @Override
@@ -240,6 +241,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
             mVueusername = mViewHolder.mWindowContent.getAisleContext().mFirstName;
             int scrollIndex = 0;
             mWindowContent_temp = mViewHolder.mWindowContent;
+            mViewHolder.tag = TAG;
             mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
                   position, new DetailImageClickListener());
          } catch (Exception e) {

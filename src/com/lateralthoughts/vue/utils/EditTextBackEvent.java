@@ -49,7 +49,7 @@ public class EditTextBackEvent extends EditText {
   public boolean onKeyPreIme(int keyCode, KeyEvent event) {
     try {
 		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-		  onInterceptListenr.onInterceptTouch();
+		  onInterceptListenr.onKeyBackPressed();
 		/*
 		  if(CreateAilseFragment.create_ailse_keyboard_hidden_shown_flag)
 		  {

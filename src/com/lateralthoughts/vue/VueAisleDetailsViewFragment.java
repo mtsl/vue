@@ -4,7 +4,9 @@ package com.lateralthoughts.vue;
 import com.lateralthoughts.vue.indicators.IndicatorView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.MyCustomAnimation;
+import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.Helper;
+import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
 
 import android.os.Bundle;
@@ -144,7 +146,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		mIndicatorView.setDrawables(R.drawable.number_active,
 				R.drawable.bullets_bg, R.drawable.number_inactive);
 		mCurrentScreen = 1;
-		int indicatorLeftMargin = VueApplication.getInstance().getScreenWidth()
+		int indicatorLeftMargin = ((VueApplication.getInstance().getScreenWidth()* 95)/100)
 				/ 2 - mIndicatorView.getIndicatorBgWidht() / 2;
 		relParams.setMargins(indicatorLeftMargin, 0, 0, 0);
 		mIndicatorView.setLayoutParams(relParams);
@@ -283,7 +285,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
        * when user enters the comment it will be added to the comment list at the top.
        */
       @Override
-      public void onAddCommentClick(final TextView view, final EditText editText,final ImageView sendComment,FrameLayout edtCommentLay) {
+      public void onAddCommentClick(final TextView view, final EditText editText,final ImageView sendComment,final FrameLayout edtCommentLay) {
          mAisleDetailsList.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
           final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
              inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
@@ -292,6 +294,30 @@ public class VueAisleDetailsViewFragment extends Fragment {
           editText.setCursorVisible(true);
           editText.setTextColor(Color.parseColor(getResources().getString(R.color.black)));
           editText.requestFocus();
+			((EditTextBackEvent) editText)
+					.setonInterceptListen(new OnInterceptListener() {
+
+						@Override
+						public void setFlag(boolean flag) {
+
+						}
+
+						@Override
+						public void onKeyBackPressed() {
+							inputMethodManager.toggleSoftInputFromWindow(
+									editText.getApplicationWindowToken(),
+									InputMethodManager.SHOW_FORCED, 0);
+							editText.setText("");
+							edtCommentLay.setVisibility(View.GONE);
+							view.setVisibility(View.VISIBLE);
+							mAisleDetailsAdapter.notifyDataSetChanged();
+						}
+
+						@Override
+						public boolean getFlag() {
+							return false;
+						}
+					});
           editText.setFocusable(true);
           editText.setImeOptions(EditorInfo.IME_ACTION_GO);
           editText.setScroller(new Scroller(getActivity()));

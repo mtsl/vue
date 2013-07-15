@@ -4,27 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-   <ImageView
-         android:id="@+id/trendingbg"
-         android:layout_width="fill_parent"
-         android:layout_height="fill_parent"
-         android:contentDescription="@string/image_contentDescription"
-         android:background="@drawable/trendingbg"/>
+
+    <ImageView
+        android:id="@+id/trendingbg"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/trendingbg"
+        android:contentDescription="@string/image_contentDescription" />
+
     <LinearLayout
+        android:id="@+id/socialintegrationmainlayotu"
         android:layout_width="match_parent"
-        android:layout_marginBottom="16dip"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-       android:id="@+id/socialintegrationmainlayotu"
-        android:layout_alignParentBottom="true" >
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dip"
+        android:orientation="vertical" >
 
         <RelativeLayout
             android:id="@+id/googleplusign_in_buttonlayout"
             android:layout_width="match_parent"
             android:layout_height="48dip"
+            android:layout_marginBottom="8dip"
             android:layout_marginLeft="24dip"
             android:layout_marginRight="24dip"
-            android:layout_marginBottom="8dip"
             android:background="@drawable/googleplus_background" >
 
             <Button
@@ -48,9 +50,9 @@
             android:id="@+id/fblog_in_buttonlayout"
             android:layout_width="match_parent"
             android:layout_height="48dip"
+            android:layout_marginBottom="8dip"
             android:layout_marginLeft="24dip"
-          android:layout_marginBottom="8dip"
-              android:layout_marginRight="24dip"
+            android:layout_marginRight="24dip"
             android:background="@drawable/facebookbtnbg" >
 
             <Button
@@ -68,29 +70,29 @@
                 android:textColor="@android:color/white"
                 android:textSize="15sp"
                 android:textStyle="bold" />
-             <com.facebook.widget.LoginButton
-                    android:id="@+id/login_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                />
+
+            <com.facebook.widget.LoginButton
+                android:id="@+id/login_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true" />
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/cancellayout"
             android:layout_width="match_parent"
-            android:layout_marginLeft="24dip"
             android:layout_height="48dip"
             android:layout_marginBottom="8dip"
-              android:layout_marginRight="24dip"
+            android:layout_marginLeft="24dip"
+            android:layout_marginRight="24dip"
             android:background="@drawable/cancel_button_bg" >
 
             <Button
                 android:id="@+id/cancel"
                 android:layout_width="36dip"
-                android:layout_marginLeft="8dip"
                 android:layout_height="36dip"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="8dip"
                 android:background="@drawable/closebtn" />
 
             <TextView
@@ -103,7 +105,6 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
         </RelativeLayout>
-       
     </LinearLayout>
 
 </RelativeLayout>
