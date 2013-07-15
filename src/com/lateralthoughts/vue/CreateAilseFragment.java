@@ -81,7 +81,9 @@ public class CreateAilseFragment extends Fragment {
 	ProgressDialog dataentryInviteFriendsProgressdialog = null;
 	SharedPreferences sharedPreferencesObj = null;
 	ListView dataEntryInviteFriendsList = null;
-
+	ImageView createAisleTitleBg = null, createAiselCloseBtn = null, createAiselToServer = null;
+	boolean isInviteFriendsListviewVisible = false;
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -102,6 +104,9 @@ public class CreateAilseFragment extends Fragment {
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		lookingForText = (EditTextBackEvent) v
 				.findViewById(R.id.lookingfortext);
+		createAiselToServer = (ImageView) v.findViewById(R.id.createaisel_to_server);
+		createAiselCloseBtn = (ImageView) v.findViewById(R.id.createaisel_close_btn);
+		createAisleTitleBg = (ImageView) v.findViewById(R.id.createaisel_title_bg);
 		dataentry_bottom_bottom_layout = (LinearLayout) v
 				.findViewById(R.id.dataentry_bottom_bottom_layout);
 		lookingForBigText = (TextView) v.findViewById(R.id.lookingforbigtext);
@@ -370,7 +375,6 @@ public class CreateAilseFragment extends Fragment {
 		});
 		dataentry_invite_friends_layout
 				.setOnClickListener(new OnClickListener() {
-
 					@Override
 					public void onClick(View arg0) {
 						dataentry_invite_friends_popup_layout
@@ -379,12 +383,44 @@ public class CreateAilseFragment extends Fragment {
 				});
 		dataentry_invitefriends_facebooklayout
 				.setOnClickListener(new OnClickListener() {
-
 					@Override
 					public void onClick(View v) {
 						getFriendsList(getActivity().getResources().getString(R.string.sidemenu_sub_option_Facebook));
 					}
 				});
+		
+		createAisleTitleBg.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				CreateAisleActivity activity = (CreateAisleActivity)getActivity();
+				activity.showBezelMenu();
+			}
+		});
+		createAiselCloseBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(isInviteFriendsListviewVisible)
+				{
+					isInviteFriendsListviewVisible = false;
+					createAiselToServer.setVisibility(View.VISIBLE);
+					dataEntryInviteFriendsList.setVisibility(View.GONE);
+					dataentry_invite_friends_layout.setVisibility(View.GONE);
+					dataentry_invite_friends_popup_layout.setVisibility(View.GONE);
+				}
+				else
+				{
+					CreateAisleActivity activity = (CreateAisleActivity)getActivity();
+					activity.finishActivity();
+				}
+						}
+		});
+		createAiselToServer.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				addAisleToServer();
+			}
+		});
+		
 		return v;
 	}
 
@@ -462,6 +498,13 @@ public class CreateAilseFragment extends Fragment {
 	}
 
 	public void addAisleToServer() {
+		// hiding keyboard
+		inputMethodManager.hideSoftInputFromWindow(
+				saySomethingAboutAisle.getWindowToken(), 0);
+		inputMethodManager.hideSoftInputFromWindow(
+				occasionText.getWindowToken(), 0);
+		inputMethodManager.hideSoftInputFromWindow(
+				lookingForText.getWindowToken(), 0);		
 		// Input parameters for Adding Aisle to server request...
 		String category = categoryText.getText().toString();
 		String lookingFor = lookingForBigText.getText().toString();
@@ -572,6 +615,8 @@ public class CreateAilseFragment extends Fragment {
 					try {
 						fbGPlusFriends = JsonParsing(response);
 						if (fbGPlusFriends != null) {
+							isInviteFriendsListviewVisible = true;
+							createAiselToServer.setVisibility(View.GONE);
 							dataEntryInviteFriendsList.setVisibility(View.VISIBLE);
 							dataEntryInviteFriendsList
 									.setAdapter(new InviteFriendsAdapter(

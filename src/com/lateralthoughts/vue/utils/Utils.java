@@ -224,8 +224,8 @@ public class Utils {
 		if(availableWidth > VueApplication.getInstance().getVueDetailsCardWidth()) {
 			requiredWidth = VueApplication.getInstance().getVueDetailsCardWidth();
 		} else {
-			requiredWidth = availableWidth;
-			//requiredWidth = VueApplication.getInstance().getVueDetailsCardWidth();
+			//requiredWidth = availableWidth;
+			requiredWidth = VueApplication.getInstance().getVueDetailsCardWidth();
 		}
 		float temp = requiredWidth/bitmapOriginalWidth;
 		if(temp <= 1) {
