@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -82,6 +83,9 @@ public class VueTrendingAislesDataModel {
     
     private final String TAG = "VueTrendingAislesModel";
     public boolean loadOnRequest = false;
+    private int mStartPosition = 0;
+    private int mEndPosition = 0;
+    private int mLocalAislesLimit = 100;
     
 	private VueTrendingAislesDataModel(Context context){
 		mContext = context;
@@ -94,15 +98,7 @@ public class VueTrendingAislesDataModel {
         mOffset = 0;
         mState = AISLE_TRENDING_LIST_DATA;
         mAisleContentList = new ArrayList<AisleWindowContent>();
-       /* Thread t = new Thread(new Runnable() {
-
-          @Override
-          public void run() {
-            getAislesFromDb();     
-          }
-        });
-        t.start();*/
-       
+        getAislesFromDb();
         // initializeTrendingAisleContent();
         mMoreDataAvailable = true;
         Log.e("Profiling", "Profiling VueTrendingAislesDataModel.VueTrendingAislesDataModel() Before getTrendingAisles() calling");
@@ -117,7 +113,7 @@ public class VueTrendingAislesDataModel {
 		//but if we already have the data we should notify right away
 		observer.onAisleDataUpdated(mAisleContentList.size());
 	}
-	
+
 	//this class is used to handle the aisle parsing
 	private class TrendingAislesContentParser extends ResultReceiver {
 	    public TrendingAislesContentParser(Handler handler){
@@ -210,21 +206,18 @@ public class VueTrendingAislesDataModel {
                 Log.e("VueTrendingAislesDataModel", "JSONArray size(): " + contentArray.length());
 	            if(0 == contentArray.length()){
 	                mMoreDataAvailable = false;
-	               // addAislesToDb();
+	                addAislesToDb();
 	            }
-	            /*DbHelper helper = new DbHelper(mContext);
-	            SQLiteDatabase db = helper.getWritableDatabase();*/
+	            DbHelper helper = new DbHelper(mContext);
+	            SQLiteDatabase db = helper.getWritableDatabase();
 	            for (int i = 0; i < contentArray.length(); i++) {
 	                userInfo  = new AisleContext();
 	                JSONObject contentItem = contentArray.getJSONObject(i);
 	                category = contentItem.getString(ITEM_CATEGORY_TAG);
 	                aisleId = contentItem.getString(CONTENT_ID_TAG);
-	                /*Cursor c = db.query(DbHelper.DATABASE_TABLE_AISLES, new String[] {VueConstants.AISLE_ID}, VueConstants.AISLE_ID + "=?",
-	                    new String[] {aisleId}, null, null, null);
-	                if(c.getCount() != 0) {
-	                  db.delete(DbHelper.DATABASE_TABLE_AISLES,  VueConstants.AISLE_ID + "=?", new String[] {aisleId});
-	                  db.delete(DbHelper.DATABASE_TABLE_AISLES_IMAGES,  VueConstants.AISLE_ID + "=?", new String[] {aisleId});
-	                }*/
+	                int deletedAisles = db.delete(DbHelper.DATABASE_TABLE_AISLES,  VueConstants.AISLE_ID + "=?", new String[] {aisleId});
+	                int deletedImages = db.delete(DbHelper.DATABASE_TABLE_AISLES_IMAGES,  VueConstants.AISLE_ID + "=?", new String[] {aisleId});
+	                Log.e("Profiling", "Profiling deletedAisles : " + deletedAisles + ", deletedImages : " + deletedImages);
 	                userInfo.mAisleId = contentItem.getString(CONTENT_ID_TAG);
 	                JSONArray imagesArray = contentItem.getJSONArray(USER_IMAGES_TAG);
 
@@ -312,8 +305,13 @@ public class VueTrendingAislesDataModel {
 	    Log.e("Profiling", "Profiling VueTrendingAislesDataModel.addAislesToDb() Start");
 		DbHelper helper = new DbHelper(mContext);
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
+		
+		//db.beginTransaction();
 		for(int i = 0; i < getAisleCount(); i++) {
+			final SQLiteStatement stmt = db
+		            .compileStatement("SELECT MAX("+VueConstants.ID+") FROM " + DbHelper.DATABASE_TABLE_AISLES);
+		  long maxId = stmt.simpleQueryForLong();
+		  Log.e("Profiling", "Profiling VueTrendingAislesDataModel.addAislesToDb() MAX VALUE : " + maxId);
           AisleWindowContent content = getAisleAt(i);
           AisleContext info = content.getAisleContext();
           ArrayList<AisleImageDetails> imageItemsArray = content.getImageList();
@@ -325,6 +323,7 @@ public class VueTrendingAislesDataModel {
 		  values.put(VueConstants.OCCASION, info.mOccasion);
 		  values.put(VueConstants.USER_ID, info.mUserId);
 		  values.put(VueConstants.AISLE_ID, info.mAisleId);
+		  values.put(VueConstants.ID, maxId + 1);
 		  db.insert(DbHelper.DATABASE_TABLE_AISLES, null, values);
 		  for(AisleImageDetails imageDetails : imageItemsArray) {
 			  ContentValues imgValues = new ContentValues();
@@ -340,8 +339,8 @@ public class VueTrendingAislesDataModel {
 			  db.insert(DbHelper.DATABASE_TABLE_AISLES_IMAGES, null, imgValues);
 		  }
 		}
-		db.setTransactionSuccessful();
-		db.endTransaction();
+		//db.setTransactionSuccessful();
+		//db.endTransaction();
 		db.close();
 		Log.e("Profiling", "Profiling VueTrendingAislesDataModel.addAislesToDb() End");
 	}
@@ -349,6 +348,7 @@ public class VueTrendingAislesDataModel {
   private void getAislesFromDb() {
     Log.e("Profiling",
         "Profiling VueTrendingAislesDataModel.getAislesFromDb() Start");
+    mEndPosition = mEndPosition + mLocalAislesLimit;
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
     AisleWindowContent aisleItem = null;
@@ -357,9 +357,11 @@ public class VueTrendingAislesDataModel {
     ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
     DbHelper helper = new DbHelper(mContext);
     SQLiteDatabase db = helper.getReadableDatabase();
-    Cursor aislesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES, null, null,
-        null, null, null, VueConstants.ID + " ASC");
-   
+    String selection = VueConstants.ID + ">? AND " + VueConstants.ID + "<=?";
+    String[] args = {Integer.toString(mStartPosition), Integer.toString(mEndPosition)};
+    Cursor aislesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES, null, selection,
+    		args, null, null, VueConstants.ID + " ASC");
+
     if (aislesCursor.moveToFirst()) {
       do {
         userInfo = new AisleContext();
@@ -433,12 +435,14 @@ public class VueTrendingAislesDataModel {
     aisleContentArray.add(aisleItem);
     imageItemsArray.clear();
     aisleImagesCursor.close();*/
-    
+    mStartPosition = mEndPosition;
     aislesCursor.close();
     db.close();
-    Message msg = new Message();
-    msg.obj = aisleContentArray;
-    mHandler.sendMessage(msg);
+    if(aisleContentArray.size() > 0) {
+      Message msg = new Message();
+      msg.obj = aisleContentArray;
+      mHandler.sendMessage(msg);
+    }
     Log.e("Profiling",
         "Profiling VueTrendingAislesDataModel.getAislesFromDb() End");
   }
@@ -452,7 +456,7 @@ public class VueTrendingAislesDataModel {
       mOffset += mLimit;
       mLimit = TRENDING_AISLES_BATCH_SIZE;
     }
-    Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 6 ++ mOffset: " + mOffset + ", mLimit" + mLimit);
+    Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 6 mOffset: " + mOffset + ", mLimit: " + mLimit);
     mVueContentGateway.getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
   }
 
@@ -464,6 +468,14 @@ public class VueTrendingAislesDataModel {
         AisleWindowContent aisleItem = getAisleItem(content.getAisleId()/*userInfo.mAisleId*/);
         aisleItem.addAisleContent(content.getAisleContext(),  content.getImageList()); 
       }
+      Thread t = new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+		  getAislesFromDb();
+		}
+	  });
+      t.start();
     };
   };
   
