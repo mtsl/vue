@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 //generic android goodies
 
 import java.lang.ref.WeakReference;
+import java.sql.Wrapper;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
@@ -18,15 +19,23 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
+import android.widget.Toast;
 
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  {
@@ -43,6 +52,8 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
    AisleImageDetails mItemDetails = null;
     private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
     private BitmapLoaderUtils mBitmapLoaderUtils;
+    private int likeImageShowTime = 3000;
+    
     @SuppressWarnings("deprecation")
    @SuppressLint("NewApi")
     @Override
@@ -109,67 +120,169 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
       }
         mTopScroller.setAdapter(new ComparisionAdapter(
             AisleDetailsViewActivity.this));
+        mTopScroller.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				final ImageView img = (ImageView)arg1.findViewById(R.id.compare_like_dislike);
+				img. setImageResource(R.drawable.thumb_up);
+				img .setVisibility(View.VISIBLE);
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						img.setVisibility(View.INVISIBLE);
+					}
+				}, likeImageShowTime);
+				
+			}
+		});
+        mTopScroller.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				final ImageView img = (ImageView)arg1.findViewById(R.id.compare_like_dislike);
+				img. setImageResource(R.drawable.thdown);
+				img .setVisibility(View.VISIBLE);
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						img.setVisibility(View.INVISIBLE);
+					}
+				}, likeImageShowTime);
+				return false;
+			}
+		});
+        mBottomScroller.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				final ImageView img = (ImageView)arg1.findViewById(R.id.compare_like_dislike);
+				img. setImageResource(R.drawable.thumb_up);
+				img .setVisibility(View.VISIBLE);
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						img.setVisibility(View.INVISIBLE);
+					}
+				}, likeImageShowTime);
+				
+			}
+		});
+        mBottomScroller.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				final ImageView img = (ImageView)arg1.findViewById(R.id.compare_like_dislike);
+				img. setImageResource(R.drawable.thdown);
+				img .setVisibility(View.VISIBLE);
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						img.setVisibility(View.INVISIBLE);
+					}
+				}, likeImageShowTime);
+				return false;
+			}
+		});
         mBottomScroller.setAdapter(new ComparisionAdapter(
             AisleDetailsViewActivity.this));
 
    }
    
-   class ComparisionAdapter extends BaseAdapter {
-        LayoutInflater minflater;
-       public ComparisionAdapter(Context context) {
-             minflater = (LayoutInflater)
-                   getSystemService(context.LAYOUT_INFLATER_SERVICE);
-       }
-       @Override
-       public int getCount() {
-          return mImageDetailsArr.size();
-       }
-       @Override
-       public Object getItem(int position) {
-          return position;
-       }
-       @Override
-       public long getItemId(int position) {
-          return position;
-       }
-       @Override
-          public View getView(int position, View convertView, ViewGroup parent) {
-             ViewHolder viewHolder;
-             mItemDetails = mImageDetailsArr.get(position);
-             Bitmap bitmap = mBitmapLoaderUtils
-                   .getCachedBitmap(mItemDetails.mCustomImageUrl);
-             if (convertView == null) {
-                viewHolder = new ViewHolder();
-                convertView = minflater.inflate(R.layout.vuecompareimg, null);
-                viewHolder.img = (ImageView) convertView
-                      .findViewById(R.id.vue_compareimg);
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                      mCoparisionScreenHeight / 2,
-                      mCoparisionScreenHeight / 2);
-                params.addRule(RelativeLayout.CENTER_IN_PARENT);
-                params.setMargins(VueApplication.getInstance().getPixel(10), 0,
-                      0, 0);
-                viewHolder.img.setLayoutParams(params);
-                viewHolder.img.setBackgroundColor(Color.parseColor(getResources().getString(R.color.white)));
-                convertView.setTag(viewHolder);
-             }
-             viewHolder = (ViewHolder) convertView.getTag();
-             if (bitmap != null)
-                viewHolder.img.setImageBitmap(bitmap);
-             else {
-                viewHolder.img.setImageResource(R.drawable.ic_launcher);
-                BitmapWorkerTask task = new BitmapWorkerTask(null,
-                      viewHolder.img, mCoparisionScreenHeight / 2);
-                task.execute(mItemDetails.mCustomImageUrl);
+	class ComparisionAdapter extends BaseAdapter {
+		LayoutInflater minflater;
+		ViewHolder viewHolder;
 
-             }
-             return convertView;
-          }
-       
-       private class ViewHolder {
-          ImageView img;
-       }
-    }
+		public ComparisionAdapter(Context context) {
+			minflater = (LayoutInflater) getSystemService(context.LAYOUT_INFLATER_SERVICE);
+		}
+
+		@Override
+		public int getCount() {
+			return mImageDetailsArr.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			mItemDetails = mImageDetailsArr.get(position);
+			Bitmap bitmap = mBitmapLoaderUtils
+					.getCachedBitmap(mItemDetails.mCustomImageUrl);
+			if (convertView == null) {
+				viewHolder = new ViewHolder();
+				convertView = minflater.inflate(R.layout.vuecompareimg, null);
+				viewHolder.img = (ImageView) convertView
+						.findViewById(R.id.vue_compareimg);
+				viewHolder.likeImage = (ImageView) convertView
+						.findViewById(R.id.compare_like_dislike);
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						mCoparisionScreenHeight / 2,
+						mCoparisionScreenHeight / 2);
+				params.addRule(RelativeLayout.CENTER_IN_PARENT);
+				params.setMargins(VueApplication.getInstance().getPixel(10), 0,
+						0, 0);
+				viewHolder.img.setLayoutParams(params);
+				viewHolder.img.setBackgroundColor(Color
+						.parseColor(getResources().getString(R.color.white)));
+				RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				params2.addRule(RelativeLayout.CENTER_IN_PARENT);
+				viewHolder.likeImage.setLayoutParams(params2);
+
+				convertView.setTag(viewHolder);
+			}
+
+			viewHolder.likeImage.setVisibility(View.INVISIBLE);
+			viewHolder = (ViewHolder) convertView.getTag();
+			viewHolder.likeImage.setImageResource(R.drawable.thumb_up);
+
+			viewHolder.img.setOnLongClickListener(new OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					viewHolder.likeImage.setVisibility(View.VISIBLE);
+					viewHolder.likeImage.setImageResource(R.drawable.thdown);
+					new Handler().postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							viewHolder.likeImage.setVisibility(View.INVISIBLE);
+						}
+					}, likeImageShowTime);
+					return false;
+				}
+			});
+
+			if (bitmap != null) {
+				viewHolder.img.setImageBitmap(bitmap);
+			}
+			else {
+				viewHolder.img.setImageResource(R.drawable.ic_launcher);
+				BitmapWorkerTask task = new BitmapWorkerTask(null,
+						viewHolder.img, mCoparisionScreenHeight / 2);
+				task.execute(mItemDetails.mCustomImageUrl);
+
+			}
+			return convertView;
+		}
+
+		private class ViewHolder {
+			ImageView img;
+			ImageView likeImage;
+		}
+	}
     @Override
     public void onResume(){
         super.onResume();
@@ -238,7 +351,6 @@ class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         if (imageViewReference != null && bitmap != null) {
             final ImageView imageView = imageViewReference.get();
-      
                 imageView.setImageBitmap(bitmap);
             
         }

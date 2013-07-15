@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+di/addcommentlay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+di/addcommentlay"
     android:background="@android:color/white"
-    
     android:orientation="vertical" >
-    <FrameLayout android:layout_width="match_parent"
-                 android:id="@+id/edtcommentlay"
-                 android:visibility="gone"
-                 android:layout_height="wrap_content">
-        <EditText android:layout_width="match_parent"
-         android:layout_height="100dp"
-         android:layout_marginLeft="12dp"
-         android:layout_marginRight="22dp"
-         
-         android:inputType="text|textMultiLine"
-         android:maxLines="4"
-         android:scrollbars="vertical"
-         android:textCursorDrawable="@null"
-         android:cursorVisible="true"
-         android:imeOptions="actionGo"
-         android:id="@+id/edtcomment"/>
-        <ImageView android:layout_width="32dp"
-                   android:layout_height="32dp"
-                   android:layout_gravity="right|center_vertical"
-                   android:id="@+id/sendcomment"
-                   android:src="@drawable/sendcomment"/>
-        </FrameLayout>
- 
+
+    <FrameLayout
+        android:id="@+id/edtcommentlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" >
+
+        <com.lateralthoughts.vue.utils.EditTextBackEvent
+            android:id="@+id/edtcomment"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="22dp"
+            android:cursorVisible="true"
+            android:imeOptions="actionGo"
+            android:inputType="text|textMultiLine"
+            android:maxLines="4"
+            android:scrollbars="vertical"
+            android:textCursorDrawable="@null" />
+
+        <ImageView
+            android:id="@+id/sendcomment"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="right|center_vertical"
+            android:src="@drawable/sendcomment" />
+    </FrameLayout>
+
     <TextView
         android:id="@+id/vue_user_entercomment"
         android:layout_width="match_parent"
@@ -36,10 +40,9 @@
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:textColor="@color/grey"
-        android:gravity="center"
         android:background="#ebebeb"
+        android:gravity="center"
         android:text="Add Comment"
-  />
+        android:textColor="@color/grey" />
 
 </LinearLayout>

@@ -39,6 +39,9 @@ public class VueApplication extends Application {
 	private String mWindowID;
 	private int mWindowCount;
 	private int mStatusBarHeight;
+	private int mVueDetailsCardWidth = 0;
+	private int mVueDetailsCardHeight = 0;
+	 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
 	}
@@ -146,9 +149,21 @@ public class VueApplication extends Application {
     	Resources r = getResources();
     	int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     	return px;
-    	     
     }
-
+    public int getVueDetailsCardWidth() {
+    	if(mVueDetailsCardWidth == 0) {
+    	int leftRightMargins = 20;
+    	mVueDetailsCardWidth  = mScreenWidth - getPixel(leftRightMargins);
+    	}
+		return mVueDetailsCardWidth;
+    }
+    public int getVueDetailsCardHeight() {
+    	if(mVueDetailsCardHeight == 0) {
+    	int bottomActionBar = 48;
+    	mVueDetailsCardHeight  = mScreenHeight - getPixel(20)- getPixel(bottomActionBar);
+    	}
+		return  mVueDetailsCardHeight;
+    }
     public RequestQueue getRequestQueue() {
         if (mVolleyRequestQueue != null) {
             return mVolleyRequestQueue;

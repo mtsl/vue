@@ -73,6 +73,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private ColorDrawable mColorDrawable;
     private int mCurrentPivotIndex;
     private BitmapLoaderUtils mBitmapLoaderUtils;
+    private String mSourceName;
     
     public AisleContentAdapter(Context context){
         mContext = context;
@@ -134,7 +135,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         BitmapsToFetch p = new BitmapsToFetch(imageList, bestHeight, startIndex, count);
         mExecutorService.submit(new ImagePrefetcher(p));
     }
-    
+    public void setSourceName(String name) {
+    	mSourceName = name;
+    }
     //Task for the queue
     private class BitmapsToFetch
     {
@@ -273,11 +276,14 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             if(bitmap != null){
                 //Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
             	//setParams(contentBrowser,imageView,bitmap);
+            	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+                bitmap = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
+            	 }
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);
             }
             else{
-                loadBitmap(itemDetails.mCustomImageUrl, mWindowContent.getBestHeightForWindow(),contentBrowser, imageView);
+                loadBitmap(itemDetails, mWindowContent.getBestHeightForWindow(),contentBrowser, imageView);
                 contentBrowser.addView(imageView);
             }
         }
@@ -288,9 +294,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         return mContentImagesCache.get(url);      
     }
     
-    public void loadBitmap(String loc, int bestHeight, AisleContentBrowser flipper, ImageView imageView) {
+    public void loadBitmap( AisleImageDetails itemDetails, int bestHeight, AisleContentBrowser flipper, ImageView imageView) {
+    	String loc = itemDetails.mCustomImageUrl;
         if (cancelPotentialDownload(loc, imageView)) {          
-            BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView, bestHeight);
+            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
             task.execute(loc);
         }
@@ -302,13 +309,16 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         private String url = null;
         private int mBestHeightForImage;
         AisleContentBrowser aisleContentBrowser ;
+        private int mAVailableWidth,mAvailabeHeight;
 
-        public BitmapWorkerTask(AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
+        public BitmapWorkerTask( AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             viewFlipperReference = new WeakReference<AisleContentBrowser>(vFlipper); 
             mBestHeightForImage = bestHeight;
             aisleContentBrowser = vFlipper;
+            mAVailableWidth = itemDetails.mAvailableWidth;
+            mAvailabeHeight = itemDetails.mAvailableHeight;
         }
 
         // Decode image in background.
@@ -336,6 +346,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 					vFlipper.invalidate();
 					// bitmap = setParams(aisleContentBrowser, imageView,
 					// bitmap);
+					 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+			                bitmap = Utils.getScalledImage(bitmap,mAVailableWidth, mAvailabeHeight);
+			            	 }
 					imageView.setImageBitmap(bitmap);
 				}
 			}
