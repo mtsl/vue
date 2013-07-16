@@ -11,6 +11,7 @@ public class CreateAisleActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_aisle_main);
+		getActionBar().hide();
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			String imagePath = b
@@ -21,14 +22,14 @@ public class CreateAisleActivity extends BaseActivity {
 		}
 	}
 
-	@Override
+	/*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.title_options2, menu);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		// Configure the search info and add any event listeners
 		return super.onCreateOptionsMenu(menu);
 	}
-
+*/
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -48,8 +49,18 @@ public class CreateAisleActivity extends BaseActivity {
 			e.printStackTrace();
 		}
 	}
+	
+	public void showBezelMenu()
+	{
+		getSlidingMenu().toggle();
+	}
+	
+	public void finishActivity()
+	{
+		finish();
+	}
 
-	@Override
+/*	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
@@ -64,5 +75,5 @@ public class CreateAisleActivity extends BaseActivity {
 			finish();
 		}
 		return super.onOptionsItemSelected(item);
-	}
+	}*/
 }

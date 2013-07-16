@@ -59,7 +59,7 @@ public class VueListFragment extends Fragment {
  // public static final String TAG = "VueListFragment";
   private ExpandableListView expandListView;
   private LinearLayout customlayout, aboutlayout, invitefriendsLayout;
-  private RelativeLayout donelayout, aboutdonelayout;
+  private RelativeLayout mBezelMainLayout, donelayout, aboutdonelayout;
   private ImageView userProfilePic;
   private TextView userName, userDateOfBirth, userGender, userCurrentLocation;
   private CheckBox smallch, mediumch, largech ;
@@ -70,9 +70,11 @@ public class VueListFragment extends Fragment {
   private SharedPreferences sharedPreferencesObj;
   private ImageLoader mImageLoader;
   private ProgressDialog progress;
+  private LayoutInflater inflater;
  
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
+    this.inflater = inflater;
     sharedPreferencesObj = getActivity().getSharedPreferences(
         VueConstants.SHAREDPREFERENCE_NAME, 0);
    // pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -80,7 +82,7 @@ public class VueListFragment extends Fragment {
       @Override
       public boolean onBackPressed() {
         boolean returnWhat = false;
-        if (invitefriendsLayout != null
+        /*if (invitefriendsLayout != null
             && invitefriendsLayout.getVisibility() == View.VISIBLE) {
           invitefriendsLayout.setVisibility(View.GONE);
           expandListView.setVisibility(View.VISIBLE);
@@ -91,6 +93,7 @@ public class VueListFragment extends Fragment {
           aboutlayout.startAnimation(animDown);
           returnWhat = true;
         }
+       */
         if (customlayout != null
             && customlayout.getVisibility() == View.VISIBLE) {
           customlayout.setVisibility(View.GONE);
@@ -105,36 +108,16 @@ public class VueListFragment extends Fragment {
 
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-
-    customlayout = (LinearLayout) getActivity().findViewById(R.id.customlayout);
-    customlayout.setVisibility(View.GONE);
+    mBezelMainLayout = (RelativeLayout) getActivity().findViewById(R.id.bezel_menu_main_layout);
     expandListView = (ExpandableListView) getActivity().findViewById(
         R.id.vue_list_fragment_list);
-    donelayout = (RelativeLayout) getActivity().findViewById(R.id.donelayout);
-    aboutlayout = (LinearLayout) getActivity().findViewById(R.id.aboutlayout);
-    aboutdonelayout = (RelativeLayout) getActivity().findViewById(
-        R.id.aboutdonelayout);
-    LayoutParams params = new LayoutParams((int) TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, getScreenWidth() / 2, getActivity()
-            .getResources().getDisplayMetrics()),
-        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48,
-            getActivity().getResources().getDisplayMetrics()));
-    params.gravity = Gravity.CENTER_HORIZONTAL;
-    aboutdonelayout.setLayoutParams(params);
-    inviteFrirendsListView = (ListView) getActivity().findViewById(
-        R.id.vue_list_fragment_Invitefriends_list);
-    invitefriendsLayout = (LinearLayout) getActivity().findViewById(
-        R.id.vue_list_fragment_invite_friendsLayout);
+
     VueListFragmentAdapter adapter = new VueListFragmentAdapter(getActivity(),
         getBezelMenuOptionItems());
     expandListView.setAdapter(adapter);
     animDown = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_down);
     animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_up);
-    userProfilePic = (ImageView) getActivity().findViewById(R.id.user_profilePic);
-    userName = (TextView) getActivity().findViewById(R.id.user_name);
-    userDateOfBirth = (TextView) getActivity().findViewById(R.id.user_date_Of_birth);
-    userGender = (TextView) getActivity().findViewById(R.id.user_gender);
-    userCurrentLocation = (TextView) getActivity().findViewById(R.id.user_current_location);
+    /**/
     expandListView.setOnGroupClickListener(new OnGroupClickListener() {
 
       @Override
@@ -144,22 +127,39 @@ public class VueListFragment extends Fragment {
             .findViewById(R.id.vue_list_fragment_itemTextview);
         String s = textView.getText().toString();
         if (s.equals(getString(R.string.sidemenu_option_About))) {
-          aboutlayout.setVisibility(View.VISIBLE);
-          aboutlayout.startAnimation(animUp);
+          inflateAboutLayout();
         } else if (s.equals(getString(R.string.sidemenu_option_FeedBack))) {
           startActivity(new Intent(getActivity(), FeedbackForm.class));
-        }
-        else if(s.equals(getString(R.string.sidemenu_option_Login)))
-        {
+        } else if(s.equals(getString(R.string.sidemeun_option_Settings))) {
+          inflateSettingsLayout();
+        } else if(s.equals(getString(R.string.sidemenu_option_Invite_Friends))) {
+          View layoutInviewFriends = inflater.inflate(R.layout.invite, null);
+          LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
+              LayoutParams.MATCH_PARENT);
+          invitefriendsLayout = (LinearLayout) layoutInviewFriends.findViewById(
+              R.id.vue_list_fragment_invite_friendsLayout);
+          invitefriendsLayout.setLayoutParams(params);
+          inviteFrirendsListView = (ListView) layoutInviewFriends.findViewById(
+              R.id.vue_list_fragment_Invitefriends_list);
+          inviteFrirendsListView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                long id) {
+
+              String itemName = ((TextView) view
+                  .findViewById(R.id.invite_friends_name)).getText().toString();
+              // TODO:
+            }
+          });
+        } else if(s.equals(getString(R.string.sidemenu_option_Login))) {
         	 sharedPreferencesObj = getActivity().getSharedPreferences(
      	            VueConstants.SHAREDPREFERENCE_NAME, 0);
         	 boolean fbloginfalg = sharedPreferencesObj.getBoolean(
        	          VueConstants.FACEBOOK_LOGIN, false);
-       	boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
+       	    boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
        	          VueConstants.GOOGLEPLUS_LOGIN, false);
-       	
-       	if(!googleplusloginfalg || !fbloginfalg)
-       	{
+       	if(!googleplusloginfalg || !fbloginfalg) {
         	
 					Intent i = new Intent(getActivity(), VueLoginActivity.class);
 					Bundle b = new Bundle();
@@ -189,43 +189,12 @@ public class VueListFragment extends Fragment {
     	  TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
     	  String s = textView.getText().toString();
     	  if(s.equals(getString(R.string.sidemenu_option_Profile))) {
-    	  //  if (s.equals(getString(R.string.sidemeun_option_Settings))) {
-              customlayout.setVisibility(View.VISIBLE);
-              customlayout.startAnimation(animUp);
               getUserInfo();
-           // } else
+    	  } else if(s.equals(getString(R.string.sidemenu_sub_option_Facebook))
+    	      || s.equals(getString(R.string.sidemenu_sub_option_Gmail))) {
+    	    getFriendsList(s); 
     	  }
-    	  getFriendsList(s);
         return false;
-      }
-    });
-    aboutdonelayout.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View arg0) {
-        aboutlayout.setVisibility(View.GONE);
-        aboutlayout.startAnimation(animDown);
-      }
-    });
-    donelayout.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View v) {
-       // Utils.saveNetworkSettings(getActivity(), wifich.isChecked());
-        customlayout.setVisibility(View.GONE);
-        customlayout.startAnimation(animDown);
-      }
-    });
-
-    inviteFrirendsListView.setOnItemClickListener(new OnItemClickListener() {
-
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position,
-          long id) {
-
-        String itemName = ((TextView) view
-            .findViewById(R.id.invite_friends_name)).getText().toString();
-        // TODO:
       }
     });
   }
@@ -492,6 +461,97 @@ public class VueListFragment extends Fragment {
         .getMetrics(displaymetrics);
     return displaymetrics.widthPixels;
   }
+
+  private class InviteFriendsAdapter extends ArrayAdapter<FbGPlusDetails> {
+
+    List<FbGPlusDetails> items;
+    Context context;
+
+    public InviteFriendsAdapter(Context context, int textViewResourceId,
+        List<FbGPlusDetails> objects) {
+      super(context, textViewResourceId, objects);
+      this.context = context;
+      items = objects;
+      mImageLoader = new ImageLoader(VueApplication.getInstance().getRequestQueue(), new BitmapLruCache(1024));
+
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      InviteFriendHolder holder;
+      if (convertView == null) {
+        convertView = LayoutInflater.from(getActivity()).inflate(
+            R.layout.invite_friends, null);
+        holder = new InviteFriendHolder();
+        holder.friendprifilepic = (NetworkImageView) convertView
+            .findViewById(R.id.invite_friends_imageView);
+        holder.name = (TextView) convertView
+            .findViewById(R.id.invite_friends_name);
+        
+        holder.invite_friends_addFriends = (Button) convertView.findViewById(R.id.invite_friends_addFriends);
+        
+        convertView.setTag(holder);
+      } else {
+        holder = (InviteFriendHolder) convertView.getTag();
+      }
+      holder.name.setText(items.get(position).getName());
+    /*  holder.imageView.setImageBitmap(imageLoader.loadImage(context,
+          items.get(position).getProfile_image_url(), holder.imageView));*/
+      
+      holder.friendprifilepic.setImageUrl(items.get(position).getProfile_image_url(), mImageLoader);
+
+      
+      
+      final int index = position;
+      
+      holder.invite_friends_addFriends .setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					
+					// Google+ friends
+					if(items.get(index).getGoogleplusFriend() != null) {
+						Intent i = new Intent(getActivity(), VueLoginActivity.class);
+						Bundle b = new Bundle();
+						b.putInt(VueConstants.GOOGLEPLUS_FRIEND_INDEX, index);
+						b.putBoolean(VueConstants.GOOGLEPLUS_FRIEND_INVITE, true);
+						i.putExtras(b);
+						startActivity(i);}
+					// Facebook friends
+					else {
+						if(items.get(index).getId() != null)
+						{
+						Intent i = new Intent(getActivity(), VueLoginActivity.class);
+						Bundle b = new Bundle();
+						b.putString(VueConstants.FB_FRIEND_ID, items.get(index).getId());
+						b.putString(VueConstants.FB_FRIEND_NAME, items.get(index).getName());
+						i.putExtras(b);
+						startActivity(i);
+						}	
+					}
+				}
+			});
+      
+      return convertView;
+    }
+
+    @Override
+    public int getCount() {
+      try {
+		return items.size();
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return 0;
+    }
+  }
+  private static class InviteFriendHolder {
+	  NetworkImageView friendprifilepic;
+    TextView name;
+    Button invite_friends_addFriends;
+  }
+
   public interface FriendsListener {
 
     public boolean onBackPressed();
@@ -499,64 +559,63 @@ public class VueListFragment extends Fragment {
   
   public void getFriendsList(String s) {
 
-	    progress = ProgressDialog.show(getActivity(), "", "Plase wait...");
-	    Log.e(getTag(), "SURU : Value of s : " + s);
-	    
-	    sharedPreferencesObj = getActivity().getSharedPreferences(
-	            VueConstants.SHAREDPREFERENCE_NAME, 0);
-	    
-	    boolean facebookloginflag = sharedPreferencesObj.getBoolean(VueConstants.FACEBOOK_LOGIN,
-	        false);
-	    boolean googleplusloginflag = sharedPreferencesObj.getBoolean(VueConstants.GOOGLEPLUS_LOGIN,
-		        false);
-	    if (s.equals("Facebook")) {
+    progress = ProgressDialog.show(getActivity(), "", "Plase wait...");
+    Log.e(getTag(), "SURU : Value of s : " + s);
 
-	        if (facebookloginflag) {
-	          fbFriendsList();
-	        }  else {
-		        if (progress.isShowing()) {
-			          progress.dismiss();
-			        }
-			        	
-			          Intent i = new Intent(getActivity(), VueLoginActivity.class);
-			       	  Bundle b = new Bundle();
-			       	  b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
-			       	 b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
-			       	  b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.FACEBOOK);
-			       	 b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
-			       	  i.putExtras(b);
-			       	  startActivity(i);
-			         
-			       
-			      }
-	       
-	    } else if (s.equals("Google Plus")) {
-	        if (googleplusloginflag) {
-	        	 Log.e(getTag(), "GOOGLEPLUS : Value of s : 1" );
-	          getGPlusFriendsList();
-	        } else {
-		        if (progress.isShowing()) {
-			          progress.dismiss();
-			        }
-		        Log.e(getTag(), "GOOGLEPLUS : Value of s : 2" );
-			        	 Log.e(getTag(), "GOOGLEPLUS : Value of s : 3" );
-			          Intent i = new Intent(getActivity(), VueLoginActivity.class);
-			       	  Bundle b = new Bundle();
-			       	  b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
-			       	 b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
-			       	  b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.GOOGLEPLUS);
-			       	  b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
-			       	  i.putExtras(b);
-			       	  startActivity(i);
-			        }
-			      
-	    }
-	    else {
-			if (progress.isShowing()) {
-				progress.dismiss();
-			}
-		}
-	  }
+    sharedPreferencesObj = getActivity().getSharedPreferences(
+        VueConstants.SHAREDPREFERENCE_NAME, 0);
+
+    boolean facebookloginflag = sharedPreferencesObj.getBoolean(
+        VueConstants.FACEBOOK_LOGIN, false);
+    boolean googleplusloginflag = sharedPreferencesObj.getBoolean(
+        VueConstants.GOOGLEPLUS_LOGIN, false);
+    if (s.equals("Facebook")) {
+
+      if (facebookloginflag) {
+        fbFriendsList();
+      } else {
+        if (progress.isShowing()) {
+          progress.dismiss();
+        }
+
+        Intent i = new Intent(getActivity(), VueLoginActivity.class);
+        Bundle b = new Bundle();
+        b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+        b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+        b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.FACEBOOK);
+        b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+        i.putExtras(b);
+        startActivity(i);
+
+
+      }
+
+    } else if (s.equals("Google Plus")) {
+      if (googleplusloginflag) {
+        Log.e(getTag(), "GOOGLEPLUS : Value of s : 1");
+        getGPlusFriendsList();
+      } else {
+        if (progress.isShowing()) {
+          progress.dismiss();
+        }
+        Log.e(getTag(), "GOOGLEPLUS : Value of s : 2");
+        Log.e(getTag(), "GOOGLEPLUS : Value of s : 3");
+        Intent i = new Intent(getActivity(), VueLoginActivity.class);
+        Bundle b = new Bundle();
+        b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+        b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+        b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.GOOGLEPLUS);
+        b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+        i.putExtras(b);
+        startActivity(i);
+      }
+
+    } else {
+      if (progress.isShowing()) {
+        progress.dismiss();
+      }
+    }
+  }
 
 	  // Pull and display fb friends from facebook.com
   private void fbFriendsList() {
@@ -565,20 +624,14 @@ public class VueListFragment extends Fragment {
 
     SharedPreferences sharedPreferencesObj = getActivity()
         .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-
     String accessToken = sharedPreferencesObj.getString(
         VueConstants.FACEBOOK_ACCESSTOKEN, null);
-
     if (accessToken != null) {
       String mainURL = VueConstants.FACEBOOK_GETFRIENDS_URL + accessToken
           + VueConstants.FACEBOOK_FRIENDS_DETAILS;
-
       Response.Listener listener = new Response.Listener<String>() {
-
-
         @Override
         public void onResponse(String response) {
-          // TODO Auto-generated method stub
           List<FbGPlusDetails> fbGPlusFriends;
           try {
             fbGPlusFriends = JsonParsing(response);
@@ -593,7 +646,6 @@ public class VueListFragment extends Fragment {
               progress.dismiss();
             }
           } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             if (progress.isShowing()) {
               progress.dismiss();
@@ -673,6 +725,9 @@ public class VueListFragment extends Fragment {
 	  }
 	  
     private void getUserInfo() {
+      expandListView.setVisibility(View.GONE);
+      customlayout.startAnimation(animUp);
+      customlayout.setVisibility(View.VISIBLE);
       String name  = userName.getText().toString();
       String dob = userDateOfBirth.getText().toString();
       String gender = userGender.getText().toString();
@@ -735,5 +790,68 @@ public class VueListFragment extends Fragment {
 		Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
 
 		return facebookFriendsDetailsList;
+	}
+	
+	private void inflateSettingsLayout() {
+	  View layoutSettings = null;
+	  if(customlayout == null) {
+	  layoutSettings = inflater.inflate(R.layout.settings_layout, null);
+      LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
+          LayoutParams.MATCH_PARENT);
+      customlayout = (LinearLayout) layoutSettings.findViewById(R.id.customlayout);
+      customlayout.setLayoutParams(params);
+      userProfilePic = (ImageView) layoutSettings.findViewById(R.id.user_profilePic);
+      userName = (TextView) layoutSettings.findViewById(R.id.user_name);
+      userDateOfBirth = (TextView) layoutSettings.findViewById(R.id.user_date_Of_birth);
+      userGender = (TextView) layoutSettings.findViewById(R.id.user_gender);
+      userCurrentLocation = (TextView) layoutSettings.findViewById(R.id.user_current_location);
+      donelayout = (RelativeLayout) layoutSettings.findViewById(R.id.donelayout);
+      donelayout.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+         // Utils.saveNetworkSettings(getActivity(), wifich.isChecked());
+          customlayout.setVisibility(View.GONE);
+          customlayout.startAnimation(animDown);
+          expandListView.setVisibility(View.VISIBLE);
+        }
+      });
+      mBezelMainLayout.addView(layoutSettings);
+	  }
+      customlayout.setVisibility(View.GONE);
+     
+	}
+	
+	private void inflateAboutLayout() {
+	  View aboutLayoutView = null;
+     if(aboutlayout == null) {
+      aboutLayoutView = inflater.inflate(R.layout.about, null);
+      LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
+          LayoutParams.MATCH_PARENT);
+      LayoutParams params2 = new LayoutParams((int) TypedValue.applyDimension(
+          TypedValue.COMPLEX_UNIT_DIP, getScreenWidth() / 2, getActivity()
+              .getResources().getDisplayMetrics()),
+          (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48,
+              getActivity().getResources().getDisplayMetrics()));
+      params2.gravity = Gravity.CENTER_HORIZONTAL;
+      aboutlayout = (LinearLayout) aboutLayoutView.findViewById(R.id.aboutlayout);
+      aboutlayout.setLayoutParams(params);
+      aboutdonelayout = (RelativeLayout) aboutLayoutView.findViewById(
+          R.id.aboutdonelayout);
+      aboutdonelayout.setLayoutParams(params);
+      aboutdonelayout.setOnClickListener(new OnClickListener() {
+
+        @Override
+        public void onClick(View arg0) {
+          expandListView.setVisibility(View.VISIBLE);
+          aboutlayout.setVisibility(View.GONE);
+          aboutlayout.startAnimation(animDown);
+        }
+      });
+      mBezelMainLayout.addView(aboutLayoutView);
+     }
+      expandListView.setVisibility(View.GONE);
+      aboutlayout.setVisibility(View.VISIBLE);
+      aboutlayout.startAnimation(animUp);
+	
 	}
 }
