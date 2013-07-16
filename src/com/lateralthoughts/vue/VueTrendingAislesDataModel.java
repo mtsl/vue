@@ -235,6 +235,11 @@ public class VueTrendingAislesDataModel {
 	                    imageItemDetails.mImageUrl = imageItem.getString(USER_IMAGE_URL_TAG);
 	                    imageItemDetails.mAvailableHeight = imageItem.getInt(IMAGE_HEIGHT_TAG);
 	                    imageItemDetails.mAvailableWidth = imageItem.getInt(IMAGE_WIDTH_TAG);
+	                    
+	                    Log.i("imgurl", "imgurl1:mImageUrl "+ imageItemDetails.mImageUrl);
+	                    Log.i("imgurl", "imgurl1:imageItemDetails.mAvailableHeight "+ imageItemDetails.mAvailableHeight);
+	                    Log.i("imgurl", "imgurl1:imageItemDetails.mAvailableWidth "+ imageItemDetails.mAvailableWidth);
+	                    
 	                    imageItemsArray.add(imageItemDetails);                      
 	                }
                   aisleItem = getAisleItem(aisleId);

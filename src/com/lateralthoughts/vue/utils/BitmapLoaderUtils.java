@@ -16,6 +16,7 @@ import com.lateralthoughts.vue.VueApplication;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 public class BitmapLoaderUtils {
 
@@ -53,6 +54,7 @@ public class BitmapLoaderUtils {
      */
     public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
     {
+    	Log.i("imgurl", "imgurl: "+url);
         File f = mFileCache.getFile(url);
         
         //from SD cache

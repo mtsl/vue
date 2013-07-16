@@ -202,16 +202,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
                VueApplication.getInstance().getScreenWidth(),
                (VueApplication.getInstance().getScreenHeight() * 60) / 100);
-         LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(
-               LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
-               android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
-               android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
          mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
          mViewHolder.aisleContentBrowser
                .setAisleDetailSwipeListener(mswipeListner);
-         FrameLayout.LayoutParams thumbnailParams = new FrameLayout.LayoutParams(
-               FrameLayout.LayoutParams.WRAP_CONTENT, mThumbnailsHeight);
+     
          mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
          convertView.setTag(mViewHolder);
       }

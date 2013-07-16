@@ -23,6 +23,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.ImageDimention;
 import com.lateralthoughts.vue.utils.Utils;
  
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
@@ -38,6 +39,7 @@ public class AisleDetailsViewListLoader {
     private ScaledImageViewFactory mViewFactory = null;
     private BitmapLoaderUtils mBitmapLoaderUtils;
     private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
+    private ImageDimention mImageDimention;
     //private int mBestHeight;
     
     public static AisleDetailsViewListLoader getInstance(Context context){
@@ -74,7 +76,7 @@ public class AisleDetailsViewListLoader {
         contentBrowser = holder.aisleContentBrowser;
         contentBrowser.setHolderName(VueAisleDetailsViewFragment.SCREEN_NAME);
         if(holder.uniqueContentId.equals(desiredContentId)){
-           Log.i("bitmaptest", "bitmaptest: call  return from here: ");
+           Log.i("bitmapsize", "bitmapsize: call  return from here: ");
             //we are looking at a visual object that has either not been used
             //before or has to be filled with same content. Either way, no need
             //to worry about cleaning up anything!
@@ -101,29 +103,38 @@ public class AisleDetailsViewListLoader {
             holder.uniqueContentId = desiredContentId;
         }       
         imageDetailsArr = windowContent.getImageList();
-        if(null != imageDetailsArr && imageDetailsArr.size() != 0){  
-            holder.aisleContentBrowser.mSwipeListener.onReceiveImageCount(imageDetailsArr.size());
-            itemDetails = imageDetailsArr.get(0);
-            imageView = mViewFactory.getEmptyImageView();
-            LinearLayout.LayoutParams params = 
-                    new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            params.gravity = Gravity.CENTER;
-            imageView.setLayoutParams(params);
-            imageView.setContainerObject(holder);
-           // imgConnectivity.setImageClick(imageView);
-            Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
-            if(bitmap != null){
-              setParams(holder.aisleContentBrowser, imageView);
-               bitmap = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
-               
-                imageView.setImageBitmap(bitmap);
-                contentBrowser.addView(imageView);                  
-            }
-            else{
-                contentBrowser.addView(imageView);
-               loadBitmap(itemDetails, contentBrowser, imageView, windowContent.getBestHeightForWindow());
-            }
-        }        
+		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
+			holder.aisleContentBrowser.mSwipeListener
+					.onReceiveImageCount(imageDetailsArr.size());
+			itemDetails = imageDetailsArr.get(0);
+			imageView = mViewFactory.getEmptyImageView();
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+			params.gravity = Gravity.CENTER;
+			imageView.setLayoutParams(params);
+			imageView.setContainerObject(holder);
+			// imgConnectivity.setImageClick(imageView);
+			Bitmap bitmap = mBitmapLoaderUtils
+					.getCachedBitmap(itemDetails.mCustomImageUrl);
+			if (bitmap != null) {
+				//get the dimentions of the image.
+				 mImageDimention = Utils.getScalledImage(bitmap,
+						 itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
+				setParams(holder.aisleContentBrowser, imageView);
+				 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
+					 bitmap = mBitmapLoaderUtils.getBitmap(itemDetails.mCustomImageUrl, true, mImageDimention.mImgHeight);
+				 }
+			/*	bitmap = Utils.getScalledImage(bitmap,
+						itemDetails.mAvailableWidth,
+						itemDetails.mAvailableHeight);*/
+				imageView.setImageBitmap(bitmap);
+				contentBrowser.addView(imageView);
+			} else {
+				contentBrowser.addView(imageView);
+				loadBitmap(itemDetails, contentBrowser, imageView,
+						itemDetails.mAvailableHeight);
+			}
+		}        
     }
     
     public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
@@ -159,6 +170,16 @@ public class AisleDetailsViewListLoader {
             Bitmap bmp = null;            
             //we want to get the bitmap and also add it into the memory cache
             bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeight); 
+            if(bmp != null) {
+           	 mImageDimention = Utils.getScalledImage(bmp,
+           			mAvailabeWidth, mAvailableHeight);
+            	
+            	 if(bmp.getHeight()<mImageDimention.mImgHeight) {
+            		 bmp = mBitmapLoaderUtils.getBitmap(url, true, mImageDimention.mImgHeight);
+				 }
+            }
+            
+            
             return bmp;            
         }
 
@@ -173,11 +194,7 @@ public class AisleDetailsViewListLoader {
                 if (this == bitmapWorkerTask) {
                    //aisleContentBrowser.addView(imageView);
                   setParams( aisleContentBrowser, imageView);
-                  Log.i("bitmapfirst", "bitmapfirst width before: "+bitmap.getWidth());
-                  Log.i("bitmapfirst", "bitmapfirst height before: "+bitmap.getHeight());
-                   bitmap = Utils.getScalledImage(bitmap, mAvailabeWidth,mAvailableHeight);
-                   Log.i("bitmapfirst", "bitmapfirst width after: "+bitmap.getWidth());
-                   Log.i("bitmapfirst", "bitmapfirst height after: "+bitmap.getHeight());
+                  // bitmap = Utils.getScalledImage(bitmap, mAvailabeWidth,mAvailableHeight);
                     imageView.setImageBitmap(bitmap);
                 }
             }
@@ -215,7 +232,7 @@ public class AisleDetailsViewListLoader {
           ) {
       int imgCardHeight = (VueApplication.getInstance().getScreenHeight() * 60) / 100;
       FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-            VueApplication.getInstance().getScreenWidth(), imgCardHeight);
+            VueApplication.getInstance().getScreenWidth(), (VueApplication.getInstance().getScreenHeight() * 60) / 100);
 
       if (vFlipper != null)
          vFlipper.setLayoutParams(showpieceParams);
