@@ -93,7 +93,6 @@ public class VueLoginActivity extends FragmentActivity implements
 	private boolean googleplusLoggedinDialogFlag = false;
 	private static final int REQUEST_CODE_INTERACTIVE_POST = 3;
 	Activity context;
-	private boolean dataentryFacebookInviteFriendsListFlag = false;
 	LinearLayout socialIntegrationMainLayout;
 	Bundle bundle = null;
 	private static final String TAG = "VueLoginActivity";
@@ -157,9 +156,7 @@ public class VueLoginActivity extends FragmentActivity implements
 					.getBoolean(VueConstants.GOOGLEPLUS_FRIEND_INVITE);
 			googleplusAutomaticLogin = bundle
 					.getBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN);
-			dataentryFacebookInviteFriendsListFlag = bundle
-					.getBoolean(VueConstants.DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG);
-		}
+			}
 
 		// Facebook Invite friend
 		if (fbFriendId != null) {
@@ -491,16 +488,12 @@ public class VueLoginActivity extends FragmentActivity implements
 							&& fromInviteFriends.equals(VueConstants.FACEBOOK)) {
 						fromInviteFriends = null;
 						try {
-							if (dataentryFacebookInviteFriendsListFlag) {
-
-							} else {
 								BaseActivity.mFrag
 										.getFriendsList(context
 												.getResources()
 												.getString(
 														R.string.sidemenu_sub_option_Facebook));
-							}
-						} catch (NotFoundException e) {
+						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}

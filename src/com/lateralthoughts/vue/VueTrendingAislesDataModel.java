@@ -94,14 +94,14 @@ public class VueTrendingAislesDataModel {
         mOffset = 0;
         mState = AISLE_TRENDING_LIST_DATA;
         mAisleContentList = new ArrayList<AisleWindowContent>();
-        Thread t = new Thread(new Runnable() {
+       /* Thread t = new Thread(new Runnable() {
 
           @Override
           public void run() {
             getAislesFromDb();     
           }
         });
-        t.start();
+        t.start();*/
        
         // initializeTrendingAisleContent();
         mMoreDataAvailable = true;
@@ -163,12 +163,14 @@ public class VueTrendingAislesDataModel {
 	                if(DEBUG) Log.e(TAG,"There is more data to parse. offset = " + mOffset);
                     if (!VueBatteryManager.isConnected(mContext)
                          && VueBatteryManager.batteryLevel(mContext) < VueBatteryManager.MINIMUM_BATTERY_LEVEL) {
+                    	Log.e("Profiling", "Profiling Battery check");
 	                  mMoreDataAvailable = false;
 	                  loadOnRequest = true;
 	                }
 	            }
 
 	            if(mMoreDataAvailable){
+	            	Log.e("Profiling", "Profiling Next data");
 	                mVueContentGateway.getTrendingAisles(mLimit, mOffset, this);
 	            }
 	            break;
@@ -208,21 +210,21 @@ public class VueTrendingAislesDataModel {
                 Log.e("VueTrendingAislesDataModel", "JSONArray size(): " + contentArray.length());
 	            if(0 == contentArray.length()){
 	                mMoreDataAvailable = false;
-	                addAislesToDb();
+	               // addAislesToDb();
 	            }
-	            DbHelper helper = new DbHelper(mContext);
-	            SQLiteDatabase db = helper.getWritableDatabase();
+	            /*DbHelper helper = new DbHelper(mContext);
+	            SQLiteDatabase db = helper.getWritableDatabase();*/
 	            for (int i = 0; i < contentArray.length(); i++) {
 	                userInfo  = new AisleContext();
 	                JSONObject contentItem = contentArray.getJSONObject(i);
 	                category = contentItem.getString(ITEM_CATEGORY_TAG);
 	                aisleId = contentItem.getString(CONTENT_ID_TAG);
-	                Cursor c = db.query(DbHelper.DATABASE_TABLE_AISLES, new String[] {VueConstants.AISLE_ID}, VueConstants.AISLE_ID + "=?",
+	                /*Cursor c = db.query(DbHelper.DATABASE_TABLE_AISLES, new String[] {VueConstants.AISLE_ID}, VueConstants.AISLE_ID + "=?",
 	                    new String[] {aisleId}, null, null, null);
 	                if(c.getCount() != 0) {
 	                  db.delete(DbHelper.DATABASE_TABLE_AISLES,  VueConstants.AISLE_ID + "=?", new String[] {aisleId});
 	                  db.delete(DbHelper.DATABASE_TABLE_AISLES_IMAGES,  VueConstants.AISLE_ID + "=?", new String[] {aisleId});
-	                }
+	                }*/
 	                userInfo.mAisleId = contentItem.getString(CONTENT_ID_TAG);
 	                JSONArray imagesArray = contentItem.getJSONArray(USER_IMAGES_TAG);
 
@@ -250,9 +252,9 @@ public class VueTrendingAislesDataModel {
                   aisleItem.addAisleContent(userInfo,  imageItemsArray);
                   // addAislesToDb(userInfo, imageItemsArray);
 	              imageItemsArray.clear();
-                  c.close();
+                 // c.close();
 	            }
-	            db.close();
+	            //db.close();
 	        }catch(JSONException ex1){
 	            if(DEBUG) Log.e(TAG,"Some exception is caught? ex1 = " + ex1.toString());
 

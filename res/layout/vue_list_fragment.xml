@@ -46,4 +46,12 @@
         android:fadingEdge="none"
         android:groupIndicator="@null"
         android:scrollbars="none" />
+    
+       <RelativeLayout
+        android:id="@+id/vue_list_fragment_invite_friendsLayout_mainxml"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/vue_list_fragment_sidemenu_actionbar" >
+	</RelativeLayout>
+    
 </RelativeLayout>

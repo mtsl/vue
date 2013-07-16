@@ -1,13 +1,14 @@
 package com.lateralthoughts.vue;
 
 import java.util.List;
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
@@ -15,16 +16,16 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
-public class InviteFriendsAdapter extends ArrayAdapter<FbGPlusDetails> {
+public class InviteFriendsAdapter extends BaseAdapter {
 
 	List<FbGPlusDetails> items;
-	Activity activity;
+	Context context;
 	private ImageLoader mImageLoader;
 
-	public InviteFriendsAdapter(Activity activity, int textViewResourceId,
+	public InviteFriendsAdapter(Context			
+			context,
 			List<FbGPlusDetails> objects) {
-		super(activity, textViewResourceId, objects);
-		this.activity = activity;
+		this.context = context;
 		items = objects;
 		mImageLoader = new ImageLoader(VueApplication.getInstance()
 				.getRequestQueue(), new BitmapLruCache(1024));
@@ -34,7 +35,8 @@ public class InviteFriendsAdapter extends ArrayAdapter<FbGPlusDetails> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		InviteFriendHolder holder;
 		if (convertView == null) {
-			convertView = activity.getLayoutInflater().inflate(R.layout.invite_friends, null);
+			 LayoutInflater layoutInflator = LayoutInflater.from(context);
+			convertView = layoutInflator.inflate(R.layout.invite_friends, null);
 			holder = new InviteFriendHolder();
 			holder.friendprifilepic = (NetworkImageView) convertView
 					.findViewById(R.id.invite_friends_imageView);
@@ -56,7 +58,7 @@ public class InviteFriendsAdapter extends ArrayAdapter<FbGPlusDetails> {
 					public void onClick(View arg0) {
 						// Google+ friends
 						if (items.get(index).getGoogleplusFriend() != null) {
-							Intent i = new Intent(activity,
+							Intent i = new Intent(context,
 									VueLoginActivity.class);
 							Bundle b = new Bundle();
 							b.putInt(VueConstants.GOOGLEPLUS_FRIEND_INDEX,
@@ -64,12 +66,12 @@ public class InviteFriendsAdapter extends ArrayAdapter<FbGPlusDetails> {
 							b.putBoolean(VueConstants.GOOGLEPLUS_FRIEND_INVITE,
 									true);
 							i.putExtras(b);
-							activity.startActivity(i);
+							context.startActivity(i);
 						}
 						// Facebook friends
 						else {
 							if (items.get(index).getId() != null) {
-								Intent i = new Intent(activity,
+								Intent i = new Intent(context,
 										VueLoginActivity.class);
 								Bundle b = new Bundle();
 								b.putString(VueConstants.FB_FRIEND_ID, items
@@ -77,7 +79,7 @@ public class InviteFriendsAdapter extends ArrayAdapter<FbGPlusDetails> {
 								b.putString(VueConstants.FB_FRIEND_NAME, items
 										.get(index).getName());
 								i.putExtras(b);
-								activity.startActivity(i);
+								context.startActivity(i);
 							}
 						}
 					}
@@ -95,9 +97,26 @@ public class InviteFriendsAdapter extends ArrayAdapter<FbGPlusDetails> {
 		return 0;
 	}
 
-	private static class InviteFriendHolder {
+	private class InviteFriendHolder {
 		NetworkImageView friendprifilepic;
 		TextView name;
 		Button invite_friends_addFriends;
+	}
+
+	@Override
+	public Object getItem(int position) {
+		// TODO Auto-generated method stub
+		try {
+			return items.get(position);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return position;
 	}
 }

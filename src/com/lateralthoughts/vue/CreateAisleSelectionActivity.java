@@ -3,7 +3,7 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import com.lateralthoughts.vue.utils.Utils;
+
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -12,26 +12,35 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.LinearLayout.LayoutParams;
+
+import com.lateralthoughts.vue.utils.Utils;
 
 public class CreateAisleSelectionActivity extends Activity {
 
 	RelativeLayout topLeftGreenCircle, topRightGreenCircle,
-			bottomLeftGreenCircle, bottomRightGreenCircle, totalBottom;
+			bottomLeftGreenCircle, bottomRightGreenCircle, totalBottom,
+			dataentrypopup_mainlayout;
 	LinearLayout boxWithCircleLayout;
 	AnimatorSet animSetXY;
-	Animation anim;
+	Animation topToBottomAnim, bottomToTopAnim, bounceAnimation = null;
 	boolean fromCreateAilseScreenFlag = false;
 	float screenHeight = 0, screenWidth = 0;
 	String cameraImageName = null;
+	boolean galleryClickedFlag = false, cameraClcikedFlag = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +59,17 @@ public class CreateAisleSelectionActivity extends Activity {
 		bottomLeftGreenCircle = (RelativeLayout) findViewById(R.id.bottomleftgreencircle);
 		bottomRightGreenCircle = (RelativeLayout) findViewById(R.id.bottomrightgreencircle);
 		totalBottom = (RelativeLayout) findViewById(R.id.totalbottom);
+		dataentrypopup_mainlayout = (RelativeLayout) findViewById(R.id.dataentrypopup_mainlayout);
 		boxWithCircleLayout = (LinearLayout) findViewById(R.id.boxwithcirclelayout);
-		anim = (TranslateAnimation) AnimationUtils.loadAnimation(this,
-				R.anim.layout_down_animation);
-		anim.setDuration(600);
+		topToBottomAnim = (TranslateAnimation) AnimationUtils.loadAnimation(
+				this, R.anim.layout_down_animation);
+		bottomToTopAnim = (TranslateAnimation) AnimationUtils.loadAnimation(
+				this, R.anim.layout_up_animation);
+		bounceAnimation = (ScaleAnimation) AnimationUtils.loadAnimation(this,
+				R.anim.buttontoucheffect);
+		bounceAnimation.setInterpolator(new BounceInterpolator());
+		topToBottomAnim.setDuration(600);
+		bottomToTopAnim.setDuration(600);
 		List<ObjectAnimator> arrayListObjectAnimators = new ArrayList<ObjectAnimator>();
 		ObjectAnimator animY = ObjectAnimator.ofFloat(topLeftGreenCircle,
 				View.SCALE_X, 0, 1f);
@@ -104,7 +120,7 @@ public class CreateAisleSelectionActivity extends Activity {
 		ObjectAnimator animY5 = ObjectAnimator.ofFloat(boxWithCircleLayout,
 				View.Y, 20, 0f);
 		arrayListObjectAnimators1.add(animY5);// ArrayList of ObjectAnimators
-		anim.setAnimationListener(new AnimationListener() {
+		topToBottomAnim.setAnimationListener(new AnimationListener() {
 			@Override
 			public void onAnimationStart(Animation arg0) {
 				// TODO Auto-generated method stub
@@ -117,13 +133,55 @@ public class CreateAisleSelectionActivity extends Activity {
 
 			@Override
 			public void onAnimationEnd(Animation arg0) {
-				// TODO Auto-generated method stub
 				topRightGreenCircle.setVisibility(View.VISIBLE);
 				topLeftGreenCircle.setVisibility(View.VISIBLE);
 				bottomLeftGreenCircle.setVisibility(View.VISIBLE);
 				bottomRightGreenCircle.setVisibility(View.VISIBLE);
 				totalBottom.setVisibility(View.VISIBLE);
 				animSetXY.start();
+			}
+		});
+		bottomToTopAnim.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+				boxWithCircleLayout.setVisibility(View.GONE);
+				topRightGreenCircle.setVisibility(View.GONE);
+				topLeftGreenCircle.setVisibility(View.GONE);
+				bottomLeftGreenCircle.setVisibility(View.GONE);
+				bottomRightGreenCircle.setVisibility(View.GONE);
+				totalBottom.setVisibility(View.GONE);
+				if (galleryClickedFlag) {
+					Intent i = new Intent(
+							Intent.ACTION_PICK,
+							android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+					startActivityForResult(
+							Intent.createChooser(i, "Select Picture"),
+							VueConstants.SELECT_PICTURE);
+				} else if (cameraClcikedFlag) {
+					cameraImageName = Utils
+							.vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
+					File cameraImageFile = new File(cameraImageName);
+					Intent intent = new Intent(
+							"android.media.action.IMAGE_CAPTURE");
+					intent.putExtra(MediaStore.EXTRA_OUTPUT,
+							Uri.fromFile(cameraImageFile));
+					startActivityForResult(intent, VueConstants.CAMERA_REQUEST);
+				} else {
+					finish();
+				}
 			}
 		});
 		topLeftGreenCircle.setVisibility(View.GONE);
@@ -133,31 +191,54 @@ public class CreateAisleSelectionActivity extends Activity {
 		bottomRightGreenCircle.setVisibility(View.GONE);
 		boxWithCircleLayout.setVisibility(View.GONE);
 		boxWithCircleLayout.setVisibility(View.VISIBLE);
-		boxWithCircleLayout.startAnimation(anim);
-		// Gallery....
-		topLeftGreenCircle.setOnClickListener(new OnClickListener() {
+		boxWithCircleLayout.startAnimation(topToBottomAnim);
+		topLeftGreenCircle.setOnTouchListener(new OnTouchListener() {
+
 			@Override
-			public void onClick(View arg0) {
+			public boolean onTouch(View arg0, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					galleryClickedFlag = true;
+					topLeftGreenCircle.startAnimation(bounceAnimation);
+					return false;
+				}
+				return false;
+			}
+		});
+		bounceAnimation.setAnimationListener(new AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation arg0) {
 				// TODO Auto-generated method stub
-				Intent i = new Intent(
-						Intent.ACTION_PICK,
-						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-				startActivityForResult(
-						Intent.createChooser(i, "Select Picture"),
-						VueConstants.SELECT_PICTURE);
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+				boxWithCircleLayout.startAnimation(bottomToTopAnim);
 			}
 		});
 		// Camera...
-		bottomLeftGreenCircle.setOnClickListener(new OnClickListener() {
+		bottomLeftGreenCircle.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					cameraClcikedFlag = true;
+					bottomLeftGreenCircle.startAnimation(bounceAnimation);
+					return false;
+				}
+				return false;
+			}
+		});
+		dataentrypopup_mainlayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				cameraImageName = Utils
-						.vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
-				File cameraImageFile = new File(cameraImageName);
-				Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-				intent.putExtra(MediaStore.EXTRA_OUTPUT,
-						Uri.fromFile(cameraImageFile));
-				startActivityForResult(intent, VueConstants.CAMERA_REQUEST);
+				boxWithCircleLayout.startAnimation(bottomToTopAnim);
 			}
 		});
 	}
@@ -224,8 +305,16 @@ public class CreateAisleSelectionActivity extends Activity {
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			finish();
 		}
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			boxWithCircleLayout.startAnimation(bottomToTopAnim);
+		}
+		return false;
 	}
 }

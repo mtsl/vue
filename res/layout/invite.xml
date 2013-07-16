@@ -3,7 +3,6 @@
         android:id="@+id/vue_list_fragment_invite_friendsLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vue_list_fragment_sidemenu_actionbar"
         android:visibility="gone" >
 
         <ListView
