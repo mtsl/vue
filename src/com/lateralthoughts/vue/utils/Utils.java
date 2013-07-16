@@ -213,9 +213,9 @@ public class Utils {
 
 		return fileCacheObj.getVueAppCameraPictureFile(1 + "").getPath();
 	}
-	public static Bitmap getScalledImage(Bitmap bitmap,int availableWidth,int availableHeight) {
-		//Log.i("bitmap1", "bitmap1 before availableWidth "+availableWidth);
-		//Log.i("bitmap1", "bitmap1 before availableHeight "+availableHeight);
+	public static ImageDimention getScalledImage(Bitmap bitmap,int availableWidth,int availableHeight) {
+	 
+		  ImageDimention imgDimention = new ImageDimention();
 		float requiredWidth,requiredHeight;
 		float bitmapOriginalWidth = bitmap.getWidth();
 		float bitmapOriginalHeight = bitmap.getHeight();
@@ -227,6 +227,12 @@ public class Utils {
 			requiredWidth = availableWidth;
 			//requiredWidth = VueApplication.getInstance().getVueDetailsCardWidth();
 		}
+		if((availableWidth < VueApplication.getInstance().getVueDetailsCardWidth() && availableHeight < VueApplication.getInstance().getVueDetailsCardHeight())) {
+			  imgDimention.mImgWidth = availableWidth;
+			    imgDimention.mImgHeight = availableHeight;
+			    return imgDimention;
+		}
+		
 		float temp = requiredWidth/bitmapOriginalWidth;
 		if(temp <= 1) {
 			//reduce the image size to the smallest one of given dimensions
@@ -245,12 +251,11 @@ public class Utils {
 			  requiredHeight = Math.round(requiredHeight * scaleFactor);
 			  requiredWidth = Math.round(requiredWidth * scaleFactor);
 		}
-		//Log.i("bitmap1", "bitmap1 before width "+bitmap.getWidth());
-		//Log.i("bitmap1", "bitmap1 before height "+bitmap.getHeight());
-		bitmap = createBitmap(bitmap, (int)requiredWidth, (int)requiredHeight);
-		//Log.i("bitmap1", "bitmap1 after width "+bitmap.getWidth());
-		//Log.i("bitmap1", "bitmap1 after height "+bitmap.getHeight());
-		return bitmap;
+		
+	    imgDimention.mImgWidth = (int) requiredWidth;
+	    imgDimention.mImgHeight = (int) requiredHeight;
+		//bitmap = createBitmap(bitmap, (int)requiredWidth, (int)requiredHeight);
+		return imgDimention;
 		
 	}
 	private static Bitmap createBitmap(Bitmap bitmap, int width, int height) {

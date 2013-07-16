@@ -36,6 +36,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ScaledImageViewFactory;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.ImageDimention;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.VueMemoryCache;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -74,6 +75,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private int mCurrentPivotIndex;
     private BitmapLoaderUtils mBitmapLoaderUtils;
     private String mSourceName;
+    private ImageDimention mImageDimention;
     
     public AisleContentAdapter(Context context){
         mContext = context;
@@ -273,17 +275,25 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             itemDetails = mAisleImageDetails.get(wantedIndex);
             imageView = mImageViewFactory.getEmptyImageView();
             Bitmap bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
+      
+            
             if(bitmap != null){
+            	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+                		mImageDimention = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
+                  	 }
                 //Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
             	//setParams(contentBrowser,imageView,bitmap);
             	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-                bitmap = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
+            		 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
+            			 bitmap =  mBitmapLoaderUtils.getBitmap(itemDetails.mCustomImageUrl, true, mImageDimention.mImgHeight);
+            		 }
+                
             	 }
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);
             }
             else{
-                loadBitmap(itemDetails, mWindowContent.getBestHeightForWindow(),contentBrowser, imageView);
+                loadBitmap(itemDetails,itemDetails.mAvailableHeight,contentBrowser, imageView);
                 contentBrowser.addView(imageView);
             }
         }
@@ -329,6 +339,23 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             //we want to get the bitmap and also add it into the memory cache
             //bmp = getBitmap(url, true, mBestHeightForImage); 
             bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeightForImage);
+			if (bmp != null) {
+				if (mSourceName != null
+						&& mSourceName
+								.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+					mImageDimention = Utils.getScalledImage(bmp,
+							mAVailableWidth, mAvailabeHeight);
+
+					if (bmp.getHeight() < mImageDimention.mImgHeight) {
+						bmp = mBitmapLoaderUtils.getBitmap(url, true,
+								mImageDimention.mImgHeight);
+				     	 Log.i("bitmapsize", "bitmapsize after12 width: "+bmp.getWidth());
+						  Log.i("bitmapsize", "bitmapsize after12 height: "+bmp.getHeight());
+					} 
+
+				}
+			}
+            
             return bmp;            
         }
 
@@ -346,9 +373,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 					vFlipper.invalidate();
 					// bitmap = setParams(aisleContentBrowser, imageView,
 					// bitmap);
-					 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+					/* if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
 			                bitmap = Utils.getScalledImage(bitmap,mAVailableWidth, mAvailabeHeight);
-			            	 }
+			            	 }*/
 					imageView.setImageBitmap(bitmap);
 				}
 			}

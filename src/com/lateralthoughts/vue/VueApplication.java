@@ -160,7 +160,8 @@ public class VueApplication extends Application {
     public int getVueDetailsCardHeight() {
     	if(mVueDetailsCardHeight == 0) {
     	int bottomActionBar = 48;
-    	mVueDetailsCardHeight  = mScreenHeight - getPixel(20)- getPixel(bottomActionBar);
+    	int topBottomMargin = 20;
+    	mVueDetailsCardHeight  = mScreenHeight - getPixel(topBottomMargin+topBottomMargin);
     	}
 		return  mVueDetailsCardHeight;
     }
