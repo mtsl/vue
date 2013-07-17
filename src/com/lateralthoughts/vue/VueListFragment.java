@@ -498,8 +498,6 @@ public class VueListFragment extends Fragment {
         b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
         i.putExtras(b);
         startActivity(i);
-
-
       }
 
     } else if (s.equals("Google Plus")) {

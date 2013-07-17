@@ -510,18 +510,18 @@ public class VueTrendingAislesDataModel {
 
         @Override
         public void run() {
-          Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-              getAislesFromDb();
-            }
-          });
-          t.start();
+          runTask(new Runnable() {
+			
+			@Override
+			public void run() {
+				 getAislesFromDb();
+			}
+		});
         }
       });
     };
   };
+ 
 
   /**
    * to start thread pool.

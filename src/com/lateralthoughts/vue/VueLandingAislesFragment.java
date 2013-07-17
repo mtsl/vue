@@ -110,7 +110,7 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 	             }
 	        });*/
 	    
-	    mLeftColumnView.setOnScrollListener(new OnScrollListener() {
+/*	    mLeftColumnView.setOnScrollListener(new OnScrollListener() {
 			
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -139,7 +139,7 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 				 
 				
 			}
-		});
+		});*/
 	    
 	       mLeftColumnView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	            @Override

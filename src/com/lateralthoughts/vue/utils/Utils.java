@@ -8,9 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.lateralthoughts.vue.CreateAisleSelectionActivity;
-import com.lateralthoughts.vue.VueApplication;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,11 +15,14 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.MediaColumns;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+
+import com.lateralthoughts.vue.VueApplication;
 
 public class Utils {
 	private static final String CURRENT_FONT_SIZE = "currentFontSize";
@@ -55,6 +55,7 @@ public class Utils {
 		return modifiedUrl.toString();
 
 	}
+
 	/**
 	 * To get the CURRENT_FONT_SIZE value stored in SharedPreferences. it will
 	 * return default value which is MEDIUM_TEXT_SIZE (18sp) if not value is
@@ -147,7 +148,7 @@ public class Utils {
 		return cursor.getString(column_index);
 	}
 
-	public static void saveImage(File f, float screenHeight, float screenWidth) {
+	public static Bitmap getResizedImage(File f, float screenHeight, float screenWidth) {
 		try {
 			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
@@ -155,7 +156,6 @@ public class Utils {
 			FileInputStream stream1 = new FileInputStream(f);
 			BitmapFactory.decodeStream(stream1, null, o);
 			stream1.close();
-
 			// Find the correct scale value. It should be the power of 2.
 			// final int REQUIRED_SIZE = mScreenWidth/2;
 			int height = o.outHeight;
@@ -163,43 +163,39 @@ public class Utils {
 			int scale = 1;
 			int heightRatio = 0;
 			int widthRatio = 0;
-
+			Log.e("Utils bitmap path", f.getPath());
+			Log.e("Utils bitmap width", width + "..." + screenWidth);
+			Log.e("Utils bitmap height", height + "..." + screenHeight);
 			if (height > screenHeight) {
 				// Calculate ratios of height and width to requested height and
 				// width
 				heightRatio = Math.round((float) height / (float) screenHeight);
-			scale = heightRatio;
 			}
-
-			/*if (width > screenWidth) {
+			if (width > screenWidth) {
 				// Calculate ratios of height and width to requested height and
 				// width
 				widthRatio = Math.round((float) width / (float) screenWidth);
-			}*/
-
+			}
 			// Choose the smallest ratio as inSampleSize value, this will
 			// guarantee
 			// a final image with both dimensions larger than or equal to the
 			// requested height and width.
-		//	scale = heightRatio < widthRatio ? heightRatio : widthRatio;
-
+			scale = heightRatio < widthRatio ? heightRatio : widthRatio;
+			Log.e("Utils bitmap width and height ratio", widthRatio
+					+ "........" + heightRatio + "????????" + scale);
 			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
-			o2.inSampleSize = scale;
+			o2.inSampleSize = (int) scale;
 			FileInputStream stream2 = new FileInputStream(f);
-			Bitmap resizedbitmap = BitmapFactory
+			Bitmap resizedBitmap = BitmapFactory
 					.decodeStream(stream2, null, o2);
 			stream2.close();
-			FileOutputStream out = new FileOutputStream(f);
-			resizedbitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-			out.flush();
-			out.close();
-			resizedbitmap.recycle();
-
+			return resizedBitmap;
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	public static String vueAppCameraImageFileName(Context context) {
@@ -207,57 +203,72 @@ public class Utils {
 		if (fileCacheObj.vueAppCameraPicsDir != null) {
 			File fv[] = fileCacheObj.vueAppCameraPicsDir.listFiles();
 			if (fv != null) {
-				return fileCacheObj.getVueAppCameraPictureFile(fv.length + 1 + "").getPath();
+				return fileCacheObj.getVueAppCameraPictureFile(
+						fv.length + 1 + "").getPath();
 			}
 		}
 
 		return fileCacheObj.getVueAppCameraPictureFile(1 + "").getPath();
 	}
-	public static ImageDimention getScalledImage(Bitmap bitmap,int availableWidth,int availableHeight) {
-	 
-		  ImageDimention imgDimention = new ImageDimention();
-		float requiredWidth,requiredHeight;
+
+	public static ImageDimention getScalledImage(Bitmap bitmap,
+			int availableWidth, int availableHeight) {
+
+		ImageDimention imgDimention = new ImageDimention();
+		float requiredWidth, requiredHeight;
 		float bitmapOriginalWidth = bitmap.getWidth();
 		float bitmapOriginalHeight = bitmap.getHeight();
 		float scaleFactor;
 		requiredHeight = availableHeight;
-		if(availableWidth > VueApplication.getInstance().getVueDetailsCardWidth()) {
-			requiredWidth = VueApplication.getInstance().getVueDetailsCardWidth();
+		if (availableWidth > VueApplication.getInstance()
+				.getVueDetailsCardWidth()) {
+			requiredWidth = VueApplication.getInstance()
+					.getVueDetailsCardWidth();
 		} else {
 			requiredWidth = availableWidth;
-			//requiredWidth = VueApplication.getInstance().getVueDetailsCardWidth();
+			// requiredWidth =
+			// VueApplication.getInstance().getVueDetailsCardWidth();
 		}
-		if((availableWidth < VueApplication.getInstance().getVueDetailsCardWidth() && availableHeight < VueApplication.getInstance().getVueDetailsCardHeight())) {
-			  imgDimention.mImgWidth = availableWidth;
-			    imgDimention.mImgHeight = availableHeight;
-			    return imgDimention;
+		if ((availableWidth < VueApplication.getInstance()
+				.getVueDetailsCardWidth() && availableHeight < VueApplication
+				.getInstance().getVueDetailsCardHeight())) {
+			imgDimention.mImgWidth = availableWidth;
+			imgDimention.mImgHeight = availableHeight;
+			return imgDimention;
 		}
-		
-		float temp = requiredWidth/bitmapOriginalWidth;
-		if(temp <= 1) {
-			//reduce the image size to the smallest one of given dimensions
-			scaleFactor = Math.min(requiredWidth/bitmapOriginalWidth, requiredHeight/bitmapOriginalHeight);
+
+		float temp = requiredWidth / bitmapOriginalWidth;
+		if (temp <= 1) {
+			// reduce the image size to the smallest one of given dimensions
+			scaleFactor = Math.min(requiredWidth / bitmapOriginalWidth,
+					requiredHeight / bitmapOriginalHeight);
 			requiredHeight = Math.round(bitmapOriginalHeight * scaleFactor);
-			requiredWidth = Math.round(bitmapOriginalWidth  * scaleFactor);
+			requiredWidth = Math.round(bitmapOriginalWidth * scaleFactor);
 		} else {
-			//increase the image size to required width increase the height proportioned to width
-			scaleFactor = requiredWidth/bitmapOriginalWidth;
+			// increase the image size to required width increase the height
+			// proportioned to width
+			scaleFactor = requiredWidth / bitmapOriginalWidth;
 			requiredHeight = Math.round(bitmapOriginalHeight * scaleFactor);
 			requiredWidth = Math.round(bitmapOriginalWidth * scaleFactor);
 		}
-		if(requiredHeight > VueApplication.getInstance().getVueDetailsCardHeight()) {
-			// decrease the image to card height and decrease the imageWidht proportioned to height 
-			  scaleFactor =VueApplication.getInstance().getVueDetailsCardHeight()/ requiredHeight;
-			  requiredHeight = Math.round(requiredHeight * scaleFactor);
-			  requiredWidth = Math.round(requiredWidth * scaleFactor);
+		if (requiredHeight > VueApplication.getInstance()
+				.getVueDetailsCardHeight()) {
+			// decrease the image to card height and decrease the imageWidht
+			// proportioned to height
+			scaleFactor = VueApplication.getInstance()
+					.getVueDetailsCardHeight() / requiredHeight;
+			requiredHeight = Math.round(requiredHeight * scaleFactor);
+			requiredWidth = Math.round(requiredWidth * scaleFactor);
 		}
-		
-	    imgDimention.mImgWidth = (int) requiredWidth;
-	    imgDimention.mImgHeight = (int) requiredHeight;
-		//bitmap = createBitmap(bitmap, (int)requiredWidth, (int)requiredHeight);
+
+		imgDimention.mImgWidth = (int) requiredWidth;
+		imgDimention.mImgHeight = (int) requiredHeight;
+		// bitmap = createBitmap(bitmap, (int)requiredWidth,
+		// (int)requiredHeight);
 		return imgDimention;
-		
+
 	}
+
 	private static Bitmap createBitmap(Bitmap bitmap, int width, int height) {
 		if (width > 0 && height > 0) {
 			try {
@@ -266,13 +277,22 @@ public class Utils {
 				return bmap;
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.i("bitmap1", "bitmap1 before exception "+bitmap.getWidth());
+				Log.i("bitmap1",
+						"bitmap1 before exception " + bitmap.getWidth());
 				e.printStackTrace();
 			} catch (Throwable e) {
-				Log.i("bitmap1", "bitmap1 before exception Throwable "+bitmap.getWidth());
+				Log.i("bitmap1",
+						"bitmap1 before exception Throwable "
+								+ bitmap.getWidth());
 				e.printStackTrace();
 			}
 		}
 		return bitmap;
+	}
+
+	public static float dipToPixels(Context context, float dipValue) {
+		DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue,
+				metrics);
 	}
 }

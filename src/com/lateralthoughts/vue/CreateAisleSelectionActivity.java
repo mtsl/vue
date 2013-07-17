@@ -3,7 +3,6 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -11,7 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,8 +24,6 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.LinearLayout.LayoutParams;
-
 import com.lateralthoughts.vue.utils.Utils;
 
 public class CreateAisleSelectionActivity extends Activity {
@@ -38,7 +35,6 @@ public class CreateAisleSelectionActivity extends Activity {
 	AnimatorSet animSetXY;
 	Animation topToBottomAnim, bottomToTopAnim, bounceAnimation = null;
 	boolean fromCreateAilseScreenFlag = false;
-	float screenHeight = 0, screenWidth = 0;
 	String cameraImageName = null;
 	boolean galleryClickedFlag = false, cameraClcikedFlag = false;
 
@@ -46,9 +42,6 @@ public class CreateAisleSelectionActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_asilse_selection);
-		DisplayMetrics dm = getResources().getDisplayMetrics();
-		screenHeight = dm.heightPixels;
-		screenWidth = dm.widthPixels;
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			fromCreateAilseScreenFlag = b
@@ -245,7 +238,6 @@ public class CreateAisleSelectionActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 		try {
 			// From Gallery...
@@ -254,8 +246,6 @@ public class CreateAisleSelectionActivity extends Activity {
 				// MEDIA GALLERY
 				String selectedImagePath = Utils
 						.getPath(selectedImageUri, this);
-				Utils.saveImage(new File(selectedImagePath), screenHeight,
-						screenWidth);
 				if (!fromCreateAilseScreenFlag) {
 					Intent intent = new Intent(this, CreateAisleActivity.class);
 					Bundle b = new Bundle();
@@ -280,7 +270,6 @@ public class CreateAisleSelectionActivity extends Activity {
 			else if (requestCode == VueConstants.CAMERA_REQUEST) {
 				File cameraImageFile = new File(cameraImageName);
 				if (cameraImageFile.exists()) {
-					Utils.saveImage(cameraImageFile, screenHeight, screenWidth);
 					if (!fromCreateAilseScreenFlag) {
 						Intent intent = new Intent(this,
 								CreateAisleActivity.class);
@@ -302,7 +291,10 @@ public class CreateAisleSelectionActivity extends Activity {
 								intent);
 						finish();
 					}
+				} else {
+					finish();
 				}
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
