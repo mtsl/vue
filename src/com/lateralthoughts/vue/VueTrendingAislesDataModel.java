@@ -99,7 +99,7 @@ public class VueTrendingAislesDataModel {
   private int mEndPosition = 0;
   private int mLocalAislesLimit = 10;
   private Cursor aisleImagesCursor = null;
-  private ThreadPoolExecutor threadPool = null;
+  private ThreadPoolExecutor threadPool;
   private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
 
   private VueTrendingAislesDataModel(Context context) {
@@ -114,6 +114,8 @@ public class VueTrendingAislesDataModel {
     mOffset = 0;
     mState = AISLE_TRENDING_LIST_DATA;
     mAisleContentList = new ArrayList<AisleWindowContent>();
+    threadPool = new ThreadPoolExecutor(poolSize, maxPoolSize, keepAliveTime,
+        TimeUnit.SECONDS, threadsQueue);
     if (!VueConnectivityManager.isNetworkConnected(context)) {
       getAislesFromDb();
     } else {
@@ -386,10 +388,6 @@ public class VueTrendingAislesDataModel {
   }
 
   private void getAislesFromDb() {
-    if (threadPool == null) {
-      threadPool = new ThreadPoolExecutor(poolSize, maxPoolSize, keepAliveTime,
-          TimeUnit.SECONDS, threadsQueue);
-    }
     mEndPosition = mEndPosition + mLocalAislesLimit;
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
