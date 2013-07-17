@@ -85,7 +85,9 @@ public class VueTrendingAislesDataModel {
     public boolean loadOnRequest = false;
     private int mStartPosition = 0;
     private int mEndPosition = 0;
-    private int mLocalAislesLimit = 100;
+    private int mLocalAislesLimit = 10;
+    private Cursor aislesCursor = null;
+    private Cursor aisleImagesCursor = null;
     
 	private VueTrendingAislesDataModel(Context context){
 		mContext = context;
@@ -308,9 +310,18 @@ public class VueTrendingAislesDataModel {
 		
 		//db.beginTransaction();
 		for(int i = 0; i < getAisleCount(); i++) {
-			final SQLiteStatement stmt = db
+			/*final SQLiteStatement stmt = db
 		            .compileStatement("SELECT MAX("+VueConstants.ID+") FROM " + DbHelper.DATABASE_TABLE_AISLES);
-		  long maxId = stmt.simpleQueryForLong();
+		  long maxId = stmt.simpleQueryForLong();*/
+		      Cursor cursor = db.rawQuery(
+		          "select COUNT(*) from " + DbHelper.DATABASE_TABLE_AISLES, null);
+		      String strCount = "";
+		      int maxId = 0;
+		      if(cursor.moveToFirst()){
+		          strCount = cursor.getString(cursor.getColumnIndex("COUNT(*)"));
+		      }
+		  maxId = Integer.valueOf(strCount).intValue();
+		  cursor.close();
 		  Log.e("Profiling", "Profiling VueTrendingAislesDataModel.addAislesToDb() MAX VALUE : " + maxId);
           AisleWindowContent content = getAisleAt(i);
           AisleContext info = content.getAisleContext();
@@ -359,9 +370,10 @@ public class VueTrendingAislesDataModel {
     SQLiteDatabase db = helper.getReadableDatabase();
     String selection = VueConstants.ID + ">? AND " + VueConstants.ID + "<=?";
     String[] args = {Integer.toString(mStartPosition), Integer.toString(mEndPosition)};
-    Cursor aislesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES, null, selection,
-    		args, null, null, VueConstants.ID + " ASC");
-
+    if (aislesCursor == null || aislesCursor.isClosed()) {
+      aislesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES, null, selection,
+          args, null, null, VueConstants.ID + " ASC");
+    }
     if (aislesCursor.moveToFirst()) {
       do {
         userInfo = new AisleContext();
@@ -381,14 +393,14 @@ public class VueTrendingAislesDataModel {
             .getColumnIndex(VueConstants.OCCASION));
         map.put(userInfo.mAisleId, userInfo);
       } while (aislesCursor.moveToNext());
-      
-      Cursor aisleImagesCursor = db.query(
-          DbHelper.DATABASE_TABLE_AISLES_IMAGES, null, null, null, null, null,
-          VueConstants.ID + " ASC");
+      if (aisleImagesCursor == null || aisleImagesCursor.isClosed()) {
+        aisleImagesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES_IMAGES,
+            null, null, null, null, null, VueConstants.ID + " ASC");
+      }
       Iterator it = map.entrySet().iterator();
       while (it.hasNext()) {
         Map.Entry pairs = (Map.Entry)it.next();
-        System.out.println(pairs.getKey() + " = " + pairs.getValue());
+        //System.out.println(pairs.getKey() + " = " + pairs.getValue());
 
       if (aisleImagesCursor.moveToFirst()) {
           do {
@@ -436,12 +448,16 @@ public class VueTrendingAislesDataModel {
     imageItemsArray.clear();
     aisleImagesCursor.close();*/
     mStartPosition = mEndPosition;
-    aislesCursor.close();
-    db.close();
+    
+    Log.e("Profiling",
+        "Profiling VueTrendingAislesDataModel.getAislesFromDb() Query complete with : " + mEndPosition);
     if(aisleContentArray.size() > 0) {
       Message msg = new Message();
       msg.obj = aisleContentArray;
       mHandler.sendMessage(msg);
+    } else {
+      aislesCursor.close();
+      db.close();
     }
     Log.e("Profiling",
         "Profiling VueTrendingAislesDataModel.getAislesFromDb() End");
@@ -468,16 +484,23 @@ public class VueTrendingAislesDataModel {
         AisleWindowContent aisleItem = getAisleItem(content.getAisleId()/*userInfo.mAisleId*/);
         aisleItem.addAisleContent(content.getAisleContext(),  content.getImageList()); 
       }
-      Thread t = new Thread(new Runnable() {
-		
-		@Override
-		public void run() {
-		  getAislesFromDb();
-		}
-	  });
-      t.start();
+      mHandler.postDelayed(new Runnable() {
+        
+        @Override
+        public void run() {
+          t.start();
+        }
+      }, 50);
     };
   };
+  
+  Thread t = new Thread(new Runnable() {
+    
+    @Override
+    public void run() {
+      getAislesFromDb();
+    }
+  });
   
 	private void copyDB() {
 		try {
