@@ -109,6 +109,38 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 	                mContext.startActivity(intent);
 	             }
 	        });*/
+	    
+	    mLeftColumnView.setOnScrollListener(new OnScrollListener() {
+			
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				 
+				
+			}
+			
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				 
+				
+			}
+		});
+	    mRightColumnView.setOnScrollListener(new OnScrollListener() {
+			
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+			 
+				
+			}
+			
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				 
+				
+			}
+		});
+	    
 	       mLeftColumnView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	            @Override
 	            public void onItemClick(AdapterView<?> parent, View view, int position, long id){

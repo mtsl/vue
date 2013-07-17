@@ -150,9 +150,12 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    if(mSwipeListener != null) {
                         	mSwipeListener.onAisleSwipe("Left");
                         }
+	                   // if((currentIndex+1)>=0 && (currentIndex+1) < aisleContentBrowser.getChildCount() )
+	                    detailImgClickListenr.onImageSwipe(currentIndex+1);
 	                    if(null != mSpecialNeedsAdapter && null == nextView){
 	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, null, currentIndex, currentIndex+1, true)){
 	                            mAnimationInProgress = true;
+	                          
 	                            Animation cantWrapRight = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right);
 	                            cantWrapRight.setAnimationListener(new Animation.AnimationListener(){
 	                                public void onAnimationEnd(Animation animation) {
@@ -188,6 +191,7 @@ public class AisleContentBrowser extends ViewFlipper {
 
                             }
                         });
+	                   
 	                    aisleContentBrowser.setDisplayedChild(currentIndex+1);
 	                    //aisleContentBrowser.invalidate();
 	                    return super.onTouchEvent(event);
@@ -201,8 +205,12 @@ public class AisleContentBrowser extends ViewFlipper {
 	                       if(mSwipeListener != null) {
                            	mSwipeListener.onAisleSwipe("Right");
                            }
+	                     
+	                      // if((currentIndex-1)>=0 && (currentIndex-1) < aisleContentBrowser.getChildCount() )
+	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
 	                        if(null != mSpecialNeedsAdapter && null == nextView){
 	                            if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex-1, true)){
+	                            	
 	                                Animation cantWrapLeft = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left);
 	                                
 	                                cantWrapLeft.setAnimationListener(new Animation.AnimationListener(){
@@ -239,6 +247,7 @@ public class AisleContentBrowser extends ViewFlipper {
                             }
                         });
 	                    aisleContentBrowser.setDisplayedChild(currentIndex-1);
+	                   
 	                    return super.onTouchEvent(event);
 	                }
 	            }
@@ -289,6 +298,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	public interface DetailClickListener{
 	    public void onImageClicked();
 	    public void onImageLongPress();
+	    public void onImageSwipe(int position);
 	}
 	DetailClickListener detailImgClickListenr;
 	public  void setDetailImageClickListener(DetailClickListener detailLestener) {

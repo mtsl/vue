@@ -40,7 +40,8 @@ import com.slidingmenu.lib.SlidingMenu;
 
 public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  {
     Fragment mFragRight;
-    
+    public static final String CLICK_EVENT = "click";
+    public static final String LONG_PRESS_EVENT = "longpress";
     HorizontalListView mTopScroller,mBottomScroller;
     int mStatusbarHeight;
     int mScreenTotalHeight;
@@ -52,7 +53,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
    AisleImageDetails mItemDetails = null;
     private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
     private BitmapLoaderUtils mBitmapLoaderUtils;
-    private int likeImageShowTime = 3000;
+    private int likeImageShowTime = 1000;
     
     @SuppressWarnings("deprecation")
    @SuppressLint("NewApi")
@@ -123,7 +124,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
         mTopScroller.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+			public void onItemClick(AdapterView<?> arg0, View arg1, final int position,
 					long arg3) {
 				final ImageView img = (ImageView)arg1.findViewById(R.id.compare_like_dislike);
 				img. setImageResource(R.drawable.thumb_up);
@@ -132,6 +133,9 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 					@Override
 					public void run() {
 						img.setVisibility(View.INVISIBLE);
+						VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+								.findFragmentById(R.id.aisle_details_view_fragment);
+						fragment.changeLikeCount(position,CLICK_EVENT);
 					}
 				}, likeImageShowTime);
 				
@@ -141,7 +145,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
+					final int position, long arg3) {
 				final ImageView img = (ImageView)arg1.findViewById(R.id.compare_like_dislike);
 				img. setImageResource(R.drawable.thdown);
 				img .setVisibility(View.VISIBLE);
@@ -149,6 +153,9 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 					@Override
 					public void run() {
 						img.setVisibility(View.INVISIBLE);
+						VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+								.findFragmentById(R.id.aisle_details_view_fragment);
+						fragment.changeLikeCount(position,LONG_PRESS_EVENT);
 					}
 				}, likeImageShowTime);
 				return false;
@@ -157,7 +164,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
         mBottomScroller.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+			public void onItemClick(AdapterView<?> arg0, View arg1, final int position,
 					long arg3) {
 				final ImageView img = (ImageView)arg1.findViewById(R.id.compare_like_dislike);
 				img. setImageResource(R.drawable.thumb_up);
@@ -166,6 +173,9 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 					@Override
 					public void run() {
 						img.setVisibility(View.INVISIBLE);
+						VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+								.findFragmentById(R.id.aisle_details_view_fragment);
+						fragment.changeLikeCount(position,CLICK_EVENT);
 					}
 				}, likeImageShowTime);
 				
@@ -175,7 +185,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
+					final int position, long arg3) {
 				final ImageView img = (ImageView)arg1.findViewById(R.id.compare_like_dislike);
 				img. setImageResource(R.drawable.thdown);
 				img .setVisibility(View.VISIBLE);
@@ -183,6 +193,9 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 					@Override
 					public void run() {
 						img.setVisibility(View.INVISIBLE);
+						VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+								.findFragmentById(R.id.aisle_details_view_fragment);
+						fragment.changeLikeCount(position,LONG_PRESS_EVENT);
 					}
 				}, likeImageShowTime);
 				return false;
@@ -249,22 +262,6 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 			viewHolder.likeImage.setVisibility(View.INVISIBLE);
 			viewHolder = (ViewHolder) convertView.getTag();
 			viewHolder.likeImage.setImageResource(R.drawable.thumb_up);
-
-			viewHolder.img.setOnLongClickListener(new OnLongClickListener() {
-				@Override
-				public boolean onLongClick(View v) {
-					viewHolder.likeImage.setVisibility(View.VISIBLE);
-					viewHolder.likeImage.setImageResource(R.drawable.thdown);
-					new Handler().postDelayed(new Runnable() {
-						@Override
-						public void run() {
-							viewHolder.likeImage.setVisibility(View.INVISIBLE);
-						}
-					}, likeImageShowTime);
-					return false;
-				}
-			});
-
 			if (bitmap != null) {
 				viewHolder.img.setImageBitmap(bitmap);
 			}
