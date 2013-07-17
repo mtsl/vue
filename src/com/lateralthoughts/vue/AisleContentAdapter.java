@@ -285,7 +285,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             	//setParams(contentBrowser,imageView,bitmap);
             	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             		 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
-            			 bitmap =  mBitmapLoaderUtils.getBitmap(itemDetails.mCustomImageUrl, true, mImageDimention.mImgHeight);
+            			 bitmap =  mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
             		 }
                 
             	 }
@@ -305,7 +305,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     }
     
     public void loadBitmap( AisleImageDetails itemDetails, int bestHeight, AisleContentBrowser flipper, ImageView imageView) {
-    	String loc = itemDetails.mCustomImageUrl;
+    	String loc = itemDetails.mImageUrl;
         if (cancelPotentialDownload(loc, imageView)) {          
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
