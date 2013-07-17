@@ -87,7 +87,7 @@ public class VueContentGateway {
         if(!isConnection) {
             Log.e(TAG, "network connection No");
             return status;
-          } else if(isConnection && (VueBatteryManager.isConnected(mContext) || VueBatteryManager.batteryLevel(mContext) > VueBatteryManager.MINIMUM_BATTERY_LEVEL)) {
+          } else if(isConnection) {
               Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 1");
         	 /* Intent intent = new Intent(mContext, VueContentRestService.class);
               intent.putExtra("url",baseUri.toString());

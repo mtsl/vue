@@ -122,7 +122,7 @@ public class AisleDetailsViewListLoader {
 						 itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
 				setParams(holder.aisleContentBrowser, imageView);
 				 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
-					 bitmap = mBitmapLoaderUtils.getBitmap(itemDetails.mCustomImageUrl, true, mImageDimention.mImgHeight);
+					 bitmap = mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
 				 }
 			/*	bitmap = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
@@ -138,7 +138,7 @@ public class AisleDetailsViewListLoader {
     }
     
     public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
-    	String loc = itemDetails.mCustomImageUrl;
+    	String loc = itemDetails.mImageUrl;
         if (cancelPotentialDownload(loc, imageView)) {          
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);

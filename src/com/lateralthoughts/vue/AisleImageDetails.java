@@ -10,4 +10,5 @@ public class AisleImageDetails {
 	
 	public int mAvailableHeight;
 	public int mAvailableWidth;
+	public int mLikesCount;
 }

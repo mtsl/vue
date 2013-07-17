@@ -122,6 +122,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.aisles_detailed_view_fragment,
 				container, false);
+		RelativeLayout bottomBar = (RelativeLayout)v.findViewById(R.id.vue_bottom_bar);
+		//bottomBar.getBackground().setAlpha(75);
+		
 		mAisleDetailsList = (ListView) v.findViewById(R.id.aisle_details_list);
 		mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
 		mVueUserName = (TextView) v.findViewById(R.id.vue_user_name);
@@ -422,5 +425,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
           return highlightPosition;
        }
       return mCurentIndPosition;
+    }
+    public void changeLikeCount(int position,String clickType) {
+    	mAisleDetailsAdapter.changeLikesCount(position,clickType);
     }
 }
