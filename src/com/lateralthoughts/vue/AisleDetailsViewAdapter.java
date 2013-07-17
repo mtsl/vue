@@ -473,6 +473,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 	private void onHandleLikeEvent() {
 		//increase the likes count
+		if(mCurrentDispImageIndex>= 0 && mCurrentDispImageIndex < mInitialImageLikeCounts.length) {
 		int initalLikesCount = mInitialImageLikeCounts[mCurrentDispImageIndex];
 		int presentLikesCount = mTempInitialImageLikeCounts[mCurrentDispImageIndex];
 		if (presentLikesCount == initalLikesCount
@@ -482,10 +483,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		}
 		isImageClciked = true;
 		notifyAdapter();
+		}
 	}
 
 	private void onHandleDisLikeEvent() {
 		//decrease the likes count
+		if(mCurrentDispImageIndex>= 0 && mCurrentDispImageIndex < mInitialImageLikeCounts.length) {
 		isImageClciked = true;
 		int initalLikesCount = mInitialImageLikeCounts[mCurrentDispImageIndex];
 		int presentLikesCount = mTempInitialImageLikeCounts[mCurrentDispImageIndex];
@@ -495,5 +498,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			mTempInitialImageLikeCounts[mCurrentDispImageIndex] = mLikes;
 		}
 		notifyAdapter();
+		}
 	}
 }
