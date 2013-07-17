@@ -188,6 +188,8 @@ public class VueLoginActivity extends FragmentActivity implements
 				socialIntegrationMainLayout.setVisibility(View.GONE);
 				ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
 				trendingbg.setVisibility(View.GONE);
+				sharedPreferencesObj = this.getSharedPreferences(
+						VueConstants.SHAREDPREFERENCE_NAME, 0);
 				boolean facebookloginflag = sharedPreferencesObj.getBoolean(
 						VueConstants.FACEBOOK_LOGIN, false);
 				if (facebookloginflag) {
@@ -437,7 +439,6 @@ public class VueLoginActivity extends FragmentActivity implements
 		gplusdialog.setOnDismissListener(new OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface arg0) {
-				// TODO Auto-generated method stub
 				finish();
 			}
 		});

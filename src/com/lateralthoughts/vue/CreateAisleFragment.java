@@ -2,18 +2,10 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -22,7 +14,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,15 +29,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.Request.Method;
-import com.android.volley.toolbox.StringRequest;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
-import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
-import com.lateralthoughts.vue.utils.SortBasedOnName;
+import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
 
 /**
@@ -59,8 +45,7 @@ public class CreateAisleFragment extends Fragment {
 			ocassionListviewLayout = null, ocassionPopup = null,
 			categoeryPopup = null, categoryListviewLayout = null;
 	TextView touchToChangeImage = null, lookingForBigText = null,
-			occassionBigText = null, categoryText = null,
-			create_aisle_screen_title = null;
+			occassionBigText = null, categoryText = null;
 	com.lateralthoughts.vue.utils.EditTextBackEvent lookingForText = null,
 			occasionText = null, saySomethingAboutAisle = null;
 	private static final String categoryitemsArray[] = { "Apparel", "Beauty",
@@ -74,22 +59,23 @@ public class CreateAisleFragment extends Fragment {
 	String previousLookingfor = null, previousOcasion = null,
 			previousSaySomething = null;
 	String imagePath = null;
-	LinearLayout mainheadingrow = null, dataentry_bottom_bottom_layout = null;
-	RelativeLayout dataentry_bottom_top_layout = null,
-			dataentry_invite_friends_layout = null,
-			dataentry_invite_friends_popup_layout = null,
-			dataentry_invitefriends_facebooklayout = null,
-			titlebarbottomlayout = null, actionbar_top_layout = null,
-			dataentry_invitefriends_cancellayout = null;
+	LinearLayout mainHeadingRow = null, dataEntryBottomBottomLayout = null;
+	RelativeLayout dataEntryBottomTopLayout = null,
+			dataEntryInviteFriendsLayout = null,
+			dataEntryInviteFriendsPopupLayout = null,
+			dataEntryInviteFriendsFacebookLayout = null,
+			titleBarBottomLayout = null, actionBarTopLayout = null,
+			dataEntryInviteFriendsCancelLayout = null;
 	public static boolean createAilseKeyboardHiddenShownFlag = false;
 	ProgressDialog dataentryInviteFriendsProgressdialog = null;
-	SharedPreferences sharedPreferencesObj = null;
 	ListView dataEntryInviteFriendsList = null;
 	ImageView createAisleTitleBg = null, createAiselCloseBtn = null,
-			createAiselToServer = null, share_created_aisle = null,
-			add_image_to_aisle = null;
+			createAiselToServer = null, shareCreatedAisle = null,
+			addImageToAisle = null, createAisleTitleTopBg = null;
 	ShareDialog mShare = null;
 	boolean addImageToAisleFlag = false;
+	float screenHeight = 0, screenWidth = 0;
+	private static final int AISLE_IMAGE_MARGIN = 96;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -104,6 +90,11 @@ public class CreateAisleFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		DisplayMetrics dm = getResources().getDisplayMetrics();
+		screenHeight = dm.heightPixels;
+		screenHeight = screenHeight
+				- Utils.dipToPixels(getActivity(), AISLE_IMAGE_MARGIN);
+		screenWidth = dm.widthPixels;
 		createAilseKeyboardHiddenShownFlag = true;
 		View v = inflater.inflate(R.layout.create_aisleview_fragment,
 				container, false);
@@ -111,36 +102,35 @@ public class CreateAisleFragment extends Fragment {
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		lookingForText = (EditTextBackEvent) v
 				.findViewById(R.id.lookingfortext);
-		dataentry_invitefriends_cancellayout = (RelativeLayout) v
+		createAisleTitleTopBg = (ImageView) v
+				.findViewById(R.id.createaisel_title_top_bg);
+		dataEntryInviteFriendsCancelLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invitefriends_cancellayout);
-		actionbar_top_layout = (RelativeLayout) v
+		actionBarTopLayout = (RelativeLayout) v
 				.findViewById(R.id.actionbar_top_layout);
-		create_aisle_screen_title = (TextView) v
-				.findViewById(R.id.create_aisle_screen_title);
 		createAiselToServer = (ImageView) v
 				.findViewById(R.id.createaisel_to_server);
-		add_image_to_aisle = (ImageView) v
-				.findViewById(R.id.add_image_to_aisle);
+		addImageToAisle = (ImageView) v.findViewById(R.id.add_image_to_aisle);
 		createAiselCloseBtn = (ImageView) v
 				.findViewById(R.id.createaisel_close_btn);
 		createAisleTitleBg = (ImageView) v
 				.findViewById(R.id.createaisel_title_bg);
-		titlebarbottomlayout = (RelativeLayout) v
+		titleBarBottomLayout = (RelativeLayout) v
 				.findViewById(R.id.titlebarbottomlayout);
-		dataentry_bottom_bottom_layout = (LinearLayout) v
+		dataEntryBottomBottomLayout = (LinearLayout) v
 				.findViewById(R.id.dataentry_bottom_bottom_layout);
-		share_created_aisle = (ImageView) v
+		shareCreatedAisle = (ImageView) v
 				.findViewById(R.id.share_created_aisle);
 		lookingForBigText = (TextView) v.findViewById(R.id.lookingforbigtext);
 		lookingForBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
 		dataEntryInviteFriendsList = (ListView) v
 				.findViewById(R.id.data_entry_Invitefriends_list);
-		dataentry_bottom_top_layout = (RelativeLayout) v
+		dataEntryBottomTopLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_bottom_top_layout);
-		dataentry_invitefriends_facebooklayout = (RelativeLayout) v
+		dataEntryInviteFriendsFacebookLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invitefriends_facebooklayout);
-		dataentry_invite_friends_popup_layout = (RelativeLayout) v
+		dataEntryInviteFriendsPopupLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invite_friends_popup_layout);
 		occassionBigText = (TextView) v.findViewById(R.id.occassionbigtext);
 		ocassionListviewLayout = (LinearLayout) v
@@ -160,12 +150,12 @@ public class CreateAisleFragment extends Fragment {
 		categoryListview = (ListView) v.findViewById(R.id.categorylistview);
 		categoryListviewLayout = (LinearLayout) v
 				.findViewById(R.id.categorylistviewlayout);
-		mainheadingrow = (LinearLayout) v.findViewById(R.id.mainheadingrow);
+		mainHeadingRow = (LinearLayout) v.findViewById(R.id.mainheadingrow);
 		listDivider = getResources().getDrawable(R.drawable.list_divider_line);
 		lookingForListviewLayout.setVisibility(View.GONE);
 		createaisleBg = (ImageView) v.findViewById(R.id.createaisel_bg);
 		categoryListview.setDivider(listDivider);
-		dataentry_invite_friends_layout = (RelativeLayout) v
+		dataEntryInviteFriendsLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invite_friends_layout);
 		previousLookingfor = lookingForText.getText().toString();
 		previousOcasion = occasionText.getText().toString();
@@ -395,15 +385,13 @@ public class CreateAisleFragment extends Fragment {
 						VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
 			}
 		});
-		dataentry_invite_friends_layout
-				.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						dataentry_invite_friends_popup_layout
-								.setVisibility(View.VISIBLE);
-					}
-				});
-		dataentry_invitefriends_facebooklayout
+		dataEntryInviteFriendsLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				dataEntryInviteFriendsPopupLayout.setVisibility(View.VISIBLE);
+			}
+		});
+		dataEntryInviteFriendsFacebookLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -414,6 +402,13 @@ public class CreateAisleFragment extends Fragment {
 		createAisleTitleBg.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				CreateAisleActivity activity = (CreateAisleActivity) getActivity();
+				activity.showBezelMenu();
+			}
+		});
+		createAisleTitleTopBg.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
 				CreateAisleActivity activity = (CreateAisleActivity) getActivity();
 				activity.showBezelMenu();
 			}
@@ -431,7 +426,7 @@ public class CreateAisleFragment extends Fragment {
 				addAisleToServer();
 			}
 		});
-		share_created_aisle.setOnClickListener(new OnClickListener() {
+		shareCreatedAisle.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mShare = new ShareDialog(getActivity(), getActivity());
@@ -441,15 +436,15 @@ public class CreateAisleFragment extends Fragment {
 				mShare.share(imageUrlList, "", "");
 			}
 		});
-		dataentry_invitefriends_cancellayout
+		dataEntryInviteFriendsCancelLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						dataentry_invite_friends_popup_layout
+						dataEntryInviteFriendsPopupLayout
 								.setVisibility(View.GONE);
 					}
 				});
-		add_image_to_aisle.setOnClickListener(new OnClickListener() {
+		addImageToAisle.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				addImageToAisleFlag = true;
@@ -534,15 +529,20 @@ public class CreateAisleFragment extends Fragment {
 	}
 
 	public void setGalleryORCameraImage(String picturePath) {
-		imagePath = picturePath;
-		createaisleBg.setImageURI(Uri.fromFile(new File(picturePath)));
-		if(addImageToAisleFlag)
-		{
-			addImageToAisleToServer();
+		try {
+			imagePath = picturePath;
+			createaisleBg.setImageBitmap(Utils.getResizedImage(new File(
+					imagePath), screenHeight, screenWidth));
+			if (addImageToAisleFlag) {
+				addImageToAisleToServer();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-	public void addImageToAisleToServer()
-	{
+
+	public void addImageToAisleToServer() {
 		String imageUrl = imagePath; // This path is image location stored in
 		// locally when user selects from Camera
 		// OR Gallery.
@@ -569,15 +569,15 @@ public class CreateAisleFragment extends Fragment {
 	}
 
 	public void renderUIAfterAddingAisleToServer() {
-		actionbar_top_layout.setVisibility(View.VISIBLE);
-		titlebarbottomlayout.setVisibility(View.GONE);
-		mainheadingrow.setVisibility(View.GONE);
+		actionBarTopLayout.setVisibility(View.VISIBLE);
+		titleBarBottomLayout.setVisibility(View.GONE);
+		mainHeadingRow.setVisibility(View.GONE);
 		touchToChangeImage.setVisibility(View.GONE);
-		dataentry_bottom_bottom_layout.setVisibility(View.GONE);
+		dataEntryBottomBottomLayout.setVisibility(View.GONE);
 		lookingForPopup.setVisibility(View.GONE);
 		ocassionPopup.setVisibility(View.GONE);
 		categoeryPopup.setVisibility(View.GONE);
 		categoryListviewLayout.setVisibility(View.GONE);
-		dataentry_bottom_top_layout.setVisibility(View.VISIBLE);
+		dataEntryBottomTopLayout.setVisibility(View.VISIBLE);
 	}
 }
