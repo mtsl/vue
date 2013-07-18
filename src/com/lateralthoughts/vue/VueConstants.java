@@ -84,5 +84,6 @@ public class VueConstants {
 	public static final String GOOGLEPLUS_USER_LOCATION = "GOOGLEPLUS_USER_LOCATION";
 	public static final String USER_lOCATION = "name";
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
+	public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
 }

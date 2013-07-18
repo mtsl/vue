@@ -19,6 +19,7 @@
                   android:layout_gravity="center_vertical"
                   android:gravity="center_vertical"
                   android:text="@string/app_name"
+                  android:textColor="@color/black"
                   android:id="@+id/dialogtitle"
                   android:layout_marginLeft="4dp"/>
     </LinearLayout>

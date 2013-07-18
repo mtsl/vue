@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,11 +16,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore.MediaColumns;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-
 import com.lateralthoughts.vue.VueApplication;
 
 public class Utils {
@@ -53,7 +51,6 @@ public class Utils {
 		modifiedUrl.append("?width=" + width);
 		modifiedUrl.append("&height=" + height);
 		return modifiedUrl.toString();
-
 	}
 
 	/**
@@ -139,16 +136,23 @@ public class Utils {
 
 	// Getting Image file path from URI.
 	public static String getPath(Uri uri, Activity activity) {
-		String[] projection = { MediaColumns.DATA };
-		Cursor cursor = activity
-				.managedQuery(uri, projection, null, null, null);
-		int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
-
-		cursor.moveToFirst();
-		return cursor.getString(column_index);
+		Log.e("getPath", ""+uri);
+		Cursor cursor = activity.getContentResolver().query(uri, null, null,
+				null, null);
+		if (cursor == null) { // Source is Dropbox or other similar local file
+			Log.e("getPath", ""+uri.getPath());						// path
+			return uri.getPath();
+		} else {
+			cursor.moveToFirst();
+			int idx = cursor
+					.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+			Log.e("getPath", ""+cursor.getString(idx)+"..?"+idx);
+			return cursor.getString(idx);
+		}
 	}
 
-	public static Bitmap getResizedImage(File f, float screenHeight, float screenWidth) {
+	public static String getResizedImage(File f, float screenHeight,
+			float screenWidth, Context mContext) {
 		try {
 			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
@@ -190,8 +194,19 @@ public class Utils {
 			Bitmap resizedBitmap = BitmapFactory
 					.decodeStream(stream2, null, o2);
 			stream2.close();
-			return resizedBitmap;
+			File resizedFileName = new File(
+					vueAppResizedImageFileName(mContext));
+			String resizedFilePath = resizedFileName.getPath();
+			Log.e("Utils", resizedFilePath);
+			FileOutputStream out = new FileOutputStream(resizedFileName);
+			resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+			out.flush();
+			out.close();
+			resizedBitmap.recycle();
+			resizedBitmap = null;
+			return resizedFilePath;
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -204,6 +219,19 @@ public class Utils {
 			File fv[] = fileCacheObj.vueAppCameraPicsDir.listFiles();
 			if (fv != null) {
 				return fileCacheObj.getVueAppCameraPictureFile(
+						fv.length + 1 + "").getPath();
+			}
+		}
+
+		return fileCacheObj.getVueAppCameraPictureFile(1 + "").getPath();
+	}
+
+	public static String vueAppResizedImageFileName(Context context) {
+		FileCache fileCacheObj = new FileCache(context);
+		if (fileCacheObj.vueAppResizedImagesDir != null) {
+			File fv[] = fileCacheObj.vueAppResizedImagesDir.listFiles();
+			if (fv != null) {
+				return fileCacheObj.getVueAppResizedPictureFile(
 						fv.length + 1 + "").getPath();
 			}
 		}

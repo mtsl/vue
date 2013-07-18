@@ -4,6 +4,7 @@
   <string name="app_id">288419657969615</string> <!-- Krishna id - 288419657969615 ; Vinodh id -  127551770751077   -->
     <!-- the following string are tags used in API endpoints -->
     <string name="trending_aisles_tag">aisle/trending</string>
+     <string name="dataentry_edit_permission">Do you want to change the existing data?</string>
     <string name="limit_tag">limit</string>
     <string name="offset_tag">offset</string>
     <string name="middle_earth">Visiting Middle Earth</string>

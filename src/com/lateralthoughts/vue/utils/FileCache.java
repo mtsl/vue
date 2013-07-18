@@ -10,6 +10,7 @@ public class FileCache {
 
 	private File cacheDir;
 	File vueAppCameraPicsDir;
+	File vueAppResizedImagesDir;
 
 	public FileCache(Context context) {
 		// Find the dir to save cached images
@@ -18,19 +19,25 @@ public class FileCache {
 			cacheDir = new File(
 					android.os.Environment.getExternalStorageDirectory(),
 					"LazyList");
-			vueAppCameraPicsDir = new File(
-					context.getExternalFilesDir(null),
+			vueAppCameraPicsDir = new File(context.getExternalFilesDir(null),
 					VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
+			vueAppResizedImagesDir = new File(
+					context.getExternalFilesDir(null),
+					VueConstants.VUE_APP_RESIZED_PICTURES_FOLDER);
 		} else {
 			cacheDir = context.getCacheDir();
 			vueAppCameraPicsDir = new File(context.getFilesDir(),
 					VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
+			vueAppCameraPicsDir = new File(context.getFilesDir(),
+					VueConstants.VUE_APP_RESIZED_PICTURES_FOLDER);
 		}
 
 		if (!cacheDir.exists())
 			cacheDir.mkdirs();
-		if(!vueAppCameraPicsDir.exists())
+		if (!vueAppCameraPicsDir.exists())
 			vueAppCameraPicsDir.mkdirs();
+		if (!vueAppResizedImagesDir.exists())
+			vueAppResizedImagesDir.mkdirs();
 	}
 
 	public File getFile(String url) {
@@ -49,6 +56,11 @@ public class FileCache {
 		return f;
 	}
 
+	public File getVueAppResizedPictureFile(String resizedImageName) {
+		File f = new File(vueAppResizedImagesDir, resizedImageName + ".jpg");
+		return f;
+	}
+
 	public void clear() {
 		File[] files = cacheDir.listFiles();
 		if (files == null)
@@ -56,10 +68,17 @@ public class FileCache {
 		for (File f : files)
 			f.delete();
 	}
-	
-	public void clearVueAppCameraPictures()
-	{
+
+	public void clearVueAppCameraPictures() {
 		File[] files = vueAppCameraPicsDir.listFiles();
+		if (files == null)
+			return;
+		for (File f : files)
+			f.delete();
+	}
+
+	public void clearVueAppResizedPictures() {
+		File[] files = vueAppResizedImagesDir.listFiles();
 		if (files == null)
 			return;
 		for (File f : files)
