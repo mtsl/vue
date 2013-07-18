@@ -212,11 +212,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 						params = new LinearLayout.LayoutParams(
 								LayoutParams.MATCH_PARENT,
 								LayoutParams.WRAP_CONTENT);
-						params.setMargins(VueApplication.getInstance()
-								.getPixel(12), VueApplication.getInstance()
-								.getPixel(4), VueApplication.getInstance()
-								.getPixel(12), VueApplication.getInstance()
-								.getPixel(4));
+						params.setMargins(leftRightMargin,topBottomMargin,leftRightMargin,topBottomMargin);
 						v.setMaxLines(Integer.MAX_VALUE);
 					} else {
 						v.setMaxLines(3);
