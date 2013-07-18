@@ -36,7 +36,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ScaledImageViewFactory;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.ImageDimention;
+import com.lateralthoughts.vue.utils.ImageDimension;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.VueMemoryCache;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -74,8 +74,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private ColorDrawable mColorDrawable;
     private int mCurrentPivotIndex;
     private BitmapLoaderUtils mBitmapLoaderUtils;
-    private String mSourceName;
-    private ImageDimention mImageDimention;
+    public String mSourceName;
+    private ImageDimension mImageDimention;
     
     public AisleContentAdapter(Context context){
         mContext = context;
@@ -139,6 +139,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     }
     public void setSourceName(String name) {
     	mSourceName = name;
+    }
+    public String getSourceName(){
+    	return mSourceName;
     }
     //Task for the queue
     private class BitmapsToFetch
@@ -264,29 +267,29 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                                             boolean shiftPivot){
         ScaleImageView imageView = null;
         AisleImageDetails itemDetails = null;
-        
         if(wantedIndex >= mAisleImageDetails.size())
             return false;
-        
         if(0 >= currentIndex && wantedIndex < currentIndex)
             return false;
-        
         if(null != mAisleImageDetails && mAisleImageDetails.size() != 0){         
             itemDetails = mAisleImageDetails.get(wantedIndex);
             imageView = mImageViewFactory.getEmptyImageView();
-            Bitmap bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
-      
-            
+            Bitmap bitmap = null;
+            if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+            	 bitmap = getCachedBitmap(itemDetails.mImageUrl);
+            } else {
+              bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
+            }
             if(bitmap != null){
-            	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-                		mImageDimention = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
-                  	 }
+            	  
                 //Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
             	//setParams(contentBrowser,imageView,bitmap);
             	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-            		 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
+            	/*	 if(bitmap.getHeight() < mImageDimention.mImgHeight) {*/
+            			mImageDimention = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
             			 bitmap =  mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
-            		 }
+            			 setParams( contentBrowser, imageView,bitmap.getHeight());
+            		 /*}*/
                 
             	 }
                 imageView.setImageBitmap(bitmap);
@@ -345,12 +348,12 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 								.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
 					mImageDimention = Utils.getScalledImage(bmp,
 							mAVailableWidth, mAvailabeHeight);
-
+					mAvailabeHeight = mImageDimention.mImgHeight;
 					if (bmp.getHeight() < mImageDimention.mImgHeight) {
 						bmp = mBitmapLoaderUtils.getBitmap(url, true,
 								mImageDimention.mImgHeight);
-				     	 Log.i("bitmapsize", "bitmapsize after12 width: "+bmp.getWidth());
-						  Log.i("bitmapsize", "bitmapsize after12 height: "+bmp.getHeight());
+						mAvailabeHeight = bmp.getHeight();
+				     	 
 					} 
 
 				}
@@ -371,8 +374,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 
 				if (this == bitmapWorkerTask) {
 					vFlipper.invalidate();
-					// bitmap = setParams(aisleContentBrowser, imageView,
-					// bitmap);
+					  setParams(aisleContentBrowser, imageView,mAvailabeHeight);
+					 
 					/* if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
 			                bitmap = Utils.getScalledImage(bitmap,mAVailableWidth, mAvailabeHeight);
 			            	 }*/
@@ -501,38 +504,16 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 	}
     
     
-    /*private Bitmap setParams(AisleContentBrowser vFlipper,ImageView imageView,Bitmap bitmap) {
-    	Log.i("width & height", "reqWidth1: Bitmap is greater than card size0" );
-    	int imgCardHeight =   (VueApplication.getInstance().getScreenHeight() *60) /100;
+    private void setParams(AisleContentBrowser vFlipper,ImageView imageView,int imageCardHeight) {
+    	//int imgCardHeight =   (VueApplication.getInstance().getScreenHeight() *60) /100;
+    	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+         	/*	 if(bitmap.getHeight() < mImageDimention.mImgHeight) {*/
+    		 int topBottomMargin = 20;
+    		 imageCardHeight += VueApplication.getInstance().getPixel(topBottomMargin);
     	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-				VueApplication.getInstance().getScreenWidth(),imgCardHeight);
-    	showpieceParams.setMargins(0, 50, 0, 50);
+				VueApplication.getInstance().getScreenWidth(),imageCardHeight);
     	if(vFlipper != null)
     	vFlipper.setLayoutParams(showpieceParams);
-    	  if(bitmap.getHeight() > imgCardHeight || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
-    	 Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
-    		 bitmap =  Utils.getScaledBitMap(bitmap, ((VueApplication.getInstance().getScreenWidth()*90)/100), (imgCardHeight*90)/100);
-    	  } else {
-    		  Log.i("width & height", "reqWidth1: Bitmap is less than card size" );
-    	  }
-    	if(vFlipper != null) {
-    	FrameLayout.LayoutParams params = 
-                new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        params.gravity = Gravity.CENTER;
-        imageView.setLayoutParams(params);
-    	} else {
-    		LinearLayout.LayoutParams params = 
-                    new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            params.gravity = Gravity.CENTER;
-            //params.setMargins(100, 0, 100, 100);
-             imageView.setScaleType(ScaleType.CENTER_INSIDE);
-            imageView.setLayoutParams(params);
-            Log.i("width & height", "reqWidth1: Bitmap is greater than card size1" );
-            if(bitmap.getHeight() >  VueApplication.getInstance().getScreenHeight()/3 || bitmap.getWidth() >VueApplication.getInstance().getScreenWidth() ) {
-      		  Log.i("width & height", "reqWidth1: Bitmap is greater than card size2" );
-      		 bitmap =  Utils.getScaledBitMap(bitmap,VueApplication.getInstance().getPixel(220),  VueApplication.getInstance().getPixel(220));
-      	  }
-    	}
-        return bitmap;
-    }*/
+    	 }
+    }
 }
