@@ -179,6 +179,7 @@ public class AisleLoader {
             url = params[0];
             Bitmap bmp = null;            
             //we want to get the bitmap and also add it into the memory cache
+            Log.e("Profiling", "Profiling New doInBackground()");
             bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeight); 
             return bmp;            
         }
@@ -217,7 +218,7 @@ public class AisleLoader {
         }
         return null;
     }
-    
+
     private static boolean cancelPotentialDownload(String url, ImageView imageView) {
         BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
         

@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
+import com.actionbarsherlock.app.SherlockFragment;
 import com.lateralthoughts.vue.indicators.IndicatorView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.MyCustomAnimation;
@@ -65,7 +66,8 @@ import android.widget.Toast;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueAisleDetailsViewFragment extends Fragment {
+public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
+  
     private Context mContext;
     public  static final  String  SCREEN_NAME = "DETAILS_SCREEN";
     private static final int AISLE_HEADER_SHOW_TIME = 5000;

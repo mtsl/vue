@@ -18,23 +18,17 @@ import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
 public class VueLandingPageActivity extends BaseActivity {
 
- 
- 
 	SharedPreferences sharedPreferencesObj;
     private static final int DELAY_TIME = 500;
-
 	 public static List<FbGPlusDetails> googlePlusFriendsDetailsList = null;
 
   @Override
   public void onCreate(Bundle icicle) {
-    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreate() Start Before super call");
     super.onCreate(icicle);
-    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreate() After super call");
     Thread.setDefaultUncaughtExceptionHandler(new
     		ExceptionHandler(this));
-    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreate() Before setContentView(R.layout.vue_landing_main) call");
     setContentView(R.layout.vue_landing_main);
-    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreate() After setContentView(R.layout.vue_landing_main) call");
+    getSupportActionBar().setTitle(getString(R.string.trending));
     // Checking wheather app is opens for first time or not?
     sharedPreferencesObj = this.getSharedPreferences(
         VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -63,17 +57,14 @@ public class VueLandingPageActivity extends BaseActivity {
       }
 
     }
-    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreate() End");
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreateOptionsMenu() Start");
     getSupportMenuInflater().inflate(R.menu.title_options, menu);
     getSupportActionBar().setHomeButtonEnabled(true);
-    Log.e("Profiling", "Profiling VueLandingPageActivity.onCreateOptionsMenu() End");
     // Configure the search info and add any event listeners
-    return super.onCreateOptionsMenu(menu);
+    return true;//super.onCreateOptionsMenu(menu);
   }
 
   @Override

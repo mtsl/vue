@@ -186,7 +186,7 @@ public class ContentLoader {
 
     public void clearCache() {
     	mAisleImagesCache.clear();
-        fileCache.clear();
+        //fileCache.clear();
     }
     
     private static boolean cancelPotentialDownload(String url, ImageView imageView) {
