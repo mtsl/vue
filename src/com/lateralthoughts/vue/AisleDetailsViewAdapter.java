@@ -164,11 +164,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       LinearLayout imgContentlay, commentContentlay;
       LinearLayout vueCommentheader, addCommentlay;
       TextView userComment, enterComment;
-      TextView vue_user_enterComment;
+     // TextView vue_user_enterComment;
       ImageView userPic, commentImg, likeImg;
       RelativeLayout exapandHolder;
       EditText edtComment;
       View separator;
+      RelativeLayout enterCommentrellay;
       FrameLayout edtCommentLay;
       ImageView commentSend;
       String tag;
@@ -199,8 +200,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
                .findViewById(R.id.vue_details_descreption);
          mViewHolder.separator = (View) convertView
                .findViewById(R.id.separator);
-         mViewHolder.vue_user_enterComment = (TextView) convertView
-               .findViewById(R.id.vue_user_entercomment);
+       /*  mViewHolder.vue_user_enterComment = (TextView) convertView
+               .findViewById(R.id.vue_user_entercomment);*/
+         mViewHolder.enterCommentrellay = (RelativeLayout) convertView.findViewById(R.id.entercmentrellay);
+         
          mViewHolder.edtComment = (EditText) convertView
                .findViewById(R.id.edtcomment);
          mViewHolder.likeImg = (ImageView) convertView
@@ -297,15 +300,18 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
             mViewHolder.vueCommentheader.setVisibility(View.GONE);
           mViewHolder.commentContentlay.setVisibility(View.GONE);
           // mViewHolder.edtCommentLay.setVisibility(View.GONE);
-          mViewHolder.vue_user_enterComment
+          if( mViewHolder.enterCommentrellay.getVisibility() == View.VISIBLE) {
+        	  mViewHolder.commentSend.setVisibility(View.GONE);
+          }
+          mViewHolder.enterCommentrellay
                .setOnClickListener(new OnClickListener() {
 
                   @Override
                   public void onClick(View v) {
                 	  mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
-                	  mViewHolder.vue_user_enterComment.setVisibility(View.GONE);
+                	  mViewHolder.enterCommentrellay.setVisibility(View.GONE);
                      mswipeListner.onAddCommentClick(
-                           mViewHolder.vue_user_enterComment,
+                    		 mViewHolder.enterCommentrellay,
                            mViewHolder.edtComment,mViewHolder.commentSend, mViewHolder.edtCommentLay);
                     
                   }
@@ -473,6 +479,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 	private void onHandleLikeEvent() {
 		//increase the likes count
+		if(mCurrentDispImageIndex>= 0 && mCurrentDispImageIndex < mInitialImageLikeCounts.length) {
 		int initalLikesCount = mInitialImageLikeCounts[mCurrentDispImageIndex];
 		int presentLikesCount = mTempInitialImageLikeCounts[mCurrentDispImageIndex];
 		if (presentLikesCount == initalLikesCount
@@ -482,10 +489,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		}
 		isImageClciked = true;
 		notifyAdapter();
+		}
 	}
 
 	private void onHandleDisLikeEvent() {
 		//decrease the likes count
+		if(mCurrentDispImageIndex>= 0 && mCurrentDispImageIndex < mInitialImageLikeCounts.length) {
 		isImageClciked = true;
 		int initalLikesCount = mInitialImageLikeCounts[mCurrentDispImageIndex];
 		int presentLikesCount = mTempInitialImageLikeCounts[mCurrentDispImageIndex];
@@ -495,5 +504,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			mTempInitialImageLikeCounts[mCurrentDispImageIndex] = mLikes;
 		}
 		notifyAdapter();
+		}
 	}
 }

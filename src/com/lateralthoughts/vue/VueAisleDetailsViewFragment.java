@@ -290,8 +290,25 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
        * when user enters the comment it will be added to the comment list at the top.
        */
       @Override
-      public void onAddCommentClick(final TextView view, final EditText editText,final ImageView sendComment,final FrameLayout edtCommentLay) {
+      public void onAddCommentClick(final RelativeLayout view, final EditText editText,final ImageView sendComment,final FrameLayout edtCommentLay) {
          mAisleDetailsList.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+         mAisleDetailsList.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				editText.getParent().requestDisallowInterceptTouchEvent(false);
+				return false;
+			}
+		});
+         editText.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				 v.getParent().requestDisallowInterceptTouchEvent(true);
+				return false;
+			}
+		});
+         
           final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
              inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
              edtCommentLay.setVisibility(View.VISIBLE);
