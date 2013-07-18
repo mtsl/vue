@@ -23,7 +23,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.ImageDimention;
+import com.lateralthoughts.vue.utils.ImageDimension;
 import com.lateralthoughts.vue.utils.Utils;
  
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
@@ -39,7 +39,7 @@ public class AisleDetailsViewListLoader {
     private ScaledImageViewFactory mViewFactory = null;
     private BitmapLoaderUtils mBitmapLoaderUtils;
     private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
-    private ImageDimention mImageDimention;
+    private ImageDimension mImageDimention;
     //private int mBestHeight;
     
     public static AisleDetailsViewListLoader getInstance(Context context){
@@ -120,9 +120,10 @@ public class AisleDetailsViewListLoader {
 				//get the dimentions of the image.
 				 mImageDimention = Utils.getScalledImage(bitmap,
 						 itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
-				setParams(holder.aisleContentBrowser, imageView);
+				setParams(holder.aisleContentBrowser, imageView,itemDetails.mAvailableHeight);
 				 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
 					 bitmap = mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
+					 setParams(holder.aisleContentBrowser, imageView,mImageDimention.mImgHeight);
 				 }
 			/*	bitmap = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
@@ -173,7 +174,7 @@ public class AisleDetailsViewListLoader {
             if(bmp != null) {
            	 mImageDimention = Utils.getScalledImage(bmp,
            			mAvailabeWidth, mAvailableHeight);
-            	
+           	mAvailableHeight = mImageDimention.mImgHeight;
             	 if(bmp.getHeight()<mImageDimention.mImgHeight) {
             		 bmp = mBitmapLoaderUtils.getBitmap(url, true, mImageDimention.mImgHeight);
 				 }
@@ -193,7 +194,7 @@ public class AisleDetailsViewListLoader {
                 
                 if (this == bitmapWorkerTask) {
                    //aisleContentBrowser.addView(imageView);
-                  setParams( aisleContentBrowser, imageView);
+                  setParams( aisleContentBrowser, imageView,mAvailableHeight);
                   // bitmap = Utils.getScalledImage(bitmap, mAvailabeWidth,mAvailableHeight);
                     imageView.setImageBitmap(bitmap);
                 }
@@ -228,11 +229,16 @@ public class AisleDetailsViewListLoader {
         return true;
     }  
 
-   private void setParams(AisleContentBrowser vFlipper, ImageView imageView 
+   private void setParams(AisleContentBrowser vFlipper, ImageView imageView,int imgScreenHeight
           ) {
       int imgCardHeight = (VueApplication.getInstance().getScreenHeight() * 60) / 100;
+   /*   FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+            VueApplication.getInstance().getScreenWidth(), (VueApplication.getInstance().getScreenHeight() * 60) / 100);*/
+      int topMottomMargin = 20;
+      
+      imgScreenHeight += VueApplication.getInstance().getPixel(topMottomMargin);
       FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-            VueApplication.getInstance().getScreenWidth(), (VueApplication.getInstance().getScreenHeight() * 60) / 100);
+              VueApplication.getInstance().getScreenWidth(),imgScreenHeight);
 
       if (vFlipper != null)
          vFlipper.setLayoutParams(showpieceParams);

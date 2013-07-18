@@ -1,5 +1,5 @@
 package com.lateralthoughts.vue.utils;
 
-public class ImageDimention {
+public class ImageDimension {
 public int mImgWidth,mImgHeight;
 }

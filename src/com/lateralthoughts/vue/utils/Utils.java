@@ -226,6 +226,7 @@ public class Utils {
 		return fileCacheObj.getVueAppCameraPictureFile(1 + "").getPath();
 	}
 
+
 	public static String vueAppResizedImageFileName(Context context) {
 		FileCache fileCacheObj = new FileCache(context);
 		if (fileCacheObj.vueAppResizedImagesDir != null) {
@@ -239,10 +240,11 @@ public class Utils {
 		return fileCacheObj.getVueAppCameraPictureFile(1 + "").getPath();
 	}
 
-	public static ImageDimention getScalledImage(Bitmap bitmap,
+
+	public static ImageDimension getScalledImage(Bitmap bitmap,
 			int availableWidth, int availableHeight) {
 
-		ImageDimention imgDimention = new ImageDimention();
+		ImageDimension imgDimension = new ImageDimension();
 		float requiredWidth, requiredHeight;
 		float bitmapOriginalWidth = bitmap.getWidth();
 		float bitmapOriginalHeight = bitmap.getHeight();
@@ -260,9 +262,9 @@ public class Utils {
 		if ((availableWidth < VueApplication.getInstance()
 				.getVueDetailsCardWidth() && availableHeight < VueApplication
 				.getInstance().getVueDetailsCardHeight())) {
-			imgDimention.mImgWidth = availableWidth;
-			imgDimention.mImgHeight = availableHeight;
-			return imgDimention;
+			imgDimension.mImgWidth = availableWidth;
+			imgDimension.mImgHeight = availableHeight;
+			return imgDimension;
 		}
 
 		float temp = requiredWidth / bitmapOriginalWidth;
@@ -289,11 +291,11 @@ public class Utils {
 			requiredWidth = Math.round(requiredWidth * scaleFactor);
 		}
 
-		imgDimention.mImgWidth = (int) requiredWidth;
-		imgDimention.mImgHeight = (int) requiredHeight;
+		imgDimension.mImgWidth = (int) requiredWidth;
+		imgDimension.mImgHeight = (int) requiredHeight;
 		// bitmap = createBitmap(bitmap, (int)requiredWidth,
 		// (int)requiredHeight);
-		return imgDimention;
+		return imgDimension;
 
 	}
 

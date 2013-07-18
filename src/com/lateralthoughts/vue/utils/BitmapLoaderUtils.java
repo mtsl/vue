@@ -103,23 +103,43 @@ public class BitmapLoaderUtils {
             //Find the correct scale value. It should be the power of 2.
             //final int REQUIRED_SIZE = mScreenWidth/2;
             int height=o.outHeight;
+            
+            int width = o.outWidth;
+          int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth();
+            
             int scale=1;
             
-            if (height > bestHeight) {
+            if (height > bestHeight || width > reqWidth) {
 
                 // Calculate ratios of height and width to requested height and width
                 final int heightRatio = Math.round((float) height / (float) bestHeight);
-               // final int widthRatio = Math.round((float) width / (float) reqWidth);
+                final int widthRatio = Math.round((float) width / (float) reqWidth);
 
                 // Choose the smallest ratio as inSampleSize value, this will guarantee
                 // a final image with both dimensions larger than or equal to the
                 // requested height and width.
                 scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
+                
+                
+                
+
+                int h=(int) Math.ceil((float) height/(float)bestHeight);
+                int w=(int) Math.ceil((float) width /(float) reqWidth);
+
+                if(h>1 || w>1){
+                    if(h>w){
+                        o.inSampleSize=h;
+
+                    }else{
+                        o.inSampleSize=w;
+                    }
+                }
             }
             
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
+            //o2.inSampleSize = scale;
+            o2.inSampleSize =  o.inSampleSize;
             //if(DEBUG) Log.d("Jaws","using inSampleSizeScale = " + scale + " original width = " + o.outWidth + "screen width = " + mScreenWidth);
             FileInputStream stream2=new FileInputStream(f);
             Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);

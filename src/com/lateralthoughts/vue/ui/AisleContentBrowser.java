@@ -2,6 +2,7 @@ package com.lateralthoughts.vue.ui;
 
 //android imports
 import com.lateralthoughts.vue.AisleDetailsViewActivity;
+import com.lateralthoughts.vue.AisleDetailsViewAdapter;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
 import com.lateralthoughts.vue.R;
@@ -9,7 +10,9 @@ import com.lateralthoughts.vue.VueApplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -17,6 +20,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -138,7 +142,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	            }
 
 	            if (mFirstX - mLastX > SWIPE_MIN_DISTANCE) {
-	                
+	            	  Log.i("params are setting", "params are setting aisleContentBrowser11111#############################################");
 	                //In this case, the user is moving the finger right to left
 	                //The current image needs to slide out left and the "next" image
 	                //needs to fade in
@@ -150,9 +154,12 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    if(mSwipeListener != null) {
                         	mSwipeListener.onAisleSwipe("Left");
                         }
+	                    setBrowserParams(nextView);
 	                   // if((currentIndex+1)>=0 && (currentIndex+1) < aisleContentBrowser.getChildCount() )
-	                    if(detailImgClickListenr != null) detailImgClickListenr.onImageSwipe(currentIndex+1);
+	                    if(detailImgClickListenr != null)
+	                    detailImgClickListenr.onImageSwipe(currentIndex+1);
 	                    if(null != mSpecialNeedsAdapter && null == nextView){
+	                    	
 	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, null, currentIndex, currentIndex+1, true)){
 	                            mAnimationInProgress = true;
 	                          
@@ -197,6 +204,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    return super.onTouchEvent(event);
 	                }                           
 	            } else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE){
+	            	 Log.i("params are setting", "params are setting aisleContentBrowser222222#############################################");
 	                requestDisallowInterceptTouchEvent(true);
 	                mTouchMoved = true;
 	                if(false == mAnimationInProgress){
@@ -205,10 +213,11 @@ public class AisleContentBrowser extends ViewFlipper {
 	                       if(mSwipeListener != null) {
                            	mSwipeListener.onAisleSwipe("Right");
                            }
-	                     
+	                       setBrowserParams(nextView);
 	                      // if((currentIndex-1)>=0 && (currentIndex-1) < aisleContentBrowser.getChildCount() )
-	                      if(detailImgClickListenr != null) detailImgClickListenr.onImageSwipe(currentIndex-1);
+	                       if(detailImgClickListenr != null) detailImgClickListenr.onImageSwipe(currentIndex-1);
 	                        if(null != mSpecialNeedsAdapter && null == nextView){
+	                        	
 	                            if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex-1, true)){
 	                            	
 	                                Animation cantWrapLeft = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left);
@@ -311,11 +320,34 @@ public class AisleContentBrowser extends ViewFlipper {
 	    public void onAisleSwipe(String id);
 	    public void onReceiveImageCount(int count);
 	    public void onResetAdapter();
-	    public void onAddCommentClick(TextView view,EditText editText,ImageView commentSend,FrameLayout editLay);
+	    public void onAddCommentClick(RelativeLayout view,EditText editText,ImageView commentSend,FrameLayout editLay);
 	}
 	public void setAisleDetailSwipeListener(AisleDetailSwipeListener swipListener) {
 		mSwipeListener = swipListener; 
 	}
 	private AisleContentClickListener mClickListener;
 	public AisleDetailSwipeListener mSwipeListener;
+	private void setBrowserParams(ScaleImageView nextView) {
+		  final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
+		  String sourName = null;
+		  if(mSpecialNeedsAdapter != null) {
+			  sourName = mSpecialNeedsAdapter.getSourceName();
+		  }
+		 if(sourName != null && sourName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+		   if(nextView != null) {
+		   Bitmap bitmap = ((BitmapDrawable)nextView.getDrawable()).getBitmap();
+		   if(bitmap != null) {
+		   int height = bitmap.getHeight();
+		     int topBottomMargin = 20;
+		      height += VueApplication.getInstance().getPixel(topBottomMargin);
+		   FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+					VueApplication.getInstance().getScreenWidth(),height);
+	    	 
+	    	if(aisleContentBrowser != null)
+	    		aisleContentBrowser.setLayoutParams(showpieceParams);
+		   }
+		   }
+		 }
+
+	}
 }

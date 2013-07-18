@@ -33,6 +33,10 @@
             android:src="@drawable/sendcomment" />
     </FrameLayout>
 
+<RelativeLayout android:layout_width="match_parent"
+                    android:id="@+id/entercmentrellay"
+                    android:layout_marginBottom="10dp"
+                    android:layout_height="wrap_content">
     <TextView
         android:id="@+id/vue_user_entercomment"
         android:layout_width="match_parent"
@@ -40,9 +44,30 @@
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        
         android:gravity="center_vertical"
         android:text="Add Comment"
         android:textColor="@color/grey" />
+    <View android:layout_height="1dp"
+        android:id="@+id/textvuelay"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_below="@+id/vue_user_entercomment"
+          android:background="@color/grey"
+          android:layout_width="match_parent"/>
+        <View android:layout_height="4dp"
+          android:background="@color/grey"
+            android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+          android:layout_above="@+id/textvuelay"
+          android:layout_alignParentLeft="true"
+          android:layout_width="1dp"/>
+      <View android:layout_height="4dp"
+          android:background="@color/grey"
+            android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+          android:layout_above="@+id/textvuelay"
+          android:layout_alignParentRight="true"
+          android:layout_width="1dp"/>
+    </RelativeLayout>
 
 </LinearLayout>
