@@ -508,7 +508,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     	//int imgCardHeight =   (VueApplication.getInstance().getScreenHeight() *60) /100;
     	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
          	/*	 if(bitmap.getHeight() < mImageDimention.mImgHeight) {*/
-    		 int topBottomMargin = 20;
+    		 int topBottomMargin = 24;
     		 imageCardHeight += VueApplication.getInstance().getPixel(topBottomMargin);
     	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
 				VueApplication.getInstance().getScreenWidth(),imageCardHeight);

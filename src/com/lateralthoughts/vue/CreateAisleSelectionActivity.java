@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -42,6 +43,9 @@ public class CreateAisleSelectionActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_asilse_selection);
+		sendBroadcast (
+				new Intent(Intent.ACTION_MEDIA_MOUNTED, 
+					Uri.parse("file://" + Environment.getExternalStorageDirectory())));
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			fromCreateAilseScreenFlag = b
@@ -157,6 +161,9 @@ public class CreateAisleSelectionActivity extends Activity {
 				bottomRightGreenCircle.setVisibility(View.GONE);
 				totalBottom.setVisibility(View.GONE);
 				if (galleryClickedFlag) {
+					sendBroadcast (
+							new Intent(Intent.ACTION_MEDIA_MOUNTED, 
+								Uri.parse("file://" + Environment.getExternalStorageDirectory())));
 					Intent i = new Intent(
 							Intent.ACTION_PICK,
 							android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -243,9 +250,11 @@ public class CreateAisleSelectionActivity extends Activity {
 			// From Gallery...
 			if (requestCode == VueConstants.SELECT_PICTURE) {
 				Uri selectedImageUri = data.getData();
+				Log.e("frag", "uri..."+selectedImageUri);
 				// MEDIA GALLERY
 				String selectedImagePath = Utils
 						.getPath(selectedImageUri, this);
+				Log.e("frag", "uri..."+selectedImagePath);
 				if (!fromCreateAilseScreenFlag) {
 					Intent intent = new Intent(this, CreateAisleActivity.class);
 					Bundle b = new Bundle();

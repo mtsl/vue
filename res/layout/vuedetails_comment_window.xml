@@ -28,7 +28,7 @@
             android:layout_toRightOf="@+id/vuewndow_comment_img"
             android:gravity="center_vertical"
             android:text="9 comments"
-            android:textColor="#000000" />
+            android:textColor="@color/black" />
     </RelativeLayout>
 
     <ImageView
@@ -48,7 +48,7 @@
         android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/vuewndow_lik_img"
         android:text="12"
-        android:textColor="#000000" />
+        android:textColor="@color/black" />
 
     <ImageView
         android:id="@+id/vuewndow_lik_img"

@@ -89,7 +89,7 @@
                     android:src="@drawable/share" />
 
                 <ImageView
-                    android:id="@+id/comment_to_create_aisle"
+                    android:id="@+id/edit_aisle"
                     android:layout_width="36dip"
                     android:layout_height="36dip"
                     android:layout_gravity="center_vertical"
@@ -114,16 +114,23 @@
         <ImageView
             android:id="@+id/createaisel_bg"
             android:layout_width="match_parent"
-            android:layout_above="@+id/dummylayoutforaisleimage"
             android:layout_height="match_parent"
+            android:layout_above="@+id/dummylayoutforaisleimage"
             android:layout_centerInParent="true" />
 
+        <android.support.v4.view.ViewPager
+            android:id="@+id/dataentry_aisles_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/dummylayoutforaisleimage"
+            android:visibility="gone" />
+
         <LinearLayout
+            android:id="@+id/dummylayoutforaisleimage"
             android:layout_width="match_parent"
             android:layout_height="48dip"
             android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-               android:id="@+id/dummylayoutforaisleimage" >
+            android:orientation="horizontal" >
         </LinearLayout>
 
         <TextView
@@ -232,6 +239,61 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="4dip"
                         android:hint="Looking for"
+                        android:singleLine="true"
+                        android:textColor="@color/dataentrytextcolor"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/find_at_popup"
+                android:layout_width="200dip"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="48dip"
+                android:layout_marginRight="8dip"
+                android:background="@drawable/pop_up_bg_ocasion"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dip"
+                    android:layout_marginRight="2dip"
+                    android:layout_marginTop="2dip"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:id="@+id/imageView1"
+                        android:layout_width="36dip"
+                        android:layout_height="36dip"
+                        android:src="@drawable/finditat" />
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="Find at"
+                        android:textColor="@color/white"
+                        android:textSize="17sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dip"
+                    android:background="@color/white" >
+
+                    <com.lateralthoughts.vue.utils.EditTextBackEvent
+                        android:id="@+id/find_at_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="4dip"
+                        android:hint="Find at"
                         android:singleLine="true"
                         android:textColor="@color/dataentrytextcolor"
                         android:textSize="15sp" />
@@ -435,7 +497,7 @@
                         android:clickable="true" />
 
                     <ImageView
-                        android:id="@+id/normalicon"
+                        android:id="@+id/find_at_icon"
                         android:layout_width="36dip"
                         android:layout_height="36dip"
                         android:layout_gravity="center_vertical"

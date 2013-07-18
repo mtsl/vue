@@ -204,6 +204,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				} else if (arg2 == 0) {
 					//will be called when press on the description, description text will be expand and collapse for 
 					//alternative clicks
+					int leftRightMargin = VueApplication.getInstance().getPixel(16);
+					int topBottomMargin = VueApplication.getInstance().getPixel(12);
 					TextView v = (TextView) arg1
 							.findViewById(R.id.vue_details_descreption);
 					int x = v.getLineCount();
@@ -217,7 +219,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 								.getPixel(4), VueApplication.getInstance()
 								.getPixel(12), VueApplication.getInstance()
 								.getPixel(4));
-						v.setLayoutParams(params);
 						v.setMaxLines(Integer.MAX_VALUE);
 					} else {
 						v.setMaxLines(3);
