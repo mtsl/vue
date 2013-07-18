@@ -72,7 +72,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     public  static final  String  SCREEN_NAME = "DETAILS_SCREEN";
     private static final int AISLE_HEADER_SHOW_TIME = 5000;
     private static final int ANIM_SPEED_EDITEXPAND = 500;
-    private static final int USER_COMMENT_MARIGIN = 4;
+    private static final int USER_COMMENT_MARIGIN = 16;
     private VueContentGateway mVueContentGateway;
     AisleDetailsViewAdapter mAisleDetailsAdapter;  
     private ListView mAisleDetailsList;
@@ -186,15 +186,14 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 							params = new LinearLayout.LayoutParams(
 									LayoutParams.MATCH_PARENT,
 									LayoutParams.WRAP_CONTENT);
+							int leftMargin = VueApplication.getInstance().getPixel(16);
+							int rightMargin = VueApplication.getInstance().getPixel(28);
+							int topBottomMargin = VueApplication.getInstance().getPixel(12);
 							params.setMargins(
-									VueApplication.getInstance().getPixel(
-											USER_COMMENT_MARIGIN),
-									VueApplication.getInstance().getPixel(
-											USER_COMMENT_MARIGIN),
-									VueApplication.getInstance().getPixel(
-											USER_COMMENT_MARIGIN),
-									VueApplication.getInstance().getPixel(
-											USER_COMMENT_MARIGIN));
+									leftMargin ,
+									topBottomMargin,
+									rightMargin,
+											topBottomMargin);
 							v.setLayoutParams(params);
 							v.setMaxLines(Integer.MAX_VALUE);
 						} else {
