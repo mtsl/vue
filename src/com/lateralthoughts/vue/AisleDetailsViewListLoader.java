@@ -234,7 +234,7 @@ public class AisleDetailsViewListLoader {
       int imgCardHeight = (VueApplication.getInstance().getScreenHeight() * 60) / 100;
    /*   FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
             VueApplication.getInstance().getScreenWidth(), (VueApplication.getInstance().getScreenHeight() * 60) / 100);*/
-      int topMottomMargin = 20;
+      int topMottomMargin = 24;
       
       imgScreenHeight += VueApplication.getInstance().getPixel(topMottomMargin);
       FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(

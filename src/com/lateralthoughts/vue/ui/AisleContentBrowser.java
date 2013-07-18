@@ -338,7 +338,7 @@ public class AisleContentBrowser extends ViewFlipper {
 		   Bitmap bitmap = ((BitmapDrawable)nextView.getDrawable()).getBitmap();
 		   if(bitmap != null) {
 		   int height = bitmap.getHeight();
-		     int topBottomMargin = 20;
+		     int topBottomMargin = 24;
 		      height += VueApplication.getInstance().getPixel(topBottomMargin);
 		   FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
 					VueApplication.getInstance().getScreenWidth(),height);
