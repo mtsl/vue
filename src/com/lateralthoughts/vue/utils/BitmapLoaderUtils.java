@@ -54,13 +54,16 @@ public class BitmapLoaderUtils {
      */
     public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
     {
+      Log.e("Profiling", "Profiling New getBitmap()");
     	Log.i("imgurl", "imgurl: "+url);
         File f = mFileCache.getFile(url);
-        
+
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight);
         if(b != null){
+          Log.e("Profiling", "Profiling New getBitmap() Bitmap not null");
             if(cacheBitmap)
+              Log.e("Profiling", "Profiling New getBitmap() cacheBitmap : " + cacheBitmap);
                 mAisleImagesCache.put(url, b);
             return b;
         }
@@ -139,6 +142,6 @@ public class BitmapLoaderUtils {
 
     public void clearCache() {
     	mAisleImagesCache.clear();
-    	mFileCache.clear();
+    	//mFileCache.clear();
     }
 }

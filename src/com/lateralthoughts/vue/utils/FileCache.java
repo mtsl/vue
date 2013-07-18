@@ -5,6 +5,7 @@ import java.io.File;
 import com.lateralthoughts.vue.VueConstants;
 
 import android.content.Context;
+import android.util.Log;
 
 public class FileCache {
 
@@ -36,7 +37,9 @@ public class FileCache {
 	public File getFile(String url) {
 		// I identify images by hashcode. Not a perfect solution, good for the
 		// demo.
-		String filename = String.valueOf(url.hashCode());
+	  int hashCode = url.hashCode();
+	  Log.e("Profiling", "Profiling New hashCode : " + url.hashCode());
+		String filename = String.valueOf(hashCode);
 		// Another possible solution (thanks to grantland)
 		// String filename = URLEncoder.encode(url);
 		File f = new File(cacheDir, filename + ".jpg");

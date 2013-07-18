@@ -97,8 +97,7 @@ public class VueTrendingAislesDataModel {
   public boolean loadOnRequest = false;
   private int mStartPosition = 0;
   private int mEndPosition = 0;
-  private int mLocalAislesLimit = 10;
-  private Cursor aisleImagesCursor = null;
+  private int mLocalAislesLimit = 20;
   private ThreadPoolExecutor threadPool;
   private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
 
@@ -289,7 +288,7 @@ public class VueTrendingAislesDataModel {
           imageItemsArray.clear();
           // c.close();
         }
-        // db.close();
+         db.close();
       } catch (JSONException ex1) {
         if (DEBUG)
           Log.e(TAG, "Some exception is caught? ex1 = " + ex1.toString());
@@ -318,6 +317,7 @@ public class VueTrendingAislesDataModel {
       aisleItem.setAisleId(aisleId);
       mAisleContentListMap.put(aisleId, aisleItem);
       mAisleContentList.add(aisleItem);
+      Log.e("Profiling", "Profiling : mHandler call getAisleItem() : mAisleContentListMap.size(); " + mAisleContentListMap.size() + ", mAisleContentList.size(); " + mAisleContentList.size());
     }
     return aisleItem;
   }
@@ -421,14 +421,12 @@ public class VueTrendingAislesDataModel {
             .getColumnIndex(VueConstants.OCCASION));
         map.put(userInfo.mAisleId, userInfo);
       } while (aislesCursor.moveToNext());
-      if (aisleImagesCursor == null || aisleImagesCursor.isClosed()) {
-        aisleImagesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES_IMAGES,
-            null, null, null, null, null, VueConstants.ID + " ASC");
-      }
+      Cursor aisleImagesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES_IMAGES,
+          null, null, null, null, null, VueConstants.ID + " ASC");
       Iterator it = map.entrySet().iterator();
       while (it.hasNext()) {
         Map.Entry pairs = (Map.Entry) it.next();
-        // System.out.println(pairs.getKey() + " = " + pairs.getValue());
+         System.out.println(pairs.getKey() + " = " + pairs.getValue());
 
         if (aisleImagesCursor.moveToFirst()) {
           do {
@@ -461,6 +459,7 @@ public class VueTrendingAislesDataModel {
             }
           } while (aisleImagesCursor.moveToNext());
         }
+        userInfo = (AisleContext) pairs.getValue();
         aisleItem = new AisleWindowContent(userInfo.mAisleId);
         aisleItem.addAisleContent(userInfo, imageItemsArray);
         aisleContentArray.add(aisleItem);
@@ -474,10 +473,9 @@ public class VueTrendingAislesDataModel {
       Message msg = new Message();
       msg.obj = aisleContentArray;
       mHandler.sendMessage(msg);
-    } else {
+    }
       aislesCursor.close();
       db.close();
-    }
   }
 
   public void loadMoreAisles() {
@@ -497,8 +495,9 @@ public class VueTrendingAislesDataModel {
     public void handleMessage(android.os.Message msg) {
       @SuppressWarnings("unchecked")
       ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
+      Log.e("Profiling", "Profiling mHandler call 1 : " + mAisleContentList.size());
       for (AisleWindowContent content : aisleContentArray) {
-        Log.e("Profiling", "Profiling : mHandler call 1");
+        Log.e("Profiling", "Profiling : mHandler call 1 AisleId() : " + content.getAisleId());
         AisleWindowContent aisleItem = getAisleItem(content.getAisleId());
         aisleItem.addAisleContent(content.getAisleContext(),
             content.getImageList());
@@ -506,19 +505,27 @@ public class VueTrendingAislesDataModel {
       for (IAisleDataObserver observer : mAisleDataObserver) {
         observer.onAisleDataUpdated(mAisleContentList.size());
       }
-      runTask(new Runnable() {
-
+      new Handler().postDelayed(new Runnable() {
+        
         @Override
         public void run() {
           runTask(new Runnable() {
-			
-			@Override
-			public void run() {
-				 getAislesFromDb();
-			}
-		});
+
+            @Override
+            public void run() {
+              runTask(new Runnable() {
+                
+                @Override
+                public void run() {
+                     getAislesFromDb();
+                }
+            });
+            }
+          });
+          
         }
-      });
+      }, 100);
+      
     };
   };
  

@@ -16,7 +16,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +34,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.Menu;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
@@ -56,17 +59,17 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
     private int likeImageShowTime = 1000;
     
     @SuppressWarnings("deprecation")
-   @SuppressLint("NewApi")
+    @SuppressLint("NewApi")
     @Override
-   public void onCreate(Bundle icicle) {
+    public void onCreate(Bundle icicle) {
       super.onCreate(icicle);
       // setContentView(R.layout.vuedetails_frag);
-      setContentView(R.layout.aisle_details_activity_landing);
-
-      int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+     setContentView(R.layout.aisle_details_activity_landing);
+      getSupportActionBar().hide();
+      /*int currentapiVersion = android.os.Build.VERSION.SDK_INT;
       if (currentapiVersion >= 11) {
          getActionBar().hide();
-      }
+      }*/
 
         mSlidingDrawer = (SlidingDrawer) findViewById(R.id.drawer2);
         mSlidingDrawer
@@ -88,8 +91,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
                };
                @Override
                public void onScrollStarted() {
-
-                  getSlidingMenu().setTouchModeAbove(
+                 getSlidingMenu().setTouchModeAbove(
                         SlidingMenu.TOUCHMODE_NONE);
                }
                @Override
@@ -178,7 +180,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 						fragment.changeLikeCount(position,CLICK_EVENT);
 					}
 				}, likeImageShowTime);
-				
+
 			}
 		});
         mBottomScroller.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -292,7 +294,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
             if (mSlidingDrawer.isOpened()) {
             }
             else {
-               getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+             getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
             }
         }
     };
@@ -300,6 +302,20 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
     public void onPause(){
         super.onPause();
 
+    }
+    
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+      if (keyCode == KeyEvent.KEYCODE_BACK) {
+        if (getSlidingMenu().isMenuShowing()) {
+          if (!mFrag.listener.onBackPressed()) {
+            getSlidingMenu().toggle();
+          }
+        } else {
+          super.onBackPressed();
+        }
+      }
+      return false;
     }
 
     @Override
@@ -353,9 +369,9 @@ class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         }
     }
 }
-      /*@Override
+     /* @Override
       public boolean onCreateOptionsMenu(Menu menu) {
-          getMenuInflater().inflate(R.menu.title_options, menu);
+         getSupportMenuInflater().inflate(R.menu.title_options, menu);
           // Configure the search info and add any event listeners
           return super.onCreateOptionsMenu(menu);
       }*/

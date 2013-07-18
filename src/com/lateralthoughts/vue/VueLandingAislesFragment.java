@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.app.Fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.Context;
@@ -15,9 +14,7 @@ import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.view.MotionEvent;
-import android.widget.AdapterView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
@@ -35,12 +32,12 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 	private VueContentGateway mVueContentGateway;
 	private TrendingAislesLeftColumnAdapter mLeftColumnAdapter;
 	private TrendingAislesRightColumnAdapter mRightColumnAdapter;
-	
+
 	private ListView mLeftColumnView;
 	private ListView mRightColumnView;
 	private AisleClickListener mAisleClickListener;
 	//private MultiColumnListView mView;
-	
+
 	int[] mLeftViewsHeights;
 	int[] mRightViewsHeights;
 
@@ -72,7 +69,7 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 		//TODO: any particular state that we want to restore?
 		
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 	    

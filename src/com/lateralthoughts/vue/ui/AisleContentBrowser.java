@@ -151,7 +151,9 @@ public class AisleContentBrowser extends ViewFlipper {
                         	mSwipeListener.onAisleSwipe("Left");
                         }
 	                   // if((currentIndex+1)>=0 && (currentIndex+1) < aisleContentBrowser.getChildCount() )
+	                    if(detailImgClickListenr != null) {
 	                    detailImgClickListenr.onImageSwipe(currentIndex+1);
+	                    }
 	                    if(null != mSpecialNeedsAdapter && null == nextView){
 	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, null, currentIndex, currentIndex+1, true)){
 	                            mAnimationInProgress = true;
@@ -207,7 +209,9 @@ public class AisleContentBrowser extends ViewFlipper {
                            }
 	                     
 	                      // if((currentIndex-1)>=0 && (currentIndex-1) < aisleContentBrowser.getChildCount() )
+	                       if(detailImgClickListenr != null) {
 	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
+	                       }
 	                        if(null != mSpecialNeedsAdapter && null == nextView){
 	                            if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex-1, true)){
 	                            	

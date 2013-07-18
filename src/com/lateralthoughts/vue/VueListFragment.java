@@ -32,6 +32,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
@@ -43,6 +44,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -55,13 +57,14 @@ import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 
-public class VueListFragment extends Fragment {
+public class VueListFragment extends SherlockFragment/*Fragment*/ {
  // public static final String TAG = "VueListFragment";
   private ExpandableListView expandListView;
   private LinearLayout customlayout, aboutlayout, invitefriendsLayout;
   private RelativeLayout mBezelMainLayout, donelayout, aboutdonelayout, vue_list_fragment_invite_friendsLayout_mainxml;
   private ImageView userProfilePic;
-  private TextView userName, userDateOfBirth, userGender, userCurrentLocation;
+  private TextView userName, userDateOfBirth, userGender, userEmail, userCurrentLocation;
+  private EditText userNameEdit, userDOBEdit, userGenderEdit, userEmailEdit, userLocationEdit;
   private CheckBox smallch, mediumch, largech ;
   private Animation animDown;
   private Animation animUp;
@@ -91,6 +94,7 @@ public class VueListFragment extends Fragment {
         if (aboutlayout != null && aboutlayout.getVisibility() == View.VISIBLE) {
           aboutlayout.setVisibility(View.GONE);
           aboutlayout.startAnimation(animDown);
+          expandListView.setVisibility(View.VISIBLE);
           returnWhat = true;
         }
        
@@ -98,6 +102,7 @@ public class VueListFragment extends Fragment {
             && customlayout.getVisibility() == View.VISIBLE) {
           customlayout.setVisibility(View.GONE);
           customlayout.startAnimation(animDown);
+          expandListView.setVisibility(View.VISIBLE);
           returnWhat = true;
         }
         return returnWhat;
@@ -638,19 +643,40 @@ public class VueListFragment extends Fragment {
       expandListView.setVisibility(View.GONE);
       customlayout.startAnimation(animUp);
       customlayout.setVisibility(View.VISIBLE);
-      String name  = userName.getText().toString();
-      String dob = userDateOfBirth.getText().toString();
-      String gender = userGender.getText().toString();
-      String location = userCurrentLocation.toString();
-      name = "Name: " + sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "");
-      dob = "DOB: " + sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_DOB, "");
-      gender = "Gender: " + sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_GENDER, "");
-      location = "Location: " + sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_LOCATION, "");
-      String profilePicUrl = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_PROFILE_PICTURE, null);
-      userName.setText(name);
+      String name = "";
+      String dob = "";
+      String gender = "";
+      String email = "";
+      String location = "";
+      String profilePicUrl = "";
+      if(!sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "").isEmpty()) {
+        name = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "");
+        dob = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_DOB, "");
+        gender = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_GENDER, "");
+        email = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_EMAIL, "");
+        location = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_LOCATION, "");
+        profilePicUrl = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_PROFILE_PICTURE, null);
+      } else if(!sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME, "").isEmpty()) {
+        name = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME, "");
+        dob =  sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_DOB, "");
+        gender = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_GENDER, "");
+        email = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_EMAIL, "");
+        location = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_LOCATION, "");
+      } else {
+        
+      }
+      /*userName.setText(name);
       userDateOfBirth.setText(dob);
       userGender.setText(gender);
-      userCurrentLocation.setText(location);
+      userCurrentLocation.setText(location);*/
+      userNameEdit.setText(name);
+      userDOBEdit.setText(dob);
+      userGenderEdit.setText(gender);
+      userEmailEdit.setText(email);
+      userLocationEdit.setText(location);
+      if(!userEmailEdit.getText().toString().isEmpty()) {
+        userEmailEdit.setEnabled(false);
+      }
       if(profilePicUrl != null) {
         Response.Listener listener = new Response.Listener<Bitmap>() {
           @Override
@@ -714,7 +740,15 @@ public class VueListFragment extends Fragment {
       userName = (TextView) layoutSettings.findViewById(R.id.user_name);
       userDateOfBirth = (TextView) layoutSettings.findViewById(R.id.user_date_Of_birth);
       userGender = (TextView) layoutSettings.findViewById(R.id.user_gender);
+      userEmail = (TextView) layoutSettings.findViewById(R.id.user_Email);
       userCurrentLocation = (TextView) layoutSettings.findViewById(R.id.user_current_location);
+      
+      userNameEdit = (EditText) layoutSettings.findViewById(R.id.user_name_EditText);
+      userDOBEdit =  (EditText) layoutSettings.findViewById(R.id.user_DOB_EditText);
+      userGenderEdit = (EditText) layoutSettings.findViewById(R.id.user_Gender_EditText);
+      userEmailEdit = (EditText) layoutSettings.findViewById(R.id.user_Email_EditText);
+      userLocationEdit = (EditText) layoutSettings.findViewById(R.id.user_location_EditText);
+      
       donelayout = (RelativeLayout) layoutSettings.findViewById(R.id.donelayout);
       donelayout.setOnClickListener(new OnClickListener() {
         @Override
