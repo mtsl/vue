@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -56,7 +57,8 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
    AisleImageDetails mItemDetails = null;
     private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
     private BitmapLoaderUtils mBitmapLoaderUtils;
-    private int likeImageShowTime = 1000;
+    private int mLikeImageShowTime = 1000;
+    public boolean misKeyboardShown = false;
     
     @SuppressWarnings("deprecation")
     @SuppressLint("NewApi")
@@ -139,7 +141,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 								.findFragmentById(R.id.aisle_details_view_fragment);
 						fragment.changeLikeCount(position,CLICK_EVENT);
 					}
-				}, likeImageShowTime);
+				}, mLikeImageShowTime);
 				
 			}
 		});
@@ -159,7 +161,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 								.findFragmentById(R.id.aisle_details_view_fragment);
 						fragment.changeLikeCount(position,LONG_PRESS_EVENT);
 					}
-				}, likeImageShowTime);
+				}, mLikeImageShowTime);
 				return false;
 			}
 		});
@@ -179,7 +181,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 								.findFragmentById(R.id.aisle_details_view_fragment);
 						fragment.changeLikeCount(position,CLICK_EVENT);
 					}
-				}, likeImageShowTime);
+				}, mLikeImageShowTime);
 
 			}
 		});
@@ -199,7 +201,7 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 								.findFragmentById(R.id.aisle_details_view_fragment);
 						fragment.changeLikeCount(position,LONG_PRESS_EVENT);
 					}
-				}, likeImageShowTime);
+				}, mLikeImageShowTime);
 				return false;
 			}
 		});
@@ -284,6 +286,18 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
 	}
     @Override
     public void onResume(){
+    	final View activityRootView = findViewById(R.id.activityroot);
+    	activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+    	    @Override
+    	    public void onGlobalLayout() {
+    	        int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+    	        if (heightDiff > 100) { // if more than 100 pixels, its probably a keyboard...
+    	        	misKeyboardShown = true;
+    	        } else {
+    	        	misKeyboardShown = false;
+    	        }
+    	     }
+    	});
         super.onResume();
     }
     
@@ -303,20 +317,23 @@ public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  
         super.onPause();
 
     }
-    
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-      if (keyCode == KeyEvent.KEYCODE_BACK) {
-        if (getSlidingMenu().isMenuShowing()) {
-          if (!mFrag.listener.onBackPressed()) {
-            getSlidingMenu().toggle();
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (getSlidingMenu().isMenuShowing()) {
+              if (!mFrag.listener.onBackPressed()) {
+                getSlidingMenu().toggle();
+              }
+            } else {
+            	if(!misKeyboardShown) 
+              super.onBackPressed();
+            }
           }
-        } else {
-          super.onBackPressed();
-        }
-      }
-      return false;
+          return false;
+    	 
     }
+    
+ 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

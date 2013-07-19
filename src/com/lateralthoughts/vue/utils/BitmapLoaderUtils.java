@@ -15,7 +15,11 @@ import com.lateralthoughts.vue.VueApplication;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.util.Log;
 
 public class BitmapLoaderUtils {
@@ -125,7 +129,7 @@ public class BitmapLoaderUtils {
                 
                 
                 
-
+/*
                 int h=(int) Math.ceil((float) height/(float)bestHeight);
                 int w=(int) Math.ceil((float) width /(float) reqWidth);
 
@@ -136,17 +140,31 @@ public class BitmapLoaderUtils {
                     }else{
                         o.inSampleSize=w;
                     }
-                }
+                }*/
             }
             
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            //o2.inSampleSize = scale;
-            o2.inSampleSize =  o.inSampleSize;
+            o2.inSampleSize = scale;
+           // o2.inSampleSize =  o.inSampleSize;
             //if(DEBUG) Log.d("Jaws","using inSampleSizeScale = " + scale + " original width = " + o.outWidth + "screen width = " + mScreenWidth);
             FileInputStream stream2=new FileInputStream(f);
             Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);
             stream2.close();
+            if(bitmap != null) {
+            width = bitmap.getWidth();
+            height = bitmap.getHeight();
+            if(/*height > bestHeight ||*/ width > reqWidth) {
+             /*   float scale2 = (float)reqWidth/width;
+                  int height1= Math.round(height * scale2);
+                  int  widht1= Math.round(width * scale2);
+                  if(widht1 > 0 && height1 > 0) {
+                  bitmap = Bitmap.createScaledBitmap(bitmap, widht1, height1,
+  						true);
+                  }*/
+            	bitmap = getModifiedBitmap(bitmap,reqWidth,height);
+            }
+            }
             return bitmap;
         } catch (FileNotFoundException e) {
         } 
@@ -155,7 +173,25 @@ public class BitmapLoaderUtils {
         }
         return null;
     }
-    
+    private Bitmap getModifiedBitmap(Bitmap originalImage, int width, int height){
+        //here width & height are the desired width & height values)
+        
+        //first lets create a new bitmap and a canvas to draw into it.
+        Bitmap newBitmap = Bitmap.createBitmap((int)width, (int)height, Config.ARGB_8888);
+        float originalWidth = originalImage.getWidth(), originalHeight = originalImage.getHeight();
+        Canvas canvas = new Canvas(newBitmap);
+        float scale = width/originalWidth;
+        float xTranslation = 0.0f, yTranslation = (height - originalHeight * scale)/2.0f;
+        Matrix transformation = new Matrix();
+        //now that we have the transformations, set that for our drawing ops
+        transformation.postTranslate(xTranslation, yTranslation);
+        transformation.preScale(scale, scale);
+        //create a paint and draw into new canvas
+         Paint paint = new Paint();
+        paint.setFilterBitmap(true);
+        canvas.drawBitmap(originalImage, transformation, paint);
+        return newBitmap;
+    }
     public Bitmap getCachedBitmap(String url){
     	return mAisleImagesCache.get(url);    	
     }

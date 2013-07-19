@@ -285,19 +285,25 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                 //Log.e("AisleContentAdapter","bitmap present. imageView = " + imageView);
             	//setParams(contentBrowser,imageView,bitmap);
             	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-            	/*	 if(bitmap.getHeight() < mImageDimention.mImgHeight) {*/
+            	 
             			mImageDimention = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
             			 bitmap =  mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
             			 setParams( contentBrowser, imageView,bitmap.getHeight());
-            		 /*}*/
+            		 
                 
             	 }
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);
             }
             else{
+            	if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
                 loadBitmap(itemDetails,itemDetails.mAvailableHeight,contentBrowser, imageView);
                 contentBrowser.addView(imageView);
+            	} else {
+            		int bestHeigh = mWindowContent.getBestHeightForWindow();
+            		 loadBitmap(itemDetails,bestHeigh,contentBrowser, imageView);
+                     contentBrowser.addView(imageView);
+            	}
             }
         }
         return true;
@@ -309,6 +315,11 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     
     public void loadBitmap( AisleImageDetails itemDetails, int bestHeight, AisleContentBrowser flipper, ImageView imageView) {
     	String loc = itemDetails.mImageUrl;
+    	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)){
+    		 loc = itemDetails.mImageUrl;
+    	 } else {
+    		 loc = itemDetails.mCustomImageUrl;
+    	 }
         if (cancelPotentialDownload(loc, imageView)) {          
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
@@ -374,11 +385,11 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 
 				if (this == bitmapWorkerTask) {
 					vFlipper.invalidate();
-					  setParams(aisleContentBrowser, imageView,mAvailabeHeight);
 					 
-					/* if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-			                bitmap = Utils.getScalledImage(bitmap,mAVailableWidth, mAvailabeHeight);
-			            	 }*/
+					 
+					 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+						 setParams(aisleContentBrowser, imageView,mAvailabeHeight);
+			            	 }
 					imageView.setImageBitmap(bitmap);
 				}
 			}

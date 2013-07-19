@@ -157,6 +157,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       TextView aisleDescription;
       TextView aisleOwnersName;
       TextView aisleContext, commentCount, likeCount;
+      TextView bookMarkCount;
       ImageView profileThumbnail;
       String uniqueContentId;
       LinearLayout aisleDescriptor;
@@ -221,6 +222,13 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
                .findViewById(R.id.vue_user_comment);
          mViewHolder.commentCount = (TextView) convertView
                .findViewById(R.id.vuewndow_comment_count);
+         mViewHolder.bookMarkCount = (TextView) convertView
+                 .findViewById(R.id.vuewndow_bookmark_count);
+         mViewHolder.commentCount.setTextSize(Utils.SMALL_TEXT_SIZE);
+         mViewHolder.bookMarkCount.setTextSize(Utils.SMALL_TEXT_SIZE);
+         mViewHolder.likeCount.setTextSize(Utils.SMALL_TEXT_SIZE);
+         
+         
          mViewHolder.commentImg = (ImageView) convertView
                .findViewById(R.id.vuewndow_comment_img);
          mViewHolder.commentSend = (ImageView) convertView.findViewById(R.id.sendcomment);
