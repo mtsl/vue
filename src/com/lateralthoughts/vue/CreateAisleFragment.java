@@ -936,4 +936,9 @@ public class CreateAisleFragment extends Fragment {
 		dataEntryAislesViewpager.setAdapter(new DataEntryAilsePagerAdapter(
 				getActivity(), aisleImagePathList));
 	}
+
+	public void addAisleDataToDataBase(String lookingFor, String occassion,
+			String category) {
+		
+	}
 }
