@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
 
@@ -185,33 +186,29 @@ public class VueConnectivityManager {
 
   public static boolean isNetworkConnected(Context context) {
     boolean isConneted = true;
-   /* SharedPreferences pref = PreferenceManager
-        .getDefaultSharedPreferences(context);*/
-    if(!VueConnectivityManager.checkConnection(context, false)) {
+    if(isAirplaneModeOn(context)) {
+      isConneted = false;
+    } else if(!VueConnectivityManager.checkConnection(context, false)) {
       isConneted = false;
       if(!isTostShown) {
         isTostShown = true;
       Toast.makeText(context, R.string.no_network, Toast.LENGTH_SHORT).show();
       }
     }
-    /*if(!pref.getBoolean(Utils.NETWORK_SETTINGS, false) && !VueConnectivityManager
-        .checkConnection(context, false)) {
-      isConneted = false;
-      if(!isTostShown) {
-        isTostShown = true;
-      Toast.makeText(context, R.string.no_network, Toast.LENGTH_SHORT).show();
-      }
-    } else if(pref.getBoolean(Utils.NETWORK_SETTINGS, false) && !VueConnectivityManager
-        .checkConnection(context, true)) {
-      isConneted = false;
-      if(!isTostShown) {
-        isTostShown = true;
-      Toast.makeText(context, R.string.no_wifi, Toast.LENGTH_SHORT).show();
-      }
-    } else {
-      isConneted = true;
-      isTostShown = false;
-    }*/
+
     return isConneted;
   }
+  
+  /**
+* Gets the state of Airplane Mode.
+* 
+* @param context
+* @return true if enabled.
+*/
+private static boolean isAirplaneModeOn(Context context) {
+
+ return Settings.System.getInt(context.getContentResolver(),
+         Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+
+}
 }

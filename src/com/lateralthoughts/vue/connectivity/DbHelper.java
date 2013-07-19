@@ -26,9 +26,9 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.ID + " text);";
      
      private String createAisleImagesTable = "create table if not exists " + DATABASE_TABLE_AISLES_IMAGES
-     + " (" + VueConstants.AISLE_ID + " integer primary key, "
+     + " (" + VueConstants.IMAGE_ID + " integer primary key, "
+     + VueConstants.AISLE_ID + " text, "
      + VueConstants.TITLE + " text, "
-     + VueConstants.IMAGE_ID + " text, "
      + VueConstants.IMAGE_URL + " text, "
      + VueConstants.DETAILS_URL + " text, "
      + VueConstants.STORE + " text, "
@@ -42,6 +42,8 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.COMMENT + " text, "
      + VueConstants.AISLE_ID + " text, "
      + VueConstants.IMAGE_ID + " text);";
+     
+     
 
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -52,6 +54,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		db.execSQL(createAislesTable);
 		db.execSQL(createAisleImagesTable);
 		db.execSQL(createQueuedDataToSyncTable);
+		
 	}
 
 	@Override
