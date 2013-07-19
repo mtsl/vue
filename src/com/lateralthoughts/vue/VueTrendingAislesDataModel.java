@@ -21,6 +21,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -392,7 +393,7 @@ public class VueTrendingAislesDataModel {
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
     AisleWindowContent aisleItem = null;
-    HashMap<String, AisleContext> map = new HashMap<String, AisleContext>();
+    LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
     ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
     ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
     DbHelper helper = new DbHelper(mContext);

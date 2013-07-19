@@ -3,7 +3,6 @@ package com.lateralthoughts.vue;
 //generic android goodies
 
 import java.lang.ref.WeakReference;
-import java.sql.Wrapper;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
@@ -16,13 +15,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -32,13 +28,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
-import android.widget.Toast;
 
-import com.actionbarsherlock.view.Menu;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class AisleDetailsViewActivity extends BaseActivity/*FragmentActivity*/  {

@@ -97,12 +97,11 @@ public class VueContentGateway {
 
               String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI + "aisle/trending?limit=%s&offset=%s";
               String requestUrl = String.format(requestUrlBase, limit, offset);
+              Log.e("Profiling", "Profiling : " + requestUrl);
               Response.Listener listener = new Response.Listener<JSONArray>(){
                   @Override
                   public void onResponse(JSONArray jsonArray){
-                    Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 2");
                       if(null != jsonArray){
-                        Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 3");
                           Bundle responseBundle = new Bundle();
                           responseBundle.putString("result",jsonArray.toString());
                           receiver.send(1,responseBundle);

@@ -11,5 +11,5 @@
      <item android:id="@+id/menu_create_aisles"
           android:icon="@drawable/createaisle"
           android:title="@string/create_aisle"
-          android:showAsAction="ifRoom|withText"/>
+          android:showAsAction="always|withText"/>
 </menu>
