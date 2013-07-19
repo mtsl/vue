@@ -54,7 +54,8 @@ public class CreateAisleFragment extends Fragment {
 	ListView categoryListview = null;
 	LinearLayout lookingForPopup = null, lookingForListviewLayout = null,
 			ocassionListviewLayout = null, ocassionPopup = null,
-			categoeryPopup = null, categoryListviewLayout = null;
+			categoeryPopup = null, categoryListviewLayout = null,
+			dataEntryRootLayout = null;
 	TextView touchToChangeImage = null, lookingForBigText = null,
 			occassionBigText = null, categoryText = null;
 	com.lateralthoughts.vue.utils.EditTextBackEvent lookingForText = null,
@@ -79,7 +80,6 @@ public class CreateAisleFragment extends Fragment {
 			titleBarBottomLayout = null, actionBarTopLayout = null,
 			dataEntryInviteFriendsCancelLayout = null,
 			dataEntryInviteFriendsGoogleplusLayout = null;
-	public static boolean createAilseKeyboardHiddenShownFlag = false;
 	ProgressDialog dataentryInviteFriendsProgressdialog = null;
 	ListView dataEntryInviteFriendsList = null;
 	ImageView createAisleTitleBg = null, createAiselCloseBtn = null,
@@ -93,8 +93,8 @@ public class CreateAisleFragment extends Fragment {
 	LinearLayout findAtPopup = null;
 	ViewPager dataEntryAislesViewpager = null;
 	private static final int AISLE_IMAGE_MARGIN = 96;
-	private static final String LOOKING_FOR = "LookingFor";
-	private static final String OCCASION = "Occasion";
+	private static final String LOOKING_FOR = "Looking";
+	private static final String OCCASION = " Occasion";
 	private static final String CATEGORY = "Category";
 	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
 	private int currentPagePosition = 0;
@@ -117,7 +117,6 @@ public class CreateAisleFragment extends Fragment {
 		screenHeight = screenHeight
 				- Utils.dipToPixels(getActivity(), AISLE_IMAGE_MARGIN);
 		screenWidth = dm.widthPixels;
-		createAilseKeyboardHiddenShownFlag = true;
 		View v = inflater.inflate(R.layout.create_aisleview_fragment,
 				container, false);
 		inputMethodManager = (InputMethodManager) getActivity()
@@ -128,6 +127,8 @@ public class CreateAisleFragment extends Fragment {
 				.findViewById(R.id.createaisel_title_top_bg);
 		dataEntryAislesViewpager = (ViewPager) v
 				.findViewById(R.id.dataentry_aisles_viewpager);
+		dataEntryRootLayout = (LinearLayout) v
+				.findViewById(R.id.dataentry_root_layout);
 		edit_aisle = (ImageView) v.findViewById(R.id.edit_aisle);
 		findAtIcon = (ImageView) v.findViewById(R.id.find_at_icon);
 		findAtText = (EditTextBackEvent) v.findViewById(R.id.find_at_text);
@@ -197,7 +198,6 @@ public class CreateAisleFragment extends Fragment {
 					@Override
 					public boolean onEditorAction(TextView arg0, int arg1,
 							KeyEvent arg2) {
-						createAilseKeyboardHiddenShownFlag = false;
 						previousSaySomething = saySomethingAboutAisle.getText()
 								.toString();
 						inputMethodManager.hideSoftInputFromWindow(
@@ -212,7 +212,6 @@ public class CreateAisleFragment extends Fragment {
 		saySomethingAboutAisle.setonInterceptListen(new OnInterceptListener() {
 			@Override
 			public void onKeyBackPressed() {
-				createAilseKeyboardHiddenShownFlag = false;
 				inputMethodManager.hideSoftInputFromWindow(
 						saySomethingAboutAisle.getWindowToken(), 0);
 				saySomethingAboutAisle.setText(previousSaySomething);
@@ -230,38 +229,22 @@ public class CreateAisleFragment extends Fragment {
 				return false;
 			}
 		});
-		saySomethingAboutAisle.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-					int arg3) {
-				createAilseKeyboardHiddenShownFlag = true;
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1,
-					int arg2, int arg3) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable arg0) {
-			}
-		});
 		lookingForText
 				.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 					@Override
 					public boolean onEditorAction(TextView v, int actionId,
 							KeyEvent event) {
-						createAilseKeyboardHiddenShownFlag = false;
 						lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-						lookingForBigText.setText(lookingForText.getText()
-								.toString());
+						if (lookingForText.getText().toString().trim().length() > 0) {
+							lookingForBigText.setText(lookingForText.getText()
+									.toString());
+						}
 						previousLookingfor = lookingForText.getText()
 								.toString();
 						lookingForPopup.setVisibility(View.GONE);
 						inputMethodManager.hideSoftInputFromWindow(
 								lookingForText.getWindowToken(), 0);
 						if (!dontGoToNextlookingFor) {
-							createAilseKeyboardHiddenShownFlag = true;
 							occassionBigText.setBackgroundColor(getResources()
 									.getColor(R.color.yellowbgcolor));
 							ocassionPopup.setVisibility(View.VISIBLE);
@@ -273,7 +256,6 @@ public class CreateAisleFragment extends Fragment {
 				});
 		lookingForText.setonInterceptListen(new OnInterceptListener() {
 			public void onKeyBackPressed() {
-				createAilseKeyboardHiddenShownFlag = false;
 				lookingForPopup.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
 				lookingForText.setText(previousLookingfor);
@@ -304,16 +286,16 @@ public class CreateAisleFragment extends Fragment {
 			@Override
 			public boolean onEditorAction(TextView arg0, int actionId,
 					KeyEvent arg2) {
-				createAilseKeyboardHiddenShownFlag = false;
 				inputMethodManager.hideSoftInputFromWindow(
 						occasionText.getWindowToken(), 0);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				occassionBigText.setText(" "
-						+ occasionText.getText().toString());
+				if (occasionText.getText().toString().trim().length() > 0) {
+					occassionBigText.setText(" "
+							+ occasionText.getText().toString());
+				}
 				previousOcasion = occasionText.getText().toString();
 				ocassionPopup.setVisibility(View.GONE);
 				if (!dontGoToNextForOccasion) {
-					createAilseKeyboardHiddenShownFlag = true;
 					categoryListview.setVisibility(View.VISIBLE);
 					categoryListview.setAdapter(new CategoryAdapter(
 							getActivity()));
@@ -325,7 +307,6 @@ public class CreateAisleFragment extends Fragment {
 		});
 		occasionText.setonInterceptListen(new OnInterceptListener() {
 			public void onKeyBackPressed() {
-				createAilseKeyboardHiddenShownFlag = false;
 				lookingForPopup.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
 				occasionText.setText(previousOcasion);
@@ -353,7 +334,19 @@ public class CreateAisleFragment extends Fragment {
 		lookingForBigText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				if (addImageToAisleFlag) {
+				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				ocassionPopup.setVisibility(View.GONE);
+				inputMethodManager.hideSoftInputFromWindow(
+						occasionText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						saySomethingAboutAisle.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						findAtText.getWindowToken(), 0);
+				findAtPopup.setVisibility(View.GONE);
+				categoryListview.setVisibility(View.GONE);
+				categoryListviewLayout.setVisibility(View.GONE);
+				categoeryPopup.setVisibility(View.GONE);
+				if (addImageToAisleFlag || editAisleImageFlag) {
 					showAlertForEditPermission(LOOKING_FOR);
 				} else {
 					lookingForTextClickFunctionality();
@@ -363,7 +356,19 @@ public class CreateAisleFragment extends Fragment {
 		occassionBigText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				if (addImageToAisleFlag) {
+				lookingForPopup.setVisibility(View.GONE);
+				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				inputMethodManager.hideSoftInputFromWindow(
+						lookingForText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						findAtText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						saySomethingAboutAisle.getWindowToken(), 0);
+				findAtPopup.setVisibility(View.GONE);
+				categoryListview.setVisibility(View.GONE);
+				categoryListviewLayout.setVisibility(View.GONE);
+				categoeryPopup.setVisibility(View.GONE);
+				if (addImageToAisleFlag || editAisleImageFlag) {
 					showAlertForEditPermission(OCCASION);
 				} else {
 					occassionTextClickFunctionality();
@@ -373,7 +378,20 @@ public class CreateAisleFragment extends Fragment {
 		categoeryIcon.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (addImageToAisleFlag) {
+				lookingForPopup.setVisibility(View.GONE);
+				ocassionPopup.setVisibility(View.GONE);
+				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				inputMethodManager.hideSoftInputFromWindow(
+						occasionText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						lookingForText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						findAtText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						saySomethingAboutAisle.getWindowToken(), 0);
+				findAtPopup.setVisibility(View.GONE);
+				if (addImageToAisleFlag || editAisleImageFlag) {
 					showAlertForEditPermission(CATEGORY);
 				} else {
 					categoryIconClickFunctionality();
@@ -383,6 +401,21 @@ public class CreateAisleFragment extends Fragment {
 		touchToChangeImage.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				inputMethodManager.hideSoftInputFromWindow(
+						saySomethingAboutAisle.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						occasionText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						lookingForText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						findAtText.getWindowToken(), 0);
+				lookingForPopup.setVisibility(View.GONE);
+				ocassionPopup.setVisibility(View.GONE);
+				categoeryPopup.setVisibility(View.GONE);
+				findAtPopup.setVisibility(View.GONE);
+				categoryListviewLayout.setVisibility(View.GONE);
+				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 				Intent intent = new Intent(getActivity(),
 						CreateAisleSelectionActivity.class);
 				Bundle b = new Bundle();
@@ -402,7 +435,8 @@ public class CreateAisleFragment extends Fragment {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						dataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
+						dataEntryInviteFriendsPopupLayout
+								.setVisibility(View.GONE);
 						if (appInstalledOrNot(VueConstants.FACEBOOK_PACKAGE_NAME)) {
 							mShare = new ShareDialog(getActivity(),
 									getActivity());
@@ -448,7 +482,8 @@ public class CreateAisleFragment extends Fragment {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						dataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
+						dataEntryInviteFriendsPopupLayout
+								.setVisibility(View.GONE);
 						if (appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME)) {
 							ArrayList<Uri> imageUris = new ArrayList<Uri>();
 							for (int i = 0; i < aisleImagePathList.size(); i++) {
@@ -507,10 +542,32 @@ public class CreateAisleFragment extends Fragment {
 		createAiselToServer.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (addImageToAisleFlag) {
-					addImageToAisleToServer();
+				inputMethodManager.hideSoftInputFromWindow(
+						saySomethingAboutAisle.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						occasionText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						lookingForText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						findAtText.getWindowToken(), 0);
+				lookingForPopup.setVisibility(View.GONE);
+				ocassionPopup.setVisibility(View.GONE);
+				categoeryPopup.setVisibility(View.GONE);
+				findAtPopup.setVisibility(View.GONE);
+				categoryListviewLayout.setVisibility(View.GONE);
+				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				if (!(lookingForBigText.getText().toString().trim()
+						.equals(LOOKING_FOR))
+						&& !(occassionBigText.getText().toString().trim()
+								.equals(OCCASION))) {
+					if (addImageToAisleFlag) {
+						addImageToAisleToServer();
+					} else {
+						addAisleToServer();
+					}
 				} else {
-					addAisleToServer();
+					showAlertForMandotoryFields();
 				}
 			}
 		});
@@ -554,15 +611,18 @@ public class CreateAisleFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				findAtPopup.setVisibility(View.VISIBLE);
-				createAilseKeyboardHiddenShownFlag = true;
 				lookingForPopup.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
+				categoeryPopup.setVisibility(View.GONE);
+				categoryListviewLayout.setVisibility(View.GONE);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 				inputMethodManager.hideSoftInputFromWindow(
 						occasionText.getWindowToken(), 0);
 				inputMethodManager.hideSoftInputFromWindow(
 						lookingForText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						saySomethingAboutAisle.getWindowToken(), 0);
 				findAtText.requestFocus();
 				inputMethodManager.showSoftInput(findAtText, 0);
 			}
@@ -571,7 +631,6 @@ public class CreateAisleFragment extends Fragment {
 			@Override
 			public boolean onEditorAction(TextView arg0, int actionId,
 					KeyEvent arg2) {
-				createAilseKeyboardHiddenShownFlag = false;
 				inputMethodManager.hideSoftInputFromWindow(
 						findAtText.getWindowToken(), 0);
 				previousFindAtText = findAtText.getText().toString();
@@ -581,7 +640,6 @@ public class CreateAisleFragment extends Fragment {
 		});
 		findAtText.setonInterceptListen(new OnInterceptListener() {
 			public void onKeyBackPressed() {
-				createAilseKeyboardHiddenShownFlag = false;
 				findAtText.setText(previousFindAtText);
 				findAtPopup.setVisibility(View.GONE);
 				inputMethodManager.hideSoftInputFromWindow(
@@ -616,7 +674,6 @@ public class CreateAisleFragment extends Fragment {
 						aisleImagePathList.get(currentPagePosition))));
 				dataEntryAislesViewpager.setVisibility(View.GONE);
 				createaisleBg.setVisibility(View.VISIBLE);
-				lookingForPopup.setVisibility(View.VISIBLE);
 				createAisleScreenTitle.setText("Edit Aisle");
 				dataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
 				dataEntryBottomTopLayout.setVisibility(View.GONE);
@@ -625,10 +682,28 @@ public class CreateAisleFragment extends Fragment {
 				mainHeadingRow.setVisibility(View.VISIBLE);
 				touchToChangeImage.setVisibility(View.VISIBLE);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(getResources().getColor(
-						R.color.yellowbgcolor));
-				lookingForText.requestFocus();
-				inputMethodManager.showSoftInput(lookingForText, 0);
+				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+			}
+		});
+		dataEntryRootLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// hiding keyboard
+				inputMethodManager.hideSoftInputFromWindow(
+						saySomethingAboutAisle.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						occasionText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						lookingForText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						findAtText.getWindowToken(), 0);
+				lookingForPopup.setVisibility(View.GONE);
+				ocassionPopup.setVisibility(View.GONE);
+				categoeryPopup.setVisibility(View.GONE);
+				findAtPopup.setVisibility(View.GONE);
+				categoryListviewLayout.setVisibility(View.GONE);
+				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 			}
 		});
 		return v;
@@ -678,49 +753,45 @@ public class CreateAisleFragment extends Fragment {
 		dialog.show();
 	}
 
+	public void showAlertForMandotoryFields() {
+		final Dialog dialog = new Dialog(getActivity(),
+				R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.googleplusappinstallationdialog);
+		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
+		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+		messagetext.setText(getResources().getString(
+				R.string.dataentry_mandtory_field_mesg));
+		okButton.setVisibility(View.GONE);
+		noButton.setText("OK");
+		noButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show();
+	}
+
 	public void lookingForTextClickFunctionality() {
-		createAilseKeyboardHiddenShownFlag = true;
 		dontGoToNextlookingFor = true;
 		lookingForPopup.setVisibility(View.VISIBLE);
-		occassionBigText.setBackgroundColor(Color.TRANSPARENT);
 		lookingForBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
-		ocassionPopup.setVisibility(View.GONE);
 		lookingForText.requestFocus();
-		inputMethodManager.hideSoftInputFromWindow(
-				occasionText.getWindowToken(), 0);
 		inputMethodManager.showSoftInput(lookingForText, 0);
-		categoryListview.setVisibility(View.GONE);
-		categoryListviewLayout.setVisibility(View.GONE);
-		categoeryPopup.setVisibility(View.GONE);
 	}
 
 	public void occassionTextClickFunctionality() {
-		createAilseKeyboardHiddenShownFlag = true;
 		dontGoToNextForOccasion = true;
 		ocassionPopup.setVisibility(View.VISIBLE);
-		lookingForPopup.setVisibility(View.GONE);
-		lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 		occassionBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
 		occasionText.requestFocus();
-		inputMethodManager.hideSoftInputFromWindow(
-				lookingForText.getWindowToken(), 0);
 		inputMethodManager.showSoftInput(occasionText, 0);
-		categoryListview.setVisibility(View.GONE);
-		categoryListviewLayout.setVisibility(View.GONE);
-		categoeryPopup.setVisibility(View.GONE);
 	}
 
 	public void categoryIconClickFunctionality() {
-		lookingForPopup.setVisibility(View.GONE);
-		ocassionPopup.setVisibility(View.GONE);
-		occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-		lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-		inputMethodManager.hideSoftInputFromWindow(
-				occasionText.getWindowToken(), 0);
-		inputMethodManager.hideSoftInputFromWindow(
-				lookingForText.getWindowToken(), 0);
 		categoryListview.setVisibility(View.VISIBLE);
 		categoryListview.setAdapter(new CategoryAdapter(getActivity()));
 		categoryListviewLayout.setVisibility(View.VISIBLE);
@@ -797,7 +868,7 @@ public class CreateAisleFragment extends Fragment {
 
 	public void setGalleryORCameraImage(String picturePath) {
 		try {
-			Log.e("frag1", "gallery called,,,,"+picturePath);
+			Log.e("frag1", "gallery called,,,," + picturePath);
 			imagePath = picturePath;
 			createaisleBg.setVisibility(View.VISIBLE);
 			resizedImagePath = Utils.getResizedImage(new File(imagePath),
@@ -823,13 +894,6 @@ public class CreateAisleFragment extends Fragment {
 	}
 
 	public void addImageToAisleToServer() {
-		// hiding keyboard
-		inputMethodManager.hideSoftInputFromWindow(
-				saySomethingAboutAisle.getWindowToken(), 0);
-		inputMethodManager.hideSoftInputFromWindow(
-				occasionText.getWindowToken(), 0);
-		inputMethodManager.hideSoftInputFromWindow(
-				lookingForText.getWindowToken(), 0);
 		// Input parameters for Adding Aisle to server request...
 		String category = categoryText.getText().toString();
 		String lookingFor = lookingForBigText.getText().toString();
@@ -843,13 +907,6 @@ public class CreateAisleFragment extends Fragment {
 	}
 
 	public void addAisleToServer() {
-		// hiding keyboard
-		inputMethodManager.hideSoftInputFromWindow(
-				saySomethingAboutAisle.getWindowToken(), 0);
-		inputMethodManager.hideSoftInputFromWindow(
-				occasionText.getWindowToken(), 0);
-		inputMethodManager.hideSoftInputFromWindow(
-				lookingForText.getWindowToken(), 0);
 		// Input parameters for Adding Aisle to server request...
 		String category = categoryText.getText().toString();
 		String lookingFor = lookingForBigText.getText().toString();
@@ -863,18 +920,15 @@ public class CreateAisleFragment extends Fragment {
 	}
 
 	public void renderUIAfterAddingAisleToServer() {
-		if (editAisleImageFlag)
+		if (editAisleImageFlag) {
 			aisleImagePathList.remove(currentPagePosition);
+		}
 		editAisleImageFlag = false;
 		actionBarTopLayout.setVisibility(View.VISIBLE);
 		titleBarBottomLayout.setVisibility(View.GONE);
 		mainHeadingRow.setVisibility(View.GONE);
 		touchToChangeImage.setVisibility(View.GONE);
 		dataEntryBottomBottomLayout.setVisibility(View.GONE);
-		lookingForPopup.setVisibility(View.GONE);
-		ocassionPopup.setVisibility(View.GONE);
-		categoeryPopup.setVisibility(View.GONE);
-		categoryListviewLayout.setVisibility(View.GONE);
 		dataEntryBottomTopLayout.setVisibility(View.VISIBLE);
 		aisleImagePathList.add(0, resizedImagePath);
 		dataEntryAislesViewpager.setVisibility(View.VISIBLE);
