@@ -8,11 +8,14 @@ import java.util.Collections;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -40,6 +43,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+
+import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -937,8 +942,40 @@ public class CreateAisleFragment extends Fragment {
 				getActivity(), aisleImagePathList));
 	}
 
-	public void addAisleDataToDataBase(String lookingFor, String occassion,
-			String category) {
-		
+	private void addAisleDataToDataBase(String tableName, String keyword,long time, int count, boolean isNewFlag) {
+		DbHelper helper = new DbHelper(getActivity());
+		SQLiteDatabase db = helper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(VueConstants.KEYWORD, keyword);
+		values.put(VueConstants.LAST_USED_TIME, time);
+		values.put(VueConstants.NUMBER_OF_TIMES_USED, count);
+		if(isNewFlag) {
+		  db.insert(tableName, null, values);  
+		} else {
+		  db.update(tableName, values, VueConstants.KEYWORD + "=?", new String[] {keyword});
+		}
+		db.close();
+	}
+
+	private AisleData getAisleData(String tableName) {
+	  AisleData data = null;
+	  DbHelper helper = new DbHelper(getActivity());
+      SQLiteDatabase db = helper.getReadableDatabase();
+      Cursor c = db.query(tableName, null, null, null, null, null, VueConstants.LAST_USED_TIME +" DESC");
+	  if(c.moveToFirst()) {
+	    data = new AisleData();
+	    data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
+	    data.time = c.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));
+	    data.count = c.getInt(c.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
+	  }
+	  c.close();
+	  db.close();
+	  return data;
+	}
+	
+	public class AisleData {
+	  String keyword;
+	  long time;
+	  int count;
 	}
 }
