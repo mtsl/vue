@@ -126,7 +126,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				container, false);
 		RelativeLayout bottomBar = (RelativeLayout)v.findViewById(R.id.vue_bottom_bar);
 		//bottomBar.getBackground().setAlpha(75);
-		
+	 
 		mAisleDetailsList = (ListView) v.findViewById(R.id.aisle_details_list);
 		mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
 		mVueUserName = (TextView) v.findViewById(R.id.vue_user_name);
@@ -312,7 +312,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
           editText.setCursorVisible(true);
           editText.setTextColor(Color.parseColor(getResources().getString(R.color.black)));
           editText.requestFocus();
-			((EditTextBackEvent) editText)
+          ((AisleDetailsViewActivity) getActivity()).misKeyboardShown = true;
+			((EditTextBackEvent) editText) 
 					.setonInterceptListen(new OnInterceptListener() {
 
 						@Override
@@ -329,6 +330,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 							edtCommentLay.setVisibility(View.GONE);
 							view.setVisibility(View.VISIBLE);
 							mAisleDetailsAdapter.notifyDataSetChanged();
+							((AisleDetailsViewActivity) getActivity()).misKeyboardShown = false;
 						}
 
 						@Override
@@ -444,4 +446,40 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     public void changeLikeCount(int position,String clickType) {
     	mAisleDetailsAdapter.changeLikesCount(position,clickType);
     }
+ private OnInterceptListener getOnInterceptListener(final EditText editText,final FrameLayout edtCommentLay,final RelativeLayout view) {
+	
+	 class EditOnInterceptListener implements OnInterceptListener {
+
+		@Override
+		public void onKeyBackPressed() {
+		      final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	             inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+			inputMethodManager.toggleSoftInputFromWindow(
+					editText.getApplicationWindowToken(),
+					InputMethodManager.SHOW_FORCED, 0);
+			editText.setText("");
+			edtCommentLay.setVisibility(View.GONE);
+			view.setVisibility(View.VISIBLE);
+			mAisleDetailsAdapter.notifyDataSetChanged();
+			
+		}
+
+		@Override
+		public void setFlag(boolean flag) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public boolean getFlag() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+	 }
+	 EditOnInterceptListener editBackHandler = new EditOnInterceptListener();
+	 
+	 return editBackHandler;
+	 
+ }
 }

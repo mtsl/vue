@@ -52,9 +52,8 @@
         android:id="@+id/vue_bottom_bar"
             android:layout_height="48dp">
         <ImageView android:layout_width="32dp"
-                   android:layout_height="48dp"
+                   android:layout_height="32dp"
                    android:layout_marginLeft="4dp"
-                   android:scaleType="fitCenter"
                    android:id="@+id/vue_user_pic"
                    android:src="@drawable/profile_thumbnail"
                    android:layout_centerVertical="true"/>
@@ -68,17 +67,16 @@
                   android:layout_centerVertical="true"/>
         
         <ImageView android:layout_width="32dp"
-                   android:layout_height="48dp"
+                   android:layout_height="32dp"
                    android:id="@+id/vue_creat_aisle"
                    android:layout_centerInParent="true"
                    android:src="@drawable/add"/>
           <ImageView android:layout_width="32dp"
-                   android:layout_height="48dp"
+                   android:layout_height="32dp"
                    android:id="@+id/vue_aisle"
                    android:layout_toLeftOf="@+id/vuesharelayout"
                    android:layout_marginRight="16dp"
                    android:layout_centerVertical="true"
-                   
                    android:src="@drawable/aisleinfo"
                    />
           <RelativeLayout android:layout_width="48dip"

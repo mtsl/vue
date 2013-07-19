@@ -3,11 +3,13 @@ package com.lateralthoughts.vue;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
 public class CreateAisleActivity extends BaseActivity {
+
+	public boolean misKeyboardShown = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,42 @@ public class CreateAisleActivity extends BaseActivity {
 
 	public void finishActivity() {
 		finish();
+	}
+
+	@Override
+	public void onResume() {
+		final View createAisleActivityRootLayout = findViewById(R.id.create_aisle_activity_root_layout);
+		createAisleActivityRootLayout.getViewTreeObserver()
+				.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+					@Override
+					public void onGlobalLayout() {
+						int heightDiff = createAisleActivityRootLayout
+								.getRootView().getHeight()
+								- createAisleActivityRootLayout.getHeight();
+						if (heightDiff > 100) { // if more than 100 pixels, its
+												// probably a keyboard...
+							misKeyboardShown = true;
+						} else {
+							misKeyboardShown = false;
+						}
+					}
+				});
+		super.onResume();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (getSlidingMenu().isMenuShowing()) {
+				if (!mFrag.listener.onBackPressed()) {
+					getSlidingMenu().toggle();
+				}
+			} else {
+				if (!misKeyboardShown)
+					super.onBackPressed();
+			}
+		}
+		return false;
 	}
 
 	/*

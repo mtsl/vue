@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.json.JSONException;
@@ -46,6 +47,7 @@ import com.facebook.Request;
 import com.facebook.Request.Callback;
 import com.facebook.Request.GraphUserCallback;
 import com.facebook.Session;
+import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
@@ -96,7 +98,8 @@ public class VueLoginActivity extends FragmentActivity implements
 	LinearLayout socialIntegrationMainLayout;
 	Bundle bundle = null;
 	private static final String TAG = "VueLoginActivity";
-	private final List<String> PERMISSIONS = new ArrayList<String>();
+	//private static final List<String> READ_PERMISSIONS = Arrays.asList("publish_actions");
+	private final List<String> PUBLISH_PERMISSIONS=Arrays.asList("publish_actions", "email", "user_birthday");
 	ProgressDialog facebookProgressialog, googlePlusProgressDialog;
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
 			.getInstance().getString(R.string.pendingActionBundleKey);
@@ -119,10 +122,6 @@ public class VueLoginActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.socialnetworkingloginscreen);
-
-		PERMISSIONS.add("publish_actions");
-		PERMISSIONS.add("email");
-		PERMISSIONS.add("user_birthday");
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);
 		RelativeLayout googleplusign_in_buttonlayout = (RelativeLayout) findViewById(R.id.googleplusign_in_buttonlayout);
@@ -246,7 +245,7 @@ public class VueLoginActivity extends FragmentActivity implements
 										.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
 							}
 						});
-				login_button.setPublishPermissions(PERMISSIONS);
+				login_button.setPublishPermissions(PUBLISH_PERMISSIONS);
 				login_button
 						.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 							public void onUserInfoFetched(GraphUser user) {
@@ -568,7 +567,7 @@ public class VueLoginActivity extends FragmentActivity implements
 				// We need to get new permissions, then complete the action when
 				// we get called back.
 				session.requestNewPublishPermissions(new Session.NewPermissionsRequest(
-						this, PERMISSIONS));
+						this, PUBLISH_PERMISSIONS));
 			}
 		}
 	}

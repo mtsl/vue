@@ -338,7 +338,9 @@ public class AisleContentBrowser extends ViewFlipper {
 		  }
 		 if(sourName != null && sourName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
 		   if(nextView != null) {
+			   try{
 		   Bitmap bitmap = ((BitmapDrawable)nextView.getDrawable()).getBitmap();
+			 
 		   if(bitmap != null) {
 		   int height = bitmap.getHeight();
 		     int topBottomMargin = 24;
@@ -346,10 +348,15 @@ public class AisleContentBrowser extends ViewFlipper {
 		   FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
 					VueApplication.getInstance().getScreenWidth(),height);
 	    	 
-	    	if(aisleContentBrowser != null)
+	    	if(aisleContentBrowser != null) {
 	    		aisleContentBrowser.setLayoutParams(showpieceParams);
+	    	}
 		   }
+			   } catch(Exception e) {
+				   e.printStackTrace();
+			   }
 		   }
+			   
 		 }
 
 	}

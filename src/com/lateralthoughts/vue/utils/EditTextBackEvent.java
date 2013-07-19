@@ -59,14 +59,15 @@ public class EditTextBackEvent extends EditText {
 		  {
 			 return false;
 		  }*/
-		  return true;
+		  return false;
 
 		}
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
 
-    return super.dispatchKeyEvent(event);
+   // return super.dispatchKeyEvent(event);
+    return false;
   }
 
   /**

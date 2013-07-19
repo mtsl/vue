@@ -6,6 +6,7 @@
     <string name="trending">Trending</string>
     <string name="trending_aisles_tag">aisle/trending</string>
      <string name="dataentry_edit_permission">Do you want to change the existing data?</string>
+     <string name="dataentry_mandtory_field_mesg">Please enter Lookingfor and Occasion.</string>
     <string name="limit_tag">limit</string>
     <string name="offset_tag">offset</string>
     <string name="middle_earth">Visiting Middle Earth</string>
