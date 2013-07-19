@@ -369,8 +369,10 @@ public class VueTrendingAislesDataModel {
       values.put(VueConstants.AISLE_ID, info.mAisleId);
       values.put(VueConstants.ID, String.format(FORMATE, maxId + 1));
       db.insert(DbHelper.DATABASE_TABLE_AISLES, null, values);
+      int imgCount = 0;
       for (AisleImageDetails imageDetails : imageItemsArray) {
         ContentValues imgValues = new ContentValues();
+        imgValues.put(VueConstants.ID, String.format(FORMATE, imgCount + 1));
         imgValues.put(VueConstants.TITLE, imageDetails.mTitle);
         imgValues.put(VueConstants.IMAGE_URL, imageDetails.mImageUrl);
         imgValues.put(VueConstants.DETAILS_URL, imageDetails.mDetalsUrl);

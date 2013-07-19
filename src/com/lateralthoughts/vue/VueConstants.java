@@ -65,6 +65,7 @@ public class VueConstants {
 	public static final String STORE = "store";
 	// Column names for dataToSync table.
 	public static final String COMMENT = "comment";
+	
 	public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
 	public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
@@ -86,4 +87,10 @@ public class VueConstants {
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
 	public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
+	
+	// Column names for lookingFor, occasion, category table.
+	public static final String KEYWORD = "keyWord";
+	public static final String LAST_USED_TIME = "lastUsedTime";
+	public static final String NUMBER_OF_TIMES_USED = "numberOfTimesUsed";
+    // Column names for 
 }
