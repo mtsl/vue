@@ -92,5 +92,12 @@ public class VueConstants {
 	public static final String KEYWORD = "keyWord";
 	public static final String LAST_USED_TIME = "lastUsedTime";
 	public static final String NUMBER_OF_TIMES_USED = "numberOfTimesUsed";
-    // Column names for 
+    
+	// User Profile details
+	public static final String USER_NAME = "userName";
+	public static final String USER_PROFILE_PICTURE = "userProfilePicture";
+	public static final String USER_EMAIL = "userEmail";
+	public static final String USER_DOB = "userDob";
+	public static final String USER_GENDER = "userGender";
+	public static final String USER_LOCATION = "userLocation";
 }

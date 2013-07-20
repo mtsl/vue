@@ -29,7 +29,7 @@ public class FileCache {
 			cacheDir = context.getCacheDir();
 			vueAppCameraPicsDir = new File(context.getFilesDir(),
 					VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
-			vueAppCameraPicsDir = new File(context.getFilesDir(),
+			vueAppResizedImagesDir = new File(context.getFilesDir(),
 					VueConstants.VUE_APP_RESIZED_PICTURES_FOLDER);
 		}
 
