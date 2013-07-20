@@ -95,12 +95,14 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
           invitefriendsLayout.setVisibility(View.GONE);
           expandListView.setVisibility(View.VISIBLE);
           returnWhat = true;
+          Log.e("Profiling", "Profiling onBackPressed() invitefriendsLayout returnWhat : " + returnWhat);
         }
         if (aboutlayout != null && aboutlayout.getVisibility() == View.VISIBLE) {
           aboutlayout.setVisibility(View.GONE);
           aboutlayout.startAnimation(animDown);
           expandListView.setVisibility(View.VISIBLE);
           returnWhat = true;
+          Log.e("Profiling", "Profiling onBackPressed() invitefriendsLayout aboutlayout : " + returnWhat);
         }
        
         if (customlayout != null
@@ -109,6 +111,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
           customlayout.startAnimation(animDown);
           expandListView.setVisibility(View.VISIBLE);
           returnWhat = true;
+          Log.e("Profiling", "Profiling onBackPressed() invitefriendsLayout customlayout : " + returnWhat);
         }
         return returnWhat;
       }
