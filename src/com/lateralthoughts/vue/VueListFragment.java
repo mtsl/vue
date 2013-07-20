@@ -12,10 +12,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -57,7 +60,7 @@ import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 
-public class VueListFragment extends SherlockFragment/*Fragment*/ {
+public class VueListFragment extends SherlockFragment implements TextWatcher/*Fragment*/ {
  // public static final String TAG = "VueListFragment";
   private ExpandableListView expandListView;
   private LinearLayout customlayout, aboutlayout, invitefriendsLayout;
@@ -74,6 +77,8 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
   private ImageLoader mImageLoader;
   private ProgressDialog progress;
   private LayoutInflater inflater;
+  private boolean isProfileEdited = false;
+  private String profilePicUrl = "";
  
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -604,39 +609,31 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
 
 
 	  // Pull and display G+ friends from plus.google.com.
-	  private void getGPlusFriendsList() {
-	    if(VueLandingPageActivity.googlePlusFriendsDetailsList != null) {
-	    inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(getActivity(),
-	       VueLandingPageActivity.googlePlusFriendsDetailsList));
-	    expandListView.setVisibility(View.GONE);
-	    invitefriendsLayout.setVisibility(View.VISIBLE);
-	    invitefriendsLayout.startAnimation(animUp);
-	    
-	    if (progress.isShowing()) {
-		      progress.dismiss();
-		    }
-	    
-	    }
-	    else
-	    {
-	    	
-	    	  if (progress.isShowing()) {
-	    	      progress.dismiss();
-	    	    }
-	    	
-	    	 Intent i = new Intent(getActivity(), VueLoginActivity.class);
-	       	  Bundle b = new Bundle();
-	       	  b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
-	       	  b.putBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN, true);
-	       	 b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
-	       	  b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.GOOGLEPLUS);
-	       	  b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
-	       	  i.putExtras(b);
-	       	  startActivity(i);
-	    }
-	  
-
-	  }
+  private void getGPlusFriendsList() {
+    if (VueLandingPageActivity.googlePlusFriendsDetailsList != null) {
+      inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(getActivity(),
+          VueLandingPageActivity.googlePlusFriendsDetailsList));
+      expandListView.setVisibility(View.GONE);
+      invitefriendsLayout.setVisibility(View.VISIBLE);
+      invitefriendsLayout.startAnimation(animUp);
+      if (progress.isShowing()) {
+        progress.dismiss();
+      }
+    } else {
+      if (progress.isShowing()) {
+        progress.dismiss();
+      }
+      Intent i = new Intent(getActivity(), VueLoginActivity.class);
+      Bundle b = new Bundle();
+      b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+      b.putBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN, true);
+      b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+      b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.GOOGLEPLUS);
+      b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+      i.putExtras(b);
+      startActivity(i);
+    }
+  }
 	  
     private void getUserInfo() {
       expandListView.setVisibility(View.GONE);
@@ -647,8 +644,14 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
       String gender = "";
       String email = "";
       String location = "";
-      String profilePicUrl = "";
-      if(!sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "").isEmpty()) {
+      if(!sharedPreferencesObj.getString(VueConstants.USER_NAME, "").isEmpty()) {
+        name = sharedPreferencesObj.getString(VueConstants.USER_NAME, "");
+        dob = sharedPreferencesObj.getString(VueConstants.USER_DOB, "");
+        gender = sharedPreferencesObj.getString(VueConstants.USER_GENDER, "");
+        email = sharedPreferencesObj.getString(VueConstants.USER_EMAIL, "");
+        location = sharedPreferencesObj.getString(VueConstants.USER_LOCATION, "");
+        profilePicUrl = sharedPreferencesObj.getString(VueConstants.USER_PROFILE_PICTURE, null);
+      } else if(!sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "").isEmpty()) {
         name = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "");
         dob = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_DOB, "");
         gender = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_GENDER, "");
@@ -661,6 +664,7 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
         gender = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_GENDER, "");
         email = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_EMAIL, "");
         location = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_LOCATION, "");
+        profilePicUrl = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_PROFILE_PICTURE, null);
       } else {
         
       }
@@ -748,14 +752,37 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
       userEmailEdit = (EditText) layoutSettings.findViewById(R.id.user_Email_EditText);
       userLocationEdit = (EditText) layoutSettings.findViewById(R.id.user_location_EditText);
       
+      userNameEdit.addTextChangedListener(this);
+      userDOBEdit.addTextChangedListener(this);
+      userGenderEdit.addTextChangedListener(this);
+      userEmailEdit.addTextChangedListener(this);
+      userLocationEdit.addTextChangedListener(this);
       donelayout = (RelativeLayout) layoutSettings.findViewById(R.id.donelayout);
       donelayout.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
          // Utils.saveNetworkSettings(getActivity(), wifich.isChecked());
+          Log.e("Profiling", "Profiling User Profile onClick");
           customlayout.setVisibility(View.GONE);
           customlayout.startAnimation(animDown);
           expandListView.setVisibility(View.VISIBLE);
+          if(isProfileEdited) {
+            Log.e("Profiling", "Profiling User Profile onClick isProfileEdited : " + isProfileEdited);
+            userDOBEdit.getText().toString();
+          userGenderEdit.getText().toString();
+          userEmailEdit.getText().toString();
+          userLocationEdit.getText().toString();
+          userEmailEdit.getText().toString();
+          Editor editor = sharedPreferencesObj.edit();
+          editor.putString(VueConstants.USER_NAME, userNameEdit.getText().toString());
+          editor.putString(VueConstants.USER_DOB, userDOBEdit.getText().toString());
+          editor.putString(VueConstants.USER_GENDER, userGenderEdit.getText().toString());
+          editor.putString(VueConstants.USER_EMAIL, userEmailEdit.getText().toString());
+          editor.putString(VueConstants.USER_LOCATION, userLocationEdit.getText().toString());
+          editor.putString(VueConstants.USER_PROFILE_PICTURE, profilePicUrl);
+          editor.commit();
+          isProfileEdited = false;
+          }
         }
       });
       mBezelMainLayout.addView(layoutSettings);
@@ -797,4 +824,24 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
       aboutlayout.startAnimation(animUp);
 	
 	}
+
+  @Override
+  public void afterTextChanged(Editable s) {
+    Log.e("Profiling", "Profiling User Profile onClick afterTextChanged 1 : " + isProfileEdited);
+    if(!isProfileEdited)
+    isProfileEdited = true;
+    Log.e("Profiling", "Profiling User Profile onClick afterTextChanged 2 : " + isProfileEdited);
+  }
+
+  @Override
+  public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void onTextChanged(CharSequence s, int start, int before, int count) {
+    // TODO Auto-generated method stub
+    
+  }
 }

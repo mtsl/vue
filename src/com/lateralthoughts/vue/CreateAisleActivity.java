@@ -1,5 +1,8 @@
 package com.lateralthoughts.vue;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,12 +13,12 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 public class CreateAisleActivity extends BaseActivity {
 
 	public boolean misKeyboardShown = false;
+	public boolean isNewActionBar = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_aisle_main);
-		getActionBar().hide();
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			String imagePath = b
@@ -26,13 +29,55 @@ public class CreateAisleActivity extends BaseActivity {
 		}
 	}
 
-	/*
-	 * @Override public boolean onCreateOptionsMenu(Menu menu) {
-	 * getSupportMenuInflater().inflate(R.menu.title_options2, menu);
-	 * getSupportActionBar().setHomeButtonEnabled(true); // Configure the search
-	 * info and add any event listeners return super.onCreateOptionsMenu(menu);
-	 * }
-	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		if (!isNewActionBar) {
+			getSupportMenuInflater().inflate(R.menu.title_options2, menu);
+		} else if (isNewActionBar) {
+			getSupportMenuInflater()
+					.inflate(R.menu.create_aisle_options2, menu);
+
+		}
+		getSupportActionBar().setHomeButtonEnabled(true); // Configure the
+															// search
+		// info and add any event listeners
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		CreateAisleFragment fragment = null;
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			getSlidingMenu().toggle();
+			break;
+		case R.id.menu_create_aisles:
+			fragment = (CreateAisleFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			fragment.createAisleClickFunctionality();
+			break;
+		case R.id.menu_cancel:
+			finish();
+			break;
+		case R.id.menu_share:
+			fragment = (CreateAisleFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			fragment.shareClickFunctionality();
+			break;
+		case R.id.menu_create_aisles_edit:
+			fragment = (CreateAisleFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			fragment.editButtonClickFunctionality();
+			break;
+		case R.id.menu_add_image:
+			fragment = (CreateAisleFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			fragment.addImageToAisleButtonClickFunctionality();
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -70,10 +115,6 @@ public class CreateAisleActivity extends BaseActivity {
 		getSlidingMenu().toggle();
 	}
 
-	public void finishActivity() {
-		finish();
-	}
-
 	@Override
 	public void onResume() {
 		final View createAisleActivityRootLayout = findViewById(R.id.create_aisle_activity_root_layout);
@@ -85,7 +126,7 @@ public class CreateAisleActivity extends BaseActivity {
 								.getRootView().getHeight()
 								- createAisleActivityRootLayout.getHeight();
 						if (heightDiff > 100) { // if more than 100 pixels, its
-												// probably a keyboard...
+							// probably a keyboard...
 							misKeyboardShown = true;
 						} else {
 							misKeyboardShown = false;
@@ -93,7 +134,6 @@ public class CreateAisleActivity extends BaseActivity {
 					}
 				});
 		super.onResume();
-		VueApplication.getInstance().setBezelMenuFragment(mFrag);
 	}
 
 	@Override
@@ -111,13 +151,4 @@ public class CreateAisleActivity extends BaseActivity {
 		return false;
 	}
 
-	/*
-	 * @Override public boolean onOptionsItemSelected(MenuItem item) { switch
-	 * (item.getItemId()) { case android.R.id.home: getSlidingMenu().toggle();
-	 * break; case R.id.menu_create_aisles: CreateAilseFragment fragment =
-	 * (CreateAilseFragment) getSupportFragmentManager()
-	 * .findFragmentById(R.id.create_aisles_view_fragment);
-	 * fragment.addAisleToServer(); break; case R.id.menu_cancel: finish(); }
-	 * return super.onOptionsItemSelected(item); }
-	 */
 }

@@ -103,7 +103,6 @@ public class CreateAisleFragment extends Fragment {
 	private static final String CATEGORY = "Category";
 	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
 	private int currentPagePosition = 0;
-	private AisleData mAisleData = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -540,9 +539,11 @@ public class CreateAisleFragment extends Fragment {
 		});
 		createAiselCloseBtn.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				CreateAisleActivity activity = (CreateAisleActivity) getActivity();
-				activity.finishActivity();
+			public void onClick(View v) {/*
+										 * CreateAisleActivity activity =
+										 * (CreateAisleActivity) getActivity();
+										 * activity.finishActivity();
+										 */
 			}
 		});
 		createAiselToServer.setOnClickListener(new OnClickListener() {
@@ -684,7 +685,10 @@ public class CreateAisleFragment extends Fragment {
 				dataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
 				dataEntryBottomTopLayout.setVisibility(View.GONE);
 				actionBarTopLayout.setVisibility(View.GONE);
-				titleBarBottomLayout.setVisibility(View.VISIBLE);
+				titleBarBottomLayout.setVisibility(View.GONE);
+				CreateAisleActivity activity = (CreateAisleActivity) getActivity();
+				activity.isNewActionBar = false;
+				activity.invalidateOptionsMenu();
 				mainHeadingRow.setVisibility(View.VISIBLE);
 				touchToChangeImage.setVisibility(View.VISIBLE);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
@@ -712,12 +716,91 @@ public class CreateAisleFragment extends Fragment {
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 			}
 		});
-		/*
-		 * mAisleData = getAisleData(DbHelper.DATABASE_TABLE_LOOKINGFOR); if
-		 * (mAisleData != null) { lookingForBigText.setText(mAisleData.keyword);
-		 * lookingForText.setText(mAisleData.keyword); }
-		 */
 		return v;
+	}
+
+	public void createAisleClickFunctionality() {
+
+		inputMethodManager.hideSoftInputFromWindow(
+				saySomethingAboutAisle.getWindowToken(), 0);
+		inputMethodManager.hideSoftInputFromWindow(
+				occasionText.getWindowToken(), 0);
+		inputMethodManager.hideSoftInputFromWindow(
+				lookingForText.getWindowToken(), 0);
+		inputMethodManager.hideSoftInputFromWindow(findAtText.getWindowToken(),
+				0);
+		lookingForPopup.setVisibility(View.GONE);
+		ocassionPopup.setVisibility(View.GONE);
+		categoeryPopup.setVisibility(View.GONE);
+		findAtPopup.setVisibility(View.GONE);
+		categoryListviewLayout.setVisibility(View.GONE);
+		occassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		if (!(lookingForBigText.getText().toString().trim().equals(LOOKING_FOR))
+				&& !(occassionBigText.getText().toString().trim()
+						.equals(OCCASION))) {
+			if (addImageToAisleFlag) {
+				addImageToAisleToServer();
+			} else {
+				addAisleToServer();
+			}
+		} else {
+			showAlertForMandotoryFields();
+		}
+
+	}
+
+	public void editButtonClickFunctionality() {
+
+		editAisleImageFlag = true;
+		currentPagePosition = dataEntryAislesViewpager.getCurrentItem();
+		resizedImagePath = aisleImagePathList.get(currentPagePosition);
+		imagePath = aisleImagePathList.get(currentPagePosition);
+		createaisleBg.setImageURI(Uri.fromFile(new File(aisleImagePathList
+				.get(currentPagePosition))));
+		dataEntryAislesViewpager.setVisibility(View.GONE);
+		createaisleBg.setVisibility(View.VISIBLE);
+		createAisleScreenTitle.setText("Edit Aisle");
+		dataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
+		dataEntryBottomTopLayout.setVisibility(View.GONE);
+		actionBarTopLayout.setVisibility(View.GONE);
+		titleBarBottomLayout.setVisibility(View.GONE);
+		CreateAisleActivity activity = (CreateAisleActivity) getActivity();
+		activity.isNewActionBar = false;
+		activity.invalidateOptionsMenu();
+		mainHeadingRow.setVisibility(View.VISIBLE);
+		touchToChangeImage.setVisibility(View.VISIBLE);
+		occassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+
+	}
+
+	public void shareClickFunctionality() {
+
+		mShare = new ShareDialog(getActivity(), getActivity());
+		if (aisleImagePathList != null) {
+			ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
+			for (int i = 0; i < aisleImagePathList.size(); i++) {
+				clsShare shareObj = new clsShare(null,
+						aisleImagePathList.get(i));
+				imageUrlList.add(shareObj);
+			}
+			mShare.share(imageUrlList, "", "");
+		}
+
+	}
+
+	public void addImageToAisleButtonClickFunctionality() {
+
+		addImageToAisleFlag = true;
+		Intent intent = new Intent(getActivity(),
+				CreateAisleSelectionActivity.class);
+		Bundle b = new Bundle();
+		b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
+		intent.putExtras(b);
+		getActivity().startActivityForResult(intent,
+				VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
+
 	}
 
 	private boolean appInstalledOrNot(String uri) {
@@ -892,7 +975,10 @@ public class CreateAisleFragment extends Fragment {
 				dataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
 				dataEntryBottomTopLayout.setVisibility(View.GONE);
 				actionBarTopLayout.setVisibility(View.GONE);
-				titleBarBottomLayout.setVisibility(View.VISIBLE);
+				titleBarBottomLayout.setVisibility(View.GONE);
+				CreateAisleActivity activity = (CreateAisleActivity) getActivity();
+				activity.isNewActionBar = false;
+				activity.invalidateOptionsMenu();
 				mainHeadingRow.setVisibility(View.VISIBLE);
 				touchToChangeImage.setVisibility(View.VISIBLE);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
@@ -914,15 +1000,6 @@ public class CreateAisleFragment extends Fragment {
 										// OR Gallery.
 		String title = ""; // For Camera and Gallery we don't have title.
 		String store = ""; // For Camera and Gallery we don't have store.
-		/*
-		 * boolean isNewFlag = true; if
-		 * (lookingForBigText.getText().toString().equals(mAisleData.keyword)) {
-		 * isNewFlag = false; mAisleData.count += 1; } else { mAisleData.keyword
-		 * = lookingForBigText.getText().toString(); mAisleData.count = 1; }
-		 * mAisleData.time = System.currentTimeMillis();
-		 * addAisleDataToDataBase(DbHelper.DATABASE_TABLE_LOOKINGFOR,
-		 * mAisleData, isNewFlag);
-		 */
 		renderUIAfterAddingAisleToServer();
 	}
 
@@ -936,16 +1013,6 @@ public class CreateAisleFragment extends Fragment {
 										// OR Gallery.
 		String title = ""; // For Camera and Gallery we don't have title.
 		String store = ""; // For Camera and Gallery we don't have store.
-		/*
-		 * boolean isNewFlag = true; if (mAisleData != null &&
-		 * lookingForBigText.getText().toString().equals(mAisleData.keyword)) {
-		 * isNewFlag = false; mAisleData.count += 1; } else { mAisleData = new
-		 * AisleData(); mAisleData.keyword =
-		 * lookingForBigText.getText().toString(); mAisleData.count = 1; }
-		 * mAisleData.time = System.currentTimeMillis();
-		 * addAisleDataToDataBase(DbHelper.DATABASE_TABLE_LOOKINGFOR,
-		 * mAisleData, isNewFlag);
-		 */
 		renderUIAfterAddingAisleToServer();
 	}
 
@@ -954,8 +1021,11 @@ public class CreateAisleFragment extends Fragment {
 			aisleImagePathList.remove(currentPagePosition);
 		}
 		editAisleImageFlag = false;
-		actionBarTopLayout.setVisibility(View.VISIBLE);
+		actionBarTopLayout.setVisibility(View.GONE);
 		titleBarBottomLayout.setVisibility(View.GONE);
+		CreateAisleActivity activity = (CreateAisleActivity) getActivity();
+		activity.isNewActionBar = true;
+		activity.invalidateOptionsMenu();
 		mainHeadingRow.setVisibility(View.GONE);
 		touchToChangeImage.setVisibility(View.GONE);
 		dataEntryBottomBottomLayout.setVisibility(View.GONE);
@@ -967,19 +1037,19 @@ public class CreateAisleFragment extends Fragment {
 				getActivity(), aisleImagePathList));
 	}
 
-	private void addAisleDataToDataBase(String tableName, AisleData mAisleData,
-			boolean isNewFlag) {
+	private void addAisleDataToDataBase(String tableName, String keyword,
+			long time, int count, boolean isNewFlag) {
 		DbHelper helper = new DbHelper(getActivity());
 		SQLiteDatabase db = helper.getWritableDatabase();
 		ContentValues values = new ContentValues();
-		values.put(VueConstants.KEYWORD, mAisleData.keyword);
-		values.put(VueConstants.LAST_USED_TIME, mAisleData.time);
-		values.put(VueConstants.NUMBER_OF_TIMES_USED, mAisleData.count);
+		values.put(VueConstants.KEYWORD, keyword);
+		values.put(VueConstants.LAST_USED_TIME, time);
+		values.put(VueConstants.NUMBER_OF_TIMES_USED, count);
 		if (isNewFlag) {
 			db.insert(tableName, null, values);
 		} else {
 			db.update(tableName, values, VueConstants.KEYWORD + "=?",
-					new String[] { mAisleData.keyword });
+					new String[] { keyword });
 		}
 		db.close();
 	}

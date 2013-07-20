@@ -509,7 +509,7 @@ public class VueTrendingAislesDataModel {
         observer.onAisleDataUpdated(mAisleContentList.size());
       }
       new Handler().postDelayed(new Runnable() {
-        
+
         @Override
         public void run() {
           runTask(new Runnable() {
