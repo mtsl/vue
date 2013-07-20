@@ -14,7 +14,7 @@ import com.slidingmenu.lib.app.SlidingFragmentActivity;
 public class BaseActivity extends SlidingFragmentActivity {
 
   private int mTitleRes = 0;
-  protected static VueListFragment mFrag;
+  protected VueListFragment mFrag;
   boolean isBaseOnResumeCalled = false;
   //private OnBackHandle onBackHandle;
   //private boolean isBaseStarts = true;

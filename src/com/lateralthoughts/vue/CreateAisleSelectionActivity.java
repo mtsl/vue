@@ -43,9 +43,9 @@ public class CreateAisleSelectionActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_asilse_selection);
-		sendBroadcast (
-				new Intent(Intent.ACTION_MEDIA_MOUNTED, 
-					Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+		sendBroadcast(new Intent(
+				Intent.ACTION_MEDIA_MOUNTED,
+				Uri.parse("file://" + Environment.getExternalStorageDirectory())));
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			fromCreateAilseScreenFlag = b
@@ -161,9 +161,10 @@ public class CreateAisleSelectionActivity extends Activity {
 				bottomRightGreenCircle.setVisibility(View.GONE);
 				totalBottom.setVisibility(View.GONE);
 				if (galleryClickedFlag) {
-					sendBroadcast (
-							new Intent(Intent.ACTION_MEDIA_MOUNTED, 
-								Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+					sendBroadcast(new Intent(
+							Intent.ACTION_MEDIA_MOUNTED,
+							Uri.parse("file://"
+									+ Environment.getExternalStorageDirectory())));
 					Intent i = new Intent(
 							Intent.ACTION_PICK,
 							android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -241,6 +242,18 @@ public class CreateAisleSelectionActivity extends Activity {
 				boxWithCircleLayout.startAnimation(bottomToTopAnim);
 			}
 		});
+		topRightGreenCircle.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				Intent getDataIntent = new Intent(
+						android.content.Intent.ACTION_PICK);
+				getDataIntent.setType("image/*");
+				getDataIntent.setClassName(VueConstants.AMAZON_APP_PACKAGE_NAME,
+						VueConstants.AMAZON_APP_ACTIVITY_NAME);
+				CreateAisleSelectionActivity.this.startActivityForResult(getDataIntent,
+						VueConstants.AMAZON_APP_REQUEST_CODE);
+			}
+		});
 	}
 
 	@Override
@@ -250,11 +263,11 @@ public class CreateAisleSelectionActivity extends Activity {
 			// From Gallery...
 			if (requestCode == VueConstants.SELECT_PICTURE) {
 				Uri selectedImageUri = data.getData();
-				Log.e("frag", "uri..."+selectedImageUri);
+				Log.e("frag", "uri..." + selectedImageUri);
 				// MEDIA GALLERY
 				String selectedImagePath = Utils
 						.getPath(selectedImageUri, this);
-				Log.e("frag", "uri..."+selectedImagePath);
+				Log.e("frag", "uri..." + selectedImagePath);
 				if (!fromCreateAilseScreenFlag) {
 					Intent intent = new Intent(this, CreateAisleActivity.class);
 					Bundle b = new Bundle();

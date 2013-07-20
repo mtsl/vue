@@ -307,6 +307,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					}
 				});
 		super.onResume();
+		VueApplication.getInstance().setBezelMenuFragment(mFrag);
 	}
 
 	private Handler mHandler = new Handler() {

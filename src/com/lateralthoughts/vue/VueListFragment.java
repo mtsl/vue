@@ -475,7 +475,6 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
   }
   
   public void getFriendsList(String s) {
-
     progress = ProgressDialog.show(getActivity(), "", "Please wait...");
     Log.e(getTag(), "SURU : Value of s : " + s);
 

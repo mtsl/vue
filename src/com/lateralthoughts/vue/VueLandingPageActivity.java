@@ -110,7 +110,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-
+		VueApplication.getInstance().setBezelMenuFragment(mFrag);
 		new Handler().postDelayed(new Runnable() {
 
 			@Override

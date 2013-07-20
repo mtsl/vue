@@ -44,7 +44,16 @@ public class VueApplication extends Application {
 	private int mStatusBarHeight;
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
+    private VueListFragment bezelMenuFragment;
 	 
+	public VueListFragment getBezelMenuFragment() {
+		return bezelMenuFragment;
+	}
+
+	public void setBezelMenuFragment(VueListFragment bezelMenuFragment) {
+		this.bezelMenuFragment = bezelMenuFragment;
+	}
+
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
 	}

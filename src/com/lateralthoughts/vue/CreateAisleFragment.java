@@ -103,6 +103,7 @@ public class CreateAisleFragment extends Fragment {
 	private static final String CATEGORY = "Category";
 	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
 	private int currentPagePosition = 0;
+	private AisleData mAisleData = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -711,6 +712,11 @@ public class CreateAisleFragment extends Fragment {
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 			}
 		});
+		/*
+		 * mAisleData = getAisleData(DbHelper.DATABASE_TABLE_LOOKINGFOR); if
+		 * (mAisleData != null) { lookingForBigText.setText(mAisleData.keyword);
+		 * lookingForText.setText(mAisleData.keyword); }
+		 */
 		return v;
 	}
 
@@ -908,6 +914,15 @@ public class CreateAisleFragment extends Fragment {
 										// OR Gallery.
 		String title = ""; // For Camera and Gallery we don't have title.
 		String store = ""; // For Camera and Gallery we don't have store.
+		/*
+		 * boolean isNewFlag = true; if
+		 * (lookingForBigText.getText().toString().equals(mAisleData.keyword)) {
+		 * isNewFlag = false; mAisleData.count += 1; } else { mAisleData.keyword
+		 * = lookingForBigText.getText().toString(); mAisleData.count = 1; }
+		 * mAisleData.time = System.currentTimeMillis();
+		 * addAisleDataToDataBase(DbHelper.DATABASE_TABLE_LOOKINGFOR,
+		 * mAisleData, isNewFlag);
+		 */
 		renderUIAfterAddingAisleToServer();
 	}
 
@@ -921,6 +936,16 @@ public class CreateAisleFragment extends Fragment {
 										// OR Gallery.
 		String title = ""; // For Camera and Gallery we don't have title.
 		String store = ""; // For Camera and Gallery we don't have store.
+		/*
+		 * boolean isNewFlag = true; if (mAisleData != null &&
+		 * lookingForBigText.getText().toString().equals(mAisleData.keyword)) {
+		 * isNewFlag = false; mAisleData.count += 1; } else { mAisleData = new
+		 * AisleData(); mAisleData.keyword =
+		 * lookingForBigText.getText().toString(); mAisleData.count = 1; }
+		 * mAisleData.time = System.currentTimeMillis();
+		 * addAisleDataToDataBase(DbHelper.DATABASE_TABLE_LOOKINGFOR,
+		 * mAisleData, isNewFlag);
+		 */
 		renderUIAfterAddingAisleToServer();
 	}
 
@@ -942,40 +967,45 @@ public class CreateAisleFragment extends Fragment {
 				getActivity(), aisleImagePathList));
 	}
 
-	private void addAisleDataToDataBase(String tableName, String keyword,long time, int count, boolean isNewFlag) {
+	private void addAisleDataToDataBase(String tableName, AisleData mAisleData,
+			boolean isNewFlag) {
 		DbHelper helper = new DbHelper(getActivity());
 		SQLiteDatabase db = helper.getWritableDatabase();
 		ContentValues values = new ContentValues();
-		values.put(VueConstants.KEYWORD, keyword);
-		values.put(VueConstants.LAST_USED_TIME, time);
-		values.put(VueConstants.NUMBER_OF_TIMES_USED, count);
-		if(isNewFlag) {
-		  db.insert(tableName, null, values);  
+		values.put(VueConstants.KEYWORD, mAisleData.keyword);
+		values.put(VueConstants.LAST_USED_TIME, mAisleData.time);
+		values.put(VueConstants.NUMBER_OF_TIMES_USED, mAisleData.count);
+		if (isNewFlag) {
+			db.insert(tableName, null, values);
 		} else {
-		  db.update(tableName, values, VueConstants.KEYWORD + "=?", new String[] {keyword});
+			db.update(tableName, values, VueConstants.KEYWORD + "=?",
+					new String[] { mAisleData.keyword });
 		}
 		db.close();
 	}
 
 	private AisleData getAisleData(String tableName) {
-	  AisleData data = null;
-	  DbHelper helper = new DbHelper(getActivity());
-      SQLiteDatabase db = helper.getReadableDatabase();
-      Cursor c = db.query(tableName, null, null, null, null, null, VueConstants.LAST_USED_TIME +" DESC");
-	  if(c.moveToFirst()) {
-	    data = new AisleData();
-	    data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
-	    data.time = c.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));
-	    data.count = c.getInt(c.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
-	  }
-	  c.close();
-	  db.close();
-	  return data;
+		AisleData data = null;
+		DbHelper helper = new DbHelper(getActivity());
+		SQLiteDatabase db = helper.getReadableDatabase();
+		Cursor c = db.query(tableName, null, null, null, null, null,
+				VueConstants.LAST_USED_TIME + " DESC");
+		if (c.moveToFirst()) {
+			data = new AisleData();
+			data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
+			data.time = c
+					.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));
+			data.count = c.getInt(c
+					.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
+		}
+		c.close();
+		db.close();
+		return data;
 	}
-	
+
 	public class AisleData {
-	  String keyword;
-	  long time;
-	  int count;
+		String keyword;
+		long time;
+		int count;
 	}
 }

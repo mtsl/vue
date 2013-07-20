@@ -93,6 +93,7 @@ public class CreateAisleActivity extends BaseActivity {
 					}
 				});
 		super.onResume();
+		VueApplication.getInstance().setBezelMenuFragment(mFrag);
 	}
 
 	@Override

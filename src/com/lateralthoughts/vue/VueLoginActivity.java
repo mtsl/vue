@@ -98,8 +98,10 @@ public class VueLoginActivity extends FragmentActivity implements
 	LinearLayout socialIntegrationMainLayout;
 	Bundle bundle = null;
 	private static final String TAG = "VueLoginActivity";
-	//private static final List<String> READ_PERMISSIONS = Arrays.asList("publish_actions");
-	private final List<String> PUBLISH_PERMISSIONS=Arrays.asList("publish_actions", "email", "user_birthday");
+	// private static final List<String> READ_PERMISSIONS =
+	// Arrays.asList("publish_actions");
+	private final List<String> PUBLISH_PERMISSIONS = Arrays.asList(
+			"publish_actions", "email", "user_birthday");
 	ProgressDialog facebookProgressialog, googlePlusProgressDialog;
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
 			.getInstance().getString(R.string.pendingActionBundleKey);
@@ -155,7 +157,7 @@ public class VueLoginActivity extends FragmentActivity implements
 					.getBoolean(VueConstants.GOOGLEPLUS_FRIEND_INVITE);
 			googleplusAutomaticLogin = bundle
 					.getBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN);
-			}
+		}
 
 		// Facebook Invite friend
 		if (fbFriendId != null) {
@@ -401,8 +403,12 @@ public class VueLoginActivity extends FragmentActivity implements
 						new SortBasedOnName());
 				if (fromInviteFriends != null
 						&& fromInviteFriends.equals(VueConstants.GOOGLEPLUS)) {
-					BaseActivity.mFrag.getFriendsList(getResources().getString(
-							R.string.sidemenu_sub_option_Gmail));
+					VueApplication
+							.getInstance()
+							.getBezelMenuFragment()
+							.getFriendsList(
+									getResources().getString(
+											R.string.sidemenu_sub_option_Gmail));
 				}
 			}
 		}
@@ -455,12 +461,9 @@ public class VueLoginActivity extends FragmentActivity implements
 				if (user != null) {
 					String location = "";
 					try {
-						JSONObject contentArray = null;
-						contentArray = new JSONObject(user.getLocation() + "");
-						for (int i = 0; i < contentArray.length(); i++) {
-							location = contentArray.getJSONArray("state")
-									.getJSONObject(1).getString("name");
-						}
+						JSONObject jsonObject = user.getLocation()
+								.getInnerJSONObject();
+						location = jsonObject.getString("name");
 					} catch (JSONException e1) {
 						e1.printStackTrace();
 					}
@@ -488,11 +491,13 @@ public class VueLoginActivity extends FragmentActivity implements
 							&& fromInviteFriends.equals(VueConstants.FACEBOOK)) {
 						fromInviteFriends = null;
 						try {
-								BaseActivity.mFrag
-										.getFriendsList(context
-												.getResources()
-												.getString(
-														R.string.sidemenu_sub_option_Facebook));
+							VueApplication
+									.getInstance()
+									.getBezelMenuFragment()
+									.getFriendsList(
+											context.getResources()
+													.getString(
+															R.string.sidemenu_sub_option_Facebook));
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -510,11 +515,13 @@ public class VueLoginActivity extends FragmentActivity implements
 							&& fromInviteFriends.equals(VueConstants.FACEBOOK)) {
 						fromInviteFriends = null;
 						try {
-							BaseActivity.mFrag
-									.getFriendsList(context
-											.getResources()
-											.getString(
-													R.string.sidemenu_sub_option_Facebook));
+							VueApplication
+									.getInstance()
+									.getBezelMenuFragment()
+									.getFriendsList(
+											context.getResources()
+													.getString(
+															R.string.sidemenu_sub_option_Facebook));
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
