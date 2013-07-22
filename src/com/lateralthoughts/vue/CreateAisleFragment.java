@@ -997,7 +997,7 @@ public class CreateAisleFragment extends Fragment {
         getActivity(), aisleImagePathList));
   }
 
-  private void addAisleDataToDataBase(String tableName, String keyword,
+  private void addAisleMetaDataToDB(String tableName, String keyword,
       long time, int count, boolean isNewFlag) {
     //DbHelper helper = new DbHelper(getActivity());
     // SQLiteDatabase db = helper.getWritableDatabase();
@@ -1014,13 +1014,14 @@ public class CreateAisleFragment extends Fragment {
     values.put(VueConstants.LAST_USED_TIME, time);
     values.put(VueConstants.NUMBER_OF_TIMES_USED, count);
     if (isNewFlag) {
-      getActivity().getContentResolver().insert(url, values);
+      getActivity().getContentResolver().insert(uri, values);
      // db.insert(tableName, null, values);
     } else {
-      db.update(tableName, values, VueConstants.KEYWORD + "=?",
-          new String[] {keyword});
+      getActivity().getContentResolver().update(uri, values, VueConstants.KEYWORD + "=?", new String[] {keyword});
+     /* db.update(tableName, values, VueConstants.KEYWORD + "=?",
+          new String[] {keyword});*/
     }
-    db.close();
+    //db.close();
   }
 
   private AisleData getAisleData(String tableName) {
