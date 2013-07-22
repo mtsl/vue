@@ -96,15 +96,21 @@ public class CreateAisleActivity extends BaseActivity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (getSlidingMenu().isMenuShowing()) {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
 			} else {
-				if (!misKeyboardShown)
-					super.onBackPressed();
+				Log.i("flagasd", "flagasd:  "+VueApplication.getInstance().mSoftKeboardIndicator);
+				 
+				if (!VueApplication.getInstance().mSoftKeboardIndicator) {
+			    super.onBackPressed();
+				} else {
+					VueApplication.getInstance().mSoftKeboardIndicator = false;
+				}
+			
 			}
 		}
 		return false;

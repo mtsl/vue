@@ -5,6 +5,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.lateralthoughts.vue.indicators.IndicatorView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.MyCustomAnimation;
+import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.Helper;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
@@ -89,6 +90,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     int mCurentIndPosition;
     static final int MAX_DOTS_TO_SHOW = 3;
     int mPrevPosition;
+    private ActionBarHandler mHandleActionBar;
 
     //TODO: define a public interface that can be implemented by the parent
     //activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -156,6 +158,56 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 		relParams.setMargins(indicatorLeftMargin, 0, 0, 0);
 		mIndicatorView.setLayoutParams(relParams);
 		mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
+		if(mAisleDetailsList != null ) {
+			
+			mAisleDetailsList.setOnScrollListener(new OnScrollListener() {
+
+				public void onScrollStateChanged(AbsListView view,
+						int scrollState) {
+
+					/*
+					 * if (scrollState != 0) isScrolling = true; else {
+					 * isScrolling = false; ((MyBaseAdapter)
+					 * imglist.getAdapter()).notifyDataSetChanged(); }
+					 */
+					switch (scrollState) {
+					case OnScrollListener.SCROLL_STATE_IDLE:
+						if(mAisleDetailsList.getChildAt(0).getTop() == 0) {
+							Log.i("scrolling", "scrolling here scrolling is SCROLL_STATE_IDLE");
+							if(mHandleActionBar != null) {
+							mHandleActionBar.showActionBar();
+							}
+						} else if(mAisleDetailsList.getChildAt(0).getTop() <= -30) {
+						 
+							if(mHandleActionBar != null) {
+								mHandleActionBar.hideActionBar();
+								}
+						}
+				 
+						break;
+					case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+						Log.i("scrolling", "scrolling here scrolling is SCROLL_STATE_TOUCH_SCROLL");
+					 
+						break;
+					case OnScrollListener.SCROLL_STATE_FLING:
+						Log.i("scrolling", "scrolling here scrolling is SCROLL_STATE_FLING");
+					 
+						break;
+					default:
+						break;
+					}
+				}
+
+				public void onScroll(AbsListView view, int firstVisibleItem,
+						int visibleItemCount, int totalItemCount) {
+
+				}
+			});
+			
+			
+			
+ 
+		}
 		mAisleDetailsList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -312,7 +364,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
           editText.setCursorVisible(true);
           editText.setTextColor(Color.parseColor(getResources().getString(R.color.black)));
           editText.requestFocus();
-          ((AisleDetailsViewActivity) getActivity()).misKeyboardShown = true;
+          
 			((EditTextBackEvent) editText) 
 					.setonInterceptListen(new OnInterceptListener() {
 
@@ -330,7 +382,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 							edtCommentLay.setVisibility(View.GONE);
 							view.setVisibility(View.VISIBLE);
 							mAisleDetailsAdapter.notifyDataSetChanged();
-							((AisleDetailsViewActivity) getActivity()).misKeyboardShown = false;
+							 
 						}
 
 						@Override
@@ -404,6 +456,16 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				}
 			});
       }
+	@Override
+	public void onDissAllowListResponse() {
+		// TODO Auto-generated method stub
+		mAisleDetailsList.requestDisallowInterceptTouchEvent(true);
+	}
+	@Override
+	public void onAllowListResponse() {
+		// TODO Auto-generated method stub
+		mAisleDetailsList.requestDisallowInterceptTouchEvent(false);
+	}
     }
     private int checkScreenBoundaries(String direction,int mCurrentScreen){
         if(direction.equalsIgnoreCase("left")) {
@@ -446,40 +508,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     public void changeLikeCount(int position,String clickType) {
     	mAisleDetailsAdapter.changeLikesCount(position,clickType);
     }
- private OnInterceptListener getOnInterceptListener(final EditText editText,final FrameLayout edtCommentLay,final RelativeLayout view) {
-	
-	 class EditOnInterceptListener implements OnInterceptListener {
-
-		@Override
-		public void onKeyBackPressed() {
-		      final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-	             inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
-			inputMethodManager.toggleSoftInputFromWindow(
-					editText.getApplicationWindowToken(),
-					InputMethodManager.SHOW_FORCED, 0);
-			editText.setText("");
-			edtCommentLay.setVisibility(View.GONE);
-			view.setVisibility(View.VISIBLE);
-			mAisleDetailsAdapter.notifyDataSetChanged();
-			
-		}
-
-		@Override
-		public void setFlag(boolean flag) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public boolean getFlag() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-		
-	 }
-	 EditOnInterceptListener editBackHandler = new EditOnInterceptListener();
-	 
-	 return editBackHandler;
-	 
- }
+    public void setActionBarHander(ActionBarHandler handleActionBar) {
+    	mHandleActionBar = handleActionBar;
+    }
+ 
+    public void setAisleContentListenerNull() {
+    	mAisleDetailsAdapter.setAisleBrowerObjectsNull();
+    }
 }

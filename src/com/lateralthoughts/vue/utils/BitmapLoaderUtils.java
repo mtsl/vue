@@ -58,16 +58,15 @@ public class BitmapLoaderUtils {
      */
     public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
     {
-      Log.e("Profiling", "Profiling New getBitmap()");
-    	Log.i("imgurl", "imgurl: "+url);
+     
         File f = mFileCache.getFile(url);
-
+        Log.i("imagenotcoming", "bitmap issue: originalbitmap url "+url);
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight);
+        
         if(b != null){
-          Log.e("Profiling", "Profiling New getBitmap() Bitmap not null");
+          
             if(cacheBitmap)
-              Log.e("Profiling", "Profiling New getBitmap() cacheBitmap : " + cacheBitmap);
                 mAisleImagesCache.put(url, b);
             return b;
         }
@@ -87,7 +86,7 @@ public class BitmapLoaderUtils {
             bitmap = decodeFile(f, bestHeight);
             if(cacheBitmap)
             	mAisleImagesCache.put(url, bitmap);
-            
+
             return bitmap;
         } catch (Throwable ex){
            ex.printStackTrace();
@@ -104,19 +103,28 @@ public class BitmapLoaderUtils {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             FileInputStream stream1 = new FileInputStream(f);
-            BitmapFactory.decodeStream(stream1,null,o);
+       BitmapFactory.decodeStream(stream1,null,o);
+            
+         
+            
             stream1.close();
             
             //Find the correct scale value. It should be the power of 2.
             //final int REQUIRED_SIZE = mScreenWidth/2;
             int height=o.outHeight;
-            
             int width = o.outWidth;
+            Log.i("imagenotcoming", "bitmap issue: originalbitmap width "+width);
+            Log.i("imagenotcoming", "bitmap issue: originalbitmap height:  "+height);
+            
+            Log.i("imagenotcoming", "bitmap issue: cardWidht width "+VueApplication.getInstance().getVueDetailsCardWidth());
+            Log.i("imagenotcoming", "bitmap issue: bestHeight:  "+bestHeight);
+            Log.i("imagenotcoming", "bitmap issue scalleddown: cardHeight "+VueApplication.getInstance().getVueDetailsCardHeight());
+            
           int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth();
             
             int scale=1;
             
-            if (height > bestHeight || width > reqWidth) {
+            if (height > bestHeight) {
 
                 // Calculate ratios of height and width to requested height and width
                 final int heightRatio = Math.round((float) height / (float) bestHeight);
@@ -126,21 +134,7 @@ public class BitmapLoaderUtils {
                 // a final image with both dimensions larger than or equal to the
                 // requested height and width.
                 scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
-                
-                
-                
-/*
-                int h=(int) Math.ceil((float) height/(float)bestHeight);
-                int w=(int) Math.ceil((float) width /(float) reqWidth);
-
-                if(h>1 || w>1){
-                    if(h>w){
-                        o.inSampleSize=h;
-
-                    }else{
-                        o.inSampleSize=w;
-                    }
-                }*/
+ 
             }
             
             //decode with inSampleSize
@@ -150,27 +144,35 @@ public class BitmapLoaderUtils {
             //if(DEBUG) Log.d("Jaws","using inSampleSizeScale = " + scale + " original width = " + o.outWidth + "screen width = " + mScreenWidth);
             FileInputStream stream2=new FileInputStream(f);
             Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);
+       
             stream2.close();
             if(bitmap != null) {
             width = bitmap.getWidth();
             height = bitmap.getHeight();
-            if(/*height > bestHeight ||*/ width > reqWidth) {
-             /*   float scale2 = (float)reqWidth/width;
-                  int height1= Math.round(height * scale2);
-                  int  widht1= Math.round(width * scale2);
-                  if(widht1 > 0 && height1 > 0) {
-                  bitmap = Bitmap.createScaledBitmap(bitmap, widht1, height1,
-  						true);
-                  }*/
+          
+            if(width > reqWidth) {
+            	 
+               float tempHeight = (height * reqWidth)/width;
+                height = (int)tempHeight;
+              /* Bitmap bitmaptest = Bitmap.createScaledBitmap(bitmap, reqWidth, height,
+						true);*/
             	bitmap = getModifiedBitmap(bitmap,reqWidth,height);
+       
             }
             }
+           
             return bitmap;
         } catch (FileNotFoundException e) {
         } 
         catch (IOException e) {
             e.printStackTrace();
         }
+        catch (Throwable ex){
+            ex.printStackTrace();
+            if(ex instanceof OutOfMemoryError)
+               mAisleImagesCache.clear();
+            return null;
+         }
         return null;
     }
     private Bitmap getModifiedBitmap(Bitmap originalImage, int width, int height){
@@ -190,6 +192,8 @@ public class BitmapLoaderUtils {
          Paint paint = new Paint();
         paint.setFilterBitmap(true);
         canvas.drawBitmap(originalImage, transformation, paint);
+        Log.i("imagenotcoming", "bitmap issue scalleddown: originalbitmap width "+newBitmap.getWidth());
+        Log.i("imagenotcoming", "bitmap issue:scalleddown originalbitmap height:  "+newBitmap.getHeight());
         return newBitmap;
     }
     public Bitmap getCachedBitmap(String url){

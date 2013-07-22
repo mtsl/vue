@@ -1,7 +1,10 @@
 package com.lateralthoughts.vue.utils;
 
+import com.lateralthoughts.vue.VueApplication;
+
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.EditText;
 
@@ -48,8 +51,12 @@ public class EditTextBackEvent extends EditText {
   @Override
   public boolean onKeyPreIme(int keyCode, KeyEvent event) {
     try {
-		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+			VueApplication.getInstance().mSoftKeboardIndicator = true;
 		  onInterceptListenr.onKeyBackPressed();
+		  Log.i("misKeyboardShown val: ", "misKeyboardShown if EditTextBackEvent: ");
+		  return false;
+		}
 		/*
 		  if(CreateAilseFragment.create_ailse_keyboard_hidden_shown_flag)
 		  {
@@ -59,10 +66,11 @@ public class EditTextBackEvent extends EditText {
 		  {
 			 return false;
 		  }*/
-		  return false;
+		  
+		  return super.dispatchKeyEvent(event);
 
 		}
-	} catch (Exception e) {
+	  catch (Exception e) {
 		e.printStackTrace();
 	}
 
