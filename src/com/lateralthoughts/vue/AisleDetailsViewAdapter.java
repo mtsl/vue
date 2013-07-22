@@ -128,22 +128,22 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
              break;
           }
       }
-      if(mWindowContentTemp != null) {
-      ArrayList<AisleImageDetails> imageDetailsArr = mWindowContentTemp.getImageList();
-     
+    if (mWindowContentTemp != null) {
+      ArrayList<AisleImageDetails> imageDetailsArr = mWindowContentTemp
+          .getImageList();
+
       mInitialImageLikeCounts = new int[imageDetailsArr.size()];
       mTempInitialImageLikeCounts = new int[imageDetailsArr.size()];
-      for(int i = 0; i< imageDetailsArr.size();i++) {
-      	mInitialImageLikeCounts[i] = imageDetailsArr.get(i).mLikesCount;
-      	mTempInitialImageLikeCounts[i] = imageDetailsArr.get(i).mLikesCount;
-      	 if(mInitialImageLikeCounts[i] == 0) {
-      		 //for temp count
-      		 mInitialImageLikeCounts[i] = 5;
-      		mTempInitialImageLikeCounts[i] = 5;
-      	 }
+      for (int i = 0; i < imageDetailsArr.size(); i++) {
+        mInitialImageLikeCounts[i] = imageDetailsArr.get(i).mLikesCount;
+        mTempInitialImageLikeCounts[i] = imageDetailsArr.get(i).mLikesCount;
+        if (mInitialImageLikeCounts[i] == 0) {
+          // for temp count
+          mInitialImageLikeCounts[i] = 5;
+          mTempInitialImageLikeCounts[i] = 5;
+        }
       }
-      }
-      
+    }
    }
 
    @Override
@@ -302,29 +302,28 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		});
          
          // image content gone
-      } else if (position == mListCount - 1) {
-            mViewHolder.separator.setVisibility(View.GONE);
-            mViewHolder.imgContentlay.setVisibility(View.GONE);
-            mViewHolder.vueCommentheader.setVisibility(View.GONE);
-          mViewHolder.commentContentlay.setVisibility(View.GONE);
-          // mViewHolder.edtCommentLay.setVisibility(View.GONE);
-          if( mViewHolder.enterCommentrellay.getVisibility() == View.VISIBLE) {
-        	  mViewHolder.commentSend.setVisibility(View.GONE);
-          }
-          mViewHolder.enterCommentrellay
-               .setOnClickListener(new OnClickListener() {
-
-                  @Override
-                  public void onClick(View v) {
-                	  mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
-                	  mViewHolder.enterCommentrellay.setVisibility(View.GONE);
-                     mswipeListner.onAddCommentClick(
-                    		 mViewHolder.enterCommentrellay,
-                           mViewHolder.edtComment,mViewHolder.commentSend, mViewHolder.edtCommentLay);
-                    
-                  }
-               });
+    } else if (position == mListCount - 1) {
+      mViewHolder.separator.setVisibility(View.GONE);
+      mViewHolder.imgContentlay.setVisibility(View.GONE);
+      mViewHolder.vueCommentheader.setVisibility(View.GONE);
+      mViewHolder.commentContentlay.setVisibility(View.GONE);
+      // mViewHolder.edtCommentLay.setVisibility(View.GONE);
+      if (mViewHolder.enterCommentrellay.getVisibility() == View.VISIBLE) {
+        mViewHolder.commentSend.setVisibility(View.GONE);
       }
+      mViewHolder.enterCommentrellay.setOnClickListener(new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+          mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
+          mViewHolder.enterCommentrellay.setVisibility(View.GONE);
+          mswipeListner.onAddCommentClick(mViewHolder.enterCommentrellay,
+              mViewHolder.edtComment, mViewHolder.commentSend,
+              mViewHolder.edtCommentLay);
+
+        }
+      });
+    }
 
       else {
          mViewHolder.userComment.setText(mTempComments2[position - 2]);

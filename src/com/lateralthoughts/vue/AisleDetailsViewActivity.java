@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -299,7 +300,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 						int heightDiff = activityRootView.getRootView()
 								.getHeight() - activityRootView.getHeight();
 						if (heightDiff > 100) { // if more than 100 pixels, its
-												// probably a keyboard...
+							// probably a keyboard...
 							misKeyboardShown = true;
 						} else {
 							misKeyboardShown = false;
@@ -328,7 +329,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (getSlidingMenu().isMenuShowing()) {
 				if (!mFrag.listener.onBackPressed()) {
@@ -337,6 +338,13 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			} else {
 				if (!misKeyboardShown)
 					super.onBackPressed();
+				/*
+				 * else { InputMethodManager imm =
+				 * (InputMethodManager)getSystemService(
+				 * Context.INPUT_METHOD_SERVICE);
+				 * imm.hideSoftInputFromWindow(myEditText.getWindowToken(), 0);
+				 * }
+				 */
 			}
 		}
 		return false;
@@ -347,7 +355,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.e("share+", "details activity result" + requestCode + resultCode);
-
 		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
@@ -357,6 +364,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				}
 			}
 		} else {
+
 			try {
 				VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.aisle_details_view_fragment);
@@ -368,6 +376,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+
 		}
 	}
 

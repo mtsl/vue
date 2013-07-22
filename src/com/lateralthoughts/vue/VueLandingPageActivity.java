@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import com.actionbarsherlock.view.Menu;
@@ -94,16 +95,20 @@ public class VueLandingPageActivity extends BaseActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
-	/*
-	 * @Override public boolean onKeyUp(int keyCode, KeyEvent event) { if
-	 * (keyCode == KeyEvent.KEYCODE_BACK) { if
-	 * (getSlidingMenu().isMenuShowing()) { if (!mFrag.listener.onBackPressed())
-	 * { getSlidingMenu().toggle(); } } else { super.onBackPressed(); } } return
-	 * false; }
-	 */
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (getSlidingMenu().isMenuShowing()) {
+				if (!mFrag.listener.onBackPressed()) {
+					getSlidingMenu().toggle();
+				}
+			} else {
+				super.onBackPressed();
+			}
+		}
+		return false;
+	}
 	public void showLogInDialog(boolean hideCancelButton) {
-
 		Intent i = new Intent(this, VueLoginActivity.class);
 		Bundle b = new Bundle();
 		b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, hideCancelButton);
@@ -136,22 +141,6 @@ public class VueLandingPageActivity extends BaseActivity {
 			}
 		}, DELAY_TIME);
 	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (getSlidingMenu().isMenuShowing()) {
-				if (!mFrag.listener.onBackPressed()) {
-					getSlidingMenu().toggle();
-				}
-			} else {
-				super.onBackPressed();
-			}
-		}
-		return false;
-
-	}
-
 	@Override
 	public void onPause() {
 		super.onPause();

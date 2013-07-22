@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +18,7 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,8 +27,10 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -35,6 +40,8 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -208,7 +215,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 						b.putString(VueConstants.FROM_INVITEFRIENDS, null);
 						b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, true);
 						i.putExtras(b);
-						getActivity().startActivity(i);
+						startActivity(i);
 					} else {
 						Toast.makeText(
 								getActivity(),
@@ -524,6 +531,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 	}
 
 	public void getFriendsList(String s) {
+
 		progress = ProgressDialog.show(getActivity(), "", "Please wait...");
 		Log.e(getTag(), "SURU : Value of s : " + s);
 
@@ -767,6 +775,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 
 	/**
 	 * 
+	 >>>>>>> e3d93a1d9d97c72905ac62d7d9da478add34ef1c
+	 * 
 	 * @param jsonString
 	 * @return
 	 * @throws JSONException
@@ -827,6 +837,23 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 					.findViewById(R.id.user_Email_EditText);
 			userLocationEdit = (EditText) layoutSettings
 					.findViewById(R.id.user_location_EditText);
+
+			userDOBEdit.setOnTouchListener(new OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View arg0, MotionEvent arg1) {
+					dataPicker();
+					return false;
+				}
+			});
+
+			userDOBEdit.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					dataPicker();
+				}
+			});
 
 			userNameEdit.addTextChangedListener(this);
 			userDOBEdit.addTextChangedListener(this);
@@ -911,7 +938,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		expandListView.setVisibility(View.GONE);
 		aboutlayout.setVisibility(View.VISIBLE);
 		aboutlayout.startAnimation(animUp);
-
 	}
 
 	@Override
@@ -930,12 +956,31 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 	public void beforeTextChanged(CharSequence s, int start, int count,
 			int after) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		// TODO Auto-generated method stub
+	}
 
+	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			String y = Integer.toString(year);
+			String m = Integer.toString(monthOfYear);
+			String d = Integer.toString(dayOfMonth);
+			userDOBEdit.setText(y + "/" + m + "/" + d);
+		}
+	};
+
+	private void dataPicker() {
+		final Calendar c = Calendar.getInstance();
+		int mYear = c.get(Calendar.YEAR);
+		int mMonth = c.get(Calendar.MONTH);
+		int mDay = c.get(Calendar.DAY_OF_MONTH);
+		DatePickerDialog DPD = new DatePickerDialog(getActivity(),
+				mDateSetListener, mYear, mMonth, mDay);
+		DPD.show();
 	}
 }

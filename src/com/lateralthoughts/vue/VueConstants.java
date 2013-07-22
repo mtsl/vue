@@ -1,5 +1,7 @@
 package com.lateralthoughts.vue;
 
+import android.net.Uri;
+
 /**
  * Here we will declare all constants related to Vue application.
  * 
@@ -104,4 +106,25 @@ public class VueConstants {
 	public static final String USER_DOB = "userDob";
 	public static final String USER_GENDER = "userGender";
 	public static final String USER_LOCATION = "userLocation";
+	
+	// Define CONTENT URI
+	public static final String AUTHORITY = 
+	    "com.lateralthoughts.vue.connectivity.VueConstants";
+	public static final String AISLES = "aisles";
+	public static final String AISLE_IMAGES = "aisleImages";
+	public static final String LOOKING_FOR_TABLE = "lookingFor";
+	  
+	// Define MIME types
+	public static final String ARTICLES_MIME_TYPE 
+	      = "vnd.android.cursor.dir/vnd.vue.articles";
+	public static final String ARTICLE_MIME_TYPE 
+	      = "vnd.android.cursor.item/vnd.vue.article";
+	  
+	// Uri to the table of database.
+	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	    + "/" + AISLES);
+	public static final Uri IMAGES_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	    + "/" + AISLE_IMAGES);
+	public static final Uri LOOKING_FOR_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	    + "/" + LOOKING_FOR_TABLE);
 }
