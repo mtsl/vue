@@ -96,6 +96,7 @@ public class DataEntryFragment extends Fragment {
 	private static final String CATEGORY = "Category";
 	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
 	private int currentPagePosition = 0;
+	private AisleData mAisleData = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -173,8 +174,15 @@ public class DataEntryFragment extends Fragment {
 		previousLookingfor = lookingForText.getText().toString();
 		previousOcasion = occasionText.getText().toString();
 		previousSaySomething = saySomethingAboutAisle.getText().toString();
-		lookingForText.requestFocus();
-		inputMethodManager.showSoftInput(lookingForText, 0);
+		mAisleData = getAisleData(VueConstants.LOOKING_FOR_TABLE);
+		if (mAisleData != null) {
+			lookingForText.setText(mAisleData.keyword);
+			lookingForBigText.setText(mAisleData.keyword);
+			lookingForPopup.setVisibility(View.GONE);
+		} else {
+			lookingForText.requestFocus();
+			inputMethodManager.showSoftInput(lookingForText, 0);
+		}
 		saySomethingAboutAisle
 				.setOnEditorActionListener(new OnEditorActionListener() {
 					@Override
@@ -905,7 +913,22 @@ public class DataEntryFragment extends Fragment {
 										// OR Gallery.
 		String title = ""; // For Camera and Gallery we don't have title.
 		String store = ""; // For Camera and Gallery we don't have store.
-		showDataProgressOnNotification();
+		if (mAisleData != null) {
+			mAisleData.count += 1;
+			if (mAisleData.keyword.equals(lookingForBigText.getText()
+					.toString().trim())) {
+				mAisleData.isNew = false;
+			} else {
+				mAisleData.isNew = true;
+			}
+		} else {
+			mAisleData = new AisleData();
+			mAisleData.count = 1;
+			mAisleData.isNew = true;
+		}
+		mAisleData.keyword = lookingForBigText.getText().toString();
+		mAisleData.time = System.currentTimeMillis();
+		showDataProgressOnNotification(VueConstants.LOOKING_FOR_TABLE);
 		renderUIAfterAddingAisleToServer();
 	}
 
@@ -931,12 +954,11 @@ public class DataEntryFragment extends Fragment {
 				getActivity(), aisleImagePathList));
 	}
 
-	private void addAisleMetaDataToDB(String tableName, String keyword,
-			long time, int count, boolean isNewFlag) {
+	private void addAisleMetaDataToDB(String tableName) {
 		// DbHelper helper = new DbHelper(getActivity());
 		// SQLiteDatabase db = helper.getWritableDatabase();
 		Uri uri = null;
-		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE) && isNewFlag) {
+		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
 			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
 		} /*
 		 * else if() {
@@ -946,15 +968,16 @@ public class DataEntryFragment extends Fragment {
 		 * }
 		 */
 		ContentValues values = new ContentValues();
-		values.put(VueConstants.KEYWORD, keyword);
-		values.put(VueConstants.LAST_USED_TIME, time);
-		values.put(VueConstants.NUMBER_OF_TIMES_USED, count);
-		if (isNewFlag) {
+		values.put(VueConstants.KEYWORD, mAisleData.keyword);
+		values.put(VueConstants.LAST_USED_TIME, mAisleData.time);
+		values.put(VueConstants.NUMBER_OF_TIMES_USED, mAisleData.count);
+		if (mAisleData.isNew) {
 			getActivity().getContentResolver().insert(uri, values);
 			// db.insert(tableName, null, values);
 		} else {
 			getActivity().getContentResolver().update(uri, values,
-					VueConstants.KEYWORD + "=?", new String[] { keyword });
+					VueConstants.KEYWORD + "=?",
+					new String[] { mAisleData.keyword });
 			/*
 			 * db.update(tableName, values, VueConstants.KEYWORD + "=?", new
 			 * String[] {keyword});
@@ -986,9 +1009,10 @@ public class DataEntryFragment extends Fragment {
 		String keyword;
 		long time;
 		int count;
+		boolean isNew;
 	}
 
-	private void showDataProgressOnNotification() {
+	private void showDataProgressOnNotification(final String tableName) {
 		final NotificationManager mNotifyManager = (NotificationManager) getActivity()
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 		final Builder mBuilder = new NotificationCompat.Builder(getActivity());
@@ -1000,29 +1024,33 @@ public class DataEntryFragment extends Fragment {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				int incr;
-				// Do the "lengthy" operation 20 times
-				for (incr = 0; incr <= 100; incr += 5) {
-					// Sets the progress indicator to a max value, the
-					// current completion percentage, and "determinate"
-					// state
-					mBuilder.setProgress(100, incr, false);
-					// Displays the progress bar for the first time.
-					mNotifyManager.notify(0, mBuilder.build());
-					// Sleeps the thread, simulating an operation
-					// that takes time
-					try {
-						// Sleep for 5 seconds
-						Thread.sleep(5 * 1000);
-					} catch (InterruptedException e) {
-						Log.d("Dataentry screen", "sleep failure");
-					}
-				}
+
+				addAisleMetaDataToDB(tableName);
+
+		        int incr;
+	            // Do the "lengthy" operation 20 times
+	            for (incr = 0; incr <= 100; incr+=20) {
+	                    // Sets the progress indicator to a max value, the
+	                    // current completion percentage, and "determinate"
+	                    // state
+	                    mBuilder.setProgress(100, incr, false);
+	                    mBuilder.setContentText("Uploading... ("+incr+"%)");
+	                    // Displays the progress bar for the first time.
+	                    mNotifyManager.notify(0, mBuilder.build());
+	                        // Sleeps the thread, simulating an operation
+	                        // that takes time
+	                        try {
+	                            // Sleep for 5 seconds
+	                            Thread.sleep(5*1000);
+	                        } catch (InterruptedException e) {
+	                        }
+	            }
+	 
 				// When the loop is finished, updates the notification
 				mBuilder.setContentText("Uploading completed")
 				// Removes the progress bar
 						.setProgress(0, 0, false);
-				mNotifyManager.notify(63, mBuilder.build());
+				mNotifyManager.notify(0, mBuilder.build());
 			}
 		}
 		// Starts the thread by calling the run() method in its Runnable
