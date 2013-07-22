@@ -85,6 +85,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
   private ProgressDialog progress;
   private LayoutInflater inflater;
   private boolean isProfileEdited = false;
+  boolean isNewUser = false;
   private String profilePicUrl = "";
  
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -172,30 +173,30 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
             }
           });
         } else if(s.equals(getString(R.string.sidemenu_option_Login))) {
-        	 sharedPreferencesObj = getActivity().getSharedPreferences(
-     	            VueConstants.SHAREDPREFERENCE_NAME, 0);
-        	 boolean fbloginfalg = sharedPreferencesObj.getBoolean(
-       	          VueConstants.FACEBOOK_LOGIN, false);
-       	    boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
-       	          VueConstants.GOOGLEPLUS_LOGIN, false);
-       	if(!googleplusloginfalg || !fbloginfalg) {
-        	
-					Intent i = new Intent(getActivity(), VueLoginActivity.class);
-					Bundle b = new Bundle();
-					 b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
-					b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
-					b.putString(VueConstants.FROM_INVITEFRIENDS,
-							null);
-					b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, true);
-					i.putExtras(b);
-					startActivity(i);
-       	}
-       	else
-       	{
-       	 Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.AlreadyLoggedinmesg),
-     	        Toast.LENGTH_LONG).show();
-       	}
-       	}
+             sharedPreferencesObj = getActivity().getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+             boolean fbloginfalg = sharedPreferencesObj.getBoolean(
+                  VueConstants.FACEBOOK_LOGIN, false);
+            boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
+                  VueConstants.GOOGLEPLUS_LOGIN, false);
+        if(!googleplusloginfalg || !fbloginfalg) {
+            
+                    Intent i = new Intent(getActivity(), VueLoginActivity.class);
+                    Bundle b = new Bundle();
+                     b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+                    b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+                    b.putString(VueConstants.FROM_INVITEFRIENDS,
+                            null);
+                    b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, true);
+                    i.putExtras(b);
+                    startActivity(i);
+        }
+        else
+        {
+         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.AlreadyLoggedinmesg),
+                Toast.LENGTH_LONG).show();
+        }
+        }
         return false;
       }
     });
@@ -205,14 +206,14 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
       @Override
       public boolean onChildClick(ExpandableListView parent, View v,
           int groupPosition, int childPosition, long id) {
-    	  TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
-    	  String s = textView.getText().toString();
-    	  if(s.equals(getString(R.string.sidemenu_option_Profile))) {
+          TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
+          String s = textView.getText().toString();
+          if(s.equals(getString(R.string.sidemenu_option_Profile))) {
               getUserInfo();
-    	  } else if(s.equals(getString(R.string.sidemenu_sub_option_Facebook))
-    	      || s.equals(getString(R.string.sidemenu_sub_option_Gmail))) {
-    	    getFriendsList(s); 
-    	  }
+          } else if(s.equals(getString(R.string.sidemenu_sub_option_Facebook))
+              || s.equals(getString(R.string.sidemenu_sub_option_Gmail))) {
+            getFriendsList(s); 
+          }
         return false;
       }
     });
@@ -541,7 +542,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
     }
   }
 
-	  // Pull and display fb friends from facebook.com
+      // Pull and display fb friends from facebook.com
   private void fbFriendsList() {
 
 
@@ -643,7 +644,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
       String gender = "";
       String email = "";
       String location = "";
-      boolean isUser = false;
+     
       if(!sharedPreferencesObj.getString(VueConstants.USER_NAME, "").isEmpty()) {
         name = sharedPreferencesObj.getString(VueConstants.USER_NAME, "");
         dob = sharedPreferencesObj.getString(VueConstants.USER_DOB, "");
@@ -658,7 +659,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         email = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_EMAIL, "");
         location = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_LOCATION, "");
         profilePicUrl = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_PROFILE_PICTURE, null);
-        isUser = true;
+        isNewUser = true;
       } else if(!sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME, "").isEmpty()) {
         name = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME, "");
         dob =  sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_DOB, "");
@@ -666,13 +667,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         email = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_EMAIL, "");
         location = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_LOCATION, "");
         profilePicUrl = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_PROFILE_PICTURE, null);
-        isUser = true;
+        isNewUser = true;
       } else {
         
       }
-      if(isUser) {
-        
-      }
+
       /*userName.setText(name);
       userDateOfBirth.setText(dob);
       userGender.setText(gender);
@@ -705,12 +704,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
     }
 
     /**
-	 *  
-	 * @param jsonString
-	 * @return
-	 * @throws JSONException
-	 */
-	@SuppressWarnings("unchecked")
+     *  
+     * @param jsonString
+     * @return
+     * @throws JSONException
+     */
+    @SuppressWarnings("unchecked")
   List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException {
     List<FbGPlusDetails> facebookFriendsDetailsList = null;
 
@@ -735,11 +734,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
 
     return facebookFriendsDetailsList;
   }
-	
-	private void inflateSettingsLayout() {
-	  View layoutSettings = null;
-	  if(customlayout == null) {
-	  layoutSettings = inflater.inflate(R.layout.settings_layout, null);
+    
+    private void inflateSettingsLayout() {
+      View layoutSettings = null;
+      if(customlayout == null) {
+      layoutSettings = inflater.inflate(R.layout.settings_layout, null);
       LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
           LayoutParams.MATCH_PARENT);
       customlayout = (LinearLayout) layoutSettings.findViewById(R.id.customlayout);
@@ -788,7 +787,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
           customlayout.setVisibility(View.GONE);
           customlayout.startAnimation(animDown);
           expandListView.setVisibility(View.VISIBLE);
-          if(isProfileEdited) {
+          if(isProfileEdited || isNewUser) {
             Log.e("Profiling", "Profiling User Profile onClick isProfileEdited : " + isProfileEdited);
             userDOBEdit.getText().toString();
           userGenderEdit.getText().toString();
@@ -804,17 +803,18 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
           editor.putString(VueConstants.USER_PROFILE_PICTURE, profilePicUrl);
           editor.commit();
           isProfileEdited = false;
+          isNewUser = false;
           }
         }
       });
       mBezelMainLayout.addView(layoutSettings);
-	  }
+      }
       customlayout.setVisibility(View.GONE);
      
-	}
-	
-	private void inflateAboutLayout() {
-	  View aboutLayoutView = null;
+    }
+    
+    private void inflateAboutLayout() {
+      View aboutLayoutView = null;
      if(aboutlayout == null) {
       aboutLayoutView = inflater.inflate(R.layout.about, null);
       LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
@@ -844,7 +844,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
       expandListView.setVisibility(View.GONE);
       aboutlayout.setVisibility(View.VISIBLE);
       aboutlayout.startAnimation(animUp);
-	}
+    }
 
   @Override
   public void afterTextChanged(Editable s) {

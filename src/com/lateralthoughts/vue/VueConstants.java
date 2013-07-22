@@ -25,6 +25,7 @@ public class VueConstants {
 	public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
 	public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";
 	public static final int SHARE_INTENT_REQUEST_CODE = 1;
+	public static final int AMAZON_APP_REQUEST_CODE = 39;
 	public static final String GOOGLEPLUS_AUTOMATIC_LOGIN = "googleplusautomaticlogin";
 	public static final String FACEBOOK_APP_NAME = "Facebook";
 	public static final String TWITTER_APP_NAME = "Twitter";
@@ -67,7 +68,8 @@ public class VueConstants {
 	public static final String STORE = "store";
 	// Column names for dataToSync table.
 	public static final String COMMENT = "comment";
-	
+	public static final int INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE = 24;
+	public static final String INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY = "invitefriendsloginactivitybundlestringkey";
 	public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
 	public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
@@ -89,12 +91,14 @@ public class VueConstants {
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
 	public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
-	
+
 	// Column names for lookingFor, occasion, category table.
 	public static final String KEYWORD = "keyWord";
 	public static final String LAST_USED_TIME = "lastUsedTime";
 	public static final String NUMBER_OF_TIMES_USED = "numberOfTimesUsed";
-    
+	public static final String AMAZON_APP_PACKAGE_NAME = "com.amazon.mShop.android";
+	public static final String AMAZON_APP_ACTIVITY_NAME = "com.amazon.mShop.home.HomeActivity";
+
 	// User Profile details
 	public static final String USER_NAME = "userName";
 	public static final String USER_PROFILE_PICTURE = "userProfilePicture";
