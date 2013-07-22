@@ -95,6 +95,10 @@
             <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
         </intent-filter>
     </receiver>
+    <provider
+           android:name="com.lateralthoughts.vue.connectivity.VueContentProvider"
+           android:authorities="com.lateralthoughts.vue.connectivity.VueConstants"
+           android:exported="false" />
     </application>
 
 </manifest>

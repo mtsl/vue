@@ -47,17 +47,20 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.IMAGE_ID + " text);";
      
     private String createLookingForTable = "create table if not exists " + DATABASE_TABLE_LOOKINGFOR
-        + " (" + VueConstants.KEYWORD + " text, "
+        + " (" + VueConstants.ID + " integer primary key autoincrement, " 
+        + VueConstants.KEYWORD + " text, "
         + VueConstants.LAST_USED_TIME + " Long, "
         + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
     
     private String createOccasionTable = "create table if not exists " + DATABASE_TABLE_OCCASION
-        + " (" + VueConstants.KEYWORD + " text, "
+        + " (" + VueConstants.ID + " integer primary key autoincrement, "
+        + VueConstants.KEYWORD + " text, "
         + VueConstants.LAST_USED_TIME + " Long, "
         + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
 
     private String createCategoryTable = "create table if not exists " + DATABASE_TABLE_CATEGORY
-        + " (" + VueConstants.KEYWORD + " text, "
+        + " (" + VueConstants.ID + " integer primary key autoincrement, "
+        + VueConstants.KEYWORD + " text, "
         + VueConstants.LAST_USED_TIME + " Long, "
         + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
         

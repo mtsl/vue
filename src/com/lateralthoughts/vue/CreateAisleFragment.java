@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -998,14 +999,23 @@ public class CreateAisleFragment extends Fragment {
 
   private void addAisleDataToDataBase(String tableName, String keyword,
       long time, int count, boolean isNewFlag) {
-    DbHelper helper = new DbHelper(getActivity());
-    SQLiteDatabase db = helper.getWritableDatabase();
+    //DbHelper helper = new DbHelper(getActivity());
+    // SQLiteDatabase db = helper.getWritableDatabase();
+    Uri uri = null;
+    if(tableName.equals(VueConstants.LOOKING_FOR_TABLE) && isNewFlag) {
+      uri = VueConstants.LOOKING_FOR_CONTENT_URI;
+    } /*else if() {
+      
+    } else if() {
+      
+    }*/
     ContentValues values = new ContentValues();
     values.put(VueConstants.KEYWORD, keyword);
     values.put(VueConstants.LAST_USED_TIME, time);
     values.put(VueConstants.NUMBER_OF_TIMES_USED, count);
     if (isNewFlag) {
-      db.insert(tableName, null, values);
+      getActivity().getContentResolver().insert(url, values);
+     // db.insert(tableName, null, values);
     } else {
       db.update(tableName, values, VueConstants.KEYWORD + "=?",
           new String[] {keyword});

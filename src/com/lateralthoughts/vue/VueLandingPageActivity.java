@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import com.actionbarsherlock.view.Menu;
@@ -81,7 +82,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-/*	@Override
+	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (getSlidingMenu().isMenuShowing()) {
@@ -94,7 +95,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		return false;
 	}
-*/
+
 	public void showLogInDialog(boolean hideCancelButton) {
 
 		Intent i = new Intent(this, VueLoginActivity.class);
@@ -131,11 +132,12 @@ public class VueLandingPageActivity extends BaseActivity {
 		}, DELAY_TIME);
 	}
 	 
-	@Override
+/*	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (getSlidingMenu().isMenuShowing()) {
 				if (!mFrag.listener.onBackPressed()) {
+				  Log.e("Profiling", "Profiling onBackPressed() onKeyDown : ");
 					getSlidingMenu().toggle();
 				}
 			} else {
@@ -143,8 +145,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			}
 		}
 		return false;
-
-	}
+	}*/
 	@Override
 	public void onPause() {
 		super.onPause();
