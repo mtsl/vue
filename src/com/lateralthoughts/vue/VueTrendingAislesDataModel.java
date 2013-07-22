@@ -348,8 +348,11 @@ public class VueTrendingAislesDataModel {
     if (mAisleContentList != null) {
       mAisleContentList.clear();
     }
+    for (IAisleDataObserver observer : mAisleDataObserver) {
+      observer.onAisleDataUpdated(mAisleContentList.size());
+    }
   }
-  
+
   private void addAislesToDb() {
     /*DbHelper helper = new DbHelper(mContext);
     SQLiteDatabase db = helper.getWritableDatabase();*/
@@ -403,7 +406,7 @@ public class VueTrendingAislesDataModel {
     // db.close();
   }
 
-  private void getAislesFromDb() {
+  public void getAislesFromDb() {
     mEndPosition = mEndPosition + mLocalAislesLimit;
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;

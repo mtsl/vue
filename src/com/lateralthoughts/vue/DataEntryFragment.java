@@ -933,42 +933,41 @@ public class DataEntryFragment extends Fragment {
 
 	private void addAisleMetaDataToDB(String tableName, String keyword,
 			long time, int count, boolean isNewFlag) {
-		// DbHelper helper = new DbHelper(getActivity());
-		// SQLiteDatabase db = helper.getWritableDatabase();
 		Uri uri = null;
 		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE) && isNewFlag) {
 			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
-		} /*
-		 * else if() {
-		 * 
-		 * } else if() {
-		 * 
-		 * }
-		 */
+		} else if(tableName.equals(VueConstants.OCCASION_TABLE)) {
+          uri = VueConstants.OCCASION_CONTENT_URI;
+        } else if(tableName.equals(VueConstants.CATEGORY_TABLE)) {
+          uri = VueConstants.CATEGORY_CONTENT_URI;
+        } else {
+          return;
+        }
 		ContentValues values = new ContentValues();
 		values.put(VueConstants.KEYWORD, keyword);
 		values.put(VueConstants.LAST_USED_TIME, time);
 		values.put(VueConstants.NUMBER_OF_TIMES_USED, count);
 		if (isNewFlag) {
 			getActivity().getContentResolver().insert(uri, values);
-			// db.insert(tableName, null, values);
 		} else {
 			getActivity().getContentResolver().update(uri, values,
 					VueConstants.KEYWORD + "=?", new String[] { keyword });
-			/*
-			 * db.update(tableName, values, VueConstants.KEYWORD + "=?", new
-			 * String[] {keyword});
-			 */
 		}
-		// db.close();
 	}
 
 	private AisleData getAisleData(String tableName) {
 		AisleData data = null;
-		DbHelper helper = new DbHelper(getActivity());
-		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor c = db.query(tableName, null, null, null, null, null,
-				VueConstants.LAST_USED_TIME + " DESC");
+		Uri uri = null;
+        if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
+            uri = VueConstants.LOOKING_FOR_CONTENT_URI;
+        } else if(tableName.equals(VueConstants.OCCASION_TABLE)) {
+          uri = VueConstants.OCCASION_CONTENT_URI;
+        } else if(tableName.equals(VueConstants.CATEGORY_TABLE)) {
+          uri = VueConstants.CATEGORY_CONTENT_URI;
+        } else {
+          return null;
+        }
+		Cursor c = getActivity().getContentResolver().query(uri, null, null, null, VueConstants.LAST_USED_TIME + " DESC");
 		if (c.moveToFirst()) {
 			data = new AisleData();
 			data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
@@ -978,7 +977,6 @@ public class DataEntryFragment extends Fragment {
 					.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
 		}
 		c.close();
-		db.close();
 		return data;
 	}
 

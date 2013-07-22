@@ -17,9 +17,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -36,12 +33,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -60,12 +54,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
-import com.lateralthoughts.vue.utils.Utils;
 
 public class VueListFragment extends SherlockFragment implements TextWatcher/*Fragment*/ {
  // public static final String TAG = "VueListFragment";
@@ -146,6 +137,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         String s = textView.getText().toString();
         if(s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
           VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
+          VueTrendingAislesDataModel.getInstance(getActivity()).getAislesFromDb();
         } else if (s.equals(getString(R.string.sidemenu_option_About))) {
           inflateAboutLayout();
         } else if (s.equals(getString(R.string.sidemenu_option_FeedBack))) {
@@ -512,7 +504,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.FACEBOOK);
         b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
         i.putExtras(b);
-        startActivity(i);
+        getActivity().startActivityForResult(i,
+            VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE);
       }
 
     } else if (s.equals("Google Plus")) {
@@ -532,7 +525,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.GOOGLEPLUS);
         b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
         i.putExtras(b);
-        startActivity(i);
+        getActivity().startActivityForResult(i,
+            VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE);
       }
 
     } else {
@@ -544,9 +538,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
 
       // Pull and display fb friends from facebook.com
   private void fbFriendsList() {
-
-
-
     SharedPreferences sharedPreferencesObj = getActivity()
         .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
     String accessToken = sharedPreferencesObj.getString(
@@ -631,7 +622,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
       b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.GOOGLEPLUS);
       b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
       i.putExtras(b);
-      startActivity(i);
+      getActivity().startActivityForResult(i,
+          VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE);
     }
   }
 

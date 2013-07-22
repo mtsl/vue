@@ -113,6 +113,8 @@ public class VueConstants {
 	public static final String AISLES = "aisles";
 	public static final String AISLE_IMAGES = "aisleImages";
 	public static final String LOOKING_FOR_TABLE = "lookingFor";
+	public static final String OCCASION_TABLE = "occasion";
+	public static final String CATEGORY_TABLE = "category";
 	  
 	// Define MIME types
 	public static final String ARTICLES_MIME_TYPE 
@@ -127,4 +129,8 @@ public class VueConstants {
 	    + "/" + AISLE_IMAGES);
 	public static final Uri LOOKING_FOR_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	    + "/" + LOOKING_FOR_TABLE);
+	public static final Uri OCCASION_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+        + "/" + OCCASION_TABLE);
+	public static final Uri CATEGORY_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+        + "/" + CATEGORY_TABLE);
 }

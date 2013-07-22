@@ -39,7 +39,6 @@ public class VueLandingPageActivity extends BaseActivity {
 			editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG,
 					false);
 			editor.commit();
-
 			showLogInDialog(false);
 		}
 		// Check the CreatedAisleCount and Comments count
