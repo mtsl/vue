@@ -341,6 +341,15 @@ public class VueTrendingAislesDataModel {
     return sVueTrendingAislesDataModel;
   }
 
+  public void clearAisles() {
+    if (mAisleContentListMap != null) {
+      mAisleContentListMap.clear();
+    }
+    if (mAisleContentList != null) {
+      mAisleContentList.clear();
+    }
+  }
+  
   private void addAislesToDb() {
     /*DbHelper helper = new DbHelper(mContext);
     SQLiteDatabase db = helper.getWritableDatabase();*/
@@ -502,9 +511,7 @@ public class VueTrendingAislesDataModel {
     public void handleMessage(android.os.Message msg) {
       @SuppressWarnings("unchecked")
       ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
-      Log.e("Profiling", "Profiling mHandler call 1 : " + mAisleContentList.size());
       for (AisleWindowContent content : aisleContentArray) {
-        Log.e("Profiling", "Profiling : mHandler call 1 AisleId() : " + content.getAisleId());
         AisleWindowContent aisleItem = getAisleItem(content.getAisleId());
         aisleItem.addAisleContent(content.getAisleContext(),
             content.getImageList());

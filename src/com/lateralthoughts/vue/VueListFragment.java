@@ -102,23 +102,19 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
           invitefriendsLayout.setVisibility(View.GONE);
           expandListView.setVisibility(View.VISIBLE);
           returnWhat = true;
-          Log.e("Profiling", "Profiling onBackPressed() invitefriendsLayout returnWhat : " + returnWhat);
         }
         if (aboutlayout != null && aboutlayout.getVisibility() == View.VISIBLE) {
           aboutlayout.setVisibility(View.GONE);
           aboutlayout.startAnimation(animDown);
           expandListView.setVisibility(View.VISIBLE);
           returnWhat = true;
-          Log.e("Profiling", "Profiling onBackPressed() invitefriendsLayout aboutlayout : " + returnWhat);
         }
-       
         if (customlayout != null
             && customlayout.getVisibility() == View.VISIBLE) {
           customlayout.setVisibility(View.GONE);
           customlayout.startAnimation(animDown);
           expandListView.setVisibility(View.VISIBLE);
           returnWhat = true;
-          Log.e("Profiling", "Profiling onBackPressed() invitefriendsLayout customlayout : " + returnWhat);
         }
         return returnWhat;
       }
@@ -147,7 +143,9 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         TextView textView = (TextView) v
             .findViewById(R.id.vue_list_fragment_itemTextview);
         String s = textView.getText().toString();
-        if (s.equals(getString(R.string.sidemenu_option_About))) {
+        if(s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
+          VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
+        } else if (s.equals(getString(R.string.sidemenu_option_About))) {
           inflateAboutLayout();
         } else if (s.equals(getString(R.string.sidemenu_option_FeedBack))) {
           startActivity(new Intent(getActivity(), FeedbackForm.class));
@@ -492,11 +490,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
   public void getFriendsList(String s) {
 
     progress = ProgressDialog.show(getActivity(), "", "Please wait...");
-    Log.e(getTag(), "SURU : Value of s : " + s);
-
     sharedPreferencesObj = getActivity().getSharedPreferences(
         VueConstants.SHAREDPREFERENCE_NAME, 0);
-
     boolean facebookloginflag = sharedPreferencesObj.getBoolean(
         VueConstants.FACEBOOK_LOGIN, false);
     boolean googleplusloginflag = sharedPreferencesObj.getBoolean(
@@ -509,7 +504,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         if (progress.isShowing()) {
           progress.dismiss();
         }
-
         Intent i = new Intent(getActivity(), VueLoginActivity.class);
         Bundle b = new Bundle();
         b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
@@ -581,8 +575,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
               progress.dismiss();
             }
           }
-
-
         }
       };
 
@@ -608,18 +600,14 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
 
       VueApplication.getInstance().getRequestQueue().add(myReq);
 
-    }
-
-    else {
+    } else {
       if (progress.isShowing()) {
         progress.dismiss();
       }
     }
-
   }
 
-
-	  // Pull and display G+ friends from plus.google.com.
+  // Pull and display G+ friends from plus.google.com.
   private void getGPlusFriendsList() {
     if (VueLandingPageActivity.googlePlusFriendsDetailsList != null) {
       inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(getActivity(),
@@ -645,7 +633,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
       startActivity(i);
     }
   }
-	  
+
     private void getUserInfo() {
       expandListView.setVisibility(View.GONE);
       customlayout.startAnimation(animUp);
@@ -655,6 +643,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
       String gender = "";
       String email = "";
       String location = "";
+      boolean isUser = false;
       if(!sharedPreferencesObj.getString(VueConstants.USER_NAME, "").isEmpty()) {
         name = sharedPreferencesObj.getString(VueConstants.USER_NAME, "");
         dob = sharedPreferencesObj.getString(VueConstants.USER_DOB, "");
@@ -669,6 +658,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         email = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_EMAIL, "");
         location = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_LOCATION, "");
         profilePicUrl = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_PROFILE_PICTURE, null);
+        isUser = true;
       } else if(!sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME, "").isEmpty()) {
         name = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME, "");
         dob =  sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_DOB, "");
@@ -676,7 +666,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         email = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_EMAIL, "");
         location = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_LOCATION, "");
         profilePicUrl = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_PROFILE_PICTURE, null);
+        isUser = true;
       } else {
+        
+      }
+      if(isUser) {
         
       }
       /*userName.setText(name);
@@ -717,30 +711,30 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
 	 * @throws JSONException
 	 */
 	@SuppressWarnings("unchecked")
-	List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException {
-		List<FbGPlusDetails> facebookFriendsDetailsList = null;
+  List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException {
+    List<FbGPlusDetails> facebookFriendsDetailsList = null;
 
-		JSONObject mainJsonObj = new JSONObject(jsonString);
-		JSONArray dataArray = mainJsonObj.getJSONArray("data");
-		if (dataArray != null && dataArray.length() > 0) {
-			facebookFriendsDetailsList = new ArrayList<FbGPlusDetails>();
+    JSONObject mainJsonObj = new JSONObject(jsonString);
+    JSONArray dataArray = mainJsonObj.getJSONArray("data");
+    if (dataArray != null && dataArray.length() > 0) {
+      facebookFriendsDetailsList = new ArrayList<FbGPlusDetails>();
 
-			for (int i = 0; i < dataArray.length(); i++) {
+      for (int i = 0; i < dataArray.length(); i++) {
 
-				JSONObject jsonObj = dataArray.getJSONObject(i);
-				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(
-						jsonObj.getString("id"), jsonObj.getString("name"),
-						jsonObj.getJSONObject("picture").getJSONObject("data")
-								.getString("url"), null);
+        JSONObject jsonObj = dataArray.getJSONObject(i);
+        FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(
+            jsonObj.getString("id"), jsonObj.getString("name"), jsonObj
+                .getJSONObject("picture").getJSONObject("data")
+                .getString("url"), null);
 
-				facebookFriendsDetailsList.add(objFacebookFriendsDetails);
-			}
-		}
+        facebookFriendsDetailsList.add(objFacebookFriendsDetails);
+      }
+    }
 
-		Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
+    Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
 
-		return facebookFriendsDetailsList;
-	}
+    return facebookFriendsDetailsList;
+  }
 	
 	private void inflateSettingsLayout() {
 	  View layoutSettings = null;
