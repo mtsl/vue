@@ -1,112 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dataentry_root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/dataentry_root_layout"
     android:background="@color/offwhitebg"
     android:orientation="vertical" >
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dip"
-        android:background="@drawable/actionbar_bg" >
-
-        <RelativeLayout
-            android:id="@+id/titlebarbottomlayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible" >
-
-            <ImageView
-                android:id="@+id/createaisel_title_bg"
-                android:layout_width="36dip"
-                android:layout_height="36dip"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="8dip"
-                android:src="@drawable/vue_launcher_icon" />
-
-            <TextView
-                android:id="@+id/create_aisle_screen_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="8dip"
-                android:layout_toRightOf="@+id/createaisel_title_bg"
-                android:text="Create Aisle"
-                android:textColor="@color/dataentrytextcolor"
-                android:textSize="18sp"
-                android:textStyle="normal" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:orientation="horizontal" >
-
-                <ImageView
-                    android:id="@+id/createaisel_close_btn"
-                    android:layout_width="36dip"
-                    android:layout_height="36dip"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="8dip"
-                    android:src="@drawable/closebtn" />
-
-                <ImageView
-                    android:id="@+id/createaisel_to_server"
-                    android:layout_width="36dip"
-                    android:layout_height="36dip"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="8dip"
-                    android:src="@drawable/createaisle" />
-            </LinearLayout>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/actionbar_top_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" >
-
-            <ImageView
-                android:id="@+id/createaisel_title_top_bg"
-                android:layout_width="36dip"
-                android:layout_height="36dip"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="8dip"
-                android:src="@drawable/vue_launcher_icon" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:orientation="horizontal" >
-
-                <ImageView
-                    android:id="@+id/share_created_aisle"
-                    android:layout_width="36dip"
-                    android:layout_height="36dip"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="8dip"
-                    android:src="@drawable/share" />
-
-                <ImageView
-                    android:id="@+id/edit_aisle"
-                    android:layout_width="36dip"
-                    android:layout_height="36dip"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="8dip"
-                    android:src="@drawable/edit" />
-
-                <ImageView
-                    android:id="@+id/add_image_to_aisle"
-                    android:layout_width="36dip"
-                    android:layout_height="36dip"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="8dip"
-                    android:src="@drawable/addimage01" />
-            </LinearLayout>
-        </RelativeLayout>
-    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -136,13 +34,12 @@
 
         <TextView
             android:id="@+id/touchtochangeimage"
-            android:layout_width="100dip"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_width="match_parent"
+            android:layout_height="48dip"
             android:layout_centerInParent="true"
-            android:layout_marginRight="8dip"
             android:background="#90000000"
             android:clickable="true"
+            android:gravity="center"
             android:padding="8dip"
             android:text="Touch To Change Image"
             android:textColor="@color/white"
@@ -206,7 +103,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dip"
+                    android:layout_marginLeft="16dip"
                     android:layout_marginRight="2dip"
                     android:layout_marginTop="2dip"
                     android:orientation="horizontal" >
@@ -222,6 +119,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="4dip"
                         android:text="Looking For?"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
@@ -261,7 +159,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dip"
+                    android:layout_marginLeft="16dip"
                     android:layout_marginRight="2dip"
                     android:layout_marginTop="2dip"
                     android:orientation="horizontal" >
@@ -277,6 +175,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="4dip"
                         android:text="Find at"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
@@ -332,7 +231,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dip"
+                    android:layout_marginLeft="16dip"
                     android:layout_marginRight="2dip"
                     android:layout_marginTop="2dip"
                     android:orientation="horizontal" >
@@ -348,6 +247,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="4dip"
                         android:text="Occasion"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
@@ -404,7 +304,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dip"
+                    android:layout_marginLeft="16dip"
                     android:layout_marginRight="2dip"
                     android:layout_marginTop="2dip"
                     android:orientation="horizontal" >
@@ -420,6 +320,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="4dip"
                         android:text="Category"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
@@ -463,7 +364,7 @@
                 </ListView>
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/dataentry_bottom_bottom_layout"
                 android:layout_width="match_parent"
                 android:layout_height="48dip"
@@ -476,16 +377,22 @@
                     android:id="@+id/saysomethingaboutaisle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                   android:layout_centerVertical="true"
+                    android:cursorVisible="false"
+                    android:layout_marginLeft="4dip"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="88dip"
                     android:hint="Say something about the aisle"
                     android:singleLine="true"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_gravity="right"
+                    android:layout_marginRight="8dip"
+                    android:id="@+id/dataentry_bottom_right_layout"
+                    android:layout_alignParentRight="true"
                     android:orientation="horizontal" >
 
                     <ImageView
@@ -505,7 +412,7 @@
                         android:layout_marginLeft="8dip"
                         android:background="@drawable/finditat" />
                 </LinearLayout>
-            </LinearLayout>
+            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/dataentry_bottom_top_layout"

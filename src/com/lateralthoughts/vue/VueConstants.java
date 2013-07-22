@@ -1,5 +1,7 @@
 package com.lateralthoughts.vue;
 
+import android.net.Uri;
+
 /**
  * Here we will declare all constants related to Vue application.
  * 
@@ -23,6 +25,7 @@ public class VueConstants {
 	public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
 	public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";
 	public static final int SHARE_INTENT_REQUEST_CODE = 1;
+	public static final int AMAZON_APP_REQUEST_CODE = 39;
 	public static final String GOOGLEPLUS_AUTOMATIC_LOGIN = "googleplusautomaticlogin";
 	public static final String FACEBOOK_APP_NAME = "Facebook";
 	public static final String TWITTER_APP_NAME = "Twitter";
@@ -65,6 +68,8 @@ public class VueConstants {
 	public static final String STORE = "store";
 	// Column names for dataToSync table.
 	public static final String COMMENT = "comment";
+	public static final int INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE = 24;
+	public static final String INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY = "invitefriendsloginactivitybundlestringkey";
 	public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
 	public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
@@ -86,4 +91,46 @@ public class VueConstants {
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
 	public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
+
+	// Column names for lookingFor, occasion, category table.
+	public static final String KEYWORD = "keyWord";
+	public static final String LAST_USED_TIME = "lastUsedTime";
+	public static final String NUMBER_OF_TIMES_USED = "numberOfTimesUsed";
+	public static final String AMAZON_APP_PACKAGE_NAME = "com.amazon.mShop.android";
+	public static final String AMAZON_APP_ACTIVITY_NAME = "com.amazon.mShop.home.HomeActivity";
+
+	// User Profile details
+	public static final String USER_NAME = "userName";
+	public static final String USER_PROFILE_PICTURE = "userProfilePicture";
+	public static final String USER_EMAIL = "userEmail";
+	public static final String USER_DOB = "userDob";
+	public static final String USER_GENDER = "userGender";
+	public static final String USER_LOCATION = "userLocation";
+	
+	// Define CONTENT URI
+	public static final String AUTHORITY = 
+	    "com.lateralthoughts.vue.connectivity.VueConstants";
+	public static final String AISLES = "aisles";
+	public static final String AISLE_IMAGES = "aisleImages";
+	public static final String LOOKING_FOR_TABLE = "lookingFor";
+	public static final String OCCASION_TABLE = "occasion";
+	public static final String CATEGORY_TABLE = "category";
+	  
+	// Define MIME types
+	public static final String ARTICLES_MIME_TYPE 
+	      = "vnd.android.cursor.dir/vnd.vue.articles";
+	public static final String ARTICLE_MIME_TYPE 
+	      = "vnd.android.cursor.item/vnd.vue.article";
+	  
+	// Uri to the table of database.
+	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	    + "/" + AISLES);
+	public static final Uri IMAGES_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	    + "/" + AISLE_IMAGES);
+	public static final Uri LOOKING_FOR_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	    + "/" + LOOKING_FOR_TABLE);
+	public static final Uri OCCASION_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+        + "/" + OCCASION_TABLE);
+	public static final Uri CATEGORY_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+        + "/" + CATEGORY_TABLE);
 }

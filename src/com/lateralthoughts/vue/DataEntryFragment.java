@@ -2,34 +2,33 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.view.ViewPager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -38,8 +37,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
+import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -49,49 +49,47 @@ import com.lateralthoughts.vue.utils.clsShare;
  * Fragment for creating Aisle
  * 
  */
-public class CreateAisleFragment extends Fragment {
+public class DataEntryFragment extends Fragment {
 
-	ListView categoryListview = null;
-	LinearLayout lookingForPopup = null, lookingForListviewLayout = null,
-			ocassionListviewLayout = null, ocassionPopup = null,
-			categoeryPopup = null, categoryListviewLayout = null,
-			dataEntryRootLayout = null;
-	TextView touchToChangeImage = null, lookingForBigText = null,
+	private ListView categoryListview = null;
+	private LinearLayout lookingForPopup = null,
+			lookingForListviewLayout = null, ocassionListviewLayout = null,
+			ocassionPopup = null, categoeryPopup = null,
+			categoryListviewLayout = null, dataEntryRootLayout = null;
+	private TextView touchToChangeImage = null, lookingForBigText = null,
 			occassionBigText = null, categoryText = null;
-	com.lateralthoughts.vue.utils.EditTextBackEvent lookingForText = null,
-			occasionText = null, saySomethingAboutAisle = null,
+	private com.lateralthoughts.vue.utils.EditTextBackEvent lookingForText = null,
+			occasionText = null,
+			saySomethingAboutAisle = null,
 			findAtText = null;
 	private static final String categoryitemsArray[] = { "Apparel", "Beauty",
 			"Electronics", "Entertainment", "Events", "Food", "Home" };
 	private Drawable listDivider = null;
-	ImageView createaisleBg = null, categoeryIcon = null;
-	Uri selectedCameraImage = null;
-	InputMethodManager inputMethodManager;
-	int categoryCurrentSelectedPosition = 0;
-	boolean dontGoToNextlookingFor = false, dontGoToNextForOccasion = false;
-	String previousLookingfor = null, previousOcasion = null,
+	private ImageView createaisleBg = null, categoeryIcon = null;
+	private Uri selectedCameraImage = null;
+	private InputMethodManager inputMethodManager;
+	private int categoryCurrentSelectedPosition = 0;
+	private boolean dontGoToNextlookingFor = false,
+			dontGoToNextForOccasion = false;
+	private String previousLookingfor = null, previousOcasion = null,
 			previousFindAtText = null, previousSaySomething = null;
-	String imagePath = null, resizedImagePath = null;
-	LinearLayout mainHeadingRow = null, dataEntryBottomBottomLayout = null;
-	RelativeLayout dataEntryBottomTopLayout = null,
+	private String imagePath = null, resizedImagePath = null;
+	private LinearLayout mainHeadingRow = null;
+	private RelativeLayout dataEntryBottomTopLayout = null,
 			dataEntryInviteFriendsLayout = null,
 			dataEntryInviteFriendsPopupLayout = null,
 			dataEntryInviteFriendsFacebookLayout = null,
-			titleBarBottomLayout = null, actionBarTopLayout = null,
+			dataEntryBottomBottomLayout = null,
 			dataEntryInviteFriendsCancelLayout = null,
 			dataEntryInviteFriendsGoogleplusLayout = null;
-	ProgressDialog dataentryInviteFriendsProgressdialog = null;
-	ListView dataEntryInviteFriendsList = null;
-	ImageView createAisleTitleBg = null, createAiselCloseBtn = null,
-			createAiselToServer = null, shareCreatedAisle = null,
-			addImageToAisle = null, createAisleTitleTopBg = null,
-			findAtIcon = null, edit_aisle = null;
-	ShareDialog mShare = null;
-	boolean addImageToAisleFlag = false, editAisleImageFlag = false;
-	float screenHeight = 0, screenWidth = 0;
-	TextView createAisleScreenTitle = null;
-	LinearLayout findAtPopup = null;
-	ViewPager dataEntryAislesViewpager = null;
+	private ProgressDialog dataentryInviteFriendsProgressdialog = null;
+	private ListView dataEntryInviteFriendsList = null;
+	private ImageView findAtIcon = null;
+	public ShareDialog mShare = null;
+	private boolean addImageToAisleFlag = false, editAisleImageFlag = false;
+	private float screenHeight = 0, screenWidth = 0;
+	private LinearLayout findAtPopup = null;
+	private ViewPager dataEntryAislesViewpager = null;
 	private static final int AISLE_IMAGE_MARGIN = 96;
 	private static final String LOOKING_FOR = "Looking";
 	private static final String OCCASION = " Occasion";
@@ -117,41 +115,23 @@ public class CreateAisleFragment extends Fragment {
 		screenHeight = screenHeight
 				- Utils.dipToPixels(getActivity(), AISLE_IMAGE_MARGIN);
 		screenWidth = dm.widthPixels;
-		View v = inflater.inflate(R.layout.create_aisleview_fragment,
-				container, false);
+		View v = inflater.inflate(R.layout.data_entry_fragment, container,
+				false);
 		inputMethodManager = (InputMethodManager) getActivity()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		lookingForText = (EditTextBackEvent) v
 				.findViewById(R.id.lookingfortext);
-		createAisleTitleTopBg = (ImageView) v
-				.findViewById(R.id.createaisel_title_top_bg);
 		dataEntryAislesViewpager = (ViewPager) v
 				.findViewById(R.id.dataentry_aisles_viewpager);
 		dataEntryRootLayout = (LinearLayout) v
 				.findViewById(R.id.dataentry_root_layout);
-		edit_aisle = (ImageView) v.findViewById(R.id.edit_aisle);
 		findAtIcon = (ImageView) v.findViewById(R.id.find_at_icon);
 		findAtText = (EditTextBackEvent) v.findViewById(R.id.find_at_text);
 		findAtPopup = (LinearLayout) v.findViewById(R.id.find_at_popup);
-		createAisleScreenTitle = (TextView) v
-				.findViewById(R.id.create_aisle_screen_title);
 		dataEntryInviteFriendsCancelLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invitefriends_cancellayout);
-		actionBarTopLayout = (RelativeLayout) v
-				.findViewById(R.id.actionbar_top_layout);
-		createAiselToServer = (ImageView) v
-				.findViewById(R.id.createaisel_to_server);
-		addImageToAisle = (ImageView) v.findViewById(R.id.add_image_to_aisle);
-		createAiselCloseBtn = (ImageView) v
-				.findViewById(R.id.createaisel_close_btn);
-		createAisleTitleBg = (ImageView) v
-				.findViewById(R.id.createaisel_title_bg);
-		titleBarBottomLayout = (RelativeLayout) v
-				.findViewById(R.id.titlebarbottomlayout);
-		dataEntryBottomBottomLayout = (LinearLayout) v
+		dataEntryBottomBottomLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_bottom_bottom_layout);
-		shareCreatedAisle = (ImageView) v
-				.findViewById(R.id.share_created_aisle);
 		dataEntryInviteFriendsGoogleplusLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invitefriends_googlepluslayout);
 		lookingForBigText = (TextView) v.findViewById(R.id.lookingforbigtext);
@@ -193,11 +173,14 @@ public class CreateAisleFragment extends Fragment {
 		previousLookingfor = lookingForText.getText().toString();
 		previousOcasion = occasionText.getText().toString();
 		previousSaySomething = saySomethingAboutAisle.getText().toString();
+		lookingForText.requestFocus();
+		inputMethodManager.showSoftInput(lookingForText, 0);
 		saySomethingAboutAisle
 				.setOnEditorActionListener(new OnEditorActionListener() {
 					@Override
 					public boolean onEditorAction(TextView arg0, int arg1,
 							KeyEvent arg2) {
+						saySomethingAboutAisle.setCursorVisible(false);
 						previousSaySomething = saySomethingAboutAisle.getText()
 								.toString();
 						inputMethodManager.hideSoftInputFromWindow(
@@ -212,6 +195,7 @@ public class CreateAisleFragment extends Fragment {
 		saySomethingAboutAisle.setonInterceptListen(new OnInterceptListener() {
 			@Override
 			public void onKeyBackPressed() {
+				saySomethingAboutAisle.setCursorVisible(false);
 				inputMethodManager.hideSoftInputFromWindow(
 						saySomethingAboutAisle.getWindowToken(), 0);
 				saySomethingAboutAisle.setText(previousSaySomething);
@@ -518,74 +502,6 @@ public class CreateAisleFragment extends Fragment {
 						}
 					}
 				});
-		createAisleTitleBg.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				CreateAisleActivity activity = (CreateAisleActivity) getActivity();
-				activity.showBezelMenu();
-			}
-		});
-		createAisleTitleTopBg.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				CreateAisleActivity activity = (CreateAisleActivity) getActivity();
-				activity.showBezelMenu();
-			}
-		});
-		createAiselCloseBtn.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				CreateAisleActivity activity = (CreateAisleActivity) getActivity();
-				activity.finishActivity();
-			}
-		});
-		createAiselToServer.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						lookingForText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						findAtText.getWindowToken(), 0);
-				lookingForPopup.setVisibility(View.GONE);
-				ocassionPopup.setVisibility(View.GONE);
-				categoeryPopup.setVisibility(View.GONE);
-				findAtPopup.setVisibility(View.GONE);
-				categoryListviewLayout.setVisibility(View.GONE);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				if (!(lookingForBigText.getText().toString().trim()
-						.equals(LOOKING_FOR))
-						&& !(occassionBigText.getText().toString().trim()
-								.equals(OCCASION))) {
-					if (addImageToAisleFlag) {
-						addImageToAisleToServer();
-					} else {
-						addAisleToServer();
-					}
-				} else {
-					showAlertForMandotoryFields();
-				}
-			}
-		});
-		shareCreatedAisle.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mShare = new ShareDialog(getActivity(), getActivity());
-				if (aisleImagePathList != null) {
-					ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
-					for (int i = 0; i < aisleImagePathList.size(); i++) {
-						clsShare shareObj = new clsShare(null,
-								aisleImagePathList.get(i));
-						imageUrlList.add(shareObj);
-					}
-					mShare.share(imageUrlList, "", "");
-				}
-			}
-		});
 		dataEntryInviteFriendsCancelLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
@@ -594,19 +510,6 @@ public class CreateAisleFragment extends Fragment {
 								.setVisibility(View.GONE);
 					}
 				});
-		addImageToAisle.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				addImageToAisleFlag = true;
-				Intent intent = new Intent(getActivity(),
-						CreateAisleSelectionActivity.class);
-				Bundle b = new Bundle();
-				b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
-				intent.putExtras(b);
-				getActivity().startActivityForResult(intent,
-						VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
-			}
-		});
 		findAtIcon.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -663,28 +566,6 @@ public class CreateAisleFragment extends Fragment {
 				return false;
 			}
 		});
-		edit_aisle.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				editAisleImageFlag = true;
-				currentPagePosition = dataEntryAislesViewpager.getCurrentItem();
-				resizedImagePath = aisleImagePathList.get(currentPagePosition);
-				imagePath = aisleImagePathList.get(currentPagePosition);
-				createaisleBg.setImageURI(Uri.fromFile(new File(
-						aisleImagePathList.get(currentPagePosition))));
-				dataEntryAislesViewpager.setVisibility(View.GONE);
-				createaisleBg.setVisibility(View.VISIBLE);
-				createAisleScreenTitle.setText("Edit Aisle");
-				dataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
-				dataEntryBottomTopLayout.setVisibility(View.GONE);
-				actionBarTopLayout.setVisibility(View.GONE);
-				titleBarBottomLayout.setVisibility(View.VISIBLE);
-				mainHeadingRow.setVisibility(View.VISIBLE);
-				touchToChangeImage.setVisibility(View.VISIBLE);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-			}
-		});
 		dataEntryRootLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -706,7 +587,111 @@ public class CreateAisleFragment extends Fragment {
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 			}
 		});
+		saySomethingAboutAisle.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				inputMethodManager.hideSoftInputFromWindow(
+						occasionText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						lookingForText.getWindowToken(), 0);
+				inputMethodManager.hideSoftInputFromWindow(
+						findAtText.getWindowToken(), 0);
+				lookingForPopup.setVisibility(View.GONE);
+				ocassionPopup.setVisibility(View.GONE);
+				categoeryPopup.setVisibility(View.GONE);
+				findAtPopup.setVisibility(View.GONE);
+				categoryListviewLayout.setVisibility(View.GONE);
+				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				saySomethingAboutAisle.setCursorVisible(true);
+				saySomethingAboutAisle.requestFocus();
+				inputMethodManager.showSoftInput(saySomethingAboutAisle, 0);
+			}
+		});
 		return v;
+	}
+
+	public void createAisleClickFunctionality() {
+		inputMethodManager.hideSoftInputFromWindow(
+				saySomethingAboutAisle.getWindowToken(), 0);
+		inputMethodManager.hideSoftInputFromWindow(
+				occasionText.getWindowToken(), 0);
+		inputMethodManager.hideSoftInputFromWindow(
+				lookingForText.getWindowToken(), 0);
+		inputMethodManager.hideSoftInputFromWindow(findAtText.getWindowToken(),
+				0);
+		lookingForPopup.setVisibility(View.GONE);
+		ocassionPopup.setVisibility(View.GONE);
+		categoeryPopup.setVisibility(View.GONE);
+		findAtPopup.setVisibility(View.GONE);
+		categoryListviewLayout.setVisibility(View.GONE);
+		occassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		if (!(lookingForBigText.getText().toString().trim().equals(LOOKING_FOR))
+				&& !(occassionBigText.getText().toString().trim()
+						.equals(OCCASION))) {
+			if (addImageToAisleFlag) {
+				addImageToAisleToServer();
+			} else {
+				addAisleToServer();
+			}
+		} else {
+			showAlertForMandotoryFields();
+		}
+
+	}
+
+	public void editButtonClickFunctionality() {
+
+		editAisleImageFlag = true;
+		currentPagePosition = dataEntryAislesViewpager.getCurrentItem();
+		resizedImagePath = aisleImagePathList.get(currentPagePosition);
+		imagePath = aisleImagePathList.get(currentPagePosition);
+		createaisleBg.setImageURI(Uri.fromFile(new File(aisleImagePathList
+				.get(currentPagePosition))));
+		dataEntryAislesViewpager.setVisibility(View.GONE);
+		createaisleBg.setVisibility(View.VISIBLE);
+		DataEntryActivity obj = (DataEntryActivity) getActivity();
+		obj.getSupportActionBar().setTitle(
+				getResources().getString(R.string.edit_aisle_screen_title));
+		dataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
+		dataEntryBottomTopLayout.setVisibility(View.GONE);
+		DataEntryActivity activity = (DataEntryActivity) getActivity();
+		activity.isNewActionBar = false;
+		activity.invalidateOptionsMenu();
+		mainHeadingRow.setVisibility(View.VISIBLE);
+		touchToChangeImage.setVisibility(View.VISIBLE);
+		occassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+
+	}
+
+	public void shareClickFunctionality() {
+
+		mShare = new ShareDialog(getActivity(), getActivity());
+		if (aisleImagePathList != null) {
+			ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
+			for (int i = 0; i < aisleImagePathList.size(); i++) {
+				clsShare shareObj = new clsShare(null,
+						aisleImagePathList.get(i));
+				imageUrlList.add(shareObj);
+			}
+			mShare.share(imageUrlList, "", "");
+		}
+
+	}
+
+	public void addImageToAisleButtonClickFunctionality() {
+
+		addImageToAisleFlag = true;
+		Intent intent = new Intent(getActivity(),
+				CreateAisleSelectionActivity.class);
+		Bundle b = new Bundle();
+		b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
+		intent.putExtras(b);
+		getActivity().startActivityForResult(intent,
+				VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
+
 	}
 
 	private boolean appInstalledOrNot(String uri) {
@@ -721,7 +706,7 @@ public class CreateAisleFragment extends Fragment {
 		return app_installed;
 	}
 
-	public void showAlertForEditPermission(final String sourceName) {
+	private void showAlertForEditPermission(final String sourceName) {
 		final Dialog dialog = new Dialog(getActivity(),
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -753,7 +738,7 @@ public class CreateAisleFragment extends Fragment {
 		dialog.show();
 	}
 
-	public void showAlertForMandotoryFields() {
+	private void showAlertForMandotoryFields() {
 		final Dialog dialog = new Dialog(getActivity(),
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -773,7 +758,7 @@ public class CreateAisleFragment extends Fragment {
 		dialog.show();
 	}
 
-	public void lookingForTextClickFunctionality() {
+	private void lookingForTextClickFunctionality() {
 		dontGoToNextlookingFor = true;
 		lookingForPopup.setVisibility(View.VISIBLE);
 		lookingForBigText.setBackgroundColor(getResources().getColor(
@@ -782,7 +767,7 @@ public class CreateAisleFragment extends Fragment {
 		inputMethodManager.showSoftInput(lookingForText, 0);
 	}
 
-	public void occassionTextClickFunctionality() {
+	private void occassionTextClickFunctionality() {
 		dontGoToNextForOccasion = true;
 		ocassionPopup.setVisibility(View.VISIBLE);
 		occassionBigText.setBackgroundColor(getResources().getColor(
@@ -791,7 +776,7 @@ public class CreateAisleFragment extends Fragment {
 		inputMethodManager.showSoftInput(occasionText, 0);
 	}
 
-	public void categoryIconClickFunctionality() {
+	private void categoryIconClickFunctionality() {
 		categoryListview.setVisibility(View.VISIBLE);
 		categoryListview.setAdapter(new CategoryAdapter(getActivity()));
 		categoryListviewLayout.setVisibility(View.VISIBLE);
@@ -799,7 +784,7 @@ public class CreateAisleFragment extends Fragment {
 	}
 
 	// Category....
-	class CategoryAdapter extends BaseAdapter {
+	private class CategoryAdapter extends BaseAdapter {
 		Activity context;
 
 		public CategoryAdapter(Activity context) {
@@ -877,11 +862,15 @@ public class CreateAisleFragment extends Fragment {
 			createaisleBg.setImageURI(Uri.fromFile(new File(resizedImagePath)));
 			if (addImageToAisleFlag) {
 				dataEntryAislesViewpager.setVisibility(View.GONE);
-				createAisleScreenTitle.setText("Add Image");
+				DataEntryActivity obj = (DataEntryActivity) getActivity();
+				obj.getSupportActionBar().setTitle(
+						getResources().getString(
+								R.string.add_imae_to_aisle_screen_title));
 				dataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
 				dataEntryBottomTopLayout.setVisibility(View.GONE);
-				actionBarTopLayout.setVisibility(View.GONE);
-				titleBarBottomLayout.setVisibility(View.VISIBLE);
+				DataEntryActivity activity = (DataEntryActivity) getActivity();
+				activity.isNewActionBar = false;
+				activity.invalidateOptionsMenu();
 				mainHeadingRow.setVisibility(View.VISIBLE);
 				touchToChangeImage.setVisibility(View.VISIBLE);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
@@ -893,7 +882,7 @@ public class CreateAisleFragment extends Fragment {
 		}
 	}
 
-	public void addImageToAisleToServer() {
+	private void addImageToAisleToServer() {
 		// Input parameters for Adding Aisle to server request...
 		String category = categoryText.getText().toString();
 		String lookingFor = lookingForBigText.getText().toString();
@@ -906,7 +895,7 @@ public class CreateAisleFragment extends Fragment {
 		renderUIAfterAddingAisleToServer();
 	}
 
-	public void addAisleToServer() {
+	private void addAisleToServer() {
 		// Input parameters for Adding Aisle to server request...
 		String category = categoryText.getText().toString();
 		String lookingFor = lookingForBigText.getText().toString();
@@ -916,16 +905,21 @@ public class CreateAisleFragment extends Fragment {
 										// OR Gallery.
 		String title = ""; // For Camera and Gallery we don't have title.
 		String store = ""; // For Camera and Gallery we don't have store.
+		showDataProgressOnNotification();
 		renderUIAfterAddingAisleToServer();
 	}
 
-	public void renderUIAfterAddingAisleToServer() {
+	private void renderUIAfterAddingAisleToServer() {
+		DataEntryActivity obj = (DataEntryActivity) getActivity();
+		obj.getSupportActionBar().setTitle(
+				getResources().getString(R.string.app_name));
 		if (editAisleImageFlag) {
 			aisleImagePathList.remove(currentPagePosition);
 		}
 		editAisleImageFlag = false;
-		actionBarTopLayout.setVisibility(View.VISIBLE);
-		titleBarBottomLayout.setVisibility(View.GONE);
+		DataEntryActivity activity = (DataEntryActivity) getActivity();
+		activity.isNewActionBar = true;
+		activity.invalidateOptionsMenu();
 		mainHeadingRow.setVisibility(View.GONE);
 		touchToChangeImage.setVisibility(View.GONE);
 		dataEntryBottomBottomLayout.setVisibility(View.GONE);
@@ -935,5 +929,101 @@ public class CreateAisleFragment extends Fragment {
 		createaisleBg.setVisibility(View.GONE);
 		dataEntryAislesViewpager.setAdapter(new DataEntryAilsePagerAdapter(
 				getActivity(), aisleImagePathList));
+	}
+
+	private void addAisleMetaDataToDB(String tableName, String keyword,
+			long time, int count, boolean isNewFlag) {
+		Uri uri = null;
+		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE) && isNewFlag) {
+			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
+		} else if(tableName.equals(VueConstants.OCCASION_TABLE)) {
+          uri = VueConstants.OCCASION_CONTENT_URI;
+        } else if(tableName.equals(VueConstants.CATEGORY_TABLE)) {
+          uri = VueConstants.CATEGORY_CONTENT_URI;
+        } else {
+          return;
+        }
+		ContentValues values = new ContentValues();
+		values.put(VueConstants.KEYWORD, keyword);
+		values.put(VueConstants.LAST_USED_TIME, time);
+		values.put(VueConstants.NUMBER_OF_TIMES_USED, count);
+		if (isNewFlag) {
+			getActivity().getContentResolver().insert(uri, values);
+		} else {
+			getActivity().getContentResolver().update(uri, values,
+					VueConstants.KEYWORD + "=?", new String[] { keyword });
+		}
+	}
+
+	private AisleData getAisleData(String tableName) {
+		AisleData data = null;
+		Uri uri = null;
+        if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
+            uri = VueConstants.LOOKING_FOR_CONTENT_URI;
+        } else if(tableName.equals(VueConstants.OCCASION_TABLE)) {
+          uri = VueConstants.OCCASION_CONTENT_URI;
+        } else if(tableName.equals(VueConstants.CATEGORY_TABLE)) {
+          uri = VueConstants.CATEGORY_CONTENT_URI;
+        } else {
+          return null;
+        }
+		Cursor c = getActivity().getContentResolver().query(uri, null, null, null, VueConstants.LAST_USED_TIME + " DESC");
+		if (c.moveToFirst()) {
+			data = new AisleData();
+			data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
+			data.time = c
+					.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));
+			data.count = c.getInt(c
+					.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
+		}
+		c.close();
+		return data;
+	}
+
+	public class AisleData {
+		String keyword;
+		long time;
+		int count;
+	}
+
+	private void showDataProgressOnNotification() {
+		final NotificationManager mNotifyManager = (NotificationManager) getActivity()
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+		final Builder mBuilder = new NotificationCompat.Builder(getActivity());
+		mBuilder.setContentTitle(getResources().getString(R.string.app_name))
+				.setContentText(
+						getResources().getString(R.string.uploading_mesg))
+				.setSmallIcon(R.drawable.vue_launcher_icon);
+		// Start a lengthy operation in a background thread
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				int incr;
+				// Do the "lengthy" operation 20 times
+				for (incr = 0; incr <= 100; incr += 5) {
+					// Sets the progress indicator to a max value, the
+					// current completion percentage, and "determinate"
+					// state
+					mBuilder.setProgress(100, incr, false);
+					// Displays the progress bar for the first time.
+					mNotifyManager.notify(0, mBuilder.build());
+					// Sleeps the thread, simulating an operation
+					// that takes time
+					try {
+						// Sleep for 5 seconds
+						Thread.sleep(5 * 1000);
+					} catch (InterruptedException e) {
+						Log.d("Dataentry screen", "sleep failure");
+					}
+				}
+				// When the loop is finished, updates the notification
+				mBuilder.setContentText("Uploading completed")
+				// Removes the progress bar
+						.setProgress(0, 0, false);
+				mNotifyManager.notify(63, mBuilder.build());
+			}
+		}
+		// Starts the thread by calling the run() method in its Runnable
+		).start();
 	}
 }

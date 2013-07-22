@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,30 +9,33 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -50,14 +54,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
-import com.lateralthoughts.vue.utils.Utils;
 
-public class VueListFragment extends SherlockFragment/*Fragment*/ {
+public class VueListFragment extends SherlockFragment implements TextWatcher/*Fragment*/ {
  // public static final String TAG = "VueListFragment";
   private ExpandableListView expandListView;
   private LinearLayout customlayout, aboutlayout, invitefriendsLayout;
@@ -74,6 +75,9 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
   private ImageLoader mImageLoader;
   private ProgressDialog progress;
   private LayoutInflater inflater;
+  private boolean isProfileEdited = false;
+  boolean isNewUser = false;
+  private String profilePicUrl = "";
  
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -97,7 +101,6 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
           expandListView.setVisibility(View.VISIBLE);
           returnWhat = true;
         }
-       
         if (customlayout != null
             && customlayout.getVisibility() == View.VISIBLE) {
           customlayout.setVisibility(View.GONE);
@@ -132,7 +135,10 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
         TextView textView = (TextView) v
             .findViewById(R.id.vue_list_fragment_itemTextview);
         String s = textView.getText().toString();
-        if (s.equals(getString(R.string.sidemenu_option_About))) {
+        if(s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
+          VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
+          VueTrendingAislesDataModel.getInstance(getActivity()).getAislesFromDb();
+        } else if (s.equals(getString(R.string.sidemenu_option_About))) {
           inflateAboutLayout();
         } else if (s.equals(getString(R.string.sidemenu_option_FeedBack))) {
           startActivity(new Intent(getActivity(), FeedbackForm.class));
@@ -159,30 +165,30 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
             }
           });
         } else if(s.equals(getString(R.string.sidemenu_option_Login))) {
-        	 sharedPreferencesObj = getActivity().getSharedPreferences(
-     	            VueConstants.SHAREDPREFERENCE_NAME, 0);
-        	 boolean fbloginfalg = sharedPreferencesObj.getBoolean(
-       	          VueConstants.FACEBOOK_LOGIN, false);
-       	    boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
-       	          VueConstants.GOOGLEPLUS_LOGIN, false);
-       	if(!googleplusloginfalg || !fbloginfalg) {
-        	
-					Intent i = new Intent(getActivity(), VueLoginActivity.class);
-					Bundle b = new Bundle();
-					 b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
-					b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
-					b.putString(VueConstants.FROM_INVITEFRIENDS,
-							null);
-					b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, true);
-					i.putExtras(b);
-					startActivity(i);
-       	}
-       	else
-       	{
-       	 Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.AlreadyLoggedinmesg),
-     	        Toast.LENGTH_LONG).show();
-       	}
-       	}
+             sharedPreferencesObj = getActivity().getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+             boolean fbloginfalg = sharedPreferencesObj.getBoolean(
+                  VueConstants.FACEBOOK_LOGIN, false);
+            boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
+                  VueConstants.GOOGLEPLUS_LOGIN, false);
+        if(!googleplusloginfalg || !fbloginfalg) {
+            
+                    Intent i = new Intent(getActivity(), VueLoginActivity.class);
+                    Bundle b = new Bundle();
+                     b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+                    b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+                    b.putString(VueConstants.FROM_INVITEFRIENDS,
+                            null);
+                    b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, true);
+                    i.putExtras(b);
+                    startActivity(i);
+        }
+        else
+        {
+         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.AlreadyLoggedinmesg),
+                Toast.LENGTH_LONG).show();
+        }
+        }
         return false;
       }
     });
@@ -192,14 +198,14 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
       @Override
       public boolean onChildClick(ExpandableListView parent, View v,
           int groupPosition, int childPosition, long id) {
-    	  TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
-    	  String s = textView.getText().toString();
-    	  if(s.equals(getString(R.string.sidemenu_option_Profile))) {
+          TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
+          String s = textView.getText().toString();
+          if(s.equals(getString(R.string.sidemenu_option_Profile))) {
               getUserInfo();
-    	  } else if(s.equals(getString(R.string.sidemenu_sub_option_Facebook))
-    	      || s.equals(getString(R.string.sidemenu_sub_option_Gmail))) {
-    	    getFriendsList(s); 
-    	  }
+          } else if(s.equals(getString(R.string.sidemenu_sub_option_Facebook))
+              || s.equals(getString(R.string.sidemenu_sub_option_Gmail))) {
+            getFriendsList(s); 
+          }
         return false;
       }
     });
@@ -477,11 +483,8 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
   public void getFriendsList(String s) {
 
     progress = ProgressDialog.show(getActivity(), "", "Please wait...");
-    Log.e(getTag(), "SURU : Value of s : " + s);
-
     sharedPreferencesObj = getActivity().getSharedPreferences(
         VueConstants.SHAREDPREFERENCE_NAME, 0);
-
     boolean facebookloginflag = sharedPreferencesObj.getBoolean(
         VueConstants.FACEBOOK_LOGIN, false);
     boolean googleplusloginflag = sharedPreferencesObj.getBoolean(
@@ -494,7 +497,6 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
         if (progress.isShowing()) {
           progress.dismiss();
         }
-
         Intent i = new Intent(getActivity(), VueLoginActivity.class);
         Bundle b = new Bundle();
         b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
@@ -502,7 +504,8 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
         b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.FACEBOOK);
         b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
         i.putExtras(b);
-        startActivity(i);
+        getActivity().startActivityForResult(i,
+            VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE);
       }
 
     } else if (s.equals("Google Plus")) {
@@ -522,7 +525,8 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
         b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.GOOGLEPLUS);
         b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
         i.putExtras(b);
-        startActivity(i);
+        getActivity().startActivityForResult(i,
+            VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE);
       }
 
     } else {
@@ -532,11 +536,8 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
     }
   }
 
-	  // Pull and display fb friends from facebook.com
+      // Pull and display fb friends from facebook.com
   private void fbFriendsList() {
-
-
-
     SharedPreferences sharedPreferencesObj = getActivity()
         .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
     String accessToken = sharedPreferencesObj.getString(
@@ -566,8 +567,6 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
               progress.dismiss();
             }
           }
-
-
         }
       };
 
@@ -593,52 +592,41 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
 
       VueApplication.getInstance().getRequestQueue().add(myReq);
 
-    }
-
-    else {
+    } else {
       if (progress.isShowing()) {
         progress.dismiss();
       }
     }
-
   }
 
+  // Pull and display G+ friends from plus.google.com.
+  private void getGPlusFriendsList() {
+    if (VueLandingPageActivity.googlePlusFriendsDetailsList != null) {
+      inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(getActivity(),
+          VueLandingPageActivity.googlePlusFriendsDetailsList));
+      expandListView.setVisibility(View.GONE);
+      invitefriendsLayout.setVisibility(View.VISIBLE);
+      invitefriendsLayout.startAnimation(animUp);
+      if (progress.isShowing()) {
+        progress.dismiss();
+      }
+    } else {
+      if (progress.isShowing()) {
+        progress.dismiss();
+      }
+      Intent i = new Intent(getActivity(), VueLoginActivity.class);
+      Bundle b = new Bundle();
+      b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+      b.putBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN, true);
+      b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+      b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.GOOGLEPLUS);
+      b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+      i.putExtras(b);
+      getActivity().startActivityForResult(i,
+          VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE);
+    }
+  }
 
-	  // Pull and display G+ friends from plus.google.com.
-	  private void getGPlusFriendsList() {
-	    if(VueLandingPageActivity.googlePlusFriendsDetailsList != null) {
-	    inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(getActivity(),
-	       VueLandingPageActivity.googlePlusFriendsDetailsList));
-	    expandListView.setVisibility(View.GONE);
-	    invitefriendsLayout.setVisibility(View.VISIBLE);
-	    invitefriendsLayout.startAnimation(animUp);
-	    
-	    if (progress.isShowing()) {
-		      progress.dismiss();
-		    }
-	    
-	    }
-	    else
-	    {
-	    	
-	    	  if (progress.isShowing()) {
-	    	      progress.dismiss();
-	    	    }
-	    	
-	    	 Intent i = new Intent(getActivity(), VueLoginActivity.class);
-	       	  Bundle b = new Bundle();
-	       	  b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
-	       	  b.putBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN, true);
-	       	 b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
-	       	  b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.GOOGLEPLUS);
-	       	  b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
-	       	  i.putExtras(b);
-	       	  startActivity(i);
-	    }
-	  
-
-	  }
-	  
     private void getUserInfo() {
       expandListView.setVisibility(View.GONE);
       customlayout.startAnimation(animUp);
@@ -648,23 +636,34 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
       String gender = "";
       String email = "";
       String location = "";
-      String profilePicUrl = "";
-      if(!sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "").isEmpty()) {
+     
+      if(!sharedPreferencesObj.getString(VueConstants.USER_NAME, "").isEmpty()) {
+        name = sharedPreferencesObj.getString(VueConstants.USER_NAME, "");
+        dob = sharedPreferencesObj.getString(VueConstants.USER_DOB, "");
+        gender = sharedPreferencesObj.getString(VueConstants.USER_GENDER, "");
+        email = sharedPreferencesObj.getString(VueConstants.USER_EMAIL, "");
+        location = sharedPreferencesObj.getString(VueConstants.USER_LOCATION, "");
+        profilePicUrl = sharedPreferencesObj.getString(VueConstants.USER_PROFILE_PICTURE, null);
+      } else if(!sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "").isEmpty()) {
         name = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "");
         dob = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_DOB, "");
         gender = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_GENDER, "");
         email = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_EMAIL, "");
         location = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_LOCATION, "");
         profilePicUrl = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_PROFILE_PICTURE, null);
+        isNewUser = true;
       } else if(!sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME, "").isEmpty()) {
         name = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME, "");
         dob =  sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_DOB, "");
         gender = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_GENDER, "");
         email = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_EMAIL, "");
         location = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_LOCATION, "");
+        profilePicUrl = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_PROFILE_PICTURE, null);
+        isNewUser = true;
       } else {
         
       }
+
       /*userName.setText(name);
       userDateOfBirth.setText(dob);
       userGender.setText(gender);
@@ -695,43 +694,43 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
         VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
       }
     }
-    
+
     /**
-	 *  
-	 * @param jsonString
-	 * @return
-	 * @throws JSONException
-	 */
-	@SuppressWarnings("unchecked")
-	List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException {
-		List<FbGPlusDetails> facebookFriendsDetailsList = null;
+     *  
+     * @param jsonString
+     * @return
+     * @throws JSONException
+     */
+    @SuppressWarnings("unchecked")
+  List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException {
+    List<FbGPlusDetails> facebookFriendsDetailsList = null;
 
-		JSONObject mainJsonObj = new JSONObject(jsonString);
-		JSONArray dataArray = mainJsonObj.getJSONArray("data");
-		if (dataArray != null && dataArray.length() > 0) {
-			facebookFriendsDetailsList = new ArrayList<FbGPlusDetails>();
+    JSONObject mainJsonObj = new JSONObject(jsonString);
+    JSONArray dataArray = mainJsonObj.getJSONArray("data");
+    if (dataArray != null && dataArray.length() > 0) {
+      facebookFriendsDetailsList = new ArrayList<FbGPlusDetails>();
 
-			for (int i = 0; i < dataArray.length(); i++) {
+      for (int i = 0; i < dataArray.length(); i++) {
 
-				JSONObject jsonObj = dataArray.getJSONObject(i);
-				FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(
-						jsonObj.getString("id"), jsonObj.getString("name"),
-						jsonObj.getJSONObject("picture").getJSONObject("data")
-								.getString("url"), null);
+        JSONObject jsonObj = dataArray.getJSONObject(i);
+        FbGPlusDetails objFacebookFriendsDetails = new FbGPlusDetails(
+            jsonObj.getString("id"), jsonObj.getString("name"), jsonObj
+                .getJSONObject("picture").getJSONObject("data")
+                .getString("url"), null);
 
-				facebookFriendsDetailsList.add(objFacebookFriendsDetails);
-			}
-		}
+        facebookFriendsDetailsList.add(objFacebookFriendsDetails);
+      }
+    }
 
-		Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
+    Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
 
-		return facebookFriendsDetailsList;
-	}
-	
-	private void inflateSettingsLayout() {
-	  View layoutSettings = null;
-	  if(customlayout == null) {
-	  layoutSettings = inflater.inflate(R.layout.settings_layout, null);
+    return facebookFriendsDetailsList;
+  }
+    
+    private void inflateSettingsLayout() {
+      View layoutSettings = null;
+      if(customlayout == null) {
+      layoutSettings = inflater.inflate(R.layout.settings_layout, null);
       LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
           LayoutParams.MATCH_PARENT);
       customlayout = (LinearLayout) layoutSettings.findViewById(R.id.customlayout);
@@ -749,24 +748,65 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
       userEmailEdit = (EditText) layoutSettings.findViewById(R.id.user_Email_EditText);
       userLocationEdit = (EditText) layoutSettings.findViewById(R.id.user_location_EditText);
       
+      userDOBEdit.setOnTouchListener(new OnTouchListener() {
+        
+        @Override
+        public boolean onTouch(View arg0, MotionEvent arg1) {
+          dataPicker();
+          return false;
+        }
+      });
+      
+      userDOBEdit.setOnClickListener(new OnClickListener() {
+        
+        @Override
+        public void onClick(View v) {
+          dataPicker();
+        }
+      });
+      
+      userNameEdit.addTextChangedListener(this);
+      userDOBEdit.addTextChangedListener(this);
+      userGenderEdit.addTextChangedListener(this);
+      userEmailEdit.addTextChangedListener(this);
+      userLocationEdit.addTextChangedListener(this);
       donelayout = (RelativeLayout) layoutSettings.findViewById(R.id.donelayout);
       donelayout.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
          // Utils.saveNetworkSettings(getActivity(), wifich.isChecked());
+          Log.e("Profiling", "Profiling User Profile onClick");
           customlayout.setVisibility(View.GONE);
           customlayout.startAnimation(animDown);
           expandListView.setVisibility(View.VISIBLE);
+          if(isProfileEdited || isNewUser) {
+            Log.e("Profiling", "Profiling User Profile onClick isProfileEdited : " + isProfileEdited);
+            userDOBEdit.getText().toString();
+          userGenderEdit.getText().toString();
+          userEmailEdit.getText().toString();
+          userLocationEdit.getText().toString();
+          userEmailEdit.getText().toString();
+          Editor editor = sharedPreferencesObj.edit();
+          editor.putString(VueConstants.USER_NAME, userNameEdit.getText().toString());
+          editor.putString(VueConstants.USER_DOB, userDOBEdit.getText().toString());
+          editor.putString(VueConstants.USER_GENDER, userGenderEdit.getText().toString());
+          editor.putString(VueConstants.USER_EMAIL, userEmailEdit.getText().toString());
+          editor.putString(VueConstants.USER_LOCATION, userLocationEdit.getText().toString());
+          editor.putString(VueConstants.USER_PROFILE_PICTURE, profilePicUrl);
+          editor.commit();
+          isProfileEdited = false;
+          isNewUser = false;
+          }
         }
       });
       mBezelMainLayout.addView(layoutSettings);
-	  }
+      }
       customlayout.setVisibility(View.GONE);
      
-	}
-	
-	private void inflateAboutLayout() {
-	  View aboutLayoutView = null;
+    }
+    
+    private void inflateAboutLayout() {
+      View aboutLayoutView = null;
      if(aboutlayout == null) {
       aboutLayoutView = inflater.inflate(R.layout.about, null);
       LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
@@ -796,6 +836,45 @@ public class VueListFragment extends SherlockFragment/*Fragment*/ {
       expandListView.setVisibility(View.GONE);
       aboutlayout.setVisibility(View.VISIBLE);
       aboutlayout.startAnimation(animUp);
-	
-	}
+    }
+
+  @Override
+  public void afterTextChanged(Editable s) {
+    Log.e("Profiling", "Profiling User Profile onClick afterTextChanged 1 : " + isProfileEdited);
+    if(!isProfileEdited)
+    isProfileEdited = true;
+    Log.e("Profiling", "Profiling User Profile onClick afterTextChanged 2 : " + isProfileEdited);
+  }
+
+  @Override
+  public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
+  public void onTextChanged(CharSequence s, int start, int before, int count) {
+    // TODO Auto-generated method stub
+  }
+
+  private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+    
+    public void onDateSet(DatePicker view, int year, int monthOfYear,
+      int dayOfMonth) {
+      String y = Integer.toString(year);
+      String m = Integer.toString(monthOfYear);
+      String d = Integer.toString(dayOfMonth);
+      userDOBEdit.setText(y + "/" + m + "/" + d);
+    }
+   };
+
+  private void dataPicker() {
+    final Calendar c = Calendar.getInstance();
+    int mYear = c.get(Calendar.YEAR);
+    int mMonth = c.get(Calendar.MONTH);
+    int mDay = c.get(Calendar.DAY_OF_MONTH);
+    DatePickerDialog DPD = new DatePickerDialog(getActivity(),
+        mDateSetListener, mYear, mMonth, mDay);
+    DPD.show();
+  }
+ 
 }

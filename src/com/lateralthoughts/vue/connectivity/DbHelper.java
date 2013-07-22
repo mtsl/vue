@@ -12,6 +12,9 @@ public class DbHelper extends SQLiteOpenHelper {
 	 public static final String DATABASE_TABLE_AISLES = "aisles";
 	 public static final String DATABASE_TABLE_AISLES_IMAGES = "aisleImages";
 	 public static final String DATABASE_TABLE_DATA_TO_SYNC = "dataToSync";
+	 public static final String DATABASE_TABLE_LOOKINGFOR = "lookingFor";
+	 public static final String DATABASE_TABLE_OCCASION = "occasion";
+	 public static final String DATABASE_TABLE_CATEGORY = "category";
 	 public static final int DATABASE_VERSION = 1;
 	 
      private String createAislesTable = "create table if not exists " + DATABASE_TABLE_AISLES
@@ -43,7 +46,24 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.AISLE_ID + " text, "
      + VueConstants.IMAGE_ID + " text);";
      
-     
+    private String createLookingForTable = "create table if not exists " + DATABASE_TABLE_LOOKINGFOR
+        + " (" + VueConstants.ID + " integer primary key autoincrement, " 
+        + VueConstants.KEYWORD + " text, "
+        + VueConstants.LAST_USED_TIME + " Long, "
+        + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
+    
+    private String createOccasionTable = "create table if not exists " + DATABASE_TABLE_OCCASION
+        + " (" + VueConstants.ID + " integer primary key autoincrement, "
+        + VueConstants.KEYWORD + " text, "
+        + VueConstants.LAST_USED_TIME + " Long, "
+        + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
+
+    private String createCategoryTable = "create table if not exists " + DATABASE_TABLE_CATEGORY
+        + " (" + VueConstants.ID + " integer primary key autoincrement, "
+        + VueConstants.KEYWORD + " text, "
+        + VueConstants.LAST_USED_TIME + " Long, "
+        + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
+        
 
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -54,7 +74,9 @@ public class DbHelper extends SQLiteOpenHelper {
 		db.execSQL(createAislesTable);
 		db.execSQL(createAisleImagesTable);
 		db.execSQL(createQueuedDataToSyncTable);
-		
+		db.execSQL(createLookingForTable);
+		db.execSQL(createOccasionTable);
+		db.execSQL(createCategoryTable);
 	}
 
 	@Override

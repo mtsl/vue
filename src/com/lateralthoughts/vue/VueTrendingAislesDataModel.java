@@ -98,7 +98,7 @@ public class VueTrendingAislesDataModel {
   public boolean loadOnRequest = false;
   private int mStartPosition = 0;
   private int mEndPosition = 0;
-  private int mLocalAislesLimit = 20;
+  private int mLocalAislesLimit = 10;
   private ThreadPoolExecutor threadPool;
   private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
 
@@ -341,14 +341,28 @@ public class VueTrendingAislesDataModel {
     return sVueTrendingAislesDataModel;
   }
 
+  public void clearAisles() {
+    if (mAisleContentListMap != null) {
+      mAisleContentListMap.clear();
+    }
+    if (mAisleContentList != null) {
+      mAisleContentList.clear();
+    }
+    for (IAisleDataObserver observer : mAisleDataObserver) {
+      observer.onAisleDataUpdated(mAisleContentList.size());
+    }
+  }
+
   private void addAislesToDb() {
-    DbHelper helper = new DbHelper(mContext);
-    SQLiteDatabase db = helper.getWritableDatabase();
+    /*DbHelper helper = new DbHelper(mContext);
+    SQLiteDatabase db = helper.getWritableDatabase();*/
 
     // db.beginTransaction();
     for (int i = 0; i < getAisleCount(); i++) {
-      Cursor cursor = db.rawQuery("select COUNT(*) from "
-          + DbHelper.DATABASE_TABLE_AISLES, null);
+     /* Cursor cursor = db.rawQuery("select COUNT(*) from "
+          + DbHelper.DATABASE_TABLE_AISLES, null);*/
+      Cursor cursor = mContext.getContentResolver().query(VueConstants.CONTENT_URI,
+          new String[] {"COUNT(*)"}, null, null, null);
       String strCount = "";
       int maxId = 0;
       if (cursor.moveToFirst()) {
@@ -368,9 +382,12 @@ public class VueTrendingAislesDataModel {
       values.put(VueConstants.USER_ID, info.mUserId);
       values.put(VueConstants.AISLE_ID, info.mAisleId);
       values.put(VueConstants.ID, String.format(FORMATE, maxId + 1));
-      db.insert(DbHelper.DATABASE_TABLE_AISLES, null, values);
+     // db.insert(DbHelper.DATABASE_TABLE_AISLES, null, values);
+      mContext.getContentResolver().insert(VueConstants.CONTENT_URI, values);
+      int imgCount = 0;
       for (AisleImageDetails imageDetails : imageItemsArray) {
         ContentValues imgValues = new ContentValues();
+        imgValues.put(VueConstants.ID, String.format(FORMATE, imgCount + 1));
         imgValues.put(VueConstants.TITLE, imageDetails.mTitle);
         imgValues.put(VueConstants.IMAGE_URL, imageDetails.mImageUrl);
         imgValues.put(VueConstants.DETAILS_URL, imageDetails.mDetalsUrl);
@@ -380,15 +397,16 @@ public class VueTrendingAislesDataModel {
         imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
         imgValues.put(VueConstants.USER_ID, info.mUserId);
         imgValues.put(VueConstants.AISLE_ID, info.mAisleId);
-        db.insert(DbHelper.DATABASE_TABLE_AISLES_IMAGES, null, imgValues);
+        /*db.insert(DbHelper.DATABASE_TABLE_AISLES_IMAGES, null, imgValues);*/
+        mContext.getContentResolver().insert(VueConstants.IMAGES_CONTENT_URI, imgValues);
       }
     }
     // db.setTransactionSuccessful();
     // db.endTransaction();
-    db.close();
+    // db.close();
   }
 
-  private void getAislesFromDb() {
+  public void getAislesFromDb() {
     mEndPosition = mEndPosition + mLocalAislesLimit;
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
@@ -496,9 +514,7 @@ public class VueTrendingAislesDataModel {
     public void handleMessage(android.os.Message msg) {
       @SuppressWarnings("unchecked")
       ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
-      Log.e("Profiling", "Profiling mHandler call 1 : " + mAisleContentList.size());
       for (AisleWindowContent content : aisleContentArray) {
-        Log.e("Profiling", "Profiling : mHandler call 1 AisleId() : " + content.getAisleId());
         AisleWindowContent aisleItem = getAisleItem(content.getAisleId());
         aisleItem.addAisleContent(content.getAisleContext(),
             content.getImageList());
@@ -507,7 +523,7 @@ public class VueTrendingAislesDataModel {
         observer.onAisleDataUpdated(mAisleContentList.size());
       }
       new Handler().postDelayed(new Runnable() {
-        
+
         @Override
         public void run() {
           runTask(new Runnable() {

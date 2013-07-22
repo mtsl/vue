@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -328,6 +329,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisle_details_view_fragment);
 		fragment.setActionBarHander(handleActionbar);
+ 
 		super.onResume();
 	}
 
@@ -365,6 +367,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				} else {
 					VueApplication.getInstance().mSoftKeboardIndicator = false;
 				}
+ 
 			}
 		}
 		return false;
@@ -375,17 +378,28 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.e("share+", "details activity result" + requestCode + resultCode);
-
-		try {
-			VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisle_details_view_fragment);
-
-			if (fragment.mAisleDetailsAdapter.mShare.shareIntentCalled) {
-				fragment.mAisleDetailsAdapter.mShare.shareIntentCalled = false;
-				fragment.mAisleDetailsAdapter.mShare.dismisDialog();
+		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
+				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
+			if (data != null) {
+				if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
+					mFrag.getFriendsList(data
+							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
+				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} else {
+
+			try {
+				VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisle_details_view_fragment);
+
+				if (fragment.mAisleDetailsAdapter.mShare.shareIntentCalled) {
+					fragment.mAisleDetailsAdapter.mShare.shareIntentCalled = false;
+					fragment.mAisleDetailsAdapter.mShare.dismisDialog();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		}
 	}
 

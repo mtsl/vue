@@ -1,5 +1,8 @@
 package com.lateralthoughts.vue;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,32 +10,76 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
-public class CreateAisleActivity extends BaseActivity {
+public class DataEntryActivity extends BaseActivity {
 
 	public boolean misKeyboardShown = false;
+	public boolean isNewActionBar = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.create_aisle_main);
-		getActionBar().hide();
+		setContentView(R.layout.date_entry_main);
+		getSupportActionBar().setTitle(
+				getResources().getString(R.string.create_ailse_screen_title));
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			String imagePath = b
 					.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-			CreateAisleFragment fragment = (CreateAisleFragment) getSupportFragmentManager()
+			DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.create_aisles_view_fragment);
 			fragment.setGalleryORCameraImage(imagePath);
 		}
 	}
 
-	/*
-	 * @Override public boolean onCreateOptionsMenu(Menu menu) {
-	 * getSupportMenuInflater().inflate(R.menu.title_options2, menu);
-	 * getSupportActionBar().setHomeButtonEnabled(true); // Configure the search
-	 * info and add any event listeners return super.onCreateOptionsMenu(menu);
-	 * }
-	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		if (!isNewActionBar) {
+			getSupportMenuInflater().inflate(R.menu.title_options2, menu);
+		} else if (isNewActionBar) {
+			getSupportMenuInflater()
+					.inflate(R.menu.create_aisle_options2, menu);
+
+		}
+		getSupportActionBar().setHomeButtonEnabled(true); // Configure the
+															// search
+		// info and add any event listeners
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		DataEntryFragment fragment = null;
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			getSlidingMenu().toggle();
+			break;
+		case R.id.menu_create_aisles:
+			fragment = (DataEntryFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			fragment.createAisleClickFunctionality();
+			break;
+		case R.id.menu_cancel:
+			finish();
+			break;
+		case R.id.menu_share:
+			fragment = (DataEntryFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			fragment.shareClickFunctionality();
+			break;
+		case R.id.menu_create_aisles_edit:
+			fragment = (DataEntryFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			fragment.editButtonClickFunctionality();
+			break;
+		case R.id.menu_add_image:
+			fragment = (DataEntryFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			fragment.addImageToAisleButtonClickFunctionality();
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -43,15 +90,23 @@ public class CreateAisleActivity extends BaseActivity {
 				if (b != null) {
 					String imagePath = b
 							.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-					CreateAisleFragment fragment = (CreateAisleFragment) getSupportFragmentManager()
+					DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.create_aisles_view_fragment);
 					fragment.setGalleryORCameraImage(imagePath);
+				}
+			} else if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
+					&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
+				if (data != null) {
+					if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
+						mFrag.getFriendsList(data
+								.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
+					}
 				}
 			} else {
 				Log.e("share+", "CreateAisle activity result" + requestCode
 						+ resultCode);
 				try {
-					CreateAisleFragment fragment = (CreateAisleFragment) getSupportFragmentManager()
+					DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.create_aisles_view_fragment);
 					if (fragment.mShare.shareIntentCalled) {
 						fragment.mShare.shareIntentCalled = false;
@@ -70,10 +125,6 @@ public class CreateAisleActivity extends BaseActivity {
 		getSlidingMenu().toggle();
 	}
 
-	public void finishActivity() {
-		finish();
-	}
-
 	@Override
 	public void onResume() {
 		final View createAisleActivityRootLayout = findViewById(R.id.create_aisle_activity_root_layout);
@@ -85,7 +136,7 @@ public class CreateAisleActivity extends BaseActivity {
 								.getRootView().getHeight()
 								- createAisleActivityRootLayout.getHeight();
 						if (heightDiff > 100) { // if more than 100 pixels, its
-												// probably a keyboard...
+							// probably a keyboard...
 							misKeyboardShown = true;
 						} else {
 							misKeyboardShown = false;
@@ -116,13 +167,4 @@ public class CreateAisleActivity extends BaseActivity {
 		return false;
 	}
 
-	/*
-	 * @Override public boolean onOptionsItemSelected(MenuItem item) { switch
-	 * (item.getItemId()) { case android.R.id.home: getSlidingMenu().toggle();
-	 * break; case R.id.menu_create_aisles: CreateAilseFragment fragment =
-	 * (CreateAilseFragment) getSupportFragmentManager()
-	 * .findFragmentById(R.id.create_aisles_view_fragment);
-	 * fragment.addAisleToServer(); break; case R.id.menu_cancel: finish(); }
-	 * return super.onOptionsItemSelected(item); }
-	 */
 }

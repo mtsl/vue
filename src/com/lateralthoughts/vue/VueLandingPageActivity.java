@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import com.actionbarsherlock.view.Menu;
@@ -38,7 +39,6 @@ public class VueLandingPageActivity extends BaseActivity {
 			editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG,
 					false);
 			editor.commit();
-
 			showLogInDialog(false);
 		}
 		// Check the CreatedAisleCount and Comments count
@@ -53,6 +53,20 @@ public class VueLandingPageActivity extends BaseActivity {
 				showLogInDialog(true);
 			}
 
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
+				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
+			if (data != null) {
+				if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
+					mFrag.getFriendsList(data
+							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
+				}
+			}
 		}
 	}
 
@@ -80,8 +94,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
-/*	@Override
+	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (getSlidingMenu().isMenuShowing()) {
@@ -94,9 +107,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		return false;
 	}
-*/
 	public void showLogInDialog(boolean hideCancelButton) {
-
 		Intent i = new Intent(this, VueLoginActivity.class);
 		Bundle b = new Bundle();
 		b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, hideCancelButton);
@@ -110,7 +121,6 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-
 		new Handler().postDelayed(new Runnable() {
 
 			@Override
@@ -129,21 +139,6 @@ public class VueLandingPageActivity extends BaseActivity {
 
 			}
 		}, DELAY_TIME);
-	}
-	 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (getSlidingMenu().isMenuShowing()) {
-				if (!mFrag.listener.onBackPressed()) {
-					getSlidingMenu().toggle();
-				}
-			} else {
-				super.onBackPressed();
-			}
-		}
-		return false;
-
 	}
 	@Override
 	public void onPause() {
