@@ -14,7 +14,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.android.volley.RequestQueue;
 
-
 //internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -30,7 +29,7 @@ import org.json.JSONObject;
 
 public class VueApplication extends Application {
 	private static VueApplication sInstance;
-	
+
 	private VueMemoryCache<Bitmap> mVueAisleImagesCache;
 	private VueMemoryCache<Bitmap> mAisleContentCache;
 	private VueMemoryCache<String> mVueAisleOwnerNamesCache;
@@ -44,15 +43,6 @@ public class VueApplication extends Application {
 	private int mStatusBarHeight;
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
-    private VueListFragment bezelMenuFragment;
-	 
-	public VueListFragment getBezelMenuFragment() {
-		return bezelMenuFragment;
-	}
-
-	public void setBezelMenuFragment(VueListFragment bezelMenuFragment) {
-		this.bezelMenuFragment = bezelMenuFragment;
-	}
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
@@ -66,19 +56,20 @@ public class VueApplication extends Application {
 	private int mScreenWidth;
 	private int mTextSize = 18;
 	public Context vueApplicationContext;
-	//public int totalDataDownload = 0;
+	// public int totalDataDownload = 0;
 	public boolean fbsharingflag = false;
 	private RequestQueue mVolleyRequestQueue;
+
 	@Override
-	public void onCreate(){
+	public void onCreate() {
 		super.onCreate();
-		sendBroadcast (
-				new Intent(Intent.ACTION_MEDIA_MOUNTED, 
-					Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+		sendBroadcast(new Intent(
+				Intent.ACTION_MEDIA_MOUNTED,
+				Uri.parse("file://" + Environment.getExternalStorageDirectory())));
 		sInstance = this;
-		
+
 		vueApplicationContext = this;
-		
+
 		mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
 		mVueAisleImagesCache.setLimit(40);
 		mVueAisleOwnerNamesCache = new VueMemoryCache<String>();
@@ -93,97 +84,112 @@ public class VueApplication extends Application {
 
 		mHttpClient = new DefaultHttpClient();
 		mFileCache = new FileCache(this);
-		
+
 		ContentAdapterFactory.getInstance(this);
-		
-		// create the JSONObject.  (Do not forget to import org.json.JSONObject!)
+
+		// create the JSONObject. (Do not forget to import org.json.JSONObject!)
 		JSONObject crittercismConfig = new JSONObject();
-		try
-		{
-		    crittercismConfig.put("shouldCollectLogcat", true); // send logcat data for devices with API Level 16 and higher
+		try {
+			crittercismConfig.put("shouldCollectLogcat", true); // send logcat
+																// data for
+																// devices with
+																// API Level 16
+																// and higher
+		} catch (JSONException je) {
 		}
-		catch (JSONException je){}
 
 		mEmptyImageView = new ScaleImageView(this);
 		Drawable d = getResources().getDrawable(R.drawable.aisle_content_empty);
 		mEmptyImageView.setImageDrawable(d);
-		
+
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		mScreenHeight = dm.heightPixels;
 		mScreenWidth = dm.widthPixels;
-        mVolleyRequestQueue = Volley.newRequestQueue(this);
+		mVolleyRequestQueue = Volley.newRequestQueue(this);
 
-		//R.drawable.aisle_content_empty;
-		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID, crittercismConfig);
+		// R.drawable.aisle_content_empty;
+		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
+				crittercismConfig);
 	}
-	
-	public static VueApplication getInstance(){
+
+	public static VueApplication getInstance() {
 		return sInstance;
 	}
-	
-	public VueMemoryCache<Bitmap> getAisleImagesMemCache(){
+
+	public VueMemoryCache<Bitmap> getAisleImagesMemCache() {
 		return mVueAisleImagesCache;
 	}
-	
-	public HttpClient getHttpClient(){
-	    return mHttpClient;
-	}
-	
-	public VueMemoryCache<Bitmap> getAisleContentCache(){
-	    return mAisleContentCache;
-	}
-	
-	public FileCache getFileCache(){
-	    return mFileCache;   
+
+	public HttpClient getHttpClient() {
+		return mHttpClient;
 	}
 
-	public int getScreenHeight(){
-	    return mScreenHeight;   
+	public VueMemoryCache<Bitmap> getAisleContentCache() {
+		return mAisleContentCache;
 	}
-	
-    public int getScreenWidth(){
-        return mScreenWidth;   
-    }
-    public void setClickedWindowID(String id) {
-    	mWindowID = id;
-    }
-    public String getClickedWindowID() {
-    	return mWindowID;
-    }
-    public void setClickedWindowCount(int count) {
-    	mWindowCount = count;
-    }
-    public int getClickedWindowCount() {
-    	return mWindowCount;
-    }
-    public int getmTextSize() {
+
+	public FileCache getFileCache() {
+		return mFileCache;
+	}
+
+	public int getScreenHeight() {
+		return mScreenHeight;
+	}
+
+	public int getScreenWidth() {
+		return mScreenWidth;
+	}
+
+	public void setClickedWindowID(String id) {
+		mWindowID = id;
+	}
+
+	public String getClickedWindowID() {
+		return mWindowID;
+	}
+
+	public void setClickedWindowCount(int count) {
+		mWindowCount = count;
+	}
+
+	public int getClickedWindowCount() {
+		return mWindowCount;
+	}
+
+	public int getmTextSize() {
 		return mTextSize;
 	}
-    public int getPixel(int dp) {
-    	Resources r = getResources();
-    	int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
-    	return px;
-    }
-    public int getVueDetailsCardWidth() {
-    	if(mVueDetailsCardWidth == 0) {
-    	int leftRightMargins = 20;
-    	mVueDetailsCardWidth  = mScreenWidth - getPixel(leftRightMargins);
-    	}
+
+	public int getPixel(int dp) {
+		Resources r = getResources();
+		int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				dp, r.getDisplayMetrics());
+		return px;
+	}
+
+	public int getVueDetailsCardWidth() {
+		if (mVueDetailsCardWidth == 0) {
+			int leftRightMargins = 20;
+			mVueDetailsCardWidth = mScreenWidth - getPixel(leftRightMargins);
+		}
 		return mVueDetailsCardWidth;
-    }
-    public int getVueDetailsCardHeight() {
-    	if(mVueDetailsCardHeight == 0) {
-    	int bottomActionBar = 48;
-    	int topBottomMargin = 20;
-    	mVueDetailsCardHeight  = mScreenHeight - getPixel(topBottomMargin+topBottomMargin);
-    	}
-		return  mVueDetailsCardHeight;
-    }
-    public RequestQueue getRequestQueue() {
-        if (mVolleyRequestQueue != null) {
-            return mVolleyRequestQueue;
-        } else {
-            throw new IllegalStateException("RequestQueue not initialized");
-        }
-    }
+	}
+
+	public int getVueDetailsCardHeight() {
+		if (mVueDetailsCardHeight == 0) {
+			int bottomActionBar = 48;
+			int topBottomMargin = 20;
+			mVueDetailsCardHeight = mScreenHeight
+					- getPixel(topBottomMargin + topBottomMargin);
+		}
+		return mVueDetailsCardHeight;
+	}
+
+	public RequestQueue getRequestQueue() {
+		if (mVolleyRequestQueue != null) {
+			return mVolleyRequestQueue;
+		} else {
+			throw new IllegalStateException("RequestQueue not initialized");
+		}
+	}
 }

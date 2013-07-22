@@ -57,6 +57,20 @@ public class VueLandingPageActivity extends BaseActivity {
 	}
 
 	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
+				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
+			if (data != null) {
+				if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
+					mFrag.getFriendsList(data
+							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
+				}
+			}
+		}
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.title_options, menu);
 		getSupportActionBar().setHomeButtonEnabled(true);
@@ -81,20 +95,13 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-/*	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (getSlidingMenu().isMenuShowing()) {
-				if (!mFrag.listener.onBackPressed()) {
-					getSlidingMenu().toggle();
-				}
-			} else {
-				super.onBackPressed();
-			}
-		}
-		return false;
-	}
-*/
+	/*
+	 * @Override public boolean onKeyUp(int keyCode, KeyEvent event) { if
+	 * (keyCode == KeyEvent.KEYCODE_BACK) { if
+	 * (getSlidingMenu().isMenuShowing()) { if (!mFrag.listener.onBackPressed())
+	 * { getSlidingMenu().toggle(); } } else { super.onBackPressed(); } } return
+	 * false; }
+	 */
 	public void showLogInDialog(boolean hideCancelButton) {
 
 		Intent i = new Intent(this, VueLoginActivity.class);
@@ -110,7 +117,6 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		VueApplication.getInstance().setBezelMenuFragment(mFrag);
 		new Handler().postDelayed(new Runnable() {
 
 			@Override
@@ -130,7 +136,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			}
 		}, DELAY_TIME);
 	}
-	 
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -145,6 +151,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		return false;
 
 	}
+
 	@Override
 	public void onPause() {
 		super.onPause();

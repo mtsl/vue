@@ -307,7 +307,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					}
 				});
 		super.onResume();
-		VueApplication.getInstance().setBezelMenuFragment(mFrag);
 	}
 
 	private Handler mHandler = new Handler() {
@@ -349,16 +348,26 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.e("share+", "details activity result" + requestCode + resultCode);
 
-		try {
-			VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisle_details_view_fragment);
-
-			if (fragment.mAisleDetailsAdapter.mShare.shareIntentCalled) {
-				fragment.mAisleDetailsAdapter.mShare.shareIntentCalled = false;
-				fragment.mAisleDetailsAdapter.mShare.dismisDialog();
+		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
+				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
+			if (data != null) {
+				if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
+					mFrag.getFriendsList(data
+							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
+				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} else {
+			try {
+				VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisle_details_view_fragment);
+
+				if (fragment.mAisleDetailsAdapter.mShare.shareIntentCalled) {
+					fragment.mAisleDetailsAdapter.mShare.shareIntentCalled = false;
+					fragment.mAisleDetailsAdapter.mShare.dismisDialog();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

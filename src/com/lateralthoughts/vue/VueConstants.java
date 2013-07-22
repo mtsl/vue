@@ -66,7 +66,8 @@ public class VueConstants {
 	public static final String STORE = "store";
 	// Column names for dataToSync table.
 	public static final String COMMENT = "comment";
-
+	public static final int INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE = 24;
+	public static final String INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY = "invitefriendsloginactivitybundlestringkey";
 	public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
 	public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
@@ -94,8 +95,8 @@ public class VueConstants {
 	public static final String LAST_USED_TIME = "lastUsedTime";
 	public static final String NUMBER_OF_TIMES_USED = "numberOfTimesUsed";
 	public static final String AMAZON_APP_PACKAGE_NAME = "com.amazon.mShop.android";
-	public static final String AMAZON_APP_ACTIVITY_NAME = "com.amazon.mShop.android/com.amazon.mShop.home.HomeActivity";
-  
+	public static final String AMAZON_APP_ACTIVITY_NAME = "com.amazon.mShop.home.HomeActivity";
+
 	// User Profile details
 	public static final String USER_NAME = "userName";
 	public static final String USER_PROFILE_PICTURE = "userProfilePicture";

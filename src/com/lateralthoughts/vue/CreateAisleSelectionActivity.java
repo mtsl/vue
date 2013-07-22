@@ -142,8 +142,12 @@ public class CreateAisleSelectionActivity extends Activity {
 
 			@Override
 			public void onAnimationStart(Animation arg0) {
-				// TODO Auto-generated method stub
-
+				boxWithCircleLayout.setVisibility(View.INVISIBLE);
+				topRightGreenCircle.setVisibility(View.INVISIBLE);
+				topLeftGreenCircle.setVisibility(View.INVISIBLE);
+				bottomLeftGreenCircle.setVisibility(View.INVISIBLE);
+				bottomRightGreenCircle.setVisibility(View.INVISIBLE);
+				totalBottom.setVisibility(View.INVISIBLE);
 			}
 
 			@Override
@@ -154,12 +158,6 @@ public class CreateAisleSelectionActivity extends Activity {
 
 			@Override
 			public void onAnimationEnd(Animation arg0) {
-				boxWithCircleLayout.setVisibility(View.GONE);
-				topRightGreenCircle.setVisibility(View.GONE);
-				topLeftGreenCircle.setVisibility(View.GONE);
-				bottomLeftGreenCircle.setVisibility(View.GONE);
-				bottomRightGreenCircle.setVisibility(View.GONE);
-				totalBottom.setVisibility(View.GONE);
 				if (galleryClickedFlag) {
 					sendBroadcast(new Intent(
 							Intent.ACTION_MEDIA_MOUNTED,
@@ -245,13 +243,15 @@ public class CreateAisleSelectionActivity extends Activity {
 		topRightGreenCircle.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Intent getDataIntent = new Intent(
-						android.content.Intent.ACTION_PICK);
-				getDataIntent.setType("image/*");
-				getDataIntent.setClassName(VueConstants.AMAZON_APP_PACKAGE_NAME,
-						VueConstants.AMAZON_APP_ACTIVITY_NAME);
-				CreateAisleSelectionActivity.this.startActivityForResult(getDataIntent,
-						VueConstants.AMAZON_APP_REQUEST_CODE);
+				/*
+				 * Intent getDataIntent = new Intent(
+				 * android.content.Intent.ACTION_PICK);
+				 * getDataIntent.setType("image/*"); getDataIntent.setClassName(
+				 * VueConstants.AMAZON_APP_PACKAGE_NAME,
+				 * VueConstants.AMAZON_APP_ACTIVITY_NAME);
+				 * CreateAisleSelectionActivity.this.startActivityForResult(
+				 * getDataIntent, VueConstants.AMAZON_APP_REQUEST_CODE);
+				 */
 			}
 		});
 	}
@@ -269,7 +269,7 @@ public class CreateAisleSelectionActivity extends Activity {
 						.getPath(selectedImageUri, this);
 				Log.e("frag", "uri..." + selectedImagePath);
 				if (!fromCreateAilseScreenFlag) {
-					Intent intent = new Intent(this, CreateAisleActivity.class);
+					Intent intent = new Intent(this, DataEntryActivity.class);
 					Bundle b = new Bundle();
 					b.putString(
 							VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
@@ -294,7 +294,7 @@ public class CreateAisleSelectionActivity extends Activity {
 				if (cameraImageFile.exists()) {
 					if (!fromCreateAilseScreenFlag) {
 						Intent intent = new Intent(this,
-								CreateAisleActivity.class);
+								DataEntryActivity.class);
 						Bundle b = new Bundle();
 						b.putString(
 								VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
@@ -317,6 +317,10 @@ public class CreateAisleSelectionActivity extends Activity {
 					finish();
 				}
 
+			} else if (requestCode == VueConstants.AMAZON_APP_REQUEST_CODE) {
+				Log.e("selection", "" + data);
+				Uri selectedImageUri = data.getData();
+				Log.e("selection", "" + selectedImageUri);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

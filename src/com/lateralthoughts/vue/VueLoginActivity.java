@@ -403,12 +403,17 @@ public class VueLoginActivity extends FragmentActivity implements
 						new SortBasedOnName());
 				if (fromInviteFriends != null
 						&& fromInviteFriends.equals(VueConstants.GOOGLEPLUS)) {
-					VueApplication
-							.getInstance()
-							.getBezelMenuFragment()
-							.getFriendsList(
-									getResources().getString(
-											R.string.sidemenu_sub_option_Gmail));
+					Intent resultIntent = new Intent();
+					Bundle b = new Bundle();
+					b.putString(
+							VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY,
+							getResources().getString(
+									R.string.sidemenu_sub_option_Gmail));
+					resultIntent.putExtras(b);
+					setResult(
+							VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE,
+							resultIntent);
+					finish();
 				}
 			}
 		}
@@ -491,15 +496,19 @@ public class VueLoginActivity extends FragmentActivity implements
 							&& fromInviteFriends.equals(VueConstants.FACEBOOK)) {
 						fromInviteFriends = null;
 						try {
-							VueApplication
-									.getInstance()
-									.getBezelMenuFragment()
-									.getFriendsList(
-											context.getResources()
-													.getString(
-															R.string.sidemenu_sub_option_Facebook));
+							Intent resultIntent = new Intent();
+							Bundle b = new Bundle();
+							b.putString(
+									VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY,
+									getResources()
+											.getString(
+													R.string.sidemenu_sub_option_Facebook));
+							resultIntent.putExtras(b);
+							setResult(
+									VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE,
+									resultIntent);
+							finish();
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -515,13 +524,18 @@ public class VueLoginActivity extends FragmentActivity implements
 							&& fromInviteFriends.equals(VueConstants.FACEBOOK)) {
 						fromInviteFriends = null;
 						try {
-							VueApplication
-									.getInstance()
-									.getBezelMenuFragment()
-									.getFriendsList(
-											context.getResources()
-													.getString(
-															R.string.sidemenu_sub_option_Facebook));
+							Intent resultIntent = new Intent();
+							Bundle b = new Bundle();
+							b.putString(
+									VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY,
+									getResources()
+											.getString(
+													R.string.sidemenu_sub_option_Facebook));
+							resultIntent.putExtras(b);
+							setResult(
+									VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE,
+									resultIntent);
+							finish();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
