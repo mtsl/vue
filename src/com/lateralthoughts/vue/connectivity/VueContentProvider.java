@@ -22,6 +22,10 @@ public class VueContentProvider extends ContentProvider{
   private static final int IMAGE_MATCH = 4;
   private static final int LOOKING_FOR_TABLE_MATCH = 5;
   private static final int LOOKING_FOR_ROW_MATCH = 6;
+  private static final int OCCATION_TABLE_MATCH = 7;
+  private static final int OCCATION_ROW_MATCH = 8;
+  private static final int CATEGORY_TABLE_MATCH = 9;
+  private static final int CATEGORY_ROW_MATCH = 10;
   private DbHelper dbHelper;
   private static final UriMatcher URIMATCHER;
 
@@ -40,6 +44,15 @@ public class VueContentProvider extends ContentProvider{
         LOOKING_FOR_TABLE_MATCH);
     URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.LOOKING_FOR_TABLE
         + "/#", LOOKING_FOR_ROW_MATCH);
+    URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.OCCASION_TABLE,
+        OCCATION_TABLE_MATCH);
+    URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.OCCASION_TABLE
+        + "/#", OCCATION_ROW_MATCH);
+    URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.CATEGORY_TABLE,
+        CATEGORY_TABLE_MATCH);
+    URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.CATEGORY_TABLE
+        + "/#",
+        CATEGORY_ROW_MATCH);
   }
 
   @Override
@@ -75,6 +88,25 @@ public class VueContentProvider extends ContentProvider{
       case LOOKING_FOR_ROW_MATCH:
         id = uri.getLastPathSegment();
         rowsDeleted = aislesDB.delete(VueConstants.LOOKING_FOR_TABLE,
+            VueConstants.ID + "=" + id + (!TextUtils.isEmpty(selection) ?
+                " AND (" + selection + ')' : ""),selectionArgs);
+        break;
+      case OCCATION_TABLE_MATCH:
+        rowsDeleted = aislesDB.delete(VueConstants.OCCASION_TABLE, selection,
+            selectionArgs);
+        break;
+      case OCCATION_ROW_MATCH:
+      id = uri.getLastPathSegment();
+      rowsDeleted = aislesDB.delete(VueConstants.OCCASION_TABLE,
+          VueConstants.ID + "=" + id + (!TextUtils.isEmpty(selection) ?
+              " AND (" + selection + ')' : ""),selectionArgs);
+      case CATEGORY_TABLE_MATCH:
+        rowsDeleted = aislesDB.delete(VueConstants.CATEGORY_TABLE, selection,
+            selectionArgs);
+        break;
+      case CATEGORY_ROW_MATCH:
+        id = uri.getLastPathSegment();
+        rowsDeleted = aislesDB.delete(VueConstants.CATEGORY_TABLE,
             VueConstants.ID + "=" + id + (!TextUtils.isEmpty(selection) ?
                 " AND (" + selection + ')' : ""),selectionArgs);
         break;
@@ -121,6 +153,24 @@ public class VueContentProvider extends ContentProvider{
           return rowUri;
         }
         break;
+      case OCCATION_TABLE_MATCH:
+        rowId = aislesDB.insert(VueConstants.OCCASION_TABLE, null, values);
+        if (rowId > 0) {
+          rowUri = ContentUris.appendId(VueConstants.CONTENT_URI.buildUpon(),
+              rowId).build();
+          return rowUri;
+        }
+        break;
+      case CATEGORY_TABLE_MATCH:
+        rowId = aislesDB.insert(VueConstants.CATEGORY_TABLE, null, values);
+        if (rowId > 0) {
+          rowUri = ContentUris.appendId(VueConstants.CONTENT_URI.buildUpon(),
+              rowId).build();
+          return rowUri;
+        }
+        break;
+      case CATEGORY_ROW_MATCH:
+      case OCCATION_ROW_MATCH:
       case LOOKING_FOR_ROW_MATCH:
       case IMAGE_MATCH:
       case AISLE_MATCH:
@@ -181,6 +231,32 @@ public class VueContentProvider extends ContentProvider{
                + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
                    : ""), selectionArgs, null, null, null);
        break;
+     case OCCATION_TABLE_MATCH:
+       qb.setTables(VueConstants.OCCASION_TABLE);
+       cursor = qb.query(aislesDB, projection, selection, selectionArgs,
+           null, null, sortOrder);
+       break;
+     case OCCATION_ROW_MATCH:
+       qb.setTables(VueConstants.OCCASION_TABLE);
+       id = uri.getLastPathSegment();
+       cursor = qb.query(aislesDB, projection,
+           VueConstants.ID+ "=" + id
+               + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
+                   : ""), selectionArgs, null, null, null);
+     break;
+     case CATEGORY_TABLE_MATCH:
+       qb.setTables(VueConstants.CATEGORY_TABLE);
+       cursor = qb.query(aislesDB, projection, selection, selectionArgs,
+           null, null, sortOrder);
+       break;
+     case CATEGORY_ROW_MATCH:
+       qb.setTables(VueConstants.CATEGORY_TABLE);
+       id = uri.getLastPathSegment();
+       cursor = qb.query(aislesDB, projection,
+           VueConstants.ID+ "=" + id
+               + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
+                   : ""), selectionArgs, null, null, null);
+       break;
     }
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
     return cursor;
@@ -228,6 +304,28 @@ public class VueContentProvider extends ContentProvider{
       case LOOKING_FOR_ROW_MATCH:
         id = uri.getLastPathSegment();
         rowsUpdated = aislesDB.update(VueConstants.LOOKING_FOR_TABLE, values,
+            VueConstants.IMAGE_ID + "=" + id
+                + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
+                    : ""), selectionArgs);
+        break;
+      case OCCATION_TABLE_MATCH:
+        rowsUpdated = aislesDB.update(VueConstants.OCCASION_TABLE, values,
+            selection, selectionArgs);
+        break;
+      case OCCATION_ROW_MATCH:
+        id = uri.getLastPathSegment();
+        rowsUpdated = aislesDB.update(VueConstants.OCCASION_TABLE, values,
+            VueConstants.IMAGE_ID + "=" + id
+                + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
+                    : ""), selectionArgs);
+        break;
+      case CATEGORY_TABLE_MATCH:
+        rowsUpdated = aislesDB.update(VueConstants.CATEGORY_TABLE, values,
+            selection, selectionArgs);
+        break;
+      case CATEGORY_ROW_MATCH:
+        id = uri.getLastPathSegment();
+        rowsUpdated = aislesDB.update(VueConstants.CATEGORY_TABLE, values,
             VueConstants.IMAGE_ID + "=" + id
                 + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
                     : ""), selectionArgs);

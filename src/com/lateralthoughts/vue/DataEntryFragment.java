@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -39,7 +38,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
-import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -68,7 +66,6 @@ public class DataEntryFragment extends Fragment {
 	private ImageView createaisleBg = null, categoeryIcon = null;
 	private Uri selectedCameraImage = null;
 	private InputMethodManager inputMethodManager;
-	private int categoryCurrentSelectedPosition = 0;
 	private boolean dontGoToNextlookingFor = false,
 			dontGoToNextForOccasion = false;
 	private String previousLookingfor = null, previousOcasion = null,
@@ -96,7 +93,8 @@ public class DataEntryFragment extends Fragment {
 	private static final String CATEGORY = "Category";
 	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
 	private int currentPagePosition = 0;
-	private AisleData mAisleData = null;
+	private AisleData lookingForAisleData = null, occassionAisleData = null,
+			categoryAilseData = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -174,14 +172,23 @@ public class DataEntryFragment extends Fragment {
 		previousLookingfor = lookingForText.getText().toString();
 		previousOcasion = occasionText.getText().toString();
 		previousSaySomething = saySomethingAboutAisle.getText().toString();
-		mAisleData = getAisleData(VueConstants.LOOKING_FOR_TABLE);
-		if (mAisleData != null) {
-			lookingForText.setText(mAisleData.keyword);
-			lookingForBigText.setText(mAisleData.keyword);
+		lookingForAisleData = getAisleData(VueConstants.LOOKING_FOR_TABLE);
+		if (lookingForAisleData != null) {
+			lookingForText.setText(lookingForAisleData.keyword);
+			lookingForBigText.setText(lookingForAisleData.keyword);
 			lookingForPopup.setVisibility(View.GONE);
 		} else {
 			lookingForText.requestFocus();
 			inputMethodManager.showSoftInput(lookingForText, 0);
+		}
+		occassionAisleData = getAisleData(VueConstants.OCCASION_TABLE);
+		if (occassionAisleData != null) {
+			occasionText.setText(occassionAisleData.keyword);
+			occassionBigText.setText(occassionAisleData.keyword);
+		}
+		categoryAilseData = getAisleData(VueConstants.CATEGORY_TABLE);
+		if (categoryAilseData != null) {
+			categoryText.setText(categoryAilseData.keyword);
 		}
 		saySomethingAboutAisle
 				.setOnEditorActionListener(new OnEditorActionListener() {
@@ -818,7 +825,8 @@ public class DataEntryFragment extends Fragment {
 			} else {
 				holder = (ViewHolder) rowView.getTag();
 			}
-			if (position == categoryCurrentSelectedPosition) {
+			if (categoryitemsArray[position].equals(categoryText.getText()
+					.toString())) {
 				holder.dataentryitemname.setTextColor(getResources().getColor(
 						R.color.black));
 				holder.dataentryitemname.setTypeface(null, Typeface.BOLD);
@@ -831,7 +839,6 @@ public class DataEntryFragment extends Fragment {
 			rowView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					categoryCurrentSelectedPosition = position;
 					categoryText.setText(categoryitemsArray[position]);
 					categoryListview.setVisibility(View.GONE);
 					categoeryPopup.setVisibility(View.GONE);
@@ -900,7 +907,7 @@ public class DataEntryFragment extends Fragment {
 										// OR Gallery.
 		String title = ""; // For Camera and Gallery we don't have title.
 		String store = ""; // For Camera and Gallery we don't have store.
-		renderUIAfterAddingAisleToServer();
+		storeMetaAisleDataIntoLocalStorage();
 	}
 
 	private void addAisleToServer() {
@@ -913,22 +920,56 @@ public class DataEntryFragment extends Fragment {
 										// OR Gallery.
 		String title = ""; // For Camera and Gallery we don't have title.
 		String store = ""; // For Camera and Gallery we don't have store.
-		if (mAisleData != null) {
-			mAisleData.count += 1;
-			if (mAisleData.keyword.equals(lookingForBigText.getText()
+		storeMetaAisleDataIntoLocalStorage();
+	}
+
+	private void storeMetaAisleDataIntoLocalStorage() {
+		if (lookingForAisleData != null) {
+			lookingForAisleData.count += 1;
+			if (lookingForAisleData.keyword.equals(lookingForBigText.getText()
 					.toString().trim())) {
-				mAisleData.isNew = false;
+				lookingForAisleData.isNew = false;
 			} else {
-				mAisleData.isNew = true;
+				lookingForAisleData.isNew = true;
 			}
 		} else {
-			mAisleData = new AisleData();
-			mAisleData.count = 1;
-			mAisleData.isNew = true;
+			lookingForAisleData = new AisleData();
+			lookingForAisleData.count = 1;
+			lookingForAisleData.isNew = true;
 		}
-		mAisleData.keyword = lookingForBigText.getText().toString();
-		mAisleData.time = System.currentTimeMillis();
-		showDataProgressOnNotification(VueConstants.LOOKING_FOR_TABLE);
+		lookingForAisleData.keyword = lookingForBigText.getText().toString();
+		lookingForAisleData.time = System.currentTimeMillis();
+		if (occassionAisleData != null) {
+			occassionAisleData.count += 1;
+			if (occassionAisleData.keyword.equals(occassionBigText.getText()
+					.toString().trim())) {
+				occassionAisleData.isNew = false;
+			} else {
+				occassionAisleData.isNew = true;
+			}
+		} else {
+			occassionAisleData = new AisleData();
+			occassionAisleData.count = 1;
+			occassionAisleData.isNew = true;
+		}
+		occassionAisleData.keyword = occassionBigText.getText().toString();
+		occassionAisleData.time = System.currentTimeMillis();
+		if (categoryAilseData != null) {
+			categoryAilseData.count += 1;
+			if (categoryAilseData.keyword.equals(categoryText.getText()
+					.toString().trim())) {
+				categoryAilseData.isNew = false;
+			} else {
+				categoryAilseData.isNew = true;
+			}
+		} else {
+			categoryAilseData = new AisleData();
+			categoryAilseData.count = 1;
+			categoryAilseData.isNew = true;
+		}
+		categoryAilseData.keyword = categoryText.getText().toString();
+		categoryAilseData.time = System.currentTimeMillis();
+		showDataProgressOnNotification();
 		renderUIAfterAddingAisleToServer();
 	}
 
@@ -954,44 +995,44 @@ public class DataEntryFragment extends Fragment {
 				getActivity(), aisleImagePathList));
 	}
 
-	private void addAisleMetaDataToDB(String tableName) {
-		// DbHelper helper = new DbHelper(getActivity());
-		// SQLiteDatabase db = helper.getWritableDatabase();
+	private void addAisleMetaDataToDB(String tableName, AisleData mAisleData) {
 		Uri uri = null;
 		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
 			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
-		} /*
-		 * else if() {
-		 * 
-		 * } else if() {
-		 * 
-		 * }
-		 */
+		} else if (tableName.equals(VueConstants.OCCASION_TABLE)) {
+			uri = VueConstants.OCCASION_CONTENT_URI;
+		} else if (tableName.equals(VueConstants.CATEGORY_TABLE)) {
+			uri = VueConstants.CATEGORY_CONTENT_URI;
+		} else {
+			return;
+		}
 		ContentValues values = new ContentValues();
 		values.put(VueConstants.KEYWORD, mAisleData.keyword);
 		values.put(VueConstants.LAST_USED_TIME, mAisleData.time);
 		values.put(VueConstants.NUMBER_OF_TIMES_USED, mAisleData.count);
 		if (mAisleData.isNew) {
 			getActivity().getContentResolver().insert(uri, values);
-			// db.insert(tableName, null, values);
 		} else {
 			getActivity().getContentResolver().update(uri, values,
 					VueConstants.KEYWORD + "=?",
 					new String[] { mAisleData.keyword });
-			/*
-			 * db.update(tableName, values, VueConstants.KEYWORD + "=?", new
-			 * String[] {keyword});
-			 */
 		}
-		// db.close();
 	}
 
 	private AisleData getAisleData(String tableName) {
 		AisleData data = null;
-		DbHelper helper = new DbHelper(getActivity());
-		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor c = db.query(tableName, null, null, null, null, null,
-				VueConstants.LAST_USED_TIME + " DESC");
+		Uri uri = null;
+		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
+			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
+		} else if (tableName.equals(VueConstants.OCCASION_TABLE)) {
+			uri = VueConstants.OCCASION_CONTENT_URI;
+		} else if (tableName.equals(VueConstants.CATEGORY_TABLE)) {
+			uri = VueConstants.CATEGORY_CONTENT_URI;
+		} else {
+			return null;
+		}
+		Cursor c = getActivity().getContentResolver().query(uri, null, null,
+				null, VueConstants.LAST_USED_TIME + " DESC");
 		if (c.moveToFirst()) {
 			data = new AisleData();
 			data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
@@ -1001,7 +1042,6 @@ public class DataEntryFragment extends Fragment {
 					.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
 		}
 		c.close();
-		db.close();
 		return data;
 	}
 
@@ -1012,7 +1052,7 @@ public class DataEntryFragment extends Fragment {
 		boolean isNew;
 	}
 
-	private void showDataProgressOnNotification(final String tableName) {
+	private void showDataProgressOnNotification() {
 		final NotificationManager mNotifyManager = (NotificationManager) getActivity()
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 		final Builder mBuilder = new NotificationCompat.Builder(getActivity());
@@ -1025,27 +1065,26 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public void run() {
 
-				addAisleMetaDataToDB(tableName);
+				addAisleMetaDataToDB(VueConstants.LOOKING_FOR_TABLE,
+						lookingForAisleData);
+				addAisleMetaDataToDB(VueConstants.OCCASION_TABLE,
+						occassionAisleData);
+				addAisleMetaDataToDB(VueConstants.CATEGORY_TABLE,
+						categoryAilseData);
 
-		        int incr;
-	            // Do the "lengthy" operation 20 times
-	            for (incr = 0; incr <= 100; incr+=20) {
-	                    // Sets the progress indicator to a max value, the
-	                    // current completion percentage, and "determinate"
-	                    // state
-	                    mBuilder.setProgress(100, incr, false);
-	                    mBuilder.setContentText("Uploading... ("+incr+"%)");
-	                    // Displays the progress bar for the first time.
-	                    mNotifyManager.notify(0, mBuilder.build());
-	                        // Sleeps the thread, simulating an operation
-	                        // that takes time
-	                        try {
-	                            // Sleep for 5 seconds
-	                            Thread.sleep(5*1000);
-	                        } catch (InterruptedException e) {
-	                        }
-	            }
-	 
+				/*
+				 * int incr; // Do the "lengthy" operation 20 times for (incr =
+				 * 0; incr <= 100; incr += 20) { // Sets the progress indicator
+				 * to a max value, the // current completion percentage, and
+				 * "determinate" // state mBuilder.setProgress(100, incr,
+				 * false); mBuilder.setContentText("Uploading... (" + incr +
+				 * "%)"); // Displays the progress bar for the first time.
+				 * mNotifyManager.notify(0, mBuilder.build()); // Sleeps the
+				 * thread, simulating an operation // that takes time try { //
+				 * Sleep for 5 seconds Thread.sleep(5 * 1000); } catch
+				 * (InterruptedException e) { } }
+				 */
+
 				// When the loop is finished, updates the notification
 				mBuilder.setContentText("Uploading completed")
 				// Removes the progress bar
