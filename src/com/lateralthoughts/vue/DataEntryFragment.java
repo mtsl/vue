@@ -957,30 +957,30 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	private AisleData getAisleData(String tableName) {
-		AisleData data = null;
-		Uri uri = null;
-        if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
-            uri = VueConstants.LOOKING_FOR_CONTENT_URI;
-        } else if(tableName.equals(VueConstants.OCCASION_TABLE)) {
-          uri = VueConstants.OCCASION_CONTENT_URI;
-        } else if(tableName.equals(VueConstants.CATEGORY_TABLE)) {
-          uri = VueConstants.CATEGORY_CONTENT_URI;
-        } else {
-          return null;
-        }
-		Cursor c = getActivity().getContentResolver().query(uri, null, null, null, VueConstants.LAST_USED_TIME + " DESC");
-		if (c.moveToFirst()) {
-			data = new AisleData();
-			data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
-			/*data.time = c
-					.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));*/
-			data.count = c.getInt(c
-					.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
-		}
-		c.close();
-		return data;
-	}
+  private AisleData getAisleData(String tableName) {
+    AisleData data = null;
+    Uri uri = null;
+    if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
+      uri = VueConstants.LOOKING_FOR_CONTENT_URI;
+    } else if (tableName.equals(VueConstants.OCCASION_TABLE)) {
+      uri = VueConstants.OCCASION_CONTENT_URI;
+    } else if (tableName.equals(VueConstants.CATEGORY_TABLE)) {
+      uri = VueConstants.CATEGORY_CONTENT_URI;
+    } else {
+      return null;
+    }
+    Cursor c = getActivity().getContentResolver().query(uri, null, null, null,
+        VueConstants.LAST_USED_TIME + " DESC");
+    if (c.moveToFirst()) {
+      data = new AisleData();
+      data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
+      data.time = c.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));
+      data.count = c
+          .getInt(c.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
+    }
+    c.close();
+    return data;
+  }
 
 	private void showDataProgressOnNotification() {
 		final NotificationManager mNotifyManager = (NotificationManager) getActivity()

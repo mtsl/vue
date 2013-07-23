@@ -15,7 +15,6 @@ import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.utils.Utils;
 
 public class DataBaseManager {
   private static final String FORMATE = "%09d";
@@ -200,7 +199,7 @@ public class DataBaseManager {
         VueConstants.AISLE_ID + "=?", new String[] {aisleID});
   }
   
-  private void addAisleMetaDataToDB(String tableName, String keyword,
+  public void addAisleMetaDataToDB(String tableName, String keyword,
       long time, int count, boolean isNewFlag) {
     Uri uri = null;
     if (tableName.equals(VueConstants.LOOKING_FOR_TABLE) && isNewFlag) {
