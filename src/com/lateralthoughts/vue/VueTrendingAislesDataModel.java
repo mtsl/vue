@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -31,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.connectivity.VueBatteryManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
@@ -63,7 +63,7 @@ public class VueTrendingAislesDataModel {
   private static final String USER_IMAGE_TITLE_TAG = "title";
   private static final String IMAGE_HEIGHT_TAG = "height";
   private static final String IMAGE_WIDTH_TAG = "width";
-  private static final String FORMATE = "%09d";
+ // private static final String FORMATE = "%09d";
 
   private ArrayList<AisleWindowContent> mAisleContentList;
   private HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
@@ -101,6 +101,7 @@ public class VueTrendingAislesDataModel {
   private int mLocalAislesLimit = 10;
   private ThreadPoolExecutor threadPool;
   private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
+  private DataBaseManager mDbManager;
 
   private VueTrendingAislesDataModel(Context context) {
     mContext = context;
@@ -114,10 +115,15 @@ public class VueTrendingAislesDataModel {
     mOffset = 0;
     mState = AISLE_TRENDING_LIST_DATA;
     mAisleContentList = new ArrayList<AisleWindowContent>();
+    mDbManager = new DataBaseManager(mContext);
     threadPool = new ThreadPoolExecutor(poolSize, maxPoolSize, keepAliveTime,
         TimeUnit.SECONDS, threadsQueue);
     if (!VueConnectivityManager.isNetworkConnected(context)) {
-      getAislesFromDb();
+      Message msg = new Message();
+      msg.obj = mDbManager.getAislesFromDB(null);
+      mHandler.sendMessage(msg);   
+      //mDbManager.getAislesFromDB(mContext, null);
+      // getAislesFromDb();
     } else {
       // initializeTrendingAisleContent();
       mMoreDataAvailable = true;
@@ -234,7 +240,8 @@ public class VueTrendingAislesDataModel {
 
             @Override
             public void run() {
-              addAislesToDb();
+              //addAislesToDb();
+              DataBaseManager.addTrentingAislesFromServerToDB(mContext);
             }
           });
         }
@@ -353,14 +360,9 @@ public class VueTrendingAislesDataModel {
     }
   }
 
-  private void addAislesToDb() {
-    /*DbHelper helper = new DbHelper(mContext);
-    SQLiteDatabase db = helper.getWritableDatabase();*/
+/*  private void addAislesToDb() {
 
-    // db.beginTransaction();
     for (int i = 0; i < getAisleCount(); i++) {
-     /* Cursor cursor = db.rawQuery("select COUNT(*) from "
-          + DbHelper.DATABASE_TABLE_AISLES, null);*/
       Cursor cursor = mContext.getContentResolver().query(VueConstants.CONTENT_URI,
           new String[] {"COUNT(*)"}, null, null, null);
       String strCount = "";
@@ -385,7 +387,6 @@ public class VueTrendingAislesDataModel {
       values.put(VueConstants.USER_ID, info.mUserId);
       values.put(VueConstants.AISLE_ID, info.mAisleId);
       values.put(VueConstants.ID, String.format(FORMATE, maxId + 1));
-     // db.insert(DbHelper.DATABASE_TABLE_AISLES, null, values);
       mContext.getContentResolver().insert(VueConstants.CONTENT_URI, values);
       int imgCount = 0;
       for (AisleImageDetails imageDetails : imageItemsArray) {
@@ -400,16 +401,13 @@ public class VueTrendingAislesDataModel {
         imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
         imgValues.put(VueConstants.USER_ID, info.mUserId);
         imgValues.put(VueConstants.AISLE_ID, info.mAisleId);
-        /*db.insert(DbHelper.DATABASE_TABLE_AISLES_IMAGES, null, imgValues);*/
         mContext.getContentResolver().insert(VueConstants.IMAGES_CONTENT_URI, imgValues);
       }
     }
-    // db.setTransactionSuccessful();
-    // db.endTransaction();
-    // db.close();
-  }
 
-  public void getAislesFromDb() {
+  }*/
+
+  /*public void getAislesFromDb() {
     mEndPosition = mEndPosition + mLocalAislesLimit;
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
@@ -498,7 +496,7 @@ public class VueTrendingAislesDataModel {
     }
       aislesCursor.close();
       db.close();
-  }
+  }*/
 
   public void loadMoreAisles() {
     mMoreDataAvailable = true;
@@ -530,17 +528,11 @@ public class VueTrendingAislesDataModel {
         @Override
         public void run() {
           runTask(new Runnable() {
-
-            @Override
             public void run() {
-              runTask(new Runnable() {
-                
-                @Override
-                public void run() {
-                     getAislesFromDb();
-                }
-            });
-            }
+              Message msg = new Message();
+              msg.obj = mDbManager.getAislesFromDB(null);
+              mHandler.sendMessage(msg);
+            };
           });
           
         }

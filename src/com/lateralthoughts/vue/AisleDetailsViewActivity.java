@@ -41,7 +41,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	public static final String CLICK_EVENT = "click";
 	public static final String LONG_PRESS_EVENT = "longpress";
 	HorizontalListView mTopScroller, mBottomScroller;
-	int mStatusbarHeight;
+	//int mStatusbarHeight;
 	int mScreenTotalHeight;
 	int mCoparisionScreenHeight;
 	Context mContext;

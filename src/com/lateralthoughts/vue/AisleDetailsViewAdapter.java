@@ -504,7 +504,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		}
 	}
 	public void setAisleBrowerObjectsNull(){
+		if(mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
+			 mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
+			
 		mViewHolder.aisleContentBrowser.setReferedObjectsNull();
+		mViewHolder.aisleContentBrowser.removeAllViews();
+		}
 	}
 	private void sendDataToDb(String windowId,int imgPosition,int likesCount) {
 		

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import com.actionbarsherlock.view.Menu;
@@ -75,7 +74,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		getSupportMenuInflater().inflate(R.menu.title_options, menu);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		// Configure the search info and add any event listeners
-		return true;// super.onCreateOptionsMenu(menu);
+		return super.onCreateOptionsMenu(menu); //true;
 	}
 
 	@Override
@@ -107,6 +106,8 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		return false;
 	}
+
+
 	public void showLogInDialog(boolean hideCancelButton) {
 		Intent i = new Intent(this, VueLoginActivity.class);
 		Bundle b = new Bundle();
@@ -121,7 +122,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-/*		new Handler().postDelayed(new Runnable() {
+		new Handler().postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
@@ -130,15 +131,21 @@ public class VueLandingPageActivity extends BaseActivity {
 				window.getDecorView().getWindowVisibleDisplayFrame(rect);
 				int statusBarHeight = rect.top;
 				
-				 * int contentViewTop=
-				 * window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
-				 * titleBarHeight= contentViewTop - statusBarHeight;
+ 
+			/*	  int contentViewTop=
+				   window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
+				  titleBarHeight= contentViewTop - statusBarHeight;
+ 
+				   int contentViewTop=
+				  window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
+				  titleBarHeight= contentViewTop - statusBarHeight;*/
+ 
 				 
 				VueApplication.getInstance().setmStatusBarHeight(
 						statusBarHeight);
 
 			}
-		}, DELAY_TIME);*/
+		}, DELAY_TIME); 
 	}
 	@Override
 	public void onPause() {

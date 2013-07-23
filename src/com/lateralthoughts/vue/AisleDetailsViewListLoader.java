@@ -76,7 +76,6 @@ public class AisleDetailsViewListLoader {
         contentBrowser = holder.aisleContentBrowser;
         contentBrowser.setHolderName(VueAisleDetailsViewFragment.SCREEN_NAME);
         if(holder.uniqueContentId.equals(desiredContentId)){
-           Log.i("bitmapsize", "bitmapsize: call  return from here: ");
             //we are looking at a visual object that has either not been used
             //before or has to be filled with same content. Either way, no need
             //to worry about cleaning up anything!
@@ -115,6 +114,8 @@ public class AisleDetailsViewListLoader {
 					.onReceiveImageCount(imageDetailsArr.size());
 			itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getEmptyImageView();
+		 
+			
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 			params.gravity = Gravity.CENTER;
