@@ -40,6 +40,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+
+import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
@@ -992,19 +994,13 @@ public class DataEntryFragment extends Fragment {
 		if (c.moveToFirst()) {
 			data = new AisleData();
 			data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
-			data.time = c
-					.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));
+			/*data.time = c
+					.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));*/
 			data.count = c.getInt(c
 					.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
 		}
 		c.close();
 		return data;
-	}
-
-	public class AisleData {
-		String keyword;
-		long time;
-		int count;
 	}
 
 	private void showDataProgressOnNotification() {
