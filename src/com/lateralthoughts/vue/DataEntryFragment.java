@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -11,12 +12,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
@@ -41,7 +42,6 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.lateralthoughts.vue.connectivity.AisleData;
-import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -98,7 +98,10 @@ public class DataEntryFragment extends Fragment {
 	private static final String CATEGORY = "Category";
 	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
 	private int currentPagePosition = 0;
-
+	public static boolean msaySomethingAboutAisleClicked = false;
+	private ArrayList<String> mLookingForAisleKeywordsList = null,
+			mOccassionAisleKeywordsList = null,
+			mCategoryAilseKeywordsList = null;
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -194,10 +197,19 @@ public class DataEntryFragment extends Fragment {
 						return true;
 					}
 				});
-		saySomethingAboutAisle.setonInterceptListen(new OnInterceptListener() {
+		OnInterceptListener interceptObj = new OnInterceptListener() {
 			@Override
 			public void onKeyBackPressed() {
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						msaySomethingAboutAisleClicked = false;
+					}
+				}, 200);
+				
 				saySomethingAboutAisle.setCursorVisible(false);
+				//saySomethingAboutAisle.setFocusable(false);
 				inputMethodManager.hideSoftInputFromWindow(
 						saySomethingAboutAisle.getWindowToken(), 0);
 				saySomethingAboutAisle.setText(previousSaySomething);
@@ -212,9 +224,11 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public boolean getFlag() {
 				// TODO Auto-generated method stub
-				return false;
+				return true;
 			}
-		});
+		};
+		interceptObj.setFlag(true);
+		saySomethingAboutAisle.setonInterceptListen(interceptObj);
 		lookingForText
 				.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 					@Override
@@ -592,6 +606,12 @@ public class DataEntryFragment extends Fragment {
 		saySomethingAboutAisle.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				msaySomethingAboutAisleClicked = true;
+				
+				//saySomethingAboutAisle.setCursorVisible(true);
+				saySomethingAboutAisle.requestFocus();
+				saySomethingAboutAisle.setFocusable(true);
+			
 				inputMethodManager.hideSoftInputFromWindow(
 						occasionText.getWindowToken(), 0);
 				inputMethodManager.hideSoftInputFromWindow(
@@ -605,9 +625,9 @@ public class DataEntryFragment extends Fragment {
 				categoryListviewLayout.setVisibility(View.GONE);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				saySomethingAboutAisle.setCursorVisible(true);
-				saySomethingAboutAisle.requestFocus();
+				
 				inputMethodManager.showSoftInput(saySomethingAboutAisle, 0);
+			 
 			}
 		});
 		return v;
@@ -981,6 +1001,7 @@ public class DataEntryFragment extends Fragment {
     c.close();
     return data;
   }
+
 
 	private void showDataProgressOnNotification() {
 		final NotificationManager mNotifyManager = (NotificationManager) getActivity()

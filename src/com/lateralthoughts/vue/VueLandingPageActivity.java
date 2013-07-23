@@ -131,15 +131,21 @@ public class VueLandingPageActivity extends BaseActivity {
 				window.getDecorView().getWindowVisibleDisplayFrame(rect);
 				int statusBarHeight = rect.top;
 				
-				 /* int contentViewTop=
+ 
+			/*	  int contentViewTop=
+				   window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
+				  titleBarHeight= contentViewTop - statusBarHeight;
+ 
+				   int contentViewTop=
 				  window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
 				  titleBarHeight= contentViewTop - statusBarHeight;*/
+ 
 				 
 				VueApplication.getInstance().setmStatusBarHeight(
 						statusBarHeight);
 
 			}
-		}, DELAY_TIME);
+		}, DELAY_TIME); 
 	}
 	@Override
 	public void onPause() {

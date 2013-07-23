@@ -200,7 +200,7 @@ public class DataBaseManager {
   }
   
   public void addAisleMetaDataToDB(String tableName, String keyword,
-      long time, int count, boolean isNewFlag) {
+    long time, int count, boolean isNewFlag) {
     Uri uri = null;
     if (tableName.equals(VueConstants.LOOKING_FOR_TABLE) && isNewFlag) {
       uri = VueConstants.LOOKING_FOR_CONTENT_URI;
@@ -221,6 +221,31 @@ public class DataBaseManager {
       mContext.getContentResolver().update(uri, values,
           VueConstants.KEYWORD + "=?", new String[] {keyword});
     }
+  }
+  
+  public AisleData getAisleMetaData(String tableName) {
+    AisleData data = null;
+    Uri uri = null;
+    if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
+      uri = VueConstants.LOOKING_FOR_CONTENT_URI;
+    } else if (tableName.equals(VueConstants.OCCASION_TABLE)) {
+      uri = VueConstants.OCCASION_CONTENT_URI;
+    } else if (tableName.equals(VueConstants.CATEGORY_TABLE)) {
+      uri = VueConstants.CATEGORY_CONTENT_URI;
+    } else {
+      return null;
+    }
+    Cursor c = mContext.getContentResolver().query(uri, null, null, null,
+        VueConstants.LAST_USED_TIME + " DESC");
+    if (c.moveToFirst()) {
+      data = new AisleData();
+      data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
+      data.time = c.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));
+      data.count = c
+          .getInt(c.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
+    }
+    c.close();
+    return data;
   }
   
 }

@@ -1,5 +1,6 @@
 package com.lateralthoughts.vue.utils;
 
+import com.lateralthoughts.vue.DataEntryFragment;
 import com.lateralthoughts.vue.VueApplication;
 
 import android.content.Context;
@@ -13,9 +14,9 @@ import android.widget.EditText;
  *EditText Custom class for EditText to hanled the events
  */
 public class EditTextBackEvent extends EditText {
-  Context context;
+  Context mContext;
   public int x;
-  private OnInterceptListener onInterceptListenr;
+  private OnInterceptListener mOnInterceptListenr;
   //private EditTextImeBackListener mOnImeBack;
 
   /**
@@ -33,7 +34,7 @@ public class EditTextBackEvent extends EditText {
    */
   public EditTextBackEvent(Context context, AttributeSet attrs) {
     super(context, attrs);
-    this.context = context;
+    this.mContext = context;
   }
 
   /**
@@ -45,7 +46,7 @@ public class EditTextBackEvent extends EditText {
   public EditTextBackEvent(Context context, AttributeSet attrs, int defStyle) {
 
     super(context, attrs, defStyle);
-    this.context = context;
+    this.mContext = context;
   }
 
   @Override
@@ -53,20 +54,15 @@ public class EditTextBackEvent extends EditText {
     try {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
 			VueApplication.getInstance().mSoftKeboardIndicator = true;
-		  onInterceptListenr.onKeyBackPressed();
+			if(mOnInterceptListenr.getFlag()){
+			if(DataEntryFragment.msaySomethingAboutAisleClicked == false) {
+				VueApplication.getInstance().mSoftKeboardIndicator = false;
+			}
+			}
+		  mOnInterceptListenr.onKeyBackPressed();
 		  Log.i("misKeyboardShown val: ", "misKeyboardShown if EditTextBackEvent: ");
 		  return false;
 		}
-		/*
-		  if(CreateAilseFragment.create_ailse_keyboard_hidden_shown_flag)
-		  {
-			  return true;
-		  }
-		  else
-		  {
-			 return false;
-		  }*/
-		  
 		  return super.dispatchKeyEvent(event);
 
 		}
@@ -102,6 +98,6 @@ public class EditTextBackEvent extends EditText {
    * @param actionListen OnInterceptListener
    */
   public void setonInterceptListen(OnInterceptListener actionListen) {
-    onInterceptListenr = actionListen;
+    mOnInterceptListenr = actionListen;
   }
 }

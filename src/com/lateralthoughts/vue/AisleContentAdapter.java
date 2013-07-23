@@ -286,7 +286,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             	 
             			mImageDimention = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
-            			 bitmap =  mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
+            			if(bitmap.getHeight() < mImageDimention.mImgHeight) {
+            				   loadBitmap(itemDetails,mImageDimention.mImgHeight,contentBrowser, imageView);
+            			}
+            			// bitmap =  mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
             			// setParams( contentBrowser, imageView,bitmap.getHeight());
             		 
                 

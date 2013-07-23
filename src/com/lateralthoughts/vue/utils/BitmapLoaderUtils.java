@@ -60,7 +60,7 @@ public class BitmapLoaderUtils {
     {
      
         File f = mFileCache.getFile(url);
-        Log.i("imagenotcoming", "bitmap issue: originalbitmap url "+url);
+        Log.i("bitmapprofile", "bitmapprofile  : originalbitmap url "+url);
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight);
         
@@ -113,12 +113,15 @@ public class BitmapLoaderUtils {
             //final int REQUIRED_SIZE = mScreenWidth/2;
             int height=o.outHeight;
             int width = o.outWidth;
-            Log.i("imagenotcoming", "bitmap issue: originalbitmap width "+width);
-            Log.i("imagenotcoming", "bitmap issue: originalbitmap height:  "+height);
+         
+            Log.i("bitmapprofile", "bitmapprofile: originalbitmap width "+width);
+            Log.i("bitmapprofile", "bitmapprofile: originalbitmap height:  "+height);
             
-            Log.i("imagenotcoming", "bitmap issue: cardWidht width "+VueApplication.getInstance().getVueDetailsCardWidth());
-            Log.i("imagenotcoming", "bitmap issue: bestHeight:  "+bestHeight);
-            Log.i("imagenotcoming", "bitmap issue scalleddown: cardHeight "+VueApplication.getInstance().getVueDetailsCardHeight());
+            Log.i("bitmapprofile", "bitmapprofile cardWidht width:  "+VueApplication.getInstance().getVueDetailsCardWidth());
+            Log.i("bitmapprofile", "bitmapprofile cardWidht height: "+VueApplication.getInstance().getVueDetailsCardHeight());
+            
+            Log.i("bitmapprofile", "bitmapprofile bestHeight:  "+bestHeight);
+          
             
           int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth();
             
@@ -160,7 +163,8 @@ public class BitmapLoaderUtils {
        
             }
             }
-           
+            Log.i("bitmapprofile", "bitmapprofile: showing bitmap width "+bitmap.getWidth());
+            Log.i("bitmapprofile", "bitmapprofile: showing bitmap height:  "+bitmap.getHeight());
             return bitmap;
         } catch (FileNotFoundException e) {
         } 

@@ -76,7 +76,6 @@ public class AisleDetailsViewListLoader {
         contentBrowser = holder.aisleContentBrowser;
         contentBrowser.setHolderName(VueAisleDetailsViewFragment.SCREEN_NAME);
         if(holder.uniqueContentId.equals(desiredContentId)){
-           Log.i("bitmapsize", "bitmapsize: call  return from here: ");
             //we are looking at a visual object that has either not been used
             //before or has to be filled with same content. Either way, no need
             //to worry about cleaning up anything!
@@ -115,6 +114,8 @@ public class AisleDetailsViewListLoader {
 					.onReceiveImageCount(imageDetailsArr.size());
 			itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getEmptyImageView();
+		 
+			
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 			params.gravity = Gravity.CENTER;
@@ -127,9 +128,10 @@ public class AisleDetailsViewListLoader {
 				//get the dimentions of the image.
 				 mImageDimention = Utils.getScalledImage(bitmap,
 						 itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
-				setParams(holder.aisleContentBrowser, imageView,itemDetails.mAvailableHeight);
+				setParams(holder.aisleContentBrowser, imageView,mBestHeight);
 				 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
-					 bitmap = mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
+					 loadBitmap(itemDetails, contentBrowser, imageView,
+								itemDetails.mAvailableHeight);
 					 setParams(holder.aisleContentBrowser, imageView,mBestHeight);
 				 }
 			/*	bitmap = Utils.getScalledImage(bitmap,
@@ -238,22 +240,13 @@ public class AisleDetailsViewListLoader {
 
    private void setParams(AisleContentBrowser vFlipper, ImageView imageView,int imgScreenHeight
           ) {
-      int imgCardHeight = (VueApplication.getInstance().getScreenHeight() * 60) / 100;
-   /*   FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-            VueApplication.getInstance().getScreenWidth(), (VueApplication.getInstance().getScreenHeight() * 60) / 100);*/
       int topMottomMargin = 24;
-      
-      imgScreenHeight += VueApplication.getInstance().getPixel(topMottomMargin);
+      topMottomMargin  = VueApplication.getInstance().getPixel(topMottomMargin);
       FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-              VueApplication.getInstance().getScreenWidth(),mBestHeight);
+              VueApplication.getInstance().getScreenWidth(),mBestHeight+topMottomMargin);
 
       if (vFlipper != null)
          vFlipper.setLayoutParams(showpieceParams);
-      /*
-       * bitmap = Utils.getScaledBitMap(bitmap,
-       * (VueApplication.getInstance().getScreenWidth()*80)/100,
-       * (VueApplication.getInstance().getScreenHeight()*60)/100);
-       */
 
       if (vFlipper != null) {
          FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
@@ -267,11 +260,6 @@ public class AisleDetailsViewListLoader {
          imageView.setScaleType(ScaleType.CENTER_INSIDE);
          imageView.setLayoutParams(params);
          imageView.setScaleType(ScaleType.CENTER_INSIDE);
-         /*
-          * bitmap = Utils.getScaledBitMap(bitmap,
-          * (VueApplication.getInstance().getScreenWidth()*80)/100,
-          * (VueApplication.getInstance().getScreenHeight()*60)/100);
-          */
       }
        
    }

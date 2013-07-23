@@ -367,6 +367,9 @@ public class VueTrendingAislesDataModel {
           new String[] {"COUNT(*)"}, null, null, null);
       String strCount = "";
       int maxId = 0;
+      if(cursor == null) {
+    	  break;
+      }
       if (cursor.moveToFirst()) {
         strCount = cursor.getString(cursor.getColumnIndex("COUNT(*)"));
       }
