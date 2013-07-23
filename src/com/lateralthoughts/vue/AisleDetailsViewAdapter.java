@@ -505,7 +505,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	}
 	public void setAisleBrowerObjectsNull(){
 		if(mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
-			 mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
+			// mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
 			
 		mViewHolder.aisleContentBrowser.setReferedObjectsNull();
 		mViewHolder.aisleContentBrowser.removeAllViews();

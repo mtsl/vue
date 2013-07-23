@@ -55,6 +55,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	private boolean isActionBarShown = false;
 	private int mCurrentapiVersion;
 	private HandleActionBar handleActionbar;
+	private int mStatusbarHeight;
 
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
