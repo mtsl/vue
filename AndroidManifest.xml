@@ -39,14 +39,14 @@
             <category android:name="android.intent.category.LAUNCHER"/>
         </intent-filter>
     </activity>
-    
+
         <activity android:name=".AisleDetailsViewActivity" 
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.VueTheme"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
-    
+
           <activity android:name=".DataEntryActivity" 
             android:label="@string/app_name"
 
@@ -57,7 +57,7 @@
             android:windowSoftInputMode="stateAlwaysVisible"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
-        
+
     <activity android:name=".SplashScreen" android:label="@string/app_name">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
