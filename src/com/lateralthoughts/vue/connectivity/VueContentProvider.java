@@ -190,7 +190,7 @@ public class VueContentProvider extends ContentProvider{
     SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
     Cursor cursor = null;
     String id;
-    
+
     switch (URIMATCHER.match(uri)) {
       case AISLES_MATCH:
         qb.setTables(VueConstants.AISLES);

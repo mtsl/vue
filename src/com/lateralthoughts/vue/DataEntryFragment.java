@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -19,6 +20,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -48,11 +51,12 @@ import com.lateralthoughts.vue.utils.clsShare;
  */
 public class DataEntryFragment extends Fragment {
 
-	private ListView categoryListview = null;
+	private ListView categoryListview = null, lookingForListview = null,
+			ocassionListview = null;
 	private LinearLayout lookingForPopup = null,
 			lookingForListviewLayout = null, ocassionPopup = null,
 			categoeryPopup = null, categoryListviewLayout = null,
-			dataEntryRootLayout = null;
+			ocassionListviewLayout = null, dataEntryRootLayout = null;
 	private TextView touchToChangeImage = null, lookingForBigText = null,
 			occassionBigText = null, categoryText = null;
 	private com.lateralthoughts.vue.utils.EditTextBackEvent lookingForText = null,
@@ -89,8 +93,9 @@ public class DataEntryFragment extends Fragment {
 	private static final String CATEGORY = "Category";
 	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
 	private int currentPagePosition = 0;
-	private ArrayList<AisleData> lookingForAisleData = null,
-			occassionAisleData = null, categoryAilseData = null;
+	private ArrayList<String> mLookingForAisleKeywordsList = null,
+			mOccassionAisleKeywordsList = null,
+			mCategoryAilseKeywordsList = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -118,9 +123,13 @@ public class DataEntryFragment extends Fragment {
 				.findViewById(R.id.lookingfortext);
 		dataEntryAislesViewpager = (ViewPager) v
 				.findViewById(R.id.dataentry_aisles_viewpager);
+		ocassionListviewLayout = (LinearLayout) v
+				.findViewById(R.id.ocassionlistviewlayout);
 		dataEntryRootLayout = (LinearLayout) v
 				.findViewById(R.id.dataentry_root_layout);
+		ocassionListview = (ListView) v.findViewById(R.id.ocassionlistview);
 		findAtIcon = (ImageView) v.findViewById(R.id.find_at_icon);
+		lookingForListview = (ListView) v.findViewById(R.id.lookingforlistview);
 		findAtText = (EditTextBackEvent) v.findViewById(R.id.find_at_text);
 		findAtPopup = (LinearLayout) v.findViewById(R.id.find_at_popup);
 		dataEntryInviteFriendsCancelLayout = (RelativeLayout) v
@@ -164,23 +173,25 @@ public class DataEntryFragment extends Fragment {
 		previousLookingfor = lookingForText.getText().toString();
 		previousOcasion = occasionText.getText().toString();
 		previousSaySomething = saySomethingAboutAisle.getText().toString();
-		lookingForAisleData = getAisleData(VueConstants.LOOKING_FOR_TABLE);
-		if (lookingForAisleData != null) {
-			lookingForText.setText(lookingForAisleData.keyword);
-			lookingForBigText.setText(lookingForAisleData.keyword);
+		mLookingForAisleKeywordsList = getAisleKeywords(VueConstants.LOOKING_FOR_TABLE);
+		if (mLookingForAisleKeywordsList != null) {
+			lookingForText.setText(mLookingForAisleKeywordsList.get(0));
+			lookingForBigText.setText(mLookingForAisleKeywordsList.get(0));
 			lookingForPopup.setVisibility(View.GONE);
+			lookingForListviewLayout.setVisibility(View.GONE);
 		} else {
+			lookingForListviewLayout.setVisibility(View.GONE);
 			lookingForText.requestFocus();
 			inputMethodManager.showSoftInput(lookingForText, 0);
 		}
-		occassionAisleData = getAisleData(VueConstants.OCCASION_TABLE);
-		if (occassionAisleData != null) {
-			occasionText.setText(occassionAisleData.keyword);
-			occassionBigText.setText(occassionAisleData.keyword);
+		mOccassionAisleKeywordsList = getAisleKeywords(VueConstants.OCCASION_TABLE);
+		if (mOccassionAisleKeywordsList != null) {
+			occasionText.setText(mOccassionAisleKeywordsList.get(0));
+			occassionBigText.setText(mOccassionAisleKeywordsList.get(0));
 		}
-		categoryAilseData = getAisleData(VueConstants.CATEGORY_TABLE);
-		if (categoryAilseData != null) {
-			categoryText.setText(categoryAilseData.keyword);
+		mCategoryAilseKeywordsList = getAisleKeywords(VueConstants.CATEGORY_TABLE);
+		if (mCategoryAilseKeywordsList != null) {
+			categoryText.setText(mCategoryAilseKeywordsList.get(0));
 		}
 		saySomethingAboutAisle
 				.setOnEditorActionListener(new OnEditorActionListener() {
@@ -233,12 +244,22 @@ public class DataEntryFragment extends Fragment {
 						previousLookingfor = lookingForText.getText()
 								.toString();
 						lookingForPopup.setVisibility(View.GONE);
+						lookingForListviewLayout.setVisibility(View.GONE);
 						inputMethodManager.hideSoftInputFromWindow(
 								lookingForText.getWindowToken(), 0);
 						if (!dontGoToNextlookingFor) {
 							occassionBigText.setBackgroundColor(getResources()
 									.getColor(R.color.yellowbgcolor));
 							ocassionPopup.setVisibility(View.VISIBLE);
+							if (mOccassionAisleKeywordsList != null
+									&& mOccassionAisleKeywordsList.size() > 0) {
+								ocassionListviewLayout
+										.setVisibility(View.VISIBLE);
+								ocassionListview
+										.setAdapter(new OccassionAdapter(
+												getActivity(),
+												mOccassionAisleKeywordsList));
+							}
 							occasionText.requestFocus();
 							inputMethodManager.showSoftInput(occasionText, 0);
 						}
@@ -248,7 +269,9 @@ public class DataEntryFragment extends Fragment {
 		lookingForText.setonInterceptListen(new OnInterceptListener() {
 			public void onKeyBackPressed() {
 				lookingForPopup.setVisibility(View.GONE);
+				lookingForListviewLayout.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
+				ocassionListviewLayout.setVisibility(View.GONE);
 				lookingForText.setText(previousLookingfor);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
@@ -286,6 +309,7 @@ public class DataEntryFragment extends Fragment {
 				}
 				previousOcasion = occasionText.getText().toString();
 				ocassionPopup.setVisibility(View.GONE);
+				ocassionListviewLayout.setVisibility(View.GONE);
 				if (!dontGoToNextForOccasion) {
 					categoryListview.setVisibility(View.VISIBLE);
 					categoryListview.setAdapter(new CategoryAdapter(
@@ -299,7 +323,9 @@ public class DataEntryFragment extends Fragment {
 		occasionText.setonInterceptListen(new OnInterceptListener() {
 			public void onKeyBackPressed() {
 				lookingForPopup.setVisibility(View.GONE);
+				lookingForListviewLayout.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
+				ocassionListviewLayout.setVisibility(View.GONE);
 				occasionText.setText(previousOcasion);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
@@ -327,6 +353,7 @@ public class DataEntryFragment extends Fragment {
 			public void onClick(View arg0) {
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				ocassionPopup.setVisibility(View.GONE);
+				ocassionListviewLayout.setVisibility(View.GONE);
 				inputMethodManager.hideSoftInputFromWindow(
 						occasionText.getWindowToken(), 0);
 				inputMethodManager.hideSoftInputFromWindow(
@@ -348,6 +375,7 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public void onClick(View arg0) {
 				lookingForPopup.setVisibility(View.GONE);
+				lookingForListviewLayout.setVisibility(View.GONE);
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 				inputMethodManager.hideSoftInputFromWindow(
 						lookingForText.getWindowToken(), 0);
@@ -370,7 +398,9 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				lookingForPopup.setVisibility(View.GONE);
+				lookingForListviewLayout.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
+				ocassionListviewLayout.setVisibility(View.GONE);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 				inputMethodManager.hideSoftInputFromWindow(
@@ -401,7 +431,9 @@ public class DataEntryFragment extends Fragment {
 				inputMethodManager.hideSoftInputFromWindow(
 						findAtText.getWindowToken(), 0);
 				lookingForPopup.setVisibility(View.GONE);
+				lookingForListviewLayout.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
+				ocassionListviewLayout.setVisibility(View.GONE);
 				categoeryPopup.setVisibility(View.GONE);
 				findAtPopup.setVisibility(View.GONE);
 				categoryListviewLayout.setVisibility(View.GONE);
@@ -522,7 +554,9 @@ public class DataEntryFragment extends Fragment {
 			public void onClick(View v) {
 				findAtPopup.setVisibility(View.VISIBLE);
 				lookingForPopup.setVisibility(View.GONE);
+				lookingForListviewLayout.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
+				ocassionListviewLayout.setVisibility(View.GONE);
 				categoeryPopup.setVisibility(View.GONE);
 				categoryListviewLayout.setVisibility(View.GONE);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
@@ -586,7 +620,9 @@ public class DataEntryFragment extends Fragment {
 				inputMethodManager.hideSoftInputFromWindow(
 						findAtText.getWindowToken(), 0);
 				lookingForPopup.setVisibility(View.GONE);
+				lookingForListviewLayout.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
+				ocassionListviewLayout.setVisibility(View.GONE);
 				categoeryPopup.setVisibility(View.GONE);
 				findAtPopup.setVisibility(View.GONE);
 				categoryListviewLayout.setVisibility(View.GONE);
@@ -604,7 +640,9 @@ public class DataEntryFragment extends Fragment {
 				inputMethodManager.hideSoftInputFromWindow(
 						findAtText.getWindowToken(), 0);
 				lookingForPopup.setVisibility(View.GONE);
+				lookingForListviewLayout.setVisibility(View.GONE);
 				ocassionPopup.setVisibility(View.GONE);
+				ocassionListviewLayout.setVisibility(View.GONE);
 				categoeryPopup.setVisibility(View.GONE);
 				findAtPopup.setVisibility(View.GONE);
 				categoryListviewLayout.setVisibility(View.GONE);
@@ -613,6 +651,77 @@ public class DataEntryFragment extends Fragment {
 				saySomethingAboutAisle.setCursorVisible(true);
 				saySomethingAboutAisle.requestFocus();
 				inputMethodManager.showSoftInput(saySomethingAboutAisle, 0);
+			}
+		});
+		lookingForText.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				ArrayList<String> tempLookingForKeywordsList = null;
+				if (mLookingForAisleKeywordsList != null
+						&& mLookingForAisleKeywordsList.size() > 0) {
+					tempLookingForKeywordsList = new ArrayList<String>();
+					for (int i = 0; i < mLookingForAisleKeywordsList.size(); i++) {
+						String temp = mLookingForAisleKeywordsList.get(i);
+						if (temp.length() >= s.length()) {
+							String tempString = temp.substring(0, s.length());
+							if (tempString.equalsIgnoreCase(s.toString())) {
+								tempLookingForKeywordsList
+										.add(mLookingForAisleKeywordsList
+												.get(i));
+							}
+						}
+					}
+					lookingForListview.setAdapter(new LookingForAdapter(
+							getActivity(), tempLookingForKeywordsList));
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
+			}
+		});
+		occasionText.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				ArrayList<String> tempOccassionKeywordsList = null;
+				if (mOccassionAisleKeywordsList != null
+						&& mOccassionAisleKeywordsList.size() > 0) {
+					tempOccassionKeywordsList = new ArrayList<String>();
+					for (int i = 0; i < mOccassionAisleKeywordsList.size(); i++) {
+						String temp = mOccassionAisleKeywordsList.get(i);
+						if (temp.length() >= s.length()) {
+							String tempString = temp.substring(0, s.length());
+							if (tempString.equalsIgnoreCase(s.toString())) {
+								tempOccassionKeywordsList
+										.add(mOccassionAisleKeywordsList.get(i));
+							}
+						}
+					}
+					ocassionListview.setAdapter(new OccassionAdapter(
+							getActivity(), tempOccassionKeywordsList));
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
 			}
 		});
 		return v;
@@ -628,7 +737,9 @@ public class DataEntryFragment extends Fragment {
 		inputMethodManager.hideSoftInputFromWindow(findAtText.getWindowToken(),
 				0);
 		lookingForPopup.setVisibility(View.GONE);
+		lookingForListviewLayout.setVisibility(View.GONE);
 		ocassionPopup.setVisibility(View.GONE);
+		ocassionListviewLayout.setVisibility(View.GONE);
 		categoeryPopup.setVisibility(View.GONE);
 		findAtPopup.setVisibility(View.GONE);
 		categoryListviewLayout.setVisibility(View.GONE);
@@ -768,6 +879,12 @@ public class DataEntryFragment extends Fragment {
 	private void lookingForTextClickFunctionality() {
 		dontGoToNextlookingFor = true;
 		lookingForPopup.setVisibility(View.VISIBLE);
+		if (mLookingForAisleKeywordsList != null
+				&& mLookingForAisleKeywordsList.size() > 0) {
+			lookingForListviewLayout.setVisibility(View.VISIBLE);
+			lookingForListview.setAdapter(new LookingForAdapter(getActivity(),
+					mLookingForAisleKeywordsList));
+		}
 		lookingForBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
 		lookingForText.requestFocus();
@@ -777,6 +894,12 @@ public class DataEntryFragment extends Fragment {
 	private void occassionTextClickFunctionality() {
 		dontGoToNextForOccasion = true;
 		ocassionPopup.setVisibility(View.VISIBLE);
+		if (mOccassionAisleKeywordsList != null
+				&& mOccassionAisleKeywordsList.size() > 0) {
+			ocassionListviewLayout.setVisibility(View.VISIBLE);
+			ocassionListview.setAdapter(new OccassionAdapter(getActivity(),
+					mOccassionAisleKeywordsList));
+		}
 		occassionBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
 		occasionText.requestFocus();
@@ -788,6 +911,168 @@ public class DataEntryFragment extends Fragment {
 		categoryListview.setAdapter(new CategoryAdapter(getActivity()));
 		categoryListviewLayout.setVisibility(View.VISIBLE);
 		categoeryPopup.setVisibility(View.VISIBLE);
+	}
+
+	// LookingFor....
+	private class LookingForAdapter extends BaseAdapter {
+		Activity context;
+		ArrayList<String> lookingForKeywordsList = null;
+
+		public LookingForAdapter(Activity context,
+				ArrayList<String> lookingForKeywordsList) {
+			super();
+			this.context = context;
+			this.lookingForKeywordsList = lookingForKeywordsList;
+		}
+
+		class ViewHolder {
+			TextView dataentryitemname;
+		}
+
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
+			ViewHolder holder = null;
+			View rowView = convertView;
+			if (rowView == null) {
+				LayoutInflater inflater = context.getLayoutInflater();
+				rowView = inflater.inflate(R.layout.dataentry_row, null, true);
+				holder = new ViewHolder();
+				holder.dataentryitemname = (TextView) rowView
+						.findViewById(R.id.dataentryitemname);
+				rowView.setTag(holder);
+			} else {
+				holder = (ViewHolder) rowView.getTag();
+			}
+			try {
+				if (lookingForKeywordsList.get(position).equals(
+						lookingForText.getText().toString())) {
+					holder.dataentryitemname.setTextColor(getResources()
+							.getColor(R.color.black));
+					holder.dataentryitemname.setTypeface(null, Typeface.BOLD);
+				} else {
+					holder.dataentryitemname.setTextColor(getResources()
+							.getColor(R.color.dataentrytextcolor));
+					holder.dataentryitemname.setTypeface(null, Typeface.NORMAL);
+				}
+				holder.dataentryitemname.setText(lookingForKeywordsList
+						.get(position));
+				rowView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						lookingForBigText.setText(lookingForKeywordsList
+								.get(position));
+						lookingForText.setText(lookingForKeywordsList
+								.get(position));
+					}
+				});
+			} catch (NotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return rowView;
+		}
+
+		@Override
+		public int getCount() {
+			try {
+				return lookingForKeywordsList.size();
+			} catch (Exception e) {
+				return 0;
+			}
+		}
+
+		@Override
+		public Object getItem(int arg0) {
+			// TODO Auto-generated method stub
+			return arg0;
+		}
+
+		@Override
+		public long getItemId(int arg0) {
+			// TODO Auto-generated method stub
+			return arg0;
+		}
+	}
+
+	// Occassion....
+	private class OccassionAdapter extends BaseAdapter {
+		Activity context;
+		ArrayList<String> occassionKeywordsList = null;
+
+		public OccassionAdapter(Activity context,
+				ArrayList<String> occassionKeywordsList) {
+			super();
+			this.context = context;
+			this.occassionKeywordsList = occassionKeywordsList;
+		}
+
+		class ViewHolder {
+			TextView dataentryitemname;
+		}
+
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
+			ViewHolder holder = null;
+			View rowView = convertView;
+			if (rowView == null) {
+				LayoutInflater inflater = context.getLayoutInflater();
+				rowView = inflater.inflate(R.layout.dataentry_row, null, true);
+				holder = new ViewHolder();
+				holder.dataentryitemname = (TextView) rowView
+						.findViewById(R.id.dataentryitemname);
+				rowView.setTag(holder);
+			} else {
+				holder = (ViewHolder) rowView.getTag();
+			}
+			try {
+				if (occassionKeywordsList.get(position).equals(
+						occasionText.getText().toString())) {
+					holder.dataentryitemname.setTextColor(getResources()
+							.getColor(R.color.black));
+					holder.dataentryitemname.setTypeface(null, Typeface.BOLD);
+				} else {
+					holder.dataentryitemname.setTextColor(getResources()
+							.getColor(R.color.dataentrytextcolor));
+					holder.dataentryitemname.setTypeface(null, Typeface.NORMAL);
+				}
+				holder.dataentryitemname.setText(occassionKeywordsList
+						.get(position));
+				rowView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						occasionText.setText(occassionKeywordsList
+								.get(position));
+						occassionBigText.setText(occassionKeywordsList
+								.get(position));
+					}
+				});
+			} catch (NotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return rowView;
+		}
+
+		@Override
+		public int getCount() {
+			try {
+				return occassionKeywordsList.size();
+			} catch (Exception e) {
+				return 0;
+			}
+		}
+
+		@Override
+		public Object getItem(int arg0) {
+			// TODO Auto-generated method stub
+			return arg0;
+		}
+
+		@Override
+		public long getItemId(int arg0) {
+			// TODO Auto-generated method stub
+			return arg0;
+		}
 	}
 
 	// Category....
@@ -916,51 +1201,6 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	private void storeMetaAisleDataIntoLocalStorage() {
-		if (lookingForAisleData != null) {
-			lookingForAisleData.count += 1;
-			if (lookingForAisleData.keyword.equals(lookingForBigText.getText()
-					.toString().trim())) {
-				lookingForAisleData.isNew = false;
-			} else {
-				lookingForAisleData.isNew = true;
-			}
-		} else {
-			lookingForAisleData = new AisleData();
-			lookingForAisleData.count = 1;
-			lookingForAisleData.isNew = true;
-		}
-		lookingForAisleData.keyword = lookingForBigText.getText().toString();
-		lookingForAisleData.time = System.currentTimeMillis();
-		if (occassionAisleData != null) {
-			occassionAisleData.count += 1;
-			if (occassionAisleData.keyword.equals(occassionBigText.getText()
-					.toString().trim())) {
-				occassionAisleData.isNew = false;
-			} else {
-				occassionAisleData.isNew = true;
-			}
-		} else {
-			occassionAisleData = new AisleData();
-			occassionAisleData.count = 1;
-			occassionAisleData.isNew = true;
-		}
-		occassionAisleData.keyword = occassionBigText.getText().toString();
-		occassionAisleData.time = System.currentTimeMillis();
-		if (categoryAilseData != null) {
-			categoryAilseData.count += 1;
-			if (categoryAilseData.keyword.equals(categoryText.getText()
-					.toString().trim())) {
-				categoryAilseData.isNew = false;
-			} else {
-				categoryAilseData.isNew = true;
-			}
-		} else {
-			categoryAilseData = new AisleData();
-			categoryAilseData.count = 1;
-			categoryAilseData.isNew = true;
-		}
-		categoryAilseData.keyword = categoryText.getText().toString();
-		categoryAilseData.time = System.currentTimeMillis();
 		showDataProgressOnNotification();
 		renderUIAfterAddingAisleToServer();
 	}
@@ -1000,7 +1240,7 @@ public class DataEntryFragment extends Fragment {
 		}
 		ContentValues values = new ContentValues();
 		values.put(VueConstants.KEYWORD, mAisleData.keyword);
-		values.put(VueConstants.LAST_USED_TIME, mAisleData.time);
+		values.put(VueConstants.LAST_USED_TIME, Utils.date());
 		values.put(VueConstants.NUMBER_OF_TIMES_USED, mAisleData.count);
 		if (mAisleData.isNew) {
 			getActivity().getContentResolver().insert(uri, values);
@@ -1011,8 +1251,8 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	private ArrayList<AisleData> getAisleData(String tableName) {
-		ArrayList<AisleData> mAisleDataList = null;
+	private ArrayList<String> getAisleKeywords(String tableName) {
+		ArrayList<String> aisleKeywordsList = null;
 		Uri uri = null;
 		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
 			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
@@ -1023,29 +1263,65 @@ public class DataEntryFragment extends Fragment {
 		} else {
 			return null;
 		}
-		Cursor c = getActivity().getContentResolver().query(uri, null, null,
-				null, VueConstants.NUMBER_OF_TIMES_USED + " DESC");
+		String twoWeeksBeforeTime = Utils.twoWeeksBeforeTime();
+		Cursor c = getActivity().getContentResolver().query(uri, null,
+				VueConstants.LAST_USED_TIME + " >?",
+				new String[] { twoWeeksBeforeTime },
+				VueConstants.NUMBER_OF_TIMES_USED + " DESC");
 		if (c.moveToFirst()) {
-			mAisleDataList = new ArrayList<DataEntryFragment.AisleData>();
+			aisleKeywordsList = new ArrayList<String>();
 			do {
-				AisleData mAisleData = new AisleData();
-				mAisleData.keyword = c.getString(c
-						.getColumnIndex(VueConstants.KEYWORD));
-				mAisleData.time = c.getLong(c
-						.getColumnIndex(VueConstants.LAST_USED_TIME));
-				mAisleData.count = c.getInt(c
-						.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
-				mAisleDataList.add(mAisleData);
-
+				aisleKeywordsList.add(c.getString(c
+						.getColumnIndex(VueConstants.KEYWORD)));
 			} while (c.moveToNext());
 		}
 		c.close();
-		return mAisleDataList;
+		Cursor c1 = getActivity().getContentResolver().query(uri, null,
+				VueConstants.LAST_USED_TIME + " <=?",
+				new String[] { twoWeeksBeforeTime },
+				VueConstants.NUMBER_OF_TIMES_USED + " DESC");
+		if (c1.moveToFirst()) {
+			if (aisleKeywordsList == null)
+				aisleKeywordsList = new ArrayList<String>();
+			do {
+				aisleKeywordsList.add(c1.getString(c1
+						.getColumnIndex(VueConstants.KEYWORD)));
+			} while (c1.moveToNext());
+		}
+		c1.close();
+		return aisleKeywordsList;
+	}
+
+	private AisleData getAisleDataForKeyword(String keyWord, String tableName) {
+		AisleData aisleDataObj = null;
+		Uri uri = null;
+		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
+			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
+		} else if (tableName.equals(VueConstants.OCCASION_TABLE)) {
+			uri = VueConstants.OCCASION_CONTENT_URI;
+		} else if (tableName.equals(VueConstants.CATEGORY_TABLE)) {
+			uri = VueConstants.CATEGORY_CONTENT_URI;
+		} else {
+			return null;
+		}
+		Cursor c = getActivity().getContentResolver().query(uri, null,
+				VueConstants.KEYWORD + "=?", new String[] { keyWord }, null);
+		if (c.moveToFirst()) {
+			aisleDataObj = new AisleData();
+			aisleDataObj.keyword = c.getString(c
+					.getColumnIndex(VueConstants.KEYWORD));
+			aisleDataObj.count = c.getInt(c
+					.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
+			aisleDataObj.time = c.getString(c
+					.getColumnIndex(VueConstants.LAST_USED_TIME));
+		}
+		c.close();
+		return aisleDataObj;
 	}
 
 	public class AisleData {
 		String keyword;
-		long time;
+		String time;
 		int count;
 		boolean isNew;
 	}
@@ -1063,12 +1339,55 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public void run() {
 
+				AisleData lookingForAisleDataObj = getAisleDataForKeyword(
+						lookingForBigText.getText().toString().trim(),
+						VueConstants.LOOKING_FOR_TABLE);
+				if (lookingForAisleDataObj != null) {
+					lookingForAisleDataObj.count += 1;
+					lookingForAisleDataObj.isNew = false;
+				} else {
+					lookingForAisleDataObj = new AisleData();
+					lookingForAisleDataObj.keyword = lookingForBigText
+							.getText().toString().trim();
+					lookingForAisleDataObj.count = 1;
+					lookingForAisleDataObj.isNew = true;
+				}
+				String currentTime = Utils.date();
+				lookingForAisleDataObj.time = currentTime;
 				addAisleMetaDataToDB(VueConstants.LOOKING_FOR_TABLE,
-						lookingForAisleData);
+						lookingForAisleDataObj);
+				AisleData occassionAisleDataObj = getAisleDataForKeyword(
+						occassionBigText.getText().toString().trim(),
+						VueConstants.OCCASION_TABLE);
+				if (occassionAisleDataObj != null) {
+					occassionAisleDataObj.count += 1;
+					occassionAisleDataObj.isNew = false;
+				} else {
+					occassionAisleDataObj = new AisleData();
+					occassionAisleDataObj.keyword = occassionBigText.getText()
+							.toString().trim();
+					occassionAisleDataObj.count = 1;
+					occassionAisleDataObj.isNew = true;
+				}
+				occassionAisleDataObj.time = currentTime;
 				addAisleMetaDataToDB(VueConstants.OCCASION_TABLE,
-						occassionAisleData);
+						occassionAisleDataObj);
+				AisleData categoryAisleDataObj = getAisleDataForKeyword(
+						categoryText.getText().toString().trim(),
+						VueConstants.CATEGORY_TABLE);
+				if (categoryAisleDataObj != null) {
+					categoryAisleDataObj.count += 1;
+					categoryAisleDataObj.isNew = false;
+				} else {
+					categoryAisleDataObj = new AisleData();
+					categoryAisleDataObj.keyword = categoryText.getText()
+							.toString().trim();
+					categoryAisleDataObj.count = 1;
+					categoryAisleDataObj.isNew = true;
+				}
+				categoryAisleDataObj.time = currentTime;
 				addAisleMetaDataToDB(VueConstants.CATEGORY_TABLE,
-						categoryAilseData);
+						categoryAisleDataObj);
 
 				/*
 				 * int incr; // Do the "lengthy" operation 20 times for (incr =

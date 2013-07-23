@@ -73,7 +73,7 @@
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" For"
+                    android:text=" For "
                     android:textColor="@color/dataentrytextcolor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -83,7 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="true"
-                    android:text=" Occasion"
+                    android:text="Occasion"
                     android:textColor="@color/dataentrytextcolor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -203,10 +203,11 @@
             <LinearLayout
                 android:id="@+id/lookingforlistviewlayout"
                 android:layout_width="150dip"
-                android:layout_height="256dip"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/mainheadingrow"
                 android:layout_toRightOf="@+id/lookingforpopup"
                 android:background="@drawable/dataentry_list_border"
+                android:maxHeight="256dip"
                 android:visibility="gone" >
 
                 <ListView
@@ -275,10 +276,11 @@
             <LinearLayout
                 android:id="@+id/ocassionlistviewlayout"
                 android:layout_width="150dip"
-                android:layout_height="256dip"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/mainheadingrow"
                 android:layout_toLeftOf="@+id/ocassionpopup"
                 android:background="@drawable/dataentry_list_border"
+                android:maxHeight="256dip"
                 android:visibility="gone" >
 
                 <ListView
@@ -377,22 +379,22 @@
                     android:id="@+id/saysomethingaboutaisle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                   android:layout_centerVertical="true"
-                    android:cursorVisible="false"
-                    android:layout_marginLeft="4dip"
                     android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="4dip"
                     android:layout_marginRight="88dip"
+                    android:cursorVisible="false"
                     android:hint="Say something about the aisle"
                     android:singleLine="true"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
 
                 <LinearLayout
+                    android:id="@+id/dataentry_bottom_right_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="8dip"
-                    android:id="@+id/dataentry_bottom_right_layout"
                     android:layout_alignParentRight="true"
+                    android:layout_marginRight="8dip"
                     android:orientation="horizontal" >
 
                     <ImageView

@@ -50,9 +50,7 @@
 
     <style name="Theme.VueTheme" parent="Theme.Sherlock.Light">
         <item name="actionBarStyle">@style/Widget.VueTheme.ActionBar</item>
-        <item name="android:actionBarStyle">@style/Widget.VueTheme.ActionBar</item>
         <item name="actionButtonStyle">@style/actionButtonStyle</item>
-        <item name="android:actionButtonStyle">@style/actionButtonStyle</item>
         <!-- <item name="android:minWidth">24dp</item> -->
     </style>
 
