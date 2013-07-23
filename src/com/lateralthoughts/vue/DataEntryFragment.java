@@ -17,6 +17,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
@@ -96,6 +97,7 @@ public class DataEntryFragment extends Fragment {
 	private static final String CATEGORY = "Category";
 	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
 	private int currentPagePosition = 0;
+	public static boolean msaySomethingAboutAisleClicked = false;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -192,10 +194,19 @@ public class DataEntryFragment extends Fragment {
 						return true;
 					}
 				});
-		saySomethingAboutAisle.setonInterceptListen(new OnInterceptListener() {
+		OnInterceptListener interceptObj = new OnInterceptListener() {
 			@Override
 			public void onKeyBackPressed() {
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						msaySomethingAboutAisleClicked = false;
+					}
+				}, 200);
+				
 				saySomethingAboutAisle.setCursorVisible(false);
+				//saySomethingAboutAisle.setFocusable(false);
 				inputMethodManager.hideSoftInputFromWindow(
 						saySomethingAboutAisle.getWindowToken(), 0);
 				saySomethingAboutAisle.setText(previousSaySomething);
@@ -210,9 +221,11 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public boolean getFlag() {
 				// TODO Auto-generated method stub
-				return false;
+				return true;
 			}
-		});
+		};
+		interceptObj.setFlag(true);
+		saySomethingAboutAisle.setonInterceptListen(interceptObj);
 		lookingForText
 				.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 					@Override
@@ -590,6 +603,12 @@ public class DataEntryFragment extends Fragment {
 		saySomethingAboutAisle.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				msaySomethingAboutAisleClicked = true;
+				
+				//saySomethingAboutAisle.setCursorVisible(true);
+				saySomethingAboutAisle.requestFocus();
+				saySomethingAboutAisle.setFocusable(true);
+			
 				inputMethodManager.hideSoftInputFromWindow(
 						occasionText.getWindowToken(), 0);
 				inputMethodManager.hideSoftInputFromWindow(
@@ -603,9 +622,9 @@ public class DataEntryFragment extends Fragment {
 				categoryListviewLayout.setVisibility(View.GONE);
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				saySomethingAboutAisle.setCursorVisible(true);
-				saySomethingAboutAisle.requestFocus();
+				
 				inputMethodManager.showSoftInput(saySomethingAboutAisle, 0);
+			 
 			}
 		});
 		return v;

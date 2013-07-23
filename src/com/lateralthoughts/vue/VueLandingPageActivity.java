@@ -121,7 +121,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		new Handler().postDelayed(new Runnable() {
+/*		new Handler().postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
@@ -129,16 +129,16 @@ public class VueLandingPageActivity extends BaseActivity {
 				Window window = VueLandingPageActivity.this.getWindow();
 				window.getDecorView().getWindowVisibleDisplayFrame(rect);
 				int statusBarHeight = rect.top;
-				/*
+				
 				 * int contentViewTop=
 				 * window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
 				 * titleBarHeight= contentViewTop - statusBarHeight;
-				 */
+				 
 				VueApplication.getInstance().setmStatusBarHeight(
 						statusBarHeight);
 
 			}
-		}, DELAY_TIME);
+		}, DELAY_TIME);*/
 	}
 	@Override
 	public void onPause() {

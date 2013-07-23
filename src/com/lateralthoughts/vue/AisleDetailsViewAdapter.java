@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
@@ -28,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -52,12 +50,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
    // we need to customize the layout depending on screen height & width which
    // we will get on the fly
-   private int mScreenHeight;
-   private int mScreenWidth;
-   private int mShowPieceHeight;
-   private int mShowPieceWidth;
-   private int mThumbnailsHeight;
-   private int mActionBarHeight;
+  
+ 
+ 
    private int mListCount;
    public int mLikes = 5;
    public int mInitialImageLikeCounts[];
@@ -66,10 +61,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    private boolean mallowLike = true,mallowDisLike = true;
    private boolean isImageClciked = false;
    private AisleWindowContent mWindowContentTemp;
-   private int mComentTextDefaultHeight;
    public String mVueusername;
    ShareDialog mShare ;
-   int mDescriptionDefaultHeight;
    private String mAisleWindowId;
 
    ViewHolder mViewHolder;
@@ -95,29 +88,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       mContext = c;
       mViewLoader = AisleDetailsViewListLoader.getInstance(mContext);
       mswipeListner = swipeListner;
-      mScreenHeight = VueApplication.getInstance().getScreenHeight();
-      mScreenWidth = VueApplication.getInstance().getScreenWidth();
-      float scale = mContext.getResources().getDisplayMetrics().density;
-
-      // the action bar height is 50 dp
-      mActionBarHeight = (int) (50 * scale + 0.5f);
-
-      TypedValue tv = new TypedValue();
-      mContext.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv,
-            true);
-       int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-           if (currentapiVersion >= 11){
-              int actionBarHeight = mContext.getResources().getDimensionPixelSize(
-                   tv.resourceId);
-              mShowPieceHeight = (int) ((mScreenHeight - actionBarHeight) * 0.60f);
-           } 
-      // the show piece item would occupy about 60% of the screen
-      mShowPieceWidth = (int) (mScreenWidth);
-      // the thumbnail item would occupy about 25% of the screen
-      mThumbnailsHeight = (int) (mScreenHeight - (mShowPieceHeight + mActionBarHeight)); // (int)(mScreenHeight*0.30f);
       mListCount = listCount;
-      mComentTextDefaultHeight = VueApplication.getInstance().getPixel(32);
-      mDescriptionDefaultHeight = VueApplication.getInstance().getPixel(50);
       if (DEBUG)
          Log.e(TAG, "About to initiate request for trending aisles");
       
@@ -140,7 +111,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         mInitialImageLikeCounts[i] = imageDetailsArr.get(i).mLikesCount;
         mTempInitialImageLikeCounts[i] = imageDetailsArr.get(i).mLikesCount;
         if (mInitialImageLikeCounts[i] == 0) {
-          // for temp count
+          // 5 is the temporary   count 
           mInitialImageLikeCounts[i] = 5;
           mTempInitialImageLikeCounts[i] = 5;
         }
@@ -239,8 +210,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          mViewHolder.userComment.setTextSize(VueApplication.getInstance()
                .getmTextSize());
          mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
-         FrameLayout fl = (FrameLayout) convertView
-               .findViewById(R.id.showpiece_container);
+    /*     FrameLayout fl = (FrameLayout) convertView
+               .findViewById(R.id.showpiece_container);*/
          FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
                VueApplication.getInstance().getScreenWidth(),
                (VueApplication.getInstance().getScreenHeight() * 60) / 100);
@@ -394,6 +365,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				final File f = ObjFileCache1.getFile(mWindowContentTemp
 						.getImageList().get(i).mCustomImageUrl);
 				if (!f.exists()) {
+					@SuppressWarnings("rawtypes")
 					Response.Listener listener = new Response.Listener<Bitmap>() {
 						@Override
 						public void onResponse(Bitmap bmp) {
@@ -406,6 +378,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 							Log.e(TAG, arg0.getMessage());
 						}
 					};
+					@SuppressWarnings("unchecked")
 					ImageRequest imagerequestObj = new ImageRequest(
 							mWindowContentTemp.getImageList().get(i).mCustomImageUrl,
 							listener, 0, 0, null, errorListener);
@@ -424,83 +397,94 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     *To handle the click and long press event on the imageview in the aisle content
     *and to allow only one like and one dislike allows
     */
-      private class DetailImageClickListener implements DetailClickListener{
-      @Override
-      public void onImageClicked() {
-    	  onHandleLikeEvent();
-      }
-      @Override
-      public void onImageLongPress() {
-    	  onHandleDisLikeEvent();
-      }
-	@Override
-	public void onImageSwipe(int position) {
-		mCurrentDispImageIndex = position;
-		int likeCount = 0 ;
-		if(position >= 0 && position < VueApplication.getInstance().getClickedWindowCount()) {
-		  likeCount = mTempInitialImageLikeCounts[position];
-		  mLikes = likeCount;
-		  notifyDataSetChanged();
-		} else {
-			return;
+	private class DetailImageClickListener implements DetailClickListener {
+		@Override
+		public void onImageClicked() {
+			onHandleLikeEvent();
 		}
-	}
-          
-       }
-      private void ratingImage() {
-    	  if(mallowLike ) {
-    	         mLikes += 1;
-    	         mallowLike = false;
-    	         mallowDisLike = true;
-    	         } else if(mLikes != 0 && mallowDisLike) {
-    	        	 mLikes -= 1;
-    	             mallowLike = true;
-    	             mallowDisLike = false;
-    	         }
-    	         isImageClciked = true;
-    	         notifyAdapter();
-      }
-      public void changeLikesCount(int position,String eventType) {
-    	  if(eventType.equalsIgnoreCase(AisleDetailsViewActivity.CLICK_EVENT)) {
-    		  //increase the like count
-    		  int initalLikesCount = mInitialImageLikeCounts[position];
- 		     int presentLikesCount = mTempInitialImageLikeCounts[position];
- 		     if(presentLikesCount == initalLikesCount || presentLikesCount == initalLikesCount-1 ) {
- 		  	  mTempInitialImageLikeCounts[position] =  mTempInitialImageLikeCounts[position] + 1;
- 		  	sendDataToDb(mAisleWindowId,position,mTempInitialImageLikeCounts[position]);
- 		     }
-    		  if(position == mCurrentDispImageIndex) {
-    			  mLikes = mTempInitialImageLikeCounts[position];
-    			  notifyAdapter();
-    		  }
-    	  }else {
-    		  //decrease the like count
-    		   int initalLikesCount = mInitialImageLikeCounts[position];
-    	        int presentLikesCount = mTempInitialImageLikeCounts[position];
-    	        if(presentLikesCount == initalLikesCount || presentLikesCount == initalLikesCount+1 ) {
-    	        	 mTempInitialImageLikeCounts[position] =  mTempInitialImageLikeCounts[position] - 1;
-    	        	 sendDataToDb(mAisleWindowId,position,mTempInitialImageLikeCounts[position]);
-    	        }
-    		  if(position == mCurrentDispImageIndex) {
-    			  mLikes = mTempInitialImageLikeCounts[position];
-    			  notifyAdapter();
-    		  }
-    	  }
-      }
 
-	private void onHandleLikeEvent() {
-		//increase the likes count
-		if(mCurrentDispImageIndex>= 0 && mCurrentDispImageIndex < mInitialImageLikeCounts.length) {
-		int initalLikesCount = mInitialImageLikeCounts[mCurrentDispImageIndex];
-		int presentLikesCount = mTempInitialImageLikeCounts[mCurrentDispImageIndex];
-		if (presentLikesCount == initalLikesCount
-				|| presentLikesCount == initalLikesCount - 1) {
+		@Override
+		public void onImageLongPress() {
+			onHandleDisLikeEvent();
+		}
+
+		@Override
+		public void onImageSwipe(int position) {
+			mCurrentDispImageIndex = position;
+			int likeCount = 0;
+			if (position >= 0
+					&& position < VueApplication.getInstance()
+							.getClickedWindowCount()) {
+				likeCount = mTempInitialImageLikeCounts[position];
+				mLikes = likeCount;
+				notifyDataSetChanged();
+			} else {
+				return;
+			}
+		}
+
+	}
+
+	private void ratingImage() {
+		if (mallowLike) {
 			mLikes += 1;
-			mTempInitialImageLikeCounts[mCurrentDispImageIndex] = mLikes;
-			sendDataToDb(mAisleWindowId,mCurrentDispImageIndex,mLikes);
+			mallowLike = false;
+			mallowDisLike = true;
+		} else if (mLikes != 0 && mallowDisLike) {
+			mLikes -= 1;
+			mallowLike = true;
+			mallowDisLike = false;
 		}
 		isImageClciked = true;
 		notifyAdapter();
+	}
+
+	public void changeLikesCount(int position, String eventType) {
+		if (eventType.equalsIgnoreCase(AisleDetailsViewActivity.CLICK_EVENT)) {
+			// increase the like count
+			int initalLikesCount = mInitialImageLikeCounts[position];
+			int presentLikesCount = mTempInitialImageLikeCounts[position];
+			if (presentLikesCount == initalLikesCount
+					|| presentLikesCount == initalLikesCount - 1) {
+				mTempInitialImageLikeCounts[position] = mTempInitialImageLikeCounts[position] + 1;
+				sendDataToDb(mAisleWindowId, position,
+						mTempInitialImageLikeCounts[position]);
+			}
+			if (position == mCurrentDispImageIndex) {
+				mLikes = mTempInitialImageLikeCounts[position];
+				notifyAdapter();
+			}
+		} else {
+			// decrease the like count
+			int initalLikesCount = mInitialImageLikeCounts[position];
+			int presentLikesCount = mTempInitialImageLikeCounts[position];
+			if (presentLikesCount == initalLikesCount
+					|| presentLikesCount == initalLikesCount + 1) {
+				mTempInitialImageLikeCounts[position] = mTempInitialImageLikeCounts[position] - 1;
+				sendDataToDb(mAisleWindowId, position,
+						mTempInitialImageLikeCounts[position]);
+			}
+			if (position == mCurrentDispImageIndex) {
+				mLikes = mTempInitialImageLikeCounts[position];
+				notifyAdapter();
+			}
+		}
+	}
+
+	private void onHandleLikeEvent() {
+		// increase the likes count
+		if (mCurrentDispImageIndex >= 0
+				&& mCurrentDispImageIndex < mInitialImageLikeCounts.length) {
+			int initalLikesCount = mInitialImageLikeCounts[mCurrentDispImageIndex];
+			int presentLikesCount = mTempInitialImageLikeCounts[mCurrentDispImageIndex];
+			if (presentLikesCount == initalLikesCount
+					|| presentLikesCount == initalLikesCount - 1) {
+				mLikes += 1;
+				mTempInitialImageLikeCounts[mCurrentDispImageIndex] = mLikes;
+				sendDataToDb(mAisleWindowId, mCurrentDispImageIndex, mLikes);
+			}
+			isImageClciked = true;
+			notifyAdapter();
 		}
 	}
 

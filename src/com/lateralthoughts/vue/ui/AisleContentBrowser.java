@@ -140,7 +140,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    mLastY - mFirstY > SWIPE_MIN_DISTANCE){
 	                return super.onTouchEvent(event);
 	            }
-
+                 
 	            if (mFirstX - mLastX > SWIPE_MIN_DISTANCE) {
 	                //In this case, the user is moving the finger right to left
 	                //The current image needs to slide out left and the "next" image

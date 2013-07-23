@@ -1,51 +1,29 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
-import com.actionbarsherlock.app.SherlockFragment;
-import com.lateralthoughts.vue.indicators.IndicatorView;
-import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
-import com.lateralthoughts.vue.ui.MyCustomAnimation;
-import com.lateralthoughts.vue.utils.ActionBarHandler;
-import com.lateralthoughts.vue.utils.EditTextBackEvent;
-import com.lateralthoughts.vue.utils.Helper;
-import com.lateralthoughts.vue.utils.OnInterceptListener;
-import com.lateralthoughts.vue.utils.Utils;
-
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.support.v4.app.Fragment;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.webkit.WebView.FindListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -53,11 +31,16 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.ScrollView;
 import android.widget.Scroller;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockFragment;
+import com.lateralthoughts.vue.indicators.IndicatorView;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
+import com.lateralthoughts.vue.utils.ActionBarHandler;
+import com.lateralthoughts.vue.utils.EditTextBackEvent;
+import com.lateralthoughts.vue.utils.OnInterceptListener;
+import com.lateralthoughts.vue.utils.Utils;
 
 //java utils
 
@@ -186,11 +169,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				 
 						break;
 					case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-						Log.i("scrolling", "scrolling here scrolling is SCROLL_STATE_TOUCH_SCROLL");
 					 
 						break;
 					case OnScrollListener.SCROLL_STATE_FLING:
-						Log.i("scrolling", "scrolling here scrolling is SCROLL_STATE_FLING");
 					 
 						break;
 					default:
@@ -220,10 +201,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 						EditText vueEdt = (EditText) arg1
 								.findViewById(R.id.edtcomment);
 						vueEdt.setVisibility(View.VISIBLE);
-					/*	MyCustomAnimation manim = new MyCustomAnimation(
-								getActivity(), vueEdt, ANIM_SPEED_EDITEXPAND,
-								MyCustomAnimation.EXPAND);
-						vueEdt.startAnimation(manim);*/
 						vueEdt.setFocusable(true);
 						mAisleDetailsAdapter.notifyDataSetChanged();
 
@@ -238,6 +215,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 							params = new LinearLayout.LayoutParams(
 									LayoutParams.MATCH_PARENT,
 									LayoutParams.WRAP_CONTENT);
+							//get the pixel equivalent to given dp value
 							int leftMargin = VueApplication.getInstance().getPixel(16);
 							int rightMargin = VueApplication.getInstance().getPixel(28);
 							int topBottomMargin = VueApplication.getInstance().getPixel(12);
@@ -255,6 +233,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				} else if (arg2 == 0) {
 					//will be called when press on the description, description text will be expand and collapse for 
 					//alternative clicks
+					//get the pixel equivalent to given dp value
 					int leftRightMargin = VueApplication.getInstance().getPixel(16);
 					int topBottomMargin = VueApplication.getInstance().getPixel(12);
 					TextView v = (TextView) arg1

@@ -15,13 +15,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -30,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
-import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -71,7 +67,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		getSupportActionBar().setTitle(getResources().getString(R.string.trending));
 		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT; 
 		  if(mCurrentapiVersion >= 11) { 
-			  getActionBar().hide(); 
+			  getSupportActionBar().hide(); 
 		  }
 		 
 
@@ -129,7 +125,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		}
 		mTopScroller.setAdapter(new ComparisionAdapter(
 				AisleDetailsViewActivity.this));
-		mTopScroller.setOnItemClickListener(new OnItemClickListener() {
+   		mTopScroller.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -254,7 +250,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		ViewHolder viewHolder;
 
 		public ComparisionAdapter(Context context) {
-			minflater = (LayoutInflater) getSystemService(context.LAYOUT_INFLATER_SERVICE);
+			minflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
 
 		@Override
@@ -335,6 +331,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	private Handler mHandler = new Handler() {
 
+		@SuppressWarnings("deprecation")
+		@SuppressLint("HandlerLeak")
 		public void handleMessage(Message msg) {
 
 			if (mSlidingDrawer.isOpened()) {
@@ -377,7 +375,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.e("share+", "details activity result" + requestCode + resultCode);
 		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
@@ -444,9 +441,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		public void showActionBar() {
 			if(!isActionBarShown) {
 			isActionBarShown = true;
-			 if(mCurrentapiVersion >= 11) { 
-				//  getActionBar().show(); 
-			  }
+            // getSupportActionBar().hide();
 			}
 			
 		}
@@ -455,7 +450,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		public void hideActionBar() {
 			if(isActionBarShown) {
 				  if(mCurrentapiVersion >= 11) { 
-					 // getActionBar().hide(); 
+					 // getSupportActionBar().hide();
 				  }
 			isActionBarShown = false;
 			}
