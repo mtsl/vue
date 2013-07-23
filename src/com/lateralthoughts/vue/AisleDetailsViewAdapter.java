@@ -70,6 +70,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    public String mVueusername;
    ShareDialog mShare ;
    int mDescriptionDefaultHeight;
+   private String mAisleWindowId;
 
    ViewHolder mViewHolder;
    String mTempComments[] = {
@@ -125,6 +126,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
           if (mWindowContentTemp.getAisleId().equalsIgnoreCase(
                 VueApplication.getInstance().getClickedWindowID())) {
         	  mWindowContentTemp = (AisleWindowContent) getItem(i);
+        	  mAisleWindowId = mWindowContentTemp.getAisleId();
              break;
           }
       }
@@ -465,6 +467,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
  		     int presentLikesCount = mTempInitialImageLikeCounts[position];
  		     if(presentLikesCount == initalLikesCount || presentLikesCount == initalLikesCount-1 ) {
  		  	  mTempInitialImageLikeCounts[position] =  mTempInitialImageLikeCounts[position] + 1;
+ 		  	sendDataToDb(mAisleWindowId,position,mTempInitialImageLikeCounts[position]);
  		     }
     		  if(position == mCurrentDispImageIndex) {
     			  mLikes = mTempInitialImageLikeCounts[position];
@@ -476,6 +479,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     	        int presentLikesCount = mTempInitialImageLikeCounts[position];
     	        if(presentLikesCount == initalLikesCount || presentLikesCount == initalLikesCount+1 ) {
     	        	 mTempInitialImageLikeCounts[position] =  mTempInitialImageLikeCounts[position] - 1;
+    	        	 sendDataToDb(mAisleWindowId,position,mTempInitialImageLikeCounts[position]);
     	        }
     		  if(position == mCurrentDispImageIndex) {
     			  mLikes = mTempInitialImageLikeCounts[position];
@@ -493,6 +497,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				|| presentLikesCount == initalLikesCount - 1) {
 			mLikes += 1;
 			mTempInitialImageLikeCounts[mCurrentDispImageIndex] = mLikes;
+			sendDataToDb(mAisleWindowId,mCurrentDispImageIndex,mLikes);
 		}
 		isImageClciked = true;
 		notifyAdapter();
@@ -509,8 +514,15 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				|| presentLikesCount == initalLikesCount + 1) {
 			mLikes -= 1;
 			mTempInitialImageLikeCounts[mCurrentDispImageIndex] = mLikes;
+			sendDataToDb(mAisleWindowId,mCurrentDispImageIndex,mLikes);
 		}
 		notifyAdapter();
 		}
+	}
+	public void setAisleBrowerObjectsNull(){
+		mViewHolder.aisleContentBrowser.setReferedObjectsNull();
+	}
+	private void sendDataToDb(String windowId,int imgPosition,int likesCount) {
+		
 	}
 }

@@ -142,7 +142,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	            }
 
 	            if (mFirstX - mLastX > SWIPE_MIN_DISTANCE) {
-	            	  Log.i("params are setting", "params are setting aisleContentBrowser11111#############################################");
 	                //In this case, the user is moving the finger right to left
 	                //The current image needs to slide out left and the "next" image
 	                //needs to fade in
@@ -153,6 +152,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex+1);
 	                    if(mSwipeListener != null) {
                         	mSwipeListener.onAisleSwipe("Left");
+                        	//mSwipeListener.onDissAllowListResponse();
                         }
 	                    setBrowserParams(nextView);
 	                   // if((currentIndex+1)>=0 && (currentIndex+1) < aisleContentBrowser.getChildCount() )
@@ -169,6 +169,10 @@ public class AisleContentBrowser extends ViewFlipper {
 	                                public void onAnimationEnd(Animation animation) {
 	                                    Animation cantWrapRightPart2 = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right2);
 	                                    aisleContentBrowser.getCurrentView().startAnimation(cantWrapRightPart2);
+	                                    if(mSwipeListener != null) {
+                                          	 
+                                           	mSwipeListener.onAllowListResponse();
+                                           }
 	                                  
 	                                 
 	                                }
@@ -191,6 +195,10 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    currentGoLeft.setAnimationListener(new Animation.AnimationListener(){
                             public void onAnimationEnd(Animation animation) {
                                 Log.e("AisleContentAdapter","End of go left animtation");
+                                if(mSwipeListener != null) {
+                                  	 
+                                   	mSwipeListener.onAllowListResponse();
+                                   }
                             }
                             public void onAnimationStart(Animation animation) {
 
@@ -205,7 +213,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    return super.onTouchEvent(event);
 	                }                           
 	            } else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE){
-	            	 Log.i("params are setting", "params are setting aisleContentBrowser222222#############################################");
 	                requestDisallowInterceptTouchEvent(true);
 	                mTouchMoved = true;
 	                if(false == mAnimationInProgress){
@@ -213,6 +220,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                       ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex-1);
 	                       if(mSwipeListener != null) {
                            	mSwipeListener.onAisleSwipe("Right");
+                          // 	mSwipeListener.onDissAllowListResponse();
                            }
 	                       setBrowserParams(nextView);
 	                      // if((currentIndex-1)>=0 && (currentIndex-1) < aisleContentBrowser.getChildCount() )
@@ -229,7 +237,10 @@ public class AisleContentBrowser extends ViewFlipper {
 	                                    public void onAnimationEnd(Animation animation) {
 	                                        Animation cantWrapLeftPart2 = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left2);
 	                                        aisleContentBrowser.getCurrentView().startAnimation(cantWrapLeftPart2);
-	                                       
+	                                        if(mSwipeListener != null) {
+	                                           	 
+	                                           	mSwipeListener.onAllowListResponse();
+	                                           }
 	                                    }
 	                                    public void onAnimationStart(Animation animation) {
 
@@ -250,6 +261,10 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    currentGoRight.setAnimationListener(new Animation.AnimationListener(){
                             public void onAnimationEnd(Animation animation) {
                                 Log.e("AisleContentAdapter","End of go right animtation");
+                                if(mSwipeListener != null) {
+                                  	 
+                                   	mSwipeListener.onAllowListResponse();
+                                   }
                             }
                             public void onAnimationStart(Animation animation) {
 
@@ -324,13 +339,21 @@ public class AisleContentBrowser extends ViewFlipper {
 	    public void onReceiveImageCount(int count);
 	    public void onResetAdapter();
 	    public void onAddCommentClick(RelativeLayout view,EditText editText,ImageView commentSend,FrameLayout editLay);
+	    public void onDissAllowListResponse();
+	    public void onAllowListResponse();
 	}
 	public void setAisleDetailSwipeListener(AisleDetailSwipeListener swipListener) {
 		mSwipeListener = swipListener; 
 	}
+	public void setReferedObjectsNull(){
+		//To relese the refrence objects form the browser to avoid the memory leaks.
+		mSwipeListener = null;
+		mClickListener = null;
+		detailImgClickListenr = null;
+	}
 	private AisleContentClickListener mClickListener;
 	public AisleDetailSwipeListener mSwipeListener;
-	private void setBrowserParams(ScaleImageView nextView) {
+	private void setBrowserParams(ScaleImageView nextView) {/*
 		  final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
 		  String sourName = null;
 		  if(mSpecialNeedsAdapter != null) {
@@ -359,5 +382,5 @@ public class AisleContentBrowser extends ViewFlipper {
 			   
 		 }
 
-	}
+	*/}
 }

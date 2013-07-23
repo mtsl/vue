@@ -30,9 +30,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
+import android.widget.Toast;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
+import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.slidingmenu.lib.SlidingMenu;
 
@@ -52,7 +56,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
 	private int mLikeImageShowTime = 1000;
-	public boolean misKeyboardShown = false;
+	private boolean isActionBarShown = false;
+	private int mCurrentapiVersion;
+	private HandleActionBar handleActionbar;
 
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
@@ -61,11 +67,13 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		super.onCreate(icicle);
 		// setContentView(R.layout.vuedetails_frag);
 		setContentView(R.layout.aisle_details_activity_landing);
-		getSupportActionBar().hide();
-		/*
-		 * int currentapiVersion = android.os.Build.VERSION.SDK_INT; if
-		 * (currentapiVersion >= 11) { getActionBar().hide(); }
-		 */
+		//getSupportActionBar().hide();
+		getSupportActionBar().setTitle(getResources().getString(R.string.trending));
+		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT; 
+		  if(mCurrentapiVersion >= 11) { 
+			  getActionBar().hide(); 
+		  }
+		 
 
 		mSlidingDrawer = (SlidingDrawer) findViewById(R.id.drawer2);
 		mSlidingDrawer
@@ -216,6 +224,31 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.title_options, menu);
+		getSupportActionBar().setHomeButtonEnabled(true);
+		// Configure the search info and add any event listeners
+		return true;// super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.menu_create_aisles:
+			Intent intent = new Intent(AisleDetailsViewActivity.this,
+					CreateAisleSelectionActivity.class);
+			startActivity(intent);
+			return true;
+		case android.R.id.home:
+			getSlidingMenu().toggle();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
 	class ComparisionAdapter extends BaseAdapter {
 		LayoutInflater minflater;
 		ViewHolder viewHolder;
@@ -292,21 +325,11 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	@Override
 	public void onResume() {
-		final View activityRootView = findViewById(R.id.activityroot);
-		activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(
-				new OnGlobalLayoutListener() {
-					@Override
-					public void onGlobalLayout() {
-						int heightDiff = activityRootView.getRootView()
-								.getHeight() - activityRootView.getHeight();
-						if (heightDiff > 100) { // if more than 100 pixels, its
-							// probably a keyboard...
-							misKeyboardShown = true;
-						} else {
-							misKeyboardShown = false;
-						}
-					}
-				});
+		handleActionbar = new HandleActionBar();
+		VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.aisle_details_view_fragment);
+		fragment.setActionBarHander(handleActionbar);
+ 
 		super.onResume();
 	}
 
@@ -336,15 +359,15 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					getSlidingMenu().toggle();
 				}
 			} else {
-				if (!misKeyboardShown)
-					super.onBackPressed();
-				/*
-				 * else { InputMethodManager imm =
-				 * (InputMethodManager)getSystemService(
-				 * Context.INPUT_METHOD_SERVICE);
-				 * imm.hideSoftInputFromWindow(myEditText.getWindowToken(), 0);
-				 * }
-				 */
+				if (!VueApplication.getInstance().mSoftKeboardIndicator) {
+					VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisle_details_view_fragment);
+					fragment.setAisleContentListenerNull();
+			    super.onBackPressed();
+				} else {
+					VueApplication.getInstance().mSoftKeboardIndicator = false;
+				}
+ 
 			}
 		}
 		return false;
@@ -414,6 +437,35 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		}
 	}
+	
+	private class HandleActionBar implements ActionBarHandler {
+
+		@Override
+		public void showActionBar() {
+			if(!isActionBarShown) {
+			isActionBarShown = true;
+			 if(mCurrentapiVersion >= 11) { 
+				//  getActionBar().show(); 
+			  }
+			}
+			
+		}
+
+		@Override
+		public void hideActionBar() {
+			if(isActionBarShown) {
+				  if(mCurrentapiVersion >= 11) { 
+					 // getActionBar().hide(); 
+				  }
+			isActionBarShown = false;
+			}
+			
+		}
+
+	 
+		
+	}
+	
 	/*
 	 * @Override public boolean onCreateOptionsMenu(Menu menu) {
 	 * getSupportMenuInflater().inflate(R.menu.title_options, menu); //

@@ -147,18 +147,26 @@ public class DataEntryActivity extends BaseActivity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (getSlidingMenu().isMenuShowing()) {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
 			} else {
-				if (!misKeyboardShown)
+				if (!VueApplication.getInstance().mSoftKeboardIndicator) {
+					VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisle_details_view_fragment);
+					fragment.setAisleContentListenerNull();
 					super.onBackPressed();
+				} else {
+					VueApplication.getInstance().mSoftKeboardIndicator = false;
+				}
+
 			}
 		}
 		return false;
+
 	}
 
 }

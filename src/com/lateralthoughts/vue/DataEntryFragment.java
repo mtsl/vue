@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -51,9 +50,9 @@ public class DataEntryFragment extends Fragment {
 
 	private ListView categoryListview = null;
 	private LinearLayout lookingForPopup = null,
-			lookingForListviewLayout = null, ocassionListviewLayout = null,
-			ocassionPopup = null, categoeryPopup = null,
-			categoryListviewLayout = null, dataEntryRootLayout = null;
+			lookingForListviewLayout = null, ocassionPopup = null,
+			categoeryPopup = null, categoryListviewLayout = null,
+			dataEntryRootLayout = null;
 	private TextView touchToChangeImage = null, lookingForBigText = null,
 			occassionBigText = null, categoryText = null;
 	private com.lateralthoughts.vue.utils.EditTextBackEvent lookingForText = null,
@@ -64,7 +63,6 @@ public class DataEntryFragment extends Fragment {
 			"Electronics", "Entertainment", "Events", "Food", "Home" };
 	private Drawable listDivider = null;
 	private ImageView createaisleBg = null, categoeryIcon = null;
-	private Uri selectedCameraImage = null;
 	private InputMethodManager inputMethodManager;
 	private boolean dontGoToNextlookingFor = false,
 			dontGoToNextForOccasion = false;
@@ -79,8 +77,6 @@ public class DataEntryFragment extends Fragment {
 			dataEntryBottomBottomLayout = null,
 			dataEntryInviteFriendsCancelLayout = null,
 			dataEntryInviteFriendsGoogleplusLayout = null;
-	private ProgressDialog dataentryInviteFriendsProgressdialog = null;
-	private ListView dataEntryInviteFriendsList = null;
 	private ImageView findAtIcon = null;
 	public ShareDialog mShare = null;
 	private boolean addImageToAisleFlag = false, editAisleImageFlag = false;
@@ -93,8 +89,8 @@ public class DataEntryFragment extends Fragment {
 	private static final String CATEGORY = "Category";
 	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
 	private int currentPagePosition = 0;
-	private AisleData lookingForAisleData = null, occassionAisleData = null,
-			categoryAilseData = null;
+	private ArrayList<AisleData> lookingForAisleData = null,
+			occassionAisleData = null, categoryAilseData = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -136,8 +132,6 @@ public class DataEntryFragment extends Fragment {
 		lookingForBigText = (TextView) v.findViewById(R.id.lookingforbigtext);
 		lookingForBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
-		dataEntryInviteFriendsList = (ListView) v
-				.findViewById(R.id.data_entry_Invitefriends_list);
 		dataEntryBottomTopLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_bottom_top_layout);
 		dataEntryInviteFriendsFacebookLayout = (RelativeLayout) v
@@ -145,8 +139,6 @@ public class DataEntryFragment extends Fragment {
 		dataEntryInviteFriendsPopupLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invite_friends_popup_layout);
 		occassionBigText = (TextView) v.findViewById(R.id.occassionbigtext);
-		ocassionListviewLayout = (LinearLayout) v
-				.findViewById(R.id.ocassionlistviewlayout);
 		ocassionPopup = (LinearLayout) v.findViewById(R.id.ocassionpopup);
 		occasionText = (EditTextBackEvent) v.findViewById(R.id.occasiontext);
 		lookingForListviewLayout = (LinearLayout) v
@@ -1019,8 +1011,8 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	private AisleData getAisleData(String tableName) {
-		AisleData data = null;
+	private ArrayList<AisleData> getAisleData(String tableName) {
+		ArrayList<AisleData> mAisleDataList = null;
 		Uri uri = null;
 		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
 			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
@@ -1032,17 +1024,23 @@ public class DataEntryFragment extends Fragment {
 			return null;
 		}
 		Cursor c = getActivity().getContentResolver().query(uri, null, null,
-				null, VueConstants.LAST_USED_TIME + " DESC");
+				null, VueConstants.NUMBER_OF_TIMES_USED + " DESC");
 		if (c.moveToFirst()) {
-			data = new AisleData();
-			data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
-			data.time = c
-					.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));
-			data.count = c.getInt(c
-					.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
+			mAisleDataList = new ArrayList<DataEntryFragment.AisleData>();
+			do {
+				AisleData mAisleData = new AisleData();
+				mAisleData.keyword = c.getString(c
+						.getColumnIndex(VueConstants.KEYWORD));
+				mAisleData.time = c.getLong(c
+						.getColumnIndex(VueConstants.LAST_USED_TIME));
+				mAisleData.count = c.getInt(c
+						.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
+				mAisleDataList.add(mAisleData);
+
+			} while (c.moveToNext());
 		}
 		c.close();
-		return data;
+		return mAisleDataList;
 	}
 
 	public class AisleData {

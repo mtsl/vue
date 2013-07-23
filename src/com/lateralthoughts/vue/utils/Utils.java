@@ -29,6 +29,7 @@ public class Utils {
 	public static final int MEDIUM_TEXT_SIZE = 18;
 	public static final int SMALL_TEXT_SIZE = 14;
 
+
 	public static void CopyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
 		try {

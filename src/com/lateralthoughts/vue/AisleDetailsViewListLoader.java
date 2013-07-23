@@ -40,7 +40,7 @@ public class AisleDetailsViewListLoader {
     private BitmapLoaderUtils mBitmapLoaderUtils;
     private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
     private ImageDimension mImageDimention;
-    //private int mBestHeight;
+    private int mBestHeight;
     
     public static AisleDetailsViewListLoader getInstance(Context context){
         if(null == sAisleDetailsViewLoaderInstance){
@@ -104,6 +104,13 @@ public class AisleDetailsViewListLoader {
         }       
         imageDetailsArr = windowContent.getImageList();
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
+			
+			 for(int i = 0;i<imageDetailsArr.size();i++) {
+				  if(mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
+					  mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
+				  }
+			 }
+			
 			holder.aisleContentBrowser.mSwipeListener
 					.onReceiveImageCount(imageDetailsArr.size());
 			itemDetails = imageDetailsArr.get(0);
@@ -123,7 +130,7 @@ public class AisleDetailsViewListLoader {
 				setParams(holder.aisleContentBrowser, imageView,itemDetails.mAvailableHeight);
 				 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
 					 bitmap = mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
-					 setParams(holder.aisleContentBrowser, imageView,mImageDimention.mImgHeight);
+					 setParams(holder.aisleContentBrowser, imageView,mBestHeight);
 				 }
 			/*	bitmap = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
@@ -238,7 +245,7 @@ public class AisleDetailsViewListLoader {
       
       imgScreenHeight += VueApplication.getInstance().getPixel(topMottomMargin);
       FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-              VueApplication.getInstance().getScreenWidth(),imgScreenHeight);
+              VueApplication.getInstance().getScreenWidth(),mBestHeight);
 
       if (vFlipper != null)
          vFlipper.setLayoutParams(showpieceParams);
