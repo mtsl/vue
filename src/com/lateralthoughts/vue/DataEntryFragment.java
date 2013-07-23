@@ -1232,7 +1232,7 @@ public class DataEntryFragment extends Fragment {
 				getActivity(), aisleImagePathList));
 	}
 
-	private void addAisleMetaDataToDB(String tableName, AisleData mAisleData) {
+/*	private void addAisleMetaDataToDB(String tableName, AisleData mAisleData) {
 		Uri uri = null;
 		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
 			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
@@ -1254,7 +1254,7 @@ public class DataEntryFragment extends Fragment {
 					VueConstants.KEYWORD + "=?",
 					new String[] { mAisleData.keyword });
 		}
-	}
+	}*/
 
 	private ArrayList<String> getAisleKeywords(String tableName) {
 		ArrayList<String> aisleKeywordsList = null;
