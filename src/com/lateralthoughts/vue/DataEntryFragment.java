@@ -93,6 +93,7 @@ public class DataEntryFragment extends Fragment {
 	private static final String CATEGORY = "Category";
 	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
 	private int currentPagePosition = 0;
+	public static boolean msaySomethingAboutAisleClicked = false;
 	private ArrayList<String> mLookingForAisleKeywordsList = null,
 			mOccassionAisleKeywordsList = null,
 			mCategoryAilseKeywordsList = null;
@@ -213,6 +214,7 @@ public class DataEntryFragment extends Fragment {
 		saySomethingAboutAisle.setonInterceptListen(new OnInterceptListener() {
 			@Override
 			public void onKeyBackPressed() {
+				msaySomethingAboutAisleClicked = false;
 				saySomethingAboutAisle.setCursorVisible(false);
 				inputMethodManager.hideSoftInputFromWindow(
 						saySomethingAboutAisle.getWindowToken(), 0);
@@ -228,7 +230,7 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public boolean getFlag() {
 				// TODO Auto-generated method stub
-				return false;
+				return true;
 			}
 		});
 		lookingForText
@@ -633,6 +635,7 @@ public class DataEntryFragment extends Fragment {
 		saySomethingAboutAisle.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				msaySomethingAboutAisleClicked = true;
 				inputMethodManager.hideSoftInputFromWindow(
 						occasionText.getWindowToken(), 0);
 				inputMethodManager.hideSoftInputFromWindow(
