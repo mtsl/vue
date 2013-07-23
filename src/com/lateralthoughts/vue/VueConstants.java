@@ -57,6 +57,10 @@ public class VueConstants {
 	public static final String USER_ID = "userId";
 	public static final String LOOKING_FOR = "lookingFor";
 	public static final String OCCASION = "occasion";
+	public static final String BOOKMARK_COUNT = "bookMarkCount";
+	public static final String IS_BOOKMARKED = "isBookmarked";
+    public static final String LIKE_OR_DISLIKE = "likeOrDislike";
+	public static final String DIRTY_FLAG = "isDirtry";
 	public static final String AISLE_ID = "aisleId";
 	// Column names for aisles images.
 	public static final String TITLE = "title";
@@ -107,6 +111,9 @@ public class VueConstants {
 	public static final String USER_GENDER = "userGender";
 	public static final String USER_LOCATION = "userLocation";
 	
+	// Column names for comments table.
+	public static final String COMMENTS = "commentS";
+	
 	// Define CONTENT URI
 	public static final String AUTHORITY = 
 	    "com.lateralthoughts.vue.connectivity.VueConstants";
@@ -115,6 +122,7 @@ public class VueConstants {
 	public static final String LOOKING_FOR_TABLE = "lookingFor";
 	public static final String OCCASION_TABLE = "occasion";
 	public static final String CATEGORY_TABLE = "category";
+	public static final String COMMENTS_ON_IMAGES_TABLE = "commentsOnImages";
 	  
 	// Define MIME types
 	public static final String ARTICLES_MIME_TYPE 
@@ -133,4 +141,6 @@ public class VueConstants {
         + "/" + OCCASION_TABLE);
 	public static final Uri CATEGORY_CONTENT_URI = Uri.parse("content://" + AUTHORITY
         + "/" + CATEGORY_TABLE);
+	public static final Uri COMMENTS_ON_IMAGE_URI = Uri.parse("content://" + AUTHORITY
+	    + "/" + COMMENTS_ON_IMAGES_TABLE);
 }

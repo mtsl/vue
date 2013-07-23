@@ -137,7 +137,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         String s = textView.getText().toString();
         if(s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
           VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
-          VueTrendingAislesDataModel.getInstance(getActivity()).getAislesFromDb();
+         // VueTrendingAislesDataModel.getInstance(getActivity()).getAislesFromDb();
         } else if (s.equals(getString(R.string.sidemenu_option_About))) {
           inflateAboutLayout();
         } else if (s.equals(getString(R.string.sidemenu_option_FeedBack))) {

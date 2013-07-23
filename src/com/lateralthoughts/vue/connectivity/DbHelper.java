@@ -15,6 +15,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	 public static final String DATABASE_TABLE_LOOKINGFOR = "lookingFor";
 	 public static final String DATABASE_TABLE_OCCASION = "occasion";
 	 public static final String DATABASE_TABLE_CATEGORY = "category";
+	 public static final String DATABASE_TABLE_COMMENTS_ON_IMAGES = "commentsOnImages";
 	 public static final int DATABASE_VERSION = 1;
 	 
      private String createAislesTable = "create table if not exists " + DATABASE_TABLE_AISLES
@@ -26,6 +27,9 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.LOOKING_FOR + " text, "
      + VueConstants.OCCASION + " text, "
      + VueConstants.USER_ID + " text, "
+     + VueConstants.BOOKMARK_COUNT + " text, "
+     + VueConstants.IS_BOOKMARKED + " integer, "
+     + VueConstants.DIRTY_FLAG + " text, "
      + VueConstants.ID + " text);";
      
      private String createAisleImagesTable = "create table if not exists " + DATABASE_TABLE_AISLES_IMAGES
@@ -37,14 +41,23 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.STORE + " text, "
      + VueConstants.USER_ID + " text, "
      + VueConstants.ID + " text, "
+     + VueConstants.LIKE_OR_DISLIKE + " text, "
+     + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.HEIGHT + " text, "
      + VueConstants.WIDTH + " text);";
      
-     private String createQueuedDataToSyncTable = "create table if not exists " + DATABASE_TABLE_DATA_TO_SYNC
+     private String createImageCommentsTable = "create table if not exists " + DATABASE_TABLE_COMMENTS_ON_IMAGES
+     + " (" + VueConstants.IMAGE_ID + " integer primary key autoincrement, "
+     + VueConstants.AISLE_ID + " text, "
+     + VueConstants.IMAGE_ID + " text, "
+     + VueConstants.DIRTY_FLAG + " integer, "
+     + VueConstants.COMMENTS + " text);";
+
+/*     private String createQueuedDataToSyncTable = "create table if not exists " + DATABASE_TABLE_DATA_TO_SYNC
      + " ("+ VueConstants.ID + " integer primary key, "
      + VueConstants.COMMENT + " text, "
      + VueConstants.AISLE_ID + " text, "
-     + VueConstants.IMAGE_ID + " text);";
+     + VueConstants.IMAGE_ID + " text);";*/
      
     private String createLookingForTable = "create table if not exists " + DATABASE_TABLE_LOOKINGFOR
         + " (" + VueConstants.ID + " integer primary key autoincrement, " 
@@ -73,7 +86,8 @@ public class DbHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(createAislesTable);
 		db.execSQL(createAisleImagesTable);
-		db.execSQL(createQueuedDataToSyncTable);
+		db.execSQL(createImageCommentsTable);
+		//db.execSQL(createQueuedDataToSyncTable);
 		db.execSQL(createLookingForTable);
 		db.execSQL(createOccasionTable);
 		db.execSQL(createCategoryTable);

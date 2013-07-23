@@ -26,6 +26,8 @@ public class VueContentProvider extends ContentProvider{
   private static final int OCCATION_ROW_MATCH = 8;
   private static final int CATEGORY_TABLE_MATCH = 9;
   private static final int CATEGORY_ROW_MATCH = 10;
+  private static final int COMMENTS_TABLE_MATCH = 11;
+  private static final int COMMENTS_ROW_MATCH = 12;
   private DbHelper dbHelper;
   private static final UriMatcher URIMATCHER;
 
@@ -51,8 +53,11 @@ public class VueContentProvider extends ContentProvider{
     URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.CATEGORY_TABLE,
         CATEGORY_TABLE_MATCH);
     URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.CATEGORY_TABLE
-        + "/#",
-        CATEGORY_ROW_MATCH);
+        + "/#", CATEGORY_ROW_MATCH);
+    URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.COMMENTS_ON_IMAGES_TABLE,
+        COMMENTS_TABLE_MATCH);
+    URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.COMMENTS_ON_IMAGES_TABLE
+        + "/#", COMMENTS_ROW_MATCH);
   }
 
   @Override
@@ -107,6 +112,16 @@ public class VueContentProvider extends ContentProvider{
       case CATEGORY_ROW_MATCH:
         id = uri.getLastPathSegment();
         rowsDeleted = aislesDB.delete(VueConstants.CATEGORY_TABLE,
+            VueConstants.ID + "=" + id + (!TextUtils.isEmpty(selection) ?
+                " AND (" + selection + ')' : ""),selectionArgs);
+        break;
+      case COMMENTS_TABLE_MATCH:
+        rowsDeleted = aislesDB.delete(VueConstants.COMMENTS_ON_IMAGES_TABLE, selection,
+            selectionArgs);
+        break;
+      case COMMENTS_ROW_MATCH:
+        id = uri.getLastPathSegment();
+        rowsDeleted = aislesDB.delete(VueConstants.COMMENTS_ON_IMAGES_TABLE,
             VueConstants.ID + "=" + id + (!TextUtils.isEmpty(selection) ?
                 " AND (" + selection + ')' : ""),selectionArgs);
         break;
@@ -169,6 +184,15 @@ public class VueContentProvider extends ContentProvider{
           return rowUri;
         }
         break;
+      case COMMENTS_TABLE_MATCH:
+        rowId = aislesDB.insert(VueConstants.COMMENTS_ON_IMAGES_TABLE, null, values);
+        if (rowId > 0) {
+          rowUri = ContentUris.appendId(VueConstants.CONTENT_URI.buildUpon(),
+              rowId).build();
+          return rowUri;
+        }
+        break;
+      case COMMENTS_ROW_MATCH:
       case CATEGORY_ROW_MATCH:
       case OCCATION_ROW_MATCH:
       case LOOKING_FOR_ROW_MATCH:
@@ -257,6 +281,20 @@ public class VueContentProvider extends ContentProvider{
                + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
                    : ""), selectionArgs, null, null, null);
        break;
+     case COMMENTS_TABLE_MATCH:
+       qb.setTables(VueConstants.COMMENTS_ON_IMAGES_TABLE);
+       cursor = qb.query(aislesDB, projection, selection, selectionArgs,
+           null, null, sortOrder);
+       break;
+     case COMMENTS_ROW_MATCH:
+       qb.setTables(VueConstants.COMMENTS_ON_IMAGES_TABLE);
+       id = uri.getLastPathSegment();
+       cursor = qb.query(aislesDB, projection,
+           VueConstants.ID+ "=" + id
+               + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
+                   : ""), selectionArgs, null, null, null);
+       break;
+       
     }
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
     return cursor;
