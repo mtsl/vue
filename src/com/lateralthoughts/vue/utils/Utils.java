@@ -7,6 +7,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,6 +25,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
 
 public class Utils {
 	private static final String CURRENT_FONT_SIZE = "currentFontSize";
@@ -28,7 +33,6 @@ public class Utils {
 	public static final int LARGE_TEXT_SIZE = 22;
 	public static final int MEDIUM_TEXT_SIZE = 18;
 	public static final int SMALL_TEXT_SIZE = 14;
-
 
 	public static void CopyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
@@ -137,17 +141,17 @@ public class Utils {
 
 	// Getting Image file path from URI.
 	public static String getPath(Uri uri, Activity activity) {
-		Log.e("getPath", ""+uri);
+		Log.e("getPath", "" + uri);
 		Cursor cursor = activity.getContentResolver().query(uri, null, null,
 				null, null);
 		if (cursor == null) { // Source is Dropbox or other similar local file
-			Log.e("getPath", ""+uri.getPath());						// path
+			Log.e("getPath", "" + uri.getPath()); // path
 			return uri.getPath();
 		} else {
 			cursor.moveToFirst();
 			int idx = cursor
 					.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-			Log.e("getPath", ""+cursor.getString(idx)+"..?"+idx);
+			Log.e("getPath", "" + cursor.getString(idx) + "..?" + idx);
 			return cursor.getString(idx);
 		}
 	}
@@ -227,7 +231,6 @@ public class Utils {
 		return fileCacheObj.getVueAppCameraPictureFile(1 + "").getPath();
 	}
 
-
 	public static String vueAppResizedImageFileName(Context context) {
 		FileCache fileCacheObj = new FileCache(context);
 		if (fileCacheObj.vueAppResizedImagesDir != null) {
@@ -240,7 +243,6 @@ public class Utils {
 
 		return fileCacheObj.getVueAppCameraPictureFile(1 + "").getPath();
 	}
-
 
 	public static ImageDimension getScalledImage(Bitmap bitmap,
 			int availableWidth, int availableHeight) {
@@ -326,4 +328,28 @@ public class Utils {
 		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue,
 				metrics);
 	}
+
+	/***
+	 * Getting Current Date...
+	 * 
+	 * @return
+	 */
+	public static String date() {
+		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
+				VueConstants.DATE_FORMAT);
+		return dateFormatGmt.format(new Date());
+	}
+
+	/**
+	 * 7 * 24 * 60 * 60 * 1000
+	 * 
+	 * Getting two weeks before time
+	 */
+	public static String twoWeeksBeforeTime() {
+		long twoWeeksDifferenceTime = (System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000));
+		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
+				VueConstants.DATE_FORMAT);
+		return dateFormatGmt.format(new Date(twoWeeksDifferenceTime));
+	}
+
 }

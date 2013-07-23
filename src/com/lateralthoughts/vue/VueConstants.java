@@ -22,6 +22,7 @@ public class VueConstants {
 	public static final int COMMENTS_LIMIT_FOR_LOGIN = 10;
 	public static final int SELECT_PICTURE = 1;
 	public static final int CAMERA_REQUEST = 2;
+	public static final String 	DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.sss";
 	public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
 	public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";
 	public static final int SHARE_INTENT_REQUEST_CODE = 1;

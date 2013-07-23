@@ -154,17 +154,19 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
-				Log.i("flagasd", "flagasd:  "+VueApplication.getInstance().mSoftKeboardIndicator);
-				 
 				if (!VueApplication.getInstance().mSoftKeboardIndicator) {
-			    super.onBackPressed();
+					VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisle_details_view_fragment);
+					fragment.setAisleContentListenerNull();
+					super.onBackPressed();
 				} else {
 					VueApplication.getInstance().mSoftKeboardIndicator = false;
 				}
-			
+
 			}
 		}
 		return false;
+
 	}
 
 }
