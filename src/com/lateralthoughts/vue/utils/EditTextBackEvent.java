@@ -60,7 +60,6 @@ public class EditTextBackEvent extends EditText {
 			}
 			}
 		  mOnInterceptListenr.onKeyBackPressed();
-		  Log.i("misKeyboardShown val: ", "misKeyboardShown if EditTextBackEvent: ");
 		  return false;
 		}
 		  return super.dispatchKeyEvent(event);

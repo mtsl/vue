@@ -240,7 +240,7 @@ public class DataBaseManager {
     if (c.moveToFirst()) {
       data = new AisleData();
       data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
-      data.time = c.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));
+      data.time = c.getString(c.getColumnIndex(VueConstants.LAST_USED_TIME));
       data.count = c
           .getInt(c.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
     }

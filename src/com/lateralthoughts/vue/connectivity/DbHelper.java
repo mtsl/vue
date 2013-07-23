@@ -47,7 +47,7 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.WIDTH + " text);";
      
      private String createImageCommentsTable = "create table if not exists " + DATABASE_TABLE_COMMENTS_ON_IMAGES
-     + " (" + VueConstants.IMAGE_ID + " integer primary key autoincrement, "
+     + " (" + VueConstants.ID + " integer primary key autoincrement, "
      + VueConstants.AISLE_ID + " text, "
      + VueConstants.IMAGE_ID + " text, "
      + VueConstants.DIRTY_FLAG + " integer, "
@@ -62,19 +62,19 @@ public class DbHelper extends SQLiteOpenHelper {
     private String createLookingForTable = "create table if not exists " + DATABASE_TABLE_LOOKINGFOR
         + " (" + VueConstants.ID + " integer primary key autoincrement, " 
         + VueConstants.KEYWORD + " text, "
-        + VueConstants.LAST_USED_TIME + " Long, "
+        + VueConstants.LAST_USED_TIME + " text, "
         + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
     
     private String createOccasionTable = "create table if not exists " + DATABASE_TABLE_OCCASION
         + " (" + VueConstants.ID + " integer primary key autoincrement, "
         + VueConstants.KEYWORD + " text, "
-        + VueConstants.LAST_USED_TIME + " Long, "
+        + VueConstants.LAST_USED_TIME + " text, "
         + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
 
     private String createCategoryTable = "create table if not exists " + DATABASE_TABLE_CATEGORY
         + " (" + VueConstants.ID + " integer primary key autoincrement, "
         + VueConstants.KEYWORD + " text, "
-        + VueConstants.LAST_USED_TIME + " Long, "
+        + VueConstants.LAST_USED_TIME + " text, "
         + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
         
 
