@@ -15,6 +15,7 @@ import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class DataBaseManager {
   private static final String FORMATE = "%09d";
@@ -27,7 +28,10 @@ public class DataBaseManager {
   public DataBaseManager(Context context) {
     mContext = context;
   }
-  
+
+  /**
+   * add all the aisles pulled from server
+   * */
   public static void addTrentingAislesFromServerToDB(Context context) {
     for (int i = 0; i < VueTrendingAislesDataModel.getInstance(context).getAisleCount(); i++) {
       Cursor cursor = context.getContentResolver().query(VueConstants.CONTENT_URI,
@@ -199,10 +203,9 @@ public class DataBaseManager {
         VueConstants.AISLE_ID + "=?", new String[] {aisleID});
   }
   
-  public void addAisleMetaDataToDB(String tableName, String keyword,
-    long time, int count, boolean isNewFlag) {
+  public void addAisleMetaDataToDB(String tableName, AisleData aisleData) {
     Uri uri = null;
-    if (tableName.equals(VueConstants.LOOKING_FOR_TABLE) && isNewFlag) {
+    if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
       uri = VueConstants.LOOKING_FOR_CONTENT_URI;
     } else if (tableName.equals(VueConstants.OCCASION_TABLE)) {
       uri = VueConstants.OCCASION_CONTENT_URI;
@@ -212,19 +215,19 @@ public class DataBaseManager {
       return;
     }
     ContentValues values = new ContentValues();
-    values.put(VueConstants.KEYWORD, keyword);
-    values.put(VueConstants.LAST_USED_TIME, time);
-    values.put(VueConstants.NUMBER_OF_TIMES_USED, count);
-    if (isNewFlag) {
+    values.put(VueConstants.KEYWORD, aisleData.keyword);
+    values.put(VueConstants.LAST_USED_TIME, Utils.date());
+    values.put(VueConstants.NUMBER_OF_TIMES_USED, aisleData.count);
+    if (aisleData.isNew) {
       mContext.getContentResolver().insert(uri, values);
     } else {
       mContext.getContentResolver().update(uri, values,
-          VueConstants.KEYWORD + "=?", new String[] {keyword});
+          VueConstants.KEYWORD + "=?", new String[] {aisleData.keyword});
     }
   }
   
-  public AisleData getAisleMetaData(String tableName) {
-    AisleData data = null;
+  public ArrayList<String> getAisleKeywords(String tableName) {
+    ArrayList<String> aisleKeywordsList = null;
     Uri uri = null;
     if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
       uri = VueConstants.LOOKING_FOR_CONTENT_URI;
@@ -235,17 +238,59 @@ public class DataBaseManager {
     } else {
       return null;
     }
-    Cursor c = mContext.getContentResolver().query(uri, null, null, null,
-        VueConstants.LAST_USED_TIME + " DESC");
+    String twoWeeksBeforeTime = Utils.twoWeeksBeforeTime();
+    Cursor c = mContext.getContentResolver().query(uri, null,
+        VueConstants.LAST_USED_TIME + " >?", new String[] {twoWeeksBeforeTime},
+        VueConstants.NUMBER_OF_TIMES_USED + " DESC");
     if (c.moveToFirst()) {
-      data = new AisleData();
-      data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
-      data.time = c.getString(c.getColumnIndex(VueConstants.LAST_USED_TIME));
-      data.count = c
-          .getInt(c.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
+      aisleKeywordsList = new ArrayList<String>();
+      do {
+        aisleKeywordsList.add(c.getString(c
+            .getColumnIndex(VueConstants.KEYWORD)));
+      } while (c.moveToNext());
     }
     c.close();
-    return data;
+    Cursor c1 = mContext.getContentResolver().query(uri, null,
+        VueConstants.LAST_USED_TIME + " <=?",
+        new String[] {twoWeeksBeforeTime},
+        VueConstants.NUMBER_OF_TIMES_USED + " DESC");
+    if (c1.moveToFirst()) {
+      if (aisleKeywordsList == null)
+        aisleKeywordsList = new ArrayList<String>();
+      do {
+        aisleKeywordsList.add(c1.getString(c1
+            .getColumnIndex(VueConstants.KEYWORD)));
+      } while (c1.moveToNext());
+    }
+    c1.close();
+    return aisleKeywordsList;
+  }
+  
+  public AisleData getAisleMetaDataForKeyword(String keyWord, String tableName) {
+    AisleData aisleDataObj = null;
+    Uri uri = null;
+    if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
+      uri = VueConstants.LOOKING_FOR_CONTENT_URI;
+    } else if (tableName.equals(VueConstants.OCCASION_TABLE)) {
+      uri = VueConstants.OCCASION_CONTENT_URI;
+    } else if (tableName.equals(VueConstants.CATEGORY_TABLE)) {
+      uri = VueConstants.CATEGORY_CONTENT_URI;
+    } else {
+      return null;
+    }
+    Cursor c = mContext.getContentResolver().query(uri, null,
+        VueConstants.KEYWORD + "=?", new String[] {keyWord}, null);
+    if (c.moveToFirst()) {
+      aisleDataObj = new AisleData();
+      aisleDataObj.keyword = c
+          .getString(c.getColumnIndex(VueConstants.KEYWORD));
+      aisleDataObj.count = c.getInt(c
+          .getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
+      aisleDataObj.time = c.getString(c
+          .getColumnIndex(VueConstants.LAST_USED_TIME));
+    }
+    c.close();
+    return aisleDataObj;
   }
   
 }

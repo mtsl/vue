@@ -42,6 +42,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.lateralthoughts.vue.connectivity.AisleData;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -99,6 +100,7 @@ public class DataEntryFragment extends Fragment {
 	private ArrayList<String> mLookingForAisleKeywordsList = null,
 			mOccassionAisleKeywordsList = null,
 			mCategoryAilseKeywordsList = null;
+	private DataBaseManager dbManager;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -113,6 +115,7 @@ public class DataEntryFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+	  dbManager = new DataBaseManager(getActivity());
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		screenHeight = dm.heightPixels;
 		screenHeight = screenHeight
@@ -176,7 +179,7 @@ public class DataEntryFragment extends Fragment {
 		previousLookingfor = lookingForText.getText().toString();
 		previousOcasion = occasionText.getText().toString();
 		previousSaySomething = saySomethingAboutAisle.getText().toString();
-		mLookingForAisleKeywordsList = getAisleKeywords(VueConstants.LOOKING_FOR_TABLE);
+		mLookingForAisleKeywordsList = dbManager.getAisleKeywords(VueConstants.LOOKING_FOR_TABLE);
 		if (mLookingForAisleKeywordsList != null) {
 			lookingForText.setText(mLookingForAisleKeywordsList.get(0));
 			lookingForBigText.setText(mLookingForAisleKeywordsList.get(0));
@@ -187,12 +190,12 @@ public class DataEntryFragment extends Fragment {
 			lookingForText.requestFocus();
 			inputMethodManager.showSoftInput(lookingForText, 0);
 		}
-		mOccassionAisleKeywordsList = getAisleKeywords(VueConstants.OCCASION_TABLE);
+		mOccassionAisleKeywordsList = dbManager.getAisleKeywords(VueConstants.OCCASION_TABLE);
 		if (mOccassionAisleKeywordsList != null) {
 			occasionText.setText(mOccassionAisleKeywordsList.get(0));
 			occassionBigText.setText(mOccassionAisleKeywordsList.get(0));
 		}
-		mCategoryAilseKeywordsList = getAisleKeywords(VueConstants.CATEGORY_TABLE);
+		mCategoryAilseKeywordsList = dbManager.getAisleKeywords(VueConstants.CATEGORY_TABLE);
 		if (mCategoryAilseKeywordsList != null) {
 			categoryText.setText(mCategoryAilseKeywordsList.get(0));
 		}
@@ -1232,72 +1235,7 @@ public class DataEntryFragment extends Fragment {
 				getActivity(), aisleImagePathList));
 	}
 
-/*	private void addAisleMetaDataToDB(String tableName, AisleData mAisleData) {
-		Uri uri = null;
-		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
-			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
-		} else if (tableName.equals(VueConstants.OCCASION_TABLE)) {
-			uri = VueConstants.OCCASION_CONTENT_URI;
-		} else if (tableName.equals(VueConstants.CATEGORY_TABLE)) {
-			uri = VueConstants.CATEGORY_CONTENT_URI;
-		} else {
-			return;
-		}
-		ContentValues values = new ContentValues();
-		values.put(VueConstants.KEYWORD, mAisleData.keyword);
-		values.put(VueConstants.LAST_USED_TIME, Utils.date());
-		values.put(VueConstants.NUMBER_OF_TIMES_USED, mAisleData.count);
-		if (mAisleData.isNew) {
-			getActivity().getContentResolver().insert(uri, values);
-		} else {
-			getActivity().getContentResolver().update(uri, values,
-					VueConstants.KEYWORD + "=?",
-					new String[] { mAisleData.keyword });
-		}
-	}*/
-
-	private ArrayList<String> getAisleKeywords(String tableName) {
-		ArrayList<String> aisleKeywordsList = null;
-		Uri uri = null;
-		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
-			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
-		} else if (tableName.equals(VueConstants.OCCASION_TABLE)) {
-			uri = VueConstants.OCCASION_CONTENT_URI;
-		} else if (tableName.equals(VueConstants.CATEGORY_TABLE)) {
-			uri = VueConstants.CATEGORY_CONTENT_URI;
-		} else {
-			return null;
-		}
-		String twoWeeksBeforeTime = Utils.twoWeeksBeforeTime();
-		Cursor c = getActivity().getContentResolver().query(uri, null,
-				VueConstants.LAST_USED_TIME + " >?",
-				new String[] { twoWeeksBeforeTime },
-				VueConstants.NUMBER_OF_TIMES_USED + " DESC");
-		if (c.moveToFirst()) {
-			aisleKeywordsList = new ArrayList<String>();
-			do {
-				aisleKeywordsList.add(c.getString(c
-						.getColumnIndex(VueConstants.KEYWORD)));
-			} while (c.moveToNext());
-		}
-		c.close();
-		Cursor c1 = getActivity().getContentResolver().query(uri, null,
-				VueConstants.LAST_USED_TIME + " <=?",
-				new String[] { twoWeeksBeforeTime },
-				VueConstants.NUMBER_OF_TIMES_USED + " DESC");
-		if (c1.moveToFirst()) {
-			if (aisleKeywordsList == null)
-				aisleKeywordsList = new ArrayList<String>();
-			do {
-				aisleKeywordsList.add(c1.getString(c1
-						.getColumnIndex(VueConstants.KEYWORD)));
-			} while (c1.moveToNext());
-		}
-		c1.close();
-		return aisleKeywordsList;
-	}
-
-	private AisleData getAisleDataForKeyword(String keyWord, String tableName) {
+/*	private AisleData getAisleDataForKeyword(String keyWord, String tableName) {
 		AisleData aisleDataObj = null;
 		Uri uri = null;
 		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
@@ -1322,7 +1260,7 @@ public class DataEntryFragment extends Fragment {
 		}
 		c.close();
 		return aisleDataObj;
-	}
+	}*/
 
 	private void showDataProgressOnNotification() {
 		final NotificationManager mNotifyManager = (NotificationManager) getActivity()
@@ -1337,7 +1275,7 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public void run() {
 
-				AisleData lookingForAisleDataObj = getAisleDataForKeyword(
+				AisleData lookingForAisleDataObj = dbManager.getAisleMetaDataForKeyword(
 						lookingForBigText.getText().toString().trim(),
 						VueConstants.LOOKING_FOR_TABLE);
 				if (lookingForAisleDataObj != null) {
@@ -1352,9 +1290,9 @@ public class DataEntryFragment extends Fragment {
 				}
 				String currentTime = Utils.date();
 				lookingForAisleDataObj.time = currentTime;
-				addAisleMetaDataToDB(VueConstants.LOOKING_FOR_TABLE,
+				dbManager.addAisleMetaDataToDB(VueConstants.LOOKING_FOR_TABLE,
 						lookingForAisleDataObj);
-				AisleData occassionAisleDataObj = getAisleDataForKeyword(
+				AisleData occassionAisleDataObj = dbManager.getAisleMetaDataForKeyword(
 						occassionBigText.getText().toString().trim(),
 						VueConstants.OCCASION_TABLE);
 				if (occassionAisleDataObj != null) {
@@ -1368,9 +1306,9 @@ public class DataEntryFragment extends Fragment {
 					occassionAisleDataObj.isNew = true;
 				}
 				occassionAisleDataObj.time = currentTime;
-				addAisleMetaDataToDB(VueConstants.OCCASION_TABLE,
+				dbManager.addAisleMetaDataToDB(VueConstants.OCCASION_TABLE,
 						occassionAisleDataObj);
-				AisleData categoryAisleDataObj = getAisleDataForKeyword(
+				AisleData categoryAisleDataObj = dbManager.getAisleMetaDataForKeyword(
 						categoryText.getText().toString().trim(),
 						VueConstants.CATEGORY_TABLE);
 				if (categoryAisleDataObj != null) {
@@ -1384,7 +1322,7 @@ public class DataEntryFragment extends Fragment {
 					categoryAisleDataObj.isNew = true;
 				}
 				categoryAisleDataObj.time = currentTime;
-				addAisleMetaDataToDB(VueConstants.CATEGORY_TABLE,
+				dbManager.addAisleMetaDataToDB(VueConstants.CATEGORY_TABLE,
 						categoryAisleDataObj);
 
 				/*
