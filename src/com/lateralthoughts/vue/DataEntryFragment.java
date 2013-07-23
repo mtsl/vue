@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -10,8 +11,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -41,8 +40,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.lateralthoughts.vue.connectivity.AisleData;
-import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -978,7 +975,7 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	private AisleData getAisleData(String tableName) {
+/*	private AisleData getAisleData(String tableName) {
 		AisleData data = null;
 		Uri uri = null;
         if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
@@ -994,14 +991,14 @@ public class DataEntryFragment extends Fragment {
 		if (c.moveToFirst()) {
 			data = new AisleData();
 			data.keyword = c.getString(c.getColumnIndex(VueConstants.KEYWORD));
-			/*data.time = c
-					.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));*/
+			data.time = c
+					.getLong(c.getColumnIndex(VueConstants.LAST_USED_TIME));
 			data.count = c.getInt(c
 					.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
 		}
 		c.close();
 		return data;
-	}
+	}*/
 
 	private void showDataProgressOnNotification() {
 		final NotificationManager mNotifyManager = (NotificationManager) getActivity()
