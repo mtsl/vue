@@ -22,15 +22,16 @@ public class DataBaseManager {
   private int mStartPosition = 0;
   private int mEndPosition = 0;
   private int mLocalAislesLimit = 10;
-
-  Context mContext;
+  private Context mContext;
   
   public DataBaseManager(Context context) {
     mContext = context;
   }
 
   /**
-   * add all the aisles pulled from server
+   * add all the aisles pulled from server to sqlite, if the aisle is already
+   * there in sqlite then it will delete and insert the new data for that aisle.
+   * @param Context context.
    * */
   public static void addTrentingAislesFromServerToDB(Context context) {
     for (int i = 0; i < VueTrendingAislesDataModel.getInstance(context).getAisleCount(); i++) {
@@ -74,6 +75,12 @@ public class DataBaseManager {
     }
   }
   
+  /**
+   * This method will return the aisles with aislesIds we give in parameter, if
+   * the parameter is null then it will return aisles in installment of 10.
+   * @param String[] aislesIds
+   * @return ArrayList<AisleWindowContent>
+   * */
   public ArrayList<AisleWindowContent> getAislesFromDB(String[] aislesIds) {
     mEndPosition = mEndPosition + mLocalAislesLimit;
     AisleContext userInfo;
@@ -178,6 +185,13 @@ public class DataBaseManager {
     
   }
   
+  /**
+   * add new Comment on images and sets the DIRTY_FLAG true to indicate that
+   * there is some new data to be uploaded to server.
+   * @param String comment
+   * @param String imageID
+   * @param String aisleID
+   * */
   public void addComments(String comment, String imageID, String aisleID) {
     ContentValues aisleValues = new ContentValues();
     aisleValues.put(VueConstants.DIRTY_FLAG, true);
@@ -196,6 +210,12 @@ public class DataBaseManager {
     // and rest of the world likes as we cannot merge these two and sync the db to server.
   }
   
+  /**
+   * if user bookmarks of unbookmarks any aisle then this method will mark that
+   * aisle as the case.
+   * @param boolean isBookmarked
+   * @param String aisleID
+   * */
   public void bookMarkOrUnBookmarkAisle(boolean isBookmarked, String aisleID) {
     ContentValues values = new ContentValues();
     values.put(VueConstants.IS_BOOKMARKED, isBookmarked);

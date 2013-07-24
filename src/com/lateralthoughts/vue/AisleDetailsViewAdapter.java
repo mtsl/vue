@@ -32,6 +32,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -64,6 +65,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    public String mVueusername;
    ShareDialog mShare ;
    private String mAisleWindowId;
+   private ScaledImageViewFactory mViewFactory = null;
+   private ContentAdapterFactory mContentAdapterFactory;
 
    ViewHolder mViewHolder;
    String mTempComments[] = {
@@ -86,7 +89,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          ArrayList<AisleWindowContent> content) {
       super(c, content);
       mContext = c;
+      mViewFactory = ScaledImageViewFactory.getInstance(mContext);
       mViewLoader = AisleDetailsViewListLoader.getInstance(mContext);
+      mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
       mswipeListner = swipeListner;
       mListCount = listCount;
       if (DEBUG)
@@ -506,7 +511,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	public void setAisleBrowerObjectsNull(){
 		if(mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
 			// mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
-			
+			  for(int i=0;i< mViewHolder.aisleContentBrowser.getChildCount();i++){
+	                //((ScaleImageView)contentBrowser.getChildAt(i)).setContainerObject(null);
+	                mViewFactory.returnUsedImageView((ScaleImageView) mViewHolder.aisleContentBrowser.getChildAt(i));
+	            }
+			  mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
 		mViewHolder.aisleContentBrowser.setReferedObjectsNull();
 		mViewHolder.aisleContentBrowser.removeAllViews();
 		}
