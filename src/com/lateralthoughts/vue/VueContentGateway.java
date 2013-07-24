@@ -102,6 +102,7 @@ public class VueContentGateway {
                   @Override
                   public void onResponse(JSONArray jsonArray){
                       if(null != jsonArray){
+                        Log.e("Profiling", "Profiling : onResponse()");
                           Bundle responseBundle = new Bundle();
                           responseBundle.putString("result",jsonArray.toString());
                           receiver.send(1,responseBundle);

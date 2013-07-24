@@ -82,6 +82,7 @@
     <!-- <string name="connectivity_management">Connectivity Management</string> -->
     <string name="create_aisle_screen_title">Create Aisle</string>
     <string name="hint_search">Search</string>
+    <string name="sidemenu_option_Trending_Aisles">Trending</string>
     <string name="sidemenu_option_My_Aisles">My Aisles</string>
     <string name="sidemenu_option_Categories">Categories</string>
     <string name="sidemeun_option_Settings">Settings</string>

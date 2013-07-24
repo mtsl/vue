@@ -1,9 +1,7 @@
 package com.lateralthoughts.vue;
 
 //android imports
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,9 +17,6 @@ import java.nio.channels.FileChannel;
 //java imports
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -70,7 +65,7 @@ public class VueTrendingAislesDataModel {
 
   // private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
   private static final int TRENDING_AISLES_BATCH_SIZE = 5;
-  private static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
+  public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
   private static final int NOTIFICATION_THRESHOLD = 4;
   private int poolSize = 1;
   private int maxPoolSize = 1;
@@ -86,24 +81,22 @@ public class VueTrendingAislesDataModel {
   // ====== End of state variables
   // ========================================================================
 
-  private int mLimit;
-  private int mOffset;
+  protected int mLimit;
+  protected int mOffset;
   private AisleWindowContentFactory mAisleWindowContentFactory;
   private boolean mAisleDataRequested;
   private long mRequestStartTime;
-  private VueContentGateway mVueContentGateway;
-  private TrendingAislesContentParser mTrendingAislesParser;
+  protected VueContentGateway mVueContentGateway;
+  protected TrendingAislesContentParser mTrendingAislesParser;
 
   private final String TAG = "VueTrendingAislesModel";
   public boolean loadOnRequest = false;
-  private int mStartPosition = 0;
-  private int mEndPosition = 0;
-  private int mLocalAislesLimit = 10;
   private ThreadPoolExecutor threadPool;
   private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
   private DataBaseManager mDbManager;
 
   private VueTrendingAislesDataModel(Context context) {
+    Log.e("Profiling", "Profining DATA CHECK VueTrendingAislesDataModel()");
     mContext = context;
     mVueContentGateway = VueContentGateway.getInstance();
     mAisleWindowContentFactory = AisleWindowContentFactory
@@ -241,6 +234,7 @@ public class VueTrendingAislesDataModel {
             @Override
             public void run() {
               //addAislesToDb();
+              DataBaseManager.markOldAislesToDelete(mContext);
               DataBaseManager.addTrentingAislesFromServerToDB(mContext);
             }
           });
@@ -325,7 +319,6 @@ public class VueTrendingAislesDataModel {
       aisleItem.setAisleId(aisleId);
       mAisleContentListMap.put(aisleId, aisleItem);
       mAisleContentList.add(aisleItem);
-      Log.e("Profiling", "Profiling : mHandler call getAisleItem() : mAisleContentListMap.size(); " + mAisleContentListMap.size() + ", mAisleContentList.size(); " + mAisleContentList.size());
     }
     return aisleItem;
   }
@@ -511,7 +504,7 @@ public class VueTrendingAislesDataModel {
         .getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
   }
 
-  Handler mHandler = new Handler() {
+  protected Handler mHandler = new Handler() {
     public void handleMessage(android.os.Message msg) {
       @SuppressWarnings("unchecked")
       ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
@@ -529,8 +522,12 @@ public class VueTrendingAislesDataModel {
         public void run() {
           runTask(new Runnable() {
             public void run() {
+              ArrayList<AisleWindowContent> aislesList = mDbManager.getAislesFromDB(null);
+              if(aislesList.size() == 0) {
+                return;
+              }
               Message msg = new Message();
-              msg.obj = mDbManager.getAislesFromDB(null);
+              msg.obj = aislesList;
               mHandler.sendMessage(msg);
             };
           });
