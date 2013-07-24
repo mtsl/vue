@@ -155,9 +155,6 @@ public class DataEntryActivity extends BaseActivity {
 				}
 			} else {
 				if (!VueApplication.getInstance().mSoftKeboardIndicator) {
-					VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.aisle_details_view_fragment);
-					fragment.setAisleContentListenerNull();
 					super.onBackPressed();
 				} else {
 					VueApplication.getInstance().mSoftKeboardIndicator = false;
