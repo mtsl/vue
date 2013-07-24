@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources.NotFoundException;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -69,6 +70,7 @@ import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.VueMemoryCache;
 import com.lateralthoughts.vue.utils.clsShare;
 
 public class VueLoginActivity extends FragmentActivity implements
@@ -86,7 +88,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	private boolean googleplusFriendInvite = false;
 	private boolean googleplusAutomaticLogin = false;
 	SharedPreferences sharedPreferencesObj;
-
+	private ImageView trendingbg = null;
 	/** The button should say "View item" in English. */
 	private static final String LABEL_VIEW_ITEM = "VIEW_ITEM";
 
@@ -127,6 +129,12 @@ public class VueLoginActivity extends FragmentActivity implements
 		setContentView(R.layout.socialnetworkingloginscreen);
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);
+		trendingbg = (ImageView) findViewById(R.id.trendingbg);
+		try {
+			trendingbg.setBackgroundResource(R.drawable.trendingbg);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 		RelativeLayout googleplusign_in_buttonlayout = (RelativeLayout) findViewById(R.id.googleplusign_in_buttonlayout);
 		RelativeLayout fblog_in_buttonlayout = (RelativeLayout) findViewById(R.id.fblog_in_buttonlayout);
 		LoginButton login_button = (LoginButton) findViewById(R.id.login_button);
@@ -163,14 +171,12 @@ public class VueLoginActivity extends FragmentActivity implements
 		// Facebook Invite friend
 		if (fbFriendId != null) {
 			socialIntegrationMainLayout.setVisibility(View.GONE);
-			ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
 			trendingbg.setVisibility(View.GONE);
 			publishFeedDialog(fbFriendId, fbFriendName);
 		}
 		// Google+ invite friend
 		else if (googleplusFriendInvite) {
 			socialIntegrationMainLayout.setVisibility(View.GONE);
-			ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
 			trendingbg.setVisibility(View.GONE);
 			googlePlusProgressDialog.show();
 			dontCallUserInfoChangesMethod = true;
@@ -178,7 +184,6 @@ public class VueLoginActivity extends FragmentActivity implements
 					VueLoginActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
 		} else if (googleplusAutomaticLogin) {
 			socialIntegrationMainLayout.setVisibility(View.GONE);
-			ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
 			trendingbg.setVisibility(View.GONE);
 			googlePlusProgressDialog.show();
 			dontCallUserInfoChangesMethod = true;
@@ -188,7 +193,6 @@ public class VueLoginActivity extends FragmentActivity implements
 		} else {
 			if (fromDetailsFbShare) {
 				socialIntegrationMainLayout.setVisibility(View.GONE);
-				ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
 				trendingbg.setVisibility(View.GONE);
 				sharedPreferencesObj = this.getSharedPreferences(
 						VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -548,7 +552,6 @@ public class VueLoginActivity extends FragmentActivity implements
 		});
 		try {
 			socialIntegrationMainLayout.setVisibility(View.GONE);
-			ImageView trendingbg = (ImageView) findViewById(R.id.trendingbg);
 			trendingbg.setVisibility(View.GONE);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -37,8 +37,13 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 		View view = inflater.inflate(R.layout.dataentry_aisle_pager_row, null);
 		ImageView dataEntryRowAisleImage = (ImageView) view
 				.findViewById(R.id.dataentry_row_aisele_image);
-		dataEntryRowAisleImage.setImageURI(Uri.fromFile(new File(imagePathsList
-				.get(position))));
+		try {
+			dataEntryRowAisleImage.setImageURI(Uri.fromFile(new File(imagePathsList
+					.get(position))));
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		((ViewPager) collection).addView(view, 0);
 		return view;
 	}

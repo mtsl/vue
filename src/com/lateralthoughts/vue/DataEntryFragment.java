@@ -1176,8 +1176,7 @@ public class DataEntryFragment extends Fragment {
 				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}
@@ -1231,8 +1230,13 @@ public class DataEntryFragment extends Fragment {
 		aisleImagePathList.add(0, resizedImagePath);
 		dataEntryAislesViewpager.setVisibility(View.VISIBLE);
 		createaisleBg.setVisibility(View.GONE);
-		dataEntryAislesViewpager.setAdapter(new DataEntryAilsePagerAdapter(
-				getActivity(), aisleImagePathList));
+		try {
+			dataEntryAislesViewpager.setAdapter(new DataEntryAilsePagerAdapter(
+					getActivity(), aisleImagePathList));
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 /*	private AisleData getAisleDataForKeyword(String keyWord, String tableName) {
