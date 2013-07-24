@@ -203,7 +203,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
           if(s.equals(getString(R.string.sidemenu_option_Profile))) {
               getUserInfo();
           } else if(s.equals(getString(R.string.sidemenu_sub_option_Facebook))
-              || s.equals(getString(R.string.sidemenu_sub_option_Gmail))) {
+              || s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
             getFriendsList(s); 
           }
         return false;
@@ -315,7 +315,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
      * getString(R.string.sidemenu_sub_option_Twitter), R.drawable.comment,
      * null); inviteFriendsChildren.add(item);
      */
-    item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Gmail),
+    item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Googleplus),
         R.drawable.comment, null);
     inviteFriendsChildren.add(item);
     return inviteFriendsChildren;
@@ -601,9 +601,9 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
 
   // Pull and display G+ friends from plus.google.com.
   private void getGPlusFriendsList() {
-    if (VueLandingPageActivity.googlePlusFriendsDetailsList != null) {
+    if (VueLandingPageActivity.mGooglePlusFriendsDetailsList != null) {
       inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(getActivity(),
-          VueLandingPageActivity.googlePlusFriendsDetailsList));
+          VueLandingPageActivity.mGooglePlusFriendsDetailsList));
       expandListView.setVisibility(View.GONE);
       invitefriendsLayout.setVisibility(View.VISIBLE);
       invitefriendsLayout.startAnimation(animUp);

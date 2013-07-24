@@ -390,8 +390,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.aisle_details_view_fragment);
 
-				if (fragment.mAisleDetailsAdapter.mShare.shareIntentCalled) {
-					fragment.mAisleDetailsAdapter.mShare.shareIntentCalled = false;
+				if (fragment.mAisleDetailsAdapter.mShare.mShareIntentCalled) {
+					fragment.mAisleDetailsAdapter.mShare.mShareIntentCalled = false;
 					fragment.mAisleDetailsAdapter.mShare.dismisDialog();
 				}
 			} catch (Exception e) {

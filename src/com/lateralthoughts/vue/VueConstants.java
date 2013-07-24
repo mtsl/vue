@@ -22,7 +22,7 @@ public class VueConstants {
 	public static final int COMMENTS_LIMIT_FOR_LOGIN = 10;
 	public static final int SELECT_PICTURE = 1;
 	public static final int CAMERA_REQUEST = 2;
-	public static final String 	DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.sss";
+	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.sss";
 	public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
 	public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";
 	public static final int SHARE_INTENT_REQUEST_CODE = 1;
@@ -60,7 +60,7 @@ public class VueConstants {
 	public static final String OCCASION = "occasion";
 	public static final String BOOKMARK_COUNT = "bookMarkCount";
 	public static final String IS_BOOKMARKED = "isBookmarked";
-    public static final String LIKE_OR_DISLIKE = "likeOrDislike";
+	public static final String LIKE_OR_DISLIKE = "likeOrDislike";
 	public static final String DIRTY_FLAG = "isDirtry";
 	public static final String AISLE_ID = "aisleId";
 	// Column names for aisles images.
@@ -111,42 +111,43 @@ public class VueConstants {
 	public static final String USER_DOB = "userDob";
 	public static final String USER_GENDER = "userGender";
 	public static final String USER_LOCATION = "userLocation";
-	
+
 	// Column names for comments table.
 	public static final String COMMENTS = "commentS";
-	
+
 	// Define CONTENT URI
-	public static final String AUTHORITY = 
-	    "com.lateralthoughts.vue.connectivity.VueConstants";
+	public static final String AUTHORITY = "com.lateralthoughts.vue.connectivity.VueConstants";
 	public static final String AISLES = "aisles";
 	public static final String AISLE_IMAGES = "aisleImages";
 	public static final String LOOKING_FOR_TABLE = "lookingFor";
 	public static final String OCCASION_TABLE = "occasion";
 	public static final String CATEGORY_TABLE = "category";
 	public static final String COMMENTS_ON_IMAGES_TABLE = "commentsOnImages";
-	  
+
 	// Define MIME types
-	public static final String ARTICLES_MIME_TYPE 
-	      = "vnd.android.cursor.dir/vnd.vue.articles";
-	public static final String ARTICLE_MIME_TYPE 
-	      = "vnd.android.cursor.item/vnd.vue.article";
-	  
+	public static final String ARTICLES_MIME_TYPE = "vnd.android.cursor.dir/vnd.vue.articles";
+	public static final String ARTICLE_MIME_TYPE = "vnd.android.cursor.item/vnd.vue.article";
+
 	// Uri to the table of database.
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	    + "/" + AISLES);
-	public static final Uri IMAGES_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	    + "/" + AISLE_IMAGES);
-	public static final Uri LOOKING_FOR_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	    + "/" + LOOKING_FOR_TABLE);
-	public static final Uri OCCASION_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-        + "/" + OCCASION_TABLE);
-	public static final Uri CATEGORY_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-        + "/" + CATEGORY_TABLE);
-	public static final Uri COMMENTS_ON_IMAGE_URI = Uri.parse("content://" + AUTHORITY
-	    + "/" + COMMENTS_ON_IMAGES_TABLE);
-	public static final String 	GMAIL_USERNAME_FOR_SENDING_ERROR_TO_MAIL = "vazeerneem@gmail.com";
-	public static final String 	GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL = "23neemsystems";
-	public static final String 	GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL = "23NeemSystemDeveloper";
-	public static final String 	GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL = "krishna@23neem.com,surendra@23neem.com,raju.k@23neem.com,vazeer@23neem.com,vvkrishna1989@gmail.com";
-	public static final String 	GMAIL_SUBJECT_FOR_SENDING_ERROR_TO_MAIL = "Vue Android App Crash Report on ";
+			+ "/" + AISLES);
+	public static final Uri IMAGES_CONTENT_URI = Uri.parse("content://"
+			+ AUTHORITY + "/" + AISLE_IMAGES);
+	public static final Uri LOOKING_FOR_CONTENT_URI = Uri.parse("content://"
+			+ AUTHORITY + "/" + LOOKING_FOR_TABLE);
+	public static final Uri OCCASION_CONTENT_URI = Uri.parse("content://"
+			+ AUTHORITY + "/" + OCCASION_TABLE);
+	public static final Uri CATEGORY_CONTENT_URI = Uri.parse("content://"
+			+ AUTHORITY + "/" + CATEGORY_TABLE);
+	public static final Uri COMMENTS_ON_IMAGE_URI = Uri.parse("content://"
+			+ AUTHORITY + "/" + COMMENTS_ON_IMAGES_TABLE);
+	public static final String GMAIL_USERNAME_FOR_SENDING_ERROR_TO_MAIL = "vazeerneem@gmail.com";
+	public static final String GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL = "23neemsystems";
+	public static final String GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL = "23NeemSystemDeveloper";
+	public static final String GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL = "krishna@23neem.com,surendra@23neem.com,raju.k@23neem.com,vazeer@23neem.com,vvkrishna1989@gmail.com";
+	public static final String GMAIL_SUBJECT_FOR_SENDING_ERROR_TO_MAIL = "Vue Android App Crash Report on ";
+	public static final String INVITATION_MESG = "Invitation from Vue application.";
+	public static final String FACEBOOK_GRAPHIC_OBJECT_NAME_KEY = "name";
+	public static final String FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY = "email";
+	public static final String FACEBOOK_GRAPHIC_OBJECT_GENDER_KEY = "gender";
 }

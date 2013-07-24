@@ -885,7 +885,7 @@ public class Session implements Serializable {
             staticContext = (applicationContext != null) ? applicationContext : currentContext;
         }*/
     	
-    	staticContext = VueApplication.getInstance().vueApplicationContext;
+    	staticContext = VueApplication.getInstance().mVueApplicationContext;
     }
 
     void authorize(AuthorizationRequest request) {
