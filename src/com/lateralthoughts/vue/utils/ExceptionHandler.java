@@ -20,24 +20,21 @@
 package com.lateralthoughts.vue.utils;
 
 import java.io.*;
-
-import com.lateralthoughts.vue.CrashActivity;
-
-import android.content.*;
+import com.lateralthoughts.vue.VueConstants;
+import android.app.Activity;
 import android.os.Process;
 import android.util.Log;
 
-
 public class ExceptionHandler implements
 		java.lang.Thread.UncaughtExceptionHandler {
-	private final Context mycontext;
+	private final Activity mycontext;
 
 	/**
 	 * 
 	 * @param context
 	 *            Context
 	 */
-	public ExceptionHandler(Context context) {
+	public ExceptionHandler(Activity context) {
 		mycontext = context;
 	}
 
@@ -50,13 +47,26 @@ public class ExceptionHandler implements
 	 *            Throwable
 	 */
 	public void uncaughtException(Thread thread, Throwable exception) {
-		StringWriter stackTrace = new StringWriter();
+		final StringWriter stackTrace = new StringWriter();
 		exception.printStackTrace(new PrintWriter(stackTrace));
 		Log.i("Vue", "" + stackTrace);
-		Intent intent = new Intent(mycontext, CrashActivity.class);
-		intent.putExtra(CrashActivity.STACKTRACE, stackTrace.toString());
-		mycontext.startActivity(intent);
-		Process.killProcess(Process.myPid());
-		System.exit(10);
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					GMailSender sender = new GMailSender(VueConstants.GMAIL_USERNAME_FOR_SENDING_ERROR_TO_MAIL,
+							VueConstants.GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL);
+					sender.sendMail(VueConstants.GMAIL_SUBJECT_FOR_SENDING_ERROR_TO_MAIL + Utils.date(), stackTrace + "",
+							VueConstants.GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL, VueConstants.GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL);
+					Process.killProcess(Process.myPid());
+					System.exit(10);
+				} catch (Exception e) {
+					Log.e("SendMail", e.getMessage(), e);
+				}
+
+			}
+		});
+		t.start();
+	
 	}
 }
