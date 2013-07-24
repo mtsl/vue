@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 //vue internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
@@ -138,5 +140,15 @@ public class ScaledImageViewFactory {
 				mAvailableObjects.add(new ScaleImageView(mContext));
 			}
 		}		
+	}
+	public void clearAllViews(){
+/*		ScaleImageView view;
+		for(int i=0;i<mObjectsInUse.size();i++){
+			view = mObjectsInUse.remove(i);
+			if(view != null) {
+				view.setImageBitmap(null);
+			   mAvailableObjects.add(view);
+			}
+		}*/
 	}
 }

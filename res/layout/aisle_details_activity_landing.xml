@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activityroot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/activityroot"
     android:orientation="vertical" >
 
     <FrameLayout
@@ -36,7 +36,7 @@
                 android:id="@id/content2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#EEEEEE"
+                android:background="@color/whitbgshade"
                 android:orientation="vertical" >
 
                 <com.lateralthoughts.vue.ui.HorizontalListView
@@ -46,7 +46,7 @@
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="10dp"
                     android:layout_weight="2"
-                    android:background="#EEEEEE"
+                    android:background="@color/whitbgshade"
                     android:scrollbars="none" >
                 </com.lateralthoughts.vue.ui.HorizontalListView>
 
@@ -57,7 +57,7 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_weight="2"
-                    android:background="#EEEEEE"
+                    android:background="@color/whitbgshade"
                     android:scrollbars="none" >
                 </com.lateralthoughts.vue.ui.HorizontalListView>
             </LinearLayout>

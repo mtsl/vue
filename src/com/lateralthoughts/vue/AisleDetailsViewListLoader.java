@@ -100,6 +100,8 @@ public class AisleDetailsViewListLoader {
             holder.aisleContentBrowser.setCustomAdapter(adapter);
             holder.aisleContentBrowser.setDetailImageClickListener(detailListener);
             holder.uniqueContentId = desiredContentId;
+            Log.i("returnsused imageview", "returnsused imageview listloader count: "+ holder.aisleContentBrowser.getChildCount());
+            Log.i("returnsused imageview", "returnsused imageview listloader obj: "+holder.aisleContentBrowser.getCustomAdapter());
         }       
         imageDetailsArr = windowContent.getImageList();
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
@@ -125,18 +127,21 @@ public class AisleDetailsViewListLoader {
 			Bitmap bitmap = mBitmapLoaderUtils
 					.getCachedBitmap(itemDetails.mCustomImageUrl);
 			if (bitmap != null) {
-				//get the dimentions of the image.
-				 mImageDimention = Utils.getScalledImage(bitmap,
-						 itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
-				setParams(holder.aisleContentBrowser, imageView,mBestHeight);
-				 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
-					 loadBitmap(itemDetails, contentBrowser, imageView,
-								itemDetails.mAvailableHeight);
-					 setParams(holder.aisleContentBrowser, imageView,mBestHeight);
-				 }
-			/*	bitmap = Utils.getScalledImage(bitmap,
+				// get the dimentions of the image.
+				mImageDimention = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
-						itemDetails.mAvailableHeight);*/
+						itemDetails.mAvailableHeight);
+				setParams(holder.aisleContentBrowser, imageView, mBestHeight);
+				if (bitmap.getHeight() < mImageDimention.mImgHeight) {
+					loadBitmap(itemDetails, contentBrowser, imageView,
+							itemDetails.mAvailableHeight);
+					setParams(holder.aisleContentBrowser, imageView,
+							mBestHeight);
+				}
+				/*
+				 * bitmap = Utils.getScalledImage(bitmap,
+				 * itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
+				 */
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {

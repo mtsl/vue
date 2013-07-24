@@ -1,5 +1,7 @@
 package com.lateralthoughts.vue;
 
+import java.util.ArrayList;
+
 public class AisleImageDetails {
 	public String mDetalsUrl;
 	public String mImageUrl;
@@ -11,4 +13,6 @@ public class AisleImageDetails {
 	public int mAvailableHeight;
 	public int mAvailableWidth;
 	public int mLikesCount;
+	public ArrayList<String> mCommentsList;
+	                         
 }
