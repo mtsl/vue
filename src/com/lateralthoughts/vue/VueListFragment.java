@@ -147,6 +147,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
           VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
           VueLandingPageActivity activity =(VueLandingPageActivity)getActivity();
           activity.getSlidingMenu().toggle();
+          activity.getSupportActionBar().setTitle(getString(R.string.sidemenu_option_My_Aisles));
           ArrayList<AisleWindowContent> aislesList = new DataBaseManager(getActivity()).getAislesFromDB(null);
           Message msg = new Message();
           msg.obj = aislesList;
@@ -163,7 +164,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
           model.clearAisles();
           VueLandingPageActivity activity =(VueLandingPageActivity)getActivity();
           activity.getSlidingMenu().toggle();
-          model.mVueContentGateway.getTrendingAisles(model.mLimit, model.mOffset,
+          activity.getSupportActionBar().setTitle(getString(R.string.trending));
+          model.mVueContentGateway.getTrendingAisles(model.mLimit = VueTrendingAislesDataModel.TRENDING_AISLES_BATCH_INITIAL_SIZE, model.mOffset = 0,
               model.mTrendingAislesParser);
         } else if (s.equals(getString(R.string.sidemenu_option_About))) {
           inflateAboutLayout();

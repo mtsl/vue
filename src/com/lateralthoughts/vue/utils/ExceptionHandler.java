@@ -56,7 +56,7 @@ public class ExceptionHandler implements
 				try {
 					GMailSender sender = new GMailSender(VueConstants.GMAIL_USERNAME_FOR_SENDING_ERROR_TO_MAIL,
 							VueConstants.GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL);
-					sender.sendMail(VueConstants.GMAIL_SUBJECT_FOR_SENDING_ERROR_TO_MAIL + Utils.date(), stackTrace + "",
+					sender.sendMail(VueConstants.GMAIL_SUBJECT_FOR_SENDING_ERROR_TO_MAIL + " Surendra " + Utils.date(), stackTrace + "",
 							VueConstants.GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL, VueConstants.GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL);
 					Process.killProcess(Process.myPid());
 					System.exit(10);
