@@ -63,6 +63,7 @@ public class VueConstants {
     public static final String LIKE_OR_DISLIKE = "likeOrDislike";
 	public static final String DIRTY_FLAG = "isDirtry";
 	public static final String AISLE_ID = "aisleId";
+	public static final String DELETE_FLAG = "deleteFlag";
 	// Column names for aisles images.
 	public static final String TITLE = "title";
 	public static final String IMAGE_URL = "imageUrl";

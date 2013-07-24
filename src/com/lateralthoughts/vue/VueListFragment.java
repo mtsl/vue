@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -55,6 +56,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 
@@ -121,7 +123,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
     expandListView = (ExpandableListView) getActivity().findViewById(
         R.id.vue_list_fragment_list);
 
-    VueListFragmentAdapter adapter = new VueListFragmentAdapter(getActivity(),
+    final VueListFragmentAdapter adapter = new VueListFragmentAdapter(getActivity(),
         getBezelMenuOptionItems());
     expandListView.setAdapter(adapter);
     animDown = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_down);
@@ -136,8 +138,33 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
             .findViewById(R.id.vue_list_fragment_itemTextview);
         String s = textView.getText().toString();
         if(s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
+          //textView.setText(getString(R.string.sidemenu_option_Trending_Aisles));
+          adapter.groups.remove(groupPosition);
+          ListOptionItem item = new ListOptionItem(
+              getString(R.string.sidemenu_option_Trending_Aisles), R.drawable.profile, null);
+          adapter.groups.add(groupPosition, item);
+          adapter.notifyDataSetChanged();
           VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
+          VueLandingPageActivity activity =(VueLandingPageActivity)getActivity();
+          activity.getSlidingMenu().toggle();
+          ArrayList<AisleWindowContent> aislesList = new DataBaseManager(getActivity()).getAislesFromDB(null);
+          Message msg = new Message();
+          msg.obj = aislesList;
+          VueTrendingAislesDataModel.getInstance(getActivity()).mHandler.sendMessage(msg);
          // VueTrendingAislesDataModel.getInstance(getActivity()).getAislesFromDb();
+        } else if(s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
+          //textView.setText(getString(R.string.sidemenu_option_My_Aisles));
+          adapter.groups.remove(groupPosition);
+          ListOptionItem item = new ListOptionItem(
+              getString(R.string.sidemenu_option_My_Aisles), R.drawable.profile, null);
+          adapter.groups.add(groupPosition, item);
+          adapter.notifyDataSetChanged();
+          VueTrendingAislesDataModel model = VueTrendingAislesDataModel.getInstance(getActivity());
+          model.clearAisles();
+          VueLandingPageActivity activity =(VueLandingPageActivity)getActivity();
+          activity.getSlidingMenu().toggle();
+          model.mVueContentGateway.getTrendingAisles(model.mLimit, model.mOffset,
+              model.mTrendingAislesParser);
         } else if (s.equals(getString(R.string.sidemenu_option_About))) {
           inflateAboutLayout();
         } else if (s.equals(getString(R.string.sidemenu_option_FeedBack))) {
@@ -351,7 +378,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
   // vue_list_fragment_list
   private class VueListFragmentAdapter extends BaseExpandableListAdapter {
 
-    private List<ListOptionItem> groups;
+    public List<ListOptionItem> groups;
 
     public VueListFragmentAdapter(Context context, List<ListOptionItem> groups) {
       this.groups = groups;
@@ -877,4 +904,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
     DPD.show();
   }
  
+  
+  
 }

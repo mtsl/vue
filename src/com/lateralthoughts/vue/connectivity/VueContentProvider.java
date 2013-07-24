@@ -220,6 +220,7 @@ public class VueContentProvider extends ContentProvider{
         qb.setTables(VueConstants.AISLES);
         cursor = qb.query(aislesDB, projection, selection, selectionArgs,
             null, null, sortOrder);
+        Log.e("provider", "Total Aisles marked to Content Provider cursor.getCount()" + cursor.getCount());
         break;
      case AISLE_MATCH:
        qb.setTables(VueConstants.AISLES);

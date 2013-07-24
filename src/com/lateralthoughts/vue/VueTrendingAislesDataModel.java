@@ -86,13 +86,13 @@ public class VueTrendingAislesDataModel {
   // ====== End of state variables
   // ========================================================================
 
-  private int mLimit;
-  private int mOffset;
+  protected int mLimit;
+  protected int mOffset;
   private AisleWindowContentFactory mAisleWindowContentFactory;
   private boolean mAisleDataRequested;
   private long mRequestStartTime;
-  private VueContentGateway mVueContentGateway;
-  private TrendingAislesContentParser mTrendingAislesParser;
+  protected VueContentGateway mVueContentGateway;
+  protected TrendingAislesContentParser mTrendingAislesParser;
 
   private final String TAG = "VueTrendingAislesModel";
   public boolean loadOnRequest = false;
@@ -241,6 +241,7 @@ public class VueTrendingAislesDataModel {
             @Override
             public void run() {
               //addAislesToDb();
+              DataBaseManager.markOldAislesToDelete(mContext);
               DataBaseManager.addTrentingAislesFromServerToDB(mContext);
             }
           });
@@ -325,7 +326,6 @@ public class VueTrendingAislesDataModel {
       aisleItem.setAisleId(aisleId);
       mAisleContentListMap.put(aisleId, aisleItem);
       mAisleContentList.add(aisleItem);
-      Log.e("Profiling", "Profiling : mHandler call getAisleItem() : mAisleContentListMap.size(); " + mAisleContentListMap.size() + ", mAisleContentList.size(); " + mAisleContentList.size());
     }
     return aisleItem;
   }
@@ -511,7 +511,7 @@ public class VueTrendingAislesDataModel {
         .getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
   }
 
-  Handler mHandler = new Handler() {
+  protected Handler mHandler = new Handler() {
     public void handleMessage(android.os.Message msg) {
       @SuppressWarnings("unchecked")
       ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
@@ -529,8 +529,12 @@ public class VueTrendingAislesDataModel {
         public void run() {
           runTask(new Runnable() {
             public void run() {
+              ArrayList<AisleWindowContent> aislesList = mDbManager.getAislesFromDB(null);
+              if(aislesList.size() == 0) {
+                return;
+              }
               Message msg = new Message();
-              msg.obj = mDbManager.getAislesFromDB(null);
+              msg.obj = aislesList;
               mHandler.sendMessage(msg);
             };
           });

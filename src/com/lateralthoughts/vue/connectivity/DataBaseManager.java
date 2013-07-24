@@ -8,7 +8,9 @@ import java.util.Map;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -39,6 +41,7 @@ public class DataBaseManager {
           new String[] {"COUNT(*)"}, null, null, null);
       String strCount = "";
       int maxId = 0;
+      int imgCount = 0;
       if (cursor.moveToFirst()) {
         strCount = cursor.getString(cursor.getColumnIndex("COUNT(*)"));
       }
@@ -57,10 +60,10 @@ public class DataBaseManager {
       values.put(VueConstants.AISLE_ID, info.mAisleId);
       values.put(VueConstants.ID, String.format(FORMATE, maxId + 1));
       context.getContentResolver().insert(VueConstants.CONTENT_URI, values);
-      int imgCount = 0;
+      
       for (AisleImageDetails imageDetails : imageItemsArray) {
         ContentValues imgValues = new ContentValues();
-        imgValues.put(VueConstants.ID, String.format(FORMATE, imgCount + 1));
+        imgValues.put(VueConstants.ID, String.format(FORMATE, ++imgCount));
         imgValues.put(VueConstants.TITLE, imageDetails.mTitle);
         imgValues.put(VueConstants.IMAGE_URL, imageDetails.mImageUrl);
         imgValues.put(VueConstants.DETAILS_URL, imageDetails.mDetalsUrl);
@@ -223,6 +226,7 @@ public class DataBaseManager {
         VueConstants.AISLE_ID + "=?", new String[] {aisleID});
   }
   
+  
   public void addAisleMetaDataToDB(String tableName, AisleData aisleData) {
     Uri uri = null;
     if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
@@ -311,6 +315,38 @@ public class DataBaseManager {
     }
     c.close();
     return aisleDataObj;
+  }
+
+  public static void markOldAislesToDelete(Context context) {
+    /*DbHelper helper = new DbHelper(context);
+    SQLiteDatabase db = helper.getReadableDatabase();
+    Cursor c = db.query(DbHelper.DATABASE_TABLE_AISLES, new String[] {VueConstants.AISLE_ID}null, null, null, null, null, null);*/
+    
+    Cursor c = context.getContentResolver().query(VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_ID}, null, null, null);
+    Log.e("DataBaseManager", "Total Aisles marked to delete : Cursor.getCount() : " + c.getCount());
+    ArrayList<String> aislesIds = new ArrayList<String>();
+    if(c.moveToFirst()) {
+      do {
+        aislesIds.add(c.getString(c.getColumnIndex(VueConstants.AISLE_ID)));
+      } while(c.moveToNext());
+    }
+    /*for(String s : aislesIds) {
+      Uri uri = Uri.parse(VueConstants.CONTENT_URI + "/" + );  
+    }*/
+    //db.close();
+    //c.close();
+    String questionSymbols = "?";
+    for (int i = 1; i < aislesIds.size(); i++) {
+      questionSymbols = questionSymbols + ",?";
+    }
+    String selection = VueConstants.AISLE_ID + " IN (" + questionSymbols + ") ";
+    String[] args = aislesIds.toArray(new String[aislesIds.size()]);
+    Log.e("DataBaseManager", "Total Aisles marked to delete : selection : " + selection);
+    Log.e("DataBaseManager", "Total Aisles marked to delete : questionSymbols : " + questionSymbols);
+    ContentValues values = new ContentValues();
+    values.put(VueConstants.DELETE_FLAG, 1);
+    int updatedRows = context.getContentResolver().update(VueConstants.CONTENT_URI, values, selection, args);
+    Log.e("DataBaseManager", "Total Aisles marked to delete : " + updatedRows);
   }
   
 }
