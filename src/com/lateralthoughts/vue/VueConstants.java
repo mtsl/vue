@@ -61,6 +61,7 @@ public class VueConstants {
 	public static final String BOOKMARK_COUNT = "bookMarkCount";
 	public static final String IS_BOOKMARKED = "isBookmarked";
     public static final String LIKE_OR_DISLIKE = "likeOrDislike";
+    public static final String LIKES_COUNT = "likesCount";
 	public static final String DIRTY_FLAG = "isDirtry";
 	public static final String AISLE_ID = "aisleId";
 	public static final String DELETE_FLAG = "deleteFlag";

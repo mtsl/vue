@@ -115,7 +115,7 @@ public class DataEntryFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-	  dbManager = new DataBaseManager(getActivity());
+	  dbManager = DataBaseManager.getInstance(getActivity());
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		screenHeight = dm.heightPixels;
 		screenHeight = screenHeight

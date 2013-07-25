@@ -60,33 +60,35 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 
-public class VueListFragment extends SherlockFragment implements TextWatcher/*Fragment*/ {
- // public static final String TAG = "VueListFragment";
+public class VueListFragment extends SherlockFragment implements TextWatcher/* Fragment */{
+  // public static final String TAG = "VueListFragment";
   private ExpandableListView expandListView;
   private LinearLayout customlayout, aboutlayout, invitefriendsLayout;
-  private RelativeLayout mBezelMainLayout, donelayout, aboutdonelayout, vue_list_fragment_invite_friendsLayout_mainxml;
+  private RelativeLayout mBezelMainLayout, donelayout, aboutdonelayout,
+      vue_list_fragment_invite_friendsLayout_mainxml;
   private ImageView userProfilePic;
-  private TextView userName, userDateOfBirth, userGender, userEmail, userCurrentLocation;
-  private EditText userNameEdit, userDOBEdit, userGenderEdit, userEmailEdit, userLocationEdit;
-  private CheckBox smallch, mediumch, largech ;
+  // private TextView userName, userDateOfBirth, userGender, userEmail,
+  // userCurrentLocation;
+  private EditText userNameEdit, userDOBEdit, userGenderEdit, userEmailEdit,
+      userLocationEdit;
   private Animation animDown;
   private Animation animUp;
   private ListView inviteFrirendsListView;
   public FriendsListener listener;
   private SharedPreferences sharedPreferencesObj;
-  private ImageLoader mImageLoader;
+  // private ImageLoader mImageLoader;
   private ProgressDialog progress;
   private LayoutInflater inflater;
   private boolean isProfileEdited = false;
   boolean isNewUser = false;
   private String profilePicUrl = "";
- 
+
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     this.inflater = inflater;
     sharedPreferencesObj = getActivity().getSharedPreferences(
         VueConstants.SHAREDPREFERENCE_NAME, 0);
-   // pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    // pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     listener = new FriendsListener() {
       @Override
       public boolean onBackPressed() {
@@ -118,13 +120,15 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
 
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    mBezelMainLayout = (RelativeLayout) getActivity().findViewById(R.id.bezel_menu_main_layout);
-    vue_list_fragment_invite_friendsLayout_mainxml = (RelativeLayout) getActivity().findViewById(R.id.vue_list_fragment_invite_friendsLayout_mainxml);
+    mBezelMainLayout = (RelativeLayout) getActivity().findViewById(
+        R.id.bezel_menu_main_layout);
+    vue_list_fragment_invite_friendsLayout_mainxml = (RelativeLayout) getActivity()
+        .findViewById(R.id.vue_list_fragment_invite_friendsLayout_mainxml);
     expandListView = (ExpandableListView) getActivity().findViewById(
         R.id.vue_list_fragment_list);
 
-    final VueListFragmentAdapter adapter = new VueListFragmentAdapter(getActivity(),
-        getBezelMenuOptionItems());
+    final VueListFragmentAdapter adapter = new VueListFragmentAdapter(
+        getActivity(), getBezelMenuOptionItems());
     expandListView.setAdapter(adapter);
     animDown = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_down);
     animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_up);
@@ -137,86 +141,99 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         TextView textView = (TextView) v
             .findViewById(R.id.vue_list_fragment_itemTextview);
         String s = textView.getText().toString();
-        if(s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
-          //textView.setText(getString(R.string.sidemenu_option_Trending_Aisles));
+        if (s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
           adapter.groups.remove(groupPosition);
           ListOptionItem item = new ListOptionItem(
-              getString(R.string.sidemenu_option_Trending_Aisles), R.drawable.profile, null);
+              getString(R.string.sidemenu_option_Trending_Aisles),
+              R.drawable.profile, null);
           adapter.groups.add(groupPosition, item);
           adapter.notifyDataSetChanged();
           VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
-          VueLandingPageActivity activity =(VueLandingPageActivity)getActivity();
+          AisleWindowContentFactory.getInstance(getActivity())
+              .clearObjectsInUse();
+          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
           activity.getSlidingMenu().toggle();
-          activity.getSupportActionBar().setTitle(getString(R.string.sidemenu_option_My_Aisles));
-          ArrayList<AisleWindowContent> aislesList = new DataBaseManager(getActivity()).getAislesFromDB(null);
+          activity.getSupportActionBar().setTitle(
+              getString(R.string.sidemenu_option_My_Aisles));
+          ArrayList<AisleWindowContent> aislesList = DataBaseManager.getInstance(getActivity())
+              .getAislesFromDB(null);
           Message msg = new Message();
           msg.obj = aislesList;
-          VueTrendingAislesDataModel.getInstance(getActivity()).mHandler.sendMessage(msg);
-         // VueTrendingAislesDataModel.getInstance(getActivity()).getAislesFromDb();
-        } else if(s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
-          //textView.setText(getString(R.string.sidemenu_option_My_Aisles));
+          VueTrendingAislesDataModel.getInstance(getActivity()).mHandler
+              .sendMessage(msg);
+        } else if (s
+            .equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
           adapter.groups.remove(groupPosition);
           ListOptionItem item = new ListOptionItem(
-              getString(R.string.sidemenu_option_My_Aisles), R.drawable.profile, null);
+              getString(R.string.sidemenu_option_My_Aisles),
+              R.drawable.profile, null);
           adapter.groups.add(groupPosition, item);
           adapter.notifyDataSetChanged();
-          VueTrendingAislesDataModel model = VueTrendingAislesDataModel.getInstance(getActivity());
+          VueTrendingAislesDataModel model = VueTrendingAislesDataModel
+              .getInstance(getActivity());
           model.clearAisles();
-          VueLandingPageActivity activity =(VueLandingPageActivity)getActivity();
+          AisleWindowContentFactory.getInstance(getActivity())
+              .clearObjectsInUse();
+          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
           activity.getSlidingMenu().toggle();
           activity.getSupportActionBar().setTitle(getString(R.string.trending));
-          model.mVueContentGateway.getTrendingAisles(model.mLimit = VueTrendingAislesDataModel.TRENDING_AISLES_BATCH_INITIAL_SIZE, model.mOffset = 0,
-              model.mTrendingAislesParser);
+          model.mMoreDataAvailable = true;
+          model.mVueContentGateway.getTrendingAisles(
+                  model.mLimit = VueTrendingAislesDataModel.TRENDING_AISLES_BATCH_INITIAL_SIZE,
+                  model.mOffset = 0, model.mTrendingAislesParser);
         } else if (s.equals(getString(R.string.sidemenu_option_About))) {
           inflateAboutLayout();
         } else if (s.equals(getString(R.string.sidemenu_option_FeedBack))) {
           startActivity(new Intent(getActivity(), FeedbackForm.class));
-        } else if(s.equals(getString(R.string.sidemeun_option_Settings))) {
+        } else if (s.equals(getString(R.string.sidemeun_option_Settings))) {
           inflateSettingsLayout();
-        } else if(s.equals(getString(R.string.sidemenu_option_Invite_Friends))) {
+        } else if (s.equals(getString(R.string.sidemenu_option_Invite_Friends))) {
           View layoutInviewFriends = inflater.inflate(R.layout.invite, null);
-          RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-          vue_list_fragment_invite_friendsLayout_mainxml.addView(layoutInviewFriends);
-          invitefriendsLayout = (LinearLayout) layoutInviewFriends.findViewById(
-              R.id.vue_list_fragment_invite_friendsLayout);
+          RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+              LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+          vue_list_fragment_invite_friendsLayout_mainxml
+              .addView(layoutInviewFriends);
+          invitefriendsLayout = (LinearLayout) layoutInviewFriends
+              .findViewById(R.id.vue_list_fragment_invite_friendsLayout);
           invitefriendsLayout.setLayoutParams(params);
-          inviteFrirendsListView = (ListView) layoutInviewFriends.findViewById(
-              R.id.vue_list_fragment_Invitefriends_list);
-          inviteFrirendsListView.setOnItemClickListener(new OnItemClickListener() {
+          inviteFrirendsListView = (ListView) layoutInviewFriends
+              .findViewById(R.id.vue_list_fragment_Invitefriends_list);
+          inviteFrirendsListView
+              .setOnItemClickListener(new OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                long id) {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
 
-              String itemName = ((TextView) view
-                  .findViewById(R.id.invite_friends_name)).getText().toString();
-              // TODO:
-            }
-          });
-        } else if(s.equals(getString(R.string.sidemenu_option_Login))) {
-             sharedPreferencesObj = getActivity().getSharedPreferences(
-                    VueConstants.SHAREDPREFERENCE_NAME, 0);
-             boolean fbloginfalg = sharedPreferencesObj.getBoolean(
-                  VueConstants.FACEBOOK_LOGIN, false);
-            boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
-                  VueConstants.GOOGLEPLUS_LOGIN, false);
-        if(!googleplusloginfalg || !fbloginfalg) {
-            
-                    Intent i = new Intent(getActivity(), VueLoginActivity.class);
-                    Bundle b = new Bundle();
-                     b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
-                    b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
-                    b.putString(VueConstants.FROM_INVITEFRIENDS,
-                            null);
-                    b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, true);
-                    i.putExtras(b);
-                    startActivity(i);
-        }
-        else
-        {
-         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.AlreadyLoggedinmesg),
-                Toast.LENGTH_LONG).show();
-        }
+                  /*String itemName = ((TextView) view
+                      .findViewById(R.id.invite_friends_name)).getText()
+                      .toString();*/
+                  // TODO:
+                }
+              });
+        } else if (s.equals(getString(R.string.sidemenu_option_Login))) {
+          sharedPreferencesObj = getActivity().getSharedPreferences(
+              VueConstants.SHAREDPREFERENCE_NAME, 0);
+          boolean fbloginfalg = sharedPreferencesObj.getBoolean(
+              VueConstants.FACEBOOK_LOGIN, false);
+          boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
+              VueConstants.GOOGLEPLUS_LOGIN, false);
+          if (!googleplusloginfalg || !fbloginfalg) {
+
+            Intent i = new Intent(getActivity(), VueLoginActivity.class);
+            Bundle b = new Bundle();
+            b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+            b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+            b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+            b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, true);
+            i.putExtras(b);
+            startActivity(i);
+          } else {
+            Toast.makeText(
+                getActivity(),
+                getActivity().getResources().getString(
+                    R.string.AlreadyLoggedinmesg), Toast.LENGTH_LONG).show();
+          }
         }
         return false;
       }
@@ -227,34 +244,17 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
       @Override
       public boolean onChildClick(ExpandableListView parent, View v,
           int groupPosition, int childPosition, long id) {
-          TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
-          String s = textView.getText().toString();
-          if(s.equals(getString(R.string.sidemenu_option_Profile))) {
-              getUserInfo();
-          } else if(s.equals(getString(R.string.sidemenu_sub_option_Facebook))
-              || s.equals(getString(R.string.sidemenu_sub_option_Gmail))) {
-            getFriendsList(s); 
-          }
+        TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
+        String s = textView.getText().toString();
+        if (s.equals(getString(R.string.sidemenu_option_Profile))) {
+          getUserInfo();
+        } else if (s.equals(getString(R.string.sidemenu_sub_option_Facebook))
+            || s.equals(getString(R.string.sidemenu_sub_option_Gmail))) {
+          getFriendsList(s);
+        }
         return false;
       }
     });
-  }
-
-  public void setListener() {
-
-  }
-
-  /**
-   * 
-   * @param small boolean
-   * @param medium boolean
-   * @param large boolean to check the check boxes when select one of the check
-   *        box
-   */
-  private void setChecks(boolean small, boolean medium, boolean large) {
-    smallch.setChecked(small);
-    mediumch.setChecked(medium);
-    largech.setChecked(large);
   }
 
   /**
@@ -274,9 +274,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
     item = new ListOptionItem(getString(R.string.sidemeun_option_Settings),
         R.drawable.settings01, getSettingsChildren());
     groups.add(item);
-    /*item = new ListOptionItem(getString(R.string.sidemenu_option_Profile),
-        R.drawable.profile, null);
-    groups.add(item);*/
     item = new ListOptionItem(
         getString(R.string.sidemenu_option_Invite_Friends), R.drawable.invite,
         getInviteFriendsChildren());
@@ -291,8 +288,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         R.drawable.vue_launcher_icon, null);
     groups.add(item);
     item = new ListOptionItem(getString(R.string.sidemenu_option_Login),
-            R.drawable.vue_launcher_icon, null);
-        groups.add(item);
+        R.drawable.vue_launcher_icon, null);
+    groups.add(item);
     return groups;
   }
 
@@ -349,11 +346,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
     inviteFriendsChildren.add(item);
     return inviteFriendsChildren;
   }
-  
+
   private List<ListOptionItem> getSettingsChildren() {
     List<ListOptionItem> settingsChildren = new ArrayList<VueListFragment.ListOptionItem>();
-    ListOptionItem item = new ListOptionItem(getString(R.string.sidemenu_option_Profile),
-        R.drawable.profile, null);
+    ListOptionItem item = new ListOptionItem(
+        getString(R.string.sidemenu_option_Profile), R.drawable.profile, null);
     settingsChildren.add(item);
     return settingsChildren;
   }
@@ -400,8 +397,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
       return 0;
     }
 
-
-
     @Override
     public View getChildView(int groupPosition, int childPosition,
         boolean isLastChild, View convertView, ViewGroup parent) {
@@ -433,7 +428,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
       if (groups.get(groupPosition).tag.equals("Categories")
           || (groups.get(groupPosition).tag
               .equals(getString(R.string.sidemenu_option_Invite_Friends)))
-              || groups.get(groupPosition).tag.equals("Settings")) {
+          || groups.get(groupPosition).tag.equals("Settings")) {
         return groups.get(groupPosition).children.size();
       }
       return 0;
@@ -508,7 +503,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
 
     public boolean onBackPressed();
   }
-  
+
   public void getFriendsList(String s) {
 
     progress = ProgressDialog.show(getActivity(), "", "Please wait...");
@@ -565,7 +560,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
     }
   }
 
-      // Pull and display fb friends from facebook.com
+  // Pull and display fb friends from facebook.com
   private void fbFriendsList() {
     SharedPreferences sharedPreferencesObj = getActivity()
         .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -582,7 +577,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
             fbGPlusFriends = JsonParsing(response);
             if (fbGPlusFriends != null) {
               inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(
-                  getActivity(),fbGPlusFriends));
+                  getActivity(), fbGPlusFriends));
               expandListView.setVisibility(View.GONE);
               invitefriendsLayout.setVisibility(View.VISIBLE);
               invitefriendsLayout.startAnimation(animUp);
@@ -656,81 +651,95 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
     }
   }
 
-    private void getUserInfo() {
-      expandListView.setVisibility(View.GONE);
-      customlayout.startAnimation(animUp);
-      customlayout.setVisibility(View.VISIBLE);
-      String name = "";
-      String dob = "";
-      String gender = "";
-      String email = "";
-      String location = "";
-     
-      if(!sharedPreferencesObj.getString(VueConstants.USER_NAME, "").isEmpty()) {
-        name = sharedPreferencesObj.getString(VueConstants.USER_NAME, "");
-        dob = sharedPreferencesObj.getString(VueConstants.USER_DOB, "");
-        gender = sharedPreferencesObj.getString(VueConstants.USER_GENDER, "");
-        email = sharedPreferencesObj.getString(VueConstants.USER_EMAIL, "");
-        location = sharedPreferencesObj.getString(VueConstants.USER_LOCATION, "");
-        profilePicUrl = sharedPreferencesObj.getString(VueConstants.USER_PROFILE_PICTURE, null);
-      } else if(!sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "").isEmpty()) {
-        name = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME, "");
-        dob = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_DOB, "");
-        gender = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_GENDER, "");
-        email = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_EMAIL, "");
-        location = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_LOCATION, "");
-        profilePicUrl = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_PROFILE_PICTURE, null);
-        isNewUser = true;
-      } else if(!sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME, "").isEmpty()) {
-        name = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME, "");
-        dob =  sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_DOB, "");
-        gender = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_GENDER, "");
-        email = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_EMAIL, "");
-        location = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_LOCATION, "");
-        profilePicUrl = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_PROFILE_PICTURE, null);
-        isNewUser = true;
-      } else {
-        
-      }
+  private void getUserInfo() {
+    expandListView.setVisibility(View.GONE);
+    customlayout.startAnimation(animUp);
+    customlayout.setVisibility(View.VISIBLE);
+    String name = "";
+    String dob = "";
+    String gender = "";
+    String email = "";
+    String location = "";
 
-      /*userName.setText(name);
-      userDateOfBirth.setText(dob);
-      userGender.setText(gender);
-      userCurrentLocation.setText(location);*/
-      userNameEdit.setText(name);
-      userDOBEdit.setText(dob);
-      userGenderEdit.setText(gender);
-      userEmailEdit.setText(email);
-      userLocationEdit.setText(location);
-      if(!userEmailEdit.getText().toString().isEmpty()) {
-        userEmailEdit.setEnabled(false);
-      }
-      if(profilePicUrl != null) {
-        Response.Listener listener = new Response.Listener<Bitmap>() {
-          @Override
-          public void onResponse(Bitmap bmp) {
-            userProfilePic.setImageBitmap(bmp);
-          }
-        };
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-           @Override
-           public void onErrorResponse(VolleyError arg0) {
-               Log.e("VueListFragment", arg0.getMessage());
-           }
-         };
-        ImageRequest imagerequestObj = new ImageRequest(profilePicUrl, listener, 0,
-            0, null, errorListener);       
-        VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
-      }
+    if (!sharedPreferencesObj.getString(VueConstants.USER_NAME, "").isEmpty()) {
+      name = sharedPreferencesObj.getString(VueConstants.USER_NAME, "");
+      dob = sharedPreferencesObj.getString(VueConstants.USER_DOB, "");
+      gender = sharedPreferencesObj.getString(VueConstants.USER_GENDER, "");
+      email = sharedPreferencesObj.getString(VueConstants.USER_EMAIL, "");
+      location = sharedPreferencesObj.getString(VueConstants.USER_LOCATION, "");
+      profilePicUrl = sharedPreferencesObj.getString(
+          VueConstants.USER_PROFILE_PICTURE, null);
+    } else if (!sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_NAME,
+        "").isEmpty()) {
+      name = sharedPreferencesObj
+          .getString(VueConstants.FACEBOOK_USER_NAME, "");
+      dob = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_DOB, "");
+      gender = sharedPreferencesObj.getString(
+          VueConstants.FACEBOOK_USER_GENDER, "");
+      email = sharedPreferencesObj.getString(VueConstants.FACEBOOK_USER_EMAIL,
+          "");
+      location = sharedPreferencesObj.getString(
+          VueConstants.FACEBOOK_USER_LOCATION, "");
+      profilePicUrl = sharedPreferencesObj.getString(
+          VueConstants.FACEBOOK_USER_PROFILE_PICTURE, null);
+      isNewUser = true;
+    } else if (!sharedPreferencesObj.getString(
+        VueConstants.GOOGLEPLUS_USER_NAME, "").isEmpty()) {
+      name = sharedPreferencesObj.getString(VueConstants.GOOGLEPLUS_USER_NAME,
+          "");
+      dob = sharedPreferencesObj
+          .getString(VueConstants.GOOGLEPLUS_USER_DOB, "");
+      gender = sharedPreferencesObj.getString(
+          VueConstants.GOOGLEPLUS_USER_GENDER, "");
+      email = sharedPreferencesObj.getString(
+          VueConstants.GOOGLEPLUS_USER_EMAIL, "");
+      location = sharedPreferencesObj.getString(
+          VueConstants.GOOGLEPLUS_USER_LOCATION, "");
+      profilePicUrl = sharedPreferencesObj.getString(
+          VueConstants.GOOGLEPLUS_USER_PROFILE_PICTURE, null);
+      isNewUser = true;
+    } else {
+
     }
 
-    /**
-     *  
-     * @param jsonString
-     * @return
-     * @throws JSONException
+    /*
+     * userName.setText(name); userDateOfBirth.setText(dob);
+     * userGender.setText(gender); userCurrentLocation.setText(location);
      */
-    @SuppressWarnings("unchecked")
+    userNameEdit.setText(name);
+    userDOBEdit.setText(dob);
+    userGenderEdit.setText(gender);
+    userEmailEdit.setText(email);
+    userLocationEdit.setText(location);
+    if (!userEmailEdit.getText().toString().isEmpty()) {
+      userEmailEdit.setEnabled(false);
+    }
+    if (profilePicUrl != null) {
+      Response.Listener listener = new Response.Listener<Bitmap>() {
+        @Override
+        public void onResponse(Bitmap bmp) {
+          userProfilePic.setImageBitmap(bmp);
+        }
+      };
+      Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError arg0) {
+          Log.e("VueListFragment", arg0.getMessage());
+        }
+      };
+      ImageRequest imagerequestObj = new ImageRequest(profilePicUrl, listener,
+          0, 0, null, errorListener);
+      VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
+    }
+  }
+
+  /**
+   * 
+   * @param jsonString
+   * @return
+   * @throws JSONException
+   */
+  @SuppressWarnings("unchecked")
   List<FbGPlusDetails> JsonParsing(String jsonString) throws JSONException {
     List<FbGPlusDetails> facebookFriendsDetailsList = null;
 
@@ -755,101 +764,126 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
 
     return facebookFriendsDetailsList;
   }
-    
-    private void inflateSettingsLayout() {
-      View layoutSettings = null;
-      if(customlayout == null) {
+
+  private void inflateSettingsLayout() {
+    View layoutSettings = null;
+    if (customlayout == null) {
       layoutSettings = inflater.inflate(R.layout.settings_layout, null);
-      LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
-          LayoutParams.MATCH_PARENT);
-      customlayout = (LinearLayout) layoutSettings.findViewById(R.id.customlayout);
+      LinearLayout.LayoutParams params = new LayoutParams(
+          LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+      customlayout = (LinearLayout) layoutSettings
+          .findViewById(R.id.customlayout);
       customlayout.setLayoutParams(params);
-      userProfilePic = (ImageView) layoutSettings.findViewById(R.id.user_profilePic);
-      userName = (TextView) layoutSettings.findViewById(R.id.user_name);
-      userDateOfBirth = (TextView) layoutSettings.findViewById(R.id.user_date_Of_birth);
-      userGender = (TextView) layoutSettings.findViewById(R.id.user_gender);
-      userEmail = (TextView) layoutSettings.findViewById(R.id.user_Email);
-      userCurrentLocation = (TextView) layoutSettings.findViewById(R.id.user_current_location);
-      
-      userNameEdit = (EditText) layoutSettings.findViewById(R.id.user_name_EditText);
-      userDOBEdit =  (EditText) layoutSettings.findViewById(R.id.user_DOB_EditText);
-      userGenderEdit = (EditText) layoutSettings.findViewById(R.id.user_Gender_EditText);
-      userEmailEdit = (EditText) layoutSettings.findViewById(R.id.user_Email_EditText);
-      userLocationEdit = (EditText) layoutSettings.findViewById(R.id.user_location_EditText);
-      
+      userProfilePic = (ImageView) layoutSettings
+          .findViewById(R.id.user_profilePic);
+      // userName = (TextView) layoutSettings.findViewById(R.id.user_name);
+      // userDateOfBirth = (TextView)
+      // layoutSettings.findViewById(R.id.user_date_Of_birth);
+      // userGender = (TextView) layoutSettings.findViewById(R.id.user_gender);
+      // userEmail = (TextView) layoutSettings.findViewById(R.id.user_Email);
+      // userCurrentLocation = (TextView)
+      // layoutSettings.findViewById(R.id.user_current_location);
+
+      userNameEdit = (EditText) layoutSettings
+          .findViewById(R.id.user_name_EditText);
+      userDOBEdit = (EditText) layoutSettings
+          .findViewById(R.id.user_DOB_EditText);
+      userGenderEdit = (EditText) layoutSettings
+          .findViewById(R.id.user_Gender_EditText);
+      userEmailEdit = (EditText) layoutSettings
+          .findViewById(R.id.user_Email_EditText);
+      userLocationEdit = (EditText) layoutSettings
+          .findViewById(R.id.user_location_EditText);
+
       userDOBEdit.setOnTouchListener(new OnTouchListener() {
-        
+
         @Override
-        public boolean onTouch(View arg0, MotionEvent arg1) {
+        public boolean onTouch(View view, MotionEvent event) {
+          if(event.getAction() == MotionEvent.ACTION_UP) {
           dataPicker();
+          }
           return false;
         }
       });
-      
-      userDOBEdit.setOnClickListener(new OnClickListener() {
-        
+
+     /* userDOBEdit.setOnClickListener(new OnClickListener() {
+
         @Override
         public void onClick(View v) {
           dataPicker();
         }
-      });
-      
+      });*/
+
       userNameEdit.addTextChangedListener(this);
       userDOBEdit.addTextChangedListener(this);
       userGenderEdit.addTextChangedListener(this);
       userEmailEdit.addTextChangedListener(this);
       userLocationEdit.addTextChangedListener(this);
-      donelayout = (RelativeLayout) layoutSettings.findViewById(R.id.donelayout);
+      donelayout = (RelativeLayout) layoutSettings
+          .findViewById(R.id.donelayout);
       donelayout.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
-         // Utils.saveNetworkSettings(getActivity(), wifich.isChecked());
+          // Utils.saveNetworkSettings(getActivity(), wifich.isChecked());
           Log.e("Profiling", "Profiling User Profile onClick");
+          if(userNameEdit.getText().toString().isEmpty()) {
+            Toast.makeText(getActivity(), "User name cannot be blank", Toast.LENGTH_LONG).show();
+            return;
+          }
           customlayout.setVisibility(View.GONE);
           customlayout.startAnimation(animDown);
           expandListView.setVisibility(View.VISIBLE);
-          if(isProfileEdited || isNewUser) {
-            Log.e("Profiling", "Profiling User Profile onClick isProfileEdited : " + isProfileEdited);
+          if (isProfileEdited || isNewUser) {
+            Log.e("Profiling",
+                "Profiling User Profile onClick isProfileEdited : "
+                    + isProfileEdited);
             userDOBEdit.getText().toString();
-          userGenderEdit.getText().toString();
-          userEmailEdit.getText().toString();
-          userLocationEdit.getText().toString();
-          userEmailEdit.getText().toString();
-          Editor editor = sharedPreferencesObj.edit();
-          editor.putString(VueConstants.USER_NAME, userNameEdit.getText().toString());
-          editor.putString(VueConstants.USER_DOB, userDOBEdit.getText().toString());
-          editor.putString(VueConstants.USER_GENDER, userGenderEdit.getText().toString());
-          editor.putString(VueConstants.USER_EMAIL, userEmailEdit.getText().toString());
-          editor.putString(VueConstants.USER_LOCATION, userLocationEdit.getText().toString());
-          editor.putString(VueConstants.USER_PROFILE_PICTURE, profilePicUrl);
-          editor.commit();
-          isProfileEdited = false;
-          isNewUser = false;
+            userGenderEdit.getText().toString();
+            userEmailEdit.getText().toString();
+            userLocationEdit.getText().toString();
+            userEmailEdit.getText().toString();
+            Editor editor = sharedPreferencesObj.edit();
+            editor.putString(VueConstants.USER_NAME, userNameEdit.getText()
+                .toString());
+            editor.putString(VueConstants.USER_DOB, userDOBEdit.getText()
+                .toString());
+            editor.putString(VueConstants.USER_GENDER, userGenderEdit.getText()
+                .toString());
+            editor.putString(VueConstants.USER_EMAIL, userEmailEdit.getText()
+                .toString());
+            editor.putString(VueConstants.USER_LOCATION, userLocationEdit
+                .getText().toString());
+            editor.putString(VueConstants.USER_PROFILE_PICTURE, profilePicUrl);
+            editor.commit();
+            sharedPreferencesObj.getString(VueConstants.USER_DOB, "No DATA FOUND FOR " + VueConstants.USER_DOB);
+            isProfileEdited = false;
+            isNewUser = false;
           }
         }
       });
       mBezelMainLayout.addView(layoutSettings);
-      }
-      customlayout.setVisibility(View.GONE);
-     
     }
-    
-    private void inflateAboutLayout() {
-      View aboutLayoutView = null;
-     if(aboutlayout == null) {
+    customlayout.setVisibility(View.GONE);
+
+  }
+
+  private void inflateAboutLayout() {
+    View aboutLayoutView = null;
+    if (aboutlayout == null) {
       aboutLayoutView = inflater.inflate(R.layout.about, null);
-      LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
-          LayoutParams.MATCH_PARENT);
+      LinearLayout.LayoutParams params = new LayoutParams(
+          LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
       LayoutParams params2 = new LayoutParams((int) TypedValue.applyDimension(
           TypedValue.COMPLEX_UNIT_DIP, getScreenWidth() / 2, getActivity()
               .getResources().getDisplayMetrics()),
           (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48,
               getActivity().getResources().getDisplayMetrics()));
       params2.gravity = Gravity.CENTER_HORIZONTAL;
-      aboutlayout = (LinearLayout) aboutLayoutView.findViewById(R.id.aboutlayout);
+      aboutlayout = (LinearLayout) aboutLayoutView
+          .findViewById(R.id.aboutlayout);
       aboutlayout.setLayoutParams(params);
-      aboutdonelayout = (RelativeLayout) aboutLayoutView.findViewById(
-          R.id.aboutdonelayout);
+      aboutdonelayout = (RelativeLayout) aboutLayoutView
+          .findViewById(R.id.aboutdonelayout);
       aboutdonelayout.setLayoutParams(params);
       aboutdonelayout.setOnClickListener(new OnClickListener() {
 
@@ -861,18 +895,19 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
         }
       });
       mBezelMainLayout.addView(aboutLayoutView);
-     }
-      expandListView.setVisibility(View.GONE);
-      aboutlayout.setVisibility(View.VISIBLE);
-      aboutlayout.startAnimation(animUp);
     }
+    expandListView.setVisibility(View.GONE);
+    aboutlayout.setVisibility(View.VISIBLE);
+    aboutlayout.startAnimation(animUp);
+  }
 
   @Override
   public void afterTextChanged(Editable s) {
-    Log.e("Profiling", "Profiling User Profile onClick afterTextChanged 1 : " + isProfileEdited);
-    if(!isProfileEdited)
-    isProfileEdited = true;
-    Log.e("Profiling", "Profiling User Profile onClick afterTextChanged 2 : " + isProfileEdited);
+    Log.e("Profiling", "Profiling User Profile onClick afterTextChanged 1 : "
+        + isProfileEdited);
+    if (!isProfileEdited) isProfileEdited = true;
+    Log.e("Profiling", "Profiling User Profile onClick afterTextChanged 2 : "
+        + isProfileEdited);
   }
 
   @Override
@@ -886,17 +921,20 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
   }
 
   private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-    
+
     public void onDateSet(DatePicker view, int year, int monthOfYear,
-      int dayOfMonth) {
+        int dayOfMonth) {
       String y = Integer.toString(year);
       String m = Integer.toString(monthOfYear);
       String d = Integer.toString(dayOfMonth);
       userDOBEdit.setText(y + "/" + m + "/" + d);
     }
-   };
+  };
 
+ // private boolean isDataPickerOpen = false;
   private void dataPicker() {
+   // if(!isDataPickerOpen) {
+   // isProfileEdited = true;
     final Calendar c = Calendar.getInstance();
     int mYear = c.get(Calendar.YEAR);
     int mMonth = c.get(Calendar.MONTH);
@@ -904,8 +942,10 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/*Fr
     DatePickerDialog DPD = new DatePickerDialog(getActivity(),
         mDateSetListener, mYear, mMonth, mDay);
     DPD.show();
+   // isDataPickerOpen = true;
+  //  }
   }
- 
-  
-  
+
+
+
 }

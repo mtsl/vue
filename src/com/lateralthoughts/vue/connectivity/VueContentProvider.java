@@ -210,7 +210,7 @@ public class VueContentProvider extends ContentProvider{
   @Override
   public Cursor query(Uri uri, String[] projection, String selection,
       String[] selectionArgs, String sortOrder) {
-    SQLiteDatabase aislesDB = dbHelper.getWritableDatabase();
+    SQLiteDatabase aislesDB = dbHelper.getReadableDatabase();
     SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
     Cursor cursor = null;
     String id;
@@ -218,9 +218,10 @@ public class VueContentProvider extends ContentProvider{
     switch (URIMATCHER.match(uri)) {
       case AISLES_MATCH:
         qb.setTables(VueConstants.AISLES);
+        //cursor = aislesDB.query(VueConstants.AISLES, projection, selection, selectionArgs, null, null, sortOrder);
         cursor = qb.query(aislesDB, projection, selection, selectionArgs,
             null, null, sortOrder);
-        Log.e("provider", "Total Aisles marked to Content Provider cursor.getCount()" + cursor.getCount());
+        Log.e("provider", "Content Provider cursor.getCount()" + cursor.getCount());
         break;
      case AISLE_MATCH:
        qb.setTables(VueConstants.AISLES);
