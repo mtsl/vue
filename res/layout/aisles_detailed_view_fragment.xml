@@ -64,7 +64,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="4dp"
             android:contentDescription="@string/Image"
-            android:src="@drawable/profile_thumbnail" />
+            android:src="@drawable/profile_light" />
 
         <TextView
             android:id="@+id/vue_user_name"
@@ -82,7 +82,7 @@
             android:layout_height="32dp"
             android:layout_centerInParent="true"
             android:contentDescription="@string/Image"
-            android:src="@drawable/add" />
+            android:src="@drawable/add_dark" />
 
         <ImageView
             android:id="@+id/vue_aisle"
@@ -92,7 +92,7 @@
             android:layout_marginRight="16dp"
             android:layout_toLeftOf="@+id/vuesharelayout"
             android:contentDescription="@string/Image"
-            android:src="@drawable/aisleinfo" />
+            android:src="@drawable/aisleinfo_light" />
 
         <RelativeLayout
             android:id="@+id/vuesharelayout"
@@ -106,7 +106,7 @@
                 android:layout_height="32dp"
                 android:layout_centerInParent="true"
                 android:contentDescription="@string/Image"
-                android:src="@drawable/share" />
+                android:src="@drawable/share_light" />
         </RelativeLayout>
     </RelativeLayout>
 
