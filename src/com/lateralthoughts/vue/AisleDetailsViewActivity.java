@@ -370,6 +370,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
+			} else if(mSlidingDrawer.isOpened()){
+				mSlidingDrawer.close();
 			} else {
 				if (!VueApplication.getInstance().mSoftKeboardIndicator) {
 					if(mVueAiselFragment == null) {
@@ -385,7 +387,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		}
 		return false;
-
+ 
 	}
 
 	@Override

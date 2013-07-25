@@ -127,7 +127,7 @@ public class AisleDetailsViewListLoader {
 			Bitmap bitmap = mBitmapLoaderUtils
 					.getCachedBitmap(itemDetails.mCustomImageUrl);
 			if (bitmap != null) {
-				// get the dimentions of the image.
+				// get the dimensions of the image.
 				mImageDimension = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
 						itemDetails.mAvailableHeight);

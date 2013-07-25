@@ -12,8 +12,8 @@ public class AisleImageDetails {
 	
 	public int mAvailableHeight;
 	public int mAvailableWidth;
-	public int mLikesCount;
-	public String mLikeDislikeStatus;
+	public int mLikesCount = 5;
+	public int mLikeDislikeStatus = AisleDetailsViewAdapter.IMG_NONE_STATUS;
 	public ArrayList<String> mCommentsList;
 	                         
 }
