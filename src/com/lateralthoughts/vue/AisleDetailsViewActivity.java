@@ -408,9 +408,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.aisle_details_view_fragment);
 				}
-
-				if (mVueAiselFragment.mAisleDetailsAdapter.mShare.shareIntentCalled) {
-					mVueAiselFragment.mAisleDetailsAdapter.mShare.shareIntentCalled = false;
+				if (mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled) {
+					mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled = false;
 					mVueAiselFragment.mAisleDetailsAdapter.mShare.dismisDialog();
 				}
 			} catch (Exception e) {

@@ -15,9 +15,9 @@ import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
 public class VueLandingPageActivity extends BaseActivity {
 
-	SharedPreferences sharedPreferencesObj;
+	SharedPreferences mSharedPreferencesObj;
 	private static final int DELAY_TIME = 500;
-	public static List<FbGPlusDetails> googlePlusFriendsDetailsList = null;
+	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -26,15 +26,15 @@ public class VueLandingPageActivity extends BaseActivity {
 		setContentView(R.layout.vue_landing_main);
 		getSupportActionBar().setTitle(getString(R.string.trending));
 		// Checking wheather app is opens for first time or not?
-		sharedPreferencesObj = this.getSharedPreferences(
+		mSharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
-		boolean isFirstTime = sharedPreferencesObj.getBoolean(
+		boolean isFirstTime = mSharedPreferencesObj.getBoolean(
 				VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG, true);
 
 		// Application opens first time.
 		if (isFirstTime) {
 
-			SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
 			editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG,
 					false);
 			editor.commit();
@@ -42,9 +42,9 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		// Check the CreatedAisleCount and Comments count
 		else {
-			int createdaislecount = sharedPreferencesObj.getInt(
+			int createdaislecount = mSharedPreferencesObj.getInt(
 					VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-			int commentscount = sharedPreferencesObj.getInt(
+			int commentscount = mSharedPreferencesObj.getInt(
 					VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
 
 			if (createdaislecount == VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
@@ -74,7 +74,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		getSupportMenuInflater().inflate(R.menu.title_options, menu);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		// Configure the search info and add any event listeners
-		return super.onCreateOptionsMenu(menu); //true;
+		return super.onCreateOptionsMenu(menu); // true;
 	}
 
 	@Override
@@ -93,6 +93,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -106,7 +107,6 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		return false;
 	}
-
 
 	public void showLogInDialog(boolean hideCancelButton) {
 		Intent i = new Intent(this, VueLoginActivity.class);
@@ -130,23 +130,24 @@ public class VueLandingPageActivity extends BaseActivity {
 				Window window = VueLandingPageActivity.this.getWindow();
 				window.getDecorView().getWindowVisibleDisplayFrame(rect);
 				int statusBarHeight = rect.top;
-				
- 
-			/*	  int contentViewTop=
-				   window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
-				  titleBarHeight= contentViewTop - statusBarHeight;
- 
-				   int contentViewTop=
-				  window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
-				  titleBarHeight= contentViewTop - statusBarHeight;*/
- 
-				 
+
+				/*
+				 * int contentViewTop=
+				 * window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
+				 * titleBarHeight= contentViewTop - statusBarHeight;
+				 * 
+				 * int contentViewTop=
+				 * window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
+				 * titleBarHeight= contentViewTop - statusBarHeight;
+				 */
+
 				VueApplication.getInstance().setmStatusBarHeight(
 						statusBarHeight);
 
 			}
-		}, DELAY_TIME); 
+		}, DELAY_TIME);
 	}
+
 	@Override
 	public void onPause() {
 		super.onPause();

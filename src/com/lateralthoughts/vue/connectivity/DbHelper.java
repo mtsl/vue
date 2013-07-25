@@ -42,7 +42,8 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.STORE + " text, "
      + VueConstants.USER_ID + " text, "
      + VueConstants.ID + " text, "
-     + VueConstants.LIKE_OR_DISLIKE + " text, "
+     + VueConstants.LIKE_OR_DISLIKE + " integer, "
+     + VueConstants.LIKES_COUNT + " integer, "
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.HEIGHT + " text, "
      + VueConstants.WIDTH + " text);";

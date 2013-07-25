@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -25,11 +28,37 @@ public class DataBaseManager {
   private int mEndPosition = 0;
   private int mLocalAislesLimit = 10;
   private Context mContext;
+  private int mPoolSize = 1;
+  private int mMaxPoolSize = 1;
+  private long mKeepAliveTime = 10;
+  private ThreadPoolExecutor threadPool;
+  private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
+  private static DataBaseManager manager;
   
-  public DataBaseManager(Context context) {
+  
+  private DataBaseManager(Context context) {
     mContext = context;
+    threadPool = new ThreadPoolExecutor(mPoolSize, mMaxPoolSize, mKeepAliveTime,
+        TimeUnit.SECONDS, threadsQueue);
   }
 
+  public static DataBaseManager getInstance(Context context) {
+    if(manager == null) {
+      manager = new DataBaseManager(context);
+    }
+    return manager;
+  }
+  
+  /**
+   * to start thread pool.
+   * 
+   * @param task Runnable
+   */
+  private void runTask(Runnable task) {
+    threadPool.execute(task);
+  }
+
+  
   /**
    * add all the aisles pulled from server to sqlite, if the aisle is already
    * there in sqlite then it will delete and insert the new data for that aisle.
@@ -188,6 +217,38 @@ public class DataBaseManager {
     
   }
   
+  public void addComments(final String comment, final String imageID, final String aisleID) {
+    runTask(new Runnable() {
+      
+      @Override
+      public void run() {
+        addCommentsToDb(comment, imageID, aisleID); 
+      }
+    });
+  }
+  
+  public void addLikeOrDisLike(final int likeStatus, final int likeCount, 
+      final String imageID, final String aisleID) {
+    runTask(new Runnable() {
+
+      @Override
+      public void run() {
+        addLikeOrDisLikeToDb(likeStatus, likeCount, imageID, aisleID);
+      }
+    });
+  }
+  
+  public void bookMarkOrUnBookmarkAisle(final boolean isBookmarked,
+      final int bookmarkCount, final String aisleID) {
+    runTask(new Runnable() {
+
+      @Override
+      public void run() {
+        bookMarkOrUnBookmarkAisleToDb(isBookmarked, bookmarkCount, aisleID);
+      }
+    });
+  }
+  
   /**
    * add new Comment on images and sets the DIRTY_FLAG true to indicate that
    * there is some new data to be uploaded to server.
@@ -195,7 +256,7 @@ public class DataBaseManager {
    * @param String imageID
    * @param String aisleID
    * */
-  public void addComments(String comment, String imageID, String aisleID) {
+  private void addCommentsToDb(String comment, String imageID, String aisleID) {
     ContentValues aisleValues = new ContentValues();
     aisleValues.put(VueConstants.DIRTY_FLAG, true);
     mContext.getContentResolver().update(VueConstants.CONTENT_URI, aisleValues,
@@ -208,9 +269,15 @@ public class DataBaseManager {
     mContext.getContentResolver().insert(VueConstants.COMMENTS_ON_IMAGE_URI, aisleValues);
   }
   
-  public void addLikeOrDisLike(boolean isLiked, String imageID, String aisleID) {
-    //TODO: We have some confusion on like/dislike and how to maintain user likes
-    // and rest of the world likes as we cannot merge these two and sync the db to server.
+  private void addLikeOrDisLikeToDb(int likeStatus, int likeCount, String imageID, String aisleID) {
+    ContentValues aisleValues = new ContentValues();
+    aisleValues.put(VueConstants.DIRTY_FLAG, true);
+    mContext.getContentResolver().update(VueConstants.CONTENT_URI, aisleValues,
+        VueConstants.AISLE_ID + "=?", new String[] {aisleID});
+    aisleValues.put(VueConstants.LIKE_OR_DISLIKE, likeStatus);
+    aisleValues.put(VueConstants.LIKES_COUNT, likeCount);
+    mContext.getContentResolver().update(VueConstants.IMAGES_CONTENT_URI, aisleValues,
+        VueConstants.AISLE_ID + "=? AND " +  VueConstants.IMAGE_ID + "=?", new String[] {aisleID, imageID});
   }
   
   /**
@@ -219,9 +286,10 @@ public class DataBaseManager {
    * @param boolean isBookmarked
    * @param String aisleID
    * */
-  public void bookMarkOrUnBookmarkAisle(boolean isBookmarked, String aisleID) {
+  private void bookMarkOrUnBookmarkAisleToDb(boolean isBookmarked, int bookmarkCount, String aisleID) {
     ContentValues values = new ContentValues();
     values.put(VueConstants.IS_BOOKMARKED, isBookmarked);
+    values.put(VueConstants.BOOKMARK_COUNT, bookmarkCount);
     mContext.getContentResolver().update(VueConstants.CONTENT_URI, values,
         VueConstants.AISLE_ID + "=?", new String[] {aisleID});
   }
@@ -321,14 +389,20 @@ public class DataBaseManager {
     /*DbHelper helper = new DbHelper(context);
     SQLiteDatabase db = helper.getReadableDatabase();
     Cursor c = db.query(DbHelper.DATABASE_TABLE_AISLES, new String[] {VueConstants.AISLE_ID}null, null, null, null, null, null);*/
-    
-    Cursor c = context.getContentResolver().query(VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_ID}, null, null, null);
-    Log.e("DataBaseManager", "Total Aisles marked to delete : Cursor.getCount() : " + c.getCount());
+   // Cursor c = context.getContentResolver().query(VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_ID}, null, null, null);
+    Cursor cursor = context.getContentResolver().query(VueConstants.CONTENT_URI, new String[] {VueConstants.ID, VueConstants.AISLE_ID}, null, null, null);
+    Cursor cursor1 = context.getContentResolver().query(VueConstants.CONTENT_URI, new String[] {"COUNT(*)"}, null, null, null);
+    String strCount = null;
+    if (cursor1.moveToFirst()) {
+      strCount = cursor1.getString(cursor1.getColumnIndex("COUNT(*)"));
+    }
+    Log.e("DataBaseManager", "Total Aisles marked to Cursor : Cursor1.getCount() : " + strCount);
+    Log.e("DataBaseManager", "Total Aisles marked to delete : Cursor.getCount() : " + cursor.getCount());
     ArrayList<String> aislesIds = new ArrayList<String>();
-    if(c.moveToFirst()) {
+    if(cursor.moveToFirst()) {
       do {
-        aislesIds.add(c.getString(c.getColumnIndex(VueConstants.AISLE_ID)));
-      } while(c.moveToNext());
+        aislesIds.add(cursor.getString(cursor.getColumnIndex(VueConstants.AISLE_ID)));
+      } while(cursor.moveToNext());
     }
     /*for(String s : aislesIds) {
       Uri uri = Uri.parse(VueConstants.CONTENT_URI + "/" + );  
