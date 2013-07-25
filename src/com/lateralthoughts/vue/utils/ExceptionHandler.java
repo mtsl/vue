@@ -2,7 +2,10 @@ package com.lateralthoughts.vue.utils;
 
 import java.io.*;
 import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.logging.Logger;
+
 import android.app.Activity;
+import android.os.Looper;
 import android.os.Process;
 import android.util.Log;
 
@@ -33,6 +36,7 @@ public class ExceptionHandler implements
 			@Override
 			public void run() {
 				try {
+					Logger.log("ERROR", "CrashActivity", stackTrace + "");
 					GMailSender sender = new GMailSender(
 							VueConstants.GMAIL_USERNAME_FOR_SENDING_ERROR_TO_MAIL,
 							VueConstants.GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL);

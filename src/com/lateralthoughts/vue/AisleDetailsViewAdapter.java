@@ -235,7 +235,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
      if(mWindowContentTemp.getWindowBookmarkIndicator()){
     	 mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
      } else {
-    	 mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save_light);
+    	 mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save_dark);
      }
      if(mShowingList.size() != 0) {
     	 mViewHolder.vueWndowCommentImg.setImageResource(R.drawable.comment);
