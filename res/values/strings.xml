@@ -20,7 +20,7 @@
     <string name="googleplus_button_text">Sign In with Google</string>
     <string name="facebook_button_text">Sign In with Facebook</string>
     <string name="cancel_button_text">No Thanks</string>
-        <string name="share_via_mesg">SHARE VIA</string>
+    <string name="share_via_mesg">SHARE VIA</string>
     <string name="com_facebook_dialogloginactivity_ok_button">OK</string>
     <string name="com_facebook_loginview_log_out_button">Log Out</string>
     <string name="com_facebook_loginview_log_in_button">Log In</string>
@@ -38,6 +38,8 @@
     <string name="com_facebook_picker_done_button_text">Done</string>
     <string name="com_facebook_choose_friends">Choose Friends</string>
     <string name="com_facebook_nearby">Nearby</string>
+    <string name="yes_mesg">Yes</string>
+    <string name="no_mesg">No</string>
     <string name="com_facebook_loading">Loading...</string>
     <string name="com_facebook_internet_permission_error_title">AndroidManifest Error</string>
     <string name="switchtotwog">No Wi-Fi Network: Switch To 2G/3G?</string>
@@ -108,6 +110,7 @@
     <string name="loading_mesg">Loading....</string>
     <string name="isconnected_mesg">is connected.</string>
     <string name="contact_us">Contact us</string>
+    <string name="pleasewait_mesg">Please wait...</string>
     <string name="publish_actions">publish_actions</string>
     <string name="contact_us_text">Please provide feedback by writing to us at</string>
     <string name="email_id">vue@thesilverlabs.com</string>
@@ -117,8 +120,9 @@
     <string name="aboutedittext">Type your message here</string>
     <string name="clear">Clear</string>
     <string name="send">Send</string>
+    <string name="data_entry_invite_friends_mandotory_mesg">Please choose atleast one friends to invite</string>
     <string name="no_camera_label">Sorry, Threre is no camera in this device.</string>
-    <string name="add">Add</string>
+    <string name="invite">Invite</string>
     <string name="abouttextfedbacktext">\nPlease write to us about how we might improve</string>
     <string name="abouttextfedbacktexttwo">to suit your needs. We will appreciate it very much!</string>
     <string name="abouttextfedbacktextt">Email will be sent using gmail. Your phone model, dimensions, resolutions and OS version are included with this message.</string>

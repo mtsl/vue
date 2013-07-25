@@ -8,9 +8,9 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 
 public class InstalledPackageRetriever {
-	ArrayList<Drawable> drawbles = new ArrayList<Drawable>();
-	ArrayList<String> packageNames = new ArrayList<String>();
-	ArrayList<String> appNames = new ArrayList<String>();
+	ArrayList<Drawable> mAppIcons = new ArrayList<Drawable>();
+	ArrayList<String> mPackageNames = new ArrayList<String>();
+	ArrayList<String> mAppNames = new ArrayList<String>();
 	Context context;
 
 	/**
@@ -38,9 +38,9 @@ public class InstalledPackageRetriever {
 			try {
 				PackageInfo pmo = pm.getPackageInfo(sharePackageNames[i],
 						PackageManager.GET_ACTIVITIES);
-				appNames.add(shareAppNames[i]);
-				packageNames.add(sharePackageNames[i]);
-				drawbles.add(pmo.applicationInfo.loadIcon(pm));
+				mAppNames.add(shareAppNames[i]);
+				mPackageNames.add(sharePackageNames[i]);
+				mAppIcons.add(pmo.applicationInfo.loadIcon(pm));
 			} catch (PackageManager.NameNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -52,7 +52,7 @@ public class InstalledPackageRetriever {
 	 * @return ArrayList<String>
 	 */
 	public ArrayList<String> getAppNames() {
-		return appNames;
+		return mAppNames;
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class InstalledPackageRetriever {
 	 * @return ArrayList<Drawable>
 	 */
 	public ArrayList<Drawable> getDrawables() {
-		return drawbles;
+		return mAppIcons;
 	}
 
 	/**
@@ -68,6 +68,6 @@ public class InstalledPackageRetriever {
 	 * @return ArrayList<ResolveInfo>
 	 */
 	public ArrayList<String> getpackageNames() {
-		return packageNames;
+		return mPackageNames;
 	}
 }

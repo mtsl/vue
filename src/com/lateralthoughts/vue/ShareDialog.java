@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -44,24 +43,20 @@ import com.lateralthoughts.vue.utils.clsShare;
  */
 public class ShareDialog {
 
-	LayoutInflater mLayoutInflater;
-	AlertDialog.Builder mScreenDialog;
-	ArrayList<String> mAppNames = new ArrayList<String>();
-	ArrayList<String> mPackageNames = new ArrayList<String>();
-	ArrayList<Drawable> mAppIcons = new ArrayList<Drawable>();
-	Intent mSendIntent;
-	Context mContext;
-	Activity mActivity;
-	String mShareOption;
-	Resources mResouces;
-	InstalledPackageRetriever mShareIntentObj;
-	public final static int TWITER_TITLE_BUDGET = 76;
-	Bitmap mArticleBitmap;
-	boolean mShareIntentCalled = false;
-	public Dialog mDialog;
-	String mAisleTitle, mName;
-	ArrayList<clsShare> mImagePathArray;
-	ProgressDialog mShareDialog;
+	private LayoutInflater mLayoutInflater;
+	private AlertDialog.Builder mScreenDialog;
+	private ArrayList<String> mAppNames = new ArrayList<String>();
+	private ArrayList<String> mPackageNames = new ArrayList<String>();
+	private ArrayList<Drawable> mAppIcons = new ArrayList<Drawable>();
+	private Intent mSendIntent;
+	private Context mContext;
+	private Activity mActivity;
+	private InstalledPackageRetriever mShareIntentObj;
+	public boolean mShareIntentCalled = false;
+	private Dialog mDialog;
+	private String mName;
+	private ArrayList<clsShare> mImagePathArray;
+	private ProgressDialog mShareDialog;
 	private static final String TAG = "ShareDialog";
 
 	public void dismisDialog() {
@@ -78,14 +73,12 @@ public class ShareDialog {
 		this.mActivity = activity;
 		mLayoutInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mResouces = context.getResources();
 	}
 
 	public void share(ArrayList<clsShare> imagePathArray, String aisleTitle,
 			String name) {
 		mShareIntentCalled = false;
 		this.mImagePathArray = imagePathArray;
-		this.mAisleTitle = aisleTitle;
 		this.mName = name;
 		prepareShareIntentData();
 		openScreenDialog();
@@ -134,7 +127,7 @@ public class ShareDialog {
 	 * Adapter to set on popup dialogue
 	 * 
 	 * */
-	public class CustomAdapter extends BaseAdapter {
+	private class CustomAdapter extends BaseAdapter {
 		/**
 		 * returns the count
 		 * 
@@ -226,7 +219,6 @@ public class ShareDialog {
 				shareText(position);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			mDialog.dismiss();
 			mShareDialog.dismiss();
@@ -279,6 +271,7 @@ public class ShareDialog {
 		mShareIntentCalled = true;
 		mShareDialog.show();
 		Thread t = new Thread(new Runnable() {
+			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
 			public void run() {
 				ArrayList<Uri> imageUris = new ArrayList<Uri>();

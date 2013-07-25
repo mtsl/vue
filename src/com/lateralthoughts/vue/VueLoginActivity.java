@@ -82,25 +82,25 @@ public class VueLoginActivity extends FragmentActivity implements
 	private String mFbFriendName = null;
 	private boolean mGoogleplusFriendInvite = false;
 	private boolean mGoogleplusAutomaticLogin = false;
-	SharedPreferences mSharedPreferencesObj;
+	private SharedPreferences mSharedPreferencesObj;
 	private ImageView mTrendingbg = null;
 	private static final String LABEL_VIEW_ITEM = "VIEW_ITEM";
-	public static final int REQUEST_CODE_PLUS_CLIENT_FRAGMENT = 0;
-	public PlusClientFragment mSignInFragment;
+	private static final int REQUEST_CODE_PLUS_CLIENT_FRAGMENT = 0;
+	private PlusClientFragment mSignInFragment;
 	private boolean mGoogleplusLoggedinDialogFlag = false;
 	private static final int REQUEST_CODE_INTERACTIVE_POST = 3;
-	Activity mContext;
-	LinearLayout mSocialIntegrationMainLayout;
-	Bundle mBundle = null;
+	private Activity mContext;
+	private LinearLayout mSocialIntegrationMainLayout;
+	private Bundle mBundle = null;
 	private static final String TAG = "VueLoginActivity";
 	private final List<String> PUBLISH_PERMISSIONS = Arrays.asList(
 			"publish_actions", "email", "user_birthday");
-	ProgressDialog mFacebookProgressialog, mGooglePlusProgressDialog;
+	private ProgressDialog mFacebookProgressDialog, mGooglePlusProgressDialog;
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
 			.getInstance().getString(R.string.pendingActionBundleKey);
 	private PendingAction mPendingAction = PendingAction.NONE;
 
-	enum PendingAction {
+	private enum PendingAction {
 		NONE, POST_PHOTO, POST_STATUS_UPDATE
 	}
 
@@ -132,7 +132,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		mContext = this;
 		mSharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
-		mFacebookProgressialog = ProgressDialog.show(mContext, getResources()
+		mFacebookProgressDialog = ProgressDialog.show(mContext, getResources()
 				.getString(R.string.sidemenu_sub_option_Facebook),
 				getResources().getString(R.string.sharing_mesg), true);
 		mGooglePlusProgressDialog = ProgressDialog.show(
@@ -141,7 +141,7 @@ public class VueLoginActivity extends FragmentActivity implements
 						R.string.sidemenu_sub_option_Googleplus),
 				getResources().getString(R.string.loading_mesg), true);
 		mGooglePlusProgressDialog.dismiss();
-		mFacebookProgressialog.dismiss();
+		mFacebookProgressDialog.dismiss();
 
 		mBundle = getIntent().getExtras();
 		if (mBundle != null) {
@@ -366,10 +366,7 @@ public class VueLoginActivity extends FragmentActivity implements
 			share(plusClient,
 					this,
 					VueConstants.INVITATION_MESG,
-					VueLandingPageActivity.mGooglePlusFriendsDetailsList
-							.get(mBundle
-									.getInt(VueConstants.GOOGLEPLUS_FRIEND_INDEX))
-							.getGoogleplusFriend());
+					mBundle.getIntegerArrayList(VueConstants.GOOGLEPLUS_FRIEND_INDEX));
 		} else {
 			plusClient.loadPeople(this, Person.Collection.VISIBLE);
 		}
@@ -456,7 +453,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		});
 	}
 
-	public void saveFBLoginDetails(final Session session) {
+	private void saveFBLoginDetails(final Session session) {
 		mSharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
 		final SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
@@ -555,7 +552,6 @@ public class VueLoginActivity extends FragmentActivity implements
 			mSocialIntegrationMainLayout.setVisibility(View.GONE);
 			mTrendingbg.setVisibility(View.GONE);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -578,12 +574,13 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 	}
 
-	public void shareToFacebook(ArrayList<clsShare> fileList, String articledesc) {
+	private void shareToFacebook(ArrayList<clsShare> fileList,
+			String articledesc) {
 		performPublish(PendingAction.POST_PHOTO, fileList, articledesc);
 	}
 
-	void performPublish(PendingAction action, ArrayList<clsShare> fileList,
-			String articledesc) {
+	private void performPublish(PendingAction action,
+			ArrayList<clsShare> fileList, String articledesc) {
 		Session session = Session.getActiveSession();
 		if (session != null) {
 			if (hasPublishPermission()) {
@@ -595,20 +592,22 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 	}
 
-	boolean hasPublishPermission() {
+	private boolean hasPublishPermission() {
 		Session session = Session.getActiveSession();
 		return session != null
 				&& session.getPermissions().contains(
 						getResources().getString(R.string.publish_actions));
 	}
 
-	void handlePendingAction(ArrayList<clsShare> fileList, String articledesc) {
+	private void handlePendingAction(ArrayList<clsShare> fileList,
+			String articledesc) {
 		postPhoto(fileList, articledesc);
 	}
 
-	void postPhoto(final ArrayList<clsShare> fileList, final String articledesc) {
+	private void postPhoto(final ArrayList<clsShare> fileList,
+			final String articledesc) {
 		if (hasPublishPermission()) {
-			mFacebookProgressialog.show();
+			mFacebookProgressDialog.show();
 			// Post photo....
 			if (fileList != null) {
 				Thread t = new Thread(new Runnable() {
@@ -626,7 +625,6 @@ public class VueLoginActivity extends FragmentActivity implements
 										try {
 											os = new FileOutputStream(f);
 										} catch (FileNotFoundException e) {
-											// TODO Auto-generated catch block
 											e.printStackTrace();
 										}
 										Utils.CopyStream(is, os);
@@ -659,7 +657,6 @@ public class VueLoginActivity extends FragmentActivity implements
 														index).getFilepath()),
 														ParcelFileDescriptor.MODE_READ_ONLY);
 									} catch (FileNotFoundException e) {
-										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
 									parameters.putParcelable("picture",
@@ -668,7 +665,7 @@ public class VueLoginActivity extends FragmentActivity implements
 										public void onCompleted(
 												com.facebook.Response response) {
 											if (index == fileList.size() - 1) {
-												mFacebookProgressialog
+												mFacebookProgressDialog
 														.dismiss();
 												showPublishResult(
 														VueLoginActivity.this
@@ -690,7 +687,7 @@ public class VueLoginActivity extends FragmentActivity implements
 				});
 				t.start();
 			} else {
-				mFacebookProgressialog.dismiss();
+				mFacebookProgressDialog.dismiss();
 			}
 		}
 	}
@@ -737,7 +734,6 @@ public class VueLoginActivity extends FragmentActivity implements
 		dialog.setOnDismissListener(new OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface arg0) {
-				// TODO Auto-generated method stub
 				finish();
 			}
 		});
@@ -799,7 +795,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	private Intent getInteractivePostIntent(PlusClient plusClient,
-			Activity activity, String post, Person googlefriend) {
+			Activity activity, String post, ArrayList<Integer> personIndexList) {
 		String action = "/?view=true";
 		Uri callToActionUrl = Uri
 				.parse(getString(R.string.plus_example_deep_link_url) + action);
@@ -817,7 +813,22 @@ public class VueLoginActivity extends FragmentActivity implements
 		builder.setContentDeepLinkId(
 				getString(R.string.plus_example_deep_link_id), null, null, null);
 		List<Person> googlefriendList = new ArrayList<Person>();
-		googlefriendList.add(googlefriend);
+		if (personIndexList != null
+				&& VueLandingPageActivity.mGooglePlusFriendsDetailsList != null) {
+			for (int i = 0; i < personIndexList.size(); i++) {
+				googlefriendList
+						.add(VueLandingPageActivity.mGooglePlusFriendsDetailsList
+								.get(personIndexList.get(i))
+								.getGoogleplusFriend());
+			}
+		}
+		if (mBundle != null) {
+			String aisleImagePath = mBundle
+					.getString(VueConstants.GOOGLEPLUS_FRIEND_IMAGE_PATH_LIST_KEY);
+			if (aisleImagePath != null) {
+				builder.setStream(Uri.fromFile(new File(aisleImagePath)));
+			}
+		}
 		builder.setRecipients(googlefriendList);
 		// Set the pre-filled message.
 		builder.setText(post);
@@ -825,16 +836,15 @@ public class VueLoginActivity extends FragmentActivity implements
 		return builder.getIntent();
 	}
 
-	public void share(PlusClient plusClient, Activity activity, String post,
-			Person googleplusFriend) {
+	private void share(PlusClient plusClient, Activity activity, String post,
+			ArrayList<Integer> personIndexList) {
 		startActivityForResult(
 				getInteractivePostIntent(plusClient, activity, post,
-						googleplusFriend), REQUEST_CODE_INTERACTIVE_POST);
+						personIndexList), REQUEST_CODE_INTERACTIVE_POST);
 	}
 
 	@Override
 	public void onPersonLoaded(ConnectionResult connectionresult, Person person) {
-		// TODO Auto-generated method stub
 		if (connectionresult.getErrorCode() == ConnectionResult.SUCCESS) {
 			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
 			editor.putString(VueConstants.GOOGLEPLUS_USER_NAME,

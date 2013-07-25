@@ -2,18 +2,16 @@ package com.lateralthoughts.vue;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
 public class DataEntryActivity extends BaseActivity {
 
-	public boolean misKeyboardShown = false;
-	public boolean isNewActionBar = false;
+	public boolean mIsKeyboardShownFlag = false;
+	public boolean mIsNewActionBarFlag = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -33,9 +31,9 @@ public class DataEntryActivity extends BaseActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (!isNewActionBar) {
+		if (!mIsNewActionBarFlag) {
 			getSupportMenuInflater().inflate(R.menu.title_options2, menu);
-		} else if (isNewActionBar) {
+		} else if (mIsNewActionBarFlag) {
 			getSupportMenuInflater()
 					.inflate(R.menu.create_aisle_options2, menu);
 
@@ -82,7 +80,6 @@ public class DataEntryActivity extends BaseActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 		try {
 			if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
@@ -103,8 +100,6 @@ public class DataEntryActivity extends BaseActivity {
 					}
 				}
 			} else {
-				Log.e("share+", "CreateAisle activity result" + requestCode
-						+ resultCode);
 				try {
 					DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.create_aisles_view_fragment);
@@ -137,9 +132,9 @@ public class DataEntryActivity extends BaseActivity {
 								- createAisleActivityRootLayout.getHeight();
 						if (heightDiff > 100) { // if more than 100 pixels, its
 							// probably a keyboard...
-							misKeyboardShown = true;
+							mIsKeyboardShownFlag = true;
 						} else {
-							misKeyboardShown = false;
+							mIsKeyboardShownFlag = false;
 						}
 					}
 				});

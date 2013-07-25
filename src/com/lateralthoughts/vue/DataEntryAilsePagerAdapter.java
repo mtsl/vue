@@ -13,19 +13,19 @@ import android.widget.ImageView;
 
 public class DataEntryAilsePagerAdapter extends PagerAdapter {
 
-	private ArrayList<String> imagePathsList = null;
+	private ArrayList<String> mImagePathsList = null;
 	private Context mContext = null;
 
 	public DataEntryAilsePagerAdapter(Context mContext,
 			ArrayList<String> imagePathsList) {
 		this.mContext = mContext;
-		this.imagePathsList = imagePathsList;
+		this.mImagePathsList = imagePathsList;
 	}
 
 	@Override
 	public int getCount() {
-		if (imagePathsList != null)
-			return imagePathsList.size();
+		if (mImagePathsList != null)
+			return mImagePathsList.size();
 		else
 			return 0;
 	}
@@ -38,10 +38,9 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 		ImageView dataEntryRowAisleImage = (ImageView) view
 				.findViewById(R.id.dataentry_row_aisele_image);
 		try {
-			dataEntryRowAisleImage.setImageURI(Uri.fromFile(new File(imagePathsList
-					.get(position))));
+			dataEntryRowAisleImage.setImageURI(Uri.fromFile(new File(
+					mImagePathsList.get(position))));
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		((ViewPager) collection).addView(view, 0);
