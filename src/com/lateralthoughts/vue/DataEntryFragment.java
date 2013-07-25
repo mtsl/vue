@@ -111,7 +111,7 @@ public class DataEntryFragment extends Fragment {
 			Bundle savedInstanceState) {
 		mCategoryitemsArray = getResources().getStringArray(
 				R.array.category_items_array);
-		mDbManager = new DataBaseManager(getActivity());
+		mDbManager = DataBaseManager.getInstance(getActivity());
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		mScreenHeight = dm.heightPixels;
 		mScreenHeight = mScreenHeight

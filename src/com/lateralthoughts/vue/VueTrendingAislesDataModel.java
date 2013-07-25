@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 //android imports
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -58,8 +59,6 @@ public class VueTrendingAislesDataModel {
   private static final String USER_IMAGE_TITLE_TAG = "title";
   private static final String IMAGE_HEIGHT_TAG = "height";
   private static final String IMAGE_WIDTH_TAG = "width";
- // private static final String FORMATE = "%09d";
-
   private ArrayList<AisleWindowContent> mAisleContentList;
   private HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
 
@@ -67,10 +66,10 @@ public class VueTrendingAislesDataModel {
   private static final int TRENDING_AISLES_BATCH_SIZE = 5;
   public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
   private static final int NOTIFICATION_THRESHOLD = 4;
-  private int poolSize = 1;
-  private int maxPoolSize = 1;
-  private long keepAliveTime = 10;
-  private boolean mMoreDataAvailable;
+  private int mPoolSize = 1;
+  private int mMaxPoolSize = 1;
+  private long mKeepAliveTime = 10;
+  public boolean mMoreDataAvailable;
 
   // ===== The following set of variables are used for state management
   // ==================================
@@ -108,8 +107,8 @@ public class VueTrendingAislesDataModel {
     mOffset = 0;
     mState = AISLE_TRENDING_LIST_DATA;
     mAisleContentList = new ArrayList<AisleWindowContent>();
-    mDbManager = new DataBaseManager(mContext);
-    threadPool = new ThreadPoolExecutor(poolSize, maxPoolSize, keepAliveTime,
+    mDbManager = DataBaseManager.getInstance(mContext);
+    threadPool = new ThreadPoolExecutor(mPoolSize, mMaxPoolSize, mKeepAliveTime,
         TimeUnit.SECONDS, threadsQueue);
     if (!VueConnectivityManager.isNetworkConnected(context)) {
       Message msg = new Message();
@@ -164,7 +163,6 @@ public class VueTrendingAislesDataModel {
             if (DEBUG)
               Log.e(TAG, "No more data is available. mOffset = " + mOffset);
           } else {
-
             parseTrendingAislesResultData(resultData.getString("result"));
             // if(mOffset > NOTIFICATION_THRESHOLD *
             // TRENDING_AISLES_BATCH_INITIAL_SIZE){
@@ -233,23 +231,21 @@ public class VueTrendingAislesDataModel {
 
             @Override
             public void run() {
-              //addAislesToDb();
               DataBaseManager.markOldAislesToDelete(mContext);
               DataBaseManager.addTrentingAislesFromServerToDB(mContext);
             }
           });
         }
         DbHelper helper = new DbHelper(mContext);
-        SQLiteDatabase db = helper.getWritableDatabase();
+        //SQLiteDatabase db = helper.getWritableDatabase();
         for (int i = 0; i < contentArray.length(); i++) {
           userInfo = new AisleContext();
           JSONObject contentItem = contentArray.getJSONObject(i);
           category = contentItem.getString(ITEM_CATEGORY_TAG);
           aisleId = contentItem.getString(CONTENT_ID_TAG);
-          int deletedAisles = db.delete(DbHelper.DATABASE_TABLE_AISLES,
-              VueConstants.AISLE_ID + "=?", new String[] {aisleId});
-          int deletedImages = db.delete(DbHelper.DATABASE_TABLE_AISLES_IMAGES,
-              VueConstants.AISLE_ID + "=?", new String[] {aisleId});
+          int deletedAisles = mContext.getContentResolver().delete(VueConstants.CONTENT_URI, VueConstants.AISLE_ID + "=?", new String[] {aisleId});
+          int deletedImages = mContext.getContentResolver().delete(VueConstants.IMAGES_CONTENT_URI, VueConstants.AISLE_ID + "=?", new String[] {aisleId});
+          Log.e("Profiling", "Profiling deletedAisles : " + deletedAisles + ", deletedImages : " + deletedImages);
           userInfo.mAisleId = contentItem.getString(CONTENT_ID_TAG);
           JSONArray imagesArray = contentItem.getJSONArray(USER_IMAGES_TAG);
 
@@ -276,21 +272,13 @@ public class VueTrendingAislesDataModel {
                 .getInt(IMAGE_HEIGHT_TAG);
             imageItemDetails.mAvailableWidth = imageItem
                 .getInt(IMAGE_WIDTH_TAG);
-            Log.i("imgurl", "imgurl1:mImageUrl " + imageItemDetails.mImageUrl);
-            Log.i("imgurl", "imgurl1:imageItemDetails.mAvailableHeight "
-                + imageItemDetails.mAvailableHeight);
-            Log.i("imgurl", "imgurl1:imageItemDetails.mAvailableWidth "
-                + imageItemDetails.mAvailableWidth);
-
             imageItemsArray.add(imageItemDetails);
           }
           aisleItem = getAisleItem(aisleId);
           aisleItem.addAisleContent(userInfo, imageItemsArray);
-          // addAislesToDb(userInfo, imageItemsArray);
           imageItemsArray.clear();
-          // c.close();
         }
-         db.close();
+       //  db.close();
       } catch (JSONException ex1) {
         if (DEBUG)
           Log.e(TAG, "Some exception is caught? ex1 = " + ex1.toString());
@@ -312,6 +300,7 @@ public class VueTrendingAislesDataModel {
           int index = mAisleContentList.indexOf(aisleItem);
           mAisleContentList.remove(index);
           mAisleContentList.add(index, aisleItem);
+          Log.e("Profiling", "Profiling getAisleItem() : aisleItem : 2" + aisleItem);
         }
       } else {
         aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
@@ -353,144 +342,6 @@ public class VueTrendingAislesDataModel {
     }
   }
 
-/*  private void addAislesToDb() {
-
-    for (int i = 0; i < getAisleCount(); i++) {
-      Cursor cursor = mContext.getContentResolver().query(VueConstants.CONTENT_URI,
-          new String[] {"COUNT(*)"}, null, null, null);
-      String strCount = "";
-      int maxId = 0;
-      if(cursor == null) {
-    	  break;
-      }
-      if (cursor.moveToFirst()) {
-        strCount = cursor.getString(cursor.getColumnIndex("COUNT(*)"));
-      }
-      maxId = Integer.valueOf(strCount).intValue();
-      cursor.close();
-      AisleWindowContent content = getAisleAt(i);
-      AisleContext info = content.getAisleContext();
-      ArrayList<AisleImageDetails> imageItemsArray = content.getImageList();
-      ContentValues values = new ContentValues();
-      values.put(VueConstants.FIRST_NAME, info.mFirstName);
-      values.put(VueConstants.LAST_NAME, info.mLastName);
-      values.put(VueConstants.JOIN_TIME, info.mJoinTime);
-      values.put(VueConstants.LOOKING_FOR, info.mLookingForItem);
-      values.put(VueConstants.OCCASION, info.mOccasion);
-      values.put(VueConstants.USER_ID, info.mUserId);
-      values.put(VueConstants.AISLE_ID, info.mAisleId);
-      values.put(VueConstants.ID, String.format(FORMATE, maxId + 1));
-      mContext.getContentResolver().insert(VueConstants.CONTENT_URI, values);
-      int imgCount = 0;
-      for (AisleImageDetails imageDetails : imageItemsArray) {
-        ContentValues imgValues = new ContentValues();
-        imgValues.put(VueConstants.ID, String.format(FORMATE, imgCount + 1));
-        imgValues.put(VueConstants.TITLE, imageDetails.mTitle);
-        imgValues.put(VueConstants.IMAGE_URL, imageDetails.mImageUrl);
-        imgValues.put(VueConstants.DETAILS_URL, imageDetails.mDetalsUrl);
-        imgValues.put(VueConstants.HEIGHT, imageDetails.mAvailableHeight);
-        imgValues.put(VueConstants.WIDTH, imageDetails.mAvailableWidth);
-        imgValues.put(VueConstants.STORE, imageDetails.mStore);
-        imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
-        imgValues.put(VueConstants.USER_ID, info.mUserId);
-        imgValues.put(VueConstants.AISLE_ID, info.mAisleId);
-        mContext.getContentResolver().insert(VueConstants.IMAGES_CONTENT_URI, imgValues);
-      }
-    }
-
-  }*/
-
-  /*public void getAislesFromDb() {
-    mEndPosition = mEndPosition + mLocalAislesLimit;
-    AisleContext userInfo;
-    AisleImageDetails imageItemDetails;
-    AisleWindowContent aisleItem = null;
-    LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
-    ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
-    ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
-    DbHelper helper = new DbHelper(mContext);
-    SQLiteDatabase db = helper.getReadableDatabase();
-    String selection = VueConstants.ID + ">? AND " + VueConstants.ID + "<=?";
-    String[] args = {String.format(FORMATE, mStartPosition),
-        String.format(FORMATE, mEndPosition)};
-    Cursor aislesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES, null,
-        selection, args, null, null, VueConstants.ID + " ASC");
-    if (aislesCursor.moveToFirst()) {
-      do {
-        userInfo = new AisleContext();
-        userInfo.mAisleId = aislesCursor.getString(aislesCursor
-            .getColumnIndex(VueConstants.AISLE_ID));
-        userInfo.mUserId = aislesCursor.getString(aislesCursor
-            .getColumnIndex(VueConstants.USER_ID));
-        userInfo.mFirstName = aislesCursor.getString(aislesCursor
-            .getColumnIndex(VueConstants.FIRST_NAME));
-        userInfo.mLastName = aislesCursor.getString(aislesCursor
-            .getColumnIndex(VueConstants.LAST_NAME));
-        userInfo.mJoinTime = Long.parseLong(aislesCursor.getString(aislesCursor
-            .getColumnIndex(VueConstants.JOIN_TIME)));
-        userInfo.mLookingForItem = aislesCursor.getString(aislesCursor
-            .getColumnIndex(VueConstants.LOOKING_FOR));
-        userInfo.mOccasion = aislesCursor.getString(aislesCursor
-            .getColumnIndex(VueConstants.OCCASION));
-        map.put(userInfo.mAisleId, userInfo);
-      } while (aislesCursor.moveToNext());
-      Cursor aisleImagesCursor = db.query(DbHelper.DATABASE_TABLE_AISLES_IMAGES,
-          null, null, null, null, null, VueConstants.ID + " ASC");
-      Iterator it = map.entrySet().iterator();
-      while (it.hasNext()) {
-        Map.Entry pairs = (Map.Entry) it.next();
-         System.out.println(pairs.getKey() + " = " + pairs.getValue());
-
-        if (aisleImagesCursor.moveToFirst()) {
-          do {
-            if (aisleImagesCursor.getString(
-                aisleImagesCursor.getColumnIndex(VueConstants.AISLE_ID))
-                .equals((String) pairs.getKey())) {
-              imageItemDetails = new AisleImageDetails();
-              imageItemDetails.mTitle = aisleImagesCursor
-                  .getString(aisleImagesCursor
-                      .getColumnIndex(VueConstants.TITLE));
-              imageItemDetails.mImageUrl = aisleImagesCursor
-                  .getString(aisleImagesCursor
-                      .getColumnIndex(VueConstants.IMAGE_URL));
-              imageItemDetails.mDetalsUrl = aisleImagesCursor
-                  .getString(aisleImagesCursor
-                      .getColumnIndex(VueConstants.DETAILS_URL));
-              imageItemDetails.mStore = aisleImagesCursor
-                  .getString(aisleImagesCursor
-                      .getColumnIndex(VueConstants.STORE));
-              imageItemDetails.mId = aisleImagesCursor
-                  .getString(aisleImagesCursor
-                      .getColumnIndex(VueConstants.IMAGE_ID));
-              imageItemDetails.mAvailableHeight = Integer
-                  .parseInt(aisleImagesCursor.getString(aisleImagesCursor
-                      .getColumnIndex(VueConstants.HEIGHT)));
-              imageItemDetails.mAvailableWidth = Integer
-                  .parseInt(aisleImagesCursor.getString(aisleImagesCursor
-                      .getColumnIndex(VueConstants.WIDTH)));
-              imageItemsArray.add(imageItemDetails);
-            }
-          } while (aisleImagesCursor.moveToNext());
-        }
-        userInfo = (AisleContext) pairs.getValue();
-        aisleItem = new AisleWindowContent(userInfo.mAisleId);
-        aisleItem.addAisleContent(userInfo, imageItemsArray);
-        aisleContentArray.add(aisleItem);
-        imageItemsArray.clear();
-        it.remove(); // avoids a ConcurrentModificationException
-      }
-      aisleImagesCursor.close();
-    }
-    mStartPosition = mEndPosition;
-    if (aisleContentArray.size() > 0) {
-      Message msg = new Message();
-      msg.obj = aisleContentArray;
-      mHandler.sendMessage(msg);
-    }
-      aislesCursor.close();
-      db.close();
-  }*/
-
   public void loadMoreAisles() {
     mMoreDataAvailable = true;
     loadOnRequest = false;
@@ -504,6 +355,7 @@ public class VueTrendingAislesDataModel {
         .getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
   }
 
+  @SuppressLint("HandlerLeak")
   protected Handler mHandler = new Handler() {
     public void handleMessage(android.os.Message msg) {
       @SuppressWarnings("unchecked")
@@ -522,8 +374,9 @@ public class VueTrendingAislesDataModel {
         public void run() {
           runTask(new Runnable() {
             public void run() {
-              ArrayList<AisleWindowContent> aislesList = mDbManager.getAislesFromDB(null);
-              if(aislesList.size() == 0) {
+              ArrayList<AisleWindowContent> aislesList = mDbManager
+                  .getAislesFromDB(null);
+              if (aislesList.size() == 0) {
                 return;
               }
               Message msg = new Message();
@@ -531,10 +384,10 @@ public class VueTrendingAislesDataModel {
               mHandler.sendMessage(msg);
             };
           });
-          
+
         }
       }, 100);
-      
+
     };
   };
  
@@ -548,14 +401,16 @@ public class VueTrendingAislesDataModel {
     threadPool.execute(task);
   }
 
+  
   private void copyDB() {
     try {
       File sd = Environment.getExternalStorageDirectory();
       File data = Environment.getDataDirectory();
 
       if (sd.canWrite()) {
-        String currentDBPath = "//data//{package name}//databases//{database name}";
-        String backupDBPath = "{database name}";
+        String currentDBPath = "//data//com.lateralthoughts.vue//databases//"
+            + DbHelper.DATABASE_NAME;
+        String backupDBPath = DbHelper.DATABASE_NAME;
         File currentDB = new File(data, currentDBPath);
         File backupDB = new File(sd, backupDBPath);
 

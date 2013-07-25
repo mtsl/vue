@@ -22,16 +22,16 @@ public class AisleWindowContent
 	private static final String IMAGE_RES_SPEC_REGEX = ".jpg"; //this is the string pattern we look for
 	private String mImageFormatSpecifier = "._SY%d.jpg";
 	private int mAisleBookmarksCount = 15;
-	private boolean windowBookmarkIndicator = false;
+	private boolean mAisleBookmarkIndicator = false;
 	
  
 
 	public boolean getWindowBookmarkIndicator() {
-		return windowBookmarkIndicator;
+		return mAisleBookmarkIndicator;
 	}
 
 	public void setWindowBookmarkIndicator(boolean windowBookmarkIndicator) {
-		this.windowBookmarkIndicator = windowBookmarkIndicator;
+		this.mAisleBookmarkIndicator = windowBookmarkIndicator;
 	}
 
 	public int getmAisleBookmarksCount() {

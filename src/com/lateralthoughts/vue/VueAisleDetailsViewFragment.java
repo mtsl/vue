@@ -392,6 +392,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 						ArrayList<String> commentList = (ArrayList<String>) mAisleDetailsAdapter.mCommentsMapList
 								.get(mAisleDetailsAdapter.mCurrentDispImageIndex);
 						commentList.add(0, etText);
+						mAisleDetailsAdapter.sendDataToDb(mAisleDetailsAdapter.mCurrentDispImageIndex,mAisleDetailsAdapter.CHANGE_COMMENT);
 						//mAisleDetailsAdapter.mTempComments2 = new String[commentList.size() + 1];
 					/*	
 						mAisleDetailsAdapter.mTempComments2 = commentList
@@ -489,6 +490,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     }
  
     public void setAisleContentListenerNull() {
-    	mAisleDetailsAdapter.setAisleBrowerObjectsNull();
+    	mAisleDetailsAdapter.setAisleBrowserObjectsNull();
     }
 }

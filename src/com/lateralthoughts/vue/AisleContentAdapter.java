@@ -75,7 +75,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private int mCurrentPivotIndex;
     private BitmapLoaderUtils mBitmapLoaderUtils;
     public String mSourceName;
-    private ImageDimension mImageDimention;
+    private ImageDimension mImageDimension;
     
     public AisleContentAdapter(Context context){
         mContext = context;
@@ -285,9 +285,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
          
             	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             	 
-            			mImageDimention = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
-            			if(bitmap.getHeight() < mImageDimention.mImgHeight) {
-            				   loadBitmap(itemDetails,mImageDimention.mImgHeight,contentBrowser, imageView);
+            			mImageDimension = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
+            			if(bitmap.getHeight() < mImageDimension.mImgHeight) {
+            				   loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView);
             			}
             			// bitmap =  mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
             			// setParams( contentBrowser, imageView,bitmap.getHeight());
@@ -302,7 +302,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                 loadBitmap(itemDetails,itemDetails.mAvailableHeight,contentBrowser, imageView);
                 contentBrowser.addView(imageView);
             	} else {
-            		Log.i("imagenotcoming", "imagenotcoming: calling doin ");
             		int bestHeigh = mWindowContent.getBestHeightForWindow();
             		 loadBitmap(itemDetails,bestHeigh,contentBrowser, imageView);
                      contentBrowser.addView(imageView);
@@ -362,12 +361,12 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 				if (mSourceName != null
 						&& mSourceName
 								.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-					mImageDimention = Utils.getScalledImage(bmp,
+					mImageDimension = Utils.getScalledImage(bmp,
 							mAVailableWidth, mAvailabeHeight);
-					mAvailabeHeight = mImageDimention.mImgHeight;
-					if (bmp.getHeight() < mImageDimention.mImgHeight) {
+					mAvailabeHeight = mImageDimension.mImgHeight;
+					if (bmp.getHeight() < mImageDimension.mImgHeight) {
 						bmp = mBitmapLoaderUtils.getBitmap(url, true,
-								mImageDimention.mImgHeight);
+								mImageDimension.mImgHeight);
 						mAvailabeHeight = bmp.getHeight();
 				     	 
 					} 
