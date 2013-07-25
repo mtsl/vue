@@ -67,6 +67,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    private boolean mIsBookImageClciked = false;
    private boolean mIsBorowserSet = false;
    
+   
    private AisleWindowContent mWindowContentTemp;
    public String mVueusername;
    ShareDialog mShare ;
@@ -144,7 +145,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    }
    static class ViewHolder {
       AisleContentBrowser aisleContentBrowser;
-      HorizontalScrollView thumbnailContainer;
       TextView aisleDescription;
       TextView aisleOwnersName;
       TextView aisleContext, commentCount, likeCount;
@@ -265,11 +265,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
             int scrollIndex = 0;
             mWindowContentTemp = mViewHolder.mWindowContent;
             mViewHolder.tag = TAG;
-       /*     if(!mIsBorowserSet) {
-            	mIsBorowserSet = true;*/
+           
             mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
                   position, new DetailImageClickListener());
-          /*  }*/
+           
             Log.i("returnsused imageview", "returnsused imageview adapeterclass count: "+  mViewHolder.aisleContentBrowser.getChildCount());
             Log.i("returnsused imageview", "returnsused imageview adapeterclass obj: "+ mViewHolder.aisleContentBrowser.getCustomAdapter());
          } catch (Exception e) {
@@ -497,6 +496,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				ArrayList<String> tempCommentList = (ArrayList<String>) mCommentsMapList.get(position);
 				if(tempCommentList != null) {
 					mShowingList = tempCommentList;
+					Log.i("mShowingList", "mShowingList size: "+mShowingList.size());
 				}
 				likeCount = mTempInitialImageLikeCounts[position];
 				mLikes = likeCount;
@@ -586,10 +586,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		notifyAdapter();
 		}
 	}
-	public void setAisleBrowerObjectsNull(){
-		 Log.i("returnsused imageview", "returnsused imageview1: "+ mViewHolder.aisleContentBrowser.getCustomAdapter());
+	public void setAisleBrowserObjectsNull(){
+		 
 		if(mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
-			 Log.i("returnsused imageview", "returnsused imageview2"+ mViewHolder.aisleContentBrowser.getChildCount());
 			 
 			
 			// mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
@@ -604,6 +603,14 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		}
 	}
 	public void sendDataToDb(String windowId,int imgPosition,int likesCount) {
+		int bookMarksCount = mWindowContentTemp.getmAisleBookmarksCount();
 		
+		ArrayList<String> comments = new ArrayList<String>();
+		  ArrayList<AisleImageDetails> imageDetailsArr = mWindowContentTemp
+		          .getImageList();
+		  if(imageDetailsArr != null && imageDetailsArr.size() != 0) {
+			  AisleImageDetails itemDetails = imageDetailsArr.get(imgPosition);
+			  comments = itemDetails.mCommentsList;
+		  }
 	}
 }

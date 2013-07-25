@@ -13,6 +13,7 @@ public class AisleImageDetails {
 	public int mAvailableHeight;
 	public int mAvailableWidth;
 	public int mLikesCount;
+	public String mLikeDislikeStatus;
 	public ArrayList<String> mCommentsList;
 	                         
 }

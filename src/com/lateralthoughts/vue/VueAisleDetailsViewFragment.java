@@ -489,6 +489,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     }
  
     public void setAisleContentListenerNull() {
-    	mAisleDetailsAdapter.setAisleBrowerObjectsNull();
+    	mAisleDetailsAdapter.setAisleBrowserObjectsNull();
     }
 }

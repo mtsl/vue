@@ -39,7 +39,7 @@ public class AisleDetailsViewListLoader {
     private ScaledImageViewFactory mViewFactory = null;
     private BitmapLoaderUtils mBitmapLoaderUtils;
     private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
-    private ImageDimension mImageDimention;
+    private ImageDimension mImageDimension;
     private int mBestHeight;
     
     public static AisleDetailsViewListLoader getInstance(Context context){
@@ -128,11 +128,11 @@ public class AisleDetailsViewListLoader {
 					.getCachedBitmap(itemDetails.mCustomImageUrl);
 			if (bitmap != null) {
 				// get the dimentions of the image.
-				mImageDimention = Utils.getScalledImage(bitmap,
+				mImageDimension = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
 						itemDetails.mAvailableHeight);
 				setParams(holder.aisleContentBrowser, imageView, mBestHeight);
-				if (bitmap.getHeight() < mImageDimention.mImgHeight) {
+				if (bitmap.getHeight() < mImageDimension.mImgHeight) {
 					loadBitmap(itemDetails, contentBrowser, imageView,
 							itemDetails.mAvailableHeight);
 					setParams(holder.aisleContentBrowser, imageView,
@@ -186,11 +186,11 @@ public class AisleDetailsViewListLoader {
             //we want to get the bitmap and also add it into the memory cache
             bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeight); 
             if(bmp != null) {
-           	 mImageDimention = Utils.getScalledImage(bmp,
+           	 mImageDimension = Utils.getScalledImage(bmp,
            			mAvailabeWidth, mAvailableHeight);
-           	mAvailableHeight = mImageDimention.mImgHeight;
-            	 if(bmp.getHeight()<mImageDimention.mImgHeight) {
-            		 bmp = mBitmapLoaderUtils.getBitmap(url, true, mImageDimention.mImgHeight);
+           	mAvailableHeight = mImageDimension.mImgHeight;
+            	 if(bmp.getHeight()<mImageDimension.mImgHeight) {
+            		 bmp = mBitmapLoaderUtils.getBitmap(url, true, mImageDimension.mImgHeight);
 				 }
             }
             
