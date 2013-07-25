@@ -21,8 +21,6 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources.NotFoundException;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -48,7 +46,6 @@ import com.facebook.Request;
 import com.facebook.Request.Callback;
 import com.facebook.Request.GraphUserCallback;
 import com.facebook.Session;
-import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
@@ -67,56 +64,48 @@ import com.googleplus.MomentUtil;
 import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
-import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
-import com.lateralthoughts.vue.utils.VueMemoryCache;
 import com.lateralthoughts.vue.utils.clsShare;
 
 public class VueLoginActivity extends FragmentActivity implements
 		OnSignedInListener, OnPeopleLoadedListener, OnPersonLoadedListener {
 
-	private boolean hideCancelButton = false;
-	private boolean fromBezelMenuLogin = false;
-	private String fromInviteFriends = null;
-	private boolean fromDetailsFbShare = false;
-	private boolean dontCallUserInfoChangesMethod = false;
-	private boolean fromGoogleplusInvitefriends = false;
-	private boolean facebookFlag = false;
-	private String fbFriendId = null;
-	private String fbFriendName = null;
-	private boolean googleplusFriendInvite = false;
-	private boolean googleplusAutomaticLogin = false;
-	SharedPreferences sharedPreferencesObj;
-	private ImageView trendingbg = null;
-	/** The button should say "View item" in English. */
+	private boolean mHideCancelButton = false;
+	private boolean mFromBezelMenuLogin = false;
+	private String mFromInviteFriends = null;
+	private boolean mFromDetailsFbShare = false;
+	private boolean mDontCallUserInfoChangesMethod = false;
+	private boolean mFromGoogleplusInvitefriends = false;
+	private boolean mFacebookFlag = false;
+	private String mFbFriendId = null;
+	private String mFbFriendName = null;
+	private boolean mGoogleplusFriendInvite = false;
+	private boolean mGoogleplusAutomaticLogin = false;
+	SharedPreferences mSharedPreferencesObj;
+	private ImageView mTrendingbg = null;
 	private static final String LABEL_VIEW_ITEM = "VIEW_ITEM";
-
-	// Google+ integration
 	public static final int REQUEST_CODE_PLUS_CLIENT_FRAGMENT = 0;
 	public PlusClientFragment mSignInFragment;
-	private boolean googleplusLoggedinDialogFlag = false;
+	private boolean mGoogleplusLoggedinDialogFlag = false;
 	private static final int REQUEST_CODE_INTERACTIVE_POST = 3;
-	Activity context;
-	LinearLayout socialIntegrationMainLayout;
-	Bundle bundle = null;
+	Activity mContext;
+	LinearLayout mSocialIntegrationMainLayout;
+	Bundle mBundle = null;
 	private static final String TAG = "VueLoginActivity";
-	// private static final List<String> READ_PERMISSIONS =
-	// Arrays.asList("publish_actions");
 	private final List<String> PUBLISH_PERMISSIONS = Arrays.asList(
 			"publish_actions", "email", "user_birthday");
-	ProgressDialog facebookProgressialog, googlePlusProgressDialog;
+	ProgressDialog mFacebookProgressialog, mGooglePlusProgressDialog;
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
 			.getInstance().getString(R.string.pendingActionBundleKey);
-	private PendingAction pendingAction = PendingAction.NONE;
+	private PendingAction mPendingAction = PendingAction.NONE;
 
 	enum PendingAction {
 		NONE, POST_PHOTO, POST_STATUS_UPDATE
 	}
 
-	private UiLifecycleHelper uiHelper;
-
-	private Session.StatusCallback callback = new Session.StatusCallback() {
+	private UiLifecycleHelper mUiHelper;
+	private Session.StatusCallback mCallback = new Session.StatusCallback() {
 		public void call(Session session, SessionState state,
 				Exception exception) {
 			onSessionStateChange(session, state, exception);
@@ -127,84 +116,88 @@ public class VueLoginActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.socialnetworkingloginscreen);
-		uiHelper = new UiLifecycleHelper(this, callback);
-		uiHelper.onCreate(savedInstanceState);
-		trendingbg = (ImageView) findViewById(R.id.trendingbg);
+		mUiHelper = new UiLifecycleHelper(this, mCallback);
+		mUiHelper.onCreate(savedInstanceState);
+		mTrendingbg = (ImageView) findViewById(R.id.trendingbg);
 		try {
-			trendingbg.setBackgroundResource(R.drawable.trendingbg);
+			mTrendingbg.setBackgroundResource(R.drawable.trendingbg);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		RelativeLayout googleplusign_in_buttonlayout = (RelativeLayout) findViewById(R.id.googleplusign_in_buttonlayout);
 		RelativeLayout fblog_in_buttonlayout = (RelativeLayout) findViewById(R.id.fblog_in_buttonlayout);
 		LoginButton login_button = (LoginButton) findViewById(R.id.login_button);
-		socialIntegrationMainLayout = (LinearLayout) findViewById(R.id.socialintegrationmainlayotu);
+		mSocialIntegrationMainLayout = (LinearLayout) findViewById(R.id.socialintegrationmainlayotu);
 		RelativeLayout cancellayout = (RelativeLayout) findViewById(R.id.cancellayout);
-		context = this;
-		sharedPreferencesObj = this.getSharedPreferences(
+		mContext = this;
+		mSharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
-		facebookProgressialog = ProgressDialog.show(context, "Facebook",
-				"Sharing....", true);
-		googlePlusProgressDialog = ProgressDialog.show(context, "Google+",
-				"Loading....", true);
-		googlePlusProgressDialog.dismiss();
-		facebookProgressialog.dismiss();
+		mFacebookProgressialog = ProgressDialog.show(mContext, getResources()
+				.getString(R.string.sidemenu_sub_option_Facebook),
+				getResources().getString(R.string.sharing_mesg), true);
+		mGooglePlusProgressDialog = ProgressDialog.show(
+				mContext,
+				getResources().getString(
+						R.string.sidemenu_sub_option_Googleplus),
+				getResources().getString(R.string.loading_mesg), true);
+		mGooglePlusProgressDialog.dismiss();
+		mFacebookProgressialog.dismiss();
 
-		bundle = getIntent().getExtras();
-		if (bundle != null) {
-			hideCancelButton = bundle
+		mBundle = getIntent().getExtras();
+		if (mBundle != null) {
+			mHideCancelButton = mBundle
 					.getBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG);
-			fromBezelMenuLogin = bundle
+			mFromBezelMenuLogin = mBundle
 					.getBoolean(VueConstants.FROM_BEZELMENU_LOGIN);
-			fromInviteFriends = bundle
+			mFromInviteFriends = mBundle
 					.getString(VueConstants.FROM_INVITEFRIENDS);
-			fromDetailsFbShare = bundle
+			mFromDetailsFbShare = mBundle
 					.getBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE);
-			fbFriendId = bundle.getString(VueConstants.FB_FRIEND_ID);
-			fbFriendName = bundle.getString(VueConstants.FB_FRIEND_NAME);
-			googleplusFriendInvite = bundle
+			mFbFriendId = mBundle.getString(VueConstants.FB_FRIEND_ID);
+			mFbFriendName = mBundle.getString(VueConstants.FB_FRIEND_NAME);
+			mGoogleplusFriendInvite = mBundle
 					.getBoolean(VueConstants.GOOGLEPLUS_FRIEND_INVITE);
-			googleplusAutomaticLogin = bundle
+			mGoogleplusAutomaticLogin = mBundle
 					.getBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN);
 		}
 
 		// Facebook Invite friend
-		if (fbFriendId != null) {
-			socialIntegrationMainLayout.setVisibility(View.GONE);
-			trendingbg.setVisibility(View.GONE);
-			publishFeedDialog(fbFriendId, fbFriendName);
+		if (mFbFriendId != null) {
+			mSocialIntegrationMainLayout.setVisibility(View.GONE);
+			mTrendingbg.setVisibility(View.GONE);
+			publishFeedDialog(mFbFriendId, mFbFriendName);
 		}
 		// Google+ invite friend
-		else if (googleplusFriendInvite) {
-			socialIntegrationMainLayout.setVisibility(View.GONE);
-			trendingbg.setVisibility(View.GONE);
-			googlePlusProgressDialog.show();
-			dontCallUserInfoChangesMethod = true;
+		else if (mGoogleplusFriendInvite) {
+			mSocialIntegrationMainLayout.setVisibility(View.GONE);
+			mTrendingbg.setVisibility(View.GONE);
+			mGooglePlusProgressDialog.show();
+			mDontCallUserInfoChangesMethod = true;
 			mSignInFragment = PlusClientFragment.getPlusClientFragment(
 					VueLoginActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
-		} else if (googleplusAutomaticLogin) {
-			socialIntegrationMainLayout.setVisibility(View.GONE);
-			trendingbg.setVisibility(View.GONE);
-			googlePlusProgressDialog.show();
-			dontCallUserInfoChangesMethod = true;
+		} else if (mGoogleplusAutomaticLogin) {
+			mSocialIntegrationMainLayout.setVisibility(View.GONE);
+			mTrendingbg.setVisibility(View.GONE);
+			mGooglePlusProgressDialog.show();
+			mDontCallUserInfoChangesMethod = true;
 			mSignInFragment = PlusClientFragment.getPlusClientFragment(
 					VueLoginActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
 			mSignInFragment.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
 		} else {
-			if (fromDetailsFbShare) {
-				socialIntegrationMainLayout.setVisibility(View.GONE);
-				trendingbg.setVisibility(View.GONE);
-				sharedPreferencesObj = this.getSharedPreferences(
+			if (mFromDetailsFbShare) {
+				mSocialIntegrationMainLayout.setVisibility(View.GONE);
+				mTrendingbg.setVisibility(View.GONE);
+				mSharedPreferencesObj = this.getSharedPreferences(
 						VueConstants.SHAREDPREFERENCE_NAME, 0);
-				boolean facebookloginflag = sharedPreferencesObj.getBoolean(
+				boolean facebookloginflag = mSharedPreferencesObj.getBoolean(
 						VueConstants.FACEBOOK_LOGIN, false);
 				if (facebookloginflag) {
-					ArrayList<clsShare> filePathList = bundle
+					ArrayList<clsShare> filePathList = mBundle
 							.getParcelableArrayList(VueConstants.FBPOST_IMAGEURLS);
 					shareToFacebook(filePathList,
-							bundle.getString(VueConstants.FBPOST_TEXT));
+							mBundle.getString(VueConstants.FBPOST_TEXT));
 				} else {
-					socialIntegrationMainLayout.setVisibility(View.VISIBLE);
+					mSocialIntegrationMainLayout.setVisibility(View.VISIBLE);
 					googleplusign_in_buttonlayout.setVisibility(View.GONE);
 					fblog_in_buttonlayout.setVisibility(View.INVISIBLE);
 					cancellayout.setVisibility(View.GONE);
@@ -213,29 +206,29 @@ public class VueLoginActivity extends FragmentActivity implements
 			} else {
 				mSignInFragment = PlusClientFragment.getPlusClientFragment(
 						VueLoginActivity.this, MomentUtil.VISIBLE_ACTIVITIES);
-				if (hideCancelButton) {
+				if (mHideCancelButton) {
 					cancellayout.setVisibility(View.GONE);
 				}
-				boolean fbloginfalg = sharedPreferencesObj.getBoolean(
+				boolean fbloginfalg = mSharedPreferencesObj.getBoolean(
 						VueConstants.FACEBOOK_LOGIN, false);
-				boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
+				boolean googleplusloginfalg = mSharedPreferencesObj.getBoolean(
 						VueConstants.GOOGLEPLUS_LOGIN, false);
-				if (fromInviteFriends != null) {
-					if (fromInviteFriends.equals(VueConstants.FACEBOOK)) {
+				if (mFromInviteFriends != null) {
+					if (mFromInviteFriends.equals(VueConstants.FACEBOOK)) {
 						googleplusign_in_buttonlayout.setVisibility(View.GONE);
-						facebookFlag = true;
+						mFacebookFlag = true;
 					}
-					if (fromInviteFriends.equals(VueConstants.GOOGLEPLUS)) {
-						dontCallUserInfoChangesMethod = true;
-						fromGoogleplusInvitefriends = true;
+					if (mFromInviteFriends.equals(VueConstants.GOOGLEPLUS)) {
+						mDontCallUserInfoChangesMethod = true;
+						mFromGoogleplusInvitefriends = true;
 						fblog_in_buttonlayout.setVisibility(View.GONE);
 					}
-				} else if (fromBezelMenuLogin) {
+				} else if (mFromBezelMenuLogin) {
 					if (fbloginfalg) {
-						dontCallUserInfoChangesMethod = true;
+						mDontCallUserInfoChangesMethod = true;
 						fblog_in_buttonlayout.setVisibility(View.GONE);
 					} else if (googleplusloginfalg) {
-						facebookFlag = true;
+						mFacebookFlag = true;
 						googleplusign_in_buttonlayout.setVisibility(View.GONE);
 					}
 				}
@@ -243,11 +236,11 @@ public class VueLoginActivity extends FragmentActivity implements
 						.setOnClickListener(new OnClickListener() {
 							@Override
 							public void onClick(View arg0) {
-								socialIntegrationMainLayout
+								mSocialIntegrationMainLayout
 										.setVisibility(View.GONE);
-								googleplusLoggedinDialogFlag = true;
-								if (fromGoogleplusInvitefriends)
-									googlePlusProgressDialog.show();
+								mGoogleplusLoggedinDialogFlag = true;
+								if (mFromGoogleplusInvitefriends)
+									mGooglePlusProgressDialog.show();
 								mSignInFragment
 										.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
 							}
@@ -256,7 +249,7 @@ public class VueLoginActivity extends FragmentActivity implements
 				login_button
 						.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 							public void onUserInfoFetched(GraphUser user) {
-								if (!dontCallUserInfoChangesMethod)
+								if (!mDontCallUserInfoChangesMethod)
 									updateUI();
 							}
 						});
@@ -273,30 +266,30 @@ public class VueLoginActivity extends FragmentActivity implements
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		uiHelper.onDestroy();
+		mUiHelper.onDestroy();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		uiHelper.onPause();
+		mUiHelper.onPause();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		uiHelper.onResume();
+		mUiHelper.onResume();
 	}
 
 	private void onSessionStateChange(Session session, SessionState state,
 			Exception exception) {
-		if (pendingAction != PendingAction.NONE
+		if (mPendingAction != PendingAction.NONE
 				&& (exception instanceof FacebookOperationCanceledException || exception instanceof FacebookAuthorizationException)) {
 			new AlertDialog.Builder(VueLoginActivity.this)
 					.setTitle(R.string.cancelled)
 					.setMessage(R.string.permission_not_granted)
 					.setPositiveButton(R.string.ok, null).show();
-			pendingAction = PendingAction.NONE;
+			mPendingAction = PendingAction.NONE;
 		} else if (state == SessionState.OPENED_TOKEN_UPDATED) {
 			handlePendingAction(null, null);
 		}
@@ -305,11 +298,11 @@ public class VueLoginActivity extends FragmentActivity implements
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		uiHelper.onSaveInstanceState(outState);
-		outState.putString(PENDING_ACTION_BUNDLE_KEY, pendingAction.name());
-		outState.putString(VueConstants.FROM_INVITEFRIENDS, fromInviteFriends);
+		mUiHelper.onSaveInstanceState(outState);
+		outState.putString(PENDING_ACTION_BUNDLE_KEY, mPendingAction.name());
+		outState.putString(VueConstants.FROM_INVITEFRIENDS, mFromInviteFriends);
 		outState.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
-				fromDetailsFbShare);
+				mFromDetailsFbShare);
 	}
 
 	@Override
@@ -318,14 +311,14 @@ public class VueLoginActivity extends FragmentActivity implements
 
 		// From Googleplus app to send the invitation to friend
 		if (requestCode == REQUEST_CODE_INTERACTIVE_POST) {
-			if (googlePlusProgressDialog != null)
-				if (googlePlusProgressDialog.isShowing())
-					googlePlusProgressDialog.dismiss();
+			if (mGooglePlusProgressDialog != null)
+				if (mGooglePlusProgressDialog.isShowing())
+					mGooglePlusProgressDialog.dismiss();
 			finish();
 		}
 		try {
-			uiHelper.onActivityResult(requestCode, resultCode, data);
-			if (!dontCallUserInfoChangesMethod)
+			mUiHelper.onActivityResult(requestCode, resultCode, data);
+			if (!mDontCallUserInfoChangesMethod)
 				updateUI();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -340,37 +333,41 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	@Override
 	public void onSignedIn(PlusClient plusClient) {
-		SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+		SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
 		editor.putBoolean(VueConstants.VUE_LOGIN, true);
 		editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, true);
 		editor.putString(VueConstants.GOOGLEPLUS_USER_EMAIL,
 				plusClient.getAccountName());
 		editor.commit();
 		plusClient.loadPerson(this, "me");
-		if (!googleplusFriendInvite && !facebookFlag
-				&& !googleplusAutomaticLogin) {
-			Toast.makeText(this,
-					plusClient.getAccountName() + " is connected.",
+		if (!mGoogleplusFriendInvite && !mFacebookFlag
+				&& !mGoogleplusAutomaticLogin) {
+			Toast.makeText(
+					this,
+					plusClient.getAccountName()
+							+ " "
+							+ getResources().getString(
+									R.string.isconnected_mesg),
 					Toast.LENGTH_LONG).show();
 		}
 		// To show Google+ App install dialog after login with Google+
-		if (googleplusLoggedinDialogFlag) {
+		if (mGoogleplusLoggedinDialogFlag) {
 
 			boolean installed = appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME);
 			if (!installed) {
-				if (googlePlusProgressDialog != null
-						&& googlePlusProgressDialog.isShowing())
-					googlePlusProgressDialog.dismiss();
+				if (mGooglePlusProgressDialog != null
+						&& mGooglePlusProgressDialog.isShowing())
+					mGooglePlusProgressDialog.dismiss();
 				showAlertMessageForGoolgePlusAppInstalation();
 			}
 		}
 
-		if (googleplusFriendInvite) {
+		if (mGoogleplusFriendInvite) {
 			share(plusClient,
 					this,
-					"Invitation from Vue application.",
-					VueLandingPageActivity.googlePlusFriendsDetailsList
-							.get(bundle
+					VueConstants.INVITATION_MESG,
+					VueLandingPageActivity.mGooglePlusFriendsDetailsList
+							.get(mBundle
 									.getInt(VueConstants.GOOGLEPLUS_FRIEND_INDEX))
 							.getGoogleplusFriend());
 		} else {
@@ -395,25 +392,25 @@ public class VueLoginActivity extends FragmentActivity implements
 	public void onPeopleLoaded(ConnectionResult status,
 			PersonBuffer personBuffer, String nextPageToken) {
 		if (ConnectionResult.SUCCESS == status.getErrorCode()) {
-			VueLandingPageActivity.googlePlusFriendsDetailsList = new ArrayList<FbGPlusDetails>();
+			VueLandingPageActivity.mGooglePlusFriendsDetailsList = new ArrayList<FbGPlusDetails>();
 			if (personBuffer != null && personBuffer.getCount() > 0) {
 				for (Person p : personBuffer) {
 					FbGPlusDetails googlePlusFriendsDetailsObj = new FbGPlusDetails(
 							null, p.getDisplayName(), p.getImage().getUrl(), p);
-					VueLandingPageActivity.googlePlusFriendsDetailsList
+					VueLandingPageActivity.mGooglePlusFriendsDetailsList
 							.add(googlePlusFriendsDetailsObj);
 				}
 				Collections.sort(
-						VueLandingPageActivity.googlePlusFriendsDetailsList,
+						VueLandingPageActivity.mGooglePlusFriendsDetailsList,
 						new SortBasedOnName());
-				if (fromInviteFriends != null
-						&& fromInviteFriends.equals(VueConstants.GOOGLEPLUS)) {
+				if (mFromInviteFriends != null
+						&& mFromInviteFriends.equals(VueConstants.GOOGLEPLUS)) {
 					Intent resultIntent = new Intent();
 					Bundle b = new Bundle();
 					b.putString(
 							VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY,
 							getResources().getString(
-									R.string.sidemenu_sub_option_Gmail));
+									R.string.sidemenu_sub_option_Googleplus));
 					resultIntent.putExtras(b);
 					setResult(
 							VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE,
@@ -422,10 +419,10 @@ public class VueLoginActivity extends FragmentActivity implements
 				}
 			}
 		}
-		if (googlePlusProgressDialog != null
-				&& googlePlusProgressDialog.isShowing())
-			googlePlusProgressDialog.dismiss();
-		if (!facebookFlag)
+		if (mGooglePlusProgressDialog != null
+				&& mGooglePlusProgressDialog.isShowing())
+			mGooglePlusProgressDialog.dismiss();
+		if (!mFacebookFlag)
 			finish();
 	}
 
@@ -460,20 +457,20 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	public void saveFBLoginDetails(final Session session) {
-		sharedPreferencesObj = this.getSharedPreferences(
+		mSharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
-		final SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+		final SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
 		Request.executeMeRequestAsync(session, new GraphUserCallback() {
 			@Override
 			public void onCompleted(GraphUser user,
 					com.facebook.Response response) {
-				// TODO Auto-generated method stub
 				if (user != null) {
 					String location = "";
 					try {
 						JSONObject jsonObject = user.getLocation()
 								.getInnerJSONObject();
-						location = jsonObject.getString("name");
+						location = jsonObject
+								.getString(VueConstants.FACEBOOK_GRAPHIC_OBJECT_NAME_KEY);
 					} catch (JSONException e1) {
 						e1.printStackTrace();
 					}
@@ -482,14 +479,18 @@ public class VueLoginActivity extends FragmentActivity implements
 							VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
 									+ user.getId()
 									+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL);
-					editor.putString(VueConstants.FACEBOOK_USER_EMAIL,
-							user.getProperty("email") + "");
+					editor.putString(
+							VueConstants.FACEBOOK_USER_EMAIL,
+							user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY)
+									+ "");
 					editor.putString(VueConstants.FACEBOOK_USER_NAME,
 							user.getName());
 					editor.putString(VueConstants.FACEBOOK_USER_DOB,
 							user.getBirthday());
-					editor.putString(VueConstants.FACEBOOK_USER_GENDER,
-							user.getProperty("gender") + "");
+					editor.putString(
+							VueConstants.FACEBOOK_USER_GENDER,
+							user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_GENDER_KEY)
+									+ "");
 					editor.putString(VueConstants.FACEBOOK_USER_LOCATION,
 							location);
 					editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
@@ -497,9 +498,9 @@ public class VueLoginActivity extends FragmentActivity implements
 					editor.putBoolean(VueConstants.VUE_LOGIN, true);
 					editor.putBoolean(VueConstants.FACEBOOK_LOGIN, true);
 					editor.commit();
-					if (fromInviteFriends != null
-							&& fromInviteFriends.equals(VueConstants.FACEBOOK)) {
-						fromInviteFriends = null;
+					if (mFromInviteFriends != null
+							&& mFromInviteFriends.equals(VueConstants.FACEBOOK)) {
+						mFromInviteFriends = null;
 						try {
 							Intent resultIntent = new Intent();
 							Bundle b = new Bundle();
@@ -517,7 +518,7 @@ public class VueLoginActivity extends FragmentActivity implements
 							e.printStackTrace();
 						}
 					}
-					if (!fromDetailsFbShare)
+					if (!mFromDetailsFbShare)
 						finish();
 				} else {
 					editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
@@ -525,9 +526,9 @@ public class VueLoginActivity extends FragmentActivity implements
 					editor.putBoolean(VueConstants.VUE_LOGIN, true);
 					editor.putBoolean(VueConstants.FACEBOOK_LOGIN, true);
 					editor.commit();
-					if (fromInviteFriends != null
-							&& fromInviteFriends.equals(VueConstants.FACEBOOK)) {
-						fromInviteFriends = null;
+					if (mFromInviteFriends != null
+							&& mFromInviteFriends.equals(VueConstants.FACEBOOK)) {
+						mFromInviteFriends = null;
 						try {
 							Intent resultIntent = new Intent();
 							Bundle b = new Bundle();
@@ -545,14 +546,14 @@ public class VueLoginActivity extends FragmentActivity implements
 							e.printStackTrace();
 						}
 					}
-					if (!fromDetailsFbShare)
+					if (!mFromDetailsFbShare)
 						finish();
 				}
 			}
 		});
 		try {
-			socialIntegrationMainLayout.setVisibility(View.GONE);
-			trendingbg.setVisibility(View.GONE);
+			mSocialIntegrationMainLayout.setVisibility(View.GONE);
+			mTrendingbg.setVisibility(View.GONE);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -564,12 +565,12 @@ public class VueLoginActivity extends FragmentActivity implements
 		boolean fbloggedin = (session != null && session.isOpened());
 		if (fbloggedin) {
 			saveFBLoginDetails(session);
-			if (fromDetailsFbShare) {
+			if (mFromDetailsFbShare) {
 				try {
-					ArrayList<clsShare> filePathList = bundle
+					ArrayList<clsShare> filePathList = mBundle
 							.getParcelableArrayList(VueConstants.FBPOST_IMAGEURLS);
 					shareToFacebook(filePathList,
-							bundle.getString(VueConstants.FBPOST_TEXT));
+							mBundle.getString(VueConstants.FBPOST_TEXT));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -586,11 +587,8 @@ public class VueLoginActivity extends FragmentActivity implements
 		Session session = Session.getActiveSession();
 		if (session != null) {
 			if (hasPublishPermission()) {
-				// We can do the action right away.
 				handlePendingAction(fileList, articledesc);
 			} else {
-				// We need to get new permissions, then complete the action when
-				// we get called back.
 				session.requestNewPublishPermissions(new Session.NewPermissionsRequest(
 						this, PUBLISH_PERMISSIONS));
 			}
@@ -600,7 +598,8 @@ public class VueLoginActivity extends FragmentActivity implements
 	boolean hasPublishPermission() {
 		Session session = Session.getActiveSession();
 		return session != null
-				&& session.getPermissions().contains("publish_actions");
+				&& session.getPermissions().contains(
+						getResources().getString(R.string.publish_actions));
 	}
 
 	void handlePendingAction(ArrayList<clsShare> fileList, String articledesc) {
@@ -609,7 +608,7 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	void postPhoto(final ArrayList<clsShare> fileList, final String articledesc) {
 		if (hasPublishPermission()) {
-			facebookProgressialog.show();
+			mFacebookProgressialog.show();
 			// Post photo....
 			if (fileList != null) {
 				Thread t = new Thread(new Runnable() {
@@ -639,6 +638,7 @@ public class VueLoginActivity extends FragmentActivity implements
 										Log.e(TAG, arg0.getMessage());
 									}
 								};
+								@SuppressWarnings("unchecked")
 								ImageRequest imagerequestObj = new ImageRequest(
 										fileList.get(i).getImageUrl(),
 										listener, 0, 0, null, errorListener);
@@ -668,7 +668,8 @@ public class VueLoginActivity extends FragmentActivity implements
 										public void onCompleted(
 												com.facebook.Response response) {
 											if (index == fileList.size() - 1) {
-												facebookProgressialog.dismiss();
+												mFacebookProgressialog
+														.dismiss();
 												showPublishResult(
 														VueLoginActivity.this
 																.getString(R.string.photo_post),
@@ -689,7 +690,7 @@ public class VueLoginActivity extends FragmentActivity implements
 				});
 				t.start();
 			} else {
-				facebookProgressialog.dismiss();
+				mFacebookProgressialog.dismiss();
 			}
 		}
 	}
@@ -721,7 +722,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		View networkdialogline = dialog.findViewById(R.id.networkdialogline);
 		networkdialogline.setVisibility(View.GONE);
 		TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-		nobutton.setText("ok");
+		nobutton.setText(getResources().getString(R.string.ok));
 		messagetext.setText(alertMessage);
 		nobutton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -767,7 +768,6 @@ public class VueLoginActivity extends FragmentActivity implements
 									"Publish cancelled", Toast.LENGTH_SHORT)
 									.show();
 						} else {
-							// Generic, ex: network error
 							Toast.makeText(VueLoginActivity.this,
 									"Error posting story", Toast.LENGTH_SHORT)
 									.show();
@@ -778,7 +778,6 @@ public class VueLoginActivity extends FragmentActivity implements
 		feedDialog.setOnDismissListener(new OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface arg0) {
-				// TODO Auto-generated method stub
 				finish();
 			}
 		});
@@ -786,16 +785,16 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	@Override
 	public void onSignedFail() {
-		boolean fbloginflag = sharedPreferencesObj.getBoolean(
+		boolean fbloginflag = mSharedPreferencesObj.getBoolean(
 				VueConstants.FACEBOOK_LOGIN, false);
-		SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+		SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
 		if (!fbloginflag)
 			editor.putBoolean(VueConstants.VUE_LOGIN, false);
 		editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, false);
 		editor.commit();
-		if (googlePlusProgressDialog != null
-				&& googlePlusProgressDialog.isShowing())
-			googlePlusProgressDialog.dismiss();
+		if (mGooglePlusProgressDialog != null
+				&& mGooglePlusProgressDialog.isShowing())
+			mGooglePlusProgressDialog.dismiss();
 		finish();
 	}
 
@@ -837,7 +836,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	public void onPersonLoaded(ConnectionResult connectionresult, Person person) {
 		// TODO Auto-generated method stub
 		if (connectionresult.getErrorCode() == ConnectionResult.SUCCESS) {
-			SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
 			editor.putString(VueConstants.GOOGLEPLUS_USER_NAME,
 					person.getDisplayName());
 			editor.putString(VueConstants.GOOGLEPLUS_USER_PROFILE_PICTURE,

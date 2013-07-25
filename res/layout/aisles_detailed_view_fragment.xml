@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#ebebeb" >
+    android:background="@color/actionbarclor" >
 
     <ListView
         android:id="@+id/aisle_details_list"
@@ -47,7 +47,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:background="#bcbcbc"
+        android:background="@color/bottombar"
         android:layout_marginBottom="12dp"
         android:id="@+id/vue_bottom_bar"
             android:layout_height="48dp">
@@ -55,6 +55,7 @@
                    android:layout_height="32dp"
                    android:layout_marginLeft="4dp"
                    android:id="@+id/vue_user_pic"
+                    android:contentDescription="@string/Image"
                    android:src="@drawable/profile_thumbnail"
                    android:layout_centerVertical="true"/>
         <TextView android:layout_height="wrap_content"
@@ -70,6 +71,7 @@
                    android:layout_height="32dp"
                    android:id="@+id/vue_creat_aisle"
                    android:layout_centerInParent="true"
+                   android:contentDescription="@string/Image"
                    android:src="@drawable/add"/>
           <ImageView android:layout_width="32dp"
                    android:layout_height="32dp"
@@ -77,6 +79,7 @@
                    android:layout_toLeftOf="@+id/vuesharelayout"
                    android:layout_marginRight="16dp"
                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/Image"
                    android:src="@drawable/aisleinfo"
                    />
           <RelativeLayout android:layout_width="48dip"
@@ -86,6 +89,7 @@
             <ImageView android:layout_width="32dp"
                    android:layout_height="32dp"
                    android:id="@+id/vue_share"
+                    android:contentDescription="@string/Image"
                   android:layout_centerInParent="true"
                    android:src="@drawable/share"
                    />

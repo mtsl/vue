@@ -8,12 +8,14 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,9 +34,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
-import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
+import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
@@ -56,34 +58,26 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
  
    private int mListCount;
    public int mLikes = 5;
+   private int mBookmarksCount;
    public int mInitialImageLikeCounts[];
    public int mTempInitialImageLikeCounts[];
    public int mCurrentDispImageIndex;
    private boolean mallowLike = true,mallowDisLike = true;
-   private boolean isImageClciked = false;
+   private boolean mIsLikeImageClciked = false;
+   private boolean mIsBookImageClciked = false;
+   private boolean mIsBorowserSet = false;
+   
    private AisleWindowContent mWindowContentTemp;
    public String mVueusername;
    ShareDialog mShare ;
    private String mAisleWindowId;
    private ScaledImageViewFactory mViewFactory = null;
    private ContentAdapterFactory mContentAdapterFactory;
-
+   @SuppressLint("UseSparseArrays")
+   Map<Integer, Object> mCommentsMapList = new HashMap<Integer, Object>();
    ViewHolder mViewHolder;
-   String mTempComments[] = {
-         "Love love love the dress! Simple and fabulous.",
-         "Love love love the dress! Simple and fabulous.",
-         "Love love love the dress! Simple and fabulous.",
-         "Love love love the dress! Simple and fabulous.",
-         "Love love love the dress! Simple and fabulous.",
-         "Love love love the dress! Simple and fabulous.",
-         "Love love love the dress! Simple and fabulous.",
-         "Love love love the dress! Simple and fabulous.",
-         "Love love love the dress! Simple and fabulous.",
-           };
-   String mTempComments2[] = {   "Love love love the dress! Simple and fabulous.",
-         "Love love love the dress! Simple and fabulous."};
-   ViewHolder mHolder;
-
+   ArrayList<String> mShowingList;
+   
    public AisleDetailsViewAdapter(Context c,
          AisleDetailSwipeListener swipeListner, int listCount,
          ArrayList<AisleWindowContent> content) {
@@ -94,6 +88,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
       mswipeListner = swipeListner;
       mListCount = listCount;
+      mShowingList = new ArrayList<String>();
       if (DEBUG)
          Log.e(TAG, "About to initiate request for trending aisles");
       
@@ -107,6 +102,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
           }
       }
     if (mWindowContentTemp != null) {
+    	mBookmarksCount = mWindowContentTemp.getmAisleBookmarksCount();
       ArrayList<AisleImageDetails> imageDetailsArr = mWindowContentTemp
           .getImageList();
 
@@ -115,12 +111,30 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       for (int i = 0; i < imageDetailsArr.size(); i++) {
         mInitialImageLikeCounts[i] = imageDetailsArr.get(i).mLikesCount;
         mTempInitialImageLikeCounts[i] = imageDetailsArr.get(i).mLikesCount;
+        
+        mCommentsMapList.put(i, imageDetailsArr.get(i).mCommentsList);
+          if(imageDetailsArr.get(i).mCommentsList == null) {
+                //TODO: for temp comments display need to replace this 
+        	  imageDetailsArr.get(i).mCommentsList = new ArrayList<String>();
+        	  if(i %2 == 0){
+        		   for(int k=0;k< 6;k++){
+          	    	 imageDetailsArr.get(i).mCommentsList.add("Love Love vue the dress! Simple and fabulous.");
+          	    }
+        	  } else {
+        	    for(int k=0;k< 10;k++){
+        	    	 imageDetailsArr.get(i).mCommentsList.add("vue vue vue  sample test comments");
+        	    }
+        	  }
+        	    mCommentsMapList.put(i, imageDetailsArr.get(i).mCommentsList);
+          }
+          
         if (mInitialImageLikeCounts[i] == 0) {
           // 5 is the temporary   count 
           mInitialImageLikeCounts[i] = 5;
           mTempInitialImageLikeCounts[i] = 5;
         }
       }
+      mShowingList = imageDetailsArr.get(0).mCommentsList;
     }
    }
 
@@ -131,12 +145,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    static class ViewHolder {
       AisleContentBrowser aisleContentBrowser;
       HorizontalScrollView thumbnailContainer;
-      // LinearLayout thumbnailScroller;
       TextView aisleDescription;
       TextView aisleOwnersName;
       TextView aisleContext, commentCount, likeCount;
       TextView bookMarkCount;
       ImageView profileThumbnail;
+      ImageView vueWindowBookmarkImg;
       String uniqueContentId;
       LinearLayout aisleDescriptor;
       AisleWindowContent mWindowContent;
@@ -179,6 +193,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
                .findViewById(R.id.vue_details_descreption);
          mViewHolder.separator = (View) convertView
                .findViewById(R.id.separator);
+         mViewHolder.vueWindowBookmarkImg = (ImageView) convertView
+                 .findViewById(R.id.vuewndow_bookmark_img);
+          
        /*  mViewHolder.vue_user_enterComment = (TextView) convertView
                .findViewById(R.id.vue_user_entercomment);*/
          mViewHolder.enterCommentrellay = (RelativeLayout) convertView.findViewById(R.id.entercmentrellay);
@@ -227,6 +244,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
          convertView.setTag(mViewHolder);
       }
+      mViewHolder.commentCount.setText((mShowingList.size()+" Comments"));
+      mViewHolder.bookMarkCount.setText(""+mBookmarksCount);
       mViewHolder.likeCount.setText("" + mLikes);
       mViewHolder = (ViewHolder) convertView.getTag();
       mViewHolder.imgContentlay.setVisibility(View.VISIBLE);
@@ -246,18 +265,30 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
             int scrollIndex = 0;
             mWindowContentTemp = mViewHolder.mWindowContent;
             mViewHolder.tag = TAG;
+       /*     if(!mIsBorowserSet) {
+            	mIsBorowserSet = true;*/
             mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
                   position, new DetailImageClickListener());
+          /*  }*/
+            Log.i("returnsused imageview", "returnsused imageview adapeterclass count: "+  mViewHolder.aisleContentBrowser.getChildCount());
+            Log.i("returnsused imageview", "returnsused imageview adapeterclass obj: "+ mViewHolder.aisleContentBrowser.getCustomAdapter());
          } catch (Exception e) {
             e.printStackTrace();
          }
          // gone comment layoutgone
       } else if (position == 1) {
-         if (isImageClciked) {
-            isImageClciked = false;
+         if (mIsLikeImageClciked) {
+            mIsLikeImageClciked = false;
             Animation rotate = AnimationUtils.loadAnimation(mContext,
                   R.anim.bounce);
             mViewHolder.likeImg.startAnimation(rotate);
+         
+         }
+         if(mIsBookImageClciked) {
+        	 mIsBookImageClciked = false;
+             Animation rotate = AnimationUtils.loadAnimation(mContext,
+                     R.anim.bounce);
+        	   mViewHolder.vueWindowBookmarkImg.startAnimation(rotate); 
          }
          mViewHolder.imgContentlay.setVisibility(View.GONE);
          mViewHolder.commentContentlay.setVisibility(View.GONE);
@@ -304,7 +335,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     }
 
       else {
-         mViewHolder.userComment.setText(mTempComments2[position - 2]);
+    	  //first two views are image and comment layout. so use position - 2 to display all the comments from start
+    	  if(position -1 < mShowingList.size()) {
+         mViewHolder.userComment.setText(mShowingList.get(position - 2));
+    	  }
          mViewHolder.imgContentlay.setVisibility(View.GONE);
          mViewHolder.vueCommentheader.setVisibility(View.GONE);
          mViewHolder.addCommentlay.setVisibility(View.GONE);
@@ -319,22 +353,61 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          @Override
          public void onClick(View v) {
             // mswipeListner.onResetAdapter();
-            if (mTempComments2.length <= 2) {
-               mTempComments2 = new String[mTempComments.length];
-               for (int i = 0; i < mTempComments.length; i++) {
-                  mTempComments2[i] = mTempComments[i];
-               }
-               mListCount = mTempComments2.length;
-            } else {
-               mTempComments2 = new String[2];
-               for (int i = 0; i < 2; i++) {
-                  mTempComments2[i] = mTempComments[i];
-               }
-               mListCount = 5;
-            }
+        	 int showFixedRowCount = 3;
+        	 if(mListCount == (showFixedRowCount +2)) {
+        		 mListCount = mShowingList.size()+showFixedRowCount;
+        	 } else {
+        		 mListCount = showFixedRowCount +2;
+        	 }
+           
             notifyDataSetChanged();
          }
       });
+      mViewHolder.vueWindowBookmarkImg.setOnClickListener(new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			mIsBookImageClciked = true;
+			if(mWindowContentTemp.getWindowBookmarkIndicator()) {
+				mBookmarksCount--;
+				mWindowContentTemp.setmAisleBookmarksCount(mBookmarksCount);
+				mWindowContentTemp.setWindowBookmarkIndicator(false);
+			} else {
+				mBookmarksCount++;
+				mWindowContentTemp.setmAisleBookmarksCount(mBookmarksCount);
+				mWindowContentTemp.setWindowBookmarkIndicator(true);
+			}
+			/*if(mWindowContentTemp.getmAisleBookmarksCount() == mBookmarksCount) {
+				mBookmarksCount++;
+				} else {
+					mBookmarksCount = mWindowContentTemp.getmAisleBookmarksCount();
+				}*/
+			notifyDataSetChanged();
+		}
+	});
+      mViewHolder.bookMarkCount.setOnClickListener(new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			mIsBookImageClciked = true;
+			if(mWindowContentTemp.getWindowBookmarkIndicator()) {
+				mBookmarksCount--;
+				mWindowContentTemp.setmAisleBookmarksCount(mBookmarksCount);
+				mWindowContentTemp.setWindowBookmarkIndicator(false);
+			} else {
+				mBookmarksCount++;
+				mWindowContentTemp.setmAisleBookmarksCount(mBookmarksCount);
+				mWindowContentTemp.setWindowBookmarkIndicator(true);
+			}
+		/*	if(mWindowContentTemp.getmAisleBookmarksCount() == mBookmarksCount) {
+				mBookmarksCount++;
+				} else {
+					mBookmarksCount = mWindowContentTemp.getmAisleBookmarksCount();
+				}*/
+				notifyDataSetChanged(); 
+			
+		}
+	});
 
       return convertView;
    }
@@ -420,6 +493,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			if (position >= 0
 					&& position < VueApplication.getInstance()
 							.getClickedWindowCount()) {
+				@SuppressWarnings("unchecked")
+				ArrayList<String> tempCommentList = (ArrayList<String>) mCommentsMapList.get(position);
+				if(tempCommentList != null) {
+					mShowingList = tempCommentList;
+				}
 				likeCount = mTempInitialImageLikeCounts[position];
 				mLikes = likeCount;
 				notifyDataSetChanged();
@@ -440,7 +518,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			mallowLike = true;
 			mallowDisLike = false;
 		}
-		isImageClciked = true;
+		mIsLikeImageClciked = true;
 		notifyAdapter();
 	}
 
@@ -488,7 +566,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				mTempInitialImageLikeCounts[mCurrentDispImageIndex] = mLikes;
 				sendDataToDb(mAisleWindowId, mCurrentDispImageIndex, mLikes);
 			}
-			isImageClciked = true;
+			mIsLikeImageClciked = true;
 			notifyAdapter();
 		}
 	}
@@ -496,7 +574,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	private void onHandleDisLikeEvent() {
 		//decrease the likes count
 		if(mCurrentDispImageIndex>= 0 && mCurrentDispImageIndex < mInitialImageLikeCounts.length) {
-		isImageClciked = true;
+		mIsLikeImageClciked = true;
 		int initalLikesCount = mInitialImageLikeCounts[mCurrentDispImageIndex];
 		int presentLikesCount = mTempInitialImageLikeCounts[mCurrentDispImageIndex];
 		if (presentLikesCount == initalLikesCount
@@ -509,18 +587,23 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		}
 	}
 	public void setAisleBrowerObjectsNull(){
+		 Log.i("returnsused imageview", "returnsused imageview1: "+ mViewHolder.aisleContentBrowser.getCustomAdapter());
 		if(mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
+			 Log.i("returnsused imageview", "returnsused imageview2"+ mViewHolder.aisleContentBrowser.getChildCount());
+			 
+			
 			// mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
 			  for(int i=0;i< mViewHolder.aisleContentBrowser.getChildCount();i++){
 	                //((ScaleImageView)contentBrowser.getChildAt(i)).setContainerObject(null);
 	                mViewFactory.returnUsedImageView((ScaleImageView) mViewHolder.aisleContentBrowser.getChildAt(i));
+	                Log.i("returnsused imageview", "returnsused imageview");
 	            }
 			  mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
 		mViewHolder.aisleContentBrowser.setReferedObjectsNull();
 		mViewHolder.aisleContentBrowser.removeAllViews();
 		}
 	}
-	private void sendDataToDb(String windowId,int imgPosition,int likesCount) {
+	public void sendDataToDb(String windowId,int imgPosition,int likesCount) {
 		
 	}
 }

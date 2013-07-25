@@ -21,7 +21,26 @@ public class AisleWindowContent
 	public static final String EMPTY_AISLE_CONTENT_ID = "EmptyAisleWindow";
 	private static final String IMAGE_RES_SPEC_REGEX = ".jpg"; //this is the string pattern we look for
 	private String mImageFormatSpecifier = "._SY%d.jpg";
+	private int mAisleBookmarksCount = 15;
+	private boolean windowBookmarkIndicator = false;
 	
+ 
+
+	public boolean getWindowBookmarkIndicator() {
+		return windowBookmarkIndicator;
+	}
+
+	public void setWindowBookmarkIndicator(boolean windowBookmarkIndicator) {
+		this.windowBookmarkIndicator = windowBookmarkIndicator;
+	}
+
+	public int getmAisleBookmarksCount() {
+		return mAisleBookmarksCount;
+	}
+
+	public void setmAisleBookmarksCount(int mAisleBookmarksCount) {
+		this.mAisleBookmarksCount = mAisleBookmarksCount;
+	}
 	//these two should be based on device with & height
 	private String mAisleId;
 	
@@ -30,7 +49,7 @@ public class AisleWindowContent
     public AisleWindowContent(String aisleId){ 
     	mAisleId = aisleId;
     }
-    
+   
     public AisleWindowContent(String aisleId, boolean createPlaceHolders){ 
     	mAisleId = aisleId;
     	if(createPlaceHolders){

@@ -32,6 +32,8 @@
    <color name="dataentrylistshadowbordercolor1">#292822</color>
    <color name="dataentrylistshadowbordercolor2">#35342c</color>
    <color name="dataentrylistshadowbordercolor3">#656556</color>
+   <color name="whitbgshade">#EEEEEE</color>
+   <color name="bottombar">#bcbcbc</color>
 </resources>  
                             
                                

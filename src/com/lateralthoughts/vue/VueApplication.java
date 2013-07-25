@@ -55,9 +55,9 @@ public class VueApplication extends Application {
 	private int mScreenHeight;
 	private int mScreenWidth;
 	private int mTextSize = 18;
-	public Context vueApplicationContext;
+	public Context mVueApplicationContext;
 	// public int totalDataDownload = 0;
-	public boolean fbsharingflag = false;
+	public boolean mFbsharingflag = false;
 	private RequestQueue mVolleyRequestQueue;
 
 	@Override
@@ -68,7 +68,7 @@ public class VueApplication extends Application {
 				Uri.parse("file://" + Environment.getExternalStorageDirectory())));
 		sInstance = this;
 
-		vueApplicationContext = this;
+		mVueApplicationContext = this;
 
 		mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
 		mVueAisleImagesCache.setLimit(40);

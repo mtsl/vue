@@ -108,8 +108,8 @@ public class DataEntryActivity extends BaseActivity {
 				try {
 					DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.create_aisles_view_fragment);
-					if (fragment.mShare.shareIntentCalled) {
-						fragment.mShare.shareIntentCalled = false;
+					if (fragment.mShare.mShareIntentCalled) {
+						fragment.mShare.mShareIntentCalled = false;
 						fragment.mShare.dismisDialog();
 					}
 				} catch (Exception e) {

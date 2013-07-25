@@ -54,8 +54,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	private int mLikeImageShowTime = 1000;
 	private boolean isActionBarShown = false;
 	private int mCurrentapiVersion;
-	private HandleActionBar handleActionbar;
+	private HandleActionBar mHandleActionbar;
 	private int mStatusbarHeight;
+	VueAisleDetailsViewFragment mVueAiselFragment;
 
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
@@ -64,14 +65,14 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		super.onCreate(icicle);
 		// setContentView(R.layout.vuedetails_frag);
 		setContentView(R.layout.aisle_details_activity_landing);
-		//getSupportActionBar().hide();
-		getSupportActionBar().setTitle(getResources().getString(R.string.trending));
-		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT; 
-		  if(mCurrentapiVersion >= 11) { 
-			  getSupportActionBar().hide(); 
-		  }
-		 
-
+		// getSupportActionBar().hide();
+		getSupportActionBar().setTitle(
+				getResources().getString(R.string.trending));
+		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT;
+		
+		if (mCurrentapiVersion >= 11) {
+			getSupportActionBar().hide();
+		}
 		mSlidingDrawer = (SlidingDrawer) findViewById(R.id.drawer2);
 		mSlidingDrawer
 				.setOnDrawerScrollListener(new SlidingDrawer.OnDrawerScrollListener() {
@@ -106,8 +107,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		mBottomScroller = (HorizontalListView) findViewById(R.id.bottomscroller);
 		mStatusbarHeight = VueApplication.getInstance().getmStatusBarHeight();
 		mScreenTotalHeight = VueApplication.getInstance().getScreenHeight();
-		mCoparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight
-				- VueApplication.getInstance().getPixel(30);
+		mCoparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight;
 		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
 				.getInstance(mContext);
 		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
@@ -123,10 +123,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		}
 		mImageDetailsArr = mWindowContent.getImageList();
 		if (null != mImageDetailsArr && mImageDetailsArr.size() != 0) {
+			mTopScroller.setAdapter(new ComparisionAdapter(
+					AisleDetailsViewActivity.this));
 		}
-		mTopScroller.setAdapter(new ComparisionAdapter(
-				AisleDetailsViewActivity.this));
-   		mTopScroller.setOnItemClickListener(new OnItemClickListener() {
+		mTopScroller.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -139,10 +139,13 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					@Override
 					public void run() {
 						img.setVisibility(View.INVISIBLE);
-						VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.aisle_details_view_fragment);
-						fragment.changeLikeCount(position, CLICK_EVENT);
+						if (mVueAiselFragment == null) {
+							mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+									.findFragmentById(
+											R.id.aisle_details_view_fragment);
+						}
+						mVueAiselFragment
+								.changeLikeCount(position, CLICK_EVENT);
 					}
 				}, mLikeImageShowTime);
 
@@ -161,10 +164,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					@Override
 					public void run() {
 						img.setVisibility(View.INVISIBLE);
-						VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.aisle_details_view_fragment);
-						fragment.changeLikeCount(position, LONG_PRESS_EVENT);
+						if (mVueAiselFragment == null) {
+							mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+									.findFragmentById(
+											R.id.aisle_details_view_fragment);
+						}
+						mVueAiselFragment.changeLikeCount(position, LONG_PRESS_EVENT);
 					}
 				}, mLikeImageShowTime);
 				return false;
@@ -183,10 +188,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					@Override
 					public void run() {
 						img.setVisibility(View.INVISIBLE);
-						VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.aisle_details_view_fragment);
-						fragment.changeLikeCount(position, CLICK_EVENT);
+						if (mVueAiselFragment == null) {
+							mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+									.findFragmentById(
+											R.id.aisle_details_view_fragment);
+						}
+						mVueAiselFragment.changeLikeCount(position, CLICK_EVENT);
 					}
 				}, mLikeImageShowTime);
 
@@ -206,18 +213,22 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 							@Override
 							public void run() {
 								img.setVisibility(View.INVISIBLE);
-								VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+								if(mVueAiselFragment == null) {
+								mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 										.findFragmentById(
 												R.id.aisle_details_view_fragment);
-								fragment.changeLikeCount(position,
+								}
+								mVueAiselFragment.changeLikeCount(position,
 										LONG_PRESS_EVENT);
 							}
 						}, mLikeImageShowTime);
 						return false;
 					}
 				});
+		if (null != mImageDetailsArr && mImageDetailsArr.size() != 0) {
 		mBottomScroller.setAdapter(new ComparisionAdapter(
 				AisleDetailsViewActivity.this));
+		}
 
 	}
 
@@ -322,10 +333,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	@Override
 	public void onResume() {
-		handleActionbar = new HandleActionBar();
-		VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+		mHandleActionbar = new HandleActionBar();
+		if(mVueAiselFragment == null) {
+		mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisle_details_view_fragment);
-		fragment.setActionBarHander(handleActionbar);
+		}
+		mVueAiselFragment.setActionBarHander(mHandleActionbar);
  
 		super.onResume();
 	}
@@ -359,9 +372,11 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				}
 			} else {
 				if (!VueApplication.getInstance().mSoftKeboardIndicator) {
-					VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+					if(mVueAiselFragment == null) {
+					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.aisle_details_view_fragment);
-					fragment.setAisleContentListenerNull();
+					}
+					mVueAiselFragment.setAisleContentListenerNull();
 			    super.onBackPressed();
 				} else {
 					VueApplication.getInstance().mSoftKeboardIndicator = false;
@@ -387,12 +402,13 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		} else {
 
 			try {
-				VueAisleDetailsViewFragment fragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+				if(mVueAiselFragment == null) {
+				mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.aisle_details_view_fragment);
-
-				if (fragment.mAisleDetailsAdapter.mShare.shareIntentCalled) {
-					fragment.mAisleDetailsAdapter.mShare.shareIntentCalled = false;
-					fragment.mAisleDetailsAdapter.mShare.dismisDialog();
+				}
+				if (mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled) {
+					mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled = false;
+					mVueAiselFragment.mAisleDetailsAdapter.mShare.dismisDialog();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

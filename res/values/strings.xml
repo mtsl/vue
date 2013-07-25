@@ -20,6 +20,7 @@
     <string name="googleplus_button_text">Sign In with Google</string>
     <string name="facebook_button_text">Sign In with Facebook</string>
     <string name="cancel_button_text">No Thanks</string>
+        <string name="share_via_mesg">SHARE VIA</string>
     <string name="com_facebook_dialogloginactivity_ok_button">OK</string>
     <string name="com_facebook_loginview_log_out_button">Log Out</string>
     <string name="com_facebook_loginview_log_in_button">Log In</string>
@@ -100,10 +101,14 @@
     <string name="sidemenu_sub_option_Home">Home</string>
     <string name="sidemenu_sub_option_Facebook">Facebook</string>
     <string name="sidemenu_sub_option_Twitter">Twitter</string>
-    <string name="sidemenu_sub_option_Gmail">Google Plus</string>
+    <string name="sidemenu_sub_option_Googleplus">Google+</string>
     <string name="done">Done</string>
     <string name="about_Vue">About Vue</string>
+    <string name="sharing_mesg">Sharing....</string>
+    <string name="loading_mesg">Loading....</string>
+    <string name="isconnected_mesg">is connected.</string>
     <string name="contact_us">Contact us</string>
+    <string name="publish_actions">publish_actions</string>
     <string name="contact_us_text">Please provide feedback by writing to us at</string>
     <string name="email_id">vue@thesilverlabs.com</string>
     <string name="vue_content">Private Policy</string>

@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -55,8 +57,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     private Context mContext;
     public  static final  String  SCREEN_NAME = "DETAILS_SCREEN";
     private static final int AISLE_HEADER_SHOW_TIME = 5000;
-    private static final int ANIM_SPEED_EDITEXPAND = 500;
-    private static final int USER_COMMENT_MARIGIN = 16;
     private VueContentGateway mVueContentGateway;
     AisleDetailsViewAdapter mAisleDetailsAdapter;  
     private ListView mAisleDetailsList;
@@ -64,16 +64,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     IndicatorView mIndicatorView;
     private int mCurrentScreen;
     private int  mTotalScreenCount ;
-    private String mScreenDirection;
-    private LinearLayout mVueDetailsContainer;
     int mListCount =5;
-    int mFirstVisibleItem;
-    int mVisibleItemCount;
     TextView mVueUserName;
     int mCurentIndPosition;
     static final int MAX_DOTS_TO_SHOW = 3;
     int mPrevPosition;
     private ActionBarHandler mHandleActionBar;
+    private ScaledImageViewFactory mImageViewFactory;
 
     //TODO: define a public interface that can be implemented by the parent
     //activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -109,9 +106,12 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.aisles_detailed_view_fragment,
 				container, false);
-		RelativeLayout bottomBar = (RelativeLayout)v.findViewById(R.id.vue_bottom_bar);
+		//RelativeLayout bottomBar = (RelativeLayout)v.findViewById(R.id.vue_bottom_bar);
 		//bottomBar.getBackground().setAlpha(75);
-	 
+		 mImageViewFactory  = ScaledImageViewFactory.getInstance(mContext);
+		 mImageViewFactory.clearAllViews();
+		 
+		 
 		mAisleDetailsList = (ListView) v.findViewById(R.id.aisle_details_list);
 		mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
 		mVueUserName = (TextView) v.findViewById(R.id.vue_user_name);
@@ -303,14 +303,14 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
        }
       @Override
       public void onResetAdapter() {
-         //TODO: need to remove these counts when original comments available.
+    /*     //TODO: need to remove these counts when original comments available.
          if(mListCount == 5){
          mListCount = 10;
          } else {
             mListCount = 5;
          }
           mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mListCount ,null);
-          mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+          mAisleDetailsList.setAdapter(mAisleDetailsAdapter);*/
          
       }
       /**
@@ -335,7 +335,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				return false;
 			}
 		});
-         
+     	view.setVisibility(View.GONE);
           final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
              inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
              edtCommentLay.setVisibility(View.VISIBLE);
@@ -361,7 +361,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 							edtCommentLay.setVisibility(View.GONE);
 							view.setVisibility(View.VISIBLE);
 							mAisleDetailsAdapter.notifyDataSetChanged();
-							 
+
 						}
 
 						@Override
@@ -375,40 +375,41 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
           editText.setVerticalScrollBarEnabled(true);
           editText.setMovementMethod(new ScrollingMovementMethod());
           sendComment.setVisibility(View.GONE);
-          sendComment.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				 String etText = editText.getText().toString();
-				 
+			sendComment.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					String etText = editText.getText().toString();
+
 					if (etText != null && etText.length() >= 1) {
 						etText = etText.trim();
 						inputMethodManager.toggleSoftInputFromWindow(
 								editText.getApplicationWindowToken(),
 								InputMethodManager.SHOW_FORCED, 0);
-						mAisleDetailsAdapter.mTempComments2 = new String[mAisleDetailsAdapter.mTempComments.length + 1];
-						mAisleDetailsAdapter.mTempComments2[0] = etText;
-						for (int i = 0; i < mAisleDetailsAdapter.mTempComments.length; i++) {
-							mAisleDetailsAdapter.mTempComments2[i + 1] = mAisleDetailsAdapter.mTempComments[i];
-						}
-						mAisleDetailsAdapter.mTempComments = new String[mAisleDetailsAdapter.mTempComments.length + 1];
-						for (int i = 0; i < mAisleDetailsAdapter.mTempComments2.length; i++) {
-							mAisleDetailsAdapter.mTempComments[i] = mAisleDetailsAdapter.mTempComments2[i];
-						}
+
+					
+						@SuppressWarnings("unchecked")
+						ArrayList<String> commentList = (ArrayList<String>) mAisleDetailsAdapter.mCommentsMapList
+								.get(mAisleDetailsAdapter.mCurrentDispImageIndex);
+						commentList.add(0, etText);
+						//mAisleDetailsAdapter.mTempComments2 = new String[commentList.size() + 1];
+					/*	
+						mAisleDetailsAdapter.mTempComments2 = commentList
+								.toArray(mAisleDetailsAdapter.mTempComments2);*/
+						mAisleDetailsAdapter.mShowingList = commentList;
 						editText.setVisibility(View.GONE);
 						editText.setText("");
 						view.setVisibility(View.VISIBLE);
 						mAisleDetailsAdapter.notifyDataSetChanged();
 					}
-				
-			}
-		});
+
+				}
+			});
 			editText.addTextChangedListener(new TextWatcher() {
 
 				@Override
 				public void onTextChanged(CharSequence s, int start,
 						int before, int count) {
-					// TODO Auto-generated method stub
 					if (s != null && s.length() >= 1) {
 						sendComment.setVisibility(View.VISIBLE);
 					} else {
@@ -420,13 +421,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				@Override
 				public void beforeTextChanged(CharSequence s, int start,
 						int count, int after) {
-					// TODO Auto-generated method stub
 
 				}
 
 				@Override
 				public void afterTextChanged(Editable s) {
-					// TODO Auto-generated method stub
 					if (s != null && s.length() >= 1) {
 						sendComment.setVisibility(View.VISIBLE);
 					} else {
@@ -437,12 +436,10 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
       }
 	@Override
 	public void onDissAllowListResponse() {
-		// TODO Auto-generated method stub
 		mAisleDetailsList.requestDisallowInterceptTouchEvent(true);
 	}
 	@Override
 	public void onAllowListResponse() {
-		// TODO Auto-generated method stub
 		mAisleDetailsList.requestDisallowInterceptTouchEvent(false);
 	}
     }
