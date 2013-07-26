@@ -13,6 +13,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
@@ -94,6 +95,7 @@ public class DataEntryFragment extends Fragment {
 	private ArrayList<String> mLookingForAisleKeywordsList = null,
 			mOccassionAisleKeywordsList = null,
 			mCategoryAilseKeywordsList = null;
+	public boolean mIsKeyboradUP = false;
 	private DataBaseManager mDbManager;
 
 	@Override
@@ -218,7 +220,14 @@ public class DataEntryFragment extends Fragment {
 						return true;
 					}
 				});
-		mSaySomethingAboutAisle.setonInterceptListen(new OnInterceptListener() {
+		final OnInterceptListener mSayBoutListner = new OnInterceptListener() {
+			
+			@Override
+			public void setFlag(boolean flag) {
+				 mIsKeyboradUP = true;
+				
+			}
+			
 			@Override
 			public void onKeyBackPressed() {
 				mSaySomethingAboutAisleClicked = false;
@@ -226,22 +235,32 @@ public class DataEntryFragment extends Fragment {
 				mInputMethodManager.hideSoftInputFromWindow(
 						mSaySomethingAboutAisle.getWindowToken(), 0);
 				mSaySomethingAboutAisle.setText(mPreviousSaySomething);
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						setFlag(false);
+					}
+				}, 500);
+				
 			}
-
-			@Override
-			public void setFlag(boolean flag) {
-			}
-
+			
 			@Override
 			public boolean getFlag() {
-				return true;
+				// TODO Auto-generated method stub
+				return mIsKeyboradUP;
 			}
-		});
+		};
+		
+		mSaySomethingAboutAisle.setonInterceptListen(mSayBoutListner) ; 
+		 
 		mLookingForText
 				.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 					@Override
 					public boolean onEditorAction(TextView v, int actionId,
 							KeyEvent event) {
+						mSayBoutListner.setFlag(true);
 						mLookingForBigText
 								.setBackgroundColor(Color.TRANSPARENT);
 						if (mLookingForText.getText().toString().trim()

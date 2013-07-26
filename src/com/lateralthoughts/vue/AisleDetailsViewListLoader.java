@@ -107,11 +107,12 @@ public class AisleDetailsViewListLoader {
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			
 			 for(int i = 0;i<imageDetailsArr.size();i++) {
+				  Log.i("imageHeight", "imageHeight all images height: "+mBestHeight);
 				  if(mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
 					  mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
 				  }
 			 }
-			
+			 Log.i("imageHeight", "imageHeight  bestHeight: "+mBestHeight);
 			holder.aisleContentBrowser.mSwipeListener
 					.onReceiveImageCount(imageDetailsArr.size());
 			itemDetails = imageDetailsArr.get(0);
@@ -252,7 +253,8 @@ public class AisleDetailsViewListLoader {
 
       if (vFlipper != null)
          vFlipper.setLayoutParams(showpieceParams);
-
+      Log.i("imageHeight", "imageHeight  bestHeight setting: "+(mBestHeight+topMottomMargin));
+      AisleDetailsViewAdapter.mImageAreaHeight = (mBestHeight+topMottomMargin);
       if (vFlipper != null) {
          FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);

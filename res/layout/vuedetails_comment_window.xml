@@ -35,45 +35,63 @@
             android:textColor="@color/black" />
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/vuewndow_bookmark_img"
-        style="@style/vue_comeents_imgalign"
-        android:layout_marginBottom="12dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="12dp"
-        android:layout_toLeftOf="@+id/vuewndow_bookmark_count"
-        android:src="@drawable/addimage01" />
+    <RelativeLayout
+        android:id="@+id/bookmarklay"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@+id/likelay" >
 
-    <TextView
-        android:id="@+id/vuewndow_bookmark_count"
-        style="@style/vue_comeents_text_align"
-        android:layout_marginBottom="12dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="12dp"
-        android:layout_toLeftOf="@+id/vuewndow_lik_img"
-        android:text="12"
-        android:textColor="@color/black" />
+        <ImageView
+            android:id="@+id/vuewndow_bookmark_img"
+            android:layout_width="16dp"
+           android:layout_height="24dp"
+           android:layout_centerVertical="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_toLeftOf="@+id/vuewndow_bookmark_count"
+            android:src="@drawable/addimage01" />
 
-    <ImageView
-        android:id="@+id/vuewndow_lik_img"
-        style="@style/vue_comeents_imgalign"
-        android:layout_marginBottom="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="12dp"
-        android:layout_toLeftOf="@+id/vuewndow_lik_count"
-        android:src="@drawable/thumb_up" />
+        <TextView
+            android:id="@+id/vuewndow_bookmark_count"
+            style="@style/vue_comeents_text_align"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="12dp"
+            android:text="12"
+            android:textColor="@color/black" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/vuewndow_lik_count"
-        style="@style/vue_comeents_text_align"
+    <RelativeLayout
+        android:id="@+id/likelay"
+        android:layout_width="76dp"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="12dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="12dp"
-        android:text="52"
-        android:textColor="@color/black" />
+        android:clickable="true"
+         >
+
+        <ImageView
+            android:id="@+id/vuewndow_lik_img"
+           android:layout_width="16dp"
+           android:layout_height="24dp"
+           android:layout_centerVertical="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_toLeftOf="@+id/vuewndow_lik_count"
+            android:src="@drawable/thumb_up" />
+
+        <TextView
+            android:id="@+id/vuewndow_lik_count"
+            style="@style/vue_comeents_text_align"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="12dp"
+            android:text="52"
+            android:textColor="@color/black" />
+    </RelativeLayout>
 
 </RelativeLayout>

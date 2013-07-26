@@ -13,6 +13,7 @@ import android.widget.EditText;
  */
 public class EditTextBackEvent extends EditText {
 	Context mContext;
+	boolean mKeyborOpenFlag = false;
 	private OnInterceptListener mOnInterceptListenr;
 
 	/**
@@ -57,10 +58,10 @@ public class EditTextBackEvent extends EditText {
 			if (keyCode == KeyEvent.KEYCODE_BACK
 					&& event.getAction() == KeyEvent.ACTION_UP) {
 				VueApplication.getInstance().mSoftKeboardIndicator = true;
-				if (mOnInterceptListenr.getFlag()) {
-					if (DataEntryFragment.mSaySomethingAboutAisleClicked == false) {
+				if (!mOnInterceptListenr.getFlag()) {
+				 
 						VueApplication.getInstance().mSoftKeboardIndicator = false;
-					}
+					 
 				}
 				mOnInterceptListenr.onKeyBackPressed();
 				return false;

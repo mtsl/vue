@@ -156,9 +156,7 @@ public class AisleContentBrowser extends ViewFlipper {
                         }
 	                    setBrowserParams(nextView);
 	                   // if((currentIndex+1)>=0 && (currentIndex+1) < aisleContentBrowser.getChildCount() )
-	                    if(detailImgClickListenr != null) {
-	                    detailImgClickListenr.onImageSwipe(currentIndex+1);
-	                    }
+	                  
 	                    if(null != mSpecialNeedsAdapter && null == nextView){
 	                    	
 	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, null, currentIndex, currentIndex+1, true)){
@@ -187,6 +185,9 @@ public class AisleContentBrowser extends ViewFlipper {
 	                            return super.onTouchEvent(event);
 	                        }
 	                    }
+	                    if(detailImgClickListenr != null) {
+		                    detailImgClickListenr.onImageSwipe(currentIndex+1);
+		                    }
 	                    Animation currentGoLeft = AnimationUtils.loadAnimation(mContext, R.anim.right_out);
 	                    final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
 	                    mAnimationInProgress = true;
@@ -224,9 +225,7 @@ public class AisleContentBrowser extends ViewFlipper {
                            }
 	                       setBrowserParams(nextView);
 	                      // if((currentIndex-1)>=0 && (currentIndex-1) < aisleContentBrowser.getChildCount() )
-	                       if(detailImgClickListenr != null) {
-	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
-	                       }
+	                      
 	                        if(null != mSpecialNeedsAdapter && null == nextView){
 	                        	
 	                            if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex-1, true)){
@@ -253,6 +252,9 @@ public class AisleContentBrowser extends ViewFlipper {
 	                                return super.onTouchEvent(event);
 	                            }
 	                        }
+	                        if(detailImgClickListenr != null) {
+	 	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
+	 	                       }
 	                    Animation currentGoRight = AnimationUtils.loadAnimation(mContext, R.anim.left_in);
 	                    final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
 	                    mAnimationInProgress = true;
@@ -296,7 +298,13 @@ public class AisleContentBrowser extends ViewFlipper {
 	    public boolean onDown(MotionEvent e) {
 	        return true;
 	    }
-	    
+	    @Override
+	    public boolean onDoubleTap(MotionEvent e) {
+	    	   if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
+		        	detailImgClickListenr.onImageDoubleTap();
+		        }
+	    	return super.onDoubleTap(e);
+	    }
 	    @Override
 	    public boolean onSingleTapConfirmed(MotionEvent event){
 	        Log.e("Vinodh Clicks","ok...we are getting item clicks!!");
@@ -326,6 +334,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	    public void onImageClicked();
 	    public void onImageLongPress();
 	    public void onImageSwipe(int position);
+	    public void onImageDoubleTap();
 	}
 	DetailClickListener detailImgClickListenr;
 	public  void setDetailImageClickListener(DetailClickListener detailLestener) {
