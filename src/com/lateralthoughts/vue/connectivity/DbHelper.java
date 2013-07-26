@@ -44,6 +44,7 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.ID + " text, "
      + VueConstants.LIKE_OR_DISLIKE + " integer, "
      + VueConstants.LIKES_COUNT + " integer, "
+     + VueConstants.DELETE_FLAG + " integer, "
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.HEIGHT + " text, "
      + VueConstants.WIDTH + " text);";
@@ -53,6 +54,7 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.AISLE_ID + " text, "
      + VueConstants.IMAGE_ID + " text, "
      + VueConstants.DIRTY_FLAG + " integer, "
+     + VueConstants.DELETE_FLAG + " integer, "
      + VueConstants.COMMENTS + " text);";
 
 /*     private String createQueuedDataToSyncTable = "create table if not exists " + DATABASE_TABLE_DATA_TO_SYNC
