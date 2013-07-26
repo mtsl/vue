@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import android.content.Context;
 import android.content.Intent;
@@ -111,8 +112,8 @@ public class VueContentGateway {
               };
               Response.ErrorListener errorListener = new Response.ErrorListener(){
                   @Override
-                  public void onErrorResponse(VolleyError error){
-                      Log.e("VueNetworkError","Vue encountered network operations error. Error = " + error.networkResponse);
+                  public void onErrorResponse(VolleyError error) {
+                    Log.e("VueNetworkError","Vue encountered network operations error. Error = " + error.networkResponse);
                   }
               };
               JsonArrayRequest vueRequest =

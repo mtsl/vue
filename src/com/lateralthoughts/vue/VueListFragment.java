@@ -59,6 +59,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
+import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
 public class VueListFragment extends SherlockFragment implements TextWatcher/* Fragment */{
   // public static final String TAG = "VueListFragment";
@@ -151,10 +152,19 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
           AisleWindowContentFactory.getInstance(getActivity())
               .clearObjectsInUse();
-          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
-          activity.getSlidingMenu().toggle();
-          activity.getSupportActionBar().setTitle(
-              getString(R.string.sidemenu_option_My_Aisles));
+          if(getActivity() instanceof SlidingFragmentActivity) {
+            Log.e("Profiling", "Profiling suru " + getString(R.string.sidemenu_option_My_Aisles));
+            SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+            activity.getSlidingMenu().toggle();
+            activity.getSupportActionBar().setTitle(
+                getString(R.string.sidemenu_option_My_Aisles));
+            if(getActivity() instanceof AisleDetailsViewActivity) {
+              startActivity(new Intent((AisleDetailsViewActivity)getActivity(), VueLandingPageActivity.class));
+            } else if(getActivity() instanceof DataEntryActivity) {
+              startActivity(new Intent((DataEntryActivity)getActivity(), VueLandingPageActivity.class));
+            }
+          }
+          
           ArrayList<AisleWindowContent> aislesList = DataBaseManager.getInstance(getActivity())
               .getAislesFromDB(null);
           Message msg = new Message();
@@ -174,9 +184,18 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           model.clearAisles();
           AisleWindowContentFactory.getInstance(getActivity())
               .clearObjectsInUse();
-          VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
-          activity.getSlidingMenu().toggle();
-          activity.getSupportActionBar().setTitle(getString(R.string.trending));
+          if(getActivity() instanceof SlidingFragmentActivity) {
+            Log.e("Profiling", "Profiling suru " + getString(R.string.sidemenu_option_Trending_Aisles));
+            SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+            activity.getSlidingMenu().toggle();
+            activity.getSupportActionBar().setTitle(getString(R.string.trending));
+            if(getActivity() instanceof AisleDetailsViewActivity) {
+              startActivity(new Intent((AisleDetailsViewActivity)getActivity(), VueLandingPageActivity.class));
+            } else if(getActivity() instanceof DataEntryActivity) {
+              startActivity(new Intent((DataEntryActivity)getActivity(), VueLandingPageActivity.class));
+            }
+          }
+
           model.mMoreDataAvailable = true;
           model.mVueContentGateway.getTrendingAisles(
                   model.mLimit = VueTrendingAislesDataModel.TRENDING_AISLES_BATCH_INITIAL_SIZE,

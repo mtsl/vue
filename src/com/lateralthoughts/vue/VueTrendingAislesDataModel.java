@@ -70,6 +70,7 @@ public class VueTrendingAislesDataModel {
   private int mMaxPoolSize = 1;
   private long mKeepAliveTime = 10;
   public boolean mMoreDataAvailable;
+  private boolean mMarkAislesToDelete = false;
 
   // ===== The following set of variables are used for state management
   // ==================================
@@ -231,21 +232,18 @@ public class VueTrendingAislesDataModel {
 
             @Override
             public void run() {
-              DataBaseManager.markOldAislesToDelete(mContext);
               DataBaseManager.addTrentingAislesFromServerToDB(mContext);
             }
           });
         }
-        DbHelper helper = new DbHelper(mContext);
-        //SQLiteDatabase db = helper.getWritableDatabase();
+        if(!mMarkAislesToDelete) {
+          mMarkAislesToDelete = DataBaseManager.markOldAislesToDelete(mContext);
+        }
         for (int i = 0; i < contentArray.length(); i++) {
           userInfo = new AisleContext();
           JSONObject contentItem = contentArray.getJSONObject(i);
           category = contentItem.getString(ITEM_CATEGORY_TAG);
           aisleId = contentItem.getString(CONTENT_ID_TAG);
-          int deletedAisles = mContext.getContentResolver().delete(VueConstants.CONTENT_URI, VueConstants.AISLE_ID + "=?", new String[] {aisleId});
-          int deletedImages = mContext.getContentResolver().delete(VueConstants.IMAGES_CONTENT_URI, VueConstants.AISLE_ID + "=?", new String[] {aisleId});
-          Log.e("Profiling", "Profiling deletedAisles : " + deletedAisles + ", deletedImages : " + deletedImages);
           userInfo.mAisleId = contentItem.getString(CONTENT_ID_TAG);
           JSONArray imagesArray = contentItem.getJSONArray(USER_IMAGES_TAG);
 
