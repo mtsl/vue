@@ -15,7 +15,7 @@ import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
 public class VueLandingPageActivity extends BaseActivity {
 
-	SharedPreferences mSharedPreferencesObj;
+	private SharedPreferences mSharedPreferencesObj;
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 

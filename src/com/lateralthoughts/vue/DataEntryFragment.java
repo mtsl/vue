@@ -5,12 +5,9 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Resources.NotFoundException;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -39,8 +36,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
-
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
@@ -54,53 +49,52 @@ import com.lateralthoughts.vue.utils.clsShare;
  */
 public class DataEntryFragment extends Fragment {
 
-	private ListView categoryListview = null, lookingForListview = null,
-			ocassionListview = null;
-	private LinearLayout lookingForPopup = null,
-			lookingForListviewLayout = null, ocassionPopup = null,
-			categoeryPopup = null, categoryListviewLayout = null,
-			ocassionListviewLayout = null, dataEntryRootLayout = null;
-	private TextView touchToChangeImage = null, lookingForBigText = null,
-			occassionBigText = null, categoryText = null;
-	private com.lateralthoughts.vue.utils.EditTextBackEvent lookingForText = null,
-			occasionText = null,
-			saySomethingAboutAisle = null,
-			findAtText = null;
-	private static final String categoryitemsArray[] = { "Apparel", "Beauty",
-			"Electronics", "Entertainment", "Events", "Food", "Home" };
-	private Drawable listDivider = null;
-	private ImageView createaisleBg = null, categoeryIcon = null;
-	private InputMethodManager inputMethodManager;
-	private boolean dontGoToNextlookingFor = false,
-			dontGoToNextForOccasion = false;
-	private String previousLookingfor = null, previousOcasion = null,
-			previousFindAtText = null, previousSaySomething = null;
-	private String imagePath = null, resizedImagePath = null;
-	private LinearLayout mainHeadingRow = null;
-	private RelativeLayout dataEntryBottomTopLayout = null,
-			dataEntryInviteFriendsLayout = null,
-			dataEntryInviteFriendsPopupLayout = null,
-			dataEntryInviteFriendsFacebookLayout = null,
-			dataEntryBottomBottomLayout = null,
-			dataEntryInviteFriendsCancelLayout = null,
-			dataEntryInviteFriendsGoogleplusLayout = null;
-	private ImageView findAtIcon = null;
+	private ListView mCategoryListview = null, mLookingForListview = null,
+			mOccasionListview = null;
+	private LinearLayout mLookingForPopup = null,
+			mLookingForListviewLayout = null, mOccasionPopup = null,
+			mCategoryPopup = null, mCategoryListviewLayout = null,
+			mOccasionListviewLayout = null, mDataEntryRootLayout = null;
+	private TextView mTouchToChangeImage = null, mLookingForBigText = null,
+			mOccassionBigText = null, mCategoryText = null;
+	private com.lateralthoughts.vue.utils.EditTextBackEvent mLookingForText = null,
+			mOccasionText = null,
+			mSaySomethingAboutAisle = null,
+			mFindAtText = null;
+	private static String mCategoryitemsArray[] = null;
+	private Drawable mListDivider = null;
+	private ImageView mCreateAisleBg = null, mCategoryIcon = null;
+	private InputMethodManager mInputMethodManager;
+	private boolean mDontGoToNextLookingFor = false,
+			mDontGoToNextForOccasion = false;
+	private String mPreviousLookingfor = null, mPreviousOcasion = null,
+			mPreviousFindAtText = null, mPreviousSaySomething = null;
+	private String mImagePath = null, mResizedImagePath = null;
+	private LinearLayout mMainHeadingRow = null;
+	private RelativeLayout mDataEntryBottomTopLayout = null,
+			mDataEntryInviteFriendsLayout = null,
+			mDataEntryInviteFriendsPopupLayout = null,
+			mDataEntryInviteFriendsFacebookLayout = null,
+			mDataEntryBottomBottomLayout = null,
+			mDataEntryInviteFriendsCancelLayout = null,
+			mDataEntryInviteFriendsGoogleplusLayout = null;
+	private ImageView mFindAtIcon = null;
 	public ShareDialog mShare = null;
-	private boolean addImageToAisleFlag = false, editAisleImageFlag = false;
-	private float screenHeight = 0, screenWidth = 0;
-	private LinearLayout findAtPopup = null;
-	private ViewPager dataEntryAislesViewpager = null;
+	private boolean mAddImageToAisleFlag = false, mEditAisleImageFlag = false;
+	private float mScreenHeight = 0, mScreenWidth = 0;
+	private LinearLayout mFindAtPopup = null;
+	private ViewPager mDataEntryAislesViewpager = null;
 	private static final int AISLE_IMAGE_MARGIN = 96;
 	private static final String LOOKING_FOR = "Looking";
 	private static final String OCCASION = " Occasion";
 	private static final String CATEGORY = "Category";
-	private ArrayList<String> aisleImagePathList = new ArrayList<String>();
-	private int currentPagePosition = 0;
-	public static boolean msaySomethingAboutAisleClicked = false;
+	private ArrayList<String> mAisleImagePathList = new ArrayList<String>();
+	private int mCurrentPagePosition = 0;
+	public static boolean mSaySomethingAboutAisleClicked = false;
 	private ArrayList<String> mLookingForAisleKeywordsList = null,
 			mOccassionAisleKeywordsList = null,
 			mCategoryAilseKeywordsList = null;
-	private DataBaseManager dbManager;
+	private DataBaseManager mDbManager;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -115,553 +109,491 @@ public class DataEntryFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-	  dbManager = DataBaseManager.getInstance(getActivity());
+		mCategoryitemsArray = getResources().getStringArray(
+				R.array.category_items_array);
+		mDbManager = DataBaseManager.getInstance(getActivity());
 		DisplayMetrics dm = getResources().getDisplayMetrics();
-		screenHeight = dm.heightPixels;
-		screenHeight = screenHeight
+		mScreenHeight = dm.heightPixels;
+		mScreenHeight = mScreenHeight
 				- Utils.dipToPixels(getActivity(), AISLE_IMAGE_MARGIN);
-		screenWidth = dm.widthPixels;
+		mScreenWidth = dm.widthPixels;
 		View v = inflater.inflate(R.layout.data_entry_fragment, container,
 				false);
-		inputMethodManager = (InputMethodManager) getActivity()
+		mInputMethodManager = (InputMethodManager) getActivity()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
-		lookingForText = (EditTextBackEvent) v
+		mLookingForText = (EditTextBackEvent) v
 				.findViewById(R.id.lookingfortext);
-		dataEntryAislesViewpager = (ViewPager) v
+		mDataEntryAislesViewpager = (ViewPager) v
 				.findViewById(R.id.dataentry_aisles_viewpager);
-		ocassionListviewLayout = (LinearLayout) v
+		mOccasionListviewLayout = (LinearLayout) v
 				.findViewById(R.id.ocassionlistviewlayout);
-		dataEntryRootLayout = (LinearLayout) v
+		mDataEntryRootLayout = (LinearLayout) v
 				.findViewById(R.id.dataentry_root_layout);
-		ocassionListview = (ListView) v.findViewById(R.id.ocassionlistview);
-		findAtIcon = (ImageView) v.findViewById(R.id.find_at_icon);
-		lookingForListview = (ListView) v.findViewById(R.id.lookingforlistview);
-		findAtText = (EditTextBackEvent) v.findViewById(R.id.find_at_text);
-		findAtPopup = (LinearLayout) v.findViewById(R.id.find_at_popup);
-		dataEntryInviteFriendsCancelLayout = (RelativeLayout) v
+		mOccasionListview = (ListView) v.findViewById(R.id.ocassionlistview);
+		mFindAtIcon = (ImageView) v.findViewById(R.id.find_at_icon);
+		mLookingForListview = (ListView) v
+				.findViewById(R.id.lookingforlistview);
+		mFindAtText = (EditTextBackEvent) v.findViewById(R.id.find_at_text);
+		mFindAtPopup = (LinearLayout) v.findViewById(R.id.find_at_popup);
+		mDataEntryInviteFriendsCancelLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invitefriends_cancellayout);
-		dataEntryBottomBottomLayout = (RelativeLayout) v
+		mDataEntryBottomBottomLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_bottom_bottom_layout);
-		dataEntryInviteFriendsGoogleplusLayout = (RelativeLayout) v
+		mDataEntryInviteFriendsGoogleplusLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invitefriends_googlepluslayout);
-		lookingForBigText = (TextView) v.findViewById(R.id.lookingforbigtext);
-		lookingForBigText.setBackgroundColor(getResources().getColor(
+		mLookingForBigText = (TextView) v.findViewById(R.id.lookingforbigtext);
+		mLookingForBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
-		dataEntryBottomTopLayout = (RelativeLayout) v
+		mDataEntryBottomTopLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_bottom_top_layout);
-		dataEntryInviteFriendsFacebookLayout = (RelativeLayout) v
+		mDataEntryInviteFriendsFacebookLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invitefriends_facebooklayout);
-		dataEntryInviteFriendsPopupLayout = (RelativeLayout) v
+		mDataEntryInviteFriendsPopupLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invite_friends_popup_layout);
-		occassionBigText = (TextView) v.findViewById(R.id.occassionbigtext);
-		ocassionPopup = (LinearLayout) v.findViewById(R.id.ocassionpopup);
-		occasionText = (EditTextBackEvent) v.findViewById(R.id.occasiontext);
-		lookingForListviewLayout = (LinearLayout) v
+		mOccassionBigText = (TextView) v.findViewById(R.id.occassionbigtext);
+		mOccasionPopup = (LinearLayout) v.findViewById(R.id.ocassionpopup);
+		mOccasionText = (EditTextBackEvent) v.findViewById(R.id.occasiontext);
+		mLookingForListviewLayout = (LinearLayout) v
 				.findViewById(R.id.lookingforlistviewlayout);
-		lookingForPopup = (LinearLayout) v.findViewById(R.id.lookingforpopup);
-		touchToChangeImage = (TextView) v.findViewById(R.id.touchtochangeimage);
-		saySomethingAboutAisle = (EditTextBackEvent) v
+		mLookingForPopup = (LinearLayout) v.findViewById(R.id.lookingforpopup);
+		mTouchToChangeImage = (TextView) v
+				.findViewById(R.id.touchtochangeimage);
+		mSaySomethingAboutAisle = (EditTextBackEvent) v
 				.findViewById(R.id.saysomethingaboutaisle);
-		categoeryIcon = (ImageView) v.findViewById(R.id.categoeryicon);
-		categoeryPopup = (LinearLayout) v.findViewById(R.id.categoerypopup);
-		categoryText = (TextView) v.findViewById(R.id.categorytext);
-		categoryText.setText(categoryitemsArray[0]);
-		categoryListview = (ListView) v.findViewById(R.id.categorylistview);
-		categoryListviewLayout = (LinearLayout) v
+		mCategoryIcon = (ImageView) v.findViewById(R.id.categoeryicon);
+		mCategoryPopup = (LinearLayout) v.findViewById(R.id.categoerypopup);
+		mCategoryText = (TextView) v.findViewById(R.id.categorytext);
+		mCategoryText.setText(mCategoryitemsArray[0]);
+		mCategoryListview = (ListView) v.findViewById(R.id.categorylistview);
+		mCategoryListviewLayout = (LinearLayout) v
 				.findViewById(R.id.categorylistviewlayout);
-		mainHeadingRow = (LinearLayout) v.findViewById(R.id.mainheadingrow);
-		listDivider = getResources().getDrawable(R.drawable.list_divider_line);
-		lookingForListviewLayout.setVisibility(View.GONE);
-		createaisleBg = (ImageView) v.findViewById(R.id.createaisel_bg);
-		categoryListview.setDivider(listDivider);
-		dataEntryInviteFriendsLayout = (RelativeLayout) v
+		mMainHeadingRow = (LinearLayout) v.findViewById(R.id.mainheadingrow);
+		mListDivider = getResources().getDrawable(R.drawable.list_divider_line);
+		mLookingForListviewLayout.setVisibility(View.GONE);
+		mCreateAisleBg = (ImageView) v.findViewById(R.id.createaisel_bg);
+		mCategoryListview.setDivider(mListDivider);
+		mDataEntryInviteFriendsLayout = (RelativeLayout) v
 				.findViewById(R.id.dataentry_invite_friends_layout);
-		previousLookingfor = lookingForText.getText().toString();
-		previousOcasion = occasionText.getText().toString();
-		previousSaySomething = saySomethingAboutAisle.getText().toString();
-		mLookingForAisleKeywordsList = dbManager.getAisleKeywords(VueConstants.LOOKING_FOR_TABLE);
+		mPreviousLookingfor = mLookingForText.getText().toString();
+		mPreviousOcasion = mOccasionText.getText().toString();
+		mPreviousSaySomething = mSaySomethingAboutAisle.getText().toString();
+		mLookingForAisleKeywordsList = mDbManager
+				.getAisleKeywords(VueConstants.LOOKING_FOR_TABLE);
 		if (mLookingForAisleKeywordsList != null) {
-			lookingForText.setText(mLookingForAisleKeywordsList.get(0));
-			lookingForBigText.setText(mLookingForAisleKeywordsList.get(0));
-			lookingForPopup.setVisibility(View.GONE);
-			lookingForListviewLayout.setVisibility(View.GONE);
+			mLookingForText.setText(mLookingForAisleKeywordsList.get(0));
+			mLookingForBigText.setText(mLookingForAisleKeywordsList.get(0));
+			mLookingForPopup.setVisibility(View.GONE);
+			mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+			mLookingForListviewLayout.setVisibility(View.GONE);
 		} else {
-			lookingForListviewLayout.setVisibility(View.GONE);
-			lookingForText.requestFocus();
-			inputMethodManager.showSoftInput(lookingForText, 0);
+			mLookingForListviewLayout.setVisibility(View.GONE);
+			mLookingForText.requestFocus();
+			mInputMethodManager.showSoftInput(mLookingForText, 0);
 		}
-		mOccassionAisleKeywordsList = dbManager.getAisleKeywords(VueConstants.OCCASION_TABLE);
+		mOccassionAisleKeywordsList = mDbManager
+				.getAisleKeywords(VueConstants.OCCASION_TABLE);
 		if (mOccassionAisleKeywordsList != null) {
-			occasionText.setText(mOccassionAisleKeywordsList.get(0));
-			occassionBigText.setText(mOccassionAisleKeywordsList.get(0));
+			mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
+			mOccassionBigText.setText(mOccassionAisleKeywordsList.get(0));
 		}
-		mCategoryAilseKeywordsList = dbManager.getAisleKeywords(VueConstants.CATEGORY_TABLE);
+		mCategoryAilseKeywordsList = mDbManager
+				.getAisleKeywords(VueConstants.CATEGORY_TABLE);
 		if (mCategoryAilseKeywordsList != null) {
-			categoryText.setText(mCategoryAilseKeywordsList.get(0));
+			mCategoryText.setText(mCategoryAilseKeywordsList.get(0));
 		}
-		saySomethingAboutAisle
+		mSaySomethingAboutAisle
 				.setOnEditorActionListener(new OnEditorActionListener() {
 					@Override
 					public boolean onEditorAction(TextView arg0, int arg1,
 							KeyEvent arg2) {
-						saySomethingAboutAisle.setCursorVisible(false);
-						previousSaySomething = saySomethingAboutAisle.getText()
-								.toString();
-						inputMethodManager.hideSoftInputFromWindow(
-								saySomethingAboutAisle.getWindowToken(), 0);
-						inputMethodManager.hideSoftInputFromWindow(
-								occasionText.getWindowToken(), 0);
-						inputMethodManager.hideSoftInputFromWindow(
-								lookingForText.getWindowToken(), 0);
+						mSaySomethingAboutAisle.setCursorVisible(false);
+						mPreviousSaySomething = mSaySomethingAboutAisle
+								.getText().toString();
+						mInputMethodManager.hideSoftInputFromWindow(
+								mSaySomethingAboutAisle.getWindowToken(), 0);
+						mInputMethodManager.hideSoftInputFromWindow(
+								mOccasionText.getWindowToken(), 0);
+						mInputMethodManager.hideSoftInputFromWindow(
+								mLookingForText.getWindowToken(), 0);
 						return true;
 					}
 				});
-		saySomethingAboutAisle.setonInterceptListen(new OnInterceptListener() {
+		mSaySomethingAboutAisle.setonInterceptListen(new OnInterceptListener() {
 			@Override
 			public void onKeyBackPressed() {
-				msaySomethingAboutAisleClicked = false;
-				saySomethingAboutAisle.setCursorVisible(false);
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				saySomethingAboutAisle.setText(previousSaySomething);
+				mSaySomethingAboutAisleClicked = false;
+				mSaySomethingAboutAisle.setCursorVisible(false);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mSaySomethingAboutAisle.setText(mPreviousSaySomething);
 			}
 
 			@Override
 			public void setFlag(boolean flag) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public boolean getFlag() {
-				// TODO Auto-generated method stub
 				return true;
 			}
 		});
-		lookingForText
+		mLookingForText
 				.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 					@Override
 					public boolean onEditorAction(TextView v, int actionId,
 							KeyEvent event) {
-						lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-						if (lookingForText.getText().toString().trim().length() > 0) {
-							lookingForBigText.setText(lookingForText.getText()
-									.toString());
+						mLookingForBigText
+								.setBackgroundColor(Color.TRANSPARENT);
+						if (mLookingForText.getText().toString().trim()
+								.length() > 0) {
+							mLookingForBigText.setText(mLookingForText
+									.getText().toString());
 						}
-						previousLookingfor = lookingForText.getText()
+						mPreviousLookingfor = mLookingForText.getText()
 								.toString();
-						lookingForPopup.setVisibility(View.GONE);
-						lookingForListviewLayout.setVisibility(View.GONE);
-						inputMethodManager.hideSoftInputFromWindow(
-								lookingForText.getWindowToken(), 0);
-						if (!dontGoToNextlookingFor) {
-							occassionBigText.setBackgroundColor(getResources()
+						mLookingForPopup.setVisibility(View.GONE);
+						mLookingForListviewLayout.setVisibility(View.GONE);
+						mInputMethodManager.hideSoftInputFromWindow(
+								mLookingForText.getWindowToken(), 0);
+						if (!mDontGoToNextLookingFor) {
+							mOccassionBigText.setBackgroundColor(getResources()
 									.getColor(R.color.yellowbgcolor));
-							ocassionPopup.setVisibility(View.VISIBLE);
+							mOccasionPopup.setVisibility(View.VISIBLE);
 							if (mOccassionAisleKeywordsList != null
 									&& mOccassionAisleKeywordsList.size() > 0) {
-								ocassionListviewLayout
+								mOccasionListviewLayout
 										.setVisibility(View.VISIBLE);
-								ocassionListview
+								mOccasionListview
 										.setAdapter(new OccassionAdapter(
 												getActivity(),
 												mOccassionAisleKeywordsList));
 							}
-							occasionText.requestFocus();
-							inputMethodManager.showSoftInput(occasionText, 0);
+							mOccasionText.requestFocus();
+							mInputMethodManager.showSoftInput(mOccasionText, 0);
 						}
 						return true;
 					}
 				});
-		lookingForText.setonInterceptListen(new OnInterceptListener() {
+		mLookingForText.setonInterceptListen(new OnInterceptListener() {
 			public void onKeyBackPressed() {
-				lookingForPopup.setVisibility(View.GONE);
-				lookingForListviewLayout.setVisibility(View.GONE);
-				ocassionPopup.setVisibility(View.GONE);
-				ocassionListviewLayout.setVisibility(View.GONE);
-				lookingForText.setText(previousLookingfor);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						lookingForText.getWindowToken(), 0);
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				mLookingForText.setText(mPreviousLookingfor);
+				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
 			}
 
 			@Override
 			public void setFlag(boolean flag) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public boolean getFlag() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		});
 
-		occasionText.setOnEditorActionListener(new OnEditorActionListener() {
+		mOccasionText.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView arg0, int actionId,
 					KeyEvent arg2) {
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				if (occasionText.getText().toString().trim().length() > 0) {
-					occassionBigText.setText(" "
-							+ occasionText.getText().toString());
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				if (mOccasionText.getText().toString().trim().length() > 0) {
+					mOccassionBigText.setText(" "
+							+ mOccasionText.getText().toString());
 				}
-				previousOcasion = occasionText.getText().toString();
-				ocassionPopup.setVisibility(View.GONE);
-				ocassionListviewLayout.setVisibility(View.GONE);
-				if (!dontGoToNextForOccasion) {
-					categoryListview.setVisibility(View.VISIBLE);
-					categoryListview.setAdapter(new CategoryAdapter(
+				mPreviousOcasion = mOccasionText.getText().toString();
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				if (!mDontGoToNextForOccasion) {
+					mCategoryListview.setVisibility(View.VISIBLE);
+					mCategoryListview.setAdapter(new CategoryAdapter(
 							getActivity()));
-					categoryListviewLayout.setVisibility(View.VISIBLE);
-					categoeryPopup.setVisibility(View.VISIBLE);
+					mCategoryListviewLayout.setVisibility(View.VISIBLE);
+					mCategoryPopup.setVisibility(View.VISIBLE);
 				}
 				return true;
 			};
 		});
-		occasionText.setonInterceptListen(new OnInterceptListener() {
+		mOccasionText.setonInterceptListen(new OnInterceptListener() {
 			public void onKeyBackPressed() {
-				lookingForPopup.setVisibility(View.GONE);
-				lookingForListviewLayout.setVisibility(View.GONE);
-				ocassionPopup.setVisibility(View.GONE);
-				ocassionListviewLayout.setVisibility(View.GONE);
-				occasionText.setText(previousOcasion);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						lookingForText.getWindowToken(), 0);
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				mOccasionText.setText(mPreviousOcasion);
+				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
 			}
 
 			@Override
 			public void setFlag(boolean flag) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public boolean getFlag() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		});
-		lookingForBigText.setOnClickListener(new OnClickListener() {
+		mLookingForBigText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				ocassionPopup.setVisibility(View.GONE);
-				ocassionListviewLayout.setVisibility(View.GONE);
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						findAtText.getWindowToken(), 0);
-				findAtPopup.setVisibility(View.GONE);
-				categoryListview.setVisibility(View.GONE);
-				categoryListviewLayout.setVisibility(View.GONE);
-				categoeryPopup.setVisibility(View.GONE);
-				if (addImageToAisleFlag || editAisleImageFlag) {
+				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mFindAtText.getWindowToken(), 0);
+				mFindAtPopup.setVisibility(View.GONE);
+				mCategoryListview.setVisibility(View.GONE);
+				mCategoryListviewLayout.setVisibility(View.GONE);
+				mCategoryPopup.setVisibility(View.GONE);
+				if (mAddImageToAisleFlag || mEditAisleImageFlag) {
 					showAlertForEditPermission(LOOKING_FOR);
 				} else {
 					lookingForTextClickFunctionality();
 				}
 			}
 		});
-		occassionBigText.setOnClickListener(new OnClickListener() {
+		mOccassionBigText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				lookingForPopup.setVisibility(View.GONE);
-				lookingForListviewLayout.setVisibility(View.GONE);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				inputMethodManager.hideSoftInputFromWindow(
-						lookingForText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						findAtText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				findAtPopup.setVisibility(View.GONE);
-				categoryListview.setVisibility(View.GONE);
-				categoryListviewLayout.setVisibility(View.GONE);
-				categoeryPopup.setVisibility(View.GONE);
-				if (addImageToAisleFlag || editAisleImageFlag) {
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mFindAtText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mFindAtPopup.setVisibility(View.GONE);
+				mCategoryListview.setVisibility(View.GONE);
+				mCategoryListviewLayout.setVisibility(View.GONE);
+				mCategoryPopup.setVisibility(View.GONE);
+				if (mAddImageToAisleFlag || mEditAisleImageFlag) {
 					showAlertForEditPermission(OCCASION);
 				} else {
 					occassionTextClickFunctionality();
 				}
 			}
 		});
-		categoeryIcon.setOnClickListener(new OnClickListener() {
+		mCategoryIcon.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				lookingForPopup.setVisibility(View.GONE);
-				lookingForListviewLayout.setVisibility(View.GONE);
-				ocassionPopup.setVisibility(View.GONE);
-				ocassionListviewLayout.setVisibility(View.GONE);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						lookingForText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						findAtText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				findAtPopup.setVisibility(View.GONE);
-				if (addImageToAisleFlag || editAisleImageFlag) {
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mFindAtText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mFindAtPopup.setVisibility(View.GONE);
+				if (mAddImageToAisleFlag || mEditAisleImageFlag) {
 					showAlertForEditPermission(CATEGORY);
 				} else {
 					categoryIconClickFunctionality();
 				}
 			}
 		});
-		touchToChangeImage.setOnClickListener(new OnClickListener() {
+		mTouchToChangeImage.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						lookingForText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						findAtText.getWindowToken(), 0);
-				lookingForPopup.setVisibility(View.GONE);
-				lookingForListviewLayout.setVisibility(View.GONE);
-				ocassionPopup.setVisibility(View.GONE);
-				ocassionListviewLayout.setVisibility(View.GONE);
-				categoeryPopup.setVisibility(View.GONE);
-				findAtPopup.setVisibility(View.GONE);
-				categoryListviewLayout.setVisibility(View.GONE);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				Intent intent = new Intent(getActivity(),
-						CreateAisleSelectionActivity.class);
-				Bundle b = new Bundle();
-				b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
-				intent.putExtras(b);
-				getActivity().startActivityForResult(intent,
-						VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
+				touchToChangeImageClickFunctionality();
 			}
 		});
-		dataEntryInviteFriendsLayout.setOnClickListener(new OnClickListener() {
+		mDataEntryInviteFriendsLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				dataEntryInviteFriendsPopupLayout.setVisibility(View.VISIBLE);
+				mDataEntryInviteFriendsPopupLayout.setVisibility(View.VISIBLE);
 			}
 		});
-		dataEntryInviteFriendsFacebookLayout
+		mDataEntryInviteFriendsFacebookLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						dataEntryInviteFriendsPopupLayout
+						mDataEntryInviteFriendsPopupLayout
 								.setVisibility(View.GONE);
-						if (appInstalledOrNot(VueConstants.FACEBOOK_PACKAGE_NAME)) {
-							mShare = new ShareDialog(getActivity(),
-									getActivity());
-							if (aisleImagePathList != null) {
-								ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
-								for (int i = 0; i < aisleImagePathList.size(); i++) {
-									clsShare shareObj = new clsShare(null,
-											aisleImagePathList.get(i));
-									imageUrlList.add(shareObj);
-								}
-								String shareText = "Your friend "
-										+ ""
-										+ " wants your opinion - get Vue to see the full details and help "
-										+ "" + " out.";
-								Intent i = new Intent(getActivity(),
-										VueLoginActivity.class);
-								Bundle b = new Bundle();
-								b.putBoolean(
-										VueConstants.CANCEL_BTN_DISABLE_FLAG,
-										false);
-								b.putString(VueConstants.FROM_INVITEFRIENDS,
-										null);
-								b.putBoolean(
-										VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
-										true);
-								b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
-										false);
-								b.putString(VueConstants.FBPOST_TEXT, shareText);
-								b.putParcelableArrayList(
-										VueConstants.FBPOST_IMAGEURLS,
-										imageUrlList);
-								i.putExtras(b);
-								getActivity().startActivity(i);
-							}
-						} else {
-							Toast.makeText(getActivity(),
-									"Facebook Application was not installed.",
-									Toast.LENGTH_LONG).show();
-						}
+						Intent i = new Intent(getActivity(),
+								DateEntryInviteFriendsActivity.class);
+						Bundle b = new Bundle();
+						b.putBoolean(
+								VueConstants.DATA_ENTRY_INVITE_FRIENDS_BUNDLE_FROM_GOOGLEPLUS_FLAG_KEY,
+								false);
+						i.putExtras(b);
+						getActivity().startActivity(i);
 					}
 				});
-		dataEntryInviteFriendsGoogleplusLayout
+		mDataEntryInviteFriendsGoogleplusLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						dataEntryInviteFriendsPopupLayout
+						mDataEntryInviteFriendsPopupLayout
 								.setVisibility(View.GONE);
-						if (appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME)) {
-							ArrayList<Uri> imageUris = new ArrayList<Uri>();
-							for (int i = 0; i < aisleImagePathList.size(); i++) {
-								imageUris.add(Uri.fromFile(new File(
-										aisleImagePathList.get(i))));
-							}
-							String shareText = "Your friend "
-									+ ""
-									+ " wants your opinion - get Vue to see the full details and help "
-									+ "" + " out.";
-							Intent sendIntent = new Intent(
-									android.content.Intent.ACTION_SEND);
-							sendIntent.setType("text/plain");
-							sendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-							sendIntent.putExtra(Intent.EXTRA_STREAM,
-									Uri.parse("mailto:"));
-							sendIntent.putExtra(
-									android.content.Intent.EXTRA_TEXT,
-									shareText);
-							sendIntent.putParcelableArrayListExtra(
-									Intent.EXTRA_STREAM, imageUris);
-							String activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
-							sendIntent.setClassName(
-									VueConstants.GOOGLEPLUS_PACKAGE_NAME,
-									activityname);
-							getActivity().startActivityForResult(sendIntent,
-									VueConstants.SHARE_INTENT_REQUEST_CODE);
-						} else {
-							Toast.makeText(getActivity(),
-									"Google+ Application was not installed.",
-									Toast.LENGTH_LONG).show();
+						Intent i = new Intent(getActivity(),
+								DateEntryInviteFriendsActivity.class);
+						Bundle b = new Bundle();
+						b.putBoolean(
+								VueConstants.DATA_ENTRY_INVITE_FRIENDS_BUNDLE_FROM_GOOGLEPLUS_FLAG_KEY,
+								true);
+						try {
+							b.putString(
+									VueConstants.DATA_ENTRY_INVITE_FRIENDS_BUNDLE_FROM_FILE_PATH_ARRAY_KEY,
+									mAisleImagePathList
+											.get(mDataEntryAislesViewpager
+													.getCurrentItem()));
+						} catch (Exception e) {
 						}
+						i.putExtras(b);
+						getActivity().startActivity(i);
 					}
 				});
-		dataEntryInviteFriendsCancelLayout
+		mDataEntryInviteFriendsCancelLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						dataEntryInviteFriendsPopupLayout
+						mDataEntryInviteFriendsPopupLayout
 								.setVisibility(View.GONE);
 					}
 				});
-		findAtIcon.setOnClickListener(new OnClickListener() {
+		mFindAtIcon.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				findAtPopup.setVisibility(View.VISIBLE);
-				lookingForPopup.setVisibility(View.GONE);
-				lookingForListviewLayout.setVisibility(View.GONE);
-				ocassionPopup.setVisibility(View.GONE);
-				ocassionListviewLayout.setVisibility(View.GONE);
-				categoeryPopup.setVisibility(View.GONE);
-				categoryListviewLayout.setVisibility(View.GONE);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						lookingForText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				findAtText.requestFocus();
-				inputMethodManager.showSoftInput(findAtText, 0);
+				mFindAtPopup.setVisibility(View.VISIBLE);
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				mCategoryPopup.setVisibility(View.GONE);
+				mCategoryListviewLayout.setVisibility(View.GONE);
+				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mFindAtText.requestFocus();
+				mInputMethodManager.showSoftInput(mFindAtText, 0);
 			}
 		});
-		findAtText.setOnEditorActionListener(new OnEditorActionListener() {
+		mFindAtText.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView arg0, int actionId,
 					KeyEvent arg2) {
-				inputMethodManager.hideSoftInputFromWindow(
-						findAtText.getWindowToken(), 0);
-				previousFindAtText = findAtText.getText().toString();
-				findAtPopup.setVisibility(View.GONE);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mFindAtText.getWindowToken(), 0);
+				mPreviousFindAtText = mFindAtText.getText().toString();
+				mFindAtPopup.setVisibility(View.GONE);
 				return true;
 			};
 		});
-		findAtText.setonInterceptListen(new OnInterceptListener() {
+		mFindAtText.setonInterceptListen(new OnInterceptListener() {
 			public void onKeyBackPressed() {
-				findAtText.setText(previousFindAtText);
-				findAtPopup.setVisibility(View.GONE);
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						lookingForText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						findAtText.getWindowToken(), 0);
+				mFindAtText.setText(mPreviousFindAtText);
+				mFindAtPopup.setVisibility(View.GONE);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mFindAtText.getWindowToken(), 0);
 			}
 
 			@Override
 			public void setFlag(boolean flag) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public boolean getFlag() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		});
-		dataEntryRootLayout.setOnClickListener(new OnClickListener() {
+		mDataEntryRootLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// hiding keyboard
-				inputMethodManager.hideSoftInputFromWindow(
-						saySomethingAboutAisle.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						lookingForText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						findAtText.getWindowToken(), 0);
-				lookingForPopup.setVisibility(View.GONE);
-				lookingForListviewLayout.setVisibility(View.GONE);
-				ocassionPopup.setVisibility(View.GONE);
-				ocassionListviewLayout.setVisibility(View.GONE);
-				categoeryPopup.setVisibility(View.GONE);
-				findAtPopup.setVisibility(View.GONE);
-				categoryListviewLayout.setVisibility(View.GONE);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				if (mOccasionText.getText().toString().trim().length() > 0) {
+					mOccassionBigText.setText(" "
+							+ mOccasionText.getText().toString());
+				}
+				if (mLookingForText.getText().toString().trim().length() > 0) {
+					mLookingForBigText.setText(mLookingForText.getText()
+							.toString());
+				}// hiding keyboard
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mFindAtText.getWindowToken(), 0);
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				mCategoryPopup.setVisibility(View.GONE);
+				mFindAtPopup.setVisibility(View.GONE);
+				mCategoryListviewLayout.setVisibility(View.GONE);
+				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				VueApplication.getInstance().mSoftKeboardIndicator = false;
 			}
 		});
-		saySomethingAboutAisle.setOnClickListener(new OnClickListener() {
+		mSaySomethingAboutAisle.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				msaySomethingAboutAisleClicked = true;
-				inputMethodManager.hideSoftInputFromWindow(
-						occasionText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						lookingForText.getWindowToken(), 0);
-				inputMethodManager.hideSoftInputFromWindow(
-						findAtText.getWindowToken(), 0);
-				lookingForPopup.setVisibility(View.GONE);
-				lookingForListviewLayout.setVisibility(View.GONE);
-				ocassionPopup.setVisibility(View.GONE);
-				ocassionListviewLayout.setVisibility(View.GONE);
-				categoeryPopup.setVisibility(View.GONE);
-				findAtPopup.setVisibility(View.GONE);
-				categoryListviewLayout.setVisibility(View.GONE);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				saySomethingAboutAisle.setCursorVisible(true);
-				saySomethingAboutAisle.requestFocus();
-				inputMethodManager.showSoftInput(saySomethingAboutAisle, 0);
+				mSaySomethingAboutAisleClicked = true;
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mFindAtText.getWindowToken(), 0);
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				mCategoryPopup.setVisibility(View.GONE);
+				mFindAtPopup.setVisibility(View.GONE);
+				mCategoryListviewLayout.setVisibility(View.GONE);
+				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				mSaySomethingAboutAisle.setCursorVisible(true);
+				mSaySomethingAboutAisle.requestFocus();
+				mInputMethodManager.showSoftInput(mSaySomethingAboutAisle, 0);
 			}
 		});
-		lookingForText.addTextChangedListener(new TextWatcher() {
+		mLookingForText.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
@@ -681,7 +613,7 @@ public class DataEntryFragment extends Fragment {
 							}
 						}
 					}
-					lookingForListview.setAdapter(new LookingForAdapter(
+					mLookingForListview.setAdapter(new LookingForAdapter(
 							getActivity(), tempLookingForKeywordsList));
 				}
 			}
@@ -689,15 +621,13 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public void afterTextChanged(Editable arg0) {
-				// TODO Auto-generated method stub
 			}
 		});
-		occasionText.addTextChangedListener(new TextWatcher() {
+		mOccasionText.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
@@ -716,7 +646,7 @@ public class DataEntryFragment extends Fragment {
 							}
 						}
 					}
-					ocassionListview.setAdapter(new OccassionAdapter(
+					mOccasionListview.setAdapter(new OccassionAdapter(
 							getActivity(), tempOccassionKeywordsList));
 				}
 			}
@@ -724,39 +654,73 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public void afterTextChanged(Editable arg0) {
-				// TODO Auto-generated method stub
+			}
+		});
+		mCreateAisleBg.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				if (mTouchToChangeImage.getVisibility() == View.VISIBLE) {
+					touchToChangeImageClickFunctionality();
+				}
 			}
 		});
 		return v;
 	}
 
+	private void touchToChangeImageClickFunctionality() {
+		mInputMethodManager.hideSoftInputFromWindow(
+				mSaySomethingAboutAisle.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mOccasionText.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mLookingForText.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mFindAtText.getWindowToken(), 0);
+		mLookingForPopup.setVisibility(View.GONE);
+		mLookingForListviewLayout.setVisibility(View.GONE);
+		mOccasionPopup.setVisibility(View.GONE);
+		mOccasionListviewLayout.setVisibility(View.GONE);
+		mCategoryPopup.setVisibility(View.GONE);
+		mFindAtPopup.setVisibility(View.GONE);
+		mCategoryListviewLayout.setVisibility(View.GONE);
+		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		Intent intent = new Intent(getActivity(),
+				CreateAisleSelectionActivity.class);
+		Bundle b = new Bundle();
+		b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
+		intent.putExtras(b);
+		getActivity().startActivityForResult(intent,
+				VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
+	}
+
 	public void createAisleClickFunctionality() {
-		inputMethodManager.hideSoftInputFromWindow(
-				saySomethingAboutAisle.getWindowToken(), 0);
-		inputMethodManager.hideSoftInputFromWindow(
-				occasionText.getWindowToken(), 0);
-		inputMethodManager.hideSoftInputFromWindow(
-				lookingForText.getWindowToken(), 0);
-		inputMethodManager.hideSoftInputFromWindow(findAtText.getWindowToken(),
-				0);
-		lookingForPopup.setVisibility(View.GONE);
-		lookingForListviewLayout.setVisibility(View.GONE);
-		ocassionPopup.setVisibility(View.GONE);
-		ocassionListviewLayout.setVisibility(View.GONE);
-		categoeryPopup.setVisibility(View.GONE);
-		findAtPopup.setVisibility(View.GONE);
-		categoryListviewLayout.setVisibility(View.GONE);
-		occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-		lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-		if (!(lookingForBigText.getText().toString().trim().equals(LOOKING_FOR))
-				&& !(occassionBigText.getText().toString().trim()
+		mInputMethodManager.hideSoftInputFromWindow(
+				mSaySomethingAboutAisle.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mOccasionText.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mLookingForText.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mFindAtText.getWindowToken(), 0);
+		mLookingForPopup.setVisibility(View.GONE);
+		mLookingForListviewLayout.setVisibility(View.GONE);
+		mOccasionPopup.setVisibility(View.GONE);
+		mOccasionListviewLayout.setVisibility(View.GONE);
+		mCategoryPopup.setVisibility(View.GONE);
+		mFindAtPopup.setVisibility(View.GONE);
+		mCategoryListviewLayout.setVisibility(View.GONE);
+		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		if (!(mLookingForBigText.getText().toString().trim()
+				.equals(LOOKING_FOR))
+				&& !(mOccassionBigText.getText().toString().trim()
 						.equals(OCCASION))) {
-			if (addImageToAisleFlag) {
+			if (mAddImageToAisleFlag) {
 				addImageToAisleToServer();
 			} else {
 				addAisleToServer();
@@ -769,37 +733,37 @@ public class DataEntryFragment extends Fragment {
 
 	public void editButtonClickFunctionality() {
 
-		editAisleImageFlag = true;
-		currentPagePosition = dataEntryAislesViewpager.getCurrentItem();
-		resizedImagePath = aisleImagePathList.get(currentPagePosition);
-		imagePath = aisleImagePathList.get(currentPagePosition);
-		createaisleBg.setImageURI(Uri.fromFile(new File(aisleImagePathList
-				.get(currentPagePosition))));
-		dataEntryAislesViewpager.setVisibility(View.GONE);
-		createaisleBg.setVisibility(View.VISIBLE);
+		mEditAisleImageFlag = true;
+		mCurrentPagePosition = mDataEntryAislesViewpager.getCurrentItem();
+		mResizedImagePath = mAisleImagePathList.get(mCurrentPagePosition);
+		mImagePath = mAisleImagePathList.get(mCurrentPagePosition);
+		mCreateAisleBg.setImageURI(Uri.fromFile(new File(mAisleImagePathList
+				.get(mCurrentPagePosition))));
+		mDataEntryAislesViewpager.setVisibility(View.GONE);
+		mCreateAisleBg.setVisibility(View.VISIBLE);
 		DataEntryActivity obj = (DataEntryActivity) getActivity();
 		obj.getSupportActionBar().setTitle(
 				getResources().getString(R.string.edit_aisle_screen_title));
-		dataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
-		dataEntryBottomTopLayout.setVisibility(View.GONE);
+		mDataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
+		mDataEntryBottomTopLayout.setVisibility(View.GONE);
 		DataEntryActivity activity = (DataEntryActivity) getActivity();
-		activity.isNewActionBar = false;
+		activity.mIsNewActionBarFlag = false;
 		activity.invalidateOptionsMenu();
-		mainHeadingRow.setVisibility(View.VISIBLE);
-		touchToChangeImage.setVisibility(View.VISIBLE);
-		occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-		lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		mMainHeadingRow.setVisibility(View.VISIBLE);
+		mTouchToChangeImage.setVisibility(View.VISIBLE);
+		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 
 	}
 
 	public void shareClickFunctionality() {
 
 		mShare = new ShareDialog(getActivity(), getActivity());
-		if (aisleImagePathList != null) {
+		if (mAisleImagePathList != null) {
 			ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
-			for (int i = 0; i < aisleImagePathList.size(); i++) {
+			for (int i = 0; i < mAisleImagePathList.size(); i++) {
 				clsShare shareObj = new clsShare(null,
-						aisleImagePathList.get(i));
+						mAisleImagePathList.get(i));
 				imageUrlList.add(shareObj);
 			}
 			mShare.share(imageUrlList, "", "");
@@ -809,7 +773,7 @@ public class DataEntryFragment extends Fragment {
 
 	public void addImageToAisleButtonClickFunctionality() {
 
-		addImageToAisleFlag = true;
+		mAddImageToAisleFlag = true;
 		Intent intent = new Intent(getActivity(),
 				CreateAisleSelectionActivity.class);
 		Bundle b = new Bundle();
@@ -818,18 +782,6 @@ public class DataEntryFragment extends Fragment {
 		getActivity().startActivityForResult(intent,
 				VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
 
-	}
-
-	private boolean appInstalledOrNot(String uri) {
-		PackageManager pm = getActivity().getPackageManager();
-		boolean app_installed = false;
-		try {
-			pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
-			app_installed = true;
-		} catch (PackageManager.NameNotFoundException e) {
-			app_installed = false;
-		}
-		return app_installed;
 	}
 
 	private void showAlertForEditPermission(final String sourceName) {
@@ -842,8 +794,8 @@ public class DataEntryFragment extends Fragment {
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
 		messagetext.setText(getResources().getString(
 				R.string.dataentry_edit_permission));
-		okButton.setText("Yes");
-		noButton.setText("No");
+		okButton.setText(getResources().getString(R.string.yes_mesg));
+		noButton.setText(getResources().getString(R.string.no_mesg));
 		okButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				dialog.dismiss();
@@ -875,7 +827,7 @@ public class DataEntryFragment extends Fragment {
 		messagetext.setText(getResources().getString(
 				R.string.dataentry_mandtory_field_mesg));
 		okButton.setVisibility(View.GONE);
-		noButton.setText("OK");
+		noButton.setText(getResources().getString(R.string.ok));
 		noButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				dialog.dismiss();
@@ -885,40 +837,40 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	private void lookingForTextClickFunctionality() {
-		dontGoToNextlookingFor = true;
-		lookingForPopup.setVisibility(View.VISIBLE);
+		mDontGoToNextLookingFor = true;
+		mLookingForPopup.setVisibility(View.VISIBLE);
 		if (mLookingForAisleKeywordsList != null
 				&& mLookingForAisleKeywordsList.size() > 0) {
-			lookingForListviewLayout.setVisibility(View.VISIBLE);
-			lookingForListview.setAdapter(new LookingForAdapter(getActivity(),
+			mLookingForListviewLayout.setVisibility(View.VISIBLE);
+			mLookingForListview.setAdapter(new LookingForAdapter(getActivity(),
 					mLookingForAisleKeywordsList));
 		}
-		lookingForBigText.setBackgroundColor(getResources().getColor(
+		mLookingForBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
-		lookingForText.requestFocus();
-		inputMethodManager.showSoftInput(lookingForText, 0);
+		mLookingForText.requestFocus();
+		mInputMethodManager.showSoftInput(mLookingForText, 0);
 	}
 
 	private void occassionTextClickFunctionality() {
-		dontGoToNextForOccasion = true;
-		ocassionPopup.setVisibility(View.VISIBLE);
+		mDontGoToNextForOccasion = true;
+		mOccasionPopup.setVisibility(View.VISIBLE);
 		if (mOccassionAisleKeywordsList != null
 				&& mOccassionAisleKeywordsList.size() > 0) {
-			ocassionListviewLayout.setVisibility(View.VISIBLE);
-			ocassionListview.setAdapter(new OccassionAdapter(getActivity(),
+			mOccasionListviewLayout.setVisibility(View.VISIBLE);
+			mOccasionListview.setAdapter(new OccassionAdapter(getActivity(),
 					mOccassionAisleKeywordsList));
 		}
-		occassionBigText.setBackgroundColor(getResources().getColor(
+		mOccassionBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
-		occasionText.requestFocus();
-		inputMethodManager.showSoftInput(occasionText, 0);
+		mOccasionText.requestFocus();
+		mInputMethodManager.showSoftInput(mOccasionText, 0);
 	}
 
 	private void categoryIconClickFunctionality() {
-		categoryListview.setVisibility(View.VISIBLE);
-		categoryListview.setAdapter(new CategoryAdapter(getActivity()));
-		categoryListviewLayout.setVisibility(View.VISIBLE);
-		categoeryPopup.setVisibility(View.VISIBLE);
+		mCategoryListview.setVisibility(View.VISIBLE);
+		mCategoryListview.setAdapter(new CategoryAdapter(getActivity()));
+		mCategoryListviewLayout.setVisibility(View.VISIBLE);
+		mCategoryPopup.setVisibility(View.VISIBLE);
 	}
 
 	// LookingFor....
@@ -953,7 +905,7 @@ public class DataEntryFragment extends Fragment {
 			}
 			try {
 				if (lookingForKeywordsList.get(position).equals(
-						lookingForText.getText().toString())) {
+						mLookingForText.getText().toString())) {
 					holder.dataentryitemname.setTextColor(getResources()
 							.getColor(R.color.black));
 					holder.dataentryitemname.setTypeface(null, Typeface.BOLD);
@@ -967,14 +919,13 @@ public class DataEntryFragment extends Fragment {
 				rowView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						lookingForBigText.setText(lookingForKeywordsList
+						mLookingForBigText.setText(lookingForKeywordsList
 								.get(position));
-						lookingForText.setText(lookingForKeywordsList
+						mLookingForText.setText(lookingForKeywordsList
 								.get(position));
 					}
 				});
 			} catch (NotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return rowView;
@@ -991,13 +942,11 @@ public class DataEntryFragment extends Fragment {
 
 		@Override
 		public Object getItem(int arg0) {
-			// TODO Auto-generated method stub
 			return arg0;
 		}
 
 		@Override
 		public long getItemId(int arg0) {
-			// TODO Auto-generated method stub
 			return arg0;
 		}
 	}
@@ -1034,7 +983,7 @@ public class DataEntryFragment extends Fragment {
 			}
 			try {
 				if (occassionKeywordsList.get(position).equals(
-						occasionText.getText().toString())) {
+						mOccasionText.getText().toString())) {
 					holder.dataentryitemname.setTextColor(getResources()
 							.getColor(R.color.black));
 					holder.dataentryitemname.setTypeface(null, Typeface.BOLD);
@@ -1048,14 +997,13 @@ public class DataEntryFragment extends Fragment {
 				rowView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						occasionText.setText(occassionKeywordsList
+						mOccasionText.setText(occassionKeywordsList
 								.get(position));
-						occassionBigText.setText(occassionKeywordsList
+						mOccassionBigText.setText(occassionKeywordsList
 								.get(position));
 					}
 				});
 			} catch (NotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return rowView;
@@ -1072,13 +1020,11 @@ public class DataEntryFragment extends Fragment {
 
 		@Override
 		public Object getItem(int arg0) {
-			// TODO Auto-generated method stub
 			return arg0;
 		}
 
 		@Override
 		public long getItemId(int arg0) {
-			// TODO Auto-generated method stub
 			return arg0;
 		}
 	}
@@ -1110,7 +1056,7 @@ public class DataEntryFragment extends Fragment {
 			} else {
 				holder = (ViewHolder) rowView.getTag();
 			}
-			if (categoryitemsArray[position].equals(categoryText.getText()
+			if (mCategoryitemsArray[position].equals(mCategoryText.getText()
 					.toString())) {
 				holder.dataentryitemname.setTextColor(getResources().getColor(
 						R.color.black));
@@ -1120,14 +1066,14 @@ public class DataEntryFragment extends Fragment {
 						R.color.dataentrytextcolor));
 				holder.dataentryitemname.setTypeface(null, Typeface.NORMAL);
 			}
-			holder.dataentryitemname.setText(categoryitemsArray[position]);
+			holder.dataentryitemname.setText(mCategoryitemsArray[position]);
 			rowView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					categoryText.setText(categoryitemsArray[position]);
-					categoryListview.setVisibility(View.GONE);
-					categoeryPopup.setVisibility(View.GONE);
-					categoryListviewLayout.setVisibility(View.GONE);
+					mCategoryText.setText(mCategoryitemsArray[position]);
+					mCategoryListview.setVisibility(View.GONE);
+					mCategoryPopup.setVisibility(View.GONE);
+					mCategoryListviewLayout.setVisibility(View.GONE);
 				}
 			});
 			return rowView;
@@ -1135,18 +1081,16 @@ public class DataEntryFragment extends Fragment {
 
 		@Override
 		public int getCount() {
-			return categoryitemsArray.length;
+			return mCategoryitemsArray.length;
 		}
 
 		@Override
 		public Object getItem(int arg0) {
-			// TODO Auto-generated method stub
 			return arg0;
 		}
 
 		@Override
 		public long getItemId(int arg0) {
-			// TODO Auto-generated method stub
 			return arg0;
 		}
 	}
@@ -1154,27 +1098,28 @@ public class DataEntryFragment extends Fragment {
 	public void setGalleryORCameraImage(String picturePath) {
 		try {
 			Log.e("frag1", "gallery called,,,," + picturePath);
-			imagePath = picturePath;
-			createaisleBg.setVisibility(View.VISIBLE);
-			resizedImagePath = Utils.getResizedImage(new File(imagePath),
-					screenHeight, screenWidth, getActivity());
-			Log.e("Frag", resizedImagePath);
-			createaisleBg.setImageURI(Uri.fromFile(new File(resizedImagePath)));
-			if (addImageToAisleFlag) {
-				dataEntryAislesViewpager.setVisibility(View.GONE);
+			mImagePath = picturePath;
+			mCreateAisleBg.setVisibility(View.VISIBLE);
+			mResizedImagePath = Utils.getResizedImage(new File(mImagePath),
+					mScreenHeight, mScreenWidth, getActivity());
+			Log.e("Frag", mResizedImagePath);
+			mCreateAisleBg.setImageURI(Uri
+					.fromFile(new File(mResizedImagePath)));
+			if (mAddImageToAisleFlag) {
+				mDataEntryAislesViewpager.setVisibility(View.GONE);
 				DataEntryActivity obj = (DataEntryActivity) getActivity();
 				obj.getSupportActionBar().setTitle(
 						getResources().getString(
 								R.string.add_imae_to_aisle_screen_title));
-				dataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
-				dataEntryBottomTopLayout.setVisibility(View.GONE);
+				mDataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
+				mDataEntryBottomTopLayout.setVisibility(View.GONE);
 				DataEntryActivity activity = (DataEntryActivity) getActivity();
-				activity.isNewActionBar = false;
+				activity.mIsNewActionBarFlag = false;
 				activity.invalidateOptionsMenu();
-				mainHeadingRow.setVisibility(View.VISIBLE);
-				touchToChangeImage.setVisibility(View.VISIBLE);
-				occassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				lookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				mMainHeadingRow.setVisibility(View.VISIBLE);
+				mTouchToChangeImage.setVisibility(View.VISIBLE);
+				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 			}
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -1182,29 +1127,29 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	private void addImageToAisleToServer() {
-		// Input parameters for Adding Aisle to server request...
-		String category = categoryText.getText().toString();
-		String lookingFor = lookingForBigText.getText().toString();
-		String occasion = occassionBigText.getText().toString();
-		String imageUrl = imagePath; // This path is image location stored in
-										// locally when user selects from Camera
-										// OR Gallery.
-		String title = ""; // For Camera and Gallery we don't have title.
-		String store = ""; // For Camera and Gallery we don't have store.
-		storeMetaAisleDataIntoLocalStorage();
+		/*
+		 * // Input parameters for Adding Aisle to server request... String
+		 * category = mCategoryText.getText().toString(); String lookingFor =
+		 * mLookingForBigText.getText().toString(); String occasion =
+		 * mOccassionBigText.getText().toString(); String imageUrl = mImagePath;
+		 * // This path is image location stored in // locally when user selects
+		 * from Camera // OR Gallery. String title = ""; // For Camera and
+		 * Gallery we don't have title. String store = ""; // For Camera and
+		 * Gallery we don't have store.
+		 */storeMetaAisleDataIntoLocalStorage();
 	}
 
 	private void addAisleToServer() {
-		// Input parameters for Adding Aisle to server request...
-		String category = categoryText.getText().toString();
-		String lookingFor = lookingForBigText.getText().toString();
-		String occasion = occassionBigText.getText().toString();
-		String imageUrl = imagePath; // This path is image location stored in
-										// locally when user selects from Camera
-										// OR Gallery.
-		String title = ""; // For Camera and Gallery we don't have title.
-		String store = ""; // For Camera and Gallery we don't have store.
-		storeMetaAisleDataIntoLocalStorage();
+		/*
+		 * // Input parameters for Adding Aisle to server request... String
+		 * category = mCategoryText.getText().toString(); String lookingFor =
+		 * mLookingForBigText.getText().toString(); String occasion =
+		 * mOccassionBigText.getText().toString(); String imageUrl = mImagePath;
+		 * // This path is image location stored in // locally when user selects
+		 * from Camera // OR Gallery. String title = ""; // For Camera and
+		 * Gallery we don't have title. String store = ""; // For Camera and
+		 * Gallery we don't have store.
+		 */storeMetaAisleDataIntoLocalStorage();
 	}
 
 	private void storeMetaAisleDataIntoLocalStorage() {
@@ -1216,61 +1161,34 @@ public class DataEntryFragment extends Fragment {
 		DataEntryActivity obj = (DataEntryActivity) getActivity();
 		obj.getSupportActionBar().setTitle(
 				getResources().getString(R.string.app_name));
-		if (editAisleImageFlag) {
-			aisleImagePathList.remove(currentPagePosition);
+		if (mEditAisleImageFlag) {
+			mAisleImagePathList.remove(mCurrentPagePosition);
 		}
-		editAisleImageFlag = false;
+		mEditAisleImageFlag = false;
 		DataEntryActivity activity = (DataEntryActivity) getActivity();
-		activity.isNewActionBar = true;
+		activity.mIsNewActionBarFlag = true;
 		activity.invalidateOptionsMenu();
-		mainHeadingRow.setVisibility(View.GONE);
-		touchToChangeImage.setVisibility(View.GONE);
-		dataEntryBottomBottomLayout.setVisibility(View.GONE);
-		dataEntryBottomTopLayout.setVisibility(View.VISIBLE);
-		aisleImagePathList.add(0, resizedImagePath);
-		dataEntryAislesViewpager.setVisibility(View.VISIBLE);
-		createaisleBg.setVisibility(View.GONE);
+		mMainHeadingRow.setVisibility(View.GONE);
+		mTouchToChangeImage.setVisibility(View.GONE);
+		mDataEntryBottomBottomLayout.setVisibility(View.GONE);
+		mDataEntryBottomTopLayout.setVisibility(View.VISIBLE);
+		mAisleImagePathList.add(0, mResizedImagePath);
+		mDataEntryAislesViewpager.setVisibility(View.VISIBLE);
+		mCreateAisleBg.setVisibility(View.GONE);
 		try {
-			dataEntryAislesViewpager.setAdapter(new DataEntryAilsePagerAdapter(
-					getActivity(), aisleImagePathList));
+			mDataEntryAislesViewpager
+					.setAdapter(new DataEntryAilsePagerAdapter(getActivity(),
+							mAisleImagePathList));
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-/*	private AisleData getAisleDataForKeyword(String keyWord, String tableName) {
-		AisleData aisleDataObj = null;
-		Uri uri = null;
-		if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
-			uri = VueConstants.LOOKING_FOR_CONTENT_URI;
-		} else if (tableName.equals(VueConstants.OCCASION_TABLE)) {
-			uri = VueConstants.OCCASION_CONTENT_URI;
-		} else if (tableName.equals(VueConstants.CATEGORY_TABLE)) {
-			uri = VueConstants.CATEGORY_CONTENT_URI;
-		} else {
-			return null;
-		}
-		Cursor c = getActivity().getContentResolver().query(uri, null,
-				VueConstants.KEYWORD + "=?", new String[] { keyWord }, null);
-		if (c.moveToFirst()) {
-			aisleDataObj = new AisleData();
-			aisleDataObj.keyword = c.getString(c
-					.getColumnIndex(VueConstants.KEYWORD));
-			aisleDataObj.count = c.getInt(c
-					.getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED));
-			aisleDataObj.time = c.getString(c
-					.getColumnIndex(VueConstants.LAST_USED_TIME));
-		}
-		c.close();
-		return aisleDataObj;
-	}*/
-
 	private void showDataProgressOnNotification() {
-		final NotificationManager mNotifyManager = (NotificationManager) getActivity()
+		final NotificationManager notifyManager = (NotificationManager) getActivity()
 				.getSystemService(Context.NOTIFICATION_SERVICE);
-		final Builder mBuilder = new NotificationCompat.Builder(getActivity());
-		mBuilder.setContentTitle(getResources().getString(R.string.app_name))
+		final Builder builder = new NotificationCompat.Builder(getActivity());
+		builder.setContentTitle(getResources().getString(R.string.app_name))
 				.setContentText(
 						getResources().getString(R.string.uploading_mesg))
 				.setSmallIcon(R.drawable.vue_launcher_icon);
@@ -1279,74 +1197,61 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public void run() {
 
-				AisleData lookingForAisleDataObj = dbManager.getAisleMetaDataForKeyword(
-						lookingForBigText.getText().toString().trim(),
-						VueConstants.LOOKING_FOR_TABLE);
+				AisleData lookingForAisleDataObj = mDbManager
+						.getAisleMetaDataForKeyword(mLookingForBigText
+								.getText().toString().trim(),
+								VueConstants.LOOKING_FOR_TABLE);
 				if (lookingForAisleDataObj != null) {
 					lookingForAisleDataObj.count += 1;
 					lookingForAisleDataObj.isNew = false;
 				} else {
 					lookingForAisleDataObj = new AisleData();
-					lookingForAisleDataObj.keyword = lookingForBigText
+					lookingForAisleDataObj.keyword = mLookingForBigText
 							.getText().toString().trim();
 					lookingForAisleDataObj.count = 1;
 					lookingForAisleDataObj.isNew = true;
 				}
 				String currentTime = Utils.date();
 				lookingForAisleDataObj.time = currentTime;
-				dbManager.addAisleMetaDataToDB(VueConstants.LOOKING_FOR_TABLE,
+				mDbManager.addAisleMetaDataToDB(VueConstants.LOOKING_FOR_TABLE,
 						lookingForAisleDataObj);
-				AisleData occassionAisleDataObj = dbManager.getAisleMetaDataForKeyword(
-						occassionBigText.getText().toString().trim(),
-						VueConstants.OCCASION_TABLE);
+				AisleData occassionAisleDataObj = mDbManager
+						.getAisleMetaDataForKeyword(mOccassionBigText.getText()
+								.toString().trim(), VueConstants.OCCASION_TABLE);
 				if (occassionAisleDataObj != null) {
 					occassionAisleDataObj.count += 1;
 					occassionAisleDataObj.isNew = false;
 				} else {
 					occassionAisleDataObj = new AisleData();
-					occassionAisleDataObj.keyword = occassionBigText.getText()
+					occassionAisleDataObj.keyword = mOccassionBigText.getText()
 							.toString().trim();
 					occassionAisleDataObj.count = 1;
 					occassionAisleDataObj.isNew = true;
 				}
 				occassionAisleDataObj.time = currentTime;
-				dbManager.addAisleMetaDataToDB(VueConstants.OCCASION_TABLE,
+				mDbManager.addAisleMetaDataToDB(VueConstants.OCCASION_TABLE,
 						occassionAisleDataObj);
-				AisleData categoryAisleDataObj = dbManager.getAisleMetaDataForKeyword(
-						categoryText.getText().toString().trim(),
-						VueConstants.CATEGORY_TABLE);
+				AisleData categoryAisleDataObj = mDbManager
+						.getAisleMetaDataForKeyword(mCategoryText.getText()
+								.toString().trim(), VueConstants.CATEGORY_TABLE);
 				if (categoryAisleDataObj != null) {
 					categoryAisleDataObj.count += 1;
 					categoryAisleDataObj.isNew = false;
 				} else {
 					categoryAisleDataObj = new AisleData();
-					categoryAisleDataObj.keyword = categoryText.getText()
+					categoryAisleDataObj.keyword = mCategoryText.getText()
 							.toString().trim();
 					categoryAisleDataObj.count = 1;
 					categoryAisleDataObj.isNew = true;
 				}
 				categoryAisleDataObj.time = currentTime;
-				dbManager.addAisleMetaDataToDB(VueConstants.CATEGORY_TABLE,
+				mDbManager.addAisleMetaDataToDB(VueConstants.CATEGORY_TABLE,
 						categoryAisleDataObj);
-
-				/*
-				 * int incr; // Do the "lengthy" operation 20 times for (incr =
-				 * 0; incr <= 100; incr += 20) { // Sets the progress indicator
-				 * to a max value, the // current completion percentage, and
-				 * "determinate" // state mBuilder.setProgress(100, incr,
-				 * false); mBuilder.setContentText("Uploading... (" + incr +
-				 * "%)"); // Displays the progress bar for the first time.
-				 * mNotifyManager.notify(0, mBuilder.build()); // Sleeps the
-				 * thread, simulating an operation // that takes time try { //
-				 * Sleep for 5 seconds Thread.sleep(5 * 1000); } catch
-				 * (InterruptedException e) { } }
-				 */
-
 				// When the loop is finished, updates the notification
-				mBuilder.setContentText("Uploading completed")
+				builder.setContentText("Uploading completed")
 				// Removes the progress bar
 						.setProgress(0, 0, false);
-				mNotifyManager.notify(0, mBuilder.build());
+				notifyManager.notify(0, builder.build());
 			}
 		}
 		// Starts the thread by calling the run() method in its Runnable

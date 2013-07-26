@@ -16,8 +16,6 @@
 
 package com.facebook;
 
-import com.lateralthoughts.vue.VueLandingPageActivity;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;

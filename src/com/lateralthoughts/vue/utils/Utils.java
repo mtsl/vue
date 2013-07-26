@@ -9,21 +9,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 
@@ -165,8 +167,6 @@ public class Utils {
 			FileInputStream stream1 = new FileInputStream(f);
 			BitmapFactory.decodeStream(stream1, null, o);
 			stream1.close();
-			// Find the correct scale value. It should be the power of 2.
-			// final int REQUIRED_SIZE = mScreenWidth/2;
 			int height = o.outHeight;
 			int width = o.outWidth;
 			int scale = 1;
@@ -190,8 +190,6 @@ public class Utils {
 			// a final image with both dimensions larger than or equal to the
 			// requested height and width.
 			scale = heightRatio < widthRatio ? heightRatio : widthRatio;
-			Log.e("Utils bitmap width and height ratio", widthRatio
-					+ "........" + heightRatio + "????????" + scale);
 			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = (int) scale;
@@ -202,7 +200,6 @@ public class Utils {
 			File resizedFileName = new File(
 					vueAppResizedImageFileName(mContext));
 			String resizedFilePath = resizedFileName.getPath();
-			Log.e("Utils", resizedFilePath);
 			FileOutputStream out = new FileOutputStream(resizedFileName);
 			resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
 			out.flush();
@@ -220,8 +217,8 @@ public class Utils {
 
 	public static String vueAppCameraImageFileName(Context context) {
 		FileCache fileCacheObj = new FileCache(context);
-		if (fileCacheObj.vueAppCameraPicsDir != null) {
-			File fv[] = fileCacheObj.vueAppCameraPicsDir.listFiles();
+		if (fileCacheObj.mVueAppCameraPicsDir != null) {
+			File fv[] = fileCacheObj.mVueAppCameraPicsDir.listFiles();
 			if (fv != null) {
 				return fileCacheObj.getVueAppCameraPictureFile(
 						fv.length + 1 + "").getPath();
@@ -233,8 +230,8 @@ public class Utils {
 
 	public static String vueAppResizedImageFileName(Context context) {
 		FileCache fileCacheObj = new FileCache(context);
-		if (fileCacheObj.vueAppResizedImagesDir != null) {
-			File fv[] = fileCacheObj.vueAppResizedImagesDir.listFiles();
+		if (fileCacheObj.mVueAppResizedImagesDir != null) {
+			File fv[] = fileCacheObj.mVueAppResizedImagesDir.listFiles();
 			if (fv != null) {
 				return fileCacheObj.getVueAppResizedPictureFile(
 						fv.length + 1 + "").getPath();
@@ -302,27 +299,6 @@ public class Utils {
 
 	}
 
-	private static Bitmap createBitmap(Bitmap bitmap, int width, int height) {
-		if (width > 0 && height > 0) {
-			try {
-				Bitmap bmap = Bitmap.createScaledBitmap(bitmap, width, height,
-						true);
-				return bmap;
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.i("bitmap1",
-						"bitmap1 before exception " + bitmap.getWidth());
-				e.printStackTrace();
-			} catch (Throwable e) {
-				Log.i("bitmap1",
-						"bitmap1 before exception Throwable "
-								+ bitmap.getWidth());
-				e.printStackTrace();
-			}
-		}
-		return bitmap;
-	}
-
 	public static float dipToPixels(Context context, float dipValue) {
 		DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue,
@@ -350,6 +326,11 @@ public class Utils {
 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
 				VueConstants.DATE_FORMAT);
 		return dateFormatGmt.format(new Date(twoWeeksDifferenceTime));
+	}
+
+	public static void refreshGallery(Context context) {
+		context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri
+				.parse("file://" + Environment.getExternalStorageDirectory())));
 	}
 
 }

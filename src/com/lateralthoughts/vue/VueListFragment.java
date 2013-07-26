@@ -513,7 +513,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
         VueConstants.FACEBOOK_LOGIN, false);
     boolean googleplusloginflag = sharedPreferencesObj.getBoolean(
         VueConstants.GOOGLEPLUS_LOGIN, false);
-    if (s.equals("Facebook")) {
+    if (s.equals(getResources().getString(R.string.sidemenu_sub_option_Facebook))) {
 
       if (facebookloginflag) {
         fbFriendsList();
@@ -532,7 +532,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
             VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE);
       }
 
-    } else if (s.equals("Google Plus")) {
+    } else if (s.equals(getResources().getString(R.string.sidemenu_sub_option_Googleplus))) {
       if (googleplusloginflag) {
         Log.e(getTag(), "GOOGLEPLUS : Value of s : 1");
         getGPlusFriendsList();
@@ -577,7 +577,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
             fbGPlusFriends = JsonParsing(response);
             if (fbGPlusFriends != null) {
               inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(
-                  getActivity(), fbGPlusFriends));
+                  getActivity(),fbGPlusFriends, false));
+
               expandListView.setVisibility(View.GONE);
               invitefriendsLayout.setVisibility(View.VISIBLE);
               invitefriendsLayout.startAnimation(animUp);
@@ -627,7 +628,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
   private void getGPlusFriendsList() {
     if (VueLandingPageActivity.mGooglePlusFriendsDetailsList != null) {
       inviteFrirendsListView.setAdapter(new InviteFriendsAdapter(getActivity(),
-          VueLandingPageActivity.mGooglePlusFriendsDetailsList));
+          VueLandingPageActivity.mGooglePlusFriendsDetailsList, false));
       expandListView.setVisibility(View.GONE);
       invitefriendsLayout.setVisibility(View.VISIBLE);
       invitefriendsLayout.startAnimation(animUp);

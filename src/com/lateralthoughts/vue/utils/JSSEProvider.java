@@ -5,6 +5,11 @@ import java.security.Provider;
 
 public class JSSEProvider extends Provider {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public JSSEProvider() {
 		super("HarmonyJSSE", 1.0, "Harmony JSSE Provider");
 		AccessController

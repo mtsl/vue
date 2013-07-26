@@ -240,7 +240,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
      if(mShowingList.size() != 0) {
     	 mViewHolder.vueWndowCommentImg.setImageResource(R.drawable.comment);
      } else {
-    	 mViewHolder.vueWndowCommentImg.setImageResource(R.drawable.comment_dark);
+    	 mViewHolder.vueWndowCommentImg.setImageResource(R.drawable.comment_light);
      }
       mViewHolder.commentCount.setText((mShowingList.size()+" Comments"));
       mViewHolder.bookMarkCount.setText(""+mBookmarksCount);

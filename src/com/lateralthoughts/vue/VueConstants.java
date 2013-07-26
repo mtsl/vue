@@ -49,6 +49,7 @@ public class VueConstants {
 	public static final String FB_FRIEND_NAME = "FBFRIENDNAME";
 	public static final String GOOGLEPLUS_FRIEND_INVITE = "GOOGLEPLUS_FRIEND_INVITE";
 	public static final String GOOGLEPLUS_FRIEND_INDEX = "GOOGLEPLUS_FRIEND_INDEX";
+	public static final String GOOGLEPLUS_FRIEND_IMAGE_PATH_LIST_KEY = "GOOGLEPLUS_FRIEND_INDEX_PATH_LIST_KEY";
 	// Column names for aisles table.
 	public static final String ID = "_id";
 	public static final String CATEGORY = "category";
@@ -152,4 +153,6 @@ public class VueConstants {
 	public static final String FACEBOOK_GRAPHIC_OBJECT_NAME_KEY = "name";
 	public static final String FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY = "email";
 	public static final String FACEBOOK_GRAPHIC_OBJECT_GENDER_KEY = "gender";
+	public static final String DATA_ENTRY_INVITE_FRIENDS_BUNDLE_FROM_GOOGLEPLUS_FLAG_KEY = "dataentryinvitefriendsbundlefromgoogleplusflagkey";
+	public static final String DATA_ENTRY_INVITE_FRIENDS_BUNDLE_FROM_FILE_PATH_ARRAY_KEY = "dataentryinvitefriendsbundlepatharraykey";
 }

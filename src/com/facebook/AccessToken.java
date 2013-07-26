@@ -21,13 +21,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.facebook.internal.Utility;
 import com.facebook.internal.Validate;
-import com.lateralthoughts.vue.VueLandingPageActivity;
-import com.lateralthoughts.vue.VueLoginActivity;
-import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
-
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;

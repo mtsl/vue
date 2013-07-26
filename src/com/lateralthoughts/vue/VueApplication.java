@@ -12,8 +12,6 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.android.volley.RequestQueue;
-
 //internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -177,7 +175,6 @@ public class VueApplication extends Application {
 
 	public int getVueDetailsCardHeight() {
 		if (mVueDetailsCardHeight == 0) {
-			int bottomActionBar = 48;
 			int topBottomMargin = 20;
 			mVueDetailsCardHeight = mScreenHeight
 					- getPixel(topBottomMargin + topBottomMargin);
