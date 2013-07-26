@@ -386,24 +386,17 @@ public class DataBaseManager {
   }
 
   public static void markOldAislesToDelete(Context context) {
-    /*DbHelper helper = new DbHelper(context);
-    SQLiteDatabase db = helper.getReadableDatabase();
-    Cursor c = db.query(DbHelper.DATABASE_TABLE_AISLES, new String[] {VueConstants.AISLE_ID}null, null, null, null, null, null);*/
-   // Cursor c = context.getContentResolver().query(VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_ID}, null, null, null);
-    Cursor cursor = context.getContentResolver().query(VueConstants.CONTENT_URI, new String[] {VueConstants.ID, VueConstants.AISLE_ID}, null, null, null);
-    Cursor cursor1 = context.getContentResolver().query(VueConstants.CONTENT_URI, new String[] {"COUNT(*)"}, null, null, null);
-    String strCount = null;
-    if (cursor1.moveToFirst()) {
-      strCount = cursor1.getString(cursor1.getColumnIndex("COUNT(*)"));
-    }
-    Log.e("DataBaseManager", "Total Aisles marked to Cursor : Cursor1.getCount() : " + strCount);
-    Log.e("DataBaseManager", "Total Aisles marked to delete : Cursor.getCount() : " + cursor.getCount());
+   Cursor cursor = context.getContentResolver().query(VueConstants.CONTENT_URI,
+       new String[] {VueConstants.ID, VueConstants.AISLE_ID}, null, null, null);
+    Log.e("DataBaseManager", "Total Aisles marked to delete : Cursor.getCount() : "
+       + cursor.getCount());
     ArrayList<String> aislesIds = new ArrayList<String>();
     if(cursor.moveToFirst()) {
       do {
         aislesIds.add(cursor.getString(cursor.getColumnIndex(VueConstants.AISLE_ID)));
       } while(cursor.moveToNext());
     }
+
     /*for(String s : aislesIds) {
       Uri uri = Uri.parse(VueConstants.CONTENT_URI + "/" + );  
     }*/
@@ -415,12 +408,13 @@ public class DataBaseManager {
     }
     String selection = VueConstants.AISLE_ID + " IN (" + questionSymbols + ") ";
     String[] args = aislesIds.toArray(new String[aislesIds.size()]);
-    Log.e("DataBaseManager", "Total Aisles marked to delete : selection : " + selection);
-    Log.e("DataBaseManager", "Total Aisles marked to delete : questionSymbols : " + questionSymbols);
     ContentValues values = new ContentValues();
     values.put(VueConstants.DELETE_FLAG, 1);
     int updatedRows = context.getContentResolver().update(VueConstants.CONTENT_URI, values, selection, args);
     Log.e("DataBaseManager", "Total Aisles marked to delete : " + updatedRows);
   }
   
+  private void deleteClosedAisles() {
+    
+  }
 }
