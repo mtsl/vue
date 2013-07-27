@@ -303,15 +303,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
        }
       @Override
       public void onResetAdapter() {
-    /*     //TODO: need to remove these counts when original comments available.
-         if(mListCount == 5){
-         mListCount = 10;
-         } else {
-            mListCount = 5;
-         }
-          mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mListCount ,null);
-          mAisleDetailsList.setAdapter(mAisleDetailsAdapter);*/
-         
       }
       /**
        * when user enters the comment it will be added to the comment list at the top.

@@ -45,6 +45,7 @@ public class AisleWindowContent
 	private String mAisleId;
 	
     private int mWindowSmallestHeight = 0;
+    private int mWindowLargestHeight = 0;
 	
     public AisleWindowContent(String aisleId){ 
     	mAisleId = aisleId;
@@ -132,6 +133,9 @@ public class AisleWindowContent
     
     public int getBestHeightForWindow(){
         return mWindowSmallestHeight;
+    }
+    public int getBestLargetHeightForWindow() {
+    	return mWindowLargestHeight;
     }
     private AisleContext mContext;
     private ArrayList<AisleImageDetails> mAisleImagesList;

@@ -154,55 +154,11 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
-				/*
-				 * DataEntryFragment fragment = (DataEntryFragment)
-				 * getSupportFragmentManager()
-				 * .findFragmentById(R.id.create_aisles_view_fragment);
-				 * Log.e("fff", fragment.mKeyboardUpTextBox); if
-				 * (fragment.mKeyboardUpTextBox == null) {
-				 */super.onBackPressed();
-				/*
-				 * } else { if (fragment.mKeyboardUpTextBox
-				 * .equals(DataEntryFragment.LOOKING_FOR)) {
-				 * fragment.lookingForInterceptListnerFunctionality(); } else if
-				 * (fragment.mKeyboardUpTextBox
-				 * .equals(DataEntryFragment.OCCASION)) {
-				 * fragment.occasionInterceptListnerFunctionality(); } else if
-				 * (fragment.mKeyboardUpTextBox
-				 * .equals(DataEntryFragment.FINDAT)) {
-				 * fragment.findAtInterceptListnerFunctionality(); } else if
-				 * (fragment.mKeyboardUpTextBox
-				 * .equals(DataEntryFragment.SAY_SOMETHING_ABOUT_AISLE)) {
-				 * fragment
-				 * .saySomethingABoutAisleInterceptListnerFunctionality(); } }
-				 */
+				super.onBackPressed();
 			}
 		}
 		return false;
 
 	}
 
-	/*public boolean onKeyPreIme(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK
-				&& event.getAction() == KeyEvent.ACTION_UP) {
-			DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.create_aisles_view_fragment);
-			Log.e("fff", fragment.mKeyboardUpTextBox);
-			if (fragment.mKeyboardUpTextBox
-					.equals(DataEntryFragment.LOOKING_FOR)) {
-				fragment.lookingForInterceptListnerFunctionality();
-			} else if (fragment.mKeyboardUpTextBox
-					.equals(DataEntryFragment.OCCASION)) {
-				fragment.occasionInterceptListnerFunctionality();
-			} else if (fragment.mKeyboardUpTextBox
-					.equals(DataEntryFragment.FINDAT)) {
-				fragment.findAtInterceptListnerFunctionality();
-			} else if (fragment.mKeyboardUpTextBox
-					.equals(DataEntryFragment.SAY_SOMETHING_ABOUT_AISLE)) {
-				fragment.saySomethingABoutAisleInterceptListnerFunctionality();
-			}
-			return false;
-		}
-		return super.dispatchKeyEvent(event);
-	}*/
 }

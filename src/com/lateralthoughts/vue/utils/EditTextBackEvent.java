@@ -57,21 +57,21 @@ public class EditTextBackEvent extends EditText {
 		try {
 			if (keyCode == KeyEvent.KEYCODE_BACK
 					&& event.getAction() == KeyEvent.ACTION_UP) {
-				VueApplication.getInstance().mSoftKeboardIndicator = true;
-				if (!mOnInterceptListenr.getFlag()) {
+				//VueApplication.getInstance().mSoftKeboardIndicator = true;
+				if (mOnInterceptListenr.getFlag()) {
 				 
-						VueApplication.getInstance().mSoftKeboardIndicator = false;
+						//VueApplication.getInstance().mSoftKeboardIndicator = false;
 					 
 				}
 				mOnInterceptListenr.onKeyBackPressed();
-				return false;
+				return true;
 			}
 			return super.dispatchKeyEvent(event);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
+		return true;
 	}
 
 	/**

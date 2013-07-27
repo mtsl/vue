@@ -2,12 +2,9 @@ package com.lateralthoughts.vue;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import com.android.volley.RequestQueue;
@@ -15,7 +12,6 @@ import com.android.volley.toolbox.Volley;
 //internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.VueMemoryCache;
 
 //import crittercism sdk
@@ -42,8 +38,6 @@ public class VueApplication extends Application {
 	private int mStatusBarHeight;
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
-	public boolean mSoftKeboardIndicator = false;
-
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
 	}
