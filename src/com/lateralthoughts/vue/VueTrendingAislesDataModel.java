@@ -223,21 +223,14 @@ public class VueTrendingAislesDataModel {
       String imageStore;
       String imageTitle;
       AisleImageDetails imageItemDetails;
-
+      JSONArray contentArray = null;
+      if(resultString.equals("error")) {
+    
+      }
       try {
-        JSONArray contentArray = new JSONArray(resultString);
-        if (0 == contentArray.length()) {
-          mMoreDataAvailable = false;
-          runTask(new Runnable() {
-
-            @Override
-            public void run() {
-              DataBaseManager.addTrentingAislesFromServerToDB(mContext);
-            }
-          });
-        }
-        if(!mMarkAislesToDelete) {
-          mMarkAislesToDelete = DataBaseManager.markOldAislesToDelete(mContext);
+        contentArray = handleResponce(resultString);
+        if(contentArray == null) {
+          return;
         }
         for (int i = 0; i < contentArray.length(); i++) {
           userInfo = new AisleContext();
@@ -284,6 +277,30 @@ public class VueTrendingAislesDataModel {
       }
 
     }
+  }
+  
+  private JSONArray handleResponce(String resultString) {
+    JSONArray contentArray = null;
+    try {
+      contentArray = new JSONArray(resultString);
+    } catch (JSONException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    if (resultString.equals("error") || 0 == contentArray.length()) {
+      mMoreDataAvailable = false;
+      if(!mMarkAislesToDelete && 0 == contentArray.length()) {
+        mMarkAislesToDelete = DataBaseManager.markOldAislesToDelete(mContext);
+      }
+      runTask(new Runnable() {
+
+        @Override
+        public void run() {
+          DataBaseManager.addTrentingAislesFromServerToDB(mContext);
+        }
+      });
+    }
+    return contentArray;
   }
 
   private AisleWindowContent getAisleItem(String aisleId) {

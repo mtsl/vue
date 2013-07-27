@@ -35,7 +35,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -53,7 +52,6 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
@@ -62,14 +60,12 @@ import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
 public class VueListFragment extends SherlockFragment implements TextWatcher/* Fragment */{
-  // public static final String TAG = "VueListFragment";
+  public static final String TAG = "VueListFragment";
   private ExpandableListView expandListView;
   private LinearLayout customlayout, aboutlayout, invitefriendsLayout;
   private RelativeLayout mBezelMainLayout, donelayout, aboutdonelayout,
       vue_list_fragment_invite_friendsLayout_mainxml;
   private ImageView userProfilePic;
-  // private TextView userName, userDateOfBirth, userGender, userEmail,
-  // userCurrentLocation;
   private EditText userNameEdit, userDOBEdit, userGenderEdit, userEmailEdit,
       userLocationEdit;
   private Animation animDown;
@@ -77,7 +73,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
   private ListView inviteFrirendsListView;
   public FriendsListener listener;
   private SharedPreferences sharedPreferencesObj;
-  // private ImageLoader mImageLoader;
   private ProgressDialog progress;
   private LayoutInflater inflater;
   private boolean isProfileEdited = false;
@@ -89,7 +84,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
     this.inflater = inflater;
     sharedPreferencesObj = getActivity().getSharedPreferences(
         VueConstants.SHAREDPREFERENCE_NAME, 0);
-    // pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     listener = new FriendsListener() {
       @Override
       public boolean onBackPressed() {
@@ -153,7 +147,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           AisleWindowContentFactory.getInstance(getActivity())
               .clearObjectsInUse();
           if(getActivity() instanceof SlidingFragmentActivity) {
-            Log.e("Profiling", "Profiling suru " + getString(R.string.sidemenu_option_My_Aisles));
             SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
             activity.getSlidingMenu().toggle();
             activity.getSupportActionBar().setTitle(
@@ -164,7 +157,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
               startActivity(new Intent((DataEntryActivity)getActivity(), VueLandingPageActivity.class));
             }
           }
-          
+
           ArrayList<AisleWindowContent> aislesList = DataBaseManager.getInstance(getActivity())
               .getAislesFromDB(null);
           Message msg = new Message();
@@ -184,15 +177,18 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           model.clearAisles();
           AisleWindowContentFactory.getInstance(getActivity())
               .clearObjectsInUse();
-          if(getActivity() instanceof SlidingFragmentActivity) {
-            Log.e("Profiling", "Profiling suru " + getString(R.string.sidemenu_option_Trending_Aisles));
+          if (getActivity() instanceof SlidingFragmentActivity) {
             SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
             activity.getSlidingMenu().toggle();
-            activity.getSupportActionBar().setTitle(getString(R.string.trending));
-            if(getActivity() instanceof AisleDetailsViewActivity) {
-              startActivity(new Intent((AisleDetailsViewActivity)getActivity(), VueLandingPageActivity.class));
-            } else if(getActivity() instanceof DataEntryActivity) {
-              startActivity(new Intent((DataEntryActivity)getActivity(), VueLandingPageActivity.class));
+            activity.getSupportActionBar().setTitle(
+                getString(R.string.trending));
+            if (getActivity() instanceof AisleDetailsViewActivity) {
+              startActivity(new Intent(
+                  (AisleDetailsViewActivity) getActivity(),
+                  VueLandingPageActivity.class));
+            } else if (getActivity() instanceof DataEntryActivity) {
+              startActivity(new Intent((DataEntryActivity) getActivity(),
+                  VueLandingPageActivity.class));
             }
           }
 

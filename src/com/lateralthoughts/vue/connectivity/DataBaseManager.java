@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
@@ -408,35 +407,35 @@ public class DataBaseManager {
   }
 
   public static boolean markOldAislesToDelete(Context context) {
- /*  Cursor cursor = context.getContentResolver().query(VueConstants.CONTENT_URI,
-       new String[] {VueConstants.ID, VueConstants.AISLE_ID}, null, null, null);
-    ArrayList<String> aislesIds = new ArrayList<String>();
-    if(cursor.moveToFirst()) {
-      do {
-        aislesIds.add(cursor.getString(cursor.getColumnIndex(VueConstants.AISLE_ID)));
-      } while(cursor.moveToNext());
-    }
-    String questionSymbols = "?";
-    for (int i = 1; i < aislesIds.size(); i++) {
-      questionSymbols = questionSymbols + ",?";
-    }
-    String selection = VueConstants.AISLE_ID + " IN (" + questionSymbols + ") ";
-    String[] args = aislesIds.toArray(new String[aislesIds.size()]);*/
     ContentValues values = new ContentValues();
     values.put(VueConstants.DELETE_FLAG, DELETE_ROW);
-    int updatedaisleRows = context.getContentResolver().update(VueConstants.CONTENT_URI, values, null, null);
-    Log.e("DataBaseManager", "Total Aisles marked to delete in aisle table : " + updatedaisleRows);
-    int updatedimagesRows = context.getContentResolver().update(VueConstants.IMAGES_CONTENT_URI, values, null, null);
-    Log.e("DataBaseManager", "Total Aisles marked to delete in images table : " + updatedimagesRows);
-    //int updatedCommentsRows = context.getContentResolver().update(VueConstants.COMMENTS_ON_IMAGE_URI, values, null, null);
-    //Log.e("DataBaseManager", "Total Aisles marked to delete in images table : " + updatedCommentsRows);
+    int updatedaisleRows = context.getContentResolver().update(
+        VueConstants.CONTENT_URI, values, null, null);
+    Log.e("DataBaseManager", "Total Aisles marked to delete in aisle table : "
+        + updatedaisleRows);
+    int updatedimagesRows = context.getContentResolver().update(
+        VueConstants.IMAGES_CONTENT_URI, values, null, null);
+    Log.e("DataBaseManager", "Total Aisles marked to delete in images table : "
+        + updatedimagesRows);
+    //int updatedCommentsRows = context.getContentResolver().update(VueConstants
+    //.COMMENTS_ON_IMAGE_URI, values, null, null);
+    //Log.e("DataBaseManager", "Total Aisles marked to delete in images table : "
+    //+ updatedCommentsRows);
     return true;
   }
-  
+
   private static void deleteOutDatedAisles(Context context) {
-    int deletedAisles = context.getContentResolver().delete(VueConstants.CONTENT_URI, VueConstants.DELETE_FLAG + "=?", new String[] {DELETE_ROW});
-    int deletedImages = context.getContentResolver().delete(VueConstants.IMAGES_CONTENT_URI, VueConstants.DELETE_FLAG + "=?", new String[] {DELETE_ROW});
-    int deletedComments = context.getContentResolver().delete(VueConstants.COMMENTS_ON_IMAGE_URI, VueConstants.DELETE_FLAG + "=?", new String[] {DELETE_ROW});
-    Log.e("DataBaseManager", "Total Aisles deleted : " + deletedAisles + ", Total Images deleted : " + deletedImages + ", Total Comments deleted : " + deletedComments);
+    int deletedAisles = context.getContentResolver().delete(
+        VueConstants.CONTENT_URI, VueConstants.DELETE_FLAG + "=?",
+        new String[] {DELETE_ROW});
+    int deletedImages = context.getContentResolver().delete(
+        VueConstants.IMAGES_CONTENT_URI, VueConstants.DELETE_FLAG + "=?",
+        new String[] {DELETE_ROW});
+    int deletedComments = context.getContentResolver().delete(
+        VueConstants.COMMENTS_ON_IMAGE_URI, VueConstants.DELETE_FLAG + "=?",
+        new String[] {DELETE_ROW});
+    Log.e("DataBaseManager", "Total Aisles deleted : " + deletedAisles
+        + ", Total Images deleted : " + deletedImages
+        + ", Total Comments deleted : " + deletedComments);
   }
 }
