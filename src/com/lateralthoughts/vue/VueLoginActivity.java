@@ -93,8 +93,10 @@ public class VueLoginActivity extends FragmentActivity implements
 	private LinearLayout mSocialIntegrationMainLayout;
 	private Bundle mBundle = null;
 	private static final String TAG = "VueLoginActivity";
-	private final List<String> PUBLISH_PERMISSIONS = Arrays.asList(
-			"publish_actions", "email", "user_birthday");
+	private final List<String> PUBLISH_PERMISSIONS = Arrays
+			.asList("publish_actions");
+	private final List<String> READ_PERMISSIONS = Arrays.asList("email",
+			"user_birthday");
 	private ProgressDialog mFacebookProgressDialog, mGooglePlusProgressDialog;
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
 			.getInstance().getString(R.string.pendingActionBundleKey);
@@ -245,7 +247,7 @@ public class VueLoginActivity extends FragmentActivity implements
 										.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
 							}
 						});
-				login_button.setPublishPermissions(PUBLISH_PERMISSIONS);
+				login_button.setReadPermissions(READ_PERMISSIONS);
 				login_button
 						.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 							public void onUserInfoFetched(GraphUser user) {
@@ -397,9 +399,11 @@ public class VueLoginActivity extends FragmentActivity implements
 					VueLandingPageActivity.mGooglePlusFriendsDetailsList
 							.add(googlePlusFriendsDetailsObj);
 				}
-				Collections.sort(
-						VueLandingPageActivity.mGooglePlusFriendsDetailsList,
-						new SortBasedOnName());
+				if (VueLandingPageActivity.mGooglePlusFriendsDetailsList != null) {
+					Collections
+							.sort(VueLandingPageActivity.mGooglePlusFriendsDetailsList,
+									new SortBasedOnName());
+				}
 				if (mFromInviteFriends != null
 						&& mFromInviteFriends.equals(VueConstants.GOOGLEPLUS)) {
 					Intent resultIntent = new Intent();
@@ -464,10 +468,12 @@ public class VueLoginActivity extends FragmentActivity implements
 				if (user != null) {
 					String location = "";
 					try {
-						JSONObject jsonObject = user.getLocation()
-								.getInnerJSONObject();
-						location = jsonObject
-								.getString(VueConstants.FACEBOOK_GRAPHIC_OBJECT_NAME_KEY);
+						if (user.getLocation() != null) {
+							JSONObject jsonObject = user.getLocation()
+									.getInnerJSONObject();
+							location = jsonObject
+									.getString(VueConstants.FACEBOOK_GRAPHIC_OBJECT_NAME_KEY);
+						}
 					} catch (JSONException e1) {
 						e1.printStackTrace();
 					}

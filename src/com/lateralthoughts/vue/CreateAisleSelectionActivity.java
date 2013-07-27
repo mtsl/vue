@@ -51,7 +51,6 @@ public class CreateAisleSelectionActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_asilse_selection);
-		Utils.refreshGallery(this);
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			mFromCreateAilseScreenFlag = b
@@ -165,7 +164,6 @@ public class CreateAisleSelectionActivity extends Activity {
 			@Override
 			public void onAnimationEnd(Animation arg0) {
 				if (mGalleryClickedFlag) {
-					Utils.refreshGallery(CreateAisleSelectionActivity.this);
 					Intent i = new Intent(
 							Intent.ACTION_PICK,
 							android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -249,20 +247,21 @@ public class CreateAisleSelectionActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		try {
+			Log.e("cs", "1");
 			// From Gallery...
 			if (requestCode == VueConstants.SELECT_PICTURE) {
 				Uri selectedImageUri = data.getData();
+				Log.e("cs", "2");
 				// MEDIA GALLERY
 				String selectedImagePath = Utils
 						.getPath(selectedImageUri, this);
+				Log.e("cs", "3");
 				Log.e("frag", "uri..." + selectedImagePath);
 				if (!mFromCreateAilseScreenFlag) {
+					Log.e("cs", "4");
 					Intent intent = new Intent(this, DataEntryActivity.class);
-					Bundle b = new Bundle();
-					b.putString(
-							VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
-							selectedImagePath);
-					intent.putExtras(b);
+					VueApplication.getInstance().mDataentryImagePathFromOtherSource = selectedImagePath;
+					Log.e("cs", "7");
 					startActivity(intent);
 					finish();
 				} else {

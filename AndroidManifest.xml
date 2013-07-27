@@ -61,7 +61,7 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
-            android:name=".DateEntryInviteFriendsActivity"
+            android:name=".DataEntryInviteFriendsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

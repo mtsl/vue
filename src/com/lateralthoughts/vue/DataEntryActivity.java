@@ -4,6 +4,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -16,17 +17,11 @@ public class DataEntryActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.e("cs", "41");
 		setContentView(R.layout.date_entry_main);
+		Log.e("cs", "42");
 		getSupportActionBar().setTitle(
 				getResources().getString(R.string.create_ailse_screen_title));
-		Bundle b = getIntent().getExtras();
-		if (b != null) {
-			String imagePath = b
-					.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-			DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.create_aisles_view_fragment);
-			fragment.setGalleryORCameraImage(imagePath);
-		}
 	}
 
 	@Override
@@ -143,22 +138,62 @@ public class DataEntryActivity extends BaseActivity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		Log.e("fff", "onkeyup");
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (getSlidingMenu().isMenuShowing()) {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
 			} else {
-				if (!VueApplication.getInstance().mSoftKeboardIndicator) {
-					super.onBackPressed();
-				} else {
-					VueApplication.getInstance().mSoftKeboardIndicator = false;
-				}
-
+				/*
+				 * DataEntryFragment fragment = (DataEntryFragment)
+				 * getSupportFragmentManager()
+				 * .findFragmentById(R.id.create_aisles_view_fragment);
+				 * Log.e("fff", fragment.mKeyboardUpTextBox); if
+				 * (fragment.mKeyboardUpTextBox == null) {
+				 */super.onBackPressed();
+				/*
+				 * } else { if (fragment.mKeyboardUpTextBox
+				 * .equals(DataEntryFragment.LOOKING_FOR)) {
+				 * fragment.lookingForInterceptListnerFunctionality(); } else if
+				 * (fragment.mKeyboardUpTextBox
+				 * .equals(DataEntryFragment.OCCASION)) {
+				 * fragment.occasionInterceptListnerFunctionality(); } else if
+				 * (fragment.mKeyboardUpTextBox
+				 * .equals(DataEntryFragment.FINDAT)) {
+				 * fragment.findAtInterceptListnerFunctionality(); } else if
+				 * (fragment.mKeyboardUpTextBox
+				 * .equals(DataEntryFragment.SAY_SOMETHING_ABOUT_AISLE)) {
+				 * fragment
+				 * .saySomethingABoutAisleInterceptListnerFunctionality(); } }
+				 */
 			}
 		}
 		return false;
 
 	}
 
+	/*public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK
+				&& event.getAction() == KeyEvent.ACTION_UP) {
+			DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			Log.e("fff", fragment.mKeyboardUpTextBox);
+			if (fragment.mKeyboardUpTextBox
+					.equals(DataEntryFragment.LOOKING_FOR)) {
+				fragment.lookingForInterceptListnerFunctionality();
+			} else if (fragment.mKeyboardUpTextBox
+					.equals(DataEntryFragment.OCCASION)) {
+				fragment.occasionInterceptListnerFunctionality();
+			} else if (fragment.mKeyboardUpTextBox
+					.equals(DataEntryFragment.FINDAT)) {
+				fragment.findAtInterceptListnerFunctionality();
+			} else if (fragment.mKeyboardUpTextBox
+					.equals(DataEntryFragment.SAY_SOMETHING_ABOUT_AISLE)) {
+				fragment.saySomethingABoutAisleInterceptListnerFunctionality();
+			}
+			return false;
+		}
+		return super.dispatchKeyEvent(event);
+	}*/
 }

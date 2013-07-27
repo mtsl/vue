@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -146,14 +148,16 @@ public class Utils {
 		Log.e("getPath", "" + uri);
 		Cursor cursor = activity.getContentResolver().query(uri, null, null,
 				null, null);
+		Log.e("cs", "5");
 		if (cursor == null) { // Source is Dropbox or other similar local file
-			Log.e("getPath", "" + uri.getPath()); // path
+			Log.e("getPath if", "" + uri.getPath()); // path
 			return uri.getPath();
 		} else {
 			cursor.moveToFirst();
 			int idx = cursor
 					.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-			Log.e("getPath", "" + cursor.getString(idx) + "..?" + idx);
+			Log.e("cs", "6");
+			Log.e("getPath else", "" + cursor.getString(idx) + "..?" + idx);
 			return cursor.getString(idx);
 		}
 	}
@@ -167,6 +171,7 @@ public class Utils {
 			FileInputStream stream1 = new FileInputStream(f);
 			BitmapFactory.decodeStream(stream1, null, o);
 			stream1.close();
+			Log.e("cs", "10");
 			int height = o.outHeight;
 			int width = o.outWidth;
 			int scale = 1;
@@ -191,21 +196,25 @@ public class Utils {
 			// requested height and width.
 			scale = heightRatio < widthRatio ? heightRatio : widthRatio;
 			// decode with inSampleSize
+			Log.e("cs", "12");
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = (int) scale;
 			FileInputStream stream2 = new FileInputStream(f);
 			Bitmap resizedBitmap = BitmapFactory
 					.decodeStream(stream2, null, o2);
 			stream2.close();
+			Log.e("cs", "13");
 			File resizedFileName = new File(
 					vueAppResizedImageFileName(mContext));
 			String resizedFilePath = resizedFileName.getPath();
 			FileOutputStream out = new FileOutputStream(resizedFileName);
 			resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+			Log.e("cs", "14");
 			out.flush();
 			out.close();
 			resizedBitmap.recycle();
 			resizedBitmap = null;
+			Log.e("cs", "15");
 			return resizedFilePath;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -326,11 +335,6 @@ public class Utils {
 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
 				VueConstants.DATE_FORMAT);
 		return dateFormatGmt.format(new Date(twoWeeksDifferenceTime));
-	}
-
-	public static void refreshGallery(Context context) {
-		context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri
-				.parse("file://" + Environment.getExternalStorageDirectory())));
 	}
 
 }

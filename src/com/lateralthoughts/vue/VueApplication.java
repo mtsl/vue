@@ -15,6 +15,7 @@ import com.android.volley.toolbox.Volley;
 //internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.VueMemoryCache;
 
 //import crittercism sdk
@@ -42,6 +43,8 @@ public class VueApplication extends Application {
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
 	public boolean mSoftKeboardIndicator = false;
+	public String mDataentryImagePathFromOtherSource = null;
+
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
 	}
@@ -61,13 +64,12 @@ public class VueApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		sendBroadcast(new Intent(
-				Intent.ACTION_MEDIA_MOUNTED,
-				Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+
 		sInstance = this;
 
 		mVueApplicationContext = this;
-
+		
+	
 		mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
 		mVueAisleImagesCache.setLimit(40);
 		mVueAisleOwnerNamesCache = new VueMemoryCache<String>();
