@@ -74,12 +74,14 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    ArrayList<String> mShowingList;
    ArrayList<AisleImageDetails> mImageDetailsArr;
    private int mBestHeight;
-   
+   int topBottomMargin = 48;   
    public AisleDetailsViewAdapter(Context c,
          AisleDetailSwipeListener swipeListner, int listCount,
          ArrayList<AisleWindowContent> content) {
       super(c, content);
       mContext = c;
+    
+      topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
       mViewFactory = ScaledImageViewFactory.getInstance(mContext);
       mViewLoader = AisleDetailsViewListLoader.getInstance(mContext);
       mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
@@ -232,8 +234,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
     /*     FrameLayout fl = (FrameLayout) convertView
                .findViewById(R.id.showpiece_container);*/
-         int topBottomMargin = 48;
-         topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
+      
          
          FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
                VueApplication.getInstance().getScreenWidth(),
@@ -245,6 +246,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
          convertView.setTag(mViewHolder);
       }
+      FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+              VueApplication.getInstance().getScreenWidth(),
+              mBestHeight+topBottomMargin);
+        mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
      if(mWindowContentTemp.getWindowBookmarkIndicator()){
     	 mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
      } else {
