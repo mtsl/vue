@@ -113,6 +113,9 @@ public class VueContentGateway {
               Response.ErrorListener errorListener = new Response.ErrorListener(){
                   @Override
                   public void onErrorResponse(VolleyError error) {
+                    Bundle responseBundle = new Bundle();
+                    responseBundle.putString("result", "error");
+                    receiver.send(1,responseBundle);
                     Log.e("VueNetworkError","Vue encountered network operations error. Error = " + error.networkResponse);
                   }
               };

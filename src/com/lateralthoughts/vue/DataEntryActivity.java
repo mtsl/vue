@@ -17,11 +17,20 @@ public class DataEntryActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.e("cs", "41");
 		setContentView(R.layout.date_entry_main);
-		Log.e("cs", "42");
 		getSupportActionBar().setTitle(
 				getResources().getString(R.string.create_ailse_screen_title));
+		Bundle b = getIntent().getExtras();
+		if (b != null) {
+			Log.e("cs", "30");
+			String imagePath = b
+					.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+			Log.e("cs", "31");
+			DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.create_aisles_view_fragment);
+			Log.e("cs", "32");
+			fragment.setGalleryORCameraImage(imagePath);
+		}
 	}
 
 	@Override

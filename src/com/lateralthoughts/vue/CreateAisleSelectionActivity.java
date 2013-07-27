@@ -258,13 +258,17 @@ public class CreateAisleSelectionActivity extends Activity {
 				Log.e("cs", "3");
 				Log.e("frag", "uri..." + selectedImagePath);
 				if (!mFromCreateAilseScreenFlag) {
-					Log.e("cs", "4");
 					Intent intent = new Intent(this, DataEntryActivity.class);
-					VueApplication.getInstance().mDataentryImagePathFromOtherSource = selectedImagePath;
+					Bundle b = new Bundle();
+					b.putString(
+							VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+							selectedImagePath);
+					intent.putExtras(b);
 					Log.e("cs", "7");
 					startActivity(intent);
 					finish();
 				} else {
+					Log.e("cs", "4");
 					Intent intent = new Intent();
 					Bundle b = new Bundle();
 					b.putString(

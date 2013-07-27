@@ -43,7 +43,6 @@ public class VueApplication extends Application {
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
 	public boolean mSoftKeboardIndicator = false;
-	public String mDataentryImagePathFromOtherSource = null;
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
