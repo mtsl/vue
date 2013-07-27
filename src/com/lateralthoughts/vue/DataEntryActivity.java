@@ -149,11 +149,12 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
-				if (!VueApplication.getInstance().mSoftKeboardIndicator) {
+				super.onBackPressed();
+			/*	if (!VueApplication.getInstance().mSoftKeboardIndicator) {
 					super.onBackPressed();
 				} else {
 					VueApplication.getInstance().mSoftKeboardIndicator = false;
-				}
+				}*/
 
 			}
 		}

@@ -43,7 +43,6 @@ import com.lateralthoughts.vue.utils.clsShare;
 
 public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    private Context mContext;
-   public static int mImageAreaHeight ;
    public static final String TAG = "AisleDetailsViewAdapter";
    public static final int IMG_LIKE_STATUS = 1;
   // public static final int IMG_DISLIKE_STATUS = -1;
@@ -74,6 +73,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    ViewHolder mViewHolder;
    ArrayList<String> mShowingList;
    ArrayList<AisleImageDetails> mImageDetailsArr;
+   private int mBestHeight;
    
    public AisleDetailsViewAdapter(Context c,
          AisleDetailSwipeListener swipeListner, int listCount,
@@ -104,6 +104,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
           .getImageList();
  
       for (int i = 0; i < mImageDetailsArr.size(); i++) {
+    	  if(mImageDetailsArr.get(i).mAvailableHeight > mBestHeight) {
+    		  mBestHeight = mImageDetailsArr.get(i).mAvailableHeight;
+    	  } 
+    	  
         mCommentsMapList.put(i, mImageDetailsArr.get(i).mCommentsList);
           if(mImageDetailsArr.get(i).mCommentsList == null) {
                 //TODO: for temp comments display need to replace this 
@@ -228,9 +232,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
     /*     FrameLayout fl = (FrameLayout) convertView
                .findViewById(R.id.showpiece_container);*/
+         int topBottomMargin = 48;
+         topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
+         
          FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
                VueApplication.getInstance().getScreenWidth(),
-               (VueApplication.getInstance().getScreenHeight() * 60) / 100);
+               mBestHeight+topBottomMargin);
          mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
          mViewHolder.aisleContentBrowser
                .setAisleDetailSwipeListener(mswipeListner);
@@ -480,8 +487,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		@Override
 		public void onImageDoubleTap() {
-			 Toast.makeText(mContext, "imgAreaHeight: "+mImageAreaHeight, 1000).show();
-			 Toast.makeText(mContext, "original image height: "+ mImageDetailsArr.get(mCurrentDispImageIndex).mAvailableHeight, 1000).show();
+			 
+			int topBottomMargin = 48;
+	         topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
+			 Toast.makeText(mContext, "imgAreaHeight: "+(topBottomMargin+mBestHeight)+" AisleID:  "+mWindowContentTemp.getAisleId(), 1500).show();
+			 Toast.makeText(mContext, "original image height: "+ mImageDetailsArr.get(mCurrentDispImageIndex).mAvailableHeight+" AisleID:  "+mWindowContentTemp.getAisleId(), 1500).show();
 		}
 
 	}

@@ -373,16 +373,16 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			} else if(mSlidingDrawer.isOpened()){
 				mSlidingDrawer.close();
 			} else {
-				if (!VueApplication.getInstance().mSoftKeboardIndicator) {
+				/*if (!VueApplication.getInstance().mSoftKeboardIndicator) {*/
 					if(mVueAiselFragment == null) {
 					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.aisle_details_view_fragment);
 					}
 					mVueAiselFragment.setAisleContentListenerNull();
 			    super.onBackPressed();
-				} else {
+			/*	} else {
 					VueApplication.getInstance().mSoftKeboardIndicator = false;
-				}
+				}*/
  
 			}
 		}

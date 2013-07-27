@@ -24,8 +24,10 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -97,6 +99,8 @@ public class DataEntryFragment extends Fragment {
 			mCategoryAilseKeywordsList = null;
 	public boolean mIsKeyboradUP = false;
 	private DataBaseManager mDbManager;
+	RelativeLayout sayeditparentlay;
+	View v;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -119,7 +123,7 @@ public class DataEntryFragment extends Fragment {
 		mScreenHeight = mScreenHeight
 				- Utils.dipToPixels(getActivity(), AISLE_IMAGE_MARGIN);
 		mScreenWidth = dm.widthPixels;
-		View v = inflater.inflate(R.layout.data_entry_fragment, container,
+		  v = inflater.inflate(R.layout.data_entry_fragment, container,
 				false);
 		mInputMethodManager = (InputMethodManager) getActivity()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -181,6 +185,7 @@ public class DataEntryFragment extends Fragment {
 		mPreviousSaySomething = mSaySomethingAboutAisle.getText().toString();
 		mLookingForAisleKeywordsList = mDbManager
 				.getAisleKeywords(VueConstants.LOOKING_FOR_TABLE);
+		sayeditparentlay = (RelativeLayout) v.findViewById(R.id.sayeditparentlay);
 		if (mLookingForAisleKeywordsList != null) {
 			mLookingForText.setText(mLookingForAisleKeywordsList.get(0));
 			mLookingForBigText.setText(mLookingForAisleKeywordsList.get(0));
@@ -220,6 +225,46 @@ public class DataEntryFragment extends Fragment {
 						return true;
 					}
 				});
+		sayeditparentlay.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				sayeditparentlay.setVisibility(View.GONE);
+				 mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+				 sayeditparentlay.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							
+							 mSaySomethingAboutAisle.requestFocus();
+							 mSaySomethingAboutAisle.setFocusable(true);
+							
+						}
+					});
+					mSaySomethingAboutAisleClicked = true;
+					mInputMethodManager.hideSoftInputFromWindow(
+							mOccasionText.getWindowToken(), 0);
+					mInputMethodManager.hideSoftInputFromWindow(
+							mLookingForText.getWindowToken(), 0);
+					mInputMethodManager.hideSoftInputFromWindow(
+							mFindAtText.getWindowToken(), 0);
+					mLookingForPopup.setVisibility(View.GONE);
+					mLookingForListviewLayout.setVisibility(View.GONE);
+					mOccasionPopup.setVisibility(View.GONE);
+					mOccasionListviewLayout.setVisibility(View.GONE);
+					mCategoryPopup.setVisibility(View.GONE);
+					mFindAtPopup.setVisibility(View.GONE);
+					mCategoryListviewLayout.setVisibility(View.GONE);
+					mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+					mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+					mInputMethodManager.showSoftInput(mSaySomethingAboutAisle, 0);
+					 final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		             inputMethodManager.toggleSoftInputFromWindow(mSaySomethingAboutAisle.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+		
+				
+				
+			}
+		});
 		final OnInterceptListener mSayBoutListner = new OnInterceptListener() {
 			
 			@Override
@@ -235,6 +280,8 @@ public class DataEntryFragment extends Fragment {
 				mInputMethodManager.hideSoftInputFromWindow(
 						mSaySomethingAboutAisle.getWindowToken(), 0);
 				mSaySomethingAboutAisle.setText(mPreviousSaySomething);
+				sayeditparentlay.setVisibility(View.VISIBLE);
+				 mSaySomethingAboutAisle.setVisibility(View.GONE);
 				new Handler().postDelayed(new Runnable() {
 					
 					@Override
@@ -253,8 +300,23 @@ public class DataEntryFragment extends Fragment {
 			}
 		};
 		
-		mSaySomethingAboutAisle.setonInterceptListen(mSayBoutListner) ; 
-		 
+		mSaySomethingAboutAisle.setonInterceptListen(mSayBoutListner) ;
+		mLookingForText.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mLookingForText.post(new Runnable() {
+				      public void run() 
+				        {
+				    	  mLookingForText. setFocusable(true);
+				    	  mLookingForText.requestFocus();
+				        }
+
+				});
+				
+			}
+		});
+	
 		mLookingForText
 				.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 					@Override
@@ -308,6 +370,14 @@ public class DataEntryFragment extends Fragment {
 						mOccasionText.getWindowToken(), 0);
 				mInputMethodManager.hideSoftInputFromWindow(
 						mLookingForText.getWindowToken(), 0);
+		/*		mLookingForText.post(new Runnable() {
+				      public void run() 
+				        {
+				    	  mSaySomethingAboutAisle.setFocusable(false);
+				    	  mLookingForText. setFocusable(false);
+				        }
+
+				});*/
 			}
 
 			@Override
@@ -585,12 +655,13 @@ public class DataEntryFragment extends Fragment {
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				VueApplication.getInstance().mSoftKeboardIndicator = false;
+				//VueApplication.getInstance().mSoftKeboardIndicator = false;
 			}
 		});
-		mSaySomethingAboutAisle.setOnClickListener(new OnClickListener() {
+	/*	mSaySomethingAboutAisle.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick(  View v1) {
+		 
 				mSaySomethingAboutAisleClicked = true;
 				mInputMethodManager.hideSoftInputFromWindow(
 						mOccasionText.getWindowToken(), 0);
@@ -607,11 +678,10 @@ public class DataEntryFragment extends Fragment {
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				mSaySomethingAboutAisle.setCursorVisible(true);
-				mSaySomethingAboutAisle.requestFocus();
 				mInputMethodManager.showSoftInput(mSaySomethingAboutAisle, 0);
+			
 			}
-		});
+		});*/
 		mLookingForText.addTextChangedListener(new TextWatcher() {
 
 			@Override

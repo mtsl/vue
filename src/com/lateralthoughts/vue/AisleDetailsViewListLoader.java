@@ -246,15 +246,13 @@ public class AisleDetailsViewListLoader {
 
    private void setParams(AisleContentBrowser vFlipper, ImageView imageView,int imgScreenHeight
           ) {
-      int topMottomMargin = 24;
-      topMottomMargin  = VueApplication.getInstance().getPixel(topMottomMargin);
+      int topBottomMargin =48;
+      topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
       FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-              VueApplication.getInstance().getScreenWidth(),mBestHeight+topMottomMargin);
+              VueApplication.getInstance().getScreenWidth(),mBestHeight+topBottomMargin);
 
       if (vFlipper != null)
          vFlipper.setLayoutParams(showpieceParams);
-      Log.i("imageHeight", "imageHeight  bestHeight setting: "+(mBestHeight+topMottomMargin));
-      AisleDetailsViewAdapter.mImageAreaHeight = (mBestHeight+topMottomMargin);
       if (vFlipper != null) {
          FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);

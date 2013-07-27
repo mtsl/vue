@@ -380,7 +380,44 @@
                 android:layout_alignParentRight="true"
                 android:background="@color/popupbgcolor"
                 android:orientation="horizontal" >
-
+                <RelativeLayout android:layout_width="wrap_content"
+                              android:id="@+id/sayeditparentlay"
+                              android:layout_height="wrap_content"
+                               android:layout_alignParentLeft="true"
+                               android:orientation="horizontal"
+                    android:layout_centerVertical="true"
+                     android:layout_marginLeft="8dip"
+                    android:layout_marginRight="88dip">
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_centerInParent="true"
+                              android:id="@+id/hinttext"
+                               android:singleLine="true"
+                                android:layout_marginLeft="4dip"
+                              android:text="Say something about the aisle"
+                                 android:textColor="@color/grey"
+                    android:textSize="15sp"/>
+                     <View android:layout_width="1dp"
+                        android:background="@color/grey"
+                        android:id="@+id/leftline"
+                            android:layout_marginTop="4dp"
+                        android:layout_alignParentLeft="true"
+                       android:layout_below="@+id/hinttext"
+                                   android:layout_height="4dp"/>
+                       <View android:layout_width="1dp"
+                        android:background="@color/grey"
+                        android:id="@+id/leftline"
+                           android:layout_marginTop="4dp"
+                        android:layout_alignParentRight="true"
+                       android:layout_below="@+id/hinttext"
+                                   android:layout_height="4dp"/>
+                    <View android:layout_width="match_parent"
+                        android:background="@color/grey"
+                        android:id="@+id/bottomline"
+                        android:layout_marginTop="8dp"
+                        android:layout_below="@+id/hinttext"
+                                   android:layout_height="1dp"/>
+                    </RelativeLayout>
                 <com.lateralthoughts.vue.utils.EditTextBackEvent
                     android:id="@+id/saysomethingaboutaisle"
                     android:layout_width="wrap_content"
@@ -390,6 +427,8 @@
                     android:layout_marginLeft="4dip"
                     android:layout_marginRight="88dip"
                     android:cursorVisible="false"
+                    android:focusable="true"
+                    android:visibility="gone"
                     android:hint="Say something about the aisle"
                     android:singleLine="true"
                     android:textColor="@color/white"

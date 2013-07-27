@@ -6,6 +6,8 @@ import java.util.List;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -57,6 +59,31 @@ public class CreateAisleSelectionActivity extends Activity {
 			mFromCreateAilseScreenFlag = b
 					.getBoolean(VueConstants.FROMCREATEAILSESCREENFLAG);
 		}
+
+		// Get intent, action and MIME type
+		Intent intent = getIntent();
+		String action = intent.getAction();
+		String type = intent.getType();
+
+		if (Intent.ACTION_SEND.equals(action) && type != null) {
+			Log.e("CretaeAisleSelectionActivity send text", type);
+			if ("text/plain".equals(type)) {
+				handleSendText(intent); // Handle text being sent
+				Log.e("CretaeAisleSelectionActivity send text", "textplain match");
+			} else if (type.startsWith("image/")) {
+				handleSendImage(intent); // Handle single image being sent
+				Log.e("CretaeAisleSelectionActivity send text", "image match");
+			}
+		} else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+			if (type.startsWith("image/")) {
+				handleSendMultipleImages(intent); // Handle multiple images
+													// being sent
+				Log.e("CretaeAisleSelectionActivity send text", "multiple image match");
+			}
+		} else {
+			// Handle other intents, such as being started from the home screen
+		}
+
 		mTopLeftGreenCircle = (RelativeLayout) findViewById(R.id.topleftgreencircle);
 		mTopRightGreenCircle = (RelativeLayout) findViewById(R.id.toprightgreencircle);
 		mBottomLeftGreenCircle = (RelativeLayout) findViewById(R.id.bottomleftgreencircle);
@@ -241,8 +268,45 @@ public class CreateAisleSelectionActivity extends Activity {
 		mTopRightGreenCircle.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				Intent amazonIntent = new Intent(
+						android.content.Intent.ACTION_VIEW);
+				amazonIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				amazonIntent.setClassName(VueConstants.AMAZON_APP_PACKAGE_NAME,
+						VueConstants.AMAZON_APP_ACTIVITY_NAME);
+				finish();
+				startActivity(amazonIntent);
 			}
 		});
+	}
+
+	@SuppressWarnings("deprecation")
+	void handleSendText(Intent intent) {
+		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+		if (sharedText != null) {
+			Log.e("CretaeAisleSelectionActivity send text", sharedText);
+			// Update UI to reflect text being shared
+		}
+	}
+
+	void handleSendImage(Intent intent) {
+		Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+		if (imageUri != null) {
+			Log.e("CretaeAisleSelectionActivity send image", imageUri + "");
+			// Update UI to reflect image being shared
+		}
+	}
+
+	void handleSendMultipleImages(Intent intent) {
+		ArrayList<Uri> imageUris = intent
+				.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+		if (imageUris != null) {
+			for (int i = 0; i < imageUris.size(); i++) {
+				Log.e("CretaeAisleSelectionActivity send multipleimage",
+						imageUris.get(i) + "");
+			}
+
+			// Update UI to reflect multiple images being shared
+		}
 	}
 
 	@Override
