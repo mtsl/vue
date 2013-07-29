@@ -832,7 +832,9 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 			}
 		}
 
-		Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
+		if (facebookFriendsDetailsList != null) {
+			Collections.sort(facebookFriendsDetailsList, new SortBasedOnName());
+		}
 
 		return facebookFriendsDetailsList;
 	}

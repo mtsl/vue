@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -269,7 +270,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				mAisleDetailsAdapter.share(getActivity(), getActivity());
 			}
 		});
-		mAisleDetailsAdapter.notifyDataSetChanged();
 		return v;
 	}
     @Override
@@ -385,6 +385,20 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 								.get(mAisleDetailsAdapter.mCurrentDispImageIndex);
 						commentList.add(0, etText);
 						mAisleDetailsAdapter.sendDataToDb(mAisleDetailsAdapter.mCurrentDispImageIndex,mAisleDetailsAdapter.CHANGE_COMMENT);
+						
+						// Updating Comments Count in Preference to show
+						// LoginDialog.
+						SharedPreferences sharedPreferencesObj = getActivity()
+								.getSharedPreferences(
+										VueConstants.SHAREDPREFERENCE_NAME, 0);
+						int commentsCount = sharedPreferencesObj.getInt(
+								VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
+						SharedPreferences.Editor editor = sharedPreferencesObj
+								.edit();
+						editor.putInt(
+								VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
+								commentsCount++);
+						editor.commit();
 						//mAisleDetailsAdapter.mTempComments2 = new String[commentList.size() + 1];
 					/*	
 						mAisleDetailsAdapter.mTempComments2 = commentList

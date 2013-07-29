@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -265,8 +266,7 @@ public class DataEntryFragment extends Fragment {
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				// mInputMethodManager.showSoftInput(mSaySomethingAboutAisle,
-				// 0);
+				mInputMethodManager.showSoftInput(mSaySomethingAboutAisle, 0);
 				final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
 						.getSystemService(Context.INPUT_METHOD_SERVICE);
 				inputMethodManager.toggleSoftInputFromWindow(
@@ -1232,7 +1232,19 @@ public class DataEntryFragment extends Fragment {
 		 * from Camera // OR Gallery. String title = ""; // For Camera and
 		 * Gallery we don't have title. String store = ""; // For Camera and
 		 * Gallery we don't have store.
-		 */storeMetaAisleDataIntoLocalStorage();
+		 */
+		// Updating Aisles Count in Preference to show LoginDialog.
+		if (!mEditAisleImageFlag) {
+			SharedPreferences sharedPreferencesObj = getActivity()
+					.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+			int createdAisleCount = sharedPreferencesObj.getInt(
+					VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
+			SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+			editor.putInt(VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE,
+					createdAisleCount++);
+			editor.commit();
+		}
+		storeMetaAisleDataIntoLocalStorage();
 	}
 
 	private void storeMetaAisleDataIntoLocalStorage() {

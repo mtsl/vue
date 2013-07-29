@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 import java.util.List;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.Window;
+
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
@@ -28,12 +30,12 @@ public class VueLandingPageActivity extends BaseActivity {
 		// Checking wheather app is opens for first time or not?
 		mSharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
-		boolean isFirstTime = mSharedPreferencesObj.getBoolean(
+		boolean isFirstTimeFlag = mSharedPreferencesObj.getBoolean(
 				VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG, true);
-
+		boolean isLoggedInFlag = mSharedPreferencesObj.getBoolean(
+				VueConstants.VUE_LOGIN, false);
 		// Application opens first time.
-		if (isFirstTime) {
-
+		if (isFirstTimeFlag) {
 			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
 			editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG,
 					false);
@@ -42,14 +44,16 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		// Check the CreatedAisleCount and Comments count
 		else {
-			int createdaislecount = mSharedPreferencesObj.getInt(
+			int createdAisleCount = mSharedPreferencesObj.getInt(
 					VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-			int commentscount = mSharedPreferencesObj.getInt(
+			int commentsCount = mSharedPreferencesObj.getInt(
 					VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
 
-			if (createdaislecount == VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
-					|| commentscount == VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
-				showLogInDialog(true);
+			if (createdAisleCount == VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
+					|| commentsCount == VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
+				if (!isLoggedInFlag) {
+					showLogInDialog(true);
+				}
 			}
 
 		}
