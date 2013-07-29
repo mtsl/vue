@@ -186,16 +186,15 @@ public class VueConnectivityManager {
 
   public static boolean isNetworkConnected(Context context) {
     boolean isConneted = true;
-    if(isAirplaneModeOn(context)) {
+    if (isAirplaneModeOn(context)) {
       isConneted = false;
-    } else if(!VueConnectivityManager.checkConnection(context, false)) {
+    } else if (!VueConnectivityManager.checkConnection(context, false)) {
       isConneted = false;
-      if(!isTostShown) {
+      if (!isTostShown) {
         isTostShown = true;
-      Toast.makeText(context, R.string.no_network, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, R.string.no_network, Toast.LENGTH_SHORT).show();
       }
     }
-
     return isConneted;
   }
   
@@ -205,10 +204,10 @@ public class VueConnectivityManager {
 * @param context
 * @return true if enabled.
 */
-private static boolean isAirplaneModeOn(Context context) {
+  private static boolean isAirplaneModeOn(Context context) {
 
- return Settings.System.getInt(context.getContentResolver(),
-         Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+    return Settings.System.getInt(context.getContentResolver(),
+        Settings.System.AIRPLANE_MODE_ON, 0) != 0;
 
-}
+  }
 }

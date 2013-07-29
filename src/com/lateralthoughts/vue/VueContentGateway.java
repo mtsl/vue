@@ -15,10 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
@@ -27,9 +25,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.lateralthoughts.vue.connectivity.VueBatteryManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
-import com.lateralthoughts.vue.service.VueContentRestService;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 //internal imports
 //volley imports
@@ -89,7 +85,6 @@ public class VueContentGateway {
             Log.e(TAG, "network connection No");
             return status;
           } else if(isConnection) {
-              Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 1");
         	 /* Intent intent = new Intent(mContext, VueContentRestService.class);
               intent.putExtra("url",baseUri.toString());
               intent.putParcelableArrayListExtra("headers", mHeaders);
@@ -98,12 +93,10 @@ public class VueContentGateway {
 
               String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI + "aisle/trending?limit=%s&offset=%s";
               String requestUrl = String.format(requestUrlBase, limit, offset);
-              Log.e("Profiling", "Profiling : " + requestUrl);
               Response.Listener listener = new Response.Listener<JSONArray>(){
                   @Override
                   public void onResponse(JSONArray jsonArray){
                       if(null != jsonArray){
-                        Log.e("Profiling", "Profiling : onResponse()");
                           Bundle responseBundle = new Bundle();
                           responseBundle.putString("result",jsonArray.toString());
                           receiver.send(1,responseBundle);

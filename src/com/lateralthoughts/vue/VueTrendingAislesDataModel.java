@@ -3,7 +3,6 @@ package com.lateralthoughts.vue;
 //android imports
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -94,10 +93,12 @@ public class VueTrendingAislesDataModel {
   private ThreadPoolExecutor threadPool;
   private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
   private DataBaseManager mDbManager;
+  private static boolean errorDownloading = false;
 
   private VueTrendingAislesDataModel(Context context) {
     Log.e("Profiling", "Profining DATA CHECK VueTrendingAislesDataModel()");
     mContext = context;
+    errorDownloading = false;
     mVueContentGateway = VueContentGateway.getInstance();
     mAisleWindowContentFactory = AisleWindowContentFactory
         .getInstance(mContext);
@@ -224,9 +225,6 @@ public class VueTrendingAislesDataModel {
       String imageTitle;
       AisleImageDetails imageItemDetails;
       JSONArray contentArray = null;
-      if(resultString.equals("error")) {
-    
-      }
       try {
         contentArray = handleResponce(resultString);
         if(contentArray == null) {
@@ -273,9 +271,7 @@ public class VueTrendingAislesDataModel {
       } catch (JSONException ex1) {
         if (DEBUG)
           Log.e(TAG, "Some exception is caught? ex1 = " + ex1.toString());
-
       }
-
     }
   }
   
@@ -288,8 +284,9 @@ public class VueTrendingAislesDataModel {
       e.printStackTrace();
     }
     if (resultString.equals("error") || 0 == contentArray.length()) {
+      errorDownloading = true;
       mMoreDataAvailable = false;
-      if(!mMarkAislesToDelete && 0 == contentArray.length()) {
+      if(!mMarkAislesToDelete && (contentArray == null || 0 == contentArray.length())) {
         mMarkAislesToDelete = DataBaseManager.markOldAislesToDelete(mContext);
       }
       runTask(new Runnable() {
@@ -315,7 +312,6 @@ public class VueTrendingAislesDataModel {
           int index = mAisleContentList.indexOf(aisleItem);
           mAisleContentList.remove(index);
           mAisleContentList.add(index, aisleItem);
-          Log.e("Profiling", "Profiling getAisleItem() : aisleItem : 2" + aisleItem);
         }
       } else {
         aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
@@ -339,7 +335,7 @@ public class VueTrendingAislesDataModel {
   }
 
   public static VueTrendingAislesDataModel getInstance(Context context) {
-    if (null == sVueTrendingAislesDataModel) {
+    if (null == sVueTrendingAislesDataModel || errorDownloading) {
       sVueTrendingAislesDataModel = new VueTrendingAislesDataModel(context);
     }
     return sVueTrendingAislesDataModel;
@@ -417,7 +413,7 @@ public class VueTrendingAislesDataModel {
   }
 
   
-  private void copyDB() {
+  private static void copyDB() {
     try {
       File sd = Environment.getExternalStorageDirectory();
       File data = Environment.getDataDirectory();
