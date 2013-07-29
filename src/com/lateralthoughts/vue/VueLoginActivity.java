@@ -254,8 +254,10 @@ public class VueLoginActivity extends FragmentActivity implements
 				login_button
 						.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 							public void onUserInfoFetched(GraphUser user) {
-								if (!mDontCallUserInfoChangesMethod)
+								if (!mDontCallUserInfoChangesMethod) {
+									Log.e("VueLoginActivity", "update UI called from user info changed method");
 									updateUI();
+								}
 							}
 						});
 				cancellayout.setOnClickListener(new OnClickListener() {
@@ -323,8 +325,11 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 		try {
 			mUiHelper.onActivityResult(requestCode, resultCode, data);
-			if (!mDontCallUserInfoChangesMethod)
+			if (!mDontCallUserInfoChangesMethod) {
+				Log.e("VueLoginActivity",
+						"update UI called from onActivityResult method");
 				updateUI();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -470,8 +475,8 @@ public class VueLoginActivity extends FragmentActivity implements
 					com.facebook.Response response) {
 				if (user != null) {
 					String location = "";
-                    VueUser vueUser = parseGraphUserData(user);
-                    vueUser.constructUnidentifiedUser();
+					VueUser vueUser = parseGraphUserData(user);
+					vueUser.constructUnidentifiedUser();
 					try {
 						if (user.getLocation() != null) {
 							JSONObject jsonObject = user.getLocation()
@@ -866,24 +871,24 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 	}
 
-    private VueUser parseGraphUserData(GraphUser user){
-        VueUser vueUser = null;
-        if(null == user){
-            throw new RuntimeException("Can't parse a null graph user object");
-        }
-        try{
-            String firstName = user.getFirstName();
-            String lastName = user.getLastName();
-            String birthday = user.getBirthday();
-            JSONObject innerObject = user.getInnerJSONObject();
-            String email = innerObject.getString("email");
-            //String email = emailObject.optString("email");
-            vueUser = new VueUser(null, null, email);
-            vueUser.setUsersName(firstName, lastName);
-        }catch(JSONException ex){
+	private VueUser parseGraphUserData(GraphUser user) {
+		VueUser vueUser = null;
+		if (null == user) {
+			throw new RuntimeException("Can't parse a null graph user object");
+		}
+		try {
+			String firstName = user.getFirstName();
+			String lastName = user.getLastName();
+			String birthday = user.getBirthday();
+			JSONObject innerObject = user.getInnerJSONObject();
+			String email = innerObject.getString("email");
+			// String email = emailObject.optString("email");
+			vueUser = new VueUser(null, null, email);
+			vueUser.setUsersName(firstName, lastName);
+		} catch (JSONException ex) {
 
-        }
-        return vueUser;
-    }
+		}
+		return vueUser;
+	}
 
 }

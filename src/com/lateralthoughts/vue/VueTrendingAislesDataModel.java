@@ -315,7 +315,6 @@ public class VueTrendingAislesDataModel {
           int index = mAisleContentList.indexOf(aisleItem);
           mAisleContentList.remove(index);
           mAisleContentList.add(index, aisleItem);
-          Log.e("Profiling", "Profiling getAisleItem() : aisleItem : 2" + aisleItem);
         }
       } else {
         aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();

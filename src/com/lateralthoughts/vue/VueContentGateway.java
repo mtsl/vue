@@ -89,7 +89,6 @@ public class VueContentGateway {
             Log.e(TAG, "network connection No");
             return status;
           } else if(isConnection) {
-              Log.e("VueTrendingAislesDataModel", "JSONArray size(): TEST 1");
         	 /* Intent intent = new Intent(mContext, VueContentRestService.class);
               intent.putExtra("url",baseUri.toString());
               intent.putParcelableArrayListExtra("headers", mHeaders);
@@ -98,12 +97,10 @@ public class VueContentGateway {
 
               String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI + "aisle/trending?limit=%s&offset=%s";
               String requestUrl = String.format(requestUrlBase, limit, offset);
-              Log.e("Profiling", "Profiling : " + requestUrl);
               Response.Listener listener = new Response.Listener<JSONArray>(){
                   @Override
                   public void onResponse(JSONArray jsonArray){
                       if(null != jsonArray){
-                        Log.e("Profiling", "Profiling : onResponse()");
                           Bundle responseBundle = new Bundle();
                           responseBundle.putString("result",jsonArray.toString());
                           receiver.send(1,responseBundle);
