@@ -70,18 +70,20 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    private ContentAdapterFactory mContentAdapterFactory;
    @SuppressLint("UseSparseArrays")
    Map<Integer, Object> mCommentsMapList = new HashMap<Integer, Object>();
-   ViewHolder mViewHolder;
+  
    ArrayList<String> mShowingList;
    ArrayList<AisleImageDetails> mImageDetailsArr;
    private int mBestHeight;
-   int topBottomMargin = 48;   
+   int mTopBottomMargin = 24;  
+   ViewHolder mViewHolder;
+  
    public AisleDetailsViewAdapter(Context c,
          AisleDetailSwipeListener swipeListner, int listCount,
          ArrayList<AisleWindowContent> content) {
       super(c, content);
       mContext = c;
     
-      topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
+      mTopBottomMargin  = VueApplication.getInstance().getPixel(mTopBottomMargin);
       mViewFactory = ScaledImageViewFactory.getInstance(mContext);
       mViewLoader = AisleDetailsViewListLoader.getInstance(mContext);
       mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
@@ -169,14 +171,15 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
    @Override
    public View getView(int position, View convertView, ViewGroup parent) {
-
+	 
       if (convertView == null) {
          mViewHolder = new ViewHolder();
          LayoutInflater layoutInflator = LayoutInflater.from(mContext);
          convertView = layoutInflator.inflate(R.layout.vue_details_adapter,
                null);
          mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
-               .findViewById(R.id.showpiece);
+               .findViewById(R.id.showpieceadapter);
+         Log.i("nullbug", "nullbug  mViewHolder.aisleContentBrowser "+ mViewHolder.aisleContentBrowser);
          mViewHolder.imgContentlay = (LinearLayout) convertView
                .findViewById(R.id.vueimagcontent);
          mViewHolder.commentContentlay = (LinearLayout) convertView
@@ -238,18 +241,26 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          
          FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
                VueApplication.getInstance().getScreenWidth(),
-               mBestHeight+topBottomMargin);
+               mBestHeight+mTopBottomMargin);
          mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
          mViewHolder.aisleContentBrowser
                .setAisleDetailSwipeListener(mswipeListner);
      
          mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
          convertView.setTag(mViewHolder);
+      } else {
+    	  mViewHolder  = (ViewHolder)convertView.getTag();
       }
-      FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-              VueApplication.getInstance().getScreenWidth(),
-              mBestHeight+topBottomMargin);
-        mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+ 
+    	    FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+    	              VueApplication.getInstance().getScreenWidth(),
+    	              mBestHeight+mTopBottomMargin);
+    	    Log.i("nullbug", "nullbug vieholder "+mViewHolder);
+    	    Log.i("nullbug", "nullbug browser "+mViewHolder.aisleContentBrowser);
+    	    
+    	  mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+    
+       
      if(mWindowContentTemp.getWindowBookmarkIndicator()){
     	 mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
      } else {
@@ -269,7 +280,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       mViewHolder.commentCount.setText((mShowingList.size()+" Comments"));
       mViewHolder.bookMarkCount.setText(""+mBookmarksCount);
       mViewHolder.likeCount.setText("" + mLikes);
-      mViewHolder = (ViewHolder) convertView.getTag();
       mViewHolder.imgContentlay.setVisibility(View.VISIBLE);
       mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
       mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
@@ -287,9 +297,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
             int scrollIndex = 0;
             mWindowContentTemp = mViewHolder.mWindowContent;
             mViewHolder.tag = TAG;
-           
+             
+         
             mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
                   position, new DetailImageClickListener());
+         
            
             Log.i("returnsused imageview", "returnsused imageview adapeterclass count: "+  mViewHolder.aisleContentBrowser.getChildCount());
             Log.i("returnsused imageview", "returnsused imageview adapeterclass obj: "+ mViewHolder.aisleContentBrowser.getCustomAdapter());
@@ -390,7 +402,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			
  			@Override
  			public void onClick(View v) {
- 				ratingImage( );
+ 				toggleRatingImage( );
  			}
  		});
       return convertView;
@@ -493,15 +505,15 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		@Override
 		public void onImageDoubleTap() {
 			 
-			int topBottomMargin = 48;
-	         topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
-			 Toast.makeText(mContext, "imgAreaHeight: "+(topBottomMargin+mBestHeight)+" AisleID:  "+mWindowContentTemp.getAisleId(), 1500).show();
+		 
+	         mTopBottomMargin  = VueApplication.getInstance().getPixel(mTopBottomMargin);
+			 Toast.makeText(mContext, "imgAreaHeight: "+(mTopBottomMargin+mBestHeight)+" AisleID:  "+mWindowContentTemp.getAisleId(), 1500).show();
 			 Toast.makeText(mContext, "original image height: "+ mImageDetailsArr.get(mCurrentDispImageIndex).mAvailableHeight+" AisleID:  "+mWindowContentTemp.getAisleId(), 1500).show();
 		}
 
 	}
 
-	private void ratingImage() {
+	private void toggleRatingImage() {
 		if(mCurrentDispImageIndex >= 0 && mCurrentDispImageIndex < mImageDetailsArr.size()) {
 		if(mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus==IMG_LIKE_STATUS){
 			mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
@@ -516,7 +528,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		notifyAdapter();
 	}
 
-	public void changeLikesCount(int position, String eventType) {
+	public void changeLikesCountFromCopmareScreen(int position, String eventType) {
 		if(position >= 0 && position < mImageDetailsArr.size()) {
 		if (eventType.equalsIgnoreCase(AisleDetailsViewActivity.CLICK_EVENT)) {
 			// increase the like count
@@ -586,9 +598,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		}
 	}
 	public void setAisleBrowserObjectsNull(){
-		 
+		 Log.i("returnsused imageview", "returnsused aisleContentBrowser1: "+mViewHolder.aisleContentBrowser);
 		if(mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
-			 
+			 Log.i("returnsused imageview", "returnsused aisleContentBrowser: "+mViewHolder.aisleContentBrowser);
 			
 			// mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
 			  for(int i=0;i< mViewHolder.aisleContentBrowser.getChildCount();i++){

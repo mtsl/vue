@@ -390,7 +390,8 @@
                     android:layout_marginRight="88dip">
                     <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:layout_centerInParent="true"
+                              android:layout_alignParentLeft="true"
+                              android:layout_centerVertical="true"
                               android:id="@+id/hinttext"
                                android:singleLine="true"
                                 android:layout_marginLeft="4dip"

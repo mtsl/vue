@@ -246,7 +246,7 @@ public class AisleDetailsViewListLoader {
 
    private void setParams(AisleContentBrowser vFlipper, ImageView imageView,int imgScreenHeight
           ) {
-      int topBottomMargin =48;
+      int topBottomMargin =24;
       topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
       FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
               VueApplication.getInstance().getScreenWidth(),mBestHeight+topBottomMargin);

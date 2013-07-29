@@ -269,6 +269,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				mAisleDetailsAdapter.share(getActivity(), getActivity());
 			}
 		});
+		mAisleDetailsAdapter.notifyDataSetChanged();
 		return v;
 	}
     @Override
@@ -474,7 +475,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
       return mCurentIndPosition;
     }
     public void changeLikeCount(int position,String clickType) {
-    	mAisleDetailsAdapter.changeLikesCount(position,clickType);
+    	mAisleDetailsAdapter.changeLikesCountFromCopmareScreen(position,clickType);
     }
     public void setActionBarHander(ActionBarHandler handleActionBar) {
     	mHandleActionBar = handleActionBar;
@@ -482,5 +483,10 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
  
     public void setAisleContentListenerNull() {
     	mAisleDetailsAdapter.setAisleBrowserObjectsNull();
+    }
+    @Override
+    public void onDestroy() {
+    	mAisleDetailsAdapter = null;
+    	super.onDestroy();
     }
 }
