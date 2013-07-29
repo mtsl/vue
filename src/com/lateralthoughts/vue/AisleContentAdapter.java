@@ -279,7 +279,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             	 bitmap = getCachedBitmap(itemDetails.mImageUrl);
             } else {
               bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
-              Log.i("imagenotcoming", "imagenotcoming: "+bitmap);
+               
             }
             if(bitmap != null){
          
@@ -521,10 +521,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 	}
     
     
-    private void setParams(AisleContentBrowser vFlipper,ImageView imageView,int imageCardHeight) {
+ /*   private void setParams(AisleContentBrowser vFlipper,ImageView imageView,int imageCardHeight) {
     	//int imgCardHeight =   (VueApplication.getInstance().getScreenHeight() *60) /100;
     	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-         	/*	 if(bitmap.getHeight() < mImageDimention.mImgHeight) {*/
+         		 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
     		 int topBottomMargin = 24;
     		 imageCardHeight += VueApplication.getInstance().getPixel(topBottomMargin);
     	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
@@ -532,5 +532,5 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     	if(vFlipper != null)
     	vFlipper.setLayoutParams(showpieceParams);
     	 }
-    }
+    }*/
 }

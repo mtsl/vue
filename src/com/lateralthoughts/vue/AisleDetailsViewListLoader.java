@@ -40,16 +40,16 @@ public class AisleDetailsViewListLoader {
     private BitmapLoaderUtils mBitmapLoaderUtils;
     private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
     private ImageDimension mImageDimension;
-    private int mBestHeight;
+    private int mBestHeight = 0;
     
-    public static AisleDetailsViewListLoader getInstance(Context context){
+   /* public static AisleDetailsViewListLoader getInstance(Context context){
         if(null == sAisleDetailsViewLoaderInstance){
             sAisleDetailsViewLoaderInstance = new AisleDetailsViewListLoader(context);
         }
         return sAisleDetailsViewLoaderInstance;        
-    }
+    }*/
     
-    private AisleDetailsViewListLoader(Context context){
+    AisleDetailsViewListLoader(Context context){
         //we don't want everyone creating an instance of this. We will
         //instead use a factory pattern and return an instance using a
         //static method
@@ -63,6 +63,8 @@ public class AisleDetailsViewListLoader {
     }
     public void getAisleContentIntoView(AisleDetailsViewAdapter.ViewHolder holder,
             int scrollIndex, int position,DetailClickListener detailListener){
+    	 mBestHeight = 0;
+    	 Log.i("showpieceParams", "showpieceParams112  entered1 "+ mBestHeight );
         ScaleImageView imageView = null;
         ArrayList<AisleImageDetails> imageDetailsArr = null;
         AisleImageDetails itemDetails = null;
@@ -73,7 +75,9 @@ public class AisleDetailsViewListLoader {
         if(null == windowContent)
             return;
         String desiredContentId = windowContent.getAisleId();
+
         contentBrowser = holder.aisleContentBrowser;
+   
         contentBrowser.setHolderName(VueAisleDetailsViewFragment.SCREEN_NAME);
         if(holder.uniqueContentId.equals(desiredContentId)){
             //we are looking at a visual object that has either not been used
@@ -100,19 +104,19 @@ public class AisleDetailsViewListLoader {
             holder.aisleContentBrowser.setCustomAdapter(adapter);
             holder.aisleContentBrowser.setDetailImageClickListener(detailListener);
             holder.uniqueContentId = desiredContentId;
-            Log.i("returnsused imageview", "returnsused imageview listloader count: "+ holder.aisleContentBrowser.getChildCount());
-            Log.i("returnsused imageview", "returnsused imageview listloader obj: "+holder.aisleContentBrowser.getCustomAdapter());
+   
         }       
         imageDetailsArr = windowContent.getImageList();
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			
 			 for(int i = 0;i<imageDetailsArr.size();i++) {
-				  Log.i("imageHeight", "imageHeight all images height: "+mBestHeight);
+				 Log.i("showpieceParams", "showpieceParams112  entered2 "+ mBestHeight );
+				 Log.i("showpieceParams", "showpieceParams112  entered2 mAvailableHeight "+ imageDetailsArr.get(i).mAvailableHeight );
 				  if(mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
 					  mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
 				  }
 			 }
-			 Log.i("imageHeight", "imageHeight  bestHeight: "+mBestHeight);
+		     setParams(holder.aisleContentBrowser, imageView, mBestHeight);
 			holder.aisleContentBrowser.mSwipeListener
 					.onReceiveImageCount(imageDetailsArr.size());
 			itemDetails = imageDetailsArr.get(0);
@@ -136,8 +140,7 @@ public class AisleDetailsViewListLoader {
 				if (bitmap.getHeight() < mImageDimension.mImgHeight) {
 					loadBitmap(itemDetails, contentBrowser, imageView,
 							itemDetails.mAvailableHeight);
-					setParams(holder.aisleContentBrowser, imageView,
-							mBestHeight);
+			 
 				}
 				/*
 				 * bitmap = Utils.getScalledImage(bitmap,
@@ -194,16 +197,16 @@ public class AisleDetailsViewListLoader {
             		 bmp = mBitmapLoaderUtils.getBitmap(url, true, mImageDimension.mImgHeight);
 				 }
             }
-            
-            
             return bmp;            
         }
 
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
         protected void onPostExecute(Bitmap bitmap) {
+        	 final ImageView imageView = imageViewReference.get();
+        	  setParams( aisleContentBrowser, imageView,mAvailableHeight);
             if (imageViewReference != null && bitmap != null) {
-                final ImageView imageView = imageViewReference.get();
+               
                 //final AisleContentBrowser vFlipper = viewFlipperReference.get();
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
                 
@@ -246,26 +249,21 @@ public class AisleDetailsViewListLoader {
 
    private void setParams(AisleContentBrowser vFlipper, ImageView imageView,int imgScreenHeight
           ) {
-      int topBottomMargin =24;
+/*      int topBottomMargin =24;
       topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
       FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
               VueApplication.getInstance().getScreenWidth(),mBestHeight+topBottomMargin);
-
-      if (vFlipper != null)
-         vFlipper.setLayoutParams(showpieceParams);
+      Log.i("showpieceParams", "showpieceParams are seting here mBestHeight: "+ mBestHeight );
       if (vFlipper != null) {
+       //  vFlipper.setLayoutParams(showpieceParams);
+         Log.i("showpieceParams", "showpieceParams are seting here: "+(mBestHeight+topBottomMargin));
+      }*/
+      if (vFlipper != null && imageView != null) {
          FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
          params.gravity = Gravity.CENTER;
          imageView.setLayoutParams(params);
-      } else {
-         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-               LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-         params.gravity = Gravity.CENTER;
-         imageView.setScaleType(ScaleType.CENTER_INSIDE);
-         imageView.setLayoutParams(params);
-         imageView.setScaleType(ScaleType.CENTER_INSIDE);
-      }
+      } 
        
    }
 }

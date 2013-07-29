@@ -72,6 +72,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     int mPrevPosition;
     private ActionBarHandler mHandleActionBar;
     private ScaledImageViewFactory mImageViewFactory;
+    ImageView mAddVueAisle;
+    RelativeLayout mVueImageIndicator;
 
     //TODO: define a public interface that can be implemented by the parent
     //activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -111,7 +113,19 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 		//bottomBar.getBackground().setAlpha(75);
 		 mImageViewFactory  = ScaledImageViewFactory.getInstance(mContext);
 		 mImageViewFactory.clearAllViews();
-		 
+		 mAddVueAisle = (ImageView) v.findViewById(R.id.vue_aisle);
+		 mAddVueAisle.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				mTotalScreenCount = VueApplication.getInstance()
+						.getClickedWindowCount();
+				 VueApplication.getInstance().setClickedWindowCount(mTotalScreenCount+1);
+				setIndicatorr();
+				mAisleDetailsAdapter.addAisleToContentWindow(null,null,"title");
+			}
+		});
 		 
 		mAisleDetailsList = (ListView) v.findViewById(R.id.aisle_details_list);
 		mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
@@ -122,14 +136,18 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 		TextView vueAisleHeading = (TextView) v
 				.findViewById(R.id.vue_aisle_heading);
 		vueAisleHeading.setTextSize(Utils.LARGE_TEXT_SIZE);
-		RelativeLayout mVueImageIndicator = (RelativeLayout) v
+		  mVueImageIndicator = (RelativeLayout) v
 				.findViewById(R.id.vue_image_indicator);
 		mIndicatorView = new IndicatorView(getActivity());
 		mIndicatorView.setId(1234);
-		RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(
+
+		///////////////////////////////////////////////////////////////////
+		
+		setIndicatorr();
+		/*RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		// relParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-		relParams.addRule(RelativeLayout.CENTER_VERTICAL);
+		relParams.addRule(RelativeLayout.CENTER_VERTICAL); 
 		mVueImageIndicator.addView(mIndicatorView);
 		mTotalScreenCount = VueApplication.getInstance()
 				.getClickedWindowCount();
@@ -141,7 +159,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				/ 2 - mIndicatorView.getIndicatorBgWidht() / 2;
 		relParams.setMargins(indicatorLeftMargin, 0, 0, 0);
 		mIndicatorView.setLayoutParams(relParams);
-		mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
+		mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);*/
+		////////////////////////////////////////////////////////////////////////
 		if(mAisleDetailsList != null ) {
 			
 			mAisleDetailsList.setOnScrollListener(new OnScrollListener() {
@@ -270,6 +289,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				mAisleDetailsAdapter.share(getActivity(), getActivity());
 			}
 		});
+		mAisleDetailsAdapter.notifyDataSetChanged();
 		return v;
 	}
     @Override
@@ -497,6 +517,25 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
  
     public void setAisleContentListenerNull() {
     	mAisleDetailsAdapter.setAisleBrowserObjectsNull();
+    }
+    private void setIndicatorr() {
+    	RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		// relParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		relParams.addRule(RelativeLayout.CENTER_VERTICAL);
+		mVueImageIndicator.removeAllViews();
+		mVueImageIndicator.addView(mIndicatorView);
+		mTotalScreenCount = VueApplication.getInstance()
+				.getClickedWindowCount();
+		mIndicatorView.setNumberofScreens(mTotalScreenCount);
+		mIndicatorView.setDrawables(R.drawable.number_active,
+				R.drawable.bullets_bg, R.drawable.number_inactive);
+		mCurrentScreen = 1;
+		int indicatorLeftMargin = ((VueApplication.getInstance().getScreenWidth()* 95)/100)
+				/ 2 - mIndicatorView.getIndicatorBgWidht() / 2;
+		relParams.setMargins(indicatorLeftMargin, 0, 0, 0);
+		mIndicatorView.setLayoutParams(relParams);
+		mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
     }
     @Override
     public void onDestroy() {

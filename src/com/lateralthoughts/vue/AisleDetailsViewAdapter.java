@@ -85,7 +85,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     
       mTopBottomMargin  = VueApplication.getInstance().getPixel(mTopBottomMargin);
       mViewFactory = ScaledImageViewFactory.getInstance(mContext);
-      mViewLoader = AisleDetailsViewListLoader.getInstance(mContext);
+     // mViewLoader = AisleDetailsViewListLoader.getInstance(mContext);
+      mViewLoader =  new AisleDetailsViewListLoader(mContext);
       mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
       mswipeListner = swipeListner;
       mListCount = listCount;
@@ -235,29 +236,21 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          mViewHolder.userComment.setTextSize(VueApplication.getInstance()
                .getmTextSize());
          mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
-    /*     FrameLayout fl = (FrameLayout) convertView
-               .findViewById(R.id.showpiece_container);*/
-      
-         
          FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
                VueApplication.getInstance().getScreenWidth(),
-               mBestHeight+mTopBottomMargin);
+               (mBestHeight+mTopBottomMargin));
          mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
          mViewHolder.aisleContentBrowser
                .setAisleDetailSwipeListener(mswipeListner);
      
          mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
          convertView.setTag(mViewHolder);
-      } else {
-    	  mViewHolder  = (ViewHolder)convertView.getTag();
-      }
- 
+		} else {
+			mViewHolder = (ViewHolder) convertView.getTag();
+		}
     	    FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
     	              VueApplication.getInstance().getScreenWidth(),
     	              mBestHeight+mTopBottomMargin);
-    	    Log.i("nullbug", "nullbug vieholder "+mViewHolder);
-    	    Log.i("nullbug", "nullbug browser "+mViewHolder.aisleContentBrowser);
-    	    
     	  mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
     
        
@@ -504,9 +497,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		@Override
 		public void onImageDoubleTap() {
-			 
-		 
-	         mTopBottomMargin  = VueApplication.getInstance().getPixel(mTopBottomMargin);
 			 Toast.makeText(mContext, "imgAreaHeight: "+(mTopBottomMargin+mBestHeight)+" AisleID:  "+mWindowContentTemp.getAisleId(), 1500).show();
 			 Toast.makeText(mContext, "original image height: "+ mImageDetailsArr.get(mCurrentDispImageIndex).mAvailableHeight+" AisleID:  "+mWindowContentTemp.getAisleId(), 1500).show();
 		}
@@ -613,7 +603,25 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		mViewHolder.aisleContentBrowser.removeAllViews();
 		}
 	}
-
+	
+    public  void addAisleToContentWindow(Bitmap addedBitmap,String uri,String title) {
+        AisleImageDetails imgDetails = new AisleImageDetails();
+        if(addedBitmap != null) {
+        imgDetails.mAvailableHeight = addedBitmap.getHeight();
+        imgDetails.mAvailableWidth = addedBitmap.getWidth();
+        }
+        imgDetails.mTitle = title;
+        imgDetails.mImageUrl = "";
+        imgDetails.mDetalsUrl = "";
+        imgDetails.mId = "";
+        imgDetails.mStore = "";
+        mImageDetailsArr.add(0,imgDetails);
+        Log.i("mViewHolder.mWindowContent", "mViewHolder.mWindowContent: "+mViewHolder.mWindowContent);
+        Log.i("mViewHolder.mWindowContent", "mViewHolder: "+mViewHolder);
+        mWindowContentTemp.addAisleContent( mWindowContentTemp.getAisleContext(), mImageDetailsArr);
+        mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+        notifyAdapter();
+    }
 	public void sendDataToDb(int imgPosition, String reqType) {
 		String aisleId;
 		String imageId;

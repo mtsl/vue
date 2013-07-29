@@ -163,8 +163,7 @@ public class BitmapLoaderUtils {
        
             }
             }
-            Log.i("bitmapprofile", "bitmapprofile: showing bitmap width "+bitmap.getWidth());
-            Log.i("bitmapprofile", "bitmapprofile: showing bitmap height:  "+bitmap.getHeight());
+ 
             return bitmap;
         } catch (FileNotFoundException e) {
         } 
