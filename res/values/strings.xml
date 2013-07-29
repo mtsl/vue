@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name">Vue</string>
-    <string name="app_id">432788383501698</string> <!-- Krishna id - 288419657969615 ; Vinodh id -  127551770751077 -->
+    <string name="app_id">606559369366437</string> <!-- Krishna id - 288419657969615 ; Vinodh id -  127551770751077 -->
     <!-- the following string are tags used in API endpoints -->
     <string name="trending">Trending</string>
     <string name="trending_aisles_tag">aisle/trending</string>

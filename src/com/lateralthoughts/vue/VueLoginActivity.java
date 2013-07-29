@@ -5,10 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
@@ -467,6 +470,8 @@ public class VueLoginActivity extends FragmentActivity implements
 					com.facebook.Response response) {
 				if (user != null) {
 					String location = "";
+                    VueUser vueUser = parseGraphUserData(user);
+                    vueUser.constructUnidentifiedUser();
 					try {
 						if (user.getLocation() != null) {
 							JSONObject jsonObject = user.getLocation()
@@ -860,5 +865,25 @@ public class VueLoginActivity extends FragmentActivity implements
 			editor.commit();
 		}
 	}
+
+    private VueUser parseGraphUserData(GraphUser user){
+        VueUser vueUser = null;
+        if(null == user){
+            throw new RuntimeException("Can't parse a null graph user object");
+        }
+        try{
+            String firstName = user.getFirstName();
+            String lastName = user.getLastName();
+            String birthday = user.getBirthday();
+            JSONObject innerObject = user.getInnerJSONObject();
+            String email = innerObject.getString("email");
+            //String email = emailObject.optString("email");
+            vueUser = new VueUser(null, null, email);
+            vueUser.setUsersName(firstName, lastName);
+        }catch(JSONException ex){
+
+        }
+        return vueUser;
+    }
 
 }
