@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -52,66 +53,70 @@ import com.lateralthoughts.vue.utils.Utils;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
-  
-    private Context mContext;
-    public  static final  String  SCREEN_NAME = "DETAILS_SCREEN";
-    private static final int AISLE_HEADER_SHOW_TIME = 5000;
-    private VueContentGateway mVueContentGateway;
-    AisleDetailsViewAdapter mAisleDetailsAdapter;  
-    private ListView mAisleDetailsList;
-    AisleDetailsSwipeListner mSwipeListener;
-    IndicatorView mIndicatorView;
-    private int mCurrentScreen;
-    private int  mTotalScreenCount ;
-    int mListCount =5;
-    TextView mVueUserName;
-    int mCurentIndPosition;
-    static final int MAX_DOTS_TO_SHOW = 3;
-    int mPrevPosition;
-    private ActionBarHandler mHandleActionBar;
-    private ScaledImageViewFactory mImageViewFactory;
+public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
-    //TODO: define a public interface that can be implemented by the parent
-    //activity so that we can notify it with an ArrayList of AisleWindowContent
-    //once we have received the result and parsed it. The idea is that the activity
-    //can then initiate a worker in the background to go fetch more content and get
-    //ready to launch other activities/fragments within the application
-    
-    @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
-        mContext = activity;
-        // adding test comment
-        //without much ado lets get started with retrieving the trending aisles list
-        mVueContentGateway = VueContentGateway.getInstance();
-        if(null == mVueContentGateway){
-            //assert here: this is a no go!
-        }  
-        mSwipeListener = new AisleDetailsSwipeListner();
-        mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mListCount ,null);
-        //mVueDetailsContainer = mAisleDetailsAdapter.prepareDetailsVue();
-        
-    }
-    
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState){
-        super.onActivityCreated(savedInstanceState);
-        //TODO: any particular state that we want to restore?
-        
-    }
-    
-    @Override
+	private Context mContext;
+	public static final String SCREEN_NAME = "DETAILS_SCREEN";
+	private static final int AISLE_HEADER_SHOW_TIME = 5000;
+	private VueContentGateway mVueContentGateway;
+	AisleDetailsViewAdapter mAisleDetailsAdapter;
+	private ListView mAisleDetailsList;
+	AisleDetailsSwipeListner mSwipeListener;
+	IndicatorView mIndicatorView;
+	private int mCurrentScreen;
+	private int mTotalScreenCount;
+	int mListCount = 5;
+	TextView mVueUserName;
+	int mCurentIndPosition;
+	static final int MAX_DOTS_TO_SHOW = 3;
+	int mPrevPosition;
+	private ActionBarHandler mHandleActionBar;
+	private ScaledImageViewFactory mImageViewFactory;
+
+	// TODO: define a public interface that can be implemented by the parent
+	// activity so that we can notify it with an ArrayList of AisleWindowContent
+	// once we have received the result and parsed it. The idea is that the
+	// activity
+	// can then initiate a worker in the background to go fetch more content and
+	// get
+	// ready to launch other activities/fragments within the application
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mContext = activity;
+		// adding test comment
+		// without much ado lets get started with retrieving the trending aisles
+		// list
+		mVueContentGateway = VueContentGateway.getInstance();
+		if (null == mVueContentGateway) {
+			// assert here: this is a no go!
+		}
+		mSwipeListener = new AisleDetailsSwipeListner();
+		mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
+				mSwipeListener, mListCount, null);
+		// mVueDetailsContainer = mAisleDetailsAdapter.prepareDetailsVue();
+
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		// TODO: any particular state that we want to restore?
+
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.aisles_detailed_view_fragment,
 				container, false);
-		//RelativeLayout bottomBar = (RelativeLayout)v.findViewById(R.id.vue_bottom_bar);
-		//bottomBar.getBackground().setAlpha(75);
-		 mImageViewFactory  = ScaledImageViewFactory.getInstance(mContext);
-		 mImageViewFactory.clearAllViews();
-		 
-		 
+		// RelativeLayout bottomBar =
+		// (RelativeLayout)v.findViewById(R.id.vue_bottom_bar);
+		// bottomBar.getBackground().setAlpha(75);
+		mImageViewFactory = ScaledImageViewFactory.getInstance(mContext);
+		mImageViewFactory.clearAllViews();
+
 		mAisleDetailsList = (ListView) v.findViewById(R.id.aisle_details_list);
 		mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
 		mVueUserName = (TextView) v.findViewById(R.id.vue_user_name);
@@ -136,13 +141,15 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 		mIndicatorView.setDrawables(R.drawable.number_active,
 				R.drawable.bullets_bg, R.drawable.number_inactive);
 		mCurrentScreen = 1;
-		int indicatorLeftMargin = ((VueApplication.getInstance().getScreenWidth()* 95)/100)
-				/ 2 - mIndicatorView.getIndicatorBgWidht() / 2;
+		int indicatorLeftMargin = ((VueApplication.getInstance()
+				.getScreenWidth() * 95) / 100)
+				/ 2
+				- mIndicatorView.getIndicatorBgWidht() / 2;
 		relParams.setMargins(indicatorLeftMargin, 0, 0, 0);
 		mIndicatorView.setLayoutParams(relParams);
 		mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
-		if(mAisleDetailsList != null ) {
-			
+		if (mAisleDetailsList != null) {
+
 			mAisleDetailsList.setOnScrollListener(new OnScrollListener() {
 
 				public void onScrollStateChanged(AbsListView view,
@@ -155,24 +162,25 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 					 */
 					switch (scrollState) {
 					case OnScrollListener.SCROLL_STATE_IDLE:
-						if(mAisleDetailsList.getChildAt(0).getTop() == 0) {
-							Log.i("scrolling", "scrolling here scrolling is SCROLL_STATE_IDLE");
-							if(mHandleActionBar != null) {
-							mHandleActionBar.showActionBar();
+						if (mAisleDetailsList.getChildAt(0).getTop() == 0) {
+							Log.i("scrolling",
+									"scrolling here scrolling is SCROLL_STATE_IDLE");
+							if (mHandleActionBar != null) {
+								mHandleActionBar.showActionBar();
 							}
-						} else if(mAisleDetailsList.getChildAt(0).getTop() <= -30) {
-						 
-							if(mHandleActionBar != null) {
+						} else if (mAisleDetailsList.getChildAt(0).getTop() <= -30) {
+
+							if (mHandleActionBar != null) {
 								mHandleActionBar.hideActionBar();
-								}
+							}
 						}
-				 
+
 						break;
 					case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-					 
+
 						break;
 					case OnScrollListener.SCROLL_STATE_FLING:
-					 
+
 						break;
 					default:
 						break;
@@ -184,10 +192,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 
 				}
 			});
-			
-			
-			
- 
+
 		}
 		mAisleDetailsList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -195,7 +200,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 					long arg3) {
 				if (arg2 != 0 && arg2 != 1) {
 					if (mListCount - 1 == arg2) {
-						//will be called when press on the enter comment text edit text will be expand
+						// will be called when press on the enter comment text
+						// edit text will be expand
 						TextView v = (TextView) arg1
 								.findViewById(R.id.vue_user_entercomment);
 						EditText vueEdt = (EditText) arg1
@@ -205,8 +211,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 						mAisleDetailsAdapter.notifyDataSetChanged();
 
 					} else {
-						//will be called when press on the user comment, comment text will be expand and collapse for 
-						//alternative clicks
+						// will be called when press on the user comment,
+						// comment text will be expand and collapse for
+						// alternative clicks
 						TextView v = (TextView) arg1
 								.findViewById(R.id.vue_user_comment);
 						int x = v.getLineCount();
@@ -215,15 +222,15 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 							params = new LinearLayout.LayoutParams(
 									LayoutParams.MATCH_PARENT,
 									LayoutParams.WRAP_CONTENT);
-							//get the pixel equivalent to given dp value
-							int leftMargin = VueApplication.getInstance().getPixel(16);
-							int rightMargin = VueApplication.getInstance().getPixel(28);
-							int topBottomMargin = VueApplication.getInstance().getPixel(12);
-							params.setMargins(
-									leftMargin ,
-									topBottomMargin,
-									rightMargin,
-											topBottomMargin);
+							// get the pixel equivalent to given dp value
+							int leftMargin = VueApplication.getInstance()
+									.getPixel(16);
+							int rightMargin = VueApplication.getInstance()
+									.getPixel(28);
+							int topBottomMargin = VueApplication.getInstance()
+									.getPixel(12);
+							params.setMargins(leftMargin, topBottomMargin,
+									rightMargin, topBottomMargin);
 							v.setLayoutParams(params);
 							v.setMaxLines(Integer.MAX_VALUE);
 						} else {
@@ -231,11 +238,14 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 						}
 					}
 				} else if (arg2 == 0) {
-					//will be called when press on the description, description text will be expand and collapse for 
-					//alternative clicks
-					//get the pixel equivalent to given dp value
-					int leftRightMargin = VueApplication.getInstance().getPixel(16);
-					int topBottomMargin = VueApplication.getInstance().getPixel(12);
+					// will be called when press on the description, description
+					// text will be expand and collapse for
+					// alternative clicks
+					// get the pixel equivalent to given dp value
+					int leftRightMargin = VueApplication.getInstance()
+							.getPixel(16);
+					int topBottomMargin = VueApplication.getInstance()
+							.getPixel(12);
 					TextView v = (TextView) arg1
 							.findViewById(R.id.vue_details_descreption);
 					int x = v.getLineCount();
@@ -244,7 +254,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 						params = new LinearLayout.LayoutParams(
 								LayoutParams.MATCH_PARENT,
 								LayoutParams.WRAP_CONTENT);
-						params.setMargins(leftRightMargin,topBottomMargin,leftRightMargin,topBottomMargin);
+						params.setMargins(leftRightMargin, topBottomMargin,
+								leftRightMargin, topBottomMargin);
 						v.setMaxLines(Integer.MAX_VALUE);
 					} else {
 						v.setMaxLines(3);
@@ -271,71 +282,86 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 		});
 		return v;
 	}
-    @Override
-    public void onResume() {
-       super.onResume();
-       mAisleDetailsAdapter.notifyDataSetChanged();
-       ViewTreeObserver vto = mVueUserName.getViewTreeObserver(); 
-       vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
-           @Override 
-           public void onGlobalLayout() { 
-               mVueUserName.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-               mVueUserName.setText(mAisleDetailsAdapter.mVueusername);
-           } 
-       });
-    }
-    /**
-     * 
-     *  
-     *while swiping the views inside the AisleContentWindow onAisleSwipe method will be
-     *called to indicate the current position of the image.
-     */
-    private class AisleDetailsSwipeListner implements AisleDetailSwipeListener {
 
-      @Override
-      public void onAisleSwipe(String direction) {
-         mPrevPosition = mCurrentScreen;
-         mIndicatorView.switchToScreen(mPrevPosition,checkScreenBoundaries(direction,mCurrentScreen)
-                );
-      }
-       public void onReceiveImageCount(int count) {
-          mTotalScreenCount = count;
-       }
-      @Override
-      public void onResetAdapter() {
-      }
-      /**
-       * when user enters the comment it will be added to the comment list at the top.
-       */
-      @Override
-      public void onAddCommentClick(final RelativeLayout view, final EditText editText,final ImageView sendComment,final FrameLayout edtCommentLay) {
-         mAisleDetailsList.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-         mAisleDetailsList.setOnTouchListener(new OnTouchListener() {
+	@Override
+	public void onResume() {
+		super.onResume();
+		mAisleDetailsAdapter.notifyDataSetChanged();
+		ViewTreeObserver vto = mVueUserName.getViewTreeObserver();
+		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				editText.getParent().requestDisallowInterceptTouchEvent(false);
-				return false;
+			public void onGlobalLayout() {
+				mVueUserName.getViewTreeObserver()
+						.removeGlobalOnLayoutListener(this);
+				mVueUserName.setText(mAisleDetailsAdapter.mVueusername);
 			}
 		});
-         editText.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				 v.getParent().requestDisallowInterceptTouchEvent(true);
-				return false;
-			}
-		});
-     	view.setVisibility(View.GONE);
-          final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-             inputMethodManager.toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
-             edtCommentLay.setVisibility(View.VISIBLE);
-          editText.setVisibility(View.VISIBLE);
-          editText.setCursorVisible(true);
-          editText.setTextColor(Color.parseColor(getResources().getString(R.color.black)));
-          editText.requestFocus();
-          
-			((EditTextBackEvent) editText) 
+	}
+
+	/**
+	 * 
+	 * 
+	 * while swiping the views inside the AisleContentWindow onAisleSwipe method
+	 * will be called to indicate the current position of the image.
+	 */
+	private class AisleDetailsSwipeListner implements AisleDetailSwipeListener {
+
+		@Override
+		public void onAisleSwipe(String direction) {
+			mPrevPosition = mCurrentScreen;
+			mIndicatorView.switchToScreen(mPrevPosition,
+					checkScreenBoundaries(direction, mCurrentScreen));
+		}
+
+		public void onReceiveImageCount(int count) {
+			mTotalScreenCount = count;
+		}
+
+		@Override
+		public void onResetAdapter() {
+		}
+
+		/**
+		 * when user enters the comment it will be added to the comment list at
+		 * the top.
+		 */
+		@Override
+		public void onAddCommentClick(final RelativeLayout view,
+				final EditText editText, final ImageView sendComment,
+				final FrameLayout edtCommentLay) {
+			mAisleDetailsList
+					.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+			mAisleDetailsList.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					// TODO Auto-generated method stub
+					editText.getParent().requestDisallowInterceptTouchEvent(
+							false);
+					return false;
+				}
+			});
+			editText.setOnTouchListener(new OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					v.getParent().requestDisallowInterceptTouchEvent(true);
+					return false;
+				}
+			});
+			view.setVisibility(View.GONE);
+			final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
+					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputMethodManager.toggleSoftInputFromWindow(
+					editText.getApplicationWindowToken(),
+					InputMethodManager.SHOW_FORCED, 0);
+			edtCommentLay.setVisibility(View.VISIBLE);
+			editText.setVisibility(View.VISIBLE);
+			editText.setCursorVisible(true);
+			editText.setTextColor(Color.parseColor(getResources().getString(
+					R.color.black)));
+			editText.requestFocus();
+
+			((EditTextBackEvent) editText)
 					.setonInterceptListen(new OnInterceptListener() {
 
 						@Override
@@ -360,12 +386,12 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 							return false;
 						}
 					});
-          editText.setFocusable(true);
-          editText.setImeOptions(EditorInfo.IME_ACTION_GO);
-          editText.setScroller(new Scroller(getActivity()));
-          editText.setVerticalScrollBarEnabled(true);
-          editText.setMovementMethod(new ScrollingMovementMethod());
-          sendComment.setVisibility(View.GONE);
+			editText.setFocusable(true);
+			editText.setImeOptions(EditorInfo.IME_ACTION_GO);
+			editText.setScroller(new Scroller(getActivity()));
+			editText.setVerticalScrollBarEnabled(true);
+			editText.setMovementMethod(new ScrollingMovementMethod());
+			sendComment.setVisibility(View.GONE);
 			sendComment.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -378,16 +404,32 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 								editText.getApplicationWindowToken(),
 								InputMethodManager.SHOW_FORCED, 0);
 
-					
 						@SuppressWarnings("unchecked")
 						ArrayList<String> commentList = (ArrayList<String>) mAisleDetailsAdapter.mCommentsMapList
 								.get(mAisleDetailsAdapter.mCurrentDispImageIndex);
 						commentList.add(0, etText);
-						mAisleDetailsAdapter.sendDataToDb(mAisleDetailsAdapter.mCurrentDispImageIndex,mAisleDetailsAdapter.CHANGE_COMMENT);
-						//mAisleDetailsAdapter.mTempComments2 = new String[commentList.size() + 1];
-					/*	
-						mAisleDetailsAdapter.mTempComments2 = commentList
-								.toArray(mAisleDetailsAdapter.mTempComments2);*/
+						mAisleDetailsAdapter.sendDataToDb(
+								mAisleDetailsAdapter.mCurrentDispImageIndex,
+								mAisleDetailsAdapter.CHANGE_COMMENT);
+						// Updating Comments Count in Preference to show
+						// LoginDialog.
+						SharedPreferences sharedPreferencesObj = getActivity()
+								.getSharedPreferences(
+										VueConstants.SHAREDPREFERENCE_NAME, 0);
+						int commentsCount = sharedPreferencesObj.getInt(
+								VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
+						SharedPreferences.Editor editor = sharedPreferencesObj
+								.edit();
+						editor.putInt(
+								VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
+								commentsCount++);
+						editor.commit();
+						// mAisleDetailsAdapter.mTempComments2 = new
+						// String[commentList.size() + 1];
+						/*
+						 * mAisleDetailsAdapter.mTempComments2 = commentList
+						 * .toArray(mAisleDetailsAdapter.mTempComments2);
+						 */
 						mAisleDetailsAdapter.mShowingList = commentList;
 						editText.setVisibility(View.GONE);
 						editText.setText("");
@@ -425,62 +467,69 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 					}
 				}
 			});
-      }
-	@Override
-	public void onDissAllowListResponse() {
-		mAisleDetailsList.requestDisallowInterceptTouchEvent(true);
+		}
+
+		@Override
+		public void onDissAllowListResponse() {
+			mAisleDetailsList.requestDisallowInterceptTouchEvent(true);
+		}
+
+		@Override
+		public void onAllowListResponse() {
+			mAisleDetailsList.requestDisallowInterceptTouchEvent(false);
+		}
 	}
-	@Override
-	public void onAllowListResponse() {
-		mAisleDetailsList.requestDisallowInterceptTouchEvent(false);
+
+	private int checkScreenBoundaries(String direction, int mCurrentScreen) {
+		if (direction.equalsIgnoreCase("left")) {
+			if (mCurrentScreen == mTotalScreenCount) {
+				this.mCurrentScreen = mTotalScreenCount;
+				return this.mCurrentScreen;
+			} else if (mCurrentScreen < mTotalScreenCount) {
+				this.mCurrentScreen++;
+				return this.mCurrentScreen;
+			}
+		} else {
+			if (direction.equalsIgnoreCase("right")) {
+				if (mCurrentScreen == 1) {
+					this.mCurrentScreen = 1;
+					return this.mCurrentScreen;
+				} else {
+					this.mCurrentScreen--;
+					return this.mCurrentScreen;
+				}
+			}
+		}
+		return mCurrentScreen;
 	}
-    }
-    private int checkScreenBoundaries(String direction,int mCurrentScreen){
-        if(direction.equalsIgnoreCase("left")) {
-           if(mCurrentScreen == mTotalScreenCount){
-              this.mCurrentScreen = mTotalScreenCount;
-              return this.mCurrentScreen;
-           } else if(mCurrentScreen < mTotalScreenCount){
-              this.mCurrentScreen++;
-              return this.mCurrentScreen;
-           }
-        } else {
-             if(direction.equalsIgnoreCase("right")) {
-                if(mCurrentScreen == 1){
-                   this.mCurrentScreen = 1;
-                   return this.mCurrentScreen;
-                } else {
-                   this.mCurrentScreen--;
-                   return this.mCurrentScreen;
-                }
-             }
-        }
-       return mCurrentScreen;
-    }
-    protected MotionEvent mLastOnDownEvent = null;
-    private int getHighlightPosition(int cur_pos) {
-       mCurentIndPosition = cur_pos;
-       int highlightPosition;
-       if(mCurentIndPosition <= mTotalScreenCount) {
-          if(mCurentIndPosition+MAX_DOTS_TO_SHOW > mTotalScreenCount) {
-             int temp = mTotalScreenCount - mCurentIndPosition;
-               highlightPosition = MAX_DOTS_TO_SHOW - temp;
-          } else {
-             int temp = mCurentIndPosition % MAX_DOTS_TO_SHOW;
-             highlightPosition = temp;
-          }
-          return highlightPosition;
-       }
-      return mCurentIndPosition;
-    }
-    public void changeLikeCount(int position,String clickType) {
-    	mAisleDetailsAdapter.changeLikesCount(position,clickType);
-    }
-    public void setActionBarHander(ActionBarHandler handleActionBar) {
-    	mHandleActionBar = handleActionBar;
-    }
- 
-    public void setAisleContentListenerNull() {
-    	mAisleDetailsAdapter.setAisleBrowserObjectsNull();
-    }
+
+	protected MotionEvent mLastOnDownEvent = null;
+
+	private int getHighlightPosition(int cur_pos) {
+		mCurentIndPosition = cur_pos;
+		int highlightPosition;
+		if (mCurentIndPosition <= mTotalScreenCount) {
+			if (mCurentIndPosition + MAX_DOTS_TO_SHOW > mTotalScreenCount) {
+				int temp = mTotalScreenCount - mCurentIndPosition;
+				highlightPosition = MAX_DOTS_TO_SHOW - temp;
+			} else {
+				int temp = mCurentIndPosition % MAX_DOTS_TO_SHOW;
+				highlightPosition = temp;
+			}
+			return highlightPosition;
+		}
+		return mCurentIndPosition;
+	}
+
+	public void changeLikeCount(int position, String clickType) {
+		mAisleDetailsAdapter.changeLikesCount(position, clickType);
+	}
+
+	public void setActionBarHander(ActionBarHandler handleActionBar) {
+		mHandleActionBar = handleActionBar;
+	}
+
+	public void setAisleContentListenerNull() {
+		mAisleDetailsAdapter.setAisleBrowserObjectsNull();
+	}
 }
