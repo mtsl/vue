@@ -59,7 +59,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.VueTheme"
+           android:theme="@style/Theme.VueTheme"
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity

@@ -40,6 +40,7 @@ public class VueApplication extends Application {
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
 	private boolean newVueTrendingAislesDataModel = false;
+
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
 	}
@@ -63,8 +64,7 @@ public class VueApplication extends Application {
 		sInstance = this;
 
 		mVueApplicationContext = this;
-		
-	
+
 		mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
 		mVueAisleImagesCache.setLimit(40);
 		mVueAisleOwnerNamesCache = new VueMemoryCache<String>();
@@ -105,6 +105,10 @@ public class VueApplication extends Application {
 		// R.drawable.aisle_content_empty;
 		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 				crittercismConfig);
+
+		FileCache fileCache = new FileCache(VueApplication.getInstance());
+		fileCache.clearVueAppResizedPictures();
+		fileCache.clearVueAppCameraPictures();
 	}
 
 	public static VueApplication getInstance() {
@@ -195,4 +199,5 @@ public class VueApplication extends Application {
 	/*public void setNewVueTrendingAislesDataModel (boolean createNewObject) {
 	  newVueTrendingAislesDataModel = createNewObject;
 	}*/
+
 }
