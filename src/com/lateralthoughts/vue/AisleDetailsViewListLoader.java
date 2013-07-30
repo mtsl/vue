@@ -64,7 +64,7 @@ public class AisleDetailsViewListLoader {
     public void getAisleContentIntoView(AisleDetailsViewAdapter.ViewHolder holder,
             int scrollIndex, int position,DetailClickListener detailListener){
     	 mBestHeight = 0;
-    	 Log.i("showpieceParams", "showpieceParams112  entered1 "+ mBestHeight );
+    	 Log.i("newAisleAdding", "newAisleAdding listdoader method stated");
         ScaleImageView imageView = null;
         ArrayList<AisleImageDetails> imageDetailsArr = null;
         AisleImageDetails itemDetails = null;
@@ -104,7 +104,7 @@ public class AisleDetailsViewListLoader {
             holder.aisleContentBrowser.setCustomAdapter(adapter);
             holder.aisleContentBrowser.setDetailImageClickListener(detailListener);
             holder.uniqueContentId = desiredContentId;
-   
+            Log.i("newAisleAdding", "newAisleAdding listdoader new browser adapter setting");
         }       
         imageDetailsArr = windowContent.getImageList();
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
@@ -186,9 +186,10 @@ public class AisleDetailsViewListLoader {
         @Override
         protected Bitmap doInBackground(String... params) {
             url = params[0];
-            Bitmap bmp = null;            
+            Bitmap bmp = null; 
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeight); 
+            
+            bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeight);
             if(bmp != null) {
            	 mImageDimension = Utils.getScalledImage(bmp,
            			mAvailabeWidth, mAvailableHeight);

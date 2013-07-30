@@ -20,6 +20,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.os.Environment;
 import android.util.Log;
 
 public class BitmapLoaderUtils {
@@ -58,12 +59,12 @@ public class BitmapLoaderUtils {
      */
     public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
     {
-     
+    	Log.i("url dummy", "url dummy  : getBitmap url "+url);
         File f = mFileCache.getFile(url);
-        Log.i("bitmapprofile", "bitmapprofile  : originalbitmap url "+url);
+        Log.i("url dummy", "url dummy  : getBitmap file name "+f);
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight);
-        
+        Log.i("url dummy", "url dummy  : getBitmap bitmap is "+b);
         if(b != null){
           
             if(cacheBitmap)
@@ -73,6 +74,10 @@ public class BitmapLoaderUtils {
         
         //from web
         try {
+        	if(url == null || url.length() < 1) {
+       
+        		return null;
+        	}
             Bitmap bitmap=null;
             URL imageUrl = new URL(url);
             HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
@@ -104,25 +109,11 @@ public class BitmapLoaderUtils {
             o.inJustDecodeBounds = true;
             FileInputStream stream1 = new FileInputStream(f);
        BitmapFactory.decodeStream(stream1,null,o);
-            
-         
-            
             stream1.close();
-            
             //Find the correct scale value. It should be the power of 2.
             //final int REQUIRED_SIZE = mScreenWidth/2;
             int height=o.outHeight;
             int width = o.outWidth;
-         
-            Log.i("bitmapprofile", "bitmapprofile: originalbitmap width "+width);
-            Log.i("bitmapprofile", "bitmapprofile: originalbitmap height:  "+height);
-            
-            Log.i("bitmapprofile", "bitmapprofile cardWidht width:  "+VueApplication.getInstance().getVueDetailsCardWidth());
-            Log.i("bitmapprofile", "bitmapprofile cardWidht height: "+VueApplication.getInstance().getVueDetailsCardHeight());
-            
-            Log.i("bitmapprofile", "bitmapprofile bestHeight:  "+bestHeight);
-          
-            
           int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth();
             
             int scale=1;
@@ -163,7 +154,11 @@ public class BitmapLoaderUtils {
        
             }
             }
- 
+            if(bitmap != null) {
+            Log.i("url dummy", "url dummy  : decodeFile  bitmap width "+bitmap.getWidth());
+            } else {
+            	 Log.i("url dummy", "url dummy  : decodeFile  bitmap is null ");
+            }
             return bitmap;
         } catch (FileNotFoundException e) {
         } 

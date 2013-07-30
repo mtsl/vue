@@ -107,6 +107,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     	mBookmarksCount = mWindowContentTemp.getmAisleBookmarksCount();
     	mImageDetailsArr = mWindowContentTemp
           .getImageList();
+    	VueApplication.getInstance().setClickedWindowCount(mImageDetailsArr.size());
  
       for (int i = 0; i < mImageDetailsArr.size(); i++) {
     	  if(mImageDetailsArr.get(i).mAvailableHeight > mBestHeight) {
@@ -606,18 +607,19 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	
     public  void addAisleToContentWindow(Bitmap addedBitmap,String uri,String title) {
         AisleImageDetails imgDetails = new AisleImageDetails();
+        //TODO:temperory setting remove later these asignments.
+        imgDetails.mAvailableHeight = 500;
+        imgDetails.mAvailableWidth = 500;
         if(addedBitmap != null) {
         imgDetails.mAvailableHeight = addedBitmap.getHeight();
         imgDetails.mAvailableWidth = addedBitmap.getWidth();
-        }
+        } 
         imgDetails.mTitle = title;
-        imgDetails.mImageUrl = "";
+        imgDetails.mImageUrl = "http://ecx.images-amazon.com/images/I/31WPX7Qn3wL.jpg";
         imgDetails.mDetalsUrl = "";
         imgDetails.mId = "";
         imgDetails.mStore = "";
         mImageDetailsArr.add(0,imgDetails);
-        Log.i("mViewHolder.mWindowContent", "mViewHolder.mWindowContent: "+mViewHolder.mWindowContent);
-        Log.i("mViewHolder.mWindowContent", "mViewHolder: "+mViewHolder);
         mWindowContentTemp.addAisleContent( mWindowContentTemp.getAisleContext(), mImageDetailsArr);
         mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
         notifyAdapter();

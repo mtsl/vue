@@ -321,7 +321,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     		 loc = itemDetails.mImageUrl;
     	 } else {
     		 loc = itemDetails.mCustomImageUrl;
-    		 Log.i("imagenotcoming", "imagenotcoming: calling doin itemDetails.mCustomImageUrl; ");
     	 }
         if (cancelPotentialDownload(loc, imageView)) {          
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
@@ -356,7 +355,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             //we want to get the bitmap and also add it into the memory cache
             //bmp = getBitmap(url, true, mBestHeightForImage); 
             bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeightForImage);
-            Log.i("imagenotcoming", "imagenotcoming: calling doin itemDetails.mCustomImageUrl doInBackground; "+bmp);
 			if (bmp != null) {
 				if (mSourceName != null
 						&& mSourceName
@@ -380,7 +378,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
 		protected void onPostExecute(Bitmap bitmap) {
-        	 Log.i("imagenotcoming", "imagenotcoming: calling doin itemDetails.mCustomImageUrl onPostExecute; "+bitmap);
 			if (viewFlipperReference != null && imageViewReference != null
 					&& bitmap != null) {
 
@@ -390,13 +387,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 
 				if (this == bitmapWorkerTask) {
 					vFlipper.invalidate();
-					 
-					 
-					 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-						// setParams(aisleContentBrowser, imageView,mAvailabeHeight);
-			            	 }
-					 Log.i("imagenotcoming", "imagenotcoming set in baground: "+bitmap);
-					imageView.setImageBitmap(bitmap);
+ 				imageView.setImageBitmap(bitmap);
 				}
 			}
 		}
