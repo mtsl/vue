@@ -42,8 +42,7 @@ public class ExceptionHandler implements
 							VueConstants.GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL);
 					sender.sendMail(
 							VueConstants.GMAIL_SUBJECT_FOR_SENDING_ERROR_TO_MAIL
-									+ Utils.date() + " (APK From Surendra)",
- 
+									+ Utils.date() + " (APK From Raju)",
 							stackTrace + "",
 							VueConstants.GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL,
 							VueConstants.GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL);
