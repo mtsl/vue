@@ -140,27 +140,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				.findViewById(R.id.vue_image_indicator);
 		mIndicatorView = new IndicatorView(getActivity());
 		mIndicatorView.setId(1234);
-
-		///////////////////////////////////////////////////////////////////
-		
 		setIndicatorr();
-		/*RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		// relParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-		relParams.addRule(RelativeLayout.CENTER_VERTICAL); 
-		mVueImageIndicator.addView(mIndicatorView);
-		mTotalScreenCount = VueApplication.getInstance()
-				.getClickedWindowCount();
-		mIndicatorView.setNumberofScreens(mTotalScreenCount);
-		mIndicatorView.setDrawables(R.drawable.number_active,
-				R.drawable.bullets_bg, R.drawable.number_inactive);
-		mCurrentScreen = 1;
-		int indicatorLeftMargin = ((VueApplication.getInstance().getScreenWidth()* 95)/100)
-				/ 2 - mIndicatorView.getIndicatorBgWidht() / 2;
-		relParams.setMargins(indicatorLeftMargin, 0, 0, 0);
-		mIndicatorView.setLayoutParams(relParams);
-		mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);*/
-		////////////////////////////////////////////////////////////////////////
 		if(mAisleDetailsList != null ) {
 			
 			mAisleDetailsList.setOnScrollListener(new OnScrollListener() {
@@ -541,5 +521,22 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     public void onDestroy() {
     	mAisleDetailsAdapter = null;
     	super.onDestroy();
+    }
+    private void moveIndicatorDot(String swipeDerection) {
+    	int indicatorPos = 0;
+    	int currentImagePos;
+    	int MAX_INDI_COUNT = 0;
+    	
+    	if(indicatorPos == 0 && swipeDerection.equalsIgnoreCase("left")) {
+    		
+    	} else if(indicatorPos != 0 && swipeDerection.equalsIgnoreCase("left")) {
+    		
+    	} else if(indicatorPos == 0 && swipeDerection.equalsIgnoreCase("right")) {
+    		
+    	} else if(indicatorPos == MAX_INDI_COUNT && swipeDerection.equalsIgnoreCase("right")) {
+    		
+    	} else if(indicatorPos == MAX_INDI_COUNT && swipeDerection.equalsIgnoreCase("left")) {
+    		
+    	}
     }
 }
