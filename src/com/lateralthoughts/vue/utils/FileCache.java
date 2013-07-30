@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue.utils;
 
 import java.io.File;
+import java.util.Date;
+
 import com.lateralthoughts.vue.VueConstants;
 import android.content.Context;
 import android.util.Log;
@@ -8,6 +10,7 @@ import android.util.Log;
 public class FileCache {
 
 	private File cacheDir;
+	private long twoDaysOldTime = 2 * 24 * 60 * 60 * 1000;
 	File mVueAppCameraPicsDir;
 	File mVueAppResizedImagesDir;
 
@@ -16,7 +19,8 @@ public class FileCache {
 		if (android.os.Environment.getExternalStorageState().equals(
 				android.os.Environment.MEDIA_MOUNTED)) {
 			cacheDir = new File(
-					android.os.Environment.getExternalStorageDirectory(),
+					/*android.os.Environment.getExternalStorageDirectory()*/
+			        context.getExternalCacheDir(),
 					"LazyList");
 			mVueAppCameraPicsDir = new File(context.getExternalFilesDir(null),
 					VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
@@ -86,5 +90,23 @@ public class FileCache {
 		for (File f : files)
 			f.delete();
 	}
-
+   
+	public void clearTwoDaysOldPictures() {
+	  File[] files = cacheDir.listFiles();
+	  if(files == null) {
+	    return;
+	  }
+	  Log.e("Profiling", "Profiling files Array size: " + files.length);
+	  int count = 0;
+	  for(File f : files) {
+	   long lastModifidedDate = f.lastModified();
+	   Log.e("Profiling", "Profiling deleting two lastModifidedDate : " + new Date(lastModifidedDate));
+	   if(System.currentTimeMillis() - lastModifidedDate >= twoDaysOldTime) {
+	     Log.e("Profiling", "Profiling deleting two days old images");
+	     if(f.delete()) {
+	       Log.e("Profiling", "Profiling Total images Deleted: " + ++count);
+	     }
+	   }
+	  }
+	}
 }

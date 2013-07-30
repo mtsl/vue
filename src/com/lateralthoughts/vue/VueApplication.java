@@ -186,7 +186,7 @@ public class VueApplication extends Application {
 			throw new IllegalStateException("RequestQueue not initialized");
 		}
 	}
-	
+
 	/*public boolean newVueTrendingAislesDataModel() {
 	  Log.e("Profiling", "Profiling newVueTrendingAislesDataModel : " + newVueTrendingAislesDataModel);
 	  return newVueTrendingAislesDataModel;

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 
@@ -14,6 +15,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
+import com.lateralthoughts.vue.utils.FileCache;
 
 public class VueLandingPageActivity extends BaseActivity {
 
@@ -106,6 +108,8 @@ public class VueLandingPageActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
+			  Log.e("Profiling", "Profiling Landing Activity: call to delete old images");
+			  new FileCache(this).clearTwoDaysOldPictures();
 				super.onBackPressed();
 			}
 		}
