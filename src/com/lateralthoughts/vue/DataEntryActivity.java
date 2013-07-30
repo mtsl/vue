@@ -23,13 +23,21 @@ public class DataEntryActivity extends BaseActivity {
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			Log.e("cs", "30");
-			String imagePath = b
+			String aisleImagePath = b
 					.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-			Log.e("cs", "31");
 			DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.create_aisles_view_fragment);
+			fragment.mFromDetailsScreenFlag = b.getBoolean(
+					VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG,
+					false);
+			if (fragment.mFromDetailsScreenFlag) {
+				getSupportActionBar().setTitle(
+						getResources().getString(
+								R.string.add_imae_to_aisle_screen_title));
+				fragment.mLookingForPopup.setVisibility(View.GONE);
+			}
 			Log.e("cs", "32");
-			fragment.setGalleryORCameraImage(imagePath);
+			fragment.setGalleryORCameraImage(aisleImagePath);
 		}
 	}
 

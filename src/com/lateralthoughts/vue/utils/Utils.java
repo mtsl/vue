@@ -9,25 +9,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 
@@ -206,16 +200,9 @@ public class Utils {
 			Log.e("cs", "13");
 			File resizedFileName = new File(
 					vueAppResizedImageFileName(mContext));
-			String resizedFilePath = resizedFileName.getPath();
-			FileOutputStream out = new FileOutputStream(resizedFileName);
-			resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-			Log.e("cs", "14");
-			out.flush();
-			out.close();
-			resizedBitmap.recycle();
-			resizedBitmap = null;
+			saveBitmap(resizedBitmap, resizedFileName);
 			Log.e("cs", "15");
-			return resizedFilePath;
+			return resizedFileName.getPath();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

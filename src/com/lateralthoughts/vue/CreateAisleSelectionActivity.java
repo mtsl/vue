@@ -37,7 +37,8 @@ public class CreateAisleSelectionActivity extends Activity {
 	private AnimatorSet mCircleAnimation;
 	private Animation mTopToBottomAnimation, mBottomToTopAnimation,
 			mBounceAnimation = null;
-	private boolean mFromCreateAilseScreenFlag = false;
+	private boolean mFromCreateAilseScreenFlag = false,
+			mFromDetailsScreenFlag = false;
 	private String mCameraImageName = null;
 	private boolean mGalleryClickedFlag = false, mCameraClickedFlag = false;
 	private static final int BOX_ANIMATION_DURATION = 600;
@@ -57,6 +58,8 @@ public class CreateAisleSelectionActivity extends Activity {
 		if (b != null) {
 			mFromCreateAilseScreenFlag = b
 					.getBoolean(VueConstants.FROMCREATEAILSESCREENFLAG);
+			mFromDetailsScreenFlag = b
+					.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG);
 		}
 
 		// Get intent, action and MIME type
@@ -68,7 +71,8 @@ public class CreateAisleSelectionActivity extends Activity {
 			Log.e("CretaeAisleSelectionActivity send text", type);
 			if ("text/plain".equals(type)) {
 				handleSendText(intent); // Handle text being sent
-				Log.e("CretaeAisleSelectionActivity send text", "textplain match");
+				Log.e("CretaeAisleSelectionActivity send text",
+						"textplain match");
 			} else if (type.startsWith("image/")) {
 				handleSendImage(intent); // Handle single image being sent
 				Log.e("CretaeAisleSelectionActivity send text", "image match");
@@ -77,7 +81,8 @@ public class CreateAisleSelectionActivity extends Activity {
 			if (type.startsWith("image/")) {
 				handleSendMultipleImages(intent); // Handle multiple images
 													// being sent
-				Log.e("CretaeAisleSelectionActivity send text", "multiple image match");
+				Log.e("CretaeAisleSelectionActivity send text",
+						"multiple image match");
 			}
 		} else {
 			// Handle other intents, such as being started from the home screen
@@ -321,7 +326,18 @@ public class CreateAisleSelectionActivity extends Activity {
 						.getPath(selectedImageUri, this);
 				Log.e("cs", "3");
 				Log.e("frag", "uri..." + selectedImagePath);
-				if (!mFromCreateAilseScreenFlag) {
+				if (mFromDetailsScreenFlag) {
+					Intent intent = new Intent();
+					Bundle b = new Bundle();
+					b.putString(
+							VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+							selectedImagePath);
+					intent.putExtras(b);
+					setResult(
+							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT,
+							intent);
+					finish();
+				} else if (!mFromCreateAilseScreenFlag) {
 					Intent intent = new Intent(this, DataEntryActivity.class);
 					Bundle b = new Bundle();
 					b.putString(
