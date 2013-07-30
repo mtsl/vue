@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -72,6 +73,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	int mPrevPosition;
 	private ActionBarHandler mHandleActionBar;
 	private ScaledImageViewFactory mImageViewFactory;
+	private ImageView mDetailsAddImageToAisle = null;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -114,6 +116,26 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		// RelativeLayout bottomBar =
 		// (RelativeLayout)v.findViewById(R.id.vue_bottom_bar);
 		// bottomBar.getBackground().setAlpha(75);
+
+		mDetailsAddImageToAisle = (ImageView) v
+				.findViewById(R.id.details_add_image_to_aisle);
+		mDetailsAddImageToAisle.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(getActivity(),
+						CreateAisleSelectionActivity.class);
+				Bundle b = new Bundle();
+				b.putBoolean(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
+						true);
+				intent.putExtras(b);
+				getActivity()
+						.startActivityForResult(
+								intent,
+								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
+			}
+		});
+
 		mImageViewFactory = ScaledImageViewFactory.getInstance(mContext);
 		mImageViewFactory.clearAllViews();
 

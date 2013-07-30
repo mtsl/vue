@@ -61,8 +61,8 @@ public class VueConstants {
 	public static final String OCCASION = "occasion";
 	public static final String BOOKMARK_COUNT = "bookMarkCount";
 	public static final String IS_BOOKMARKED = "isBookmarked";
-    public static final String LIKE_OR_DISLIKE = "likeOrDislike";
-    public static final String LIKES_COUNT = "likesCount";
+	public static final String LIKE_OR_DISLIKE = "likeOrDislike";
+	public static final String LIKES_COUNT = "likesCount";
 	public static final String DIRTY_FLAG = "isDirtry";
 	public static final String AISLE_ID = "aisleId";
 	public static final String DELETE_FLAG = "deleteFlag";
@@ -80,7 +80,11 @@ public class VueConstants {
 	public static final String INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY = "invitefriendsloginactivitybundlestringkey";
 	public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
 	public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
+	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG = "fromDetailsscreentoCreateAilseScreenflag";
+	public static final String FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG = "fromDetailsscreentoDataentryScreenflag";
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
+	public static final int FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT = 64;
+	public static final int FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT = 65;
 	public static final String FACEBOOK_USER_PROFILE_PICTURE = "FACEBOOK_USER_PROFILE_PICTURE";
 	public static final String FACEBOOK_USER_EMAIL = "FACEBOOK_USER_EMAIL";
 	public static final String FACEBOOK_USER_NAME = "FACEBOOK_USER_NAME";
@@ -147,7 +151,7 @@ public class VueConstants {
 	public static final String GMAIL_USERNAME_FOR_SENDING_ERROR_TO_MAIL = "vazeerneem@gmail.com";
 	public static final String GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL = "23neemsystems";
 	public static final String GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL = "23NeemSystemDeveloper";
-	public static final String GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL = "krishna@23neem.com,surendra@23neem.com,raju.k@23neem.com,vvkrishna1989@gmail.com";
+	public static final String GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL = "krishna@23neem.com,surendra@23neem.com,raju.k@23neem.com,vvkrishna1989@gmail.com,suru.indra@gmail.com,kunche.raju@gmail.com";
 	public static final String GMAIL_SUBJECT_FOR_SENDING_ERROR_TO_MAIL = "Vue Android App Crash Report on ";
 	public static final String INVITATION_MESG = "Invitation from Vue application.";
 	public static final String FACEBOOK_GRAPHIC_OBJECT_NAME_KEY = "name";
