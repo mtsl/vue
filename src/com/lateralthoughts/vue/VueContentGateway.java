@@ -15,10 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
@@ -27,9 +25,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.lateralthoughts.vue.connectivity.VueBatteryManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
-import com.lateralthoughts.vue.service.VueContentRestService;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 //internal imports
 //volley imports

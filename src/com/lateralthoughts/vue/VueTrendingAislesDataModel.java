@@ -3,10 +3,10 @@ package com.lateralthoughts.vue;
 //android imports
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.ResultReceiver;
 import android.util.Log;
@@ -94,10 +94,14 @@ public class VueTrendingAislesDataModel {
   private ThreadPoolExecutor threadPool;
   private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
   private DataBaseManager mDbManager;
+  public boolean isDownloadFail = false;
+  public boolean cancleDownload = false;
 
   private VueTrendingAislesDataModel(Context context) {
     Log.e("Profiling", "Profining DATA CHECK VueTrendingAislesDataModel()");
     mContext = context;
+    isDownloadFail = false;
+    cancleDownload = false;
     mVueContentGateway = VueContentGateway.getInstance();
     mAisleWindowContentFactory = AisleWindowContentFactory
         .getInstance(mContext);
@@ -111,20 +115,10 @@ public class VueTrendingAislesDataModel {
     mDbManager = DataBaseManager.getInstance(mContext);
     threadPool = new ThreadPoolExecutor(mPoolSize, mMaxPoolSize, mKeepAliveTime,
         TimeUnit.SECONDS, threadsQueue);
-    if (!VueConnectivityManager.isNetworkConnected(context)) {
-      Message msg = new Message();
-      msg.obj = mDbManager.getAislesFromDB(null);
-      mHandler.sendMessage(msg);   
-      //mDbManager.getAislesFromDB(mContext, null);
-      // getAislesFromDb();
-    } else {
-      // initializeTrendingAisleContent();
-      mMoreDataAvailable = true;
-      mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-          mTrendingAislesParser);
-    }
+    loadData();
   }
 
+  
   public void registerAisleDataObserver(IAisleDataObserver observer) {
     if (!mAisleDataObserver.contains(observer))
       mAisleDataObserver.add(observer);
@@ -164,6 +158,10 @@ public class VueTrendingAislesDataModel {
             if (DEBUG)
               Log.e(TAG, "No more data is available. mOffset = " + mOffset);
           } else {
+            if(cancleDownload) {
+              cancleDownload = false;
+              return;
+            }
             parseTrendingAislesResultData(resultData.getString("result"));
             // if(mOffset > NOTIFICATION_THRESHOLD *
             // TRENDING_AISLES_BATCH_INITIAL_SIZE){
@@ -224,9 +222,6 @@ public class VueTrendingAislesDataModel {
       String imageTitle;
       AisleImageDetails imageItemDetails;
       JSONArray contentArray = null;
-      if(resultString.equals("error")) {
-    
-      }
       try {
         contentArray = handleResponce(resultString);
         if(contentArray == null) {
@@ -269,13 +264,10 @@ public class VueTrendingAislesDataModel {
           aisleItem.addAisleContent(userInfo, imageItemsArray);
           imageItemsArray.clear();
         }
-       //  db.close();
       } catch (JSONException ex1) {
         if (DEBUG)
           Log.e(TAG, "Some exception is caught? ex1 = " + ex1.toString());
-
       }
-
     }
   }
   
@@ -284,12 +276,13 @@ public class VueTrendingAislesDataModel {
     try {
       contentArray = new JSONArray(resultString);
     } catch (JSONException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     if (resultString.equals("error") || 0 == contentArray.length()) {
+     
+      isDownloadFail = true;
       mMoreDataAvailable = false;
-      if(!mMarkAislesToDelete && 0 == contentArray.length()) {
+      if(!mMarkAislesToDelete && (contentArray == null || 0 == contentArray.length())) {
         mMarkAislesToDelete = DataBaseManager.markOldAislesToDelete(mContext);
       }
       runTask(new Runnable() {
@@ -339,6 +332,7 @@ public class VueTrendingAislesDataModel {
 
   public static VueTrendingAislesDataModel getInstance(Context context) {
     if (null == sVueTrendingAislesDataModel) {
+      Log.e("Profiling", "Profiling getInstance() : new instance");
       sVueTrendingAislesDataModel = new VueTrendingAislesDataModel(context);
     }
     return sVueTrendingAislesDataModel;
@@ -369,7 +363,25 @@ public class VueTrendingAislesDataModel {
         .getTrendingAisles(mLimit, mOffset, mTrendingAislesParser);
   }
 
-  @SuppressLint("HandlerLeak")
+  public void loadData() {
+    if (!VueConnectivityManager.isNetworkConnected(mContext)) {
+      isDownloadFail = true;
+      ArrayList<AisleWindowContent> aisleContentArray = mDbManager.getAislesFromDB(null);
+      if(aisleContentArray.size() == 0) {
+        Log.e("Profiling", "Profiling aisleContentArray.size() : " + aisleContentArray.size());
+        return;
+      }
+      Message msg = new Message();
+      msg.obj = aisleContentArray;
+      mHandler.sendMessage(msg);
+    } else {
+      // initializeTrendingAisleContent();
+      mMoreDataAvailable = true;
+      mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+          mTrendingAislesParser);
+    }
+  }
+  
   protected Handler mHandler = new Handler() {
     public void handleMessage(android.os.Message msg) {
       @SuppressWarnings("unchecked")
@@ -382,29 +394,22 @@ public class VueTrendingAislesDataModel {
       for (IAisleDataObserver observer : mAisleDataObserver) {
         observer.onAisleDataUpdated(mAisleContentList.size());
       }
-      new Handler().postDelayed(new Runnable() {
-
-        @Override
+      runTask(new Runnable() {
         public void run() {
-          runTask(new Runnable() {
-            public void run() {
-              ArrayList<AisleWindowContent> aislesList = mDbManager
-                  .getAislesFromDB(null);
-              if (aislesList.size() == 0) {
-                return;
-              }
-              Message msg = new Message();
-              msg.obj = aislesList;
-              mHandler.sendMessage(msg);
-            };
-          });
-
-        }
-      }, 100);
+          ArrayList<AisleWindowContent> aislesList = mDbManager
+              .getAislesFromDB(null);
+          if (aislesList.size() == 0) {
+            return;
+          }
+          Message msg = new Message();
+          msg.obj = aislesList;
+          mHandler.sendMessage(msg);
+        };
+      });
 
     };
   };
- 
+  
 
   /**
    * to start thread pool.
@@ -414,9 +419,16 @@ public class VueTrendingAislesDataModel {
   public void runTask(Runnable task) {
     threadPool.execute(task);
   }
-
+ 
+/*  protected abstract class VueHandler  {
+    public abstract void handleMessage(android.os.Message msg);
+    
+    public void sendMessage(android.os.Message msg) {
+      handleMessage(msg);
+    }
+  }*/
   
-  private void copyDB() {
+  private static void copyDB() {
     try {
       File sd = Environment.getExternalStorageDirectory();
       File data = Environment.getDataDirectory();
