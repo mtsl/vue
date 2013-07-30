@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -38,6 +39,7 @@ public class VueApplication extends Application {
 	private int mStatusBarHeight;
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
+	private boolean newVueTrendingAislesDataModel = false;
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
 	}
@@ -184,4 +186,13 @@ public class VueApplication extends Application {
 			throw new IllegalStateException("RequestQueue not initialized");
 		}
 	}
+	
+	/*public boolean newVueTrendingAislesDataModel() {
+	  Log.e("Profiling", "Profiling newVueTrendingAislesDataModel : " + newVueTrendingAislesDataModel);
+	  return newVueTrendingAislesDataModel;
+	}*/
+	
+	/*public void setNewVueTrendingAislesDataModel (boolean createNewObject) {
+	  newVueTrendingAislesDataModel = createNewObject;
+	}*/
 }

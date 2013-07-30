@@ -76,9 +76,10 @@ public class DataBaseManager {
             .getColumnIndex(VueConstants.AISLE_ID)));
       } while (aisleIdCursor.moveToNext());
     }
+    int aislesCount = VueTrendingAislesDataModel.getInstance(context)
+    .getAisleCount();
     aisleIdCursor.close();
-    for (int i = 0; i < VueTrendingAislesDataModel.getInstance(context)
-        .getAisleCount(); i++) {
+    for (int i = 0; i < aislesCount; i++) {
       Cursor cursor = context.getContentResolver()
           .query(VueConstants.CONTENT_URI, new String[] {"COUNT(*)"}, null,
               null, null);
@@ -132,6 +133,7 @@ public class DataBaseManager {
               imgValues);
         }
       }
+      Log.e("Profiling", "Profiling inserting new aisles to db");
     }
     deleteOutDatedAisles(context);
   }
