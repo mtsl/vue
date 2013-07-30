@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 //generic android goodies
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -9,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,6 +37,8 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */{
@@ -411,6 +415,20 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			if (b != null) {
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+				if (imagePath != null) {
+					int hashCode = imagePath.hashCode();
+					 Log.i("added url", "added url getFile: "+hashCode);
+					String filename = String.valueOf(hashCode);
+					
+					FileCache fileCache = new FileCache(this);
+					  File  cacheDir = new File(
+							android.os.Environment.getExternalStorageDirectory(),
+							"LazyList/"+filename);
+					File fileName = fileCache.getFile(imagePath);
+					Utils.saveBitmap(BitmapFactory.decodeFile(imagePath), cacheDir.getAbsoluteFile());
+					mVueAiselFragment.addAisleToWindow(imagePath);
+				 
+				}
 				Log.e("AisleDetailsActivityOnActivityResult", imagePath);
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT

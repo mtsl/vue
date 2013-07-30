@@ -511,17 +511,4 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 		return null;
 	}
     
-    
- /*   private void setParams(AisleContentBrowser vFlipper,ImageView imageView,int imageCardHeight) {
-    	//int imgCardHeight =   (VueApplication.getInstance().getScreenHeight() *60) /100;
-    	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-         		 if(bitmap.getHeight() < mImageDimention.mImgHeight) {
-    		 int topBottomMargin = 24;
-    		 imageCardHeight += VueApplication.getInstance().getPixel(topBottomMargin);
-    	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-				VueApplication.getInstance().getScreenWidth(),imageCardHeight);
-    	if(vFlipper != null)
-    	vFlipper.setLayoutParams(showpieceParams);
-    	 }
-    }*/
 }

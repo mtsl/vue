@@ -187,6 +187,7 @@ public class AisleDetailsViewListLoader {
         protected Bitmap doInBackground(String... params) {
             url = params[0];
             Bitmap bmp = null; 
+            Log.i("added url", "added url listloader: "+url);
             //we want to get the bitmap and also add it into the memory cache
             
             bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeight);

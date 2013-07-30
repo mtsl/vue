@@ -37,6 +37,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Scroller;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.lateralthoughts.vue.indicators.IndicatorView;
@@ -140,11 +141,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				mTotalScreenCount = VueApplication.getInstance()
-						.getClickedWindowCount();
-				 VueApplication.getInstance().setClickedWindowCount(mTotalScreenCount+1);
-				setIndicatorr();
-				mAisleDetailsAdapter.addAisleToContentWindow(null,null,"title");
+				
+				Toast.makeText(mContext, "find it at", Toast.LENGTH_LONG).show();
+			
 			}
 		});
 
@@ -542,6 +541,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     public void onDestroy() {
     	mAisleDetailsAdapter = null;
     	super.onDestroy();
+    }
+    public void addAisleToWindow(String imgUrl) {
+    	mTotalScreenCount = VueApplication.getInstance()
+				.getClickedWindowCount();
+		 VueApplication.getInstance().setClickedWindowCount(mTotalScreenCount+1);
+		setIndicatorr();
+		mAisleDetailsAdapter.addAisleToContentWindow(null,imgUrl,"title");
     }
     private void moveIndicatorDot(String swipeDerection) {
     	int indicatorPos = 0;

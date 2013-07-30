@@ -59,12 +59,12 @@ public class BitmapLoaderUtils {
      */
     public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
     {
-    	Log.i("url dummy", "url dummy  : getBitmap url "+url);
+    	 Log.i("added url", "added url getBitmap: "+url);
         File f = mFileCache.getFile(url);
-        Log.i("url dummy", "url dummy  : getBitmap file name "+f);
+        Log.i("added url", "added url getBitmap: "+f);
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight);
-        Log.i("url dummy", "url dummy  : getBitmap bitmap is "+b);
+        Log.i("added url", "added url getBitmap: "+b);
         if(b != null){
           
             if(cacheBitmap)
@@ -155,9 +155,10 @@ public class BitmapLoaderUtils {
             }
             }
             if(bitmap != null) {
-            Log.i("url dummy", "url dummy  : decodeFile  bitmap width "+bitmap.getWidth());
+            	 Log.i("added url", "added urldecodeFile  bitmap width "+bitmap.getWidth());
+            
             } else {
-            	 Log.i("url dummy", "url dummy  : decodeFile  bitmap is null ");
+            	 Log.i("added url", "added urldecodeFile  bitmap null " );
             }
             return bitmap;
         } catch (FileNotFoundException e) {
