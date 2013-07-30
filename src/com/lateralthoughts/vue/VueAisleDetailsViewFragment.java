@@ -37,6 +37,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Scroller;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.lateralthoughts.vue.indicators.IndicatorView;
@@ -140,11 +141,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				mTotalScreenCount = VueApplication.getInstance()
-						.getClickedWindowCount();
-				 VueApplication.getInstance().setClickedWindowCount(mTotalScreenCount+1);
-				setIndicatorr();
-				mAisleDetailsAdapter.addAisleToContentWindow(null,null,"title");
+				
+				Toast.makeText(mContext, "find it at", Toast.LENGTH_LONG).show();
+			
 			}
 		});
 
@@ -161,27 +160,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				.findViewById(R.id.vue_image_indicator);
 		mIndicatorView = new IndicatorView(getActivity());
 		mIndicatorView.setId(1234);
-
-		///////////////////////////////////////////////////////////////////
-		
 		setIndicatorr();
-		/*RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		// relParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-		relParams.addRule(RelativeLayout.CENTER_VERTICAL); 
-		mVueImageIndicator.addView(mIndicatorView);
-		mTotalScreenCount = VueApplication.getInstance()
-				.getClickedWindowCount();
-		mIndicatorView.setNumberofScreens(mTotalScreenCount);
-		mIndicatorView.setDrawables(R.drawable.number_active,
-				R.drawable.bullets_bg, R.drawable.number_inactive);
-		mCurrentScreen = 1;
-		int indicatorLeftMargin = ((VueApplication.getInstance().getScreenWidth()* 95)/100)
-				/ 2 - mIndicatorView.getIndicatorBgWidht() / 2;
-		relParams.setMargins(indicatorLeftMargin, 0, 0, 0);
-		mIndicatorView.setLayoutParams(relParams);
-		mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);*/
-		////////////////////////////////////////////////////////////////////////
 		if(mAisleDetailsList != null ) {
 			
 			mAisleDetailsList.setOnScrollListener(new OnScrollListener() {
@@ -562,5 +541,29 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     public void onDestroy() {
     	mAisleDetailsAdapter = null;
     	super.onDestroy();
+    }
+    public void addAisleToWindow(String imgUrl) {
+    	mTotalScreenCount = VueApplication.getInstance()
+				.getClickedWindowCount();
+		 VueApplication.getInstance().setClickedWindowCount(mTotalScreenCount+1);
+		setIndicatorr();
+		mAisleDetailsAdapter.addAisleToContentWindow(null,imgUrl,"title");
+    }
+    private void moveIndicatorDot(String swipeDerection) {
+    	int indicatorPos = 0;
+    	int currentImagePos;
+    	int MAX_INDI_COUNT = 0;
+    	
+    	if(indicatorPos == 0 && swipeDerection.equalsIgnoreCase("left")) {
+    		
+    	} else if(indicatorPos != 0 && swipeDerection.equalsIgnoreCase("left")) {
+    		
+    	} else if(indicatorPos == 0 && swipeDerection.equalsIgnoreCase("right")) {
+    		
+    	} else if(indicatorPos == MAX_INDI_COUNT && swipeDerection.equalsIgnoreCase("right")) {
+    		
+    	} else if(indicatorPos == MAX_INDI_COUNT && swipeDerection.equalsIgnoreCase("left")) {
+    		
+    	}
     }
 }

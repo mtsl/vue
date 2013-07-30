@@ -615,7 +615,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         imgDetails.mAvailableWidth = addedBitmap.getWidth();
         } 
         imgDetails.mTitle = title;
-        imgDetails.mImageUrl = "http://ecx.images-amazon.com/images/I/31WPX7Qn3wL.jpg";
+       // imgDetails.mImageUrl = "http://ecx.images-amazon.com/images/I/31WPX7Qn3wL.jpg";
+        imgDetails.mImageUrl = uri;
+        Log.i("added url", "added url aisleadapter1: "+uri);
         imgDetails.mDetalsUrl = "";
         imgDetails.mId = "";
         imgDetails.mStore = "";

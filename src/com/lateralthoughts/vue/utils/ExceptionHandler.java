@@ -1,13 +1,14 @@
 package com.lateralthoughts.vue.utils;
 
-import java.io.*;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.logging.Logger;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import android.app.Activity;
-import android.os.Looper;
 import android.os.Process;
 import android.util.Log;
+
+import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.logging.Logger;
 
 public class ExceptionHandler implements
 		java.lang.Thread.UncaughtExceptionHandler {

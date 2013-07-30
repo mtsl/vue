@@ -47,9 +47,9 @@ public class FileCache {
 	public File getFile(String url) {
 		// I identify images by hashcode. Not a perfect solution, good for the
 		// demo.
-		Log.i("url dummy", "url dummy  : getFile url "+url);
+		 Log.i("added url", "added url getFile: "+url);
 		int hashCode = url.hashCode();
-		Log.i("url dummy", "url dummy  : getFile url hashCode "+hashCode);
+		 Log.i("added url", "added url getFile: "+hashCode);
 		String filename = String.valueOf(hashCode);
 		// Another possible solution (thanks to grantland)
 		// String filename = URLEncoder.encode(url);
