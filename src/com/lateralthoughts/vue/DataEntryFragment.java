@@ -432,6 +432,7 @@ public class DataEntryFragment extends Fragment {
 		mLookingForBigText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				hideAllEditableTextboxes();
 				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				mOccasionPopup.setVisibility(View.GONE);
 				mOccasionListviewLayout.setVisibility(View.GONE);
@@ -455,6 +456,7 @@ public class DataEntryFragment extends Fragment {
 		mOccassionBigText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				hideAllEditableTextboxes();
 				mLookingForPopup.setVisibility(View.GONE);
 				mLookingForListviewLayout.setVisibility(View.GONE);
 				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);

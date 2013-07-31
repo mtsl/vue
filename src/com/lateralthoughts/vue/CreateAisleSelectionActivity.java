@@ -43,7 +43,9 @@ public class CreateAisleSelectionActivity extends Activity {
 	private boolean mFromCreateAilseScreenFlag = false,
 			mFromDetailsScreenFlag = false;
 	private String mCameraImageName = null;
-	private boolean mGalleryClickedFlag = false, mCameraClickedFlag = false;
+	private boolean mGalleryClickedFlag = false, mCameraClickedFlag = false,
+			mAmazonClickedFlag = false, mEtsyClickedFlag = false,
+			mExtraClickedFlag = false;
 	private static final int BOX_ANIMATION_DURATION = 600;
 	private static final int CIRCLE_ANIMATION_DURATION = 1000;
 	private static final float ZOOM_START_POSITION = 0f;
@@ -217,6 +219,14 @@ public class CreateAisleSelectionActivity extends Activity {
 						galleryFunctionality();
 					} else if (mCameraClickedFlag) {
 						cameraFunctionality();
+					} else if (mAmazonClickedFlag) {
+						amazonFunctionality();
+					} else if (mEtsyClickedFlag) {
+						// Etsy clicked functionality.
+						finish();
+					} else if (mExtraClickedFlag) {
+						// Extra clicked functionality
+						finish();
 					} else {
 						finish();
 					}
@@ -230,6 +240,7 @@ public class CreateAisleSelectionActivity extends Activity {
 			mBoxWithCircleLayout.setVisibility(View.GONE);
 			mBoxWithCircleLayout.setVisibility(View.VISIBLE);
 			mBoxWithCircleLayout.startAnimation(mTopToBottomAnimation);
+			// Gallery
 			mTopLeftGreenCircle.setOnTouchListener(new OnTouchListener() {
 
 				@Override
@@ -237,6 +248,59 @@ public class CreateAisleSelectionActivity extends Activity {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
 						mGalleryClickedFlag = true;
 						mTopLeftGreenCircle.startAnimation(mBounceAnimation);
+						return false;
+					}
+					return false;
+				}
+			});
+			// Etsy
+			mTotalBottom.setOnTouchListener(new OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View arg0, MotionEvent event) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mEtsyClickedFlag = true;
+						mTotalBottom.startAnimation(mBounceAnimation);
+						return false;
+					}
+					return false;
+				}
+			});
+			// Extra
+			mBottomRightGreenCircle.setOnTouchListener(new OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View arg0, MotionEvent event) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mExtraClickedFlag = true;
+						mBottomRightGreenCircle
+								.startAnimation(mBounceAnimation);
+						return false;
+					}
+					return false;
+				}
+			});
+			// Amazon
+			mTopRightGreenCircle.setOnTouchListener(new OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View arg0, MotionEvent event) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mAmazonClickedFlag = true;
+						mTopRightGreenCircle.startAnimation(mBounceAnimation);
+						return false;
+					}
+					return false;
+				}
+			});
+			// Camera...
+			mBottomLeftGreenCircle.setOnTouchListener(new OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mCameraClickedFlag = true;
+						mBottomLeftGreenCircle.startAnimation(mBounceAnimation);
 						return false;
 					}
 					return false;
@@ -259,31 +323,11 @@ public class CreateAisleSelectionActivity extends Activity {
 					mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation);
 				}
 			}); //
-			// Camera...
-			mBottomLeftGreenCircle.setOnTouchListener(new OnTouchListener() {
-
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						mCameraClickedFlag = true;
-						mBottomLeftGreenCircle.startAnimation(mBounceAnimation);
-						return false;
-					}
-					return false;
-				}
-			});
 			mDataentryPopupMainLayout.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View arg0) {
 					mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation);
-				}
-			});
-			mTopRightGreenCircle.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					amazonFunctionality();
 				}
 			});
 		} else {
@@ -431,6 +475,14 @@ public class CreateAisleSelectionActivity extends Activity {
 								galleryFunctionality();
 							} else if (mCameraClickedFlag) {
 								cameraFunctionality();
+							} else if (mAmazonClickedFlag) {
+								amazonFunctionality();
+							} else if (mEtsyClickedFlag) {
+								// Etsy clicked functionality.
+								finish();
+							} else if (mExtraClickedFlag) {
+								// Extra clicked functionality
+								finish();
 							} else {
 								finish();
 							}
@@ -444,6 +496,7 @@ public class CreateAisleSelectionActivity extends Activity {
 			mBottomBoxWithCircleLayout.setVisibility(View.VISIBLE);
 			mBottomBoxWithCircleLayout
 					.startAnimation(mBottomTopToBottomAnimation);
+			// Gallery
 			mBottomTopLeftGreenCircle.setOnTouchListener(new OnTouchListener() {
 
 				@Override
@@ -457,21 +510,49 @@ public class CreateAisleSelectionActivity extends Activity {
 					return false;
 				}
 			});
-			mBounceAnimation.setAnimationListener(new AnimationListener() {
-				@Override
-				public void onAnimationStart(Animation arg0) {
-				}
+			// Etsy
+			mBottomTotalTop.setOnTouchListener(new OnTouchListener() {
 
 				@Override
-				public void onAnimationRepeat(Animation arg0) {
-				}
-
-				@Override
-				public void onAnimationEnd(Animation arg0) {
-					mBottomBoxWithCircleLayout
-							.startAnimation(mBottomBottomToTopAnimation);
+				public boolean onTouch(View arg0, MotionEvent event) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mEtsyClickedFlag = true;
+						mBottomTotalTop.startAnimation(mBounceAnimation);
+						return false;
+					}
+					return false;
 				}
 			});
+			// Extra
+			mBottomBottomRightGreenCircle
+					.setOnTouchListener(new OnTouchListener() {
+
+						@Override
+						public boolean onTouch(View arg0, MotionEvent event) {
+							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								mExtraClickedFlag = true;
+								mBottomBottomRightGreenCircle
+										.startAnimation(mBounceAnimation);
+								return false;
+							}
+							return false;
+						}
+					});
+			// Amazon
+			mBottomTopRightGreenCircle
+					.setOnTouchListener(new OnTouchListener() {
+
+						@Override
+						public boolean onTouch(View arg0, MotionEvent event) {
+							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								mAmazonClickedFlag = true;
+								mBottomTopRightGreenCircle
+										.startAnimation(mBounceAnimation);
+								return false;
+							}
+							return false;
+						}
+					});
 			// Camera...
 			mBottomBottomLeftGreenCircle
 					.setOnTouchListener(new OnTouchListener() {
@@ -487,6 +568,21 @@ public class CreateAisleSelectionActivity extends Activity {
 							return false;
 						}
 					});
+			mBounceAnimation.setAnimationListener(new AnimationListener() {
+				@Override
+				public void onAnimationStart(Animation arg0) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation arg0) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation arg0) {
+					mBottomBoxWithCircleLayout
+							.startAnimation(mBottomBottomToTopAnimation);
+				}
+			});
 			mDataentryPopupMainLayout.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
@@ -494,13 +590,6 @@ public class CreateAisleSelectionActivity extends Activity {
 							.startAnimation(mBottomBottomToTopAnimation);
 				}
 			});
-			mBottomTopRightGreenCircle
-					.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View arg0) {
-							amazonFunctionality();
-						}
-					});
 		}
 	}
 
