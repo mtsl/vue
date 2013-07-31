@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.ResultReceiver;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -365,6 +366,7 @@ public class VueTrendingAislesDataModel {
 
   public void loadData() {
     if (!VueConnectivityManager.isNetworkConnected(mContext)) {
+      Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT).show();
       isDownloadFail = true;
       ArrayList<AisleWindowContent> aisleContentArray = mDbManager.getAislesFromDB(null);
       if(aisleContentArray.size() == 0) {

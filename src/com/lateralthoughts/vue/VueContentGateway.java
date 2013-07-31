@@ -20,6 +20,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
@@ -82,6 +83,7 @@ public class VueContentGateway {
 
         boolean isConnection = VueConnectivityManager.isNetworkConnected(mContext);
         if(!isConnection) {
+          Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_LONG).show();
             Log.e(TAG, "network connection No");
             return status;
           } else if(isConnection) {

@@ -187,20 +187,11 @@ public class VueConnectivityManager {
   public static boolean isNetworkConnected(Context context) {
     boolean isConneted = true;
     if (isAirplaneModeOn(context)) {
-      if (!isTostShown) {
-        isTostShown = true;
-      Toast.makeText(context, R.string.no_network, Toast.LENGTH_LONG).show();
-      }
       isConneted = false;
     } else if (!VueConnectivityManager.checkConnection(context, false)) {
       isConneted = false;
-      if (!isTostShown) {
-        isTostShown = true;
-        Toast.makeText(context, R.string.no_network, Toast.LENGTH_SHORT).show();
-      }
-    } else {
-      isTostShown = false;
-    }
+      
+    } 
     return isConneted;
   }
   
