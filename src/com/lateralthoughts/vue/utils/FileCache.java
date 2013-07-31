@@ -23,10 +23,10 @@ public class FileCache {
 			        context.getExternalCacheDir(),
 					"LazyList");
 			mVueAppCameraPicsDir = new File(
-					android.os.Environment.getExternalStorageDirectory(),
+					context.getExternalFilesDir(null),
 					VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
 			mVueAppResizedImagesDir = new File(
-					android.os.Environment.getExternalStorageDirectory(),
+					context.getExternalFilesDir(null),
 					VueConstants.VUE_APP_RESIZED_PICTURES_FOLDER);
 		} else {
 			cacheDir = context.getCacheDir();

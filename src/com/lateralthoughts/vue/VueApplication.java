@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -105,10 +104,6 @@ public class VueApplication extends Application {
 		// R.drawable.aisle_content_empty;
 		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 				crittercismConfig);
-
-		FileCache fileCache = new FileCache(VueApplication.getInstance());
-		fileCache.clearVueAppResizedPictures();
-		fileCache.clearVueAppCameraPictures();
 	}
 
 	public static VueApplication getInstance() {
