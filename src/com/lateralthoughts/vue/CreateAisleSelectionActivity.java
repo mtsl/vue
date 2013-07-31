@@ -38,8 +38,8 @@ public class CreateAisleSelectionActivity extends Activity {
 	private LinearLayout mBoxWithCircleLayout, mBottomBoxWithCircleLayout;
 	private AnimatorSet mCircleAnimation, mBottomCircleAnimation;
 	private Animation mTopToBottomAnimation, mBottomToTopAnimation,
-			mBottomBottomToTopAnimation, mBottomTopToBottomAnimation,
-			mBounceAnimation = null;
+			mBottomBottomToTopAnimation, mBottomTopToBottomAnimation/*,*/
+			/*mBounceAnimation = null*/;
 	private boolean mFromCreateAilseScreenFlag = false,
 			mFromDetailsScreenFlag = false;
 	private String mCameraImageName = null;
