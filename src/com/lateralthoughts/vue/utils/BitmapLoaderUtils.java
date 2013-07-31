@@ -59,12 +59,12 @@ public class BitmapLoaderUtils {
      */
     public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
     {
-    	 Log.i("added url", "added url getBitmap: "+url);
+    	 Log.i("added url", "added url  getBitmap "+url);
         File f = mFileCache.getFile(url);
-        Log.i("added url", "added url getBitmap: "+f);
+        Log.i("added url", "added url  getBitmap "+f);
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight);
-        Log.i("added url", "added url getBitmap: "+b);
+        Log.i("added url", "added url  getBitmap "+b);
         if(b != null){
           
             if(cacheBitmap)
@@ -103,6 +103,8 @@ public class BitmapLoaderUtils {
 
     //decodes image and scales it to reduce memory consumption
     private Bitmap decodeFile(File f, int bestHeight){
+        Log.i("added url", "added url in  decodeFile: bestheight is "+bestHeight );
+   
         try {
             //decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -114,6 +116,8 @@ public class BitmapLoaderUtils {
             //final int REQUIRED_SIZE = mScreenWidth/2;
             int height=o.outHeight;
             int width = o.outWidth;
+            Log.i("added url", "added urldecodeFile  bitmap o.height : "+height );
+            Log.i("added url", "added urldecodeFile  bitmap o.width : "+width );
           int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth();
             
             int scale=1;
@@ -155,18 +159,22 @@ public class BitmapLoaderUtils {
             }
             }
             if(bitmap != null) {
-            	 Log.i("added url", "added urldecodeFile  bitmap width "+bitmap.getWidth());
+            	 Log.i("added url", "added url  urldecodeFile width "+bitmap.getWidth());
+            	 
             
             } else {
             	 Log.i("added url", "added urldecodeFile  bitmap null " );
             }
             return bitmap;
         } catch (FileNotFoundException e) {
+        	Log.i("added url", "added urldecodeFile  filenotfound exception " );
         } 
         catch (IOException e) {
+        	Log.i("added url", "added urldecodeFile  io exception " );
             e.printStackTrace();
         }
         catch (Throwable ex){
+        	Log.i("added url", "added urldecodeFile  throwable exception " );
             ex.printStackTrace();
             if(ex instanceof OutOfMemoryError)
                mAisleImagesCache.clear();

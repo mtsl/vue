@@ -293,7 +293,6 @@ public class DataEntryFragment extends Fragment {
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				mInputMethodManager.showSoftInput(mSaySomethingAboutAisle, 0);
 				final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
 						.getSystemService(Context.INPUT_METHOD_SERVICE);
 				inputMethodManager.toggleSoftInputFromWindow(
@@ -730,6 +729,8 @@ public class DataEntryFragment extends Fragment {
 		mCategoryListviewLayout.setVisibility(View.GONE);
 		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		mSaySomeThingEditParent.setVisibility(View.VISIBLE);
+		mSaySomethingAboutAisle.setVisibility(View.GONE);
 	}
 
 	public void lookingForInterceptListnerFunctionality() {

@@ -617,11 +617,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         imgDetails.mTitle = title;
        // imgDetails.mImageUrl = "http://ecx.images-amazon.com/images/I/31WPX7Qn3wL.jpg";
         imgDetails.mImageUrl = uri;
-        Log.i("added url", "added url aisleadapter1: "+uri);
+        Log.i("added url", "added url aisleDetailsviewadapter "+uri);
         imgDetails.mDetalsUrl = "";
         imgDetails.mId = "";
         imgDetails.mStore = "";
-        mImageDetailsArr.add(0,imgDetails);
+        mImageDetailsArr.add(mCurrentDispImageIndex,imgDetails);
         mWindowContentTemp.addAisleContent( mWindowContentTemp.getAisleContext(), mImageDetailsArr);
         mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
         notifyAdapter();
