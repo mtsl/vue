@@ -1,16 +1,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/dataentrypopup_mainlayout"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#90000000" >
 
+    
     <RelativeLayout
+        android:id="@+id/data_entry_popup_mainsublayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/data_entry_popup_mainsublayout"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="16dip" >
+        android:layout_marginTop="16dip"
+        android:visibility="visible" >
 
         <LinearLayout
             android:id="@+id/boxwithcirclelayout"
@@ -150,6 +152,169 @@
             android:layout_marginLeft="32dip"
             android:layout_marginTop="170dip"
             android:layout_toRightOf="@+id/boxwithcirclelayout"
+            android:background="@drawable/whitecircle" >
+
+            <View
+                android:layout_width="56dip"
+                android:layout_height="56dip"
+                android:layout_centerInParent="true"
+                android:background="@drawable/graycircle" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Extra"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
+    </RelativeLayout>
+   
+
+    <RelativeLayout
+        android:id="@+id/data_entry_bottom_popup_mainsublayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:paddingBottom="60dip" >
+
+        <LinearLayout
+            android:id="@+id/bottomboxwithcirclelayout"
+            android:layout_width="96dip"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/bottom_total_top"
+                android:layout_width="60dip"
+                android:layout_height="60dip"
+                android:layout_above="@+id/bottomboxwithcirclelayout"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dip"
+                android:background="@drawable/whitecircle" >
+
+                <View
+                    android:layout_width="56dip"
+                    android:layout_height="56dip"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/graycircle" />
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Etsy"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/bottom_circle"
+                android:layout_width="96dip"
+                android:layout_height="96dip"
+                android:background="@drawable/circle" >
+
+                <ImageView
+                    android:id="@+id/createaisel_bg"
+                    android:layout_width="48dip"
+                    android:layout_height="48dip"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/createaisle" />
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/box"
+                android:layout_width="42dip"
+                android:layout_height="120dip"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/verticalsqure" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/bottom_topleftgreencircle"
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:layout_marginRight="24dip"
+            android:layout_marginTop="56dip"
+            android:layout_toLeftOf="@+id/bottomboxwithcirclelayout"
+            android:background="@drawable/whitecircle" >
+
+            <View
+                android:layout_width="56dip"
+                android:layout_height="56dip"
+                android:layout_centerInParent="true"
+                android:background="@drawable/graycircle" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Gallery"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/bottom_toprightgreencircle"
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:layout_marginLeft="24dip"
+            android:layout_marginTop="56dip"
+            android:layout_toRightOf="@+id/bottomboxwithcirclelayout"
+            android:background="@drawable/whitecircle" >
+
+            <View
+                android:layout_width="56dip"
+                android:layout_height="56dip"
+                android:layout_centerInParent="true"
+                android:background="@drawable/graycircle" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Amazon"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/emtyview"
+            android:layout_width="8dip"
+            android:layout_height="64dip"
+            android:layout_centerHorizontal="true" />
+
+        <RelativeLayout
+            android:id="@+id/bottom_bottomleftgreencircle"
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:layout_marginTop="162dip"
+            android:layout_toLeftOf="@+id/bottomboxwithcirclelayout"
+            android:background="@drawable/whitecircle" >
+
+            <View
+                android:layout_width="56dip"
+                android:layout_height="56dip"
+                android:layout_centerInParent="true"
+                android:background="@drawable/graycircle" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Camera"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/bottom_bottomrightgreencircle"
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:layout_marginTop="162dip"
+            android:layout_toRightOf="@+id/bottomboxwithcirclelayout"
             android:background="@drawable/whitecircle" >
 
             <View
