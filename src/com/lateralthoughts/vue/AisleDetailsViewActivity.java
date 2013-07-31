@@ -416,20 +416,21 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 				if (imagePath != null) {
-					int hashCode = imagePath.hashCode();
-					 Log.i("added url", "added url getFile: "+hashCode);
-					String filename = String.valueOf(hashCode);
+				//	int hashCode = imagePath.hashCode();
 					
-					FileCache fileCache = new FileCache(this);
-					  File  cacheDir = new File(
-							android.os.Environment.getExternalStorageDirectory(),
-							"LazyList/"+filename);
-					File fileName = fileCache.getFile(imagePath);
-					Utils.saveBitmap(BitmapFactory.decodeFile(imagePath), cacheDir.getAbsoluteFile());
+				//	String filename = String.valueOf(hashCode);
+					 /* File  cacheDir = new File(
+							  getExternalCacheDir(),
+							"LazyList/"+filename);*/
+					 FileCache fileCache = new FileCache(this);
+					 File f = fileCache.getFile(imagePath);
+					 Log.e("Detailsscreen", "hash code " + f.getPath());
+					 Log.e("Detailsscreen", "image path " + imagePath);
+					Utils.saveBitmap(BitmapFactory.decodeFile(imagePath), f );
 					mVueAiselFragment.addAisleToWindow(imagePath);
 				 
 				}
-				Log.e("AisleDetailsActivityOnActivityResult", imagePath);
+				 
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT) {
