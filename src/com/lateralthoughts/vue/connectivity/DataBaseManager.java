@@ -66,6 +66,7 @@ public class DataBaseManager {
    * @param Context context.
    * */
   public static void addTrentingAislesFromServerToDB(Context context) {
+	  int imgCount = 0;
     Cursor aisleIdCursor = context.getContentResolver().query(
         VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_ID}, null,
         null, null);
@@ -85,7 +86,7 @@ public class DataBaseManager {
               null, null);
       String strCount = "";
       int maxId = 0;
-      int imgCount = 0;
+      
       if (cursor.moveToFirst()) {
         strCount = cursor.getString(cursor.getColumnIndex("COUNT(*)"));
       }
@@ -129,8 +130,13 @@ public class DataBaseManager {
         } else {
           imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
           imgValues.put(VueConstants.ID, String.format(FORMATE, ++imgCount));
-          context.getContentResolver().insert(VueConstants.IMAGES_CONTENT_URI,
-              imgValues);
+          try{
+        	  context.getContentResolver().insert(VueConstants.IMAGES_CONTENT_URI,
+                      imgValues);
+          }catch(Exception e) {
+        	  e.printStackTrace();
+          }
+        
         }
       }
       Log.e("Profiling", "Profiling inserting new aisles to db");

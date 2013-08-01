@@ -430,19 +430,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 				if (imagePath != null) {
-					// int hashCode = imagePath.hashCode();
-
-					// String filename = String.valueOf(hashCode);
-					/*
-					 * File cacheDir = new File( getExternalCacheDir(),
-					 * "LazyList/"+filename);
-					 */
-					FileCache fileCache = new FileCache(this);
-					File f = fileCache.getFile(imagePath);
-					Log.e("Detailsscreen", "hash code " + f.getPath());
-					Log.e("Detailsscreen", "image path " + imagePath);
-					Utils.saveBitmap(BitmapFactory.decodeFile(imagePath), f);
-					mVueAiselFragment.addAisleToWindow(imagePath);
+					 FileCache fileCache = new FileCache(this);
+					 File f = fileCache.getFile(imagePath);
+					 Log.e("Detailsscreen", "hash code " + f.getPath());
+					 Log.e("Detailsscreen", "image path " + imagePath);
+					Utils.saveBitmap(BitmapFactory.decodeFile(imagePath), f );
+					mVueAiselFragment.addAisleToWindow(BitmapFactory.decodeFile(imagePath),imagePath);
 
 				}
 

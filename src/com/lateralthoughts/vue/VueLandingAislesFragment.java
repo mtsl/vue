@@ -69,7 +69,14 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 		//TODO: any particular state that we want to restore?
 		
 	}
-
+public void notifyAdapters() {
+	if(mLeftColumnAdapter != null) {
+	mLeftColumnAdapter.notifyDataSetChanged();
+	}
+	if(mRightColumnAdapter != null) {
+	mRightColumnAdapter.notifyDataSetChanged();
+	}
+}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 	    

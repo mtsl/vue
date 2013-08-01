@@ -22,7 +22,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	private SharedPreferences mSharedPreferencesObj;
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
-
+	VueLandingAislesFragment fragment;
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -59,6 +59,11 @@ public class VueLandingPageActivity extends BaseActivity {
 			}
 
 		}
+		fragment = (VueLandingAislesFragment) getSupportFragmentManager()
+				.findFragmentById(
+						R.id.aisles_view_fragment); 
+				
+			 
 	}
 
 	@Override
@@ -135,6 +140,10 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		if(fragment != null) {
+			fragment.notifyAdapters();
+		}
+		
 		new Handler().postDelayed(new Runnable() {
 
 			@Override

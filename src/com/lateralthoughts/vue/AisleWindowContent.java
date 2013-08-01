@@ -90,13 +90,7 @@ public class AisleWindowContent
     }
     
     private boolean udpateImageUrlsForDevice(){
-    	String regularUrl;
-    	String urlReusablePart;
-    	String customFittedSizePart;
-    	int index = -1;
-    	StringBuilder sb;
     	AisleImageDetails imageDetails;
-
     	for (int i=0;i<mAisleImagesList.size();i++){
     		
     		imageDetails = mAisleImagesList.get(i);
@@ -104,25 +98,30 @@ public class AisleWindowContent
     		    mWindowSmallestHeight = imageDetails.mAvailableHeight;
     	}
     	for (int i=0;i<mAisleImagesList.size();i++){
-    		sb = new StringBuilder();
-    		imageDetails = mAisleImagesList.get(i);
-    		regularUrl = imageDetails.mImageUrl;
-    		index = regularUrl.indexOf(IMAGE_RES_SPEC_REGEX); 
-    		if(-1 != index){
-    			//we have a match
-    			urlReusablePart = regularUrl.split(IMAGE_RES_SPEC_REGEX)[0];
-    			sb.append(urlReusablePart);
-    			customFittedSizePart = String.format(mImageFormatSpecifier, mWindowSmallestHeight);  
-    			sb.append(customFittedSizePart);
-    			imageDetails.mCustomImageUrl = sb.toString();
-    		}else{
-    			imageDetails.mCustomImageUrl = regularUrl;
-    		}
-    		imageDetails.mCustomImageUrl = Utils.addImageInfo(imageDetails.mCustomImageUrl,imageDetails.mAvailableWidth,imageDetails.mAvailableHeight);
+    
+    		prepareCustomUrl(mAisleImagesList.get(i));
     	}
     	return true;
     }
-    
+    public void prepareCustomUrl(AisleImageDetails imageDetails ) {
+    	StringBuilder sb = new StringBuilder();
+    	String urlReusablePart;
+    	String customFittedSizePart;
+    	String regularUrl = imageDetails.mImageUrl;
+    	int index = -1;
+		index = regularUrl.indexOf(IMAGE_RES_SPEC_REGEX); 
+		if(-1 != index){
+			//we have a match
+			urlReusablePart = regularUrl.split(IMAGE_RES_SPEC_REGEX)[0];
+			sb.append(urlReusablePart);
+			customFittedSizePart = String.format(mImageFormatSpecifier, mWindowSmallestHeight);  
+			sb.append(customFittedSizePart);
+			imageDetails.mCustomImageUrl = sb.toString();
+		}else{
+			imageDetails.mCustomImageUrl = regularUrl;
+		}
+		imageDetails.mCustomImageUrl = Utils.addImageInfo(imageDetails.mCustomImageUrl,imageDetails.mAvailableWidth,imageDetails.mAvailableHeight);
+    }
     public AisleContext getAisleContext(){
     	return mContext;
     }
