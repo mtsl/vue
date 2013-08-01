@@ -423,10 +423,20 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY); String
 				 * saysomethingAboutAisle = b .getString(VueConstants.
 				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE
-				 * ); String findAt = b .getString(VueConstants.
-				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT);
+				 * ); 
 				 */
 
+				String findAt = b .getString(VueConstants.
+						  FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT);
+						  if (mVueAiselFragment == null) {
+					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisle_details_view_fragment);
+				};
+				if(findAt != null)
+				{
+					mVueAiselFragment.mEditTextFindAt.setText(findAt);
+				}
+				
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 				if (imagePath != null) {
@@ -444,6 +454,15 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT) {
 			Bundle b = data.getExtras();
 			if (b != null) {
+				if (mVueAiselFragment == null) {
+					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisle_details_view_fragment);
+				}
+				String lookingFor,occation,category,saySomething;
+				AisleContext aisleInfo = mVueAiselFragment.getAisleContext();
+				lookingFor = aisleInfo.mLookingForItem;
+				occation =  aisleInfo.mOccasion;
+				category = aisleInfo.mCategory;
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 				Intent intent = new Intent(this, DataEntryActivity.class);
@@ -459,21 +478,17 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 						false);
 				b1.putString(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
-						null);
+						lookingFor);
 				b1.putString(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
-						null);
+						occation);
 				b1.putString(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
-						null);
+						category);
 				b1.putString(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
 						null);
 				String findAt = null;
-				if (mVueAiselFragment == null) {
-					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.aisle_details_view_fragment);
-				}
 				findAt = mVueAiselFragment.mEditTextFindAt.getText().toString();
 				b1.putString(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,

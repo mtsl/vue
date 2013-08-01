@@ -35,7 +35,9 @@ public class DataEntryActivity extends BaseActivity {
 				getSupportActionBar().setTitle(
 						getResources().getString(
 								R.string.add_imae_to_aisle_screen_title));
-				if (b.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG)) {
+				fragment.mIsUserAisleFlag = b
+						.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG);
+				if (fragment.mIsUserAisleFlag) {
 					fragment.mLookingForPopup.setVisibility(View.GONE);
 					fragment.mLookingForBigText
 							.setBackgroundColor(Color.TRANSPARENT);

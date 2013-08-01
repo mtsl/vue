@@ -112,6 +112,7 @@ public class DataEntryFragment extends Fragment {
 	private ProgressBar mAisleBgProgressbar;
 	private GestureDetector mDetector;
 	public boolean mFromDetailsScreenFlag = false;
+	public boolean mIsUserAisleFlag = false;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -820,18 +821,20 @@ public class DataEntryFragment extends Fragment {
 					b.putString(
 							VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 							mImagePath);
-					b.putString(
-							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
-							mLookingForBigText.getText().toString());
-					b.putString(
-							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
-							mOccassionBigText.getText().toString());
-					b.putString(
-							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
-							mCategoryText.getText().toString());
-					b.putString(
-							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
-							mSaySomethingAboutAisle.getText().toString());
+					if (!mIsUserAisleFlag) {
+						b.putString(
+								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
+								mLookingForBigText.getText().toString());
+						b.putString(
+								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
+								mOccassionBigText.getText().toString());
+						b.putString(
+								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
+								mCategoryText.getText().toString());
+						b.putString(
+								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
+								mSaySomethingAboutAisle.getText().toString());
+					}
 					b.putString(
 							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
 							mFindAtText.getText().toString());
