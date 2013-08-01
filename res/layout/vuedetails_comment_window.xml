@@ -15,9 +15,9 @@
             android:layout_width="16dp"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_marginBottom="12dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="6dp"
             android:src="@drawable/comment" />
 
         <TextView
@@ -25,9 +25,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_marginBottom="12dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="6dp"
             android:layout_toRightOf="@+id/vuewndow_comment_img"
             android:gravity="center_vertical"
             android:singleLine="true"
@@ -46,9 +46,9 @@
             android:layout_width="16dp"
            android:layout_height="24dp"
            android:layout_centerVertical="true"
-            android:layout_marginBottom="12dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="6dp"
             android:layout_toLeftOf="@+id/vuewndow_bookmark_count"
             android:src="@drawable/addimage01" />
 
@@ -56,9 +56,9 @@
             android:id="@+id/vuewndow_bookmark_count"
             style="@style/vue_comeents_text_align"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="12dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginRight="12dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="6dp"
             android:text="12"
             android:textColor="@color/black" />
     </RelativeLayout>
@@ -76,10 +76,10 @@
            android:layout_width="16dp"
            android:layout_height="24dp"
            android:layout_centerVertical="true"
-            android:layout_marginBottom="12dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginLeft="12dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="6dp"
             android:layout_toLeftOf="@+id/vuewndow_lik_count"
             android:src="@drawable/thumb_up" />
 
@@ -87,9 +87,9 @@
             android:id="@+id/vuewndow_lik_count"
             style="@style/vue_comeents_text_align"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="12dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="6dp"
             android:text="52"
             android:textColor="@color/black" />
     </RelativeLayout>

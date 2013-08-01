@@ -6,6 +6,7 @@ import com.lateralthoughts.vue.AisleDetailsViewAdapter;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueAisleDetailsViewFragment;
 import com.lateralthoughts.vue.VueApplication;
 
 import android.content.Context;
@@ -151,7 +152,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
 	                    ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex+1);
 	                    if(mSwipeListener != null) {
-                        	mSwipeListener.onAisleSwipe("Left");
+                        	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT);
                         	//mSwipeListener.onDissAllowListResponse();
                         }
 	                    setBrowserParams(nextView);
@@ -220,7 +221,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                       int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
 	                       ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex-1);
 	                       if(mSwipeListener != null) {
-                           	mSwipeListener.onAisleSwipe("Right");
+                           	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_RIGHT_TO_LEFT);
                           // 	mSwipeListener.onDissAllowListResponse();
                            }
 	                       setBrowserParams(nextView);

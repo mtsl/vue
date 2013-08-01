@@ -171,9 +171,17 @@ public class VueApplication extends Application {
 
 	public int getVueDetailsCardHeight() {
 		if (mVueDetailsCardHeight == 0) {
-			int topBottomMargin = 20;
+			int statusBarHeight = getmStatusBarHeight();
+			if(statusBarHeight == 0) {
+				statusBarHeight = 24;
+			}
+			//48 actionbar height
+			//4+4 top bottom margins
+			//8 dot indicator height.
+			int topBottomMargin = 48+4+4+8+statusBarHeight;
+			topBottomMargin = getPixel(topBottomMargin);
 			mVueDetailsCardHeight = mScreenHeight
-					- getPixel(topBottomMargin + topBottomMargin);
+					- getPixel(topBottomMargin);
 		}
 		return mVueDetailsCardHeight;
 	}

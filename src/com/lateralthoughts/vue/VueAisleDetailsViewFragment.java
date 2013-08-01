@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,6 +64,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     private Context mContext;
     public  static final  String  SCREEN_NAME = "DETAILS_SCREEN";
     private static final int AISLE_HEADER_SHOW_TIME = 5000;
+    public static final String SWIPE_LEFT_TO_RIGHT = "LEFT";
+    public static final String SWIPE_RIGHT_TO_LEFT = "RIGHT";
     private VueContentGateway mVueContentGateway;
     AisleDetailsViewAdapter mAisleDetailsAdapter;  
     private ListView mAisleDetailsList;
@@ -73,7 +76,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     int mListCount =5;
     TextView mVueUserName;
     int mCurentIndPosition;
-    static final int MAX_DOTS_TO_SHOW = 3;
+    static final int MAX_DOTS_TO_SHOW_LIMIT= 5;
     int mPrevPosition;
     private ActionBarHandler mHandleActionBar;
     private ScaledImageViewFactory mImageViewFactory;
@@ -175,8 +178,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
 			}
 		});
-		//RelativeLayout bottomBar = (RelativeLayout)v.findViewById(R.id.vue_bottom_bar);
-		//bottomBar.getBackground().setAlpha(75);
+		RelativeLayout bottomBar = (RelativeLayout)v.findViewById(R.id.vue_bottom_bar);
+		bottomBar.getBackground().setAlpha(25);
 		 mImageViewFactory  = ScaledImageViewFactory.getInstance(mContext);
 		 mImageViewFactory.clearAllViews();
 		 mAddVueAisle = (ImageView) v.findViewById(R.id.vue_aisle);
@@ -277,9 +280,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 									LayoutParams.MATCH_PARENT,
 									LayoutParams.WRAP_CONTENT);
 							//get the pixel equivalent to given dp value
-							int leftMargin = VueApplication.getInstance().getPixel(16);
-							int rightMargin = VueApplication.getInstance().getPixel(28);
-							int topBottomMargin = VueApplication.getInstance().getPixel(12);
+							int leftMargin = VueApplication.getInstance().getPixel(8);
+							int rightMargin = VueApplication.getInstance().getPixel(14);
+							int topBottomMargin = VueApplication.getInstance().getPixel(6);
 							params.setMargins(
 									leftMargin ,
 									topBottomMargin,
@@ -295,8 +298,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 					//will be called when press on the description, description text will be expand and collapse for 
 					//alternative clicks
 					//get the pixel equivalent to given dp value
-					int leftRightMargin = VueApplication.getInstance().getPixel(16);
-					int topBottomMargin = VueApplication.getInstance().getPixel(12);
+					int leftRightMargin = VueApplication.getInstance().getPixel(8);
+					int topBottomMargin = VueApplication.getInstance().getPixel(6);
 					TextView v = (TextView) arg1
 							.findViewById(R.id.vue_details_descreption);
 					int x = v.getLineCount();
@@ -533,11 +536,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
        mCurentIndPosition = cur_pos;
        int highlightPosition;
        if(mCurentIndPosition <= mTotalScreenCount) {
-          if(mCurentIndPosition+MAX_DOTS_TO_SHOW > mTotalScreenCount) {
+          if(mCurentIndPosition+MAX_DOTS_TO_SHOW_LIMIT > mTotalScreenCount) {
              int temp = mTotalScreenCount - mCurentIndPosition;
-               highlightPosition = MAX_DOTS_TO_SHOW - temp;
+               highlightPosition = MAX_DOTS_TO_SHOW_LIMIT - temp;
           } else {
-             int temp = mCurentIndPosition % MAX_DOTS_TO_SHOW;
+             int temp = mCurentIndPosition % MAX_DOTS_TO_SHOW_LIMIT;
              highlightPosition = temp;
           }
           return highlightPosition;
@@ -556,18 +559,29 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     }
     private void setIndicatorr() {
     	RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		// relParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-		relParams.addRule(RelativeLayout.CENTER_VERTICAL);
+		//relParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		mVueImageIndicator.removeAllViews();
 		mVueImageIndicator.addView(mIndicatorView);
+	/*	
+		RelativeLayout.LayoutParams leftArrowParams = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		leftArrowParams.addRule(RelativeLayout.LEFT_OF, mIndicatorView.getId());
+		TextView leftArrow = new TextView(mContext);
+		TextView righttArrow = new TextView(mContext);
+		leftArrow.setLayoutParams(leftArrowParams);
+		leftArrow.setText("<");
+		mVueImageIndicator.addView(leftArrow);*/
+		
 		mTotalScreenCount = VueApplication.getInstance()
 				.getClickedWindowCount();
-		mIndicatorView.setNumberofScreens(mTotalScreenCount);
+		//mIndicatorView.setNumberofScreens(mTotalScreenCount);
+		 setMaxIndiCount();
 		mIndicatorView.setDrawables(R.drawable.number_active,
 				R.drawable.bullets_bg, R.drawable.number_inactive);
 		mCurrentScreen = 1;
-		int indicatorLeftMargin = ((VueApplication.getInstance().getScreenWidth()* 95)/100)
+		int indicatorLeftMargin = ((VueApplication.getInstance().getScreenWidth()* 98)/100)
 				/ 2 - mIndicatorView.getIndicatorBgWidht() / 2;
 		relParams.setMargins(indicatorLeftMargin, 0, 0, 0);
 		mIndicatorView.setLayoutParams(relParams);
@@ -580,54 +594,61 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     	mAisleDetailsAdapter = null;
     	super.onDestroy();
     }
-    public void addAisleToWindow(String imgUrl) {
+    public void addAisleToWindow(Bitmap bitmap,String imgUrl) {
     	mTotalScreenCount = VueApplication.getInstance()
 				.getClickedWindowCount();
 		 VueApplication.getInstance().setClickedWindowCount(mTotalScreenCount+1);
 		 setMaxIndiCount();
 		setIndicatorr();
-		mAisleDetailsAdapter.addAisleToContentWindow(null,imgUrl,"title");
+		mAisleDetailsAdapter.addAisleToContentWindow(bitmap,imgUrl,"title");
     }
     private void moveIndicatorDot(String swipeDerection) {
-    	Log.i("dotmove", "dotmove swipeDerection: "+swipeDerection);
-    	Log.i("dotmove", "dotmove mCurrentImagePos: "+mCurrentImagePos);
-    	Log.i("dotmove", "dotmove mDotIndicatorPos: "+mDotIndicatorPos);
-    	Log.i("dotmove", "dotmove MAX_INDI_COUNT: "+ MAX_INDI_COUNT);
-    	Log.i("dotmove", "dotmove TOTAL_IMAGE_COUNT: "+ TOTAL_IMAGE_COUNT);
- 
-    	if(mDotIndicatorPos == 0 && swipeDerection.equalsIgnoreCase("right")) {
-    		if(mCurrentImagePos > 0){
+    	if(mDotIndicatorPos == 2 && mCurrentImagePos > 2 && swipeDerection.equalsIgnoreCase(SWIPE_RIGHT_TO_LEFT)) {
+    		//when the indicator is in 2 position and more images on left side so
+    		//so stop the indicator at posion 2 until image count reach first.
+    		if(mCurrentImagePos > 2){
     			showLeftArrow();
     			mCurrentImagePos -= 1;
     		}else {
     			//nothing to do.
     		}
-    		
-    	} else if(mDotIndicatorPos != 0 && swipeDerection.equalsIgnoreCase("right")) {
-    		if(mCurrentImagePos > mDotIndicatorPos) {
+    	} else if(mDotIndicatorPos != 0 && swipeDerection.equalsIgnoreCase(SWIPE_RIGHT_TO_LEFT)) {
+    	/*	if(mCurrentImagePos > mDotIndicatorPos) {
     			  showLeftArrow();
     		} else {
     			disableLeftArrow();
-    		}
+    		}*/
     		if(mDotIndicatorPos != 1){
-    		moveDotLeft(mCurrentImagePos);
+    		moveDotLeft(mDotIndicatorPos);
     		mCurrentImagePos -= 1;
     		}
     	
     		
-    	} else if(swipeDerection.equalsIgnoreCase("left")) {
+    	}else if(((mDotIndicatorPos+1) == MAX_INDI_COUNT )&& (TOTAL_IMAGE_COUNT - mCurrentImagePos)>1&& swipeDerection.equalsIgnoreCase(SWIPE_LEFT_TO_RIGHT))  {
+    		//when the indicator is in 2 from last position and more images on right side so
+    		// stop the indicator at posion 2 from last until image count reach last.
+    		int remainingImagesCount = TOTAL_IMAGE_COUNT - mCurrentImagePos;
+    		if(remainingImagesCount > 0){
+    			mCurrentImagePos += 1;
+    		}
+    	}
+    	
+    	else if(swipeDerection.equalsIgnoreCase(SWIPE_LEFT_TO_RIGHT)) {
     		int remainingDots = MAX_INDI_COUNT - mDotIndicatorPos;
     		int remainingImagesCount = TOTAL_IMAGE_COUNT - mCurrentImagePos;
-    		if(remainingImagesCount > remainingDots) {
+    		/*if(remainingImagesCount > remainingDots) {
     			showRightArrow();
     		} else {
     			disableRightArrow();
-    		}
+    		}*/
     		if(remainingDots != 0) {
-    			moveDotRight(mCurrentImagePos);
-    			mCurrentImagePos += 1;
+    			moveDotRight(mDotIndicatorPos);
+    			
     		} else {
     			//don't move to right it is at last position.
+    		}
+    		if(remainingImagesCount > 0){
+    			mCurrentImagePos += 1;
     		}
     	} 
     }
@@ -653,10 +674,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     }
     private void setMaxIndiCount(){
     	TOTAL_IMAGE_COUNT = VueApplication.getInstance().getClickedWindowCount();
-    	if(VueApplication.getInstance().getClickedWindowCount() > 10) {
-    		MAX_INDI_COUNT = 10;
+    	if(VueApplication.getInstance().getClickedWindowCount() > MAX_DOTS_TO_SHOW_LIMIT) {
+    		MAX_INDI_COUNT = MAX_DOTS_TO_SHOW_LIMIT;
     	} else {
     		MAX_INDI_COUNT = VueApplication.getInstance().getClickedWindowCount();
     	}
+    	mIndicatorView.setNumberofScreens(MAX_INDI_COUNT);
     }
 }

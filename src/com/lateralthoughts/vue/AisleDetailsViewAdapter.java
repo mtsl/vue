@@ -15,6 +15,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -613,7 +614,13 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         if(addedBitmap != null) {
         imgDetails.mAvailableHeight = addedBitmap.getHeight();
         imgDetails.mAvailableWidth = addedBitmap.getWidth();
-        } 
+        }  
+        if(imgDetails.mAvailableHeight > VueApplication.getInstance().getVueDetailsCardHeight()) {
+        	imgDetails.mAvailableHeight =VueApplication.getInstance().getVueDetailsCardHeight();
+        }
+        if(imgDetails.mAvailableHeight > mBestHeight){
+        	mBestHeight = imgDetails.mAvailableHeight;
+        }
         imgDetails.mTitle = title;
        // imgDetails.mImageUrl = "http://ecx.images-amazon.com/images/I/31WPX7Qn3wL.jpg";
         imgDetails.mImageUrl = uri;
@@ -624,6 +631,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         mImageDetailsArr.add(mCurrentDispImageIndex,imgDetails);
         mWindowContentTemp.addAisleContent( mWindowContentTemp.getAisleContext(), mImageDetailsArr);
         mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+   	    FileCache fileCache = new FileCache(mContext);
+	    File f = fileCache.getFile(mImageDetailsArr.get(0).mCustomImageUrl);
+        Utils.saveBitmap(BitmapFactory.decodeFile(uri), f );
         notifyAdapter();
     }
 	public void sendDataToDb(int imgPosition, String reqType) {
@@ -651,5 +661,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			}
 
 		}
+	}
+	private void getOccationAndLookingFor(){
+		AisleContext aisleInfo = 	mWindowContentTemp.getAisleContext();
+		String occation = aisleInfo.mOccasion;
+		String lookingFor = aisleInfo.mLookingForItem;
 	}
 }

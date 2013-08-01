@@ -427,7 +427,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					 Log.e("Detailsscreen", "hash code " + f.getPath());
 					 Log.e("Detailsscreen", "image path " + imagePath);
 					Utils.saveBitmap(BitmapFactory.decodeFile(imagePath), f );
-					mVueAiselFragment.addAisleToWindow(imagePath);
+					mVueAiselFragment.addAisleToWindow(BitmapFactory.decodeFile(imagePath),imagePath);
 				 
 				}
 				 

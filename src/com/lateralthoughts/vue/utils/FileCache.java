@@ -49,8 +49,6 @@ public class FileCache {
 		// demo.
 		 
 		int hashCode = url.hashCode();
-		 Log.i("added url", "added url filechace hascode: "+hashCode);
-		 Log.i("added url", "added url filechace: "+url);
 		String filename = String.valueOf(hashCode);
 		// Another possible solution (thanks to grantland)
 		// String filename = URLEncoder.encode(url);
