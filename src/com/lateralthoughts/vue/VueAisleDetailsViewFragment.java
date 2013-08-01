@@ -369,6 +369,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
        }
       @Override
       public void onResetAdapter() {
+    	  mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mListCount ,null);
+    	  mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+    	 
       }
       /**
        * when user enters the comment it will be added to the comment list at the top.

@@ -71,10 +71,14 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 	}
 public void notifyAdapters() {
 	if(mLeftColumnAdapter != null) {
+		TrendingAislesLeftColumnAdapter.mIsLeftDataChanged = true;
 	mLeftColumnAdapter.notifyDataSetChanged();
+	Log.i("listadapter", "adapter leftadapter notified");
 	}
 	if(mRightColumnAdapter != null) {
+		TrendingAislesRightColumnAdapter.mIsRightDataChanged = true;
 	mRightColumnAdapter.notifyDataSetChanged();
+	Log.i("listadapter", "adapter adapter notified");
 	}
 }
 	@Override

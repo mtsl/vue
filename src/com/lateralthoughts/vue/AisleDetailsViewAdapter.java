@@ -684,7 +684,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    	    FileCache fileCache = new FileCache(mContext);
 	    File f = fileCache.getFile(mImageDetailsArr.get(0).mCustomImageUrl);
         Utils.saveBitmap(BitmapFactory.decodeFile(uri), f );
-        notifyAdapter();
+        mswipeListner.onResetAdapter();
+        //notifyAdapter();
     }
 	public void sendDataToDb(int imgPosition, String reqType) {
 		String aisleId;
