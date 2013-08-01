@@ -413,24 +413,32 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT) {
 			Bundle b = data.getExtras();
 			if (b != null) {
+
+				/*
+				 * String lookingFor = b .getString(VueConstants.
+				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR);
+				 * String occasion = b .getString(VueConstants.
+				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION); String
+				 * category = b .getString(VueConstants.
+				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY); String
+				 * saysomethingAboutAisle = b .getString(VueConstants.
+				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE
+				 * ); String findAt = b .getString(VueConstants.
+				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT);
+				 */
+
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 				if (imagePath != null) {
-				//	int hashCode = imagePath.hashCode();
-					
-				//	String filename = String.valueOf(hashCode);
-					 /* File  cacheDir = new File(
-							  getExternalCacheDir(),
-							"LazyList/"+filename);*/
 					 FileCache fileCache = new FileCache(this);
 					 File f = fileCache.getFile(imagePath);
 					 Log.e("Detailsscreen", "hash code " + f.getPath());
 					 Log.e("Detailsscreen", "image path " + imagePath);
 					Utils.saveBitmap(BitmapFactory.decodeFile(imagePath), f );
 					mVueAiselFragment.addAisleToWindow(BitmapFactory.decodeFile(imagePath),imagePath);
-				 
+
 				}
-				 
+
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT) {
@@ -446,6 +454,30 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				b1.putBoolean(
 						VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG,
 						true);
+				b1.putBoolean(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
+						false);
+				b1.putString(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
+						null);
+				b1.putString(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
+						null);
+				b1.putString(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
+						null);
+				b1.putString(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
+						null);
+				String findAt = null;
+				if (mVueAiselFragment == null) {
+					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisle_details_view_fragment);
+				}
+				findAt = mVueAiselFragment.mEditTextFindAt.getText().toString();
+				b1.putString(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
+						findAt);
 				intent.putExtras(b1);
 				startActivityForResult(
 						intent,

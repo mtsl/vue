@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -34,7 +35,47 @@ public class DataEntryActivity extends BaseActivity {
 				getSupportActionBar().setTitle(
 						getResources().getString(
 								R.string.add_imae_to_aisle_screen_title));
-				fragment.mLookingForPopup.setVisibility(View.GONE);
+				if (b.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG)) {
+					fragment.mLookingForPopup.setVisibility(View.GONE);
+					fragment.mLookingForBigText
+							.setBackgroundColor(Color.TRANSPARENT);
+					fragment.mLookingForListviewLayout.setVisibility(View.GONE);
+					fragment.mLookingForBigText.setClickable(false);
+					fragment.mOccassionBigText.setClickable(false);
+					fragment.mCategoryIcon.setClickable(false);
+					fragment.mSaySomeThingEditParent.setClickable(false);
+				}
+				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR) != null) {
+					fragment.mLookingForBigText
+							.setText(b
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR));
+					fragment.mLookingForText
+							.setText(b
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR));
+				}
+				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION) != null) {
+					fragment.mOccassionBigText
+							.setText(b
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION));
+					fragment.mOccasionText
+							.setText(b
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION));
+				}
+				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE) != null) {
+					fragment.mSaySomethingAboutAisle
+							.setText(b
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE));
+				}
+				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT) != null) {
+					fragment.mFindAtText
+							.setText(b
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT));
+				}
+				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY) != null) {
+					fragment.mCategoryText
+							.setText(b
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY));
+				}
 			}
 			Log.e("cs", "32");
 			fragment.setGalleryORCameraImage(aisleImagePath);
