@@ -243,6 +243,7 @@ public class VueTrendingAislesDataModel {
           userInfo.mUserId = user.getString(CONTENT_ID_TAG);
           userInfo.mLookingForItem = contentItem.getString(LOOKING_FOR_TAG);
           userInfo.mOccasion = contentItem.getString(OCCASION_TAG);
+          userInfo.mCategory = category;
           userInfo.mJoinTime = Long.parseLong(user
               .getString(USER_JOIN_TIME_TAG));
           for (int j = 0; j < imagesArray.length(); j++) {

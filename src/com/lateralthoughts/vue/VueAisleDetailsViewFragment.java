@@ -602,6 +602,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 		setIndicatorr();
 		mAisleDetailsAdapter.addAisleToContentWindow(bitmap,imgUrl,"title");
     }
+    public AisleContext getAisleContext(){
+    	
+    	return mAisleDetailsAdapter.getAisleContext();
+    	
+    }
     private void moveIndicatorDot(String swipeDerection) {
     	if(mDotIndicatorPos == 2 && mCurrentImagePos > 2 && swipeDerection.equalsIgnoreCase(SWIPE_RIGHT_TO_LEFT)) {
     		//when the indicator is in 2 position and more images on left side so

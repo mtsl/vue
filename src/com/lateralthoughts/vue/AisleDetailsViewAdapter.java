@@ -662,9 +662,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		}
 	}
-	private void getOccationAndLookingFor(){
-		AisleContext aisleInfo = 	mWindowContentTemp.getAisleContext();
-		String occation = aisleInfo.mOccasion;
-		String lookingFor = aisleInfo.mLookingForItem;
+	public AisleContext getAisleContext(){
+		return mWindowContentTemp.getAisleContext();
 	}
 }

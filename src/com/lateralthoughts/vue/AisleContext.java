@@ -11,4 +11,5 @@ public class AisleContext {
 	public String mLookingForItem;
 	public String mAisleId;
 	public String mUserId;
+	public String mCategory;
 }
