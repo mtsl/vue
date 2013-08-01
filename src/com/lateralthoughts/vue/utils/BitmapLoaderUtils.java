@@ -20,6 +20,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.os.Environment;
 import android.util.Log;
 
 public class BitmapLoaderUtils {
@@ -58,12 +59,12 @@ public class BitmapLoaderUtils {
      */
     public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
     {
-     
+    	 Log.i("added url", "added url  getBitmap "+url);
         File f = mFileCache.getFile(url);
-        Log.i("bitmapprofile", "bitmapprofile  : originalbitmap url "+url);
+        Log.i("added url", "added url  getBitmap "+f);
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight);
-        
+        Log.i("added url", "added url  getBitmap "+b);
         if(b != null){
           
             if(cacheBitmap)
@@ -73,6 +74,10 @@ public class BitmapLoaderUtils {
         
         //from web
         try {
+        	if(url == null || url.length() < 1) {
+       
+        		return null;
+        	}
             Bitmap bitmap=null;
             URL imageUrl = new URL(url);
             HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
@@ -98,31 +103,21 @@ public class BitmapLoaderUtils {
 
     //decodes image and scales it to reduce memory consumption
     private Bitmap decodeFile(File f, int bestHeight){
+        Log.i("added url", "added url in  decodeFile: bestheight is "+bestHeight );
+   
         try {
             //decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             FileInputStream stream1 = new FileInputStream(f);
        BitmapFactory.decodeStream(stream1,null,o);
-            
-         
-            
             stream1.close();
-            
             //Find the correct scale value. It should be the power of 2.
             //final int REQUIRED_SIZE = mScreenWidth/2;
             int height=o.outHeight;
             int width = o.outWidth;
-         
-            Log.i("bitmapprofile", "bitmapprofile: originalbitmap width "+width);
-            Log.i("bitmapprofile", "bitmapprofile: originalbitmap height:  "+height);
-            
-            Log.i("bitmapprofile", "bitmapprofile cardWidht width:  "+VueApplication.getInstance().getVueDetailsCardWidth());
-            Log.i("bitmapprofile", "bitmapprofile cardWidht height: "+VueApplication.getInstance().getVueDetailsCardHeight());
-            
-            Log.i("bitmapprofile", "bitmapprofile bestHeight:  "+bestHeight);
-          
-            
+            Log.i("added url", "added urldecodeFile  bitmap o.height : "+height );
+            Log.i("added url", "added urldecodeFile  bitmap o.width : "+width );
           int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth();
             
             int scale=1;
@@ -163,15 +158,23 @@ public class BitmapLoaderUtils {
        
             }
             }
-            Log.i("bitmapprofile", "bitmapprofile: showing bitmap width "+bitmap.getWidth());
-            Log.i("bitmapprofile", "bitmapprofile: showing bitmap height:  "+bitmap.getHeight());
+            if(bitmap != null) {
+            	 Log.i("added url", "added url  urldecodeFile width "+bitmap.getWidth());
+            	 
+            
+            } else {
+            	 Log.i("added url", "added urldecodeFile  bitmap null " );
+            }
             return bitmap;
         } catch (FileNotFoundException e) {
+        	Log.i("added url", "added urldecodeFile  filenotfound exception " );
         } 
         catch (IOException e) {
+        	Log.i("added url", "added urldecodeFile  io exception " );
             e.printStackTrace();
         }
         catch (Throwable ex){
+        	Log.i("added url", "added urldecodeFile  throwable exception " );
             ex.printStackTrace();
             if(ex instanceof OutOfMemoryError)
                mAisleImagesCache.clear();

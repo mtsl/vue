@@ -10,19 +10,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <ImageView
-            android:id="@+id/createaisel_bg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/dummylayoutforaisleimage"
-            android:layout_centerInParent="true" />
+        <ProgressBar
+            android:id="@+id/aisle_bg_progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminateDrawable="@drawable/aisle_bg_progressbar_drawable" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/dataentry_aisles_viewpager"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/dummylayoutforaisleimage"
-            android:visibility="gone" />
+            android:layout_above="@+id/dummylayoutforaisleimage" >
+
+            <ImageView
+                android:id="@+id/createaisel_bg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:adjustViewBounds="true" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/dataentry_aisles_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/dummylayoutforaisleimage"
@@ -380,44 +392,53 @@
                 android:layout_alignParentRight="true"
                 android:background="@color/popupbgcolor"
                 android:orientation="horizontal" >
-                 <RelativeLayout android:layout_width="wrap_content"
-                              android:id="@+id/sayeditparentlay"
-                              android:layout_height="wrap_content"
-                               android:layout_alignParentLeft="true"
-                               android:orientation="horizontal"
+
+                <RelativeLayout
+                    android:id="@+id/sayeditparentlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                      android:layout_marginLeft="8dip"
                     android:layout_marginRight="88dip">
                     <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:layout_centerInParent="true"
+                              android:layout_alignParentLeft="true"
+                              android:layout_centerVertical="true"
                               android:id="@+id/hinttext"
                                android:singleLine="true"
                                 android:layout_marginLeft="4dip"
                               android:text="Say something about the aisle"
                                  android:textColor="@color/grey"
                     android:textSize="15sp"/>
-                     <View android:layout_width="1dp"
-                        android:background="@color/grey"
+                     <View  
+                         
                         android:id="@+id/leftline"
-                            android:layout_marginTop="4dp"
+                        android:layout_width="1dp"
+                        android:layout_height="4dp"
                         android:layout_alignParentLeft="true"
-                       android:layout_below="@+id/hinttext"
-                                   android:layout_height="4dp"/>
-                       <View android:layout_width="1dp"
-                        android:background="@color/grey"
-                        android:id="@+id/leftline"
-                           android:layout_marginTop="4dp"
-                        android:layout_alignParentRight="true"
-                       android:layout_below="@+id/hinttext"
-                                   android:layout_height="4dp"/>
-                    <View android:layout_width="match_parent"
-                        android:background="@color/grey"
-                        android:id="@+id/bottomline"
-                        android:layout_marginTop="8dp"
                         android:layout_below="@+id/hinttext"
-                                   android:layout_height="1dp"/>
-                    </RelativeLayout>
+                        android:layout_marginTop="4dp"
+                        android:background="@color/grey" />
+
+                    <View
+                        android:id="@+id/leftline"
+                        android:layout_width="1dp"
+                        android:layout_height="4dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/hinttext"
+                        android:layout_marginTop="4dp"
+                        android:background="@color/grey" />
+
+                    <View
+                        android:id="@+id/bottomline"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/hinttext"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/grey" />
+                </RelativeLayout>
+
                 <com.lateralthoughts.vue.utils.EditTextBackEvent
                     android:id="@+id/saysomethingaboutaisle"
                     android:layout_width="wrap_content"
@@ -428,11 +449,11 @@
                     android:layout_marginRight="88dip"
                     android:cursorVisible="false"
                     android:focusable="true"
-                    android:visibility="gone"
                     android:hint="Say something about the aisle"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/dataentry_bottom_right_layout"

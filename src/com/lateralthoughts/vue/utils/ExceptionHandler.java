@@ -1,13 +1,14 @@
 package com.lateralthoughts.vue.utils;
 
-import java.io.*;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.logging.Logger;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import android.app.Activity;
-import android.os.Looper;
 import android.os.Process;
 import android.util.Log;
+
+import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.logging.Logger;
 
 public class ExceptionHandler implements
 		java.lang.Thread.UncaughtExceptionHandler {
@@ -42,8 +43,7 @@ public class ExceptionHandler implements
 							VueConstants.GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL);
 					sender.sendMail(
 							VueConstants.GMAIL_SUBJECT_FOR_SENDING_ERROR_TO_MAIL
-									+ Utils.date() + " (APK From Raju)",
- 
+									+ Utils.date() + " (APK From Krishna)",
 							stackTrace + "",
 							VueConstants.GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL,
 							VueConstants.GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL);

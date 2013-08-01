@@ -154,7 +154,7 @@ public class IndicatorView extends LinearLayout {
 		// this.setBackgroundResource(R.drawable.bullets_bg);
 		mIndicatorBgwidth = getIndicatorBgWidht(
 				mActiveIndicatorBitmap.getWidth() * 2, mTotalScreenNo);
-		Bitmap newBitmap = getNewBitmap(mIndicatorBitmap, mIndicatorBgwidth);
+		//Bitmap newBitmap = getNewBitmap(mIndicatorBitmap, mIndicatorBgwidth);
 		Drawable d = getResources().getDrawable(R.drawable.bullets_bg);
 		d = new BitmapDrawable(getResources(), mIndicatorBitmap);
 		this.setBackgroundDrawable(d);

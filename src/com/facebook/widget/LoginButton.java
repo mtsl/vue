@@ -69,7 +69,7 @@ public class LoginButton extends Button {
 	private Session userInfoSession = null; // the Session used to fetch the
 											// current user info
 	private boolean confirmLogout = false;
-	private boolean fetchUserInfo = true;
+	private boolean fetchUserInfo = false;
 	private UserInfoChangedCallback userInfoChangedCallback;
 	private Fragment parentFragment;
 	private LoginButtonProperties properties = new LoginButtonProperties();

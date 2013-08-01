@@ -70,20 +70,23 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
    private ContentAdapterFactory mContentAdapterFactory;
    @SuppressLint("UseSparseArrays")
    Map<Integer, Object> mCommentsMapList = new HashMap<Integer, Object>();
-   ViewHolder mViewHolder;
+  
    ArrayList<String> mShowingList;
    ArrayList<AisleImageDetails> mImageDetailsArr;
    private int mBestHeight;
-   int topBottomMargin = 48;   
+   int mTopBottomMargin = 24;  
+   ViewHolder mViewHolder;
+  
    public AisleDetailsViewAdapter(Context c,
          AisleDetailSwipeListener swipeListner, int listCount,
          ArrayList<AisleWindowContent> content) {
       super(c, content);
       mContext = c;
     
-      topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
+      mTopBottomMargin  = VueApplication.getInstance().getPixel(mTopBottomMargin);
       mViewFactory = ScaledImageViewFactory.getInstance(mContext);
-      mViewLoader = AisleDetailsViewListLoader.getInstance(mContext);
+     // mViewLoader = AisleDetailsViewListLoader.getInstance(mContext);
+      mViewLoader =  new AisleDetailsViewListLoader(mContext);
       mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
       mswipeListner = swipeListner;
       mListCount = listCount;
@@ -104,6 +107,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
     	mBookmarksCount = mWindowContentTemp.getmAisleBookmarksCount();
     	mImageDetailsArr = mWindowContentTemp
           .getImageList();
+    	VueApplication.getInstance().setClickedWindowCount(mImageDetailsArr.size());
  
       for (int i = 0; i < mImageDetailsArr.size(); i++) {
     	  if(mImageDetailsArr.get(i).mAvailableHeight > mBestHeight) {
@@ -169,14 +173,15 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
    @Override
    public View getView(int position, View convertView, ViewGroup parent) {
-
+	 
       if (convertView == null) {
          mViewHolder = new ViewHolder();
          LayoutInflater layoutInflator = LayoutInflater.from(mContext);
          convertView = layoutInflator.inflate(R.layout.vue_details_adapter,
                null);
          mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
-               .findViewById(R.id.showpiece);
+               .findViewById(R.id.showpieceadapter);
+         Log.i("nullbug", "nullbug  mViewHolder.aisleContentBrowser "+ mViewHolder.aisleContentBrowser);
          mViewHolder.imgContentlay = (LinearLayout) convertView
                .findViewById(R.id.vueimagcontent);
          mViewHolder.commentContentlay = (LinearLayout) convertView
@@ -232,24 +237,24 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
          mViewHolder.userComment.setTextSize(VueApplication.getInstance()
                .getmTextSize());
          mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
-    /*     FrameLayout fl = (FrameLayout) convertView
-               .findViewById(R.id.showpiece_container);*/
-      
-         
          FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
                VueApplication.getInstance().getScreenWidth(),
-               mBestHeight+topBottomMargin);
+               (mBestHeight+mTopBottomMargin));
          mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
          mViewHolder.aisleContentBrowser
                .setAisleDetailSwipeListener(mswipeListner);
      
          mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
          convertView.setTag(mViewHolder);
-      }
-      FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-              VueApplication.getInstance().getScreenWidth(),
-              mBestHeight+topBottomMargin);
-        mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+		} else {
+			mViewHolder = (ViewHolder) convertView.getTag();
+		}
+    	    FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+    	              VueApplication.getInstance().getScreenWidth(),
+    	              mBestHeight+mTopBottomMargin);
+    	  mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+    
+       
      if(mWindowContentTemp.getWindowBookmarkIndicator()){
     	 mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
      } else {
@@ -269,7 +274,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
       mViewHolder.commentCount.setText((mShowingList.size()+" Comments"));
       mViewHolder.bookMarkCount.setText(""+mBookmarksCount);
       mViewHolder.likeCount.setText("" + mLikes);
-      mViewHolder = (ViewHolder) convertView.getTag();
       mViewHolder.imgContentlay.setVisibility(View.VISIBLE);
       mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
       mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
@@ -287,9 +291,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
             int scrollIndex = 0;
             mWindowContentTemp = mViewHolder.mWindowContent;
             mViewHolder.tag = TAG;
-           
+             
+         
             mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
                   position, new DetailImageClickListener());
+         
            
             Log.i("returnsused imageview", "returnsused imageview adapeterclass count: "+  mViewHolder.aisleContentBrowser.getChildCount());
             Log.i("returnsused imageview", "returnsused imageview adapeterclass obj: "+ mViewHolder.aisleContentBrowser.getCustomAdapter());
@@ -390,7 +396,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			
  			@Override
  			public void onClick(View v) {
- 				ratingImage( );
+ 				toggleRatingImage( );
  			}
  		});
       return convertView;
@@ -492,16 +498,13 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		@Override
 		public void onImageDoubleTap() {
-			 
-			int topBottomMargin = 48;
-	         topBottomMargin  = VueApplication.getInstance().getPixel(topBottomMargin);
-			 Toast.makeText(mContext, "imgAreaHeight: "+(topBottomMargin+mBestHeight)+" AisleID:  "+mWindowContentTemp.getAisleId(), 1500).show();
+			 Toast.makeText(mContext, "imgAreaHeight: "+(mTopBottomMargin+mBestHeight)+" AisleID:  "+mWindowContentTemp.getAisleId(), 1500).show();
 			 Toast.makeText(mContext, "original image height: "+ mImageDetailsArr.get(mCurrentDispImageIndex).mAvailableHeight+" AisleID:  "+mWindowContentTemp.getAisleId(), 1500).show();
 		}
 
 	}
 
-	private void ratingImage() {
+	private void toggleRatingImage() {
 		if(mCurrentDispImageIndex >= 0 && mCurrentDispImageIndex < mImageDetailsArr.size()) {
 		if(mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus==IMG_LIKE_STATUS){
 			mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
@@ -516,7 +519,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		notifyAdapter();
 	}
 
-	public void changeLikesCount(int position, String eventType) {
+	public void changeLikesCountFromCopmareScreen(int position, String eventType) {
 		if(position >= 0 && position < mImageDetailsArr.size()) {
 		if (eventType.equalsIgnoreCase(AisleDetailsViewActivity.CLICK_EVENT)) {
 			// increase the like count
@@ -586,9 +589,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		}
 	}
 	public void setAisleBrowserObjectsNull(){
-		 
+		 Log.i("returnsused imageview", "returnsused aisleContentBrowser1: "+mViewHolder.aisleContentBrowser);
 		if(mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
-			 
+			 Log.i("returnsused imageview", "returnsused aisleContentBrowser: "+mViewHolder.aisleContentBrowser);
 			
 			// mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
 			  for(int i=0;i< mViewHolder.aisleContentBrowser.getChildCount();i++){
@@ -601,7 +604,28 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		mViewHolder.aisleContentBrowser.removeAllViews();
 		}
 	}
-
+	
+    public  void addAisleToContentWindow(Bitmap addedBitmap,String uri,String title) {
+        AisleImageDetails imgDetails = new AisleImageDetails();
+        //TODO:temperory setting remove later these asignments.
+        imgDetails.mAvailableHeight = 500;
+        imgDetails.mAvailableWidth = 500;
+        if(addedBitmap != null) {
+        imgDetails.mAvailableHeight = addedBitmap.getHeight();
+        imgDetails.mAvailableWidth = addedBitmap.getWidth();
+        } 
+        imgDetails.mTitle = title;
+       // imgDetails.mImageUrl = "http://ecx.images-amazon.com/images/I/31WPX7Qn3wL.jpg";
+        imgDetails.mImageUrl = uri;
+        Log.i("added url", "added url aisleDetailsviewadapter "+uri);
+        imgDetails.mDetalsUrl = "";
+        imgDetails.mId = "";
+        imgDetails.mStore = "";
+        mImageDetailsArr.add(mCurrentDispImageIndex,imgDetails);
+        mWindowContentTemp.addAisleContent( mWindowContentTemp.getAisleContext(), mImageDetailsArr);
+        mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+        notifyAdapter();
+    }
 	public void sendDataToDb(int imgPosition, String reqType) {
 		String aisleId;
 		String imageId;

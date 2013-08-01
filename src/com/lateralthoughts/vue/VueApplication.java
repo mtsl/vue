@@ -38,6 +38,8 @@ public class VueApplication extends Application {
 	private int mStatusBarHeight;
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
+	private boolean newVueTrendingAislesDataModel = false;
+
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
 	}
@@ -61,8 +63,7 @@ public class VueApplication extends Application {
 		sInstance = this;
 
 		mVueApplicationContext = this;
-		
-	
+
 		mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
 		mVueAisleImagesCache.setLimit(40);
 		mVueAisleOwnerNamesCache = new VueMemoryCache<String>();
@@ -184,4 +185,14 @@ public class VueApplication extends Application {
 			throw new IllegalStateException("RequestQueue not initialized");
 		}
 	}
+
+	/*public boolean newVueTrendingAislesDataModel() {
+	  Log.e("Profiling", "Profiling newVueTrendingAislesDataModel : " + newVueTrendingAislesDataModel);
+	  return newVueTrendingAislesDataModel;
+	}*/
+	
+	/*public void setNewVueTrendingAislesDataModel (boolean createNewObject) {
+	  newVueTrendingAislesDataModel = createNewObject;
+	}*/
+
 }

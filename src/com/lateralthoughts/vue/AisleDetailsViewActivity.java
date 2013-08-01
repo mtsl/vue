@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 //generic android goodies
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -9,12 +10,14 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +37,8 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */{
@@ -41,7 +46,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	public static final String CLICK_EVENT = "click";
 	public static final String LONG_PRESS_EVENT = "longpress";
 	HorizontalListView mTopScroller, mBottomScroller;
-	//int mStatusbarHeight;
+	// int mStatusbarHeight;
 	int mScreenTotalHeight;
 	int mCoparisionScreenHeight;
 	Context mContext;
@@ -69,7 +74,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		getSupportActionBar().setTitle(
 				getResources().getString(R.string.trending));
 		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT;
-		
+
 		if (mCurrentapiVersion >= 11) {
 			getSupportActionBar().hide();
 		}
@@ -169,7 +174,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 									.findFragmentById(
 											R.id.aisle_details_view_fragment);
 						}
-						mVueAiselFragment.changeLikeCount(position, LONG_PRESS_EVENT);
+						mVueAiselFragment.changeLikeCount(position,
+								LONG_PRESS_EVENT);
 					}
 				}, mLikeImageShowTime);
 				return false;
@@ -193,7 +199,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 									.findFragmentById(
 											R.id.aisle_details_view_fragment);
 						}
-						mVueAiselFragment.changeLikeCount(position, CLICK_EVENT);
+						mVueAiselFragment
+								.changeLikeCount(position, CLICK_EVENT);
 					}
 				}, mLikeImageShowTime);
 
@@ -213,10 +220,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 							@Override
 							public void run() {
 								img.setVisibility(View.INVISIBLE);
-								if(mVueAiselFragment == null) {
-								mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-										.findFragmentById(
-												R.id.aisle_details_view_fragment);
+								if (mVueAiselFragment == null) {
+									mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+											.findFragmentById(
+													R.id.aisle_details_view_fragment);
 								}
 								mVueAiselFragment.changeLikeCount(position,
 										LONG_PRESS_EVENT);
@@ -226,8 +233,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					}
 				});
 		if (null != mImageDetailsArr && mImageDetailsArr.size() != 0) {
-		mBottomScroller.setAdapter(new ComparisionAdapter(
-				AisleDetailsViewActivity.this));
+			mBottomScroller.setAdapter(new ComparisionAdapter(
+					AisleDetailsViewActivity.this));
 		}
 
 	}
@@ -256,7 +263,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	class ComparisionAdapter extends BaseAdapter {
 		LayoutInflater minflater;
 		ViewHolder viewHolder;
@@ -334,12 +341,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	@Override
 	public void onResume() {
 		mHandleActionbar = new HandleActionBar();
-		if(mVueAiselFragment == null) {
-		mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.aisle_details_view_fragment);
+		if (mVueAiselFragment == null) {
+			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisle_details_view_fragment);
 		}
 		mVueAiselFragment.setActionBarHander(mHandleActionbar);
- 
+
 		super.onResume();
 	}
 
@@ -370,24 +377,25 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
-			} else if(mSlidingDrawer.isOpened()){
+			} else if (mSlidingDrawer.isOpened()) {
 				mSlidingDrawer.close();
 			} else {
-				/*if (!VueApplication.getInstance().mSoftKeboardIndicator) {*/
-					if(mVueAiselFragment == null) {
+				/* if (!VueApplication.getInstance().mSoftKeboardIndicator) { */
+				if (mVueAiselFragment == null) {
 					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.aisle_details_view_fragment);
-					}
-					mVueAiselFragment.setAisleContentListenerNull();
-			    super.onBackPressed();
-			/*	} else {
-					VueApplication.getInstance().mSoftKeboardIndicator = false;
-				}*/
- 
+				}
+				mVueAiselFragment.setAisleContentListenerNull();
+				super.onBackPressed();
+				/*
+				 * } else { VueApplication.getInstance().mSoftKeboardIndicator =
+				 * false; }
+				 */
+
 			}
 		}
 		return false;
- 
+
 	}
 
 	@Override
@@ -401,16 +409,59 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
 				}
 			}
+		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT
+				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT) {
+			Bundle b = data.getExtras();
+			if (b != null) {
+				String imagePath = b
+						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+				if (imagePath != null) {
+				//	int hashCode = imagePath.hashCode();
+					
+				//	String filename = String.valueOf(hashCode);
+					 /* File  cacheDir = new File(
+							  getExternalCacheDir(),
+							"LazyList/"+filename);*/
+					 FileCache fileCache = new FileCache(this);
+					 File f = fileCache.getFile(imagePath);
+					 Log.e("Detailsscreen", "hash code " + f.getPath());
+					 Log.e("Detailsscreen", "image path " + imagePath);
+					Utils.saveBitmap(BitmapFactory.decodeFile(imagePath), f );
+					mVueAiselFragment.addAisleToWindow(imagePath);
+				 
+				}
+				 
+			}
+		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT
+				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT) {
+			Bundle b = data.getExtras();
+			if (b != null) {
+				String imagePath = b
+						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+				Intent intent = new Intent(this, DataEntryActivity.class);
+				Bundle b1 = new Bundle();
+				b1.putString(
+						VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+						imagePath);
+				b1.putBoolean(
+						VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG,
+						true);
+				intent.putExtras(b1);
+				startActivityForResult(
+						intent,
+						VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT);
+			}
 		} else {
 
 			try {
-				if(mVueAiselFragment == null) {
-				mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.aisle_details_view_fragment);
+				if (mVueAiselFragment == null) {
+					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisle_details_view_fragment);
 				}
 				if (mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled) {
 					mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled = false;
-					mVueAiselFragment.mAisleDetailsAdapter.mShare.dismisDialog();
+					mVueAiselFragment.mAisleDetailsAdapter.mShare
+							.dismisDialog();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -453,33 +504,31 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		}
 	}
-	
+
 	private class HandleActionBar implements ActionBarHandler {
 
 		@Override
 		public void showActionBar() {
-			if(!isActionBarShown) {
-			isActionBarShown = true;
-            // getSupportActionBar().hide();
+			if (!isActionBarShown) {
+				isActionBarShown = true;
+				// getSupportActionBar().hide();
 			}
-			
+
 		}
 
 		@Override
 		public void hideActionBar() {
-			if(isActionBarShown) {
-				  if(mCurrentapiVersion >= 11) { 
-					 // getSupportActionBar().hide();
-				  }
-			isActionBarShown = false;
+			if (isActionBarShown) {
+				if (mCurrentapiVersion >= 11) {
+					// getSupportActionBar().hide();
+				}
+				isActionBarShown = false;
 			}
-			
+
 		}
 
-	 
-		
 	}
-	
+
 	/*
 	 * @Override public boolean onCreateOptionsMenu(Menu menu) {
 	 * getSupportMenuInflater().inflate(R.menu.title_options, menu); //

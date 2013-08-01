@@ -25,7 +25,6 @@
 package com.lateralthoughts.vue;
 
 import android.widget.BaseAdapter;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -69,15 +68,22 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
+        if(mVueTrendingAislesDataModel.isDownloadFail) {
+          mVueTrendingAislesDataModel.loadData();
+        }
         mLoader = AisleLoader.getInstance(mContext);  
         mIsScrolling = false;
     }
     
-    public TrendingAislesGenericAdapter(Context c, AisleContentClickListener listener, ArrayList<AisleWindowContent> content) {
+    public TrendingAislesGenericAdapter(Context c, AisleContentClickListener listener,
+        ArrayList<AisleWindowContent> content) {
         mContext = c;
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
+        if(mVueTrendingAislesDataModel.isDownloadFail) {
+          mVueTrendingAislesDataModel.loadData();
+        }
         mLoader = AisleLoader.getInstance(mContext);  
         mIsScrolling = false;
         mClickListener = listener;

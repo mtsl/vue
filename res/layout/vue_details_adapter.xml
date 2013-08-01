@@ -19,7 +19,7 @@
             android:background="@color/white" >
 
             <com.lateralthoughts.vue.ui.AisleContentBrowser
-                android:id="@+id/showpiece"
+                android:id="@+id/showpieceadapter"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center" >
