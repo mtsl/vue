@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,6 +72,14 @@ import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.X509TrustManager;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 
 public class VueLoginActivity extends FragmentActivity implements
 		OnSignedInListener, OnPeopleLoadedListener, OnPersonLoadedListener {
@@ -266,7 +276,38 @@ public class VueLoginActivity extends FragmentActivity implements
 				});
 			}
 		}
+        try{
+        HttpsURLConnection.setDefaultHostnameVerifier(new NullHostNameVerifier());
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, new X509TrustManager[]{new NullX509TrustManager()}, new SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+        }catch(NoSuchAlgorithmException ex){
+
+        }catch(KeyManagementException ex2){
+
+        }
 	}
+
+    private static class NullX509TrustManager implements X509TrustManager {
+
+        public void checkClientTrusted(X509Certificate[] cert, String authType) {
+        }
+
+        public void checkServerTrusted(X509Certificate[] cert, String authType) {
+        }
+
+        public X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+    }
+
+    private class NullHostNameVerifier implements HostnameVerifier {
+
+        public boolean verify(String hostname, SSLSession session) {
+            Log.i("RestUtilImpl", "Approving certificate for " + hostname);
+            return true;
+        }
+    }
 
 	@Override
 	public void onDestroy() {
