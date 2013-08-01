@@ -59,19 +59,19 @@ public class DataEntryFragment extends Fragment {
 
 	private ListView mCategoryListview = null, mLookingForListview = null,
 			mOccasionListview = null;
-	private LinearLayout mLookingForListviewLayout = null,
+	public LinearLayout mLookingForListviewLayout = null,
 			mOccasionPopup = null, mCategoryPopup = null,
 			mCategoryListviewLayout = null, mOccasionListviewLayout = null,
 			mDataEntryRootLayout = null;
 	public LinearLayout mLookingForPopup = null;
-	private TextView mTouchToChangeImage = null, mLookingForBigText = null,
+	public TextView mTouchToChangeImage = null, mLookingForBigText = null,
 			mOccassionBigText = null, mCategoryText = null,
-	        mHintTextForSaySomeThing;
-	private EditTextBackEvent mLookingForText = null, mOccasionText = null,
+			mHintTextForSaySomeThing;
+	public EditTextBackEvent mLookingForText = null, mOccasionText = null,
 			mSaySomethingAboutAisle = null, mFindAtText = null;
 	private static String mCategoryitemsArray[] = null;
 	private Drawable mListDivider = null;
-	private ImageView mCreateAisleBg = null, mCategoryIcon = null;
+	public ImageView mCreateAisleBg = null, mCategoryIcon = null;
 	private InputMethodManager mInputMethodManager;
 	private boolean mDontGoToNextLookingFor = false,
 			mDontGoToNextForOccasion = false;
@@ -105,7 +105,7 @@ public class DataEntryFragment extends Fragment {
 			mOccassionAisleKeywordsList = null,
 			mCategoryAilseKeywordsList = null;
 	private DataBaseManager mDbManager;
-	private RelativeLayout mSaySomeThingEditParent;
+	public RelativeLayout mSaySomeThingEditParent;
 	private View mDataEntryFragmentView;
 	private ImageResizeAsynTask mImageResizeAsynTask = null;
 	private Bitmap mAisleImageBitmap = null;
@@ -208,7 +208,8 @@ public class DataEntryFragment extends Fragment {
 		mCategoryListview.setDivider(mListDivider);
 		mDataEntryInviteFriendsLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_invite_friends_layout);
-		mHintTextForSaySomeThing = (TextView)mDataEntryFragmentView.findViewById(R.id.hinttext);
+		mHintTextForSaySomeThing = (TextView) mDataEntryFragmentView
+				.findViewById(R.id.hinttext);
 		mPreviousLookingfor = mLookingForText.getText().toString();
 		mPreviousOcasion = mOccasionText.getText().toString();
 		mPreviousSaySomething = mSaySomethingAboutAisle.getText().toString();
@@ -252,9 +253,11 @@ public class DataEntryFragment extends Fragment {
 								mOccasionText.getWindowToken(), 0);
 						mInputMethodManager.hideSoftInputFromWindow(
 								mLookingForText.getWindowToken(), 0);
-						String tempString = mSaySomethingAboutAisle.getText().toString();
-						if(tempString != null && !tempString.equalsIgnoreCase("")) {
-						mHintTextForSaySomeThing.setText(tempString);
+						String tempString = mSaySomethingAboutAisle.getText()
+								.toString();
+						if (tempString != null
+								&& !tempString.equalsIgnoreCase("")) {
+							mHintTextForSaySomeThing.setText(tempString);
 						}
 						mSaySomeThingEditParent.setVisibility(View.VISIBLE);
 						mSaySomethingAboutAisle.setVisibility(View.GONE);
@@ -817,6 +820,21 @@ public class DataEntryFragment extends Fragment {
 					b.putString(
 							VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 							mImagePath);
+					b.putString(
+							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
+							mLookingForBigText.getText().toString());
+					b.putString(
+							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
+							mOccassionBigText.getText().toString());
+					b.putString(
+							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
+							mCategoryText.getText().toString());
+					b.putString(
+							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
+							mSaySomethingAboutAisle.getText().toString());
+					b.putString(
+							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
+							mFindAtText.getText().toString());
 					intent.putExtras(b);
 					getActivity()
 							.setResult(
