@@ -23,6 +23,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 	VueLandingAislesFragment fragment;
+
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -34,8 +35,6 @@ public class VueLandingPageActivity extends BaseActivity {
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
 		boolean isFirstTimeFlag = mSharedPreferencesObj.getBoolean(
 				VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG, true);
-		boolean isLoggedInFlag = mSharedPreferencesObj.getBoolean(
-				VueConstants.VUE_LOGIN, false);
 		// Application opens first time.
 		if (isFirstTimeFlag) {
 			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
@@ -44,26 +43,8 @@ public class VueLandingPageActivity extends BaseActivity {
 			editor.commit();
 			showLogInDialog(false);
 		}
-		// Check the CreatedAisleCount and Comments count
-		else {
-			int createdAisleCount = mSharedPreferencesObj.getInt(
-					VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-			int commentsCount = mSharedPreferencesObj.getInt(
-					VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
-
-			if (createdAisleCount == VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
-					|| commentsCount == VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
-				if (!isLoggedInFlag) {
-					showLogInDialog(true);
-				}
-			}
-
-		}
 		fragment = (VueLandingAislesFragment) getSupportFragmentManager()
-				.findFragmentById(
-						R.id.aisles_view_fragment); 
-				
-			 
+				.findFragmentById(R.id.aisles_view_fragment);
 	}
 
 	@Override
@@ -140,10 +121,10 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(fragment != null) {
+		if (fragment != null) {
 			fragment.notifyAdapters();
 		}
-		
+
 		new Handler().postDelayed(new Runnable() {
 
 			@Override

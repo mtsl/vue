@@ -113,6 +113,7 @@ public class DataEntryFragment extends Fragment {
 	private GestureDetector mDetector;
 	public boolean mFromDetailsScreenFlag = false;
 	public boolean mIsUserAisleFlag = false;
+	private LoginWarningMessage mLoginWarningMessage = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -1258,7 +1259,17 @@ public class DataEntryFragment extends Fragment {
 		 * from Camera // OR Gallery. String title = ""; // For Camera and
 		 * Gallery we don't have title. String store = ""; // For Camera and
 		 * Gallery we don't have store.
-		 */storeMetaAisleDataIntoLocalStorage();
+		 */
+		if (checkLimitForLoginDialog()) {
+			if (mLoginWarningMessage == null) {
+				mLoginWarningMessage = new LoginWarningMessage(getActivity());
+			}
+			mLoginWarningMessage.showLoginWarningMessageDialog(
+					"You need to Login with the app to add image to aisle.",
+					true);
+		} else {
+			storeMetaAisleDataIntoLocalStorage();
+		}
 	}
 
 	private void addAisleToServer() {
@@ -1274,16 +1285,30 @@ public class DataEntryFragment extends Fragment {
 		 */
 		// Updating Aisles Count in Preference to show LoginDialog.
 		if (!mEditAisleImageFlag) {
-			SharedPreferences sharedPreferencesObj = getActivity()
-					.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-			int createdAisleCount = sharedPreferencesObj.getInt(
-					VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-			SharedPreferences.Editor editor = sharedPreferencesObj.edit();
-			editor.putInt(VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE,
-					createdAisleCount++);
-			editor.commit();
+			if (checkLimitForLoginDialog()) {
+				if (mLoginWarningMessage == null) {
+					mLoginWarningMessage = new LoginWarningMessage(
+							getActivity());
+				}
+				mLoginWarningMessage
+						.showLoginWarningMessageDialog(
+								"You need to Login with the app to create aisle.",
+								true);
+			} else {
+				SharedPreferences sharedPreferencesObj = getActivity()
+						.getSharedPreferences(
+								VueConstants.SHAREDPREFERENCE_NAME, 0);
+				int createdAisleCount = sharedPreferencesObj.getInt(
+						VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
+				SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+				editor.putInt(VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE,
+						createdAisleCount++);
+				editor.commit();
+				storeMetaAisleDataIntoLocalStorage();
+			}
+		} else {
+			storeMetaAisleDataIntoLocalStorage();
 		}
-		storeMetaAisleDataIntoLocalStorage();
 	}
 
 	private void storeMetaAisleDataIntoLocalStorage() {
@@ -1449,6 +1474,21 @@ public class DataEntryFragment extends Fragment {
 		@Override
 		public void onLongPress(MotionEvent e) {
 			super.onLongPress(e);
+		}
+	}
+
+	private boolean checkLimitForLoginDialog() {
+		SharedPreferences sharedPreferencesObj = getActivity()
+				.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+		int createdAisleCount = sharedPreferencesObj.getInt(
+				VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
+		int commentsCount = sharedPreferencesObj.getInt(
+				VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
+		if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
+				|| commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 }
