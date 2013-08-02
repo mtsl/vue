@@ -62,6 +62,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	private HandleActionBar mHandleActionbar;
 	private int mStatusbarHeight;
 	VueAisleDetailsViewFragment mVueAiselFragment;
+	public static Context mAisleDetailsActivityContext = null;
 
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
@@ -70,6 +71,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		super.onCreate(icicle);
 		// setContentView(R.layout.vuedetails_frag);
 		setContentView(R.layout.aisle_details_activity_landing);
+		mAisleDetailsActivityContext = this;
 		// getSupportActionBar().hide();
 		getSupportActionBar().setTitle(
 				getResources().getString(R.string.trending));

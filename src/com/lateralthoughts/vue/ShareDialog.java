@@ -292,11 +292,13 @@ public class ShareDialog {
 									Log.e(TAG, arg0.getMessage());
 								}
 							};
-							ImageRequest imagerequestObj = new ImageRequest(
-									mImagePathArray.get(i).getImageUrl(),
-									listener, 0, 0, null, errorListener);
-							VueApplication.getInstance().getRequestQueue()
-									.add(imagerequestObj);
+							if (mImagePathArray.get(i).getImageUrl() != null) {
+								ImageRequest imagerequestObj = new ImageRequest(
+										mImagePathArray.get(i).getImageUrl(),
+										listener, 0, 0, null, errorListener);
+								VueApplication.getInstance().getRequestQueue()
+										.add(imagerequestObj);
+							}
 						}
 						Uri screenshotUri = Uri.fromFile(f);
 						imageUris.add(screenshotUri);

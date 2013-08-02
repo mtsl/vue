@@ -546,7 +546,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				mLoginWarningMessage = new LoginWarningMessage(mContext);
 			}
 			mLoginWarningMessage.showLoginWarningMessageDialog(
-					"You need to Login with the app to Like.", true);
+					"You need to Login with the app to Like.", true, false, 0, null, null);
 		} else {
 			if (mCurrentDispImageIndex >= 0
 					&& mCurrentDispImageIndex < mImageDetailsArr.size()) {
@@ -573,7 +573,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				mLoginWarningMessage = new LoginWarningMessage(mContext);
 			}
 			mLoginWarningMessage.showLoginWarningMessageDialog(
-					"You need to Login with the app to Like.", true);
+					"You need to Login with the app to Like.", true, false, 0, null, null);
 		} else {
 			if (position >= 0 && position < mImageDetailsArr.size()) {
 				if (eventType
@@ -620,7 +620,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				mLoginWarningMessage = new LoginWarningMessage(mContext);
 			}
 			mLoginWarningMessage.showLoginWarningMessageDialog(
-					"You need to Login with the app to Like.", true);
+					"You need to Login with the app to Like.", true, false, 0, null, null);
 		} else {
 			// increase the likes count
 			if (mCurrentDispImageIndex >= 0
@@ -647,7 +647,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				mLoginWarningMessage = new LoginWarningMessage(mContext);
 			}
 			mLoginWarningMessage.showLoginWarningMessageDialog(
-					"You need to Login with the app to Like.", true);
+					"You need to Login with the app to Like.", true, false, 0, null, null);
 		} else {
 			// decrease the likes count
 			if (mCurrentDispImageIndex >= 0
@@ -725,7 +725,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		FileCache fileCache = new FileCache(mContext);
 		File f = fileCache.getFile(mImageDetailsArr.get(0).mCustomImageUrl);
 		Utils.saveBitmap(BitmapFactory.decodeFile(uri), f);
-		notifyAdapter();
+		mswipeListner.onResetAdapter();
+		// notifyAdapter();
 	}
 
 	public void sendDataToDb(int imgPosition, String reqType) {
@@ -763,13 +764,19 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		if (mContext != null) {
 			SharedPreferences sharedPreferencesObj = mContext
 					.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-			int createdAisleCount = sharedPreferencesObj.getInt(
-					VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-			int commentsCount = sharedPreferencesObj.getInt(
-					VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
-			if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
-					|| commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
-				return true;
+			boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+					VueConstants.VUE_LOGIN, false);
+			if (!isUserLoggedInFlag) {
+				int createdAisleCount = sharedPreferencesObj.getInt(
+						VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
+				int commentsCount = sharedPreferencesObj.getInt(
+						VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
+				if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
+						|| commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}

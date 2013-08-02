@@ -817,34 +817,46 @@ public class DataEntryFragment extends Fragment {
 				addImageToAisleToServer();
 			} else {
 				if (mFromDetailsScreenFlag) {
-					Intent intent = new Intent();
-					Bundle b = new Bundle();
-					b.putString(
-							VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
-							mImagePath);
-					if (!mIsUserAisleFlag) {
+					if (checkLimitForLoginDialog()) {
+						if (mLoginWarningMessage == null) {
+							mLoginWarningMessage = new LoginWarningMessage(
+									getActivity());
+						}
+						mLoginWarningMessage
+								.showLoginWarningMessageDialog(
+										"You need to Login with the app to add image to aisle.",
+										true, true, 0, null, null);
+					} else {
+						Intent intent = new Intent();
+						Bundle b = new Bundle();
 						b.putString(
-								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
-								mLookingForBigText.getText().toString());
+								VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+								mImagePath);
+						if (!mIsUserAisleFlag) {
+							b.putString(
+									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
+									mLookingForBigText.getText().toString());
+							b.putString(
+									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
+									mOccassionBigText.getText().toString());
+							b.putString(
+									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
+									mCategoryText.getText().toString());
+							b.putString(
+									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
+									mSaySomethingAboutAisle.getText()
+											.toString());
+						}
 						b.putString(
-								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
-								mOccassionBigText.getText().toString());
-						b.putString(
-								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
-								mCategoryText.getText().toString());
-						b.putString(
-								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
-								mSaySomethingAboutAisle.getText().toString());
+								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
+								mFindAtText.getText().toString());
+						intent.putExtras(b);
+						getActivity()
+								.setResult(
+										VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT,
+										intent);
+						getActivity().finish();
 					}
-					b.putString(
-							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
-							mFindAtText.getText().toString());
-					intent.putExtras(b);
-					getActivity()
-							.setResult(
-									VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT,
-									intent);
-					getActivity().finish();
 				} else {
 					addAisleToServer();
 				}
@@ -1266,7 +1278,7 @@ public class DataEntryFragment extends Fragment {
 			}
 			mLoginWarningMessage.showLoginWarningMessageDialog(
 					"You need to Login with the app to add image to aisle.",
-					true);
+					true, true, 0, null, null);
 		} else {
 			storeMetaAisleDataIntoLocalStorage();
 		}
@@ -1290,28 +1302,40 @@ public class DataEntryFragment extends Fragment {
 					mLoginWarningMessage = new LoginWarningMessage(
 							getActivity());
 				}
-				mLoginWarningMessage
-						.showLoginWarningMessageDialog(
-								"You need to Login with the app to create aisle.",
-								true);
+				mLoginWarningMessage.showLoginWarningMessageDialog(
+						"You need to Login with the app to create aisle.",
+						true, true, 0, null, null);
 			} else {
 				SharedPreferences sharedPreferencesObj = getActivity()
 						.getSharedPreferences(
 								VueConstants.SHAREDPREFERENCE_NAME, 0);
 				int createdAisleCount = sharedPreferencesObj.getInt(
 						VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-				SharedPreferences.Editor editor = sharedPreferencesObj.edit();
-				editor.putInt(VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE,
-						createdAisleCount++);
-				editor.commit();
-				storeMetaAisleDataIntoLocalStorage();
+				if (createdAisleCount == 4) {
+					if (mLoginWarningMessage == null) {
+						mLoginWarningMessage = new LoginWarningMessage(
+								getActivity());
+					}
+					mLoginWarningMessage
+							.showLoginWarningMessageDialog(
+									"You have 1 aisle left to create aisle without logging in.",
+									false, true, 4, null, null);
+				} else {
+					SharedPreferences.Editor editor = sharedPreferencesObj
+							.edit();
+					editor.putInt(
+							VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE,
+							createdAisleCount + 1);
+					editor.commit();
+					storeMetaAisleDataIntoLocalStorage();
+				}
 			}
 		} else {
 			storeMetaAisleDataIntoLocalStorage();
 		}
 	}
 
-	private void storeMetaAisleDataIntoLocalStorage() {
+	public void storeMetaAisleDataIntoLocalStorage() {
 		showDataProgressOnNotification();
 		renderUIAfterAddingAisleToServer();
 	}
@@ -1480,13 +1504,19 @@ public class DataEntryFragment extends Fragment {
 	private boolean checkLimitForLoginDialog() {
 		SharedPreferences sharedPreferencesObj = getActivity()
 				.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-		int createdAisleCount = sharedPreferencesObj.getInt(
-				VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-		int commentsCount = sharedPreferencesObj.getInt(
-				VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
-		if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
-				|| commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
-			return true;
+		boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+				VueConstants.VUE_LOGIN, false);
+		if (!isUserLoggedInFlag) {
+			int createdAisleCount = sharedPreferencesObj.getInt(
+					VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
+			int commentsCount = sharedPreferencesObj.getInt(
+					VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
+			if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
+					|| commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}

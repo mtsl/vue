@@ -51,6 +51,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     
     public int firstX;
     public int lastX;
+    public static boolean mIsRightDataChanged = false;
     
     public TrendingAislesRightColumnAdapter(Context c, ArrayList<AisleWindowContent> content) {
         super(c,content);
@@ -102,8 +103,11 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
             if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position = " + position);
         }
         //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
-
         holder = (ViewHolder) convertView.getTag();
+        if(mIsRightDataChanged) {
+        	mIsRightDataChanged = false;
+      	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+        }
         holder.mWindowContent = (AisleWindowContent)getItem(position);
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());

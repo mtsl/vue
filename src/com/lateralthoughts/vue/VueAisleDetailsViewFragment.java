@@ -368,6 +368,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mAisleDetailsAdapter.notifyDataSetChanged();
 		ViewTreeObserver vto = mVueUserName.getViewTreeObserver();
 		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+
 			@Override
 			public void onGlobalLayout() {
 				mVueUserName.getViewTreeObserver()
@@ -478,22 +479,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 				@Override
 				public void onClick(View v) {
+					Log.e("clicked", "1");
 					String etText = editText.getText().toString();
 
 					if (etText != null && etText.length() >= 1) {
-						etText = etText.trim();
-						inputMethodManager.toggleSoftInputFromWindow(
-								editText.getApplicationWindowToken(),
-								InputMethodManager.SHOW_FORCED, 0);
-
-						@SuppressWarnings("unchecked")
-						ArrayList<String> commentList = (ArrayList<String>) mAisleDetailsAdapter.mCommentsMapList
-								.get(mAisleDetailsAdapter.mCurrentDispImageIndex);
-						commentList.add(0, etText);
-						mAisleDetailsAdapter.sendDataToDb(
-								mAisleDetailsAdapter.mCurrentDispImageIndex,
-								mAisleDetailsAdapter.CHANGE_COMMENT);
+						Log.e("clicked", "2");
 						if (mAisleDetailsAdapter.checkLimitForLoginDialog()) {
+							Log.e("clicked", "3");
 							if (mLoginWarningMessage == null) {
 								mLoginWarningMessage = new LoginWarningMessage(
 										mContext);
@@ -501,8 +493,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 							mLoginWarningMessage
 									.showLoginWarningMessageDialog(
 											"You need to Login with the app to Comment.",
-											true);
+											true, false, 0, null, null);
 						} else {
+							Log.e("clicked", "4");
 							// Updating Comments Count in Preference to show
 							// LoginDialog.
 							SharedPreferences sharedPreferencesObj = getActivity()
@@ -512,17 +505,34 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 							int commentsCount = sharedPreferencesObj.getInt(
 									VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
 									0);
-							SharedPreferences.Editor editor = sharedPreferencesObj
-									.edit();
-							editor.putInt(
-									VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
-									commentsCount++);
-							editor.commit();
-							mAisleDetailsAdapter.mShowingList = commentList;
-							editText.setVisibility(View.GONE);
-							editText.setText("");
-							view.setVisibility(View.VISIBLE);
-							mAisleDetailsAdapter.notifyDataSetChanged();
+							Log.e("clicked", "5" + commentsCount);
+							if (commentsCount == 8) {
+								if (mLoginWarningMessage == null) {
+									mLoginWarningMessage = new LoginWarningMessage(
+											getActivity());
+								}
+								mLoginWarningMessage
+										.showLoginWarningMessageDialog(
+												"You have 2 aisle left to comment without logging in.",
+												false, false, 8, editText, view);
+							} else if (commentsCount == 9) {
+								if (mLoginWarningMessage == null) {
+									mLoginWarningMessage = new LoginWarningMessage(
+											getActivity());
+								}
+								mLoginWarningMessage
+										.showLoginWarningMessageDialog(
+												"You have 1 aisle left to comment without logging in.",
+												false, false, 9, editText, view);
+							} else {
+								SharedPreferences.Editor editor = sharedPreferencesObj
+										.edit();
+								editor.putInt(
+										VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
+										commentsCount + 1);
+								editor.commit();
+								addComment(editText, view);
+							}
 						}
 					}
 				}
@@ -565,6 +575,27 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		public void onAllowListResponse() {
 			mAisleDetailsList.requestDisallowInterceptTouchEvent(false);
 		}
+	}
+
+	public void addComment(EditText editText, RelativeLayout view) {
+		String etText = editText.getText().toString().trim();
+		InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMethodManager.toggleSoftInputFromWindow(
+				editText.getApplicationWindowToken(),
+				InputMethodManager.SHOW_FORCED, 0);
+		@SuppressWarnings("unchecked")
+		ArrayList<String> commentList = (ArrayList<String>) mAisleDetailsAdapter.mCommentsMapList
+				.get(mAisleDetailsAdapter.mCurrentDispImageIndex);
+		commentList.add(0, etText);
+		mAisleDetailsAdapter.sendDataToDb(
+				mAisleDetailsAdapter.mCurrentDispImageIndex,
+				mAisleDetailsAdapter.CHANGE_COMMENT);
+		mAisleDetailsAdapter.mShowingList = commentList;
+		editText.setVisibility(View.GONE);
+		editText.setText("");
+		view.setVisibility(View.VISIBLE);
+		mAisleDetailsAdapter.notifyDataSetChanged();
 	}
 
 	private int checkScreenBoundaries(String direction, int mCurrentScreen) {
