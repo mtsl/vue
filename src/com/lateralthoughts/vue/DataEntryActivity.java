@@ -2,6 +2,9 @@ package com.lateralthoughts.vue;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,11 +17,13 @@ public class DataEntryActivity extends BaseActivity {
 
 	public boolean mIsKeyboardShownFlag = false;
 	public boolean mIsNewActionBarFlag = false;
+	public static Context mDataEntryActivityContext = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.date_entry_main);
+		mDataEntryActivityContext = this;
 		getSupportActionBar().setTitle(
 				getResources().getString(R.string.create_ailse_screen_title));
 		Bundle b = getIntent().getExtras();

@@ -14,6 +14,7 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -76,6 +77,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	private int mBestHeight;
 	private int mTopBottomMargin = 24;
 	ViewHolder mViewHolder;
+	private LoginWarningMessage mLoginWarningMessage = null;
 
 	public AisleDetailsViewAdapter(Context c,
 			AisleDetailSwipeListener swipeListner, int listCount,
@@ -538,96 +540,131 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	}
 
 	private void toggleRatingImage() {
-		if (mCurrentDispImageIndex >= 0
-				&& mCurrentDispImageIndex < mImageDetailsArr.size()) {
-			if (mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-				mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
-				mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount = mImageDetailsArr
-						.get(mCurrentDispImageIndex).mLikesCount - 1;
-			} else {
-				mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
-				mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount = mImageDetailsArr
-						.get(mCurrentDispImageIndex).mLikesCount + 1;
+		if (checkLimitForLoginDialog()) {
+			if (mLoginWarningMessage == null) {
+				mLoginWarningMessage = new LoginWarningMessage(mContext);
 			}
-			mLikes = mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount;
+			mLoginWarningMessage.showLoginWarningMessageDialog(
+					"You need to Login with the app to Like.", true, false, 0, null, null);
+		} else {
+			if (mCurrentDispImageIndex >= 0
+					&& mCurrentDispImageIndex < mImageDetailsArr.size()) {
+				if (mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+					mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
+					mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount = mImageDetailsArr
+							.get(mCurrentDispImageIndex).mLikesCount - 1;
+				} else {
+					mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
+					mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount = mImageDetailsArr
+							.get(mCurrentDispImageIndex).mLikesCount + 1;
+				}
+				mLikes = mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount;
+			}
+			mIsLikeImageClicked = true;
+			notifyAdapter();
 		}
-		mIsLikeImageClicked = true;
-		notifyAdapter();
 	}
 
 	public void changeLikesCountFromCopmareScreen(int position, String eventType) {
-		if (position >= 0 && position < mImageDetailsArr.size()) {
-			if (eventType
-					.equalsIgnoreCase(AisleDetailsViewActivity.CLICK_EVENT)) {
-				// increase the like count
-				if (mImageDetailsArr.get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-					mImageDetailsArr.get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
-				} else if (mImageDetailsArr.get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
-					mImageDetailsArr.get(position).mLikesCount = mImageDetailsArr
-							.get(position).mLikesCount + 1;
-					mImageDetailsArr.get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
-					sendDataToDb(position, CHANGE_LIKES);
-				}
 
+		if (checkLimitForLoginDialog()) {
+			if (mLoginWarningMessage == null) {
+				mLoginWarningMessage = new LoginWarningMessage(mContext);
+			}
+			mLoginWarningMessage.showLoginWarningMessageDialog(
+					"You need to Login with the app to Like.", true, false, 0, null, null);
+		} else {
+			if (position >= 0 && position < mImageDetailsArr.size()) {
+				if (eventType
+						.equalsIgnoreCase(AisleDetailsViewActivity.CLICK_EVENT)) {
+					// increase the like count
+					if (mImageDetailsArr.get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+						mImageDetailsArr.get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+					} else if (mImageDetailsArr.get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
+						mImageDetailsArr.get(position).mLikesCount = mImageDetailsArr
+								.get(position).mLikesCount + 1;
+						mImageDetailsArr.get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+						sendDataToDb(position, CHANGE_LIKES);
+					}
+
+					if (position == mCurrentDispImageIndex) {
+						mLikes = mImageDetailsArr.get(position).mLikesCount;
+						notifyAdapter();
+					}
+				} else {
+					// decrease the like count
+					if (mImageDetailsArr.get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+						mImageDetailsArr.get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
+						mImageDetailsArr.get(position).mLikesCount = mImageDetailsArr
+								.get(position).mLikesCount - 1;
+						sendDataToDb(position, CHANGE_LIKES);
+					} else if (mImageDetailsArr.get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
+						mImageDetailsArr.get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
+						sendDataToDb(position, CHANGE_LIKES);
+					}
+				}
 				if (position == mCurrentDispImageIndex) {
 					mLikes = mImageDetailsArr.get(position).mLikesCount;
 					notifyAdapter();
 				}
-			} else {
-				// decrease the like count
-				if (mImageDetailsArr.get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-					mImageDetailsArr.get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
-					mImageDetailsArr.get(position).mLikesCount = mImageDetailsArr
-							.get(position).mLikesCount - 1;
-					sendDataToDb(position, CHANGE_LIKES);
-				} else if (mImageDetailsArr.get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
-					mImageDetailsArr.get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
-					sendDataToDb(position, CHANGE_LIKES);
-				}
 			}
-			if (position == mCurrentDispImageIndex) {
-				mLikes = mImageDetailsArr.get(position).mLikesCount;
+
+		}
+
+	}
+
+	private void onHandleLikeEvent() {
+		if (checkLimitForLoginDialog()) {
+			if (mLoginWarningMessage == null) {
+				mLoginWarningMessage = new LoginWarningMessage(mContext);
+			}
+			mLoginWarningMessage.showLoginWarningMessageDialog(
+					"You need to Login with the app to Like.", true, false, 0, null, null);
+		} else {
+			// increase the likes count
+			if (mCurrentDispImageIndex >= 0
+					&& mCurrentDispImageIndex < mImageDetailsArr.size()) {
+				if (mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+					mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
+
+				} else if (mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus == IMG_NONE_STATUS) {
+					mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount = mImageDetailsArr
+							.get(mCurrentDispImageIndex).mLikesCount + 1;
+					mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
+					sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES);
+				}
+				mLikes = mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount;
+				mIsLikeImageClicked = true;
 				notifyAdapter();
 			}
 		}
 	}
 
-	private void onHandleLikeEvent() {
-		// increase the likes count
-		if (mCurrentDispImageIndex >= 0
-				&& mCurrentDispImageIndex < mImageDetailsArr.size()) {
-			if (mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-				mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
-
-			} else if (mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus == IMG_NONE_STATUS) {
-				mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount = mImageDetailsArr
-						.get(mCurrentDispImageIndex).mLikesCount + 1;
-				mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
-				sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES);
-			}
-			mLikes = mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount;
-			mIsLikeImageClicked = true;
-			notifyAdapter();
-		}
-	}
-
 	private void onHandleDisLikeEvent() {
-		// decrease the likes count
-		if (mCurrentDispImageIndex >= 0
-				&& mCurrentDispImageIndex < mImageDetailsArr.size()) {
-			mIsLikeImageClicked = true;
-			if (mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-				mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
-				mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount = mImageDetailsArr
-						.get(mCurrentDispImageIndex).mLikesCount - 1;
-				sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES);
-
-			} else if (mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus == IMG_NONE_STATUS) {
-				mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
-				sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES);
+		if (checkLimitForLoginDialog()) {
+			if (mLoginWarningMessage == null) {
+				mLoginWarningMessage = new LoginWarningMessage(mContext);
 			}
-			mLikes = mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount;
-			notifyAdapter();
+			mLoginWarningMessage.showLoginWarningMessageDialog(
+					"You need to Login with the app to Like.", true, false, 0, null, null);
+		} else {
+			// decrease the likes count
+			if (mCurrentDispImageIndex >= 0
+					&& mCurrentDispImageIndex < mImageDetailsArr.size()) {
+				mIsLikeImageClicked = true;
+				if (mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+					mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
+					mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount = mImageDetailsArr
+							.get(mCurrentDispImageIndex).mLikesCount - 1;
+					sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES);
+
+				} else if (mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus == IMG_NONE_STATUS) {
+					mImageDetailsArr.get(mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
+					sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES);
+				}
+				mLikes = mImageDetailsArr.get(mCurrentDispImageIndex).mLikesCount;
+				notifyAdapter();
+			}
 		}
 	}
 
@@ -653,39 +690,44 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			mViewHolder.aisleContentBrowser.removeAllViews();
 		}
 	}
- 
-	
-    public  void addAisleToContentWindow(Bitmap addedBitmap,String uri,String title) {
-        AisleImageDetails imgDetails = new AisleImageDetails();
-        //TODO:temperory setting remove later these asignments.
-        imgDetails.mAvailableHeight = 500;
-        imgDetails.mAvailableWidth = 500;
-        if(addedBitmap != null) {
-        imgDetails.mAvailableHeight = addedBitmap.getHeight();
-        imgDetails.mAvailableWidth = addedBitmap.getWidth();
-        }  
-        if(imgDetails.mAvailableHeight > VueApplication.getInstance().getVueDetailsCardHeight()) {
-        	imgDetails.mAvailableHeight =VueApplication.getInstance().getVueDetailsCardHeight();
-        }
-        if(imgDetails.mAvailableHeight > mBestHeight){
-        	mBestHeight = imgDetails.mAvailableHeight;
-        }
-        imgDetails.mTitle = title;
-       // imgDetails.mImageUrl = "http://ecx.images-amazon.com/images/I/31WPX7Qn3wL.jpg";
-        imgDetails.mImageUrl = uri;
-        Log.i("added url", "added url aisleDetailsviewadapter "+uri);
-        imgDetails.mDetalsUrl = "";
-        imgDetails.mId = "";
-        imgDetails.mStore = "";
-        mImageDetailsArr.add(mCurrentDispImageIndex,imgDetails);
-        mWindowContentTemp.addAisleContent( mWindowContentTemp.getAisleContext(), mImageDetailsArr);
-        mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-   	    FileCache fileCache = new FileCache(mContext);
-	    File f = fileCache.getFile(mImageDetailsArr.get(0).mCustomImageUrl);
-        Utils.saveBitmap(BitmapFactory.decodeFile(uri), f );
-        mswipeListner.onResetAdapter();
-        //notifyAdapter();
-    }
+
+	public void addAisleToContentWindow(Bitmap addedBitmap, String uri,
+			String title) {
+		AisleImageDetails imgDetails = new AisleImageDetails();
+		// TODO:temperory setting remove later these asignments.
+		imgDetails.mAvailableHeight = 500;
+		imgDetails.mAvailableWidth = 500;
+		if (addedBitmap != null) {
+			imgDetails.mAvailableHeight = addedBitmap.getHeight();
+			imgDetails.mAvailableWidth = addedBitmap.getWidth();
+		}
+		if (imgDetails.mAvailableHeight > VueApplication.getInstance()
+				.getVueDetailsCardHeight()) {
+			imgDetails.mAvailableHeight = VueApplication.getInstance()
+					.getVueDetailsCardHeight();
+		}
+		if (imgDetails.mAvailableHeight > mBestHeight) {
+			mBestHeight = imgDetails.mAvailableHeight;
+		}
+		imgDetails.mTitle = title;
+		// imgDetails.mImageUrl =
+		// "http://ecx.images-amazon.com/images/I/31WPX7Qn3wL.jpg";
+		imgDetails.mImageUrl = uri;
+		Log.i("added url", "added url aisleDetailsviewadapter " + uri);
+		imgDetails.mDetalsUrl = "";
+		imgDetails.mId = "";
+		imgDetails.mStore = "";
+		mImageDetailsArr.add(mCurrentDispImageIndex, imgDetails);
+		mWindowContentTemp.addAisleContent(
+				mWindowContentTemp.getAisleContext(), mImageDetailsArr);
+		mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+		FileCache fileCache = new FileCache(mContext);
+		File f = fileCache.getFile(mImageDetailsArr.get(0).mCustomImageUrl);
+		Utils.saveBitmap(BitmapFactory.decodeFile(uri), f);
+		mswipeListner.onResetAdapter();
+		// notifyAdapter();
+	}
+
 	public void sendDataToDb(int imgPosition, String reqType) {
 		String aisleId;
 		String imageId;
@@ -712,7 +754,33 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 		}
 	}
-	public AisleContext getAisleContext(){
+
+	public AisleContext getAisleContext() {
 		return mWindowContentTemp.getAisleContext();
+	}
+
+	public boolean checkLimitForLoginDialog() {
+		if (mContext != null) {
+			SharedPreferences sharedPreferencesObj = mContext
+					.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+			boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+					VueConstants.VUE_LOGIN, false);
+			if (!isUserLoggedInFlag) {
+				int createdAisleCount = sharedPreferencesObj.getInt(
+						VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
+				int commentsCount = sharedPreferencesObj.getInt(
+						VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
+				if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
+						|| commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 }

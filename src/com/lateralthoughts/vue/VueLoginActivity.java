@@ -265,7 +265,8 @@ public class VueLoginActivity extends FragmentActivity implements
 						.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 							public void onUserInfoFetched(GraphUser user) {
 								if (!mDontCallUserInfoChangesMethod) {
-									Log.e("VueLoginActivity", "update UI called from user info changed method");
+									Log.e("VueLoginActivity",
+											"update UI called from user info changed method");
 									updateUI();
 								}
 							}
@@ -278,38 +279,42 @@ public class VueLoginActivity extends FragmentActivity implements
 				});
 			}
 		}
-        try{
-        HttpsURLConnection.setDefaultHostnameVerifier(new NullHostNameVerifier());
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, new X509TrustManager[]{new NullX509TrustManager()}, new SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
-        }catch(NoSuchAlgorithmException ex){
+		try {
+			HttpsURLConnection
+					.setDefaultHostnameVerifier(new NullHostNameVerifier());
+			SSLContext context = SSLContext.getInstance("TLS");
+			context.init(null,
+					new X509TrustManager[] { new NullX509TrustManager() },
+					new SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(context
+					.getSocketFactory());
+		} catch (NoSuchAlgorithmException ex) {
 
-        }catch(KeyManagementException ex2){
+		} catch (KeyManagementException ex2) {
 
-        }
+		}
 	}
 
-    private static class NullX509TrustManager implements X509TrustManager {
+	private static class NullX509TrustManager implements X509TrustManager {
 
-        public void checkClientTrusted(X509Certificate[] cert, String authType) {
-        }
+		public void checkClientTrusted(X509Certificate[] cert, String authType) {
+		}
 
-        public void checkServerTrusted(X509Certificate[] cert, String authType) {
-        }
+		public void checkServerTrusted(X509Certificate[] cert, String authType) {
+		}
 
-        public X509Certificate[] getAcceptedIssuers() {
-            return null;
-        }
-    }
+		public X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
+	}
 
-    private class NullHostNameVerifier implements HostnameVerifier {
+	private class NullHostNameVerifier implements HostnameVerifier {
 
-        public boolean verify(String hostname, SSLSession session) {
-            Log.i("RestUtilImpl", "Approving certificate for " + hostname);
-            return true;
-        }
-    }
+		public boolean verify(String hostname, SSLSession session) {
+			Log.i("RestUtilImpl", "Approving certificate for " + hostname);
+			return true;
+		}
+	}
 
 	@Override
 	public void onDestroy() {
@@ -693,12 +698,15 @@ public class VueLoginActivity extends FragmentActivity implements
 										Log.e(TAG, arg0.getMessage());
 									}
 								};
-								@SuppressWarnings("unchecked")
-								ImageRequest imagerequestObj = new ImageRequest(
-										fileList.get(i).getImageUrl(),
-										listener, 0, 0, null, errorListener);
-								VueApplication.getInstance().getRequestQueue()
-										.add(imagerequestObj);
+								if (fileList.get(i).getImageUrl() != null) {
+									@SuppressWarnings("unchecked")
+									ImageRequest imagerequestObj = new ImageRequest(
+											fileList.get(i).getImageUrl(),
+											listener, 0, 0, null, errorListener);
+									VueApplication.getInstance()
+											.getRequestQueue()
+											.add(imagerequestObj);
+								}
 							}
 							final int index = i;
 							VueLoginActivity.this.runOnUiThread(new Runnable() {
