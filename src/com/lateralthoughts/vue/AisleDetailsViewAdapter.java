@@ -60,12 +60,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	public int mLikes;
 	private int mBookmarksCount;
 	public int mCurrentDispImageIndex;
-	private boolean mallowLike = true, mallowDisLike = true;
 	private boolean mIsLikeImageClicked = false;
 	private boolean mIsBookImageClciked = false;
 	private AisleWindowContent mWindowContentTemp;
 	public String mVueusername;
-	ShareDialog mShare;
+    ShareDialog mShare;
 	private String mAisleWindowId;
 	private ScaledImageViewFactory mViewFactory = null;
 	private ContentAdapterFactory mContentAdapterFactory;
@@ -75,7 +74,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	ArrayList<String> mShowingList;
 	ArrayList<AisleImageDetails> mImageDetailsArr;
 	private int mBestHeight;
-	int mTopBottomMargin = 24;
+	private int mTopBottomMargin = 24;
 	ViewHolder mViewHolder;
 
 	public AisleDetailsViewAdapter(Context c,

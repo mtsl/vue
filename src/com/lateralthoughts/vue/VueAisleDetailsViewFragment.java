@@ -66,29 +66,29 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     private static final int AISLE_HEADER_SHOW_TIME = 5000;
     public static final String SWIPE_LEFT_TO_RIGHT = "LEFT";
     public static final String SWIPE_RIGHT_TO_LEFT = "RIGHT";
-    private VueContentGateway mVueContentGateway;
-    AisleDetailsViewAdapter mAisleDetailsAdapter;  
-    private ListView mAisleDetailsList;
-    AisleDetailsSwipeListner mSwipeListener;
-    IndicatorView mIndicatorView;
     private int mCurrentScreen;
     private int  mTotalScreenCount ;
+    private int mDotIndicatorPos = 1;
+    private int mCurrentImagePos = 1;
+	private int MAX_INDI_COUNT = 0;
+	private int TOTAL_IMAGE_COUNT = 0;
     int mListCount =5;
-    TextView mVueUserName;
-    int mCurentIndPosition;
+    private int mCurentIndPosition;
     static final int MAX_DOTS_TO_SHOW_LIMIT= 5;
     int mPrevPosition;
     private ActionBarHandler mHandleActionBar;
     private ScaledImageViewFactory mImageViewFactory;
     ImageView mAddVueAisle;
-    RelativeLayout mVueImageIndicator;
+    private RelativeLayout mVueImageIndicator;
     private ImageView mDetailsAddImageToAisle = null;
-    int mDotIndicatorPos = 1;
-    int mCurrentImagePos = 1;
-	int MAX_INDI_COUNT = 0;
-	int TOTAL_IMAGE_COUNT = 0;
 	LinearLayout mDetailsFindAtPopup;
 	EditTextBackEvent mEditTextFindAt;
+	TextView mVueUserName;
+	private VueContentGateway mVueContentGateway;
+	AisleDetailsViewAdapter mAisleDetailsAdapter;  
+	private ListView mAisleDetailsList;
+	AisleDetailsSwipeListner mSwipeListener;
+	private IndicatorView mIndicatorView;
     //TODO: define a public interface that can be implemented by the parent
     //activity so that we can notify it with an ArrayList of AisleWindowContent
     //once we have received the result and parsed it. The idea is that the activity
@@ -96,20 +96,22 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     //ready to launch other activities/fragments within the application
     
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
-        mContext = activity;
-        // adding test comment
-        //without much ado lets get started with retrieving the trending aisles list
-        mVueContentGateway = VueContentGateway.getInstance();
-        if(null == mVueContentGateway){
-            //assert here: this is a no go!
-        }  
-        mSwipeListener = new AisleDetailsSwipeListner();
-        mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mListCount ,null);
-        //mVueDetailsContainer = mAisleDetailsAdapter.prepareDetailsVue();
-        
-    }
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mContext = activity;
+		// adding test comment
+		// without much ado lets get started with retrieving the trending aisles
+		// list
+		mVueContentGateway = VueContentGateway.getInstance();
+		if (null == mVueContentGateway) {
+			// assert here: this is a no go!
+		}
+		mSwipeListener = new AisleDetailsSwipeListner();
+		mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
+				mSwipeListener, mListCount, null);
+		// mVueDetailsContainer = mAisleDetailsAdapter.prepareDetailsVue();
+
+	}
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
@@ -128,7 +130,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				.findViewById(R.id.details_add_image_to_aisle);
 		mEditTextFindAt = (EditTextBackEvent) v.findViewById(R.id.detaisl_find_at_text);
 		mEditTextFindAt.setOnEditorActionListener(new OnEditorActionListener() {
-			
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				 final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -180,21 +181,17 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 		});
 		RelativeLayout bottomBar = (RelativeLayout)v.findViewById(R.id.vue_bottom_bar);
 		bottomBar.getBackground().setAlpha(25);
-		 mImageViewFactory  = ScaledImageViewFactory.getInstance(mContext);
-		 mImageViewFactory.clearAllViews();
+		// mImageViewFactory  = ScaledImageViewFactory.getInstance(mContext);
+		// mImageViewFactory.clearAllViews();
 		 mAddVueAisle = (ImageView) v.findViewById(R.id.vue_aisle);
 		 mAddVueAisle.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-		 
 				 final InputMethodManager inputMethodManager=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 	             inputMethodManager.toggleSoftInputFromWindow(mEditTextFindAt.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
 				mDetailsFindAtPopup.setVisibility(View.VISIBLE);
 				mEditTextFindAt.requestFocus();
-			 
-				
-			
 			}
 		});
 
@@ -211,7 +208,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				.findViewById(R.id.vue_image_indicator);
 		mIndicatorView = new IndicatorView(getActivity());
 		mIndicatorView.setId(1234);
-		setIndicatorr();
+		setIndicator();
 		if(mAisleDetailsList != null ) {
 			
 			mAisleDetailsList.setOnScrollListener(new OnScrollListener() {
@@ -316,7 +313,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				}
 			}
 		});
-		dotIndicatorBg.getBackground().setAlpha(45);
+		dotIndicatorBg.getBackground().setAlpha(50);
 		new Handler().postDelayed(new Runnable() {
 
 			@Override
@@ -535,21 +532,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
        return mCurrentScreen;
     }
     protected MotionEvent mLastOnDownEvent = null;
-    private int getHighlightPosition(int cur_pos) {
-       mCurentIndPosition = cur_pos;
-       int highlightPosition;
-       if(mCurentIndPosition <= mTotalScreenCount) {
-          if(mCurentIndPosition+MAX_DOTS_TO_SHOW_LIMIT > mTotalScreenCount) {
-             int temp = mTotalScreenCount - mCurentIndPosition;
-               highlightPosition = MAX_DOTS_TO_SHOW_LIMIT - temp;
-          } else {
-             int temp = mCurentIndPosition % MAX_DOTS_TO_SHOW_LIMIT;
-             highlightPosition = temp;
-          }
-          return highlightPosition;
-       }
-      return mCurentIndPosition;
-    }
     public void changeLikeCount(int position,String clickType) {
     	mAisleDetailsAdapter.changeLikesCountFromCopmareScreen(position,clickType);
     }
@@ -560,23 +542,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
     public void setAisleContentListenerNull() {
     	mAisleDetailsAdapter.setAisleBrowserObjectsNull();
     }
-    private void setIndicatorr() {
+    private void setIndicator() {
     	RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		// relParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 		//relParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		mVueImageIndicator.removeAllViews();
 		mVueImageIndicator.addView(mIndicatorView);
-	/*	
-		RelativeLayout.LayoutParams leftArrowParams = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		leftArrowParams.addRule(RelativeLayout.LEFT_OF, mIndicatorView.getId());
-		TextView leftArrow = new TextView(mContext);
-		TextView righttArrow = new TextView(mContext);
-		leftArrow.setLayoutParams(leftArrowParams);
-		leftArrow.setText("<");
-		mVueImageIndicator.addView(leftArrow);*/
-		
 		mTotalScreenCount = VueApplication.getInstance()
 				.getClickedWindowCount();
 		//mIndicatorView.setNumberofScreens(mTotalScreenCount);
@@ -602,7 +574,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/*Fragment*/ {
 				.getClickedWindowCount();
 		 VueApplication.getInstance().setClickedWindowCount(mTotalScreenCount+1);
 		 setMaxIndiCount();
-		setIndicatorr();
+		setIndicator();
 		mAisleDetailsAdapter.addAisleToContentWindow(bitmap,imgUrl,"title");
     }
     public AisleContext getAisleContext(){
