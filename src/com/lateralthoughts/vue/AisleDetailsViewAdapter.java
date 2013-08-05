@@ -688,6 +688,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 	public void addAisleToContentWindow(Bitmap addedBitmap, String uri,
 			String title) {
+		Log.e("Land", "vueland 17");
 		AisleImageDetails imgDetails = new AisleImageDetails();
 		// TODO:temperory setting remove later these asignments.
 		imgDetails.mAvailableHeight = 500;
@@ -715,7 +716,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		mImageDetailsArr.add(mCurrentDispImageIndex, imgDetails);
 		mWindowContentTemp.addAisleContent(
 				mWindowContentTemp.getAisleContext(), mImageDetailsArr);
-		mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 		FileCache fileCache = new FileCache(mContext);
 		File f = fileCache.getFile(mImageDetailsArr.get(0).mCustomImageUrl);
 		Utils.saveBitmap(BitmapFactory.decodeFile(uri), f);
@@ -723,7 +723,16 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		Log.i("listadapter", "adapter leftadapter data changed for this window aisledetails screen: "+mWindowContentTemp.getAisleId());
 		//mswipeListner.onResetAdapter();
 		mImageRefresh = true;
-		 notifyAdapter();
+		if(mViewHolder!= null){
+			Log.e("Land", "vueland 18");
+		mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+		notifyAdapter();
+		} else {
+			Log.e("Land", "vueland 19");
+			mswipeListner.onResetAdapter();
+		}
+	
+		 //
 	}
 
 	public void sendDataToDb(int imgPosition, String reqType) {

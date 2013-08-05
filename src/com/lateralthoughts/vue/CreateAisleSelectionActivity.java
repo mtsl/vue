@@ -591,12 +591,12 @@ public class CreateAisleSelectionActivity extends Activity {
 
 	private void amazonFunctionality() {
 		if (Utils.appInstalledOrNot(VueConstants.AMAZON_APP_PACKAGE_NAME, this)) {
-			Intent amazonIntent = new Intent(android.content.Intent.ACTION_VIEW);
-			amazonIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			/*Intent amazonIntent = new Intent(android.content.Intent.ACTION_VIEW);
+			amazonIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			amazonIntent.setClassName(VueConstants.AMAZON_APP_PACKAGE_NAME,
 					VueConstants.AMAZON_APP_ACTIVITY_NAME);
 			finish();
-			startActivity(amazonIntent);
+			startActivity(amazonIntent);*/
 		} else {
 			Toast.makeText(this, "This application was not installed.",
 					Toast.LENGTH_LONG).show();
@@ -606,7 +606,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	private void etsyClickFunctionality() {
 		if (Utils.appInstalledOrNot(VueConstants.ETSY_APP_PACKAGE_NAME, this)) {
 			Intent etsyIntent = new Intent(android.content.Intent.ACTION_VIEW);
-			etsyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			etsyIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			etsyIntent.setClassName(VueConstants.ETSY_APP_PACKAGE_NAME,
 					VueConstants.ETSY_APP_ACTIVITY_NAME);
 			finish();
@@ -620,7 +620,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	private void fancyClickFunctionality() {
 		if (Utils.appInstalledOrNot(VueConstants.FANCY_APP_PACKAGE_NAME, this)) {
 			Intent fancyIntent = new Intent(android.content.Intent.ACTION_VIEW);
-			fancyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			fancyIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			fancyIntent.setClassName(VueConstants.FANCY_APP_PACKAGE_NAME,
 					VueConstants.FANCY_APP_ACTIVITY_NAME);
 			finish();

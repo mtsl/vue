@@ -72,7 +72,6 @@
             android:name=".AisleDetailsViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
             android:theme="@style/Theme.VueTheme"
             android:windowSoftInputMode="adjustResize" >
         </activity>
@@ -80,7 +79,6 @@
             android:name=".DataEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.VueTheme"
             android:windowSoftInputMode="adjustPan" >

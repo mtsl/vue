@@ -58,6 +58,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	private int mCurrentapiVersion;
 	private HandleActionBar mHandleActionbar;
 	private int mStatusbarHeight;
+	private boolean mTempflag = true;
 	VueAisleDetailsViewFragment mVueAiselFragment;
 	public static Context mAisleDetailsActivityContext = null;
 
@@ -235,13 +236,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			mBottomScroller.setAdapter(new ComparisionAdapter(
 					AisleDetailsViewActivity.this));
 		}
-
-		Bundle b = getIntent().getExtras();
-		if (b != null) {
-			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
-				sendDataToDataentryScreen(b);
-			}
-		}
+	
 
 	}
 
@@ -357,6 +352,15 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		mVueAiselFragment.setActionBarHander(mHandleActionbar);
 
 		super.onResume();
+		Log.e("Land", "vueland 2");
+		Bundle b = getIntent().getExtras();
+		if (b != null && mTempflag) {
+			mTempflag = false;
+			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
+				Log.e("Land", "vueland 3"); 
+				sendDataToDataentryScreen(b);
+			}
+		}
 	}
 
 	private Handler mHandler = new Handler() {
@@ -406,10 +410,15 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		return false;
 
 	}
-
+@Override
+protected void onDestroy() {
+	 Log.e("ondestory", "ondestory detailsview");
+	super.onDestroy();
+}
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		Log.e("Land", "vueland 12");
 		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
@@ -420,9 +429,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT) {
+			Log.e("Land", "vueland 13");
 			Bundle b = data.getExtras();
 			if (b != null) {
-
+				Log.e("Land", "vueland 14");
 				/*
 				 * String lookingFor = b .getString(VueConstants.
 				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR);
@@ -448,6 +458,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 				if (imagePath != null) {
+					Log.e("Land", "vueland 15");
 					FileCache fileCache = new FileCache(this);
 					File f = fileCache.getFile(imagePath);
 					Log.e("Detailsscreen", "hash code " + f.getPath());
@@ -544,6 +555,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	}
 
 	private void sendDataToDataentryScreen(Bundle b) {
+		Log.e("Land", "vueland 4");
 		String lookingFor, occation, category/* , saySomething */;
 		if (mVueAiselFragment == null) {
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
@@ -587,7 +599,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
 				findAt);
 		intent.putExtras(b1);
-		startActivityForResult(
+		Log.e("Land", "vueland 5");
+		this.startActivityForResult(
 				intent,
 				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT);
 	}

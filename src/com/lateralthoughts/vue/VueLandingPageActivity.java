@@ -74,13 +74,14 @@ public class VueLandingPageActivity extends BaseActivity {
 				VueApplication.getInstance()
 						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
 								false);
+				Log.e("Land", "vueland 1");
 				Intent i = new Intent(this, AisleDetailsViewActivity.class);
 				Bundle b = new Bundle();
 				b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
 						tempArray[tempArray.length - 1]);
 				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
 				i.putExtras(b);
-				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				//i.setFlags(Intent.);
 				startActivity(i);
 
 			} else {
@@ -90,6 +91,7 @@ public class VueLandingPageActivity extends BaseActivity {
 						tempArray[tempArray.length - 1]);
 				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
 				i.putExtras(b);
+				//i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(i);
 			}
 		}

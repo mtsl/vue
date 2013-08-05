@@ -54,6 +54,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
@@ -814,8 +815,15 @@ public class DataEntryFragment extends Fragment {
 		hideAllEditableTextboxes();
 		Intent intent = new Intent(getActivity(),
 				CreateAisleSelectionActivity.class);
-		VueApplication.getInstance()
-				.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(false);
+		if (mFromDetailsScreenFlag) {
+			VueApplication
+					.getInstance()
+					.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(true);
+		} else {
+			VueApplication.getInstance()
+					.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
+							false);
+		}
 		Bundle b = new Bundle();
 		b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
 		intent.putExtras(b);
@@ -843,6 +851,7 @@ public class DataEntryFragment extends Fragment {
 										"You need to Login with the app to add image to aisle.",
 										true, true, 0, null, null);
 					} else {
+						Log.e("Land", "vueland 10");
 						Intent intent = new Intent();
 						Bundle b = new Bundle();
 						b.putString(
@@ -867,6 +876,7 @@ public class DataEntryFragment extends Fragment {
 								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
 								mFindAtText.getText().toString());
 						intent.putExtras(b);
+						Log.e("Land", "vueland 11");
 						getActivity()
 								.setResult(
 										VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT,
@@ -1561,6 +1571,7 @@ public class DataEntryFragment extends Fragment {
 			super.onPreExecute();
 
 			dialog = ProgressDialog.show(getActivity(), "", "Please wait...");
+			dialog.setCancelable(true);
 		}
 
 		@Override
@@ -1624,10 +1635,18 @@ public class DataEntryFragment extends Fragment {
 					if (dialog.isShowing()) {
 						dialog.dismiss();
 					}
+					Toast.makeText(getActivity(),
+							"Sorry, there are no images.", Toast.LENGTH_LONG)
+							.show();
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				if (dialog.isShowing()) {
+					dialog.dismiss();
+				}
+				Toast.makeText(getActivity(), "Sorry, there are no images.",
+						Toast.LENGTH_LONG).show();
 			}
 
 		}
