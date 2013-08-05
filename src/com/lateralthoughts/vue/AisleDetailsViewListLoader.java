@@ -62,7 +62,7 @@ public class AisleDetailsViewListLoader {
         if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
     public void getAisleContentIntoView(AisleDetailsViewAdapter.ViewHolder holder,
-            int scrollIndex, int position,DetailClickListener detailListener){
+            int scrollIndex, int position,DetailClickListener detailListener){/*
     	 mBestHeight = 0;
         ScaleImageView imageView = null;
         ArrayList<AisleImageDetails> imageDetailsArr = null;
@@ -117,7 +117,7 @@ public class AisleDetailsViewListLoader {
 			holder.aisleContentBrowser.mSwipeListener
 					.onReceiveImageCount(imageDetailsArr.size());
 			itemDetails = imageDetailsArr.get(0);
-			imageView = mViewFactory.getEmptyImageView();
+			//imageView = mViewFactory.getEmptyImageView();
 		 
 			
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -139,10 +139,10 @@ public class AisleDetailsViewListLoader {
 							itemDetails.mAvailableHeight);
 			 
 				}
-				/*
+				
 				 * bitmap = Utils.getScalledImage(bitmap,
 				 * itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
-				 */
+				 
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
@@ -151,7 +151,7 @@ public class AisleDetailsViewListLoader {
 						itemDetails.mAvailableHeight);
 			}
 		}        
-    }
+    */}
     
     public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
     	String loc = itemDetails.mImageUrl;

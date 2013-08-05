@@ -326,9 +326,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				viewHolder.img.setImageBitmap(bitmap);
 			} else {
 				viewHolder.img.setImageResource(R.drawable.ic_launcher);
-				BitmapWorkerTask task = new BitmapWorkerTask(null,
+			/*	BitmapWorkerTask task = new BitmapWorkerTask(null,
 						viewHolder.img, mCoparisionScreenHeight / 2);
-				task.execute(mItemDetails.mCustomImageUrl);
+				task.execute(mItemDetails.mCustomImageUrl);*/
 
 			}
 			return convertView;
