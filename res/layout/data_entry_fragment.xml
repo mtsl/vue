@@ -399,20 +399,22 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                     android:layout_marginLeft="8dip"
-                    android:layout_marginRight="88dip">
-                    <TextView android:layout_width="wrap_content"
-                              android:layout_height="wrap_content"
-                              android:layout_alignParentLeft="true"
-                              android:layout_centerVertical="true"
-                              android:id="@+id/hinttext"
-                               android:singleLine="true"
-                                android:layout_marginLeft="4dip"
-                              android:text="Say something about the aisle"
-                                 android:textColor="@color/grey"
-                    android:textSize="15sp"/>
-                     <View  
-                         
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="88dip" >
+
+                    <TextView
+                        android:id="@+id/hinttext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="4dip"
+                        android:singleLine="true"
+                        android:text="Say something about the aisle"
+                        android:textColor="@color/grey"
+                        android:textSize="15sp" />
+
+                    <View
                         android:id="@+id/leftline"
                         android:layout_width="1dp"
                         android:layout_height="4dp"

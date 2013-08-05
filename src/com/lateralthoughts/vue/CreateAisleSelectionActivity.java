@@ -24,6 +24,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class CreateAisleSelectionActivity extends Activity {
@@ -66,33 +67,6 @@ public class CreateAisleSelectionActivity extends Activity {
 			mFromDetailsScreenFlag = b
 					.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG);
 		}
-
-		// Get intent, action and MIME type
-		Intent intent = getIntent();
-		String action = intent.getAction();
-		String type = intent.getType();
-
-		if (Intent.ACTION_SEND.equals(action) && type != null) {
-			Log.e("CretaeAisleSelectionActivity send text", type);
-			if ("text/plain".equals(type)) {
-				handleSendText(intent); // Handle text being sent
-				Log.e("CretaeAisleSelectionActivity send text",
-						"textplain match");
-			} else if (type.startsWith("image/")) {
-				handleSendImage(intent); // Handle single image being sent
-				Log.e("CretaeAisleSelectionActivity send text", "image match");
-			}
-		} else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-			if (type.startsWith("image/")) {
-				handleSendMultipleImages(intent); // Handle multiple images
-													// being sent
-				Log.e("CretaeAisleSelectionActivity send text",
-						"multiple image match");
-			}
-		} else {
-			// Handle other intents, such as being started from the home screen
-		}
-
 		mDataentryPopupMainLayout = (RelativeLayout) findViewById(R.id.dataentrypopup_mainlayout);
 		mDataEntryBottomPopupMainSubLayout = (RelativeLayout) findViewById(R.id.data_entry_bottom_popup_mainsublayout);
 		mDataEntryTopPopupMainSubLayout = (RelativeLayout) findViewById(R.id.data_entry_popup_mainsublayout);
@@ -223,10 +197,12 @@ public class CreateAisleSelectionActivity extends Activity {
 						amazonFunctionality();
 					} else if (mEtsyClickedFlag) {
 						// Etsy clicked functionality.
-						finish();
+						etsyClickFunctionality();
 					} else if (mExtraClickedFlag) {
 						// Extra clicked functionality
-						finish();
+						// finish();
+						// fancy
+						fancyClickFunctionality();
 					} else {
 						finish();
 					}
@@ -479,10 +455,14 @@ public class CreateAisleSelectionActivity extends Activity {
 								amazonFunctionality();
 							} else if (mEtsyClickedFlag) {
 								// Etsy clicked functionality.
-								finish();
+								// finish();
+								etsyClickFunctionality();
 							} else if (mExtraClickedFlag) {
-								// Extra clicked functionality
-								finish();
+								/*
+								 * // Extra clicked functionality finish();
+								 */
+								// fancy
+								fancyClickFunctionality();
 							} else {
 								finish();
 							}
@@ -593,35 +573,6 @@ public class CreateAisleSelectionActivity extends Activity {
 		}
 	}
 
-	void handleSendText(Intent intent) {
-		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-		if (sharedText != null) {
-			Log.e("CretaeAisleSelectionActivity send text", sharedText);
-			// Update UI to reflect text being shared
-		}
-	}
-
-	void handleSendImage(Intent intent) {
-		Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-		if (imageUri != null) {
-			Log.e("CretaeAisleSelectionActivity send image", imageUri + "");
-			// Update UI to reflect image being shared
-		}
-	}
-
-	void handleSendMultipleImages(Intent intent) {
-		ArrayList<Uri> imageUris = intent
-				.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-		if (imageUris != null) {
-			for (int i = 0; i < imageUris.size(); i++) {
-				Log.e("CretaeAisleSelectionActivity send multipleimage",
-						imageUris.get(i) + "");
-			}
-
-			// Update UI to reflect multiple images being shared
-		}
-	}
-
 	private void cameraFunctionality() {
 		mCameraImageName = Utils
 				.vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
@@ -639,12 +590,46 @@ public class CreateAisleSelectionActivity extends Activity {
 	}
 
 	private void amazonFunctionality() {
-		Intent amazonIntent = new Intent(android.content.Intent.ACTION_VIEW);
-		amazonIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-		amazonIntent.setClassName(VueConstants.AMAZON_APP_PACKAGE_NAME,
-				VueConstants.AMAZON_APP_ACTIVITY_NAME);
-		finish();
-		startActivity(amazonIntent);
+		if (Utils.appInstalledOrNot(VueConstants.AMAZON_APP_PACKAGE_NAME, this)) {
+			/*Intent amazonIntent = new Intent(android.content.Intent.ACTION_VIEW);
+			amazonIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			amazonIntent.setClassName(VueConstants.AMAZON_APP_PACKAGE_NAME,
+					VueConstants.AMAZON_APP_ACTIVITY_NAME);
+			finish();
+			startActivity(amazonIntent);*/
+		} else {
+			Toast.makeText(this, "This application was not installed.",
+					Toast.LENGTH_LONG).show();
+		}
+	}
+
+	private void etsyClickFunctionality() {
+		if (Utils.appInstalledOrNot(VueConstants.ETSY_APP_PACKAGE_NAME, this)) {
+			Intent etsyIntent = new Intent(android.content.Intent.ACTION_VIEW);
+			etsyIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			etsyIntent.setClassName(VueConstants.ETSY_APP_PACKAGE_NAME,
+					VueConstants.ETSY_APP_ACTIVITY_NAME);
+			finish();
+			startActivity(etsyIntent);
+		} else {
+			Toast.makeText(this, "This application was not installed.",
+					Toast.LENGTH_LONG).show();
+		}
+	}
+
+	private void fancyClickFunctionality() {
+		if (Utils.appInstalledOrNot(VueConstants.FANCY_APP_PACKAGE_NAME, this)) {
+			Intent fancyIntent = new Intent(android.content.Intent.ACTION_VIEW);
+			fancyIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			fancyIntent.setClassName(VueConstants.FANCY_APP_PACKAGE_NAME,
+					VueConstants.FANCY_APP_ACTIVITY_NAME);
+			finish();
+			startActivity(fancyIntent);
+		} else {
+			Toast.makeText(this, "This application was not installed.",
+					Toast.LENGTH_LONG).show();
+		}
+
 	}
 
 	@Override
@@ -733,6 +718,11 @@ public class CreateAisleSelectionActivity extends Activity {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			mGalleryClickedFlag = false;
+			mCameraClickedFlag = false;
+			mAmazonClickedFlag = false;
+			mEtsyClickedFlag = false;
+			mExtraClickedFlag = false;
 			if (!mFromDetailsScreenFlag) {
 				mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation);
 			} else {
@@ -742,4 +732,5 @@ public class CreateAisleSelectionActivity extends Activity {
 		}
 		return false;
 	}
+
 }

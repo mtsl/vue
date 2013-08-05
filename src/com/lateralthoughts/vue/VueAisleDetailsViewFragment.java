@@ -183,6 +183,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			public void onClick(View arg0) {
 				Intent intent = new Intent(getActivity(),
 						CreateAisleSelectionActivity.class);
+				VueApplication.getInstance()
+						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
+								true);
 				Bundle b = new Bundle();
 				b.putBoolean(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
@@ -677,6 +680,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	}
 
 	public void addAisleToWindow(Bitmap bitmap, String imgUrl) {
+		Log.e("Land", "vueland 16");
 		mTotalScreenCount = VueApplication.getInstance()
 				.getClickedWindowCount();
 		 VueApplication.getInstance().setClickedWindowCount(mTotalScreenCount+1);
