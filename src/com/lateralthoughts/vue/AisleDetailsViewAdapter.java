@@ -61,12 +61,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	public int mLikes;
 	private int mBookmarksCount;
 	public int mCurrentDispImageIndex;
-	private boolean mallowLike = true, mallowDisLike = true;
 	private boolean mIsLikeImageClicked = false;
 	private boolean mIsBookImageClciked = false;
 	private AisleWindowContent mWindowContentTemp;
 	public String mVueusername;
-	ShareDialog mShare;
+    ShareDialog mShare;
 	private String mAisleWindowId;
 	private ScaledImageViewFactory mViewFactory = null;
 	private ContentAdapterFactory mContentAdapterFactory;
@@ -76,8 +75,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	ArrayList<String> mShowingList;
 	ArrayList<AisleImageDetails> mImageDetailsArr;
 	private int mBestHeight;
-	int mTopBottomMargin = 24;
+	private int mTopBottomMargin = 24;
 	ViewHolder mViewHolder;
+	boolean mImageRefresh = true;
 	private LoginWarningMessage mLoginWarningMessage = null;
 
 	public AisleDetailsViewAdapter(Context c,
@@ -305,18 +305,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				int scrollIndex = 0;
 				mWindowContentTemp = mViewHolder.mWindowContent;
 				mViewHolder.tag = TAG;
-
+                if(mImageRefresh) {
+                	mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+                	mImageRefresh = false;
 				mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
 						position, new DetailImageClickListener());
-
-				Log.i("returnsused imageview",
-						"returnsused imageview adapeterclass count: "
-								+ mViewHolder.aisleContentBrowser
-										.getChildCount());
-				Log.i("returnsused imageview",
-						"returnsused imageview adapeterclass obj: "
-								+ mViewHolder.aisleContentBrowser
-										.getCustomAdapter());
+                }
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -725,8 +719,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		FileCache fileCache = new FileCache(mContext);
 		File f = fileCache.getFile(mImageDetailsArr.get(0).mCustomImageUrl);
 		Utils.saveBitmap(BitmapFactory.decodeFile(uri), f);
-		mswipeListner.onResetAdapter();
-		// notifyAdapter();
+		mWindowContentTemp.mIsDataChanged = true;
+		Log.i("listadapter", "adapter leftadapter data changed for this window aisledetails screen: "+mWindowContentTemp.getAisleId());
+		//mswipeListner.onResetAdapter();
+		mImageRefresh = true;
+		 notifyAdapter();
 	}
 
 	public void sendDataToDb(int imgPosition, String reqType) {

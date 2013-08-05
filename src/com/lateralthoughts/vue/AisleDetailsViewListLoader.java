@@ -95,7 +95,8 @@ public class AisleDetailsViewListLoader {
             mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser.getCustomAdapter());
             holder.aisleContentBrowser.setCustomAdapter(null);
             adapter.setContentSource(desiredContentId, holder.mWindowContent);
-            adapter.setSourceName(holder.tag);
+           // adapter.setSourceName(holder.tag);
+            holder.aisleContentBrowser.setmSourceName(holder.tag);
            // holder.thumbnailScroller.removeAllViews();
             holder.aisleContentBrowser.removeAllViews();
             holder.aisleContentBrowser.setUniqueId(desiredContentId);

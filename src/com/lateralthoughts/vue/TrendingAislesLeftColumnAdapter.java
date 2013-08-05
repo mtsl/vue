@@ -111,7 +111,12 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         holder.mWindowContent = (AisleWindowContent)getItem(position);
         int scrollIndex = 0;
-        
+        if(holder.mWindowContent.mIsDataChanged) {
+        	holder.mWindowContent.mIsDataChanged = false;
+        	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+        		Log.i("listadapter", "adapter leftadapter left adapter resetting notified");
+        		Log.i("listadapter", "adapter leftadapter data changed for this window: "+holder.mWindowContent.getAisleId());
+        }
             mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
         AisleContext context = holder.mWindowContent.getAisleContext();
 

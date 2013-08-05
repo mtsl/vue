@@ -23,6 +23,7 @@ public class AisleWindowContent
 	private String mImageFormatSpecifier = "._SY%d.jpg";
 	private int mAisleBookmarksCount = 15;
 	private boolean mAisleBookmarkIndicator = false;
+	public boolean mIsDataChanged = false;
 	
  
 

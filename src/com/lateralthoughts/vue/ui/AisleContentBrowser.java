@@ -35,7 +35,15 @@ import android.view.GestureDetector;
 
 public class AisleContentBrowser extends ViewFlipper {
     private String mAisleUniqueId;
-    private int mScrollIndex;
+    private String mSourceName;
+    public String getmSourceName() {
+		return mSourceName;
+	}
+
+	public void setmSourceName(String mSourceName) {
+		this.mSourceName = mSourceName;
+	}
+	private int mScrollIndex;
     //private AisleContentTouchListener mCustomTouchListener;
     private Context mContext;
     

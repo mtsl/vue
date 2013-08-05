@@ -74,7 +74,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private ColorDrawable mColorDrawable;
     private int mCurrentPivotIndex;
     private BitmapLoaderUtils mBitmapLoaderUtils;
-    public String mSourceName;
+   // public String mSourceName;
     private ImageDimension mImageDimension;
     
     public AisleContentAdapter(Context context){
@@ -137,12 +137,12 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         BitmapsToFetch p = new BitmapsToFetch(imageList, bestHeight, startIndex, count);
         mExecutorService.submit(new ImagePrefetcher(p));
     }
-    public void setSourceName(String name) {
+/*    public void setSourceName(String name) {
     	mSourceName = name;
     }
     public String getSourceName(){
     	return mSourceName;
-    }
+    }*/
     //Task for the queue
     private class BitmapsToFetch
     {
@@ -275,30 +275,31 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             itemDetails = mAisleImageDetails.get(wantedIndex);
             imageView = mImageViewFactory.getEmptyImageView();
             Bitmap bitmap = null;
-            if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+            if(contentBrowser.getmSourceName()!= null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             	 bitmap = getCachedBitmap(itemDetails.mImageUrl);
             } else {
               bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
                
             }
+       
+            if(contentBrowser.getmSourceName() != null) {
+            	Log.i("adapter swiping", "adapter swiping  mSourceName : "+contentBrowser.getmSourceName() );
+            	Log.i("adapter swiping", "adapter swiping  contentBrowser : "+contentBrowser );
+            }
             if(bitmap != null){
          
-            	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+            	 if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             	 
             			mImageDimension = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
             			if(bitmap.getHeight() < mImageDimension.mImgHeight) {
             				   loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView);
             			}
-            			// bitmap =  mBitmapLoaderUtils.getBitmap(itemDetails.mImageUrl, true, mImageDimention.mImgHeight);
-            			// setParams( contentBrowser, imageView,bitmap.getHeight());
-            		 
-                
             	 }
                 imageView.setImageBitmap(bitmap);
                 contentBrowser.addView(imageView);
             }
             else{
-            	if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+            	if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
                 loadBitmap(itemDetails,itemDetails.mAvailableHeight,contentBrowser, imageView);
                 contentBrowser.addView(imageView);
             	} else {
@@ -317,7 +318,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     
     public void loadBitmap( AisleImageDetails itemDetails, int bestHeight, AisleContentBrowser flipper, ImageView imageView) {
     	String loc = itemDetails.mImageUrl;
-    	 if(mSourceName != null && mSourceName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)){
+    	 if(flipper.getmSourceName() != null && flipper.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)){
     		 loc = itemDetails.mImageUrl;
     	 } else {
     		 loc = itemDetails.mCustomImageUrl;
@@ -355,9 +356,21 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             //we want to get the bitmap and also add it into the memory cache
             //bmp = getBitmap(url, true, mBestHeightForImage); 
             bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeightForImage);
+            
+            if(!(aisleContentBrowser.getmSourceName() != null && aisleContentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG))&& bmp != null) {
+                Log.i("adapter swiping", "adapter swiping doing  ++++++++++++++++++++++++++++++++++++++++++++ " );
+                Log.i("adapter swiping", "adapter swiping doing mCustomImageUrl : "+url);
+                Log.i("adapter swiping", "adapter swiping doing bitmap.width: "+bmp.getWidth());
+                Log.i("adapter swiping", "adapter swiping doing bitmap.height: "+bmp.getHeight());
+                Log.i("adapter swiping", "adapter swiping  -------------------------------------------- " );
+                }else {
+                	Log.i("adapter swiping", "adapter swiping details case. " );
+                }
+            
+            
 			if (bmp != null) {
-				if (mSourceName != null
-						&& mSourceName
+				if (aisleContentBrowser.getmSourceName() != null
+						&& aisleContentBrowser.getmSourceName()
 								.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
 					mImageDimension = Utils.getScalledImage(bmp,
 							mAVailableWidth, mAvailabeHeight);
