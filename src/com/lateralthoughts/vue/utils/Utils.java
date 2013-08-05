@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -322,6 +323,18 @@ public class Utils {
 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
 				VueConstants.DATE_FORMAT);
 		return dateFormatGmt.format(new Date(twoWeeksDifferenceTime));
+	}
+
+	public static boolean appInstalledOrNot(String uri, Context context) {
+		PackageManager pm = context.getPackageManager();
+		boolean app_installed = false;
+		try {
+			pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+			app_installed = true;
+		} catch (PackageManager.NameNotFoundException e) {
+			app_installed = false;
+		}
+		return app_installed;
 	}
 
 }

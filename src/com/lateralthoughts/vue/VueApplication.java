@@ -40,6 +40,17 @@ public class VueApplication extends Application {
 	private int mVueDetailsCardHeight = 0;
 	private boolean newVueTrendingAislesDataModel = false;
 
+	public boolean ismFromDetailsScreenToDataentryCreateAisleScreenFlag() {
+		return mFromDetailsScreenToDataentryCreateAisleScreenFlag;
+	}
+
+	public void setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
+			boolean mFromDetailsScreenToDataentryCreateAisleScreenFlag) {
+		this.mFromDetailsScreenToDataentryCreateAisleScreenFlag = mFromDetailsScreenToDataentryCreateAisleScreenFlag;
+	}
+
+	private boolean mFromDetailsScreenToDataentryCreateAisleScreenFlag;
+
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
 	}
@@ -48,8 +59,8 @@ public class VueApplication extends Application {
 		this.mStatusBarHeight = mStatusBarHeight;
 	}
 
-	private int mScreenHeight;
-	private int mScreenWidth;
+	public int mScreenHeight;
+	public int mScreenWidth;
 	private int mTextSize = 18;
 	public Context mVueApplicationContext;
 	// public int totalDataDownload = 0;
@@ -172,16 +183,15 @@ public class VueApplication extends Application {
 	public int getVueDetailsCardHeight() {
 		if (mVueDetailsCardHeight == 0) {
 			int statusBarHeight = getmStatusBarHeight();
-			if(statusBarHeight == 0) {
+			if (statusBarHeight == 0) {
 				statusBarHeight = 24;
 			}
-			 
-			//4+4 top bottom margins
-			//8 dot indicator height.
-			int topBottomMargin =4+4+8+statusBarHeight;
+
+			// 4+4 top bottom margins
+			// 8 dot indicator height.
+			int topBottomMargin = 4 + 4 + 8 + statusBarHeight;
 			topBottomMargin = getPixel(topBottomMargin);
-			mVueDetailsCardHeight = mScreenHeight
-					- getPixel(topBottomMargin);
+			mVueDetailsCardHeight = mScreenHeight - getPixel(topBottomMargin);
 		}
 		return mVueDetailsCardHeight;
 	}
@@ -194,13 +204,15 @@ public class VueApplication extends Application {
 		}
 	}
 
-	/*public boolean newVueTrendingAislesDataModel() {
-	  Log.e("Profiling", "Profiling newVueTrendingAislesDataModel : " + newVueTrendingAislesDataModel);
-	  return newVueTrendingAislesDataModel;
-	}*/
-	
-	/*public void setNewVueTrendingAislesDataModel (boolean createNewObject) {
-	  newVueTrendingAislesDataModel = createNewObject;
-	}*/
+	/*
+	 * public boolean newVueTrendingAislesDataModel() { Log.e("Profiling",
+	 * "Profiling newVueTrendingAislesDataModel : " +
+	 * newVueTrendingAislesDataModel); return newVueTrendingAislesDataModel; }
+	 */
+
+	/*
+	 * public void setNewVueTrendingAislesDataModel (boolean createNewObject) {
+	 * newVueTrendingAislesDataModel = createNewObject; }
+	 */
 
 }
