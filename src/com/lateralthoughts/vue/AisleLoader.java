@@ -111,8 +111,10 @@ public class AisleLoader {
     		//before or has to be filled with same content. Either way, no need
     		//to worry about cleaning up anything!
 		    holder.aisleContentBrowser.setScrollIndex(scrollIndex);
+			Log.i("listadapter", "adapter leftadapter uniquecontentId equals");
     		return;
     	}else{
+    		Log.i("listadapter", "adapter leftadapter uniquecontentId NOT equals");
     		//we are going to re-use an existing object to show some new content
     		//lets release the scaleimageviews first
     		for(int i=0;i<contentBrowser.getChildCount();i++){
@@ -123,8 +125,10 @@ public class AisleLoader {
     		mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser.getCustomAdapter());
     		holder.aisleContentBrowser.setCustomAdapter(null);
     		adapter.setContentSource(desiredContentId, holder.mWindowContent);
-    		
+    		Log.i("listadapter", "adapter leftadapter aisleContentBrowser count: "+holder.aisleContentBrowser.getChildCount());
+    		Log.i("listadapter", "adapter leftadapter aisleContentBrowser removing all views");
     		holder.aisleContentBrowser.removeAllViews();
+    		Log.i("listadapter", "adapter leftadapter aisleContentBrowser now count: "+holder.aisleContentBrowser.getChildCount());
     		holder.aisleContentBrowser.setUniqueId(desiredContentId);
     		holder.aisleContentBrowser.setScrollIndex(scrollIndex);
     		holder.aisleContentBrowser.setCustomAdapter(adapter);

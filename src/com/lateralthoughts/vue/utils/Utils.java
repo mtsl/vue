@@ -22,6 +22,8 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+
+import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 
@@ -322,6 +324,11 @@ public class Utils {
 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
 				VueConstants.DATE_FORMAT);
 		return dateFormatGmt.format(new Date(twoWeeksDifferenceTime));
+	}
+	public static Bitmap getBitmap() {
+		Bitmap icon = BitmapFactory.decodeResource(VueApplication.getInstance().mVueApplicationContext.getResources(),
+                R.drawable.ic_launcher);
+		return icon;
 	}
 
 }

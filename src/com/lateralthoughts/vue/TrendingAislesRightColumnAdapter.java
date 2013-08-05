@@ -104,11 +104,14 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         }
         //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
         holder = (ViewHolder) convertView.getTag();
-        if(mIsRightDataChanged) {
-        	mIsRightDataChanged = false;
-      	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-        }
         holder.mWindowContent = (AisleWindowContent)getItem(position);
+        if(holder.mWindowContent.mIsDataChanged) {
+        	holder.mWindowContent.mIsDataChanged = false;
+        	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+        		Log.i("listadapter", "adapter leftadapter right adapter resetting notified");
+        		Log.i("listadapter", "adapter leftadapter data changed for this window: "+holder.mWindowContent.getAisleId());
+        }
+        
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
         //if(!mIsScrolling)

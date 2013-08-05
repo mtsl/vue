@@ -88,6 +88,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	LinearLayout mDetailsFindAtPopup;
 	EditTextBackEvent mEditTextFindAt;
 	private LoginWarningMessage mLoginWarningMessage = null;
+	private View mDetailsContentView = null;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -111,7 +112,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mSwipeListener = new AisleDetailsSwipeListner();
 		mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
 				mSwipeListener, mListCount, null);
-		// mVueDetailsContainer = mAisleDetailsAdapter.prepareDetailsVue();
+		 
 
 	}
 	@Override
@@ -120,17 +121,21 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		// TODO: any particular state that we want to restore?
 
 	}
-
+	  @Override
+	    public void onCreate(Bundle savedInstanceState) {
+	        super.onCreate(savedInstanceState);
+	        setRetainInstance(true);
+	    }
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.aisles_detailed_view_fragment,
+		mDetailsContentView = inflater.inflate(R.layout.aisles_detailed_view_fragment,
 				container, false);
-		mDetailsFindAtPopup = (LinearLayout) v
+		mDetailsFindAtPopup = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_popup);
-		mDetailsAddImageToAisle = (ImageView) v
+		mDetailsAddImageToAisle = (ImageView) mDetailsContentView
 				.findViewById(R.id.details_add_image_to_aisle);
-		mEditTextFindAt = (EditTextBackEvent) v
+		mEditTextFindAt = (EditTextBackEvent) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_text);
 		mEditTextFindAt.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
@@ -189,12 +194,12 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
 			}
 		});
-		RelativeLayout bottomBar = (RelativeLayout) v
+		RelativeLayout bottomBar = (RelativeLayout) mDetailsContentView
 				.findViewById(R.id.vue_bottom_bar);
 		bottomBar.getBackground().setAlpha(25);
 		mImageViewFactory = ScaledImageViewFactory.getInstance(mContext);
 		mImageViewFactory.clearAllViews();
-		mAddVueAisle = (ImageView) v.findViewById(R.id.vue_aisle);
+		mAddVueAisle = (ImageView) mDetailsContentView.findViewById(R.id.vue_aisle);
 		mAddVueAisle.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -211,16 +216,16 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			}
 		});
 
-		mAisleDetailsList = (ListView) v.findViewById(R.id.aisle_details_list);
+		mAisleDetailsList = (ListView) mDetailsContentView.findViewById(R.id.aisle_details_list);
 		mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
-		mVueUserName = (TextView) v.findViewById(R.id.vue_user_name);
+		mVueUserName = (TextView) mDetailsContentView.findViewById(R.id.vue_user_name);
 		mVueUserName.setTextSize(Utils.MEDIUM_TEXT_SIZE);
-		final LinearLayout dotIndicatorBg = (LinearLayout) v
+		final LinearLayout dotIndicatorBg = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.dot_indicator_bg);
-		TextView vueAisleHeading = (TextView) v
+		TextView vueAisleHeading = (TextView) mDetailsContentView
 				.findViewById(R.id.vue_aisle_heading);
 		vueAisleHeading.setTextSize(Utils.LARGE_TEXT_SIZE);
-		mVueImageIndicator = (RelativeLayout) v
+		mVueImageIndicator = (RelativeLayout) mDetailsContentView
 				.findViewById(R.id.vue_image_indicator);
 		mIndicatorView = new IndicatorView(getActivity());
 		mIndicatorView.setId(1234);
@@ -346,7 +351,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				dotIndicatorBg.setVisibility(View.GONE);
 			}
 		}, AISLE_HEADER_SHOW_TIME);
-		RelativeLayout vueShareLayout = (RelativeLayout) v
+		RelativeLayout vueShareLayout = (RelativeLayout) mDetailsContentView
 				.findViewById(R.id.vuesharelayout);
 		vueShareLayout.setOnClickListener(new OnClickListener() {
 			@Override
@@ -355,7 +360,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			}
 		});
 		mAisleDetailsAdapter.notifyDataSetChanged();
-		return v;
+		return mDetailsContentView;
 	}
 
 	@Override
@@ -399,6 +404,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public void onResetAdapter() {
+			  mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,mSwipeListener,mListCount ,null);
+	    	  mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
 		}
 
 		/**
@@ -654,6 +661,14 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mDotIndicatorPos = 1;
 		mCurrentImagePos = 1;
 	}
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDetailsContentView = null;
+        mAisleDetailsAdapter = null;
+        mContext = null;
+        
+    }
 
 	@Override
 	public void onDestroy() {
