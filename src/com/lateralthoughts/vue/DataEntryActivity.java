@@ -1,12 +1,16 @@
 package com.lateralthoughts.vue;
 
+import java.util.ArrayList;
+
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -93,6 +97,18 @@ public class DataEntryActivity extends BaseActivity {
 				if (b.getString(VueConstants.FROM_OTHER_SOURCES_URL) != null) {
 					fragment.getImagesFromUrl(b
 							.getString(VueConstants.FROM_OTHER_SOURCES_URL));
+				} else if (b
+						.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS) != null) {
+					ArrayList<Uri> imageUrisList = b
+							.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS);
+					ArrayList<OtherSourceImageDetails> otherSourcesImageDetailsList = new ArrayList<OtherSourceImageDetails>();
+					for (int i = 0; i < imageUrisList.size(); i++) {
+						OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails(
+								null, null, null, 0, 0, imageUrisList.get(i));
+						otherSourcesImageDetailsList
+								.add(otherSourceImageDetails);
+					}
+					fragment.showOtherSourcesGridview(otherSourcesImageDetailsList);
 				}
 			}
 		}

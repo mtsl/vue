@@ -49,6 +49,7 @@ public class VueConstants {
 	public static final String FB_FRIEND_NAME = "FBFRIENDNAME";
 	public static final String FROM_OTHER_SOURCES_FLAG = "fromothersourcesflag";
 	public static final String FROM_OTHER_SOURCES_URL = "fromothersourcesurl";
+	public static final String FROM_OTHER_SOURCES_IMAGE_URIS = "fromothersourcesimageuris";
 	public static final String GOOGLEPLUS_FRIEND_INVITE = "GOOGLEPLUS_FRIEND_INVITE";
 	public static final String GOOGLEPLUS_FRIEND_INDEX = "GOOGLEPLUS_FRIEND_INDEX";
 	public static final String GOOGLEPLUS_FRIEND_IMAGE_PATH_LIST_KEY = "GOOGLEPLUS_FRIEND_INDEX_PATH_LIST_KEY";

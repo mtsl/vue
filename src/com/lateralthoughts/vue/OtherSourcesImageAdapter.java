@@ -24,7 +24,8 @@ public class OtherSourcesImageAdapter extends BaseAdapter {
 		this.mListImages = listImages;
 		mInflater = (LayoutInflater) mActivity
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mImageLoader = new OtherSourceImageLoader(mActivity.getApplicationContext());
+		mImageLoader = new OtherSourceImageLoader(
+				mActivity.getApplicationContext());
 	}
 
 	public int getCount() {
@@ -55,9 +56,15 @@ public class OtherSourcesImageAdapter extends BaseAdapter {
 		} else
 			holder = (ViewHolder) vi.getTag();
 
-		holder.imgViewImage.setTag(mListImages.get(position).getOriginUrl());
-		mImageLoader.DisplayImage(mListImages.get(position).getOriginUrl(),
-				mActivity, holder.imgViewImage);
+		if (mListImages.get(position).getImageUri() != null) {
+			holder.imgViewImage.setImageURI(mListImages.get(position)
+					.getImageUri());
+		} else {
+			holder.imgViewImage
+					.setTag(mListImages.get(position).getOriginUrl());
+			mImageLoader.DisplayImage(mListImages.get(position).getOriginUrl(),
+					mActivity, holder.imgViewImage);
+		}
 		return vi;
 	}
 }

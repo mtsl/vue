@@ -8,7 +8,6 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
@@ -97,6 +96,36 @@ public class VueLandingPageActivity extends BaseActivity {
 		if (imageUri != null) {
 			Log.e("CretaeAisleSelectionActivity send image", imageUri + "");
 			// Update UI to reflect image being shared
+			if (VueApplication.getInstance()
+					.ismFromDetailsScreenToDataentryCreateAisleScreenFlag()) {
+
+				VueApplication.getInstance()
+						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
+								false);
+				Log.e("Land", "vueland 1");
+				Intent i = new Intent(this, AisleDetailsViewActivity.class);
+				Bundle b = new Bundle();
+				ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
+				imageUrisList.add(imageUri);
+				b.putParcelableArrayList(
+						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+						imageUrisList);
+				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+				i.putExtras(b);
+				startActivity(i);
+
+			} else {
+				Intent i = new Intent(this, DataEntryActivity.class);
+				Bundle b = new Bundle();
+				ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
+				imageUrisList.add(imageUri);
+				b.putParcelableArrayList(
+						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+						imageUrisList);
+				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+				i.putExtras(b);
+				startActivity(i);
+			}
 		}
 	}
 
@@ -104,11 +133,30 @@ public class VueLandingPageActivity extends BaseActivity {
 		ArrayList<Uri> imageUris = intent
 				.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
 		if (imageUris != null) {
-			for (int i = 0; i < imageUris.size(); i++) {
-				Log.e("CretaeAisleSelectionActivity send multipleimage",
-						imageUris.get(i) + "");
-			}
+			if (VueApplication.getInstance()
+					.ismFromDetailsScreenToDataentryCreateAisleScreenFlag()) {
 
+				VueApplication.getInstance()
+						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
+								false);
+				Log.e("Land", "vueland 1");
+				Intent i = new Intent(this, AisleDetailsViewActivity.class);
+				Bundle b = new Bundle();
+				b.putParcelableArrayList(
+						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS, imageUris);
+				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+				i.putExtras(b);
+				startActivity(i);
+
+			} else {
+				Intent i = new Intent(this, DataEntryActivity.class);
+				Bundle b = new Bundle();
+				b.putParcelableArrayList(
+						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS, imageUris);
+				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+				i.putExtras(b);
+				startActivity(i);
+			}
 			// Update UI to reflect multiple images being shared
 		}
 	}
