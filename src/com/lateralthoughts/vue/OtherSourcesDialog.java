@@ -3,7 +3,7 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.util.ArrayList;
 import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.GoogleImageBean;
+import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import android.app.Activity;
 import android.app.Dialog;
 import android.support.v4.app.FragmentActivity;
@@ -16,14 +16,14 @@ import android.widget.Toast;
 public class OtherSourcesDialog {
 	private Activity mActivity = null;
 	private FileCache mFileCache = null;
-	private ArrayList<GoogleImageBean> imagesList;
+	private ArrayList<OtherSourceImageDetails> imagesList;
 
 	public OtherSourcesDialog(Activity activity) {
 		mActivity = activity;
 		mFileCache = new FileCache(mActivity);
 	}
 
-	public void showImageDailog(ArrayList<GoogleImageBean> imagesList) {
+	public void showImageDailog(ArrayList<OtherSourceImageDetails> imagesList) {
 		final Dialog dialog = new Dialog(mActivity,
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

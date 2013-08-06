@@ -1,6 +1,6 @@
 package com.lateralthoughts.vue.utils;
 
-public class GoogleImageBean {
+public class OtherSourceImageDetails {
 	public String getThumbUrl() {
 		return thumbUrl;
 	}
@@ -41,7 +41,7 @@ public class GoogleImageBean {
 		this.height = height;
 	}
 
-	public GoogleImageBean(String thumbUrl, String title, String originUrl,
+	public OtherSourceImageDetails(String thumbUrl, String title, String originUrl,
 			int width, int height) {
 		this.thumbUrl = thumbUrl;
 		this.title = title;
@@ -50,7 +50,7 @@ public class GoogleImageBean {
 		this.height = height;
 	}
 
-	public GoogleImageBean() {
+	public OtherSourceImageDetails() {
 
 	}
 

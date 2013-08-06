@@ -50,8 +50,8 @@ import android.widget.Toast;
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
-import com.lateralthoughts.vue.utils.GetImagesTask;
-import com.lateralthoughts.vue.utils.GoogleImageBean;
+import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
+import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
@@ -1557,7 +1557,7 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	public void showOtherSourcesGridview(ArrayList<GoogleImageBean> imagesList) {
+	public void showOtherSourcesGridview(ArrayList<OtherSourceImageDetails> imagesList) {
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
 			mProgressDialog = null;
@@ -1578,7 +1578,7 @@ public class DataEntryFragment extends Fragment {
 			mProgressDialog = ProgressDialog.show(getActivity(), "",
 					"Please wait...");
 		}
-		GetImagesTask getImagesTask = new GetImagesTask(sourceUrl);
+		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(sourceUrl);
 		getImagesTask.execute();
 	}
 }

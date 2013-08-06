@@ -8,23 +8,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import com.lateralthoughts.vue.utils.GoogleImageBean;
-import com.lateralthoughts.vue.utils.GoogleImageLoader;
+import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
+import com.lateralthoughts.vue.utils.OtherSourceImageLoader;
 
 public class OtherSourcesImageAdapter extends BaseAdapter {
 
 	private Activity mActivity;
-	private ArrayList<GoogleImageBean> mListImages;
+	private ArrayList<OtherSourceImageDetails> mListImages;
 	private LayoutInflater mInflater = null;
-	private GoogleImageLoader mImageLoader;
+	private OtherSourceImageLoader mImageLoader;
 
 	public OtherSourcesImageAdapter(Activity a,
-			ArrayList<GoogleImageBean> listImages) {
+			ArrayList<OtherSourceImageDetails> listImages) {
 		mActivity = a;
 		this.mListImages = listImages;
 		mInflater = (LayoutInflater) mActivity
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mImageLoader = new GoogleImageLoader(mActivity.getApplicationContext());
+		mImageLoader = new OtherSourceImageLoader(mActivity.getApplicationContext());
 	}
 
 	public int getCount() {
