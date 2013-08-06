@@ -1,16 +1,17 @@
 package com.lateralthoughts.vue;
 
+import java.util.ArrayList;
 import java.util.List;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
-
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
@@ -61,6 +62,62 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
+	void handleSendText(Intent intent) {
+		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+		if (sharedText != null) {
+			String[] tempArray = sharedText.split(" ");
+			Log.e("CretaeAisleSelectionActivity send text", sharedText + "...?"
+					+ tempArray[tempArray.length - 1]);
+			if (VueApplication.getInstance()
+					.ismFromDetailsScreenToDataentryCreateAisleScreenFlag()) {
+
+				VueApplication.getInstance()
+						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
+								false);
+				Log.e("Land", "vueland 1");
+				Intent i = new Intent(this, AisleDetailsViewActivity.class);
+				Bundle b = new Bundle();
+				b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+						tempArray[tempArray.length - 1]);
+				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+				i.putExtras(b);
+				//i.setFlags(Intent.);
+				startActivity(i);
+
+			} else {
+				Intent i = new Intent(this, DataEntryActivity.class);
+				Bundle b = new Bundle();
+				b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+						tempArray[tempArray.length - 1]);
+				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+				i.putExtras(b);
+				//i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(i);
+			}
+		}
+	}
+
+	void handleSendImage(Intent intent) {
+		Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+		if (imageUri != null) {
+			Log.e("CretaeAisleSelectionActivity send image", imageUri + "");
+			// Update UI to reflect image being shared
+		}
+	}
+
+	void handleSendMultipleImages(Intent intent) {
+		ArrayList<Uri> imageUris = intent
+				.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+		if (imageUris != null) {
+			for (int i = 0; i < imageUris.size(); i++) {
+				Log.e("CretaeAisleSelectionActivity send multipleimage",
+						imageUris.get(i) + "");
+			}
+
+			// Update UI to reflect multiple images being shared
+		}
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.title_options, menu);
@@ -76,6 +133,10 @@ public class VueLandingPageActivity extends BaseActivity {
 		case R.id.menu_create_aisles:
 			Intent intent = new Intent(VueLandingPageActivity.this,
 					CreateAisleSelectionActivity.class);
+			VueApplication.getInstance()
+					.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
+							false);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(intent);
 			return true;
 		case android.R.id.home:
@@ -133,17 +194,6 @@ public class VueLandingPageActivity extends BaseActivity {
 				Window window = VueLandingPageActivity.this.getWindow();
 				window.getDecorView().getWindowVisibleDisplayFrame(rect);
 				int statusBarHeight = rect.top;
-
-				/*
-				 * int contentViewTop=
-				 * window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
-				 * titleBarHeight= contentViewTop - statusBarHeight;
-				 * 
-				 * int contentViewTop=
-				 * window.findViewById(Window.ID_ANDROID_CONTENT).getTop(); int
-				 * titleBarHeight= contentViewTop - statusBarHeight;
-				 */
-
 				VueApplication.getInstance().setmStatusBarHeight(
 						statusBarHeight);
 
@@ -155,6 +205,36 @@ public class VueLandingPageActivity extends BaseActivity {
 	public void onPause() {
 		super.onPause();
 
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		super.onNewIntent(intent);
+		// Get intent, action and MIME type
+		String action = intent.getAction();
+		String type = intent.getType();
+
+		if (Intent.ACTION_SEND.equals(action) && type != null) {
+			Log.e("CretaeAisleSelectionActivity send text", type);
+			if ("text/plain".equals(type)) {
+				handleSendText(intent); // Handle text being sent
+				Log.e("CretaeAisleSelectionActivity send text",
+						"textplain match");
+			} else if (type.startsWith("image/")) {
+				handleSendImage(intent); // Handle single image being sent
+				Log.e("CretaeAisleSelectionActivity send text", "image match");
+			}
+		} else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+			if (type.startsWith("image/")) {
+				handleSendMultipleImages(intent); // Handle multiple images
+													// being sent
+				Log.e("CretaeAisleSelectionActivity send text",
+						"multiple image match");
+			}
+		} else {
+			// Handle other intents, such as being started from the home screen
+		}
 	}
 
 }

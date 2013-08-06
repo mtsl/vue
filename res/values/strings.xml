@@ -68,7 +68,7 @@
     <string name="cancelled">Cancelled</string>
     <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
     <string name="ok">Ok</string>
-
+   <string name="cache_dirname">GoogleImgApp_Cache</string>
     <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string> -->
     <string name="profile">Profile</string>
     <string name="create_aisle">Create Aisle</string>

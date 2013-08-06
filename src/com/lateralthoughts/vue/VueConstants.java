@@ -47,6 +47,8 @@ public class VueConstants {
 	public static final String FBPOST_IMAGEURLS = "FBPOSTIMAGEURLS";
 	public static final String FB_FRIEND_ID = "FBFRIENDID";
 	public static final String FB_FRIEND_NAME = "FBFRIENDNAME";
+	public static final String FROM_OTHER_SOURCES_FLAG = "fromothersourcesflag";
+	public static final String FROM_OTHER_SOURCES_URL = "fromothersourcesurl";
 	public static final String GOOGLEPLUS_FRIEND_INVITE = "GOOGLEPLUS_FRIEND_INVITE";
 	public static final String GOOGLEPLUS_FRIEND_INDEX = "GOOGLEPLUS_FRIEND_INDEX";
 	public static final String GOOGLEPLUS_FRIEND_IMAGE_PATH_LIST_KEY = "GOOGLEPLUS_FRIEND_INDEX_PATH_LIST_KEY";
@@ -109,7 +111,6 @@ public class VueConstants {
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
 	public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
-	
 
 	// Column names for lookingFor, occasion, category table.
 	public static final String KEYWORD = "keyWord";
@@ -117,6 +118,10 @@ public class VueConstants {
 	public static final String NUMBER_OF_TIMES_USED = "numberOfTimesUsed";
 	public static final String AMAZON_APP_PACKAGE_NAME = "com.amazon.mShop.android";
 	public static final String AMAZON_APP_ACTIVITY_NAME = "com.amazon.mShop.home.HomeActivity";
+	public static final String ETSY_APP_PACKAGE_NAME = "com.etsy.android";
+	public static final String ETSY_APP_ACTIVITY_NAME = "com.etsy.android.ui.HomeActivity";
+	public static final String FANCY_APP_PACKAGE_NAME = "com.thefancy.app";
+	public static final String FANCY_APP_ACTIVITY_NAME = "com.thefancy.app.common.Main";
 
 	// User Profile details
 	public static final String USER_NAME = "userName";

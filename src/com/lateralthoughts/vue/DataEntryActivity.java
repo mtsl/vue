@@ -85,7 +85,18 @@ public class DataEntryActivity extends BaseActivity {
 				}
 			}
 			Log.e("cs", "32");
-			fragment.setGalleryORCameraImage(aisleImagePath);
+			if (aisleImagePath != null)
+				fragment.setGalleryORCameraImage(aisleImagePath);
+			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
+				fragment.mCreateAisleBg.setVisibility(View.GONE);
+				fragment.mAisleBgProgressbar.setVisibility(View.GONE);
+				fragment.searchString = null;
+				fragment.searchString = b
+						.getString(VueConstants.FROM_OTHER_SOURCES_URL);
+				if (fragment.searchString != null) {
+					fragment.getImagesFromGoogle();
+				}
+			}
 		}
 	}
 
@@ -117,7 +128,10 @@ public class DataEntryActivity extends BaseActivity {
 			fragment.createAisleClickFunctionality();
 			break;
 		case R.id.menu_cancel:
+			/*Intent intentLan = new Intent(this, VueLandingPageActivity.class);
+			intentLan.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);*/
 			finish();
+		//	startActivity(intentLan);
 			break;
 		case R.id.menu_share:
 			fragment = (DataEntryFragment) getSupportFragmentManager()
@@ -210,6 +224,11 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
+			/*	Intent intentLan = new Intent(this, VueLandingPageActivity.class);
+				intentLan.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				finish();
+				startActivity(intentLan);
+				*/
 				super.onBackPressed();
 			}
 		}
