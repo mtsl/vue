@@ -20,13 +20,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
-public class GoogleImageLoader {
+public class OtherSourceImageLoader {
 
 	private HashMap<String, Bitmap> mCache = new HashMap<String, Bitmap>();
 	Context mContext;
 	FileCache mFileCache;
 
-	public GoogleImageLoader(Context context) {
+	public OtherSourceImageLoader(Context context) {
 		this.mContext = context;
 		mFileCache = new FileCache(mContext);
 		photoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);

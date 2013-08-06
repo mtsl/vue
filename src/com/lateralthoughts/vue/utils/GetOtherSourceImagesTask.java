@@ -8,9 +8,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,12 +19,12 @@ import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-public class GetImagesTask extends
-		AsyncTask<String, String, ArrayList<GoogleImageBean>> {
+public class GetOtherSourceImagesTask extends
+		AsyncTask<String, String, ArrayList<OtherSourceImageDetails>> {
 
 	private String mSourceUrl = null;
 
-	public GetImagesTask(String sourceUrl) {
+	public GetOtherSourceImagesTask(String sourceUrl) {
 		mSourceUrl = sourceUrl;
 	}
 
@@ -37,30 +34,10 @@ public class GetImagesTask extends
 	}
 
 	@Override
-	protected ArrayList<GoogleImageBean> doInBackground(String... arg0) {
-		/*
-		 * URL url; try { url = new URL(
-		 * "https://ajax.googleapis.com/ajax/services/search/images?" +
-		 * "v=1.0&q=" + "site:" + searchString + "&rsz=8");
-		 * 
-		 * URLConnection connection = url.openConnection();
-		 * 
-		 * String line; StringBuilder builder = new StringBuilder();
-		 * BufferedReader reader = new BufferedReader( new
-		 * InputStreamReader(connection.getInputStream())); while ((line =
-		 * reader.readLine()) != null) { builder.append(line); }
-		 * 
-		 * System.out.println("Builder string => " + builder.toString());
-		 * 
-		 * json = new JSONObject(builder.toString()); } catch
-		 * (MalformedURLException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated
-		 * catch block e.printStackTrace(); } catch (JSONException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
+	protected ArrayList<OtherSourceImageDetails> doInBackground(String... arg0) {
 		Log.e("asyntask", "url ???" + mSourceUrl);
 		try {
-			ArrayList<GoogleImageBean> imgDetails = parseHtml(mSourceUrl, 0, 0);
+			ArrayList<OtherSourceImageDetails> imgDetails = parseHtml(mSourceUrl, 0, 0);
 			return imgDetails;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -69,10 +46,10 @@ public class GetImagesTask extends
 		return null;
 	}
 
-	private ArrayList<GoogleImageBean> parseHtml(String url, int reqWidth,
+	private ArrayList<OtherSourceImageDetails> parseHtml(String url, int reqWidth,
 			int reqHeight) throws IOException {
-		ArrayList<GoogleImageBean> imageDetails = new ArrayList<GoogleImageBean>();
-		GoogleImageBean googleImageBean;
+		ArrayList<OtherSourceImageDetails> imageDetails = new ArrayList<OtherSourceImageDetails>();
+		OtherSourceImageDetails googleImageBean;
 		Document doc = null;
 		doc = Jsoup.parse(getData(url), url);
 		Elements elements = doc.select("img");
@@ -92,7 +69,7 @@ public class GetImagesTask extends
 						System.out.println("NumberFormatException");
 					}
 					// if (width > reqWidth && height > reqHeight) {
-					googleImageBean = new GoogleImageBean();
+					googleImageBean = new OtherSourceImageDetails();
 					googleImageBean.setWidth(width);
 					googleImageBean.setHeight(height);
 					googleImageBean
@@ -111,7 +88,7 @@ public class GetImagesTask extends
 	}
 
 	@Override
-	protected void onPostExecute(ArrayList<GoogleImageBean> result) {
+	protected void onPostExecute(ArrayList<OtherSourceImageDetails> result) {
 		super.onPostExecute(result);
 		DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
 				.getSupportFragmentManager().findFragmentById(
@@ -157,35 +134,4 @@ public class GetImagesTask extends
 		}
 		return sb.toString();
 	}
-
-	public ArrayList<GoogleImageBean> getImageList(JSONArray resultArray) {
-		ArrayList<GoogleImageBean> listImages = new ArrayList<GoogleImageBean>();
-		GoogleImageBean bean;
-
-		try {
-			for (int i = 0; i < resultArray.length(); i++) {
-				JSONObject obj;
-				obj = resultArray.getJSONObject(i);
-				bean = new GoogleImageBean();
-				bean.setHeight(Integer.parseInt(obj.getString("height")));
-				bean.setWidth(Integer.parseInt(obj.getString("width")));
-				bean.setOriginUrl(obj.getString("url"));
-				bean.setTitle(obj.getString("title"));
-				bean.setThumbUrl(obj.getString("tbUrl"));
-				Log.e("tag", "Thumb URL => " + obj);
-				System.out.println("Thumb URL => " + obj.getString("tbUrl"));
-
-				if (bean.getWidth() > 100 && bean.getHeight() > 100) {
-					listImages.add(bean);
-				}
-
-			}
-			return listImages;
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
 }
