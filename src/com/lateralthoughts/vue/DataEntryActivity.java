@@ -86,15 +86,13 @@ public class DataEntryActivity extends BaseActivity {
 			}
 			Log.e("cs", "32");
 			if (aisleImagePath != null)
-				fragment.setGalleryORCameraImage(aisleImagePath);
+				fragment.setGalleryORCameraImage(aisleImagePath, false);
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
 				fragment.mCreateAisleBg.setVisibility(View.GONE);
 				fragment.mAisleBgProgressbar.setVisibility(View.GONE);
-				fragment.searchString = null;
-				fragment.searchString = b
-						.getString(VueConstants.FROM_OTHER_SOURCES_URL);
-				if (fragment.searchString != null) {
-					fragment.getImagesFromGoogle();
+				if (b.getString(VueConstants.FROM_OTHER_SOURCES_URL) != null) {
+					fragment.getImagesFromUrl(b
+							.getString(VueConstants.FROM_OTHER_SOURCES_URL));
 				}
 			}
 		}
@@ -128,10 +126,13 @@ public class DataEntryActivity extends BaseActivity {
 			fragment.createAisleClickFunctionality();
 			break;
 		case R.id.menu_cancel:
-			/*Intent intentLan = new Intent(this, VueLandingPageActivity.class);
-			intentLan.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);*/
+			/*
+			 * Intent intentLan = new Intent(this,
+			 * VueLandingPageActivity.class);
+			 * intentLan.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			 */
 			finish();
-		//	startActivity(intentLan);
+			// startActivity(intentLan);
 			break;
 		case R.id.menu_share:
 			fragment = (DataEntryFragment) getSupportFragmentManager()
@@ -163,7 +164,7 @@ public class DataEntryActivity extends BaseActivity {
 							.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 					DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.create_aisles_view_fragment);
-					fragment.setGalleryORCameraImage(imagePath);
+					fragment.setGalleryORCameraImage(imagePath, false);
 				}
 			} else if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 					&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
@@ -224,11 +225,12 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
-			/*	Intent intentLan = new Intent(this, VueLandingPageActivity.class);
-				intentLan.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				finish();
-				startActivity(intentLan);
-				*/
+				/*
+				 * Intent intentLan = new Intent(this,
+				 * VueLandingPageActivity.class);
+				 * intentLan.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); finish();
+				 * startActivity(intentLan);
+				 */
 				super.onBackPressed();
 			}
 		}

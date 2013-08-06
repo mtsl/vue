@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -326,9 +329,11 @@ public class Utils {
 				VueConstants.DATE_FORMAT);
 		return dateFormatGmt.format(new Date(twoWeeksDifferenceTime));
 	}
+
 	public static Bitmap getBitmap() {
-		Bitmap icon = BitmapFactory.decodeResource(VueApplication.getInstance().mVueApplicationContext.getResources(),
-                R.drawable.ic_launcher);
+		Bitmap icon = BitmapFactory.decodeResource(
+				VueApplication.getInstance().mVueApplicationContext
+						.getResources(), R.drawable.ic_launcher);
 		return icon;
 	}
 
@@ -342,6 +347,20 @@ public class Utils {
 			app_installed = false;
 		}
 		return app_installed;
+	}
+
+	public static String getUrlFromString(String stringWithUrl) {
+		String regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(stringWithUrl);
+		while (m.find()) {
+			String urlStr = m.group();
+			if (urlStr.startsWith("(") && urlStr.endsWith(")")) {
+				urlStr = urlStr.substring(1, urlStr.length() - 1);
+			}
+			return urlStr;
+		}
+		return null;
 	}
 
 }

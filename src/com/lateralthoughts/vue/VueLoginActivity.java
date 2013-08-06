@@ -509,8 +509,13 @@ public class VueLoginActivity extends FragmentActivity implements
 					com.facebook.Response response) {
 				if (user != null) {
 					String location = "";
-					VueUser vueUser = parseGraphUserData(user);
-					vueUser.constructUnidentifiedUser();
+                    VueUserManager userManager = VueUserManager.getUserManager();
+                    userManager.createFBIdentifiedUser(user, new VueUserManager.UserUpdateCallback() {
+                        @Override
+                        public void onUserUpdated(VueUser user) {
+                            Log.e("Vue User Creation","callback from successful user creation");
+                        }
+                    });
 					try {
 						if (user.getLocation() != null) {
 							JSONObject jsonObject = user.getLocation()
