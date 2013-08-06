@@ -17,6 +17,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class VueLandingPageActivity extends BaseActivity {
 
@@ -65,9 +66,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	void handleSendText(Intent intent) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
 		if (sharedText != null) {
-			String[] tempArray = sharedText.split(" ");
-			Log.e("CretaeAisleSelectionActivity send text", sharedText + "...?"
-					+ tempArray[tempArray.length - 1]);
+			String sourceUrl = Utils.getUrlFromString(sharedText);
 			if (VueApplication.getInstance()
 					.ismFromDetailsScreenToDataentryCreateAisleScreenFlag()) {
 
@@ -77,21 +76,17 @@ public class VueLandingPageActivity extends BaseActivity {
 				Log.e("Land", "vueland 1");
 				Intent i = new Intent(this, AisleDetailsViewActivity.class);
 				Bundle b = new Bundle();
-				b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
-						tempArray[tempArray.length - 1]);
+				b.putString(VueConstants.FROM_OTHER_SOURCES_URL, sourceUrl);
 				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
 				i.putExtras(b);
-				//i.setFlags(Intent.);
 				startActivity(i);
 
 			} else {
 				Intent i = new Intent(this, DataEntryActivity.class);
 				Bundle b = new Bundle();
-				b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
-						tempArray[tempArray.length - 1]);
+				b.putString(VueConstants.FROM_OTHER_SOURCES_URL, sourceUrl);
 				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
 				i.putExtras(b);
-				//i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(i);
 			}
 		}

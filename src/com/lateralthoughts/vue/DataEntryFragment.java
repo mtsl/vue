@@ -1,16 +1,7 @@
 package com.lateralthoughts.vue;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -47,18 +38,19 @@ import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
+
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
+import com.lateralthoughts.vue.utils.GetImagesTask;
 import com.lateralthoughts.vue.utils.GoogleImageBean;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -127,8 +119,8 @@ public class DataEntryFragment extends Fragment {
 	public boolean mFromDetailsScreenFlag = false;
 	public boolean mIsUserAisleFlag = false;
 	private LoginWarningMessage mLoginWarningMessage = null;
-	public String searchString = null;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
+	private ProgressDialog mProgressDialog;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -1259,15 +1251,30 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	public void setGalleryORCameraImage(String picturePath) {
+	public void setGalleryORCameraImage(String picturePath,
+			boolean dontResizeImageFlag) {
 		try {
 			Log.e("frag1", "gallery called,,,," + picturePath);
 			Log.e("cs", "8");
 			mAisleBgProgressbar.setVisibility(View.VISIBLE);
 			mCreateAisleBg.setVisibility(View.GONE);
 			mImagePath = picturePath;
-			mImageResizeAsynTask = new ImageResizeAsynTask();
-			mImageResizeAsynTask.execute(getActivity());
+			if (dontResizeImageFlag) {
+				mAisleBgProgressbar.setVisibility(View.GONE);
+				mCreateAisleBg.setVisibility(View.VISIBLE);
+				if (mImagePath != null) {
+					mAisleImageBitmap = BitmapFactory.decodeFile(mImagePath);
+				}
+				if (mAisleImageBitmap != null) {
+					mCreateAisleBg.setImageBitmap(mAisleImageBitmap);
+				} else {
+					mCreateAisleBg.setImageDrawable(getResources().getDrawable(
+							R.drawable.no_image));
+				}
+			} else {
+				mImageResizeAsynTask = new ImageResizeAsynTask();
+				mImageResizeAsynTask.execute(getActivity());
+			}
 			if (mAddImageToAisleFlag) {
 				mDataEntryAislesViewpager.setVisibility(View.GONE);
 				DataEntryActivity obj = (DataEntryActivity) getActivity();
@@ -1550,137 +1557,28 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	private void showOtherSourcesGridview(ArrayList<GoogleImageBean> imagesList) {
-		if (mOtherSourcesDialog == null) {
-			mOtherSourcesDialog = new OtherSourcesDialog(getActivity());
+	public void showOtherSourcesGridview(ArrayList<GoogleImageBean> imagesList) {
+		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+			mProgressDialog.dismiss();
+			mProgressDialog = null;
 		}
-		mOtherSourcesDialog.showImageDailog(imagesList);
+		if (imagesList != null && imagesList.size() > 0) {
+			if (mOtherSourcesDialog == null) {
+				mOtherSourcesDialog = new OtherSourcesDialog(getActivity());
+			}
+			mOtherSourcesDialog.showImageDailog(imagesList);
+		} else {
+			Toast.makeText(getActivity(), "Sorry, there are no images.",
+					Toast.LENGTH_LONG).show();
+		}
 	}
 
-	public void getImagesFromGoogle() {
-		new getImagesTask().execute();
-	}
-
-	public class getImagesTask extends AsyncTask<String, String, String> {
-		JSONObject json;
-		ProgressDialog dialog;
-
-		@Override
-		protected void onPreExecute() {
-			// TODO Auto-generated method stub
-			super.onPreExecute();
-
-			dialog = ProgressDialog.show(getActivity(), "", "Please wait...");
-			dialog.setCancelable(true);
+	public void getImagesFromUrl(String sourceUrl) {
+		if (mProgressDialog == null) {
+			mProgressDialog = ProgressDialog.show(getActivity(), "",
+					"Please wait...");
 		}
-
-		@Override
-		protected String doInBackground(String... arg0) {
-			// TODO Auto-generated method stub
-
-			URL url;
-			try {
-				url = new URL(
-						"https://ajax.googleapis.com/ajax/services/search/images?"
-								+ "v=1.0&q=" + "site:" + searchString
-								+ "&rsz=8");
-
-				URLConnection connection = url.openConnection();
-
-				String line;
-				StringBuilder builder = new StringBuilder();
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(connection.getInputStream()));
-				while ((line = reader.readLine()) != null) {
-					builder.append(line);
-				}
-
-				System.out.println("Builder string => " + builder.toString());
-
-				json = new JSONObject(builder.toString());
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			// TODO Auto-generated method stub
-			super.onPostExecute(result);
-			try {
-				if (json != null) {
-					JSONObject responseObject = json
-							.getJSONObject("responseData");
-					JSONArray resultArray = responseObject
-							.getJSONArray("results");
-
-					ArrayList<GoogleImageBean> listImages = getImageList(resultArray);
-					if (dialog.isShowing()) {
-						dialog.dismiss();
-					}
-					if (listImages != null && listImages.size() > 0) {
-						showOtherSourcesGridview(listImages);
-					}
-					System.out.println("Result array length => "
-							+ resultArray.length());
-				} else {
-					if (dialog.isShowing()) {
-						dialog.dismiss();
-					}
-					Toast.makeText(getActivity(),
-							"Sorry, there are no images.", Toast.LENGTH_LONG)
-							.show();
-				}
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				if (dialog.isShowing()) {
-					dialog.dismiss();
-				}
-				Toast.makeText(getActivity(), "Sorry, there are no images.",
-						Toast.LENGTH_LONG).show();
-			}
-
-		}
-
-	}
-
-	public ArrayList<GoogleImageBean> getImageList(JSONArray resultArray) {
-		ArrayList<GoogleImageBean> listImages = new ArrayList<GoogleImageBean>();
-		GoogleImageBean bean;
-
-		try {
-			for (int i = 0; i < resultArray.length(); i++) {
-				JSONObject obj;
-				obj = resultArray.getJSONObject(i);
-				bean = new GoogleImageBean();
-				bean.setHeight(Integer.parseInt(obj.getString("height")));
-				bean.setWidth(Integer.parseInt(obj.getString("width")));
-				bean.setOriginUrl(obj.getString("url"));
-				bean.setTitle(obj.getString("title"));
-				bean.setThumbUrl(obj.getString("tbUrl"));
-				Log.e("tag", "Thumb URL => " + obj);
-				System.out.println("Thumb URL => " + obj.getString("tbUrl"));
-
-				if (bean.getWidth() > 100 && bean.getHeight() > 100) {
-					listImages.add(bean);
-				}
-
-			}
-			return listImages;
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
+		GetImagesTask getImagesTask = new GetImagesTask(sourceUrl);
+		getImagesTask.execute();
 	}
 }

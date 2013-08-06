@@ -48,7 +48,7 @@ public class OtherSourcesDialog {
 					fragment.mFindAtText
 							.setText(OtherSourcesDialog.this.imagesList.get(
 									position).getOriginUrl());
-					fragment.setGalleryORCameraImage(f.getPath());
+					fragment.setGalleryORCameraImage(f.getPath(), true);
 				} else {
 					Toast.makeText(mActivity, "Please wait. Image is loading.",
 							Toast.LENGTH_LONG).show();
