@@ -2,15 +2,15 @@ package com.lateralthoughts.vue;
 
 import android.os.Bundle;
 import android.util.Log;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.android.volley.*;
 import com.android.volley.toolbox.HttpHeaderParser;
 
 //FB imports
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -177,6 +177,41 @@ public class VueUserManager {
         }
     }
 
+    public void fetchUserDataFromLocalId(String id, final UserUpdateCallback callback){
+        //https://1-java.vueapi-canary-development1.appspot.com/api/userget/id/5707702298738688
+
+        String requestUrlBase = VUE_API_BASE_URI + "api/userget/id/" + id;
+        String requestUrl = requestUrlBase;
+        Response.Listener listener = new Response.Listener<String>(){
+            @Override
+            public void onResponse(String jsonString){
+                if(null != jsonString){
+                    Log.e("Vue App", "jsonString = " + jsonString);
+                    VueUser user = parseVueUserInfo(jsonString);
+                    callback.onUserUpdated(user);
+                }
+            }
+        };
+        Response.ErrorListener errorListener = new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VueNetworkError","Vue encountered network operations error. Error = " + error.networkResponse);
+            }
+        };
+        StringRequest vueRequest =
+                new StringRequest(requestUrl, listener, errorListener ){
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> headersMap = new HashMap<String, String>();
+                        headersMap.put("Accept-Encoding", "gzip");
+                        headersMap.put("Content-Type","application/json");
+                        return headersMap;
+                    }
+                };
+
+        VueApplication.getInstance().getRequestQueue().add(vueRequest);
+    }
+
     private VueUser parseGraphUserIntoVueUser(GraphUser graphUser){
         if(null == graphUser){
             throw new NullPointerException("GraphUser was set to null in parseGraphUserIntoVueUser");
@@ -196,5 +231,32 @@ public class VueUserManager {
 
         }
         return vueUser;
+    }
+
+    private VueUser parseVueUserInfo(String jsonString){
+        VueUser user = null;
+        //{"user":{"id":5707702298738688,"email":null,"firstName":null,"lastName":null,
+        // "joinTime":1375333802621,"deviceId":null,"facebookId":"FACEBOOK_ID_UNKNOWN","
+        // googlePlusId":"GOOGLE_PLUS_ID_UNKNOWN"}}
+
+        if(null == jsonString)
+            throw new NullPointerException("parseVueUserInfo invoked with null object");
+
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            String userString = jsonObject.optString("user");
+            JSONObject userObject = jsonObject.getJSONObject("user");
+            String id = userObject.optString("id");
+            String email = userObject.optString("email");
+            String firstName = userObject.optString("firstName");
+            String lastName = userObject.optString("lastName");
+            String deviceId = userObject.optString("deviceId");
+            user = new VueUser(null, null, email);
+            user.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return user;
     }
 }
