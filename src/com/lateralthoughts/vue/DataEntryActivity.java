@@ -104,7 +104,7 @@ public class DataEntryActivity extends BaseActivity {
 					ArrayList<OtherSourceImageDetails> otherSourcesImageDetailsList = new ArrayList<OtherSourceImageDetails>();
 					for (int i = 0; i < imageUrisList.size(); i++) {
 						OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails(
-								null, null, null, 0, 0, imageUrisList.get(i));
+								null, null, null, 0, 0, imageUrisList.get(i), 0);
 						otherSourcesImageDetailsList
 								.add(otherSourceImageDetails);
 					}

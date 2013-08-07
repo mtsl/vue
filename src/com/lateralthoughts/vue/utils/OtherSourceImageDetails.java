@@ -44,13 +44,15 @@ public class OtherSourceImageDetails {
 	}
 
 	public OtherSourceImageDetails(String thumbUrl, String title,
-			String originUrl, int width, int height, Uri imageUri) {
+			String originUrl, int width, int height, Uri imageUri,
+			int widthHeightMultipliedValue) {
 		this.thumbUrl = thumbUrl;
 		this.title = title;
 		this.originUrl = originUrl;
 		this.width = width;
 		this.height = height;
 		this.imageUri = imageUri;
+		this.widthHeightMultipliedValue = widthHeightMultipliedValue;
 	}
 
 	public OtherSourceImageDetails() {
@@ -63,6 +65,15 @@ public class OtherSourceImageDetails {
 	private int width;
 	private int height;
 	private Uri imageUri;
+	private int widthHeightMultipliedValue;
+
+	public int getWidthHeightMultipliedValue() {
+		return widthHeightMultipliedValue;
+	}
+
+	public void setWidthHeightMultipliedValue(int widthHeightMultipliedValue) {
+		this.widthHeightMultipliedValue = widthHeightMultipliedValue;
+	}
 
 	public Uri getImageUri() {
 		return imageUri;

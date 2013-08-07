@@ -8,6 +8,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,6 +17,9 @@ import org.jsoup.select.Elements;
 import com.lateralthoughts.vue.DataEntryActivity;
 import com.lateralthoughts.vue.DataEntryFragment;
 import com.lateralthoughts.vue.R;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -23,6 +28,8 @@ public class GetOtherSourceImagesTask extends
 		AsyncTask<String, String, ArrayList<OtherSourceImageDetails>> {
 
 	private String mSourceUrl = null;
+	private static final int WIDTH_LIMIT = 150;
+	private static final int HEIGHT_LIMIT = 150;
 
 	public GetOtherSourceImagesTask(String sourceUrl) {
 		mSourceUrl = sourceUrl;
@@ -37,7 +44,8 @@ public class GetOtherSourceImagesTask extends
 	protected ArrayList<OtherSourceImageDetails> doInBackground(String... arg0) {
 		Log.e("asyntask", "url ???" + mSourceUrl);
 		try {
-			ArrayList<OtherSourceImageDetails> imgDetails = parseHtml(mSourceUrl, 0, 0);
+			ArrayList<OtherSourceImageDetails> imgDetails = parseHtml(
+					mSourceUrl, WIDTH_LIMIT, HEIGHT_LIMIT);
 			return imgDetails;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -46,10 +54,10 @@ public class GetOtherSourceImagesTask extends
 		return null;
 	}
 
-	private ArrayList<OtherSourceImageDetails> parseHtml(String url, int reqWidth,
-			int reqHeight) throws IOException {
+	private ArrayList<OtherSourceImageDetails> parseHtml(String url,
+			int reqWidth, int reqHeight) throws IOException {
 		ArrayList<OtherSourceImageDetails> imageDetails = new ArrayList<OtherSourceImageDetails>();
-		OtherSourceImageDetails googleImageBean;
+		OtherSourceImageDetails OtherSourceImageDetails = null;
 		Document doc = null;
 		doc = Jsoup.parse(getData(url), url);
 		Elements elements = doc.select("img");
@@ -68,21 +76,28 @@ public class GetOtherSourceImagesTask extends
 					} catch (NumberFormatException e) {
 						System.out.println("NumberFormatException");
 					}
-					// if (width > reqWidth && height > reqHeight) {
-					googleImageBean = new OtherSourceImageDetails();
-					googleImageBean.setWidth(width);
-					googleImageBean.setHeight(height);
-					googleImageBean
-							.setOriginUrl(elements2.get(j).absUrl("src"));
-					/*
-					 * } else { imgDetails = getHeightWidth(
-					 * elements2.get(j).absUrl("src"), reqWidth, reqHeight); }
-					 */
-					if (googleImageBean != null) {
-						imageDetails.add(googleImageBean);
+					if (width > reqWidth && height > reqHeight) {
+						OtherSourceImageDetails = new OtherSourceImageDetails();
+						OtherSourceImageDetails.setWidth(width);
+						OtherSourceImageDetails.setHeight(height);
+						OtherSourceImageDetails.setOriginUrl(elements2.get(j)
+								.absUrl("src"));
+						OtherSourceImageDetails
+								.setWidthHeightMultipliedValue(width * height);
+					} else {
+						OtherSourceImageDetails = getHeightWidth(
+								elements2.get(j).absUrl("src"), reqWidth,
+								reqHeight);
+					}
+					if (OtherSourceImageDetails != null) {
+						imageDetails.add(OtherSourceImageDetails);
 					}
 				}
 			}
+		}
+		if (imageDetails != null) {
+			Collections.sort(imageDetails, new SortBasedOnImageWidthHeight());
+			Collections.reverse(imageDetails);
 		}
 		return imageDetails;
 	}
@@ -134,4 +149,41 @@ public class GetOtherSourceImagesTask extends
 		}
 		return sb.toString();
 	}
+
+	private OtherSourceImageDetails getHeightWidth(String absUrl, int reqWidth,
+			int reqHeight) {
+		OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails();
+		Bitmap bmp = getImage(absUrl);
+		if (bmp == null) {
+			return null;
+		} else if (bmp.getWidth() >= reqWidth && bmp.getHeight() >= reqHeight) {
+			otherSourceImageDetails.setHeight(bmp.getHeight());
+			otherSourceImageDetails.setWidth(bmp.getWidth());
+			otherSourceImageDetails.setOriginUrl(absUrl);
+			otherSourceImageDetails.setWidthHeightMultipliedValue(bmp
+					.getHeight() * bmp.getWidth());
+			return otherSourceImageDetails;
+		} else {
+			return null;
+		}
+	}
+
+	private Bitmap getImage(String url) {
+		InputStream is = getInputScream(url);
+		Bitmap bmp = BitmapFactory.decodeStream(is);
+		return bmp;
+	}
+
+	private InputStream getInputScream(String imgUrl) {
+		InputStream is = null;
+		try {
+			URL url = new URL(imgUrl);
+			URLConnection con = url.openConnection();
+			is = con.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return is;
+	}
+
 }
