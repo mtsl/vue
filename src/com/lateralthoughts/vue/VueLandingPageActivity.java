@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.Window;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -38,6 +39,19 @@ public class VueLandingPageActivity extends BaseActivity {
 				VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG, true);
 		// Application opens first time.
 		if (isFirstTimeFlag) {
+			VueUserManager userManager = VueUserManager.getUserManager();
+			userManager.createUnidentifiedUser(new UserUpdateCallback() {
+
+				@Override
+				public void onUserUpdated(VueUser user) {
+					try {
+						Utils.writeObjectToFile(VueLandingPageActivity.this,
+								VueConstants.VUE_APP_USEROBJECT__FILENAME, user);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
 			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
 			editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG,
 					false);

@@ -11,19 +11,34 @@ public class FileCache {
 
 	private File cacheDir;
 	private long twoDaysOldTime = 2 * 24 * 60 * 60 * 1000;
-	File mVueAppCameraPicsDir;
-	File mVueAppResizedImagesDir;
+	private File mVueAppCameraPicsDir;
+
+	public File getmVueAppCameraPicsDir() {
+		return mVueAppCameraPicsDir;
+	}
+
+	public void setmVueAppCameraPicsDir(File mVueAppCameraPicsDir) {
+		this.mVueAppCameraPicsDir = mVueAppCameraPicsDir;
+	}
+
+	public File getmVueAppResizedImagesDir() {
+		return mVueAppResizedImagesDir;
+	}
+
+	public void setmVueAppResizedImagesDir(File mVueAppResizedImagesDir) {
+		this.mVueAppResizedImagesDir = mVueAppResizedImagesDir;
+	}
+
+	private File mVueAppResizedImagesDir;
 
 	public FileCache(Context context) {
 		// Find the dir to save cached images
 		if (android.os.Environment.getExternalStorageState().equals(
 				android.os.Environment.MEDIA_MOUNTED)) {
 			cacheDir = new File(
-					/*android.os.Environment.getExternalStorageDirectory()*/
-			        context.getExternalCacheDir(),
-					"LazyList");
-			mVueAppCameraPicsDir = new File(
-					context.getExternalFilesDir(null),
+			/* android.os.Environment.getExternalStorageDirectory() */
+			context.getExternalCacheDir(), "LazyList");
+			mVueAppCameraPicsDir = new File(context.getExternalFilesDir(null),
 					VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
 			mVueAppResizedImagesDir = new File(
 					context.getExternalFilesDir(null),
@@ -47,7 +62,7 @@ public class FileCache {
 	public File getFile(String url) {
 		// I identify images by hashcode. Not a perfect solution, good for the
 		// demo.
-		 
+
 		int hashCode = url.hashCode();
 		String filename = String.valueOf(hashCode);
 		// Another possible solution (thanks to grantland)
@@ -90,23 +105,25 @@ public class FileCache {
 		for (File f : files)
 			f.delete();
 	}
-   
+
 	public void clearTwoDaysOldPictures() {
-	  File[] files = cacheDir.listFiles();
-	  if(files == null) {
-	    return;
-	  }
-	  Log.e("Profiling", "Profiling files Array size: " + files.length);
-	  int count = 0;
-	  for(File f : files) {
-	   long lastModifidedDate = f.lastModified();
-	   Log.e("Profiling", "Profiling deleting two lastModifidedDate : " + new Date(lastModifidedDate));
-	   if(System.currentTimeMillis() - lastModifidedDate >= twoDaysOldTime) {
-	     Log.e("Profiling", "Profiling deleting two days old images");
-	     if(f.delete()) {
-	       Log.e("Profiling", "Profiling Total images Deleted: " + ++count);
-	     }
-	   }
-	  }
+		File[] files = cacheDir.listFiles();
+		if (files == null) {
+			return;
+		}
+		Log.e("Profiling", "Profiling files Array size: " + files.length);
+		int count = 0;
+		for (File f : files) {
+			long lastModifidedDate = f.lastModified();
+			Log.e("Profiling", "Profiling deleting two lastModifidedDate : "
+					+ new Date(lastModifidedDate));
+			if (System.currentTimeMillis() - lastModifidedDate >= twoDaysOldTime) {
+				Log.e("Profiling", "Profiling deleting two days old images");
+				if (f.delete()) {
+					Log.e("Profiling", "Profiling Total images Deleted: "
+							+ ++count);
+				}
+			}
+		}
 	}
 }

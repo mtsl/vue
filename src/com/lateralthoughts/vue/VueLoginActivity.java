@@ -504,13 +504,24 @@ public class VueLoginActivity extends FragmentActivity implements
 					com.facebook.Response response) {
 				if (user != null) {
 					String location = "";
-                    VueUserManager userManager = VueUserManager.getUserManager();
-                    userManager.createFBIdentifiedUser(user, new VueUserManager.UserUpdateCallback() {
-                        @Override
-                        public void onUserUpdated(VueUser user) {
-                            Log.e("Vue User Creation","callback from successful user creation");
-                        }
-                    });
+					VueUserManager userManager = VueUserManager
+							.getUserManager();
+					userManager.createFBIdentifiedUser(user,
+							new VueUserManager.UserUpdateCallback() {
+								@Override
+								public void onUserUpdated(VueUser user) {
+									try {
+										Utils.writeObjectToFile(
+												VueLoginActivity.this,
+												VueConstants.VUE_APP_USEROBJECT__FILENAME,
+												user);
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+									Log.e("Vue User Creation",
+											"callback from successful user creation");
+								}
+							});
 					try {
 						if (user.getLocation() != null) {
 							JSONObject jsonObject = user.getLocation()
@@ -907,25 +918,4 @@ public class VueLoginActivity extends FragmentActivity implements
 			editor.commit();
 		}
 	}
-
-	private VueUser parseGraphUserData(GraphUser user) {
-		VueUser vueUser = null;
-		if (null == user) {
-			throw new RuntimeException("Can't parse a null graph user object");
-		}
-		try {
-			String firstName = user.getFirstName();
-			String lastName = user.getLastName();
-			String birthday = user.getBirthday();
-			JSONObject innerObject = user.getInnerJSONObject();
-			String email = innerObject.getString("email");
-			// String email = emailObject.optString("email");
-			vueUser = new VueUser(null, null, email);
-			vueUser.setUsersName(firstName, lastName);
-		} catch (JSONException ex) {
-
-		}
-		return vueUser;
-	}
-
 }

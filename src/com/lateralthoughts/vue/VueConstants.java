@@ -111,6 +111,7 @@ public class VueConstants {
 	public static final String USER_lOCATION = "name";
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
 	public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
+	public static final String VUE_APP_USEROBJECT__FILENAME = "vueuser.ser";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
 
 	// Column names for lookingFor, occasion, category table.
