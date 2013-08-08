@@ -10,6 +10,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
+import com.lateralthoughts.vue.utils.Utils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,7 +88,8 @@ public class VueUserManager {
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
 					Log.e("Profiling", "Profiling : onResponse()");
-					VueUser user = new VueUser(null, null, null);
+					VueUser user = new VueUser(null, null, Utils.getDeviceId(),
+							null);
 					user.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
 					VueUserManager.this.setCurrentUser(user);
 					callback.onUserUpdated(user);
@@ -112,6 +115,7 @@ public class VueUserManager {
 	public void createFBIdentifiedUser(final GraphUser graphUser,
 			final UserUpdateCallback callback) {
 		// lets throw an exception if the current user is not NULL.
+
 		/*if (null != mCurrentUser)
 			throw new RuntimeException(
 					"Cannot call createFBIdentifiedUser when User is "
@@ -141,7 +145,111 @@ public class VueUserManager {
 			}
 		};
 		String requestUrl = VUE_API_BASE_URI + FB_USER_CREATE_ENDPOINT
-				+ user.getFBUserId();
+				+ user.getmFacebookId();
+		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+				errorListener);
+		VueApplication.getInstance().getRequestQueue().add(request);
+
+	}
+
+	public void createGooglePlusIdentifiedUser(final VueUser vueUser,
+			final UserUpdateCallback callback) {
+		// lets throw an exception if the current user is not NULL.
+
+		/*if (null != mCurrentUser)
+			throw new RuntimeException(
+					"Cannot call createFBIdentifiedUser when User is "
+							+ "already available. Try the update APIs");
+*/
+		Response.Listener listener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					VueUserManager.this.setCurrentUser(vueUser);
+					vueUser.setUserIdentityMethod(PreferredIdentityLayer.GPLUS);
+					callback.onUserUpdated(vueUser);
+				}
+			}
+		};
+		Response.ErrorListener errorListener = new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				if (null != error.networkResponse
+						&& null != error.networkResponse.data) {
+					String errorData = error.networkResponse.data.toString();
+					Log.e("VueUserDebug", "error date = " + errorData);
+				}
+			}
+		};
+		String requestUrl = VUE_API_BASE_URI + GPLUS_USER_CREATE_ENDPOINT
+				+ vueUser.getmGooglePlusId();
+		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+				errorListener);
+		VueApplication.getInstance().getRequestQueue().add(request);
+
+	}
+
+	public void updateFBIdentifiedUser(final GraphUser graphUser,
+			final VueUser vueUser, final UserUpdateCallback callback) {
+
+		final VueUser user = parseGraphUserIntoVueUser(graphUser);
+		Response.Listener listener = new Response.Listener<String>() {
+			GraphUser graphUser;
+
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					user.setUserIdentityMethod(vueUser.getUserIdentity());
+					user.setmDeviceId(vueUser.getmDeviceId());
+					user.setmGooglePlusId(vueUser.getmGooglePlusId());
+					VueUserManager.this.setCurrentUser(user);
+					callback.onUserUpdated(user);
+				}
+			}
+		};
+		Response.ErrorListener errorListener = new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				if (null != error.networkResponse
+						&& null != error.networkResponse.data) {
+					String errorData = error.networkResponse.data.toString();
+					Log.e("VueUserDebug", "error date = " + errorData);
+				}
+			}
+		};
+		String requestUrl = VUE_API_BASE_URI + FB_USER_CREATE_ENDPOINT
+				+ user.getmFacebookId();
+		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+				errorListener);
+		VueApplication.getInstance().getRequestQueue().add(request);
+
+	}
+
+	public void updateGooglePlusIdentifiedUser(final VueUser vueUser,
+			final UserUpdateCallback callback) {
+		// lets throw an exception if the current user is not NULL.
+
+		Response.Listener listener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					VueUserManager.this.setCurrentUser(vueUser);
+					callback.onUserUpdated(vueUser);
+				}
+			}
+		};
+		Response.ErrorListener errorListener = new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				if (null != error.networkResponse
+						&& null != error.networkResponse.data) {
+					String errorData = error.networkResponse.data.toString();
+					Log.e("VueUserDebug", "error date = " + errorData);
+				}
+			}
+		};
+		String requestUrl = VUE_API_BASE_URI + GPLUS_USER_CREATE_ENDPOINT
+				+ vueUser.getmGooglePlusId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
@@ -251,7 +359,7 @@ public class VueUserManager {
 			String email = innerObject
 					.getString(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY);
 			String username = graphUser.getName();
-			vueUser = new VueUser(username, null, email);
+			vueUser = new VueUser(username, null, null, email);
 			vueUser.setUsersName(firstName, lastName);
 			vueUser.setBirthday(birthday);
 		} catch (JSONException ex) {
@@ -279,7 +387,7 @@ public class VueUserManager {
 			String firstName = userObject.optString("firstName");
 			String lastName = userObject.optString("lastName");
 			String deviceId = userObject.optString("deviceId");
-			user = new VueUser(null, null, email);
+			user = new VueUser(null, null, null, email);
 			user.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
 		} catch (JSONException e) {
 			e.printStackTrace();

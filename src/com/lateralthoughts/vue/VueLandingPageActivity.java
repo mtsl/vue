@@ -60,6 +60,18 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		fragment = (VueLandingAislesFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisles_view_fragment);
+		try {
+			VueUser vueUser = Utils.readObjectFromFile(this,
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			Log.e("tag fbid", vueUser.getmFacebookId() + "");
+			Log.e("tag g+id", vueUser.getmGooglePlusId() + "");
+			Log.e("tag deviceid", vueUser.getmDeviceId() + "");
+			Log.e("tag email", vueUser.getmEmailId() + "");
+			Log.e("tag useridentity", vueUser.getUserIdentity().name() + "");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

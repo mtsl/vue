@@ -25,6 +25,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -382,5 +383,14 @@ public class Utils {
 		VueUser vueUser = (VueUser) is.readObject();
 		is.close();
 		return vueUser;
+	}
+
+	public static String getDeviceId() {
+
+		String deviceId = Secure.getString(VueApplication.getInstance()
+				.getContentResolver(), Secure.ANDROID_ID);
+		Log.e("Utils", "get device id method called" + deviceId);
+		return deviceId;
+
 	}
 }
