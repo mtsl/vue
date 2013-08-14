@@ -12,7 +12,6 @@ import com.android.volley.toolbox.Volley;
 //internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.VueMemoryCache;
 
 //import crittercism sdk
 import com.crittercism.app.Crittercism;
@@ -25,10 +24,10 @@ import org.json.JSONObject;
 public class VueApplication extends Application {
 	private static VueApplication sInstance;
 
-	private VueMemoryCache<Bitmap> mVueAisleImagesCache;
-	private VueMemoryCache<Bitmap> mAisleContentCache;
-	private VueMemoryCache<String> mVueAisleOwnerNamesCache;
-	private VueMemoryCache<String> mVueAisleContextInfoCache;
+	//private VueMemoryCache<Bitmap> mVueAisleImagesCache;
+	//private VueMemoryCache<Bitmap> mAisleContentCache;
+	//private VueMemoryCache<String> mVueAisleOwnerNamesCache;
+	//private VueMemoryCache<String> mVueAisleContextInfoCache;
 	private static final String CRITTERCISM_APP_ID = "5153c41e558d6a2403000009";
 	private HttpClient mHttpClient;
 	private FileCache mFileCache;
@@ -75,17 +74,17 @@ public class VueApplication extends Application {
 
 		mVueApplicationContext = this;
 
-		mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
-		mVueAisleImagesCache.setLimit(40);
-		mVueAisleOwnerNamesCache = new VueMemoryCache<String>();
-		mVueAisleOwnerNamesCache.setLimit(1);
-		mVueAisleContextInfoCache = new VueMemoryCache<String>();
-		mVueAisleContextInfoCache.setLimit(1);
+		//mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
+		//mVueAisleImagesCache.setLimit(40);
+		//mVueAisleOwnerNamesCache = new VueMemoryCache<String>();
+		//mVueAisleOwnerNamesCache.setLimit(1);
+		//mVueAisleContextInfoCache = new VueMemoryCache<String>();
+		//mVueAisleContextInfoCache.setLimit(1);
 		ScaledImageViewFactory.getInstance(this);
 		AisleWindowContentFactory.getInstance(this);
 
-		mAisleContentCache = new VueMemoryCache<Bitmap>();
-		mAisleContentCache.setLimit(10);
+		//mAisleContentCache = new VueMemoryCache<Bitmap>();
+		//mAisleContentCache.setLimit(10);
 
 		mHttpClient = new DefaultHttpClient();
 		mFileCache = new FileCache(this);
@@ -121,17 +120,17 @@ public class VueApplication extends Application {
 		return sInstance;
 	}
 
-	public VueMemoryCache<Bitmap> getAisleImagesMemCache() {
+	/*public VueMemoryCache<Bitmap> getAisleImagesMemCache() {
 		return mVueAisleImagesCache;
-	}
+	}*/
 
 	public HttpClient getHttpClient() {
 		return mHttpClient;
 	}
 
-	public VueMemoryCache<Bitmap> getAisleContentCache() {
+/*	public VueMemoryCache<Bitmap> getAisleContentCache() {
 		return mAisleContentCache;
-	}
+	}*/
 
 	public FileCache getFileCache() {
 		return mFileCache;

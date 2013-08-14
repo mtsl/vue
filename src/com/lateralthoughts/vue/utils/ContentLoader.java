@@ -42,7 +42,8 @@ import android.util.Log;
  */
 public class ContentLoader {
     
-    VueMemoryCache<Bitmap> mAisleImagesCache; // = new MemoryCache();
+    //VueMemoryCache<Bitmap> mAisleImagesCache; // = new MemoryCache();
+	   BitmapLruCache mAisleImagesCache;
     private static final boolean DEBUG = false;
     FileCache fileCache;
     private Map<ImageView, String> imageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
@@ -56,7 +57,8 @@ public class ContentLoader {
         fileCache = new FileCache(context);
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         mScreenWidth = metrics.widthPixels; 
-        mAisleImagesCache = VueApplication.getInstance().getAisleImagesMemCache();
+       // mAisleImagesCache = VueApplication.getInstance().getAisleImagesMemCache();
+        mAisleImagesCache = BitmapLruCache.getInstance(VueApplication.getInstance());
     }
     
     public void displayImage(String url, ImageView imageView){
@@ -140,8 +142,9 @@ public class ContentLoader {
             return bitmap;
         } catch (Throwable ex){
            ex.printStackTrace();
-           if(ex instanceof OutOfMemoryError)
-        	   mAisleImagesCache.clear();
+           if(ex instanceof OutOfMemoryError) {
+        	   //mAisleImagesCache.clear();
+           }
            return null;
         }
     }
@@ -185,7 +188,7 @@ public class ContentLoader {
     }
 
     public void clearCache() {
-    	mAisleImagesCache.clear();
+    	//mAisleImagesCache.clear();
         //fileCache.clear();
     }
     

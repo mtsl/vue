@@ -134,6 +134,9 @@ public class AisleWindowContent
     public int getBestHeightForWindow(){
         return mWindowSmallestHeight;
     }
+    public void setBestHeightForWindow(int height){
+    	mWindowSmallestHeight = height;
+    }
     public int getBestLargetHeightForWindow() {
     	return mWindowLargestHeight;
     }

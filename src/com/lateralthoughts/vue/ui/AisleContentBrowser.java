@@ -1,37 +1,27 @@
 package com.lateralthoughts.vue.ui;
 
 //android imports
-import com.lateralthoughts.vue.AisleDetailsViewActivity;
-import com.lateralthoughts.vue.AisleDetailsViewAdapter;
-import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.IAisleContentAdapter;
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueAisleDetailsViewFragment;
-import com.lateralthoughts.vue.VueApplication;
-
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
-
-//android UI & graphics imports
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.ViewFlipper;
-
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.GestureDetector;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.ViewFlipper;
+
+import com.lateralthoughts.vue.AisleDetailsViewActivity;
+import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.IAisleContentAdapter;
+import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueAisleDetailsViewFragment;
 
 public class AisleContentBrowser extends ViewFlipper {
     private String mAisleUniqueId;
@@ -61,7 +51,17 @@ public class AisleContentBrowser extends ViewFlipper {
     private boolean mTouchMoved;
     private int mTapTimeout;
     private String holderName;
-    public String getHolderName() {
+    private String mBrowserArea;
+ 
+    public String getmBrowserArea() {
+		return mBrowserArea;
+	}
+
+	public void setmBrowserArea(String mBrowserArea) {
+		this.mBrowserArea = mBrowserArea;
+	}
+
+	public String getHolderName() {
 		return holderName;
 	}
 
@@ -122,6 +122,9 @@ public class AisleContentBrowser extends ViewFlipper {
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
 	        final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
+	      /*  if(aisleContentBrowser.getCurrentView() == null) {
+    		    return false;
+	        }*/
 	        boolean result = mDetector.onTouchEvent(event);
 	        if (event.getAction() == MotionEvent.ACTION_DOWN) {
 	            mAnimationInProgress= false;
@@ -142,7 +145,8 @@ public class AisleContentBrowser extends ViewFlipper {
 	            return super.onTouchEvent(event);
 	        }
 
-	        else if(event.getAction() == MotionEvent.ACTION_MOVE){	            
+	        else if(event.getAction() == MotionEvent.ACTION_MOVE){	
+	        	Log.i("browsermove", "browsermove1");
 	            mLastX = (int)event.getX();
 	            mLastY = (int)event.getY();
 	            if(mFirstY - mLastY > SWIPE_MIN_DISTANCE ||
@@ -157,18 +161,19 @@ public class AisleContentBrowser extends ViewFlipper {
 	                mTouchMoved = true;
 	                requestDisallowInterceptTouchEvent(true);
 	                if(false == mAnimationInProgress){
+	                	View nextView = null;
 	                    int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
-	                    ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex+1);
+	                    	  nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex+1);
+	                    	  
 	                    if(mSwipeListener != null) {
                         	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT);
                         	//mSwipeListener.onDissAllowListResponse();
                         }
-	                    setBrowserParams(nextView);
 	                   // if((currentIndex+1)>=0 && (currentIndex+1) < aisleContentBrowser.getChildCount() )
 	                  
 	                    if(null != mSpecialNeedsAdapter && null == nextView){
 	                    	
-	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, null, currentIndex, currentIndex+1, true)){
+	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,currentIndex, currentIndex+1, true)){
 	                            mAnimationInProgress = true;
 	                          
 	                            Animation cantWrapRight = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right);
@@ -224,20 +229,22 @@ public class AisleContentBrowser extends ViewFlipper {
 	                }                           
 	            } else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE){
 	                requestDisallowInterceptTouchEvent(true);
+	                Log.i("browsermove", "browsermove1 right");
 	                mTouchMoved = true;
 	                if(false == mAnimationInProgress){
 	                       int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
-	                       ScaleImageView nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex-1);
+	                       View nextView = null;
+		                    	  nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex-1);
 	                       if(mSwipeListener != null) {
                            	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_RIGHT_TO_LEFT);
                           // 	mSwipeListener.onDissAllowListResponse();
                            }
-	                       setBrowserParams(nextView);
+	                       
 	                      // if((currentIndex-1)>=0 && (currentIndex-1) < aisleContentBrowser.getChildCount() )
 	                      
 	                        if(null != mSpecialNeedsAdapter && null == nextView){
 	                        	
-	                            if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, nextView, currentIndex, currentIndex-1, true)){
+	                            if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,currentIndex, currentIndex-1, true)){
 	                            	
 	                                Animation cantWrapLeft = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left);
 	                                
@@ -316,12 +323,12 @@ public class AisleContentBrowser extends ViewFlipper {
 	    }
 	    @Override
 	    public boolean onSingleTapConfirmed(MotionEvent event){
-	        Log.e("Vinodh Clicks","ok...we are getting item clicks!!");
 	        if(mClickListener != null && null != mSpecialNeedsAdapter) {
 	        mClickListener.onAisleClicked(mAisleUniqueId,mSpecialNeedsAdapter.getAisleItemsCount());
 	          
 	        }
 	        if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
+	        	detailImgClickListenr.onSetBrowserArea(getmBrowserArea());
 	        	detailImgClickListenr.onImageClicked();
 	        }
 	        
@@ -330,6 +337,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	    @Override
 	    public void onLongPress(MotionEvent e) {
 	    	  if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
+	    		  detailImgClickListenr.onSetBrowserArea(getmBrowserArea());
 		        	detailImgClickListenr.onImageLongPress();
 		        }
 	    	super.onLongPress(e);
@@ -338,12 +346,14 @@ public class AisleContentBrowser extends ViewFlipper {
 	
 	public interface AisleContentClickListener{
 	    public void onAisleClicked(String id,int count);
+		public boolean isFlingCalled();
 	}
 	public interface DetailClickListener{
 	    public void onImageClicked();
 	    public void onImageLongPress();
 	    public void onImageSwipe(int position);
 	    public void onImageDoubleTap();
+	    public void onSetBrowserArea(String area);
 	}
 	DetailClickListener detailImgClickListenr;
 	public  void setDetailImageClickListener(DetailClickListener detailLestener) {
@@ -371,34 +381,5 @@ public class AisleContentBrowser extends ViewFlipper {
 	}
 	private AisleContentClickListener mClickListener;
 	public AisleDetailSwipeListener mSwipeListener;
-	private void setBrowserParams(ScaleImageView nextView) {/*
-		  final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
-		  String sourName = null;
-		  if(mSpecialNeedsAdapter != null) {
-			  sourName = mSpecialNeedsAdapter.getSourceName();
-		  }
-		 if(sourName != null && sourName.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-		   if(nextView != null) {
-			   try{
-		   Bitmap bitmap = ((BitmapDrawable)nextView.getDrawable()).getBitmap();
-			 
-		   if(bitmap != null) {
-		   int height = bitmap.getHeight();
-		     int topBottomMargin = 24;
-		      height += VueApplication.getInstance().getPixel(topBottomMargin);
-		   FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-					VueApplication.getInstance().getScreenWidth(),height);
-	    	 
-	    	if(aisleContentBrowser != null) {
-	    		aisleContentBrowser.setLayoutParams(showpieceParams);
-	    	}
-		   }
-			   } catch(Exception e) {
-				   e.printStackTrace();
-			   }
-		   }
-			   
-		 }
-
-	*/}
+ 
 }

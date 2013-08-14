@@ -44,11 +44,12 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
     private Context mContext;
     
     private final String TAG = "TrendingAislesLeftColumnAdapter";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     
     public int firstX;
     public int lastX;
     public static boolean mIsLeftDataChanged = false;
+    AisleContentClickListener listener;
 
     public TrendingAislesLeftColumnAdapter(Context c, ArrayList<AisleWindowContent> content) {
         super(c, content);
@@ -61,7 +62,7 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
     public TrendingAislesLeftColumnAdapter(Context c, AisleContentClickListener listener, ArrayList<AisleWindowContent> content) {
         super(c, listener, content);
         mContext = c;
-        
+        this.listener = listener;
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
         //mVueTrendingAislesDataModel.registerAisleDataObserver(this);       
     }
@@ -93,13 +94,18 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
             convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
             holder = new ViewHolder();
             holder.aisleContentBrowser = (AisleContentBrowser) convertView .findViewById(R.id.aisle_content_flipper);
+            LinearLayout.LayoutParams showpieceParams = new LinearLayout.LayoutParams(
+					VueApplication.getInstance().getScreenWidth()/2,
+					 250);
+        	//holder.aisleContentBrowser.setLayoutParams(showpieceParams);
+            
             holder.aisleDescriptor = (LinearLayout) convertView .findViewById(R.id.aisle_descriptor);
             holder.profileThumbnail = (ImageView)holder.aisleDescriptor.findViewById(R.id.profile_icon_descriptor);
             holder.aisleOwnersName = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_owner_name);
             holder.aisleContext = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_context);
             holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
             convertView.setTag(holder);
-            if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position = " + position);
+            if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position1 = " + position);
         }
         //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
         holder = (ViewHolder) convertView.getTag();
@@ -114,10 +120,14 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         if(holder.mWindowContent.mIsDataChanged) {
         	holder.mWindowContent.mIsDataChanged = false;
         	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-        		Log.i("listadapter", "adapter leftadapter left adapter resetting notified");
-        		Log.i("listadapter", "adapter leftadapter data changed for this window: "+holder.mWindowContent.getAisleId());
+  
         }
-            mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
+       // if(!listener.isFlingCalled()) {
+        	 mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
+      //  } else {
+        //	Log.i("fling", "fling dont set holder it is fling call");
+       // }
+           
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);

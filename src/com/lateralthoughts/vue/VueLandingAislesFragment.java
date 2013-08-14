@@ -40,6 +40,8 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 
 	int[] mLeftViewsHeights;
 	int[] mRightViewsHeights;
+	
+	public boolean isFlingCalled;
 
 	//TODO: define a public interface that can be implemented by the parent
 	//activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -71,13 +73,13 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 	}
 public void notifyAdapters() {
 	if(mLeftColumnAdapter != null) {
-		TrendingAislesLeftColumnAdapter.mIsLeftDataChanged = true;
-	mLeftColumnAdapter.notifyDataSetChanged();
+		//TrendingAislesLeftColumnAdapter.mIsLeftDataChanged = true;
+	//mLeftColumnAdapter.notifyDataSetChanged();
 	Log.i("listadapter", "adapter leftadapter notified");
 	}
 	if(mRightColumnAdapter != null) {
-		TrendingAislesRightColumnAdapter.mIsRightDataChanged = true;
-	mRightColumnAdapter.notifyDataSetChanged();
+		//TrendingAislesRightColumnAdapter.mIsRightDataChanged = true;
+	//mRightColumnAdapter.notifyDataSetChanged();
 	Log.i("listadapter", "adapter adapter notified");
 	}
 }
@@ -101,22 +103,6 @@ public void notifyAdapters() {
 	    mRightColumnView.setOnScrollListener(scrollListener);
 	    
 	    mLeftColumnView.setClickable(true);
-	    /*mLeftColumnView.setOnItemClickListener(new OnItemClickListener(){
-	        public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
-                Intent intent = new Intent();
-                intent.setClass(VueApplication.getInstance(), AisleDetailsViewActivity.class);
-                mContext.startActivity(intent);
-	         }
-	    });
-	    
-	    mRightColumnView.setOnItemClickListener(new OnItemClickListener(){
-	            public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
-	                //MyClass selItem = (MyClass) adapter.getItem(position);
-	                Intent intent = new Intent();
-	                intent.setClass(VueApplication.getInstance(), AisleDetailsViewActivity.class);
-	                mContext.startActivity(intent);
-	             }
-	        });*/
 	       mLeftColumnView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	            @Override
 	            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
@@ -160,7 +146,16 @@ public void notifyAdapters() {
         public void onScrollStateChanged(AbsListView view, int scrollState) {
             mLeftColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
             mRightColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
-
+            if(scrollState == SCROLL_STATE_FLING) {
+            	 
+            	isFlingCalled = true;
+            } else if(scrollState == SCROLL_STATE_IDLE) {
+            	 
+            	isFlingCalled = false;
+            	//notify the adapters.
+            	mLeftColumnAdapter.notifyDataSetChanged();
+            	mRightColumnAdapter.notifyDataSetChanged();
+            } 
             int first = view.getFirstVisiblePosition();
             int count = view.getChildCount();
 
@@ -229,12 +224,19 @@ public void notifyAdapters() {
     private class AisleClickListener implements AisleContentClickListener{
         @Override
         public void onAisleClicked(String id,int count){
+        	Log.i("click", "click on window in land");
             Intent intent = new Intent();
             intent.setClass(VueApplication.getInstance(), AisleDetailsViewActivity.class);
             VueApplication.getInstance().setClickedWindowID(id);
             VueApplication.getInstance().setClickedWindowCount(count);
             startActivity(intent);
         }
+
+		@Override
+		public boolean isFlingCalled() {
+			 
+			return isFlingCalled;
+		}
     }
 
 }

@@ -773,5 +773,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
     	mIndicatorView.setNumberofScreens(MAX_INDI_COUNT);
     }
 
-
+ public  ArrayList<String> getAisleWindowImgList(){
+	 return mAisleDetailsAdapter.mImageDetailsArr ;
+ }
 }

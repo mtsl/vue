@@ -28,24 +28,27 @@ public class BitmapLoaderUtils {
 	//private Context mContext;
 	private static BitmapLoaderUtils sBitmapLoaderUtils;
     private FileCache mFileCache;
-    private VueMemoryCache<Bitmap> mAisleImagesCache;
+   // private VueMemoryCache<Bitmap> mAisleImagesCache;
+    private BitmapLruCache mAisleImagesCache;
     //private int mScreenWidth;
     
     //private final boolean DEBUG = false;
     
-	private BitmapLoaderUtils(Context context){
+	private BitmapLoaderUtils(){
 		//mContext = context;
         mFileCache = VueApplication.getInstance().getFileCache();
-        mAisleImagesCache = VueApplication.getInstance().getAisleImagesMemCache();
+        //mAisleImagesCache = VueApplication.getInstance().getAisleImagesMemCache();
+        mAisleImagesCache = BitmapLruCache.getInstance(VueApplication.getInstance());
+        
         //DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
         //mScreenWidth = metrics.widthPixels;
         
         //mExecutorService = Executors.newFixedThreadPool(5);
 	}
 	
-	public static BitmapLoaderUtils getInstance(Context context){
+	public static BitmapLoaderUtils getInstance(){
 		if(null == sBitmapLoaderUtils){
-			sBitmapLoaderUtils = new BitmapLoaderUtils(context);
+			sBitmapLoaderUtils = new BitmapLoaderUtils();
 		}
 		return sBitmapLoaderUtils;
 	}
@@ -68,7 +71,7 @@ public class BitmapLoaderUtils {
         if(b != null){
           
             if(cacheBitmap)
-                mAisleImagesCache.put(url, b);
+                mAisleImagesCache.putBitmap(url, b);
             return b;
         }
         
@@ -85,18 +88,25 @@ public class BitmapLoaderUtils {
             conn.setReadTimeout(30000);
             conn.setInstanceFollowRedirects(true);
             InputStream is=conn.getInputStream();
+            Log.i("added url", "added url  InputStream "+is);
+            Log.i("added url", "added url  InputStream url "+url);
+   		 
+    		int hashCode = url.hashCode();
+    		String filename = String.valueOf(hashCode);
+            Log.i("added url", "added url  InputStream imgname "+filename);
             OutputStream os = new FileOutputStream(f);
             Utils.CopyStream(is, os);
             os.close();
             bitmap = decodeFile(f, bestHeight);
-            if(cacheBitmap)
-            	mAisleImagesCache.put(url, bitmap);
+            if(cacheBitmap) 
+            	mAisleImagesCache.putBitmap(url, bitmap);
 
             return bitmap;
         } catch (Throwable ex){
            ex.printStackTrace();
-           if(ex instanceof OutOfMemoryError)
-              mAisleImagesCache.clear();
+           if(ex instanceof OutOfMemoryError) {
+             // mAisleImagesCache.clear();
+           }
            return null;
         }
     }
@@ -176,8 +186,9 @@ public class BitmapLoaderUtils {
         catch (Throwable ex){
         	Log.i("added url", "added urldecodeFile  throwable exception " );
             ex.printStackTrace();
-            if(ex instanceof OutOfMemoryError)
-               mAisleImagesCache.clear();
+            if(ex instanceof OutOfMemoryError) {
+               //mAisleImagesCache.clear();
+            }
             return null;
          }
         return null;
@@ -208,7 +219,10 @@ public class BitmapLoaderUtils {
     }
 
     public void clearCache() {
-    	mAisleImagesCache.clear();
+    	//mAisleImagesCache.clear();
     	//mFileCache.clear();
+    }
+    public void removeBitmapFromCache(String id){
+    	//mAisleImagesCache.removeBitmap(id);
     }
 }

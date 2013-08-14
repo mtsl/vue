@@ -334,7 +334,7 @@ public class VueTrendingAislesDataModel {
 
   public static VueTrendingAislesDataModel getInstance(Context context) {
     if (null == sVueTrendingAislesDataModel) {
-      Log.e("Profiling", "Profiling getInstance() : new instance");
+      Log.e("Profiling", "Profiling getInstance()111 : new instance");
       sVueTrendingAislesDataModel = new VueTrendingAislesDataModel(context);
     }
     return sVueTrendingAislesDataModel;

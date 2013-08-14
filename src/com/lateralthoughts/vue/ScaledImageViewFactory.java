@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 //android imports
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
@@ -83,6 +84,9 @@ public class ScaledImageViewFactory {
 				
 			}
 		}
+		Log.e("ImageViewFactory","imageCount mAvailableObjects: " + mAvailableObjects.size());
+		Log.e("ImageViewFactory","imageCount mObjectsInUse: " + mObjectsInUse.size());
+	 
 		return imageView;
 	}
 	
@@ -97,6 +101,7 @@ public class ScaledImageViewFactory {
 		}
 
 		imageView.setImageDrawable(background);
+		
 		return imageView;
 	}
 	
@@ -110,13 +115,10 @@ public class ScaledImageViewFactory {
 		if(-1 == index){
 			return;
 		}
-		
 		synchronized(this){
 			view = mObjectsInUse.remove(index);
 			view.setImageBitmap(null);
 			mAvailableObjects.add(view);
-			Log.e("ImageViewFactory","return used image view. mAvailableObjects.size() = " + mAvailableObjects.size());
-			
 			//TODO: we have a way to expand the pool once the initial objects get used up - should
 			//we have an equivalent to free up some of the objects?
 		}

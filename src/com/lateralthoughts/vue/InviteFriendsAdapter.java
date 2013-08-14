@@ -32,7 +32,7 @@ public class InviteFriendsAdapter extends BaseAdapter {
 		this.mContext = context;
 		mItems = objects;
 		mImageLoader = new ImageLoader(VueApplication.getInstance()
-				.getRequestQueue(), new BitmapLruCache(1024));
+				.getRequestQueue(),  BitmapLruCache.getInstance(mContext));
 		mFromDataentryScreen = fromDataentryScreen;
 	}
 
