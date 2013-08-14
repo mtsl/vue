@@ -1,5 +1,7 @@
 package com.lateralthoughts.vue.utils;
 
+import android.net.Uri;
+
 public class OtherSourceImageDetails {
 	public String getThumbUrl() {
 		return thumbUrl;
@@ -41,13 +43,16 @@ public class OtherSourceImageDetails {
 		this.height = height;
 	}
 
-	public OtherSourceImageDetails(String thumbUrl, String title, String originUrl,
-			int width, int height) {
+	public OtherSourceImageDetails(String thumbUrl, String title,
+			String originUrl, int width, int height, Uri imageUri,
+			int widthHeightMultipliedValue) {
 		this.thumbUrl = thumbUrl;
 		this.title = title;
 		this.originUrl = originUrl;
 		this.width = width;
 		this.height = height;
+		this.imageUri = imageUri;
+		this.widthHeightMultipliedValue = widthHeightMultipliedValue;
 	}
 
 	public OtherSourceImageDetails() {
@@ -59,5 +64,23 @@ public class OtherSourceImageDetails {
 	private String originUrl;
 	private int width;
 	private int height;
+	private Uri imageUri;
+	private int widthHeightMultipliedValue;
+
+	public int getWidthHeightMultipliedValue() {
+		return widthHeightMultipliedValue;
+	}
+
+	public void setWidthHeightMultipliedValue(int widthHeightMultipliedValue) {
+		this.widthHeightMultipliedValue = widthHeightMultipliedValue;
+	}
+
+	public Uri getImageUri() {
+		return imageUri;
+	}
+
+	public void setImageUri(Uri imageUri) {
+		this.imageUri = imageUri;
+	}
 
 }

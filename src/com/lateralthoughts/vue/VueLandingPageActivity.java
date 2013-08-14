@@ -8,12 +8,12 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -39,6 +39,19 @@ public class VueLandingPageActivity extends BaseActivity {
 				VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG, true);
 		// Application opens first time.
 		if (isFirstTimeFlag) {
+			VueUserManager userManager = VueUserManager.getUserManager();
+			userManager.createUnidentifiedUser(new UserUpdateCallback() {
+
+				@Override
+				public void onUserUpdated(VueUser user) {
+					try {
+						Utils.writeObjectToFile(VueLandingPageActivity.this,
+								VueConstants.VUE_APP_USEROBJECT__FILENAME, user);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
 			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
 			editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG,
 					false);
@@ -47,6 +60,18 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		fragment = (VueLandingAislesFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisles_view_fragment);
+		try {
+			VueUser vueUser = Utils.readObjectFromFile(this,
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			Log.e("tag fbid", vueUser.getmFacebookId() + "");
+			Log.e("tag g+id", vueUser.getmGooglePlusId() + "");
+			Log.e("tag deviceid", vueUser.getmDeviceId() + "");
+			Log.e("tag email", vueUser.getmEmailId() + "");
+			Log.e("tag useridentity", vueUser.getUserIdentity().name() + "");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -97,6 +122,36 @@ public class VueLandingPageActivity extends BaseActivity {
 		if (imageUri != null) {
 			Log.e("CretaeAisleSelectionActivity send image", imageUri + "");
 			// Update UI to reflect image being shared
+			if (VueApplication.getInstance()
+					.ismFromDetailsScreenToDataentryCreateAisleScreenFlag()) {
+
+				VueApplication.getInstance()
+						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
+								false);
+				Log.e("Land", "vueland 1");
+				Intent i = new Intent(this, AisleDetailsViewActivity.class);
+				Bundle b = new Bundle();
+				ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
+				imageUrisList.add(imageUri);
+				b.putParcelableArrayList(
+						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+						imageUrisList);
+				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+				i.putExtras(b);
+				startActivity(i);
+
+			} else {
+				Intent i = new Intent(this, DataEntryActivity.class);
+				Bundle b = new Bundle();
+				ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
+				imageUrisList.add(imageUri);
+				b.putParcelableArrayList(
+						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+						imageUrisList);
+				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+				i.putExtras(b);
+				startActivity(i);
+			}
 		}
 	}
 
@@ -104,11 +159,30 @@ public class VueLandingPageActivity extends BaseActivity {
 		ArrayList<Uri> imageUris = intent
 				.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
 		if (imageUris != null) {
-			for (int i = 0; i < imageUris.size(); i++) {
-				Log.e("CretaeAisleSelectionActivity send multipleimage",
-						imageUris.get(i) + "");
-			}
+			if (VueApplication.getInstance()
+					.ismFromDetailsScreenToDataentryCreateAisleScreenFlag()) {
 
+				VueApplication.getInstance()
+						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
+								false);
+				Log.e("Land", "vueland 1");
+				Intent i = new Intent(this, AisleDetailsViewActivity.class);
+				Bundle b = new Bundle();
+				b.putParcelableArrayList(
+						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS, imageUris);
+				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+				i.putExtras(b);
+				startActivity(i);
+
+			} else {
+				Intent i = new Intent(this, DataEntryActivity.class);
+				Bundle b = new Bundle();
+				b.putParcelableArrayList(
+						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS, imageUris);
+				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+				i.putExtras(b);
+				startActivity(i);
+			}
 			// Update UI to reflect multiple images being shared
 		}
 	}

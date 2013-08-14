@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,6 +25,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -30,6 +33,7 @@ import android.util.TypedValue;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueUser;
 
 public class Utils {
 	private static final String CURRENT_FONT_SIZE = "currentFontSize";
@@ -221,8 +225,8 @@ public class Utils {
 
 	public static String vueAppCameraImageFileName(Context context) {
 		FileCache fileCacheObj = new FileCache(context);
-		if (fileCacheObj.mVueAppCameraPicsDir != null) {
-			File fv[] = fileCacheObj.mVueAppCameraPicsDir.listFiles();
+		if (fileCacheObj.getmVueAppCameraPicsDir() != null) {
+			File fv[] = fileCacheObj.getmVueAppCameraPicsDir().listFiles();
 			if (fv != null) {
 				return fileCacheObj.getVueAppCameraPictureFile(
 						fv.length + 1 + "").getPath();
@@ -234,8 +238,8 @@ public class Utils {
 
 	public static String vueAppResizedImageFileName(Context context) {
 		FileCache fileCacheObj = new FileCache(context);
-		if (fileCacheObj.mVueAppResizedImagesDir != null) {
-			File fv[] = fileCacheObj.mVueAppResizedImagesDir.listFiles();
+		if (fileCacheObj.getmVueAppResizedImagesDir() != null) {
+			File fv[] = fileCacheObj.getmVueAppResizedImagesDir().listFiles();
 			if (fv != null) {
 				return fileCacheObj.getVueAppResizedPictureFile(
 						fv.length + 1 + "").getPath();
@@ -365,4 +369,30 @@ public class Utils {
 		return null;
 	}
 
+	public static void writeObjectToFile(Context context, String fileName,
+			VueUser vueUser) throws Exception {
+		FileOutputStream fos = context.openFileOutput(fileName,
+				Context.MODE_PRIVATE);
+		ObjectOutputStream os = new ObjectOutputStream(fos);
+		os.writeObject(vueUser);
+		os.close();
+	}
+
+	public static VueUser readObjectFromFile(Context context, String fileName)
+			throws Exception {
+		FileInputStream fis = context.openFileInput(fileName);
+		ObjectInputStream is = new ObjectInputStream(fis);
+		VueUser vueUser = (VueUser) is.readObject();
+		is.close();
+		return vueUser;
+	}
+
+	public static String getDeviceId() {
+
+		String deviceId = Secure.getString(VueApplication.getInstance()
+				.getContentResolver(), Secure.ANDROID_ID);
+		Log.e("Utils", "get device id method called" + deviceId);
+		return deviceId;
+
+	}
 }

@@ -49,6 +49,7 @@ public class VueConstants {
 	public static final String FB_FRIEND_NAME = "FBFRIENDNAME";
 	public static final String FROM_OTHER_SOURCES_FLAG = "fromothersourcesflag";
 	public static final String FROM_OTHER_SOURCES_URL = "fromothersourcesurl";
+	public static final String FROM_OTHER_SOURCES_IMAGE_URIS = "fromothersourcesimageuris";
 	public static final String GOOGLEPLUS_FRIEND_INVITE = "GOOGLEPLUS_FRIEND_INVITE";
 	public static final String GOOGLEPLUS_FRIEND_INDEX = "GOOGLEPLUS_FRIEND_INDEX";
 	public static final String GOOGLEPLUS_FRIEND_IMAGE_PATH_LIST_KEY = "GOOGLEPLUS_FRIEND_INDEX_PATH_LIST_KEY";
@@ -110,6 +111,7 @@ public class VueConstants {
 	public static final String USER_lOCATION = "name";
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
 	public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
+	public static final String VUE_APP_USEROBJECT__FILENAME = "vueuser.ser";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
 
 	// Column names for lookingFor, occasion, category table.

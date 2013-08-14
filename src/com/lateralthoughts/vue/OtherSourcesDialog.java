@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
+import com.lateralthoughts.vue.utils.Utils;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.support.v4.app.FragmentActivity;
@@ -37,21 +39,34 @@ public class OtherSourcesDialog {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				File f = mFileCache.getVueAppResizedPictureFile(String
-						.valueOf(OtherSourcesDialog.this.imagesList
-								.get(position).getOriginUrl().hashCode()));
-				if (f.exists()) {
+				if (OtherSourcesDialog.this.imagesList.get(position)
+						.getImageUri() != null) {
 					dialog.dismiss();
+					String picturePath = Utils.getPath(
+							OtherSourcesDialog.this.imagesList.get(position)
+									.getImageUri(), mActivity);
 					DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
 							.getSupportFragmentManager().findFragmentById(
 									R.id.create_aisles_view_fragment);
-					fragment.mFindAtText
-							.setText(OtherSourcesDialog.this.imagesList.get(
-									position).getOriginUrl());
-					fragment.setGalleryORCameraImage(f.getPath(), true);
+					fragment.setGalleryORCameraImage(picturePath, false);
 				} else {
-					Toast.makeText(mActivity, "Please wait. Image is loading.",
-							Toast.LENGTH_LONG).show();
+					File f = mFileCache.getVueAppResizedPictureFile(String
+							.valueOf(OtherSourcesDialog.this.imagesList
+									.get(position).getOriginUrl().hashCode()));
+					if (f.exists()) {
+						dialog.dismiss();
+						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
+								.getSupportFragmentManager().findFragmentById(
+										R.id.create_aisles_view_fragment);
+						fragment.mFindAtText
+								.setText(OtherSourcesDialog.this.imagesList
+										.get(position).getOriginUrl());
+						fragment.setGalleryORCameraImage(f.getPath(), true);
+					} else {
+						Toast.makeText(mActivity,
+								"Please wait. Image is loading.",
+								Toast.LENGTH_LONG).show();
+					}
 				}
 			}
 		});

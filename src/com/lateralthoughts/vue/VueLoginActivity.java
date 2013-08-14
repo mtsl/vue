@@ -7,13 +7,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
@@ -25,7 +22,6 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -68,11 +64,11 @@ import com.google.android.gms.plus.model.people.PersonBuffer;
 import com.googleplus.MomentUtil;
 import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
+import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -509,13 +505,62 @@ public class VueLoginActivity extends FragmentActivity implements
 					com.facebook.Response response) {
 				if (user != null) {
 					String location = "";
-                    VueUserManager userManager = VueUserManager.getUserManager();
-                    userManager.createFBIdentifiedUser(user, new VueUserManager.UserUpdateCallback() {
-                        @Override
-                        public void onUserUpdated(VueUser user) {
-                            Log.e("Vue User Creation","callback from successful user creation");
-                        }
-                    });
+					VueUserManager userManager = VueUserManager
+							.getUserManager();
+					VueUser storedVueUser = null;
+					try {
+						storedVueUser = Utils.readObjectFromFile(
+								VueLoginActivity.this,
+								VueConstants.VUE_APP_USEROBJECT__FILENAME);
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+					if (storedVueUser != null) {
+						if (storedVueUser
+								.getUserIdentity()
+								.equals(VueUserManager.PreferredIdentityLayer.DEVICE_ID)) {
+							storedVueUser
+									.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.FB);
+						} else if (storedVueUser.getUserIdentity().equals(
+								VueUserManager.PreferredIdentityLayer.GPLUS)) {
+							storedVueUser
+									.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.ALL_IDS_AVAILABLE);
+						} else {
+							storedVueUser
+									.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.FB);
+						}
+						userManager.updateFBIdentifiedUser(user, storedVueUser,
+								new UserUpdateCallback() {
+									@Override
+									public void onUserUpdated(VueUser user) {
+										try {
+											Utils.writeObjectToFile(
+													VueLoginActivity.this,
+													VueConstants.VUE_APP_USEROBJECT__FILENAME,
+													user);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+									}
+								});
+					} else {
+						userManager.createFBIdentifiedUser(user,
+								new VueUserManager.UserUpdateCallback() {
+									@Override
+									public void onUserUpdated(VueUser user) {
+										try {
+											Utils.writeObjectToFile(
+													VueLoginActivity.this,
+													VueConstants.VUE_APP_USEROBJECT__FILENAME,
+													user);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+										Log.e("Vue User Creation",
+												"callback from successful user creation");
+									}
+								});
+					}
 					try {
 						if (user.getLocation() != null) {
 							JSONObject jsonObject = user.getLocation()
@@ -904,6 +949,63 @@ public class VueLoginActivity extends FragmentActivity implements
 	@Override
 	public void onPersonLoaded(ConnectionResult connectionresult, Person person) {
 		if (connectionresult.getErrorCode() == ConnectionResult.SUCCESS) {
+			mSharedPreferencesObj = this.getSharedPreferences(
+					VueConstants.SHAREDPREFERENCE_NAME, 0);
+			VueUserManager userManager = VueUserManager.getUserManager();
+			VueUser vueUser = new VueUser(null, person.getDisplayName(), null,
+					mSharedPreferencesObj.getString(
+							VueConstants.GOOGLEPLUS_USER_EMAIL, null));
+			VueUser storedVueUser = null;
+			try {
+				storedVueUser = Utils.readObjectFromFile(VueLoginActivity.this,
+						VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+			if (storedVueUser != null) {
+				if (storedVueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.DEVICE_ID)) {
+					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS);
+					vueUser.setmDeviceId(storedVueUser.getmDeviceId());
+				} else if (storedVueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.FB)) {
+					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.ALL_IDS_AVAILABLE);
+					vueUser.setmFacebookId(storedVueUser.getmFacebookId());
+				} else {
+					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS);
+				}
+				userManager.updateGooglePlusIdentifiedUser(vueUser,
+						new UserUpdateCallback() {
+							@Override
+							public void onUserUpdated(VueUser user) {
+								try {
+									Utils.writeObjectToFile(
+											VueLoginActivity.this,
+											VueConstants.VUE_APP_USEROBJECT__FILENAME,
+											user);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+			} else {
+				userManager.createGooglePlusIdentifiedUser(vueUser,
+						new VueUserManager.UserUpdateCallback() {
+							@Override
+							public void onUserUpdated(VueUser user) {
+								try {
+									Utils.writeObjectToFile(
+											VueLoginActivity.this,
+											VueConstants.VUE_APP_USEROBJECT__FILENAME,
+											user);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								Log.e("Vue User Creation",
+										"callback from successful user creation");
+							}
+						});
+			}
 			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
 			editor.putString(VueConstants.GOOGLEPLUS_USER_NAME,
 					person.getDisplayName());
@@ -912,25 +1014,4 @@ public class VueLoginActivity extends FragmentActivity implements
 			editor.commit();
 		}
 	}
-
-	private VueUser parseGraphUserData(GraphUser user) {
-		VueUser vueUser = null;
-		if (null == user) {
-			throw new RuntimeException("Can't parse a null graph user object");
-		}
-		try {
-			String firstName = user.getFirstName();
-			String lastName = user.getLastName();
-			String birthday = user.getBirthday();
-			JSONObject innerObject = user.getInnerJSONObject();
-			String email = innerObject.getString("email");
-			// String email = emailObject.optString("email");
-			vueUser = new VueUser(null, null, email);
-			vueUser.setUsersName(firstName, lastName);
-		} catch (JSONException ex) {
-
-		}
-		return vueUser;
-	}
-
 }

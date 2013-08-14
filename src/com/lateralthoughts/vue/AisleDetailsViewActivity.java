@@ -234,9 +234,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 						return false;
 					}
 				});
-	
-	
-
 	}
 
 	@Override
@@ -361,7 +358,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		if (b != null && mTempflag) {
 			mTempflag = false;
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
-				Log.e("Land", "vueland 3"); 
+				Log.e("Land", "vueland 3");
 				sendDataToDataentryScreen(b);
 			}
 		}
@@ -440,11 +437,13 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		return false;
 
 	}
-@Override
-protected void onDestroy() {
-	 Log.e("ondestory", "ondestory detailsview");
-	super.onDestroy();
-}
+
+	@Override
+	protected void onDestroy() {
+		Log.e("ondestory", "ondestory detailsview");
+		super.onDestroy();
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -613,6 +612,9 @@ protected void onDestroy() {
 				b.getString(VueConstants.FROM_OTHER_SOURCES_URL));
 		b1.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG,
 				b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG));
+		b1.putParcelableArrayList(
+				VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+				b.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS));
 		String findAt = null;
 		findAt = mVueAiselFragment.mEditTextFindAt.getText().toString();
 		b1.putString(
