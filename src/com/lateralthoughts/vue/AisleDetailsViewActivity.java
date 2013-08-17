@@ -80,7 +80,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	
 	 ContentAdapterFactory  mContentAdapterFactory;
 	 ScaledImageViewFactory mViewFactory;
-
+		ComparisionAdapter mBottomAdapter, mTopAdapter;
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	@Override
@@ -362,6 +362,16 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				sendDataToDataentryScreen(b);
 			}
 		}
+		
+		if (mVueAiselFragment != null) {
+			mImageDetailsArr = mVueAiselFragment.getAisleWindowImgList();
+			if(mBottomAdapter != null){
+				mBottomAdapter.notifyDataSetChanged();
+			}
+			if(mTopAdapter != null){
+				mTopAdapter.notifyDataSetChanged();
+			}
+		}
 		if(!isSlidePanleLoaded) {
 			isSlidePanleLoaded = true;
 		new Handler().postDelayed(new Runnable() {
@@ -369,22 +379,22 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			@Override
 			public void run() {
 				if (mVueAiselFragment != null) {
+					if(mImageDetailsArr != null) {
 					mImageDetailsArr = mVueAiselFragment.getAisleWindowImgList();
+					}
 					mBitmapLoaderUtils = BitmapLoaderUtils.getInstance( );
-					for(int i=0;i<mImageDetailsArr.size();i++)
-						Log.i("mCustomUrl", "mCustomUrl in getview: "+mImageDetailsArr.get(i).toString());
-					 
-				}
-				if (null != mImageDetailsArr && mImageDetailsArr.size() != 0) {
-					mBottomScroller.setAdapter(new ComparisionAdapter(
-							AisleDetailsViewActivity.this));
-					 
-						mTopScroller.setAdapter(new ComparisionAdapter(
-								AisleDetailsViewActivity.this));
-					 
-				}
+					if (null != mImageDetailsArr
+							&& mImageDetailsArr.size() != 0) {
+						mBottomAdapter = new ComparisionAdapter(
+								AisleDetailsViewActivity.this);
+						mTopAdapter = new ComparisionAdapter(
+								AisleDetailsViewActivity.this);
+						mBottomScroller.setAdapter(mBottomAdapter);
+						mTopScroller.setAdapter(mTopAdapter);
+
+					}
 			}
-				
+			}	
 			 
 		}, 500);
 		}
@@ -472,11 +482,14 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 				if (imagePath != null) {
+					
 					FileCache fileCache = new FileCache(this);
 					File f = fileCache.getFile(imagePath);
-					Utils.saveBitmap(BitmapFactory.decodeFile(imagePath), f);
+					File sourceFile = new File(imagePath);
+					Bitmap  bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile, VueApplication.getInstance().mScreenHeight);
+					Utils.saveBitmap(bmp, f);
 					mVueAiselFragment.addAisleToWindow(
-							BitmapFactory.decodeFile(imagePath), imagePath);
+							bmp, imagePath);
 
 				}
 

@@ -165,10 +165,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
 	                    	  nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex+1);
 	                    	  
-	                    if(mSwipeListener != null) {
-                        	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT);
-                        	//mSwipeListener.onDissAllowListResponse();
-                        }
+	                
 	                   // if((currentIndex+1)>=0 && (currentIndex+1) < aisleContentBrowser.getChildCount() )
 	                  
 	                    if(null != mSpecialNeedsAdapter && null == nextView){
@@ -199,6 +196,11 @@ public class AisleContentBrowser extends ViewFlipper {
 	                            return super.onTouchEvent(event);
 	                        }
 	                    }
+	                    if(mSwipeListener != null) {
+                        	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT,currentIndex+1);
+                        	//mSwipeListener.onDissAllowListResponse();
+                        }
+	                    
 	                    if(detailImgClickListenr != null) {
 		                    detailImgClickListenr.onImageSwipe(currentIndex+1);
 		                    }
@@ -235,10 +237,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                       int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
 	                       View nextView = null;
 		                    	  nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex-1);
-	                       if(mSwipeListener != null) {
-                           	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_RIGHT_TO_LEFT);
-                          // 	mSwipeListener.onDissAllowListResponse();
-                           }
+	                    
 	                       
 	                      // if((currentIndex-1)>=0 && (currentIndex-1) < aisleContentBrowser.getChildCount() )
 	                      
@@ -268,6 +267,10 @@ public class AisleContentBrowser extends ViewFlipper {
 	                                return super.onTouchEvent(event);
 	                            }
 	                        }
+	                        if(mSwipeListener != null) {
+	                           	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_RIGHT_TO_LEFT,currentIndex-1);
+	                          // 	mSwipeListener.onDissAllowListResponse();
+	                           }
 	                        if(detailImgClickListenr != null) {
 	 	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
 	 	                       }
@@ -363,7 +366,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	    mClickListener = listener;
 	}
 	public interface AisleDetailSwipeListener{
-	    public void onAisleSwipe(String id);
+	    public void onAisleSwipe(String id,int position);
 	    public void onReceiveImageCount(int count);
 	    public void onResetAdapter();
 	    public void onAddCommentClick(RelativeLayout view,EditText editText,ImageView commentSend,FrameLayout editLay);

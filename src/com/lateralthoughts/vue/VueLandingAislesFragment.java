@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 //generic android & java goodies
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,11 +151,14 @@ public void notifyAdapters() {
             	 
             	isFlingCalled = true;
             } else if(scrollState == SCROLL_STATE_IDLE) {
-            	 
-            	isFlingCalled = false;
-            	//notify the adapters.
-            	mLeftColumnAdapter.notifyDataSetChanged();
-            	mRightColumnAdapter.notifyDataSetChanged();
+         
+						isFlingCalled = false;
+		            	//notify the adapters.
+		            	//mLeftColumnAdapter.notifyDataSetChanged();
+		            	//mRightColumnAdapter.notifyDataSetChanged();
+						
+				  
+            
             } 
             int first = view.getFirstVisiblePosition();
             int count = view.getChildCount();

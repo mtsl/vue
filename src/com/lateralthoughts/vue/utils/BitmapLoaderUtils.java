@@ -112,7 +112,7 @@ public class BitmapLoaderUtils {
     }
 
     //decodes image and scales it to reduce memory consumption
-    private Bitmap decodeFile(File f, int bestHeight){
+    public Bitmap decodeFile(File f, int bestHeight){
         Log.i("added url", "added url in  decodeFile: bestheight is "+bestHeight );
    
         try {

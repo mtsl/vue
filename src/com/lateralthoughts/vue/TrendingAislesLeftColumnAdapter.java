@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.content.Context;
 import android.util.Log;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 
 //internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 
 public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapter {
@@ -50,11 +52,13 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
     public int lastX;
     public static boolean mIsLeftDataChanged = false;
     AisleContentClickListener listener;
+    LinearLayout.LayoutParams mShowpieceParams,mShowpieceParamsDefault;
+
 
     public TrendingAislesLeftColumnAdapter(Context c, ArrayList<AisleWindowContent> content) {
         super(c, content);
         mContext = c;
-        
+  
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
         //mVueTrendingAislesDataModel.registerAisleDataObserver(this);       
     }
@@ -94,17 +98,18 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
             convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
             holder = new ViewHolder();
             holder.aisleContentBrowser = (AisleContentBrowser) convertView .findViewById(R.id.aisle_content_flipper);
-            LinearLayout.LayoutParams showpieceParams = new LinearLayout.LayoutParams(
-					VueApplication.getInstance().getScreenWidth()/2,
-					 250);
-        	//holder.aisleContentBrowser.setLayoutParams(showpieceParams);
-            
             holder.aisleDescriptor = (LinearLayout) convertView .findViewById(R.id.aisle_descriptor);
             holder.profileThumbnail = (ImageView)holder.aisleDescriptor.findViewById(R.id.profile_icon_descriptor);
             holder.aisleOwnersName = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_owner_name);
             holder.aisleContext = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_context);
             holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
             convertView.setTag(holder);
+            mShowpieceParams = new LinearLayout.LayoutParams(
+    				VueApplication.getInstance().getScreenWidth()/2,
+    				 250);
+          mShowpieceParamsDefault = new LinearLayout.LayoutParams(
+    				 LayoutParams.MATCH_PARENT,
+    				 LayoutParams.MATCH_PARENT);
             if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position1 = " + position);
         }
         //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
@@ -122,11 +127,24 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
   
         }
-       // if(!listener.isFlingCalled()) {
+        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
+/*        if(!listener.isFlingCalled()) {
         	 mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
-      //  } else {
-        //	Log.i("fling", "fling dont set holder it is fling call");
-       // }
+        	 holder.aisleContentBrowser.setLayoutParams(mShowpieceParamsDefault);
+        	 
+        		for(int i=0;i<holder.aisleContentBrowser.getChildCount();i++){
+        		    ((ScaleImageView)holder.aisleContentBrowser.getChildAt(i)).setVisibility(View.VISIBLE);
+        			 
+        		}
+        	 
+        } else {
+        	holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+        	for(int i=0;i<holder.aisleContentBrowser.getChildCount();i++){
+    		    ((ScaleImageView)holder.aisleContentBrowser.getChildAt(i)).setVisibility(View.INVISIBLE);
+    			 
+    		}
+        	Log.i("fling", "fling dont set holder it is fling call");
+        }*/
            
         AisleContext context = holder.mWindowContent.getAisleContext();
 

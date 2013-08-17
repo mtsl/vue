@@ -39,6 +39,7 @@ public class IndicatorView extends LinearLayout {
 	public IndicatorView(Context context) {
 		super(context);
 		this.mContext = context;
+		 
 		initialize(context);
 
 	}
@@ -60,7 +61,7 @@ public class IndicatorView extends LinearLayout {
 		mInactiveIndicatorBitmap = BitmapFactory.decodeResource(
 				mContext.getResources(), inactiveDots);
 		mIndicatorBgwidth = getIndicatorBgWidht(
-				mInactiveIndicatorBitmap.getWidth() * 2, mTotalScreenNo);
+				mInactiveIndicatorBitmap.getWidth() * 2, VueApplication.getInstance().getClickedWindowCount());
 		mIndicatorBitmap = getNewBitmap(mIndicatorBitmap, mIndicatorBgwidth);
 		mActiveIndicatorBitmap = BitmapFactory.decodeResource(
 				mContext.getResources(), movingDot);
@@ -161,6 +162,7 @@ public class IndicatorView extends LinearLayout {
 	}
 
 	private Bitmap getNewBitmap(Bitmap bitmap, int newWidth) {
+		Log.i("bitmapWidth", "bitmapWidth: "+newWidth);
 		return Bitmap.createScaledBitmap(bitmap, newWidth, 20, true);
 	}
 

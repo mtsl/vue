@@ -25,6 +25,7 @@
         android:layout_marginRight="6dp"
         android:layout_marginTop="6dp"
         android:background="@android:color/white" >
+          <include android:id="@+id/indicatorlayid" layout="@layout/dotindicator"/>
     </RelativeLayout>
 
     <LinearLayout
