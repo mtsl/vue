@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="20dp"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/leftarrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="2dp"
+        android:gravity="center"
+        android:text="&lt;" />
+
+    <ImageView
+        android:id="@+id/one"
+        style="@style/dotimg"
+        android:src="@drawable/number_active" />
+
+    <ImageView
+        android:id="@+id/two"
+        style="@style/dotimg"
+        android:src="@drawable/number_active" />
+
+    <ImageView
+        android:id="@+id/three"
+        style="@style/dotimg"
+        android:src="@drawable/number_active" />
+
+    <ImageView
+        android:id="@+id/four"
+        style="@style/dotimg"
+        android:src="@drawable/number_active" />
+
+    <ImageView
+        android:id="@+id/five"
+        style="@style/dotimg"
+        android:src="@drawable/number_active" />
+
+    <ImageView
+        android:id="@+id/six"
+        style="@style/dotimg"
+        android:src="@drawable/number_active" />
+
+    <ImageView
+        android:id="@+id/seven"
+        style="@style/dotimg"
+        android:src="@drawable/number_active" />
+
+    <ImageView
+        android:id="@+id/eight"
+        style="@style/dotimg"
+        android:src="@drawable/number_active" />
+
+    <ImageView
+        android:id="@+id/nine"
+        style="@style/dotimg"
+        android:src="@drawable/number_active" />
+
+    <ImageView
+        android:id="@+id/ten"
+        style="@style/dotimg"
+        android:src="@drawable/number_active" />
+
+    <TextView
+        android:id="@+id/rightarrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="2dp"
+        android:text=">" />
+
+</LinearLayout>
