@@ -401,7 +401,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	public void onResume() {
 		super.onResume();
 		// setMaxIndiCount();
-		upDatePageDots(highlightPosition,"right");
+		upDatePageDots(highlightPosition, "right");
 		mAisleDetailsAdapter.notifyDataSetChanged();
 		ViewTreeObserver vto = mVueUserName.getViewTreeObserver();
 		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -432,7 +432,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			 */
 			// moveIndicatorDot(direction);
 			Log.i("higlightPosition", "higlightPosition 1 : " + position);
-			upDatePageDots(position,direction);
+			upDatePageDots(position, direction);
 		}
 
 		public void onReceiveImageCount(int count) {
@@ -834,7 +834,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		return mAisleDetailsAdapter.getImageList();
 	}
 
-	private void upDatePageDots(int currentPosition,String direction) {
+	private void upDatePageDots(int currentPosition, String direction) {
 
 		highlightPosition = currentPosition % 10;
 		Log.i("higlightPosition", "higlightPosition: " + highlightPosition);
@@ -865,54 +865,40 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 						}
 					}
 				} else {
-					if (mRightArrow.getVisibility() == View.VISIBLE) {
-						showRightArrow();
-						showDots(DOT_MAX_COUUNT);
-					} else {
-						disableRightArrow();
-						if (mTotalPageCount % 10 == 0) {
-							showDots(10);
+					// Swiping from left to right...
+					if (direction.equalsIgnoreCase("left")) {
+						if (mRightArrow.getVisibility() == View.VISIBLE) {
+							showRightArrow();
+							showDots(DOT_MAX_COUUNT);
 						} else {
-							showDots(mTotalPageCount % 10);
+							disableRightArrow();
+							if (mTotalPageCount % 10 == 0) {
+								showDots(10);
+							} else {
+								showDots(mTotalPageCount % 10);
+							}
+						}
+					} else if (direction.equalsIgnoreCase("right")) {
+						if ((currentPosition + 1) % 10 == 0) {
+							showDots(DOT_MAX_COUUNT);
+							if (remainingDots > 1) {
+								showRightArrow();
+							}
+						} else {
+							if (mRightArrow.getVisibility() == View.VISIBLE) {
+								showRightArrow();
+								showDots(DOT_MAX_COUUNT);
+							} else {
+								disableRightArrow();
+								if (mTotalPageCount % 10 == 0) {
+									showDots(10);
+								} else {
+									showDots(mTotalPageCount % 10);
+								}
+							}
 						}
 					}
 				}
-
-				/*
-				 * if (mLeftArrow.getVisibility() == View.VISIBLE) {
-				 * showLeftArrow(); dotsCount = DOT_MAX_COUUNT; if
-				 * (mRightArrow.getVisibility() == View.VISIBLE) { if
-				 * (remainingDots > DOT_MAX_COUUNT) { showRightArrow();
-				 * dotsCount = DOT_MAX_COUUNT; showDots(dotsCount); } else {
-				 * disableRightArrow(); showDots(remainingDots); } } if
-				 * (remainingDots > DOT_MAX_COUUNT) { showRightArrow(); } } else
-				 * { showLeftArrow(); if (remainingDots > DOT_MAX_COUUNT) {
-				 * showRightArrow(); dotsCount = DOT_MAX_COUUNT;
-				 * showDots(dotsCount); } else { disableRightArrow();
-				 * showDots(remainingDots); } }
-				 */
-
-				/*
-				 * if(remainingDots >= DOT_MAX_COUUNT) {
-				 * 
-				 * dotsCount = DOT_MAX_COUUNT; showDots(dotsCount);
-				 * showRightArrow();
-				 * 
-				 * } else {
-				 * 
-				 * disableRightArrow(); if(mTotalPageCount/10>=2){
-				 * 
-				 * } else {
-				 * 
-				 * } dotsCount = mTotalPageCount%10; if(dotsCount == 0){
-				 * dotsCount = mTotalPageCount - currentPosition; }
-				 * Log.i("showdots", "showdots after20 : dotsCount"+dotsCount);
-				 * Log.i("showdots",
-				 * "showdots after20 mTotalPageCount: "+mTotalPageCount);
-				 * showDots(dotsCount);
-				 * 
-				 * }
-				 */
 			}
 
 		} else {

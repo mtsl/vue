@@ -65,4 +65,16 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <Button
+        android:id="@+id/imageButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/white"
+        android:padding="16dip"
+        android:text="hi"
+        android:textColor="@color/black"
+         />
+
 </RelativeLayout>
