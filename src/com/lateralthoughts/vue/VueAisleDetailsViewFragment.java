@@ -403,7 +403,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	public void onResume() {
 		super.onResume();
 		// setMaxIndiCount();
-		upDatePageDots(highlightPosition,"right");
+		upDatePageDots(highlightPosition, "right");
 		mAisleDetailsAdapter.notifyDataSetChanged();
 		ViewTreeObserver vto = mVueUserName.getViewTreeObserver();
 		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -434,7 +434,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			 */
 			// moveIndicatorDot(direction);
 			Log.i("higlightPosition", "higlightPosition 1 : " + position);
-			upDatePageDots(position,direction);
+			upDatePageDots(position, direction);
 		}
 
 		public void onReceiveImageCount(int count) {
@@ -836,7 +836,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		return mAisleDetailsAdapter.getImageList();
 	}
 
-	private void upDatePageDots(int currentPosition,String direction) {
+	private void upDatePageDots(int currentPosition, String direction) {
 
 		highlightPosition = currentPosition % 10;
 		Log.i("higlightPosition", "higlightPosition: " + highlightPosition);
@@ -852,27 +852,41 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				showRightArrow();
 
 			} else {
-				showLeftArrow(); 
-				int state = currentPosition /DOT_MAX_COUUNT;
-				 
-				if(state == mCurrentState){
-					
-				} else {
-					mCurrentState = state;
-					int remainingDots = mTotalPageCount - currentPosition;
-					if(remainingDots > DOT_MAX_COUUNT){
+				int remainingDots = mTotalPageCount - currentPosition;
+				// Swiping from left to right...
+				if (direction.equalsIgnoreCase("left")) {
+					if (mRightArrow.getVisibility() == View.VISIBLE) {
 						showRightArrow();
 						showDots(DOT_MAX_COUUNT);
 					} else {
 						disableRightArrow();
-						remainingDots = currentPosition%10;
-						if(remainingDots == 0){
-							remainingDots = mTotalPageCount - currentPosition;
+						if (mTotalPageCount % 10 == 0) {
+							showDots(10);
+						} else {
+							showDots(mTotalPageCount % 10);
 						}
-						showDots(remainingDots);
 					}
+				} else if (direction.equalsIgnoreCase("right")) {
+					if ((currentPosition + 1) % 10 == 0) {
+						showDots(DOT_MAX_COUUNT);
+						if (remainingDots > 1) {
+							showRightArrow();
+						}
+					} else {
+						if (mRightArrow.getVisibility() == View.VISIBLE) {
+							showRightArrow();
+							showDots(DOT_MAX_COUUNT);
+						} else {
+							disableRightArrow();
+							if (mTotalPageCount % 10 == 0) {
+								showDots(10);
+							} else {
+								showDots(mTotalPageCount % 10);
+							}
+						}
+					}
+					showDots(remainingDots);
 				}
- 
 			}
 
 		} else {
