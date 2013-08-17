@@ -89,6 +89,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	EditTextBackEvent mEditTextFindAt;
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
+	int mCurrentState;
+	 
 	private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
 			mDotSeven, mDotEight, mDotNine, mDotTen;
 
@@ -843,76 +845,34 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		if (mTotalPageCount > DOT_MAX_COUUNT) {
 
 			if (currentPosition < DOT_MAX_COUUNT) {
-
+				mCurrentState = 0;
 				dotsCount = DOT_MAX_COUUNT;
 				showDots(dotsCount);
 				disableLeftArrow();
 				showRightArrow();
 
 			} else {
-				showLeftArrow();
-				int remainingDots = mTotalPageCount - currentPosition;
-				if (currentPosition % 10 == 0) {
-					if (remainingDots > DOT_MAX_COUUNT) {
-						showRightArrow();
-						showDots(DOT_MAX_COUUNT);
-					} else {
-						disableRightArrow();
-						if (remainingDots == 0) {
-							showDots(1);
-						} else {
-							showDots(remainingDots);
-						}
-					}
+				showLeftArrow(); 
+				int state = currentPosition /DOT_MAX_COUUNT;
+				 
+				if(state == mCurrentState){
+					
 				} else {
-					if (mRightArrow.getVisibility() == View.VISIBLE) {
+					mCurrentState = state;
+					int remainingDots = mTotalPageCount - currentPosition;
+					if(remainingDots > DOT_MAX_COUUNT){
 						showRightArrow();
 						showDots(DOT_MAX_COUUNT);
 					} else {
 						disableRightArrow();
-						if (mTotalPageCount % 10 == 0) {
-							showDots(10);
-						} else {
-							showDots(mTotalPageCount % 10);
+						remainingDots = currentPosition%10;
+						if(remainingDots == 0){
+							remainingDots = mTotalPageCount - currentPosition;
 						}
+						showDots(remainingDots);
 					}
 				}
-
-				/*
-				 * if (mLeftArrow.getVisibility() == View.VISIBLE) {
-				 * showLeftArrow(); dotsCount = DOT_MAX_COUUNT; if
-				 * (mRightArrow.getVisibility() == View.VISIBLE) { if
-				 * (remainingDots > DOT_MAX_COUUNT) { showRightArrow();
-				 * dotsCount = DOT_MAX_COUUNT; showDots(dotsCount); } else {
-				 * disableRightArrow(); showDots(remainingDots); } } if
-				 * (remainingDots > DOT_MAX_COUUNT) { showRightArrow(); } } else
-				 * { showLeftArrow(); if (remainingDots > DOT_MAX_COUUNT) {
-				 * showRightArrow(); dotsCount = DOT_MAX_COUUNT;
-				 * showDots(dotsCount); } else { disableRightArrow();
-				 * showDots(remainingDots); } }
-				 */
-
-				/*
-				 * if(remainingDots >= DOT_MAX_COUUNT) {
-				 * 
-				 * dotsCount = DOT_MAX_COUUNT; showDots(dotsCount);
-				 * showRightArrow();
-				 * 
-				 * } else {
-				 * 
-				 * disableRightArrow(); if(mTotalPageCount/10>=2){
-				 * 
-				 * } else {
-				 * 
-				 * } dotsCount = mTotalPageCount%10; if(dotsCount == 0){
-				 * dotsCount = mTotalPageCount - currentPosition; }
-				 * Log.i("showdots", "showdots after20 : dotsCount"+dotsCount);
-				 * Log.i("showdots",
-				 * "showdots after20 mTotalPageCount: "+mTotalPageCount);
-				 * showDots(dotsCount);
-				 * 
-				 * }
-				 */
+ 
 			}
 
 		} else {
