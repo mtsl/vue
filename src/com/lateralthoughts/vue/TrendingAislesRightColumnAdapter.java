@@ -127,11 +127,6 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
 
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
-<<<<<<< HEAD
-        //if(!mIsScrolling)
-       // if(!listener.isFlingCalled()) {
-            mLoader.getAisleContentIntoView(holder, scrollIndex, position, false);
-=======
         mLoader.getAisleContentIntoView(holder, scrollIndex, position, false);
          /*   if(!listener.isFlingCalled()) {
            	 mLoader.getAisleContentIntoView(holder, scrollIndex, position, false);
@@ -149,7 +144,6 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     		}
            	Log.i("fling", "fling dont set holder it is fling call");
            }*/
->>>>>>> eec7c614578142ab534db55fee994766ff8f24cc
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);
