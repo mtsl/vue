@@ -39,6 +39,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
@@ -74,7 +75,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	ViewHolder mViewHolder;
 	boolean mImageRefresh = true;
 	 
-	ArrayList<String> mCustomUrls = new ArrayList<String>();
+	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
 	@SuppressWarnings("unchecked")
 	public AisleDetailsViewAdapter(Context c,
@@ -632,7 +633,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 	public void addAisleToContentWindow(Bitmap addedBitmap, String uri,
 			String title) {
-		Log.e("Land", "vueland 17");
 		AisleImageDetails imgDetails = new AisleImageDetails();
 		// TODO:temperory setting remove later these asignments.
 		imgDetails.mAvailableHeight = 500;
@@ -653,31 +653,36 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		// imgDetails.mImageUrl =
 		// "http://ecx.images-amazon.com/images/I/31WPX7Qn3wL.jpg";
 		imgDetails.mImageUrl = uri;
-		Log.i("added url", "added url aisleDetailsviewadapter " + uri);
 		imgDetails.mDetalsUrl = "";
 		imgDetails.mId = "";
 		imgDetails.mStore = "";
 		getItem(mCurrentAislePosition).getImageList().add(mCurrentDispImageIndex, imgDetails);
 		getItem(mCurrentAislePosition).addAisleContent(
 				getItem(mCurrentAislePosition).getAisleContext(), getItem(mCurrentAislePosition).getImageList());
-		FileCache fileCache = new FileCache(mContext);
-		File f = fileCache.getFile(getItem(mCurrentAislePosition).getImageList().get(0).mCustomImageUrl);
-		Utils.saveBitmap(BitmapFactory.decodeFile(uri), f);
+		//FileCache fileCache = new FileCache(mContext);
+		//File f = fileCache.getFile(getItem(mCurrentAislePosition).getImageList().get(0).mCustomImageUrl);
+		//File sourceFile = new File(uri);
+		//Bitmap  bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile, mBestHeight);
+		//Utils.saveBitmap(BitmapFactory.decodeFile(uri), f);
+		//Utils.saveBitmap(bmp, f);
 		getItem(mCurrentAislePosition).mIsDataChanged = true;
-		//mswipeListner.onResetAdapter();
 		mImageRefresh = true;
 		if(mViewHolder!= null){
-			Log.e("Land", "vueland 18");
 		mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 		notifyAdapter();
 		} else {
-			Log.e("Land", "vueland 19");
 			mswipeListner.onResetAdapter();
 		}
 	
 		 //
 	}
-
+ public ArrayList<String> getImageList(){
+	 ArrayList<String> imageList = new ArrayList<String>();
+	 for(int i=0;i<getItem(mCurrentAislePosition).getImageList().size();i++){
+		 imageList.add(getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl);
+	 }
+	 return imageList;
+ }
 	public void sendDataToDb(int imgPosition, String reqType) {
 		String aisleId;
 		String imageId;
