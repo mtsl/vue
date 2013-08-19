@@ -53,6 +53,8 @@ public class Utils {
 				os.write(bytes, 0, count);
 			}
 		} catch (Exception ex) {
+			Log.i("added url", "added url  InputStream got error ");
+			ex.printStackTrace();
 		}
 	}
 

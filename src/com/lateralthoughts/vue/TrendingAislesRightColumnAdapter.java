@@ -27,6 +27,7 @@ package com.lateralthoughts.vue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -47,11 +48,12 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     
     private AisleLoader mLoader;
     
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     
     public int firstX;
     public int lastX;
     public static boolean mIsRightDataChanged = false;
+    AisleContentClickListener listener;
     
     public TrendingAislesRightColumnAdapter(Context c, ArrayList<AisleWindowContent> content) {
         super(c,content);
@@ -64,6 +66,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         super(c, listener, content);
         mContext = c;
         mLoader = AisleLoader.getInstance(mContext);
+        this.listener = listener;
         
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
         //mVueTrendingAislesDataModel.registerAisleDataObserver(this);       
@@ -94,13 +97,17 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
             convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
             holder = new ViewHolder();
             holder.aisleContentBrowser = (AisleContentBrowser) convertView .findViewById(R.id.aisle_content_flipper);
+            LinearLayout.LayoutParams showpieceParams = new LinearLayout.LayoutParams(
+					VueApplication.getInstance().getScreenWidth()/2,
+					 200);
+        	//holder.aisleContentBrowser.setLayoutParams(showpieceParams);
             holder.aisleDescriptor = (LinearLayout) convertView .findViewById(R.id.aisle_descriptor);
             holder.profileThumbnail = (ImageView)holder.aisleDescriptor.findViewById(R.id.profile_icon_descriptor);
             holder.aisleOwnersName = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_owner_name);
             holder.aisleContext = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_context);
             holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
             convertView.setTag(holder);
-            if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position = " + position);
+            if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position2 = " + position);
         }
         //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
         holder = (ViewHolder) convertView.getTag();
@@ -108,15 +115,13 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         if(holder.mWindowContent.mIsDataChanged) {
         	holder.mWindowContent.mIsDataChanged = false;
         	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-        		Log.i("listadapter", "adapter leftadapter right adapter resetting notified");
-        		Log.i("listadapter", "adapter leftadapter data changed for this window: "+holder.mWindowContent.getAisleId());
         }
 
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
         //if(!mIsScrolling)
+       // if(!listener.isFlingCalled()) {
             mLoader.getAisleContentIntoView(holder, scrollIndex, position, false);
-
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);

@@ -13,11 +13,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ImageView.ScaleType;
+import android.widget.Toast;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.content.Context;
@@ -36,9 +41,9 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ScaledImageViewFactory;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.ImageDimension;
 import com.lateralthoughts.vue.utils.Utils;
-import com.lateralthoughts.vue.utils.VueMemoryCache;
 import com.lateralthoughts.vue.utils.FileCache;
 
 /**
@@ -63,7 +68,8 @@ import com.lateralthoughts.vue.utils.FileCache;
  */
 public class AisleContentAdapter implements IAisleContentAdapter {
 
-    private VueMemoryCache<Bitmap> mContentImagesCache;
+   // private VueMemoryCache<Bitmap> mContentImagesCache;
+	private BitmapLruCache mContentImagesCache;
     private ArrayList<AisleImageDetails> mAisleImageDetails;
     private AisleWindowContent mWindowContent;
     
@@ -79,13 +85,14 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     
     public AisleContentAdapter(Context context){
         mContext = context;
-        mContentImagesCache = VueApplication.getInstance().getAisleContentCache();
+        //mContentImagesCache = VueApplication.getInstance().getAisleContentCache();
+        mContentImagesCache = BitmapLruCache.getInstance(VueApplication.getInstance());
         mFileCache = VueApplication.getInstance().getFileCache();
         mCurrentPivotIndex = -1;
         mImageViewFactory  = ScaledImageViewFactory.getInstance(mContext);     
         mExecutorService = Executors.newFixedThreadPool(5);
         mColorDrawable = new ColorDrawable(Color.WHITE);
-        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
+        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
     }
     
     //========================= Methods from the inherited IAisleContentAdapter ========================//
@@ -202,8 +209,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             return;
         } catch (Throwable ex){
            ex.printStackTrace();
-           if(ex instanceof OutOfMemoryError)
-               mContentImagesCache.clear();
+           if(ex instanceof OutOfMemoryError) {
+               //mContentImagesCache.clear();
+           }
            return;
         }
     }
@@ -263,7 +271,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     }
     
     @Override
-    public boolean setAisleContent(AisleContentBrowser contentBrowser,ScaleImageView reuseView, int currentIndex, int wantedIndex, 
+    public boolean setAisleContent(AisleContentBrowser contentBrowser, int currentIndex, int wantedIndex, 
                                             boolean shiftPivot){
         ScaleImageView imageView = null;
         AisleImageDetails itemDetails = null;
@@ -281,13 +289,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
               bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
                
             }
-       
-            if(contentBrowser.getmSourceName() != null) {
-            	Log.i("adapter swiping", "adapter swiping  mSourceName : "+contentBrowser.getmSourceName() );
-            	Log.i("adapter swiping", "adapter swiping  contentBrowser : "+contentBrowser );
-            }
             if(bitmap != null){
-         
             	 if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             	 
             			mImageDimension = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
@@ -296,7 +298,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             			}
             	 }
                 imageView.setImageBitmap(bitmap);
-                contentBrowser.addView(imageView);
+                	contentBrowser.addView(imageView);
+                 
             }
             else{
             	if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
@@ -305,7 +308,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             	} else {
             		int bestHeigh = mWindowContent.getBestHeightForWindow();
             		 loadBitmap(itemDetails,bestHeigh,contentBrowser, imageView);
-                     contentBrowser.addView(imageView);
+                           	contentBrowser.addView(imageView);
             	}
             }
         }
@@ -323,11 +326,11 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     	 } else {
     		 loc = itemDetails.mCustomImageUrl;
     	 }
-        if (cancelPotentialDownload(loc, imageView)) {          
+       // if (cancelPotentialDownload(loc, imageView)) {          
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
             task.execute(loc);
-        }
+       // }
     }
     
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
@@ -472,8 +475,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             return bitmap;
         } catch (Throwable ex){
            ex.printStackTrace();
-           if(ex instanceof OutOfMemoryError)
-               mContentImagesCache.clear();
+           if(ex instanceof OutOfMemoryError) {
+              // mContentImagesCache.clear();
+           }
            return null;
         }
     }
@@ -523,5 +527,21 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 		}
 		return null;
 	}
-    
+	private void createLayout(ScaleImageView image,AisleContentBrowser contentBrowser,int id){
+		RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		params2.addRule(RelativeLayout.CENTER_IN_PARENT);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(VueApplication.getInstance().getPixel(32), VueApplication.getInstance().getPixel(32));
+		params.addRule(RelativeLayout.CENTER_IN_PARENT);
+		RelativeLayout imageParent = new RelativeLayout(mContext);
+		RelativeLayout.LayoutParams paramsRel = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		imageParent.setLayoutParams(paramsRel);
+		image.setLayoutParams(params2);
+		imageParent.addView(image);
+		ImageView thumbImage = new ImageView(mContext);
+		thumbImage.setLayoutParams(params);
+		thumbImage.setImageResource(R.drawable.thumb_up);
+		thumbImage.setVisibility(View.INVISIBLE);
+		imageParent.addView(thumbImage);
+		contentBrowser.addView(imageParent);
+	}
 }

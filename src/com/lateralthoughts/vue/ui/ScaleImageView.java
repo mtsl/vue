@@ -11,6 +11,7 @@
  */
 package com.lateralthoughts.vue.ui;
 
+ 
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -60,6 +61,7 @@ public class ScaleImageView extends ImageView {
 	@Override
 	public void setImageDrawable(Drawable d) {
 		super.setImageDrawable(d);
+		 
 		if (imageChangeListener != null)
 			imageChangeListener.changed((d == null));
 	}

@@ -26,7 +26,7 @@
 
             <LinearLayout
                 android:id="@+id/handler2"
-                android:layout_width="5dip"
+                android:layout_width="1dip"
                 android:layout_height="fill_parent"
                 android:orientation="vertical"
                 android:visibility="invisible" >
@@ -38,8 +38,31 @@
                 android:layout_height="wrap_content"
                 android:background="@color/whitbgshade"
                 android:orientation="vertical" >
+<!-- 
+                <com.lateralthoughts.vue.ui.AisleContentBrowser
+                    android:id="@+id/topscroller"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="2"
+                     
+                 >
+                </com.lateralthoughts.vue.ui.AisleContentBrowser>
 
-                <com.lateralthoughts.vue.ui.HorizontalListView
+                <com.lateralthoughts.vue.ui.AisleContentBrowser
+                    android:id="@+id/bottomscroller"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="2"
+                    
+                >
+                </com.lateralthoughts.vue.ui.AisleContentBrowser> -->
+
+                
+                     <com.lateralthoughts.vue.ui.HorizontalListView
                     android:id="@+id/topscroller"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
@@ -60,6 +83,7 @@
                     android:background="@color/whitbgshade"
                     android:scrollbars="none" >
                 </com.lateralthoughts.vue.ui.HorizontalListView>
+               
             </LinearLayout>
         </SlidingDrawer>
     </FrameLayout>

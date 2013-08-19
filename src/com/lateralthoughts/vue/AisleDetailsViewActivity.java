@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -24,16 +25,22 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
+import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.lateralthoughts.vue.AisleDetailsViewListLoader.BitmapWorkerTask;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.HorizontalListView;
+import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.SlidingMenu;
@@ -42,15 +49,18 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	Fragment mFragRight;
 	public static final String CLICK_EVENT = "click";
 	public static final String LONG_PRESS_EVENT = "longpress";
+	public static final String SCREEN_TAG = "comparisonscreen";
+	public static final String TOP_SCROLLER = "topscroller";
+	public static final String BOTTOM_SCROLLER = "bottomscroller";
 	HorizontalListView mTopScroller, mBottomScroller;
 	// int mStatusbarHeight;
 	int mScreenTotalHeight;
-	int mCoparisionScreenHeight;
+	int mComparisionScreenHeight;
 	Context mContext;
 	AisleWindowContent mWindowContent;
 	private SlidingDrawer mSlidingDrawer;
-	ArrayList<AisleImageDetails> mImageDetailsArr = null;
-	AisleImageDetails mItemDetails = null;
+	ArrayList<String> mImageDetailsArr = null;
+	//AisleImageDetails mItemDetails = null;
 	private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
 	private int mLikeImageShowTime = 1000;
@@ -61,6 +71,15 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	private boolean mTempflag = true;
 	VueAisleDetailsViewFragment mVueAiselFragment;
 	public static Context mAisleDetailsActivityContext = null;
+	ViewHolder viewHolder;
+	LinearLayout MContentLinearLay;
+	int mCurentAislePosistion;
+	//AisleContentBrowser mTopScroller, mBottomScroller;
+	private boolean isSlidePanleLoaded = false;
+	  //private ViewPager mTopScroller,mBottomScroller;
+	
+	 ContentAdapterFactory  mContentAdapterFactory;
+	 ScaledImageViewFactory mViewFactory;
 
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
@@ -108,29 +127,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 						new Thread(mRunnable).start();
 					}
 				});
+		MContentLinearLay = (LinearLayout) findViewById(R.id.content2);
 		mTopScroller = (HorizontalListView) findViewById(R.id.topscroller);
 		mBottomScroller = (HorizontalListView) findViewById(R.id.bottomscroller);
 		mStatusbarHeight = VueApplication.getInstance().getmStatusBarHeight();
 		mScreenTotalHeight = VueApplication.getInstance().getScreenHeight();
-		mCoparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight;
-		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
-				.getInstance(mContext);
-		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
-		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
-			mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel
-					.getAisleAt(i);
-			if (mWindowContent.getAisleId().equalsIgnoreCase(
-					VueApplication.getInstance().getClickedWindowID())) {
-				mWindowContent = (AisleWindowContent) mVueTrendingAislesDataModel
-						.getAisleAt(i);
-				break;
-			}
-		}
-		mImageDetailsArr = mWindowContent.getImageList();
-		if (null != mImageDetailsArr && mImageDetailsArr.size() != 0) {
-			mTopScroller.setAdapter(new ComparisionAdapter(
-					AisleDetailsViewActivity.this));
-		}
+		mComparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight;
 		mTopScroller.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -232,11 +234,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 						return false;
 					}
 				});
-		if (null != mImageDetailsArr && mImageDetailsArr.size() != 0) {
-			mBottomScroller.setAdapter(new ComparisionAdapter(
-					AisleDetailsViewActivity.this));
-		}
-
 	}
 
 	@Override
@@ -269,8 +266,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	class ComparisionAdapter extends BaseAdapter {
 		LayoutInflater minflater;
-		ViewHolder viewHolder;
-
+		
+            int i = 0;
 		public ComparisionAdapter(Context context) {
 			minflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
@@ -293,9 +290,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 
-			mItemDetails = mImageDetailsArr.get(position);
+			//mItemDetails = mImageDetailsArr.get(position);
 			Bitmap bitmap = mBitmapLoaderUtils
-					.getCachedBitmap(mItemDetails.mCustomImageUrl);
+					.getCachedBitmap(mImageDetailsArr.get(position));
+			
 			if (convertView == null) {
 				viewHolder = new ViewHolder();
 				convertView = minflater.inflate(R.layout.vuecompareimg, null);
@@ -304,8 +302,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				viewHolder.likeImage = (ImageView) convertView
 						.findViewById(R.id.compare_like_dislike);
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-						mCoparisionScreenHeight / 2,
-						mCoparisionScreenHeight / 2);
+						mComparisionScreenHeight / 2,
+						mComparisionScreenHeight / 2);
 				params.addRule(RelativeLayout.CENTER_IN_PARENT);
 				params.setMargins(VueApplication.getInstance().getPixel(10), 0,
 						0, 0);
@@ -319,28 +317,32 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 				convertView.setTag(viewHolder);
 			}
-
-			viewHolder.likeImage.setVisibility(View.INVISIBLE);
 			viewHolder = (ViewHolder) convertView.getTag();
+			viewHolder.likeImage.setVisibility(View.INVISIBLE);
+			
 			viewHolder.likeImage.setImageResource(R.drawable.thumb_up);
 			if (bitmap != null) {
+				Log.i("cachecheck", "cachecheck if :"+position);
 				viewHolder.img.setImageBitmap(bitmap);
 			} else {
+				Log.i("cachecheck", "cachecheck else "+position);
 				viewHolder.img.setImageResource(R.drawable.ic_launcher);
 				BitmapWorkerTask task = new BitmapWorkerTask(null,
-						viewHolder.img, mCoparisionScreenHeight / 2);
-				task.execute(mItemDetails.mCustomImageUrl);
+						viewHolder.img, mComparisionScreenHeight / 2);
+				
+				task.execute(mImageDetailsArr.get(position));
+				
 
 			}
 			return convertView;
 		}
 
-		private class ViewHolder {
-			ImageView img;
-			ImageView likeImage;
-		}
+		
 	}
-
+	private class ViewHolder {
+		ImageView img;
+		ImageView likeImage;
+	}
 	@Override
 	public void onResume() {
 		mHandleActionbar = new HandleActionBar();
@@ -360,6 +362,34 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				sendDataToDataentryScreen(b);
 			}
 		}
+		if(!isSlidePanleLoaded) {
+			isSlidePanleLoaded = true;
+		new Handler().postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (mVueAiselFragment != null) {
+					mImageDetailsArr = mVueAiselFragment.getAisleWindowImgList();
+					mBitmapLoaderUtils = BitmapLoaderUtils.getInstance( );
+					for(int i=0;i<mImageDetailsArr.size();i++)
+						Log.i("mCustomUrl", "mCustomUrl in getview: "+mImageDetailsArr.get(i).toString());
+					 
+				}
+				if (null != mImageDetailsArr && mImageDetailsArr.size() != 0) {
+					mBottomScroller.setAdapter(new ComparisionAdapter(
+							AisleDetailsViewActivity.this));
+					 
+						mTopScroller.setAdapter(new ComparisionAdapter(
+								AisleDetailsViewActivity.this));
+					 
+				}
+			}
+				
+			 
+		}, 500);
+		}
+	 
+		
 	}
 
 	private Handler mHandler = new Handler() {
@@ -392,18 +422,16 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			} else if (mSlidingDrawer.isOpened()) {
 				mSlidingDrawer.close();
 			} else {
-				/* if (!VueApplication.getInstance().mSoftKeboardIndicator) { */
 				if (mVueAiselFragment == null) {
 					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.aisle_details_view_fragment);
 				}
 				mVueAiselFragment.setAisleContentListenerNull();
+				MContentLinearLay.removeAllViews();
+				for(int i = 0;i<mImageDetailsArr.size();i++){
+				//	mBitmapLoaderUtils.removeBitmapFromCache(mImageDetailsArr.get(i));
+				}
 				super.onBackPressed();
-				/*
-				 * } else { VueApplication.getInstance().mSoftKeboardIndicator =
-				 * false; }
-				 */
-
 			}
 		}
 		return false;
@@ -419,7 +447,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.e("Land", "vueland 12");
 		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
@@ -430,22 +457,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT) {
-			Log.e("Land", "vueland 13");
 			Bundle b = data.getExtras();
 			if (b != null) {
-				Log.e("Land", "vueland 14");
-				/*
-				 * String lookingFor = b .getString(VueConstants.
-				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR);
-				 * String occasion = b .getString(VueConstants.
-				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION); String
-				 * category = b .getString(VueConstants.
-				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY); String
-				 * saysomethingAboutAisle = b .getString(VueConstants.
-				 * FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE
-				 * );
-				 */
-
 				String findAt = b
 						.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT);
 				if (mVueAiselFragment == null) {
@@ -459,11 +472,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 				if (imagePath != null) {
-					Log.e("Land", "vueland 15");
 					FileCache fileCache = new FileCache(this);
 					File f = fileCache.getFile(imagePath);
-					Log.e("Detailsscreen", "hash code " + f.getPath());
-					Log.e("Detailsscreen", "image path " + imagePath);
 					Utils.saveBitmap(BitmapFactory.decodeFile(imagePath), f);
 					mVueAiselFragment.addAisleToWindow(
 							BitmapFactory.decodeFile(imagePath), imagePath);
@@ -495,6 +505,14 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 		}
 	}
+    public void loadBitmap(String url, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
+    	 
+      //  if (cancelPotentialDownload(loc, imageView)) { 
+            BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView, bestHeight);
+            ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
+            task.execute(url);
+       // }
+    }
 
 	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		private final WeakReference<ImageView> imageViewReference;
@@ -608,4 +626,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				intent,
 				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT);
 	}
+ 
+ 
 }

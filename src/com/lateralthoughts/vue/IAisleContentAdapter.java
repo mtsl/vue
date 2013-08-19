@@ -19,7 +19,7 @@ public interface IAisleContentAdapter {
     
     public int getAisleItemsCount();
     
-    public boolean setAisleContent(AisleContentBrowser contentBrowser,ScaleImageView reuseImageView, int currentIndex, int wantedIndex, boolean shiftPivot);
+    public boolean setAisleContent(AisleContentBrowser contentBrowser, int currentIndex, int wantedIndex, boolean shiftPivot);
 
 /*	public void setSourceName(String sourceName);
 	public String getSourceName();*/

@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.graphics.Bitmap;
 
 //import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -28,7 +30,8 @@ public class AisleLoader {
     private static AisleLoader sAisleLoaderInstance = null;
     private ScaledImageViewFactory mViewFactory = null;
     private BitmapLoaderUtils mBitmapLoaderUtils;
-    private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
+   // private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
+   // private List<ViewHolder> browserList = new ArrayList<TrendingAislesGenericAdapter.ViewHolder>();
     
     //Design Notes: The SGV is powered by data from the TrendingAislesAdapter. This adapter starts
     //the information flow by requesting top aisles in batches. As the aisle 
@@ -70,7 +73,7 @@ public class AisleLoader {
     	//static method
     	mContext = context;
         mViewFactory = ScaledImageViewFactory.getInstance(context);
-        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance(mContext);
+        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
         mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
         if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
@@ -133,7 +136,7 @@ public class AisleLoader {
     		holder.aisleContentBrowser.setScrollIndex(scrollIndex);
     		holder.aisleContentBrowser.setCustomAdapter(adapter);
     		holder.uniqueContentId = desiredContentId;
-    		mContentViewMap.put(holder.uniqueContentId, holder);
+    		//mContentViewMap.put(holder.uniqueContentId, holder);
     	}
     	imageDetailsArr = windowContent.getImageList();
 

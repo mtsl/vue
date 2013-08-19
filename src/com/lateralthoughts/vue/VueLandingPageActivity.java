@@ -224,8 +224,6 @@ public class VueLandingPageActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
-				Log.e("Profiling",
-						"Profiling Landing Activity: call to delete old images");
 				FileCache fileCache = new FileCache(
 						VueApplication.getInstance());
 				fileCache.clearVueAppResizedPictures();
