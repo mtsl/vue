@@ -116,7 +116,7 @@ public class AisleLoader {
     		//to worry about cleaning up anything!
 		    holder.aisleContentBrowser.setScrollIndex(scrollIndex);
 			Log.i("listadapter", "adapter leftadapter uniquecontentId equals");
-    		// return;
+    		 return;
     	}else{
     		
     		//we are going to re-use an existing object to show some new content
