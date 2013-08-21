@@ -98,25 +98,25 @@ public class AisleLoader {
     	ArrayList<AisleImageDetails> imageDetailsArr = null;
     	AisleImageDetails itemDetails = null;
     	AisleContentBrowser contentBrowser = null;
-    	
+
     	if(null == holder)
     		return;
     	AisleWindowContent windowContent = holder.mWindowContent;
-    	
+
     	if(null == windowContent)
     		return;
-    	
+
     	//String currentContentId = holder.aisleContentBrowser.getUniqueId();
     	String desiredContentId = windowContent.getAisleId();
     	contentBrowser = holder.aisleContentBrowser;
-    	
+
 		if(holder.uniqueContentId.equals(desiredContentId)){
     		//we are looking at a visual object that has either not been used
     		//before or has to be filled with same content. Either way, no need
     		//to worry about cleaning up anything!
 		    holder.aisleContentBrowser.setScrollIndex(scrollIndex);
-
-    		return;
+			Log.i("listadapter", "adapter leftadapter uniquecontentId equals");
+    		// return;
     	}else{
     		
     		//we are going to re-use an existing object to show some new content
@@ -139,12 +139,13 @@ public class AisleLoader {
     		holder.aisleContentBrowser.removeAllViews();
     		holder.aisleContentBrowser.setUniqueId(desiredContentId);
     		holder.aisleContentBrowser.setScrollIndex(scrollIndex);
-    		
-    		
-     
-    	}  
+    		holder.aisleContentBrowser.setCustomAdapter(adapter);
+    		holder.uniqueContentId = desiredContentId;
+    		//mContentViewMap.put(holder.uniqueContentId, holder);
+    	}
     	imageDetailsArr = windowContent.getImageList();
-    	if(null != imageDetailsArr && imageDetailsArr.size() != 0){    		
+
+    	if(null != imageDetailsArr && imageDetailsArr.size() != 0){	
     		itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
@@ -162,7 +163,7 @@ public class AisleLoader {
 			}
         }
     }
-    
+
     public void loadBitmap(String loc, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
         if (cancelPotentialDownload(loc, imageView)) {        	
             BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView, bestHeight);

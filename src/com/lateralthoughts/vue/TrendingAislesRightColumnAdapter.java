@@ -124,7 +124,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         	holder.mWindowContent.mIsDataChanged = false;
         	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
         }
-        
+
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
         mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,listener);

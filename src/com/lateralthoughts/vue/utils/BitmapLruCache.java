@@ -2,6 +2,7 @@ package com.lateralthoughts.vue.utils;
 
 import com.android.volley.toolbox.ImageLoader.ImageCache;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -23,6 +24,7 @@ public class BitmapLruCache extends LruCache<String, Bitmap> implements ImageCac
 	return mBitmapLruCache;
 	   
    }
+    @SuppressLint("NewApi")
     @Override
     protected int sizeOf(String key, Bitmap value) {
         return value.getByteCount();
