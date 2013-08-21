@@ -74,6 +74,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	private int mTopBottomMargin = 24;
 	ViewHolder mViewHolder;
 	boolean mImageRefresh = true;
+	private boolean mSetPosition;
 	 
 	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
@@ -82,6 +83,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			AisleDetailSwipeListener swipeListner, int listCount,
 			ArrayList<AisleWindowContent> content) {
 		super(c, content);
+		mSetPosition = true;
 		mContext = c;
 		mTopBottomMargin = VueApplication.getInstance().getPixel(
 				mTopBottomMargin);
@@ -295,14 +297,15 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			//mViewHolder.mWindowContent = mWindowContentTemp;
 			try {
 				mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName;
-				int scrollIndex = 0;
+				int scrollIndex = VueApplication.getInstance().getmAisleImgCurrentPos();
 				//mWindowContentTemp = mViewHolder.mWindowContent;
 				mViewHolder.tag = TAG;
                 if(mImageRefresh) {
                 	mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
                 	mImageRefresh = false;
 				mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
-						position, new DetailImageClickListener(),getItem(mCurrentAislePosition));
+						position, new DetailImageClickListener(),getItem(mCurrentAislePosition),mSetPosition);
+				mSetPosition = false;
                 }
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -626,7 +629,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			mCommentsMapList = null;
 			mViewHolder.aisleContentBrowser.setReferedObjectsNull();
 			mViewHolder.aisleContentBrowser.removeAllViews();
-			mViewLoader.clearBrowser();
+			mViewLoader.clearBrowser(getItem(mCurrentAislePosition).getImageList());
 			mViewHolder.aisleContentBrowser = null;
 		}
 	}
@@ -650,8 +653,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			mBestHeight = imgDetails.mAvailableHeight;
 		}
 		imgDetails.mTitle = title;
-		// imgDetails.mImageUrl =
-		// "http://ecx.images-amazon.com/images/I/31WPX7Qn3wL.jpg";
 		imgDetails.mImageUrl = uri;
 		imgDetails.mDetalsUrl = "";
 		imgDetails.mId = "";
@@ -659,12 +660,11 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		getItem(mCurrentAislePosition).getImageList().add(mCurrentDispImageIndex, imgDetails);
 		getItem(mCurrentAislePosition).addAisleContent(
 				getItem(mCurrentAislePosition).getAisleContext(), getItem(mCurrentAislePosition).getImageList());
-		//FileCache fileCache = new FileCache(mContext);
-		//File f = fileCache.getFile(getItem(mCurrentAislePosition).getImageList().get(0).mCustomImageUrl);
-		//File sourceFile = new File(uri);
-		//Bitmap  bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile, mBestHeight);
-		//Utils.saveBitmap(BitmapFactory.decodeFile(uri), f);
-		//Utils.saveBitmap(bmp, f);
+		FileCache fileCache = new FileCache(mContext);
+		File f = fileCache.getFile(getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mCustomImageUrl);
+		File sourceFile = new File(uri);
+		Bitmap  bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile, getItem(mCurrentAislePosition).getBestHeightForWindow());
+		Utils.saveBitmap(bmp, f);
 		getItem(mCurrentAislePosition).mIsDataChanged = true;
 		mImageRefresh = true;
 		if(mViewHolder!= null){
@@ -673,8 +673,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		} else {
 			mswipeListner.onResetAdapter();
 		}
-	
-		 //
 	}
  public ArrayList<String> getImageList(){
 	 ArrayList<String> imageList = new ArrayList<String>();

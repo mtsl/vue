@@ -1,25 +1,22 @@
 package com.lateralthoughts.vue;
 
-import android.app.Application;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
-//internal imports
-import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.FileCache;
-
-//import crittercism sdk
-import com.crittercism.app.Crittercism;
-
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.app.Application;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.crittercism.app.Crittercism;
+import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.lateralthoughts.vue.utils.FileCache;
 
 public class VueApplication extends Application {
 	private static VueApplication sInstance;
@@ -62,6 +59,15 @@ public class VueApplication extends Application {
 	public int mScreenWidth;
 	private int mTextSize = 18;
 	public Context mVueApplicationContext;
+	private int mAisleImgCurrentPos;
+	public int getmAisleImgCurrentPos() {
+		return mAisleImgCurrentPos;
+	}
+
+	public void setmAisleImgCurrentPos(int mAisleImgCurrentPos) {
+		this.mAisleImgCurrentPos = mAisleImgCurrentPos;
+	}
+
 	// public int totalDataDownload = 0;
 	public boolean mFbsharingflag = false;
 	private RequestQueue mVolleyRequestQueue;
