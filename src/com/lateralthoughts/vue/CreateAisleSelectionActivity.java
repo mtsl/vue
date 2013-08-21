@@ -55,7 +55,8 @@ public class CreateAisleSelectionActivity extends Activity {
 			mFromDetailsScreenFlag = false;
 	private String mCameraImageName = null;
 	private boolean mGalleryClickedFlag = false, mCameraClickedFlag = false,
-			mTopRightClickedFlag = false, mBottomRightClickedFlag = false;
+			mTopRightClickedFlag = false, mBottomRightClickedFlag = false,
+			mMoreClickedFlag = false;
 	private static final int BOX_ANIMATION_DURATION = 600;
 	private static final int CIRCLE_ANIMATION_DURATION = 1000;
 	private static final float ZOOM_START_POSITION = 0f;
@@ -248,23 +249,28 @@ public class CreateAisleSelectionActivity extends Activity {
 
 				@Override
 				public void onAnimationEnd(Animation arg0) {
-					if (mGalleryClickedFlag) {
-						galleryFunctionality();
-					} else if (mCameraClickedFlag) {
-						cameraFunctionality();
-					} else if (mTopRightClickedFlag) {
-						loadShoppingApplication(
-								VueApplication.getInstance().mShoppingApplicationDetailsList
-										.get(0).getActivityName(),
-								VueApplication.getInstance().mShoppingApplicationDetailsList
-										.get(0).getPackageName());
-					} else if (mBottomRightClickedFlag) {
-						loadShoppingApplication(
-								VueApplication.getInstance().mShoppingApplicationDetailsList
-										.get(1).getActivityName(),
-								VueApplication.getInstance().mShoppingApplicationDetailsList
-										.get(1).getPackageName());
-					} else {
+					try {
+						if (mGalleryClickedFlag) {
+							galleryFunctionality();
+						} else if (mCameraClickedFlag) {
+							cameraFunctionality();
+						} else if (mTopRightClickedFlag) {
+							loadShoppingApplication(
+									VueApplication.getInstance().mShoppingApplicationDetailsList
+											.get(0).getActivityName(),
+									VueApplication.getInstance().mShoppingApplicationDetailsList
+											.get(0).getPackageName());
+						} else if (mBottomRightClickedFlag) {
+							loadShoppingApplication(
+									VueApplication.getInstance().mShoppingApplicationDetailsList
+											.get(1).getActivityName(),
+									VueApplication.getInstance().mShoppingApplicationDetailsList
+											.get(1).getPackageName());
+						} else {
+							finish();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 						finish();
 					}
 				}
@@ -296,6 +302,7 @@ public class CreateAisleSelectionActivity extends Activity {
 				@Override
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mMoreClickedFlag = true;
 						moreClickFunctionality();
 						// mTotalBottom.startAnimation(mBounceAnimation);
 						return false;
@@ -360,13 +367,21 @@ public class CreateAisleSelectionActivity extends Activity {
 					mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation);
 				}
 			}); //
-			/*
-			 * mDataentryPopupMainLayout.setOnClickListener(new
-			 * OnClickListener() {
-			 * 
-			 * @Override public void onClick(View arg0) {
-			 * mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation); } });
-			 */
+
+			mDataentryPopupMainLayout.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					if (mGalleryClickedFlag || mCameraClickedFlag
+							|| mTopRightClickedFlag || mBottomRightClickedFlag
+							|| mMoreClickedFlag) {
+						// don't do anything...
+					} else {
+						mBoxWithCircleLayout
+								.startAnimation(mBottomToTopAnimation);
+					}
+				}
+			});
+
 		} else {
 			mDataEntryMoreBottomListLayout = (LinearLayout) findViewById(R.id.data_entry_more_bottom_list_layout);
 			mDataEntryMoreBottomListLayout.setVisibility(View.GONE);
@@ -557,23 +572,28 @@ public class CreateAisleSelectionActivity extends Activity {
 
 						@Override
 						public void onAnimationEnd(Animation arg0) {
-							if (mGalleryClickedFlag) {
-								galleryFunctionality();
-							} else if (mCameraClickedFlag) {
-								cameraFunctionality();
-							} else if (mTopRightClickedFlag) {
-								loadShoppingApplication(
-										VueApplication.getInstance().mShoppingApplicationDetailsList
-												.get(0).getActivityName(),
-										VueApplication.getInstance().mShoppingApplicationDetailsList
-												.get(0).getPackageName());
-							} else if (mBottomRightClickedFlag) {
-								loadShoppingApplication(
-										VueApplication.getInstance().mShoppingApplicationDetailsList
-												.get(1).getActivityName(),
-										VueApplication.getInstance().mShoppingApplicationDetailsList
-												.get(1).getPackageName());
-							} else {
+							try {
+								if (mGalleryClickedFlag) {
+									galleryFunctionality();
+								} else if (mCameraClickedFlag) {
+									cameraFunctionality();
+								} else if (mTopRightClickedFlag) {
+									loadShoppingApplication(
+											VueApplication.getInstance().mShoppingApplicationDetailsList
+													.get(0).getActivityName(),
+											VueApplication.getInstance().mShoppingApplicationDetailsList
+													.get(0).getPackageName());
+								} else if (mBottomRightClickedFlag) {
+									loadShoppingApplication(
+											VueApplication.getInstance().mShoppingApplicationDetailsList
+													.get(1).getActivityName(),
+											VueApplication.getInstance().mShoppingApplicationDetailsList
+													.get(1).getPackageName());
+								} else {
+									finish();
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
 								finish();
 							}
 						}
@@ -606,6 +626,7 @@ public class CreateAisleSelectionActivity extends Activity {
 				@Override
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mMoreClickedFlag = true;
 						moreClickFunctionality();
 						return false;
 					}
@@ -672,14 +693,22 @@ public class CreateAisleSelectionActivity extends Activity {
 							.startAnimation(mBottomBottomToTopAnimation);
 				}
 			});
-			/*
-			 * mDataentryPopupMainLayout.setOnClickListener(new
-			 * OnClickListener() {
-			 * 
-			 * @Override public void onClick(View arg0) {
-			 * mBottomBoxWithCircleLayout
-			 * .startAnimation(mBottomBottomToTopAnimation); } });
-			 */
+
+			mDataentryPopupMainLayout.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					if (mGalleryClickedFlag || mCameraClickedFlag
+							|| mTopRightClickedFlag || mBottomRightClickedFlag
+							|| mMoreClickedFlag) {
+						// don't do anything...
+					} else {
+						mBottomBoxWithCircleLayout
+								.startAnimation(mBottomBottomToTopAnimation);
+					}
+				}
+			});
+
 		}
 	}
 
@@ -700,10 +729,17 @@ public class CreateAisleSelectionActivity extends Activity {
 	}
 
 	private void moreClickFunctionality() {
-		if (mDataEntryMoreTopListLayout != null) {
-			mDataEntryMoreTopListLayout.setVisibility(View.VISIBLE);
-		} else if (mDataEntryMoreBottomListLayout != null) {
-			mDataEntryMoreBottomListLayout.setVisibility(View.VISIBLE);
+		if (mDataEntryShoppingApplicationsList != null
+				&& mDataEntryShoppingApplicationsList.size() > 0) {
+			if (mDataEntryMoreTopListLayout != null) {
+				mDataEntryMoreTopListLayout.setVisibility(View.VISIBLE);
+			} else if (mDataEntryMoreBottomListLayout != null) {
+				mDataEntryMoreBottomListLayout.setVisibility(View.VISIBLE);
+			}
+		} else {
+			Toast.makeText(this, "There are no applications.",
+					Toast.LENGTH_LONG).show();
+			finish();
 		}
 	}
 
