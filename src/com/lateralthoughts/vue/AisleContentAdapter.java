@@ -105,7 +105,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         
         
         //lets file cache the first two items in the list
-        queueImagePrefetch(mAisleImageDetails, mWindowContent.getBestHeightForWindow(), 1,2);
+       // queueImagePrefetch(mAisleImageDetails, mWindowContent.getBestHeightForWindow(), 1,2);
     }
     
     @Override

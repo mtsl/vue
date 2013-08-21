@@ -127,7 +127,8 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
   
         }
-        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
+        Log.i("flingcheck", "flingcheck getview");
+        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false,listener);
 /*        if(!listener.isFlingCalled()) {
         	 mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
         	 holder.aisleContentBrowser.setLayoutParams(mShowpieceParamsDefault);
