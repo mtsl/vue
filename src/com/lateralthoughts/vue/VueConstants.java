@@ -118,12 +118,6 @@ public class VueConstants {
 	public static final String KEYWORD = "keyWord";
 	public static final String LAST_USED_TIME = "lastUsedTime";
 	public static final String NUMBER_OF_TIMES_USED = "numberOfTimesUsed";
-	public static final String AMAZON_APP_PACKAGE_NAME = "com.amazon.mShop.android";
-	public static final String AMAZON_APP_ACTIVITY_NAME = "com.amazon.mShop.home.HomeActivity";
-	public static final String ETSY_APP_PACKAGE_NAME = "com.etsy.android";
-	public static final String ETSY_APP_ACTIVITY_NAME = "com.etsy.android.ui.HomeActivity";
-	public static final String FANCY_APP_PACKAGE_NAME = "com.thefancy.app";
-	public static final String FANCY_APP_ACTIVITY_NAME = "com.thefancy.app.common.Main";
 
 	// User Profile details
 	public static final String USER_NAME = "userName";

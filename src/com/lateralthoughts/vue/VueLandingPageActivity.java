@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -90,6 +92,7 @@ public class VueLandingPageActivity extends BaseActivity {
 
 	void handleSendText(Intent intent) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
 			if (VueApplication.getInstance()

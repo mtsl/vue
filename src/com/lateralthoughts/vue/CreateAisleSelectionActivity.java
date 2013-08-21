@@ -12,8 +12,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
@@ -22,9 +24,13 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class CreateAisleSelectionActivity extends Activity {
@@ -36,17 +42,20 @@ public class CreateAisleSelectionActivity extends Activity {
 			mBottomBottomRightGreenCircle, mBottomTotalTop,
 			mDataEntryBottomPopupMainSubLayout,
 			mDataEntryTopPopupMainSubLayout;
-	private LinearLayout mBoxWithCircleLayout, mBottomBoxWithCircleLayout;
+	private LinearLayout mBoxWithCircleLayout, mBottomBoxWithCircleLayout,
+			mDataEntryMoreTopListLayout, mDataEntryMoreBottomListLayout;
 	private AnimatorSet mCircleAnimation, mBottomCircleAnimation;
 	private Animation mTopToBottomAnimation, mBottomToTopAnimation,
 			mBottomBottomToTopAnimation, mBottomTopToBottomAnimation,
 			mBounceAnimation = null;
+	private ListView mDataEntryMoreTopListview, mDataEntryMoreBottomListview;
+	private TextView mTopRightText, mBottomRightText, mBottomTopRightText,
+			mBottomBottomRightText;
 	private boolean mFromCreateAilseScreenFlag = false,
 			mFromDetailsScreenFlag = false;
 	private String mCameraImageName = null;
 	private boolean mGalleryClickedFlag = false, mCameraClickedFlag = false,
-			mAmazonClickedFlag = false, mEtsyClickedFlag = false,
-			mExtraClickedFlag = false;
+			mTopRightClickedFlag = false, mBottomRightClickedFlag = false;
 	private static final int BOX_ANIMATION_DURATION = 600;
 	private static final int CIRCLE_ANIMATION_DURATION = 1000;
 	private static final float ZOOM_START_POSITION = 0f;
@@ -55,6 +64,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	private static final float CIRCLE_SELECTION_END_POSITION = 0f;
 	private static final String GALLERY_ALERT_MESSAGE = "Select Picture";
 	private static final String CAMERA_INTENT_NAME = "android.media.action.IMAGE_CAPTURE";
+	private ArrayList<ShoppingApplicationDetails> mDataEntryShoppingApplicationsList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +84,62 @@ public class CreateAisleSelectionActivity extends Activity {
 				R.anim.buttontoucheffect);
 		mBounceAnimation.setInterpolator(new BounceInterpolator());
 		if (!mFromDetailsScreenFlag) {
+			mDataEntryMoreTopListLayout = (LinearLayout) findViewById(R.id.data_entry_more_top_list_layout);
+			mDataEntryMoreTopListLayout.setVisibility(View.GONE);
 			mDataEntryBottomPopupMainSubLayout.setVisibility(View.GONE);
 			mDataEntryTopPopupMainSubLayout.setVisibility(View.VISIBLE);
+			mDataEntryMoreTopListview = (ListView) findViewById(R.id.data_entry_more_top_listview);
 			mTopLeftGreenCircle = (RelativeLayout) findViewById(R.id.topleftgreencircle);
 			mTopRightGreenCircle = (RelativeLayout) findViewById(R.id.toprightgreencircle);
 			mBottomLeftGreenCircle = (RelativeLayout) findViewById(R.id.bottomleftgreencircle);
 			mBottomRightGreenCircle = (RelativeLayout) findViewById(R.id.bottomrightgreencircle);
 			mTotalBottom = (RelativeLayout) findViewById(R.id.totalbottom);
+			mTopRightText = (TextView) findViewById(R.id.top_right_text);
+			mBottomRightText = (TextView) findViewById(R.id.bottom_right_text);
+			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null) {
+				if (VueApplication.getInstance().mShoppingApplicationDetailsList
+						.size() > 0
+						&& VueApplication.getInstance().mShoppingApplicationDetailsList
+								.get(0).getAppName() != null) {
+					mTopRightText
+							.setText(VueApplication.getInstance().mShoppingApplicationDetailsList
+									.get(0).getAppName());
+				} else {
+					mTopRightText.setText("Not found.");
+					mTopRightGreenCircle.setClickable(false);
+				}
+				if (VueApplication.getInstance().mShoppingApplicationDetailsList
+						.size() > 1
+						&& VueApplication.getInstance().mShoppingApplicationDetailsList
+								.get(1).getAppName() != null) {
+					mBottomRightText
+							.setText(VueApplication.getInstance().mShoppingApplicationDetailsList
+									.get(1).getAppName());
+				} else {
+					mBottomRightText.setText("Not found.");
+					mBottomRightGreenCircle.setClickable(false);
+				}
+				for (int i = 2; i < VueApplication.getInstance().mShoppingApplicationDetailsList
+						.size(); i++) {
+					if (mDataEntryShoppingApplicationsList == null) {
+						mDataEntryShoppingApplicationsList = new ArrayList<ShoppingApplicationDetails>();
+					}
+					ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
+							VueApplication.getInstance().mShoppingApplicationDetailsList
+									.get(i).getAppName(),
+							VueApplication.getInstance().mShoppingApplicationDetailsList
+									.get(i).getActivityName(),
+							VueApplication.getInstance().mShoppingApplicationDetailsList
+									.get(i).getPackageName());
+					mDataEntryShoppingApplicationsList
+							.add(shoppingApplicationDetails);
+				}
+				if (mDataEntryShoppingApplicationsList != null
+						&& mDataEntryShoppingApplicationsList.size() > 0) {
+					mDataEntryMoreTopListview
+							.setAdapter(new ShoppingApplicationsAdapter(this));
+				}
+			}
 			mBoxWithCircleLayout = (LinearLayout) findViewById(R.id.boxwithcirclelayout);
 			mTopToBottomAnimation = (TranslateAnimation) AnimationUtils
 					.loadAnimation(this, R.anim.layout_down_animation);
@@ -193,16 +252,18 @@ public class CreateAisleSelectionActivity extends Activity {
 						galleryFunctionality();
 					} else if (mCameraClickedFlag) {
 						cameraFunctionality();
-					} else if (mAmazonClickedFlag) {
-						amazonFunctionality();
-					} else if (mEtsyClickedFlag) {
-						// Etsy clicked functionality.
-						etsyClickFunctionality();
-					} else if (mExtraClickedFlag) {
-						// Extra clicked functionality
-						// finish();
-						// fancy
-						fancyClickFunctionality();
+					} else if (mTopRightClickedFlag) {
+						loadShoppingApplication(
+								VueApplication.getInstance().mShoppingApplicationDetailsList
+										.get(0).getActivityName(),
+								VueApplication.getInstance().mShoppingApplicationDetailsList
+										.get(0).getPackageName());
+					} else if (mBottomRightClickedFlag) {
+						loadShoppingApplication(
+								VueApplication.getInstance().mShoppingApplicationDetailsList
+										.get(1).getActivityName(),
+								VueApplication.getInstance().mShoppingApplicationDetailsList
+										.get(1).getPackageName());
 					} else {
 						finish();
 					}
@@ -229,26 +290,26 @@ public class CreateAisleSelectionActivity extends Activity {
 					return false;
 				}
 			});
-			// Etsy
+			// More Shopping Category Applications....
 			mTotalBottom.setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						mEtsyClickedFlag = true;
-						mTotalBottom.startAnimation(mBounceAnimation);
+						moreClickFunctionality();
+						// mTotalBottom.startAnimation(mBounceAnimation);
 						return false;
 					}
 					return false;
 				}
 			});
-			// Extra
+			// Bottom Right
 			mBottomRightGreenCircle.setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						mExtraClickedFlag = true;
+						mBottomRightClickedFlag = true;
 						mBottomRightGreenCircle
 								.startAnimation(mBounceAnimation);
 						return false;
@@ -256,13 +317,13 @@ public class CreateAisleSelectionActivity extends Activity {
 					return false;
 				}
 			});
-			// Amazon
+			// TopRight App
 			mTopRightGreenCircle.setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						mAmazonClickedFlag = true;
+						mTopRightClickedFlag = true;
 						mTopRightGreenCircle.startAnimation(mBounceAnimation);
 						return false;
 					}
@@ -299,14 +360,16 @@ public class CreateAisleSelectionActivity extends Activity {
 					mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation);
 				}
 			}); //
-			mDataentryPopupMainLayout.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation);
-				}
-			});
+			/*
+			 * mDataentryPopupMainLayout.setOnClickListener(new
+			 * OnClickListener() {
+			 * 
+			 * @Override public void onClick(View arg0) {
+			 * mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation); } });
+			 */
 		} else {
+			mDataEntryMoreBottomListLayout = (LinearLayout) findViewById(R.id.data_entry_more_bottom_list_layout);
+			mDataEntryMoreBottomListLayout.setVisibility(View.GONE);
 			mDataEntryBottomPopupMainSubLayout.setVisibility(View.VISIBLE);
 			mDataEntryTopPopupMainSubLayout.setVisibility(View.GONE);
 			mBottomBoxWithCircleLayout = (LinearLayout) findViewById(R.id.bottomboxwithcirclelayout);
@@ -315,6 +378,53 @@ public class CreateAisleSelectionActivity extends Activity {
 			mBottomBottomLeftGreenCircle = (RelativeLayout) findViewById(R.id.bottom_bottomleftgreencircle);
 			mBottomBottomRightGreenCircle = (RelativeLayout) findViewById(R.id.bottom_bottomrightgreencircle);
 			mBottomTotalTop = (RelativeLayout) findViewById(R.id.bottom_total_top);
+			mBottomTopRightText = (TextView) findViewById(R.id.bottom_topright_text);
+			mBottomBottomRightText = (TextView) findViewById(R.id.bottom_bottom_right_text);
+			mDataEntryMoreBottomListview = (ListView) findViewById(R.id.data_entry_more_bottom_listview);
+			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null) {
+				if (VueApplication.getInstance().mShoppingApplicationDetailsList
+						.size() > 0
+						&& VueApplication.getInstance().mShoppingApplicationDetailsList
+								.get(0).getAppName() != null) {
+					mBottomTopRightText
+							.setText(VueApplication.getInstance().mShoppingApplicationDetailsList
+									.get(0).getAppName());
+				} else {
+					mBottomTopRightText.setText("Not found.");
+					mBottomTopRightGreenCircle.setClickable(false);
+				}
+				if (VueApplication.getInstance().mShoppingApplicationDetailsList
+						.size() > 1
+						&& VueApplication.getInstance().mShoppingApplicationDetailsList
+								.get(1).getAppName() != null) {
+					mBottomBottomRightText
+							.setText(VueApplication.getInstance().mShoppingApplicationDetailsList
+									.get(1).getAppName());
+				} else {
+					mBottomBottomRightText.setText("Not found.");
+					mBottomBottomRightGreenCircle.setClickable(false);
+				}
+				for (int i = 2; i < VueApplication.getInstance().mShoppingApplicationDetailsList
+						.size(); i++) {
+					if (mDataEntryShoppingApplicationsList == null) {
+						mDataEntryShoppingApplicationsList = new ArrayList<ShoppingApplicationDetails>();
+					}
+					ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
+							VueApplication.getInstance().mShoppingApplicationDetailsList
+									.get(i).getAppName(),
+							VueApplication.getInstance().mShoppingApplicationDetailsList
+									.get(i).getActivityName(),
+							VueApplication.getInstance().mShoppingApplicationDetailsList
+									.get(i).getPackageName());
+					mDataEntryShoppingApplicationsList
+							.add(shoppingApplicationDetails);
+				}
+				if (mDataEntryShoppingApplicationsList != null
+						&& mDataEntryShoppingApplicationsList.size() > 0) {
+					mDataEntryMoreBottomListview
+							.setAdapter(new ShoppingApplicationsAdapter(this));
+				}
+			}
 			mBottomTopToBottomAnimation = (TranslateAnimation) AnimationUtils
 					.loadAnimation(this, R.anim.bottom_layout_up_anim);
 			mBottomBottomToTopAnimation = (TranslateAnimation) AnimationUtils
@@ -451,18 +561,18 @@ public class CreateAisleSelectionActivity extends Activity {
 								galleryFunctionality();
 							} else if (mCameraClickedFlag) {
 								cameraFunctionality();
-							} else if (mAmazonClickedFlag) {
-								amazonFunctionality();
-							} else if (mEtsyClickedFlag) {
-								// Etsy clicked functionality.
-								// finish();
-								etsyClickFunctionality();
-							} else if (mExtraClickedFlag) {
-								/*
-								 * // Extra clicked functionality finish();
-								 */
-								// fancy
-								fancyClickFunctionality();
+							} else if (mTopRightClickedFlag) {
+								loadShoppingApplication(
+										VueApplication.getInstance().mShoppingApplicationDetailsList
+												.get(0).getActivityName(),
+										VueApplication.getInstance().mShoppingApplicationDetailsList
+												.get(0).getPackageName());
+							} else if (mBottomRightClickedFlag) {
+								loadShoppingApplication(
+										VueApplication.getInstance().mShoppingApplicationDetailsList
+												.get(1).getActivityName(),
+										VueApplication.getInstance().mShoppingApplicationDetailsList
+												.get(1).getPackageName());
 							} else {
 								finish();
 							}
@@ -490,27 +600,26 @@ public class CreateAisleSelectionActivity extends Activity {
 					return false;
 				}
 			});
-			// Etsy
+			// More...
 			mBottomTotalTop.setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						mEtsyClickedFlag = true;
-						mBottomTotalTop.startAnimation(mBounceAnimation);
+						moreClickFunctionality();
 						return false;
 					}
 					return false;
 				}
 			});
-			// Extra
+			// Bottom Right
 			mBottomBottomRightGreenCircle
 					.setOnTouchListener(new OnTouchListener() {
 
 						@Override
 						public boolean onTouch(View arg0, MotionEvent event) {
 							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								mExtraClickedFlag = true;
+								mBottomRightClickedFlag = true;
 								mBottomBottomRightGreenCircle
 										.startAnimation(mBounceAnimation);
 								return false;
@@ -518,14 +627,14 @@ public class CreateAisleSelectionActivity extends Activity {
 							return false;
 						}
 					});
-			// Amazon
+			// Top Right
 			mBottomTopRightGreenCircle
 					.setOnTouchListener(new OnTouchListener() {
 
 						@Override
 						public boolean onTouch(View arg0, MotionEvent event) {
 							if (event.getAction() == MotionEvent.ACTION_DOWN) {
-								mAmazonClickedFlag = true;
+								mTopRightClickedFlag = true;
 								mBottomTopRightGreenCircle
 										.startAnimation(mBounceAnimation);
 								return false;
@@ -563,13 +672,14 @@ public class CreateAisleSelectionActivity extends Activity {
 							.startAnimation(mBottomBottomToTopAnimation);
 				}
 			});
-			mDataentryPopupMainLayout.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View arg0) {
-					mBottomBoxWithCircleLayout
-							.startAnimation(mBottomBottomToTopAnimation);
-				}
-			});
+			/*
+			 * mDataentryPopupMainLayout.setOnClickListener(new
+			 * OnClickListener() {
+			 * 
+			 * @Override public void onClick(View arg0) {
+			 * mBottomBoxWithCircleLayout
+			 * .startAnimation(mBottomBottomToTopAnimation); } });
+			 */
 		}
 	}
 
@@ -589,49 +699,26 @@ public class CreateAisleSelectionActivity extends Activity {
 				VueConstants.SELECT_PICTURE);
 	}
 
-	private void amazonFunctionality() {
-		if (Utils.appInstalledOrNot(VueConstants.AMAZON_APP_PACKAGE_NAME, this)) {
-
-			Intent amazonIntent = new Intent(android.content.Intent.ACTION_VIEW);
-			amazonIntent.setClassName(VueConstants.AMAZON_APP_PACKAGE_NAME,
-					VueConstants.AMAZON_APP_ACTIVITY_NAME);
-			finish();
-			startActivity(amazonIntent);
-
-		} else {
-			Toast.makeText(this, "This application was not installed.",
-					Toast.LENGTH_LONG).show();
-			finish();
+	private void moreClickFunctionality() {
+		if (mDataEntryMoreTopListLayout != null) {
+			mDataEntryMoreTopListLayout.setVisibility(View.VISIBLE);
+		} else if (mDataEntryMoreBottomListLayout != null) {
+			mDataEntryMoreBottomListLayout.setVisibility(View.VISIBLE);
 		}
 	}
 
-	private void etsyClickFunctionality() {
-		if (Utils.appInstalledOrNot(VueConstants.ETSY_APP_PACKAGE_NAME, this)) {
-			Intent etsyIntent = new Intent(android.content.Intent.ACTION_VIEW);
-			etsyIntent.setClassName(VueConstants.ETSY_APP_PACKAGE_NAME,
-					VueConstants.ETSY_APP_ACTIVITY_NAME);
+	private void loadShoppingApplication(String activityName, String packageName) {
+		if (Utils.appInstalledOrNot(packageName, this)) {
+			Intent shoppingAppIntent = new Intent(
+					android.content.Intent.ACTION_VIEW);
+			shoppingAppIntent.setClassName(packageName, activityName);
 			finish();
-			startActivity(etsyIntent);
+			startActivity(shoppingAppIntent);
 		} else {
-			Toast.makeText(this, "This application was not installed.",
+			Toast.makeText(this, "Sorry, This application was not installed.",
 					Toast.LENGTH_LONG).show();
 			finish();
 		}
-	}
-
-	private void fancyClickFunctionality() {
-		if (Utils.appInstalledOrNot(VueConstants.FANCY_APP_PACKAGE_NAME, this)) {
-			Intent fancyIntent = new Intent(android.content.Intent.ACTION_VIEW);
-			fancyIntent.setClassName(VueConstants.FANCY_APP_PACKAGE_NAME,
-					VueConstants.FANCY_APP_ACTIVITY_NAME);
-			finish();
-			startActivity(fancyIntent);
-		} else {
-			Toast.makeText(this, "This application was not installed.",
-					Toast.LENGTH_LONG).show();
-			finish();
-		}
-
 	}
 
 	@Override
@@ -717,14 +804,70 @@ public class CreateAisleSelectionActivity extends Activity {
 		}
 	}
 
+	// Shopping Category Applications List ....
+	private class ShoppingApplicationsAdapter extends BaseAdapter {
+		Activity context;
+
+		public ShoppingApplicationsAdapter(Activity context) {
+			super();
+			this.context = context;
+		}
+
+		class ViewHolder {
+			TextView dataentryitemname;
+		}
+
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
+			ViewHolder holder = null;
+			View rowView = convertView;
+			if (rowView == null) {
+				LayoutInflater inflater = context.getLayoutInflater();
+				rowView = inflater.inflate(R.layout.dataentry_row, null, true);
+				holder = new ViewHolder();
+				holder.dataentryitemname = (TextView) rowView
+						.findViewById(R.id.dataentryitemname);
+				rowView.setTag(holder);
+			} else {
+				holder = (ViewHolder) rowView.getTag();
+			}
+			holder.dataentryitemname.setText(mDataEntryShoppingApplicationsList
+					.get(position).getAppName());
+			rowView.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					loadShoppingApplication(mDataEntryShoppingApplicationsList
+							.get(position).getActivityName(),
+							mDataEntryShoppingApplicationsList.get(position)
+									.getPackageName());
+				}
+			});
+			return rowView;
+		}
+
+		@Override
+		public int getCount() {
+			return mDataEntryShoppingApplicationsList.size();
+		}
+
+		@Override
+		public Object getItem(int arg0) {
+			return arg0;
+		}
+
+		@Override
+		public long getItemId(int arg0) {
+			return arg0;
+		}
+	}
+
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			mGalleryClickedFlag = false;
 			mCameraClickedFlag = false;
-			mAmazonClickedFlag = false;
-			mEtsyClickedFlag = false;
-			mExtraClickedFlag = false;
+			mTopRightClickedFlag = false;
+			mBottomRightClickedFlag = false;
 			if (!mFromDetailsScreenFlag) {
 				mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation);
 			} else {
