@@ -114,8 +114,11 @@ public class AisleDetailsViewListLoader {
         }       
         imageDetailsArr = windowContent.getImageList();
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
-			
+			 
 			 for(int i = 0;i<imageDetailsArr.size();i++) {
+				 Log.i("urldata", "urldata: mCustomUrl: "+imageDetailsArr.get(i).mCustomImageUrl);
+				 Log.i("urldata", "urldata: mImageUrl: "+imageDetailsArr.get(i).mImageUrl);
+				 
 				  if(mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
 					  mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
 				  }

@@ -85,6 +85,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		super(c, content);
 		mSetPosition = true;
 		mContext = c;
+		
 		mTopBottomMargin = VueApplication.getInstance().getPixel(
 				mTopBottomMargin);
 		mViewLoader = new AisleDetailsViewListLoader(mContext);
@@ -101,6 +102,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				break;
 			}
 		}
+		Log.i("bestHeight", "bestHeight in details adapter: "+getItem(mCurrentAislePosition).getBestHeightForWindow());
 		if (getItem(mCurrentAislePosition) != null) {
 			mBookmarksCount = getItem(mCurrentAislePosition).getmAisleBookmarksCount();
 			VueApplication.getInstance().setClickedWindowCount(

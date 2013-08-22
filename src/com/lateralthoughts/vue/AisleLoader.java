@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.graphics.Bitmap;
 
 //import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
@@ -144,7 +145,11 @@ public class AisleLoader {
     		//mContentViewMap.put(holder.uniqueContentId, holder);
     	}
     	imageDetailsArr = windowContent.getImageList();
-
+    	LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
+ 				VueApplication.getInstance().getScreenWidth()/2,
+ 				windowContent.getBestHeightForWindow());
+         holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+    	
     	if(null != imageDetailsArr && imageDetailsArr.size() != 0){	
     		itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getPreconfiguredImageView(position);
@@ -157,9 +162,11 @@ public class AisleLoader {
 			}
 			else{
 				contentBrowser.addView(imageView);
-			
+			  
 				if(!placeholderOnly)
 				    loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView, bestHeight);
+				Log.i("bestHeight", "bestHeight: "+bestHeight);
+			 
 			}
         }
     }
@@ -199,6 +206,7 @@ public class AisleLoader {
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
         protected void onPostExecute(Bitmap bitmap) {
+        	
             if (viewFlipperReference != null && 
             		imageViewReference != null && bitmap != null) {
                 final ImageView imageView = imageViewReference.get();

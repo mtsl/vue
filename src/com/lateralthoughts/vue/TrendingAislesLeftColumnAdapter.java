@@ -107,6 +107,7 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
             mShowpieceParams = new LinearLayout.LayoutParams(
     				VueApplication.getInstance().getScreenWidth()/2,
     				 250);
+          //  holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
           mShowpieceParamsDefault = new LinearLayout.LayoutParams(
     				 LayoutParams.MATCH_PARENT,
     				 LayoutParams.MATCH_PARENT);

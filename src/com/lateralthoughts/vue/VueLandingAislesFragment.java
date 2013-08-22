@@ -42,7 +42,8 @@ public class VueLandingAislesFragment extends SherlockFragment/*Fragment*/ {
 	int[] mLeftViewsHeights;
 	int[] mRightViewsHeights;
 	
-	public boolean isFlingCalled;
+	public boolean mIsFlingCalled;
+ 
 
 	//TODO: define a public interface that can be implemented by the parent
 	//activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -148,27 +149,22 @@ public void notifyAdapters() {
             mLeftColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
             mRightColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
             if(scrollState == SCROLL_STATE_FLING) {
-            	 
-            	isFlingCalled = true;
+            	mIsFlingCalled = true;
             } else if(scrollState == SCROLL_STATE_IDLE) {
-         
+           
 						
 		            	//notify the adapters.
-            	new Handler().postDelayed(new Runnable() {
-					
-					@Override
-					public void run() {
-						   if(isFlingCalled == true){
+          
+						   if(mIsFlingCalled == true){
 							   Log.i("flingcheck", "flingcheck  scrollstate idle");
-		            	          isFlingCalled = false;
+		            	          mIsFlingCalled = false;
 		            	          Log.i("flingcheck", "flingcheck  before notified adapter");
 				            	mLeftColumnAdapter.notifyDataSetChanged();
 				            	mRightColumnAdapter.notifyDataSetChanged();
+				             
 				            	 Log.i("flingcheck", "flingcheck  after notified adapter");
 		            	          }
-						
-					}
-				}, 1000);
+				 
             	       
 						
 				  
@@ -253,8 +249,8 @@ public void notifyAdapters() {
 
 		@Override
 		public boolean isFlingCalled() {
-			  Log.i("flingcheck", "flingcheck  isFlingCalled val: "+isFlingCalled);
-			return isFlingCalled;
+			  Log.i("flingcheck", "flingcheck  isFlingCalled val: "+mIsFlingCalled);
+			return mIsFlingCalled;
 		}
     }
 
