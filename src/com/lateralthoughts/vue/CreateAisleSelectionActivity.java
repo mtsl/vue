@@ -808,7 +808,18 @@ public class CreateAisleSelectionActivity extends Activity {
 			else if (requestCode == VueConstants.CAMERA_REQUEST) {
 				File cameraImageFile = new File(mCameraImageName);
 				if (cameraImageFile.exists()) {
-					if (!mFromCreateAilseScreenFlag) {
+					if (mFromDetailsScreenFlag) {
+						Intent intent = new Intent();
+						Bundle b = new Bundle();
+						b.putString(
+								VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+								mCameraImageName);
+						intent.putExtras(b);
+						setResult(
+								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT,
+								intent);
+						finish();
+					} else if (!mFromCreateAilseScreenFlag) {
 						Intent intent = new Intent(this,
 								DataEntryActivity.class);
 						Bundle b = new Bundle();
@@ -816,9 +827,11 @@ public class CreateAisleSelectionActivity extends Activity {
 								VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 								mCameraImageName);
 						intent.putExtras(b);
+						Log.e("cs", "7");
 						startActivity(intent);
 						finish();
 					} else {
+						Log.e("cs", "4");
 						Intent intent = new Intent();
 						Bundle b = new Bundle();
 						b.putString(

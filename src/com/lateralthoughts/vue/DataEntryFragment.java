@@ -1262,6 +1262,7 @@ public class DataEntryFragment extends Fragment {
 			if (dontResizeImageFlag) {
 				mAisleBgProgressbar.setVisibility(View.GONE);
 				mCreateAisleBg.setVisibility(View.VISIBLE);
+				mResizedImagePath = mImagePath;
 				if (mImagePath != null) {
 					mAisleImageBitmap = BitmapFactory.decodeFile(mImagePath);
 				}
@@ -1557,7 +1558,8 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	public void showOtherSourcesGridview(ArrayList<OtherSourceImageDetails> imagesList) {
+	public void showOtherSourcesGridview(
+			ArrayList<OtherSourceImageDetails> imagesList) {
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
 			mProgressDialog = null;
@@ -1578,7 +1580,8 @@ public class DataEntryFragment extends Fragment {
 			mProgressDialog = ProgressDialog.show(getActivity(), "",
 					"Please wait...");
 		}
-		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(sourceUrl);
+		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
+				sourceUrl);
 		getImagesTask.execute();
 	}
 }

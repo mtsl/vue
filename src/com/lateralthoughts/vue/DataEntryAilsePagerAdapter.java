@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,6 +39,7 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 		ImageView dataEntryRowAisleImage = (ImageView) view
 				.findViewById(R.id.dataentry_row_aisele_image);
 		try {
+			Log.e("Adapter", "file path :::: " + mImagePathsList.get(position));
 			dataEntryRowAisleImage.setImageURI(Uri.fromFile(new File(
 					mImagePathsList.get(position))));
 		} catch (Throwable e) {
