@@ -104,9 +104,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		// setContentView(R.layout.vuedetails_frag);
 		setContentView(R.layout.aisle_details_activity_landing);
 		mAisleDetailsActivityContext = this;
-		// getSupportActionBar().hide();
-		getSupportActionBar().setTitle(
-				getResources().getString(R.string.trending));
 		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT;
 
 		if (mCurrentapiVersion >= 11) {

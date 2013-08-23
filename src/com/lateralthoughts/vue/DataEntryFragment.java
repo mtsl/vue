@@ -121,6 +121,7 @@ public class DataEntryFragment extends Fragment {
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
 	private ProgressDialog mProgressDialog;
+	private DataEntryActivity mDataEntryActivity;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -896,14 +897,18 @@ public class DataEntryFragment extends Fragment {
 		}
 		mDataEntryAislesViewpager.setVisibility(View.GONE);
 		mCreateAisleBg.setVisibility(View.VISIBLE);
-		DataEntryActivity obj = (DataEntryActivity) getActivity();
-		obj.getSupportActionBar().setTitle(
-				getResources().getString(R.string.edit_aisle_screen_title));
+		if (mDataEntryActivity == null) {
+			mDataEntryActivity = (DataEntryActivity) getActivity();
+		}
+		mDataEntryActivity.mVueDataentryActionbarScreenName
+				.setText(getResources().getString(
+						R.string.edit_aisle_screen_title));
+		mDataEntryActivity.mVueDataentryActionbarBottomLayout
+				.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryActionbarTopLayout
+				.setVisibility(View.VISIBLE);
 		mDataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
 		mDataEntryBottomTopLayout.setVisibility(View.GONE);
-		DataEntryActivity activity = (DataEntryActivity) getActivity();
-		activity.mIsNewActionBarFlag = false;
-		activity.invalidateOptionsMenu();
 		mMainHeadingRow.setVisibility(View.VISIBLE);
 		mTouchToChangeImage.setVisibility(View.VISIBLE);
 		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
@@ -1278,15 +1283,18 @@ public class DataEntryFragment extends Fragment {
 			}
 			if (mAddImageToAisleFlag) {
 				mDataEntryAislesViewpager.setVisibility(View.GONE);
-				DataEntryActivity obj = (DataEntryActivity) getActivity();
-				obj.getSupportActionBar().setTitle(
-						getResources().getString(
+				if (mDataEntryActivity == null) {
+					mDataEntryActivity = (DataEntryActivity) getActivity();
+				}
+				mDataEntryActivity.mVueDataentryActionbarScreenName
+						.setText(getResources().getString(
 								R.string.add_imae_to_aisle_screen_title));
+				mDataEntryActivity.mVueDataentryActionbarBottomLayout
+						.setVisibility(View.GONE);
+				mDataEntryActivity.mVueDataentryActionbarTopLayout
+						.setVisibility(View.VISIBLE);
 				mDataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
 				mDataEntryBottomTopLayout.setVisibility(View.GONE);
-				DataEntryActivity activity = (DataEntryActivity) getActivity();
-				activity.mIsNewActionBarFlag = false;
-				activity.invalidateOptionsMenu();
 				mMainHeadingRow.setVisibility(View.VISIBLE);
 				mTouchToChangeImage.setVisibility(View.VISIBLE);
 				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
@@ -1377,16 +1385,19 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	private void renderUIAfterAddingAisleToServer() {
-		DataEntryActivity obj = (DataEntryActivity) getActivity();
-		obj.getSupportActionBar().setTitle(
-				getResources().getString(R.string.app_name));
+		if (mDataEntryActivity == null) {
+			mDataEntryActivity = (DataEntryActivity) getActivity();
+		}
+		mDataEntryActivity.mVueDataentryActionbarScreenName
+				.setText(getResources().getString(R.string.app_name));
+		mDataEntryActivity.mVueDataentryActionbarBottomLayout
+				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryActionbarTopLayout
+				.setVisibility(View.GONE);
 		if (mEditAisleImageFlag) {
 			mAisleImagePathList.remove(mCurrentPagePosition);
 		}
 		mEditAisleImageFlag = false;
-		DataEntryActivity activity = (DataEntryActivity) getActivity();
-		activity.mIsNewActionBarFlag = true;
-		activity.invalidateOptionsMenu();
 		mMainHeadingRow.setVisibility(View.GONE);
 		mTouchToChangeImage.setVisibility(View.GONE);
 		mDataEntryBottomBottomLayout.setVisibility(View.GONE);
