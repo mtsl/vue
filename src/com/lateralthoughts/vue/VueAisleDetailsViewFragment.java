@@ -40,7 +40,6 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.lateralthoughts.vue.indicators.IndicatorView;
@@ -61,43 +60,30 @@ import com.lateralthoughts.vue.utils.Utils;
 public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private Context mContext;
 	public static final String SCREEN_NAME = "DETAILS_SCREEN";
-	private static final int AISLE_HEADER_SHOW_TIME = 5000;
 	public static final String SWIPE_LEFT_TO_RIGHT = "LEFT";
 	public static final String SWIPE_RIGHT_TO_LEFT = "RIGHT";
+	private static final int AISLE_HEADER_SHOW_TIME = 5000;
+	private int DOT_MAX_COUUNT = 10;
+	private int mDotsCount = 0;
+	private int mHighlightPosition;
+	private int mTotalPageCount;
+	private int mListCount = 5;
+	private int mTotalScreenCount;
 	private VueContentGateway mVueContentGateway;
 	AisleDetailsViewAdapter mAisleDetailsAdapter;
-	private ListView mAisleDetailsList;
 	AisleDetailsSwipeListner mSwipeListener;
-	IndicatorView mIndicatorView;
-	private int mCurrentScreen;
-	private int mTotalScreenCount;
-	int mListCount = 5;
-	TextView mVueUserName;
-	int mCurentIndPosition;
-	static final int MAX_DOTS_TO_SHOW_LIMIT = 10;
-	int mPrevPosition;
 	private ActionBarHandler mHandleActionBar;
 	private ScaledImageViewFactory mImageViewFactory;
-	ImageView mAddVueAisle;
-	RelativeLayout mVueImageIndicator;
-	private ImageView mDetailsAddImageToAisle = null;
-	int mDotIndicatorPos = 1;
-	int mCurrentImagePos = 1;
-	int MAX_INDI_COUNT = 0;
-	int TOTAL_IMAGE_COUNT = 0;
-	LinearLayout mDetailsFindAtPopup;
-	EditTextBackEvent mEditTextFindAt;
+	private ImageView mDetailsAddImageToAisle = null,mAddVueAisle;
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
 	private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
 			mDotSeven, mDotEight, mDotNine, mDotTen;
+	TextView mLeftArrow, mRightArrow,mVueUserName;
+	private ListView mAisleDetailsList;
+	EditTextBackEvent mEditTextFindAt;
+	LinearLayout mDetailsFindAtPopup;
 
-	TextView mLeftArrow, mRightArrow;
-
-	int DOT_MAX_COUUNT = 10;
-	int dotsCount = 0;
-	int highlightPosition;
-	int mTotalPageCount;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -140,6 +126,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		mHighlightPosition = VueApplication.getInstance().getmAisleImgCurrentPos();
 		mDetailsContentView = inflater.inflate(
 				R.layout.aisles_detailed_view_fragment, container, false);
 		mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
@@ -243,10 +230,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		TextView vueAisleHeading = (TextView) mDetailsContentView
 				.findViewById(R.id.vue_aisle_heading);
 		vueAisleHeading.setTextSize(Utils.LARGE_TEXT_SIZE);
-		mVueImageIndicator = (RelativeLayout) mDetailsContentView
-				.findViewById(R.id.vue_image_indicator);
-
-		// ///////////////////////////////////////////////////////////////
 		mDotOne = (ImageView) mDetailsContentView.findViewById(R.id.one);
 		mDotTwo = (ImageView) mDetailsContentView.findViewById(R.id.two);
 		mDotThree = (ImageView) mDetailsContentView.findViewById(R.id.three);
@@ -261,13 +244,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				.findViewById(R.id.leftarrow);
 		mRightArrow = (TextView) mDetailsContentView
 				.findViewById(R.id.rightarrow);
-
-		// ////////////////////////////////////////////////////////////////
-		// setIndicator();
 		if (mAisleDetailsList != null) {
-
 			mAisleDetailsList.setOnScrollListener(new OnScrollListener() {
-
 				public void onScrollStateChanged(AbsListView view,
 						int scrollState) {
 					/*
@@ -401,7 +379,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	public void onResume() {
 		super.onResume();
 		// setMaxIndiCount();
-		upDatePageDots(highlightPosition, "right");
+		upDatePageDots(mHighlightPosition, "right");
 		mAisleDetailsAdapter.notifyDataSetChanged();
 		ViewTreeObserver vto = mVueUserName.getViewTreeObserver();
 		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -425,13 +403,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public void onAisleSwipe(String direction, int position) {
-			/*
-			 * mPrevPosition = mCurrentScreen;
-			 * mIndicatorView.switchToScreen(mPrevPosition
-			 * ,checkScreenBoundaries(direction,mCurrentScreen));
-			 */
-			// moveIndicatorDot(direction);
-			Log.i("higlightPosition", "higlightPosition 1 : " + position);
 			upDatePageDots(position, direction);
 		}
 
@@ -521,13 +492,10 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 				@Override
 				public void onClick(View v) {
-					Log.e("clicked", "1");
 					String etText = editText.getText().toString();
 
 					if (etText != null && etText.length() >= 1) {
-						Log.e("clicked", "2");
 						if (mAisleDetailsAdapter.checkLimitForLoginDialog()) {
-							Log.e("clicked", "3");
 							if (mLoginWarningMessage == null) {
 								mLoginWarningMessage = new LoginWarningMessage(
 										mContext);
@@ -537,7 +505,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 											"You need to Login with the app to Comment.",
 											true, false, 0, null, null);
 						} else {
-							Log.e("clicked", "4");
 							// Updating Comments Count in Preference to show
 							// LoginDialog.
 							SharedPreferences sharedPreferencesObj = getActivity()
@@ -547,7 +514,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 							int commentsCount = sharedPreferencesObj.getInt(
 									VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
 									0);
-							Log.e("clicked", "5" + commentsCount);
 							if (commentsCount == 8) {
 								if (mLoginWarningMessage == null) {
 									mLoginWarningMessage = new LoginWarningMessage(
@@ -641,30 +607,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		view.setVisibility(View.VISIBLE);
 		mAisleDetailsAdapter.notifyDataSetChanged();
 	}
-
-	private int checkScreenBoundaries(String direction, int mCurrentScreen) {
-		if (direction.equalsIgnoreCase("left")) {
-			if (mCurrentScreen == mTotalScreenCount) {
-				this.mCurrentScreen = mTotalScreenCount;
-				return this.mCurrentScreen;
-			} else if (mCurrentScreen < mTotalScreenCount) {
-				this.mCurrentScreen++;
-				return this.mCurrentScreen;
-			}
-		} else {
-			if (direction.equalsIgnoreCase("right")) {
-				if (mCurrentScreen == 1) {
-					this.mCurrentScreen = 1;
-					return this.mCurrentScreen;
-				} else {
-					this.mCurrentScreen--;
-					return this.mCurrentScreen;
-				}
-			}
-		}
-		return mCurrentScreen;
-	}
-
 	protected MotionEvent mLastOnDownEvent = null;
 
 	public void changeLikeCount(int position, String clickType) {
@@ -679,29 +621,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	public void setAisleContentListenerNull() {
 		mAisleDetailsAdapter.setAisleBrowserObjectsNull();
 	}
-
-	/*
-	 * private void setIndicator() { MAX_INDI_COUNT =
-	 * VueApplication.getInstance().getClickedWindowCount(); mIndicatorView =
-	 * new IndicatorView(getActivity() ); mIndicatorView.setId(1234);
-	 * RelativeLayout.LayoutParams relParams = new RelativeLayout.LayoutParams(
-	 * 
-	 * LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT); //
-	 * relParams.addRule(RelativeLayout.CENTER_HORIZONTAL); //
-	 * relParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-	 * mVueImageIndicator.removeAllViews();
-	 * mVueImageIndicator.addView(mIndicatorView); mTotalScreenCount =
-	 * VueApplication.getInstance() .getClickedWindowCount(); //
-	 * mIndicatorView.setNumberofScreens(mTotalScreenCount); setMaxIndiCount();
-	 * mIndicatorView.setDrawables(R.drawable.number_active,
-	 * R.drawable.bullets_bg, R.drawable.number_inactive); mCurrentScreen = 1;
-	 * int indicatorLeftMargin = ((VueApplication.getInstance()
-	 * .getScreenWidth() * 98) / 100) / 2 - mIndicatorView.getIndicatorBgWidht()
-	 * / 2; relParams.setMargins(indicatorLeftMargin, 0, 0, 0);
-	 * mIndicatorView.setLayoutParams(relParams);
-	 * mIndicatorView.switchToScreen(mCurrentScreen, mCurrentScreen);
-	 * mDotIndicatorPos = 1; mCurrentImagePos = 1; }
-	 */
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
@@ -718,15 +637,14 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	}
 
 	public void addAisleToWindow(Bitmap bitmap, String imgUrl) {
-		Log.e("Land", "vueland 16");
 		mTotalScreenCount = VueApplication.getInstance()
 				.getClickedWindowCount();
 		VueApplication.getInstance().setClickedWindowCount(
 				mTotalScreenCount + 1);
 		mTotalScreenCount = mTotalScreenCount + 1;
-		// setMaxIndiCount();
-		// setIndicator();
+		upDatePageDots(0, "right");
 		mAisleDetailsAdapter.addAisleToContentWindow(bitmap, imgUrl, "title");
+		
 	}
 
 	public AisleContext getAisleContext() {
@@ -734,181 +652,97 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		return mAisleDetailsAdapter.getAisleContext();
 
 	}
-
-	private void moveIndicatorDot(String swipeDerection) {
-		if (mDotIndicatorPos == 2 && mCurrentImagePos > 2
-				&& swipeDerection.equalsIgnoreCase(SWIPE_RIGHT_TO_LEFT)) {
-			// when the indicator is in 2 position and more images on left side
-			// so
-			// so stop the indicator at posion 2 until image count reach first.
-			if (mCurrentImagePos > 2) {
-				showLeftArrow();
-				mCurrentImagePos -= 1;
-			} else {
-				// nothing to do.
-			}
-		} else if (mDotIndicatorPos != 0
-				&& swipeDerection.equalsIgnoreCase(SWIPE_RIGHT_TO_LEFT)) {
-			/*
-			 * if(mCurrentImagePos > mDotIndicatorPos) { showLeftArrow(); } else
-			 * { disableLeftArrow(); }
-			 */
-			if (mDotIndicatorPos != 1) {
-				moveDotLeft(mDotIndicatorPos);
-				mCurrentImagePos -= 1;
-			}
-
-		} else if (((mDotIndicatorPos + 1) == MAX_INDI_COUNT)
-				&& (TOTAL_IMAGE_COUNT - mCurrentImagePos) > 1
-				&& swipeDerection.equalsIgnoreCase(SWIPE_LEFT_TO_RIGHT)) {
-			// when the indicator is in 2 from last position and more images on
-			// right side so
-			// stop the indicator at posion 2 from last until image count reach
-			// last.
-			int remainingImagesCount = TOTAL_IMAGE_COUNT - mCurrentImagePos;
-			if (remainingImagesCount > 0) {
-				mCurrentImagePos += 1;
-			}
-		}
-
-		else if (swipeDerection.equalsIgnoreCase(SWIPE_LEFT_TO_RIGHT)) {
-			int remainingDots = MAX_INDI_COUNT - mDotIndicatorPos;
-			int remainingImagesCount = TOTAL_IMAGE_COUNT - mCurrentImagePos;
-			/*
-			 * if(remainingImagesCount > remainingDots) { showRightArrow(); }
-			 * else { disableRightArrow(); }
-			 */
-			if (remainingDots != 0) {
-				moveDotRight(mDotIndicatorPos);
-
-			} else {
-				// don't move to right it is at last position.
-			}
-			if (remainingImagesCount > 0) {
-				mCurrentImagePos += 1;
-			}
-		}
-	}
-
 	private void showLeftArrow() {
-		// TODO: show the left arrow
 		mLeftArrow.setVisibility(View.VISIBLE);
 	}
 
 	private void showRightArrow() {
-		// TODO: show the right arrow
 		mRightArrow.setVisibility(View.VISIBLE);
 	}
-
-	private void moveDotLeft(int moveFrom) {
-		mDotIndicatorPos -= 1;
-		mIndicatorView.switchToScreen(moveFrom, mDotIndicatorPos);
-	}
-
-	private void moveDotRight(int moveFrom) {
-		mDotIndicatorPos += 1;
-		mIndicatorView.switchToScreen(moveFrom, mDotIndicatorPos);
-	}
-
 	private void disableLeftArrow() {
-		// TODO: disable the left arrow
-
 		mLeftArrow.setVisibility(View.GONE);
 	}
 
 	private void disableRightArrow() {
-		// TODO: disable the right arrow
 		mRightArrow.setVisibility(View.GONE);
 	}
-
-	/*
-	 * private void setMaxIndiCount(){ TOTAL_IMAGE_COUNT =
-	 * VueApplication.getInstance().getClickedWindowCount();
-	 * if(VueApplication.getInstance().getClickedWindowCount() >
-	 * MAX_DOTS_TO_SHOW_LIMIT) { MAX_INDI_COUNT = MAX_DOTS_TO_SHOW_LIMIT; } else
-	 * { MAX_INDI_COUNT = VueApplication.getInstance().getClickedWindowCount();
-	 * } mIndicatorView.setNumberofScreens(MAX_INDI_COUNT); }
-	 */
-
 	public ArrayList<String> getAisleWindowImgList() {
 		return mAisleDetailsAdapter.getImageList();
 	}
 
 	private void upDatePageDots(int currentPosition, String direction) {
 
-		highlightPosition = currentPosition % 10;
-		Log.i("higlightPosition", "higlightPosition: " + highlightPosition);
-		hightLightCurrentPage(highlightPosition);
-		mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
-		if (mTotalPageCount > DOT_MAX_COUUNT) {
+        mHighlightPosition = currentPosition % 10;
+        hightLightCurrentPage(mHighlightPosition);
+        mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
+        if (mTotalPageCount > DOT_MAX_COUUNT) {
 
-			if (currentPosition < DOT_MAX_COUUNT) {
+            if (currentPosition < DOT_MAX_COUUNT) {
 
-				dotsCount = DOT_MAX_COUUNT;
-				showDots(dotsCount);
-				disableLeftArrow();
-				showRightArrow();
+                mDotsCount = DOT_MAX_COUUNT;
+                showDots(mDotsCount);
+                disableLeftArrow();
+                showRightArrow();
 
-			} else {
-				showLeftArrow();
-				int remainingDots = mTotalPageCount - currentPosition;
-				if (currentPosition % 10 == 0) {
-					if (remainingDots > DOT_MAX_COUUNT) {
-						showRightArrow();
-						showDots(DOT_MAX_COUUNT);
-					} else {
-						disableRightArrow();
-						if (remainingDots == 0) {
-							showDots(1);
-						} else {
-							showDots(remainingDots);
-						}
-					}
-				} else {
-					// Swiping from left to right...
-					if (direction.equalsIgnoreCase("left")) {
-						if (mRightArrow.getVisibility() == View.VISIBLE) {
-							showRightArrow();
-							showDots(DOT_MAX_COUUNT);
-						} else {
-							disableRightArrow();
-							if (mTotalPageCount % 10 == 0) {
-								showDots(10);
-							} else {
-								showDots(mTotalPageCount % 10);
-							}
-						}
-					} else if (direction.equalsIgnoreCase("right")) {
-						if ((currentPosition + 1) % 10 == 0) {
-							showDots(DOT_MAX_COUUNT);
-							if (remainingDots > 1) {
-								showRightArrow();
-							}
-						} else {
-							if (mRightArrow.getVisibility() == View.VISIBLE) {
-								showRightArrow();
-								showDots(DOT_MAX_COUUNT);
-							} else {
-								disableRightArrow();
-								if (mTotalPageCount % 10 == 0) {
-									showDots(10);
-								} else {
-									showDots(mTotalPageCount % 10);
-								}
-							}
-						}
-					}
-				}
-			}
+            } else {
+                showLeftArrow();
+                int remainingDots = mTotalPageCount - currentPosition;
+                if (currentPosition % 10 == 0) {
+                    if (remainingDots > DOT_MAX_COUUNT) {
+                        showRightArrow();
+                        showDots(DOT_MAX_COUUNT);
+                    } else {
+                        disableRightArrow();
+                        if (remainingDots == 0) {
+                            showDots(1);
+                        } else {
+                            showDots(remainingDots);
+                        }
+                    }
+                } else {
+                    // Swiping from left to right...
+                    if (direction.equalsIgnoreCase(SWIPE_LEFT_TO_RIGHT)) {
+                        if (mRightArrow.getVisibility() == View.VISIBLE) {
+                            showRightArrow();
+                            showDots(DOT_MAX_COUUNT);
+                        } else {
+                            disableRightArrow();
+                            if (mTotalPageCount % 10 == 0) {
+                                showDots(10);
+                            } else {
+                                showDots(mTotalPageCount % 10);
+                            }
+                        }
+                    } else if (direction.equalsIgnoreCase(SWIPE_RIGHT_TO_LEFT)) { 
+                        if ((currentPosition + 1) % 10 == 0) {
+                            showDots(DOT_MAX_COUUNT);
+                            if (remainingDots > 1) {
+                                showRightArrow();
+                            }
+                        } else {
+                            if (mRightArrow.getVisibility() == View.VISIBLE) {
+                                showRightArrow();
+                                showDots(DOT_MAX_COUUNT);
+                            } else {
+                                disableRightArrow();
+                                if (mTotalPageCount % 10 == 0) {
+                                    showDots(10);
+                                } else {
+                                    showDots(mTotalPageCount % 10);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-		} else {
-			disableLeftArrow();
-			disableRightArrow();
-			Log.i("showdots", "showdots1 : " + mTotalPageCount);
-			showDots(mTotalPageCount);
-		}
+        } else {
+            disableLeftArrow();
+            disableRightArrow();
+            showDots(mTotalPageCount);
+        }
 
-	}
+    }
 
 	private void hightLightCurrentPage(int position) {
 		if (position == 0) {
@@ -966,7 +800,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 	private void showDots(int dotsCount) {
 		for (int i = 0; i < dotsCount; i++) {
-			Log.i("showdots", "showdots2 visible at: " + i);
 			if (i == 0) {
 				mDotOne.setVisibility(View.VISIBLE);
 			} else if (i == 1) {
@@ -990,7 +823,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			}
 		}
 		for (int i = dotsCount; i < DOT_MAX_COUUNT; i++) {
-			Log.i("showdots", "showdots2 gont at: " + i);
 			if (i == 0) {
 				mDotOne.setVisibility(View.GONE);
 			} else if (i == 1) {

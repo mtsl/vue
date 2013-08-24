@@ -107,6 +107,7 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
             mShowpieceParams = new LinearLayout.LayoutParams(
     				VueApplication.getInstance().getScreenWidth()/2,
     				 250);
+          //  holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
           mShowpieceParamsDefault = new LinearLayout.LayoutParams(
     				 LayoutParams.MATCH_PARENT,
     				 LayoutParams.MATCH_PARENT);
@@ -127,7 +128,8 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
   
         }
-        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
+        Log.i("flingcheck", "flingcheck getview");
+        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false,listener);
 /*        if(!listener.isFlingCalled()) {
         	 mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
         	 holder.aisleContentBrowser.setLayoutParams(mShowpieceParamsDefault);

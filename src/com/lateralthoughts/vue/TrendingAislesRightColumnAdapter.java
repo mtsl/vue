@@ -111,7 +111,10 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
             convertView.setTag(holder);
             mShowpieceParams = new LinearLayout.LayoutParams(
     				VueApplication.getInstance().getScreenWidth()/2,
-    				 250);
+    				 300);
+        
+            //holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+            
           mShowpieceParamsDefault = new LinearLayout.LayoutParams(
     				 LayoutParams.MATCH_PARENT,
     				 LayoutParams.MATCH_PARENT);
@@ -127,7 +130,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
 
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
-        mLoader.getAisleContentIntoView(holder, scrollIndex, position, false);
+        mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,listener);
          /*   if(!listener.isFlingCalled()) {
            	 mLoader.getAisleContentIntoView(holder, scrollIndex, position, false);
            	 holder.aisleContentBrowser.setLayoutParams(mShowpieceParamsDefault);

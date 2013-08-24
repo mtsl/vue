@@ -63,8 +63,9 @@ public class AisleDetailsViewListLoader {
         if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
     public void getAisleContentIntoView(AisleDetailsViewAdapter.ViewHolder holder,
-            int scrollIndex, int position,DetailClickListener detailListener,AisleWindowContent windowContent){
+            int scrollIndex, int position,DetailClickListener detailListener,AisleWindowContent windowContent,boolean setPosistion){
     	 mBestHeight = 0;
+    	 Log.i("currentimage", "currentimage: getAisleContentIntoView1 " );
         ScaleImageView imageView = null;
         ArrayList<AisleImageDetails> imageDetailsArr = null;
         AisleImageDetails itemDetails = null;
@@ -84,8 +85,14 @@ public class AisleDetailsViewListLoader {
             //before or has to be filled with same content. Either way, no need
             //to worry about cleaning up anything!
             holder.aisleContentBrowser.setScrollIndex(scrollIndex);
+            Log.i("currentimage", "currentimage: setPosistion1 " ); 
+            if(setPosistion){
+            	Log.i("currentimage", "currentimage: setPosistion2 " ); 
+            	 holder.aisleContentBrowser.setCurrentImage();
+            }
             return;
         }else{
+        	 Log.i("currentimage", "currentimage: getAisleContentIntoView2 else part " );
             //we are going to re-use an existing object to show some new content
             //lets release the scaleimageviews first
             for(int i=0;i<contentBrowser.getChildCount();i++){
@@ -98,20 +105,20 @@ public class AisleDetailsViewListLoader {
             adapter.setContentSource(desiredContentId,  windowContent);
            // adapter.setSourceName(holder.tag);
             holder.aisleContentBrowser.setmSourceName(holder.tag);
-           // holder.thumbnailScroller.removeAllViews();
             holder.aisleContentBrowser.removeAllViews();
             holder.aisleContentBrowser.setUniqueId(desiredContentId);
             holder.aisleContentBrowser.setScrollIndex(scrollIndex);
             holder.aisleContentBrowser.setCustomAdapter(adapter);
             holder.aisleContentBrowser.setDetailImageClickListener(detailListener);
             holder.uniqueContentId = desiredContentId;
-           // Log.i("returnsused imageview", "returnsused imageview mViewHolder.aisleContentBrowser count2: "+holder.aisleContentBrowser.getChildCount());
-            Log.i("returnsused imageview", "returnsused imageview mViewHolder.aisleContentBrowser count3: "+holder.aisleContentBrowser);
         }       
         imageDetailsArr = windowContent.getImageList();
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
-			
+			 
 			 for(int i = 0;i<imageDetailsArr.size();i++) {
+				 Log.i("urldata", "urldata: mCustomUrl: "+imageDetailsArr.get(i).mCustomImageUrl);
+				 Log.i("urldata", "urldata: mImageUrl: "+imageDetailsArr.get(i).mImageUrl);
+				 
 				  if(mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
 					  mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
 				  }
@@ -144,10 +151,16 @@ public class AisleDetailsViewListLoader {
 				 
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
+				if(scrollIndex != 0){
+				contentBrowser.setCurrentImage();
+				}
 			} else {
 				contentBrowser.addView(imageView);
 				loadBitmap(itemDetails, contentBrowser, imageView,
 						itemDetails.mAvailableHeight);
+				if(scrollIndex != 0){
+					contentBrowser.setCurrentImage();
+					}
 			}
 		}        
     }
@@ -243,12 +256,9 @@ public class AisleDetailsViewListLoader {
         }
         return true;
     }  
-public void clearBrowser(){
+public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 	 if (contentBrowser != null) {
 			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
-				Log.i("returnsused imageview", "returnsused imageview4");
-				Log.i("returnsused imageview", "returnsused imageview4 img: "+(ScaleImageView)contentBrowser
-						.getChildAt(i));
 				mViewFactory
 				.returnUsedImageView((ScaleImageView)contentBrowser
 						.getChildAt(i));
@@ -256,6 +266,16 @@ public void clearBrowser(){
 			 mContentAdapterFactory.returnUsedAdapter(contentBrowser.getCustomAdapter());
 			contentBrowser.removeAllViews();
 			contentBrowser = null;
+			
+			for(int i = 0;i<imageList.size();i++){
+				Bitmap bitmap = mBitmapLoaderUtils
+						.getCachedBitmap(imageList.get(i).mImageUrl);
+				Log.i("bitmap reclying", "bitmap reclying 1");
+				if(bitmap != null){
+					Log.i("bitmap reclying", "bitmap reclying 2");
+					bitmap.recycle();
+				}
+			}
 		}
 	
 }

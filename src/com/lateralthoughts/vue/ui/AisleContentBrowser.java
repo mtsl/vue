@@ -22,10 +22,12 @@ import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueAisleDetailsViewFragment;
+import com.lateralthoughts.vue.VueApplication;
 
 public class AisleContentBrowser extends ViewFlipper {
     private String mAisleUniqueId;
     private String mSourceName;
+    int mCurrentIndex;
     public String getmSourceName() {
 		return mSourceName;
 	}
@@ -52,6 +54,7 @@ public class AisleContentBrowser extends ViewFlipper {
     private int mTapTimeout;
     private String holderName;
     private String mBrowserArea;
+    private boolean mSetPosition;
  
     public String getmBrowserArea() {
 		return mBrowserArea;
@@ -107,6 +110,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	
 	public void setScrollIndex(int scrollIndex){
 		mScrollIndex = scrollIndex;
+		 
 	}
 	
 	public int getScrollIndex(){
@@ -162,7 +166,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                requestDisallowInterceptTouchEvent(true);
 	                if(false == mAnimationInProgress){
 	                	View nextView = null;
-	                    int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
+	                    final int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
 	                    	  nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex+1);
 	                    	  
 	                
@@ -196,14 +200,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                            return super.onTouchEvent(event);
 	                        }
 	                    }
-	                    if(mSwipeListener != null) {
-                        	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT,currentIndex+1);
-                        	//mSwipeListener.onDissAllowListResponse();
-                        }
-	                    
-	                    if(detailImgClickListenr != null) {
-		                    detailImgClickListenr.onImageSwipe(currentIndex+1);
-		                    }
+	                  
 	                    Animation currentGoLeft = AnimationUtils.loadAnimation(mContext, R.anim.right_out);
 	                    final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
 	                    mAnimationInProgress = true;
@@ -216,6 +213,14 @@ public class AisleContentBrowser extends ViewFlipper {
                                   	 
                                    	mSwipeListener.onAllowListResponse();
                                    }
+                                if(mSwipeListener != null) {
+                                	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT,currentIndex+1);
+                                	//mSwipeListener.onDissAllowListResponse();
+                                }
+        	                    mCurrentIndex = currentIndex+1;
+        	                    if(detailImgClickListenr != null) {
+        		                    detailImgClickListenr.onImageSwipe(currentIndex+1);
+        		                    }
                             }
                             public void onAnimationStart(Animation animation) {
 
@@ -234,7 +239,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                Log.i("browsermove", "browsermove1 right");
 	                mTouchMoved = true;
 	                if(false == mAnimationInProgress){
-	                       int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
+	                       final int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
 	                       View nextView = null;
 		                    	  nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex-1);
 	                    
@@ -267,13 +272,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	                                return super.onTouchEvent(event);
 	                            }
 	                        }
-	                        if(mSwipeListener != null) {
-	                           	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_RIGHT_TO_LEFT,currentIndex-1);
-	                          // 	mSwipeListener.onDissAllowListResponse();
-	                           }
-	                        if(detailImgClickListenr != null) {
-	 	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
-	 	                       }
+	                   
 	                    Animation currentGoRight = AnimationUtils.loadAnimation(mContext, R.anim.left_in);
 	                    final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
 	                    mAnimationInProgress = true;
@@ -286,6 +285,14 @@ public class AisleContentBrowser extends ViewFlipper {
                                   	 
                                    	mSwipeListener.onAllowListResponse();
                                    }
+                                mCurrentIndex = currentIndex-1;
+    	                        if(mSwipeListener != null) {
+    	                           	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_RIGHT_TO_LEFT,currentIndex-1);
+    	                          // 	mSwipeListener.onDissAllowListResponse();
+    	                           }
+    	                        if(detailImgClickListenr != null) {
+    	 	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
+    	 	                       }
                             }
                             public void onAnimationStart(Animation animation) {
 
@@ -303,7 +310,16 @@ public class AisleContentBrowser extends ViewFlipper {
 	        return super.onTouchEvent(event);
 	    }
 	//}
-	
+	public void setCurrentImage(){
+		Log.i("currentimage", "currentimage1: "+VueApplication.getInstance().getmAisleImgCurrentPos()); 
+		for(int i=0;i<VueApplication.getInstance().getmAisleImgCurrentPos();i++) {
+		 mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,i, i+1, true);
+		 Log.i("currentimage", "currentimage2"); 
+		}
+		final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
+		 
+		  aisleContentBrowser.setDisplayedChild(VueApplication.getInstance().getmAisleImgCurrentPos());
+	}
 	public void setCustomAdapter(IAisleContentAdapter adapter){
 	    mSpecialNeedsAdapter = adapter;
 	}
@@ -327,7 +343,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	    @Override
 	    public boolean onSingleTapConfirmed(MotionEvent event){
 	        if(mClickListener != null && null != mSpecialNeedsAdapter) {
-	        mClickListener.onAisleClicked(mAisleUniqueId,mSpecialNeedsAdapter.getAisleItemsCount());
+	        mClickListener.onAisleClicked(mAisleUniqueId,mSpecialNeedsAdapter.getAisleItemsCount(),mCurrentIndex);
 	          
 	        }
 	        if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
@@ -348,7 +364,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	 }
 	
 	public interface AisleContentClickListener{
-	    public void onAisleClicked(String id,int count);
+	    public void onAisleClicked(String id,int count,int currentPosition);
 		public boolean isFlingCalled();
 	}
 	public interface DetailClickListener{

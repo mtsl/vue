@@ -44,10 +44,12 @@ public class GetOtherSourceImagesTask extends
 	protected ArrayList<OtherSourceImageDetails> doInBackground(String... arg0) {
 		Log.e("asyntask", "url ???" + mSourceUrl);
 		try {
-			ArrayList<OtherSourceImageDetails> imgDetails = parseHtml(
-					mSourceUrl, WIDTH_LIMIT, HEIGHT_LIMIT);
-			return imgDetails;
-		} catch (IOException e) {
+			if (mSourceUrl != null) {
+				ArrayList<OtherSourceImageDetails> imgDetails = parseHtml(
+				mSourceUrl, WIDTH_LIMIT, HEIGHT_LIMIT);
+				return imgDetails;
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -55,7 +57,7 @@ public class GetOtherSourceImagesTask extends
 	}
 
 	private ArrayList<OtherSourceImageDetails> parseHtml(String url,
-			int reqWidth, int reqHeight) throws IOException {
+			int reqWidth, int reqHeight) throws Exception {
 		ArrayList<OtherSourceImageDetails> imageDetails = new ArrayList<OtherSourceImageDetails>();
 		OtherSourceImageDetails OtherSourceImageDetails = null;
 		Document doc = null;

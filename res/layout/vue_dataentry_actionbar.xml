@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="48dip" >
+
+    <RelativeLayout
+        android:id="@+id/vue_dataentry_actionbar_app_icon_layout"
+        android:layout_width="48dip"
+        android:layout_height="fill_parent" >
+
+        <ImageView
+            android:id="@+id/vue_dataentry_actionbar_app_icon"
+            android:layout_width="36dip"
+            android:layout_height="36dip"
+            android:layout_centerInParent="true"
+            android:src="@drawable/vue_launcher_icon" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/vue_dataentry_actionbar_screenname"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_toRightOf="@+id/vue_dataentry_actionbar_app_icon_layout"
+        android:gravity="center_vertical"
+        android:paddingRight="6dip"
+        android:text="@string/app_name"
+        android:textColor="@color/black"
+        android:textSize="18dip" />
+
+    <LinearLayout
+        android:id="@+id/vue_dataentry_actionbar_top_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal"
+        android:visibility="visible" >
+
+        <RelativeLayout
+            android:id="@+id/vue_dataentry_actionbar_close_icon_layout"
+            android:layout_width="48dip"
+            android:layout_height="fill_parent" >
+
+            <ImageView
+                android:id="@+id/vue_dataentry_actionbar_close_icon"
+                android:layout_width="36dip"
+                android:layout_height="36dip"
+                android:layout_centerInParent="true"
+                android:src="@drawable/cancel_gray" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/vue_dataentry_actionbar_createaisle_icon_layout"
+            android:layout_width="48dip"
+            android:layout_height="fill_parent" >
+
+            <ImageView
+                android:id="@+id/vue_dataentry_actionbar_createaisle_icon"
+                android:layout_width="36dip"
+                android:layout_height="36dip"
+                android:layout_centerInParent="true"
+                android:src="@drawable/createaisle" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/vue_dataentry_actionbar_bottom_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <RelativeLayout
+            android:id="@+id/vue_dataentry_actionbar_share_icon_layout"
+            android:layout_width="48dip"
+            android:layout_height="fill_parent" >
+
+            <ImageView
+                android:id="@+id/vue_dataentry_actionbar_share_icon"
+                android:layout_width="36dip"
+                android:layout_height="36dip"
+                android:layout_centerInParent="true"
+                android:src="@drawable/share" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/vue_dataentry_actionbar_edit_icon_layout"
+            android:layout_width="48dip"
+            android:layout_height="fill_parent" >
+
+            <ImageView
+                android:id="@+id/vue_dataentry_actionbar_edit_icon"
+                android:layout_width="36dip"
+                android:layout_height="36dip"
+                android:layout_centerInParent="true"
+                android:src="@drawable/edit" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/vue_dataentry_actionbar_addimage_icon_layout"
+            android:layout_width="48dip"
+            android:layout_height="fill_parent" >
+
+            <ImageView
+                android:id="@+id/vue_dataentry_actionbar_addimage_icon"
+                android:layout_width="36dip"
+                android:layout_height="36dip"
+                android:layout_centerInParent="true"
+                android:src="@drawable/addimage01" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

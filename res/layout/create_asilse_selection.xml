@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="#90000000" >
 
-    
     <RelativeLayout
         android:id="@+id/data_entry_popup_mainsublayout"
         android:layout_width="match_parent"
@@ -83,7 +82,7 @@
                 android:background="@drawable/graycircle" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/top_right_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -141,7 +140,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Etsy"
+                android:text="More"
                 android:textColor="@android:color/white" />
         </RelativeLayout>
 
@@ -161,7 +160,7 @@
                 android:background="@drawable/graycircle" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/bottom_right_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -169,7 +168,6 @@
                 android:textColor="@android:color/white" />
         </RelativeLayout>
     </RelativeLayout>
-   
 
     <RelativeLayout
         android:id="@+id/data_entry_bottom_popup_mainsublayout"
@@ -206,7 +204,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="Etsy"
+                    android:text="More"
                     android:textColor="@android:color/white" />
             </RelativeLayout>
 
@@ -272,7 +270,7 @@
                 android:background="@drawable/graycircle" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/bottom_topright_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -324,7 +322,7 @@
                 android:background="@drawable/graycircle" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/bottom_bottom_right_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -332,5 +330,40 @@
                 android:textColor="@android:color/white" />
         </RelativeLayout>
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/data_entry_more_top_list_layout"
+        android:layout_width="150dip"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/data_entry_popup_mainsublayout"
+        android:background="@drawable/dataentry_list_border"
+        android:maxHeight="256dip"
+        android:visibility="gone" >
+
+        <ListView
+       		android:id="@+id/data_entry_more_top_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="2dip" >
+        </ListView>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/data_entry_more_bottom_list_layout"
+        android:layout_width="150dip"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/data_entry_bottom_popup_mainsublayout"
+        android:background="@drawable/dataentry_list_border"
+        android:maxHeight="256dip"
+        android:visibility="gone" >
+
+        <ListView
+       		android:id="@+id/data_entry_more_bottom_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="2dip" >
+        </ListView>
+    </LinearLayout>
 
 </RelativeLayout>

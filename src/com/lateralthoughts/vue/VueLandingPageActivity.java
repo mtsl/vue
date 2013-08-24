@@ -10,9 +10,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
@@ -25,13 +29,49 @@ public class VueLandingPageActivity extends BaseActivity {
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 	VueLandingAislesFragment fragment;
+	private TextView mVueLandingActionbarScreenName;
+	private LinearLayout mVueLandingActionbarRightLayout;
+	private View mVueLandingActionbarView;
+	private RelativeLayout mVueLandingActionbarAppIconLayout;
 
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
-		getSupportActionBar().setTitle(getString(R.string.trending));
+		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
+				R.layout.vue_landing_actionbar, null);
+		mVueLandingActionbarScreenName = (TextView) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_actionbar_screen_name);
+		mVueLandingActionbarRightLayout = (LinearLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_actionbar_right_layout);
+		mVueLandingActionbarAppIconLayout = (RelativeLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_actionbar_app_icon_layout);
+		mVueLandingActionbarScreenName.setText(getResources().getString(
+				R.string.trending));
+		getSupportActionBar().setCustomView(mVueLandingActionbarView);
+		getSupportActionBar().setDisplayShowCustomEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		mVueLandingActionbarRightLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						Intent intent = new Intent(VueLandingPageActivity.this,
+								CreateAisleSelectionActivity.class);
+						VueApplication
+								.getInstance()
+								.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
+										false);
+						startActivity(intent);
+					}
+				});
+		mVueLandingActionbarAppIconLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						getSlidingMenu().toggle();
+					}
+				});
 		// Checking wheather app is opens for first time or not?
 		mSharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -60,18 +100,6 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		fragment = (VueLandingAislesFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisles_view_fragment);
-		try {
-			VueUser vueUser = Utils.readObjectFromFile(this,
-					VueConstants.VUE_APP_USEROBJECT__FILENAME);
-			Log.e("tag fbid", vueUser.getmFacebookId() + "");
-			Log.e("tag g+id", vueUser.getmGooglePlusId() + "");
-			Log.e("tag deviceid", vueUser.getmDeviceId() + "");
-			Log.e("tag email", vueUser.getmEmailId() + "");
-			Log.e("tag useridentity", vueUser.getUserIdentity().name() + "");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -90,6 +118,7 @@ public class VueLandingPageActivity extends BaseActivity {
 
 	void handleSendText(Intent intent) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
 			if (VueApplication.getInstance()
@@ -184,35 +213,6 @@ public class VueLandingPageActivity extends BaseActivity {
 				startActivity(i);
 			}
 			// Update UI to reflect multiple images being shared
-		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.title_options, menu);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		// Configure the search info and add any event listeners
-		return super.onCreateOptionsMenu(menu); // true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case R.id.menu_create_aisles:
-			Intent intent = new Intent(VueLandingPageActivity.this,
-					CreateAisleSelectionActivity.class);
-			VueApplication.getInstance()
-					.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
-							false);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-			startActivity(intent);
-			return true;
-		case android.R.id.home:
-			getSlidingMenu().toggle();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
 		}
 	}
 

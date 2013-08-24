@@ -105,7 +105,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         
         
         //lets file cache the first two items in the list
-        queueImagePrefetch(mAisleImageDetails, mWindowContent.getBestHeightForWindow(), 1,2);
+       // queueImagePrefetch(mAisleImageDetails, mWindowContent.getBestHeightForWindow(), 1,2);
     }
     
     @Override
@@ -306,9 +306,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                 loadBitmap(itemDetails,itemDetails.mAvailableHeight,contentBrowser, imageView);
                 contentBrowser.addView(imageView);
             	} else {
-            		int bestHeigh = mWindowContent.getBestHeightForWindow();
-            		 loadBitmap(itemDetails,bestHeigh,contentBrowser, imageView);
+            		int bestHeight = mWindowContent.getBestHeightForWindow();
+            		 loadBitmap(itemDetails,bestHeight,contentBrowser, imageView);
                            	contentBrowser.addView(imageView);
+                           	Log.i("bestHeight", "bestHeight in adapter: "+bestHeight);
             	}
             }
         }
@@ -386,7 +387,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 					} 
 
 				}
-			}
+			} 
             
             return bmp;            
         }

@@ -12,11 +12,13 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.graphics.Bitmap;
 
 //import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 
@@ -92,7 +94,7 @@ public class AisleLoader {
     //When the task completes check to make sure that the url for which the task was started is still
     //valid. If so, add the downloaded image to the view object
     public void getAisleContentIntoView(ViewHolder holder,
-    		int scrollIndex, int position, boolean placeholderOnly){
+    		int scrollIndex, int position, boolean placeholderOnly,AisleContentClickListener listener){
     	ScaleImageView imageView = null;
     	ArrayList<AisleImageDetails> imageDetailsArr = null;
     	AisleImageDetails itemDetails = null;
@@ -115,23 +117,27 @@ public class AisleLoader {
     		//to worry about cleaning up anything!
 		    holder.aisleContentBrowser.setScrollIndex(scrollIndex);
 			Log.i("listadapter", "adapter leftadapter uniquecontentId equals");
-    		// return;
+    		 return;
     	}else{
-    		Log.i("listadapter", "adapter leftadapter uniquecontentId NOT equals");
+    		
     		//we are going to re-use an existing object to show some new content
     		//lets release the scaleimageviews first
     		for(int i=0;i<contentBrowser.getChildCount();i++){
     		    //((ScaleImageView)contentBrowser.getChildAt(i)).setContainerObject(null);
     			mViewFactory.returnUsedImageView((ScaleImageView)contentBrowser.getChildAt(i));
     		}
+    	/*	 if(!listener.isFlingCalled()){*/
+    			 Log.i("flingcheck", "flingcheck fling stopped");
     		IAisleContentAdapter adapter = mContentAdapterFactory.getAisleContentAdapter();
     		mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser.getCustomAdapter());
     		holder.aisleContentBrowser.setCustomAdapter(null);
     		adapter.setContentSource(desiredContentId, holder.mWindowContent);
-    		Log.i("listadapter", "adapter leftadapter aisleContentBrowser count: "+holder.aisleContentBrowser.getChildCount());
-    		Log.i("listadapter", "adapter leftadapter aisleContentBrowser removing all views");
+    		holder.aisleContentBrowser.setCustomAdapter(adapter);
+    		/* } else {
+    			 Log.i("flingcheck", "flingcheck fling call running");
+    		 }*/
+    		holder.uniqueContentId = desiredContentId;
     		holder.aisleContentBrowser.removeAllViews();
-    		Log.i("listadapter", "adapter leftadapter aisleContentBrowser now count: "+holder.aisleContentBrowser.getChildCount());
     		holder.aisleContentBrowser.setUniqueId(desiredContentId);
     		holder.aisleContentBrowser.setScrollIndex(scrollIndex);
     		holder.aisleContentBrowser.setCustomAdapter(adapter);
@@ -139,7 +145,11 @@ public class AisleLoader {
     		//mContentViewMap.put(holder.uniqueContentId, holder);
     	}
     	imageDetailsArr = windowContent.getImageList();
-
+    	LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
+ 				VueApplication.getInstance().getScreenWidth()/2,
+ 				windowContent.getBestHeightForWindow());
+         holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+    	
     	if(null != imageDetailsArr && imageDetailsArr.size() != 0){	
     		itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getPreconfiguredImageView(position);
@@ -152,8 +162,11 @@ public class AisleLoader {
 			}
 			else{
 				contentBrowser.addView(imageView);
+			  
 				if(!placeholderOnly)
 				    loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView, bestHeight);
+				Log.i("bestHeight", "bestHeight: "+bestHeight);
+			 
 			}
         }
     }
@@ -193,6 +206,7 @@ public class AisleLoader {
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
         protected void onPostExecute(Bitmap bitmap) {
+        	
             if (viewFlipperReference != null && 
             		imageViewReference != null && bitmap != null) {
                 final ImageView imageView = imageViewReference.get();

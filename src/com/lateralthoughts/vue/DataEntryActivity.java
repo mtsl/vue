@@ -1,12 +1,7 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,88 +9,194 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class DataEntryActivity extends BaseActivity {
 
 	public boolean mIsKeyboardShownFlag = false;
-	public boolean mIsNewActionBarFlag = false;
 	public static Context mDataEntryActivityContext = null;
+	public TextView mVueDataentryActionbarScreenName;
+	private RelativeLayout mVueDataentryActionbarCloseIconLayout,
+			mVueDataentryActionbarCreateAisleIconLayout,
+			mVueDataentryActionbarShareIconLayout,
+			mVueDataentryActionbarEditIconLayout,
+			mVueDataentryActionbarAddImageIconLayout,
+			mVueDataentryActionbarAppIconLayout;
+	public LinearLayout mVueDataentryActionbarTopLayout,
+			mVueDataentryActionbarBottomLayout;
+	private View mVueDataentryActionbarView;
+	private DataEntryFragment mDataEntryFragment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.date_entry_main);
+		mVueDataentryActionbarView = LayoutInflater.from(this).inflate(
+				R.layout.vue_dataentry_actionbar, null);
+		mVueDataentryActionbarScreenName = (TextView) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_screenname);
+		mVueDataentryActionbarCloseIconLayout = (RelativeLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_close_icon_layout);
+		mVueDataentryActionbarCreateAisleIconLayout = (RelativeLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_createaisle_icon_layout);
+		mVueDataentryActionbarShareIconLayout = (RelativeLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_share_icon_layout);
+		mVueDataentryActionbarEditIconLayout = (RelativeLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_edit_icon_layout);
+		mVueDataentryActionbarAddImageIconLayout = (RelativeLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_addimage_icon_layout);
+		mVueDataentryActionbarTopLayout = (LinearLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_top_layout);
+		mVueDataentryActionbarBottomLayout = (LinearLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_bottom_layout);
+		mVueDataentryActionbarAppIconLayout = (RelativeLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_app_icon_layout);
+		mVueDataentryActionbarScreenName.setText(getResources().getString(
+				R.string.create_aisle_screen_title));
+		getSupportActionBar().setCustomView(mVueDataentryActionbarView);
+		getSupportActionBar().setDisplayShowCustomEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		mVueDataentryActionbarAppIconLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						getSlidingMenu().toggle();
+					}
+				});
+		mVueDataentryActionbarAddImageIconLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						if (mDataEntryFragment == null) {
+							mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+									.findFragmentById(
+											R.id.create_aisles_view_fragment);
+						}
+						mDataEntryFragment
+								.addImageToAisleButtonClickFunctionality();
+					}
+				});
+		mVueDataentryActionbarCloseIconLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						finish();
+					}
+				});
+		mVueDataentryActionbarCreateAisleIconLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						if (mDataEntryFragment == null) {
+							mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+									.findFragmentById(
+											R.id.create_aisles_view_fragment);
+						}
+						mDataEntryFragment.createAisleClickFunctionality();
+					}
+				});
+		mVueDataentryActionbarShareIconLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						if (mDataEntryFragment == null) {
+							mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+									.findFragmentById(
+											R.id.create_aisles_view_fragment);
+						}
+						mDataEntryFragment.shareClickFunctionality();
+					}
+				});
+		mVueDataentryActionbarEditIconLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						if (mDataEntryFragment == null) {
+							mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+									.findFragmentById(
+											R.id.create_aisles_view_fragment);
+						}
+						mDataEntryFragment.editButtonClickFunctionality();
+					}
+				});
 		mDataEntryActivityContext = this;
-		getSupportActionBar().setTitle(
-				getResources().getString(R.string.create_ailse_screen_title));
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			Log.e("cs", "30");
 			String aisleImagePath = b
 					.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-			DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.create_aisles_view_fragment);
-			fragment.mFromDetailsScreenFlag = b.getBoolean(
+			if (mDataEntryFragment == null) {
+				mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.create_aisles_view_fragment);
+			}
+			mDataEntryFragment.mFromDetailsScreenFlag = b.getBoolean(
 					VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG,
 					false);
-			if (fragment.mFromDetailsScreenFlag) {
-				getSupportActionBar().setTitle(
-						getResources().getString(
-								R.string.add_imae_to_aisle_screen_title));
-				fragment.mIsUserAisleFlag = b
+			if (mDataEntryFragment.mFromDetailsScreenFlag) {
+				mVueDataentryActionbarScreenName.setText(getResources()
+						.getString(R.string.add_imae_to_aisle_screen_title));
+				mDataEntryFragment.mIsUserAisleFlag = b
 						.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG);
-				if (fragment.mIsUserAisleFlag) {
-					fragment.mLookingForPopup.setVisibility(View.GONE);
-					fragment.mLookingForBigText
+				if (mDataEntryFragment.mIsUserAisleFlag) {
+					mDataEntryFragment.mLookingForPopup
+							.setVisibility(View.GONE);
+					mDataEntryFragment.mLookingForBigText
 							.setBackgroundColor(Color.TRANSPARENT);
-					fragment.mLookingForListviewLayout.setVisibility(View.GONE);
-					fragment.mLookingForBigText.setClickable(false);
-					fragment.mOccassionBigText.setClickable(false);
-					fragment.mCategoryIcon.setClickable(false);
-					fragment.mSaySomeThingEditParent.setClickable(false);
+					mDataEntryFragment.mLookingForListviewLayout
+							.setVisibility(View.GONE);
+					mDataEntryFragment.mLookingForBigText.setClickable(false);
+					mDataEntryFragment.mOccassionBigText.setClickable(false);
+					mDataEntryFragment.mCategoryIcon.setClickable(false);
+					mDataEntryFragment.mSaySomeThingEditParent
+							.setClickable(false);
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR) != null) {
-					fragment.mLookingForBigText
+					mDataEntryFragment.mLookingForBigText
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR));
-					fragment.mLookingForText
+					mDataEntryFragment.mLookingForText
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR));
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION) != null) {
-					fragment.mOccassionBigText
+					mDataEntryFragment.mOccassionBigText
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION));
-					fragment.mOccasionText
+					mDataEntryFragment.mOccasionText
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION));
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE) != null) {
-					fragment.mSaySomethingAboutAisle
+					mDataEntryFragment.mSaySomethingAboutAisle
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE));
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT) != null) {
-					fragment.mFindAtText
+					mDataEntryFragment.mFindAtText
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT));
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY) != null) {
-					fragment.mCategoryText
+					mDataEntryFragment.mCategoryText
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY));
 				}
 			}
 			Log.e("cs", "32");
 			if (aisleImagePath != null)
-				fragment.setGalleryORCameraImage(aisleImagePath, false);
+				mDataEntryFragment.setGalleryORCameraImage(aisleImagePath,
+						false);
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
-				fragment.mCreateAisleBg.setVisibility(View.GONE);
-				fragment.mAisleBgProgressbar.setVisibility(View.GONE);
+				mDataEntryFragment.mCreateAisleBg.setVisibility(View.GONE);
+				mDataEntryFragment.mAisleBgProgressbar.setVisibility(View.GONE);
 				if (b.getString(VueConstants.FROM_OTHER_SOURCES_URL) != null) {
-					fragment.getImagesFromUrl(b
+					mDataEntryFragment.getImagesFromUrl(b
 							.getString(VueConstants.FROM_OTHER_SOURCES_URL));
 				} else if (b
 						.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS) != null) {
@@ -108,65 +209,11 @@ public class DataEntryActivity extends BaseActivity {
 						otherSourcesImageDetailsList
 								.add(otherSourceImageDetails);
 					}
-					fragment.showOtherSourcesGridview(otherSourcesImageDetailsList);
+					mDataEntryFragment
+							.showOtherSourcesGridview(otherSourcesImageDetailsList);
 				}
 			}
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		if (!mIsNewActionBarFlag) {
-			getSupportMenuInflater().inflate(R.menu.title_options2, menu);
-		} else if (mIsNewActionBarFlag) {
-			getSupportMenuInflater()
-					.inflate(R.menu.create_aisle_options2, menu);
-
-		}
-		getSupportActionBar().setHomeButtonEnabled(true); // Configure the
-															// search
-		// info and add any event listeners
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		DataEntryFragment fragment = null;
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			getSlidingMenu().toggle();
-			break;
-		case R.id.menu_create_aisles:
-			fragment = (DataEntryFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.create_aisles_view_fragment);
-			fragment.createAisleClickFunctionality();
-			break;
-		case R.id.menu_cancel:
-			/*
-			 * Intent intentLan = new Intent(this,
-			 * VueLandingPageActivity.class);
-			 * intentLan.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			 */
-			finish();
-			// startActivity(intentLan);
-			break;
-		case R.id.menu_share:
-			fragment = (DataEntryFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.create_aisles_view_fragment);
-			fragment.shareClickFunctionality();
-			break;
-		case R.id.menu_create_aisles_edit:
-			fragment = (DataEntryFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.create_aisles_view_fragment);
-			fragment.editButtonClickFunctionality();
-			break;
-		case R.id.menu_add_image:
-			fragment = (DataEntryFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.create_aisles_view_fragment);
-			fragment.addImageToAisleButtonClickFunctionality();
-			break;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -178,9 +225,13 @@ public class DataEntryActivity extends BaseActivity {
 				if (b != null) {
 					String imagePath = b
 							.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-					DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.create_aisles_view_fragment);
-					fragment.setGalleryORCameraImage(imagePath, false);
+					if (mDataEntryFragment == null) {
+						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+								.findFragmentById(
+										R.id.create_aisles_view_fragment);
+					}
+					mDataEntryFragment
+							.setGalleryORCameraImage(imagePath, false);
 				}
 			} else if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 					&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
@@ -192,11 +243,14 @@ public class DataEntryActivity extends BaseActivity {
 				}
 			} else {
 				try {
-					DataEntryFragment fragment = (DataEntryFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.create_aisles_view_fragment);
-					if (fragment.mShare.mShareIntentCalled) {
-						fragment.mShare.mShareIntentCalled = false;
-						fragment.mShare.dismisDialog();
+					if (mDataEntryFragment == null) {
+						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+								.findFragmentById(
+										R.id.create_aisles_view_fragment);
+					}
+					if (mDataEntryFragment.mShare.mShareIntentCalled) {
+						mDataEntryFragment.mShare.mShareIntentCalled = false;
+						mDataEntryFragment.mShare.dismisDialog();
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -241,12 +295,6 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
-				/*
-				 * Intent intentLan = new Intent(this,
-				 * VueLandingPageActivity.class);
-				 * intentLan.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); finish();
-				 * startActivity(intentLan);
-				 */
 				super.onBackPressed();
 			}
 		}
