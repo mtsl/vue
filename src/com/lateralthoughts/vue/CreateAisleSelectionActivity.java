@@ -336,8 +336,6 @@ public class CreateAisleSelectionActivity extends Activity {
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
 						mMoreClickedFlag = true;
-						moreClickFunctionality();
-						// mTotalBottom.startAnimation(mBounceAnimation);
 						return false;
 					}
 					return false;
@@ -408,9 +406,10 @@ public class CreateAisleSelectionActivity extends Activity {
 				@Override
 				public void onClick(View arg0) {
 					if (mGalleryClickedFlag || mCameraClickedFlag
-							|| mTopRightClickedFlag || mBottomRightClickedFlag
-							|| mMoreClickedFlag) {
+							|| mTopRightClickedFlag || mBottomRightClickedFlag) {
 						// don't do anything...
+					} else if (mMoreClickedFlag) {
+						moreClickFunctionality();
 					} else {
 						if (!mIsTopToBottomAnimationStartedFlag
 								&& !mIsBottomToTopAnimationStartedFlag) {
@@ -695,7 +694,6 @@ public class CreateAisleSelectionActivity extends Activity {
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
 						mMoreClickedFlag = true;
-						moreClickFunctionality();
 						return false;
 					}
 					return false;
@@ -774,8 +772,10 @@ public class CreateAisleSelectionActivity extends Activity {
 				public void onClick(View arg0) {
 					if (mGalleryClickedFlag || mCameraClickedFlag
 							|| mTopRightClickedFlag || mBottomRightClickedFlag
-							|| mMoreClickedFlag) {
+							) {
 						// don't do anything...
+					}  else if (mMoreClickedFlag) {
+						moreClickFunctionality();
 					} else {
 						if (!mIsBottomTopToBottomAnimationStartedFlag
 								&& !mIsBottomBottomToTopAnimationStartedFlag) {

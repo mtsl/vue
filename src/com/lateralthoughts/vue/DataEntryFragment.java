@@ -283,11 +283,12 @@ public class DataEntryFragment extends Fragment {
 
 					@Override
 					public void run() {
-
 						mSaySomethingAboutAisle.requestFocus();
 						mSaySomethingAboutAisle.setFocusable(true);
 						mSaySomethingAboutAisle.setCursorVisible(true);
-
+						mSaySomethingAboutAisle
+								.setSelection(mSaySomethingAboutAisle.getText()
+										.toString().length());
 					}
 				});
 				mSaySomethingAboutAisleClicked = true;
@@ -887,11 +888,18 @@ public class DataEntryFragment extends Fragment {
 						getActivity().finish();
 					}
 				} else {
-					addAisleToServer();
+					if (mAisleImageBitmap != null) {
+						addAisleToServer();
+					} else {
+						showAlertForMandotoryFields(getResources()
+								.getString(
+										R.string.dataentry_mandtory_field_add_aisleimage_mesg));
+					}
 				}
 			}
 		} else {
-			showAlertForMandotoryFields();
+			showAlertForMandotoryFields(getResources().getString(
+					R.string.dataentry_mandtory_field_mesg));
 		}
 
 	}
@@ -993,7 +1001,7 @@ public class DataEntryFragment extends Fragment {
 		dialog.show();
 	}
 
-	private void showAlertForMandotoryFields() {
+	private void showAlertForMandotoryFields(String message) {
 		final Dialog dialog = new Dialog(getActivity(),
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1001,8 +1009,7 @@ public class DataEntryFragment extends Fragment {
 		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
 		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-		messagetext.setText(getResources().getString(
-				R.string.dataentry_mandtory_field_mesg));
+		messagetext.setText(message);
 		okButton.setVisibility(View.GONE);
 		noButton.setText(getResources().getString(R.string.ok));
 		noButton.setOnClickListener(new OnClickListener() {
