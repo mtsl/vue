@@ -465,4 +465,95 @@ public class DataBaseManager {
         + ", Total Images deleted : " + deletedImages
         + ", Total Comments deleted : " + deletedComments);
   }
+  
+  public ArrayList<AisleWindowContent> getAislesByCategory(String category) {
+    AisleContext userInfo;
+    AisleImageDetails imageItemDetails;
+    AisleWindowContent aisleItem = null;
+    String selection;
+    String[] args = null;
+    String sortOrder = null;
+    
+    LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
+    ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
+    ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
+    
+    Cursor aislesCursor = mContext.getContentResolver().query(
+        VueConstants.CONTENT_URI, null, VueConstants.CATEGORY + "=?",
+        new String[] {category}, VueConstants.ID + "ASC");
+    
+    if (aislesCursor.moveToFirst()) {
+      do {
+        userInfo = new AisleContext();
+        userInfo.mAisleId = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.AISLE_ID));
+        userInfo.mUserId = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.USER_ID));
+        userInfo.mFirstName = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.FIRST_NAME));
+        userInfo.mLastName = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.LAST_NAME));
+        userInfo.mJoinTime = Long.parseLong(aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.JOIN_TIME)));
+        userInfo.mLookingForItem = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.LOOKING_FOR));
+        userInfo.mOccasion = aislesCursor.getString(aislesCursor
+            .getColumnIndex(VueConstants.OCCASION));
+        map.put(userInfo.mAisleId, userInfo);
+      } while (aislesCursor.moveToNext());
+    }
+    Cursor aisleImagesCursor = mContext.getContentResolver().query(
+        VueConstants.IMAGES_CONTENT_URI, null, null, null,
+        VueConstants.ID + " ASC");
+    Iterator it = map.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry pairs = (Map.Entry) it.next();
+      System.out.println(pairs.getKey() + " = " + pairs.getValue());
+
+      if (aisleImagesCursor.moveToFirst()) {
+        do {
+          if (aisleImagesCursor.getString(
+              aisleImagesCursor.getColumnIndex(VueConstants.AISLE_ID)).equals(
+              (String) pairs.getKey())) {
+            imageItemDetails = new AisleImageDetails();
+            imageItemDetails.mTitle = aisleImagesCursor
+                .getString(aisleImagesCursor.getColumnIndex(VueConstants.TITLE));
+            imageItemDetails.mImageUrl = aisleImagesCursor
+                .getString(aisleImagesCursor
+                    .getColumnIndex(VueConstants.IMAGE_URL));
+            imageItemDetails.mDetalsUrl = aisleImagesCursor
+                .getString(aisleImagesCursor
+                    .getColumnIndex(VueConstants.DETAILS_URL));
+            imageItemDetails.mStore = aisleImagesCursor
+                .getString(aisleImagesCursor.getColumnIndex(VueConstants.STORE));
+            imageItemDetails.mId = aisleImagesCursor
+                .getString(aisleImagesCursor
+                    .getColumnIndex(VueConstants.IMAGE_ID));
+            imageItemDetails.mAvailableHeight = Integer
+                .parseInt(aisleImagesCursor.getString(aisleImagesCursor
+                    .getColumnIndex(VueConstants.HEIGHT)));
+            imageItemDetails.mAvailableWidth = Integer
+                .parseInt(aisleImagesCursor.getString(aisleImagesCursor
+                    .getColumnIndex(VueConstants.WIDTH)));
+            imageItemsArray.add(imageItemDetails);
+          }
+        } while (aisleImagesCursor.moveToNext());
+      }
+      userInfo = (AisleContext) pairs.getValue();
+      aisleItem = new AisleWindowContent(userInfo.mAisleId);
+      aisleItem.addAisleContent(userInfo, imageItemsArray);
+      aisleContentArray.add(aisleItem);
+      imageItemsArray.clear();
+      it.remove(); // avoids a ConcurrentModificationException
+    }
+    aislesCursor.close();
+    aisleImagesCursor.close();
+ 
+    return aisleContentArray;
+    
+  }
+  
+  
+  
+  
 }
