@@ -1,6 +1,5 @@
 package com.lateralthoughts.vue;
 
-
 import java.util.ArrayList;
 
 import org.apache.http.client.HttpClient;
@@ -38,6 +37,7 @@ public class VueApplication extends Application {
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
 	private boolean newVueTrendingAislesDataModel = false;
+	public ArrayList<String> mAisleImagePathList = new ArrayList<String>();
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
 
 	public boolean ismFromDetailsScreenToDataentryCreateAisleScreenFlag() {
@@ -64,6 +64,7 @@ public class VueApplication extends Application {
 	private int mTextSize = 18;
 	public Context mVueApplicationContext;
 	private int mAisleImgCurrentPos;
+
 	public int getmAisleImgCurrentPos() {
 		return mAisleImgCurrentPos;
 	}
