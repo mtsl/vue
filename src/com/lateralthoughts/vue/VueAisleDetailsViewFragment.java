@@ -199,8 +199,6 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		RelativeLayout bottomBar = (RelativeLayout) mDetailsContentView
 				.findViewById(R.id.vue_bottom_bar);
 		bottomBar.getBackground().setAlpha(25);
-		mImageViewFactory = ScaledImageViewFactory.getInstance(mContext);
-		mImageViewFactory.clearAllViews();
 		mAddVueAisle = (ImageView) mDetailsContentView
 				.findViewById(R.id.vue_aisle);
 		mAddVueAisle.setOnClickListener(new OnClickListener() {

@@ -292,6 +292,34 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 						.equals(getString(R.string.sidemenu_sub_option_Facebook))
 						|| s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
 					getFriendsList(s);
+				} else {
+					TextView categoryText = (TextView) v
+							.findViewById(R.id.child_itemTextview);
+					String cat = categoryText.getText().toString();
+					if (getActivity() instanceof SlidingFragmentActivity) {
+						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+						activity.getSlidingMenu().toggle();
+						activity.getSupportActionBar().setTitle(cat);
+						
+						VueTrendingAislesDataModel model = VueTrendingAislesDataModel
+								.getInstance(getActivity());
+						model.clearAisles();
+						AisleWindowContentFactory.getInstance(getActivity())
+								.clearObjectsInUse();
+						
+						ScaledImageViewFactory mImageViewFactory = ScaledImageViewFactory.getInstance(getActivity());
+						mImageViewFactory.clearAllImageViews();
+						
+						if (getActivity() instanceof AisleDetailsViewActivity) {
+							startActivity(new Intent(
+									(AisleDetailsViewActivity) getActivity(),
+									VueLandingPageActivity.class));
+						} else if (getActivity() instanceof DataEntryActivity) {
+							startActivity(new Intent(
+									(DataEntryActivity) getActivity(),
+									VueLandingPageActivity.class));
+						}
+					}
 				}
 				return false;
 			}

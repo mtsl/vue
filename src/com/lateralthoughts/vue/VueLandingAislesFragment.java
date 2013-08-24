@@ -1,21 +1,20 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.Context;
-import android.widget.ListView;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.view.MotionEvent;
+import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
