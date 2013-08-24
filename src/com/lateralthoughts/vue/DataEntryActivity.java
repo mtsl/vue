@@ -86,6 +86,8 @@ public class DataEntryActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
+						VueApplication.getInstance().mAisleImagePathList
+								.clear();
 						finish();
 					}
 				});
@@ -295,6 +297,7 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
+				VueApplication.getInstance().mAisleImagePathList.clear();
 				super.onBackPressed();
 			}
 		}

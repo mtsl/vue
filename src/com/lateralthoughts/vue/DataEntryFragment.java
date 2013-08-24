@@ -103,7 +103,6 @@ public class DataEntryFragment extends Fragment {
 	public static final String CATEGORY = "Category";
 	public static final String FINDAT = "findat";
 	public static final String SAY_SOMETHING_ABOUT_AISLE = "SaysomethingAboutAisle";
-	private ArrayList<String> mAisleImagePathList = new ArrayList<String>();
 	private int mCurrentPagePosition = 0;
 	public static boolean mSaySomethingAboutAisleClicked = false;
 	private ArrayList<String> mLookingForAisleKeywordsList = null,
@@ -287,6 +286,7 @@ public class DataEntryFragment extends Fragment {
 
 						mSaySomethingAboutAisle.requestFocus();
 						mSaySomethingAboutAisle.setFocusable(true);
+						mSaySomethingAboutAisle.setCursorVisible(true);
 
 					}
 				});
@@ -558,7 +558,7 @@ public class DataEntryFragment extends Fragment {
 						try {
 							b.putString(
 									VueConstants.DATA_ENTRY_INVITE_FRIENDS_BUNDLE_FROM_FILE_PATH_ARRAY_KEY,
-									mAisleImagePathList
+									VueApplication.getInstance().mAisleImagePathList
 											.get(mDataEntryAislesViewpager
 													.getCurrentItem()));
 						} catch (Exception e) {
@@ -594,6 +594,8 @@ public class DataEntryFragment extends Fragment {
 				mInputMethodManager.hideSoftInputFromWindow(
 						mSaySomethingAboutAisle.getWindowToken(), 0);
 				mFindAtText.requestFocus();
+				mFindAtText.setSelection(mFindAtText.getText().toString()
+						.length());
 				mInputMethodManager.showSoftInput(mFindAtText, 0);
 			}
 		});
@@ -726,7 +728,14 @@ public class DataEntryFragment extends Fragment {
 		}
 		if (mLookingForText.getText().toString().trim().length() > 0) {
 			mLookingForBigText.setText(mLookingForText.getText().toString());
-		}// hiding keyboard
+		}
+		mSaySomethingAboutAisle.setCursorVisible(false);
+		mPreviousSaySomething = mSaySomethingAboutAisle.getText().toString();
+		String tempString = mSaySomethingAboutAisle.getText().toString();
+		if (tempString != null && !tempString.equalsIgnoreCase("")) {
+			mHintTextForSaySomeThing.setText(tempString);
+		}
+		// hiding keyboard
 		mInputMethodManager.hideSoftInputFromWindow(
 				mSaySomethingAboutAisle.getWindowToken(), 0);
 		mInputMethodManager.hideSoftInputFromWindow(
@@ -808,6 +817,7 @@ public class DataEntryFragment extends Fragment {
 		hideAllEditableTextboxes();
 		Intent intent = new Intent(getActivity(),
 				CreateAisleSelectionActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		if (mFromDetailsScreenFlag) {
 			VueApplication
 					.getInstance()
@@ -889,9 +899,13 @@ public class DataEntryFragment extends Fragment {
 	public void editButtonClickFunctionality() {
 		mEditAisleImageFlag = true;
 		mCurrentPagePosition = mDataEntryAislesViewpager.getCurrentItem();
-		mResizedImagePath = mAisleImagePathList.get(mCurrentPagePosition);
-		mImagePath = mAisleImagePathList.get(mCurrentPagePosition);
-		File aisleFile = new File(mAisleImagePathList.get(mCurrentPagePosition));
+		mResizedImagePath = VueApplication.getInstance().mAisleImagePathList
+				.get(mCurrentPagePosition);
+		mImagePath = VueApplication.getInstance().mAisleImagePathList
+				.get(mCurrentPagePosition);
+		File aisleFile = new File(
+				VueApplication.getInstance().mAisleImagePathList
+						.get(mCurrentPagePosition));
 		if (aisleFile.exists()) {
 			mCreateAisleBg.setImageURI(Uri.fromFile(aisleFile));
 		}
@@ -918,11 +932,12 @@ public class DataEntryFragment extends Fragment {
 	public void shareClickFunctionality() {
 
 		mShare = new ShareDialog(getActivity(), getActivity());
-		if (mAisleImagePathList != null) {
+		if (VueApplication.getInstance().mAisleImagePathList != null) {
 			ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
-			for (int i = 0; i < mAisleImagePathList.size(); i++) {
+			for (int i = 0; i < VueApplication.getInstance().mAisleImagePathList
+					.size(); i++) {
 				clsShare shareObj = new clsShare(null,
-						mAisleImagePathList.get(i));
+						VueApplication.getInstance().mAisleImagePathList.get(i));
 				imageUrlList.add(shareObj);
 			}
 			mShare.share(imageUrlList, "", "");
@@ -935,6 +950,7 @@ public class DataEntryFragment extends Fragment {
 		mAddImageToAisleFlag = true;
 		Intent intent = new Intent(getActivity(),
 				CreateAisleSelectionActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		VueApplication.getInstance()
 				.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(false);
 		Bundle b = new Bundle();
@@ -1009,6 +1025,8 @@ public class DataEntryFragment extends Fragment {
 		mLookingForBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
 		mLookingForText.requestFocus();
+		mLookingForText.setSelection(mLookingForText.getText().toString()
+				.length());
 		mInputMethodManager.showSoftInput(mLookingForText, 0);
 	}
 
@@ -1024,6 +1042,7 @@ public class DataEntryFragment extends Fragment {
 		mOccassionBigText.setBackgroundColor(getResources().getColor(
 				R.color.yellowbgcolor));
 		mOccasionText.requestFocus();
+		mOccasionText.setSelection(mOccasionText.getText().toString().length());
 		mInputMethodManager.showSoftInput(mOccasionText, 0);
 	}
 
@@ -1395,20 +1414,22 @@ public class DataEntryFragment extends Fragment {
 		mDataEntryActivity.mVueDataentryActionbarTopLayout
 				.setVisibility(View.GONE);
 		if (mEditAisleImageFlag) {
-			mAisleImagePathList.remove(mCurrentPagePosition);
+			VueApplication.getInstance().mAisleImagePathList
+					.remove(mCurrentPagePosition);
 		}
 		mEditAisleImageFlag = false;
 		mMainHeadingRow.setVisibility(View.GONE);
 		mTouchToChangeImage.setVisibility(View.GONE);
 		mDataEntryBottomBottomLayout.setVisibility(View.GONE);
 		mDataEntryBottomTopLayout.setVisibility(View.VISIBLE);
-		mAisleImagePathList.add(0, mResizedImagePath);
+		VueApplication.getInstance().mAisleImagePathList.add(0,
+				mResizedImagePath);
 		mDataEntryAislesViewpager.setVisibility(View.VISIBLE);
 		mCreateAisleBg.setVisibility(View.GONE);
 		try {
 			mDataEntryAislesViewpager
 					.setAdapter(new DataEntryAilsePagerAdapter(getActivity(),
-							mAisleImagePathList));
+							VueApplication.getInstance().mAisleImagePathList));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

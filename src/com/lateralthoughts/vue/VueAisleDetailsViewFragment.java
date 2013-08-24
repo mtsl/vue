@@ -74,16 +74,15 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	AisleDetailsSwipeListner mSwipeListener;
 	private ActionBarHandler mHandleActionBar;
 	private ScaledImageViewFactory mImageViewFactory;
-	private ImageView mDetailsAddImageToAisle = null,mAddVueAisle;
+	private ImageView mDetailsAddImageToAisle = null, mAddVueAisle;
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
 	private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
 			mDotSeven, mDotEight, mDotNine, mDotTen;
-	TextView mLeftArrow, mRightArrow,mVueUserName;
+	TextView mLeftArrow, mRightArrow, mVueUserName;
 	private ListView mAisleDetailsList;
 	EditTextBackEvent mEditTextFindAt;
 	LinearLayout mDetailsFindAtPopup;
-
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -126,7 +125,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mHighlightPosition = VueApplication.getInstance().getmAisleImgCurrentPos();
+		mHighlightPosition = VueApplication.getInstance()
+				.getmAisleImgCurrentPos();
 		mDetailsContentView = inflater.inflate(
 				R.layout.aisles_detailed_view_fragment, container, false);
 		mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
@@ -185,6 +185,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				VueApplication.getInstance()
 						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
 								true);
+				intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				Bundle b = new Bundle();
 				b.putBoolean(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
@@ -607,6 +608,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		view.setVisibility(View.VISIBLE);
 		mAisleDetailsAdapter.notifyDataSetChanged();
 	}
+
 	protected MotionEvent mLastOnDownEvent = null;
 
 	public void changeLikeCount(int position, String clickType) {
@@ -621,6 +623,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	public void setAisleContentListenerNull() {
 		mAisleDetailsAdapter.setAisleBrowserObjectsNull();
 	}
+
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
@@ -644,7 +647,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mTotalScreenCount = mTotalScreenCount + 1;
 		upDatePageDots(0, "right");
 		mAisleDetailsAdapter.addAisleToContentWindow(bitmap, imgUrl, "title");
-		
+
 	}
 
 	public AisleContext getAisleContext() {
@@ -652,6 +655,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		return mAisleDetailsAdapter.getAisleContext();
 
 	}
+
 	private void showLeftArrow() {
 		mLeftArrow.setVisibility(View.VISIBLE);
 	}
@@ -659,6 +663,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private void showRightArrow() {
 		mRightArrow.setVisibility(View.VISIBLE);
 	}
+
 	private void disableLeftArrow() {
 		mLeftArrow.setVisibility(View.GONE);
 	}
@@ -666,83 +671,84 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private void disableRightArrow() {
 		mRightArrow.setVisibility(View.GONE);
 	}
+
 	public ArrayList<String> getAisleWindowImgList() {
 		return mAisleDetailsAdapter.getImageList();
 	}
 
 	private void upDatePageDots(int currentPosition, String direction) {
 
-        mHighlightPosition = currentPosition % 10;
-        hightLightCurrentPage(mHighlightPosition);
-        mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
-        if (mTotalPageCount > DOT_MAX_COUUNT) {
+		mHighlightPosition = currentPosition % 10;
+		hightLightCurrentPage(mHighlightPosition);
+		mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
+		if (mTotalPageCount > DOT_MAX_COUUNT) {
 
-            if (currentPosition < DOT_MAX_COUUNT) {
+			if (currentPosition < DOT_MAX_COUUNT) {
 
-                mDotsCount = DOT_MAX_COUUNT;
-                showDots(mDotsCount);
-                disableLeftArrow();
-                showRightArrow();
+				mDotsCount = DOT_MAX_COUUNT;
+				showDots(mDotsCount);
+				disableLeftArrow();
+				showRightArrow();
 
-            } else {
-                showLeftArrow();
-                int remainingDots = mTotalPageCount - currentPosition;
-                if (currentPosition % 10 == 0) {
-                    if (remainingDots > DOT_MAX_COUUNT) {
-                        showRightArrow();
-                        showDots(DOT_MAX_COUUNT);
-                    } else {
-                        disableRightArrow();
-                        if (remainingDots == 0) {
-                            showDots(1);
-                        } else {
-                            showDots(remainingDots);
-                        }
-                    }
-                } else {
-                    // Swiping from left to right...
-                    if (direction.equalsIgnoreCase(SWIPE_LEFT_TO_RIGHT)) {
-                        if (mRightArrow.getVisibility() == View.VISIBLE) {
-                            showRightArrow();
-                            showDots(DOT_MAX_COUUNT);
-                        } else {
-                            disableRightArrow();
-                            if (mTotalPageCount % 10 == 0) {
-                                showDots(10);
-                            } else {
-                                showDots(mTotalPageCount % 10);
-                            }
-                        }
-                    } else if (direction.equalsIgnoreCase(SWIPE_RIGHT_TO_LEFT)) { 
-                        if ((currentPosition + 1) % 10 == 0) {
-                            showDots(DOT_MAX_COUUNT);
-                            if (remainingDots > 1) {
-                                showRightArrow();
-                            }
-                        } else {
-                            if (mRightArrow.getVisibility() == View.VISIBLE) {
-                                showRightArrow();
-                                showDots(DOT_MAX_COUUNT);
-                            } else {
-                                disableRightArrow();
-                                if (mTotalPageCount % 10 == 0) {
-                                    showDots(10);
-                                } else {
-                                    showDots(mTotalPageCount % 10);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+			} else {
+				showLeftArrow();
+				int remainingDots = mTotalPageCount - currentPosition;
+				if (currentPosition % 10 == 0) {
+					if (remainingDots > DOT_MAX_COUUNT) {
+						showRightArrow();
+						showDots(DOT_MAX_COUUNT);
+					} else {
+						disableRightArrow();
+						if (remainingDots == 0) {
+							showDots(1);
+						} else {
+							showDots(remainingDots);
+						}
+					}
+				} else {
+					// Swiping from left to right...
+					if (direction.equalsIgnoreCase(SWIPE_LEFT_TO_RIGHT)) {
+						if (mRightArrow.getVisibility() == View.VISIBLE) {
+							showRightArrow();
+							showDots(DOT_MAX_COUUNT);
+						} else {
+							disableRightArrow();
+							if (mTotalPageCount % 10 == 0) {
+								showDots(10);
+							} else {
+								showDots(mTotalPageCount % 10);
+							}
+						}
+					} else if (direction.equalsIgnoreCase(SWIPE_RIGHT_TO_LEFT)) {
+						if ((currentPosition + 1) % 10 == 0) {
+							showDots(DOT_MAX_COUUNT);
+							if (remainingDots > 1) {
+								showRightArrow();
+							}
+						} else {
+							if (mRightArrow.getVisibility() == View.VISIBLE) {
+								showRightArrow();
+								showDots(DOT_MAX_COUUNT);
+							} else {
+								disableRightArrow();
+								if (mTotalPageCount % 10 == 0) {
+									showDots(10);
+								} else {
+									showDots(mTotalPageCount % 10);
+								}
+							}
+						}
+					}
+				}
+			}
 
-        } else {
-            disableLeftArrow();
-            disableRightArrow();
-            showDots(mTotalPageCount);
-        }
+		} else {
+			disableLeftArrow();
+			disableRightArrow();
+			showDots(mTotalPageCount);
+		}
 
-    }
+	}
 
 	private void hightLightCurrentPage(int position) {
 		if (position == 0) {

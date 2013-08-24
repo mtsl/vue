@@ -62,6 +62,7 @@ public class VueLandingPageActivity extends BaseActivity {
 								.getInstance()
 								.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
 										false);
+						intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 						startActivity(intent);
 					}
 				});

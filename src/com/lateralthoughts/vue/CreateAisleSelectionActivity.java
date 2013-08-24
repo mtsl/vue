@@ -3,6 +3,9 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -56,13 +59,17 @@ public class CreateAisleSelectionActivity extends Activity {
 	private String mCameraImageName = null;
 	private boolean mGalleryClickedFlag = false, mCameraClickedFlag = false,
 			mTopRightClickedFlag = false, mBottomRightClickedFlag = false,
-			mMoreClickedFlag = false;
-	private static final int BOX_ANIMATION_DURATION = 600;
-	private static final int CIRCLE_ANIMATION_DURATION = 1000;
-	private static final float ZOOM_START_POSITION = 0f;
-	private static final float ZOOM_END_POSITION = 1f;
-	private static final float CIRCLE_SELECTION_START_POSITION = 20f;
-	private static final float CIRCLE_SELECTION_END_POSITION = 0f;
+			mMoreClickedFlag = false,
+			mIsTopToBottomAnimationStartedFlag = false,
+			mIsBottomToTopAnimationStartedFlag = false,
+			mIsBottomTopToBottomAnimationStartedFlag = false,
+			mIsBottomBottomToTopAnimationStartedFlag = false;
+	private final int BOX_ANIMATION_DURATION = 600;
+	private final int CIRCLE_ANIMATION_DURATION = 1000;
+	private final float ZOOM_START_POSITION = 0f;
+	private final float ZOOM_END_POSITION = 1f;
+	private final float CIRCLE_SELECTION_START_POSITION = 20f;
+	private final float CIRCLE_SELECTION_END_POSITION = 0f;
 	private static final String GALLERY_ALERT_MESSAGE = "Select Picture";
 	private static final String CAMERA_INTENT_NAME = "android.media.action.IMAGE_CAPTURE";
 	private ArrayList<ShoppingApplicationDetails> mDataEntryShoppingApplicationsList;
@@ -230,6 +237,28 @@ public class CreateAisleSelectionActivity extends Activity {
 					mCircleAnimation.start();
 				}
 			});
+			mCircleAnimation.addListener(new AnimatorListener() {
+
+				@Override
+				public void onAnimationStart(Animator animation) {
+
+				}
+
+				@Override
+				public void onAnimationRepeat(Animator animation) {
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					mIsTopToBottomAnimationStartedFlag = false;
+				}
+
+				@Override
+				public void onAnimationCancel(Animator animation) {
+
+				}
+			});
 			mBottomToTopAnimation.setAnimationListener(new AnimationListener() {
 
 				@Override
@@ -282,13 +311,17 @@ public class CreateAisleSelectionActivity extends Activity {
 			mBottomRightGreenCircle.setVisibility(View.GONE);
 			mBoxWithCircleLayout.setVisibility(View.GONE);
 			mBoxWithCircleLayout.setVisibility(View.VISIBLE);
-			mBoxWithCircleLayout.startAnimation(mTopToBottomAnimation);
+			if (!mIsTopToBottomAnimationStartedFlag) {
+				mIsTopToBottomAnimationStartedFlag = true;
+				mBoxWithCircleLayout.startAnimation(mTopToBottomAnimation);
+			}
 			// Gallery
 			mTopLeftGreenCircle.setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mDataEntryMoreTopListLayout.setVisibility(View.GONE);
 						mGalleryClickedFlag = true;
 						mTopLeftGreenCircle.startAnimation(mBounceAnimation);
 						return false;
@@ -316,6 +349,7 @@ public class CreateAisleSelectionActivity extends Activity {
 				@Override
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mDataEntryMoreTopListLayout.setVisibility(View.GONE);
 						mBottomRightClickedFlag = true;
 						mBottomRightGreenCircle
 								.startAnimation(mBounceAnimation);
@@ -330,6 +364,7 @@ public class CreateAisleSelectionActivity extends Activity {
 				@Override
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mDataEntryMoreTopListLayout.setVisibility(View.GONE);
 						mTopRightClickedFlag = true;
 						mTopRightGreenCircle.startAnimation(mBounceAnimation);
 						return false;
@@ -343,6 +378,7 @@ public class CreateAisleSelectionActivity extends Activity {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mDataEntryMoreTopListLayout.setVisibility(View.GONE);
 						mCameraClickedFlag = true;
 						mBottomLeftGreenCircle.startAnimation(mBounceAnimation);
 						return false;
@@ -376,8 +412,14 @@ public class CreateAisleSelectionActivity extends Activity {
 							|| mMoreClickedFlag) {
 						// don't do anything...
 					} else {
-						mBoxWithCircleLayout
-								.startAnimation(mBottomToTopAnimation);
+						if (!mIsTopToBottomAnimationStartedFlag
+								&& !mIsBottomToTopAnimationStartedFlag) {
+							mDataEntryMoreTopListLayout
+									.setVisibility(View.GONE);
+							mIsBottomToTopAnimationStartedFlag = true;
+							mBoxWithCircleLayout
+									.startAnimation(mBottomToTopAnimation);
+						}
 					}
 				}
 			});
@@ -547,6 +589,28 @@ public class CreateAisleSelectionActivity extends Activity {
 							mBottomCircleAnimation.start();
 						}
 					});
+			mBottomCircleAnimation.addListener(new AnimatorListener() {
+
+				@Override
+				public void onAnimationStart(Animator animation) {
+
+				}
+
+				@Override
+				public void onAnimationRepeat(Animator animation) {
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					mIsBottomTopToBottomAnimationStartedFlag = false;
+				}
+
+				@Override
+				public void onAnimationCancel(Animator animation) {
+
+				}
+			});
 			mBottomBottomToTopAnimation
 					.setAnimationListener(new AnimationListener() {
 
@@ -604,14 +668,18 @@ public class CreateAisleSelectionActivity extends Activity {
 			mBottomBottomLeftGreenCircle.setVisibility(View.GONE);
 			mBottomBottomRightGreenCircle.setVisibility(View.GONE);
 			mBottomBoxWithCircleLayout.setVisibility(View.VISIBLE);
-			mBottomBoxWithCircleLayout
-					.startAnimation(mBottomTopToBottomAnimation);
+			if (!mIsBottomTopToBottomAnimationStartedFlag) {
+				mIsBottomTopToBottomAnimationStartedFlag = true;
+				mBottomBoxWithCircleLayout
+						.startAnimation(mBottomTopToBottomAnimation);
+			}
 			// Gallery
 			mBottomTopLeftGreenCircle.setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						mDataEntryMoreBottomListLayout.setVisibility(View.GONE);
 						mGalleryClickedFlag = true;
 						mBottomTopLeftGreenCircle
 								.startAnimation(mBounceAnimation);
@@ -640,6 +708,8 @@ public class CreateAisleSelectionActivity extends Activity {
 						@Override
 						public boolean onTouch(View arg0, MotionEvent event) {
 							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								mDataEntryMoreBottomListLayout
+										.setVisibility(View.GONE);
 								mBottomRightClickedFlag = true;
 								mBottomBottomRightGreenCircle
 										.startAnimation(mBounceAnimation);
@@ -655,6 +725,8 @@ public class CreateAisleSelectionActivity extends Activity {
 						@Override
 						public boolean onTouch(View arg0, MotionEvent event) {
 							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								mDataEntryMoreBottomListLayout
+										.setVisibility(View.GONE);
 								mTopRightClickedFlag = true;
 								mBottomTopRightGreenCircle
 										.startAnimation(mBounceAnimation);
@@ -670,6 +742,8 @@ public class CreateAisleSelectionActivity extends Activity {
 						@Override
 						public boolean onTouch(View v, MotionEvent event) {
 							if (event.getAction() == MotionEvent.ACTION_DOWN) {
+								mDataEntryMoreBottomListLayout
+										.setVisibility(View.GONE);
 								mCameraClickedFlag = true;
 								mBottomBottomLeftGreenCircle
 										.startAnimation(mBounceAnimation);
@@ -703,8 +777,14 @@ public class CreateAisleSelectionActivity extends Activity {
 							|| mMoreClickedFlag) {
 						// don't do anything...
 					} else {
-						mBottomBoxWithCircleLayout
-								.startAnimation(mBottomBottomToTopAnimation);
+						if (!mIsBottomTopToBottomAnimationStartedFlag
+								&& !mIsBottomBottomToTopAnimationStartedFlag) {
+							mDataEntryMoreBottomListLayout
+									.setVisibility(View.GONE);
+							mIsBottomBottomToTopAnimationStartedFlag = true;
+							mBottomBoxWithCircleLayout
+									.startAnimation(mBottomBottomToTopAnimation);
+						}
 					}
 				}
 			});
@@ -741,6 +821,7 @@ public class CreateAisleSelectionActivity extends Activity {
 					Toast.LENGTH_LONG).show();
 			finish();
 		}
+		mMoreClickedFlag = false;
 	}
 
 	private void loadShoppingApplication(String activityName, String packageName) {
@@ -918,10 +999,20 @@ public class CreateAisleSelectionActivity extends Activity {
 			mTopRightClickedFlag = false;
 			mBottomRightClickedFlag = false;
 			if (!mFromDetailsScreenFlag) {
-				mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation);
+				if (!mIsTopToBottomAnimationStartedFlag
+						&& !mIsBottomToTopAnimationStartedFlag) {
+					mDataEntryMoreTopListLayout.setVisibility(View.GONE);
+					mIsBottomToTopAnimationStartedFlag = true;
+					mBoxWithCircleLayout.startAnimation(mBottomToTopAnimation);
+				}
 			} else {
-				mBottomBoxWithCircleLayout
-						.startAnimation(mBottomBottomToTopAnimation);
+				if (!mIsBottomTopToBottomAnimationStartedFlag
+						&& !mIsBottomBottomToTopAnimationStartedFlag) {
+					mDataEntryMoreBottomListLayout.setVisibility(View.GONE);
+					mIsBottomBottomToTopAnimationStartedFlag = true;
+					mBottomBoxWithCircleLayout
+							.startAnimation(mBottomBottomToTopAnimation);
+				}
 			}
 		}
 		return false;
