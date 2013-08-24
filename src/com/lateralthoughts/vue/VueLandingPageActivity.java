@@ -31,7 +31,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 	VueLandingAislesFragment fragment;
-	private TextView mVueLandingActionbarScreenName;
+	public TextView mVueLandingActionbarScreenName;
 	private LinearLayout mVueLandingActionbarRightLayout;
 	private View mVueLandingActionbarView;
 
@@ -306,6 +306,12 @@ public class VueLandingPageActivity extends BaseActivity {
 		} else {
 			// Handle other intents, such as being started from the home screen
 		}
+	}
+	
+	public void showCategory(String catName){
+	 mVueLandingActionbarScreenName
+		.setText(catName);
+		 
 	}
 
 }

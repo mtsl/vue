@@ -154,8 +154,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 					if (getActivity() instanceof SlidingFragmentActivity) {
 						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
 						activity.getSlidingMenu().toggle();
-						activity.getSupportActionBar().setTitle(
-								getString(R.string.sidemenu_option_My_Aisles));
+						if (getActivity() instanceof VueLandingPageActivity) {
+							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+							vueLandingPageActivity.mVueLandingActionbarScreenName
+									.setText(
+											getString(R.string.sidemenu_option_My_Aisles));
+						}
 						if (getActivity() instanceof AisleDetailsViewActivity) {
 							startActivity(new Intent(
 									(AisleDetailsViewActivity) getActivity(),
@@ -189,8 +193,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 					if (getActivity() instanceof SlidingFragmentActivity) {
 						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
 						activity.getSlidingMenu().toggle();
-						activity.getSupportActionBar().setTitle(
-								getString(R.string.trending));
+						if (getActivity() instanceof VueLandingPageActivity) {
+							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+							vueLandingPageActivity.mVueLandingActionbarScreenName
+									.setText(
+											getString(R.string.trending));
+						}
 						if (getActivity() instanceof AisleDetailsViewActivity) {
 							startActivity(new Intent(
 									(AisleDetailsViewActivity) getActivity(),
@@ -299,17 +307,23 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 					if (getActivity() instanceof SlidingFragmentActivity) {
 						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
 						activity.getSlidingMenu().toggle();
-						activity.getSupportActionBar().setTitle(cat);
-						
+						if (getActivity() instanceof VueLandingPageActivity) {
+							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+							vueLandingPageActivity.showCategory(cat);
+						}
+
 						VueTrendingAislesDataModel model = VueTrendingAislesDataModel
 								.getInstance(getActivity());
 						model.clearAisles();
 						AisleWindowContentFactory.getInstance(getActivity())
 								.clearObjectsInUse();
-						
-						ScaledImageViewFactory mImageViewFactory = ScaledImageViewFactory.getInstance(getActivity());
-						mImageViewFactory.clearAllImageViews();
-						
+
+						/*
+						 * ScaledImageViewFactory mImageViewFactory =
+						 * ScaledImageViewFactory.getInstance(getActivity());
+						 * mImageViewFactory.clearAllImageViews();
+						 */
+
 						if (getActivity() instanceof AisleDetailsViewActivity) {
 							startActivity(new Intent(
 									(AisleDetailsViewActivity) getActivity(),

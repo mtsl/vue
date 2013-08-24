@@ -252,5 +252,9 @@ public void notifyAdapters() {
 			return mIsFlingCalled;
 		}
     }
+    public void resetAdaptersContent(){
+    	
+    	
+    }
 
 }
