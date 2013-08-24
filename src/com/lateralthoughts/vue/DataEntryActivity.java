@@ -1,7 +1,6 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
-import com.actionbarsherlock.view.MenuItem;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +26,8 @@ public class DataEntryActivity extends BaseActivity {
 			mVueDataentryActionbarCreateAisleIconLayout,
 			mVueDataentryActionbarShareIconLayout,
 			mVueDataentryActionbarEditIconLayout,
-			mVueDataentryActionbarAddImageIconLayout;
+			mVueDataentryActionbarAddImageIconLayout,
+			mVueDataentryActionbarAppIconLayout;
 	public LinearLayout mVueDataentryActionbarTopLayout,
 			mVueDataentryActionbarBottomLayout;
 	private View mVueDataentryActionbarView;
@@ -55,11 +55,20 @@ public class DataEntryActivity extends BaseActivity {
 				.findViewById(R.id.vue_dataentry_actionbar_top_layout);
 		mVueDataentryActionbarBottomLayout = (LinearLayout) mVueDataentryActionbarView
 				.findViewById(R.id.vue_dataentry_actionbar_bottom_layout);
+		mVueDataentryActionbarAppIconLayout = (RelativeLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_app_icon_layout);
 		mVueDataentryActionbarScreenName.setText(getResources().getString(
 				R.string.create_aisle_screen_title));
 		getSupportActionBar().setCustomView(mVueDataentryActionbarView);
 		getSupportActionBar().setDisplayShowCustomEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		mVueDataentryActionbarAppIconLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						getSlidingMenu().toggle();
+					}
+				});
 		mVueDataentryActionbarAddImageIconLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
@@ -205,16 +214,6 @@ public class DataEntryActivity extends BaseActivity {
 				}
 			}
 		}
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			getSlidingMenu().toggle();
-			break;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

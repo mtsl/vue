@@ -16,9 +16,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.actionbarsherlock.view.MenuItem;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
@@ -34,6 +34,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	public TextView mVueLandingActionbarScreenName;
 	private LinearLayout mVueLandingActionbarRightLayout;
 	private View mVueLandingActionbarView;
+	private RelativeLayout mVueLandingActionbarAppIconLayout;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -46,11 +47,13 @@ public class VueLandingPageActivity extends BaseActivity {
 				.findViewById(R.id.vue_landing_actionbar_screen_name);
 		mVueLandingActionbarRightLayout = (LinearLayout) mVueLandingActionbarView
 				.findViewById(R.id.vue_landing_actionbar_right_layout);
+		mVueLandingActionbarAppIconLayout = (RelativeLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_actionbar_app_icon_layout);
 		mVueLandingActionbarScreenName.setText(getResources().getString(
 				R.string.trending));
 		getSupportActionBar().setCustomView(mVueLandingActionbarView);
 		getSupportActionBar().setDisplayShowCustomEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
 		mVueLandingActionbarRightLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
@@ -62,6 +65,13 @@ public class VueLandingPageActivity extends BaseActivity {
 								.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
 										false);
 						startActivity(intent);
+					}
+				});
+		mVueLandingActionbarAppIconLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						getSlidingMenu().toggle();
 					}
 				});
 		// Checking wheather app is opens for first time or not?
@@ -205,18 +215,6 @@ public class VueLandingPageActivity extends BaseActivity {
 				startActivity(i);
 			}
 			// Update UI to reflect multiple images being shared
-		}
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			getSlidingMenu().toggle();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
 		}
 	}
 

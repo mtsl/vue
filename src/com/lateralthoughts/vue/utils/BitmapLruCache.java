@@ -22,7 +22,7 @@ public class BitmapLruCache extends LruCache<String, Bitmap> implements ImageCac
 		   mBitmapLruCache = new BitmapLruCache(cacheSize); 
 	   }
 	return mBitmapLruCache;
-	   
+
    }
     @SuppressLint("NewApi")
     @Override

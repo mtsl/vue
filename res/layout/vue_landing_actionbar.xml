@@ -3,13 +3,26 @@
     android:layout_width="fill_parent"
     android:layout_height="48dip" >
 
+    <RelativeLayout
+        android:id="@+id/vue_landing_actionbar_app_icon_layout"
+        android:layout_width="48dip"
+        android:layout_height="fill_parent" >
+
+        <ImageView
+            android:id="@+id/vue_landing_actionbar_app_icon"
+            android:layout_width="36dip"
+            android:layout_height="36dip"
+            android:layout_centerInParent="true"
+            android:src="@drawable/vue_launcher_icon" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/vue_landing_actionbar_screen_name"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:gravity="center_vertical"
-        android:paddingLeft="6dip"
         android:paddingRight="6dip"
+        android:layout_toRightOf="@+id/vue_landing_actionbar_app_icon_layout"
         android:text="@string/app_name"
         android:textColor="@color/black"
         android:textSize="18dip" />

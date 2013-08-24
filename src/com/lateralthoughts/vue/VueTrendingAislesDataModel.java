@@ -423,6 +423,19 @@ public class VueTrendingAislesDataModel {
     threadPool.execute(task);
   }
  
+  public void displayCategoryAisles(String category) {
+    clearAisles();
+    ArrayList<AisleWindowContent> aisleWindowList = mDbManager.getAislesByCategory(category);
+    for (AisleWindowContent content : aisleWindowList) {
+      AisleWindowContent aisleItem = getAisleItem(content.getAisleId());
+      aisleItem.addAisleContent(content.getAisleContext(),
+          content.getImageList());
+    }
+    for (IAisleDataObserver observer : mAisleDataObserver) {
+      observer.onAisleDataUpdated(mAisleContentList.size());
+    }
+  }
+  
 /*  protected abstract class VueHandler  {
     public abstract void handleMessage(android.os.Message msg);
     
