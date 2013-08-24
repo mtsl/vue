@@ -73,9 +73,12 @@ public class CreateAisleSelectionActivity extends Activity {
 	private static final String GALLERY_ALERT_MESSAGE = "Select Picture";
 	private static final String CAMERA_INTENT_NAME = "android.media.action.IMAGE_CAPTURE";
 	private ArrayList<ShoppingApplicationDetails> mDataEntryShoppingApplicationsList;
+	public static boolean isActivityShowing = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.e("CreateAisleSelectionActivity", "23neem onCreate called");
+		isActivityShowing = true;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_asilse_selection);
 		Bundle b = getIntent().getExtras();
@@ -771,10 +774,9 @@ public class CreateAisleSelectionActivity extends Activity {
 				@Override
 				public void onClick(View arg0) {
 					if (mGalleryClickedFlag || mCameraClickedFlag
-							|| mTopRightClickedFlag || mBottomRightClickedFlag
-							) {
+							|| mTopRightClickedFlag || mBottomRightClickedFlag) {
 						// don't do anything...
-					}  else if (mMoreClickedFlag) {
+					} else if (mMoreClickedFlag) {
 						moreClickFunctionality();
 					} else {
 						if (!mIsBottomTopToBottomAnimationStartedFlag
@@ -822,6 +824,13 @@ public class CreateAisleSelectionActivity extends Activity {
 			finish();
 		}
 		mMoreClickedFlag = false;
+	}
+
+	@Override
+	protected void onDestroy() {
+		Log.e("CreateAisleSelectionActivity", "23neem onDestroye called");
+		super.onDestroy();
+		isActivityShowing = false;
 	}
 
 	private void loadShoppingApplication(String activityName, String packageName) {

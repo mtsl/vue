@@ -831,8 +831,11 @@ public class DataEntryFragment extends Fragment {
 		Bundle b = new Bundle();
 		b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
 		intent.putExtras(b);
-		getActivity().startActivityForResult(intent,
-				VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
+		if (!CreateAisleSelectionActivity.isActivityShowing) {
+			CreateAisleSelectionActivity.isActivityShowing = true;
+			getActivity().startActivityForResult(intent,
+					VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
+		}
 	}
 
 	public void createAisleClickFunctionality() {
@@ -964,9 +967,11 @@ public class DataEntryFragment extends Fragment {
 		Bundle b = new Bundle();
 		b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
 		intent.putExtras(b);
-		getActivity().startActivityForResult(intent,
-				VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
-
+		if (!CreateAisleSelectionActivity.isActivityShowing) {
+			CreateAisleSelectionActivity.isActivityShowing = true;
+			getActivity().startActivityForResult(intent,
+					VueConstants.CREATE_AILSE_ACTIVITY_RESULT);
+		}
 	}
 
 	private void showAlertForEditPermission(final String sourceName) {
