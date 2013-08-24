@@ -275,7 +275,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			VueApplication.getInstance()
 					.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
 							false);
-			startActivity(intent);
+			if (!CreateAisleSelectionActivity.isActivityShowing) {
+				CreateAisleSelectionActivity.isActivityShowing = true;
+				startActivity(intent);
+			}
 			return true;
 		case android.R.id.home:
 			getSlidingMenu().toggle();
@@ -664,9 +667,11 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				findAt);
 		intent.putExtras(b1);
 		Log.e("Land", "vueland 5");
-		this.startActivityForResult(
-				intent,
-				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT);
+		if (!CreateAisleSelectionActivity.isActivityShowing) {
+			this.startActivityForResult(
+					intent,
+					VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT);
+		}
 	}
 
 	/*

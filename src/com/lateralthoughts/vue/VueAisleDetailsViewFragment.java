@@ -191,10 +191,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
 						true);
 				intent.putExtras(b);
-				getActivity()
-						.startActivityForResult(
-								intent,
-								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
+				if (!CreateAisleSelectionActivity.isActivityShowing) {
+					CreateAisleSelectionActivity.isActivityShowing = true;
+					getActivity()
+							.startActivityForResult(
+									intent,
+									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
+				}
 			}
 		});
 		RelativeLayout bottomBar = (RelativeLayout) mDetailsContentView
