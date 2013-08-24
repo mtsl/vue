@@ -74,6 +74,7 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
     
     @Override
     public int getCount(){
+    	
         return mVueTrendingAislesDataModel.getAisleCount()/2;
     }
 

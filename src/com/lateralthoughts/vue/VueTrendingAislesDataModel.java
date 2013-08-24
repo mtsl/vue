@@ -323,7 +323,10 @@ public class VueTrendingAislesDataModel {
 
   public int getAisleCount() {
     if (null != mAisleContentList) {
+    	Log.i("mAisleContentList", " mAisleContentList size is:  "+mAisleContentList.size());
       return mAisleContentList.size();
+    } else {
+    	 Log.i("mAisleContentList", " mAisleContentList is null returining 0");
     }
     return 0;
   }
@@ -430,10 +433,13 @@ public class VueTrendingAislesDataModel {
       AisleWindowContent aisleItem = getAisleItem(content.getAisleId());
       aisleItem.addAisleContent(content.getAisleContext(),
           content.getImageList());
+      getAisleItem(content.getAisleId());
     }
     for (IAisleDataObserver observer : mAisleDataObserver) {
       observer.onAisleDataUpdated(mAisleContentList.size());
     }
+    Log.i("mAisleContentList", "mAisleContentList ################aisleWindowList size: "+aisleWindowList.size());
+    Log.i("mAisleContentList", "mAisleContentList size: "+mAisleContentList.size());
   }
   
 /*  protected abstract class VueHandler  {

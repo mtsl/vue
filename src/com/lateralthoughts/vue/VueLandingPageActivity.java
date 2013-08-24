@@ -20,6 +20,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
+import com.lateralthoughts.vue.ui.StackViews;
+import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -225,6 +227,11 @@ public class VueLandingPageActivity extends BaseActivity {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
+			} else if(StackViews.getInstance().getStackCount() > 0){
+				ViewInfo viewInfo = StackViews.getInstance().pull(); 
+				mVueLandingActionbarScreenName
+				.setText(viewInfo.mVueName);
+			 VueTrendingAislesDataModel.getInstance(this).displayCategoryAisles(viewInfo.mVueName);
 			} else {
 				FileCache fileCache = new FileCache(
 						VueApplication.getInstance());
@@ -309,6 +316,11 @@ public class VueLandingPageActivity extends BaseActivity {
 	public void showCategory(String catName){
 	 mVueLandingActionbarScreenName
 		.setText(catName);
+	 VueTrendingAislesDataModel.getInstance(this).displayCategoryAisles(catName);
+	 ViewInfo viewInfo = new ViewInfo();
+	 viewInfo.mVueName = catName;
+	 viewInfo.position = 0;
+	 StackViews.getInstance().push(viewInfo);
 		 
 	}
 
