@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.FacebookException;
 import com.facebook.Request;
@@ -48,6 +49,8 @@ import com.facebook.internal.SessionTracker;
 import com.facebook.internal.Utility;
 import com.facebook.model.GraphUser;
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueLoginActivity;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 
 /**
  * A Log In/Log Out button that maintains session state and logs in/out for the
@@ -652,89 +655,88 @@ public class LoginButton extends Button {
 
 		@Override
 		public void onClick(View v) {
-			// NotifiShowAlert notifyInstance =
-			// SingletonFb.getSingleInstance().getNotifyAlertInstance();
-			/*
-			 * if (!notifyInstance.checkConnection()) {
-			 * 
-			 * if (notifyInstance.checkAnyNetConection()) {
-			 * showAlertToChangeLocalSettings(getResources().getString(
-			 * R.string.switchtotwog)); } else { notifyInstance.callShowAlert();
-			 * } } else {
-			 */
-			Context context = getContext();
-			final Session openSession = sessionTracker.getOpenSession();
-			if (openSession != null) {
-				// If the Session is currently open, it must mean we need to log
-				// out
-				if (confirmLogout) {
-					// Create a confirmation dialog
-					String logout = getResources().getString(
-							R.string.com_facebook_loginview_log_out_action);
-					String cancel = getResources().getString(
-							R.string.com_facebook_loginview_cancel_action);
-					String message;
-					if (user != null && user.getName() != null) {
-						message = String
-								.format(getResources()
-										.getString(
-												R.string.com_facebook_loginview_logged_in_as),
-										user.getName());
-					} else {
-						message = getResources()
-								.getString(
-										R.string.com_facebook_loginview_logged_in_using_facebook);
-					}
-					AlertDialog.Builder builder = new AlertDialog.Builder(
-							context);
-					builder.setMessage(message)
-							.setCancelable(true)
-							.setPositiveButton(logout,
-									new DialogInterface.OnClickListener() {
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											openSession
-													.closeAndClearTokenInformation();
-										}
-									}).setNegativeButton(cancel, null);
-					builder.create().show();
-				} else {
-					openSession.closeAndClearTokenInformation();
-				}
-			} else {
-				Session currentSession = sessionTracker.getSession();
-				if (currentSession == null
-						|| currentSession.getState().isClosed()) {
-					sessionTracker.setSession(null);
-					Session session = new Session.Builder(context)
-							.setApplicationId(applicationId).build();
-					Session.setActiveSession(session);
-					currentSession = session;
-				}
-				if (!currentSession.isOpened()) {
-					Session.OpenRequest openRequest = null;
-					if (parentFragment != null) {
-						openRequest = new Session.OpenRequest(parentFragment);
-					} else if (context instanceof Activity) {
-						openRequest = new Session.OpenRequest(
-								(Activity) context);
-					}
-
-					if (openRequest != null) {
-						openRequest
-								.setDefaultAudience(properties.defaultAudience);
-						openRequest.setPermissions(properties.permissions);
-						openRequest.setLoginBehavior(properties.loginBehavior);
-
-						if (SessionAuthorizationType.PUBLISH
-								.equals(properties.authorizationType)) {
-							currentSession.openForPublish(openRequest);
+			if (VueConnectivityManager.isNetworkConnected(getContext())) {
+				Context context = getContext();
+				final Session openSession = sessionTracker.getOpenSession();
+				if (openSession != null) {
+					// If the Session is currently open, it must mean we need to
+					// log
+					// out
+					if (confirmLogout) {
+						// Create a confirmation dialog
+						String logout = getResources().getString(
+								R.string.com_facebook_loginview_log_out_action);
+						String cancel = getResources().getString(
+								R.string.com_facebook_loginview_cancel_action);
+						String message;
+						if (user != null && user.getName() != null) {
+							message = String
+									.format(getResources()
+											.getString(
+													R.string.com_facebook_loginview_logged_in_as),
+											user.getName());
 						} else {
-							currentSession.openForRead(openRequest);
+							message = getResources()
+									.getString(
+											R.string.com_facebook_loginview_logged_in_using_facebook);
+						}
+						AlertDialog.Builder builder = new AlertDialog.Builder(
+								context);
+						builder.setMessage(message)
+								.setCancelable(true)
+								.setPositiveButton(logout,
+										new DialogInterface.OnClickListener() {
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+												openSession
+														.closeAndClearTokenInformation();
+											}
+										}).setNegativeButton(cancel, null);
+						builder.create().show();
+					} else {
+						openSession.closeAndClearTokenInformation();
+					}
+				} else {
+					Session currentSession = sessionTracker.getSession();
+					if (currentSession == null
+							|| currentSession.getState().isClosed()) {
+						sessionTracker.setSession(null);
+						Session session = new Session.Builder(context)
+								.setApplicationId(applicationId).build();
+						Session.setActiveSession(session);
+						currentSession = session;
+					}
+					if (!currentSession.isOpened()) {
+						Session.OpenRequest openRequest = null;
+						if (parentFragment != null) {
+							openRequest = new Session.OpenRequest(
+									parentFragment);
+						} else if (context instanceof Activity) {
+							openRequest = new Session.OpenRequest(
+									(Activity) context);
+						}
+
+						if (openRequest != null) {
+							openRequest
+									.setDefaultAudience(properties.defaultAudience);
+							openRequest.setPermissions(properties.permissions);
+							openRequest
+									.setLoginBehavior(properties.loginBehavior);
+
+							if (SessionAuthorizationType.PUBLISH
+									.equals(properties.authorizationType)) {
+								currentSession.openForPublish(openRequest);
+							} else {
+								currentSession.openForRead(openRequest);
+							}
 						}
 					}
 				}
+			} else {
+				Toast.makeText(getContext(),
+						getResources().getString(R.string.no_network),
+						Toast.LENGTH_LONG).show();
 			}
 		}
 		// }

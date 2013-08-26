@@ -65,6 +65,7 @@ import com.googleplus.MomentUtil;
 import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
@@ -247,13 +248,22 @@ public class VueLoginActivity extends FragmentActivity implements
 						.setOnClickListener(new OnClickListener() {
 							@Override
 							public void onClick(View arg0) {
-								mSocialIntegrationMainLayout
-										.setVisibility(View.GONE);
-								mGoogleplusLoggedinDialogFlag = true;
-								if (mFromGoogleplusInvitefriends)
-									mGooglePlusProgressDialog.show();
-								mSignInFragment
-										.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
+								if (VueConnectivityManager
+										.isNetworkConnected(VueLoginActivity.this)) {
+									mSocialIntegrationMainLayout
+											.setVisibility(View.GONE);
+									mGoogleplusLoggedinDialogFlag = true;
+									if (mFromGoogleplusInvitefriends)
+										mGooglePlusProgressDialog.show();
+									mSignInFragment
+											.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
+								} else {
+									Toast.makeText(
+											VueLoginActivity.this,
+											getResources().getString(
+													R.string.no_network),
+											Toast.LENGTH_LONG).show();
+								}
 							}
 						});
 				login_button.setReadPermissions(READ_PERMISSIONS);
