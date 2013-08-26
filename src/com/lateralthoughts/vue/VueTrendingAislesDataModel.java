@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 //android imports
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -31,6 +32,7 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.connectivity.VueBatteryManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.ui.NotifyProgress;
 
 public class VueTrendingAislesDataModel {
 
@@ -61,6 +63,7 @@ public class VueTrendingAislesDataModel {
   private static final String IMAGE_HEIGHT_TAG = "height";
   private static final String IMAGE_WIDTH_TAG = "width";
   private ArrayList<AisleWindowContent> mAisleContentList;
+  NotifyProgress mNotifyProgress;
   private HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
 
   // private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
@@ -313,9 +316,8 @@ public class VueTrendingAislesDataModel {
         }
       } else {
         aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
+        
       }
-      Log.i("stacked views", "stacked views null check aisleItem: "+aisleItem);
-      Log.i("stacked views", "stacked views null check aisleId: "+aisleId);
       aisleItem.setAisleId(aisleId);
       mAisleContentListMap.put(aisleId, aisleItem);
       mAisleContentList.add(aisleItem);
@@ -376,7 +378,6 @@ public class VueTrendingAislesDataModel {
       isDownloadFail = true;
       ArrayList<AisleWindowContent> aisleContentArray = mDbManager.getAislesFromDB(null);
       if(aisleContentArray.size() == 0) {
-        Log.e("Profiling", "Profiling aisleContentArray.size() : " + aisleContentArray.size());
         return;
       }
       Message msg = new Message();
@@ -428,20 +429,10 @@ public class VueTrendingAislesDataModel {
     threadPool.execute(task);
   }
  
-  public void displayCategoryAisles(String category) {
-    clearAisles();
-    ArrayList<AisleWindowContent> aisleWindowList = mDbManager.getAislesByCategory(category);
-    for (AisleWindowContent content : aisleWindowList) {
-      AisleWindowContent aisleItem = getAisleItem(content.getAisleId());
-      aisleItem.addAisleContent(content.getAisleContext(),
-          content.getImageList());
-      getAisleItem(content.getAisleId());
-    }
-    for (IAisleDataObserver observer : mAisleDataObserver) {
-      observer.onAisleDataUpdated(mAisleContentList.size());
-    }
-    Log.i("mAisleContentList", "mAisleContentList ################aisleWindowList size: "+aisleWindowList.size());
-    Log.i("mAisleContentList", "mAisleContentList size: "+mAisleContentList.size());
+  public void displayCategoryAisles(String category,NotifyProgress  progress) {
+	  mNotifyProgress = progress;
+	  DbDataGetter dBgetter = new DbDataGetter();
+	  dBgetter.execute(category);
   }
   
 /*  protected abstract class VueHandler  {
@@ -474,5 +465,36 @@ public class VueTrendingAislesDataModel {
       }
     } catch (Exception e) {
     }
+  }
+  private class DbDataGetter extends AsyncTask<String, Void, Void> {
+	  String category;
+	  ArrayList<AisleWindowContent> aisleWindowList;
+  @Override
+protected void onPreExecute() {
+	  mNotifyProgress.showProgress();
+	    clearAisles();
+	    AisleWindowContentFactory.getInstance(VueApplication.getInstance()).clearObjectsInUse();
+	super.onPreExecute();
+}
+	@Override
+	protected Void doInBackground(String... params) {
+		category = params[0];
+	  aisleWindowList = mDbManager.getAislesByCategory(category);
+		return null;
+	}
+	@Override
+		protected void onPostExecute(Void result) {
+	    for (AisleWindowContent content : aisleWindowList) {
+		      AisleWindowContent aisleItem = getAisleItem(content.getAisleId());
+		      aisleItem.addAisleContent(content.getAisleContext(),
+		          content.getImageList());
+		     // getAisleItem(content.getAisleId());
+		    }
+		    for (IAisleDataObserver observer : mAisleDataObserver) {
+		      observer.onAisleDataUpdated(mAisleContentList.size());
+		    }
+		    mNotifyProgress.dismissProgress();
+			super.onPostExecute(result);
+		}  
   }
 }

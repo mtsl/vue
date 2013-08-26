@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -16,10 +17,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
+import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
@@ -37,12 +40,14 @@ public class VueLandingPageActivity extends BaseActivity {
 	private LinearLayout mVueLandingActionbarRightLayout;
 	private View mVueLandingActionbarView;
 	private RelativeLayout mVueLandingActionbarAppIconLayout;
+	ProgressBar pbsearch;
 
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
+		pbsearch = (ProgressBar)findViewById(R.id.adprogress_progressBar);
 		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_landing_actionbar, null);
 		mVueLandingActionbarScreenName = (TextView) mVueLandingActionbarView
@@ -108,6 +113,10 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		fragment = (VueLandingAislesFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisles_view_fragment);
+		 ViewInfo viewInfo = new ViewInfo();
+		 viewInfo.mVueName = getResources().getString(R.string.trending);
+		 viewInfo.position = 0;
+		 StackViews.getInstance().push(viewInfo);
 	}
 
 	@Override
@@ -232,10 +241,14 @@ public class VueLandingPageActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else if(StackViews.getInstance().getStackCount() > 0){
-				ViewInfo viewInfo = StackViews.getInstance().pull(); 
+				final ViewInfo viewInfo = StackViews.getInstance().pull(); 
+				if(viewInfo != null){
 				mVueLandingActionbarScreenName
 				.setText(viewInfo.mVueName);
-			 VueTrendingAislesDataModel.getInstance(this).displayCategoryAisles(viewInfo.mVueName);
+						 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(viewInfo.mVueName,new ProgresStatus());
+				} else {
+					super.onBackPressed();
+				}
 			} else {
 				FileCache fileCache = new FileCache(
 						VueApplication.getInstance());
@@ -317,15 +330,31 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 	
-	public void showCategory(String catName){
+	public void showCategory(final String catName){
+		if(!StackViews.getInstance().getTop().equalsIgnoreCase(catName)) {
 	 mVueLandingActionbarScreenName
 		.setText(catName);
-	 VueTrendingAislesDataModel.getInstance(this).displayCategoryAisles(catName);
 	 ViewInfo viewInfo = new ViewInfo();
 	 viewInfo.mVueName = catName;
 	 viewInfo.position = 0;
 	 StackViews.getInstance().push(viewInfo);
-		 
+		// TODO Auto-generated method stub
+		 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(catName,new ProgresStatus());
+		}
+	}
+class ProgresStatus implements NotifyProgress {
+
+	@Override
+	public void showProgress() {
+		 pbsearch.setVisibility(View.VISIBLE);
+		
 	}
 
+	@Override
+	public void dismissProgress() {
+		 pbsearch.setVisibility(View.INVISIBLE);
+		
+	}
+	
+}
 }

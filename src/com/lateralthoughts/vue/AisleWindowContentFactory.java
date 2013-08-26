@@ -57,8 +57,10 @@ public class AisleWindowContentFactory {
 			if(!mAvailableObjects.isEmpty()){
 				windowContent = mAvailableObjects.remove(mAvailableObjects.size()-1);
 				mObjectsInUse.add(windowContent);
+				 
 			}
 		}
+		 
 		return windowContent;
 	}
 	

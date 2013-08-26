@@ -7,5 +7,15 @@
         android:id="@+id/aisles_view_fragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
+    
+        <ProgressBar
+        android:id="@+id/adprogress_progressBar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" 
+        style="?android:attr/progressBarStyleLarge" 
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:visibility="invisible"
+    />
   
 </RelativeLayout>
