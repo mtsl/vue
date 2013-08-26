@@ -314,6 +314,8 @@ public class VueTrendingAislesDataModel {
       } else {
         aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
       }
+      Log.i("stacked views", "stacked views null check aisleItem: "+aisleItem);
+      Log.i("stacked views", "stacked views null check aisleId: "+aisleId);
       aisleItem.setAisleId(aisleId);
       mAisleContentListMap.put(aisleId, aisleItem);
       mAisleContentList.add(aisleItem);

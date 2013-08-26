@@ -79,7 +79,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
 	@SuppressWarnings("unchecked")
-	public AisleDetailsViewAdapter(Context c,
+	public AisleDetailsViewAdapter(Context c,                                                                               
 			AisleDetailSwipeListener swipeListner, int listCount,
 			ArrayList<AisleWindowContent> content) {
 		super(c, content);
