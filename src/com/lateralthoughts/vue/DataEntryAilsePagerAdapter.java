@@ -5,17 +5,20 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 public class DataEntryAilsePagerAdapter extends PagerAdapter {
 
 	private ArrayList<String> mImagePathsList = null;
 	private Context mContext = null;
+	private DataEntryFragment mDataEntryFragment = null;
 
 	public DataEntryAilsePagerAdapter(Context mContext,
 			ArrayList<String> imagePathsList) {
@@ -46,6 +49,18 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 			e.printStackTrace();
 		}
 		((ViewPager) collection).addView(view, 0);
+		view.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (mDataEntryFragment == null) {
+					mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
+							.getSupportFragmentManager().findFragmentById(
+									R.id.create_aisles_view_fragment);
+				}
+				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
+						.setVisibility(View.GONE);
+			}
+		});
 		return view;
 	}
 

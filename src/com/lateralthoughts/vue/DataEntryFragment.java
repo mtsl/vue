@@ -22,6 +22,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -86,11 +87,11 @@ public class DataEntryFragment extends Fragment {
 	private LinearLayout mMainHeadingRow = null;
 	private RelativeLayout mDataEntryBottomTopLayout = null,
 			mDataEntryInviteFriendsLayout = null,
-			mDataEntryInviteFriendsPopupLayout = null,
 			mDataEntryInviteFriendsFacebookLayout = null,
 			mDataEntryBottomBottomLayout = null,
 			mDataEntryInviteFriendsCancelLayout = null,
 			mDataEntryInviteFriendsGoogleplusLayout = null;
+	public RelativeLayout mDataEntryInviteFriendsPopupLayout = null;
 	private ImageView mFindAtIcon = null;
 	public ShareDialog mShare = null;
 	private boolean mAddImageToAisleFlag = false, mEditAisleImageFlag = false;
@@ -704,13 +705,6 @@ public class DataEntryFragment extends Fragment {
 			public void afterTextChanged(Editable arg0) {
 			}
 		});
-		/*
-		 * mCreateAisleBg.setOnClickListener(new OnClickListener() {
-		 * 
-		 * @Override public void onClick(View arg0) { if
-		 * (mTouchToChangeImage.getVisibility() == View.VISIBLE) {
-		 * touchToChangeImageClickFunctionality(); } } });
-		 */
 		mDetector = new GestureDetector(getActivity(), new mListener());
 		mCreateAisleBg.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -719,7 +713,23 @@ public class DataEntryFragment extends Fragment {
 				return true;
 			}
 		});
+		mDataEntryAislesViewpager
+				.setOnPageChangeListener(new OnPageChangeListener() {
 
+					@Override
+					public void onPageSelected(int arg0) {
+						mDataEntryInviteFriendsPopupLayout
+								.setVisibility(View.GONE);
+					}
+
+					@Override
+					public void onPageScrolled(int arg0, float arg1, int arg2) {
+					}
+
+					@Override
+					public void onPageScrollStateChanged(int arg0) {
+					}
+				});
 		return mDataEntryFragmentView;
 	}
 
@@ -756,6 +766,7 @@ public class DataEntryFragment extends Fragment {
 		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 		mSaySomeThingEditParent.setVisibility(View.VISIBLE);
 		mSaySomethingAboutAisle.setVisibility(View.GONE);
+		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
 	}
 
 	public void lookingForInterceptListnerFunctionality() {
@@ -908,6 +919,7 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	public void editButtonClickFunctionality() {
+		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
 		mEditAisleImageFlag = true;
 		mCurrentPagePosition = mDataEntryAislesViewpager.getCurrentItem();
 		mResizedImagePath = VueApplication.getInstance().mAisleImagePathList
@@ -941,7 +953,7 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	public void shareClickFunctionality() {
-
+		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
 		mShare = new ShareDialog(getActivity(), getActivity());
 		if (VueApplication.getInstance().mAisleImagePathList != null) {
 			ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
@@ -957,7 +969,7 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	public void addImageToAisleButtonClickFunctionality() {
-
+		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
 		mAddImageToAisleFlag = true;
 		Intent intent = new Intent(getActivity(),
 				CreateAisleSelectionActivity.class);

@@ -57,13 +57,15 @@ public class DataEntryInviteFriendsActivity extends Activity {
 					.getBoolean(VueConstants.DATA_ENTRY_INVITE_FRIENDS_BUNDLE_FROM_GOOGLEPLUS_FLAG_KEY);
 			// Display Google+ friends
 			if (mFromGoogleplusFlag) {
-				getFriendsList(getResources().getString(
-						R.string.sidemenu_sub_option_Googleplus));
+				getFriendsList(
+						getResources().getString(
+								R.string.sidemenu_sub_option_Googleplus), false);
 			}
 			// Display Facebook Friends...
 			else {
-				getFriendsList(getResources().getString(
-						R.string.sidemenu_sub_option_Facebook));
+				getFriendsList(
+						getResources().getString(
+								R.string.sidemenu_sub_option_Facebook), false);
 			}
 		}
 		mDataEntryInviteFriendsCloseBtn
@@ -141,7 +143,7 @@ public class DataEntryInviteFriendsActivity extends Activity {
 		}
 	}
 
-	public void getFriendsList(String s) {
+	public void getFriendsList(String s, boolean fromOnActivityResultMethodFlag) {
 		mProgressDialog = ProgressDialog.show(this, "", getResources()
 				.getString(R.string.pleasewait_mesg));
 		mSharedPreferences = getSharedPreferences(
@@ -201,9 +203,16 @@ public class DataEntryInviteFriendsActivity extends Activity {
 	// Pull and display G+ friends from plus.google.com.
 	private void getGPlusFriendsList() {
 		if (VueLandingPageActivity.mGooglePlusFriendsDetailsList != null) {
-			setDataEntryInviteFriendsAdapter(VueLandingPageActivity.mGooglePlusFriendsDetailsList);
 			if (mProgressDialog.isShowing()) {
 				mProgressDialog.dismiss();
+			}
+			if (VueLandingPageActivity.mGooglePlusFriendsDetailsList.size() > 0) {
+				setDataEntryInviteFriendsAdapter(VueLandingPageActivity.mGooglePlusFriendsDetailsList);
+			} else {
+				Toast.makeText(DataEntryInviteFriendsActivity.this,
+						getResources().getString(R.string.fb_no_friends),
+						Toast.LENGTH_LONG).show();
+				finish();
 			}
 		} else {
 			if (mProgressDialog.isShowing()) {
@@ -239,6 +248,9 @@ public class DataEntryInviteFriendsActivity extends Activity {
 					List<FbGPlusDetails> fbGPlusFriends;
 					try {
 						fbGPlusFriends = JsonParsing(response);
+						if (mProgressDialog.isShowing()) {
+							mProgressDialog.dismiss();
+						}
 						if (fbGPlusFriends != null) {
 							setDataEntryInviteFriendsAdapter(fbGPlusFriends);
 						} else {
@@ -247,9 +259,7 @@ public class DataEntryInviteFriendsActivity extends Activity {
 									getResources().getString(
 											R.string.fb_no_friends),
 									Toast.LENGTH_LONG).show();
-						}
-						if (mProgressDialog.isShowing()) {
-							mProgressDialog.dismiss();
+							finish();
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -321,14 +331,19 @@ public class DataEntryInviteFriendsActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		Log.e("InviteFriends Activity", "request code ::" + requestCode
+				+ " ::: result code :::" + resultCode);
 		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
 				if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
-					getFriendsList(data
-							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
+					getFriendsList(
+							data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY),
+							true);
 				}
 			}
+		} else {
+			finish();
 		}
 	}
 }
