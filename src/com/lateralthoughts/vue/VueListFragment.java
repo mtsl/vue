@@ -308,9 +308,9 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
 						activity.getSlidingMenu().toggle();
 						if (getActivity() instanceof VueLandingPageActivity) {
-							VueTrendingAislesDataModel model = VueTrendingAislesDataModel
+							/*VueTrendingAislesDataModel model = VueTrendingAislesDataModel
 									.getInstance(getActivity());
-							model.clearAisles();
+							model.clearAisles();*/
 							AisleWindowContentFactory.getInstance(getActivity())
 									.clearObjectsInUse();
 							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();

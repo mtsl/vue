@@ -1398,7 +1398,9 @@ public class DataEntryFragment extends Fragment {
 								VueConstants.SHAREDPREFERENCE_NAME, 0);
 				int createdAisleCount = sharedPreferencesObj.getInt(
 						VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-				if (createdAisleCount == 4) {
+				boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+						VueConstants.VUE_LOGIN, false);
+				if (createdAisleCount == 4 && !isUserLoggedInFlag) {
 					if (mLoginWarningMessage == null) {
 						mLoginWarningMessage = new LoginWarningMessage(
 								getActivity());

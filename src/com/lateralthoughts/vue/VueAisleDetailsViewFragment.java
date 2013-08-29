@@ -516,7 +516,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 							int commentsCount = sharedPreferencesObj.getInt(
 									VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
 									0);
-							if (commentsCount == 8) {
+							boolean isUserLoggedInFlag = sharedPreferencesObj
+									.getBoolean(VueConstants.VUE_LOGIN, false);
+							if (commentsCount == 8 && !isUserLoggedInFlag) {
 								if (mLoginWarningMessage == null) {
 									mLoginWarningMessage = new LoginWarningMessage(
 											getActivity());
@@ -525,7 +527,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 										.showLoginWarningMessageDialog(
 												"You have 2 aisle left to comment without logging in.",
 												false, false, 8, editText, view);
-							} else if (commentsCount == 9) {
+							} else if (commentsCount == 9
+									&& !isUserLoggedInFlag) {
 								if (mLoginWarningMessage == null) {
 									mLoginWarningMessage = new LoginWarningMessage(
 											getActivity());
