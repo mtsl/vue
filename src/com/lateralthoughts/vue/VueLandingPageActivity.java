@@ -246,7 +246,13 @@ public class VueLandingPageActivity extends BaseActivity {
 					if(!mVueLandingActionbarScreenName.getText().toString().equalsIgnoreCase("Trending")){
 				mVueLandingActionbarScreenName
 				.setText(viewInfo.mVueName);
-						 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(viewInfo.mVueName,new ProgresStatus());
+						 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(viewInfo.mVueName,new ProgresStatus(),false);
+						 if(fragment == null){
+							 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
+										.findFragmentById(R.id.aisles_view_fragment);
+						 }
+						 fragment.moveListToPosition(viewInfo.position);
+						 
 					}else {
 						super.onBackPressed();
 					}
@@ -335,15 +341,22 @@ public class VueLandingPageActivity extends BaseActivity {
 	}
 	
 	public void showCategory(final String catName){
+		 if(fragment == null){
+			 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+		 }
+		if(StackViews.getInstance().getStackCount() == 1){
+			StackViews.getInstance().getItem(0).position = fragment.getListPosition();
+		}
 		if(!StackViews.getInstance().getTop().equalsIgnoreCase(catName)) {
 	 mVueLandingActionbarScreenName
 		.setText(catName);
 	 ViewInfo viewInfo = new ViewInfo();
 	 viewInfo.mVueName = catName;
-	 viewInfo.position = 0;
+	 viewInfo.position = fragment.getListPosition();
 	 StackViews.getInstance().push(viewInfo);
 		// TODO Auto-generated method stub
-		 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(catName,new ProgresStatus());
+		 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(catName,new ProgresStatus(),true);
 		}
 	}
 class ProgresStatus implements NotifyProgress {
@@ -355,8 +368,18 @@ class ProgresStatus implements NotifyProgress {
 	}
 
 	@Override
-	public void dismissProgress() {
+	public void dismissProgress(boolean fromWhere) {
 		 pbsearch.setVisibility(View.INVISIBLE);
+		 if(fragment == null){
+			 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+		 }
+		 if(fromWhere){
+			 fragment.moveListToPosition(0);
+		 } else {
+			 
+		 }
+		 
 		
 	}
 	

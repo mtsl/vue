@@ -256,5 +256,12 @@ public void notifyAdapters() {
     	
     	
     }
-
+public void moveListToPosition(int position){
+	mLeftColumnView.setSelection(position);
+	mLeftColumnView.smoothScrollToPosition(position);
+}
+public int getListPosition(){
+	return mLeftColumnView.getFirstVisiblePosition();
+	
+}
 }

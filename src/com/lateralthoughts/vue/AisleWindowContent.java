@@ -92,12 +92,14 @@ public class AisleWindowContent
     
     private boolean udpateImageUrlsForDevice(){
     	AisleImageDetails imageDetails;
+    	mWindowSmallestHeight = 0;
     	for (int i=0;i<mAisleImagesList.size();i++){
     		
     		imageDetails = mAisleImagesList.get(i);
     		if(imageDetails.mAvailableHeight < mWindowSmallestHeight || mWindowSmallestHeight == 0)
     		    mWindowSmallestHeight = imageDetails.mAvailableHeight;
     	}
+     
     	for (int i=0;i<mAisleImagesList.size();i++){
     
     		prepareCustomUrl(mAisleImagesList.get(i));
