@@ -243,9 +243,13 @@ public class VueLandingPageActivity extends BaseActivity {
 			} else if(StackViews.getInstance().getStackCount() > 0){
 				final ViewInfo viewInfo = StackViews.getInstance().pull(); 
 				if(viewInfo != null){
+					if(!mVueLandingActionbarScreenName.getText().toString().equalsIgnoreCase("Trending")){
 				mVueLandingActionbarScreenName
 				.setText(viewInfo.mVueName);
 						 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(viewInfo.mVueName,new ProgresStatus());
+					}else {
+						super.onBackPressed();
+					}
 				} else {
 					super.onBackPressed();
 				}

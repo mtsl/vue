@@ -35,6 +35,7 @@ public class DataEntryActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.e("Land", "vueland 64");
 		setContentView(R.layout.date_entry_main);
 		mVueDataentryActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_dataentry_actionbar, null);

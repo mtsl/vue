@@ -661,11 +661,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				findAt);
 		intent.putExtras(b1);
 		Log.e("Land", "vueland 5");
-		if (!CreateAisleSelectionActivity.isActivityShowing) {
-			this.startActivityForResult(
-					intent,
-					VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT);
-		}
+		this.startActivityForResult(
+				intent,
+				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT);
 	}
 
 	/*

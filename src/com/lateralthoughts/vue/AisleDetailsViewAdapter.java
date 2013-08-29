@@ -715,6 +715,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 						.getWindowBookmarkIndicator();
 			} else if (reqType.equals(CHANGE_COMMENT)) {
 				// aisleId,imageId,comment
+				if(itemDetails.mCommentsList == null){
+					getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList = new ArrayList<String>();
+				}
 				String commentAdded = itemDetails.mCommentsList.get(0);
 			} else if (reqType.equals(CHANGE_LIKES)) {
 				// aisleId,imageId,likesCount,likeStatus
