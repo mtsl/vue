@@ -53,7 +53,7 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 			@Override
 			public void onClick(View v) {
 				if (mDataEntryFragment == null) {
-					mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
+					mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
 							.getSupportFragmentManager().findFragmentById(
 									R.id.create_aisles_view_fragment);
 				}

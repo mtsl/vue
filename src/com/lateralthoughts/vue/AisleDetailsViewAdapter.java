@@ -24,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -630,9 +631,23 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			}
 			mCommentsMapList = null;
 			mViewHolder.aisleContentBrowser.setReferedObjectsNull();
-			mViewHolder.aisleContentBrowser.removeAllViews();
 			mViewLoader.clearBrowser(getItem(mCurrentAislePosition).getImageList());
-			mViewHolder.aisleContentBrowser = null;
+			ScaledImageViewFactory   mViewFactory = ScaledImageViewFactory.getInstance(mContext);
+			for(int i=0;i<mViewHolder.aisleContentBrowser.getChildCount();i++){
+				mViewFactory
+				.returnUsedImageView((ScaleImageView)mViewHolder.aisleContentBrowser
+						.getChildAt(i));
+				Log.i("bitmap reclying", "bitmap reclying  in adapter");
+			}
+			if(mViewHolder.aisleContentBrowser != null){
+			ContentAdapterFactory mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
+			 mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
+			 mViewHolder.aisleContentBrowser.setCustomAdapter(null);
+			 mViewHolder.aisleContentBrowser.removeAllViews();
+			 mViewHolder.aisleContentBrowser = null;
+			}
+		 
+			//mViewHolder.aisleContentBrowser.removeAllViews();
 		}
 	}
 
@@ -768,4 +783,13 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			notifyAdapter();
 		}
  }
+
+	public void closeKeyboard() {
+		final InputMethodManager mInputMethodManager = (InputMethodManager) mContext
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mViewHolder.edtComment.getWindowToken(), 0);
+		mViewHolder.edtCommentLay.setVisibility(View.GONE);
+		mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
+	}
 }

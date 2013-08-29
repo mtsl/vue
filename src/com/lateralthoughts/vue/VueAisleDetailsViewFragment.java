@@ -304,6 +304,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 						mAisleDetailsAdapter.notifyDataSetChanged();
 
 					} else {
+						mAisleDetailsAdapter.closeKeyboard();
 						// will be called when press on the user comment,
 						// comment text will be expand and collapse for
 						// alternative clicks
@@ -331,6 +332,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 						}
 					}
 				} else if (arg2 == 0) {
+					mAisleDetailsAdapter.closeKeyboard();
 					// will be called when press on the description, description
 					// text will be expand and collapse for
 					// alternative clicks
@@ -351,6 +353,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 								leftRightMargin, topBottomMargin);
 						v.setMaxLines(Integer.MAX_VALUE);
 					} else {
+						 
 						v.setMaxLines(3);
 					}
 				}
@@ -452,6 +455,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			inputMethodManager.toggleSoftInputFromWindow(
 					editText.getApplicationWindowToken(),
 					InputMethodManager.SHOW_FORCED, 0);
+			
+			editText.requestFocus();
+			final InputMethodManager mInputMethodManager = (InputMethodManager) getActivity()
+					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			mInputMethodManager.showSoftInput(editText, 0);
+			
+			
 			edtCommentLay.setVisibility(View.VISIBLE);
 			editText.setVisibility(View.VISIBLE);
 			editText.setCursorVisible(true);
@@ -469,9 +479,12 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 						@Override
 						public void onKeyBackPressed() {
-							inputMethodManager.toggleSoftInputFromWindow(
-									editText.getApplicationWindowToken(),
-									InputMethodManager.SHOW_FORCED, 0);
+						 
+							
+							mInputMethodManager.hideSoftInputFromWindow(
+									editText.getWindowToken(), 0);
+							
+							
 							editText.setText("");
 							edtCommentLay.setVisibility(View.GONE);
 							view.setVisibility(View.VISIBLE);

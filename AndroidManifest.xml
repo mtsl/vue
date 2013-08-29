@@ -78,6 +78,14 @@
             android:theme="@style/Theme.VueTheme"
             android:windowSoftInputMode="adjustResize" >
         </activity>
+          <activity
+            android:name=".MemoryTestActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.VueTheme"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
         <activity
             android:name=".DataEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

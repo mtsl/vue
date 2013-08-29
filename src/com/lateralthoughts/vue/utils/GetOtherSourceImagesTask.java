@@ -14,15 +14,17 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import com.lateralthoughts.vue.DataEntryActivity;
-import com.lateralthoughts.vue.DataEntryFragment;
-import com.lateralthoughts.vue.R;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+
+import com.lateralthoughts.vue.DataEntryActivity;
+import com.lateralthoughts.vue.DataEntryFragment;
+import com.lateralthoughts.vue.R;
 
 public class GetOtherSourceImagesTask extends
 		AsyncTask<String, String, ArrayList<OtherSourceImageDetails>> {
@@ -30,9 +32,11 @@ public class GetOtherSourceImagesTask extends
 	private String mSourceUrl = null;
 	private static final int WIDTH_LIMIT = 150;
 	private static final int HEIGHT_LIMIT = 150;
+	private Context mContext = null;
 
-	public GetOtherSourceImagesTask(String sourceUrl) {
+	public GetOtherSourceImagesTask(String sourceUrl, Context context) {
 		mSourceUrl = sourceUrl;
+		mContext = context;
 	}
 
 	@Override
@@ -46,7 +50,7 @@ public class GetOtherSourceImagesTask extends
 		try {
 			if (mSourceUrl != null) {
 				ArrayList<OtherSourceImageDetails> imgDetails = parseHtml(
-				mSourceUrl, WIDTH_LIMIT, HEIGHT_LIMIT);
+						mSourceUrl, WIDTH_LIMIT, HEIGHT_LIMIT);
 				return imgDetails;
 			}
 		} catch (Exception e) {
@@ -107,7 +111,7 @@ public class GetOtherSourceImagesTask extends
 	@Override
 	protected void onPostExecute(ArrayList<OtherSourceImageDetails> result) {
 		super.onPostExecute(result);
-		DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
+		DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mContext)
 				.getSupportFragmentManager().findFragmentById(
 						R.id.create_aisles_view_fragment);
 		fragment.showOtherSourcesGridview(result);

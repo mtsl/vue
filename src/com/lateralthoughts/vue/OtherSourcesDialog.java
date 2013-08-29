@@ -45,7 +45,7 @@ public class OtherSourcesDialog {
 					String picturePath = Utils.getPath(
 							OtherSourcesDialog.this.imagesList.get(position)
 									.getImageUri(), mActivity);
-					DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
+					DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
 							.getSupportFragmentManager().findFragmentById(
 									R.id.create_aisles_view_fragment);
 					fragment.setGalleryORCameraImage(picturePath, false);
@@ -55,7 +55,7 @@ public class OtherSourcesDialog {
 									.get(position).getOriginUrl().hashCode()));
 					if (f.exists()) {
 						dialog.dismiss();
-						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
+						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
 								.getSupportFragmentManager().findFragmentById(
 										R.id.create_aisles_view_fragment);
 						fragment.mFindAtText

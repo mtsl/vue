@@ -254,12 +254,15 @@ public class AisleDetailsViewListLoader {
     }  
 public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 	 if (contentBrowser != null) {
+		 Log.i("bitmap reclying", "bitmap reclying  contentBrowser.getChildCount(): "+contentBrowser.getChildCount());
 			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
 				mViewFactory
 				.returnUsedImageView((ScaleImageView)contentBrowser
 						.getChildAt(i));
-			}
+				Log.i("bitmap reclying", "bitmap reclying  images are returned");
+			} 
 			 mContentAdapterFactory.returnUsedAdapter(contentBrowser.getCustomAdapter());
+			 contentBrowser.setCustomAdapter(null);
 			contentBrowser.removeAllViews();
 			contentBrowser = null;
 			
@@ -272,6 +275,8 @@ public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 					bitmap.recycle();
 				}
 			}
+		} else {
+			Log.i("bitmap reclying", "bitmap reclying  contentBrowser is null ");
 		}
 	
 }
