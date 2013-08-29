@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00000000"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/landingothersourcedialogmainlayotu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dip"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/landingothersourcedialogaddimagetoaisle_buttonlayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dip"
+            android:layout_marginBottom="8dip"
+            android:layout_marginLeft="24dip"
+            android:layout_marginRight="24dip"
+            android:background="@drawable/googleplus_background" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Add image to aisle"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/landingothersourcedialogcreateaisle_buttonlayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dip"
+            android:layout_marginBottom="8dip"
+            android:layout_marginLeft="24dip"
+            android:layout_marginRight="24dip"
+            android:background="@drawable/googleplus_background" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Create Aisle"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>
