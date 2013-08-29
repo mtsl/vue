@@ -64,6 +64,7 @@ public class VueTrendingAislesDataModel {
 	private static final String IMAGE_WIDTH_TAG = "width";
 	private ArrayList<AisleWindowContent> mAisleContentList;
 	NotifyProgress mNotifyProgress;
+	boolean mRequestToServer;
 	private HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
 
 	// private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
@@ -461,8 +462,9 @@ public class VueTrendingAislesDataModel {
 		threadPool.execute(task);
 	}
 
-	public void displayCategoryAisles(String category, NotifyProgress progress) {
-		mNotifyProgress = progress;
+	public void displayCategoryAisles(String category, NotifyProgress progress,boolean fromServer) {
+		mRequestToServer = fromServer;
+		mNotifyProgress = progress; 
 		DbDataGetter dBgetter = new DbDataGetter();
 		dBgetter.execute(category);
 	}
@@ -507,9 +509,6 @@ public class VueTrendingAislesDataModel {
 		@Override
 		protected void onPreExecute() {
 			mNotifyProgress.showProgress();
-			clearAisles();
-			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
-					.clearObjectsInUse();
 			super.onPreExecute();
 		}
 
@@ -522,17 +521,27 @@ public class VueTrendingAislesDataModel {
 
 		@Override
 		protected void onPostExecute(Void result) {
+			clearAisles();
+			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
+					.clearObjectsInUse();
 			for (AisleWindowContent content : aisleWindowList) {
+			
+				
 				AisleWindowContent aisleItem = getAisleItem(content
 						.getAisleId());
 				aisleItem.addAisleContent(content.getAisleContext(),
 						content.getImageList());
 				// getAisleItem(content.getAisleId());
+			
 			}
 			for (IAisleDataObserver observer : mAisleDataObserver) {
 				observer.onAisleDataUpdated(mAisleContentList.size());
 			}
-			mNotifyProgress.dismissProgress();
+			if(mRequestToServer){
+			mNotifyProgress.dismissProgress(false);
+			}else{
+				mNotifyProgress.dismissProgress(true);
+			}
 			super.onPostExecute(result);
 		}
 	}

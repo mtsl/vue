@@ -11,22 +11,22 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Bitmap.Config;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -41,19 +41,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
-import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.lateralthoughts.vue.AisleDetailsViewListLoader.BitmapWorkerTask;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
-import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapCacheDetailsScreen;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.SlidingMenu;
@@ -83,7 +79,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	private int mStatusbarHeight;
 	private boolean mTempflag = true;
 	VueAisleDetailsViewFragment mVueAiselFragment;
-	public static Context mAisleDetailsActivityContext = null;
 	ViewHolder viewHolder;
 	LinearLayout MContentLinearLay;
 	int mCurentAislePosistion;
@@ -104,7 +99,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		super.onCreate(icicle);
 		// setContentView(R.layout.vuedetails_frag);
 		setContentView(R.layout.aisle_details_activity_landing);
-		mAisleDetailsActivityContext = this;
 		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT;
 
 		if (mCurrentapiVersion >= 11) {

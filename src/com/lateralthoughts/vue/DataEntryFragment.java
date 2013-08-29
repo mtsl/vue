@@ -1637,7 +1637,7 @@ public class DataEntryFragment extends Fragment {
 					"Please wait...");
 		}
 		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
-				sourceUrl);
+				sourceUrl, getActivity());
 		getImagesTask.execute();
 	}
 }

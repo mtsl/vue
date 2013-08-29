@@ -44,4 +44,7 @@ public class StackViews {
     public String getTop(){
 		return mCurrentItem;
     }
+    public ViewInfo getItem(int position){
+    	return mViewStack.get(position);
+    }
 }

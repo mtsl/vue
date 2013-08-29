@@ -95,6 +95,7 @@ public class VueContentGateway {
 
               String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI + "aisle/trending?limit=%s&offset=%s";
               String requestUrl = String.format(requestUrlBase, limit, offset);
+              Log.e("VueNetworkError","Vue encountered network requestUrl = " +requestUrl);
               Response.Listener listener = new Response.Listener<JSONArray>(){
                   @Override
                   public void onResponse(JSONArray jsonArray){

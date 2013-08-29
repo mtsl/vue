@@ -20,7 +20,6 @@ import android.widget.TextView;
 public class DataEntryActivity extends BaseActivity {
 
 	public boolean mIsKeyboardShownFlag = false;
-	public static Context mDataEntryActivityContext = null;
 	public TextView mVueDataentryActionbarScreenName;
 	private RelativeLayout mVueDataentryActionbarCloseIconLayout,
 			mVueDataentryActionbarCreateAisleIconLayout,
@@ -128,7 +127,6 @@ public class DataEntryActivity extends BaseActivity {
 						mDataEntryFragment.editButtonClickFunctionality();
 					}
 				});
-		mDataEntryActivityContext = this;
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			Log.e("cs", "30");

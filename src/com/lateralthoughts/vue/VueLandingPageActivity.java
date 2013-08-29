@@ -242,18 +242,20 @@ public class VueLandingPageActivity extends BaseActivity {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
-			} else if (StackViews.getInstance().getStackCount() > 0) {
-				final ViewInfo viewInfo = StackViews.getInstance().pull();
-				if (viewInfo != null) {
-					if (!mVueLandingActionbarScreenName.getText().toString()
-							.equalsIgnoreCase("Trending")) {
-						mVueLandingActionbarScreenName
-								.setText(viewInfo.mVueName);
-						VueTrendingAislesDataModel.getInstance(
-								VueLandingPageActivity.this)
-								.displayCategoryAisles(viewInfo.mVueName,
-										new ProgresStatus());
-					} else {
+			} else if(StackViews.getInstance().getStackCount() > 0){
+				final ViewInfo viewInfo = StackViews.getInstance().pull(); 
+				if(viewInfo != null){
+					if(!mVueLandingActionbarScreenName.getText().toString().equalsIgnoreCase("Trending")){
+				mVueLandingActionbarScreenName
+				.setText(viewInfo.mVueName);
+						 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(viewInfo.mVueName,new ProgresStatus(),false);
+						 if(fragment == null){
+							 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
+										.findFragmentById(R.id.aisles_view_fragment);
+						 }
+						 fragment.moveListToPosition(viewInfo.position);
+						 
+					}else {
 						super.onBackPressed();
 					}
 				} else {
@@ -339,17 +341,24 @@ public class VueLandingPageActivity extends BaseActivity {
 			// Handle other intents, such as being started from the home screen
 		}
 	}
-
-	public void showCategory(final String catName) {
-		if (!StackViews.getInstance().getTop().equalsIgnoreCase(catName)) {
-			mVueLandingActionbarScreenName.setText(catName);
-			ViewInfo viewInfo = new ViewInfo();
-			viewInfo.mVueName = catName;
-			viewInfo.position = 0;
-			StackViews.getInstance().push(viewInfo);
-			// TODO Auto-generated method stub
-			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
-					.displayCategoryAisles(catName, new ProgresStatus());
+ 
+	public void showCategory(final String catName){
+		 if(fragment == null){
+			 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+		 }
+		if(StackViews.getInstance().getStackCount() == 1){
+			StackViews.getInstance().getItem(0).position = fragment.getListPosition();
+		}
+		if(!StackViews.getInstance().getTop().equalsIgnoreCase(catName)) {
+	 mVueLandingActionbarScreenName
+		.setText(catName);
+	 ViewInfo viewInfo = new ViewInfo();
+	 viewInfo.mVueName = catName;
+	 viewInfo.position = fragment.getListPosition();
+	 StackViews.getInstance().push(viewInfo);
+		// TODO Auto-generated method stub
+		 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(catName,new ProgresStatus(),true);
 		}
 	}
 
@@ -360,15 +369,21 @@ public class VueLandingPageActivity extends BaseActivity {
 			pbsearch.setVisibility(View.VISIBLE);
 
 		}
-
 		@Override
-		public void dismissProgress() {
-			pbsearch.setVisibility(View.INVISIBLE);
-
-		}
+		public void dismissProgress(boolean fromWhere) {
+			 pbsearch.setVisibility(View.INVISIBLE);
+			 if(fragment == null){
+				 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisles_view_fragment);
+			 }
+			 if(fromWhere){
+				 fragment.moveListToPosition(0);
+			 } else {
+				 
+			 }
 
 	}
-
+	}
 	private void showScreenSelectionForOtherSource(final String type,
 			final String action, final Intent intent) {
 		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
@@ -403,5 +418,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			}
 		});
 		dialog.show();
+ 
 	}
+	
 }
