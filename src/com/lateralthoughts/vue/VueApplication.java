@@ -40,16 +40,16 @@ public class VueApplication extends Application {
 	public ArrayList<String> mAisleImagePathList = new ArrayList<String>();
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
 
-	public boolean ismFromDetailsScreenToDataentryCreateAisleScreenFlag() {
+/*	public boolean ismFromDetailsScreenToDataentryCreateAisleScreenFlag() {
 		return mFromDetailsScreenToDataentryCreateAisleScreenFlag;
 	}
 
 	public void setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
 			boolean mFromDetailsScreenToDataentryCreateAisleScreenFlag) {
 		this.mFromDetailsScreenToDataentryCreateAisleScreenFlag = mFromDetailsScreenToDataentryCreateAisleScreenFlag;
-	}
+	}*/
 
-	private boolean mFromDetailsScreenToDataentryCreateAisleScreenFlag;
+	//private boolean mFromDetailsScreenToDataentryCreateAisleScreenFlag;
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;

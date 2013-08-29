@@ -272,9 +272,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			Intent intent = new Intent(AisleDetailsViewActivity.this,
 					CreateAisleSelectionActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-			VueApplication.getInstance()
-					.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
-							false);
+			Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+					AisleDetailsViewActivity.this, false);
 			if (!CreateAisleSelectionActivity.isActivityShowing) {
 				CreateAisleSelectionActivity.isActivityShowing = true;
 				startActivity(intent);

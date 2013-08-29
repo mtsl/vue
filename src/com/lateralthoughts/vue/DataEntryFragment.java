@@ -831,13 +831,11 @@ public class DataEntryFragment extends Fragment {
 				CreateAisleSelectionActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		if (mFromDetailsScreenFlag) {
-			VueApplication
-					.getInstance()
-					.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(true);
+			Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+					getActivity(), true);
 		} else {
-			VueApplication.getInstance()
-					.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
-							false);
+			Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+					getActivity(), false);
 		}
 		Bundle b = new Bundle();
 		b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
@@ -974,8 +972,8 @@ public class DataEntryFragment extends Fragment {
 		Intent intent = new Intent(getActivity(),
 				CreateAisleSelectionActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		VueApplication.getInstance()
-				.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(false);
+		Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+				getActivity(), false);
 		Bundle b = new Bundle();
 		b.putBoolean(VueConstants.FROMCREATEAILSESCREENFLAG, true);
 		intent.putExtras(b);

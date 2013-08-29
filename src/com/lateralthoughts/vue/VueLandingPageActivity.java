@@ -2,8 +2,7 @@ package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -20,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
@@ -47,7 +45,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		super.onCreate(icicle);
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
-		pbsearch = (ProgressBar)findViewById(R.id.adprogress_progressBar);
+		pbsearch = (ProgressBar) findViewById(R.id.adprogress_progressBar);
 		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_landing_actionbar, null);
 		mVueLandingActionbarScreenName = (TextView) mVueLandingActionbarView
@@ -67,10 +65,8 @@ public class VueLandingPageActivity extends BaseActivity {
 					public void onClick(View arg0) {
 						Intent intent = new Intent(VueLandingPageActivity.this,
 								CreateAisleSelectionActivity.class);
-						VueApplication
-								.getInstance()
-								.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
-										false);
+						Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+								VueLandingPageActivity.this, false);
 						intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 						if (!CreateAisleSelectionActivity.isActivityShowing) {
 							CreateAisleSelectionActivity.isActivityShowing = true;
@@ -113,10 +109,19 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		fragment = (VueLandingAislesFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisles_view_fragment);
-		 ViewInfo viewInfo = new ViewInfo();
-		 viewInfo.mVueName = getResources().getString(R.string.trending);
-		 viewInfo.position = 0;
-		 StackViews.getInstance().push(viewInfo);
+		ViewInfo viewInfo = new ViewInfo();
+		viewInfo.mVueName = getResources().getString(R.string.trending);
+		viewInfo.position = 0;
+		StackViews.getInstance().push(viewInfo);
+		// Get intent, action and MIME type
+		Intent intent = getIntent();
+		String action = intent.getAction();
+		String type = intent.getType();
+		if (Intent.ACTION_SEND.equals(action) && type != null) {
+			showScreenSelectionForOtherSource(type, action, intent);
+		} else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+			showScreenSelectionForOtherSource(type, action, intent);
+		}
 	}
 
 	@Override
@@ -138,12 +143,11 @@ public class VueLandingPageActivity extends BaseActivity {
 		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
-			if (VueApplication.getInstance()
-					.ismFromDetailsScreenToDataentryCreateAisleScreenFlag()) {
+			if (Utils
+					.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 
-				VueApplication.getInstance()
-						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
-								false);
+				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+						VueLandingPageActivity.this, false);
 				Log.e("Land", "vueland 1");
 				Intent i = new Intent(this, AisleDetailsViewActivity.class);
 				Bundle b = new Bundle();
@@ -168,12 +172,11 @@ public class VueLandingPageActivity extends BaseActivity {
 		if (imageUri != null) {
 			Log.e("CretaeAisleSelectionActivity send image", imageUri + "");
 			// Update UI to reflect image being shared
-			if (VueApplication.getInstance()
-					.ismFromDetailsScreenToDataentryCreateAisleScreenFlag()) {
+			if (Utils
+					.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 
-				VueApplication.getInstance()
-						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
-								false);
+				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+						VueLandingPageActivity.this, false);
 				Log.e("Land", "vueland 1");
 				Intent i = new Intent(this, AisleDetailsViewActivity.class);
 				Bundle b = new Bundle();
@@ -205,12 +208,11 @@ public class VueLandingPageActivity extends BaseActivity {
 		ArrayList<Uri> imageUris = intent
 				.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
 		if (imageUris != null) {
-			if (VueApplication.getInstance()
-					.ismFromDetailsScreenToDataentryCreateAisleScreenFlag()) {
+			if (Utils
+					.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 
-				VueApplication.getInstance()
-						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
-								false);
+				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+						VueLandingPageActivity.this, false);
 				Log.e("Land", "vueland 1");
 				Intent i = new Intent(this, AisleDetailsViewActivity.class);
 				Bundle b = new Bundle();
@@ -240,14 +242,18 @@ public class VueLandingPageActivity extends BaseActivity {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
-			} else if(StackViews.getInstance().getStackCount() > 0){
-				final ViewInfo viewInfo = StackViews.getInstance().pull(); 
-				if(viewInfo != null){
-					if(!mVueLandingActionbarScreenName.getText().toString().equalsIgnoreCase("Trending")){
-				mVueLandingActionbarScreenName
-				.setText(viewInfo.mVueName);
-						 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(viewInfo.mVueName,new ProgresStatus());
-					}else {
+			} else if (StackViews.getInstance().getStackCount() > 0) {
+				final ViewInfo viewInfo = StackViews.getInstance().pull();
+				if (viewInfo != null) {
+					if (!mVueLandingActionbarScreenName.getText().toString()
+							.equalsIgnoreCase("Trending")) {
+						mVueLandingActionbarScreenName
+								.setText(viewInfo.mVueName);
+						VueTrendingAislesDataModel.getInstance(
+								VueLandingPageActivity.this)
+								.displayCategoryAisles(viewInfo.mVueName,
+										new ProgresStatus());
+					} else {
 						super.onBackPressed();
 					}
 				} else {
@@ -333,32 +339,69 @@ public class VueLandingPageActivity extends BaseActivity {
 			// Handle other intents, such as being started from the home screen
 		}
 	}
-	
-	public void showCategory(final String catName){
-		if(!StackViews.getInstance().getTop().equalsIgnoreCase(catName)) {
-	 mVueLandingActionbarScreenName
-		.setText(catName);
-	 ViewInfo viewInfo = new ViewInfo();
-	 viewInfo.mVueName = catName;
-	 viewInfo.position = 0;
-	 StackViews.getInstance().push(viewInfo);
-		// TODO Auto-generated method stub
-		 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(catName,new ProgresStatus());
+
+	public void showCategory(final String catName) {
+		if (!StackViews.getInstance().getTop().equalsIgnoreCase(catName)) {
+			mVueLandingActionbarScreenName.setText(catName);
+			ViewInfo viewInfo = new ViewInfo();
+			viewInfo.mVueName = catName;
+			viewInfo.position = 0;
+			StackViews.getInstance().push(viewInfo);
+			// TODO Auto-generated method stub
+			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+					.displayCategoryAisles(catName, new ProgresStatus());
 		}
 	}
-class ProgresStatus implements NotifyProgress {
 
-	@Override
-	public void showProgress() {
-		 pbsearch.setVisibility(View.VISIBLE);
-		
+	class ProgresStatus implements NotifyProgress {
+
+		@Override
+		public void showProgress() {
+			pbsearch.setVisibility(View.VISIBLE);
+
+		}
+
+		@Override
+		public void dismissProgress() {
+			pbsearch.setVisibility(View.INVISIBLE);
+
+		}
+
 	}
 
-	@Override
-	public void dismissProgress() {
-		 pbsearch.setVisibility(View.INVISIBLE);
-		
+	private void showScreenSelectionForOtherSource(final String type,
+			final String action, final Intent intent) {
+		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.other_source_landing_screen_selection);
+		RelativeLayout addImageToAisleLayout = (RelativeLayout) dialog
+				.findViewById(R.id.landingothersourcedialogaddimagetoaisle_buttonlayout);
+		RelativeLayout createAisleLayout = (RelativeLayout) dialog
+				.findViewById(R.id.landingothersourcedialogcreateaisle_buttonlayout);
+		addImageToAisleLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				dialog.dismiss();
+			}
+		});
+		createAisleLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+				if (Intent.ACTION_SEND.equals(action) && type != null) {
+					if ("text/plain".equals(type)) {
+						handleSendText(intent);
+					} else if (type.startsWith("image/")) {
+						handleSendImage(intent);
+					}
+				} else if (Intent.ACTION_SEND_MULTIPLE.equals(action)
+						&& type != null) {
+					if (type.startsWith("image/")) {
+						handleSendMultipleImages(intent);
+					}
+				}
+			}
+		});
+		dialog.show();
 	}
-	
-}
 }
