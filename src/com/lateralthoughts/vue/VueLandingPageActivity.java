@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
@@ -26,6 +28,8 @@ import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
+import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class VueLandingPageActivity extends BaseActivity {
@@ -33,19 +37,22 @@ public class VueLandingPageActivity extends BaseActivity {
 	private SharedPreferences mSharedPreferencesObj;
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
-	VueLandingAislesFragment fragment;
+	private VueLandingAislesFragment mFragment;
 	public TextView mVueLandingActionbarScreenName;
 	private LinearLayout mVueLandingActionbarRightLayout;
 	private View mVueLandingActionbarView;
 	private RelativeLayout mVueLandingActionbarAppIconLayout;
-	ProgressBar pbsearch;
+	private ProgressBar mLoadProgress;
+	private ProgressDialog mProgressDialog;
+	private OtherSourcesDialog mOtherSourcesDialog = null;
+	public static String mOtherSourceImagePath = null;
 
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
-		pbsearch = (ProgressBar) findViewById(R.id.adprogress_progressBar);
+		mLoadProgress = (ProgressBar) findViewById(R.id.adprogress_progressBar);
 		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_landing_actionbar, null);
 		mVueLandingActionbarScreenName = (TextView) mVueLandingActionbarView
@@ -63,14 +70,19 @@ public class VueLandingPageActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						Intent intent = new Intent(VueLandingPageActivity.this,
-								CreateAisleSelectionActivity.class);
-						Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-								VueLandingPageActivity.this, false);
-						intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-						if (!CreateAisleSelectionActivity.isActivityShowing) {
-							CreateAisleSelectionActivity.isActivityShowing = true;
-							startActivity(intent);
+						if (mOtherSourceImagePath == null) {
+							Intent intent = new Intent(
+									VueLandingPageActivity.this,
+									CreateAisleSelectionActivity.class);
+							Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+									VueLandingPageActivity.this, false);
+							intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+							if (!CreateAisleSelectionActivity.isActivityShowing) {
+								CreateAisleSelectionActivity.isActivityShowing = true;
+								startActivity(intent);
+							}
+						} else {
+							showDiscardOtherAppImageDialog();
 						}
 					}
 				});
@@ -107,20 +119,25 @@ public class VueLandingPageActivity extends BaseActivity {
 			editor.commit();
 			showLogInDialog(false);
 		}
-		fragment = (VueLandingAislesFragment) getSupportFragmentManager()
+		mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisles_view_fragment);
 		ViewInfo viewInfo = new ViewInfo();
 		viewInfo.mVueName = getResources().getString(R.string.trending);
 		viewInfo.position = 0;
 		StackViews.getInstance().push(viewInfo);
-		// Get intent, action and MIME type
 		Intent intent = getIntent();
 		String action = intent.getAction();
 		String type = intent.getType();
 		if (Intent.ACTION_SEND.equals(action) && type != null) {
-			showScreenSelectionForOtherSource(type, action, intent);
+			if ("text/plain".equals(type)) {
+				handleSendText(intent, true);
+			} else if (type.startsWith("image/")) {
+				handleSendImage(intent, true);
+			}
 		} else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-			showScreenSelectionForOtherSource(type, action, intent);
+			if (type.startsWith("image/")) {
+				handleSendMultipleImages(intent, true);
+			}
 		}
 	}
 
@@ -138,100 +155,116 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-	void handleSendText(Intent intent) {
+	void handleSendText(Intent intent, boolean fromOnCreateMethodFlag) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
 		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
-			if (Utils
-					.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
+			if (!fromOnCreateMethodFlag) {
+				if (Utils
+						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 
-				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-						VueLandingPageActivity.this, false);
-				Log.e("Land", "vueland 1");
-				Intent i = new Intent(this, AisleDetailsViewActivity.class);
-				Bundle b = new Bundle();
-				b.putString(VueConstants.FROM_OTHER_SOURCES_URL, sourceUrl);
-				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
-				i.putExtras(b);
-				startActivity(i);
+					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+							VueLandingPageActivity.this, false);
+					Log.e("Land", "vueland 1");
+					Intent i = new Intent(this, AisleDetailsViewActivity.class);
+					Bundle b = new Bundle();
+					b.putString(VueConstants.FROM_OTHER_SOURCES_URL, sourceUrl);
+					b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+					i.putExtras(b);
+					startActivity(i);
 
+				} else {
+					Intent i = new Intent(this, DataEntryActivity.class);
+					Bundle b = new Bundle();
+					b.putString(VueConstants.FROM_OTHER_SOURCES_URL, sourceUrl);
+					b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+					i.putExtras(b);
+					startActivity(i);
+				}
 			} else {
-				Intent i = new Intent(this, DataEntryActivity.class);
-				Bundle b = new Bundle();
-				b.putString(VueConstants.FROM_OTHER_SOURCES_URL, sourceUrl);
-				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
-				i.putExtras(b);
-				startActivity(i);
+				getImagesFromUrl(sourceUrl);
 			}
 		}
 	}
 
-	void handleSendImage(Intent intent) {
+	void handleSendImage(Intent intent, boolean fromOnCreateMethodFlag) {
 		Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
 		if (imageUri != null) {
-			Log.e("CretaeAisleSelectionActivity send image", imageUri + "");
-			// Update UI to reflect image being shared
-			if (Utils
-					.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
+			if (!fromOnCreateMethodFlag) {
+				Log.e("CretaeAisleSelectionActivity send image", imageUri + "");
+				// Update UI to reflect image being shared
+				if (Utils
+						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 
-				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-						VueLandingPageActivity.this, false);
-				Log.e("Land", "vueland 1");
-				Intent i = new Intent(this, AisleDetailsViewActivity.class);
-				Bundle b = new Bundle();
-				ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
-				imageUrisList.add(imageUri);
-				b.putParcelableArrayList(
-						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
-						imageUrisList);
-				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
-				i.putExtras(b);
-				startActivity(i);
+					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+							VueLandingPageActivity.this, false);
+					Log.e("Land", "vueland 1");
+					Intent i = new Intent(this, AisleDetailsViewActivity.class);
+					Bundle b = new Bundle();
+					ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
+					imageUrisList.add(imageUri);
+					b.putParcelableArrayList(
+							VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+							imageUrisList);
+					b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+					i.putExtras(b);
+					startActivity(i);
 
+				} else {
+					Intent i = new Intent(this, DataEntryActivity.class);
+					Bundle b = new Bundle();
+					ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
+					imageUrisList.add(imageUri);
+					b.putParcelableArrayList(
+							VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+							imageUrisList);
+					b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+					i.putExtras(b);
+					startActivity(i);
+				}
 			} else {
-				Intent i = new Intent(this, DataEntryActivity.class);
-				Bundle b = new Bundle();
-				ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
-				imageUrisList.add(imageUri);
-				b.putParcelableArrayList(
-						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
-						imageUrisList);
-				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
-				i.putExtras(b);
-				startActivity(i);
+				ArrayList<Uri> imageUriList = new ArrayList<Uri>();
+				imageUriList.add(imageUri);
+				showOtherSourcesGridview(convertImageUrisToOtherSourceImageDetails(imageUriList));
 			}
 		}
 	}
 
-	void handleSendMultipleImages(Intent intent) {
+	void handleSendMultipleImages(Intent intent, boolean fromOnCreateMethodFlag) {
 		ArrayList<Uri> imageUris = intent
 				.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
 		if (imageUris != null) {
-			if (Utils
-					.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
+			if (!fromOnCreateMethodFlag) {
+				if (Utils
+						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 
-				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-						VueLandingPageActivity.this, false);
-				Log.e("Land", "vueland 1");
-				Intent i = new Intent(this, AisleDetailsViewActivity.class);
-				Bundle b = new Bundle();
-				b.putParcelableArrayList(
-						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS, imageUris);
-				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
-				i.putExtras(b);
-				startActivity(i);
+					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+							VueLandingPageActivity.this, false);
+					Log.e("Land", "vueland 1");
+					Intent i = new Intent(this, AisleDetailsViewActivity.class);
+					Bundle b = new Bundle();
+					b.putParcelableArrayList(
+							VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+							imageUris);
+					b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+					i.putExtras(b);
+					startActivity(i);
 
+				} else {
+					Intent i = new Intent(this, DataEntryActivity.class);
+					Bundle b = new Bundle();
+					b.putParcelableArrayList(
+							VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+							imageUris);
+					b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+					i.putExtras(b);
+					startActivity(i);
+				}
+				// Update UI to reflect multiple images being shared
 			} else {
-				Intent i = new Intent(this, DataEntryActivity.class);
-				Bundle b = new Bundle();
-				b.putParcelableArrayList(
-						VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS, imageUris);
-				b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
-				i.putExtras(b);
-				startActivity(i);
+				showOtherSourcesGridview(convertImageUrisToOtherSourceImageDetails(imageUris));
 			}
-			// Update UI to reflect multiple images being shared
 		}
 	}
 
@@ -242,23 +275,29 @@ public class VueLandingPageActivity extends BaseActivity {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
-			} else if(StackViews.getInstance().getStackCount() > 0){
-				final ViewInfo viewInfo = StackViews.getInstance().pull(); 
-				if(viewInfo != null){
-					if(!mVueLandingActionbarScreenName.getText().toString().equalsIgnoreCase("Trending")){
-				mVueLandingActionbarScreenName
-				.setText(viewInfo.mVueName);
-						 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(viewInfo.mVueName,new ProgresStatus(),false);
-						 if(fragment == null){
-							 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
-										.findFragmentById(R.id.aisles_view_fragment);
-						 }
-						 fragment.moveListToPosition(viewInfo.position);
-						 
-					}else {
+			} else if (StackViews.getInstance().getStackCount() > 0) {
+				final ViewInfo viewInfo = StackViews.getInstance().pull();
+				if (viewInfo != null) {
+					if (!mVueLandingActionbarScreenName.getText().toString()
+							.equalsIgnoreCase("Trending")) {
+						mVueLandingActionbarScreenName
+								.setText(viewInfo.mVueName);
+						VueTrendingAislesDataModel.getInstance(
+								VueLandingPageActivity.this)
+								.displayCategoryAisles(viewInfo.mVueName,
+										new ProgresStatus(), false);
+						if (mFragment == null) {
+							mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+									.findFragmentById(R.id.aisles_view_fragment);
+						}
+						mFragment.moveListToPosition(viewInfo.position);
+
+					} else {
+						mOtherSourceImagePath = null;
 						super.onBackPressed();
 					}
 				} else {
+					mOtherSourceImagePath = null;
 					super.onBackPressed();
 				}
 			} else {
@@ -267,6 +306,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				fileCache.clearVueAppResizedPictures();
 				fileCache.clearVueAppCameraPictures();
 				fileCache.clearTwoDaysOldPictures();
+				mOtherSourceImagePath = null;
 				super.onBackPressed();
 			}
 		}
@@ -287,8 +327,8 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (fragment != null) {
-			fragment.notifyAdapters();
+		if (mFragment != null) {
+			mFragment.notifyAdapters();
 		}
 
 		new Handler().postDelayed(new Runnable() {
@@ -314,7 +354,6 @@ public class VueLandingPageActivity extends BaseActivity {
 
 	@Override
 	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
 		super.onNewIntent(intent);
 		// Get intent, action and MIME type
 		String action = intent.getAction();
@@ -323,17 +362,19 @@ public class VueLandingPageActivity extends BaseActivity {
 		if (Intent.ACTION_SEND.equals(action) && type != null) {
 			Log.e("CretaeAisleSelectionActivity send text", type);
 			if ("text/plain".equals(type)) {
-				handleSendText(intent); // Handle text being sent
+				handleSendText(intent, false); // Handle text being sent
 				Log.e("CretaeAisleSelectionActivity send text",
 						"textplain match");
 			} else if (type.startsWith("image/")) {
-				handleSendImage(intent); // Handle single image being sent
+				handleSendImage(intent, false); // Handle single image being
+												// sent
 				Log.e("CretaeAisleSelectionActivity send text", "image match");
 			}
 		} else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
 			if (type.startsWith("image/")) {
-				handleSendMultipleImages(intent); // Handle multiple images
-													// being sent
+				handleSendMultipleImages(intent, false); // Handle multiple
+															// images
+				// being sent
 				Log.e("CretaeAisleSelectionActivity send text",
 						"multiple image match");
 			}
@@ -341,24 +382,25 @@ public class VueLandingPageActivity extends BaseActivity {
 			// Handle other intents, such as being started from the home screen
 		}
 	}
- 
-	public void showCategory(final String catName){
-		 if(fragment == null){
-			 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.aisles_view_fragment);
-		 }
-		if(StackViews.getInstance().getStackCount() == 1){
-			StackViews.getInstance().getItem(0).position = fragment.getListPosition();
+
+	public void showCategory(final String catName) {
+		if (mFragment == null) {
+			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisles_view_fragment);
 		}
-		if(!StackViews.getInstance().getTop().equalsIgnoreCase(catName)) {
-	 mVueLandingActionbarScreenName
-		.setText(catName);
-	 ViewInfo viewInfo = new ViewInfo();
-	 viewInfo.mVueName = catName;
-	 viewInfo.position = fragment.getListPosition();
-	 StackViews.getInstance().push(viewInfo);
-		// TODO Auto-generated method stub
-		 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(catName,new ProgresStatus(),true);
+		if (StackViews.getInstance().getStackCount() == 1) {
+			StackViews.getInstance().getItem(0).position = mFragment
+					.getListPosition();
+		}
+		if (!StackViews.getInstance().getTop().equalsIgnoreCase(catName)) {
+			mVueLandingActionbarScreenName.setText(catName);
+			ViewInfo viewInfo = new ViewInfo();
+			viewInfo.mVueName = catName;
+			viewInfo.position = mFragment.getListPosition();
+			StackViews.getInstance().push(viewInfo);
+			// TODO Auto-generated method stub
+			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+					.displayCategoryAisles(catName, new ProgresStatus(), true);
 		}
 	}
 
@@ -366,26 +408,53 @@ public class VueLandingPageActivity extends BaseActivity {
 
 		@Override
 		public void showProgress() {
-			pbsearch.setVisibility(View.VISIBLE);
+			mLoadProgress.setVisibility(View.VISIBLE);
 
 		}
+
 		@Override
 		public void dismissProgress(boolean fromWhere) {
-			 pbsearch.setVisibility(View.INVISIBLE);
-			 if(fragment == null){
-				 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.aisles_view_fragment);
-			 }
-			 if(fromWhere){
-				 fragment.moveListToPosition(0);
-			 } else {
-				 
-			 }
+			mLoadProgress.setVisibility(View.INVISIBLE);
+			if (mFragment == null) {
+				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+			}
+			if (fromWhere) {
+				mFragment.moveListToPosition(0);
+			} else {
 
+			}
+
+		}
 	}
+
+	public void showDiscardOtherAppImageDialog() {
+		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.googleplusappinstallationdialog);
+		final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+		TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
+		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+		messagetext.setText(getResources().getString(
+				R.string.discard_othersource_image_mesg));
+		yesButton.setText("Yes");
+		noButton.setText("No");
+		yesButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				mOtherSourceImagePath = null;
+				dialog.dismiss();
+			}
+		});
+		noButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show();
 	}
-	private void showScreenSelectionForOtherSource(final String type,
-			final String action, final Intent intent) {
+
+	public void showScreenSelectionForOtherSource(final String imagePath) {
+		mOtherSourceImagePath = imagePath;
 		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.other_source_landing_screen_selection);
@@ -403,22 +472,55 @@ public class VueLandingPageActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				dialog.dismiss();
-				if (Intent.ACTION_SEND.equals(action) && type != null) {
-					if ("text/plain".equals(type)) {
-						handleSendText(intent);
-					} else if (type.startsWith("image/")) {
-						handleSendImage(intent);
-					}
-				} else if (Intent.ACTION_SEND_MULTIPLE.equals(action)
-						&& type != null) {
-					if (type.startsWith("image/")) {
-						handleSendMultipleImages(intent);
-					}
-				}
+				Intent intent = new Intent(VueLandingPageActivity.this,
+						DataEntryActivity.class);
+				Bundle b = new Bundle();
+				b.putString(
+						VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+						imagePath);
+				mOtherSourceImagePath = null;
+				intent.putExtras(b);
+				startActivity(intent);
 			}
 		});
 		dialog.show();
- 
 	}
-	
+
+	public void showOtherSourcesGridview(
+			ArrayList<OtherSourceImageDetails> imagesList) {
+		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+			mProgressDialog.dismiss();
+			mProgressDialog = null;
+		}
+		if (imagesList != null && imagesList.size() > 0) {
+			if (mOtherSourcesDialog == null) {
+				mOtherSourcesDialog = new OtherSourcesDialog(this);
+			}
+			mOtherSourcesDialog.showImageDailog(imagesList, true);
+		} else {
+			Toast.makeText(this, "Sorry, there are no images.",
+					Toast.LENGTH_LONG).show();
+		}
+	}
+
+	private void getImagesFromUrl(String sourceUrl) {
+		if (mProgressDialog == null) {
+			mProgressDialog = ProgressDialog.show(this, "", "Please wait...");
+		}
+		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
+				sourceUrl, this, true);
+		getImagesTask.execute();
+	}
+
+	private ArrayList<OtherSourceImageDetails> convertImageUrisToOtherSourceImageDetails(
+			ArrayList<Uri> imageUriList) {
+		ArrayList<OtherSourceImageDetails> otherSourcesImageDetailsList = new ArrayList<OtherSourceImageDetails>();
+		for (int i = 0; i < imageUriList.size(); i++) {
+			OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails(
+					null, null, null, 0, 0, imageUriList.get(i), 0);
+			otherSourcesImageDetailsList.add(otherSourceImageDetails);
+		}
+		return otherSourcesImageDetailsList;
+	}
+
 }

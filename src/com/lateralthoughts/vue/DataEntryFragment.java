@@ -867,37 +867,43 @@ public class DataEntryFragment extends Fragment {
 										"You need to Login with the app to add image to aisle.",
 										true, true, 0, null, null);
 					} else {
-						Log.e("Land", "vueland 10");
-						Intent intent = new Intent();
-						Bundle b = new Bundle();
-						b.putString(
-								VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
-								mImagePath);
-						if (!mIsUserAisleFlag) {
+						if (mAisleImageBitmap != null) {
+							Log.e("Land", "vueland 10");
+							Intent intent = new Intent();
+							Bundle b = new Bundle();
 							b.putString(
-									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
-									mLookingForBigText.getText().toString());
+									VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+									mImagePath);
+							if (!mIsUserAisleFlag) {
+								b.putString(
+										VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
+										mLookingForBigText.getText().toString());
+								b.putString(
+										VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
+										mOccassionBigText.getText().toString());
+								b.putString(
+										VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
+										mCategoryText.getText().toString());
+								b.putString(
+										VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
+										mSaySomethingAboutAisle.getText()
+												.toString());
+							}
 							b.putString(
-									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
-									mOccassionBigText.getText().toString());
-							b.putString(
-									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
-									mCategoryText.getText().toString());
-							b.putString(
-									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
-									mSaySomethingAboutAisle.getText()
-											.toString());
+									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
+									mFindAtText.getText().toString());
+							intent.putExtras(b);
+							Log.e("Land", "vueland 11");
+							getActivity()
+									.setResult(
+											VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT,
+											intent);
+							getActivity().finish();
+						} else {
+							showAlertForMandotoryFields(getResources()
+									.getString(
+											R.string.dataentry_mandtory_field_add_aisleimage_mesg));
 						}
-						b.putString(
-								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
-								mFindAtText.getText().toString());
-						intent.putExtras(b);
-						Log.e("Land", "vueland 11");
-						getActivity()
-								.setResult(
-										VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT,
-										intent);
-						getActivity().finish();
 					}
 				} else {
 					if (mAisleImageBitmap != null) {
@@ -928,7 +934,8 @@ public class DataEntryFragment extends Fragment {
 				VueApplication.getInstance().mAisleImagePathList
 						.get(mCurrentPagePosition));
 		if (aisleFile.exists()) {
-			mCreateAisleBg.setImageURI(Uri.fromFile(aisleFile));
+			mAisleImageBitmap = BitmapFactory.decodeFile(aisleFile.getPath());
+			mCreateAisleBg.setImageBitmap(mAisleImageBitmap);
 		}
 		mDataEntryAislesViewpager.setVisibility(View.GONE);
 		mCreateAisleBg.setVisibility(View.VISIBLE);
@@ -1624,7 +1631,7 @@ public class DataEntryFragment extends Fragment {
 			if (mOtherSourcesDialog == null) {
 				mOtherSourcesDialog = new OtherSourcesDialog(getActivity());
 			}
-			mOtherSourcesDialog.showImageDailog(imagesList);
+			mOtherSourcesDialog.showImageDailog(imagesList, false);
 		} else {
 			Toast.makeText(getActivity(), "Sorry, there are no images.",
 					Toast.LENGTH_LONG).show();
@@ -1637,7 +1644,7 @@ public class DataEntryFragment extends Fragment {
 					"Please wait...");
 		}
 		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
-				sourceUrl, getActivity());
+				sourceUrl, getActivity(), false);
 		getImagesTask.execute();
 	}
 }

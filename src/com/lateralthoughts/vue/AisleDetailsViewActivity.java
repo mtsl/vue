@@ -248,6 +248,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 						return false;
 					}
 				});
+		if (VueLandingPageActivity.mOtherSourceImagePath != null) {
+			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath);
+			VueLandingPageActivity.mOtherSourceImagePath = null;
+		}
 	}
 
 	@Override
@@ -501,16 +505,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 				if (imagePath != null) {
-
-					FileCache fileCache = new FileCache(this);
-					File f = fileCache.getFile(imagePath);
-					File sourceFile = new File(imagePath);
-					Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(
-							sourceFile,
-							VueApplication.getInstance().mScreenHeight);
-					Utils.saveBitmap(bmp, f);
-					mVueAiselFragment.addAisleToWindow(bmp, imagePath);
-
+					addImageToAisle(imagePath);
 				}
 
 			}
@@ -844,5 +839,19 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				"bitmap issue:scalleddown originalbitmap height:  "
 						+ newBitmap.getHeight());
 		return newBitmap;
+	}
+
+	private void addImageToAisle(String imagePath) {
+		FileCache fileCache = new FileCache(this);
+		File f = fileCache.getFile(imagePath);
+		File sourceFile = new File(imagePath);
+		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
+				VueApplication.getInstance().mScreenHeight);
+		Utils.saveBitmap(bmp, f);
+		if (mVueAiselFragment == null) {
+			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisle_details_view_fragment);
+		}
+		mVueAiselFragment.addAisleToWindow(bmp, imagePath);
 	}
 }

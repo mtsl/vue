@@ -2,7 +2,6 @@ package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -196,6 +195,16 @@ public class DataEntryActivity extends BaseActivity {
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
 				mDataEntryFragment.mCreateAisleBg.setVisibility(View.GONE);
 				mDataEntryFragment.mAisleBgProgressbar.setVisibility(View.GONE);
+				if (!mDataEntryFragment.mFromDetailsScreenFlag) {
+					if (VueApplication.getInstance().mAisleImagePathList != null
+							&& VueApplication.getInstance().mAisleImagePathList
+									.size() > 0) {
+						mVueDataentryActionbarScreenName
+								.setText(getResources()
+										.getString(
+												R.string.add_imae_to_aisle_screen_title));
+					}
+				}
 				if (b.getString(VueConstants.FROM_OTHER_SOURCES_URL) != null) {
 					mDataEntryFragment.getImagesFromUrl(b
 							.getString(VueConstants.FROM_OTHER_SOURCES_URL));
