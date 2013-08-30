@@ -69,7 +69,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
         if(mVueTrendingAislesDataModel.isDownloadFail) {
-          mVueTrendingAislesDataModel.loadData();
+          mVueTrendingAislesDataModel.loadData(true);
         }
         mLoader = AisleLoader.getInstance(mContext);  
         mIsScrolling = false;
@@ -82,7 +82,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
         if(mVueTrendingAislesDataModel.isDownloadFail) {
-          mVueTrendingAislesDataModel.loadData();
+          mVueTrendingAislesDataModel.loadData(true);
         }
         mLoader = AisleLoader.getInstance(mContext);  
         mIsScrolling = false;

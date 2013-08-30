@@ -146,10 +146,10 @@ public class AisleLoader {
     		//mContentViewMap.put(holder.uniqueContentId, holder);
     	}
     	imageDetailsArr = windowContent.getImageList();
-    /*	LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
+    	LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
  				VueApplication.getInstance().getScreenWidth()/2,
  				windowContent.getBestHeightForWindow());
-         holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);*/
+         holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
     	
     	
     	

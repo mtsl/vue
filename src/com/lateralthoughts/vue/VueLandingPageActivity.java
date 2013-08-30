@@ -41,7 +41,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	private View mVueLandingActionbarView;
 	private RelativeLayout mVueLandingActionbarAppIconLayout;
 	ProgressBar pbsearch;
-
+    private int mCurentScreenPosition;
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -111,12 +111,12 @@ public class VueLandingPageActivity extends BaseActivity {
 			editor.commit();
 			showLogInDialog(false);
 		}
-		fragment = (VueLandingAislesFragment) getSupportFragmentManager()
+	/*	fragment = (VueLandingAislesFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisles_view_fragment);
 		 ViewInfo viewInfo = new ViewInfo();
 		 viewInfo.mVueName = getResources().getString(R.string.trending);
 		 viewInfo.position = 0;
-		 StackViews.getInstance().push(viewInfo);
+		 StackViews.getInstance().push(viewInfo);*/
 	}
 
 	@Override
@@ -246,12 +246,8 @@ public class VueLandingPageActivity extends BaseActivity {
 					if(!mVueLandingActionbarScreenName.getText().toString().equalsIgnoreCase("Trending")){
 				mVueLandingActionbarScreenName
 				.setText(viewInfo.mVueName);
-						 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(viewInfo.mVueName,new ProgresStatus(),false);
-						 if(fragment == null){
-							 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
-										.findFragmentById(R.id.aisles_view_fragment);
-						 }
-						 fragment.moveListToPosition(viewInfo.position);
+				mCurentScreenPosition = viewInfo.position;
+						 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(viewInfo.mVueName,new ProgresStatus(),false,false);
 						 
 					}else {
 						super.onBackPressed();
@@ -345,28 +341,25 @@ public class VueLandingPageActivity extends BaseActivity {
 			 fragment = (VueLandingAislesFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.aisles_view_fragment);
 		 }
-		if(StackViews.getInstance().getStackCount() == 1){
-			StackViews.getInstance().getItem(0).position = fragment.getListPosition();
+		if(mVueLandingActionbarScreenName.getText().toString().equalsIgnoreCase(catName)) {
+			return;
 		}
-		if(!StackViews.getInstance().getTop().equalsIgnoreCase(catName)) {
+			ViewInfo viewInfo = new ViewInfo();
+			 viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
+			 viewInfo.position = fragment.getListPosition();
+			 StackViews.getInstance().push(viewInfo);
+			 Log.i("positonmoved", "positonmoved saved position "+viewInfo.position);
 	 mVueLandingActionbarScreenName
 		.setText(catName);
-	 ViewInfo viewInfo = new ViewInfo();
-	 viewInfo.mVueName = catName;
-	 viewInfo.position = fragment.getListPosition();
-	 StackViews.getInstance().push(viewInfo);
-		// TODO Auto-generated method stub
-		 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(catName,new ProgresStatus(),true);
-		}
+	 
+		 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(catName,new ProgresStatus(),true,false);
+		
 	}
 class ProgresStatus implements NotifyProgress {
-
 	@Override
 	public void showProgress() {
 		 pbsearch.setVisibility(View.VISIBLE);
-		
 	}
-
 	@Override
 	public void dismissProgress(boolean fromWhere) {
 		 pbsearch.setVisibility(View.INVISIBLE);
@@ -376,12 +369,17 @@ class ProgresStatus implements NotifyProgress {
 		 }
 		 if(fromWhere){
 			 fragment.moveListToPosition(0);
+			 Log.i("positonmoved", "positonmoved from serverto cur pos 0");
 		 } else {
-			 
+			 Log.i("positonmoved", "positonmoved moved to position "+mCurentScreenPosition);
+			 fragment.moveListToPosition(mCurentScreenPosition);
 		 }
-		 
-		
 	}
-	
+	@Override
+	public boolean isAlreadyDownloaed(String category) {
+		boolean isDowoaded = StackViews.getInstance().categoryCheck(category);
+		Log.i("isAlredeDownloaded", "isAlredeDownloaded: "+isDowoaded);
+		return isDowoaded;
+	}
 }
 }

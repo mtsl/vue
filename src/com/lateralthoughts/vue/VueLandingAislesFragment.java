@@ -227,7 +227,7 @@ public void notifyAdapters() {
                 totalItems = mRightColumnAdapter.getCount();
               }
               if((totalItems - lastVisiblePosition) < 5) {
-                VueTrendingAislesDataModel.getInstance(mContext).loadMoreAisles();
+                VueTrendingAislesDataModel.getInstance(mContext).loadMoreAisles(true);
               }
             }
             
