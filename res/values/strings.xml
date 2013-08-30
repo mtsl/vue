@@ -10,6 +10,7 @@
     <string name="dataentry_mandtory_field_add_aisleimage_mesg">Please Add Aisle Image.</string>
     <string name="limit_tag">limit</string>
     <string name="offset_tag">offset</string>
+    <string name="discard_othersource_image_mesg">Would you like to discard the other application image?</string>
     <string name="middle_earth">Visiting Middle Earth</string>
     <string name="profile_owner">Profile Owner</string>
     <string name="uploading_mesg">Uploading...</string>
@@ -69,7 +70,7 @@
     <string name="cancelled">Cancelled</string>
     <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
     <string name="ok">Ok</string>
-   <string name="cache_dirname">GoogleImgApp_Cache</string>
+    <string name="cache_dirname">GoogleImgApp_Cache</string>
     <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string> -->
     <string name="profile">Profile</string>
     <string name="create_aisle">Create Aisle</string>

@@ -23,10 +23,6 @@ import com.lateralthoughts.vue.utils.Utils;
 public class VueApplication extends Application {
 	private static VueApplication sInstance;
 
-	// private VueMemoryCache<Bitmap> mVueAisleImagesCache;
-	// private VueMemoryCache<Bitmap> mAisleContentCache;
-	// private VueMemoryCache<String> mVueAisleOwnerNamesCache;
-	// private VueMemoryCache<String> mVueAisleContextInfoCache;
 	private static final String CRITTERCISM_APP_ID = "5153c41e558d6a2403000009";
 	private HttpClient mHttpClient;
 	private FileCache mFileCache;
@@ -40,16 +36,6 @@ public class VueApplication extends Application {
 	public ArrayList<String> mAisleImagePathList = new ArrayList<String>();
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
 
-	public boolean ismFromDetailsScreenToDataentryCreateAisleScreenFlag() {
-		return mFromDetailsScreenToDataentryCreateAisleScreenFlag;
-	}
-
-	public void setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
-			boolean mFromDetailsScreenToDataentryCreateAisleScreenFlag) {
-		this.mFromDetailsScreenToDataentryCreateAisleScreenFlag = mFromDetailsScreenToDataentryCreateAisleScreenFlag;
-	}
-
-	private boolean mFromDetailsScreenToDataentryCreateAisleScreenFlag;
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;

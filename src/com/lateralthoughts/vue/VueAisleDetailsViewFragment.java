@@ -182,9 +182,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			public void onClick(View arg0) {
 				Intent intent = new Intent(getActivity(),
 						CreateAisleSelectionActivity.class);
-				VueApplication.getInstance()
-						.setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
-								true);
+				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+						getActivity(), true);
 				intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				Bundle b = new Bundle();
 				b.putBoolean(

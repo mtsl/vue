@@ -80,10 +80,10 @@ public class LoginWarningMessage {
 								VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
 								count + 1);
 						editor.commit();
-				/*		VueAisleDetailsViewFragment mVueAiselFragment = (VueAisleDetailsViewFragment) ((FragmentActivity) mContext)
+						VueAisleDetailsViewFragment mVueAiselFragment = (VueAisleDetailsViewFragment) ((FragmentActivity) mContext)
 								.getSupportFragmentManager().findFragmentById(
 										R.id.aisle_details_view_fragment);
-						mVueAiselFragment.addComment(editText, view);*/
+						mVueAiselFragment.addComment(editText, view);
 					}
 				}
 			}

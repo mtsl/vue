@@ -388,11 +388,30 @@ public class Utils {
 	}
 
 	public static String getDeviceId() {
-
 		String deviceId = Secure.getString(VueApplication.getInstance()
 				.getContentResolver(), Secure.ANDROID_ID);
 		Log.e("Utils", "get device id method called" + deviceId);
 		return deviceId;
+	}
 
+	public static boolean getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+			Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences
+				.getBoolean(
+						VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_CREATE_AISLESCREEN_FLAG,
+						false);
+	}
+
+	public static void putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+			Context context, boolean flag) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean(
+				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_CREATE_AISLESCREEN_FLAG,
+				flag);
+		editor.commit();
 	}
 }

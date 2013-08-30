@@ -137,152 +137,170 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v,
 					int groupPosition, long id) {
-				TextView textView = (TextView) v
-						.findViewById(R.id.vue_list_fragment_itemTextview);
-				String s = textView.getText().toString();
-				if (s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
-					adapter.groups.remove(groupPosition);
-					ListOptionItem item = new ListOptionItem(
-							getString(R.string.sidemenu_option_Trending_Aisles),
-							R.drawable.profile, null);
-					adapter.groups.add(groupPosition, item);
-					adapter.notifyDataSetChanged();
-					VueTrendingAislesDataModel.getInstance(getActivity())
-							.clearAisles();
-					AisleWindowContentFactory.getInstance(getActivity())
-							.clearObjectsInUse();
-					if (getActivity() instanceof SlidingFragmentActivity) {
-						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-						activity.getSlidingMenu().toggle();
-						if (getActivity() instanceof VueLandingPageActivity) {
-							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-							vueLandingPageActivity.mVueLandingActionbarScreenName
-									.setText(
-											getString(R.string.sidemenu_option_My_Aisles));
+				if (VueLandingPageActivity.mOtherSourceImagePath == null) {
+					TextView textView = (TextView) v
+							.findViewById(R.id.vue_list_fragment_itemTextview);
+					String s = textView.getText().toString();
+					if (s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
+						adapter.groups.remove(groupPosition);
+						ListOptionItem item = new ListOptionItem(
+								getString(R.string.sidemenu_option_Trending_Aisles),
+								R.drawable.profile, null);
+						adapter.groups.add(groupPosition, item);
+						adapter.notifyDataSetChanged();
+						VueTrendingAislesDataModel.getInstance(getActivity())
+								.clearAisles();
+						AisleWindowContentFactory.getInstance(getActivity())
+								.clearObjectsInUse();
+						if (getActivity() instanceof SlidingFragmentActivity) {
+							SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+							activity.getSlidingMenu().toggle();
+							if (getActivity() instanceof VueLandingPageActivity) {
+								VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+								vueLandingPageActivity.mVueLandingActionbarScreenName
+										.setText(getString(R.string.sidemenu_option_My_Aisles));
+							}
+							if (getActivity() instanceof AisleDetailsViewActivity) {
+								startActivity(new Intent(
+										(AisleDetailsViewActivity) getActivity(),
+										VueLandingPageActivity.class));
+							} else if (getActivity() instanceof DataEntryActivity) {
+								startActivity(new Intent(
+										(DataEntryActivity) getActivity(),
+										VueLandingPageActivity.class));
+							}
 						}
-						if (getActivity() instanceof AisleDetailsViewActivity) {
-							startActivity(new Intent(
-									(AisleDetailsViewActivity) getActivity(),
-									VueLandingPageActivity.class));
-						} else if (getActivity() instanceof DataEntryActivity) {
-							startActivity(new Intent(
-									(DataEntryActivity) getActivity(),
-									VueLandingPageActivity.class));
+
+						ArrayList<AisleWindowContent> aislesList = DataBaseManager
+								.getInstance(getActivity()).getAislesFromDB(
+										null);
+						Message msg = new Message();
+						msg.obj = aislesList;
+						VueTrendingAislesDataModel.getInstance(getActivity()).mHandler
+								.sendMessage(msg);
+					} else if (s
+							.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
+						adapter.groups.remove(groupPosition);
+						ListOptionItem item = new ListOptionItem(
+								getString(R.string.sidemenu_option_My_Aisles),
+								R.drawable.profile, null);
+						adapter.groups.add(groupPosition, item);
+						adapter.notifyDataSetChanged();
+						VueTrendingAislesDataModel model = VueTrendingAislesDataModel
+								.getInstance(getActivity());
+						model.clearAisles();
+						AisleWindowContentFactory.getInstance(getActivity())
+								.clearObjectsInUse();
+						if (getActivity() instanceof SlidingFragmentActivity) {
+							SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+							activity.getSlidingMenu().toggle();
+							if (getActivity() instanceof VueLandingPageActivity) {
+								VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+								vueLandingPageActivity.mVueLandingActionbarScreenName
+										.setText(getString(R.string.trending));
+							}
+							if (getActivity() instanceof AisleDetailsViewActivity) {
+								startActivity(new Intent(
+										(AisleDetailsViewActivity) getActivity(),
+										VueLandingPageActivity.class));
+							} else if (getActivity() instanceof DataEntryActivity) {
+								startActivity(new Intent(
+										(DataEntryActivity) getActivity(),
+										VueLandingPageActivity.class));
+							}
+						}
+
+						model.mMoreDataAvailable = true;
+						model.mVueContentGateway
+								.getTrendingAisles(
+										model.mLimit = VueTrendingAislesDataModel.TRENDING_AISLES_BATCH_INITIAL_SIZE,
+										model.mOffset = 0,
+										model.mTrendingAislesParser,true);
+					} else if (s
+							.equals(getString(R.string.sidemenu_option_About))) {
+						inflateAboutLayout();
+					} else if (s
+							.equals(getString(R.string.sidemenu_option_FeedBack))) {
+						startActivity(new Intent(getActivity(),
+								FeedbackForm.class));
+					} else if (s
+							.equals(getString(R.string.sidemeun_option_Settings))) {
+						inflateSettingsLayout();
+					} else if (s
+							.equals(getString(R.string.sidemenu_option_Invite_Friends))) {
+						View layoutInviewFriends = inflater.inflate(
+								R.layout.invite, null);
+						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+								LayoutParams.MATCH_PARENT,
+								LayoutParams.MATCH_PARENT);
+						vue_list_fragment_invite_friendsLayout_mainxml
+								.addView(layoutInviewFriends);
+						invitefriendsLayout = (LinearLayout) layoutInviewFriends
+								.findViewById(R.id.vue_list_fragment_invite_friendsLayout);
+						invitefriendsLayout.setLayoutParams(params);
+						inviteFrirendsListView = (ListView) layoutInviewFriends
+								.findViewById(R.id.vue_list_fragment_Invitefriends_list);
+						inviteFrirendsListView
+								.setOnItemClickListener(new OnItemClickListener() {
+
+									@Override
+									public void onItemClick(
+											AdapterView<?> parent, View view,
+											int position, long id) {
+
+										/*
+										 * String itemName = ((TextView) view
+										 * .findViewById
+										 * (R.id.invite_friends_name)).getText()
+										 * .toString();
+										 */
+										// TODO:
+									}
+								});
+					} else if (s
+							.equals(getString(R.string.sidemenu_option_Login))) {
+						sharedPreferencesObj = getActivity()
+								.getSharedPreferences(
+										VueConstants.SHAREDPREFERENCE_NAME, 0);
+						boolean fbloginfalg = sharedPreferencesObj.getBoolean(
+								VueConstants.FACEBOOK_LOGIN, false);
+						boolean googleplusloginfalg = sharedPreferencesObj
+								.getBoolean(VueConstants.GOOGLEPLUS_LOGIN,
+										false);
+						if (!googleplusloginfalg || !fbloginfalg) {
+
+							Intent i = new Intent(getActivity(),
+									VueLoginActivity.class);
+							Bundle b = new Bundle();
+							b.putBoolean(
+									VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
+									false);
+							b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
+									false);
+							b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+							b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
+									true);
+							i.putExtras(b);
+							startActivity(i);
+						} else {
+							Toast.makeText(
+									getActivity(),
+									getActivity().getResources().getString(
+											R.string.AlreadyLoggedinmesg),
+									Toast.LENGTH_LONG).show();
 						}
 					}
-
-					ArrayList<AisleWindowContent> aislesList = DataBaseManager
-							.getInstance(getActivity()).getAislesFromDB(null);
-					Message msg = new Message();
-					msg.obj = aislesList;
-					VueTrendingAislesDataModel.getInstance(getActivity()).mHandler
-							.sendMessage(msg);
-				} else if (s
-						.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
-					adapter.groups.remove(groupPosition);
-					ListOptionItem item = new ListOptionItem(
-							getString(R.string.sidemenu_option_My_Aisles),
-							R.drawable.profile, null);
-					adapter.groups.add(groupPosition, item);
-					adapter.notifyDataSetChanged();
-					VueTrendingAislesDataModel model = VueTrendingAislesDataModel
-							.getInstance(getActivity());
-					model.clearAisles();
-					AisleWindowContentFactory.getInstance(getActivity())
-							.clearObjectsInUse();
-					if (getActivity() instanceof SlidingFragmentActivity) {
-						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-						activity.getSlidingMenu().toggle();
-						if (getActivity() instanceof VueLandingPageActivity) {
-							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-							vueLandingPageActivity.mVueLandingActionbarScreenName
-									.setText(
-											getString(R.string.trending));
-						}
-						if (getActivity() instanceof AisleDetailsViewActivity) {
-							startActivity(new Intent(
-									(AisleDetailsViewActivity) getActivity(),
-									VueLandingPageActivity.class));
-						} else if (getActivity() instanceof DataEntryActivity) {
-							startActivity(new Intent(
-									(DataEntryActivity) getActivity(),
-									VueLandingPageActivity.class));
-						}
+ 
+					return false;
+				} else {
+					try {
+						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+						vueLandingPageActivity.showDiscardOtherAppImageDialog();
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-
-					model.mMoreDataAvailable = true;
-					model.mVueContentGateway
-							.getTrendingAisles(
-									model.mLimit = VueTrendingAislesDataModel.TRENDING_AISLES_BATCH_INITIAL_SIZE,
-									model.mOffset = 0,
-									model.mTrendingAislesParser,false);
-				} else if (s.equals(getString(R.string.sidemenu_option_About))) {
-					inflateAboutLayout();
-				} else if (s
-						.equals(getString(R.string.sidemenu_option_FeedBack))) {
-					startActivity(new Intent(getActivity(), FeedbackForm.class));
-				} else if (s
-						.equals(getString(R.string.sidemeun_option_Settings))) {
-					inflateSettingsLayout();
-				} else if (s
-						.equals(getString(R.string.sidemenu_option_Invite_Friends))) {
-					View layoutInviewFriends = inflater.inflate(
-							R.layout.invite, null);
-					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-							LayoutParams.MATCH_PARENT,
-							LayoutParams.MATCH_PARENT);
-					vue_list_fragment_invite_friendsLayout_mainxml
-							.addView(layoutInviewFriends);
-					invitefriendsLayout = (LinearLayout) layoutInviewFriends
-							.findViewById(R.id.vue_list_fragment_invite_friendsLayout);
-					invitefriendsLayout.setLayoutParams(params);
-					inviteFrirendsListView = (ListView) layoutInviewFriends
-							.findViewById(R.id.vue_list_fragment_Invitefriends_list);
-					inviteFrirendsListView
-							.setOnItemClickListener(new OnItemClickListener() {
-
-								@Override
-								public void onItemClick(AdapterView<?> parent,
-										View view, int position, long id) {
-
-									/*
-									 * String itemName = ((TextView) view
-									 * .findViewById
-									 * (R.id.invite_friends_name)).getText()
-									 * .toString();
-									 */
-									// TODO:
-								}
-							});
-				} else if (s.equals(getString(R.string.sidemenu_option_Login))) {
-					sharedPreferencesObj = getActivity().getSharedPreferences(
-							VueConstants.SHAREDPREFERENCE_NAME, 0);
-					boolean fbloginfalg = sharedPreferencesObj.getBoolean(
-							VueConstants.FACEBOOK_LOGIN, false);
-					boolean googleplusloginfalg = sharedPreferencesObj
-							.getBoolean(VueConstants.GOOGLEPLUS_LOGIN, false);
-					if (!googleplusloginfalg || !fbloginfalg) {
-
-						Intent i = new Intent(getActivity(),
-								VueLoginActivity.class);
-						Bundle b = new Bundle();
-						b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
-								false);
-						b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
-								false);
-						b.putString(VueConstants.FROM_INVITEFRIENDS, null);
-						b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, true);
-						i.putExtras(b);
-						startActivity(i);
-					} else {
-						Toast.makeText(
-								getActivity(),
-								getActivity().getResources().getString(
-										R.string.AlreadyLoggedinmesg),
-								Toast.LENGTH_LONG).show();
-					}
+					return false;
 				}
-				return false;
 			}
 		});
 
@@ -291,52 +309,64 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id) {
-				TextView textView = (TextView) v
-						.findViewById(R.id.child_itemTextview);
-				String s = textView.getText().toString();
-				if (s.equals(getString(R.string.sidemenu_option_Profile))) {
-					getUserInfo();
-				} else if (s
-						.equals(getString(R.string.sidemenu_sub_option_Facebook))
-						|| s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
-					getFriendsList(s);
-				} else {
-					TextView categoryText = (TextView) v
+				if (VueLandingPageActivity.mOtherSourceImagePath == null) {
+					TextView textView = (TextView) v
 							.findViewById(R.id.child_itemTextview);
-					String cat = categoryText.getText().toString();
-					if (getActivity() instanceof SlidingFragmentActivity) {
-						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-						activity.getSlidingMenu().toggle();
-						if (getActivity() instanceof VueLandingPageActivity) {
-							/*VueTrendingAislesDataModel model = VueTrendingAislesDataModel
-									.getInstance(getActivity());
-							model.clearAisles();*/
-							AisleWindowContentFactory.getInstance(getActivity())
-									.clearObjectsInUse();
-							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-							vueLandingPageActivity.showCategory(cat);
-						}
+					String s = textView.getText().toString();
+					if (s.equals(getString(R.string.sidemenu_option_Profile))) {
+						getUserInfo();
+					} else if (s
+							.equals(getString(R.string.sidemenu_sub_option_Facebook))
+							|| s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
+						getFriendsList(s);
+					} else {
+						TextView categoryText = (TextView) v
+								.findViewById(R.id.child_itemTextview);
+						String cat = categoryText.getText().toString();
+						if (getActivity() instanceof SlidingFragmentActivity) {
+							SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+							activity.getSlidingMenu().toggle();
+							if (getActivity() instanceof VueLandingPageActivity) {
+								/*
+								 * VueTrendingAislesDataModel model =
+								 * VueTrendingAislesDataModel
+								 * .getInstance(getActivity());
+								 * model.clearAisles();
+								 */
+								AisleWindowContentFactory.getInstance(
+										getActivity()).clearObjectsInUse();
+								VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+								vueLandingPageActivity.showCategory(cat);
+							}
 
-					
+							/*
+							 * ScaledImageViewFactory mImageViewFactory =
+							 * ScaledImageViewFactory
+							 * .getInstance(getActivity());
+							 * mImageViewFactory.clearAllImageViews();
+							 */
 
-						/*
-						 * ScaledImageViewFactory mImageViewFactory =
-						 * ScaledImageViewFactory.getInstance(getActivity());
-						 * mImageViewFactory.clearAllImageViews();
-						 */
-
-						if (getActivity() instanceof AisleDetailsViewActivity) {
-							startActivity(new Intent(
-									(AisleDetailsViewActivity) getActivity(),
-									VueLandingPageActivity.class));
-						} else if (getActivity() instanceof DataEntryActivity) {
-							startActivity(new Intent(
-									(DataEntryActivity) getActivity(),
-									VueLandingPageActivity.class));
+							if (getActivity() instanceof AisleDetailsViewActivity) {
+								startActivity(new Intent(
+										(AisleDetailsViewActivity) getActivity(),
+										VueLandingPageActivity.class));
+							} else if (getActivity() instanceof DataEntryActivity) {
+								startActivity(new Intent(
+										(DataEntryActivity) getActivity(),
+										VueLandingPageActivity.class));
+							}
 						}
 					}
+					return false;
+				} else {
+					try {
+						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+						vueLandingPageActivity.showDiscardOtherAppImageDialog();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return false;
 				}
-				return false;
 			}
 		});
 	}

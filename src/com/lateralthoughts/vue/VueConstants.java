@@ -53,6 +53,7 @@ public class VueConstants {
 	public static final String GOOGLEPLUS_FRIEND_INVITE = "GOOGLEPLUS_FRIEND_INVITE";
 	public static final String GOOGLEPLUS_FRIEND_INDEX = "GOOGLEPLUS_FRIEND_INDEX";
 	public static final String GOOGLEPLUS_FRIEND_IMAGE_PATH_LIST_KEY = "GOOGLEPLUS_FRIEND_INDEX_PATH_LIST_KEY";
+	public static final String FROM_DETAILS_SCREEN_TO_DATAENTRY_CREATE_AISLESCREEN_FLAG = "FromDetailsScreenToDataentryCreateAisleScreenFlag";
 	// Column names for aisles table.
 	public static final String ID = "_id";
 	public static final String CATEGORY = "category";
