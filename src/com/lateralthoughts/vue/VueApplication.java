@@ -136,6 +136,7 @@ public class VueApplication extends Application {
 		// R.drawable.aisle_content_empty;
 		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 				crittercismConfig);
+		
 	}
 
 	public static VueApplication getInstance() {

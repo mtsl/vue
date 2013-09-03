@@ -45,7 +45,6 @@
     <string name="no_mesg">No</string>
     <string name="com_facebook_loading">Loading...</string>
     <string name="com_facebook_internet_permission_error_title">AndroidManifest Error</string>
-    <string name="switchtotwog">No Wi-Fi Network: Switch To 2G/3G?</string>
     <string name="com_facebook_internet_permission_error_message">WebView login requires INTERNET permission</string>
     <string name="com_facebook_requesterror_web_login">Please log in via https://www.facebook.com or https://m.facebook.com to re-enable the app to connect with Facebook.</string>
     <string name="com_facebook_requesterror_relogin">The app is not connected with Facebook, please log in and reconnect this app.</string>

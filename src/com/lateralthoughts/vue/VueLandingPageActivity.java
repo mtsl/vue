@@ -1,7 +1,9 @@
 package com.lateralthoughts.vue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,7 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+ 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -44,11 +47,15 @@ public class VueLandingPageActivity extends BaseActivity {
 	private LinearLayout mVueLandingActionbarRightLayout;
 	private View mVueLandingActionbarView;
 	private RelativeLayout mVueLandingActionbarAppIconLayout;
-    private int mCurentScreenPosition;
+	private int mCurentScreenPosition;
 	private ProgressBar mLoadProgress;
 	private ProgressDialog mProgressDialog;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
 	public static String mOtherSourceImagePath = null;
+	public boolean mDisableOutsideClickFlag = false;
+	private String mCameraImageName = null;
+	private static final String CAMERA_INTENT_NAME = "android.media.action.IMAGE_CAPTURE";
+
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -72,27 +79,30 @@ public class VueLandingPageActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						if (mOtherSourceImagePath == null) {
-							Intent intent = new Intent(
-									VueLandingPageActivity.this,
-									CreateAisleSelectionActivity.class);
-							Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-									VueLandingPageActivity.this, false);
-							intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-							if (!CreateAisleSelectionActivity.isActivityShowing) {
-								CreateAisleSelectionActivity.isActivityShowing = true;
-								startActivity(intent);
-							}
-						} else {
-							showDiscardOtherAppImageDialog();
-						}
+						/*
+						 * if (mOtherSourceImagePath == null) { Intent intent =
+						 * new Intent( VueLandingPageActivity.this,
+						 * CreateAisleSelectionActivity.class); Utils.
+						 * putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag
+						 * ( VueLandingPageActivity.this, false);
+						 * intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); if
+						 * (!CreateAisleSelectionActivity.isActivityShowing) {
+						 * CreateAisleSelectionActivity.isActivityShowing =
+						 * true; startActivity(intent); } } else {
+						 * showDiscardOtherAppImageDialog(); }
+						 */
+						showPopUp();
 					}
 				});
 		mVueLandingActionbarAppIconLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						getSlidingMenu().toggle();
+						if (!mDisableOutsideClickFlag) {
+							getSlidingMenu().toggle();
+						} else {
+							showPopUp();
+						}
 					}
 				});
 		// Checking wheather app is opens for first time or not?
@@ -121,7 +131,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			editor.commit();
 			showLogInDialog(false);
 		}
- 
+
 		mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisles_view_fragment);
 		ViewInfo viewInfo = new ViewInfo();
@@ -175,6 +185,21 @@ protected void onStop() {
 					mFrag.getFriendsList(data
 							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
 				}
+			}
+		} // From Camera...
+		else if (requestCode == VueConstants.CAMERA_REQUEST) {
+			File cameraImageFile = new File(mCameraImageName);
+			if (cameraImageFile.exists()) {
+				Intent intent = new Intent(this, DataEntryActivity.class);
+				Bundle b = new Bundle();
+				b.putString(
+						VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+						mCameraImageName);
+				intent.putExtras(b);
+				Log.e("cs", "7");
+				startActivity(intent);
+			} else {
+				finish();
 			}
 		}
 	}
@@ -299,16 +324,20 @@ protected void onStop() {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
-			} else if(StackViews.getInstance().getStackCount() > 0){
-				final ViewInfo viewInfo = StackViews.getInstance().pull(); 
-				if(viewInfo != null){
-					if(!mVueLandingActionbarScreenName.getText().toString().equalsIgnoreCase("Trending")){
-				mVueLandingActionbarScreenName
-				.setText(viewInfo.mVueName);
-				mCurentScreenPosition = viewInfo.position;
-						 VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).displayCategoryAisles(viewInfo.mVueName,new ProgresStatus(),false,false);
-						 
-					}else {
+			} else if (StackViews.getInstance().getStackCount() > 0) {
+				final ViewInfo viewInfo = StackViews.getInstance().pull();
+				if (viewInfo != null) {
+					if (!mVueLandingActionbarScreenName.getText().toString()
+							.equalsIgnoreCase("Trending")) {
+						mVueLandingActionbarScreenName
+								.setText(viewInfo.mVueName);
+						mCurentScreenPosition = viewInfo.position;
+						VueTrendingAislesDataModel.getInstance(
+								VueLandingPageActivity.this)
+								.displayCategoryAisles(viewInfo.mVueName,
+										new ProgresStatus(), false, false);
+
+					} else {
 						mOtherSourceImagePath = null;
 						super.onBackPressed();
 					}
@@ -419,36 +448,37 @@ protected void onStop() {
 
 	}
 
- 
-class ProgresStatus implements NotifyProgress {
-	@Override
-	public void showProgress() {
-		mLoadProgress.setVisibility(View.VISIBLE);
-	}
-	@Override
-	public void dismissProgress(boolean fromWhere) {
-		mLoadProgress.setVisibility(View.INVISIBLE);
-		 if(mFragment == null){
-			 mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+	class ProgresStatus implements NotifyProgress {
+		@Override
+		public void showProgress() {
+			mLoadProgress.setVisibility(View.VISIBLE);
+		}
+
+		@Override
+		public void dismissProgress(boolean fromWhere) {
+			mLoadProgress.setVisibility(View.INVISIBLE);
+			if (mFragment == null) {
+				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.aisles_view_fragment);
-		 }
-		 if(fromWhere){
-			 mFragment.moveListToPosition(0);
-			 Log.i("positonmoved", "positonmoved from serverto cur pos 0");
-		 } else {
-			 Log.i("positonmoved", "positonmoved moved to position "+mCurentScreenPosition);
-			 mFragment.moveListToPosition(mCurentScreenPosition);
-		 }
+			}
+			if (fromWhere) {
+				mFragment.moveListToPosition(0);
+				Log.i("positonmoved", "positonmoved from serverto cur pos 0");
+			} else {
+				Log.i("positonmoved", "positonmoved moved to position "
+						+ mCurentScreenPosition);
+				mFragment.moveListToPosition(mCurentScreenPosition);
+			}
+		}
+
+		@Override
+		public boolean isAlreadyDownloaed(String category) {
+			boolean isDowoaded = StackViews.getInstance().categoryCheck(
+					category);
+			Log.i("isAlredeDownloaded", "isAlredeDownloaded: " + isDowoaded);
+			return isDowoaded;
+		}
 	}
-	@Override
-	public boolean isAlreadyDownloaed(String category) {
-		boolean isDowoaded = StackViews.getInstance().categoryCheck(category);
-		Log.i("isAlredeDownloaded", "isAlredeDownloaded: "+isDowoaded);
-		return isDowoaded;
-	}
-}
- 
-	 
 
 	public void showDiscardOtherAppImageDialog() {
 		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
@@ -545,5 +575,22 @@ class ProgresStatus implements NotifyProgress {
 		return otherSourcesImageDetailsList;
 	}
 
- 
+	public void showPopUp() {
+		mDisableOutsideClickFlag = !mDisableOutsideClickFlag;
+		if (mFragment == null) {
+			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisles_view_fragment);
+		}
+		mFragment.arcMenu.mArcLayout.setVisibility(View.VISIBLE);
+		mFragment.arcMenu.mArcLayout.switchState(true);
+	}
+
+	public void loadCamera() {
+		mCameraImageName = Utils.vueAppCameraImageFileName(this);
+		File cameraImageFile = new File(mCameraImageName);
+		Intent intent = new Intent(CAMERA_INTENT_NAME);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraImageFile));
+		startActivityForResult(intent, VueConstants.CAMERA_REQUEST);
+	}
+
 }

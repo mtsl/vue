@@ -3,16 +3,20 @@
 
     <dimen name="margin">8dp</dimen>
     <dimen name="descriptor_icon_margin">2dp</dimen>
-    
-    <!-- for bezel swipe  -->
+
+    <!-- for bezel swipe -->
     <!-- sliding options -->
     <dimen name="shadow_width">15dp</dimen>
     <dimen name="slidingmenu_offset">48dp</dimen>
-     <dimen name="slidingmenu_offset_right">0dp</dimen>
-
+    <dimen name="slidingmenu_offset_right">0dp</dimen>
     <dimen name="menu_item_padding">10dp</dimen>
     <dimen name="menu_header_padding_top">8dp</dimen>
     <dimen name="menu_header_line">3dp</dimen>
     <dimen name="menu_icon_side">40dp</dimen>
-    
+
+    <item name="menuFromDegrees" format="float" type="dimen">-180.0</item>
+    <item name="menuToDegrees" format="float" type="dimen">-360.0</item>
+
+    <dimen name="menuChildSize">30dp</dimen>
+
 </resources>
