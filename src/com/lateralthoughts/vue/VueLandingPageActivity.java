@@ -21,6 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
@@ -141,7 +143,28 @@ public class VueLandingPageActivity extends BaseActivity {
 			}
 		}
 	}
+@Override
+protected void onStart() {
+	FlurryAgent.onStartSession(this, "6938R8DC7R5HZWF976TJ");
+	try {
+		VueUser vueUser = Utils.readObjectFromFile(this, VueConstants.VUE_APP_USEROBJECT__FILENAME);
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+/*	FlurryAgent.setAge(arg0);
+	FlurryAgent.setGender(arg0);
+	FlurryAgent.setUserId(arg0);*/
+	FlurryAgent.onPageView();
 
+	super.onStart();
+}
+@Override
+protected void onStop() {
+	super.onStop();
+	FlurryAgent.onEndSession(this);
+	
+}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);

@@ -111,6 +111,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 			for (int i = 0; i < getItem(mCurrentAislePosition).getImageList().size(); i++) {
 				mCustomUrls.add(getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl);
+				Log.i("clone", "mCustomImageUrl url: "+getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl);
 				if (getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight > mBestHeight) {
 					mBestHeight = getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight;
 				}

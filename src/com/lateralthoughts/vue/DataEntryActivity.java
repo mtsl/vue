@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
+
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import android.content.Intent;
 import android.graphics.Color;
@@ -225,7 +227,18 @@ public class DataEntryActivity extends BaseActivity {
 			}
 		}
 	}
-
+	@Override
+	protected void onStart() {
+		FlurryAgent.onStartSession(this, "6938R8DC7R5HZWF976TJ");
+		FlurryAgent.onPageView();
+		super.onStart();
+	}
+	@Override
+	protected void onStop() {
+		super.onStop();
+		FlurryAgent.onEndSession(this);
+		
+	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);

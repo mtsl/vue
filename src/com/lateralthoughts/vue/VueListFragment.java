@@ -210,7 +210,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 							}
 						}
 
-						model.mMoreDataAvailable = true;
+						model.setMoreDataAVailable(true);
 						model.mVueContentGateway
 								.getTrendingAisles(
 										model.mLimit = VueTrendingAislesDataModel.TRENDING_AISLES_BATCH_INITIAL_SIZE,

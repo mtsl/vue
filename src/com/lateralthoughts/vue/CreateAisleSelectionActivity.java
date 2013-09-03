@@ -33,6 +33,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -793,7 +795,18 @@ public class CreateAisleSelectionActivity extends Activity {
 
 		}
 	}
-
+	@Override
+	protected void onStart() {
+		FlurryAgent.onStartSession(this, "6938R8DC7R5HZWF976TJ");
+		FlurryAgent.onPageView();
+		super.onStart();
+	}
+	@Override
+	protected void onStop() {
+		super.onStop();
+		FlurryAgent.onEndSession(this);
+		
+	}
 	private void cameraFunctionality() {
 		mCameraImageName = Utils
 				.vueAppCameraImageFileName(CreateAisleSelectionActivity.this);

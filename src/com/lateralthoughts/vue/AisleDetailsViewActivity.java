@@ -44,6 +44,7 @@ import android.widget.SlidingDrawer;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.ui.ScaleImageView;
@@ -253,7 +254,18 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			VueLandingPageActivity.mOtherSourceImagePath = null;
 		}
 	}
-
+	@Override
+	protected void onStart() {
+		FlurryAgent.onStartSession(this, "6938R8DC7R5HZWF976TJ");
+		FlurryAgent.onPageView();
+		super.onStart();
+	}
+	@Override
+	protected void onStop() {
+		super.onStop();
+		FlurryAgent.onEndSession(this);
+		
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.title_options, menu);
