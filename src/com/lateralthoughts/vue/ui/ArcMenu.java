@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -18,7 +17,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.lateralthoughts.vue.CreateAisleSelectionActivity;
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 
 public class ArcMenu extends RelativeLayout {
@@ -27,10 +28,6 @@ public class ArcMenu extends RelativeLayout {
 	public ImageView mHintView;
 
 	public Context mContext;
-
-	private static final int[] ITEM_DRAWABLES = { R.drawable.composer_camera,
-			R.drawable.composer_music, R.drawable.composer_place,
-			R.drawable.composer_sleep, R.drawable.composer_thought };
 
 	public ArcMenu(Context context) {
 		super(context);
@@ -59,13 +56,11 @@ public class ArcMenu extends RelativeLayout {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					/*
-					 * mHintView
-					 * .startAnimation(createHintSwitchAnimation(mArcLayout
-					 * .isExpanded())); mArcLayout.switchState(true);
-					 */
+					mHintView
+							.startAnimation(createHintSwitchAnimation(mArcLayout
+									.isExpanded()));
+					mArcLayout.switchState(true);
 				}
-
 				return false;
 			}
 		});
@@ -103,44 +98,51 @@ public class ArcMenu extends RelativeLayout {
 
 			@Override
 			public void onClick(final View viewClicked) {
-				Animation animation = bindItemAnimation(viewClicked, true, 400);
-				animation.setAnimationListener(new AnimationListener() {
 
-					@Override
-					public void onAnimationStart(Animation animation) {
+				if (position == 4) {
+					CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
+					createAisleSelectionActivity.moreClickFunctionality();
+				} else {
+					Animation animation = bindItemAnimation(viewClicked, true,
+							400);
+					animation.setAnimationListener(new AnimationListener() {
 
+						@Override
+						public void onAnimationStart(Animation animation) {
+
+						}
+
+						@Override
+						public void onAnimationRepeat(Animation animation) {
+
+						}
+
+						@Override
+						public void onAnimationEnd(Animation animation) {
+							postDelayed(new Runnable() {
+
+								@Override
+								public void run() {
+									itemDidDisappear(position);
+								}
+							}, 0);
+						}
+					});
+
+					final int itemCount = mArcLayout.getChildCount();
+					for (int i = 0; i < itemCount; i++) {
+						View item = mArcLayout.getChildAt(i);
+						if (viewClicked != item) {
+							bindItemAnimation(item, false, 300);
+						}
 					}
 
-					@Override
-					public void onAnimationRepeat(Animation animation) {
+					mArcLayout.invalidate();
+					mHintView.startAnimation(createHintSwitchAnimation(true));
 
+					if (listener != null) {
+						listener.onClick(viewClicked);
 					}
-
-					@Override
-					public void onAnimationEnd(Animation animation) {
-						postDelayed(new Runnable() {
-
-							@Override
-							public void run() {
-								itemDidDisappear(position);
-							}
-						}, 0);
-					}
-				});
-
-				final int itemCount = mArcLayout.getChildCount();
-				for (int i = 0; i < itemCount; i++) {
-					View item = mArcLayout.getChildAt(i);
-					if (viewClicked != item) {
-						bindItemAnimation(item, false, 300);
-					}
-				}
-
-				mArcLayout.invalidate();
-				mHintView.startAnimation(createHintSwitchAnimation(true));
-
-				if (listener != null) {
-					listener.onClick(viewClicked);
 				}
 			}
 		};
@@ -161,16 +163,52 @@ public class ArcMenu extends RelativeLayout {
 			item.clearAnimation();
 		}
 		mArcLayout.setVisibility(View.INVISIBLE);
-		VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mContext;
-		vueLandingPageActivity.mDisableOutsideClickFlag = !vueLandingPageActivity.mDisableOutsideClickFlag;
-		if (position == 0) {
-			vueLandingPageActivity.loadCamera();
+		CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
+		switch (position) {
+		case 0:
+			createAisleSelectionActivity.cameraFunctionality();
+			break;
+		case 1:
+			createAisleSelectionActivity.galleryFunctionality();
+			break;
+		case 2:
+			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
+					&& VueApplication.getInstance().mShoppingApplicationDetailsList
+							.size() > 0) {
+				createAisleSelectionActivity
+						.loadShoppingApplication(
+								VueApplication.getInstance().mShoppingApplicationDetailsList
+										.get(0).getActivityName(),
+								VueApplication.getInstance().mShoppingApplicationDetailsList
+										.get(0).getPackageName());
+			} else {
+				Toast.makeText(mContext, "There is no application.",
+						Toast.LENGTH_LONG).show();
+				createAisleSelectionActivity.finish();
+			}
+			break;
+		case 3:
+			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
+					&& VueApplication.getInstance().mShoppingApplicationDetailsList
+							.size() > 1) {
+				createAisleSelectionActivity
+						.loadShoppingApplication(
+								VueApplication.getInstance().mShoppingApplicationDetailsList
+										.get(1).getActivityName(),
+								VueApplication.getInstance().mShoppingApplicationDetailsList
+										.get(1).getPackageName());
+			} else {
+				Toast.makeText(mContext, "There is no application.",
+						Toast.LENGTH_LONG).show();
+				createAisleSelectionActivity.finish();
+			}
+			break;
+		default:
+			createAisleSelectionActivity.finish();
+			break;
 		}
 		mArcLayout.mExpanded = !mArcLayout.mExpanded;
 		mArcLayout.removeAllViews();
-		initArcMenu(this, ITEM_DRAWABLES);
-
-		// mArcLayout.switchState(false);
 	}
 
 	static Animation createItemDisapperAnimation(final long duration,
@@ -201,7 +239,7 @@ public class ArcMenu extends RelativeLayout {
 		return animation;
 	}
 
-	private void initArcMenu(ArcMenu menu, int[] itemDrawables) {
+	public void initArcMenu(ArcMenu menu, int[] itemDrawables) {
 		final int itemCount = itemDrawables.length;
 		for (int i = 0; i < itemCount; i++) {
 			ImageView item = new ImageView(mContext);

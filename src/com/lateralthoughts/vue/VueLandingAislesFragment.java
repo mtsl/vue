@@ -41,12 +41,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	private ListView mRightColumnView;
 	private AisleClickListener mAisleClickListener;
 	// private MultiColumnListView mView;
-	private static final int[] ITEM_DRAWABLES = { R.drawable.composer_camera,
-			R.drawable.composer_music, R.drawable.composer_place,
-			R.drawable.composer_sleep, R.drawable.composer_thought };
 	int[] mLeftViewsHeights;
 	int[] mRightViewsHeights;
-	ArcMenu arcMenu;
 	public boolean mIsFlingCalled;
 
 	// TODO: define a public interface that can be implemented by the parent
@@ -103,8 +99,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		// synchronized list view approach
 		View v = inflater.inflate(R.layout.aisles_view_fragment2, container,
 				false);
-		arcMenu = (ArcMenu) v.findViewById(R.id.arc_menu);
-		initArcMenu(arcMenu, ITEM_DRAWABLES);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 
@@ -265,19 +259,15 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		@Override
 		public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-			if (!vueLandingPageActivity.mDisableOutsideClickFlag) {
-				Log.i("bestHeigth", "bestHeigth windowID: " + id);
-				Intent intent = new Intent();
-				intent.setClass(VueApplication.getInstance(),
-						AisleDetailsViewActivity.class);
-				VueApplication.getInstance().setClickedWindowID(id);
-				VueApplication.getInstance().setClickedWindowCount(count);
-				VueApplication.getInstance().setmAisleImgCurrentPos(
-						aisleImgCurrentPos);
-				startActivity(intent);
-			} else {
-				vueLandingPageActivity.showPopUp();
-			}
+			Log.i("bestHeigth", "bestHeigth windowID: " + id);
+			Intent intent = new Intent();
+			intent.setClass(VueApplication.getInstance(),
+					AisleDetailsViewActivity.class);
+			VueApplication.getInstance().setClickedWindowID(id);
+			VueApplication.getInstance().setClickedWindowCount(count);
+			VueApplication.getInstance().setmAisleImgCurrentPos(
+					aisleImgCurrentPos);
+			startActivity(intent);
 		}
 
 		@Override
@@ -319,5 +309,5 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			});
 		}
 	}
-	
+
 }

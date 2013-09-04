@@ -26,7 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
- 
+
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -54,9 +54,6 @@ public class VueLandingPageActivity extends BaseActivity {
 	private ProgressDialog mProgressDialog;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
 	public static String mOtherSourceImagePath = null;
-	public boolean mDisableOutsideClickFlag = false;
-	private String mCameraImageName = null;
-	private static final String CAMERA_INTENT_NAME = "android.media.action.IMAGE_CAPTURE";
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 
 	@Override
@@ -82,30 +79,27 @@ public class VueLandingPageActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						/*
-						 * if (mOtherSourceImagePath == null) { Intent intent =
-						 * new Intent( VueLandingPageActivity.this,
-						 * CreateAisleSelectionActivity.class); Utils.
-						 * putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag
-						 * ( VueLandingPageActivity.this, false);
-						 * intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); if
-						 * (!CreateAisleSelectionActivity.isActivityShowing) {
-						 * CreateAisleSelectionActivity.isActivityShowing =
-						 * true; startActivity(intent); } } else {
-						 * showDiscardOtherAppImageDialog(); }
-						 */
-						showPopUp();
+						if (mOtherSourceImagePath == null) {
+							Intent intent = new Intent(
+									VueLandingPageActivity.this,
+									CreateAisleSelectionActivity.class);
+							Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+									VueLandingPageActivity.this, false);
+							intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+							if (!CreateAisleSelectionActivity.isActivityShowing) {
+								CreateAisleSelectionActivity.isActivityShowing = true;
+								startActivity(intent);
+							}
+						} else {
+							showDiscardOtherAppImageDialog();
+						}
 					}
 				});
 		mVueLandingActionbarAppIconLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						if (!mDisableOutsideClickFlag) {
-							getSlidingMenu().toggle();
-						} else {
-							showPopUp();
-						}
+						getSlidingMenu().toggle();
 					}
 				});
 		// Checking wheather app is opens for first time or not?
@@ -156,49 +150,60 @@ public class VueLandingPageActivity extends BaseActivity {
 			}
 		}
 	}
-@Override
-protected void onStart() {
-	FlurryAgent.onStartSession(this,Utils.FLURRY_APP_KEY);
-	FlurryAgent.logEvent(TRENDING_SCREEN_VISITORS);
-	VueUser vueUser = null;
-	try {
-		  vueUser = Utils.readObjectFromFile(this, VueConstants.VUE_APP_USEROBJECT__FILENAME);
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	if(vueUser != null){
-		 Map<String, String> articleParams = new HashMap<String, String>();
-		 if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.DEVICE_ID)){
-			 articleParams.put("User_Status", "Un_Registered");
-		 } else {
-			 articleParams.put("User_Status", "Registered");
-			 if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.FB)){
-				 articleParams.put("Registered_Source", "Registered with FB");
-			 }else if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.GPLUS)){
-				 articleParams.put("Registered_Source", "Registered with GPLUS");
-			 } else   if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.GPLUS_FB)){
-				 articleParams.put("Registered_Source", "Registered with FB and GPLUS");
-			 }
-			 
-		 }
-		 FlurryAgent.logEvent("Rigestered_Users", articleParams);
- 
-	}
-/*	FlurryAgent.setAge(arg0);
-	FlurryAgent.setGender(arg0);
-	FlurryAgent.setUserId(arg0);*/
-	FlurryAgent.onPageView();
-	
 
-	super.onStart();
-}
-@Override
-protected void onStop() {
-	super.onStop();
-	FlurryAgent.onEndSession(this);
-	
-}
+	@Override
+	protected void onStart() {
+		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
+		FlurryAgent.logEvent(TRENDING_SCREEN_VISITORS);
+		VueUser vueUser = null;
+		try {
+			vueUser = Utils.readObjectFromFile(this,
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (vueUser != null) {
+			Map<String, String> articleParams = new HashMap<String, String>();
+			if (vueUser.getUserIdentity().equals(
+					VueUserManager.PreferredIdentityLayer.DEVICE_ID)) {
+				articleParams.put("User_Status", "Un_Registered");
+			} else {
+				articleParams.put("User_Status", "Registered");
+				if (vueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.FB)) {
+					articleParams
+							.put("Registered_Source", "Registered with FB");
+				} else if (vueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.GPLUS)) {
+					articleParams.put("Registered_Source",
+							"Registered with GPLUS");
+				} else if (vueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.GPLUS_FB)) {
+					articleParams.put("Registered_Source",
+							"Registered with FB and GPLUS");
+				}
+
+			}
+			FlurryAgent.logEvent("Rigestered_Users", articleParams);
+
+		}
+		/*
+		 * FlurryAgent.setAge(arg0); FlurryAgent.setGender(arg0);
+		 * FlurryAgent.setUserId(arg0);
+		 */
+		FlurryAgent.onPageView();
+
+		super.onStart();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		FlurryAgent.onEndSession(this);
+
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -209,21 +214,6 @@ protected void onStop() {
 					mFrag.getFriendsList(data
 							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
 				}
-			}
-		} // From Camera...
-		else if (requestCode == VueConstants.CAMERA_REQUEST) {
-			File cameraImageFile = new File(mCameraImageName);
-			if (cameraImageFile.exists()) {
-				Intent intent = new Intent(this, DataEntryActivity.class);
-				Bundle b = new Bundle();
-				b.putString(
-						VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
-						mCameraImageName);
-				intent.putExtras(b);
-				Log.e("cs", "7");
-				startActivity(intent);
-			} else {
-				//finish();
 			}
 		}
 	}
@@ -464,13 +454,14 @@ protected void onStop() {
 		ViewInfo viewInfo = new ViewInfo();
 		viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
 		viewInfo.mPosition = mFragment.getListPosition();
-		viewInfo.mOffset = VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).getmOffset();
+		viewInfo.mOffset = VueTrendingAislesDataModel.getInstance(
+				VueLandingPageActivity.this).getmOffset();
 		StackViews.getInstance().push(viewInfo);
 		mVueLandingActionbarScreenName.setText(catName);
 		VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 				.displayCategoryAisles(catName, new ProgresStatus(), true,
 						false);
-		 FlurryAgent.logEvent(catName);
+		FlurryAgent.logEvent(catName);
 
 	}
 
@@ -600,23 +591,4 @@ protected void onStop() {
 		}
 		return otherSourcesImageDetailsList;
 	}
-
-	public void showPopUp() {
-		mDisableOutsideClickFlag = !mDisableOutsideClickFlag;
-		if (mFragment == null) {
-			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisles_view_fragment);
-		}
-		mFragment.arcMenu.mArcLayout.setVisibility(View.VISIBLE);
-		mFragment.arcMenu.mArcLayout.switchState(true);
-	}
-
-	public void loadCamera() {
-		mCameraImageName = Utils.vueAppCameraImageFileName(this);
-		File cameraImageFile = new File(mCameraImageName);
-		Intent intent = new Intent(CAMERA_INTENT_NAME);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraImageFile));
-		startActivityForResult(intent, VueConstants.CAMERA_REQUEST);
-	}
-
 }

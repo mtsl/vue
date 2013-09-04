@@ -14,8 +14,8 @@
     <dimen name="menu_header_line">3dp</dimen>
     <dimen name="menu_icon_side">40dp</dimen>
 
-    <item name="menuFromDegrees" format="float" type="dimen">-180.0</item>
-    <item name="menuToDegrees" format="float" type="dimen">-360.0</item>
+    <item name="menuFromDegrees" format="float" type="dimen">0.0</item>
+    <item name="menuToDegrees" format="float" type="dimen">360.0</item>
 
     <dimen name="menuChildSize">30dp</dimen>
 

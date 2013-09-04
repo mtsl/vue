@@ -1,7 +1,6 @@
 package com.lateralthoughts.vue.ui;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
@@ -16,7 +15,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.RotateAnimation;
 
-import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.CreateAisleSelectionActivity;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class ArcLayout extends ViewGroup {
@@ -29,20 +28,22 @@ public class ArcLayout extends ViewGroup {
 
 	private int mLayoutPadding = 10;
 
-	public static final float DEFAULT_FROM_DEGREES = -180.0f;
+	public static final float DEFAULT_FROM_DEGREES = -90.0f;
 
-	public static final float DEFAULT_TO_DEGREES = -360.0f;
+	public static final float DEFAULT_TO_DEGREES = -378.0f;
 
 	private float mFromDegrees = DEFAULT_FROM_DEGREES;
 
 	private float mToDegrees = DEFAULT_TO_DEGREES;
 
-	private static int MIN_RADIUS = 100;
+	private static int MIN_RADIUS = 76;
 
 	/* the distance between the layout's center and any child's center */
 	private int mRadius;
 
 	public boolean mExpanded = false;
+
+	private Context mContext;
 
 	public ArcLayout(Context context) {
 		super(context);
@@ -51,8 +52,17 @@ public class ArcLayout extends ViewGroup {
 	public ArcLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
-		CHILD_SIZE = (int) Utils.dipToPixels(context, 48);
-		MIN_RADIUS = (int) Utils.dipToPixels(context, 76);
+		mContext = context;
+
+		CHILD_SIZE = 48;
+		MIN_RADIUS = 76;
+		mChildPadding = 5;
+		mLayoutPadding = 10;
+
+		CHILD_SIZE = (int) Utils.dipToPixels(context, CHILD_SIZE);
+		MIN_RADIUS = (int) Utils.dipToPixels(context, MIN_RADIUS);
+		mChildPadding = (int) Utils.dipToPixels(context, mChildPadding);
+		mLayoutPadding = (int) Utils.dipToPixels(context, mLayoutPadding);
 
 		if (attrs != null) {
 			/*
@@ -319,6 +329,8 @@ public class ArcLayout extends ViewGroup {
 		}
 		if (isExpand) {
 			setVisibility(View.INVISIBLE);
+			CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
+			createAisleSelectionActivity.finish();
 		}
 		requestLayout();
 	}

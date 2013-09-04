@@ -35,7 +35,9 @@ public class VueApplication extends Application {
 	private boolean newVueTrendingAislesDataModel = false;
 	public ArrayList<String> mAisleImagePathList = new ArrayList<String>();
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
-
+	public static final int[] POPUP_ITEM_DRAWABLES = { R.drawable.composer_camera,
+		R.drawable.composer_music, R.drawable.composer_place,
+		R.drawable.composer_sleep, R.drawable.composer_thought };
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;

@@ -6,15 +6,15 @@
         android:id="@+id/item_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       
-         />
+        android:layout_centerInParent="true"
+     />
 
     <FrameLayout
         android:id="@+id/control_layout"
         android:layout_width="wrap_content"
-        android:visibility="gone"
         android:layout_height="wrap_content"
-         >
+        android:layout_centerInParent="true"
+        android:background="@drawable/composer_button" >
 
         <ImageView
             android:id="@+id/control_hint"
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:duplicateParentState="true"
-             />
+            android:src="@drawable/composer_icn_plus" />
     </FrameLayout>
 
 </merge>
