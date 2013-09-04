@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
+import com.lateralthoughts.vue.utils.Utils;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -32,6 +34,7 @@ public class DataEntryActivity extends BaseActivity {
 			mVueDataentryActionbarBottomLayout;
 	private View mVueDataentryActionbarView;
 	private DataEntryFragment mDataEntryFragment;
+	private static final String CREATE_AISLE_SCREEN_VISITORS = "Create_Aisle_Screen_Visitors";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -229,8 +232,9 @@ public class DataEntryActivity extends BaseActivity {
 	}
 	@Override
 	protected void onStart() {
-		FlurryAgent.onStartSession(this, "6938R8DC7R5HZWF976TJ");
+		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
 		FlurryAgent.onPageView();
+		FlurryAgent.logEvent(CREATE_AISLE_SCREEN_VISITORS);
 		super.onStart();
 	}
 	@Override

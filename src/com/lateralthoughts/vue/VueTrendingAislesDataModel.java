@@ -84,6 +84,14 @@ public class VueTrendingAislesDataModel {
 
 	protected int mLimit;
 	protected int mOffset;
+	public int getmOffset() {
+		return mOffset;
+	}
+
+	public void setmOffset(int mOffset) {
+		this.mOffset = mOffset;
+	}
+
 	private AisleWindowContentFactory mAisleWindowContentFactory;
 	private boolean mAisleDataRequested;
 	private long mRequestStartTime;

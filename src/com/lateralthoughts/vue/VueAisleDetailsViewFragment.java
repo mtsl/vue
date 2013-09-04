@@ -42,6 +42,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
@@ -179,6 +180,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mDetailsAddImageToAisle.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
 				Intent intent = new Intent(getActivity(),
 						CreateAisleSelectionActivity.class);
 				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
@@ -207,7 +209,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 			@Override
 			public void onClick(View v) {
-
+				FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
 				final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
 						.getSystemService(Context.INPUT_METHOD_SERVICE);
 				inputMethodManager.toggleSoftInputFromWindow(
@@ -371,6 +373,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		vueShareLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
 				mAisleDetailsAdapter.share(getActivity(), getActivity());
 			}
 		});
@@ -505,6 +508,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 				@Override
 				public void onClick(View v) {
+					FlurryAgent.logEvent("ADD_COMMENTS_DETAILSVIEW");
 					String etText = editText.getText().toString();
 
 					if (etText != null && etText.length() >= 1) {

@@ -54,6 +54,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
@@ -140,7 +141,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				if (VueLandingPageActivity.mOtherSourceImagePath == null) {
 					TextView textView = (TextView) v
 							.findViewById(R.id.vue_list_fragment_itemTextview);
-					String s = textView.getText().toString();
+					String s = textView.getText().toString(); 
+					 FlurryAgent.logEvent(s);
 					if (s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
 						adapter.groups.remove(groupPosition);
 						ListOptionItem item = new ListOptionItem(
@@ -303,7 +305,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				}
 			}
 		});
-
+ 
 		expandListView.setOnChildClickListener(new OnChildClickListener() {
 
 			@Override
@@ -314,10 +316,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 							.findViewById(R.id.child_itemTextview);
 					String s = textView.getText().toString();
 					if (s.equals(getString(R.string.sidemenu_option_Profile))) {
+						 FlurryAgent.logEvent("Settings_"+s);
 						getUserInfo();
 					} else if (s
 							.equals(getString(R.string.sidemenu_sub_option_Facebook))
 							|| s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
+						 FlurryAgent.logEvent("InviteFriends_"+s);
 						getFriendsList(s);
 					} else {
 						TextView categoryText = (TextView) v

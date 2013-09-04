@@ -75,6 +75,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	private static final String GALLERY_ALERT_MESSAGE = "Select Picture";
 	private static final String CAMERA_INTENT_NAME = "android.media.action.IMAGE_CAPTURE";
 	private ArrayList<ShoppingApplicationDetails> mDataEntryShoppingApplicationsList;
+	private static final String CREATE_AISLE_POPUP = "Selection_Popup";
 	public static boolean isActivityShowing = false;
 
 	@Override
@@ -797,8 +798,9 @@ public class CreateAisleSelectionActivity extends Activity {
 	}
 	@Override
 	protected void onStart() {
-		FlurryAgent.onStartSession(this, "6938R8DC7R5HZWF976TJ");
+		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
 		FlurryAgent.onPageView();
+		FlurryAgent.logEvent(CREATE_AISLE_POPUP);
 		super.onStart();
 	}
 	@Override
@@ -808,6 +810,7 @@ public class CreateAisleSelectionActivity extends Activity {
 		
 	}
 	private void cameraFunctionality() {
+		 FlurryAgent.logEvent("ADD_IMAGE_CAMERA");
 		mCameraImageName = Utils
 				.vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
 		File cameraImageFile = new File(mCameraImageName);
@@ -817,6 +820,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	}
 
 	private void galleryFunctionality() {
+		 FlurryAgent.logEvent("ADD_IMAGE_GALLERY");
 		Intent i = new Intent(Intent.ACTION_PICK,
 				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(Intent.createChooser(i, GALLERY_ALERT_MESSAGE),
@@ -824,6 +828,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	}
 
 	private void moreClickFunctionality() {
+		 FlurryAgent.logEvent("ADD_IMAGE_MORE");
 		if (mDataEntryShoppingApplicationsList != null
 				&& mDataEntryShoppingApplicationsList.size() > 0) {
 			if (mDataEntryMoreTopListLayout != null) {

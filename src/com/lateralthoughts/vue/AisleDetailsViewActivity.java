@@ -62,6 +62,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	public static final String SCREEN_TAG = "comparisonscreen";
 	public static final String TOP_SCROLLER = "topscroller";
 	public static final String BOTTOM_SCROLLER = "bottomscroller";
+	private static final String DETAILS_SCREEN_VISITOR ="Details_Screen_Visitors";
 	HorizontalListView mTopScroller, mBottomScroller;
 	// int mStatusbarHeight;
 	int mScreenTotalHeight;
@@ -256,8 +257,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	}
 	@Override
 	protected void onStart() {
-		FlurryAgent.onStartSession(this, "6938R8DC7R5HZWF976TJ");
+		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
 		FlurryAgent.onPageView();
+		FlurryAgent.logEvent(DETAILS_SCREEN_VISITOR);
 		super.onStart();
 	}
 	@Override
