@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,6 +78,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	ViewHolder mViewHolder;
 	boolean mImageRefresh = true;
 	private boolean mSetPosition;
+	private static final int mWaitTime = 1000;
 	 
 	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
@@ -145,6 +147,20 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			}
 			mShowingList = getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList;
 			mLikes = getItem(mCurrentAislePosition).getImageList().get(0).mLikesCount;
+			 new Handler().postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					 Map<String, String> articleParams = new HashMap<String, String>();
+					 articleParams.put("Category", getItem(mCurrentAislePosition).getAisleContext().mCategory);
+					 articleParams.put("Lookingfor", getItem(mCurrentAislePosition).getAisleContext().mLookingForItem);
+					 articleParams.put("Occasion", getItem(mCurrentAislePosition).getAisleContext().mOccasion);
+					 FlurryAgent.logEvent("Visited_Categories", articleParams);
+					
+				}
+				//wait time for flurry session starts
+			}, mWaitTime);
+		
 		}
 	}
 
@@ -763,22 +779,31 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			return false;
 		}
 	}
- private void onChangeLikesCount(int position){
-	 FlurryAgent.logEvent("LIKES_DETAILSVIEW");
+
+	private void onChangeLikesCount(int position) {
+		Map<String, String> articleParams = new HashMap<String, String>();
+		articleParams.put("Category", getItem(mCurrentAislePosition)
+				.getAisleContext().mCategory);
+		articleParams.put("Lookingfor", getItem(mCurrentAislePosition)
+				.getAisleContext().mLookingForItem);
+		articleParams.put("Occasion", getItem(mCurrentAislePosition)
+				.getAisleContext().mOccasion);
+		FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
 		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
 		} else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
-			
-			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(mCurrentAislePosition).getImageList()
-					.get(position).mLikesCount + 1;
+
+			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
+					mCurrentAislePosition).getImageList().get(position).mLikesCount + 1;
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
 			sendDataToDb(position, CHANGE_LIKES);
 		}
 		if (position == mCurrentDispImageIndex) {
-			mLikes = getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount;
+			mLikes = getItem(mCurrentAislePosition).getImageList()
+					.get(position).mLikesCount;
 			notifyAdapter();
 		}
- }
+	}
  private void onChangeDislikesCount(int position){
 	 FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
 		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {

@@ -167,6 +167,7 @@ protected void onStart() {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+	Log.i("vueUser", "vueUser val: "+vueUser);
 	if(vueUser != null){
 		 Map<String, String> articleParams = new HashMap<String, String>();
 		 if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.DEVICE_ID)){
