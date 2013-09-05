@@ -29,6 +29,7 @@ import android.widget.Toast;
  
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
+import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
@@ -78,6 +79,39 @@ public class VueLandingPageActivity extends BaseActivity {
 		getSupportActionBar().setCustomView(mVueLandingActionbarView);
 		getSupportActionBar().setDisplayShowCustomEnabled(true);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		
+		
+		
+	 
+/*		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readObjectFromFile(
+					 this,
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+	      boolean test = true;
+          if(test){
+          	  Log.e("AisleCreationTest","Aisle created1 requestsend!");
+              AisleManager aisleManager = AisleManager.getAisleManager();
+              Aisle aisle = new Aisle();
+              aisle.setCategory("Abstracts");
+              aisle.setId(0L);
+              aisle.setLookingFor("Great software");
+              aisle.setName("Super Aisle");
+              aisle.setOccassion("Product Launch");
+              aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
+              aisleManager.createEmptyAisle(aisle, new AisleManager.AisleUpdateCallback() {
+                  @Override
+                  public void onAisleUpdated() {
+                      Log.e("AisleCreationTest","Aisle created1 successfully!");
+                  }
+              });
+          }
+		*/
+		
+		
 		mVueLandingActionbarRightLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override

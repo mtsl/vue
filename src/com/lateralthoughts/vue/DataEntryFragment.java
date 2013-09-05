@@ -809,7 +809,7 @@ public class DataEntryFragment extends Fragment {
 		mInputMethodManager.hideSoftInputFromWindow(
 				mOccasionText.getWindowToken(), 0);
 		mInputMethodManager.hideSoftInputFromWindow(
-				mLookingForText.getWindowToken(), 0);
+				mLookingForText.getWindowToken(), 0);  
 		mInputMethodManager.hideSoftInputFromWindow(
 				mFindAtText.getWindowToken(), 0);
 	}
@@ -956,7 +956,6 @@ public class DataEntryFragment extends Fragment {
 		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 	}
-
 	public void shareClickFunctionality() {
 		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
 		mShare = new ShareDialog(getActivity(), getActivity());

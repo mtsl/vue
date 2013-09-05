@@ -537,8 +537,9 @@ public class VueLoginActivity extends FragmentActivity implements
 								});
 
                         //test code to check aisle creation
-                        boolean test = false;
+                        boolean test = true;
                         if(test){
+                        	  Log.e("AisleCreationTest","Aisle created requestsend!");
                             AisleManager aisleManager = AisleManager.getAisleManager();
                             Aisle aisle = new Aisle();
                             aisle.setCategory("Abstracts");

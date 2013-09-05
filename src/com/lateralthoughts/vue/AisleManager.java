@@ -6,13 +6,22 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.domain.Image;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 //FB imports
@@ -25,10 +34,10 @@ public class AisleManager {
         public void onAisleUpdated();
     }
 
-    private String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
+    private static String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/api/";
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
-    private String CREATE_AISLE_ENDPOINT = "api/aislecreate";
-
+    private static String CREATE_AISLE_ENDPOINT = "aislecreate";
+    private String CREATE_IMAGE_ENDPOINT = "imageecreate";
     private static AisleManager sAisleManager = null;
     private VueUser mCurrentUser;
 
@@ -59,18 +68,29 @@ public class AisleManager {
         }catch(JsonProcessingException ex2){
 
         }
+        try {
+			Aisle aisleresult = testCreateAisle(aisle);
+			
+			Log.i("aisleinfo", "aisle id: "+aisleresult.getId());
+			Log.i("aisleinfo", "aisle id: "+aisleresult.getOwnerUserId());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         Response.Listener listener = new Response.Listener<String>() {
 
             @Override
             public void onResponse(String jsonArray) {
+            	 
                 if (null != jsonArray) {
-                    Log.e("Profiling", "Profiling : onResponse()");
+                    Log.e("Profiling", "Profiling : onResponse(): "+jsonArray);
                     try{
                         JSONObject userInfo = new JSONObject(jsonArray);
-                        JSONObject user = userInfo.getJSONObject("user");
+                        //JSONObject user = userInfo.getJSONObject("user");
                         callback.onAisleUpdated();
-                    }catch(JSONException ex){
-
+                    }catch(Exception ex){
+                    	 Log.e("Profiling", "Profiling : onResponse() error");
+                    	ex.printStackTrace();
                     }
                 }
             }
@@ -78,6 +98,7 @@ public class AisleManager {
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+            	 Log.e("AisleCreationTest","Aisle created2 failure response");
                 if (null != error.networkResponse
                         && null != error.networkResponse.data) {
                     String errorData = error.networkResponse.data.toString();
@@ -85,23 +106,104 @@ public class AisleManager {
                 }
             }
         };
+        Log.e("AisleCreationTest","Aisle created2 requestsend!");
         String requestUrl = VUE_API_BASE_URI + CREATE_AISLE_ENDPOINT;
-        AisleCreateRequest request = new AisleCreateRequest(aisleAsString, listener,
-                errorListener);
+        AislePutRequest request = new AislePutRequest(aisleAsString, listener,
+                errorListener,requestUrl);
         VueApplication.getInstance().getRequestQueue().add(request);
     }
+    
+    
+    //test code for url put request checking.
+    public static Aisle testCreateAisle(Aisle aisle) throws Exception
+ {
+		Aisle createdAisle = null;
+		ObjectMapper mapper = new ObjectMapper();
+		String s = VUE_API_BASE_URI + CREATE_AISLE_ENDPOINT;
+		URL url = new URL(s);
+		HttpPut httpPut = new HttpPut(url.toString());
+		StringEntity entity = new StringEntity(mapper.writeValueAsString(aisle));
+		System.out.println("Aisle create request: "
+				+ mapper.writeValueAsString(aisle));
+		entity.setContentType("application/json;charset=UTF-8");
+		entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+				"application/json;charset=UTF-8"));
+		httpPut.setEntity(entity);
 
-    private class AisleCreateRequest extends Request<String> {
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpResponse response = httpClient.execute(httpPut);
+		if (response.getEntity() != null
+				&& response.getStatusLine().getStatusCode() == 200) {
+			String responseMessage = EntityUtils.toString(response.getEntity());
+			System.out.println("AISLE CREATED SUCCESS Response: "
+					+ responseMessage);
+			if (responseMessage.length() > 0) {
+				createdAisle = (new ObjectMapper()).readValue(responseMessage,
+						Aisle.class);
+			}
+		}
+
+		return createdAisle;
+	}
+ 
+
+    
+    
+    
+//issues a request to add an image to the aisle.
+	public void addImageToAisle(Image image, final AisleUpdateCallback callback) {
+		if (null == image) {
+			throw new RuntimeException(
+					"Can't create Aisle without a non null aisle object");
+		}
+		String imageAsString = null;
+		try {
+			imageAsString = mObjectMapper.writeValueAsString(image);
+		} catch (JsonProcessingException ex2) {
+
+		}
+		Response.Listener listener = new Response.Listener<String>() {
+
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					Log.e("Profiling", "Profiling : onResponse()");
+					try {
+						JSONObject userInfo = new JSONObject(jsonArray);
+						JSONObject user = userInfo.getJSONObject("user");
+						callback.onAisleUpdated();
+					} catch (JSONException ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		};
+		Response.ErrorListener errorListener = new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				if (null != error.networkResponse
+						&& null != error.networkResponse.data) {
+					String errorData = error.networkResponse.data.toString();
+					Log.e("VueUserDebug", "error date = " + errorData);
+				}
+			}
+		};
+		AislePutRequest request = new AislePutRequest(imageAsString, listener,
+				errorListener, VUE_API_BASE_URI + CREATE_IMAGE_ENDPOINT);
+		VueApplication.getInstance().getRequestQueue().add(request);
+	}
+    
+    private class AislePutRequest extends Request<String> {
         // ... other methods go here
         private Map<String, String> mParams;
         Response.Listener<String> mListener;
         private String mAisleAsString;
         private StringEntity mEntity;
 
-        public AisleCreateRequest(String aisleAsString,
+        public AislePutRequest(String aisleAsString,
                                  Response.Listener<String> listener,
-                                 Response.ErrorListener errorListener) {
-            super(Method.PUT, VUE_API_BASE_URI + CREATE_AISLE_ENDPOINT,
+                                 Response.ErrorListener errorListener,String url) {
+            super(Method.PUT,url,
                     errorListener);
             mListener = listener;
             mAisleAsString = aisleAsString;
