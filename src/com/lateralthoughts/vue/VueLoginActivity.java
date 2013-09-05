@@ -41,6 +41,7 @@ import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
@@ -534,6 +535,25 @@ public class VueLoginActivity extends FragmentActivity implements
 										}
 									}
 								});
+
+                        //test code to check aisle creation
+                        boolean test = false;
+                        if(test){
+                            AisleManager aisleManager = AisleManager.getAisleManager();
+                            Aisle aisle = new Aisle();
+                            aisle.setCategory("Abstracts");
+                            aisle.setId(0L);
+                            aisle.setLookingFor("Great software");
+                            aisle.setName("Super Aisle");
+                            aisle.setOccassion("Product Launch");
+                            aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
+                            aisleManager.createEmptyAisle(aisle, new AisleManager.AisleUpdateCallback() {
+                                @Override
+                                public void onAisleUpdated() {
+                                    Log.e("AisleCreationTest","Aisle created successfully!");
+                                }
+                            });
+                        }
 					} else {
 						userManager.createFBIdentifiedUser(user,
 								new VueUserManager.UserUpdateCallback() {

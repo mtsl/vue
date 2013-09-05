@@ -14,6 +14,7 @@ import java.util.Locale;
 
 public class VueUser implements Serializable {
 
+    private String mVueId;
 	public VueUser(String facebookId, String googlePlusId, String deviceId,
 			String emailId) {
 		mEmailId = emailId;
@@ -26,6 +27,13 @@ public class VueUser implements Serializable {
 
 	}
 
+    public void setVueUserId(String vueId){
+        mVueId = vueId;
+    }
+
+    public String getVueId(){
+        return mVueId;
+    }
 	public void setUsersName(String firstName, String lastName) {
 		mFirstName = firstName;
 		mLastName = lastName;

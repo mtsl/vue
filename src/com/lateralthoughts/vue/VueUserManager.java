@@ -94,6 +94,7 @@ public class VueUserManager {
 
                         VueUser vueUser =
                                 new VueUser(null, null, Utils.getDeviceId(),null);
+                        vueUser.setVueUserId(id);
                         vueUser.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
                         VueUserManager.this.setCurrentUser(vueUser);
                         callback.onUserUpdated(vueUser);
@@ -260,11 +261,6 @@ public class VueUserManager {
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
-
-	}
-
-	public void createGPlusIdentifiedUser(String idValue,
-			UserUpdateCallback callback) {
 
 	}
 
