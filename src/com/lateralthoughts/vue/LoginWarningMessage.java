@@ -1,5 +1,7 @@
 package com.lateralthoughts.vue;
 
+import com.flurry.android.FlurryAgent;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +43,7 @@ public class LoginWarningMessage {
 		okButton.setText("LoginNow");
 		okButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				FlurryAgent.logEvent("Login_From_Alert");
 				dialog.dismiss();
 				Intent i = new Intent(mContext, VueLoginActivity.class);
 				Bundle b = new Bundle();

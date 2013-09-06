@@ -196,12 +196,32 @@ public class VueLandingPageActivity extends BaseActivity {
 
 		super.onStart();
 	}
+ 
 
 	@Override
 	protected void onStop() {
 		super.onStop();
 		FlurryAgent.onEndSession(this);
-
+ 
+	/*Log.i("vueUser", "vueUser val: "+vueUser);
+	if(vueUser != null){
+		 Map<String, String> articleParams = new HashMap<String, String>();
+		 if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.DEVICE_ID)){
+			 articleParams.put("User_Status", "Un_Registered");
+		 } else {
+			 articleParams.put("User_Status", "Registered");
+			 if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.FB)){
+				 articleParams.put("Registered_Source", "Registered with FB");
+			 }else if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.GPLUS)){
+				 articleParams.put("Registered_Source", "Registered with GPLUS");
+			 } else   if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.GPLUS_FB)){
+				 articleParams.put("Registered_Source", "Registered with FB and GPLUS");
+			 }
+			 
+		 }
+		 FlurryAgent.logEvent("Rigestered_Users", articleParams);*/
+ 
+ 
 	}
 
 	@Override
