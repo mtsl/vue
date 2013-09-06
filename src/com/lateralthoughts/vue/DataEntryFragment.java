@@ -48,8 +48,11 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import com.google.android.gms.plus.model.people.Person.Image;
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
@@ -1537,8 +1540,62 @@ public class DataEntryFragment extends Fragment {
 		}
 		// Starts the thread by calling the run() method in its Runnable
 		).start();
-	}
+		//upload empty aisle to server.
 
+	          
+	}
+ private void addAilse(){
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readObjectFromFile(
+					 getActivity(),
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+	              AisleManager aisleManager = AisleManager.getAisleManager();
+	              Aisle aisle = new Aisle();
+	              aisle.setCategory(mCategoryText.getText()
+							.toString().trim());
+	              aisle.setId(0L);
+	              aisle.setLookingFor(mLookingForBigText
+							.getText().toString().trim());
+	              aisle.setName("Super Aisle");
+	              aisle.setOccassion(mOccassionBigText.getText()
+							.toString().trim());
+	              if(storedVueUser != null) {
+	              aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
+	              }
+	              aisleManager.createEmptyAisle(aisle, new AisleManager.AisleUpdateCallback() {
+	                  @Override
+	                  public void onAisleUpdated() {
+	                      Log.e("AisleCreationTest","Aisle created1 successfully!");
+	                  }
+	              });
+ }
+ private void addImage(String originalImageLocation, int width, int height,String title,Long owneAisleId,Long owneUserId){
+	 
+	 VueImage image = new VueImage();
+	 image.setDetailsUrl("");
+	 image.setHeight(height);
+	 image.setWidth(width);
+	 image.setId(0L);
+	 image.setImageUrl(originalImageLocation);
+	 image.setTitle(title);
+	 image.setOwnerAisleId(owneAisleId);
+	 image.setOwnerUserId(owneUserId);
+	 //image.setRating(rating);
+	 //image.setStore(store);
+	  AisleManager aisleManager = AisleManager.getAisleManager();
+	  aisleManager.addImageToAisle(image, new AisleManager.AisleUpdateCallback() {
+		
+		@Override
+		public void onAisleUpdated() {
+			Log.e("AisleCreationTest","image added successfully!");
+			
+		}
+	});
+ }
 	private class ImageResizeAsynTask extends
 			AsyncTask<Activity, Activity, Activity> {
 

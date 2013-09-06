@@ -6,7 +6,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.domain.Aisle;
-import com.lateralthoughts.vue.domain.Image;
+import com.lateralthoughts.vue.domain.VueImage;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -151,7 +151,7 @@ public class AisleManager {
     
     
 //issues a request to add an image to the aisle.
-	public void addImageToAisle(Image image, final AisleUpdateCallback callback) {
+	public void addImageToAisle(VueImage image, final AisleUpdateCallback callback) {
 		if (null == image) {
 			throw new RuntimeException(
 					"Can't create Aisle without a non null aisle object");
