@@ -361,26 +361,33 @@ public class VueTrendingAislesDataModel {
 		AisleWindowContent aisleItem = null;
 		aisleItem = mAisleContentListMap.get(aisleId);
 		if (null == aisleItem) {
-			if (null != mAisleContentListMap
-					.get(mAisleWindowContentFactory.EMPTY_AISLE_ID)) {
-				aisleItem = mAisleContentListMap
-						.get(mAisleWindowContentFactory.EMPTY_AISLE_ID);
-				if (mAisleContentList.contains(aisleItem)) {
-					int index = mAisleContentList.indexOf(aisleItem);
-					mAisleContentList.remove(index);
-					mAisleContentList.add(index, aisleItem);
-				}
-			} else {
-				aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
-			}
+			aisleItem = getAisle(aisleId);
 			aisleItem.setAisleId(aisleId);
 			mAisleContentListMap.put(aisleId, aisleItem);
 			mAisleContentList.add(aisleItem);
-			
 		}
 		return aisleItem;
 	}
-
+	public AisleWindowContent getAisle(String aisleId){
+		AisleWindowContent aisleItem = null;
+		if (null != mAisleContentListMap
+				.get(mAisleWindowContentFactory.EMPTY_AISLE_ID)) {
+			aisleItem = mAisleContentListMap
+					.get(mAisleWindowContentFactory.EMPTY_AISLE_ID);
+			if (mAisleContentList.contains(aisleItem)) {
+				int index = mAisleContentList.indexOf(aisleItem);
+				mAisleContentList.remove(index);
+				mAisleContentList.add(index, aisleItem);
+			}
+		} else {
+			aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
+		}
+		return aisleItem;
+	}
+    public void addItemToList(String aisleId,AisleWindowContent aisleItem,int position ){
+    	mAisleContentListMap.put(aisleId, aisleItem);
+		mAisleContentList.add(position, aisleItem);
+    }
 	public int getAisleCount() {
 		if (null != mAisleContentList) {
 			Log.i("mAisleContentList", " mAisleContentList size is:  "
@@ -413,11 +420,16 @@ public class VueTrendingAislesDataModel {
 		if (mAisleContentList != null) {
 			mAisleContentList.clear();
 		}
+		dataObserver();
+	}
+  public void dataObserver(){
 		for (IAisleDataObserver observer : mAisleDataObserver) {
 			observer.onAisleDataUpdated(mAisleContentList.size());
-		}
-	}
-
+		}  
+  }
+  public void listSize(){
+	  Log.i("mAisleContentList", "mAisleContentList: "+mAisleContentList.size());
+  }
 	public void loadMoreAisles(boolean loadMore) {
 		 
 		if(isMoreDataAvailable()){

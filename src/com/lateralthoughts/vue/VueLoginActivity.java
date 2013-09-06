@@ -550,7 +550,7 @@ public class VueLoginActivity extends FragmentActivity implements
                             aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
                             aisleManager.createEmptyAisle(aisle, new AisleManager.AisleUpdateCallback() {
                                 @Override
-                                public void onAisleUpdated() {
+                                public void onAisleUpdated(AisleContext aisleContext,String aisleId) {
                                     Log.e("AisleCreationTest","Aisle created successfully!");
                                 }
                             });

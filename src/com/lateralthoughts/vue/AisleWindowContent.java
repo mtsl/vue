@@ -124,6 +124,7 @@ public class AisleWindowContent
 			imageDetails.mCustomImageUrl = regularUrl;
 		}
 		imageDetails.mCustomImageUrl = Utils.addImageInfo(imageDetails.mCustomImageUrl,imageDetails.mAvailableWidth,imageDetails.mAvailableHeight);
+	 
     }
     public AisleContext getAisleContext(){
     	return mContext;

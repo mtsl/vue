@@ -247,8 +247,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					totalItems = mRightColumnAdapter.getCount();
 				}
 				if ((totalItems - lastVisiblePosition) < 5) {
-					VueTrendingAislesDataModel.getInstance(mContext)
-							.loadMoreAisles(true);
+					//VueTrendingAislesDataModel.getInstance(mContext)
+						//	.loadMoreAisles(true);
 				}
 			}
 

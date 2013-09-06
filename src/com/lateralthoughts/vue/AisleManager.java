@@ -31,9 +31,11 @@ public class AisleManager {
 
     private ObjectMapper mObjectMapper;
     public interface AisleUpdateCallback {
-        public void onAisleUpdated();
+        public void onAisleUpdated(AisleContext aisleContext,String id);
     }
-
+    public interface ImageAddedCallback {
+    	 public void onImageAdded(AisleImageDetails imageDetails);
+    }
     private static String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/api/";
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
     private static String CREATE_AISLE_ENDPOINT = "aislecreate";
@@ -87,7 +89,7 @@ public class AisleManager {
                     try{
                         JSONObject userInfo = new JSONObject(jsonArray);
                         //JSONObject user = userInfo.getJSONObject("user");
-                        callback.onAisleUpdated();
+                        callback.onAisleUpdated(null,null);
                     }catch(Exception ex){
                     	 Log.e("Profiling", "Profiling : onResponse() error");
                     	ex.printStackTrace();
@@ -151,7 +153,7 @@ public class AisleManager {
     
     
 //issues a request to add an image to the aisle.
-	public void addImageToAisle(VueImage image, final AisleUpdateCallback callback) {
+	public void addImageToAisle(VueImage image, final ImageAddedCallback callback) {
 		if (null == image) {
 			throw new RuntimeException(
 					"Can't create Aisle without a non null aisle object");
@@ -171,7 +173,7 @@ public class AisleManager {
 					try {
 						JSONObject userInfo = new JSONObject(jsonArray);
 						JSONObject user = userInfo.getJSONObject("user");
-						callback.onAisleUpdated();
+						callback.onImageAdded(null);
 					} catch (JSONException ex) {
 						ex.printStackTrace();
 					}
