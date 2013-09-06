@@ -1,18 +1,5 @@
 package com.lateralthoughts.vue;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -30,25 +17,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.facebook.FacebookAuthorizationException;
-import com.facebook.FacebookException;
-import com.facebook.FacebookOperationCanceledException;
-import com.facebook.FacebookRequestError;
-import com.facebook.HttpMethod;
-import com.facebook.Request;
+import com.facebook.*;
 import com.facebook.Request.Callback;
 import com.facebook.Request.GraphUserCallback;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
@@ -56,9 +31,9 @@ import com.facebook.widget.WebDialog;
 import com.facebook.widget.WebDialog.OnCompleteListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.plus.PlusClient;
+import com.google.android.gms.plus.PlusClient.OnPeopleLoadedListener;
 import com.google.android.gms.plus.PlusClient.OnPersonLoadedListener;
 import com.google.android.gms.plus.PlusShare;
-import com.google.android.gms.plus.PlusClient.OnPeopleLoadedListener;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.model.people.PersonBuffer;
 import com.googleplus.MomentUtil;
@@ -66,17 +41,24 @@ import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.X509TrustManager;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.net.ssl.*;
+import java.io.*;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class VueLoginActivity extends FragmentActivity implements
 		OnSignedInListener, OnPeopleLoadedListener, OnPersonLoadedListener {
@@ -553,6 +535,26 @@ public class VueLoginActivity extends FragmentActivity implements
 										}
 									}
 								});
+
+                        //test code to check aisle creation
+                        boolean test = true;
+                        if(test){
+                        	  Log.e("AisleCreationTest","Aisle created requestsend!");
+                            AisleManager aisleManager = AisleManager.getAisleManager();
+                            Aisle aisle = new Aisle();
+                            aisle.setCategory("Abstracts");
+                            aisle.setId(0L);
+                            aisle.setLookingFor("Great software");
+                            aisle.setName("Super Aisle");
+                            aisle.setOccassion("Product Launch");
+                            aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
+                            aisleManager.createEmptyAisle(aisle, new AisleManager.AisleUpdateCallback() {
+                                @Override
+                                public void onAisleUpdated() {
+                                    Log.e("AisleCreationTest","Aisle created successfully!");
+                                }
+                            });
+                        }
 					} else {
 						userManager.createFBIdentifiedUser(user,
 								new VueUserManager.UserUpdateCallback() {
@@ -976,11 +978,11 @@ public class VueLoginActivity extends FragmentActivity implements
 				if (storedVueUser.getUserIdentity().equals(
 						VueUserManager.PreferredIdentityLayer.DEVICE_ID)) {
 					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS);
-					vueUser.setmDeviceId(storedVueUser.getmDeviceId());
+					vueUser.setDeviceId(storedVueUser.getDeviceId());
 				} else if (storedVueUser.getUserIdentity().equals(
 						VueUserManager.PreferredIdentityLayer.FB)) {
 					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.ALL_IDS_AVAILABLE);
-					vueUser.setmFacebookId(storedVueUser.getmFacebookId());
+					vueUser.setFacebookId(storedVueUser.getFacebookId());
 				} else {
 					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS);
 				}
