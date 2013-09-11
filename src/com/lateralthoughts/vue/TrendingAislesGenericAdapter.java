@@ -68,9 +68,9 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
-        if(mVueTrendingAislesDataModel.isDownloadFail) {
-          mVueTrendingAislesDataModel.loadData();
-        }
+       /* if(mVueTrendingAislesDataModel.isDownloadFail) {
+          mVueTrendingAislesDataModel.loadData(true);
+        }*/
         mLoader = AisleLoader.getInstance(mContext);  
         mIsScrolling = false;
     }
@@ -81,9 +81,9 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
-        if(mVueTrendingAislesDataModel.isDownloadFail) {
-          mVueTrendingAislesDataModel.loadData();
-        }
+      /*  if(mVueTrendingAislesDataModel.isDownloadFail) {
+          mVueTrendingAislesDataModel.loadData(true);
+        }*/
         mLoader = AisleLoader.getInstance(mContext);  
         mIsScrolling = false;
         mClickListener = listener;
@@ -107,37 +107,6 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
     
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {     
-/*        ViewHolder holder;
-        StringBuilder sb = new StringBuilder();
-
-        int actualPosition = calculateActualPosition(position);
-
-        if (null == convertView) {
-            LayoutInflater layoutInflator = LayoutInflater.from(mContext);
-            convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
-            holder = new ViewHolder();
-            holder.aisleContentBrowser = (AisleContentBrowser) convertView .findViewById(R.id.aisle_content_flipper);
-            holder.aisleDescriptor = (LinearLayout) convertView .findViewById(R.id.aisle_descriptor);
-            holder.profileThumbnail = (ImageView)holder.aisleDescriptor.findViewById(R.id.profile_icon_descriptor);
-            holder.aisleOwnersName = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_owner_name);
-            holder.aisleContext = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_context);
-            holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-            convertView.setTag(holder);
-            if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position = " + position);
-        }
-        
-        holder = (ViewHolder) convertView.getTag();
-        //holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
-        holder.mWindowContent = (AisleWindowContent)getItem(actualPosition);
-        int scrollIndex = 0;
-        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
-        AisleContext context = holder.mWindowContent.getAisleContext();
-
-        sb.append(context.mFirstName).append(" ").append(context.mLastName);
-        holder.aisleOwnersName.setText(sb.toString());
-        StringBuilder contextBuilder = new StringBuilder();
-        contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem);
-        holder.aisleContext.setText(contextBuilder.toString());*/
         return convertView;
     }
     

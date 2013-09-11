@@ -3,12 +3,12 @@ package com.lateralthoughts.vue.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.logging.Logger;
+
 import android.app.Activity;
 import android.os.Process;
 import android.util.Log;
-
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.logging.Logger;
 
 public class ExceptionHandler implements
 		java.lang.Thread.UncaughtExceptionHandler {
@@ -33,11 +33,15 @@ public class ExceptionHandler implements
 		final StringWriter stackTrace = new StringWriter();
 		exception.printStackTrace(new PrintWriter(stackTrace));
 		Log.i("Vue", "" + stackTrace);
+
 		Thread t = new Thread(new Runnable() {
+
 			@Override
 			public void run() {
 				try {
+
 					Logger.log("ERROR", "CrashActivity", stackTrace + "");
+
 					GMailSender sender = new GMailSender(
 							VueConstants.GMAIL_USERNAME_FOR_SENDING_ERROR_TO_MAIL,
 							VueConstants.GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL);
@@ -47,8 +51,10 @@ public class ExceptionHandler implements
 							stackTrace + "",
 							VueConstants.GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL,
 							VueConstants.GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL);
+
 					Process.killProcess(Process.myPid());
 					System.exit(10);
+
 				} catch (Exception e) {
 					Log.e("SendMail", e.getMessage(), e);
 				}

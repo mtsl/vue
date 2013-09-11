@@ -1,19 +1,7 @@
 package com.lateralthoughts.vue;
 
-import android.os.Bundle;
-import android.util.Log;
-import com.android.volley.*;
-import org.json.JSONArray;
-import com.android.volley.Response.Listener;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.toolbox.HttpHeaderParser;
-
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
-import java.io.UnsupportedEncodingException;
 
 /**
  * UserCredentials in Vue involves creating a Vue User account on the backend to
@@ -26,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 
 public class VueUser implements Serializable {
 
+    private String mVueId;
 	public VueUser(String facebookId, String googlePlusId, String deviceId,
 			String emailId) {
 		mEmailId = emailId;
@@ -38,6 +27,13 @@ public class VueUser implements Serializable {
 
 	}
 
+    public void setVueUserId(String vueId){
+        mVueId = vueId;
+    }
+
+    public String getVueId(){
+        return mVueId;
+    }
 	public void setUsersName(String firstName, String lastName) {
 		mFirstName = firstName;
 		mLastName = lastName;
@@ -58,19 +54,19 @@ public class VueUser implements Serializable {
 
 	private String mBirthday;
 
-	public String getmFacebookId() {
+	public String getFacebookId() {
 		return mFacebookId;
 	}
 
-	public void setmFacebookId(String mFacebookId) {
+	public void setFacebookId(String mFacebookId) {
 		this.mFacebookId = mFacebookId;
 	}
 
-	public String getmGooglePlusId() {
+	public String getGooglePlusId() {
 		return mGooglePlusId;
 	}
 
-	public void setmGooglePlusId(String mGooglePlusId) {
+	public void setGooglePlusId(String mGooglePlusId) {
 		this.mGooglePlusId = mGooglePlusId;
 	}
 
@@ -81,19 +77,19 @@ public class VueUser implements Serializable {
 	private Locale mUserLocale;
 	private String mEmailId;
 
-	public String getmEmailId() {
+	public String getEmailId() {
 		return mEmailId;
 	}
 
-	public void setmEmailId(String mEmailId) {
+	public void setEmailId(String mEmailId) {
 		this.mEmailId = mEmailId;
 	}
 
-	public String getmDeviceId() {
+	public String getDeviceId() {
 		return mDeviceId;
 	}
 
-	public void setmDeviceId(String mDeviceId) {
+	public void setDeviceId(String mDeviceId) {
 		this.mDeviceId = mDeviceId;
 	}
 

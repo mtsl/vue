@@ -68,8 +68,9 @@ public class VueContentGateway {
 	 * getTrendingAisles - This API is used to get a list of the current Trending Aisles.
 	 * The ResultReceiver object will be notified when the list is available
 	 */
-	public boolean getTrendingAisles(int limit, int offset, final ResultReceiver receiver){
+	public boolean getTrendingAisles(int limit, int offset, final ResultReceiver receiver,final boolean loadMore){
 		boolean status = true;
+		Log.i("datarequest", "datarequest parsing data offset: "+offset+"  limit: "+limit); 
         mParams.clear();
         StringBuilder baseUri = new StringBuilder();
 
@@ -95,12 +96,14 @@ public class VueContentGateway {
 
               String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI + "aisle/trending?limit=%s&offset=%s";
               String requestUrl = String.format(requestUrlBase, limit, offset);
+              Log.e("VueNetworkError","Vue encountered network requestUrl = " +requestUrl);
               Response.Listener listener = new Response.Listener<JSONArray>(){
                   @Override
                   public void onResponse(JSONArray jsonArray){
                       if(null != jsonArray){
                           Bundle responseBundle = new Bundle();
                           responseBundle.putString("result",jsonArray.toString());
+                          responseBundle.putBoolean("loadMore", loadMore);
                           receiver.send(1,responseBundle);
                       }
                   }

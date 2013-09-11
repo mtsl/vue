@@ -1,5 +1,7 @@
 package com.lateralthoughts.vue;
 
+import com.flurry.android.FlurryAgent;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +43,7 @@ public class LoginWarningMessage {
 		okButton.setText("LoginNow");
 		okButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				FlurryAgent.logEvent("Login_From_Alert");
 				dialog.dismiss();
 				Intent i = new Intent(mContext, VueLoginActivity.class);
 				Bundle b = new Bundle();
@@ -66,7 +69,7 @@ public class LoginWarningMessage {
 								VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE,
 								count + 1);
 						editor.commit();
-						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
+						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mContext)
 								.getSupportFragmentManager().findFragmentById(
 										R.id.create_aisles_view_fragment);
 						fragment.storeMetaAisleDataIntoLocalStorage();
@@ -80,7 +83,7 @@ public class LoginWarningMessage {
 								VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
 								count + 1);
 						editor.commit();
-						VueAisleDetailsViewFragment mVueAiselFragment = (VueAisleDetailsViewFragment) ((FragmentActivity) AisleDetailsViewActivity.mAisleDetailsActivityContext)
+						VueAisleDetailsViewFragment mVueAiselFragment = (VueAisleDetailsViewFragment) ((FragmentActivity) mContext)
 								.getSupportFragmentManager().findFragmentById(
 										R.id.aisle_details_view_fragment);
 						mVueAiselFragment.addComment(editText, view);

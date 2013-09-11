@@ -5,7 +5,9 @@ import java.util.ArrayList;
 
 //android imports
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
@@ -115,6 +117,16 @@ public class ScaledImageViewFactory {
 		if(-1 == index){
 			return;
 		}
+	/*	 
+		
+
+		Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+		if(bitmap != null){
+			bitmap.recycle();
+			Log.i("recycle bitmap1111", "recycle bitmap1111");
+		}else {
+			Log.i("recycle bitmap1111", "recycle bitmap2222");
+		}*/
 		synchronized(this){
 			view = mObjectsInUse.remove(index);
 			view.setImageBitmap(null);
@@ -143,14 +155,26 @@ public class ScaledImageViewFactory {
 			}
 		}		
 	}
-	public void clearAllViews(){
-/*		ScaleImageView view;
+/*	public void clearAllViews(){
+		ScaleImageView view;
 		for(int i=0;i<mObjectsInUse.size();i++){
 			view = mObjectsInUse.remove(i);
 			if(view != null) {
 				view.setImageBitmap(null);
 			   mAvailableObjects.add(view);
 			}
-		}*/
+		}
+	}*/
+	
+	public void clearAllImageViews(){
+		ScaleImageView view;
+		for(int i=0;i<mObjectsInUse.size();i++){
+			view = mObjectsInUse.remove(i);
+			if(view != null) {
+				view.setImageBitmap(null);
+				 
+			   mAvailableObjects.add(view);
+			}
+		}
 	}
 }

@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -15,18 +14,15 @@ import android.view.Gravity;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 
-//import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
+import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.ImageDimension;
 import com.lateralthoughts.vue.utils.Utils;
- 
-import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 
 public class AisleDetailsViewListLoader {
     private static final boolean DEBUG = false;
@@ -258,12 +254,15 @@ public class AisleDetailsViewListLoader {
     }  
 public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 	 if (contentBrowser != null) {
+		 Log.i("bitmap reclying", "bitmap reclying  contentBrowser.getChildCount(): "+contentBrowser.getChildCount());
 			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
 				mViewFactory
 				.returnUsedImageView((ScaleImageView)contentBrowser
 						.getChildAt(i));
-			}
+				Log.i("bitmap reclying", "bitmap reclying  images are returned");
+			} 
 			 mContentAdapterFactory.returnUsedAdapter(contentBrowser.getCustomAdapter());
+			 contentBrowser.setCustomAdapter(null);
 			contentBrowser.removeAllViews();
 			contentBrowser = null;
 			
@@ -276,6 +275,8 @@ public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 					bitmap.recycle();
 				}
 			}
+		} else {
+			Log.i("bitmap reclying", "bitmap reclying  contentBrowser is null ");
 		}
 	
 }

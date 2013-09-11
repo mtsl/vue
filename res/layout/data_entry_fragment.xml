@@ -68,6 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="8dip"
+                android:background="#90000000"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -79,7 +80,7 @@
                     android:paddingBottom="16dip"
                     android:paddingTop="16dip"
                     android:text="Looking"
-                    android:textColor="@color/dataentrytextcolor"
+                    android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -90,7 +91,7 @@
                     android:paddingBottom="16dip"
                     android:paddingTop="16dip"
                     android:text=" For "
-                    android:textColor="@color/dataentrytextcolor"
+                    android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -102,7 +103,7 @@
                     android:paddingBottom="16dip"
                     android:paddingTop="16dip"
                     android:text="Occasion"
-                    android:textColor="@color/dataentrytextcolor"
+                    android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>

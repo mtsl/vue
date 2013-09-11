@@ -8,6 +8,7 @@
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
@@ -41,6 +42,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.VueTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -73,6 +75,15 @@
             android:name=".AisleDetailsViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.VueTheme"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
+          <activity
+            android:name=".MemoryTestActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.VueTheme"
             android:windowSoftInputMode="adjustResize" >
         </activity>
@@ -93,15 +104,8 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
-            android:name=".SplashScreen"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity android:name="com.lateralthoughts.vue.VueComparisionActivity" />
+            android:name="com.lateralthoughts.vue.VueComparisionActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.lateralthoughts.vue.VueLoginActivity"
             android:screenOrientation="portrait"
@@ -113,18 +117,22 @@
         </activity>
         <activity
             android:name=".CrashActivity"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Dialog" />
         <activity
             android:name="com.facebook.LoginActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".DetailsViewActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.VueTheme" />
         <activity
             android:name=".FeedbackForm"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|" />
 
         <service android:name="com.lateralthoughts.vue.service.VueContentRestService" />

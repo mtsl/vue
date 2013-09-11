@@ -16,7 +16,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
@@ -75,11 +77,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	ViewHolder mViewHolder;
 	boolean mImageRefresh = true;
 	private boolean mSetPosition;
+	private static final int mWaitTime = 1000;
 	 
 	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
 	@SuppressWarnings("unchecked")
-	public AisleDetailsViewAdapter(Context c,
+	public AisleDetailsViewAdapter(Context c,                                                                               
 			AisleDetailSwipeListener swipeListner, int listCount,
 			ArrayList<AisleWindowContent> content) {
 		super(c, content);
@@ -110,6 +113,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 
 			for (int i = 0; i < getItem(mCurrentAislePosition).getImageList().size(); i++) {
 				mCustomUrls.add(getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl);
+				Log.i("clone", "mCustomImageUrl url: "+getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl);
 				if (getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight > mBestHeight) {
 					mBestHeight = getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight;
 				}
@@ -142,6 +146,20 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			}
 			mShowingList = getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList;
 			mLikes = getItem(mCurrentAislePosition).getImageList().get(0).mLikesCount;
+			 new Handler().postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					 Map<String, String> articleParams = new HashMap<String, String>();
+					 articleParams.put("Category", getItem(mCurrentAislePosition).getAisleContext().mCategory);
+					 articleParams.put("Lookingfor", getItem(mCurrentAislePosition).getAisleContext().mLookingForItem);
+					 articleParams.put("Occasion", getItem(mCurrentAislePosition).getAisleContext().mOccasion);
+					 FlurryAgent.logEvent("Visited_Categories", articleParams);
+					
+				}
+				//wait time for flurry session starts
+			}, mWaitTime);
+		
 		}
 	}
 
@@ -396,10 +414,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			public void onClick(View v) {
 				mIsBookImageClciked = true;
 				if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
+					 FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
 					mBookmarksCount--;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(mBookmarksCount);
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(false);
 				} else {
+					 FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
 					mBookmarksCount++;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(mBookmarksCount);
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(true);
@@ -528,6 +548,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 							+ getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mAvailableHeight
 							+ " AisleID:  " + getItem(mCurrentAislePosition).getAisleId(),
 					1500).show();
+			
+			Log.i("mCustomUrlthispos", "mCustomUrlthispos2:"+ getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mCustomImageUrl);
+			Log.i("mCustomUrlthispos", "mCustomUrlthispos3:"+ getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mImageUrl);
 		}
 
 		@Override
@@ -630,9 +653,23 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			}
 			mCommentsMapList = null;
 			mViewHolder.aisleContentBrowser.setReferedObjectsNull();
-			mViewHolder.aisleContentBrowser.removeAllViews();
 			mViewLoader.clearBrowser(getItem(mCurrentAislePosition).getImageList());
-			mViewHolder.aisleContentBrowser = null;
+			ScaledImageViewFactory   mViewFactory = ScaledImageViewFactory.getInstance(mContext);
+			for(int i=0;i<mViewHolder.aisleContentBrowser.getChildCount();i++){
+				mViewFactory
+				.returnUsedImageView((ScaleImageView)mViewHolder.aisleContentBrowser
+						.getChildAt(i));
+				Log.i("bitmap reclying", "bitmap reclying  in adapter");
+			}
+			if(mViewHolder.aisleContentBrowser != null){
+			ContentAdapterFactory mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
+			 mContentAdapterFactory.returnUsedAdapter(mViewHolder.aisleContentBrowser.getCustomAdapter());
+			 mViewHolder.aisleContentBrowser.setCustomAdapter(null);
+			 mViewHolder.aisleContentBrowser.removeAllViews();
+			 mViewHolder.aisleContentBrowser = null;
+			}
+		 
+			//mViewHolder.aisleContentBrowser.removeAllViews();
 		}
 	}
 
@@ -700,6 +737,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 						.getWindowBookmarkIndicator();
 			} else if (reqType.equals(CHANGE_COMMENT)) {
 				// aisleId,imageId,comment
+				if(itemDetails.mCommentsList == null){
+					getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList = new ArrayList<String>();
+				}
 				String commentAdded = itemDetails.mCommentsList.get(0);
 			} else if (reqType.equals(CHANGE_LIKES)) {
 				// aisleId,imageId,likesCount,likeStatus
@@ -738,22 +778,33 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			return false;
 		}
 	}
- private void onChangeLikesCount(int position){
+
+	private void onChangeLikesCount(int position) {
+		Map<String, String> articleParams = new HashMap<String, String>();
+		articleParams.put("Category", getItem(mCurrentAislePosition)
+				.getAisleContext().mCategory);
+		articleParams.put("Lookingfor", getItem(mCurrentAislePosition)
+				.getAisleContext().mLookingForItem);
+		articleParams.put("Occasion", getItem(mCurrentAislePosition)
+				.getAisleContext().mOccasion);
+		FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
 		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
 		} else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
-			
-			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(mCurrentAislePosition).getImageList()
-					.get(position).mLikesCount + 1;
+
+			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
+					mCurrentAislePosition).getImageList().get(position).mLikesCount + 1;
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
 			sendDataToDb(position, CHANGE_LIKES);
 		}
 		if (position == mCurrentDispImageIndex) {
-			mLikes = getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount;
+			mLikes = getItem(mCurrentAislePosition).getImageList()
+					.get(position).mLikesCount;
 			notifyAdapter();
 		}
- }
+	}
  private void onChangeDislikesCount(int position){
+	 FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
 		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(mCurrentAislePosition).getImageList()
@@ -768,4 +819,13 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			notifyAdapter();
 		}
  }
+
+	public void closeKeyboard() {
+		final InputMethodManager mInputMethodManager = (InputMethodManager) mContext
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mViewHolder.edtComment.getWindowToken(), 0);
+		mViewHolder.edtCommentLay.setVisibility(View.GONE);
+		mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
+	}
 }

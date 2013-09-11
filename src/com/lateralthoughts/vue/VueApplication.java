@@ -1,6 +1,5 @@
 package com.lateralthoughts.vue;
 
-
 import java.util.ArrayList;
 
 import org.apache.http.client.HttpClient;
@@ -24,10 +23,6 @@ import com.lateralthoughts.vue.utils.Utils;
 public class VueApplication extends Application {
 	private static VueApplication sInstance;
 
-	// private VueMemoryCache<Bitmap> mVueAisleImagesCache;
-	// private VueMemoryCache<Bitmap> mAisleContentCache;
-	// private VueMemoryCache<String> mVueAisleOwnerNamesCache;
-	// private VueMemoryCache<String> mVueAisleContextInfoCache;
 	private static final String CRITTERCISM_APP_ID = "5153c41e558d6a2403000009";
 	private HttpClient mHttpClient;
 	private FileCache mFileCache;
@@ -38,18 +33,11 @@ public class VueApplication extends Application {
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
 	private boolean newVueTrendingAislesDataModel = false;
+	public ArrayList<String> mAisleImagePathList = new ArrayList<String>();
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
-
-	public boolean ismFromDetailsScreenToDataentryCreateAisleScreenFlag() {
-		return mFromDetailsScreenToDataentryCreateAisleScreenFlag;
-	}
-
-	public void setmFromDetailsScreenToDataentryCreateAisleScreenFlag(
-			boolean mFromDetailsScreenToDataentryCreateAisleScreenFlag) {
-		this.mFromDetailsScreenToDataentryCreateAisleScreenFlag = mFromDetailsScreenToDataentryCreateAisleScreenFlag;
-	}
-
-	private boolean mFromDetailsScreenToDataentryCreateAisleScreenFlag;
+	public static final int[] POPUP_ITEM_DRAWABLES = { R.drawable.composer_camera,
+		R.drawable.composer_music, R.drawable.composer_place,
+		R.drawable.composer_sleep, R.drawable.composer_thought };
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
@@ -64,6 +52,7 @@ public class VueApplication extends Application {
 	private int mTextSize = 18;
 	public Context mVueApplicationContext;
 	private int mAisleImgCurrentPos;
+
 	public int getmAisleImgCurrentPos() {
 		return mAisleImgCurrentPos;
 	}
@@ -149,6 +138,7 @@ public class VueApplication extends Application {
 		// R.drawable.aisle_content_empty;
 		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 				crittercismConfig);
+		
 	}
 
 	public static VueApplication getInstance() {

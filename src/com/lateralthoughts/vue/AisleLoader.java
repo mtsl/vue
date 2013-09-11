@@ -110,6 +110,11 @@ public class AisleLoader {
     	//String currentContentId = holder.aisleContentBrowser.getUniqueId();
     	String desiredContentId = windowContent.getAisleId();
     	contentBrowser = holder.aisleContentBrowser;
+    	if(desiredContentId.equalsIgnoreCase("6098")){
+    		Log.i("bestheight", "bestheight best of chappals smallheight: "+windowContent.getBestHeightForWindow());
+    	}else if(desiredContentId.equalsIgnoreCase("6111")){
+    		Log.i("bestheight", "bestheight best of ornaments smallheight: "+windowContent.getBestHeightForWindow());
+    	}
 
 		if(holder.uniqueContentId.equals(desiredContentId)){
     		//we are looking at a visual object that has either not been used
@@ -126,16 +131,12 @@ public class AisleLoader {
     		    //((ScaleImageView)contentBrowser.getChildAt(i)).setContainerObject(null);
     			mViewFactory.returnUsedImageView((ScaleImageView)contentBrowser.getChildAt(i));
     		}
-    	/*	 if(!listener.isFlingCalled()){*/
-    			 Log.i("flingcheck", "flingcheck fling stopped");
+    			
     		IAisleContentAdapter adapter = mContentAdapterFactory.getAisleContentAdapter();
     		mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser.getCustomAdapter());
     		holder.aisleContentBrowser.setCustomAdapter(null);
     		adapter.setContentSource(desiredContentId, holder.mWindowContent);
     		holder.aisleContentBrowser.setCustomAdapter(adapter);
-    		/* } else {
-    			 Log.i("flingcheck", "flingcheck fling call running");
-    		 }*/
     		holder.uniqueContentId = desiredContentId;
     		holder.aisleContentBrowser.removeAllViews();
     		holder.aisleContentBrowser.setUniqueId(desiredContentId);
@@ -150,6 +151,8 @@ public class AisleLoader {
  				windowContent.getBestHeightForWindow());
          holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
     	
+    	
+    	
     	if(null != imageDetailsArr && imageDetailsArr.size() != 0){	
     		itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getPreconfiguredImageView(position);
@@ -157,10 +160,12 @@ public class AisleLoader {
 			Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
 			int bestHeight = windowContent.getBestHeightForWindow();
 			if(bitmap != null){
+				 Log.i("flingcheck", "createview issue2 bitmap not null");
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);    				
 			}
 			else{
+				 Log.i("flingcheck", "createview issue3 bitmap  null");
 				contentBrowser.addView(imageView);
 			  
 				if(!placeholderOnly)

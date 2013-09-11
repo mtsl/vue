@@ -7,8 +7,10 @@
     <string name="trending_aisles_tag">aisle/trending</string>
     <string name="dataentry_edit_permission">Do you want to change the existing data?</string>
     <string name="dataentry_mandtory_field_mesg">Please enter Lookingfor and Occasion.</string>
+    <string name="dataentry_mandtory_field_add_aisleimage_mesg">Please Add Aisle Image.</string>
     <string name="limit_tag">limit</string>
     <string name="offset_tag">offset</string>
+    <string name="discard_othersource_image_mesg">Would you like to discard the other application image?</string>
     <string name="middle_earth">Visiting Middle Earth</string>
     <string name="profile_owner">Profile Owner</string>
     <string name="uploading_mesg">Uploading...</string>
@@ -43,7 +45,6 @@
     <string name="no_mesg">No</string>
     <string name="com_facebook_loading">Loading...</string>
     <string name="com_facebook_internet_permission_error_title">AndroidManifest Error</string>
-    <string name="switchtotwog">No Wi-Fi Network: Switch To 2G/3G?</string>
     <string name="com_facebook_internet_permission_error_message">WebView login requires INTERNET permission</string>
     <string name="com_facebook_requesterror_web_login">Please log in via https://www.facebook.com or https://m.facebook.com to re-enable the app to connect with Facebook.</string>
     <string name="com_facebook_requesterror_relogin">The app is not connected with Facebook, please log in and reconnect this app.</string>
@@ -68,7 +69,7 @@
     <string name="cancelled">Cancelled</string>
     <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
     <string name="ok">Ok</string>
-   <string name="cache_dirname">GoogleImgApp_Cache</string>
+    <string name="cache_dirname">GoogleImgApp_Cache</string>
     <!-- <string name="image_res_placeholder" formatted="false">._SX%d_SY%d.jpg</string> -->
     <string name="profile">Profile</string>
     <string name="create_aisle">Create Aisle</string>

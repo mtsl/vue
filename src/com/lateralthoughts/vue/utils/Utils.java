@@ -41,6 +41,7 @@ public class Utils {
 	public static final int LARGE_TEXT_SIZE = 22;
 	public static final int MEDIUM_TEXT_SIZE = 18;
 	public static final int SMALL_TEXT_SIZE = 14;
+	public static final String FLURRY_APP_KEY = "6938R8DC7R5HZWF976TJ";
 
 	public static void CopyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
@@ -388,11 +389,30 @@ public class Utils {
 	}
 
 	public static String getDeviceId() {
-
 		String deviceId = Secure.getString(VueApplication.getInstance()
 				.getContentResolver(), Secure.ANDROID_ID);
 		Log.e("Utils", "get device id method called" + deviceId);
 		return deviceId;
+	}
 
+	public static boolean getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+			Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences
+				.getBoolean(
+						VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_CREATE_AISLESCREEN_FLAG,
+						false);
+	}
+
+	public static void putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+			Context context, boolean flag) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean(
+				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_CREATE_AISLESCREEN_FLAG,
+				flag);
+		editor.commit();
 	}
 }

@@ -25,7 +25,8 @@ public class OtherSourcesDialog {
 		mFileCache = new FileCache(mActivity);
 	}
 
-	public void showImageDailog(ArrayList<OtherSourceImageDetails> imagesList) {
+	public void showImageDailog(ArrayList<OtherSourceImageDetails> imagesList,
+			final boolean fromLandingScreenFlag) {
 		final Dialog dialog = new Dialog(mActivity,
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -45,23 +46,37 @@ public class OtherSourcesDialog {
 					String picturePath = Utils.getPath(
 							OtherSourcesDialog.this.imagesList.get(position)
 									.getImageUri(), mActivity);
-					DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
-							.getSupportFragmentManager().findFragmentById(
-									R.id.create_aisles_view_fragment);
-					fragment.setGalleryORCameraImage(picturePath, false);
+					if (!fromLandingScreenFlag) {
+						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
+								.getSupportFragmentManager().findFragmentById(
+										R.id.create_aisles_view_fragment);
+						fragment.setGalleryORCameraImage(picturePath, false);
+					} else {
+						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
+						vueLandingPageActivity
+								.showScreenSelectionForOtherSource(picturePath);
+					}
 				} else {
 					File f = mFileCache.getVueAppResizedPictureFile(String
 							.valueOf(OtherSourcesDialog.this.imagesList
 									.get(position).getOriginUrl().hashCode()));
 					if (f.exists()) {
 						dialog.dismiss();
-						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
-								.getSupportFragmentManager().findFragmentById(
-										R.id.create_aisles_view_fragment);
-						fragment.mFindAtText
-								.setText(OtherSourcesDialog.this.imagesList
-										.get(position).getOriginUrl());
-						fragment.setGalleryORCameraImage(f.getPath(), true);
+						if (!fromLandingScreenFlag) {
+							DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
+									.getSupportFragmentManager()
+									.findFragmentById(
+											R.id.create_aisles_view_fragment);
+							fragment.mFindAtText
+									.setText(OtherSourcesDialog.this.imagesList
+											.get(position).getOriginUrl());
+							fragment.setGalleryORCameraImage(f.getPath(), true);
+						} else {
+							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
+							vueLandingPageActivity
+									.showScreenSelectionForOtherSource(f
+											.getPath());
+						}
 					} else {
 						Toast.makeText(mActivity,
 								"Please wait. Image is loading.",

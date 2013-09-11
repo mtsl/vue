@@ -9,20 +9,19 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import com.lateralthoughts.vue.DataEntryActivity;
-import com.lateralthoughts.vue.DataEntryFragment;
-import com.lateralthoughts.vue.R;
-
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import com.lateralthoughts.vue.DataEntryFragment;
+import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueLandingPageActivity;
 
 public class GetOtherSourceImagesTask extends
 		AsyncTask<String, String, ArrayList<OtherSourceImageDetails>> {
@@ -30,9 +29,14 @@ public class GetOtherSourceImagesTask extends
 	private String mSourceUrl = null;
 	private static final int WIDTH_LIMIT = 150;
 	private static final int HEIGHT_LIMIT = 150;
+	private Context mContext = null;
+	private boolean mFromLandingScreenFlag;
 
-	public GetOtherSourceImagesTask(String sourceUrl) {
+	public GetOtherSourceImagesTask(String sourceUrl, Context context,
+			boolean fromLandingScreenFlag) {
 		mSourceUrl = sourceUrl;
+		mContext = context;
+		mFromLandingScreenFlag = fromLandingScreenFlag;
 	}
 
 	@Override
@@ -46,7 +50,7 @@ public class GetOtherSourceImagesTask extends
 		try {
 			if (mSourceUrl != null) {
 				ArrayList<OtherSourceImageDetails> imgDetails = parseHtml(
-				mSourceUrl, WIDTH_LIMIT, HEIGHT_LIMIT);
+						mSourceUrl, WIDTH_LIMIT, HEIGHT_LIMIT);
 				return imgDetails;
 			}
 		} catch (Exception e) {
@@ -107,10 +111,15 @@ public class GetOtherSourceImagesTask extends
 	@Override
 	protected void onPostExecute(ArrayList<OtherSourceImageDetails> result) {
 		super.onPostExecute(result);
-		DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) DataEntryActivity.mDataEntryActivityContext)
-				.getSupportFragmentManager().findFragmentById(
-						R.id.create_aisles_view_fragment);
-		fragment.showOtherSourcesGridview(result);
+		if (!mFromLandingScreenFlag) {
+			DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mContext)
+					.getSupportFragmentManager().findFragmentById(
+							R.id.create_aisles_view_fragment);
+			fragment.showOtherSourcesGridview(result);
+		} else {
+			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mContext;
+			vueLandingPageActivity.showOtherSourcesGridview(result);
+		}
 	}
 
 	private String getData(String url) {

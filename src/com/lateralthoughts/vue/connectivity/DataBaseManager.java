@@ -479,8 +479,9 @@ public class DataBaseManager {
     ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
     
     Cursor aislesCursor = mContext.getContentResolver().query(
-        VueConstants.CONTENT_URI, null, VueConstants.CATEGORY + "=?",
-        new String[] {category}, VueConstants.ID + "ASC");
+        VueConstants.CONTENT_URI, null, /*VueConstants.CATEGORY + "=?"*/null,
+        /*new String[] {category}*/null, VueConstants.ID + " ASC");
+    Log.i("cursize", "cursize: "+aislesCursor.getCount());
     
     if (aislesCursor.moveToFirst()) {
       do {

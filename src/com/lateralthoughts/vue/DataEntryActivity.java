@@ -1,8 +1,11 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
+
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
-import android.content.Context;
+import com.lateralthoughts.vue.utils.Utils;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -20,7 +23,6 @@ import android.widget.TextView;
 public class DataEntryActivity extends BaseActivity {
 
 	public boolean mIsKeyboardShownFlag = false;
-	public static Context mDataEntryActivityContext = null;
 	public TextView mVueDataentryActionbarScreenName;
 	private RelativeLayout mVueDataentryActionbarCloseIconLayout,
 			mVueDataentryActionbarCreateAisleIconLayout,
@@ -32,10 +34,12 @@ public class DataEntryActivity extends BaseActivity {
 			mVueDataentryActionbarBottomLayout;
 	private View mVueDataentryActionbarView;
 	private DataEntryFragment mDataEntryFragment;
+	private static final String CREATE_AISLE_SCREEN_VISITORS = "Create_Aisle_Screen_Visitors";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.e("Land", "vueland 64");
 		setContentView(R.layout.date_entry_main);
 		mVueDataentryActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_dataentry_actionbar, null);
@@ -86,6 +90,8 @@ public class DataEntryActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
+						VueApplication.getInstance().mAisleImagePathList
+								.clear();
 						finish();
 					}
 				});
@@ -125,7 +131,6 @@ public class DataEntryActivity extends BaseActivity {
 						mDataEntryFragment.editButtonClickFunctionality();
 					}
 				});
-		mDataEntryActivityContext = this;
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			Log.e("cs", "30");
@@ -195,6 +200,16 @@ public class DataEntryActivity extends BaseActivity {
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
 				mDataEntryFragment.mCreateAisleBg.setVisibility(View.GONE);
 				mDataEntryFragment.mAisleBgProgressbar.setVisibility(View.GONE);
+				if (!mDataEntryFragment.mFromDetailsScreenFlag) {
+					if (VueApplication.getInstance().mAisleImagePathList != null
+							&& VueApplication.getInstance().mAisleImagePathList
+									.size() > 0) {
+						mVueDataentryActionbarScreenName
+								.setText(getResources()
+										.getString(
+												R.string.add_imae_to_aisle_screen_title));
+					}
+				}
 				if (b.getString(VueConstants.FROM_OTHER_SOURCES_URL) != null) {
 					mDataEntryFragment.getImagesFromUrl(b
 							.getString(VueConstants.FROM_OTHER_SOURCES_URL));
@@ -215,7 +230,19 @@ public class DataEntryActivity extends BaseActivity {
 			}
 		}
 	}
-
+	@Override
+	protected void onStart() {
+		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
+		FlurryAgent.onPageView();
+		FlurryAgent.logEvent(CREATE_AISLE_SCREEN_VISITORS);
+		super.onStart();
+	}
+	@Override
+	protected void onStop() {
+		super.onStop();
+		FlurryAgent.onEndSession(this);
+		
+	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -295,6 +322,7 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
+				VueApplication.getInstance().mAisleImagePathList.clear();
 				super.onBackPressed();
 			}
 		}

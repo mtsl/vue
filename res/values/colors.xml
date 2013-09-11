@@ -34,6 +34,7 @@
    <color name="dataentrylistshadowbordercolor3">#656556</color>
    <color name="whitbgshade">#EEEEEE</color>
    <color name="bottombar">#bcbcbc</color>
+   <color name="transperent">#00000000</color>
 </resources>  
                             
                                

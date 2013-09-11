@@ -1,33 +1,28 @@
 package com.lateralthoughts.vue;
 
-import android.os.Bundle;
 import android.util.Log;
 import com.android.volley.*;
 import com.android.volley.toolbox.HttpHeaderParser;
-
-//FB imports
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.lateralthoughts.vue.utils.Utils;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-//java util imports
 import java.io.UnsupportedEncodingException;
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+//FB imports
+//java util imports
 
 public class VueUserManager {
 	public interface UserUpdateCallback {
 		public void onUserUpdated(VueUser user);
 	}
 
-	private String VUE_API_BASE_URI = "https://1-java.vueapi-canary.appspot.com/";
+	private String VUE_API_BASE_URI = "http://1-java.vueapi-canary.appspot.com/";
+    //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
 	private String USER_CREATE_ENDPOINT = "api/usercreate/trial";
 	private String GPLUS_USER_CREATE_ENDPOINT = "api/usercreate/googleplus";
 	private String FB_USER_CREATE_ENDPOINT = "api/usercreate/facebook/";
@@ -88,11 +83,24 @@ public class VueUserManager {
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
 					Log.e("Profiling", "Profiling : onResponse()");
-					VueUser user = new VueUser(null, null, Utils.getDeviceId(),
-							null);
-					user.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
-					VueUserManager.this.setCurrentUser(user);
-					callback.onUserUpdated(user);
+                    try{
+                        JSONObject userInfo = new JSONObject(jsonArray);
+                        JSONObject user = userInfo.getJSONObject("user");
+                        String id = user.getString("id");
+                        String email = user.getString("email");
+                        String firstName = user.getString("firstName");
+                        String lastName = user.getString("lastName");
+                        String deviceId = user.getString("deviceId");
+
+                        VueUser vueUser =
+                                new VueUser(null, null, Utils.getDeviceId(),null);
+                        vueUser.setVueUserId(id);
+                        vueUser.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
+                        VueUserManager.this.setCurrentUser(vueUser);
+                        callback.onUserUpdated(vueUser);
+                    }catch(JSONException ex){
+
+                    }
 				}
 			}
 		};
@@ -145,7 +153,7 @@ public class VueUserManager {
 			}
 		};
 		String requestUrl = VUE_API_BASE_URI + FB_USER_CREATE_ENDPOINT
-				+ user.getmFacebookId();
+				+ user.getFacebookId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
@@ -182,7 +190,7 @@ public class VueUserManager {
 			}
 		};
 		String requestUrl = VUE_API_BASE_URI + GPLUS_USER_CREATE_ENDPOINT
-				+ vueUser.getmGooglePlusId();
+				+ vueUser.getGooglePlusId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
@@ -200,8 +208,8 @@ public class VueUserManager {
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
 					user.setUserIdentityMethod(vueUser.getUserIdentity());
-					user.setmDeviceId(vueUser.getmDeviceId());
-					user.setmGooglePlusId(vueUser.getmGooglePlusId());
+					user.setDeviceId(vueUser.getDeviceId());
+					user.setGooglePlusId(vueUser.getGooglePlusId());
 					VueUserManager.this.setCurrentUser(user);
 					callback.onUserUpdated(user);
 				}
@@ -218,7 +226,7 @@ public class VueUserManager {
 			}
 		};
 		String requestUrl = VUE_API_BASE_URI + FB_USER_CREATE_ENDPOINT
-				+ user.getmFacebookId();
+				+ user.getFacebookId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
@@ -249,15 +257,10 @@ public class VueUserManager {
 			}
 		};
 		String requestUrl = VUE_API_BASE_URI + GPLUS_USER_CREATE_ENDPOINT
-				+ vueUser.getmGooglePlusId();
+				+ vueUser.getGooglePlusId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
-
-	}
-
-	public void createGPlusIdentifiedUser(String idValue,
-			UserUpdateCallback callback) {
 
 	}
 
@@ -274,7 +277,7 @@ public class VueUserManager {
 		public UserCreateRequest(String param1, String param2,
 				Response.Listener<String> listener,
 				Response.ErrorListener errorListener) {
-			super(Request.Method.PUT, VUE_API_BASE_URI + USER_CREATE_ENDPOINT,
+			super(Method.PUT, VUE_API_BASE_URI + USER_CREATE_ENDPOINT,
 					errorListener);
 			mListener = listener;
 		}
@@ -355,11 +358,13 @@ public class VueUserManager {
 			String firstName = graphUser.getFirstName();
 			String lastName = graphUser.getLastName();
 			String birthday = graphUser.getBirthday();
+            String facebookUserId = graphUser.getUsername();
 			JSONObject innerObject = graphUser.getInnerJSONObject();
 			String email = innerObject
 					.getString(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY);
 			String username = graphUser.getName();
-			vueUser = new VueUser(username, null, null, email);
+            String facebookId = graphUser.getId();
+			vueUser = new VueUser(facebookUserId, null, null, email);
 			vueUser.setUsersName(firstName, lastName);
 			vueUser.setBirthday(birthday);
 		} catch (JSONException ex) {
