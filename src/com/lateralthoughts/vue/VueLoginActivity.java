@@ -985,6 +985,7 @@ public class VueLoginActivity extends FragmentActivity implements
 				} else {
 					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS);
 				}
+				vueUser.setVueUserId(storedVueUser.getVueId());
 				userManager.updateGooglePlusIdentifiedUser(vueUser,
 						new UserUpdateCallback() {
 							@Override
