@@ -543,7 +543,6 @@ public class VueLoginActivity extends FragmentActivity implements
                             AisleManager aisleManager = AisleManager.getAisleManager();
                             Aisle aisle = new Aisle();
                             aisle.setCategory("Abstracts");
-                            aisle.setId(0L);
                             aisle.setLookingFor("Great software");
                             aisle.setName("Super Aisle");
                             aisle.setOccassion("Product Launch");
