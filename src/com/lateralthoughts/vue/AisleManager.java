@@ -61,7 +61,7 @@ public class AisleManager {
     // have only current user at a time. When this call returns the
     // UserUpdateCallback's onUserUpdated API will
     // be invoked and the VueUser object is created and set at that point.
-    public void createEmptyAisle(Aisle aisle, final AisleUpdateCallback callback){
+    public void createEmptyAisle(final Aisle aisle, final AisleUpdateCallback callback){
         if(null == aisle)
             throw new RuntimeException("Can't create Aisle without a non null aisle object");
         String aisleAsString = null;
@@ -70,28 +70,40 @@ public class AisleManager {
         }catch(JsonProcessingException ex2){
 
         }
-        try {
-			Aisle aisleresult = testCreateAisle(aisle);
+      
+   /*     	
+        	 new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						 Log.e("Profiling", "Profiling : onResponse():test calling "  );
+						Aisle aisleresult = testCreateAisle(aisle);
+						 Log.e("Profiling", "Profiling : onResponse():test calling completed"  );
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}).start();*/
 			
-			Log.i("aisleinfo", "aisle id: "+aisleresult.getId());
-			Log.i("aisleinfo", "aisle id: "+aisleresult.getOwnerUserId());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			
+		 
+	 
         Response.Listener listener = new Response.Listener<String>() {
 
             @Override
             public void onResponse(String jsonArray) {
             	 
                 if (null != jsonArray) {
-                    Log.e("Profiling", "Profiling : onResponse(): "+jsonArray);
+                   // Log.e("Profiling", "Profiling : onResponse(): "+jsonArray);
                     try{
                         JSONObject userInfo = new JSONObject(jsonArray);
-                        //JSONObject user = userInfo.getJSONObject("user");
+                        JSONObject user = userInfo.getJSONObject("user");
                         callback.onAisleUpdated(null,null);
                     }catch(Exception ex){
-                    	 Log.e("Profiling", "Profiling : onResponse() error");
+                    	// Log.e("Profiling", "Profiling : onResponse() error");
                     	ex.printStackTrace();
                     }
                 }
@@ -115,36 +127,46 @@ public class AisleManager {
         VueApplication.getInstance().getRequestQueue().add(request);
     }
     
+    private AisleContext parseAisleContent(JSONObject user){
+    	AisleContext aisle = null;
+    	
+		return aisle;
+    	
+    }
     
     //test code for url put request checking.
     public static Aisle testCreateAisle(Aisle aisle) throws Exception
  {
+    	 Log.e("Profiling", "Profiling : onResponse():test testCreateAisle "  );
 		Aisle createdAisle = null;
 		ObjectMapper mapper = new ObjectMapper();
 		String s = VUE_API_BASE_URI + CREATE_AISLE_ENDPOINT;
 		URL url = new URL(s);
+		 Log.e("Profiling", "Profiling : onResponse():test testCreateAisle2 "  );
 		HttpPut httpPut = new HttpPut(url.toString());
 		StringEntity entity = new StringEntity(mapper.writeValueAsString(aisle));
-		System.out.println("Aisle create request: "
-				+ mapper.writeValueAsString(aisle));
+		 
 		entity.setContentType("application/json;charset=UTF-8");
 		entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
 				"application/json;charset=UTF-8"));
 		httpPut.setEntity(entity);
-
+		 Log.e("Profiling", "Profiling : onResponse():test testCreateAisle 3"  );
 		DefaultHttpClient httpClient = new DefaultHttpClient();
+		 Log.e("Profiling", "Profiling : onResponse():test testCreateAisle 3.1"  );
 		HttpResponse response = httpClient.execute(httpPut);
+		 Log.e("Profiling", "Profiling : onResponse():test testCreateAisle 4"  );
 		if (response.getEntity() != null
 				&& response.getStatusLine().getStatusCode() == 200) {
 			String responseMessage = EntityUtils.toString(response.getEntity());
-			System.out.println("AISLE CREATED SUCCESS Response: "
-					+ responseMessage);
+			 Log.e("Profiling", "Profiling : onResponse():test testCreateAisle response5: "+responseMessage  );
 			if (responseMessage.length() > 0) {
 				createdAisle = (new ObjectMapper()).readValue(responseMessage,
 						Aisle.class);
 			}
+		} else {
+			 Log.e("Profiling", "Profiling : onResponse():test testCreateAisle response: else case6"  );
 		}
-
+		
 		return createdAisle;
 	}
  

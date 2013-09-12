@@ -3,6 +3,8 @@ package com.lateralthoughts.vue;
 import java.io.Serializable;
 import java.util.Locale;
 
+import android.util.Log;
+
 /**
  * UserCredentials in Vue involves creating a Vue User account on the backend to
  * which we can associate identity layers such as FB id, G+ id, etc. A Vue User
@@ -32,6 +34,7 @@ public class VueUser implements Serializable {
     }
 
     public String getVueId(){
+    	Log.i("userid", "userid123456: "+mVueId);
         return mVueId;
     }
 	public void setUsersName(String firstName, String lastName) {

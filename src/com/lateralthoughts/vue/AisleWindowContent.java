@@ -45,7 +45,7 @@ public class AisleWindowContent
 	//these two should be based on device with & height
 	private String mAisleId;
 	
-    private int mWindowSmallestHeight = 0;
+    int mWindowSmallestHeight = 0;
     private int mWindowLargestHeight = 0;
 	
     public AisleWindowContent(String aisleId){ 

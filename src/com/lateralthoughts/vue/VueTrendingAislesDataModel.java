@@ -61,6 +61,7 @@ public class VueTrendingAislesDataModel {
 	private ArrayList<AisleWindowContent> mAisleContentList;
 	NotifyProgress mNotifyProgress;
 	boolean mRequestToServer;
+	ArrayList<String> aisleIds = new ArrayList<String>();
 	private HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
 
 	// private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
@@ -157,54 +158,29 @@ public class VueTrendingAislesDataModel {
 				// mAdapterState = AISLE_TRENDING_CONTENT_DATA; //we are no
 				// longer
 				// waiting for list!
-		/*		long elapsed = System.currentTimeMillis() - mRequestStartTime;
-				if (mAisleDataRequested) {
-					if (DEBUG)
-						Log.e(TAG, "It took " + elapsed
-								+ " seconds for first request to return");
-					mAisleDataRequested = false;
-				}
-				if (!mMoreDataAvailable) {
-					if (DEBUG)
-						Log.e(TAG, "No more data is available. mOffset = "
-								+ mOffset);
-				} else {
-					if (cancleDownload) {
-						cancleDownload = false;
-						return;
-					}*/
-					parseTrendingAislesResultData(
+	 
+		/*		ArrayList<AisleWindowContent> aislesList =*/	parseTrendingAislesResultData(
 							resultData.getString("result"),
 							resultData.getBoolean("loadMore"));
-					// if(mOffset > NOTIFICATION_THRESHOLD *
-					// TRENDING_AISLES_BATCH_INITIAL_SIZE){
+				
+			/*	  if(aislesList != null){
+					  for(int i=0;i<aislesList.size();i++){
+						  aisleIds.add(aislesList.get(i).getAisleId()); 
+					  }
+				  }*/
 					// if this is the first set of data we are receiving go
 					// ahead
 					// notify the data set changed
 					for (IAisleDataObserver observer : mAisleDataObserver) {
 						observer.onAisleDataUpdated(mAisleContentList.size());
 					}
-					// notifyDataSetChanged();
-					/*
-					 * if (mOffset < NOTIFICATION_THRESHOLD
-					 * TRENDING_AISLES_BATCH_SIZE) mOffset += mLimit; else {
-					 * mOffset += mLimit; mLimit = TRENDING_AISLES_BATCH_SIZE; }
-					 */
+					 
 					if (DEBUG)
 						Log.e(TAG, "There is more data to parse. offset = "
 								+ mOffset);
-					// if (!VueBatteryManager.isConnected(mContext)
-					// && VueBatteryManager.batteryLevel(mContext) <
-					// VueBatteryManager.MINIMUM_BATTERY_LEVEL) {
-					//mMoreDataAvailable = false;
+				 
 					loadOnRequest = true;
-					// }
-				/*}*/
-				/*
-				 * if (mMoreDataAvailable) {
-				 * mVueContentGateway.getTrendingAisles(mLimit, mOffset, this);
-				 * }
-				 */
+			 
 				break;
 
 			default:
@@ -219,7 +195,7 @@ public class VueTrendingAislesDataModel {
 		// This is pretty inconsistent.
 		// Let the allocation happen in one place for both items. Fix this!
 		@SuppressWarnings("unused")
-		private void parseTrendingAislesResultData(String resultString,
+		private ArrayList<AisleWindowContent> parseTrendingAislesResultData(String resultString,
 				boolean loadMore) {
 			Log.i("datarequest", "datarequest parsing data1111"); 
 			Log.i("size of windowlist", "datarequest size of windowlist:  "+mAisleContentList.size());
@@ -236,6 +212,7 @@ public class VueTrendingAislesDataModel {
 
 			AisleWindowContent aisleItem = null;
 			ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
+			ArrayList<AisleWindowContent> aisleList = new ArrayList<AisleWindowContent>();
 			JSONObject imageItem;
 			String imageUrl;
 			String imageDetalsUrl;
@@ -247,8 +224,7 @@ public class VueTrendingAislesDataModel {
 			try {
 				contentArray = handleResponce(resultString, loadMore);
 				if (contentArray == null) {
-					Log.i("datarequest", "datarequest returning caonteny array is nulllllllllllll"); 
-					return;
+					return mAisleContentList;
 				}
 				for (int i = 0; i < contentArray.length(); i++) {
 					userInfo = new AisleContext();
@@ -292,6 +268,7 @@ public class VueTrendingAislesDataModel {
 					}
 					aisleItem = getAisleItem(aisleId);
 					aisleItem.addAisleContent(userInfo, imageItemsArray);
+					//aisleList.add(aisleItem);
 					imageItemsArray.clear();
 				}
 				dismissProgress();
@@ -302,8 +279,9 @@ public class VueTrendingAislesDataModel {
 					Log.e(TAG,
 							"Some exception is caught? ex1 = " + ex1.toString());
 			}
-			Log.i("datarequest", "datarequest parsing data22222222222"); 
+			 
 			Log.i("size of windowlist", "datarequest size of windowlist:  "+mAisleContentList.size());
+			return aisleList;
 		}
 	}
 
@@ -319,19 +297,7 @@ public class VueTrendingAislesDataModel {
 			e.printStackTrace();
 		}
 		if (contentArray != null) {
-			runTask(new Runnable() {
-
-				@Override
-				public void run() {
-					// To do AislesList is getting 0 in the middile.
-					try {
-						DataBaseManager
-								.addTrentingAislesFromServerToDB(mContext);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			});
+			writeToDb();
 		}
 		Log.e("VueTrendingDatamodel", "handle response :::: " + resultString);
 		if (resultString.equals("error") || 0 == contentArray.length()) {
@@ -356,15 +322,30 @@ public class VueTrendingAislesDataModel {
 		}
 		return contentArray;
 	}
-
+	public void insertNewAisleToDb(String aisleId){
+		Log.e("Profiling", "Profiling inserting new aisles to db id: user created2********************** "+aisleId);
+		aisleIds.add(aisleId);
+		writeToDb();
+	}
+public void writeToDb(){
+	new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+			Log.e("Profiling", "Profiling inserting new aisles to db id: user created3********************** ");
+			DataBaseManager
+			.addTrentingAislesFromServerToDB(mContext);
+			
+		}
+	}).start();
+	 
+}
 	private AisleWindowContent getAisleItem(String aisleId) {
 		AisleWindowContent aisleItem = null;
 		aisleItem = mAisleContentListMap.get(aisleId);
 		if (null == aisleItem) {
 			aisleItem = getAisle(aisleId);
 			aisleItem.setAisleId(aisleId);
-			mAisleContentListMap.put(aisleId, aisleItem);
-			mAisleContentList.add(aisleItem);
 		}
 		return aisleItem;
 	}
@@ -382,6 +363,8 @@ public class VueTrendingAislesDataModel {
 		} else {
 			aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
 		}
+		mAisleContentListMap.put(aisleId, aisleItem);
+		mAisleContentList.add(aisleItem);
 		return aisleItem;
 	}
     public void addItemToList(String aisleId,AisleWindowContent aisleItem,int position ){
@@ -403,7 +386,9 @@ public class VueTrendingAislesDataModel {
 	public AisleWindowContent getAisleAt(int position) {
 		return mAisleContentList.get(position);
 	}
-
+	public AisleWindowContent getAisleAt(String aisleId) {
+		return mAisleContentListMap.get(aisleId);
+	}
 	public static VueTrendingAislesDataModel getInstance(Context context) {
 		if (null == sVueTrendingAislesDataModel) {
 			Log.e("Profiling", "Profiling getInstance()111 : new instance");

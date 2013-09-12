@@ -84,6 +84,7 @@ public class VueUserManager {
 				if (null != jsonArray) {
 					Log.e("Profiling", "Profiling : onResponse()");
                     try{
+                    	 Log.i("userid", "userid123456 null check storedVueUser response1: ");
                         JSONObject userInfo = new JSONObject(jsonArray);
                         JSONObject user = userInfo.getJSONObject("user");
                         String id = user.getString("id");
@@ -91,7 +92,7 @@ public class VueUserManager {
                         String firstName = user.getString("firstName");
                         String lastName = user.getString("lastName");
                         String deviceId = user.getString("deviceId");
-
+                        Log.i("userid", "userid123456 null check storedVueUser response2: ");
                         VueUser vueUser =
                                 new VueUser(null, null, Utils.getDeviceId(),null);
                         vueUser.setVueUserId(id);
@@ -99,7 +100,8 @@ public class VueUserManager {
                         VueUserManager.this.setCurrentUser(vueUser);
                         callback.onUserUpdated(vueUser);
                     }catch(JSONException ex){
-
+                    	Log.i("userid", "userid123456 null check storedVueUser response exception: ");
+                    	ex.printStackTrace();
                     }
 				}
 			}
@@ -207,6 +209,7 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
+					user.setVueUserId(vueUser.getVueId());
 					user.setUserIdentityMethod(vueUser.getUserIdentity());
 					user.setDeviceId(vueUser.getDeviceId());
 					user.setGooglePlusId(vueUser.getGooglePlusId());

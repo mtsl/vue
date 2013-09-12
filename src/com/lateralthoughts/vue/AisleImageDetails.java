@@ -9,7 +9,6 @@ public class AisleImageDetails {
 	public String mStore;
 	public String mTitle;
 	public String mCustomImageUrl;
-	
 	public int mAvailableHeight;
 	public int mAvailableWidth;
 	//TODO: remove this assignment when real count available.
