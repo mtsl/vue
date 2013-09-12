@@ -340,7 +340,7 @@ public void writeToDb(){
 	}).start();
 	 
 }
-	private AisleWindowContent getAisleItem(String aisleId) {
+	public AisleWindowContent getAisleItem(String aisleId) {
 		AisleWindowContent aisleItem = null;
 		aisleItem = mAisleContentListMap.get(aisleId);
 		if (null == aisleItem) {
@@ -611,7 +611,7 @@ public void setMoreDataAVailable(boolean dataState){
 		}
 	}
 
-	private void clearContent() {
+	public void clearContent() {
 		clearAisles();
 		AisleWindowContentFactory.getInstance(VueApplication.getInstance())
 				.clearObjectsInUse();
@@ -621,7 +621,7 @@ public void setMoreDataAVailable(boolean dataState){
 		mNotifyProgress.showProgress();
 	}
 
-	private void dismissProgress() {
+	public void dismissProgress() {
 		if (mNotifyProgress != null) {
 			mNotifyProgress.dismissProgress(mRequestToServer);
 		}

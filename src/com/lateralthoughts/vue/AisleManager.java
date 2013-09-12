@@ -97,13 +97,13 @@ public class AisleManager {
             public void onResponse(String jsonArray) {
             	 
                 if (null != jsonArray) {
-                   // Log.e("Profiling", "Profiling : onResponse(): "+jsonArray);
+                    Log.e("Profiling", "Profiling : onResponse(): ***********"+jsonArray);
                     try{
                         JSONObject userInfo = new JSONObject(jsonArray);
                         JSONObject user = userInfo.getJSONObject("user");
                         callback.onAisleUpdated(null,null);
                     }catch(Exception ex){
-                    	// Log.e("Profiling", "Profiling : onResponse() error");
+                    	 Log.e("Profiling", "Profiling : onResponse() **************** error");
                     	ex.printStackTrace();
                     }
                 }
@@ -122,6 +122,7 @@ public class AisleManager {
         };
         Log.e("AisleCreationTest","Aisle created2 requestsend!");
         String requestUrl = VUE_API_BASE_URI + CREATE_AISLE_ENDPOINT;
+        Log.e("Profiling", "Profiling : onResponse() ailseString ****************  "+aisleAsString);
         AislePutRequest request = new AislePutRequest(aisleAsString, listener,
                 errorListener,requestUrl);
         VueApplication.getInstance().getRequestQueue().add(request);
