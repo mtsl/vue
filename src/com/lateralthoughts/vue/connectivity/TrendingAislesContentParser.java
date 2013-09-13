@@ -2,6 +2,7 @@ package com.lateralthoughts.vue.connectivity;
 
 import java.util.ArrayList;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -37,7 +38,9 @@ public class TrendingAislesContentParser extends ResultReceiver{
 					AisleWindowContent aisleItem = aislesList.get(i);
 					VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).addItemToList(aisleItem.getAisleId(), aisleItem);
 				}
-				aislesList.clear();
+				
+				new DbDataSetter(aislesList).execute();
+				 
 				aislesList = null;
 			}
 			
@@ -52,6 +55,28 @@ public class TrendingAislesContentParser extends ResultReceiver{
 		default:
 			// we should never have to encounter this!
 			break;
+		}
+	}
+	private class DbDataSetter extends AsyncTask<Void, Void, Void> {
+		ArrayList<AisleWindowContent> mAislesList;
+		public DbDataSetter(ArrayList<AisleWindowContent> aislesList) {
+			mAislesList = aislesList;
+		}
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+		@Override
+		protected Void doInBackground(Void... params) {
+			DataBaseManager
+			.addTrentingAislesFromServerToDB(VueApplication.getInstance(),mAislesList);
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
 		}
 	}
 }
