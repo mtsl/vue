@@ -38,9 +38,7 @@ public class TrendingAislesContentParser extends ResultReceiver{
 					AisleWindowContent aisleItem = aislesList.get(i);
 					VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).addItemToList(aisleItem.getAisleId(), aisleItem);
 				}
-				
 				new DbDataSetter(aislesList).execute();
-				 
 				aislesList = null;
 			}
 			
