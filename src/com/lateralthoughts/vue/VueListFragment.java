@@ -143,6 +143,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		    public boolean onKey(View v, int keyCode, KeyEvent event) {
 		      if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
 		            (keyCode == KeyEvent.KEYCODE_ENTER)) {
+		        VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
+		        if (getActivity() instanceof SlidingFragmentActivity) {
+                  SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+                  activity.getSlidingMenu().toggle();
+		        }
 		        String s = mSideMenuSearchBar.getText().toString().trim();
 		        if(s.isEmpty()) {
 		          return false;

@@ -52,46 +52,26 @@ public class NetworkHandler {
 
   public static void requestSearch(final String searchString, final ResultReceiver receiver) {
 
-    testSearchResopnce(searchString);
-    
-    
-    Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
+    ///testSearchResopnce(searchString);
+    JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL + searchString, new Response.Listener<JSONArray>() {
+
       @Override
-      public void onResponse(JSONArray jsonArray) {
-        if (null != jsonArray) {
+      public void onResponse(JSONArray response) {
+        if (null != response) {
           Bundle responseBundle = new Bundle();
-          responseBundle.putString("Search result", jsonArray.toString());
+          responseBundle.putString("Search result", response.toString());
           responseBundle.putBoolean("loadMore", false);
           receiver.send(1, responseBundle);
         }
-      }
-    };
-    Response.ErrorListener errorListener = new Response.ErrorListener() {
-      @Override
-      public void onErrorResponse(VolleyError error) {
-        Bundle responseBundle = new Bundle();
-        responseBundle.putString("result", "error");
-        // receiver.send(1,responseBundle);
-        Log.e("VueNetworkError", "Suru error check");
-        Log.e("VueNetworkError",
-            "Vue encountered network operations error. Error = "
-                + error.networkResponse);
-      }
-    };
+        Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
+      }}, new Response.ErrorListener() {
 
+        @Override
+        public void onErrorResponse(VolleyError error) {
+          Log.e("Search Resopnse", "SURU Search Error Resopnse : " + error.getMessage());
+        }});
     
-    JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
-        + searchString, listener, errorListener) {
-      @Override
-      public Map<String, String> getHeaders() throws AuthFailureError {
-        HashMap<String, String> headersMap = new HashMap<String, String>();
-        headersMap.put("Accept-Encoding", "gzip");
-        headersMap.put("Content-Type", "application/json");
-        return headersMap;
-      }
-    };
-    Log.e("VueNetworkError", "Suru Search URL : " + SEARCH_REQUEST_URL + searchString);
-    VueApplication.getInstance().getRequestQueue().add(vueRequest);
+        VueApplication.getInstance().getRequestQueue().add(vueRequest);
 
   }
 
@@ -131,3 +111,49 @@ public class NetworkHandler {
     t.start();
   }
 }
+
+
+
+
+
+
+
+/*
+
+Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
+  @Override
+  public void onResponse(JSONArray jsonArray) {
+    if (null != jsonArray) {
+      Bundle responseBundle = new Bundle();
+      responseBundle.putString("Search result", jsonArray.toString());
+      responseBundle.putBoolean("loadMore", false);
+      receiver.send(1, responseBundle);
+    }
+  }
+};
+Response.ErrorListener errorListener = new Response.ErrorListener() {
+  @Override
+  public void onErrorResponse(VolleyError error) {
+    Bundle responseBundle = new Bundle();
+    responseBundle.putString("result", "error");
+    // receiver.send(1,responseBundle);
+    Log.e("VueNetworkError", "Suru error check");
+    Log.e("VueNetworkError",
+        "Vue encountered network operations error. Error = "
+            + error.networkResponse);
+  }
+};
+
+
+JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
+    + searchString, listener, errorListener) {
+  @Override
+  public Map<String, String> getHeaders() throws AuthFailureError {
+    HashMap<String, String> headersMap = new HashMap<String, String>();
+    headersMap.put("Accept-Encoding", "gzip");
+    headersMap.put("Content-Type", "application/json");
+    return headersMap;
+  }
+};
+Log.e("VueNetworkError", "Suru Search URL : " + SEARCH_REQUEST_URL + searchString);
+*/
