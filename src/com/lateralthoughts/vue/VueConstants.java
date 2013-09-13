@@ -160,7 +160,7 @@ public class VueConstants {
 	public static final String GMAIL_USERNAME_FOR_SENDING_ERROR_TO_MAIL = "vazeerneem@gmail.com";
 	public static final String GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL = "23neemsystems";
 	public static final String GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL = "23NeemSystemDeveloper";
-	public static final String GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL = "krishna@23neem.com,surendra@23neem.com,raju.k@23neem.com,vvkrishna1989@gmail.com,suru.indra@gmail.com,kunche.raju@gmail.com";
+	public static final String GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL = "krishna@23neem.com,surendra@23neem.com,raju.k@23neem.com,vvkrishna1989@gmail.com,kunche.raju@gmail.com";
 	public static final String GMAIL_SUBJECT_FOR_SENDING_ERROR_TO_MAIL = "Vue Android App Crash Report on ";
 	public static final String INVITATION_MESG = "Invitation from Vue application.";
 	public static final String FACEBOOK_GRAPHIC_OBJECT_NAME_KEY = "name";

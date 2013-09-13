@@ -78,28 +78,6 @@ public class CreateAisleSelectionActivity extends Activity {
 		});
 
 		if (VueApplication.getInstance().mShoppingApplicationDetailsList != null) {
-			/*
-			 * if (VueApplication.getInstance().mShoppingApplicationDetailsList
-			 * .size() > 0 &&
-			 * VueApplication.getInstance().mShoppingApplicationDetailsList
-			 * .get(0).getAppName() != null) { mTopRightText
-			 * .setText(VueApplication
-			 * .getInstance().mShoppingApplicationDetailsList
-			 * .get(0).getAppName()); } else {
-			 * mTopRightText.setText("Not found.");
-			 * mTopRightGreenCircle.setClickable(false); }
-			 */
-			/*
-			 * if (VueApplication.getInstance().mShoppingApplicationDetailsList
-			 * .size() > 1 &&
-			 * VueApplication.getInstance().mShoppingApplicationDetailsList
-			 * .get(1).getAppName() != null) { mBottomRightText
-			 * .setText(VueApplication
-			 * .getInstance().mShoppingApplicationDetailsList
-			 * .get(1).getAppName()); } else {
-			 * mBottomRightText.setText("Not found.");
-			 * mBottomRightGreenCircle.setClickable(false); }
-			 */
 			for (int i = 2; i < VueApplication.getInstance().mShoppingApplicationDetailsList
 					.size(); i++) {
 				if (mDataEntryShoppingApplicationsList == null) {

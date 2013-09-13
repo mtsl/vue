@@ -54,6 +54,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.plus.model.people.Person.Image;
 import com.googleplus.UserInfo;
+import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
@@ -824,7 +825,7 @@ public class DataEntryFragment extends Fragment {
 		mInputMethodManager.hideSoftInputFromWindow(
 				mOccasionText.getWindowToken(), 0);
 		mInputMethodManager.hideSoftInputFromWindow(
-				mLookingForText.getWindowToken(), 0);  
+				mLookingForText.getWindowToken(), 0);
 		mInputMethodManager.hideSoftInputFromWindow(
 				mFindAtText.getWindowToken(), 0);
 	}
@@ -970,6 +971,7 @@ public class DataEntryFragment extends Fragment {
 		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 	}
+
 	public void shareClickFunctionality() {
 		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
 		mShare = new ShareDialog(getActivity(), getActivity());
@@ -1386,7 +1388,7 @@ public class DataEntryFragment extends Fragment {
 					true, true, 0, null, null);
 		} else {
 			mImageList.add(getImage(mImagePath, 0, 0, "", 0L, 0L));
-			//addImageToAisle(getImage(mImagePath, 0, 0, "", 0L, 0L));
+			// addImageToAisle(getImage(mImagePath, 0, 0, "", 0L, 0L));
 			addImageToAisle();
 			storeMetaAisleDataIntoLocalStorage();
 		}
@@ -1555,17 +1557,16 @@ public class DataEntryFragment extends Fragment {
 		}
 		// Starts the thread by calling the run() method in its Runnable
 		).start();
-		//upload empty aisle to server.
+		// upload empty aisle to server.
 
-	          
 	}
+
 	//create ailse and send to server.
  private void createNewAisle(){ 
 	 Log.i("create ailse functionality", "create ailse functionality addAilse");
 		VueUser storedVueUser = null;
 		try {
-			storedVueUser = Utils.readObjectFromFile(
-					 getActivity(),
+			storedVueUser = Utils.readObjectFromFile(getActivity(),
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 		} catch (Exception e2) {
 			e2.printStackTrace();
@@ -1644,19 +1645,23 @@ public class DataEntryFragment extends Fragment {
 	  AisleManager aisleManager = AisleManager.getAisleManager();
 		aisleManager.addImageToAisle(image,
 				new AisleManager.ImageAddedCallback() {
-					
+
 					@Override
 					public void onImageAdded(AisleImageDetails imageDetails) {
-						if(aisleItem != null){
-							ArrayList<AisleImageDetails> mAisleImagesList = aisleItem.getImageList();
-							mAisleImagesList.add(imageDetails); 
-							aisleItem.addAisleContent(aisleItem.getAisleContext(), mAisleImagesList);
+						if (aisleItem != null) {
+							ArrayList<AisleImageDetails> mAisleImagesList = aisleItem
+									.getImageList();
+							mAisleImagesList.add(imageDetails);
+							aisleItem.addAisleContent(
+									aisleItem.getAisleContext(),
+									mAisleImagesList);
 						}
-						 addImage();
-						
+						addImage();
+
 					}
 				});
- }
+	}
+
 	private class ImageResizeAsynTask extends
 			AsyncTask<Activity, Activity, Activity> {
 
@@ -1764,6 +1769,7 @@ public class DataEntryFragment extends Fragment {
 				sourceUrl, getActivity(), false);
 		getImagesTask.execute();
 	}
+
  //create aisle window and add to list so that aisle will be visible in list.
     private void setAisleContent(AisleContext userInfo,String aisleId){
     	aisleItem = VueTrendingAislesDataModel.getInstance(getActivity()).getAisle(aisleId);
