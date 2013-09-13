@@ -70,6 +70,7 @@ public class AisleManager {
         }catch(JsonProcessingException ex2){
 
         }
+
       
    /*     	
         	 new Thread(new Runnable() {
@@ -91,6 +92,7 @@ public class AisleManager {
 			
 		 
 	 
+
         Response.Listener listener = new Response.Listener<String>() {
 
             @Override
@@ -100,7 +102,9 @@ public class AisleManager {
                     Log.e("Profiling", "Profiling : onResponse(): ***********"+jsonArray);
                     try{
                         JSONObject userInfo = new JSONObject(jsonArray);
+
                         JSONObject user = userInfo.getJSONObject("user");
+
                         callback.onAisleUpdated(null,null);
                     }catch(Exception ex){
                     	 Log.e("Profiling", "Profiling : onResponse() **************** error");

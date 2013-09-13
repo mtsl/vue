@@ -152,8 +152,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		        if(s.isEmpty()) {
 		          return false;
 		        }
-              NetworkHandler.requestSearch(s, VueTrendingAislesDataModel
-                  .getInstance(getActivity()).mTrendingAislesParser);
+		        VueTrendingAislesDataModel.getInstance(getActivity()).getNetworkHandler().requestSearch(s);
               return true;
           }
             return false;
@@ -239,12 +238,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 							}
 						}
 
-						model.setMoreDataAVailable(true);
+				/*		model.setMoreDataAVailable(true);
 						model.mVueContentGateway
 								.getTrendingAisles(
 										model.mLimit = VueTrendingAislesDataModel.TRENDING_AISLES_BATCH_INITIAL_SIZE,
 										model.mOffset = 0,
-										model.mTrendingAislesParser,true);
+										model.mTrendingAislesParser,true);*/
 					} else if (s
 							.equals(getString(R.string.sidemenu_option_About))) {
 						inflateAboutLayout();
