@@ -113,24 +113,15 @@ public class VueTrendingAislesDataModel {
 		observer.onAisleDataUpdated(mAisleContentList.size());
 	}
  
-	public void insertNewAisleToDb(String aisleId){
+	/*public void insertNewAisleToDb(String aisleId){
 		Log.e("Profiling", "Profiling inserting new aisles to db id: user created2********************** "+aisleId);
 		aisleIds.add(aisleId);
 		writeToDb();
-	}
-public void writeToDb(){
-	new Thread(new Runnable() {
-		
-		@Override
-		public void run() {
-			Log.e("Profiling", "Profiling inserting new aisles to db id: user created3********************** ");
-			DataBaseManager
-			.addTrentingAislesFromServerToDB(mContext); //TODO: need to add arrayList as second parameter.
-			
-		}
-	}).start();
+	}*/
+   public void writeToDb(final ArrayList<AisleWindowContent> aisleList){
+	
 	 
-}
+   }
 	public AisleWindowContent getAisleItem(String aisleId) {
 		AisleWindowContent aisleItem = null;
 		aisleItem = mAisleContentListMap.get(aisleId);

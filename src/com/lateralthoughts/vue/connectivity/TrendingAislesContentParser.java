@@ -37,8 +37,18 @@ public class TrendingAislesContentParser extends ResultReceiver{
 					AisleWindowContent aisleItem = aislesList.get(i);
 					VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).addItemToList(aisleItem.getAisleId(), aisleItem);
 				}
-				aislesList.clear();
-				aislesList = null;
+				new Thread(new Runnable() {
+			        
+			        @Override
+			        public void run() {
+			            Log.e("Profiling", "Profiling inserting new aisles to db id: user created3********************** ");
+			            DataBaseManager
+			            .addTrentingAislesFromServerToDB(VueApplication.getInstance(), aislesList); //TODO: need to add arrayList as second parameter.
+			            aislesList.clear();
+		                aislesList = null;
+			        }
+			    }).start();
+				
 			}
 			
 				// if this is the first set of data we are receiving go
