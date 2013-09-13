@@ -61,7 +61,7 @@ public class AisleManager {
     // have only current user at a time. When this call returns the
     // UserUpdateCallback's onUserUpdated API will
     // be invoked and the VueUser object is created and set at that point.
-    public void createEmptyAisle(Aisle aisle, final AisleUpdateCallback callback){
+    public void createEmptyAisle(final Aisle aisle, final AisleUpdateCallback callback){
         if(null == aisle)
             throw new RuntimeException("Can't create Aisle without a non null aisle object");
         String aisleAsString = null;
@@ -70,6 +70,10 @@ public class AisleManager {
         }catch(JsonProcessingException ex2){
 
         }
+        Thread t = new Thread(new Runnable() {
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			@Override
+			public void run() {
         try {
 			Aisle aisleresult = testCreateAisle(aisle);
 			
@@ -79,6 +83,8 @@ public class AisleManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+			}});
+		t.start();
         Response.Listener listener = new Response.Listener<String>() {
 
             @Override
@@ -88,6 +94,7 @@ public class AisleManager {
                     Log.e("Profiling", "Profiling : onResponse(): "+jsonArray);
                     try{
                         JSONObject userInfo = new JSONObject(jsonArray);
+                        Log.e("Profiling", "Profiling : onResponse(): "+jsonArray);
                         //JSONObject user = userInfo.getJSONObject("user");
                         callback.onAisleUpdated(null,null);
                     }catch(Exception ex){

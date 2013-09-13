@@ -91,7 +91,7 @@ public class VueUserManager {
                         String firstName = user.getString("firstName");
                         String lastName = user.getString("lastName");
                         String deviceId = user.getString("deviceId");
-
+                        Log.e("vueusermanager", "id :::: " + id);
                         VueUser vueUser =
                                 new VueUser(null, null, Utils.getDeviceId(),null);
                         vueUser.setVueUserId(id);
@@ -99,7 +99,7 @@ public class VueUserManager {
                         VueUserManager.this.setCurrentUser(vueUser);
                         callback.onUserUpdated(vueUser);
                     }catch(JSONException ex){
-
+                    	ex.printStackTrace();
                     }
 				}
 			}
