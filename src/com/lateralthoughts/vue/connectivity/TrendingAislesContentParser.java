@@ -73,7 +73,7 @@ public class TrendingAislesContentParser extends ResultReceiver{
 		}
 		@Override
 		protected void onPostExecute(Void result) {
-			// TODO Auto-generated method stub
+			mAislesList.clear();
 			super.onPostExecute(result);
 		}
 	}

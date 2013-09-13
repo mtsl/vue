@@ -12,7 +12,7 @@ import com.lateralthoughts.vue.ui.NotifyProgress;
 
 public class DbDataGetter extends AsyncTask<String, Void, Void>{
 	
-	String category;
+	String mCategory;
 	ArrayList<AisleWindowContent> aisleWindowList;
 	NotifyProgress mNotifyProgress;
 
@@ -30,8 +30,8 @@ public class DbDataGetter extends AsyncTask<String, Void, Void>{
 
 	@Override
 	protected Void doInBackground(String... params) {
-		category = params[0];
-		aisleWindowList = DataBaseManager.getInstance(VueApplication.getInstance()).getAislesByCategory(category);
+		mCategory = params[0];
+		aisleWindowList = DataBaseManager.getInstance(VueApplication.getInstance()).getAislesByCategory(mCategory);
 		for (int i = 0; i < aisleWindowList.size(); i++) {
 			if (aisleWindowList.get(i).getImageList().size() == 0) {
 				Log.i("loading from db",

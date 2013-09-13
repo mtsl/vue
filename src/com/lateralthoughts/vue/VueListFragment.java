@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseExpandableListAdapter;
@@ -153,6 +154,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		          return false;
 		        }
 		        VueTrendingAislesDataModel.getInstance(getActivity()).getNetworkHandler().requestSearch(s);
+		        //TODO:close the keyboard here
+		    	final InputMethodManager mInputMethodManager = (InputMethodManager) getActivity()
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+		    	mInputMethodManager.hideSoftInputFromWindow(
+		    			mSideMenuSearchBar.getWindowToken(), 0);
               return true;
           }
             return false;

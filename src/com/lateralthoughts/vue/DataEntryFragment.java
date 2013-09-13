@@ -1588,25 +1588,30 @@ public class DataEntryFragment extends Fragment {
 	              }
 	  			
 	              boolean localTest = true;
-	              if(localTest){
-					int hashCode = mImagePath.hashCode();
-					String filename = String.valueOf(hashCode);
-					filename = filename.substring(2, filename.length()-1);
-	              AisleContext userInfo = new AisleContext();
-	      		userInfo.mFirstName = "vue_name";
-				userInfo.mLastName = "vue_lastname";
-				userInfo.mUserId = "12346";
-				userInfo.mAisleId = filename;
-				userInfo.mLookingForItem = mLookingForBigText
-						.getText().toString().trim();
-				userInfo.mOccasion =mOccassionBigText.getText()
-						.toString().trim();
-				userInfo.mCategory = mCategoryText.getText()
-						.toString().trim();
-				userInfo.mJoinTime = 1234L;
-	              setAisleContent(userInfo,filename);
-	              }
-	              
+		if (localTest) {
+			int hashCode = mImagePath.hashCode();
+			String filename = String.valueOf(hashCode);
+			filename = filename.substring(2, filename.length() - 1);
+			AisleContext userInfo = new AisleContext();
+			userInfo.mFirstName = "vue_name";
+			userInfo.mLastName = "vue_lastname";
+			userInfo.mUserId = "12346";
+			userInfo.mAisleId = filename;
+			userInfo.mLookingForItem = mLookingForBigText.getText().toString()
+					.trim();
+			userInfo.mOccasion = mOccassionBigText.getText().toString().trim();
+			userInfo.mCategory = mCategoryText.getText().toString().trim();
+			userInfo.mJoinTime = 1234L;
+			setAisleContent(userInfo, filename);
+		}
+	       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestCreateAisle(aisle, new AisleManager.AisleUpdateCallback() {
+               @Override
+               public void onAisleUpdated(AisleContext aisleContext,String aisleId) {
+                   Log.e("AisleCreationTest","Aisle created1 successfully!");
+                   setAisleContent(aisleContext,aisleId);
+                   addImage();
+               }
+           });       
 	       /*       
 	              aisleManager.createEmptyAisle(aisle, new AisleManager.AisleUpdateCallback() {
 	                  @Override

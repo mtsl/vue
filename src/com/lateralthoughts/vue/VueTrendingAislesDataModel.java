@@ -38,13 +38,7 @@ public class VueTrendingAislesDataModel {
 	private ArrayList<AisleWindowContent> mAisleContentList;
 	NotifyProgress mNotifyProgress;
 	boolean mRequestToServer;
-	ArrayList<String> aisleIds = new ArrayList<String>();
 	private HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
-
-	// private static final int TRENDING_AISLES_SAMPLE_SIZE = 100;
-	//private static final int TRENDING_AISLES_BATCH_SIZE = 10;
-	public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
-	//private static final int NOTIFICATION_THRESHOLD = 4;
 	private int mPoolSize = 1;
 	private int mMaxPoolSize = 1;
 	private long mKeepAliveTime = 10;
@@ -59,17 +53,6 @@ public class VueTrendingAislesDataModel {
 	// private final int AISLE_TRENDING_CONTENT_DATA = 2;
 	// ====== End of state variables
 	// ========================================================================
-
-	//protected int mLimit;
-	//protected int mOffset;
-/*	public int getmOffset() {
-		return mOffset;
-	}
-
-	public void setmOffset(int mOffset) {
-		this.mOffset = mOffset;
-	}*/
-
 	private AisleWindowContentFactory mAisleWindowContentFactory;
 	private boolean mAisleDataRequested;
 	private long mRequestStartTime;
@@ -78,27 +61,19 @@ public class VueTrendingAislesDataModel {
 	private ThreadPoolExecutor threadPool;
 	private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
 	private DataBaseManager mDbManager;
-	public boolean isDownloadFail = false;
-	public boolean cancleDownload = false;
 	NetworkHandler mNetworkHandler;
 
 	private VueTrendingAislesDataModel(Context context) {
 		Log.e("Profiling", "Profining DATA CHECK VueTrendingAislesDataModel()");
 		mContext = context;
-		isDownloadFail = false;
-		cancleDownload = false;
 		mAisleWindowContentFactory = AisleWindowContentFactory
 				.getInstance(mContext);
 		mAisleDataObserver = new ArrayList<IAisleDataObserver>();
-
-		//mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
-		//mOffset = 0;
 		mState = AISLE_TRENDING_LIST_DATA;
 		mAisleContentList = new ArrayList<AisleWindowContent>();
 		mDbManager = DataBaseManager.getInstance(mContext);
 		threadPool = new ThreadPoolExecutor(mPoolSize, mMaxPoolSize,
 				mKeepAliveTime, TimeUnit.SECONDS, threadsQueue);
-		//loadData(true);
 		mNetworkHandler = new NetworkHandler(mContext);
 		mNetworkHandler.loadInitialData(true, mHandler);
 	}
@@ -118,10 +93,6 @@ public class VueTrendingAislesDataModel {
 		aisleIds.add(aisleId);
 		writeToDb();
 	}*/
-   public void writeToDb(final ArrayList<AisleWindowContent> aisleList){
-	
-	 
-   }
 	public AisleWindowContent getAisleItem(String aisleId) {
 		AisleWindowContent aisleItem = null;
 		aisleItem = mAisleContentListMap.get(aisleId);
@@ -201,46 +172,6 @@ public class VueTrendingAislesDataModel {
   public void listSize(){
 	  Log.i("mAisleContentList", "mAisleContentList: "+mAisleContentList.size());
   }
-/*	public void loadMoreAisles(boolean loadMore) {
-		Log.i("offeset and limit", "offeset1: load moredata");
-		if(isMoreDataAvailable()){
-		loadOnRequest = false;
-		if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
-			mOffset += mLimit;
-		else {
-			mOffset += mLimit;
-			mLimit = TRENDING_AISLES_BATCH_SIZE;
-		}
-		Log.i("offeset and limit", "offeset1: " + mOffset + " and limit: "+ mLimit);
-		
-		mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-				mTrendingAislesParser, loadMore);
-		} else {
-			Log.i("offeset and limit", "offeset1: else part");
-		}
-	}*/
-
-/*	public void loadData(boolean loadMore) {
-		if (!VueConnectivityManager.isNetworkConnected(mContext)) {
-			Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
-					.show();
-			isDownloadFail = true;
-			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
-					.getAislesFromDB(null);
-			if (aisleContentArray.size() == 0) {
-				return;
-			}
-			Message msg = new Message();
-			msg.obj = aisleContentArray;
-			mHandler.sendMessage(msg);
-		} else {
-			// initializeTrendingAisleContent();
-			setMoreDataAVailable(true);
-			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-					mTrendingAislesParser, loadMore);
-		}
-	}*/
-
 	protected Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			@SuppressWarnings("unchecked")
@@ -284,49 +215,12 @@ public class VueTrendingAislesDataModel {
 	 mNotifyProgress = progress;
 	 mRequestToServer = fromServer;
  }
-/*	public void displayCategoryAisles(String category, NotifyProgress progress,
-			boolean fromServer, boolean loadMore) {
-		mRequestToServer = fromServer;
-		mNotifyProgress = progress;
-		String downLoadFromServer = "fromDb";
-		if (fromServer == true) {
-			 if(progress.isAlreadyDownloaed(category)){ 
-
-			downLoadFromServer = "fromServer";
-			mOffset = 0;
-			mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
-			clearContent();
-			showProgress();
-			setMoreDataAVailable(true);
-			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-					mTrendingAislesParser, loadMore);
-			Log.i("loading from db", "loading from server");
-			
-			 * } else { downLoadFromServer = "fromDb"; DbDataGetter dBgetter =
-			 * new DbDataGetter();
-			 * dBgetter.execute(category,downLoadFromServer); }
-			 
-		} else {
-			Log.i("loading from db", "loading from db");
-			downLoadFromServer = "fromDb";
-			DbDataGetter dBgetter = new DbDataGetter();
-			dBgetter.execute(category, downLoadFromServer);
-		}
-
-	}*/
 public boolean isMoreDataAvailable(){
 	return mMoreDataAvailable;
 }
 public void setMoreDataAVailable(boolean dataState){
 	mMoreDataAvailable = dataState;
 }
-	/*
-	 * protected abstract class VueHandler { public abstract void
-	 * handleMessage(android.os.Message msg);
-	 * 
-	 * public void sendMessage(android.os.Message msg) { handleMessage(msg); } }
-	 */
-
 	private static void copyDB() {
 		try {
 			File sd = Environment.getExternalStorageDirectory();
@@ -352,57 +246,6 @@ public void setMoreDataAVailable(boolean dataState){
 		} catch (Exception e) {
 		}
 	}
-/*
-	private class DbDataGetter extends AsyncTask<String, Void, Void> {
-		String category;
-		ArrayList<AisleWindowContent> aisleWindowList;
-
-		@Override
-		protected void onPreExecute() {
-
-			clearContent();
-
-			mNotifyProgress.showProgress();
-			super.onPreExecute();
-		}
-
-		@Override
-		protected Void doInBackground(String... params) {
-			category = params[0];
-			aisleWindowList = mDbManager.getAislesByCategory(category);
-			for (int i = 0; i < aisleWindowList.size(); i++) {
-				if (aisleWindowList.get(i).getImageList().size() == 0) {
-					Log.i("loading from db",
-							"loading from db2 this window has no images:  "
-									+ aisleWindowList.get(i).getAisleId());
-					// Log.i("loading from db",
-					// "loading from db2 this window has no images:  "+aisleWindowList.get(i).);
-				}
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-
-			for (AisleWindowContent content : aisleWindowList) {
-
-				AisleWindowContent aisleItem = getAisleItem(content
-						.getAisleId());
-				aisleItem.addAisleContent(content.getAisleContext(),
-						content.getImageList());
-				// getAisleItem(content.getAisleId());
-				addItemToList(aisleItem.getAisleId(),aisleItem);
-
-			}
-			for (IAisleDataObserver observer : mAisleDataObserver) {
-				observer.onAisleDataUpdated(mAisleContentList.size());
-			}
-			dismissProgress();
-			super.onPostExecute(result);
-		}
-	}*/
-
 	public void clearContent() {
 		clearAisles();
 		AisleWindowContentFactory.getInstance(VueApplication.getInstance())

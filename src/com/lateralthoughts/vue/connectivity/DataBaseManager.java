@@ -78,8 +78,7 @@ public class DataBaseManager {
             .getColumnIndex(VueConstants.AISLE_ID)));
       } while (aisleIdCursor.moveToNext());
     }
-    int aislesCount = VueTrendingAislesDataModel.getInstance(context)
-    .getAisleCount();
+    int aislesCount = contentList.size();
     aisleIdCursor.close();
     for (int i = 0; i < aislesCount; i++) {
       Cursor cursor = context.getContentResolver()

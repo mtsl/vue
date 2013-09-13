@@ -70,29 +70,6 @@ public class AisleManager {
         }catch(JsonProcessingException ex2){
 
         }
-
-      
-   /*     	
-        	 new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					try {
-						 Log.e("Profiling", "Profiling : onResponse():test calling "  );
-						Aisle aisleresult = testCreateAisle(aisle);
-						 Log.e("Profiling", "Profiling : onResponse():test calling completed"  );
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}).start();*/
-			
-			
-		 
-	 
-
         Response.Listener listener = new Response.Listener<String>() {
 
             @Override
@@ -104,7 +81,7 @@ public class AisleManager {
                         JSONObject userInfo = new JSONObject(jsonArray);
 
                         JSONObject user = userInfo.getJSONObject("user");
-
+                        //TODO: GET THE AISLE OBJECT FROM THE PARSER CLASE SEND THE AISLE AND AISLE ID BACK.
                         callback.onAisleUpdated(null,null);
                     }catch(Exception ex){
                     	 Log.e("Profiling", "Profiling : onResponse() **************** error");
