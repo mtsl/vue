@@ -2,12 +2,18 @@ package com.lateralthoughts.vue.connectivity;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
@@ -18,7 +24,7 @@ import com.lateralthoughts.vue.ui.NotifyProgress;
 
 public class NetworkHandler {
 	 Context mContext;
-	 
+	 private static final String SEARCH_REQUEST_URL = "http://1-java.vueapi-canary-devel-search.appspot.com/api/getaisleswithmatchingkeyword/";
 	  
 	 DataBaseManager mDbManager;
 	 protected VueContentGateway mVueContentGateway;
@@ -87,9 +93,31 @@ public class NetworkHandler {
  public void requestCreateAisle(){
 	 VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dataObserver();
  }
- public void requestSearch(String searchString){
-	 
- }
+ public void requestSearch(final String searchString) {
+
+	    ///testSearchResopnce(searchString);
+	    JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL + searchString, new Response.Listener<JSONArray>() {
+
+	      @Override
+	      public void onResponse(JSONArray response) {
+	        if (null != response) {
+	          Bundle responseBundle = new Bundle();
+	          responseBundle.putString("Search result", response.toString());
+	          responseBundle.putBoolean("loadMore", false);
+	          mTrendingAislesParser.send(1, responseBundle);
+	        }
+	        Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
+	      }}, new Response.ErrorListener() {
+
+	        @Override
+	        public void onErrorResponse(VolleyError error) {
+	          Log.e("Search Resopnse", "SURU Search Error Resopnse : " + error.getMessage());
+	        }});
+	    
+	        VueApplication.getInstance().getRequestQueue().add(vueRequest);
+
+	  }
+
  public void requestUserAisles(){
 	 
  }
@@ -122,4 +150,12 @@ public class NetworkHandler {
 public void setmOffset(int mOffset) {
 	this.mOffset = mOffset;
 }
+
 }
+
+
+
+
+
+
+ 

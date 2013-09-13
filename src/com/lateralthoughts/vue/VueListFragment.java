@@ -24,14 +24,17 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseExpandableListAdapter;
@@ -46,6 +49,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -56,6 +60,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -69,7 +74,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 			vue_list_fragment_invite_friendsLayout_mainxml;
 	private ImageView userProfilePic;
 	private EditText userNameEdit, userDOBEdit, userGenderEdit, userEmailEdit,
-			userLocationEdit;
+			userLocationEdit, mSideMenuSearchBar;
 	private Animation animDown;
 	private Animation animUp;
 	private ListView inviteFrirendsListView;
@@ -118,6 +123,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		mSideMenuSearchBar = (EditText) getActivity().findViewById(R.id.side_Menu_searchBar);
 		mBezelMainLayout = (RelativeLayout) getActivity().findViewById(
 				R.id.bezel_menu_main_layout);
 		vue_list_fragment_invite_friendsLayout_mainxml = (RelativeLayout) getActivity()
@@ -133,6 +139,26 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				.loadAnimation(getActivity(), R.anim.anim_down);
 		animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_up);
 		/**/
+		mSideMenuSearchBar.setOnKeyListener(new OnKeyListener() {
+		    public boolean onKey(View v, int keyCode, KeyEvent event) {
+		      if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+		            (keyCode == KeyEvent.KEYCODE_ENTER)) {
+		        VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
+		        if (getActivity() instanceof SlidingFragmentActivity) {
+                  SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+                  activity.getSlidingMenu().toggle();
+		        }
+		        String s = mSideMenuSearchBar.getText().toString().trim();
+		        if(s.isEmpty()) {
+		          return false;
+		        }
+		        VueTrendingAislesDataModel.getInstance(getActivity()).getNetworkHandler().requestSearch(s);
+              return true;
+          }
+            return false;
+          }
+        });
+		
 		expandListView.setOnGroupClickListener(new OnGroupClickListener() {
 
 			@Override
