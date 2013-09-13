@@ -116,6 +116,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				@Override
 				public void onUserUpdated(VueUser user) {
 					try {
+						 Log.i("userid", "userid123456 null check storedVueUser seting loging page: ");
 						Utils.writeObjectToFile(VueLandingPageActivity.this,
 								VueConstants.VUE_APP_USEROBJECT__FILENAME, user);
 					} catch (Exception e) {
