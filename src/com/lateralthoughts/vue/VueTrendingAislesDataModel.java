@@ -334,7 +334,7 @@ public void writeToDb(){
 		public void run() {
 			Log.e("Profiling", "Profiling inserting new aisles to db id: user created3********************** ");
 			DataBaseManager
-			.addTrentingAislesFromServerToDB(mContext);
+			.addTrentingAislesFromServerToDB(mContext); //TODO: need to add arrayList as second parameter.
 			
 		}
 	}).start();
