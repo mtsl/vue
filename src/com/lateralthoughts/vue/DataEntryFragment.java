@@ -1574,7 +1574,7 @@ public class DataEntryFragment extends Fragment {
 	              Aisle aisle = new Aisle();
 	              aisle.setCategory(mCategoryText.getText()
 							.toString().trim());
-	              aisle.setId(0L);
+	              
 	              aisle.setLookingFor(mLookingForBigText
 							.getText().toString().trim());
 	              aisle.setName("Super Aisle");
@@ -1768,6 +1768,7 @@ public class DataEntryFragment extends Fragment {
     private void setAisleContent(AisleContext userInfo,String aisleId){
     	aisleItem = VueTrendingAislesDataModel.getInstance(getActivity()).getAisle(aisleId);
     	aisleItem.setAisleId(aisleId);
+    	VueTrendingAislesDataModel.getInstance(getActivity()).addItemToList(aisleId, aisleItem);
     	ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
     	AisleImageDetails imageDetails = new AisleImageDetails();
     	imageDetails.mAvailableHeight = 300;
@@ -1784,7 +1785,7 @@ public class DataEntryFragment extends Fragment {
         	imageDetails.mAvailableHeight = bmp.getWidth();
         	imageDetails.mAvailableWidth = bmp.getHeight();
     	}
-    	VueTrendingAislesDataModel.getInstance(getActivity()).addItemToList(aisleId, aisleItem, 0);
+    	VueTrendingAislesDataModel.getInstance(getActivity()).addItemToListAt(aisleId, aisleItem, 0);
     	VueTrendingAislesDataModel.getInstance(getActivity()).dataObserver();
     	VueTrendingAislesDataModel.getInstance(getActivity()).listSize();
     	Log.e("Profiling", "Profiling inserting new aisles to db id: user created********************** "+aisleId);

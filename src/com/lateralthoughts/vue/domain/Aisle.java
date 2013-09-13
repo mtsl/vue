@@ -1,7 +1,7 @@
 package com.lateralthoughts.vue.domain;
 
 public class Aisle {
-        Long id;
+       // Long id;
         Long ownerUserId;
         String category;
         String lookingFor;
@@ -18,7 +18,7 @@ public class Aisle {
         public Aisle(Long id, String category, String lookingFor, String name,
                      String occassion, Long refImageId, Long ownerUserId) {
             super();
-            this.id = id;
+          //  this.id = id;
             this.category = category;
             this.lookingFor = lookingFor;
             this.name = name;
@@ -27,13 +27,13 @@ public class Aisle {
             this.ownerUserId = ownerUserId;
         }
 
-        public Long getId() {
+       /* public Long getId() {
             return id;
-        }
+        }*/
 
-        public void setId(Long id) {
+       /* public void setId(Long id) {
             this.id = id;
-        }
+        }*/
 
         public String getCategory() {
             return category;

@@ -369,8 +369,8 @@ public class VueLandingPageActivity extends BaseActivity {
 								.setText(viewInfo.mVueName);
 						mCurentScreenPosition = viewInfo.mPosition;
 						VueTrendingAislesDataModel.getInstance(
-								VueLandingPageActivity.this)
-								.displayCategoryAisles(viewInfo.mVueName,
+								VueLandingPageActivity.this).getNetworkHandler()
+								.reqestByCategory(viewInfo.mVueName,
 										new ProgresStatus(), false, false);
 
 					} else {
@@ -477,11 +477,11 @@ public class VueLandingPageActivity extends BaseActivity {
 		viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
 		viewInfo.mPosition = mFragment.getListPosition();
 		viewInfo.mOffset = VueTrendingAislesDataModel.getInstance(
-				VueLandingPageActivity.this).getmOffset();
+				VueLandingPageActivity.this).getNetworkHandler().getmOffset();
 		StackViews.getInstance().push(viewInfo);
 		mVueLandingActionbarScreenName.setText(catName);
-		VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
-				.displayCategoryAisles(catName, new ProgresStatus(), true,
+		VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).getNetworkHandler()
+				.reqestByCategory(catName, new ProgresStatus(), true,
 						false);
 		FlurryAgent.logEvent(catName);
 
