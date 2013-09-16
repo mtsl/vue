@@ -21,7 +21,7 @@ public class VueUserManager {
 		public void onUserUpdated(VueUser user);
 	}
 
-	private String VUE_API_BASE_URI = "http://1-java.vueapi-canary.appspot.com/";
+	private String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
 	private String USER_CREATE_ENDPOINT = "api/usercreate/trial";
 	private String GPLUS_USER_CREATE_ENDPOINT = "api/usercreate/googleplus";
@@ -85,8 +85,8 @@ public class VueUserManager {
 					Log.e("Profiling", "Profiling : onResponse()");
                     try{
                     	 Log.i("userid", "userid123456 null check storedVueUser response1: ");
-                        JSONObject userInfo = new JSONObject(jsonArray);
-                        JSONObject user = userInfo.getJSONObject("user");
+                        JSONObject user = new JSONObject(jsonArray);
+                        //JSONObject user = userInfo.getJSONObject("user");
                         String id = user.getString("id");
                         String email = user.getString("email");
                         String firstName = user.getString("firstName");
