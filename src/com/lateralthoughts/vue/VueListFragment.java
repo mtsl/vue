@@ -63,6 +63,7 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
+import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
 public class VueListFragment extends SherlockFragment implements TextWatcher/* Fragment */{
@@ -123,7 +124,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mSideMenuSearchBar = (EditText) getActivity().findViewById(R.id.side_Menu_searchBar);
+		mSideMenuSearchBar = (EditText) getActivity().findViewById(
+				R.id.side_Menu_searchBar);
 		mBezelMainLayout = (RelativeLayout) getActivity().findViewById(
 				R.id.bezel_menu_main_layout);
 		vue_list_fragment_invite_friendsLayout_mainxml = (RelativeLayout) getActivity()
@@ -140,26 +142,27 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_up);
 		/**/
 		mSideMenuSearchBar.setOnKeyListener(new OnKeyListener() {
-		    public boolean onKey(View v, int keyCode, KeyEvent event) {
-		      if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-		            (keyCode == KeyEvent.KEYCODE_ENTER)) {
-		        VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
-		        if (getActivity() instanceof SlidingFragmentActivity) {
-                  SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-                  activity.getSlidingMenu().toggle();
-		        }
-		        String s = mSideMenuSearchBar.getText().toString().trim();
-		        if(s.isEmpty()) {
-		          return false;
-		        }
-              NetworkHandler.requestSearch(s, VueTrendingAislesDataModel
-                  .getInstance(getActivity()).mTrendingAislesParser);
-              return true;
-          }
-            return false;
-          }
-        });
-		
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if ((event.getAction() == KeyEvent.ACTION_DOWN)
+						&& (keyCode == KeyEvent.KEYCODE_ENTER)) {
+					VueTrendingAislesDataModel.getInstance(getActivity())
+							.clearAisles();
+					if (getActivity() instanceof SlidingFragmentActivity) {
+						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+						activity.getSlidingMenu().toggle();
+					}
+					String s = mSideMenuSearchBar.getText().toString().trim();
+					if (s.isEmpty()) {
+						return false;
+					}
+					NetworkHandler.requestSearch(s, VueTrendingAislesDataModel
+							.getInstance(getActivity()).mTrendingAislesParser);
+					return true;
+				}
+				return false;
+			}
+		});
+
 		expandListView.setOnGroupClickListener(new OnGroupClickListener() {
 
 			@Override
@@ -168,8 +171,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				if (VueLandingPageActivity.mOtherSourceImagePath == null) {
 					TextView textView = (TextView) v
 							.findViewById(R.id.vue_list_fragment_itemTextview);
-					String s = textView.getText().toString(); 
-					 FlurryAgent.logEvent(s);
+					String s = textView.getText().toString();
+					FlurryAgent.logEvent(s);
 					if (s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
 						adapter.groups.remove(groupPosition);
 						ListOptionItem item = new ListOptionItem(
@@ -244,7 +247,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 								.getTrendingAisles(
 										model.mLimit = VueTrendingAislesDataModel.TRENDING_AISLES_BATCH_INITIAL_SIZE,
 										model.mOffset = 0,
-										model.mTrendingAislesParser,true);
+										model.mTrendingAislesParser, true);
 					} else if (s
 							.equals(getString(R.string.sidemenu_option_About))) {
 						inflateAboutLayout();
@@ -319,7 +322,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 									Toast.LENGTH_LONG).show();
 						}
 					}
- 
+
 					return false;
 				} else {
 					try {
@@ -332,7 +335,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				}
 			}
 		});
- 
+
 		expandListView.setOnChildClickListener(new OnChildClickListener() {
 
 			@Override
@@ -343,12 +346,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 							.findViewById(R.id.child_itemTextview);
 					String s = textView.getText().toString();
 					if (s.equals(getString(R.string.sidemenu_option_Profile))) {
-						 FlurryAgent.logEvent("Settings_"+s);
+						FlurryAgent.logEvent("Settings_" + s);
 						getUserInfo();
 					} else if (s
 							.equals(getString(R.string.sidemenu_sub_option_Facebook))
 							|| s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
-						 FlurryAgent.logEvent("InviteFriends_"+s);
+						FlurryAgent.logEvent("InviteFriends_" + s);
 						getFriendsList(s);
 					} else {
 						TextView categoryText = (TextView) v
@@ -827,69 +830,28 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		expandListView.setVisibility(View.GONE);
 		customlayout.startAnimation(animUp);
 		customlayout.setVisibility(View.VISIBLE);
-		String name = "";
-		String dob = "";
-		String gender = "";
-		String email = "";
-		String location = "";
 
-		if (!sharedPreferencesObj.getString(VueConstants.USER_NAME, "")
-				.isEmpty()) {
-			name = sharedPreferencesObj.getString(VueConstants.USER_NAME, "");
-			dob = sharedPreferencesObj.getString(VueConstants.USER_DOB, "");
-			gender = sharedPreferencesObj.getString(VueConstants.USER_GENDER,
-					"");
-			email = sharedPreferencesObj.getString(VueConstants.USER_EMAIL, "");
-			location = sharedPreferencesObj.getString(
-					VueConstants.USER_LOCATION, "");
-			profilePicUrl = sharedPreferencesObj.getString(
-					VueConstants.USER_PROFILE_PICTURE, null);
-		} else if (!sharedPreferencesObj.getString(
-				VueConstants.FACEBOOK_USER_NAME, "").isEmpty()) {
-			name = sharedPreferencesObj.getString(
-					VueConstants.FACEBOOK_USER_NAME, "");
-			dob = sharedPreferencesObj.getString(
-					VueConstants.FACEBOOK_USER_DOB, "");
-			gender = sharedPreferencesObj.getString(
-					VueConstants.FACEBOOK_USER_GENDER, "");
-			email = sharedPreferencesObj.getString(
-					VueConstants.FACEBOOK_USER_EMAIL, "");
-			location = sharedPreferencesObj.getString(
-					VueConstants.FACEBOOK_USER_LOCATION, "");
-			profilePicUrl = sharedPreferencesObj.getString(
-					VueConstants.FACEBOOK_USER_PROFILE_PICTURE, null);
-			isNewUser = true;
-		} else if (!sharedPreferencesObj.getString(
-				VueConstants.GOOGLEPLUS_USER_NAME, "").isEmpty()) {
-			name = sharedPreferencesObj.getString(
-					VueConstants.GOOGLEPLUS_USER_NAME, "");
-			dob = sharedPreferencesObj.getString(
-					VueConstants.GOOGLEPLUS_USER_DOB, "");
-			gender = sharedPreferencesObj.getString(
-					VueConstants.GOOGLEPLUS_USER_GENDER, "");
-			email = sharedPreferencesObj.getString(
-					VueConstants.GOOGLEPLUS_USER_EMAIL, "");
-			location = sharedPreferencesObj.getString(
-					VueConstants.GOOGLEPLUS_USER_LOCATION, "");
-			profilePicUrl = sharedPreferencesObj.getString(
-					VueConstants.GOOGLEPLUS_USER_PROFILE_PICTURE, null);
-			isNewUser = true;
-		} else {
-
+		VueUserProfile vueUserProfile = null;
+		try {
+			vueUserProfile = Utils.readUserProfileObjectFromFile(getActivity(),
+					VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
-		/*
-		 * userName.setText(name); userDateOfBirth.setText(dob);
-		 * userGender.setText(gender); userCurrentLocation.setText(location);
-		 */
-		userNameEdit.setText(name);
-		userDOBEdit.setText(dob);
-		userGenderEdit.setText(gender);
-		userEmailEdit.setText(email);
-		userLocationEdit.setText(location);
-		if (!userEmailEdit.getText().toString().isEmpty()) {
-			userEmailEdit.setEnabled(false);
+		if (vueUserProfile != null) {
+			isNewUser = true;
+			profilePicUrl = vueUserProfile.getUserProfilePicture();
+			userNameEdit.setText(vueUserProfile.getUserName());
+			userDOBEdit.setText(vueUserProfile.getUserDOB());
+			userGenderEdit.setText(vueUserProfile.getUserGender());
+			userEmailEdit.setText(vueUserProfile.getUserEmail());
+			userLocationEdit.setText(vueUserProfile.getUserLocation());
+			if (!userEmailEdit.getText().toString().isEmpty()) {
+				userEmailEdit.setEnabled(false);
+			}
 		}
+
 		if (profilePicUrl != null) {
 			Response.Listener listener = new Response.Listener<Bitmap>() {
 				@Override
@@ -1024,22 +986,21 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 						userEmailEdit.getText().toString();
 						userLocationEdit.getText().toString();
 						userEmailEdit.getText().toString();
-						Editor editor = sharedPreferencesObj.edit();
-						editor.putString(VueConstants.USER_NAME, userNameEdit
-								.getText().toString());
-						editor.putString(VueConstants.USER_DOB, userDOBEdit
-								.getText().toString());
-						editor.putString(VueConstants.USER_GENDER,
-								userGenderEdit.getText().toString());
-						editor.putString(VueConstants.USER_EMAIL, userEmailEdit
-								.getText().toString());
-						editor.putString(VueConstants.USER_LOCATION,
-								userLocationEdit.getText().toString());
-						editor.putString(VueConstants.USER_PROFILE_PICTURE,
-								profilePicUrl);
-						editor.commit();
-						sharedPreferencesObj.getString(VueConstants.USER_DOB,
-								"No DATA FOUND FOR " + VueConstants.USER_DOB);
+						try {
+							VueUserProfile vueUserProfile = new VueUserProfile(
+									profilePicUrl, userEmailEdit.getText()
+											.toString(), userNameEdit.getText()
+											.toString(), userDOBEdit.getText()
+											.toString(), userGenderEdit
+											.getText().toString(),
+									userLocationEdit.getText().toString(), true);
+							Utils.writeUserProfileObjectToFile(
+									getActivity(),
+									VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
+									vueUserProfile);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 						isProfileEdited = false;
 						isNewUser = false;
 					}

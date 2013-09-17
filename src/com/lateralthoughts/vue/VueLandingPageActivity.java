@@ -117,7 +117,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				public void onUserUpdated(VueUser user) {
 					try {
 						 Log.i("userid", "userid123456 null check storedVueUser seting loging page: ");
-						Utils.writeObjectToFile(VueLandingPageActivity.this,
+						Utils.writeUserObjectToFile(VueLandingPageActivity.this,
 								VueConstants.VUE_APP_USEROBJECT__FILENAME, user);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -159,7 +159,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		FlurryAgent.logEvent(TRENDING_SCREEN_VISITORS);
 		VueUser vueUser = null;
 		try {
-			vueUser = Utils.readObjectFromFile(this,
+			vueUser = Utils.readUserObjectFromFile(this,
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -522,7 +522,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	public void showDiscardOtherAppImageDialog() {
 		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.googleplusappinstallationdialog);
+		dialog.setContentView(R.layout.vue_popup);
 		final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
 		TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);

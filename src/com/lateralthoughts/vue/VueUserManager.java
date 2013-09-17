@@ -22,19 +22,22 @@ public class VueUserManager {
 	}
 
 	private String VUE_API_BASE_URI = "http://1-java.vueapi-canary.appspot.com/";
-    //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
+	// private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
 	private String USER_CREATE_ENDPOINT = "api/usercreate/trial";
 	private String GPLUS_USER_CREATE_ENDPOINT = "api/usercreate/googleplus";
+	private String INSTAGRAM_USER_CREATE_ENDPOINT = "api/usercreate/instagram";
 	private String FB_USER_CREATE_ENDPOINT = "api/usercreate/facebook/";
 	private String USER_UPDATE_FB = "api/userupdate/facebook/";
 
 	public enum PreferredIdentityLayer {
-		GPLUS, FB, DEVICE_ID, GPLUS_FB, ALL_IDS_AVAILABLE // always keep this
-															// enum the last. If
-															// you don't know
-															// what you are
-															// doing don't muck
-															// around in here
+		INSTAGRAM, GPLUS, FB, DEVICE_ID, GPLUS_FB, GPLUS_INSTAGRAM, FB_INSTAGRAM, ALL_IDS_AVAILABLE // always
+																									// keep
+																									// this
+		// enum the last. If
+		// you don't know
+		// what you are
+		// doing don't muck
+		// around in here
 	}
 
 	private static VueUserManager sUserManager = null;
@@ -83,26 +86,29 @@ public class VueUserManager {
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
 					Log.e("Profiling", "Profiling : onResponse()");
-                    try{
-                    	 Log.i("userid", "userid123456 null check storedVueUser response1: ");
-                        JSONObject userInfo = new JSONObject(jsonArray);
-                        JSONObject user = userInfo.getJSONObject("user");
-                        String id = user.getString("id");
-                        String email = user.getString("email");
-                        String firstName = user.getString("firstName");
-                        String lastName = user.getString("lastName");
-                        String deviceId = user.getString("deviceId");
-                        Log.i("userid", "userid123456 null check storedVueUser response2: ");
-                        VueUser vueUser =
-                                new VueUser(null, null, Utils.getDeviceId(),null);
-                        vueUser.setVueUserId(id);
-                        vueUser.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
-                        VueUserManager.this.setCurrentUser(vueUser);
-                        callback.onUserUpdated(vueUser);
-                    }catch(JSONException ex){
-                    	Log.i("userid", "userid123456 null check storedVueUser response exception: ");
-                    	ex.printStackTrace();
-                    }
+					try {
+						Log.i("userid",
+								"userid123456 null check storedVueUser response1: ");
+						JSONObject userInfo = new JSONObject(jsonArray);
+						JSONObject user = userInfo.getJSONObject("user");
+						String id = user.getString("id");
+						String email = user.getString("email");
+						String firstName = user.getString("firstName");
+						String lastName = user.getString("lastName");
+						String deviceId = user.getString("deviceId");
+						Log.i("userid",
+								"userid123456 null check storedVueUser response2: ");
+						VueUser vueUser = new VueUser(null, null, null,
+								Utils.getDeviceId(), null);
+						vueUser.setVueUserId(id);
+						vueUser.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
+						VueUserManager.this.setCurrentUser(vueUser);
+						callback.onUserUpdated(vueUser);
+					} catch (JSONException ex) {
+						Log.i("userid",
+								"userid123456 null check storedVueUser response exception: ");
+						ex.printStackTrace();
+					}
 				}
 			}
 		};
@@ -126,10 +132,11 @@ public class VueUserManager {
 			final UserUpdateCallback callback) {
 		// lets throw an exception if the current user is not NULL.
 
-		/*if (null != mCurrentUser)
-			throw new RuntimeException(
-					"Cannot call createFBIdentifiedUser when User is "
-							+ "already available. Try the update APIs");*/
+		/*
+		 * if (null != mCurrentUser) throw new RuntimeException(
+		 * "Cannot call createFBIdentifiedUser when User is " +
+		 * "already available. Try the update APIs");
+		 */
 
 		final VueUser user = parseGraphUserIntoVueUser(graphUser);
 		Response.Listener listener = new Response.Listener<String>() {
@@ -166,11 +173,11 @@ public class VueUserManager {
 			final UserUpdateCallback callback) {
 		// lets throw an exception if the current user is not NULL.
 
-		/*if (null != mCurrentUser)
-			throw new RuntimeException(
-					"Cannot call createFBIdentifiedUser when User is "
-							+ "already available. Try the update APIs");
-*/
+		/*
+		 * if (null != mCurrentUser) throw new RuntimeException(
+		 * "Cannot call createFBIdentifiedUser when User is " +
+		 * "already available. Try the update APIs");
+		 */
 		Response.Listener listener = new Response.Listener<String>() {
 			@Override
 			public void onResponse(String jsonArray) {
@@ -193,6 +200,43 @@ public class VueUserManager {
 		};
 		String requestUrl = VUE_API_BASE_URI + GPLUS_USER_CREATE_ENDPOINT
 				+ vueUser.getGooglePlusId();
+		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+				errorListener);
+		VueApplication.getInstance().getRequestQueue().add(request);
+
+	}
+
+	public void createInstagramIdentifiedUser(final VueUser vueUser,
+			final UserUpdateCallback callback) {
+		// lets throw an exception if the current user is not NULL.
+
+		/*
+		 * if (null != mCurrentUser) throw new RuntimeException(
+		 * "Cannot call createFBIdentifiedUser when User is " +
+		 * "already available. Try the update APIs");
+		 */
+		Response.Listener listener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					VueUserManager.this.setCurrentUser(vueUser);
+					vueUser.setUserIdentityMethod(PreferredIdentityLayer.INSTAGRAM);
+					callback.onUserUpdated(vueUser);
+				}
+			}
+		};
+		Response.ErrorListener errorListener = new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				if (null != error.networkResponse
+						&& null != error.networkResponse.data) {
+					String errorData = error.networkResponse.data.toString();
+					Log.e("VueUserDebug", "error date = " + errorData);
+				}
+			}
+		};
+		String requestUrl = VUE_API_BASE_URI + INSTAGRAM_USER_CREATE_ENDPOINT
+				+ vueUser.getInstagramId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
@@ -265,6 +309,36 @@ public class VueUserManager {
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
 
+	}
+
+	public void updateInstagramIdentifiedUser(final VueUser vueUser,
+			final UserUpdateCallback callback) {
+		// lets throw an exception if the current user is not NULL.
+
+		Response.Listener listener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					VueUserManager.this.setCurrentUser(vueUser);
+					callback.onUserUpdated(vueUser);
+				}
+			}
+		};
+		Response.ErrorListener errorListener = new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				if (null != error.networkResponse
+						&& null != error.networkResponse.data) {
+					String errorData = error.networkResponse.data.toString();
+					Log.e("VueUserDebug", "error date = " + errorData);
+				}
+			}
+		};
+		String requestUrl = VUE_API_BASE_URI + INSTAGRAM_USER_CREATE_ENDPOINT
+				+ vueUser.getInstagramId();
+		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+				errorListener);
+		VueApplication.getInstance().getRequestQueue().add(request);
 	}
 
 	public void updateUnidentifiedUser(PreferredIdentityLayer newIdentity,
@@ -361,13 +435,13 @@ public class VueUserManager {
 			String firstName = graphUser.getFirstName();
 			String lastName = graphUser.getLastName();
 			String birthday = graphUser.getBirthday();
-            String facebookUserId = graphUser.getUsername();
+			String facebookUserId = graphUser.getUsername();
 			JSONObject innerObject = graphUser.getInnerJSONObject();
 			String email = innerObject
 					.getString(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY);
 			String username = graphUser.getName();
-            String facebookId = graphUser.getId();
-			vueUser = new VueUser(facebookUserId, null, null, email);
+			String facebookId = graphUser.getId();
+			vueUser = new VueUser(facebookUserId, null, null, null, email);
 			vueUser.setUsersName(firstName, lastName);
 			vueUser.setBirthday(birthday);
 		} catch (JSONException ex) {
@@ -395,7 +469,7 @@ public class VueUserManager {
 			String firstName = userObject.optString("firstName");
 			String lastName = userObject.optString("lastName");
 			String deviceId = userObject.optString("deviceId");
-			user = new VueUser(null, null, null, email);
+			user = new VueUser(null, null, null, null, email);
 			user.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
 		} catch (JSONException e) {
 			e.printStackTrace();

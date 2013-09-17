@@ -1010,7 +1010,7 @@ public class DataEntryFragment extends Fragment {
 		final Dialog dialog = new Dialog(getActivity(),
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.googleplusappinstallationdialog);
+		dialog.setContentView(R.layout.vue_popup);
 		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
 		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
@@ -1042,7 +1042,7 @@ public class DataEntryFragment extends Fragment {
 		final Dialog dialog = new Dialog(getActivity(),
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.googleplusappinstallationdialog);
+		dialog.setContentView(R.layout.vue_popup);
 		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
 		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
@@ -1566,7 +1566,7 @@ public class DataEntryFragment extends Fragment {
 	 Log.i("create ailse functionality", "create ailse functionality addAilse");
 		VueUser storedVueUser = null;
 		try {
-			storedVueUser = Utils.readObjectFromFile(getActivity(),
+			storedVueUser = Utils.readUserObjectFromFile(getActivity(),
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 		} catch (Exception e2) {
 			e2.printStackTrace();

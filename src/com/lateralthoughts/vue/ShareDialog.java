@@ -230,7 +230,7 @@ public class ShareDialog {
 		final Dialog gplusdialog = new Dialog(mContext,
 				R.style.Theme_Dialog_Translucent);
 		gplusdialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		gplusdialog.setContentView(R.layout.googleplusappinstallationdialog);
+		gplusdialog.setContentView(R.layout.vue_popup);
 		TextView messagetext = (TextView) gplusdialog
 				.findViewById(R.id.messagetext);
 		if (!fberror)

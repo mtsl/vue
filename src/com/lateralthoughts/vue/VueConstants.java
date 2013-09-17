@@ -14,6 +14,7 @@ public class VueConstants {
 	public static final String FACEBOOK = "Facebook";
 	public static final String GOOGLEPLUS = "Googleplus";
 	public static final String FACEBOOK_LOGIN = "FacebookLoginFlag";
+	public static final String INSTAGRAM_LOGIN = "InstagramLoginFlag";
 	public static final String GOOGLEPLUS_LOGIN = "GoogleplusLoginFlag";
 	public static final String FIRSTTIME_LOGIN_PREFRENCE_FLAG = "firstTimeLoginPrefrenceFlag";
 	public static final String CREATED_AISLE_COUNT_IN_PREFERENCE = "createdAisleCountInPreference";
@@ -36,6 +37,7 @@ public class VueConstants {
 	public static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
 	public static final String GMAIL_PACKAGE_NAME = "com.google.android.gm";
 	public static final String GOOGLEPLUS_PACKAGE_NAME = "com.google.android.apps.plus";
+	public static final String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
 	public static final String TWITTER_ACTIVITY_NAME = "com.twitter.android.PostActivity";
 	public static final String GMAIL_ACTIVITY_NAME = "com.google.android.gm.ComposeActivityGmail";
 	public static final String GOOGLEPLUS_ACTIVITY_NAME = "com.google.android.apps.plus.phone.SignOnActivity";
@@ -95,38 +97,19 @@ public class VueConstants {
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
 	public static final int FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT = 64;
 	public static final int FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT = 65;
-	public static final String FACEBOOK_USER_PROFILE_PICTURE = "FACEBOOK_USER_PROFILE_PICTURE";
-	public static final String FACEBOOK_USER_EMAIL = "FACEBOOK_USER_EMAIL";
-	public static final String FACEBOOK_USER_NAME = "FACEBOOK_USER_NAME";
-	public static final String FACEBOOK_USER_DOB = "FACEBOOK_USER_DOB";
-	public static final String FACEBOOK_USER_GENDER = "FACEBOOK_USER_GENDER";
-	public static final String FACEBOOK_USER_LOCATION = "FACEBOOK_USER_LOCATION";
 	public static final String FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL = "https://graph.facebook.com/";
 	public static final String FACEBOOK_USER_PROFILE_PICTURE_SUB_URL = "/picture";
-	public static final String GOOGLEPLUS_USER_PROFILE_PICTURE = "GOOGLEPLUS_USER_PROFILE_PICTURE";
-	public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
-	public static final String GOOGLEPLUS_USER_NAME = "GOOGLEPLUS_USER_NAME";
-	public static final String GOOGLEPLUS_USER_DOB = "GOOGLEPLUS_USER_DOB";
-	public static final String GOOGLEPLUS_USER_GENDER = "GOOGLEPLUS_USER_GENDER";
-	public static final String GOOGLEPLUS_USER_LOCATION = "GOOGLEPLUS_USER_LOCATION";
 	public static final String USER_lOCATION = "name";
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
 	public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
 	public static final String VUE_APP_USEROBJECT__FILENAME = "vueuser.ser";
+	public static final String VUE_APP_USERPROFILEOBJECT__FILENAME = "vueuserprofile.ser";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
 
 	// Column names for lookingFor, occasion, category table.
 	public static final String KEYWORD = "keyWord";
 	public static final String LAST_USED_TIME = "lastUsedTime";
 	public static final String NUMBER_OF_TIMES_USED = "numberOfTimesUsed";
-
-	// User Profile details
-	public static final String USER_NAME = "userName";
-	public static final String USER_PROFILE_PICTURE = "userProfilePicture";
-	public static final String USER_EMAIL = "userEmail";
-	public static final String USER_DOB = "userDob";
-	public static final String USER_GENDER = "userGender";
-	public static final String USER_LOCATION = "userLocation";
 
 	// Column names for comments table.
 	public static final String COMMENTS = "commentS";
@@ -157,6 +140,7 @@ public class VueConstants {
 			+ AUTHORITY + "/" + CATEGORY_TABLE);
 	public static final Uri COMMENTS_ON_IMAGE_URI = Uri.parse("content://"
 			+ AUTHORITY + "/" + COMMENTS_ON_IMAGES_TABLE);
+	public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
 	public static final String GMAIL_USERNAME_FOR_SENDING_ERROR_TO_MAIL = "vazeerneem@gmail.com";
 	public static final String GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL = "23neemsystems";
 	public static final String GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL = "23NeemSystemDeveloper";

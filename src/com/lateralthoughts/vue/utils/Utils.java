@@ -34,6 +34,7 @@ import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueUser;
+import com.lateralthoughts.vue.VueUserProfile;
 
 public class Utils {
 	private static final String CURRENT_FONT_SIZE = "currentFontSize";
@@ -370,7 +371,7 @@ public class Utils {
 		return null;
 	}
 
-	public static void writeObjectToFile(Context context, String fileName,
+	public static void writeUserObjectToFile(Context context, String fileName,
 			VueUser vueUser) throws Exception {
 		FileOutputStream fos = context.openFileOutput(fileName,
 				Context.MODE_PRIVATE);
@@ -379,13 +380,31 @@ public class Utils {
 		os.close();
 	}
 
-	public static VueUser readObjectFromFile(Context context, String fileName)
-			throws Exception {
+	public static VueUser readUserObjectFromFile(Context context,
+			String fileName) throws Exception {
 		FileInputStream fis = context.openFileInput(fileName);
 		ObjectInputStream is = new ObjectInputStream(fis);
 		VueUser vueUser = (VueUser) is.readObject();
 		is.close();
 		return vueUser;
+	}
+
+	public static void writeUserProfileObjectToFile(Context context,
+			String fileName, VueUserProfile vueUserProfile) throws Exception {
+		FileOutputStream fos = context.openFileOutput(fileName,
+				Context.MODE_PRIVATE);
+		ObjectOutputStream os = new ObjectOutputStream(fos);
+		os.writeObject(vueUserProfile);
+		os.close();
+	}
+
+	public static VueUserProfile readUserProfileObjectFromFile(Context context,
+			String fileName) throws Exception {
+		FileInputStream fis = context.openFileInput(fileName);
+		ObjectInputStream is = new ObjectInputStream(fis);
+		VueUserProfile vueUserProfile = (VueUserProfile) is.readObject();
+		is.close();
+		return vueUserProfile;
 	}
 
 	public static String getDeviceId() {
