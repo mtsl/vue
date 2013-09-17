@@ -20,18 +20,14 @@ public class VueUserManager {
 	public interface UserUpdateCallback {
 		public void onUserUpdated(VueUser user);
 	}
-<<<<<<< HEAD
+ 
  
 
 	public static String VUE_API_BASE_URI = "http://2-java.vueapi-canary.appspot.com/";
  
 	//private String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
-=======
-
-	private String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
-	// private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
->>>>>>> 36ad303e84cdff6a6369ee9c120fc22512e2c32b
+ 
 	private String USER_CREATE_ENDPOINT = "api/usercreate/trial";
 	private String GPLUS_USER_CREATE_ENDPOINT = "api/usercreate/googleplus";
 	private String INSTAGRAM_USER_CREATE_ENDPOINT = "api/usercreate/instagram";
@@ -95,8 +91,7 @@ public class VueUserManager {
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
 					Log.e("Profiling", "Profiling : onResponse()");
-
-<<<<<<< HEAD
+ 
                     try{
                     	 Log.i("userid", "userid123456 null check storedVueUser response1: ");
                         JSONObject user = new JSONObject(jsonArray);
@@ -118,31 +113,7 @@ public class VueUserManager {
                     	Log.i("userid", "userid123456 null check storedVueUser response exception: ");
                     	ex.printStackTrace();
                     }
-=======
-					try {
-						Log.i("userid",
-								"userid123456 null check storedVueUser response1: ");
-						JSONObject user = new JSONObject(jsonArray);
-						// JSONObject user = userInfo.getJSONObject("user");
-						String id = user.getString("id");
-						String email = user.getString("email");
-						String firstName = user.getString("firstName");
-						String lastName = user.getString("lastName");
-						String deviceId = user.getString("deviceId");
-						Log.i("userid",
-								"userid123456 null check storedVueUser response2: ");
-						VueUser vueUser = new VueUser(null, null, null,
-								Utils.getDeviceId(), null);
-						vueUser.setVueUserId(id);
-						vueUser.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
-						VueUserManager.this.setCurrentUser(vueUser);
-						callback.onUserUpdated(vueUser);
-					} catch (JSONException ex) {
-						Log.i("userid",
-								"userid123456 null check storedVueUser response exception: ");
-						ex.printStackTrace();
-					}
->>>>>>> 36ad303e84cdff6a6369ee9c120fc22512e2c32b
+ 
 
 				}
 			}
