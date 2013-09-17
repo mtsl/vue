@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue;
 
-public class VueUserProfile {
+import java.io.Serializable;
+
+public class VueUserProfile implements Serializable{
 
 	public String getUserProfilePicture() {
 		return userProfilePicture;
