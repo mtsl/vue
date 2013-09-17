@@ -2,7 +2,7 @@ package com.lateralthoughts.vue.domain;
 
 public class VueImage {
 	
-    Long id;
+  /*  Long id;*/
     Long ownerUserId;
     Long ownerAisleId;
 	String detailsUrl;
@@ -15,11 +15,11 @@ public class VueImage {
 	
 	public VueImage() {}
 
-	public VueImage(Long id, String detailsUrl, Integer height, Integer width,
+	public VueImage(/*Long id,*/ String detailsUrl, Integer height, Integer width,
 			String imageUrl, Integer rating, String store, String title,
 			Long ownerUserId, Long ownerAisleId) {
 		super();
-		this.id = id;
+		//this.id = id;
 		this.detailsUrl = detailsUrl;
 		this.height = height;
 		this.width = width;
@@ -31,13 +31,13 @@ public class VueImage {
 		this.ownerUserId = ownerUserId;
 	}
 
-	public Long getId() {
+	/*public Long getId() {
 		return id;
-	}
+	}*/
 
-	public void setId(Long id) {
+	/*public void setId(Long id) {
 		this.id = id;
-	}
+	}*/
 
 	public String getDetailsUrl() {
 		return detailsUrl;

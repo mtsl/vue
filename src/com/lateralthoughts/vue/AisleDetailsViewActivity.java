@@ -122,8 +122,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
             aisle.setLookingFor("Great software");
             aisle.setName("Super Aisle");
             aisle.setOccassion("Product Launch");
-            aisle.setOwnerUserId(6646522020102144L);
-            
+           // aisle.setOwnerUserId(6646522020102144L);
+            aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
             aisleManager.createEmptyAisle(aisle, new AisleManager.AisleUpdateCallback() {
                 @Override
                 public void onAisleUpdated(AisleContext aisleContext,String aisleId) {

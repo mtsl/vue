@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.lateralthoughts.vue.DataEntryFragment;
 import com.lateralthoughts.vue.VueApplication;
 
 import android.content.Context;
@@ -67,6 +68,11 @@ public class BitmapLoaderUtils {
         Log.i("added url", "added url  getBitmap "+f);
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight);
+    	if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
+			Log.i("imageurl", "imageurl original   bitmap check2:  "+b);
+			Log.i("imageurl", "imageurl hashcode " + f.getPath());
+			Log.i("imageurl", "imageurl imagepath " + url);
+		}
         Log.i("added url", "added url  getBitmap "+b);
         if(b != null){
           
@@ -100,10 +106,16 @@ public class BitmapLoaderUtils {
             bitmap = decodeFile(f, bestHeight);
             if(cacheBitmap) 
             	mAisleImagesCache.putBitmap(url, bitmap);
+        	if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
+    			Log.i("imageurl", "imageurl original   bitmap check3:  "+bitmap);
+    		}
 
             return bitmap;
         } catch (Throwable ex){
            ex.printStackTrace();
+           if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
+   			Log.i("imageurl", "imageurl original   bitmap check4:  error");
+   		}
            if(ex instanceof OutOfMemoryError) {
              // mAisleImagesCache.clear();
            }

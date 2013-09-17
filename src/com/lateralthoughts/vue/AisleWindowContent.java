@@ -129,7 +129,9 @@ public class AisleWindowContent
     public AisleContext getAisleContext(){
     	return mContext;
     }
-    
+    public void setAisleContext(AisleContext context){
+    	mContext = context;
+    }
     public String getAisleId(){
     	return mAisleId;
     }

@@ -21,7 +21,7 @@ public class VueUserManager {
 		public void onUserUpdated(VueUser user);
 	}
 
-	private String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
+	private String VUE_API_BASE_URI = "http://2-java.vueapi-canary.appspot.com/";
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
 	private String USER_CREATE_ENDPOINT = "api/usercreate/trial";
 	private String GPLUS_USER_CREATE_ENDPOINT = "api/usercreate/googleplus";
@@ -98,6 +98,7 @@ public class VueUserManager {
                         vueUser.setVueUserId(id);
                         vueUser.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
                         VueUserManager.this.setCurrentUser(vueUser);
+                        Log.i("imageurl", "imageurl is ok got user id: "+vueUser);
                         callback.onUserUpdated(vueUser);
                     }catch(JSONException ex){
                     	Log.i("userid", "userid123456 null check storedVueUser response exception: ");

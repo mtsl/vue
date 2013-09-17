@@ -79,6 +79,10 @@ public class Parser {
 				category = contentItem.getString(ITEM_CATEGORY_TAG);
 				aisleId = contentItem.getString(CONTENT_ID_TAG);
 				userInfo.mAisleId = contentItem.getString(CONTENT_ID_TAG);
+				Log.i("aisleId", "aisleId: "+userInfo.mAisleId);
+				if(userInfo.mAisleId.equalsIgnoreCase("5741031244955648")){
+					Log.i("aisleId", "aisleId: this ailse retrieved successfully*******************************"+userInfo.mAisleId);
+				}
 				JSONArray imagesArray = contentItem
 						.getJSONArray(USER_IMAGES_TAG);
 
@@ -139,5 +143,46 @@ public class Parser {
 		}
 		return contentArray;
 	}
+	
+public AisleContext getAisleCotent(String jsonArray){
+	AisleContext aisleContext = new AisleContext();
+    if (null != jsonArray) {
+        
+        try{
+            JSONObject userInfo = new JSONObject(jsonArray);
+            aisleContext.mAisleId = userInfo.getString(CONTENT_ID_TAG);
+            aisleContext.mCategory = userInfo.getString(ITEM_CATEGORY_TAG);
+            aisleContext.mOccasion = userInfo.getString(OCCASION_TAG);
+            aisleContext.mLookingForItem = userInfo
+					.getString(LOOKING_FOR_TAG);
+            aisleContext.mUserId = userInfo.getString(CONTENT_ID_TAG);
+        }catch(Exception ex){
+        	 Log.e("Profiling", "Profiling : onResponse()################### error");
+        	ex.printStackTrace();
+        }
+    }
+	return aisleContext;
+}
+public AisleImageDetails getImageDetails(String jsonArray) throws JSONException {
+	AisleImageDetails imageItemDetails = new AisleImageDetails();
+	JSONObject userInfo = new JSONObject(jsonArray);
+	imageItemDetails.mDetalsUrl = userInfo
+			.getString(USER_IMAGE_DETALS_TAG);
+	imageItemDetails.mId = userInfo
+			.getString(USER_IMAGE_ID_TAG);
+	imageItemDetails.mStore = userInfo
+			.getString(USER_IMAGE_STORE_TAG);
+	imageItemDetails.mTitle = userInfo
+			.getString(USER_IMAGE_TITLE_TAG);
+	imageItemDetails.mImageUrl = userInfo
+			.getString(USER_IMAGE_URL_TAG);
+	Log.i("imageurl", "imageurl is: "+imageItemDetails.mImageUrl);
+	imageItemDetails.mAvailableHeight = userInfo
+			.getInt(IMAGE_HEIGHT_TAG);
+	imageItemDetails.mAvailableWidth = userInfo
+			.getInt(IMAGE_WIDTH_TAG);
+	return imageItemDetails;
+	 
+}
 }
  

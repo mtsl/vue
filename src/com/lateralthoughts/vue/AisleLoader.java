@@ -110,12 +110,6 @@ public class AisleLoader {
     	//String currentContentId = holder.aisleContentBrowser.getUniqueId();
     	String desiredContentId = windowContent.getAisleId();
     	contentBrowser = holder.aisleContentBrowser;
-    	if(desiredContentId.equalsIgnoreCase("6098")){
-    		Log.i("bestheight", "bestheight best of chappals smallheight: "+windowContent.getBestHeightForWindow());
-    	}else if(desiredContentId.equalsIgnoreCase("6111")){
-    		Log.i("bestheight", "bestheight best of ornaments smallheight: "+windowContent.getBestHeightForWindow());
-    	}
-
 		if(holder.uniqueContentId.equals(desiredContentId)){
     		//we are looking at a visual object that has either not been used
     		//before or has to be filled with same content. Either way, no need
@@ -158,20 +152,22 @@ public class AisleLoader {
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
 			Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mCustomImageUrl);
+			if(DataEntryFragment.testId.equalsIgnoreCase(windowContent.getAisleId())){
+				Log.i("imageurl", "imageurl original   bitmap check:  "+bitmap);
+			}
+			
 			int bestHeight = windowContent.getBestHeightForWindow();
 			if(bitmap != null){
-				 Log.i("flingcheck", "createview issue2 bitmap not null");
+ 
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);    				
 			}
 			else{
-				 Log.i("flingcheck", "createview issue3 bitmap  null");
+				 
 				contentBrowser.addView(imageView);
 			  
 				if(!placeholderOnly)
 				    loadBitmap(itemDetails.mCustomImageUrl, contentBrowser, imageView, bestHeight);
-				Log.i("bestHeight", "bestHeight: "+bestHeight);
-			 
 			}
         }
     }

@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.lateralthoughts.vue.AisleManager;
+import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
@@ -22,19 +23,21 @@ import com.lateralthoughts.vue.VueContentGateway;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.ui.NotifyProgress;
  
 
 public class NetworkHandler {
 	Context mContext;
-	private static final String SEARCH_REQUEST_URL = "http://1-java.vueapi-canary-devel-search.appspot.com/api/getaisleswithmatchingkeyword/";
-
+	private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
+	                                                  //http://2-java.vueapi-canary-development1.appspot.com/api/
 	DataBaseManager mDbManager;
 	protected VueContentGateway mVueContentGateway;
 	protected TrendingAislesContentParser mTrendingAislesParser;
 	private static final int NOTIFICATION_THRESHOLD = 4;
 	private static final int TRENDING_AISLES_BATCH_SIZE = 10;
 	public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
+	 private static String MY_AISLES = "/aislesget/user/";
 	protected int mLimit;
 	protected int mOffset;
 
@@ -109,6 +112,9 @@ public class NetworkHandler {
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.dataObserver();
 	}
+	public void requestForAddImage(VueImage image,ImageAddedCallback callback){
+		AisleManager.getAisleManager().addImageToAisle(image, callback);
+	}
 //get aisles related to search keyword
 	public void requestSearch(final String searchString) {
 		JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
@@ -138,10 +144,38 @@ public class NetworkHandler {
 
 	}
 
-	public void requestUserAisles() {
+	public void requestUserAisles(String userId) {
 
+		JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
+				+ MY_AISLES+userId, new Response.Listener<JSONArray>() {
+
+			@Override
+			public void onResponse(JSONArray response) {
+				if (null != response) {
+					Bundle responseBundle = new Bundle();
+					responseBundle.putString("Search result",
+							response.toString());
+					responseBundle.putBoolean("loadMore", false);
+					mTrendingAislesParser.send(1, responseBundle);
+				}
+				Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
+			}
+		}, new Response.ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				Log.e("Search Resopnse", "SURU Search Error Resopnse : "
+						+ error.getMessage());
+			}
+		});
+
+		VueApplication.getInstance().getRequestQueue().add(vueRequest);
+
+	
 	}
 
+	
+	
 	public void loadInitialData(boolean loadMore, Handler mHandler) {
 
 		if (!VueConnectivityManager.isNetworkConnected(mContext)) {
@@ -156,12 +190,15 @@ public class NetworkHandler {
 			msg.obj = aisleContentArray;
 			mHandler.sendMessage(msg);
 		} else {
+			
 			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 					mTrendingAislesParser, loadMore);
 		}
 
 	}
-
+ public void requestAislesByUser(){
+	 
+ }
 	public int getmOffset() {
 		return mOffset;
 	}

@@ -46,7 +46,7 @@ public class VueContentGateway {
     private String mOffsetTag;
     
     private static final String VUE_CONTENT_PROVIDER_BASE_URI = "http://1-python.vueapi-canary.appspot.com/rest/0.1/";
-	
+    
 	public static VueContentGateway getInstance(){
 		if(null == sInstance){
 			sInstance = new VueContentGateway();
