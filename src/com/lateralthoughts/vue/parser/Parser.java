@@ -46,7 +46,7 @@ public class Parser {
 	// This is pretty inconsistent.
 	// Let the allocation happen in one place for both items. Fix this!
 	@SuppressWarnings("unused")
-	private ArrayList<AisleWindowContent> parseTrendingAislesResultData(String resultString,
+	public ArrayList<AisleWindowContent> parseTrendingAislesResultData(String resultString,
 			boolean loadMore) {
 		String category;
 		String aisleId;
@@ -116,7 +116,7 @@ public class Parser {
 				
 				aisleItem = VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getAisleItem(aisleId);
 				aisleItem.addAisleContent(userInfo, imageItemsArray);
-				//aisleList.add(aisleItem);
+				aisleList.add(aisleItem);
 				imageItemsArray.clear();
 			}
 			VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();

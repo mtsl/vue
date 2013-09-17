@@ -1,115 +1,175 @@
 package com.lateralthoughts.vue.connectivity;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.os.ResultReceiver;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.lateralthoughts.vue.AisleManager;
+import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueContentGateway;
+import com.lateralthoughts.vue.VueTrendingAislesDataModel;
+import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
+import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.ui.NotifyProgress;
+ 
 
 public class NetworkHandler {
+	Context mContext;
+	private static final String SEARCH_REQUEST_URL = "http://1-java.vueapi-canary-devel-search.appspot.com/api/getaisleswithmatchingkeyword/";
 
-  private static final String SEARCH_REQUEST_URL = "http://1-java.vueapi-canary-devel-search.appspot.com/api/getaisleswithmatchingkeyword/";
-  
-  public void requestMoreAisle() {
+	DataBaseManager mDbManager;
+	protected VueContentGateway mVueContentGateway;
+	protected TrendingAislesContentParser mTrendingAislesParser;
+	private static final int NOTIFICATION_THRESHOLD = 4;
+	private static final int TRENDING_AISLES_BATCH_SIZE = 10;
+	public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
+	protected int mLimit;
+	protected int mOffset;
 
-  }
+	public NetworkHandler(Context context) {
+		mContext = context;
+		mVueContentGateway = VueContentGateway.getInstance();
+		mTrendingAislesParser = new TrendingAislesContentParser(new Handler());
+		mDbManager = DataBaseManager.getInstance(mContext);
+		mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
+		mOffset = 0;
+	}
+//whle user scrolls down get next 10 aisles
+	public void requestMoreAisle(boolean loadMore) {
+		Log.i("offeset and limit", "offeset1: load moredata");
+		if (VueTrendingAislesDataModel
+				.getInstance(VueApplication.getInstance())
+				.isMoreDataAvailable()) {
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
+			if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
+				mOffset += mLimit;
+			else {
+				mOffset += mLimit;
+				mLimit = TRENDING_AISLES_BATCH_SIZE;
+			}
+			Log.i("offeset and limit", "offeset1: " + mOffset + " and limit: "
+					+ mLimit);
 
-  public void reqestByCategory(String catName) {
+			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+					mTrendingAislesParser, loadMore);
+		} else {
+			Log.i("offeset and limit", "offeset1: else part");
+		}
+	}
+//get the aisle based on the category
+	public void reqestByCategory(String category, NotifyProgress progress,
+			boolean fromServer, boolean loadMore) {
 
-  }
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+				.setNotificationProgress(progress, fromServer);
+		String downLoadFromServer = "fromDb";
+		if (fromServer == true) {
+			downLoadFromServer = "fromServer";
+			mOffset = 0;
+			mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).clearContent();
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).showProgress();
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance())
+					.setMoreDataAVailable(true);
+			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+					mTrendingAislesParser, loadMore);
+			Log.i("loading from db", "loading from server");
 
-  public void requestTrending() {
+		} else {
+			Log.i("loading from db", "loading from db");
+			downLoadFromServer = "fromDb";
+			DbDataGetter dBgetter = new DbDataGetter(progress);
+			dBgetter.execute(category, downLoadFromServer);
+		}
 
-  }
+	}
 
-  public void requestCreateAisle() {
+	public static void requestTrending() {
 
-  }
+	}
+//request the server to create an empty aisle.
+	public void requestCreateAisle(Aisle aisle,final AisleUpdateCallback callback) {
+		AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+				.dataObserver();
+	}
+//get aisles related to search keyword
+	public void requestSearch(final String searchString) {
+		JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
+				+ searchString, new Response.Listener<JSONArray>() {
 
-  public static void requestSearch(final String searchString, final ResultReceiver receiver) {
+			@Override
+			public void onResponse(JSONArray response) {
+				if (null != response) {
+					Bundle responseBundle = new Bundle();
+					responseBundle.putString("Search result",
+							response.toString());
+					responseBundle.putBoolean("loadMore", false);
+					mTrendingAislesParser.send(1, responseBundle);
+				}
+				Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
+			}
+		}, new Response.ErrorListener() {
 
-    ///testSearchResopnce(searchString);
-    JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL + searchString, new Response.Listener<JSONArray>() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				Log.e("Search Resopnse", "SURU Search Error Resopnse : "
+						+ error.getMessage());
+			}
+		});
 
-      @Override
-      public void onResponse(JSONArray response) {
-        if (null != response) {
-          Bundle responseBundle = new Bundle();
-          responseBundle.putString("Search result", response.toString());
-          responseBundle.putBoolean("loadMore", false);
-          receiver.send(1, responseBundle);
-        }
-        Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
-      }}, new Response.ErrorListener() {
+		VueApplication.getInstance().getRequestQueue().add(vueRequest);
 
-        @Override
-        public void onErrorResponse(VolleyError error) {
-          Log.e("Search Resopnse", "SURU Search Error Resopnse : " + error.getMessage());
-        }});
-    
-        VueApplication.getInstance().getRequestQueue().add(vueRequest);
+	}
 
-  }
+	public void requestUserAisles() {
 
-  public void requestUserAisles() {
+	}
 
-  }
-  
-  private static void testSearchResopnce(final String searchString) {
-    Thread t = new Thread(new Runnable() {
-      
-      @Override
-      public void run() {
-        HttpClient httpClient = new DefaultHttpClient();  
-        String url = SEARCH_REQUEST_URL + searchString;
-        HttpGet httpGet = new HttpGet(url);
-        try {
-            HttpResponse response = httpClient.execute(httpGet);
-            StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                HttpEntity entity = response.getEntity();
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                entity.writeTo(out);
-                out.close();
-                String responseStr = out.toString();
-                Log.e("VueNetworkError", "Suru Search URL : " + responseStr);
-                // do something with response 
-            } else {
-                // handle bad response
-            }
-        } catch (ClientProtocolException e) {
-            // handle exception
-        } catch (IOException e) {
-            // handle exception
-        } 
-      }
-    });
-    t.start();
-  }
+	public void loadInitialData(boolean loadMore, Handler mHandler) {
+
+		if (!VueConnectivityManager.isNetworkConnected(mContext)) {
+			Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
+					.show();
+			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
+					.getAislesFromDB(null);
+			if (aisleContentArray.size() == 0) {
+				return;
+			}
+			Message msg = new Message();
+			msg.obj = aisleContentArray;
+			mHandler.sendMessage(msg);
+		} else {
+			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+					mTrendingAislesParser, loadMore);
+		}
+
+	}
+
+	public int getmOffset() {
+		return mOffset;
+	}
+
+	public void setmOffset(int mOffset) {
+		this.mOffset = mOffset;
+	}
+
 }
 
 
@@ -117,43 +177,4 @@ public class NetworkHandler {
 
 
 
-
-/*
-
-Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
-  @Override
-  public void onResponse(JSONArray jsonArray) {
-    if (null != jsonArray) {
-      Bundle responseBundle = new Bundle();
-      responseBundle.putString("Search result", jsonArray.toString());
-      responseBundle.putBoolean("loadMore", false);
-      receiver.send(1, responseBundle);
-    }
-  }
-};
-Response.ErrorListener errorListener = new Response.ErrorListener() {
-  @Override
-  public void onErrorResponse(VolleyError error) {
-    Bundle responseBundle = new Bundle();
-    responseBundle.putString("result", "error");
-    // receiver.send(1,responseBundle);
-    Log.e("VueNetworkError", "Suru error check");
-    Log.e("VueNetworkError",
-        "Vue encountered network operations error. Error = "
-            + error.networkResponse);
-  }
-};
-
-
-JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
-    + searchString, listener, errorListener) {
-  @Override
-  public Map<String, String> getHeaders() throws AuthFailureError {
-    HashMap<String, String> headersMap = new HashMap<String, String>();
-    headersMap.put("Accept-Encoding", "gzip");
-    headersMap.put("Content-Type", "application/json");
-    return headersMap;
-  }
-};
-Log.e("VueNetworkError", "Suru Search URL : " + SEARCH_REQUEST_URL + searchString);
-*/
+ 

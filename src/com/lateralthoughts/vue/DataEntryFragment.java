@@ -983,9 +983,13 @@ public class DataEntryFragment extends Fragment {
 						VueApplication.getInstance().mAisleImagePathList.get(i));
 				imageUrlList.add(shareObj);
 			}
-			mShare.share(imageUrlList, "", "");
+			if (mDataEntryAislesViewpager != null) {
+				mShare.share(imageUrlList, "", "",
+						mDataEntryAislesViewpager.getCurrentItem());
+			} else {
+				mShare.share(imageUrlList, "", "", 0);
+			}
 		}
-
 	}
 
 	public void addImageToAisleButtonClickFunctionality() {
@@ -1561,9 +1565,10 @@ public class DataEntryFragment extends Fragment {
 
 	}
 
-	//create ailse and send to server.
- private void createNewAisle(){ 
-	 Log.i("create ailse functionality", "create ailse functionality addAilse");
+	// create ailse and send to server.
+	private void createNewAisle() {
+		Log.i("create ailse functionality",
+				"create ailse functionality addAilse");
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(getActivity(),
@@ -1571,78 +1576,88 @@ public class DataEntryFragment extends Fragment {
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
-	              AisleManager aisleManager = AisleManager.getAisleManager();
-	              Aisle aisle = new Aisle();
-	              aisle.setCategory(mCategoryText.getText()
-							.toString().trim());
-	              aisle.setId(0L);
-	              aisle.setLookingFor(mLookingForBigText
-							.getText().toString().trim());
-	              aisle.setName("Super Aisle");
-	              aisle.setOccassion(mOccassionBigText.getText()
-							.toString().trim());
-	              mImageList.add(getImage(mImagePath, 340, 340, "dummy", 12345L, 123L));
-	              Log.i("userid", "userid123456 null check storedVueUser: "+storedVueUser);
-	              if(storedVueUser != null) {
-	              aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
-	              }
-	  			
-	              boolean localTest = true;
-	              if(localTest){
-					int hashCode = mImagePath.hashCode();
-					String filename = String.valueOf(hashCode);
-					filename = filename.substring(2, filename.length()-1);
-	              AisleContext userInfo = new AisleContext();
-	      		userInfo.mFirstName = "vue_name";
-				userInfo.mLastName = "vue_lastname";
-				userInfo.mUserId = "12346";
-				userInfo.mAisleId = filename;
-				userInfo.mLookingForItem = mLookingForBigText
-						.getText().toString().trim();
-				userInfo.mOccasion =mOccassionBigText.getText()
-						.toString().trim();
-				userInfo.mCategory = mCategoryText.getText()
-						.toString().trim();
-				userInfo.mJoinTime = 1234L;
-	              setAisleContent(userInfo,filename);
-	              }
-	              
-	       /*       
-	              aisleManager.createEmptyAisle(aisle, new AisleManager.AisleUpdateCallback() {
-	                  @Override
-	                  public void onAisleUpdated(AisleContext aisleContext,String aisleId) {
-	                      Log.e("AisleCreationTest","Aisle created1 successfully!");
-	                      setAisleContent(aisleContext,aisleId);
-	                      addImage();
-	                  }
-	              });*/
- }
- 
- //create Image object add to aisle
- private VueImage getImage(String originalImageLocation, int width, int height,String title,Long owneAisleId,Long ownerUserId){
-	 
-	 VueImage image = new VueImage();
-	 image.setDetailsUrl("");
-	 image.setHeight(340);
-	 image.setWidth(height);
-	 image.setId(0L);
-	 image.setImageUrl(originalImageLocation);
-	 image.setTitle(title);
-	 image.setOwnerAisleId(owneAisleId);
-	 image.setOwnerUserId(ownerUserId);
-	 //image.setRating(rating);
-	 //image.setStore(store);
-	  return image;
- }
- //add image to the created aisle
- private void addImage(){
-	 VueImage image = null;
-	 if(mImageList.size() > 0) {
-		 image = mImageList.remove(0);
-	 } else {
-		 return;
-	 }
-	  AisleManager aisleManager = AisleManager.getAisleManager();
+		AisleManager aisleManager = AisleManager.getAisleManager();
+		Aisle aisle = new Aisle();
+		aisle.setCategory(mCategoryText.getText().toString().trim());
+
+		aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
+		aisle.setName("Super Aisle");
+		aisle.setOccassion(mOccassionBigText.getText().toString().trim());
+		mImageList.add(getImage(mImagePath, 340, 340, "dummy", 12345L, 123L));
+		Log.i("userid", "userid123456 null check storedVueUser: "
+				+ storedVueUser);
+		if (storedVueUser != null) {
+			aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
+		}
+
+		boolean localTest = true;
+		if (localTest) {
+			int hashCode = mImagePath.hashCode();
+			String filename = String.valueOf(hashCode);
+			filename = filename.substring(2, filename.length() - 1);
+			AisleContext userInfo = new AisleContext();
+			userInfo.mFirstName = "vue_name";
+			userInfo.mLastName = "vue_lastname";
+			userInfo.mUserId = "12346";
+			userInfo.mAisleId = filename;
+			userInfo.mLookingForItem = mLookingForBigText.getText().toString()
+					.trim();
+			userInfo.mOccasion = mOccassionBigText.getText().toString().trim();
+			userInfo.mCategory = mCategoryText.getText().toString().trim();
+			userInfo.mJoinTime = 1234L;
+			setAisleContent(userInfo, filename);
+		}
+		VueTrendingAislesDataModel
+				.getInstance(VueApplication.getInstance())
+				.getNetworkHandler()
+				.requestCreateAisle(aisle,
+						new AisleManager.AisleUpdateCallback() {
+							@Override
+							public void onAisleUpdated(
+									AisleContext aisleContext, String aisleId) {
+								Log.e("AisleCreationTest",
+										"Aisle created1 successfully!");
+								setAisleContent(aisleContext, aisleId);
+								addImage();
+							}
+						});
+		/*
+		 * aisleManager.createEmptyAisle(aisle, new
+		 * AisleManager.AisleUpdateCallback() {
+		 * 
+		 * @Override public void onAisleUpdated(AisleContext aisleContext,String
+		 * aisleId) { Log.e("AisleCreationTest","Aisle created1 successfully!");
+		 * setAisleContent(aisleContext,aisleId); addImage(); } });
+		 */
+	}
+
+	// create Image object add to aisle
+	private VueImage getImage(String originalImageLocation, int width,
+			int height, String title, Long owneAisleId, Long ownerUserId) {
+
+		VueImage image = new VueImage();
+		image.setDetailsUrl("");
+		image.setHeight(340);
+		image.setWidth(height);
+		image.setId(0L);
+		image.setImageUrl(originalImageLocation);
+		image.setTitle(title);
+		image.setOwnerAisleId(owneAisleId);
+		image.setOwnerUserId(ownerUserId);
+		// image.setRating(rating);
+		// image.setStore(store);
+		return image;
+	}
+
+	// add image to the created aisle
+	private void addImage() {
+		VueImage image = null;
+		if (mImageList.size() > 0) {
+			image = mImageList.remove(0);
+		} else {
+			return;
+		}
+		AisleManager aisleManager = AisleManager.getAisleManager();
 		aisleManager.addImageToAisle(image,
 				new AisleManager.ImageAddedCallback() {
 
@@ -1770,77 +1785,92 @@ public class DataEntryFragment extends Fragment {
 		getImagesTask.execute();
 	}
 
- //create aisle window and add to list so that aisle will be visible in list.
-    private void setAisleContent(AisleContext userInfo,String aisleId){
-    	aisleItem = VueTrendingAislesDataModel.getInstance(getActivity()).getAisle(aisleId);
-    	aisleItem.setAisleId(aisleId);
-    	ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
-    	AisleImageDetails imageDetails = new AisleImageDetails();
-    	imageDetails.mAvailableHeight = 300;
-    	imageDetails.mAvailableWidth = 340;
-    	VueImage image = mImageList.remove(0);
-    	imageDetails.mImageUrl =image.getImageUrl();
-    	imageItemsArray.add(imageDetails);
-    	saveBitmap(imageDetails.mImageUrl,imageDetails.mImageUrl);
-    	aisleItem.addAisleContent(userInfo, imageItemsArray);
-    	imageDetails.mCustomImageUrl = aisleItem.getImageList().get(0).mCustomImageUrl;
-    	Bitmap bmp = saveBitmap(imageDetails.mImageUrl,imageDetails.mCustomImageUrl);
-    	if(bmp != null){
+	// create aisle window and add to list so that aisle will be visible in
+	// list.
+	private void setAisleContent(AisleContext userInfo, String aisleId) {
+		aisleItem = VueTrendingAislesDataModel.getInstance(getActivity())
+				.getAisle(aisleId);
+		aisleItem.setAisleId(aisleId);
+		VueTrendingAislesDataModel.getInstance(getActivity()).addItemToList(
+				aisleId, aisleItem);
+		ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
+		AisleImageDetails imageDetails = new AisleImageDetails();
+		imageDetails.mAvailableHeight = 300;
+		imageDetails.mAvailableWidth = 340;
+		VueImage image = mImageList.remove(0);
+		imageDetails.mImageUrl = image.getImageUrl();
+		imageItemsArray.add(imageDetails);
+		saveBitmap(imageDetails.mImageUrl, imageDetails.mImageUrl);
+		aisleItem.addAisleContent(userInfo, imageItemsArray);
+		imageDetails.mCustomImageUrl = aisleItem.getImageList().get(0).mCustomImageUrl;
+		Bitmap bmp = saveBitmap(imageDetails.mImageUrl,
+				imageDetails.mCustomImageUrl);
+		if (bmp != null) {
 
-        	imageDetails.mAvailableHeight = bmp.getWidth();
-        	imageDetails.mAvailableWidth = bmp.getHeight();
-    	}
-    	VueTrendingAislesDataModel.getInstance(getActivity()).addItemToList(aisleId, aisleItem, 0);
-    	VueTrendingAislesDataModel.getInstance(getActivity()).dataObserver();
-    	VueTrendingAislesDataModel.getInstance(getActivity()).listSize();
-    	Log.e("Profiling", "Profiling inserting new aisles to db id: user created********************** "+aisleId);
-    	//VueTrendingAislesDataModel.getInstance(getActivity()).insertNewAisleToDb(aisleId);
-    	 
-    }
-    private Bitmap saveBitmap(String sourcePath,String destPath){
-    	 
-    		FileCache fileCache = new FileCache(getActivity());
-    		File f = fileCache.getFile(destPath);
-    		File sourceFile = new File(sourcePath);
-    		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-    				VueApplication.getInstance().mScreenHeight);
-    		Utils.saveBitmap(bmp, f);
-			return bmp;
-    }
-    //add image to the created aisle for now, we are creating the aisle depending the 
-    // response from the server but for adding image without waiting for the server
-    //response add immediately after that send that image data to the back end.
-    //because to create an aisle requires aisle id but to add image need not wait for server response.
-    private void addImageToAisle(){
-    	VueImage image = null;
-    	if(mImageList.size()== 0){
-    		return;
-    	}
-    	ArrayList<AisleImageDetails> imageItemsArray = aisleItem.getImageList();
-    	for(int i=0;i<mImageList.size();i++) {
-    		image = mImageList.remove(i);
-    	
-    	AisleImageDetails imageDetails = new AisleImageDetails();
-    	imageDetails.mImageUrl = image.getImageUrl();
-    	Bitmap bmp =  saveBitmap(imageDetails.mImageUrl,imageDetails.mImageUrl);
-    	if(bmp != null){
-        	imageDetails.mAvailableHeight = bmp.getWidth();
-        	imageDetails.mAvailableWidth = bmp.getHeight();
-    	}
-    	
-    	if(imageDetails.mAvailableHeight < aisleItem.mWindowSmallestHeight || aisleItem.mWindowSmallestHeight == 0)
-    		aisleItem.mWindowSmallestHeight = imageDetails.mAvailableHeight;
-    	aisleItem.prepareCustomUrl(imageDetails);
-    	 saveBitmap(imageDetails.mImageUrl,imageDetails.mCustomImageUrl);
-    	 imageItemsArray.add(imageDetails);
+			imageDetails.mAvailableHeight = bmp.getWidth();
+			imageDetails.mAvailableWidth = bmp.getHeight();
+		}
+		VueTrendingAislesDataModel.getInstance(getActivity()).addItemToListAt(
+				aisleId, aisleItem, 0);
+		VueTrendingAislesDataModel.getInstance(getActivity()).dataObserver();
+		VueTrendingAislesDataModel.getInstance(getActivity()).listSize();
+		Log.e("Profiling",
+				"Profiling inserting new aisles to db id: user created********************** "
+						+ aisleId);
+		// VueTrendingAislesDataModel.getInstance(getActivity()).insertNewAisleToDb(aisleId);
+
 	}
-    	
-    	 
-    	//aisleItem.addAisleContent(aisleItem.getAisleContext(), imageItemsArray);
-    	//saveBitmap(imageDetails.mImageUrl,imageDetails.mImageUrl);
-    
-    	VueTrendingAislesDataModel.getInstance(getActivity()).dataObserver();
-    	//VueTrendingAislesDataModel.getInstance(getActivity()).insertNewAisleToDb(aisleId);
-    	 
-    }
+
+	private Bitmap saveBitmap(String sourcePath, String destPath) {
+
+		FileCache fileCache = new FileCache(getActivity());
+		File f = fileCache.getFile(destPath);
+		File sourceFile = new File(sourcePath);
+		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
+				VueApplication.getInstance().mScreenHeight);
+		Utils.saveBitmap(bmp, f);
+		return bmp;
+	}
+
+	// add image to the created aisle for now, we are creating the aisle
+	// depending the
+	// response from the server but for adding image without waiting for the
+	// server
+	// response add immediately after that send that image data to the back end.
+	// because to create an aisle requires aisle id but to add image need not
+	// wait for server response.
+	private void addImageToAisle() {
+		VueImage image = null;
+		if (mImageList.size() == 0) {
+			return;
+		}
+		ArrayList<AisleImageDetails> imageItemsArray = aisleItem.getImageList();
+		for (int i = 0; i < mImageList.size(); i++) {
+			image = mImageList.remove(i);
+
+			AisleImageDetails imageDetails = new AisleImageDetails();
+			imageDetails.mImageUrl = image.getImageUrl();
+			Bitmap bmp = saveBitmap(imageDetails.mImageUrl,
+					imageDetails.mImageUrl);
+			if (bmp != null) {
+				imageDetails.mAvailableHeight = bmp.getWidth();
+				imageDetails.mAvailableWidth = bmp.getHeight();
+			}
+
+			if (imageDetails.mAvailableHeight < aisleItem.mWindowSmallestHeight
+					|| aisleItem.mWindowSmallestHeight == 0)
+				aisleItem.mWindowSmallestHeight = imageDetails.mAvailableHeight;
+			aisleItem.prepareCustomUrl(imageDetails);
+			saveBitmap(imageDetails.mImageUrl, imageDetails.mCustomImageUrl);
+			imageItemsArray.add(imageDetails);
+		}
+
+		// aisleItem.addAisleContent(aisleItem.getAisleContext(),
+		// imageItemsArray);
+		// saveBitmap(imageDetails.mImageUrl,imageDetails.mImageUrl);
+
+		VueTrendingAislesDataModel.getInstance(getActivity()).dataObserver();
+		// VueTrendingAislesDataModel.getInstance(getActivity()).insertNewAisleToDb(aisleId);
+
+	}
 }

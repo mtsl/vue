@@ -3,6 +3,7 @@ package com.lateralthoughts.vue.connectivity;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -65,7 +66,7 @@ public class DataBaseManager {
    * 
    * @param Context context.
    * */
-  public static void addTrentingAislesFromServerToDB(Context context) {
+  public static void addTrentingAislesFromServerToDB(Context context, List<AisleWindowContent> contentList) {
 	  int imgCount = 0;
     Cursor aisleIdCursor = context.getContentResolver().query(
         VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_ID}, null,
@@ -77,8 +78,7 @@ public class DataBaseManager {
             .getColumnIndex(VueConstants.AISLE_ID)));
       } while (aisleIdCursor.moveToNext());
     }
-    int aislesCount = VueTrendingAislesDataModel.getInstance(context)
-    .getAisleCount();
+    int aislesCount = contentList.size();
     aisleIdCursor.close();
     for (int i = 0; i < aislesCount; i++) {
       Cursor cursor = context.getContentResolver()
@@ -92,8 +92,9 @@ public class DataBaseManager {
       }
       maxId = Integer.valueOf(strCount).intValue();
       cursor.close();
-      AisleWindowContent content = VueTrendingAislesDataModel.getInstance(
-          context).getAisleAt(i);
+      /*AisleWindowContent content = VueTrendingAislesDataModel.getInstance(
+          context).getAisleAt(i);*/
+      AisleWindowContent content = contentList.get(i);
       AisleContext info = content.getAisleContext();
       ArrayList<AisleImageDetails> imageItemsArray = content.getImageList();
       ContentValues values = new ContentValues();

@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseExpandableListAdapter;
@@ -142,26 +143,31 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_up);
 		/**/
 		mSideMenuSearchBar.setOnKeyListener(new OnKeyListener() {
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if ((event.getAction() == KeyEvent.ACTION_DOWN)
-						&& (keyCode == KeyEvent.KEYCODE_ENTER)) {
-					VueTrendingAislesDataModel.getInstance(getActivity())
-							.clearAisles();
-					if (getActivity() instanceof SlidingFragmentActivity) {
-						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-						activity.getSlidingMenu().toggle();
-					}
-					String s = mSideMenuSearchBar.getText().toString().trim();
-					if (s.isEmpty()) {
-						return false;
-					}
-					NetworkHandler.requestSearch(s, VueTrendingAislesDataModel
-							.getInstance(getActivity()).mTrendingAislesParser);
-					return true;
-				}
-				return false;
-			}
-		});
+
+		    public boolean onKey(View v, int keyCode, KeyEvent event) {
+		      if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+		            (keyCode == KeyEvent.KEYCODE_ENTER)) {
+		        VueTrendingAislesDataModel.getInstance(getActivity()).clearAisles();
+		        if (getActivity() instanceof SlidingFragmentActivity) {
+                  SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+                  activity.getSlidingMenu().toggle();
+		        }
+		        String s = mSideMenuSearchBar.getText().toString().trim();
+		        if(s.isEmpty()) {
+		          return false;
+		        }
+		        VueTrendingAislesDataModel.getInstance(getActivity()).getNetworkHandler().requestSearch(s);
+		        //TODO:close the keyboard here
+		    	final InputMethodManager mInputMethodManager = (InputMethodManager) getActivity()
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+		    	mInputMethodManager.hideSoftInputFromWindow(
+		    			mSideMenuSearchBar.getWindowToken(), 0);
+              return true;
+          }
+            return false;
+          }
+        });
+		
 
 		expandListView.setOnGroupClickListener(new OnGroupClickListener() {
 
@@ -242,12 +248,13 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 							}
 						}
 
-						model.setMoreDataAVailable(true);
+				/*		model.setMoreDataAVailable(true);
 						model.mVueContentGateway
 								.getTrendingAisles(
 										model.mLimit = VueTrendingAislesDataModel.TRENDING_AISLES_BATCH_INITIAL_SIZE,
 										model.mOffset = 0,
-										model.mTrendingAislesParser, true);
+
+										model.mTrendingAislesParser,true);*/
 					} else if (s
 							.equals(getString(R.string.sidemenu_option_About))) {
 						inflateAboutLayout();

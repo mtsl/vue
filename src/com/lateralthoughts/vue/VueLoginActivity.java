@@ -235,6 +235,8 @@ public class VueLoginActivity extends FragmentActivity implements
 						VueConstants.FACEBOOK_LOGIN, false);
 				boolean googleplusloginfalg = mSharedPreferencesObj.getBoolean(
 						VueConstants.GOOGLEPLUS_LOGIN, false);
+				boolean instagramloginfalg = mSharedPreferencesObj.getBoolean(
+						VueConstants.INSTAGRAM_LOGIN, false);
 				if (mFromInviteFriends != null) {
 					if (mFromInviteFriends.equals(VueConstants.FACEBOOK)) {
 						googleplusign_in_buttonlayout.setVisibility(View.GONE);
@@ -254,6 +256,9 @@ public class VueLoginActivity extends FragmentActivity implements
 					} else if (googleplusloginfalg) {
 						mFacebookFlag = true;
 						googleplusign_in_buttonlayout.setVisibility(View.GONE);
+					}
+					if (instagramloginfalg) {
+						instagramSignInButtonLayout.setVisibility(View.GONE);
 					}
 				}
 				googleplusign_in_buttonlayout
@@ -284,7 +289,7 @@ public class VueLoginActivity extends FragmentActivity implements
 							public void onClick(View arg0) {
 								if (VueConnectivityManager
 										.isNetworkConnected(VueLoginActivity.this)) {
-									InstagramApp mApp = new InstagramApp(
+									mInstagramApp = new InstagramApp(
 											VueLoginActivity.this,
 											getResources()
 													.getString(
@@ -295,9 +300,9 @@ public class VueLoginActivity extends FragmentActivity implements
 											getResources()
 													.getString(
 															R.string.instagram_callbackurl));
-									mApp.setListener(listener);
-									if (!mApp.hasAccessToken()) {
-										mApp.authorize();
+									mInstagramApp.setListener(listener);
+									if (!mInstagramApp.hasAccessToken()) {
+										mInstagramApp.authorize();
 									} else {
 										Toast.makeText(
 												VueLoginActivity.this,
@@ -615,32 +620,6 @@ public class VueLoginActivity extends FragmentActivity implements
 										}
 									}
 								});
-
-						// test code to check aisle creation
-						boolean test = true;
-						if (test) {
-							Log.e("AisleCreationTest",
-									"Aisle created requestsend!");
-							AisleManager aisleManager = AisleManager
-									.getAisleManager();
-							Aisle aisle = new Aisle();
-							aisle.setCategory("Abstracts");
-							aisle.setLookingFor("Great software");
-							aisle.setName("Super Aisle");
-							aisle.setOccassion("Product Launch");
-							aisle.setOwnerUserId(Long.valueOf(storedVueUser
-									.getVueId()));
-							aisleManager.createEmptyAisle(aisle,
-									new AisleManager.AisleUpdateCallback() {
-										@Override
-										public void onAisleUpdated(
-												AisleContext aisleContext,
-												String aisleId) {
-											Log.e("AisleCreationTest",
-													"Aisle created successfully!");
-										}
-									});
-						}
 					} else {
 						userManager.createFBIdentifiedUser(user,
 								new VueUserManager.UserUpdateCallback() {
@@ -1251,6 +1230,8 @@ public class VueLoginActivity extends FragmentActivity implements
 					this)) {
 				showAlertMessageForAppInstalation("Instagram",
 						VueConstants.INSTAGRAM_PACKAGE_NAME);
+			} else {
+				finish();
 			}
 		}
 	}

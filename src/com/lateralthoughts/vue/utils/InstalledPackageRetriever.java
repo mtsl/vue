@@ -29,10 +29,12 @@ public class InstalledPackageRetriever {
 		String[] sharePackageNames = { VueConstants.TWITTER_PACKAGE_NAME,
 				VueConstants.FACEBOOK_PACKAGE_NAME,
 				VueConstants.GOOGLEPLUS_PACKAGE_NAME,
-				VueConstants.GMAIL_PACKAGE_NAME };
+				VueConstants.GMAIL_PACKAGE_NAME,
+				VueConstants.INSTAGRAM_PACKAGE_NAME };
 		String[] shareAppNames = { VueConstants.TWITTER_APP_NAME,
 				VueConstants.FACEBOOK_APP_NAME,
-				VueConstants.GOOGLEPLUS_APP_NAME, VueConstants.GMAIL_APP_NAME };
+				VueConstants.GOOGLEPLUS_APP_NAME, VueConstants.GMAIL_APP_NAME,
+				VueConstants.INSTAGRAM_APP_NAME };
 		PackageManager pm = context.getPackageManager();
 		for (int i = 0; i < sharePackageNames.length; i++) {
 			try {

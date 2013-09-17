@@ -32,6 +32,7 @@ public class VueConstants {
 	public static final String FACEBOOK_APP_NAME = "Facebook";
 	public static final String TWITTER_APP_NAME = "Twitter";
 	public static final String GMAIL_APP_NAME = "Gmail";
+	public static final String INSTAGRAM_APP_NAME = "Instagram";
 	public static final String GOOGLEPLUS_APP_NAME = "Google+";
 	public static final String FACEBOOK_PACKAGE_NAME = "com.facebook.katana";
 	public static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
@@ -39,6 +40,7 @@ public class VueConstants {
 	public static final String GOOGLEPLUS_PACKAGE_NAME = "com.google.android.apps.plus";
 	public static final String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
 	public static final String TWITTER_ACTIVITY_NAME = "com.twitter.android.PostActivity";
+	public static final String INSTAGRAM_ACTIVITY_NAME = "com.instagram.android.activity.MainTabActivity";
 	public static final String GMAIL_ACTIVITY_NAME = "com.google.android.gm.ComposeActivityGmail";
 	public static final String GOOGLEPLUS_ACTIVITY_NAME = "com.google.android.apps.plus.phone.SignOnActivity";
 	public static final String CANCEL_BTN_DISABLE_FLAG = "cancelbuttondisableflag";
