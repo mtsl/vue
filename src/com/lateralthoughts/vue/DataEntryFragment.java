@@ -1588,6 +1588,9 @@ public class DataEntryFragment extends Fragment {
 		aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
 		aisle.setName("Super Aisle");
 		aisle.setOccassion(mOccassionBigText.getText().toString().trim());
+		/*aisle.setmFisrtName("firstName");
+		aisle.setmLastName("LastName");
+		aisle.setmDescription("descreption");
  
 		/*
 		 * aisle.setmFisrtName("Vue"); aisle.setmLastName("TestAisle");
@@ -1824,7 +1827,7 @@ public class DataEntryFragment extends Fragment {
 		Log.i("imageurl", "imageurl adding image to aisle ");
 		VueUser storedVueUser = null;
 		try {
-			storedVueUser = Utils.readObjectFromFile(getActivity(),
+			storedVueUser = Utils.readUserObjectFromFile(getActivity(),
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 		} catch (Exception e2) {
 			e2.printStackTrace();

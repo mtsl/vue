@@ -73,6 +73,7 @@ public class Parser {
 			if (contentArray == null) {
 				return aisleList;
 			}
+			 Log.e("Profiling", "Profiling : response json array: "+contentArray);
 			for (int i = 0; i < contentArray.length(); i++) {
 				userInfo = new AisleContext();
 				JSONObject contentItem = contentArray.getJSONObject(i);
@@ -146,16 +147,27 @@ public class Parser {
 	
 public AisleContext getAisleCotent(String jsonArray){
 	AisleContext aisleContext = new AisleContext();
+	  
     if (null != jsonArray) {
         
         try{
             JSONObject userInfo = new JSONObject(jsonArray);
             aisleContext.mAisleId = userInfo.getString(CONTENT_ID_TAG);
             aisleContext.mCategory = userInfo.getString(ITEM_CATEGORY_TAG);
-            aisleContext.mOccasion = userInfo.getString(OCCASION_TAG);
+         
             aisleContext.mLookingForItem = userInfo
 					.getString(LOOKING_FOR_TAG);
             aisleContext.mUserId = userInfo.getString(CONTENT_ID_TAG);
+            Log.e("Profiling", "Profiling : onResponse() mUserId: "+ aisleContext.mUserId); 
+            Log.e("Profiling", "Profiling : onResponse() mAisleId: "+ aisleContext.mAisleId); 
+            aisleContext.mOccasion = userInfo.getString(OCCASION_TAG);
+         
+            
+            
+ 
+            
+            
+            
         }catch(Exception ex){
         	 Log.e("Profiling", "Profiling : onResponse()################### error");
         	ex.printStackTrace();
@@ -164,6 +176,7 @@ public AisleContext getAisleCotent(String jsonArray){
 	return aisleContext;
 }
 public AisleImageDetails getImageDetails(String jsonArray) throws JSONException {
+	 
 	AisleImageDetails imageItemDetails = new AisleImageDetails();
 	JSONObject userInfo = new JSONObject(jsonArray);
 	imageItemDetails.mDetalsUrl = userInfo

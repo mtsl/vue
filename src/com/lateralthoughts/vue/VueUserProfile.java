@@ -1,6 +1,13 @@
 package com.lateralthoughts.vue;
 
-public class VueUserProfile {
+import java.io.Serializable;
+
+public class VueUserProfile implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public String getUserProfilePicture() {
 		return userProfilePicture;

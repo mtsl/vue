@@ -107,6 +107,12 @@ public class AisleManager {
         };
         Log.i("imageurl", "imageurl  aisle creation request aisleAsString: "+aisleAsString);
         String requestUrl = VUE_API_BASE_URI + CREATE_AISLE_ENDPOINT;
+       
+       
+     
+        Log.i("imageurl", "imageurl  aisle creation request url: "+requestUrl);
+        
+        
         AislePutRequest request = new AislePutRequest(aisleAsString, listener,
                 errorListener,requestUrl);
         VueApplication.getInstance().getRequestQueue().add(request);

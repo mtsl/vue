@@ -22,7 +22,7 @@ public class VueUserManager {
 	}
  
 
-	private String VUE_API_BASE_URI = "http://2-java.vueapi-canary.appspot.com/";
+	public static String VUE_API_BASE_URI = "http://2-java.vueapi-canary.appspot.com/";
  
 	//private String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";

@@ -8,8 +8,9 @@ public class Aisle {
         String mName;
         String mOccassion;
         Long mRefImageId;
-       // String mFisrtName;
-        //String mLastName;
+     /*   String mDescription;
+		String mFisrtName;
+        String mLastName;*/
 
 
 		/** ImageList should never be uploaded with the aisle */
@@ -19,7 +20,7 @@ public class Aisle {
         public Aisle() {}
 
         public Aisle(Long id, String category, String lookingFor, String name,
-                     String occassion, Long refImageId, Long ownerUserId) {
+                     String occassion, Long refImageId, Long ownerUserId,String firstName,String lastName,String descreption) {
             super();
           //  this.id = id;
             this.mCategory = category;
@@ -28,6 +29,9 @@ public class Aisle {
             this.mOccassion = occassion;
             this.mRefImageId = refImageId;
             this.mOwnerUserId = ownerUserId;
+        /*    this.mDescription = descreption;
+            this.mFisrtName = firstName;
+            this.mLastName = lastName;*/
         }
 
        /* public Long getId() {
@@ -38,7 +42,7 @@ public class Aisle {
             this.id = id;
         }*/
 
-     /*   public String getmLastName() {
+ /*       public String getmLastName() {
 			return mLastName;
 		}
 
@@ -52,7 +56,14 @@ public class Aisle {
 
 		public void setmFisrtName(String mFisrtName) {
 			this.mFisrtName = mFisrtName;
-		}*/
+		}
+		  public String getmDescription() {
+				return mDescription;
+			}
+
+			public void setmDescription(String mDescription) {
+				this.mDescription = mDescription;
+			}*/
         public String getCategory() {
             return mCategory;
         }
