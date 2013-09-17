@@ -2,12 +2,16 @@ package com.lateralthoughts.vue;
 
 import java.io.Serializable;
 
+<<<<<<< HEAD
 public class VueUserProfile implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+=======
+public class VueUserProfile implements Serializable{
+>>>>>>> 36ad303e84cdff6a6369ee9c120fc22512e2c32b
 
 	public String getUserProfilePicture() {
 		return userProfilePicture;
