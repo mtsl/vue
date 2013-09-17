@@ -106,7 +106,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		
 		VueUser storedVueUser = null;
 		try {
-			storedVueUser = Utils.readObjectFromFile(
+			storedVueUser = Utils.readUserObjectFromFile(
 					AisleDetailsViewActivity.this,
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 		} catch (Exception e2) {

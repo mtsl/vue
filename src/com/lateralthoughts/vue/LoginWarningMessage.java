@@ -30,7 +30,7 @@ public class LoginWarningMessage {
 		final Dialog dialog = new Dialog(mContext,
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.googleplusappinstallationdialog);
+		dialog.setContentView(R.layout.vue_popup);
 		final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
 		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);

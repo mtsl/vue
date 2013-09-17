@@ -1,5 +1,28 @@
 package com.lateralthoughts.vue;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,13 +40,26 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.*;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.facebook.*;
+import com.facebook.FacebookAuthorizationException;
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
+import com.facebook.Request;
 import com.facebook.Request.Callback;
 import com.facebook.Request.GraphUserCallback;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
@@ -39,6 +75,8 @@ import com.google.android.gms.plus.model.people.PersonBuffer;
 import com.googleplus.MomentUtil;
 import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
+import com.instagram.InstagramApp;
+import com.instagram.InstagramApp.OAuthAuthenticationListener;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
@@ -46,19 +84,6 @@ import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.net.ssl.*;
-import java.io.*;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class VueLoginActivity extends FragmentActivity implements
 		OnSignedInListener, OnPeopleLoadedListener, OnPersonLoadedListener {
@@ -105,6 +130,7 @@ public class VueLoginActivity extends FragmentActivity implements
 			onSessionStateChange(session, state, exception);
 		}
 	};
+	private InstagramApp mInstagramApp = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +145,7 @@ public class VueLoginActivity extends FragmentActivity implements
 			e.printStackTrace();
 		}
 		RelativeLayout googleplusign_in_buttonlayout = (RelativeLayout) findViewById(R.id.googleplusign_in_buttonlayout);
+		RelativeLayout instagramSignInButtonLayout = (RelativeLayout) findViewById(R.id.instagramsign_in_buttonlayout);
 		RelativeLayout fblog_in_buttonlayout = (RelativeLayout) findViewById(R.id.fblog_in_buttonlayout);
 		LoginButton login_button = (LoginButton) findViewById(R.id.login_button);
 		mSocialIntegrationMainLayout = (LinearLayout) findViewById(R.id.socialintegrationmainlayotu);
@@ -193,6 +220,7 @@ public class VueLoginActivity extends FragmentActivity implements
 				} else {
 					mSocialIntegrationMainLayout.setVisibility(View.VISIBLE);
 					googleplusign_in_buttonlayout.setVisibility(View.GONE);
+					instagramSignInButtonLayout.setVisibility(View.GONE);
 					fblog_in_buttonlayout.setVisibility(View.INVISIBLE);
 					cancellayout.setVisibility(View.GONE);
 					login_button.performClick();
@@ -207,15 +235,19 @@ public class VueLoginActivity extends FragmentActivity implements
 						VueConstants.FACEBOOK_LOGIN, false);
 				boolean googleplusloginfalg = mSharedPreferencesObj.getBoolean(
 						VueConstants.GOOGLEPLUS_LOGIN, false);
+				boolean instagramloginfalg = mSharedPreferencesObj.getBoolean(
+						VueConstants.INSTAGRAM_LOGIN, false);
 				if (mFromInviteFriends != null) {
 					if (mFromInviteFriends.equals(VueConstants.FACEBOOK)) {
 						googleplusign_in_buttonlayout.setVisibility(View.GONE);
+						instagramSignInButtonLayout.setVisibility(View.GONE);
 						mFacebookFlag = true;
 					}
 					if (mFromInviteFriends.equals(VueConstants.GOOGLEPLUS)) {
 						mDontCallUserInfoChangesMethod = true;
 						mFromGoogleplusInvitefriends = true;
 						fblog_in_buttonlayout.setVisibility(View.GONE);
+						instagramSignInButtonLayout.setVisibility(View.GONE);
 					}
 				} else if (mFromBezelMenuLogin) {
 					if (fbloginfalg) {
@@ -224,6 +256,9 @@ public class VueLoginActivity extends FragmentActivity implements
 					} else if (googleplusloginfalg) {
 						mFacebookFlag = true;
 						googleplusign_in_buttonlayout.setVisibility(View.GONE);
+					}
+					if (instagramloginfalg) {
+						instagramSignInButtonLayout.setVisibility(View.GONE);
 					}
 				}
 				googleplusign_in_buttonlayout
@@ -239,6 +274,41 @@ public class VueLoginActivity extends FragmentActivity implements
 										mGooglePlusProgressDialog.show();
 									mSignInFragment
 											.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
+								} else {
+									Toast.makeText(
+											VueLoginActivity.this,
+											getResources().getString(
+													R.string.no_network),
+											Toast.LENGTH_LONG).show();
+								}
+							}
+						});
+				instagramSignInButtonLayout
+						.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View arg0) {
+								if (VueConnectivityManager
+										.isNetworkConnected(VueLoginActivity.this)) {
+									mInstagramApp = new InstagramApp(
+											VueLoginActivity.this,
+											getResources()
+													.getString(
+															R.string.instagram_client_id),
+											getResources()
+													.getString(
+															R.string.instagram_client_secret),
+											getResources()
+													.getString(
+															R.string.instagram_callbackurl));
+									mInstagramApp.setListener(listener);
+									if (!mInstagramApp.hasAccessToken()) {
+										mInstagramApp.authorize();
+									} else {
+										Toast.makeText(
+												VueLoginActivity.this,
+												"This User is Already Logged in with Instagram",
+												Toast.LENGTH_LONG);
+									}
 								} else {
 									Toast.makeText(
 											VueLoginActivity.this,
@@ -402,7 +472,8 @@ public class VueLoginActivity extends FragmentActivity implements
 				if (mGooglePlusProgressDialog != null
 						&& mGooglePlusProgressDialog.isShowing())
 					mGooglePlusProgressDialog.dismiss();
-				showAlertMessageForGoolgePlusAppInstalation();
+				showAlertMessageForAppInstalation("Google+",
+						VueConstants.GOOGLEPLUS_PACKAGE_NAME);
 			}
 		}
 
@@ -457,29 +528,33 @@ public class VueLoginActivity extends FragmentActivity implements
 			finish();
 	}
 
-	private void showAlertMessageForGoolgePlusAppInstalation() {
-		final Dialog gplusdialog = new Dialog(this,
-				R.style.Theme_Dialog_Translucent);
-		gplusdialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		gplusdialog.setContentView(R.layout.googleplusappinstallationdialog);
-		TextView noButton = (TextView) gplusdialog.findViewById(R.id.nobutton);
-		TextView okButton = (TextView) gplusdialog.findViewById(R.id.okbutton);
+	private void showAlertMessageForAppInstalation(String appName,
+			final String packageName) {
+		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.vue_popup);
+		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
+		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+		messagetext.setText(getResources().getString(
+				R.string.app_installation_mesg)
+				+ " " + appName + "?");
+		okButton.setText("Install " + appName);
 		okButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				gplusdialog.dismiss();
+				dialog.dismiss();
 				Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
-						.parse("market://details?id="
-								+ VueConstants.GOOGLEPLUS_PACKAGE_NAME));
+						.parse("market://details?id=" + packageName));
 				startActivity(goToMarket);
 			}
 		});
 		noButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				gplusdialog.dismiss();
+				dialog.dismiss();
 			}
 		});
-		gplusdialog.show();
-		gplusdialog.setOnDismissListener(new OnDismissListener() {
+		dialog.show();
+		dialog.setOnDismissListener(new OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface arg0) {
 				finish();
@@ -501,7 +576,7 @@ public class VueLoginActivity extends FragmentActivity implements
 							.getUserManager();
 					VueUser storedVueUser = null;
 					try {
-						storedVueUser = Utils.readObjectFromFile(
+						storedVueUser = Utils.readUserObjectFromFile(
 								VueLoginActivity.this,
 								VueConstants.VUE_APP_USEROBJECT__FILENAME);
 					} catch (Exception e2) {
@@ -516,6 +591,16 @@ public class VueLoginActivity extends FragmentActivity implements
 						} else if (storedVueUser.getUserIdentity().equals(
 								VueUserManager.PreferredIdentityLayer.GPLUS)) {
 							storedVueUser
+									.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS_FB);
+						} else if (storedVueUser
+								.getUserIdentity()
+								.equals(VueUserManager.PreferredIdentityLayer.INSTAGRAM)) {
+							storedVueUser
+									.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.FB_INSTAGRAM);
+						} else if (storedVueUser
+								.getUserIdentity()
+								.equals(VueUserManager.PreferredIdentityLayer.GPLUS_INSTAGRAM)) {
+							storedVueUser
 									.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.ALL_IDS_AVAILABLE);
 						} else {
 							storedVueUser
@@ -526,7 +611,7 @@ public class VueLoginActivity extends FragmentActivity implements
 									@Override
 									public void onUserUpdated(VueUser user) {
 										try {
-											Utils.writeObjectToFile(
+											Utils.writeUserObjectToFile(
 													VueLoginActivity.this,
 													VueConstants.VUE_APP_USEROBJECT__FILENAME,
 													user);
@@ -535,32 +620,13 @@ public class VueLoginActivity extends FragmentActivity implements
 										}
 									}
 								});
-
-                        //test code to check aisle creation
-                        boolean test = true;
-                        if(test){
-                        	  Log.e("AisleCreationTest","Aisle created requestsend!");
-                            AisleManager aisleManager = AisleManager.getAisleManager();
-                            Aisle aisle = new Aisle();
-                            aisle.setCategory("Abstracts");
-                            aisle.setLookingFor("Great software");
-                            aisle.setName("Super Aisle");
-                            aisle.setOccassion("Product Launch");
-                            aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
-                            aisleManager.createEmptyAisle(aisle, new AisleManager.AisleUpdateCallback() {
-                                @Override
-                                public void onAisleUpdated(AisleContext aisleContext,String aisleId) {
-                                    Log.e("AisleCreationTest","Aisle created successfully!");
-                                }
-                            });
-                        }
 					} else {
 						userManager.createFBIdentifiedUser(user,
 								new VueUserManager.UserUpdateCallback() {
 									@Override
 									public void onUserUpdated(VueUser user) {
 										try {
-											Utils.writeObjectToFile(
+											Utils.writeUserObjectToFile(
 													VueLoginActivity.this,
 													VueConstants.VUE_APP_USEROBJECT__FILENAME,
 													user);
@@ -582,25 +648,34 @@ public class VueLoginActivity extends FragmentActivity implements
 					} catch (JSONException e1) {
 						e1.printStackTrace();
 					}
-					editor.putString(
-							VueConstants.FACEBOOK_USER_PROFILE_PICTURE,
-							VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
-									+ user.getId()
-									+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL);
-					editor.putString(
-							VueConstants.FACEBOOK_USER_EMAIL,
-							user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY)
-									+ "");
-					editor.putString(VueConstants.FACEBOOK_USER_NAME,
-							user.getName());
-					editor.putString(VueConstants.FACEBOOK_USER_DOB,
-							user.getBirthday());
-					editor.putString(
-							VueConstants.FACEBOOK_USER_GENDER,
-							user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_GENDER_KEY)
-									+ "");
-					editor.putString(VueConstants.FACEBOOK_USER_LOCATION,
-							location);
+
+					try {
+						VueUserProfile storedUserProfile = Utils
+								.readUserProfileObjectFromFile(
+										VueLoginActivity.this,
+										VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+						if (storedUserProfile == null
+								|| (storedUserProfile != null && !storedUserProfile
+										.isUserDetailsModified())) {
+							VueUserProfile vueUserProfile = new VueUserProfile(
+									VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
+											+ user.getId()
+											+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
+									user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY)
+											+ "",
+									user.getName(),
+									user.getBirthday(),
+									user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_GENDER_KEY)
+											+ "", location, false);
+							Utils.writeUserProfileObjectToFile(
+									VueLoginActivity.this,
+									VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
+									vueUserProfile);
+						}
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+
 					editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
 							session.getAccessToken());
 					editor.putBoolean(VueConstants.VUE_LOGIN, true);
@@ -964,34 +1039,43 @@ public class VueLoginActivity extends FragmentActivity implements
 					VueConstants.SHAREDPREFERENCE_NAME, 0);
 			VueUserManager userManager = VueUserManager.getUserManager();
 			VueUser vueUser = new VueUser(null, person.getDisplayName(), null,
-					mSharedPreferencesObj.getString(
+					null, mSharedPreferencesObj.getString(
 							VueConstants.GOOGLEPLUS_USER_EMAIL, null));
+			vueUser.setUsersName(person.getDisplayName(), "");
 			VueUser storedVueUser = null;
 			try {
-				storedVueUser = Utils.readObjectFromFile(VueLoginActivity.this,
+				storedVueUser = Utils.readUserObjectFromFile(
+						VueLoginActivity.this,
 						VueConstants.VUE_APP_USEROBJECT__FILENAME);
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
 			if (storedVueUser != null) {
+				vueUser.setDeviceId(storedVueUser.getDeviceId());
+				vueUser.setFacebookId(storedVueUser.getFacebookId());
+				vueUser.setInstagramId(storedVueUser.getInstagramId());
+				vueUser.setVueUserId(storedVueUser.getVueId());
 				if (storedVueUser.getUserIdentity().equals(
 						VueUserManager.PreferredIdentityLayer.DEVICE_ID)) {
 					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS);
-					vueUser.setDeviceId(storedVueUser.getDeviceId());
 				} else if (storedVueUser.getUserIdentity().equals(
 						VueUserManager.PreferredIdentityLayer.FB)) {
+					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS_FB);
+				} else if (storedVueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.INSTAGRAM)) {
+					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS_INSTAGRAM);
+				} else if (storedVueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.FB_INSTAGRAM)) {
 					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.ALL_IDS_AVAILABLE);
-					vueUser.setFacebookId(storedVueUser.getFacebookId());
 				} else {
 					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS);
 				}
-				vueUser.setVueUserId(storedVueUser.getVueId());
 				userManager.updateGooglePlusIdentifiedUser(vueUser,
 						new UserUpdateCallback() {
 							@Override
 							public void onUserUpdated(VueUser user) {
 								try {
-									Utils.writeObjectToFile(
+									Utils.writeUserObjectToFile(
 											VueLoginActivity.this,
 											VueConstants.VUE_APP_USEROBJECT__FILENAME,
 											user);
@@ -1006,7 +1090,7 @@ public class VueLoginActivity extends FragmentActivity implements
 							@Override
 							public void onUserUpdated(VueUser user) {
 								try {
-									Utils.writeObjectToFile(
+									Utils.writeUserObjectToFile(
 											VueLoginActivity.this,
 											VueConstants.VUE_APP_USEROBJECT__FILENAME,
 											user);
@@ -1018,12 +1102,138 @@ public class VueLoginActivity extends FragmentActivity implements
 							}
 						});
 			}
-			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
-			editor.putString(VueConstants.GOOGLEPLUS_USER_NAME,
-					person.getDisplayName());
-			editor.putString(VueConstants.GOOGLEPLUS_USER_PROFILE_PICTURE,
-					person.getImage().getUrl());
-			editor.commit();
+			try {
+				if (Utils.readUserProfileObjectFromFile(this,
+						VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME) == null) {
+					VueUserProfile vueUserProfile = new VueUserProfile(person
+							.getImage().getUrl(),
+							mSharedPreferencesObj.getString(
+									VueConstants.GOOGLEPLUS_USER_EMAIL, null),
+							person.getDisplayName(), null, null, null, false);
+					Utils.writeUserProfileObjectToFile(this,
+							VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
+							vueUserProfile);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
+
+	OAuthAuthenticationListener listener = new OAuthAuthenticationListener() {
+
+		@Override
+		public void onSuccess() {
+			saveInstagramUserDetails();
+		}
+
+		@Override
+		public void onFail(String error) {
+			Toast.makeText(VueLoginActivity.this, error, Toast.LENGTH_SHORT)
+					.show();
+		}
+	};
+
+	private void saveInstagramUserDetails() {
+		if (mInstagramApp != null) {
+			mSharedPreferencesObj = this.getSharedPreferences(
+					VueConstants.SHAREDPREFERENCE_NAME, 0);
+			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
+			editor.putBoolean(VueConstants.VUE_LOGIN, true);
+			editor.putBoolean(VueConstants.INSTAGRAM_LOGIN, true);
+			editor.commit();
+
+			VueUserManager userManager = VueUserManager.getUserManager();
+			VueUser vueUser = new VueUser(null, null, mInstagramApp.getName(),
+					null, null);
+			vueUser.setUsersName(mInstagramApp.getName(), "");
+			VueUser storedVueUser = null;
+			try {
+				storedVueUser = Utils.readUserObjectFromFile(
+						VueLoginActivity.this,
+						VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+			if (storedVueUser != null) {
+				vueUser.setDeviceId(storedVueUser.getDeviceId());
+				vueUser.setFacebookId(storedVueUser.getFacebookId());
+				vueUser.setEmailId(storedVueUser.getEmailId());
+				vueUser.setGooglePlusId(storedVueUser.getGooglePlusId());
+				vueUser.setVueUserId(storedVueUser.getVueId());
+				if (storedVueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.DEVICE_ID)) {
+					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.INSTAGRAM);
+				} else if (storedVueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.FB)) {
+					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.FB_INSTAGRAM);
+				} else if (storedVueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.GPLUS)) {
+					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.GPLUS_INSTAGRAM);
+				} else if (storedVueUser.getUserIdentity().equals(
+						VueUserManager.PreferredIdentityLayer.GPLUS_FB)) {
+					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.ALL_IDS_AVAILABLE);
+				} else {
+					vueUser.setUserIdentityMethod(VueUserManager.PreferredIdentityLayer.INSTAGRAM);
+				}
+				userManager.updateInstagramIdentifiedUser(vueUser,
+						new UserUpdateCallback() {
+							@Override
+							public void onUserUpdated(VueUser user) {
+								try {
+									Utils.writeUserObjectToFile(
+											VueLoginActivity.this,
+											VueConstants.VUE_APP_USEROBJECT__FILENAME,
+											user);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+			} else {
+				userManager.createInstagramIdentifiedUser(vueUser,
+						new VueUserManager.UserUpdateCallback() {
+							@Override
+							public void onUserUpdated(VueUser user) {
+								try {
+									Utils.writeUserObjectToFile(
+											VueLoginActivity.this,
+											VueConstants.VUE_APP_USEROBJECT__FILENAME,
+											user);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								Log.e("Vue User Creation",
+										"callback from successful user creation");
+							}
+						});
+			}
+
+			try {
+				if (Utils.readUserProfileObjectFromFile(this,
+						VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME) == null) {
+					VueUserProfile vueUserProfile = new VueUserProfile(
+							mInstagramApp.getProfilePicture(),
+							mInstagramApp.getUserName(),
+							mInstagramApp.getName(), null, null, null, false);
+					Utils.writeUserProfileObjectToFile(this,
+							VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
+							vueUserProfile);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			Toast.makeText(VueLoginActivity.this,
+					mInstagramApp.getName() + "is succeffully Logged in.",
+					Toast.LENGTH_SHORT).show();
+			if (!Utils.appInstalledOrNot(VueConstants.INSTAGRAM_PACKAGE_NAME,
+					this)) {
+				showAlertMessageForAppInstalation("Instagram",
+						VueConstants.INSTAGRAM_PACKAGE_NAME);
+			} else {
+				finish();
+			}
+		}
+	}
+
 }

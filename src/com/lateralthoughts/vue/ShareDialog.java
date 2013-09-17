@@ -55,6 +55,7 @@ public class ShareDialog {
 	public boolean mShareIntentCalled = false;
 	private Dialog mDialog;
 	private String mName;
+	private int mCurrentAislePosition;
 	private ArrayList<clsShare> mImagePathArray;
 	private ProgressDialog mShareDialog;
 	private static final String TAG = "ShareDialog";
@@ -76,10 +77,11 @@ public class ShareDialog {
 	}
 
 	public void share(ArrayList<clsShare> imagePathArray, String aisleTitle,
-			String name) {
+			String name, int currentAislePosition) {
 		mShareIntentCalled = false;
 		this.mImagePathArray = imagePathArray;
 		this.mName = name;
+		mCurrentAislePosition = currentAislePosition;
 		prepareShareIntentData();
 		openScreenDialog();
 	}
@@ -215,6 +217,9 @@ public class ShareDialog {
 					VueConstants.GMAIL_APP_NAME)) {
 				shareImageAndText(position);
 			} else if (mAppNames.get(position).equalsIgnoreCase(
+					VueConstants.INSTAGRAM_APP_NAME)) {
+				shareSingleImage(position, mCurrentAislePosition);
+			} else if (mAppNames.get(position).equalsIgnoreCase(
 					VueConstants.TWITTER_APP_NAME)) {
 				shareText(position);
 			}
@@ -230,7 +235,7 @@ public class ShareDialog {
 		final Dialog gplusdialog = new Dialog(mContext,
 				R.style.Theme_Dialog_Translucent);
 		gplusdialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		gplusdialog.setContentView(R.layout.googleplusappinstallationdialog);
+		gplusdialog.setContentView(R.layout.vue_popup);
 		TextView messagetext = (TextView) gplusdialog
 				.findViewById(R.id.messagetext);
 		if (!fberror)
@@ -323,6 +328,77 @@ public class ShareDialog {
 				} else if (mAppNames.get(position).equals(
 						VueConstants.TWITTER_APP_NAME)) {
 					activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+				} else if (mAppNames.get(position).equals(
+						VueConstants.INSTAGRAM_APP_NAME)) {
+					activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
+				}
+				mSendIntent.setClassName(mPackageNames.get(position),
+						activityname);
+				mActivity.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						mScreenDialog.setCancelable(true);
+						mActivity.startActivityForResult(mSendIntent,
+								VueConstants.SHARE_INTENT_REQUEST_CODE);
+					}
+				});
+			}
+		});
+		t.start();
+	}
+
+	private void shareSingleImage(final int position,
+			final int currentAislePosition) {
+		mDialog.dismiss();
+		mShareIntentCalled = true;
+		mShareDialog.show();
+		Thread t = new Thread(new Runnable() {
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			@Override
+			public void run() {
+				Uri imageUri = null;
+				if (mImagePathArray != null && mImagePathArray.size() > 0) {
+					final File f = new File(mImagePathArray.get(
+							currentAislePosition).getFilepath());
+					if (!f.exists()) {
+						Response.Listener listener = new Response.Listener<Bitmap>() {
+							@Override
+							public void onResponse(Bitmap bmp) {
+								Utils.saveBitmap(bmp, f);
+							}
+						};
+						Response.ErrorListener errorListener = new Response.ErrorListener() {
+							@Override
+							public void onErrorResponse(VolleyError arg0) {
+								Log.e(TAG, arg0.getMessage());
+							}
+						};
+						if (mImagePathArray.get(currentAislePosition)
+								.getImageUrl() != null) {
+							ImageRequest imagerequestObj = new ImageRequest(
+									mImagePathArray.get(currentAislePosition)
+											.getImageUrl(), listener, 0, 0,
+									null, errorListener);
+							VueApplication.getInstance().getRequestQueue()
+									.add(imagerequestObj);
+						}
+					}
+					imageUri = Uri.fromFile(f);
+				}
+				mSendIntent.setType("image/*");
+				mSendIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+				String activityname = null;
+				if (mAppNames.get(position).equals(VueConstants.GMAIL_APP_NAME)) {
+					activityname = VueConstants.GMAIL_ACTIVITY_NAME;
+				} else if (mAppNames.get(position).equals(
+						VueConstants.GOOGLEPLUS_APP_NAME)) {
+					activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
+				} else if (mAppNames.get(position).equals(
+						VueConstants.TWITTER_APP_NAME)) {
+					activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+				} else if (mAppNames.get(position).equals(
+						VueConstants.INSTAGRAM_APP_NAME)) {
+					activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
 				}
 				mSendIntent.setClassName(mPackageNames.get(position),
 						activityname);
@@ -356,6 +432,9 @@ public class ShareDialog {
 		} else if (mAppNames.get(position).equals(
 				VueConstants.GOOGLEPLUS_APP_NAME)) {
 			activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
+		} else if (mAppNames.get(position).equals(
+				VueConstants.INSTAGRAM_APP_NAME)) {
+			activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
 		}
 		mSendIntent.setClassName(mPackageNames.get(position), activityname);
 		mScreenDialog.setCancelable(true);

@@ -986,9 +986,13 @@ public class DataEntryFragment extends Fragment {
 						VueApplication.getInstance().mAisleImagePathList.get(i));
 				imageUrlList.add(shareObj);
 			}
-			mShare.share(imageUrlList, "", "");
+			if (mDataEntryAislesViewpager != null) {
+				mShare.share(imageUrlList, "", "",
+						mDataEntryAislesViewpager.getCurrentItem());
+			} else {
+				mShare.share(imageUrlList, "", "", 0);
+			}
 		}
-
 	}
 
 	public void addImageToAisleButtonClickFunctionality() {
@@ -1013,7 +1017,7 @@ public class DataEntryFragment extends Fragment {
 		final Dialog dialog = new Dialog(getActivity(),
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.googleplusappinstallationdialog);
+		dialog.setContentView(R.layout.vue_popup);
 		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
 		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
@@ -1045,7 +1049,7 @@ public class DataEntryFragment extends Fragment {
 		final Dialog dialog = new Dialog(getActivity(),
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.googleplusappinstallationdialog);
+		dialog.setContentView(R.layout.vue_popup);
 		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
 		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
@@ -1572,19 +1576,19 @@ public class DataEntryFragment extends Fragment {
 				"create ailse functionality addAilse");
 		VueUser storedVueUser = null;
 		try {
-			storedVueUser = Utils.readObjectFromFile(getActivity(),
+			storedVueUser = Utils.readUserObjectFromFile(getActivity(),
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
 		AisleManager aisleManager = AisleManager.getAisleManager();
 		Aisle aisle = new Aisle();
-		//aisle.setCategory(mCategoryText.getText().toString().trim());
-		aisle.setCategory("occasion");
-
+ 
+		aisle.setCategory(mCategoryText.getText().toString().trim());
 		aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
 		aisle.setName("Super Aisle");
 		aisle.setOccassion(mOccassionBigText.getText().toString().trim());
+ 
 		/*
 		 * aisle.setmFisrtName("Vue"); aisle.setmLastName("TestAisle");
 		 */
@@ -1594,12 +1598,14 @@ public class DataEntryFragment extends Fragment {
 			mImagePath = s;
 			Log.i("imageurl", "imageurl  from other sources:  " + mImagePath);
 		}
+ 
 		mImageList.add(getImage(mImagePath, 340, 340, "dummy", 12345L, 123L));
 		Log.i("userid", "userid123456 null check storedVueUser: "
 				+ storedVueUser);
 		if (storedVueUser != null) {
 			aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
 		}
+ 
 		VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance())
 				.getNetworkHandler()
@@ -1645,6 +1651,7 @@ public class DataEntryFragment extends Fragment {
 			return;
 		}
 		Log.i("addimagetoaisle", "addimagetoaisle  method call2");
+ 
 		AisleManager aisleManager = AisleManager.getAisleManager();
 		aisleManager.addImageToAisle(image,
 				new AisleManager.ImageAddedCallback() {
@@ -1775,6 +1782,7 @@ public class DataEntryFragment extends Fragment {
 
 	// create aisle window and add to list so that aisle will be visible in
 	// list.
+ 
 	private void setAisleContent(AisleContext userInfo, final String aisleId) {
 		Log.i("imageurl", "imageurl  aisle creation success ");
 		aisleItem = VueTrendingAislesDataModel.getInstance(getActivity())
@@ -1785,6 +1793,7 @@ public class DataEntryFragment extends Fragment {
 		boolean isFirstImage = true;
 		addImageToAisle(image, aisleId, isFirstImage);
 		// VueTrendingAislesDataModel.getInstance(getActivity()).insertNewAisleToDb(aisleId);
+ 
 	}
 
 	private Bitmap saveBitmap(String sourcePath, String destPath) {
@@ -1805,6 +1814,7 @@ public class DataEntryFragment extends Fragment {
 	// response add immediately after that send that image data to the back end.
 	// because to create an aisle requires aisle id but to add image need not
 	// wait for server response.
+ 
 	private void addImageToAisle(VueImage image, final String aisleId,
 			final boolean isFirstImage) {
 		// Bitmap bmp = saveBitmap(image.getImageUrl(), image.getImageUrl());
@@ -1929,6 +1939,7 @@ public class DataEntryFragment extends Fragment {
 		Log.i("imageurl", "imageurl hashcode " + f.getPath());
 		Log.i("imageurl", "imageurl imagepath " + imagePath);
 		Utils.saveBitmap(bmp, f);
+ 
 
 	}
 }

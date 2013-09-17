@@ -16,12 +16,24 @@ import android.util.Log;
 
 public class VueUser implements Serializable {
 
-    private String mVueId;
-	public VueUser(String facebookId, String googlePlusId, String deviceId,
-			String emailId) {
+	private String mVueId;
+
+	public String getInstagramId() {
+		return mInstagramId;
+	}
+
+	public void setInstagramId(String mInstagramId) {
+		this.mInstagramId = mInstagramId;
+	}
+
+	private String mInstagramId;
+
+	public VueUser(String facebookId, String googlePlusId, String instagramId,
+			String deviceId, String emailId) {
 		mEmailId = emailId;
 		mFacebookId = facebookId;
 		mGooglePlusId = googlePlusId;
+		mInstagramId = instagramId;
 		mDeviceId = deviceId;
 	}
 
@@ -29,14 +41,15 @@ public class VueUser implements Serializable {
 
 	}
 
-    public void setVueUserId(String vueId){
-        mVueId = vueId;
-    }
+	public void setVueUserId(String vueId) {
+		mVueId = vueId;
+	}
 
-    public String getVueId(){
-    	Log.i("userid", "userid123456: "+mVueId);
-        return mVueId;
-    }
+	public String getVueId() {
+		Log.i("userid", "userid123456: " + mVueId);
+		return mVueId;
+	}
+
 	public void setUsersName(String firstName, String lastName) {
 		mFirstName = firstName;
 		mLastName = lastName;
@@ -75,6 +88,15 @@ public class VueUser implements Serializable {
 
 	private String mFacebookId;
 	private String mGooglePlusId;
+
+	public String getmFirstName() {
+		return mFirstName;
+	}
+
+	public String getmLastName() {
+		return mLastName;
+	}
+
 	private String mFirstName;
 	private String mLastName;
 	private Locale mUserLocale;
