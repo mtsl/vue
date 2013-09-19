@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.utils.UrlConstants;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -37,10 +38,10 @@ public class AisleManager {
     public interface ImageAddedCallback {
     	 public void onImageAdded(AisleImageDetails imageDetails);
     }
-    private static String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
+   // private static String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
     
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
-    private static String CREATE_AISLE_ENDPOINT = "api/aislecreate";
+    //private static String CREATE_AISLE_ENDPOINT = "api/aislecreate";
     private String CREATE_IMAGE_ENDPOINT = "imagecreate";
     private static AisleManager sAisleManager = null;
    
@@ -107,8 +108,8 @@ public class AisleManager {
             }
         };
         Log.i("imageurl", "imageurl  aisle creation request aisleAsString: "+aisleAsString);
-        String requestUrl = VUE_API_BASE_URI + CREATE_AISLE_ENDPOINT;
-       
+       // String requestUrl = VUE_API_BASE_URI + CREATE_AISLE_ENDPOINT;
+        String requestUrl = UrlConstants.CREATE_AISLE_RESTURL;
        
      
         Log.i("imageurl", "imageurl  aisle creation request url: "+requestUrl);
@@ -126,7 +127,7 @@ public class AisleManager {
     	
     }
 //issues a request to add an image to the aisle.
-	public void addImageToAisle(VueImage image, final ImageAddedCallback callback) {
+	public void addImageToAisle(VueImage image, final ImageAddedCallback callback) {/*
 		Log.i("addimagetoaisle", "addimagetoaisle1");
 		if (null == image) {
 			throw new RuntimeException(
@@ -170,7 +171,7 @@ public class AisleManager {
 		AislePutRequest request = new AislePutRequest(imageAsString, listener,
 				errorListener, VUE_API_BASE_URI + CREATE_IMAGE_ENDPOINT);
 		VueApplication.getInstance().getRequestQueue().add(request);
-	}
+	*/}
     private class AislePutRequest extends Request<String> {
         // ... other methods go here
         private Map<String, String> mParams;

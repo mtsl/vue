@@ -86,7 +86,7 @@ public class VueContentGateway {
 		Log.i("datarequest", "datarequest parsing data offset: " + offset
 				+ "  limit: " + limit);
 		mParams.clear();
-		StringBuilder baseUri = new StringBuilder();
+/*		StringBuilder baseUri = new StringBuilder();
 
 		addParams(mLimitTag, String.valueOf(limit));
 		addParams(mOffsetTag, String.valueOf(offset));
@@ -95,7 +95,7 @@ public class VueContentGateway {
 		// we want to get the current trending aisles
 		baseUri.append(mTrendingAislesTag);
 		if (DEBUG)
-			Log.e(TAG, "uri we are sending = " + baseUri.toString());
+			Log.e(TAG, "uri we are sending = " + baseUri.toString());*/
 
 		boolean isConnection = VueConnectivityManager
 				.isNetworkConnected(mContext);
@@ -116,13 +116,12 @@ public class VueContentGateway {
 
 			// String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI +
 			// "aisle/trending?limit=%s&offset=%s";
-			String requestUrl = VUE_CONTENT_PROVIDER_BASE_URI + "/" + limit
+			final String requestUrl = VUE_CONTENT_PROVIDER_BASE_URI + "/" + limit
 					+ "/" + offset; /*
 									 * String.format(requestUrlBase, limit,
 									 * offset);
 									 */
-			Log.e("VueNetworkError", "Vue encountered network requestUrl = "
-					+ requestUrl);
+			Log.i("Gateway", "jsonresponse trendig requestUrl:  " + requestUrl);
 			Response.Listener listener = new Response.Listener<JSONArray>() {
 				@Override
 				public void onResponse(JSONArray jsonArray) {
@@ -142,6 +141,7 @@ public class VueContentGateway {
 					Bundle responseBundle = new Bundle();
 					responseBundle.putString("result", "error");
 					receiver.send(1, responseBundle);
+					Log.i("Gateway", "jsonresponse trendig error response:  "   );
 					Log.e("VueNetworkError",
 							"Vue encountered network operations error. Error = "
 									+ error.networkResponse);
@@ -162,10 +162,11 @@ public class VueContentGateway {
 											 * ,"application/json"); return
 											 * headersMap; } }
 											 */;
-
+	 
+			
+			
 			VueApplication.getInstance().getRequestQueue().add(vueRequest);
-
-			// mContext.startService(intent);
+ 
 		}
 		return status;
 	}

@@ -1,0 +1,29 @@
+package com.lateralthoughts.vue.utils;
+
+public class UrlConstants {
+	private static final String SERVER_BASE_URL = "http://2-java.vueapi-canary-development1.appspot.com/";
+	/**
+	 * (C)reate routine URL's
+	 */
+	public static final String CREATE_USER_RESTURL = SERVER_BASE_URL
+			+ "api/usercreate/trial";
+
+	public static final String CREATE_AISLE_RESTURL = SERVER_BASE_URL
+			+ "api/aislecreate";
+
+	public static final String GET_AISLE_RESTURL = SERVER_BASE_URL
+			+ "api/aisleget/id";
+	public static final String GET_AISLELIST_BYUSER_RESTURL = SERVER_BASE_URL
+			+ "api/aislesget/user";
+	public static final String GET_IMAGELIST_RESTURL = SERVER_BASE_URL
+			+ "api/imagesget/aisle";
+
+	public static final String GET_TRENDINGAISLES_RESTURL = SERVER_BASE_URL
+			+ "api/trendingaislesgetorderedbytime";
+ 
+	public static final String SEARCH_BY_KEYWORD_BASE_URL = SERVER_BASE_URL
+			+ "api/getaisleswithmatchingoccassion/";
+	public static final String SEARCH_BY_USER = SERVER_BASE_URL
+			+ "api/getaisleswithmatchingfacebookORGPlus/";
+
+}
