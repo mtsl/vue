@@ -101,23 +101,24 @@ public class ContentLoader {
     				viewFlipper.addView(imageView);
     			}
     			else{
-    				loadBitmap(itemDetails.mCustomImageUrl, viewFlipper, imageView);
+    				loadBitmap(itemDetails.mCustomImageUrl, itemDetails.mImageUrl, viewFlipper, imageView);
     				//imageView.setImageDrawable(new DownloadDrawable());
     			}
             }
         }
     }
     
-    public void loadBitmap(String loc, ViewFlipper flipper, ImageView imageView) {
+    public void loadBitmap(String loc, String serverImageUrl, ViewFlipper flipper, ImageView imageView) {
         if (cancelPotentialDownload(loc, imageView)) {
             BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView);
             DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
             imageView.setImageDrawable(downloadedDrawable);
-            task.execute(loc);
+            String[] imageArray = {loc, serverImageUrl};
+            task.execute(imageArray);
         }
     }
     
-    private Bitmap getBitmap(String url) 
+    private Bitmap getBitmap(String url, String serverUrl) 
     {
         File f = fileCache.getFile(url);
         
@@ -129,7 +130,7 @@ public class ContentLoader {
         //from web
         try {
             Bitmap bitmap=null;
-            URL imageUrl = new URL(url);
+            URL imageUrl = new URL(serverUrl);
             HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
             conn.setConnectTimeout(30000);
             conn.setReadTimeout(30000);
@@ -226,6 +227,7 @@ public class ContentLoader {
         private final WeakReference<ViewFlipper>viewFlipperReference;
         //private final ImageView mImageView; //imageViewReference;
         private String url = null;
+        private String serverUrl = null;
 
         public BitmapWorkerTask(ViewFlipper vFlipper, ImageView imageView) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
@@ -238,8 +240,9 @@ public class ContentLoader {
         @Override
         protected Bitmap doInBackground(String... params) {
             url = params[0];
+            serverUrl = params[1];
             Bitmap bmp = null;            
-            bmp = getBitmap(url); 
+            bmp = getBitmap(url, serverUrl); 
             mAisleImagesCache.put(url, bmp);
             return bmp;            
         }

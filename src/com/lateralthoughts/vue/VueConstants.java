@@ -8,6 +8,7 @@ import android.net.Uri;
  */
 public class VueConstants {
 
+	public static final String GET_IMAGES_FOR_AISLE = "http://2-java.vueapi-canary-development1.appspot.com/api/imagesget/aisle/";
 	public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
 	public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
 	public static final String VUE_LOGIN = "VueLoginFlag";
@@ -72,7 +73,7 @@ public class VueConstants {
 	public static final String LIKE_OR_DISLIKE = "likeOrDislike";
 	public static final String LIKES_COUNT = "likesCount";
 	public static final String DIRTY_FLAG = "isDirtry";
-	public static final String AISLE_ID = "aisleId";
+	public static final String AISLE_Id = "aisleId";
 	public static final String DELETE_FLAG = "deleteFlag";
 	// Column names for aisles images.
 	public static final String TITLE = "title";
@@ -154,4 +155,28 @@ public class VueConstants {
 	public static final String FACEBOOK_GRAPHIC_OBJECT_GENDER_KEY = "gender";
 	public static final String DATA_ENTRY_INVITE_FRIENDS_BUNDLE_FROM_GOOGLEPLUS_FLAG_KEY = "dataentryinvitefriendsbundlefromgoogleplusflagkey";
 	public static final String DATA_ENTRY_INVITE_FRIENDS_BUNDLE_FROM_FILE_PATH_ARRAY_KEY = "dataentryinvitefriendsbundlepatharraykey";
+	// Aisle Response Keys
+	public static final String AISLE_ID = "id";
+	public static final String AISLE_CATEGORY = "category";
+	public static final String AISLE_LOOKINGFOR = "lookingFor";
+	public static final String AISLE_NAME = "name";
+	public static final String AISLE_OCCASSION = "occassion";
+	public static final String AISLE_OWNER_USER_ID = "ownerUserId";
+	public static final String AISLE_OWNER_FIRSTNAME = "aisleOwnerFirstName";
+	public static final String AISLE_OWNER_LASTNAME = "aisleOwnerLastName";
+	public static final String AISLE_BOOKMARK_COUNT = "bookmarkCount";
+	// Aisle Images Response Keys
+	public static final String AISLE_IMAGE_ID = "id";
+	public static final String AISLE_IMAGE_OWNERUSER_ID = "ownerUserId";
+	public static final String AISLE_IMAGE_OWNER_AISLE_ID = "ownerAisleId";
+	public static final String AISLE_IMAGE_DETAILS_URL = "detailsUrl";
+	public static final String AISLE_IMAGE_HEIGHT = "height";
+	public static final String AISLE_IMAGE_WIDTH = "width";
+	public static final String AISLE_IMAGE_IMAGE_URL = "imageUrl";
+	public static final String AISLE_IMAGE_RATING = "rating";
+	public static final String AISLE_IMAGE_STORE = "store";
+	public static final String AISLE_IMAGE_TITLE = "title";
+	// Reciver constants
+	public static final int AISLE_TRENDING_LIST_DATA = 1;
+	public static final int AISLE_TRENDING_PARSED_DATA = 2;
 }

@@ -13,6 +13,9 @@ public class AisleImageDetails {
 	public int mAvailableWidth;
 	//TODO: remove this assignment when real count available.
 	public int mLikesCount = 5;
+	public String mOwnerUserId;
+	public String mOwnerAisleId;
+	public String mRating;
 	public int mLikeDislikeStatus = AisleDetailsViewAdapter.IMG_NONE_STATUS;
 	public ArrayList<String> mCommentsList;
 	                         

@@ -1,7 +1,7 @@
 package com.lateralthoughts.vue;
 
 public class AisleContext {
-	
+
 	public String mFirstName;
 	public String mLastName;
 	public long mJoinTime;
@@ -12,4 +12,6 @@ public class AisleContext {
 	public String mAisleId;
 	public String mUserId;
 	public String mCategory;
+	public String mName;
+	public int mBookmarkCount;
 }

@@ -56,7 +56,7 @@ public class NetworkHandler {
 	public NetworkHandler(Context context) {
 		mContext = context;
 		mVueContentGateway = VueContentGateway.getInstance();
-		mTrendingAislesParser = new TrendingAislesContentParser(new Handler());
+		mTrendingAislesParser = new TrendingAislesContentParser(new Handler(), VueConstants.AISLE_TRENDING_LIST_DATA);
 		mDbManager = DataBaseManager.getInstance(mContext);
 		mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
 		mOffset = 0;
@@ -202,7 +202,6 @@ public class NetworkHandler {
 			msg.obj = aisleContentArray;
 			mHandler.sendMessage(msg);
 		} else {
-			mOffset = 101;
 			Log.i("Gateway", "loadInitialData:  " + loadMore);
 			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 					mTrendingAislesParser, loadMore);

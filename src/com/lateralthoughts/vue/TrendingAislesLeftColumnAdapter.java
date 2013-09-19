@@ -152,6 +152,7 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);
+        Log.i("Left adapter", "Context fn ln " + context.mFirstName + "??? " + context.mLastName + "??? "  + sb);
         holder.aisleOwnersName.setText(sb.toString());
         StringBuilder contextBuilder = new StringBuilder();
         contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem);

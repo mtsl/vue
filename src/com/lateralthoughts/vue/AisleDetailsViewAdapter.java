@@ -782,14 +782,14 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		}
 	}
 
-	public ArrayList<String> getImageList() {
-		ArrayList<String> imageList = new ArrayList<String>();
-		for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
+	public ArrayList<AisleImageDetails> getImageList() {
+		//ArrayList<String> imageList = new ArrayList<String>();
+		/*for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
 				.size(); i++) {
 			imageList
 					.add(getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl);
-		}
-		return imageList;
+		}*/
+		return getItem(mCurrentAislePosition).getImageList();
 	}
 
 	public void sendDataToDb(int imgPosition, String reqType) {

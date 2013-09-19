@@ -69,13 +69,13 @@ public class DataBaseManager {
   public static void addTrentingAislesFromServerToDB(Context context, List<AisleWindowContent> contentList) {
 	  int imgCount = 0;
     Cursor aisleIdCursor = context.getContentResolver().query(
-        VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_ID}, null,
+        VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id}, null,
         null, null);
     ArrayList<String> aisleIds = new ArrayList<String>();
     if (aisleIdCursor.moveToFirst()) {
       do {
         aisleIds.add(aisleIdCursor.getString(aisleIdCursor
-            .getColumnIndex(VueConstants.AISLE_ID)));
+            .getColumnIndex(VueConstants.AISLE_Id)));
       } while (aisleIdCursor.moveToNext());
     }
     int aislesCount = contentList.size();
@@ -104,11 +104,11 @@ public class DataBaseManager {
       values.put(VueConstants.LOOKING_FOR, info.mLookingForItem);
       values.put(VueConstants.OCCASION, info.mOccasion);
       values.put(VueConstants.USER_ID, info.mUserId);
-      values.put(VueConstants.AISLE_ID, info.mAisleId);
+      values.put(VueConstants.AISLE_Id, info.mAisleId);
       values.put(VueConstants.DELETE_FLAG, 0);
       if (aisleIds.contains(info.mAisleId)) {
         context.getContentResolver().update(VueConstants.CONTENT_URI, values,
-            VueConstants.AISLE_ID + "=?", new String[] {info.mAisleId});
+            VueConstants.AISLE_Id + "=?", new String[] {info.mAisleId});
       } else {
         values.put(VueConstants.ID, String.format(FORMATE, maxId + 1));
         context.getContentResolver().insert(VueConstants.CONTENT_URI, values);
@@ -123,10 +123,10 @@ public class DataBaseManager {
         imgValues.put(VueConstants.WIDTH, imageDetails.mAvailableWidth);
         imgValues.put(VueConstants.STORE, imageDetails.mStore);
         imgValues.put(VueConstants.USER_ID, info.mUserId);
-        imgValues.put(VueConstants.AISLE_ID, info.mAisleId);
+        imgValues.put(VueConstants.AISLE_Id, info.mAisleId);
         if (aisleIds.contains(info.mAisleId)) {
           context.getContentResolver().update(VueConstants.IMAGES_CONTENT_URI,
-              imgValues, VueConstants.AISLE_ID + "=?",
+              imgValues, VueConstants.AISLE_Id + "=?",
               new String[] {info.mAisleId});
         } else {
           imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
@@ -174,7 +174,7 @@ public class DataBaseManager {
       for (int i = 1; i < aislesIds.length; i++) {
         questionSymbols = questionSymbols + ",?";
       }
-      selection = VueConstants.AISLE_ID + " IN (" + questionSymbols + ") ";
+      selection = VueConstants.AISLE_Id + " IN (" + questionSymbols + ") ";
       args = aislesIds;
     }
     Cursor aislesCursor = mContext.getContentResolver().query(
@@ -183,7 +183,7 @@ public class DataBaseManager {
       do {
         userInfo = new AisleContext();
         userInfo.mAisleId = aislesCursor.getString(aislesCursor
-            .getColumnIndex(VueConstants.AISLE_ID));
+            .getColumnIndex(VueConstants.AISLE_Id));
         userInfo.mUserId = aislesCursor.getString(aislesCursor
             .getColumnIndex(VueConstants.USER_ID));
         userInfo.mFirstName = aislesCursor.getString(aislesCursor
@@ -210,7 +210,7 @@ public class DataBaseManager {
       if (aisleImagesCursor.moveToFirst()) {
         do {
           if (aisleImagesCursor.getString(
-              aisleImagesCursor.getColumnIndex(VueConstants.AISLE_ID)).equals(
+              aisleImagesCursor.getColumnIndex(VueConstants.AISLE_Id)).equals(
               (String) pairs.getKey())) {
             imageItemDetails = new AisleImageDetails();
             imageItemDetails.mTitle = aisleImagesCursor
@@ -300,12 +300,12 @@ public class DataBaseManager {
     ContentValues aisleValues = new ContentValues();
     aisleValues.put(VueConstants.DIRTY_FLAG, true);
     mContext.getContentResolver().update(VueConstants.CONTENT_URI, aisleValues,
-        VueConstants.AISLE_ID + "=?", new String[] {aisleID});
+        VueConstants.AISLE_Id + "=?", new String[] {aisleID});
     mContext.getContentResolver().update(VueConstants.IMAGES_CONTENT_URI,
-        aisleValues, VueConstants.AISLE_ID + "=?", new String[] {aisleID});
+        aisleValues, VueConstants.AISLE_Id + "=?", new String[] {aisleID});
     aisleValues.put(VueConstants.COMMENTS, comment);
     aisleValues.put(VueConstants.IMAGE_ID, imageID);
-    aisleValues.put(VueConstants.AISLE_ID, aisleID);
+    aisleValues.put(VueConstants.AISLE_Id, aisleID);
     mContext.getContentResolver().insert(VueConstants.COMMENTS_ON_IMAGE_URI,
         aisleValues);
   }
@@ -315,12 +315,12 @@ public class DataBaseManager {
     ContentValues aisleValues = new ContentValues();
     aisleValues.put(VueConstants.DIRTY_FLAG, true);
     mContext.getContentResolver().update(VueConstants.CONTENT_URI, aisleValues,
-        VueConstants.AISLE_ID + "=?", new String[] {aisleID});
+        VueConstants.AISLE_Id + "=?", new String[] {aisleID});
     aisleValues.put(VueConstants.LIKE_OR_DISLIKE, likeStatus);
     aisleValues.put(VueConstants.LIKES_COUNT, likeCount);
     mContext.getContentResolver().update(VueConstants.IMAGES_CONTENT_URI,
         aisleValues,
-        VueConstants.AISLE_ID + "=? AND " + VueConstants.IMAGE_ID + "=?",
+        VueConstants.AISLE_Id + "=? AND " + VueConstants.IMAGE_ID + "=?",
         new String[] {aisleID, imageID});
   }
 
@@ -337,7 +337,7 @@ public class DataBaseManager {
     values.put(VueConstants.IS_BOOKMARKED, isBookmarked);
     values.put(VueConstants.BOOKMARK_COUNT, bookmarkCount);
     mContext.getContentResolver().update(VueConstants.CONTENT_URI, values,
-        VueConstants.AISLE_ID + "=?", new String[] {aisleID});
+        VueConstants.AISLE_Id + "=?", new String[] {aisleID});
   }
 
 
@@ -488,7 +488,7 @@ public class DataBaseManager {
       do {
         userInfo = new AisleContext();
         userInfo.mAisleId = aislesCursor.getString(aislesCursor
-            .getColumnIndex(VueConstants.AISLE_ID));
+            .getColumnIndex(VueConstants.AISLE_Id));
         userInfo.mUserId = aislesCursor.getString(aislesCursor
             .getColumnIndex(VueConstants.USER_ID));
         userInfo.mFirstName = aislesCursor.getString(aislesCursor
@@ -515,7 +515,7 @@ public class DataBaseManager {
       if (aisleImagesCursor.moveToFirst()) {
         do {
           if (aisleImagesCursor.getString(
-              aisleImagesCursor.getColumnIndex(VueConstants.AISLE_ID)).equals(
+              aisleImagesCursor.getColumnIndex(VueConstants.AISLE_Id)).equals(
               (String) pairs.getKey())) {
             imageItemDetails = new AisleImageDetails();
             imageItemDetails.mTitle = aisleImagesCursor

@@ -1577,32 +1577,31 @@ public class DataEntryFragment extends Fragment {
 		}
 		AisleManager aisleManager = AisleManager.getAisleManager();
 		Aisle aisle = new Aisle();
- 
+
 		aisle.setCategory(mCategoryText.getText().toString().trim());
 		aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
 		aisle.setName("Super Aisle");
 		aisle.setOccassion(mOccassionBigText.getText().toString().trim());
-		/*aisle.setmFisrtName("firstName");
-		aisle.setmLastName("LastName");
-		aisle.setmDescription("descreption");
- 
 		/*
-		 * aisle.setmFisrtName("Vue"); aisle.setmLastName("TestAisle");
+		 * aisle.setmFisrtName("firstName"); aisle.setmLastName("LastName");
+		 * aisle.setmDescription("descreption");
+		 * 
+		 * /* aisle.setmFisrtName("Vue"); aisle.setmLastName("TestAisle");
 		 */
 		String s = mFindAtText.getText().toString();
 		Log.i("imageurl", "imageurl  from other sources: path  " + s);
-		if (s != null && s.length()>2) {
+		if (s != null && s.length() > 2) {
 			mImagePath = s;
 			Log.i("imageurl", "imageurl  from other sources:  " + mImagePath);
 		}
- 
+
 		mImageList.add(getImage(mImagePath, 340, 340, "dummy", 12345L, 123L));
 		Log.i("userid", "userid123456 null check storedVueUser: "
 				+ storedVueUser);
 		if (storedVueUser != null) {
 			aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
 		}
- 
+
 		VueImage image = new VueImage();
 		image.setDetailsUrl("Got this image from a random url");
 		image.setHeight(500);
@@ -1660,7 +1659,7 @@ public class DataEntryFragment extends Fragment {
 			return;
 		}
 		Log.i("addimagetoaisle", "addimagetoaisle  method call2");
- 
+
 		AisleManager aisleManager = AisleManager.getAisleManager();
 		aisleManager.addImageToAisle(image,
 				new AisleManager.ImageAddedCallback() {
@@ -1791,7 +1790,7 @@ public class DataEntryFragment extends Fragment {
 
 	// create aisle window and add to list so that aisle will be visible in
 	// list.
- 
+
 	private void setAisleContent(AisleContext userInfo, final String aisleId) {
 		Log.i("imageurl", "imageurl  aisle creation success ");
 		aisleItem = VueTrendingAislesDataModel.getInstance(getActivity())
@@ -1802,7 +1801,7 @@ public class DataEntryFragment extends Fragment {
 		boolean isFirstImage = true;
 		addImageToAisle(image, aisleId, isFirstImage);
 		// VueTrendingAislesDataModel.getInstance(getActivity()).insertNewAisleToDb(aisleId);
- 
+
 	}
 
 	private Bitmap saveBitmap(String sourcePath, String destPath) {
@@ -1823,7 +1822,7 @@ public class DataEntryFragment extends Fragment {
 	// response add immediately after that send that image data to the back end.
 	// because to create an aisle requires aisle id but to add image need not
 	// wait for server response.
- 
+
 	private void addImageToAisle(VueImage image, final String aisleId,
 			final boolean isFirstImage) {
 		// Bitmap bmp = saveBitmap(image.getImageUrl(), image.getImageUrl());
@@ -1871,7 +1870,7 @@ public class DataEntryFragment extends Fragment {
 											Bitmap bmp = BitmapLoaderUtils
 													.getInstance()
 													.getBitmap(
-															imageDetails.mImageUrl,
+															imageDetails.mImageUrl, imageDetails.mImageUrl,
 															true, tempHeight);
 								 if(bmp == null){
 									 bmp =	saveBitmap(imageDetails.mImageUrl,
@@ -1943,14 +1942,13 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	private void cacheBitmap(String imagePath, Bitmap bmp) {
-		try{
-		FileCache fileCache = new FileCache(VueApplication.getInstance());
-		File f = fileCache.getFile(imagePath);
-		Utils.saveBitmap(bmp, f);
-		}catch(Exception e){
+		try {
+			FileCache fileCache = new FileCache(VueApplication.getInstance());
+			File f = fileCache.getFile(imagePath);
+			Utils.saveBitmap(bmp, f);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
- 
 
 	}
 }
