@@ -8,10 +8,20 @@ public class Aisle {
         String mName;
         String mOccassion;
         Long mRefImageId;
-     /*   String mDescription;
+        VueImage mAisleImage;
+     /* String mDescription;
 		String mFisrtName;
         String mLastName;*/
 
+
+
+		public VueImage getAisleImage() {
+			return mAisleImage;
+		}
+
+		public void setAisleImage(VueImage mAisleImage) {
+			this.mAisleImage = mAisleImage;
+		}
 
 		/** ImageList should never be uploaded with the aisle */
         //@JsonIgnore
@@ -20,16 +30,17 @@ public class Aisle {
         public Aisle() {}
 
         public Aisle(Long id, String category, String lookingFor, String name,
-                     String occassion, Long refImageId, Long ownerUserId,String firstName,String lastName,String descreption) {
+                     String occassion, Long refImageId, Long ownerUserId,String firstName,String lastName,String descreption,  VueImage aisleImage) {
             super();
-          //  this.id = id;
+          //this.id = id;
             this.mCategory = category;
             this.mLookingFor = lookingFor;
             this.mName = name;
             this.mOccassion = occassion;
             this.mRefImageId = refImageId;
             this.mOwnerUserId = ownerUserId;
-        /*    this.mDescription = descreption;
+            this.mAisleImage = aisleImage;
+         /* this.mDescription = descreption;
             this.mFisrtName = firstName;
             this.mLastName = lastName;*/
         }

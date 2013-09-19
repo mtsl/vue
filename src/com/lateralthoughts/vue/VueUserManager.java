@@ -23,7 +23,7 @@ public class VueUserManager {
  
  
 
-	public static String VUE_API_BASE_URI = "http://2-java.vueapi-canary.appspot.com/";
+	public static String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
  
 	//private String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
@@ -90,7 +90,7 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					Log.e("Profiling", "Profiling : onResponse()");
+					Log.e("Profiling", "Create User: Profiling : onResponse()" + jsonArray);
  
                     try{
                     	 Log.i("userid", "userid123456 null check storedVueUser response1: ");

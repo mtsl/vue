@@ -12,6 +12,7 @@ public class VueImage {
 	Integer rating;
 	String store;
 	String title;
+
 	
 	public VueImage() {}
 

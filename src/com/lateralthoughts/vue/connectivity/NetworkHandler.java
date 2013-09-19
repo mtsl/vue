@@ -1,7 +1,12 @@
 package com.lateralthoughts.vue.connectivity;
 
+import java.net.URL;
 import java.util.ArrayList;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import android.content.Context;
@@ -19,12 +24,16 @@ import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueContentGateway;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
+import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
+import com.lateralthoughts.vue.utils.Utils;
  
 
 public class NetworkHandler {
@@ -37,9 +46,12 @@ public class NetworkHandler {
 	private static final int NOTIFICATION_THRESHOLD = 4;
 	private static final int TRENDING_AISLES_BATCH_SIZE = 10;
 	public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
-	 private static String MY_AISLES = "/aislesget/user/";
+	 private static String MY_AISLES = "aislesget/user/";
 	protected int mLimit;
 	protected int mOffset;
+	
+	
+	
 
 	public NetworkHandler(Context context) {
 		mContext = context;
@@ -190,15 +202,76 @@ public class NetworkHandler {
 			msg.obj = aisleContentArray;
 			mHandler.sendMessage(msg);
 		} else {
-			
+			mOffset = 101;
+			Log.i("Gateway", "loadInitialData:  " + loadMore);
 			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 					mTrendingAislesParser, loadMore);
 		}
 
 	}
- public void requestAislesByUser(){
+ public void requestAislesByUser()  {
 	 
- }
+	 //TODO: CHANGE THIS REQUEST TO VOLLEY
+	 new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+			try{
+				Log.i("getAisleByuser", "getAisleByuser getailselistmethod " );
+				 testGetAisleList();
+				 Log.i("getAisleByuser", "getAisleByuser getailselistmethod completed " );
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			
+		}
+	}).start();
+	
+	 /*
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+		String userId = null;
+		if (storedVueUser != null) {
+			userId = Long.valueOf(storedVueUser.getVueId()).toString();
+		}
+	//String requestUrl = "http://2-java.vueapi-canary-development1.appspot.com/"+"api/getaisleswithmatchingfacebookORGPlus/"+userId;
+	String requestUrl = "http://2-java.vueapi-canary-development1.appspot.com/"+"api/aislesget/user/"+userId;
+	
+	http://2-java.vueapi-canary-development1.appspot.com/api/aislesget/user
+	
+	Log.i("getAisleByuser", "getAisleByuser requestUrl: "+requestUrl );
+		JsonArrayRequest vueRequest = new JsonArrayRequest( 
+				requestUrl, new Response.Listener<JSONArray>() {
+
+			@Override
+			public void onResponse(JSONArray response) {
+				if (null != response) {
+					Bundle responseBundle = new Bundle();
+					responseBundle.putString("Search result",
+							response.toString());
+					responseBundle.putBoolean("loadMore", false);
+					mTrendingAislesParser.send(1, responseBundle);
+				}
+				Log.e("getAisleByuser", "getAisleByuser response : " + response);
+			}
+		}, new Response.ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				Log.e("getAisleByuser Resopnse", "getAisleByuser Error Resopnse : "
+						+ error.getMessage());
+			}
+		});
+
+		VueApplication.getInstance().getRequestQueue().add(vueRequest);
+	 
+	 
+ */}
 	public int getmOffset() {
 		return mOffset;
 	}
@@ -206,6 +279,37 @@ public class NetworkHandler {
 	public void setmOffset(int mOffset) {
 		this.mOffset = mOffset;
 	}
+	
+	public   void testGetAisleList() throws Exception{
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+		String userId = null;
+		if (storedVueUser != null) {
+			userId = Long.valueOf(storedVueUser.getVueId()).toString();
+		}
+	//String requestUrl = "http://2-java.vueapi-canary-development1.appspot.com/"+"api/getaisleswithmatchingfacebookORGPlus/"+userId;
+	String requestUrl = "http://2-java.vueapi-canary-development1.appspot.com/api/aislesget/user/"+userId; 
+		
+		
+		URL url = new URL(requestUrl);
+		HttpGet httpGet = new HttpGet(url.toString());
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpResponse response = httpClient.execute(httpGet);
+		if(response.getEntity()!=null &&
+		response.getStatusLine().getStatusCode() == 200) {
+		String responseMessage = EntityUtils.toString(response.getEntity());
+		System.out.println("Response: "+responseMessage);
+		new Parser().getUserAilseLIst(responseMessage);
+		Log.i("getAisleByuser", "getAisleByuser requestUrl java code response: "+responseMessage );
+		}
+
+		 
+		}
 
 }
 

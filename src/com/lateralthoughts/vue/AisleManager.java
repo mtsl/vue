@@ -37,10 +37,10 @@ public class AisleManager {
     public interface ImageAddedCallback {
     	 public void onImageAdded(AisleImageDetails imageDetails);
     }
-    private static String VUE_API_BASE_URI = "http://2-java.vueapi-canary.appspot.com/api/";
-                                                               
+    private static String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
+    
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
-    private static String CREATE_AISLE_ENDPOINT = "aislecreate";
+    private static String CREATE_AISLE_ENDPOINT = "api/aislecreate";
     private String CREATE_IMAGE_ENDPOINT = "imagecreate";
     private static AisleManager sAisleManager = null;
    
@@ -77,9 +77,9 @@ public class AisleManager {
 
             @Override
             public void onResponse(String jsonArray) {
-            	 Log.i("imageurl", "imageurl  aisle creation response ");
                 if (null != jsonArray) {
-                    
+               	 Log.i("imageurl", "imageurl aisle creation response11 " + jsonArray);
+  
                     try{
                        // JSONObject userInfo = new JSONObject(jsonArray);
                         
@@ -87,6 +87,7 @@ public class AisleManager {
                       //  JSONObject user = userInfo.getJSONObject("user");
                         //TODO: GET THE AISLE OBJECT FROM THE PARSER CLASE SEND THE AISLE AND AISLE ID BACK.
                         callback.onAisleUpdated(aisleContext,aisleContext.mAisleId);
+                        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
                     }catch(Exception ex){
                     	 Log.e("Profiling", "Profiling : onResponse() **************** error");
                     	ex.printStackTrace();

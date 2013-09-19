@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -19,7 +17,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -52,9 +49,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.google.android.gms.plus.model.people.Person.Image;
-import com.googleplus.UserInfo;
-import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
@@ -63,8 +57,8 @@ import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
-import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
+import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
 
@@ -1609,6 +1603,18 @@ public class DataEntryFragment extends Fragment {
 			aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
 		}
  
+		VueImage image = new VueImage();
+		image.setDetailsUrl("Got this image from a random url");
+		image.setHeight(500);
+		image.setWidth(500);
+		image.setImageUrl(mFindAtText.getText().toString());
+		image.setStore("Amazon");
+		image.setTitle("Android Test");
+		if (storedVueUser != null) {
+			image.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
+		}
+		aisle.setAisleImage(image);
+
 		VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance())
 				.getNetworkHandler()
@@ -1921,7 +1927,7 @@ public class DataEntryFragment extends Fragment {
 												@Override
 												public void run() {
 													VueTrendingAislesDataModel
-													.getInstance(getActivity())
+													.getInstance(VueApplication.getInstance())
 													.dataObserver();
 													
 												}
@@ -1937,11 +1943,13 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	private void cacheBitmap(String imagePath, Bitmap bmp) {
-		FileCache fileCache = new FileCache(getActivity());
+		try{
+		FileCache fileCache = new FileCache(VueApplication.getInstance());
 		File f = fileCache.getFile(imagePath);
-		Log.i("imageurl", "imageurl hashcode " + f.getPath());
-		Log.i("imageurl", "imageurl imagepath " + imagePath);
 		Utils.saveBitmap(bmp, f);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
  
 
 	}
