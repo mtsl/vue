@@ -227,7 +227,6 @@ public class ContentLoader {
         private final WeakReference<ViewFlipper>viewFlipperReference;
         //private final ImageView mImageView; //imageViewReference;
         private String url = null;
-        private String serverUrl = null;
 
         public BitmapWorkerTask(ViewFlipper vFlipper, ImageView imageView) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
@@ -240,9 +239,8 @@ public class ContentLoader {
         @Override
         protected Bitmap doInBackground(String... params) {
             url = params[0];
-            serverUrl = params[1];
             Bitmap bmp = null;            
-            bmp = getBitmap(url, serverUrl); 
+            bmp = getBitmap(url, params[1]); 
             mAisleImagesCache.put(url, bmp);
             return bmp;            
         }

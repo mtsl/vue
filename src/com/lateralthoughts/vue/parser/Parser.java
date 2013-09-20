@@ -102,13 +102,35 @@ public class Parser {
 				Log.e("Profiling", "Profiling : onResponse() mAisleId: "
 						+ aisleContext.mAisleId);
 				aisleContext.mOccasion = userInfo.getString(OCCASION_TAG);
-				aisleContext.mName = userInfo.getString(VueConstants.AISLE_NAME);
-				aisleContext.mFirstName = userInfo.getString(VueConstants.AISLE_OWNER_FIRSTNAME);
-				aisleContext.mLastName = userInfo.getString(VueConstants.AISLE_OWNER_LASTNAME);
-				aisleContext.mBookmarkCount = userInfo.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
-				AisleImageDetails aisleImageDetails = getImageDetails(userInfo.getJSONObject("aisleImage"));
+				aisleContext.mName = userInfo
+						.getString(VueConstants.AISLE_NAME);
+				String firstName = userInfo
+						.getString(VueConstants.AISLE_OWNER_FIRSTNAME);
+				String lastName = userInfo
+						.getString(VueConstants.AISLE_OWNER_LASTNAME);
+				if (firstName == null || firstName.equals("null")) {
+					aisleContext.mFirstName = " ";
+					firstName = null;
+				} else {
+					aisleContext.mFirstName = firstName;
+				}
+				if (lastName == null || lastName.equals("null")) {
+					aisleContext.mLastName = " ";
+					lastName = null;
+				} else {
+					aisleContext.mLastName = lastName;
+				}
+				if (firstName == null && lastName == null) {
+					aisleContext.mFirstName = "Anonymous";
+				}
+				aisleContext.mBookmarkCount = userInfo
+						.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
+				AisleImageDetails aisleImageDetails = getImageDetails(userInfo
+						.getJSONObject("aisleImage"));
 				arrayList.add(aisleImageDetails);
-				aisleWindowContent = VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getAisle(aisleContext.mUserId);
+				aisleWindowContent = VueTrendingAislesDataModel.getInstance(
+						VueApplication.getInstance()).getAisle(
+						aisleContext.mUserId);
 				aisleWindowContent.addAisleContent(aisleContext, arrayList);
 			} catch (Exception ex) {
 				Log.e("Profiling",
@@ -118,9 +140,7 @@ public class Parser {
 		}
 		return aisleWindowContent;
 	}
-	
 
-	
 	public AisleImageDetails getImageDetails(JSONObject userInfo)
 			throws JSONException {
 
@@ -156,8 +176,8 @@ public class Parser {
 		return aisleWindowContentList;
 	}
 
-	public static ArrayList<AisleImageDetails> getImagesForAisleId(
-			String aisleId) throws Exception {
+	public ArrayList<AisleImageDetails> getImagesForAisleId(String aisleId)
+			throws Exception {
 		ArrayList<AisleImageDetails> imageList = new ArrayList<AisleImageDetails>();
 		String imageRequestUrl = VueConstants.GET_IMAGES_FOR_AISLE + aisleId;
 		URL url = new URL(imageRequestUrl);
@@ -256,7 +276,6 @@ public class Parser {
 			}
 			if (aisleImageDetailsList != null
 					&& aisleImageDetailsList.size() > 0) {
-				Log.i("myailsedebug", "myailsedebug: parsing prparing aislewindow : "   );
 				AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
 						.getInstance(VueApplication.getInstance()).getAisle(
 								aisleContext.mAisleId);
