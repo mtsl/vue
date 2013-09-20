@@ -146,7 +146,7 @@ public class VueConnectivityManager {
    *        checks for any network available.
    * @return boolean.
    * */
-  public static boolean checkConnection(Context context, boolean isWifi) {
+  private static boolean checkConnection(Context context, boolean isWifi) {
     NetworkInfo info = VueConnectivityManager.getNetworkInfo(context);
     if (info == null) {
       return false;
@@ -186,12 +186,14 @@ public class VueConnectivityManager {
 
   public static boolean isNetworkConnected(Context context) {
     boolean isConneted = true;
-    if (isAirplaneModeOn(context)) {
+    if(!isConnectedWifi(context)) {
       isConneted = false;
-    } else if (!VueConnectivityManager.checkConnection(context, false)) {
-      isConneted = false;
-      
-    } 
+      if (isAirplaneModeOn(context)) {
+        isConneted = false;
+      } else if (VueConnectivityManager.isConnectedMobile(context)) {
+        isConneted = true; 
+      }
+    }
     return isConneted;
   }
   
