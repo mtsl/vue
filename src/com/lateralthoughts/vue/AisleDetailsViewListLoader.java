@@ -176,7 +176,6 @@ public class AisleDetailsViewListLoader {
         private final WeakReference<ImageView> imageViewReference;
         //private final WeakReference<AisleContentBrowser>viewFlipperReference;
         private String url = null;
-        private String serverImageUrl = null;
         private int mBestHeight;
         AisleContentBrowser aisleContentBrowser ;
         int mAvailabeWidth,mAvailableHeight;
@@ -194,17 +193,16 @@ public class AisleDetailsViewListLoader {
         @Override
         protected Bitmap doInBackground(String... params) {
             url = params[0];
-            serverImageUrl = params[1];
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, null, true, mBestHeight);
+            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight);
             if(bmp != null) {
            	 mImageDimension = Utils.getScalledImage(bmp,
            			mAvailabeWidth, mAvailableHeight);
            	mAvailableHeight = mImageDimension.mImgHeight;
             	 if(bmp.getHeight()<mImageDimension.mImgHeight) {
-            		 bmp = mBitmapLoaderUtils.getBitmap(url, serverImageUrl, true, mImageDimension.mImgHeight);
+            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mImageDimension.mImgHeight);
 				 }
             }
             return bmp;            

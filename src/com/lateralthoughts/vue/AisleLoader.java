@@ -215,7 +215,6 @@ public class AisleLoader {
 		private final WeakReference<ImageView> imageViewReference;
 		private final WeakReference<AisleContentBrowser> viewFlipperReference;
 		private String url = null;
-		private String imageServerUrl;
 		private int mBestHeight;
 
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
@@ -232,11 +231,10 @@ public class AisleLoader {
 		@Override
 		protected Bitmap doInBackground(String... params) {
 			url = params[0];
-			imageServerUrl = params[1];
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
 			Log.e("Profiling", "Profiling New doInBackground()");
-			bmp = mBitmapLoaderUtils.getBitmap(url, imageServerUrl, true,
+			bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true,
 					mBestHeight);
 			return bmp;
 		}
