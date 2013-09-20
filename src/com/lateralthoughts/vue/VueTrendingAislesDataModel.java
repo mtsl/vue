@@ -171,6 +171,13 @@ public class VueTrendingAislesDataModel {
   }
   public void listSize(){
 	  Log.i("mAisleContentList", "mAisleContentList: "+mAisleContentList.size());
+	  for(int i=0;i<mAisleContentList.size();i++){
+		  AisleWindowContent item = mAisleContentList.get(i);
+		  for(int j=0;j<item.getImageList().size();j++){
+			  Log.i("aisleWindowImageUrl", "aisleWindowImageUrl: "+item.getImageList().get(j).mImageUrl);
+		  }
+		  
+	  }
   }
 	protected Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {

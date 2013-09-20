@@ -140,12 +140,14 @@ public class Parser {
 	public ArrayList<AisleWindowContent> getUserAilseLIst(String jsonArray) {
 		ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
 		try {
-			Log.i("useraisleparsing", "useraisleparsing started");
+			 
 			JSONObject jsonResponse = new JSONObject(new String(jsonArray));
 			JSONArray aisleArray = jsonResponse.getJSONArray("aisles");
 
 			if (aisleArray != null) {
+				Log.i("myailsedebug", "myailsedebug: parsing method calling: " );
 				aisleWindowContentList = parseAisleInformation(aisleArray);
+				Log.i("myailsedebug", "myailsedebug: parsing method  calling ending: "+aisleWindowContentList.size() );
 			}
 
 		} catch (Exception e) {
@@ -186,8 +188,7 @@ public class Parser {
 							.getInt(VueConstants.AISLE_IMAGE_WIDTH);
 					aisleImageDetails.mImageUrl = jsonObject
 							.getString(VueConstants.AISLE_IMAGE_IMAGE_URL);
-					Log.e("Parser", "image url for ailse image: "
-							+ aisleImageDetails.mImageUrl);
+					Log.i("aisleWindowImageUrl", "aisleWindowImageUrl parsing: "+aisleImageDetails.mImageUrl);
 					aisleImageDetails.mRating = jsonObject
 							.getString(VueConstants.AISLE_IMAGE_RATING);
 					aisleImageDetails.mStore = jsonObject
@@ -201,7 +202,7 @@ public class Parser {
 				}
 			}
 		}
-
+		Log.i("myailsedebug", "myailsedebug: parsing imageUrl: "+imageList.size());
 		return imageList;
 	}
 
@@ -212,6 +213,7 @@ public class Parser {
 			AisleContext aisleContext = new AisleContext();
 			JSONObject ailseItem = jsonArray.getJSONObject(i);
 			aisleContext.mAisleId = ailseItem.getString(VueConstants.AISLE_ID);
+		 	Log.i("myailsedebug", "myailsedebug: recieved aisle aisleContext.mAisleId: "+aisleContext.mAisleId); 
 			aisleContext.mCategory = ailseItem
 					.getString(VueConstants.AISLE_CATEGORY);
 			aisleContext.mLookingForItem = ailseItem
@@ -242,22 +244,27 @@ public class Parser {
 			}
 			aisleContext.mBookmarkCount = ailseItem
 					.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
+			
+		 
+			
 			ArrayList<AisleImageDetails> aisleImageDetailsList = null;
 			try {
 				aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
+				 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			if (aisleImageDetailsList != null
 					&& aisleImageDetailsList.size() > 0) {
-				Log.i("ailsesize", "ailseListSizemaintrending: if called in parsing" );
+				Log.i("myailsedebug", "myailsedebug: parsing prparing aislewindow : "   );
 				AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
 						.getInstance(VueApplication.getInstance()).getAisle(
 								aisleContext.mAisleId);
 				aisleWindowContent.addAisleContent(aisleContext,
 						aisleImageDetailsList);
 				aisleWindowContentList.add(aisleWindowContent);
-			}
+				Log.i("myailsedebug", "myailsedebug: parsing prparing aislewindow  list size: "+aisleWindowContentList.size()   );
+			}  
 		}
 		return aisleWindowContentList;
 	}

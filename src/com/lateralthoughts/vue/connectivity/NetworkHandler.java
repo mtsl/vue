@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.AisleWindowContentFactory;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
@@ -217,6 +218,7 @@ public class NetworkHandler {
 	}
 
 	public void requestAislesByUser() {
+		Log.i("myailsedebug", "myailsedebug:  requestAislesByUser method calling  " );
 		/*
 		 * String userId = null; try{ VueUser storedVueUser = null;
 		 * storedVueUser =
@@ -257,6 +259,7 @@ public class NetworkHandler {
 		 */
 
 		// TODO: CHANGE THIS REQUEST TO VOLLEY
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 		new Thread(new Runnable() {
 
 			@Override
@@ -264,6 +267,12 @@ public class NetworkHandler {
 				try {
 					aislesList = null;
 					aislesList = testGetAisleList();
+					if(aislesList != null){
+						Log.i("myailsedebug", "myailsedebug: recieved my ailse list:  "+aislesList.size() );
+					} else {
+						
+						Log.i("myailsedebug", "myailsedebug: recieved my ailse list is null:  "/*+aislesList.size()*/ );
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -272,7 +281,11 @@ public class NetworkHandler {
 							.runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
-									VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = true;
+									VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+									.clearAisles();
+							AisleWindowContentFactory.getInstance(VueApplication.getInstance())
+									.clearObjectsInUse();
+									VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 									if (aislesList != null
 											&& aislesList.size() > 0) {
 										for (int i = 0; i < aislesList.size(); i++) {
@@ -286,6 +299,8 @@ public class NetworkHandler {
 																	.getAisleContext().mAisleId,
 															aislesList.get(i));
 										}
+										VueTrendingAislesDataModel.getInstance(
+												VueApplication.getInstance()).listSize();
 
 										VueTrendingAislesDataModel.getInstance(
 												VueApplication.getInstance())
@@ -325,6 +340,7 @@ public class NetworkHandler {
 		}
 		String requestUrl = UrlConstants.GET_AISLELIST_BYUSER_RESTURL + "/"
 				+ userId;
+		Log.i("myailsedebug", "myailsedebug: request issueing " );
 		URL url = new URL(requestUrl);
 		HttpGet httpGet = new HttpGet(url.toString());
 		DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -332,7 +348,7 @@ public class NetworkHandler {
 		if (response.getEntity() != null
 				&& response.getStatusLine().getStatusCode() == 200) {
 			String responseMessage = EntityUtils.toString(response.getEntity());
-			System.out.println("Response: " + responseMessage);
+			 Log.i("aisleWindowImageUrl", "aisleWindowImageUrl response Message: "+responseMessage);
 			return new Parser().getUserAilseLIst(responseMessage);
 		}
 		return null;

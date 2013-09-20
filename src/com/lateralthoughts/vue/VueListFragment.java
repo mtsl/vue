@@ -186,13 +186,13 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 								R.drawable.profile, null);
 						adapter.groups.add(groupPosition, item);
 						adapter.notifyDataSetChanged();
-				
+						Log.i("myailsedebug", "myailsedebug:  requestAislesByUser method calling1  " );
 						VueTrendingAislesDataModel.getInstance(
 								VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
-						VueTrendingAislesDataModel.getInstance(getActivity())
+				/*		VueTrendingAislesDataModel.getInstance(getActivity())
 						.clearAisles();
 				AisleWindowContentFactory.getInstance(getActivity())
-						.clearObjectsInUse();
+						.clearObjectsInUse();*/
 							 
 						if (getActivity() instanceof SlidingFragmentActivity) {
 							SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();

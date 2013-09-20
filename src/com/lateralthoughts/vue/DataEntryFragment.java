@@ -1607,6 +1607,10 @@ public class DataEntryFragment extends Fragment {
 		image.setHeight(500);
 		image.setWidth(500);
 		image.setImageUrl(mFindAtText.getText().toString());
+		
+		Log.i("myailsedebug", "myailsedebug: imageUrl sending: "+mFindAtText.getText().toString());
+		
+		
 		image.setStore("Amazon");
 		image.setTitle("Android Test");
 		if (storedVueUser != null) {

@@ -1,7 +1,22 @@
 package com.lateralthoughts.vue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.http.entity.StringEntity;
+import org.json.JSONObject;
+
 import android.util.Log;
-import com.android.volley.*;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,25 +24,6 @@ import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.UrlConstants;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-//FB imports
-//java util imports
 
 public class AisleManager {
 
@@ -79,8 +75,8 @@ public class AisleManager {
             @Override
             public void onResponse(String jsonArray) {
                 if (null != jsonArray) {
-               	 Log.i("imageurl", "imageurl aisle creation response11 " + jsonArray);
-  
+               	 
+               	Log.i("myailsedebug", "myailsedebug: recieved response:  "+jsonArray );
                     try{
                        // JSONObject userInfo = new JSONObject(jsonArray);
                         
@@ -98,6 +94,8 @@ public class AisleManager {
                     	 Log.e("Profiling", "Profiling : onResponse() **************** error");
                     	ex.printStackTrace();
                     }
+                } else {
+                	Log.i("myailsedebug", "myailsedebug: recieved response: is null ");
                 }
             }
         };
