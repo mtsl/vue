@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.lateralthoughts.vue.DataEntryFragment;
 import com.lateralthoughts.vue.VueApplication;
 
 import android.content.Context;
@@ -60,13 +61,18 @@ public class BitmapLoaderUtils {
      * just want to have the bitmap. This is a utility function and is public because it is to 
      * be shared by other components in the internal implementation.   
      */
-    public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
+    public Bitmap getBitmap(String url, String imageServerUrl, boolean cacheBitmap, int bestHeight) 
     {
     	 Log.i("added url", "added url  getBitmap "+url);
         File f = mFileCache.getFile(url);
         Log.i("added url", "added url  getBitmap "+f);
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight);
+    	if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
+			Log.i("imageurl", "imageurl original   bitmap check2:  "+b);
+			Log.i("imageurl", "imageurl hashcode " + f.getPath());
+			Log.i("imageurl", "imageurl imagepath " + url);
+		}
         Log.i("added url", "added url  getBitmap "+b);
         if(b != null){
           
@@ -77,12 +83,14 @@ public class BitmapLoaderUtils {
         
         //from web
         try {
-        	if(url == null || url.length() < 1) {
+        	Log.i("imageurl", "imageurl original vue  bitmap check4:  error" + imageServerUrl);
+        	if(imageServerUrl == null || imageServerUrl.length() < 1) {
        
         		return null;
         	}
+        	Log.i("imageurl", "imageurl original vue  bitmap check4:  error" + imageServerUrl);
             Bitmap bitmap=null;
-            URL imageUrl = new URL(url);
+            URL imageUrl = new URL(imageServerUrl);
             HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
             conn.setConnectTimeout(30000);
             conn.setReadTimeout(30000);
@@ -100,10 +108,16 @@ public class BitmapLoaderUtils {
             bitmap = decodeFile(f, bestHeight);
             if(cacheBitmap) 
             	mAisleImagesCache.putBitmap(url, bitmap);
+        	if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
+    			Log.i("imageurl", "imageurl original   bitmap check3:  "+bitmap);
+    		}
 
             return bitmap;
         } catch (Throwable ex){
            ex.printStackTrace();
+           if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
+   			Log.i("imageurl", "imageurl original vue  bitmap check4:  error");
+   		}
            if(ex instanceof OutOfMemoryError) {
              // mAisleImagesCache.clear();
            }

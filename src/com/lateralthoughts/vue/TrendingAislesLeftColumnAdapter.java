@@ -129,7 +129,7 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
   
         }
-        Log.i("flingcheck", "flingcheck getview");
+        
         mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false,listener);
 /*        if(!listener.isFlingCalled()) {
         	 mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition, false);
@@ -152,6 +152,7 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);
+        Log.i("Left adapter", "Context fn ln " + context.mFirstName + "??? " + context.mLastName + "??? "  + sb);
         holder.aisleOwnersName.setText(sb.toString());
         StringBuilder contextBuilder = new StringBuilder();
         contextBuilder.append(context.mOccasion).append(" : ").append(context.mLookingForItem);

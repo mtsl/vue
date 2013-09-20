@@ -338,6 +338,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         private final WeakReference<ImageView> imageViewReference;
         private final WeakReference<AisleContentBrowser>viewFlipperReference;
         private String url = null;
+        private String serverImageUrl = null;
         private int mBestHeightForImage;
         AisleContentBrowser aisleContentBrowser ;
         private int mAVailableWidth,mAvailabeHeight;
@@ -356,10 +357,11 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         @Override
         protected Bitmap doInBackground(String... params) {
             url = params[0];
+            serverImageUrl = params[1];
             Bitmap bmp = null;            
             //we want to get the bitmap and also add it into the memory cache
             //bmp = getBitmap(url, true, mBestHeightForImage); 
-            bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeightForImage);
+            bmp = mBitmapLoaderUtils.getBitmap(url, serverImageUrl, true, mBestHeightForImage);
             
             if(!(aisleContentBrowser.getmSourceName() != null && aisleContentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG))&& bmp != null) {
                 Log.i("adapter swiping", "adapter swiping doing  ++++++++++++++++++++++++++++++++++++++++++++ " );
@@ -380,7 +382,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 							mAVailableWidth, mAvailabeHeight);
 					mAvailabeHeight = mImageDimension.mImgHeight;
 					if (bmp.getHeight() < mImageDimension.mImgHeight) {
-						bmp = mBitmapLoaderUtils.getBitmap(url, true,
+						bmp = mBitmapLoaderUtils.getBitmap(url, serverImageUrl, true,
 								mImageDimension.mImgHeight);
 						mAvailabeHeight = bmp.getHeight();
 				     	 

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -56,10 +57,12 @@ public class VueLandingPageActivity extends BaseActivity {
 	private OtherSourcesDialog mOtherSourcesDialog = null;
 	public static String mOtherSourceImagePath = null;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
+	public static Activity landingPageActivity = null;
 
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+		landingPageActivity = this;
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
 		mLoadProgress = (ProgressBar) findViewById(R.id.adprogress_progressBar);
@@ -116,8 +119,10 @@ public class VueLandingPageActivity extends BaseActivity {
 				@Override
 				public void onUserUpdated(VueUser user) {
 					try {
-						 Log.i("userid", "userid123456 null check storedVueUser seting loging page: ");
-						Utils.writeUserObjectToFile(VueLandingPageActivity.this,
+						Log.i("userid",
+								"userid123456 null check storedVueUser seting loging page: ");
+						Utils.writeUserObjectToFile(
+								VueLandingPageActivity.this,
 								VueConstants.VUE_APP_USEROBJECT__FILENAME, user);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -198,32 +203,34 @@ public class VueLandingPageActivity extends BaseActivity {
 
 		super.onStart();
 	}
- 
 
 	@Override
 	protected void onStop() {
 		super.onStop();
 		FlurryAgent.onEndSession(this);
- 
-	/*Log.i("vueUser", "vueUser val: "+vueUser);
-	if(vueUser != null){
-		 Map<String, String> articleParams = new HashMap<String, String>();
-		 if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.DEVICE_ID)){
-			 articleParams.put("User_Status", "Un_Registered");
-		 } else {
-			 articleParams.put("User_Status", "Registered");
-			 if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.FB)){
-				 articleParams.put("Registered_Source", "Registered with FB");
-			 }else if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.GPLUS)){
-				 articleParams.put("Registered_Source", "Registered with GPLUS");
-			 } else   if(vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer.GPLUS_FB)){
-				 articleParams.put("Registered_Source", "Registered with FB and GPLUS");
-			 }
-			 
-		 }
-		 FlurryAgent.logEvent("Rigestered_Users", articleParams);*/
- 
- 
+
+		/*
+		 * Log.i("vueUser", "vueUser val: "+vueUser); if(vueUser != null){
+		 * Map<String, String> articleParams = new HashMap<String, String>();
+		 * if(
+		 * vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer
+		 * .DEVICE_ID)){ articleParams.put("User_Status", "Un_Registered"); }
+		 * else { articleParams.put("User_Status", "Registered");
+		 * if(vueUser.getUserIdentity
+		 * ().equals(VueUserManager.PreferredIdentityLayer.FB)){
+		 * articleParams.put("Registered_Source", "Registered with FB"); }else
+		 * if
+		 * (vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer
+		 * .GPLUS)){ articleParams.put("Registered_Source",
+		 * "Registered with GPLUS"); } else
+		 * if(vueUser.getUserIdentity().equals(VueUserManager
+		 * .PreferredIdentityLayer.GPLUS_FB)){
+		 * articleParams.put("Registered_Source",
+		 * "Registered with FB and GPLUS"); }
+		 * 
+		 * } FlurryAgent.logEvent("Rigestered_Users", articleParams);
+		 */
+
 	}
 
 	@Override
@@ -368,8 +375,9 @@ public class VueLandingPageActivity extends BaseActivity {
 						mVueLandingActionbarScreenName
 								.setText(viewInfo.mVueName);
 						mCurentScreenPosition = viewInfo.mPosition;
-						VueTrendingAislesDataModel.getInstance(
-								VueLandingPageActivity.this).getNetworkHandler()
+						VueTrendingAislesDataModel
+								.getInstance(VueLandingPageActivity.this)
+								.getNetworkHandler()
 								.reqestByCategory(viewInfo.mVueName,
 										new ProgresStatus(), false, false);
 
@@ -476,13 +484,14 @@ public class VueLandingPageActivity extends BaseActivity {
 		ViewInfo viewInfo = new ViewInfo();
 		viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
 		viewInfo.mPosition = mFragment.getListPosition();
-		viewInfo.mOffset = VueTrendingAislesDataModel.getInstance(
-				VueLandingPageActivity.this).getNetworkHandler().getmOffset();
+		viewInfo.mOffset = VueTrendingAislesDataModel
+				.getInstance(VueLandingPageActivity.this).getNetworkHandler()
+				.getmOffset();
 		StackViews.getInstance().push(viewInfo);
 		mVueLandingActionbarScreenName.setText(catName);
-		VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this).getNetworkHandler()
-				.reqestByCategory(catName, new ProgresStatus(), true,
-						false);
+		VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+				.getNetworkHandler()
+				.reqestByCategory(catName, new ProgresStatus(), true, false);
 		FlurryAgent.logEvent(catName);
 
 	}

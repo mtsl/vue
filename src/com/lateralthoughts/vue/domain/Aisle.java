@@ -2,29 +2,47 @@ package com.lateralthoughts.vue.domain;
 
 public class Aisle {
        // Long id;
-        Long ownerUserId;
-        String category;
-        String lookingFor;
-        String name;
-        String occassion;
-        Long refImageId;
+        Long mOwnerUserId;
+        String mCategory;
+        String mLookingFor;
+        String mName;
+        String mOccassion;
+        Long mRefImageId;
+        VueImage mAisleImage;
+     /* String mDescription;
+		String mFisrtName;
+        String mLastName;*/
 
-        /** ImageList should never be uploaded with the aisle */
+
+
+		public VueImage getAisleImage() {
+			return mAisleImage;
+		}
+
+		public void setAisleImage(VueImage mAisleImage) {
+			this.mAisleImage = mAisleImage;
+		}
+
+		/** ImageList should never be uploaded with the aisle */
         //@JsonIgnore
         //ImageList imageList;
 
         public Aisle() {}
 
         public Aisle(Long id, String category, String lookingFor, String name,
-                     String occassion, Long refImageId, Long ownerUserId) {
+                     String occassion, Long refImageId, Long ownerUserId,String firstName,String lastName,String descreption,  VueImage aisleImage) {
             super();
-          //  this.id = id;
-            this.category = category;
-            this.lookingFor = lookingFor;
-            this.name = name;
-            this.occassion = occassion;
-            this.refImageId = refImageId;
-            this.ownerUserId = ownerUserId;
+          //this.id = id;
+            this.mCategory = category;
+            this.mLookingFor = lookingFor;
+            this.mName = name;
+            this.mOccassion = occassion;
+            this.mRefImageId = refImageId;
+            this.mOwnerUserId = ownerUserId;
+            this.mAisleImage = aisleImage;
+         /* this.mDescription = descreption;
+            this.mFisrtName = firstName;
+            this.mLastName = lastName;*/
         }
 
        /* public Long getId() {
@@ -35,52 +53,74 @@ public class Aisle {
             this.id = id;
         }*/
 
+ /*       public String getmLastName() {
+			return mLastName;
+		}
+
+		public void setmLastName(String mLastName) {
+			this.mLastName = mLastName;
+		}
+
+		public String getmFisrtName() {
+			return mFisrtName;
+		}
+
+		public void setmFisrtName(String mFisrtName) {
+			this.mFisrtName = mFisrtName;
+		}
+		  public String getmDescription() {
+				return mDescription;
+			}
+
+			public void setmDescription(String mDescription) {
+				this.mDescription = mDescription;
+			}*/
         public String getCategory() {
-            return category;
+            return mCategory;
         }
 
         public void setCategory(String category) {
-            this.category = category;
+            this.mCategory = category;
         }
 
         public String getLookingFor() {
-            return lookingFor;
+            return mLookingFor;
         }
 
         public void setLookingFor(String lookingFor) {
-            this.lookingFor = lookingFor;
+            this.mLookingFor = lookingFor;
         }
 
         public String getName() {
-            return name;
+            return mName;
         }
 
         public void setName(String name) {
-            this.name = name;
+            this.mName = name;
         }
 
         public String getOccassion() {
-            return occassion;
+            return mOccassion;
         }
 
         public void setOccassion(String occassion) {
-            this.occassion = occassion;
+            this.mOccassion = occassion;
         }
 
         public Long getRefImageId() {
-            return refImageId;
+            return mRefImageId;
         }
 
         public void setRefImageId(Long refImageId) {
-            this.refImageId = refImageId;
+            this.mRefImageId = refImageId;
         }
 
         public Long getOwnerUserId() {
-            return ownerUserId;
+            return mOwnerUserId;
         }
 
         public void setOwnerUserId(Long ownerUserId) {
-            this.ownerUserId = ownerUserId;
+            this.mOwnerUserId = ownerUserId;
         }
 
         //@JsonIgnore

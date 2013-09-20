@@ -73,7 +73,7 @@ public class VueContentProvider extends ContentProvider{
       case AISLE_MATCH:
         id = uri.getLastPathSegment();
         rowsDeleted = aislesDB.delete(VueConstants.AISLES,
-            VueConstants.AISLE_ID + "=" + id + (!TextUtils.isEmpty(selection) ?
+            VueConstants.AISLE_Id + "=" + id + (!TextUtils.isEmpty(selection) ?
                 " AND (" + selection + ')' : ""),selectionArgs);
         break;
       case AISLE_IMAGES_MATCH:
@@ -226,7 +226,7 @@ public class VueContentProvider extends ContentProvider{
        qb.setTables(VueConstants.AISLES);
        id = uri.getLastPathSegment();
        cursor = qb.query(aislesDB, projection,
-           VueConstants.AISLE_ID+ "=" + id
+           VueConstants.AISLE_Id+ "=" + id
                + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
                    : ""), selectionArgs, null, null, null);
         break;
@@ -321,7 +321,7 @@ public class VueContentProvider extends ContentProvider{
       case AISLE_MATCH:
         id = uri.getLastPathSegment();
         rowsUpdated = aislesDB.update(VueConstants.AISLES, values,
-            VueConstants.AISLE_ID + "=" + id
+            VueConstants.AISLE_Id + "=" + id
                 + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
                     : ""), selectionArgs);
         break;

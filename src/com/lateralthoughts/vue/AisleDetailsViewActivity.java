@@ -63,7 +63,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	public static final String SCREEN_TAG = "comparisonscreen";
 	public static final String TOP_SCROLLER = "topscroller";
 	public static final String BOTTOM_SCROLLER = "bottomscroller";
-	private static final String DETAILS_SCREEN_VISITOR ="Details_Screen_Visitors";
+	private static final String DETAILS_SCREEN_VISITOR = "Details_Screen_Visitors";
 	HorizontalListView mTopScroller, mBottomScroller;
 	// int mStatusbarHeight;
 	int mScreenTotalHeight;
@@ -71,7 +71,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	Context mContext;
 	AisleWindowContent mWindowContent;
 	private SlidingDrawer mSlidingDrawer;
-	ArrayList<String> mImageDetailsArr = null;
+	ArrayList<AisleImageDetails> mImageDetailsArr = null;
 	// AisleImageDetails mItemDetails = null;
 	private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
@@ -102,8 +102,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		super.onCreate(icicle);
 		// setContentView(R.layout.vuedetails_frag);
 		setContentView(R.layout.aisle_details_activity_landing);
-		
-		
+
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(
@@ -112,30 +111,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
-		
-	    boolean test = true;
-        if(test){
-        	  Log.e("AisleCreationTest","Aisle created requestsend!  storedVueUser: "+storedVueUser);
-            AisleManager aisleManager = AisleManager.getAisleManager();
-            Aisle aisle = new Aisle();
-            aisle.setCategory("Abstracts");
-            aisle.setLookingFor("Great software");
-            aisle.setName("Super Aisle");
-            aisle.setOccassion("Product Launch");
-            aisle.setOwnerUserId(6646522020102144L);
-            
-            aisleManager.createEmptyAisle(aisle, new AisleManager.AisleUpdateCallback() {
-                @Override
-                public void onAisleUpdated(AisleContext aisleContext,String aisleId) {
-                    Log.e("AisleCreationTest","Aisle created successfully!");
-                }
-            });
-        }
-		
-		
-		
-		
-		
 		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT;
 
 		if (mCurrentapiVersion >= 11) {
@@ -290,6 +265,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			VueLandingPageActivity.mOtherSourceImagePath = null;
 		}
 	}
+
 	@Override
 	protected void onStart() {
 		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
@@ -297,12 +273,14 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		FlurryAgent.logEvent(DETAILS_SCREEN_VISITOR);
 		super.onStart();
 	}
+
 	@Override
 	protected void onStop() {
 		super.onStop();
 		FlurryAgent.onEndSession(this);
-		
+
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.title_options, menu);
@@ -363,7 +341,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 			// mItemDetails = mImageDetailsArr.get(position);
 			Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(mImageDetailsArr
-					.get(position));
+					.get(position).mCustomImageUrl);
 
 			if (convertView == null) {
 				viewHolder = new ViewHolder();
@@ -400,8 +378,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				viewHolder.img.setImageResource(R.drawable.ic_launcher);
 				BitmapWorkerTask task = new BitmapWorkerTask(null,
 						viewHolder.img, mComparisionScreenHeight / 2);
-
-				task.execute(mImageDetailsArr.get(position));
+				String[] imagesArray = {
+						mImageDetailsArr.get(position).mCustomImageUrl,
+						mImageDetailsArr.get(position).mImageUrl };
+				task.execute(imagesArray);
 
 			}
 			return convertView;
@@ -583,21 +563,20 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		}
 	}
 
-	public void loadBitmap(String url, AisleContentBrowser flipper,
-			ImageView imageView, int bestHeight) {
-
-		// if (cancelPotentialDownload(loc, imageView)) {
-		BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-				bestHeight);
-		((ScaleImageView) imageView).setOpaqueWorkerObject(task);
-		task.execute(url);
-		// }
-	}
+	/*
+	 * public void loadBitmap(String url, AisleContentBrowser flipper, ImageView
+	 * imageView, int bestHeight) {
+	 * 
+	 * // if (cancelPotentialDownload(loc, imageView)) { BitmapWorkerTask task =
+	 * new BitmapWorkerTask(flipper, imageView, bestHeight); ((ScaleImageView)
+	 * imageView).setOpaqueWorkerObject(task); task.execute(url); // } }
+	 */
 
 	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		private final WeakReference<ImageView> imageViewReference;
 		// private final WeakReference<AisleContentBrowser>viewFlipperReference;
 		private String url = null;
+		private String serverImageUrl = null;
 		private int mBestHeight;
 
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
@@ -612,9 +591,11 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		@Override
 		protected Bitmap doInBackground(String... params) {
 			url = params[0];
+			serverImageUrl = params[1];
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
-			bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeight);
+			bmp = mBitmapLoaderUtils.getBitmap(url, serverImageUrl, true,
+					mBestHeight);
 
 			// bmp = getBitmap(url, true, mBestHeight);
 			return bmp;

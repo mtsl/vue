@@ -650,10 +650,15 @@ public class VueLoginActivity extends FragmentActivity implements
 					}
 
 					try {
-						VueUserProfile storedUserProfile = Utils
-								.readUserProfileObjectFromFile(
-										VueLoginActivity.this,
-										VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+						VueUserProfile storedUserProfile = null;
+						try {
+							storedUserProfile = Utils
+									.readUserProfileObjectFromFile(
+											VueLoginActivity.this,
+											VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 						if (storedUserProfile == null
 								|| (storedUserProfile != null && !storedUserProfile
 										.isUserDetailsModified())) {
@@ -1102,20 +1107,25 @@ public class VueLoginActivity extends FragmentActivity implements
 							}
 						});
 			}
+			VueUserProfile storedUserProfile = null;
 			try {
-				if (Utils.readUserProfileObjectFromFile(this,
-						VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME) == null) {
-					VueUserProfile vueUserProfile = new VueUserProfile(person
-							.getImage().getUrl(),
-							mSharedPreferencesObj.getString(
-									VueConstants.GOOGLEPLUS_USER_EMAIL, null),
-							person.getDisplayName(), null, null, null, false);
+				storedUserProfile = Utils.readUserProfileObjectFromFile(this,
+						VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (storedUserProfile == null) {
+				VueUserProfile vueUserProfile = new VueUserProfile(person
+						.getImage().getUrl(), mSharedPreferencesObj.getString(
+						VueConstants.GOOGLEPLUS_USER_EMAIL, null),
+						person.getDisplayName(), null, null, null, false);
+				try {
 					Utils.writeUserProfileObjectToFile(this,
 							VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
 							vueUserProfile);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -1208,20 +1218,24 @@ public class VueLoginActivity extends FragmentActivity implements
 							}
 						});
 			}
-
+			VueUserProfile storedUserProfile = null;
 			try {
-				if (Utils.readUserProfileObjectFromFile(this,
-						VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME) == null) {
-					VueUserProfile vueUserProfile = new VueUserProfile(
-							mInstagramApp.getProfilePicture(),
-							mInstagramApp.getUserName(),
-							mInstagramApp.getName(), null, null, null, false);
+				storedUserProfile = Utils.readUserProfileObjectFromFile(this,
+						VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+			} catch (Exception e) {
+			}
+			if (storedUserProfile == null) {
+				VueUserProfile vueUserProfile = new VueUserProfile(
+						mInstagramApp.getProfilePicture(),
+						mInstagramApp.getUserName(), mInstagramApp.getName(),
+						null, null, null, false);
+				try {
 					Utils.writeUserProfileObjectToFile(this,
 							VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
 							vueUserProfile);
+				} catch (Exception e1) {
+					e1.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 			Toast.makeText(VueLoginActivity.this,
 					mInstagramApp.getName() + "is succeffully Logged in.",

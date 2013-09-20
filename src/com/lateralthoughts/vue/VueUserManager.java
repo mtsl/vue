@@ -20,8 +20,14 @@ public class VueUserManager {
 	public interface UserUpdateCallback {
 		public void onUserUpdated(VueUser user);
 	}
-	private String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
+ 
+ 
+
+	public static String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
+ 
+	//private String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
+ 
 	private String USER_CREATE_ENDPOINT = "api/usercreate/trial";
 	private String GPLUS_USER_CREATE_ENDPOINT = "api/usercreate/googleplus";
 	private String INSTAGRAM_USER_CREATE_ENDPOINT = "api/usercreate/instagram";
@@ -84,8 +90,8 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					Log.e("Profiling", "Profiling : onResponse()");
-
+					Log.e("Profiling", "Create User: Profiling : onResponse()" + jsonArray);
+ 
                     try{
                     	 Log.i("userid", "userid123456 null check storedVueUser response1: ");
                         JSONObject user = new JSONObject(jsonArray);
@@ -101,11 +107,13 @@ public class VueUserManager {
                         vueUser.setVueUserId(id);
                         vueUser.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
                         VueUserManager.this.setCurrentUser(vueUser);
+                        Log.i("imageurl", "imageurl is ok got user id: "+vueUser);
                         callback.onUserUpdated(vueUser);
                     }catch(JSONException ex){
                     	Log.i("userid", "userid123456 null check storedVueUser response exception: ");
                     	ex.printStackTrace();
                     }
+ 
 
 				}
 			}
@@ -435,14 +443,20 @@ public class VueUserManager {
 			String birthday = graphUser.getBirthday();
 			String facebookUserId = graphUser.getUsername();
 			JSONObject innerObject = graphUser.getInnerJSONObject();
-			String email = innerObject
-					.getString(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY);
+			String email;
+			try {
+				email = innerObject
+						.getString(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY);
+			} catch (Exception e) {
+				email = graphUser.getUsername();
+				e.printStackTrace();
+			}
 			String username = graphUser.getName();
 			String facebookId = graphUser.getId();
 			vueUser = new VueUser(facebookUserId, null, null, null, email);
 			vueUser.setUsersName(firstName, lastName);
 			vueUser.setBirthday(birthday);
-		} catch (JSONException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		return vueUser;

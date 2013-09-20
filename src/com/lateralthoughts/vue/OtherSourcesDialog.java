@@ -50,6 +50,9 @@ public class OtherSourcesDialog {
 						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
 								.getSupportFragmentManager().findFragmentById(
 										R.id.create_aisles_view_fragment);
+						fragment.mFindAtText
+								.setText(OtherSourcesDialog.this.imagesList
+										.get(position).getOriginUrl());
 						fragment.setGalleryORCameraImage(picturePath, false);
 					} else {
 						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;

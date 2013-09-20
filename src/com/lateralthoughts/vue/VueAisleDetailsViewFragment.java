@@ -691,7 +691,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mRightArrow.setVisibility(View.GONE);
 	}
 
-	public ArrayList<String> getAisleWindowImgList() {
+	public ArrayList<AisleImageDetails> getAisleWindowImgList() {
 		return mAisleDetailsAdapter.getImageList();
 	}
 

@@ -163,10 +163,12 @@ public class AisleDetailsViewListLoader {
     
     public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
     	String loc = itemDetails.mImageUrl;
+    	String serverImageUrl = itemDetails.mImageUrl;
       //  if (cancelPotentialDownload(loc, imageView)) { 
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
-            task.execute(loc);
+            String imagesArray[] = {loc, serverImageUrl};
+            task.execute(imagesArray);
        // }
     }
     
@@ -174,6 +176,7 @@ public class AisleDetailsViewListLoader {
         private final WeakReference<ImageView> imageViewReference;
         //private final WeakReference<AisleContentBrowser>viewFlipperReference;
         private String url = null;
+        private String serverImageUrl = null;
         private int mBestHeight;
         AisleContentBrowser aisleContentBrowser ;
         int mAvailabeWidth,mAvailableHeight;
@@ -191,16 +194,17 @@ public class AisleDetailsViewListLoader {
         @Override
         protected Bitmap doInBackground(String... params) {
             url = params[0];
+            serverImageUrl = params[1];
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, true, mBestHeight);
+            bmp = mBitmapLoaderUtils.getBitmap(url, null, true, mBestHeight);
             if(bmp != null) {
            	 mImageDimension = Utils.getScalledImage(bmp,
            			mAvailabeWidth, mAvailableHeight);
            	mAvailableHeight = mImageDimension.mImgHeight;
             	 if(bmp.getHeight()<mImageDimension.mImgHeight) {
-            		 bmp = mBitmapLoaderUtils.getBitmap(url, true, mImageDimension.mImgHeight);
+            		 bmp = mBitmapLoaderUtils.getBitmap(url, serverImageUrl, true, mImageDimension.mImgHeight);
 				 }
             }
             return bmp;            

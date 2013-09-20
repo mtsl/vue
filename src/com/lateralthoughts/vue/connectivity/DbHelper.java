@@ -19,7 +19,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	 public static final int DATABASE_VERSION = 1;
 	 
      private String createAislesTable = "create table if not exists " + DATABASE_TABLE_AISLES
-     + " (" + VueConstants.AISLE_ID + " integer primary key, "
+     + " (" + VueConstants.AISLE_Id + " integer primary key, "
      + VueConstants.CATEGORY + " text, "
      + VueConstants.FIRST_NAME + " text, "
      + VueConstants.LAST_NAME + " text, "
@@ -35,7 +35,7 @@ public class DbHelper extends SQLiteOpenHelper {
      
      private String createAisleImagesTable = "create table if not exists " + DATABASE_TABLE_AISLES_IMAGES
      + " (" + VueConstants.IMAGE_ID + " integer primary key, "
-     + VueConstants.AISLE_ID + " text, "
+     + VueConstants.AISLE_Id + " text, "
      + VueConstants.TITLE + " text, "
      + VueConstants.IMAGE_URL + " text, "
      + VueConstants.DETAILS_URL + " text, "
@@ -51,7 +51,7 @@ public class DbHelper extends SQLiteOpenHelper {
      
      private String createImageCommentsTable = "create table if not exists " + DATABASE_TABLE_COMMENTS_ON_IMAGES
      + " (" + VueConstants.ID + " integer primary key autoincrement, "
-     + VueConstants.AISLE_ID + " text, "
+     + VueConstants.AISLE_Id + " text, "
      + VueConstants.IMAGE_ID + " text, "
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.DELETE_FLAG + " integer, "
