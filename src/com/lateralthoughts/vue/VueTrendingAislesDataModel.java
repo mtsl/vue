@@ -166,6 +166,7 @@ public class VueTrendingAislesDataModel {
 	}
   public void dataObserver(){
 		for (IAisleDataObserver observer : mAisleDataObserver) {
+			Log.i("TrendingDataModel", "DataObserver for List Refresh:  ");
 			observer.onAisleDataUpdated(mAisleContentList.size());
 		} 
 		loadOnRequest = true;

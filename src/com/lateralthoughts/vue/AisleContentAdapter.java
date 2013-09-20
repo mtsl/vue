@@ -181,13 +181,13 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             
             for(int i = startIndex; i<count+startIndex; i++){
                 //Log.e("FileCacher","about to cache file for index = " + mBitmapsToFetch.mImagesList.get(i).mCustomImageUrl);
-                cacheBitmapToLocal(mBitmapsToFetch.mImagesList.get(i).mCustomImageUrl, mBitmapsToFetch.mBestHeight);
+                cacheBitmapToLocal(mBitmapsToFetch.mImagesList.get(i).mCustomImageUrl,  mBitmapsToFetch.mImagesList.get(i).mImageUrl, mBitmapsToFetch.mBestHeight);
             }
         }
     }
     
     
-    public void cacheBitmapToLocal(String url, int bestHeight) 
+    public void cacheBitmapToLocal(String url, String serverUrl, int bestHeight) 
     {
         File f = mFileCache.getFile(url);        
         //from SD cache
@@ -197,7 +197,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         
         //from web
         try {
-            URL imageUrl = new URL(url);
+            URL imageUrl = new URL(serverUrl);
             HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
             conn.setConnectTimeout(30000);
             conn.setReadTimeout(30000);
@@ -338,7 +338,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         private final WeakReference<ImageView> imageViewReference;
         private final WeakReference<AisleContentBrowser>viewFlipperReference;
         private String url = null;
-        private String serverImageUrl = null;
         private int mBestHeightForImage;
         AisleContentBrowser aisleContentBrowser ;
         private int mAVailableWidth,mAvailabeHeight;
@@ -357,11 +356,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         @Override
         protected Bitmap doInBackground(String... params) {
             url = params[0];
-            serverImageUrl = params[1];
             Bitmap bmp = null;            
             //we want to get the bitmap and also add it into the memory cache
             //bmp = getBitmap(url, true, mBestHeightForImage); 
-            bmp = mBitmapLoaderUtils.getBitmap(url, serverImageUrl, true, mBestHeightForImage);
+            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeightForImage);
             
             if(!(aisleContentBrowser.getmSourceName() != null && aisleContentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG))&& bmp != null) {
                 Log.i("adapter swiping", "adapter swiping doing  ++++++++++++++++++++++++++++++++++++++++++++ " );
@@ -382,7 +380,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 							mAVailableWidth, mAvailabeHeight);
 					mAvailabeHeight = mImageDimension.mImgHeight;
 					if (bmp.getHeight() < mImageDimension.mImgHeight) {
-						bmp = mBitmapLoaderUtils.getBitmap(url, serverImageUrl, true,
+						bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true,
 								mImageDimension.mImgHeight);
 						mAvailabeHeight = bmp.getHeight();
 				     	 
@@ -446,7 +444,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
      * just want to have the bitmap. This is a utility function and is public because it is to 
      * be shared by other components in the internal implementation.   
      */
-    public Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) 
+    public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight) 
     {
         File f = mFileCache.getFile(url);
         
@@ -462,7 +460,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         try {
             Bitmap bitmap=null;
             System.setProperty("http.keepAlive", "false");
-            URL imageUrl = new URL(url);
+            URL imageUrl = new URL(serverUrl);
             HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
             conn.setConnectTimeout(30000);
             conn.setReadTimeout(30000);

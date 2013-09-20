@@ -61,7 +61,7 @@ public class BitmapLoaderUtils {
      * just want to have the bitmap. This is a utility function and is public because it is to 
      * be shared by other components in the internal implementation.   
      */
-    public Bitmap getBitmap(String url, String imageServerUrl, boolean cacheBitmap, int bestHeight) 
+    public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight) 
     {
     	 Log.i("added url", "added url  getBitmap "+url);
         File f = mFileCache.getFile(url);
@@ -83,14 +83,14 @@ public class BitmapLoaderUtils {
         
         //from web
         try {
-        	Log.i("imageurl", "imageurl original vue  bitmap check4:  error" + imageServerUrl);
-        	if(imageServerUrl == null || imageServerUrl.length() < 1) {
+        	Log.i("imageurl", "imageurl original vue  bitmap check4:  error" + url);
+        	if(serverUrl == null || serverUrl.length() < 1) {
        
         		return null;
         	}
-        	Log.i("imageurl", "imageurl original vue  bitmap check4:  error" + imageServerUrl);
+        	Log.i("imageurl", "imageurl original vue  bitmap check4:  error" + url);
             Bitmap bitmap=null;
-            URL imageUrl = new URL(imageServerUrl);
+            URL imageUrl = new URL(serverUrl);
             HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
             conn.setConnectTimeout(30000);
             conn.setReadTimeout(30000);

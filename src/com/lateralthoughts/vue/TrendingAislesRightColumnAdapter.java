@@ -93,9 +93,10 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     public View getView(int position, View convertView, ViewGroup parent) {     
         ViewHolder holder;
         StringBuilder sb = new StringBuilder();
-        
+        Log.i("TrendingDataModel", "DataObserver for List Refresh:  Right getview ");
         if (null == convertView) {
-            LayoutInflater layoutInflator = LayoutInflater.from(mContext);
+        	Log.i("TrendingDataModel", "DataObserver for List Refresh: Right getview if ");
+        	LayoutInflater layoutInflator = LayoutInflater.from(mContext);
             convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
             holder = new ViewHolder();
             holder.aisleContentBrowser = (AisleContentBrowser) convertView .findViewById(R.id.aisle_content_flipper);
@@ -172,6 +173,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
 
     @Override
     public void onAisleDataUpdated(int newCount){
+    	Log.i("TrendingDataModel", "DataObserver for List Refresh: Right List AisleUpdate Called ");
         notifyDataSetChanged();
     }
 

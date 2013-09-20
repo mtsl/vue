@@ -53,6 +53,10 @@ public class OtherSourcesDialog {
 						fragment.mFindAtText
 								.setText(OtherSourcesDialog.this.imagesList
 										.get(position).getOriginUrl());
+						fragment.mOtherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
+								.get(position).getHeight();
+						fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
+								.get(position).getWidth();
 						fragment.setGalleryORCameraImage(picturePath, false);
 					} else {
 						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
@@ -73,6 +77,10 @@ public class OtherSourcesDialog {
 							fragment.mFindAtText
 									.setText(OtherSourcesDialog.this.imagesList
 											.get(position).getOriginUrl());
+							fragment.mOtherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
+									.get(position).getHeight();
+							fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
+									.get(position).getWidth();
 							fragment.setGalleryORCameraImage(f.getPath(), true);
 						} else {
 							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;

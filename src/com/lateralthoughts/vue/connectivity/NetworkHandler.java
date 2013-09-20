@@ -129,8 +129,6 @@ public class NetworkHandler {
 	public void requestCreateAisle(Aisle aisle,
 			final AisleUpdateCallback callback) {
 		AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
-		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-				.dataObserver();
 	}
 
 	public void requestForAddImage(VueImage image, ImageAddedCallback callback) {

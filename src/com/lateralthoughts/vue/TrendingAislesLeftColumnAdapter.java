@@ -93,8 +93,9 @@ public class TrendingAislesLeftColumnAdapter extends TrendingAislesGenericAdapte
         StringBuilder sb = new StringBuilder();
 
         int actualPosition = calculateActualPosition(position);
-        
+        Log.i("TrendingDataModel", "DataObserver for List Refresh: Left getview ");
         if (null == convertView) {
+        	Log.i("TrendingDataModel", "DataObserver for List Refresh: Left getview if ");
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
             convertView = layoutInflator.inflate(R.layout.staggered_row_item, null);
             holder = new ViewHolder();

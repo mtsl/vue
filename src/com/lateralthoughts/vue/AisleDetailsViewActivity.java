@@ -576,7 +576,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		private final WeakReference<ImageView> imageViewReference;
 		// private final WeakReference<AisleContentBrowser>viewFlipperReference;
 		private String url = null;
-		private String serverImageUrl = null;
 		private int mBestHeight;
 
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
@@ -591,10 +590,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		@Override
 		protected Bitmap doInBackground(String... params) {
 			url = params[0];
-			serverImageUrl = params[1];
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
-			bmp = mBitmapLoaderUtils.getBitmap(url, serverImageUrl, true,
+			bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true,
 					mBestHeight);
 
 			// bmp = getBitmap(url, true, mBestHeight);
@@ -698,7 +696,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	 * the bitmap. This is a utility function and is public because it is to be
 	 * shared by other components in the internal implementation.
 	 */
-	private Bitmap getBitmap(String url, boolean cacheBitmap, int bestHeight) {
+	private Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight) {
 		Log.i("added url", "added url  getBitmap " + url);
 		File f = mFileCache.getFile(url);
 		Log.i("added url", "added url  getBitmap " + f);
@@ -714,12 +712,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 		// from web
 		try {
-			if (url == null || url.length() < 1) {
+			if (serverUrl == null || serverUrl.length() < 1) {
 
 				return null;
 			}
 			Bitmap bitmap = null;
-			URL imageUrl = new URL(url);
+			URL imageUrl = new URL(serverUrl);
 			HttpURLConnection conn = (HttpURLConnection) imageUrl
 					.openConnection();
 			conn.setConnectTimeout(30000);
