@@ -27,7 +27,7 @@ public class Parser {
 	// backend
 	private static final String ITEM_CATEGORY_TAG = "category";
 	private static final String LOOKING_FOR_TAG = "lookingFor";
-	private static final String OCCASION_TAG = "occasion";
+	private static final String OCCASION_TAG = "occassion";
 	private static final String CONTENT_ID_TAG = "id";
 	private static final String USER_IMAGE_ID_TAG = "id";
 	private static final String USER_IMAGE_DETALS_TAG = "detailsUrl";
@@ -48,73 +48,19 @@ public class Parser {
 		ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
 
 		JSONArray contentArray = null;
-		try {
-			contentArray = handleResponce(resultString, loadMore);
-			if (contentArray == null) {
-				return aisleWindowContentList;
-			}
-			Log.i("useraisleparsing",
-					"imageListresponse imageListResponse response: "
-							+ contentArray);
-			for (int i = 0; i < contentArray.length(); i++) {
-				AisleContext aisleContext = new AisleContext();
-				JSONObject ailseItem = contentArray.getJSONObject(i);
-				aisleContext.mAisleId = ailseItem
-						.getString(VueConstants.AISLE_ID);
-				aisleContext.mCategory = ailseItem
-						.getString(VueConstants.AISLE_CATEGORY);
-				aisleContext.mLookingForItem = ailseItem
-						.getString(VueConstants.AISLE_LOOKINGFOR);
-				aisleContext.mName = ailseItem
-						.getString(VueConstants.AISLE_NAME);
-				aisleContext.mOccasion = ailseItem
-						.getString(VueConstants.AISLE_OCCASSION);
-				aisleContext.mUserId = ailseItem
-						.getString(VueConstants.AISLE_OWNER_USER_ID);
-				String firstName = ailseItem
-						.getString(VueConstants.AISLE_OWNER_FIRSTNAME);
-				String lastName = ailseItem
-						.getString(VueConstants.AISLE_OWNER_LASTNAME);
-				if (firstName == null || firstName.equals("null")) {
-					aisleContext.mFirstName = " ";
-					firstName = null;
-				} else {
-					aisleContext.mFirstName = firstName;
-				}
-				if (lastName == null || lastName.equals("null")) {
-					aisleContext.mLastName = " ";
-					lastName = null;
-				} else {
-					aisleContext.mLastName = lastName;
-				}
-				if (firstName == null && lastName == null) {
-					aisleContext.mFirstName = "Anonymous";
-				}
-				aisleContext.mBookmarkCount = ailseItem
-						.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
-				ArrayList<AisleImageDetails> aisleImageDetailsList = null;
-				try {
-					aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				if (aisleImageDetailsList != null
-						&& aisleImageDetailsList.size() > 0) {
-					AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
-							.getInstance(VueApplication.getInstance())
-							.getAisle(aisleContext.mAisleId);
-					aisleWindowContent.addAisleContent(aisleContext,
-							aisleImageDetailsList);
-					VueTrendingAislesDataModel.getInstance(
-							VueApplication.getInstance()).addItemToList(
-							aisleContext.mAisleId, aisleWindowContent);
-					aisleWindowContentList.add(aisleWindowContent);
-				}
-			}
-		} catch (JSONException ex1) {
-			ex1.printStackTrace();
+
+		contentArray = handleResponce(resultString, loadMore);
+		if (contentArray == null) {
 			return aisleWindowContentList;
 		}
+		Log.i("useraisleparsing",
+				"imageListresponse imageListResponse response: " + contentArray);
+		try {
+			aisleWindowContentList = parseAisleInformation(contentArray);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
 		Log.e("Profiling", "Profiling : response json array444444444444444: "
 				+ aisleWindowContentList.size());
 		return aisleWindowContentList;
@@ -136,13 +82,15 @@ public class Parser {
 		return contentArray;
 	}
 
-	public AisleContext getAisleCotent(String jsonArray) {
+	public AisleWindowContent getAisleCotent(String response) {
+		AisleWindowContent aisleWindowContent = null;
 		AisleContext aisleContext = new AisleContext();
+		ArrayList<AisleImageDetails> arrayList = new ArrayList<AisleImageDetails>();
 
-		if (null != jsonArray) {
+		if (null != response) {
 
 			try {
-				JSONObject userInfo = new JSONObject(jsonArray);
+				JSONObject userInfo = new JSONObject(response);
 				aisleContext.mAisleId = userInfo.getString(CONTENT_ID_TAG);
 				aisleContext.mCategory = userInfo.getString(ITEM_CATEGORY_TAG);
 
@@ -154,21 +102,29 @@ public class Parser {
 				Log.e("Profiling", "Profiling : onResponse() mAisleId: "
 						+ aisleContext.mAisleId);
 				aisleContext.mOccasion = userInfo.getString(OCCASION_TAG);
-
+				aisleContext.mName = userInfo.getString(VueConstants.AISLE_NAME);
+				aisleContext.mFirstName = userInfo.getString(VueConstants.AISLE_OWNER_FIRSTNAME);
+				aisleContext.mLastName = userInfo.getString(VueConstants.AISLE_OWNER_LASTNAME);
+				aisleContext.mBookmarkCount = userInfo.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
+				AisleImageDetails aisleImageDetails = getImageDetails(userInfo.getJSONObject("aisleImage"));
+				arrayList.add(aisleImageDetails);
+				aisleWindowContent = VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getAisle(aisleContext.mUserId);
+				aisleWindowContent.addAisleContent(aisleContext, arrayList);
 			} catch (Exception ex) {
 				Log.e("Profiling",
 						"Profiling : onResponse()################### error");
 				ex.printStackTrace();
 			}
 		}
-		return aisleContext;
+		return aisleWindowContent;
 	}
+	
 
-	public AisleImageDetails getImageDetails(String jsonArray)
+	
+	public AisleImageDetails getImageDetails(JSONObject userInfo)
 			throws JSONException {
 
 		AisleImageDetails imageItemDetails = new AisleImageDetails();
-		JSONObject userInfo = new JSONObject(jsonArray);
 		imageItemDetails.mDetalsUrl = userInfo.getString(USER_IMAGE_DETALS_TAG);
 		imageItemDetails.mId = userInfo.getString(USER_IMAGE_ID_TAG);
 		imageItemDetails.mStore = userInfo.getString(USER_IMAGE_STORE_TAG);
@@ -181,80 +137,21 @@ public class Parser {
 
 	}
 
-	public List getUserAilseLIst(String jsonArray) {
-		String userId;
-		String aisleId, ownerUserId, name, category, lookingFor, occassion, aisleOwnerFirstName, aisleOwnerLastName;
-		int bookmarkCount;
+	public ArrayList<AisleWindowContent> getUserAilseLIst(String jsonArray) {
+		ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
 		try {
 			Log.i("useraisleparsing", "useraisleparsing started");
-
 			JSONObject jsonResponse = new JSONObject(new String(jsonArray));
 			JSONArray aisleArray = jsonResponse.getJSONArray("aisles");
 
-			/*
-			 * JSONArray contentArray = new JSONArray(jsonArray); JSONObject
-			 * contentItem = contentArray.getJSONObject(0); userId =
-			 * contentItem.getString("id"); Log.i("useraisleparsing",
-			 * "useraisleparsing userId: "+userId);
-			 */
-
-			/*
-			 * JSONArray imagesArray = null; imagesArray =
-			 * contentItem.getJSONArray("aisles");
-			 */
-			JSONObject ailseItem;
-			for (int i = 0; i < aisleArray.length(); i++) {
-				AisleContext aisleContext = new AisleContext();
-				ailseItem = aisleArray.getJSONObject(i);
-				aisleId = ailseItem.getString("id");
-				aisleContext.mAisleId = aisleId;
-				Log.i("useraisleparsing", "useraisleparsing aisleId: "
-						+ aisleId);
-				ownerUserId = ailseItem.getString("ownerUserId");
-				aisleContext.mUserId = ownerUserId;
-				Log.i("useraisleparsing", "useraisleparsing ownerUserId: "
-						+ ownerUserId);
-				name = ailseItem.getString("name");
-				Log.i("useraisleparsing", "useraisleparsing name: " + name);
-				category = ailseItem.getString("category");
-				aisleContext.mCategory = category;
-				Log.i("useraisleparsing", "useraisleparsing category: "
-						+ category);
-				lookingFor = ailseItem.getString("lookingFor");
-				aisleContext.mLookingForItem = lookingFor;
-				Log.i("useraisleparsing", "useraisleparsing lookingFor: "
-						+ lookingFor);
-				occassion = ailseItem.getString("occassion");
-				aisleContext.mOccasion = occassion;
-				Log.i("useraisleparsing", "useraisleparsing occassion: "
-						+ occassion);
-				aisleOwnerFirstName = ailseItem
-						.getString("aisleOwnerFirstName");
-				if (aisleOwnerFirstName == null) {
-					aisleContext.mFirstName = "";
-				} else {
-					aisleContext.mFirstName = aisleOwnerFirstName;
-				}
-				Log.i("useraisleparsing",
-						"useraisleparsing aisleOwnerFirstName: "
-								+ aisleOwnerFirstName);
-				aisleOwnerLastName = ailseItem.getString("aisleOwnerLastName");
-				if (aisleOwnerLastName == null) {
-					aisleContext.mLastName = "";
-				} else {
-					aisleContext.mLastName = aisleOwnerLastName;
-				}
-				Log.i("useraisleparsing",
-						"useraisleparsing aisleOwnerLastName: "
-								+ aisleOwnerLastName);
-
+			if (aisleArray != null) {
+				aisleWindowContentList = parseAisleInformation(aisleArray);
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
-
+		return aisleWindowContentList;
 	}
 
 	public static ArrayList<AisleImageDetails> getImagesForAisleId(
@@ -306,5 +203,62 @@ public class Parser {
 		}
 
 		return imageList;
+	}
+
+	private ArrayList<AisleWindowContent> parseAisleInformation(
+			JSONArray jsonArray) throws JSONException {
+		ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
+		for (int i = 0; i < jsonArray.length(); i++) {
+			AisleContext aisleContext = new AisleContext();
+			JSONObject ailseItem = jsonArray.getJSONObject(i);
+			aisleContext.mAisleId = ailseItem.getString(VueConstants.AISLE_ID);
+			aisleContext.mCategory = ailseItem
+					.getString(VueConstants.AISLE_CATEGORY);
+			aisleContext.mLookingForItem = ailseItem
+					.getString(VueConstants.AISLE_LOOKINGFOR);
+			aisleContext.mName = ailseItem.getString(VueConstants.AISLE_NAME);
+			aisleContext.mOccasion = ailseItem
+					.getString(VueConstants.AISLE_OCCASSION);
+			aisleContext.mUserId = ailseItem
+					.getString(VueConstants.AISLE_OWNER_USER_ID);
+			String firstName = ailseItem
+					.getString(VueConstants.AISLE_OWNER_FIRSTNAME);
+			String lastName = ailseItem
+					.getString(VueConstants.AISLE_OWNER_LASTNAME);
+			if (firstName == null || firstName.equals("null")) {
+				aisleContext.mFirstName = " ";
+				firstName = null;
+			} else {
+				aisleContext.mFirstName = firstName;
+			}
+			if (lastName == null || lastName.equals("null")) {
+				aisleContext.mLastName = " ";
+				lastName = null;
+			} else {
+				aisleContext.mLastName = lastName;
+			}
+			if (firstName == null && lastName == null) {
+				aisleContext.mFirstName = "Anonymous";
+			}
+			aisleContext.mBookmarkCount = ailseItem
+					.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
+			ArrayList<AisleImageDetails> aisleImageDetailsList = null;
+			try {
+				aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (aisleImageDetailsList != null
+					&& aisleImageDetailsList.size() > 0) {
+				Log.i("ailsesize", "ailseListSizemaintrending: if called in parsing" );
+				AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance()).getAisle(
+								aisleContext.mAisleId);
+				aisleWindowContent.addAisleContent(aisleContext,
+						aisleImageDetailsList);
+				aisleWindowContentList.add(aisleWindowContent);
+			}
+		}
+		return aisleWindowContentList;
 	}
 }

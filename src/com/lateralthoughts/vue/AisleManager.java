@@ -84,11 +84,16 @@ public class AisleManager {
                     try{
                        // JSONObject userInfo = new JSONObject(jsonArray);
                         
-                     AisleContext aisleContext =  new Parser().getAisleCotent(jsonArray);
+                  AisleWindowContent aileItem =  new Parser().getAisleCotent(jsonArray);
+                      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).addItemToListAt(aileItem.getAisleContext().mAisleId, aileItem, 0);
+                  	VueTrendingAislesDataModel.getInstance(
+							VueApplication.getInstance())
+							.dataObserver();
+
                       //  JSONObject user = userInfo.getJSONObject("user");
                         //TODO: GET THE AISLE OBJECT FROM THE PARSER CLASE SEND THE AISLE AND AISLE ID BACK.
-                        callback.onAisleUpdated(aisleContext,aisleContext.mAisleId);
-                        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
+                        //callback.onAisleUpdated(aisleContext,aisleContext.mAisleId);
+                        //VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
                     }catch(Exception ex){
                     	 Log.e("Profiling", "Profiling : onResponse() **************** error");
                     	ex.printStackTrace();

@@ -28,6 +28,7 @@ import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueContentGateway;
+import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
@@ -37,36 +38,36 @@ import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
- 
 
 public class NetworkHandler {
 	Context mContext;
 	private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
-	                                                  //http://2-java.vueapi-canary-development1.appspot.com/api/
+	// http://2-java.vueapi-canary-development1.appspot.com/api/
 	DataBaseManager mDbManager;
 	protected VueContentGateway mVueContentGateway;
 	protected TrendingAislesContentParser mTrendingAislesParser;
 	private static final int NOTIFICATION_THRESHOLD = 4;
 	private static final int TRENDING_AISLES_BATCH_SIZE = 10;
 	public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
-	 private static String MY_AISLES = "aislesget/user/";
+	private static String MY_AISLES = "aislesget/user/";
 	protected int mLimit;
 	protected int mOffset;
-	
-	
-	
+	ArrayList<AisleWindowContent> aislesList = null;
 
 	public NetworkHandler(Context context) {
 		mContext = context;
 		mVueContentGateway = VueContentGateway.getInstance();
-		mTrendingAislesParser = new TrendingAislesContentParser(new Handler(), VueConstants.AISLE_TRENDING_LIST_DATA);
+		mTrendingAislesParser = new TrendingAislesContentParser(new Handler(),
+				VueConstants.AISLE_TRENDING_LIST_DATA);
 		mDbManager = DataBaseManager.getInstance(mContext);
 		mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
 		mOffset = 0;
 	}
-//whle user scrolls down get next 10 aisles
+
+	// whle user scrolls down get next 10 aisles
 	public void requestMoreAisle(boolean loadMore) {
-	/*	Log.i("offeset and limit", "offeset1: load moredata");
+
+		Log.i("offeset and limit", "offeset1: load moredata");
 		if (VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance())
 				.isMoreDataAvailable()) {
@@ -85,9 +86,11 @@ public class NetworkHandler {
 					mTrendingAislesParser, loadMore);
 		} else {
 			Log.i("offeset and limit", "offeset1: else part");
-		}*/
+		}
+
 	}
-//get the aisle based on the category
+
+	// get the aisle based on the category
 	public void reqestByCategory(String category, NotifyProgress progress,
 			boolean fromServer, boolean loadMore) {
 
@@ -121,16 +124,20 @@ public class NetworkHandler {
 	public static void requestTrending() {
 
 	}
-//request the server to create an empty aisle.
-	public void requestCreateAisle(Aisle aisle,final AisleUpdateCallback callback) {
+
+	// request the server to create an empty aisle.
+	public void requestCreateAisle(Aisle aisle,
+			final AisleUpdateCallback callback) {
 		AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.dataObserver();
 	}
-	public void requestForAddImage(VueImage image,ImageAddedCallback callback){
+
+	public void requestForAddImage(VueImage image, ImageAddedCallback callback) {
 		AisleManager.getAisleManager().addImageToAisle(image, callback);
 	}
-//get aisles related to search keyword
+
+	// get aisles related to search keyword
 	public void requestSearch(final String searchString) {
 		JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
 				+ searchString, new Response.Listener<JSONArray>() {
@@ -162,7 +169,7 @@ public class NetworkHandler {
 	public void requestUserAisles(String userId) {
 
 		JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
-				+ MY_AISLES+userId, new Response.Listener<JSONArray>() {
+				+ MY_AISLES + userId, new Response.Listener<JSONArray>() {
 
 			@Override
 			public void onResponse(JSONArray response) {
@@ -186,11 +193,8 @@ public class NetworkHandler {
 
 		VueApplication.getInstance().getRequestQueue().add(vueRequest);
 
-	
 	}
 
-	
-	
 	public void loadInitialData(boolean loadMore, Handler mHandler) {
 
 		if (!VueConnectivityManager.isNetworkConnected(mContext)) {
@@ -211,73 +215,97 @@ public class NetworkHandler {
 		}
 
 	}
- public void requestAislesByUser()  {
-/*	 String userId = null;
-	 try{
-	    VueUser storedVueUser = null;
-				storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
-						VueConstants.VUE_APP_USEROBJECT__FILENAME);
-			
-			if (storedVueUser != null) {
-				userId = Long.valueOf(storedVueUser.getVueId()).toString();
-			}
-	 }catch(Exception e){
-		 e.printStackTrace();
-	 }
-			Log.i("getAisleByuser", "getAisleByuser getailselistmethod get user iD " );
-		    String requestUrl = UrlConstants.GET_AISLELIST_BYUSER_RESTURL+"/"+userId;
-	 
-		    Log.i("getAisleByuser", "getAisleByuser getailselistmethod requestUrl:  "+requestUrl );
-	 
-	 
-	 
-		JsonObjectRequest vueRequest = new JsonObjectRequest(requestUrl 
-				 , null, new Response.Listener<JSONObject>() {
+
+	public void requestAislesByUser() {
+		/*
+		 * String userId = null; try{ VueUser storedVueUser = null;
+		 * storedVueUser =
+		 * Utils.readUserObjectFromFile(VueApplication.getInstance(),
+		 * VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		 * 
+		 * if (storedVueUser != null) { userId =
+		 * Long.valueOf(storedVueUser.getVueId()).toString(); } }catch(Exception
+		 * e){ e.printStackTrace(); } Log.i("getAisleByuser",
+		 * "getAisleByuser getailselistmethod get user iD " ); String requestUrl
+		 * = UrlConstants.GET_AISLELIST_BYUSER_RESTURL+"/"+userId;
+		 * 
+		 * Log.i("getAisleByuser",
+		 * "getAisleByuser getailselistmethod requestUrl:  "+requestUrl );
+		 * 
+		 * 
+		 * 
+		 * JsonObjectRequest vueRequest = new JsonObjectRequest(requestUrl ,
+		 * null, new Response.Listener<JSONObject>() {
+		 * 
+		 * @Override public void onResponse(JSONObject response) { if (null !=
+		 * response) { Log.i("getAisleByuser",
+		 * "getAisleByuser getailselistmethod response:  "+ response ); Bundle
+		 * responseBundle = new Bundle();
+		 * responseBundle.putString("Search result", response.toString());
+		 * responseBundle.putBoolean("loadMore", false);
+		 * mTrendingAislesParser.send(1, responseBundle); }
+		 * Log.e("Search Resopnse", "SURU Search Resopnse : " + response); } },
+		 * new Response.ErrorListener() {
+		 * 
+		 * @Override public void onErrorResponse(VolleyError error) {
+		 * Log.i("getAisleByuser",
+		 * "getAisleByuser getailselistmethod Error response:  "+error );
+		 * 
+		 * } });
+		 * 
+		 * VueApplication.getInstance().getRequestQueue().add(vueRequest);
+		 */
+
+		// TODO: CHANGE THIS REQUEST TO VOLLEY
+		new Thread(new Runnable() {
 
 			@Override
-			public void onResponse(JSONObject response) {
-				if (null != response) {
-					 Log.i("getAisleByuser", "getAisleByuser getailselistmethod response:  "+ response );
-					Bundle responseBundle = new Bundle();
-					responseBundle.putString("Search result",
-							response.toString());
-					responseBundle.putBoolean("loadMore", false);
-					mTrendingAislesParser.send(1, responseBundle);
+			public void run() {
+				try {
+					aislesList = null;
+					aislesList = testGetAisleList();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
-			}
-		}, new Response.ErrorListener() {
+				if (VueLandingPageActivity.landingPageActivity != null) {
+					VueLandingPageActivity.landingPageActivity
+							.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = true;
+									if (aislesList != null
+											&& aislesList.size() > 0) {
+										for (int i = 0; i < aislesList.size(); i++) {
+											VueTrendingAislesDataModel
+													.getInstance(
+															VueApplication
+																	.getInstance())
+													.addItemToList(
+															aislesList
+																	.get(i)
+																	.getAisleContext().mAisleId,
+															aislesList.get(i));
+										}
 
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				 Log.i("getAisleByuser", "getAisleByuser getailselistmethod Error response:  "+error );
-		 
+										VueTrendingAislesDataModel.getInstance(
+												VueApplication.getInstance())
+												.dismissProgress();
+										// if this is the first set of data we
+										// are receiving
+										// go
+										// ahead
+										// notify the data set changed
+										VueTrendingAislesDataModel.getInstance(
+												VueApplication.getInstance())
+												.dataObserver();
+									}
+								}
+							});
+				}
 			}
-		});
+		}).start();
+	}
 
-		VueApplication.getInstance().getRequestQueue().add(vueRequest);*/
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 //TODO: CHANGE THIS REQUEST TO VOLLEY
-	 new Thread(new Runnable() {
-		
-		@Override
-		public void run() {
-			try{
- 
-				 testGetAisleList();
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-			
-		}
-	}).start();
- }
 	public int getmOffset() {
 		return mOffset;
 	}
@@ -285,35 +313,30 @@ public class NetworkHandler {
 	public void setmOffset(int mOffset) {
 		this.mOffset = mOffset;
 	}
-	
-	public   void testGetAisleList() throws Exception{
-		    VueUser storedVueUser = null;
-			storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
-					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+
+	public ArrayList<AisleWindowContent> testGetAisleList() throws Exception {
+		VueUser storedVueUser = null;
+		storedVueUser = Utils.readUserObjectFromFile(
+				VueApplication.getInstance(),
+				VueConstants.VUE_APP_USEROBJECT__FILENAME);
 		String userId = null;
 		if (storedVueUser != null) {
 			userId = Long.valueOf(storedVueUser.getVueId()).toString();
 		}
-	    String requestUrl = UrlConstants.GET_AISLELIST_BYUSER_RESTURL+"/"+userId;
+		String requestUrl = UrlConstants.GET_AISLELIST_BYUSER_RESTURL + "/"
+				+ userId;
 		URL url = new URL(requestUrl);
 		HttpGet httpGet = new HttpGet(url.toString());
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = httpClient.execute(httpGet);
-		if(response.getEntity()!=null &&
-		response.getStatusLine().getStatusCode() == 200) {
-		String responseMessage = EntityUtils.toString(response.getEntity());
-		System.out.println("Response: "+responseMessage);
-		new Parser().getUserAilseLIst(responseMessage);
+		if (response.getEntity() != null
+				&& response.getStatusLine().getStatusCode() == 200) {
+			String responseMessage = EntityUtils.toString(response.getEntity());
+			System.out.println("Response: " + responseMessage);
+			return new Parser().getUserAilseLIst(responseMessage);
 		}
+		return null;
 
-		 
-		}
+	}
 
 }
-
-
-
-
-
-
- 

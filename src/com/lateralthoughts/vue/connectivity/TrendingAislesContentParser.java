@@ -34,33 +34,58 @@ public class TrendingAislesContentParser extends ResultReceiver {
 			Thread t = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					ArrayList<AisleWindowContent> aislesList = new Parser()
+					final ArrayList<AisleWindowContent> aislesList = new Parser()
 							.parseTrendingAislesResultData(
 									resultData.getString("result"),
 									resultData.getBoolean("loadMore"));
-				/*	if (aislesList != null && aislesList.size() > 0) {
-						int size = aislesList.size();
-						Log.i("ailsesize", "ailseListSize: " + size);
-						new DbDataSetter(aislesList).execute();
-						aislesList = null;
-					}*/
+					/*
+					 * if (aislesList != null && aislesList.size() > 0) { int
+					 * size = aislesList.size(); Log.i("ailsesize",
+					 * "ailseListSize: " + size); new
+					 * DbDataSetter(aislesList).execute(); aislesList = null; }
+					 */
+					Log.i("ailsesize", "ailseListSizemaintrending: "
+							+ aislesList.size());
 					if (VueLandingPageActivity.landingPageActivity != null) {
 						VueLandingPageActivity.landingPageActivity
 								.runOnUiThread(new Runnable() {
 
 									@Override
 									public void run() {
-										VueTrendingAislesDataModel.getInstance(
-												VueApplication.getInstance())
-												.dismissProgress();
-										// if this is the first set of data we
-										// are receiving
-										// go
-										// ahead
-										// notify the data set changed
-										VueTrendingAislesDataModel.getInstance(
-												VueApplication.getInstance())
-												.dataObserver();
+										VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = true;
+										if (aislesList != null
+												&& aislesList.size() > 0) {
+											for (int i = 0; i < aislesList
+													.size(); i++) {
+												VueTrendingAislesDataModel
+														.getInstance(
+																VueApplication
+																		.getInstance())
+														.addItemToList(
+																aislesList
+																		.get(i)
+																		.getAisleContext().mAisleId,
+																aislesList
+																		.get(i));
+											}
+
+											VueTrendingAislesDataModel
+													.getInstance(
+															VueApplication
+																	.getInstance())
+													.dismissProgress();
+											// if this is the first set of data
+											// we
+											// are receiving
+											// go
+											// ahead
+											// notify the data set changed
+											VueTrendingAislesDataModel
+													.getInstance(
+															VueApplication
+																	.getInstance())
+													.dataObserver();
+										}
 									}
 								});
 					}
