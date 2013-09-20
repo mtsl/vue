@@ -114,6 +114,10 @@ public class AisleLoader {
 	public void getAisleContentIntoView(ViewHolder holder, int scrollIndex,
 			int position, boolean placeholderOnly,
 			AisleContentClickListener listener) {
+		Log.i("TrendingDataModel",
+				"DataObserver for List Refresh: getAisleContentView called "
+						+ scrollIndex + "???" + position + "????"
+						+ placeholderOnly);
 		ScaleImageView imageView = null;
 		ArrayList<AisleImageDetails> imageDetailsArr = null;
 		AisleImageDetails itemDetails = null;
@@ -234,7 +238,7 @@ public class AisleLoader {
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
 			Log.e("Profiling", "Profiling New doInBackground()");
-			bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true,
+			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
 					mBestHeight);
 			return bmp;
 		}
