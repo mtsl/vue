@@ -48,6 +48,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
@@ -1439,10 +1440,20 @@ public class DataEntryFragment extends Fragment {
 								getActivity(),
 								VueConstants.VUE_APP_USEROBJECT__FILENAME);
 					} catch (Exception e2) {
+						e2.printStackTrace();
 					}
 					if (storedVueUser != null
 							&& storedVueUser.getVueId() != null) {
-						addNewAisleToServer(storedVueUser);
+						if (VueConnectivityManager
+								.isNetworkConnected(getActivity())) {
+							addNewAisleToServer(storedVueUser);
+						} else {
+							Toast.makeText(
+									getActivity(),
+									getResources().getString(
+											R.string.no_network),
+									Toast.LENGTH_LONG).show();
+						}
 					} else {
 						// TODO By Krishna
 						// In User Creation response Listener we need to call
@@ -1569,38 +1580,38 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	// create ailse and send to server.
-	private void addNewAisleToServer(VueUser storedVueUser) {
+	public void addNewAisleToServer(VueUser storedVueUser) {
 		String imageSourceUrl = mFindAtText.getText().toString();
 		if (imageSourceUrl != null && imageSourceUrl.trim().length() > 0) {
 			Aisle aisle = new Aisle();
 			aisle.setCategory(mCategoryText.getText().toString().trim());
 			aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
-			aisle.setName("Super Aisle"); //TODO By Krishna
+			aisle.setName("Super Aisle"); // TODO By Krishna
 			aisle.setOccassion(mOccassionBigText.getText().toString().trim());
 			aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
 			VueImage image = new VueImage();
-			image.setDetailsUrl("Got this image from a random url"); //TODO By Krishna
+			image.setDetailsUrl("Got this image from a random url"); // TODO By
+																		// Krishna
 			image.setHeight(mOtherSourceImageOriginalHeight);
 			image.setWidth(mOtherSourceImageOriginalWidth);
 			image.setImageUrl(imageSourceUrl);
-			//String imageApplicationSource = "UnKnown";
-		/*	if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
-					&& VueApplication.getInstance().mShoppingApplicationDetailsList
-							.size() > 0) {
-				for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
-						.size(); i++) {
-					if (imageSourceUrl
-							.contains(VueApplication.getInstance().mShoppingApplicationDetailsList
-									.get(i).getAppName())) {
-						imageApplicationSource = VueApplication.getInstance().mShoppingApplicationDetailsList
-								.get(i).getAppName();
-						break;
-					}
-				}
-			}*/
+			// String imageApplicationSource = "UnKnown";
+			/*
+			 * if (VueApplication.getInstance().mShoppingApplicationDetailsList
+			 * != null &&
+			 * VueApplication.getInstance().mShoppingApplicationDetailsList
+			 * .size() > 0) { for (int i = 0; i <
+			 * VueApplication.getInstance().mShoppingApplicationDetailsList
+			 * .size(); i++) { if (imageSourceUrl
+			 * .contains(VueApplication.getInstance
+			 * ().mShoppingApplicationDetailsList .get(i).getAppName())) {
+			 * imageApplicationSource =
+			 * VueApplication.getInstance().mShoppingApplicationDetailsList
+			 * .get(i).getAppName(); break; } } }
+			 */
 			image.setStore("UnKnown"); // TODO By Krishna
 			image.setTitle("Android Test"); // TODO By Krishna
- 
+
 			image.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
 			aisle.setAisleImage(image);
 			VueTrendingAislesDataModel

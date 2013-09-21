@@ -89,6 +89,7 @@ public class VueUserManager {
 
 			@Override
 			public void onResponse(String jsonArray) {
+				Log.e("VueUserDebug", "vueuser: response listener ");
 				if (null != jsonArray) {
 					Log.e("Profiling", "Create User: Profiling : onResponse()" + jsonArray);
  
@@ -121,6 +122,7 @@ public class VueUserManager {
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
+				Log.e("VueUserDebug", "vueuser: error listener ");
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
@@ -128,6 +130,7 @@ public class VueUserManager {
 				}
 			}
 		};
+		Log.e("VueUserDebug", "vueuser: method called ");
 		String requestUrl = VUE_API_BASE_URI + USER_CREATE_ENDPOINT;
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
@@ -356,6 +359,7 @@ public class VueUserManager {
 		// ... other methods go here
 		private Map<String, String> mParams;
 		Response.Listener<String> mListener;
+		Response.ErrorListener mErrorListener;
 
 		public UserCreateRequest(String param1, String param2,
 				Response.Listener<String> listener,
@@ -363,6 +367,7 @@ public class VueUserManager {
 			super(Method.PUT, VUE_API_BASE_URI + USER_CREATE_ENDPOINT,
 					errorListener);
 			mListener = listener;
+			mErrorListener = errorListener;
 		}
 
 		@Override
@@ -391,6 +396,14 @@ public class VueUserManager {
 			mListener.onResponse(s);
 			Log.e("VueUser", "error = " + s);
 		}
+
+		@Override
+		public void deliverError(VolleyError error) {
+			mErrorListener.onErrorResponse(error);
+		/*	// TODO Auto-generated method stub
+			super.deliverError(error);*/
+		}
+		
 	}
 
 	public void fetchUserDataFromLocalId(String id,

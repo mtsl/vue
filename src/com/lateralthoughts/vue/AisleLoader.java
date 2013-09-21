@@ -116,7 +116,7 @@ public class AisleLoader {
 			AisleContentClickListener listener) {
 		Log.i("TrendingDataModel",
 				"DataObserver for List Refresh: getAisleContentView called "
-						+ scrollIndex + "???" + position + "????"
+						+ holder.mWindowContent.getAisleId() + "???" + position + "????"
 						+ placeholderOnly);
 		ScaleImageView imageView = null;
 		ArrayList<AisleImageDetails> imageDetailsArr = null;

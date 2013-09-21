@@ -10,6 +10,7 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONObject;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -95,7 +96,8 @@ public class AisleManager {
                     	ex.printStackTrace();
                     }
                 } else {
-                	Log.i("myailsedebug", "myailsedebug: recieved response: is null ");
+                	Toast.makeText(VueApplication.getInstance(), "New Aisle Creation in server is failed.", Toast.LENGTH_LONG).show();
+                 
                 }
             }
         };
@@ -103,10 +105,11 @@ public class AisleManager {
             @Override
             public void onErrorResponse(VolleyError error) {
             	 Log.i("imageurl", "imageurl  aisle creation error response ");
-                if (null != error.networkResponse
+            	 Toast.makeText(VueApplication.getInstance(), "New Aisle Creation in server is failed.", Toast.LENGTH_LONG).show();
+            	 if (null != error.networkResponse
                         && null != error.networkResponse.data) {
                     String errorData = error.networkResponse.data.toString();
-                    Log.e("VueUserDebug", "error date = " + errorData);
+                     
                 }
             }
         };

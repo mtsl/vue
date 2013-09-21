@@ -35,9 +35,10 @@ public class VueApplication extends Application {
 	private boolean newVueTrendingAislesDataModel = false;
 	public ArrayList<String> mAisleImagePathList = new ArrayList<String>();
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
-	public static final int[] POPUP_ITEM_DRAWABLES = { R.drawable.composer_camera,
-		R.drawable.composer_music, R.drawable.composer_place,
-		R.drawable.composer_sleep, R.drawable.composer_thought };
+	public static final int[] POPUP_ITEM_DRAWABLES = {
+			R.drawable.composer_camera, R.drawable.composer_music,
+			R.drawable.composer_place, R.drawable.composer_sleep,
+			R.drawable.composer_thought };
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
@@ -78,6 +79,8 @@ public class VueApplication extends Application {
 			"com.amazon.mShop.android", "com.ebay.mobile", "com.etsy.android",
 			"com.thefancy.app", "com.shopping", "com.greybit.jewellery",
 			"com.olx.olx", "com.pinterest", "com.robemall.zovi" };
+
+	public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
 
 	@Override
 	public void onCreate() {
@@ -138,7 +141,7 @@ public class VueApplication extends Application {
 		// R.drawable.aisle_content_empty;
 		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 				crittercismConfig);
-		
+
 	}
 
 	public static VueApplication getInstance() {

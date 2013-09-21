@@ -115,6 +115,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
     public void onAisleDataUpdated(int newCount){
     	Log.i("TrendingDataModel", "DataObserver for List Refresh:  Generic Aisle Update Called ");
         notifyDataSetChanged();
+        
     }
     
     private int calculateActualPosition(int viewPosition){
