@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.entity.StringEntity;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
@@ -133,8 +134,8 @@ public class AisleManager {
     	
     }
 //issues a request to add an image to the aisle.
-	public void addImageToAisle(VueImage image, final ImageAddedCallback callback) {/*
-		Log.i("addimagetoaisle", "addimagetoaisle1");
+	public void addImageToAisle(VueImage image, final ImageAddedCallback callback) {
+		Log.i("addimagefuncitonality", "addimagefuncitonality entered in method");
 		if (null == image) {
 			throw new RuntimeException(
 					"Can't create Aisle without a non null aisle object");
@@ -149,35 +150,30 @@ public class AisleManager {
 
 			@Override
 			public void onResponse(String jsonArray) {
-				Log.i("addimagetoaisle", "addimagetoaisle onresponse jsonArray: "+jsonArray);
+		 
 				if (null != jsonArray) {
-					Log.e("Profiling", "Profiling : onResponse()");
-					try {
-			 
-						callback.onImageAdded(new Parser().getImageDetails(jsonArray));
-					} catch (JSONException ex) {
-						ex.printStackTrace();
-						Log.i("addimagetoaisle", "addimagetoaisle  onresponse exception");
-					}
-				}
+				 
+					Log.i("addimagefuncitonality", "addimagefuncitonality jsonArray response: "+jsonArray);
+					//callback.onImageAdded(new Parser().getImageDetails(jsonArray));
+				} 
 			}
 		};
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				Log.i("addimagetoaisle", "addimagetoaisle onerror response");
+				 
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
+					Log.i("addimagefuncitonality", "addimagefuncitonality jsonArray response ERROR: ");
 				}
 			}
 		};
-		Log.i("addimagetoaisle", "addimagetoaisle 2 sending request string: "+imageAsString);
+		Log.i("addimagefuncitonality", "addimagefuncitonality entered in method requst String: "+imageAsString);
 		AislePutRequest request = new AislePutRequest(imageAsString, listener,
-				errorListener, VUE_API_BASE_URI + CREATE_IMAGE_ENDPOINT);
+				errorListener,UrlConstants.CREATE_IMAGE_RESTURL);
 		VueApplication.getInstance().getRequestQueue().add(request);
-	*/}
+	}
     private class AislePutRequest extends Request<String> {
         // ... other methods go here
         private Map<String, String> mParams;
