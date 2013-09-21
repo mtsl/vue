@@ -60,9 +60,6 @@ public class Parser {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
-		Log.e("Profiling", "Profiling : response json array444444444444444: "
-				+ aisleWindowContentList.size());
 		return aisleWindowContentList;
 	}
 
@@ -71,8 +68,6 @@ public class Parser {
 		try {
 			contentArray = new JSONArray(resultString);
 			if (!loadMore) {
-				Log.i("datarequest",
-						"datarequest new request clear data in list");
 				VueTrendingAislesDataModel.getInstance(
 						VueApplication.getInstance()).clearContent();
 			}
@@ -97,10 +92,6 @@ public class Parser {
 				aisleContext.mLookingForItem = userInfo
 						.getString(LOOKING_FOR_TAG);
 				aisleContext.mUserId = userInfo.getString(CONTENT_ID_TAG);
-				Log.e("Profiling", "Profiling : onResponse() mUserId: "
-						+ aisleContext.mUserId);
-				Log.e("Profiling", "Profiling : onResponse() mAisleId: "
-						+ aisleContext.mAisleId);
 				aisleContext.mOccasion = userInfo.getString(OCCASION_TAG);
 				aisleContext.mName = userInfo
 						.getString(VueConstants.AISLE_NAME);
@@ -133,8 +124,6 @@ public class Parser {
 						aisleContext.mUserId);
 				aisleWindowContent.addAisleContent(aisleContext, arrayList);
 			} catch (Exception ex) {
-				Log.e("Profiling",
-						"Profiling : onResponse()################### error");
 				ex.printStackTrace();
 			}
 		}
@@ -150,7 +139,6 @@ public class Parser {
 		imageItemDetails.mStore = userInfo.getString(USER_IMAGE_STORE_TAG);
 		imageItemDetails.mTitle = userInfo.getString(USER_IMAGE_TITLE_TAG);
 		imageItemDetails.mImageUrl = userInfo.getString(USER_IMAGE_URL_TAG);
-		Log.i("imageurl", "imageurl is: " + imageItemDetails.mImageUrl);
 		imageItemDetails.mAvailableHeight = userInfo.getInt(IMAGE_HEIGHT_TAG);
 		imageItemDetails.mAvailableWidth = userInfo.getInt(IMAGE_WIDTH_TAG);
 		return imageItemDetails;
@@ -160,7 +148,7 @@ public class Parser {
 	public ArrayList<AisleWindowContent> getUserAilseLIst(String jsonArray) {
 		ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
 		try {
-			Log.i("useraisleparsing", "useraisleparsing started");
+			 
 			JSONObject jsonResponse = new JSONObject(new String(jsonArray));
 			JSONArray aisleArray = jsonResponse.getJSONArray("aisles");
 
@@ -206,8 +194,6 @@ public class Parser {
 							.getInt(VueConstants.AISLE_IMAGE_WIDTH);
 					aisleImageDetails.mImageUrl = jsonObject
 							.getString(VueConstants.AISLE_IMAGE_IMAGE_URL);
-					Log.e("Parser", "image url for ailse image: "
-							+ aisleImageDetails.mImageUrl);
 					aisleImageDetails.mRating = jsonObject
 							.getString(VueConstants.AISLE_IMAGE_RATING);
 					aisleImageDetails.mStore = jsonObject
@@ -221,7 +207,6 @@ public class Parser {
 				}
 			}
 		}
-
 		return imageList;
 	}
 
@@ -262,23 +247,25 @@ public class Parser {
 			}
 			aisleContext.mBookmarkCount = ailseItem
 					.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
+			
+		 
+			
 			ArrayList<AisleImageDetails> aisleImageDetailsList = null;
 			try {
 				aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
+				 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			if (aisleImageDetailsList != null
 					&& aisleImageDetailsList.size() > 0) {
-				Log.i("ailsesize",
-						"ailseListSizemaintrending: if called in parsing");
 				AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
 						.getInstance(VueApplication.getInstance()).getAisle(
 								aisleContext.mAisleId);
 				aisleWindowContent.addAisleContent(aisleContext,
 						aisleImageDetailsList);
 				aisleWindowContentList.add(aisleWindowContent);
-			}
+			}  
 		}
 		return aisleWindowContentList;
 	}

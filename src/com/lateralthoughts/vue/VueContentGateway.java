@@ -80,7 +80,7 @@ public class VueContentGateway {
 	 * Trending Aisles. The ResultReceiver object will be notified when the list
 	 * is available
 	 */
-	public boolean getTrendingAisles(int limit, int offset,
+	public boolean getTrendingAisles(int limit, final int offset,
 			final ResultReceiver receiver, final boolean loadMore) {
 		boolean status = true;
 		Log.i("datarequest", "datarequest parsing data offset: " + offset
@@ -131,6 +131,7 @@ public class VueContentGateway {
 						responseBundle
 								.putString("result", jsonArray.toString());
 						responseBundle.putBoolean("loadMore", loadMore);
+						responseBundle.putInt("offset", offset);
 						receiver.send(1, responseBundle);
 					}
 				}

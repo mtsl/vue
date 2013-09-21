@@ -10,6 +10,7 @@ import android.os.ResultReceiver;
 import android.util.Log;
 
 import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
@@ -38,21 +39,51 @@ public class TrendingAislesContentParser extends ResultReceiver {
 							.parseTrendingAislesResultData(
 									resultData.getString("result"),
 									resultData.getBoolean("loadMore"));
+
 					/*
 					 * if (aislesList != null && aislesList.size() > 0) { int
 					 * size = aislesList.size(); Log.i("ailsesize",
 					 * "ailseListSize: " + size); new
-					 * DbDataSetter(aislesList).execute(); aislesList = null; }
+					 * DbDataSetter(aislesList).execute(); }
 					 */
+
 					Log.i("ailsesize", "ailseListSizemaintrending: "
 							+ aislesList.size());
-					if (VueLandingPageActivity.landingPageActivity != null) {
+
+					boolean refreshListFlag = false;
+
+					if (VueLandingPageActivity.landingPageActivity != null
+							&& !(VueLandingPageActivity.mVueLandingActionbarScreenName
+									.getText().toString()
+									.equals(VueApplication
+											.getInstance()
+											.getString(
+													R.string.sidemenu_option_My_Aisles)))) {
+						if (VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag) {
+							VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
+							if (resultData.getInt("offset") == 0) {
+								refreshListFlag = true;
+							}
+						} else {
+							refreshListFlag = true;
+						}
+					}
+
+				/*	if (aislesList.size() == 0) {
+						VueTrendingAislesDataModel.getInstance(
+								VueApplication.getInstance())
+								.setMoreDataAVailable(false); // TODO
+					}*/
+
+					if (refreshListFlag) {
 						VueLandingPageActivity.landingPageActivity
 								.runOnUiThread(new Runnable() {
 
 									@Override
 									public void run() {
-										VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = true;
+										VueTrendingAislesDataModel
+												.getInstance(VueApplication
+														.getInstance()).loadOnRequest = true;
 										if (aislesList != null
 												&& aislesList.size() > 0) {
 											for (int i = 0; i < aislesList

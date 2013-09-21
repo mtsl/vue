@@ -82,7 +82,9 @@ public class AisleWindowContent {
 		{
 			mAisleImagesList = (ArrayList<AisleImageDetails>) items.clone();
 		}
+		mAisleId = context.mAisleId;
 		mContext = context;
+	
 		// lets parse through the image urls and update the image resolution
 		// VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
 		udpateImageUrlsForDevice();
@@ -98,7 +100,8 @@ public class AisleWindowContent {
 
 	private boolean udpateImageUrlsForDevice() {
 		AisleImageDetails imageDetails;
-		mWindowSmallestHeight = 0;
+		//TODO: when more images available set this variable to smallest height among all
+		mWindowSmallestHeight = 340;
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 
 			imageDetails = mAisleImagesList.get(i);

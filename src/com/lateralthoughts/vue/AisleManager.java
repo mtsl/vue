@@ -1,7 +1,24 @@
 package com.lateralthoughts.vue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.http.entity.StringEntity;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.util.Log;
-import com.android.volley.*;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,25 +26,6 @@ import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.UrlConstants;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-//FB imports
-//java util imports
 
 public class AisleManager {
 
@@ -79,8 +77,8 @@ public class AisleManager {
             @Override
             public void onResponse(String jsonArray) {
                 if (null != jsonArray) {
-               	 Log.i("imageurl", "imageurl aisle creation response11 " + jsonArray);
-  
+               	 
+               	Log.i("myailsedebug", "myailsedebug: recieved response:  "+jsonArray );
                     try{
                        // JSONObject userInfo = new JSONObject(jsonArray);
                         
@@ -98,6 +96,9 @@ public class AisleManager {
                     	 Log.e("Profiling", "Profiling : onResponse() **************** error");
                     	ex.printStackTrace();
                     }
+                } else {
+                	Toast.makeText(VueApplication.getInstance(), "New Aisle Creation in server is failed.", Toast.LENGTH_LONG).show();
+                 
                 }
             }
         };
@@ -105,10 +106,11 @@ public class AisleManager {
             @Override
             public void onErrorResponse(VolleyError error) {
             	 Log.i("imageurl", "imageurl  aisle creation error response ");
-                if (null != error.networkResponse
+            	 Toast.makeText(VueApplication.getInstance(), "New Aisle Creation in server is failed.", Toast.LENGTH_LONG).show();
+            	 if (null != error.networkResponse
                         && null != error.networkResponse.data) {
                     String errorData = error.networkResponse.data.toString();
-                    Log.e("VueUserDebug", "error date = " + errorData);
+                     
                 }
             }
         };
@@ -132,8 +134,8 @@ public class AisleManager {
     	
     }
 //issues a request to add an image to the aisle.
-	public void addImageToAisle(VueImage image, final ImageAddedCallback callback) {/*
-		Log.i("addimagetoaisle", "addimagetoaisle1");
+	public void addImageToAisle(VueImage image, final ImageAddedCallback callback) {
+		Log.i("addimagefuncitonality", "addimagefuncitonality entered in method");
 		if (null == image) {
 			throw new RuntimeException(
 					"Can't create Aisle without a non null aisle object");
@@ -148,35 +150,30 @@ public class AisleManager {
 
 			@Override
 			public void onResponse(String jsonArray) {
-				Log.i("addimagetoaisle", "addimagetoaisle onresponse jsonArray: "+jsonArray);
+		 
 				if (null != jsonArray) {
-					Log.e("Profiling", "Profiling : onResponse()");
-					try {
-			 
-						callback.onImageAdded(new Parser().getImageDetails(jsonArray));
-					} catch (JSONException ex) {
-						ex.printStackTrace();
-						Log.i("addimagetoaisle", "addimagetoaisle  onresponse exception");
-					}
-				}
+				 
+					Log.i("addimagefuncitonality", "addimagefuncitonality jsonArray response: "+jsonArray);
+					//callback.onImageAdded(new Parser().getImageDetails(jsonArray));
+				} 
 			}
 		};
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				Log.i("addimagetoaisle", "addimagetoaisle onerror response");
+				 
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
+					Log.i("addimagefuncitonality", "addimagefuncitonality jsonArray response ERROR: ");
 				}
 			}
 		};
-		Log.i("addimagetoaisle", "addimagetoaisle 2 sending request string: "+imageAsString);
+		Log.i("addimagefuncitonality", "addimagefuncitonality entered in method requst String: "+imageAsString);
 		AislePutRequest request = new AislePutRequest(imageAsString, listener,
-				errorListener, VUE_API_BASE_URI + CREATE_IMAGE_ENDPOINT);
+				errorListener,UrlConstants.CREATE_IMAGE_RESTURL);
 		VueApplication.getInstance().getRequestQueue().add(request);
-	*/}
+	}
     private class AislePutRequest extends Request<String> {
         // ... other methods go here
         private Map<String, String> mParams;

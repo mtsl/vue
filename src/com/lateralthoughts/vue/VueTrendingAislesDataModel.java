@@ -75,7 +75,8 @@ public class VueTrendingAislesDataModel {
 		threadPool = new ThreadPoolExecutor(mPoolSize, mMaxPoolSize,
 				mKeepAliveTime, TimeUnit.SECONDS, threadsQueue);
 		mNetworkHandler = new NetworkHandler(mContext);
-		mNetworkHandler.loadInitialData(true, mHandler);
+		boolean loadMore = true;
+		mNetworkHandler.loadInitialData(loadMore, mHandler);
 	}
     public NetworkHandler getNetworkHandler(){
     	return mNetworkHandler;
@@ -170,8 +171,9 @@ public class VueTrendingAislesDataModel {
 		} 
 		loadOnRequest = true;
   }
-  public void listSize(){
-	  Log.i("mAisleContentList", "mAisleContentList: "+mAisleContentList.size());
+  public int listSize(){
+	   return mAisleContentList.size();
+	 
   }
 	protected Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
