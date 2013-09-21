@@ -221,6 +221,7 @@ public class AisleContentBrowser extends ViewFlipper {
         	                    if(detailImgClickListenr != null) {
         		                    detailImgClickListenr.onImageSwipe(currentIndex+1);
         		                    }
+        	                   // aisleContentBrowser.setDisplayedChild(currentIndex+1);
                             }
                             public void onAnimationStart(Animation animation) {
 
@@ -293,6 +294,7 @@ public class AisleContentBrowser extends ViewFlipper {
     	                        if(detailImgClickListenr != null) {
     	 	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
     	 	                       }
+    	                       // aisleContentBrowser.setDisplayedChild(currentIndex-1);
                             }
                             public void onAnimationStart(Animation animation) {
 

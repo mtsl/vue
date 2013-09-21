@@ -2,6 +2,9 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -46,6 +49,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
@@ -1611,6 +1616,8 @@ public class DataEntryFragment extends Fragment {
 			 */
 			image.setStore("UnKnown"); // TODO By Krishna
 			image.setTitle("Android Test"); // TODO By Krishna
+
+			FlurryAgent.logEvent("New_Aisle_Creation");
 
 			image.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
 			aisle.setAisleImage(image);

@@ -223,7 +223,12 @@ public class NetworkHandler {
 		// TODO: CHANGE THIS REQUEST TO VOLLEY
 		if (VueConnectivityManager.isNetworkConnected(VueApplication
 				.getInstance())) {
-
+			VueTrendingAislesDataModel.getInstance(
+					VueApplication.getInstance())
+					.clearAisles();
+			AisleWindowContentFactory.getInstance(
+					VueApplication.getInstance())
+					.clearObjectsInUse();
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 			new Thread(new Runnable() {
@@ -247,12 +252,6 @@ public class NetworkHandler {
 								.runOnUiThread(new Runnable() {
 									@Override
 									public void run() {
-										VueTrendingAislesDataModel.getInstance(
-												VueApplication.getInstance())
-												.clearAisles();
-										AisleWindowContentFactory.getInstance(
-												VueApplication.getInstance())
-												.clearObjectsInUse();
 										VueTrendingAislesDataModel
 												.getInstance(VueApplication
 														.getInstance()).loadOnRequest = false;

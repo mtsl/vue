@@ -322,6 +322,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     
     public void loadBitmap( AisleImageDetails itemDetails, int bestHeight, AisleContentBrowser flipper, ImageView imageView) {
     	String loc = itemDetails.mImageUrl;
+    	String serverUrl = itemDetails.mImageUrl;
     	 if(flipper.getmSourceName() != null && flipper.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)){
     		 loc = itemDetails.mImageUrl;
     	 } else {
@@ -330,7 +331,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
        // if (cancelPotentialDownload(loc, imageView)) {          
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
-            task.execute(loc);
+            task.execute(loc,serverUrl);
        // }
     }
     
