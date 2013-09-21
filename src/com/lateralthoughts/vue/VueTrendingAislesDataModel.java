@@ -75,7 +75,8 @@ public class VueTrendingAislesDataModel {
 		threadPool = new ThreadPoolExecutor(mPoolSize, mMaxPoolSize,
 				mKeepAliveTime, TimeUnit.SECONDS, threadsQueue);
 		mNetworkHandler = new NetworkHandler(mContext);
-		mNetworkHandler.loadInitialData(true, mHandler);
+		boolean loadMore = true;
+		mNetworkHandler.loadInitialData(loadMore, mHandler);
 	}
     public NetworkHandler getNetworkHandler(){
     	return mNetworkHandler;
