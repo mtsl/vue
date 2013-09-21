@@ -90,6 +90,12 @@ public class DataEntryActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
+						Utils.putDataentryScreenAisleId(DataEntryActivity.this,
+								null);
+						Utils.putDataentryAddImageAisleFlag(
+								DataEntryActivity.this, false);
+						Utils.putDataentryEditAisleFlag(DataEntryActivity.this,
+								false);
 						VueApplication.getInstance().mAisleImagePathList
 								.clear();
 						finish();
@@ -230,6 +236,7 @@ public class DataEntryActivity extends BaseActivity {
 			}
 		}
 	}
+
 	@Override
 	protected void onStart() {
 		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
@@ -237,12 +244,14 @@ public class DataEntryActivity extends BaseActivity {
 		FlurryAgent.logEvent(CREATE_AISLE_SCREEN_VISITORS);
 		super.onStart();
 	}
+
 	@Override
 	protected void onStop() {
 		super.onStop();
 		FlurryAgent.onEndSession(this);
-		
+
 	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -322,6 +331,7 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
+				Utils.putDataentryScreenAisleId(this, null);
 				VueApplication.getInstance().mAisleImagePathList.clear();
 				super.onBackPressed();
 			}

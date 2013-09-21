@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
+import com.lateralthoughts.vue.utils.UrlConstants;
 
 public class VueContentGateway {
 	private final String TAG = "VueContentGateway";
@@ -48,12 +49,7 @@ public class VueContentGateway {
 	private String mLimitTag;
 	private String mOffsetTag;
 
-	// private static final String VUE_CONTENT_PROVIDER_BASE_URI =
-	// "http://1-python.vueapi-canary.appspot.com/rest/0.1/";
-	// private static final String VUE_CONTENT_PROVIDER_BASE_URI =
-	// "http://2-java.vueapi-canary.appspot.com/api/";
 
-	private static final String VUE_CONTENT_PROVIDER_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/api/trendingaislesgetorderedbytime";
 
 	public static VueContentGateway getInstance() {
 		if (null == sInstance) {
@@ -116,7 +112,7 @@ public class VueContentGateway {
 
 			// String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI +
 			// "aisle/trending?limit=%s&offset=%s";
-			final String requestUrl = VUE_CONTENT_PROVIDER_BASE_URI + "/" + limit
+			final String requestUrl = UrlConstants.SERVER_BASE_URL + "api/trendingaislesgetorderedbytime/" + limit
 					+ "/" + offset; /*
 									 * String.format(requestUrlBase, limit,
 									 * offset);

@@ -434,4 +434,50 @@ public class Utils {
 				flag);
 		editor.commit();
 	}
+
+	public static String getDataentryScreenAisleId(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getString(
+				VueConstants.DATAENTRY_SCREEN_AISLE_ID, null);
+	}
+
+	public static void putDataentryScreenAisleId(Context context, String aisleId) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(VueConstants.DATAENTRY_SCREEN_AISLE_ID, aisleId);
+		editor.commit();
+	}
+
+	public static boolean getDataentryAddImageAisleFlag(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getBoolean(
+				VueConstants.DATAENTRY_ADDIMAGE_AISLE_FLAG, false);
+	}
+
+	public static void putDataentryAddImageAisleFlag(Context context,
+			boolean flag) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean(VueConstants.DATAENTRY_ADDIMAGE_AISLE_FLAG, flag);
+		editor.commit();
+	}
+
+	public static boolean getDataentryEditAisleFlag(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getBoolean(
+				VueConstants.DATAENTRY_EDIT_AISLE_FLAG, false);
+	}
+
+	public static void putDataentryEditAisleFlag(Context context, boolean flag) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean(VueConstants.DATAENTRY_EDIT_AISLE_FLAG, flag);
+		editor.commit();
+	}
 }
