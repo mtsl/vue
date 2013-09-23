@@ -59,14 +59,23 @@ public class DataBaseManager {
     threadPool.execute(task);
   }
 
-
+ public void addTrentingAislesFromServerToDB(final Context context, final List<AisleWindowContent> contentList) {
+   runTask(new Runnable() {
+    
+    @Override
+    public void run() {
+      addAislesToDB(context, contentList);
+    }
+  });
+ }
+  
   /**
    * add all the aisles pulled from server to sqlite, if the aisle is already
    * there in sqlite then it will delete and insert the new data for that aisle.
    * 
    * @param Context context.
    * */
-  public static void addTrentingAislesFromServerToDB(Context context, List<AisleWindowContent> contentList) {
+  public static void addAislesToDB(Context context, List<AisleWindowContent> contentList) {
 	  int imgCount = 0;
     Cursor aisleIdCursor = context.getContentResolver().query(
         VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id}, null,
