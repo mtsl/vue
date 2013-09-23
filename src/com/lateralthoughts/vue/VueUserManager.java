@@ -5,6 +5,7 @@ import com.android.volley.*;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.facebook.model.GraphUser;
+import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +24,7 @@ public class VueUserManager {
  
  
 
-	public static String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
+	
  
 	//private String VUE_API_BASE_URI = "http://2-java.vueapi-canary-development1.appspot.com/";
     //private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
@@ -131,7 +132,7 @@ public class VueUserManager {
 			}
 		};
 		Log.e("VueUserDebug", "vueuser: method called ");
-		String requestUrl = VUE_API_BASE_URI + USER_CREATE_ENDPOINT;
+		String requestUrl = UrlConstants.SERVER_BASE_URL + USER_CREATE_ENDPOINT;
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
@@ -170,7 +171,7 @@ public class VueUserManager {
 				}
 			}
 		};
-		String requestUrl = VUE_API_BASE_URI + FB_USER_CREATE_ENDPOINT
+		String requestUrl = UrlConstants.SERVER_BASE_URL + FB_USER_CREATE_ENDPOINT
 				+ user.getFacebookId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
@@ -207,7 +208,7 @@ public class VueUserManager {
 				}
 			}
 		};
-		String requestUrl = VUE_API_BASE_URI + GPLUS_USER_CREATE_ENDPOINT
+		String requestUrl = UrlConstants.SERVER_BASE_URL + GPLUS_USER_CREATE_ENDPOINT
 				+ vueUser.getGooglePlusId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
@@ -244,7 +245,7 @@ public class VueUserManager {
 				}
 			}
 		};
-		String requestUrl = VUE_API_BASE_URI + INSTAGRAM_USER_CREATE_ENDPOINT
+		String requestUrl = UrlConstants.SERVER_BASE_URL + INSTAGRAM_USER_CREATE_ENDPOINT
 				+ vueUser.getInstagramId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
@@ -281,7 +282,7 @@ public class VueUserManager {
 				}
 			}
 		};
-		String requestUrl = VUE_API_BASE_URI + FB_USER_CREATE_ENDPOINT
+		String requestUrl = UrlConstants.SERVER_BASE_URL + FB_USER_CREATE_ENDPOINT
 				+ user.getFacebookId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
@@ -312,7 +313,7 @@ public class VueUserManager {
 				}
 			}
 		};
-		String requestUrl = VUE_API_BASE_URI + GPLUS_USER_CREATE_ENDPOINT
+		String requestUrl = UrlConstants.SERVER_BASE_URL + GPLUS_USER_CREATE_ENDPOINT
 				+ vueUser.getGooglePlusId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
@@ -343,7 +344,7 @@ public class VueUserManager {
 				}
 			}
 		};
-		String requestUrl = VUE_API_BASE_URI + INSTAGRAM_USER_CREATE_ENDPOINT
+		String requestUrl = UrlConstants.SERVER_BASE_URL + INSTAGRAM_USER_CREATE_ENDPOINT
 				+ vueUser.getInstagramId();
 		UserCreateRequest request = new UserCreateRequest(null, null, listener,
 				errorListener);
@@ -364,7 +365,7 @@ public class VueUserManager {
 		public UserCreateRequest(String param1, String param2,
 				Response.Listener<String> listener,
 				Response.ErrorListener errorListener) {
-			super(Method.PUT, VUE_API_BASE_URI + USER_CREATE_ENDPOINT,
+			super(Method.PUT, UrlConstants.SERVER_BASE_URL + USER_CREATE_ENDPOINT,
 					errorListener);
 			mListener = listener;
 			mErrorListener = errorListener;
@@ -410,7 +411,7 @@ public class VueUserManager {
 			final UserUpdateCallback callback) {
 		// https://1-java.vueapi-canary-development1.appspot.com/api/userget/id/5707702298738688
 
-		String requestUrlBase = VUE_API_BASE_URI + "api/userget/id/" + id;
+		String requestUrlBase = UrlConstants.SERVER_BASE_URL + "api/userget/id/" + id;
 		String requestUrl = requestUrlBase;
 		Response.Listener listener = new Response.Listener<String>() {
 			@Override

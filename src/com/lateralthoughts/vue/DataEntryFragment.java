@@ -50,7 +50,10 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+ 
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
+ 
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
@@ -71,7 +74,6 @@ public class DataEntryFragment extends Fragment {
 
 	public static String testId = "";
 	public static String testCutomUrl = "";
-	AisleWindowContent aisleItem = null;
 	private ListView mCategoryListview = null, mLookingForListview = null,
 			mOccasionListview = null;
 	public LinearLayout mLookingForListviewLayout = null,
@@ -103,7 +105,6 @@ public class DataEntryFragment extends Fragment {
 	public RelativeLayout mDataEntryInviteFriendsPopupLayout = null;
 	private ImageView mFindAtIcon = null;
 	public ShareDialog mShare = null;
-	private boolean mAddImageToAisleFlag = false, mEditAisleImageFlag = false;
 	private float mScreenHeight = 0, mScreenWidth = 0;
 	private LinearLayout mFindAtPopup = null;
 	private ViewPager mDataEntryAislesViewpager = null;
@@ -133,8 +134,6 @@ public class DataEntryFragment extends Fragment {
 	private DataEntryActivity mDataEntryActivity;
 	public int mOtherSourceImageOriginalHeight, mOtherSourceImageOriginalWidth;
 
-	// private List<VueImage> mImageList;
-
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -148,7 +147,6 @@ public class DataEntryFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// mImageList = new ArrayList<VueImage>();
 		mCategoryitemsArray = getResources().getStringArray(
 				R.array.category_items_array);
 		mDbManager = DataBaseManager.getInstance(getActivity());
@@ -470,7 +468,8 @@ public class DataEntryFragment extends Fragment {
 				mCategoryListview.setVisibility(View.GONE);
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mCategoryPopup.setVisibility(View.GONE);
-				if (mAddImageToAisleFlag || mEditAisleImageFlag) {
+				if (Utils.getDataentryAddImageAisleFlag(getActivity())
+						|| Utils.getDataentryEditAisleFlag(getActivity())) {
 					showAlertForEditPermission(LOOKING_FOR);
 				} else {
 					lookingForTextClickFunctionality();
@@ -494,7 +493,8 @@ public class DataEntryFragment extends Fragment {
 				mCategoryListview.setVisibility(View.GONE);
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mCategoryPopup.setVisibility(View.GONE);
-				if (mAddImageToAisleFlag || mEditAisleImageFlag) {
+				if (Utils.getDataentryAddImageAisleFlag(getActivity())
+						|| Utils.getDataentryEditAisleFlag(getActivity())) {
 					showAlertForEditPermission(OCCASION);
 				} else {
 					occassionTextClickFunctionality();
@@ -519,7 +519,8 @@ public class DataEntryFragment extends Fragment {
 				mInputMethodManager.hideSoftInputFromWindow(
 						mSaySomethingAboutAisle.getWindowToken(), 0);
 				mFindAtPopup.setVisibility(View.GONE);
-				if (mAddImageToAisleFlag || mEditAisleImageFlag) {
+				if (Utils.getDataentryAddImageAisleFlag(getActivity())
+						|| Utils.getDataentryEditAisleFlag(getActivity())) {
 					showAlertForEditPermission(CATEGORY);
 				} else {
 					categoryIconClickFunctionality();
@@ -860,8 +861,8 @@ public class DataEntryFragment extends Fragment {
 				.equals(LOOKING_FOR))
 				&& !(mOccassionBigText.getText().toString().trim()
 						.equals(OCCASION))) {
-			if (mAddImageToAisleFlag) {
-				addImageToAisleToServer();
+			if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
+				addImageToAisle();
 			} else {
 				if (mFromDetailsScreenFlag) {
 					if (checkLimitForLoginDialog()) {
@@ -876,6 +877,28 @@ public class DataEntryFragment extends Fragment {
 					} else {
 						if (mAisleImageBitmap != null) {
 							Log.e("Land", "vueland 10");
+							VueUser storedVueUser = null;
+							try {
+								storedVueUser = Utils.readUserObjectFromFile(getActivity(),
+										VueConstants.VUE_APP_USEROBJECT__FILENAME);
+							} catch (Exception e2) {
+								e2.printStackTrace();
+							}
+							if (storedVueUser != null && storedVueUser.getVueId() != null) {
+								if (VueConnectivityManager
+										.isNetworkConnected(getActivity())) {
+									addImageToAisleToServer(storedVueUser.getVueId(),
+											VueApplication.getInstance().getClickedWindowID(), true);
+								} else {
+									Toast.makeText(getActivity(),
+											getResources().getString(R.string.no_network),
+											Toast.LENGTH_LONG).show();
+								}
+							} else {
+								// TODO By Krishna
+								// In User Creation response Listener we need to call
+								// CreateAisle
+							}
 							Intent intent = new Intent();
 							Bundle b = new Bundle();
 							b.putString(
@@ -914,7 +937,7 @@ public class DataEntryFragment extends Fragment {
 					}
 				} else {
 					if (mAisleImageBitmap != null) {
-						addAisleToServer();
+						addAisle();
 					} else {
 						showAlertForMandotoryFields(getResources()
 								.getString(
@@ -930,7 +953,7 @@ public class DataEntryFragment extends Fragment {
 
 	public void editButtonClickFunctionality() {
 		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
-		mEditAisleImageFlag = true;
+		Utils.putDataentryEditAisleFlag(getActivity(), true);
 		mCurrentPagePosition = mDataEntryAislesViewpager.getCurrentItem();
 		mResizedImagePath = VueApplication.getInstance().mAisleImagePathList
 				.get(mCurrentPagePosition);
@@ -985,7 +1008,7 @@ public class DataEntryFragment extends Fragment {
 
 	public void addImageToAisleButtonClickFunctionality() {
 		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
-		mAddImageToAisleFlag = true;
+		Utils.putDataentryAddImageAisleFlag(getActivity(), true);
 		Intent intent = new Intent(getActivity(),
 				CreateAisleSelectionActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -1339,7 +1362,7 @@ public class DataEntryFragment extends Fragment {
 				mImageResizeAsynTask = new ImageResizeAsynTask();
 				mImageResizeAsynTask.execute(getActivity());
 			}
-			if (mAddImageToAisleFlag) {
+			if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
 				mDataEntryAislesViewpager.setVisibility(View.GONE);
 				if (mDataEntryActivity == null) {
 					mDataEntryActivity = (DataEntryActivity) getActivity();
@@ -1363,17 +1386,7 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	private void addImageToAisleToServer() {
-		/*
-		 * // Input parameters for Adding Aisle to server request... String
-		 * category = mCategoryText.getText().toString(); String lookingFor =
-		 * mLookingForBigText.getText().toString(); String occasion =
-		 * mOccassionBigText.getText().toString(); String imageUrl = mImagePath;
-		 * // This path is image location stored in // locally when user selects
-		 * from Camera // OR Gallery. String title = ""; // For Camera and
-		 * Gallery we don't have title. String store = ""; // For Camera and
-		 * Gallery we don't have store.
-		 */
+	private void addImageToAisle() {
 		if (checkLimitForLoginDialog()) {
 			if (mLoginWarningMessage == null) {
 				mLoginWarningMessage = new LoginWarningMessage(getActivity());
@@ -1382,30 +1395,40 @@ public class DataEntryFragment extends Fragment {
 					"You need to Login with the app to add image to aisle.",
 					true, true, 0, null, null);
 		} else {
-			// mImageList.add(getImage(mImagePath, 0, 0, "", 0L, 0L));
-			// addImageToAisle(getImage(mImagePath, 0, 0, "", 0L, 0L));
-			// boolean isFirstImage = false;
-			/*
-			 * addImageToAisle(mImageList.remove(0), aisleItem.getAisleId(),
-			 * isFirstImage);
-			 */
 			storeMetaAisleDataIntoLocalStorage();
+			if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
+				VueUser storedVueUser = null;
+				try {
+					storedVueUser = Utils.readUserObjectFromFile(getActivity(),
+							VueConstants.VUE_APP_USEROBJECT__FILENAME);
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+				if (storedVueUser != null && storedVueUser.getVueId() != null) {
+					if (VueConnectivityManager
+							.isNetworkConnected(getActivity())) {
+						addImageToAisleToServer(storedVueUser.getVueId(),
+								Utils.getDataentryScreenAisleId(getActivity()), false);
+					} else {
+						Toast.makeText(getActivity(),
+								getResources().getString(R.string.no_network),
+								Toast.LENGTH_LONG).show();
+					}
+				} else {
+					// TODO By Krishna
+					// In User Creation response Listener we need to call
+					// CreateAisle
+				}
+			} else {
+				Toast.makeText(getActivity(), "This Aisle is not created.",
+						Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 
-	private void addAisleToServer() {
-		/*
-		 * // Input parameters for Adding Aisle to server request... String
-		 * category = mCategoryText.getText().toString(); String lookingFor =
-		 * mLookingForBigText.getText().toString(); String occasion =
-		 * mOccassionBigText.getText().toString(); String imageUrl = mImagePath;
-		 * // This path is image location stored in // locally when user selects
-		 * from Camera // OR Gallery. String title = ""; // For Camera and
-		 * Gallery we don't have title. String store = ""; // For Camera and
-		 * Gallery we don't have store.
-		 */
+	private void addAisle() {
 		// Updating Aisles Count in Preference to show LoginDialog.
-		if (!mEditAisleImageFlag) {
+		if (!Utils.getDataentryEditAisleFlag(getActivity())) {
 			if (checkLimitForLoginDialog()) {
 				if (mLoginWarningMessage == null) {
 					mLoginWarningMessage = new LoginWarningMessage(
@@ -1451,7 +1474,7 @@ public class DataEntryFragment extends Fragment {
 							&& storedVueUser.getVueId() != null) {
 						if (VueConnectivityManager
 								.isNetworkConnected(getActivity())) {
-							addNewAisleToServer(storedVueUser);
+							addAisleToServer(storedVueUser.getVueId());
 						} else {
 							Toast.makeText(
 									getActivity(),
@@ -1486,11 +1509,11 @@ public class DataEntryFragment extends Fragment {
 				.setVisibility(View.VISIBLE);
 		mDataEntryActivity.mVueDataentryActionbarTopLayout
 				.setVisibility(View.GONE);
-		if (mEditAisleImageFlag) {
+		if (Utils.getDataentryEditAisleFlag(getActivity())) {
 			VueApplication.getInstance().mAisleImagePathList
 					.remove(mCurrentPagePosition);
 		}
-		mEditAisleImageFlag = false;
+		Utils.putDataentryEditAisleFlag(getActivity(), false);
 		mMainHeadingRow.setVisibility(View.GONE);
 		mTouchToChangeImage.setVisibility(View.GONE);
 		mDataEntryBottomBottomLayout.setVisibility(View.GONE);
@@ -1585,7 +1608,7 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	// create ailse and send to server.
-	public void addNewAisleToServer(VueUser storedVueUser) {
+	public void addAisleToServer(String ownerUserId) {
 		String imageSourceUrl = mFindAtText.getText().toString();
 		if (imageSourceUrl != null && imageSourceUrl.trim().length() > 0) {
 			Aisle aisle = new Aisle();
@@ -1593,33 +1616,34 @@ public class DataEntryFragment extends Fragment {
 			aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
 			aisle.setName("Super Aisle"); // TODO By Krishna
 			aisle.setOccassion(mOccassionBigText.getText().toString().trim());
-			aisle.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
+			aisle.setOwnerUserId(Long.valueOf(ownerUserId));
 			VueImage image = new VueImage();
 			image.setDetailsUrl("Got this image from a random url"); // TODO By
 																		// Krishna
 			image.setHeight(mOtherSourceImageOriginalHeight);
 			image.setWidth(mOtherSourceImageOriginalWidth);
 			image.setImageUrl(imageSourceUrl);
-			// String imageApplicationSource = "UnKnown";
-			/*
-			 * if (VueApplication.getInstance().mShoppingApplicationDetailsList
-			 * != null &&
-			 * VueApplication.getInstance().mShoppingApplicationDetailsList
-			 * .size() > 0) { for (int i = 0; i <
-			 * VueApplication.getInstance().mShoppingApplicationDetailsList
-			 * .size(); i++) { if (imageSourceUrl
-			 * .contains(VueApplication.getInstance
-			 * ().mShoppingApplicationDetailsList .get(i).getAppName())) {
-			 * imageApplicationSource =
-			 * VueApplication.getInstance().mShoppingApplicationDetailsList
-			 * .get(i).getAppName(); break; } } }
-			 */
-			image.setStore("UnKnown"); // TODO By Krishna
+			String store = "UnKnown";
+			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
+					&& VueApplication.getInstance().mShoppingApplicationDetailsList
+							.size() > 0) {
+				for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
+						.size(); i++) {
+					if (imageSourceUrl
+							.toLowerCase()
+							.contains(
+									VueApplication.getInstance().mShoppingApplicationDetailsList
+											.get(i).getAppName().toLowerCase())) {
+						store = VueApplication.getInstance().mShoppingApplicationDetailsList
+								.get(i).getAppName();
+					}
+				}
+			}
+			image.setStore(store);
 			image.setTitle("Android Test"); // TODO By Krishna
-
 			FlurryAgent.logEvent("New_Aisle_Creation");
-
-			image.setOwnerUserId(Long.valueOf(storedVueUser.getVueId()));
+			image.setOwnerUserId(Long.valueOf(ownerUserId));
+ 
 			aisle.setAisleImage(image);
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
@@ -1627,49 +1651,68 @@ public class DataEntryFragment extends Fragment {
 					.requestCreateAisle(aisle,
 							new AisleManager.AisleUpdateCallback() {
 								@Override
-								public void onAisleUpdated(
-										AisleContext aisleContext,
-										String aisleId) {
-									Log.e("AisleCreationTest",
-											"Aisle created1 successfully****!");
-									setAisleContent(aisleContext, aisleId);
-									// addImage();
+								public void onAisleUpdated(String aisleId) {
+									Utils.putDataentryScreenAisleId(
+											getActivity(), aisleId);
 								}
 							});
+		} else {
+			Toast.makeText(
+					getActivity(),
+					getResources()
+							.getString(
+									R.string.dataentry_mandtory_field_add_aisleimage_mesg),
+					Toast.LENGTH_LONG).show();
 		}
 	}
 
-	/*
-	 * // create Image object add to aisle private VueImage getImage(String
-	 * originalImageLocation, int width, int height, String title, Long
-	 * owneAisleId, Long ownerUserId) {
-	 * 
-	 * VueImage image = new VueImage(); image.setDetailsUrl("");
-	 * image.setHeight(height); image.setWidth(width); // image.setId(0L);
-	 * image.setImageUrl(originalImageLocation); image.setTitle(title);
-	 * image.setOwnerAisleId(owneAisleId); image.setOwnerUserId(ownerUserId); //
-	 * image.setRating(rating); // image.setStore(store); return image; }
-	 */
-
-	/*
-	 * // add image to the created aisle private void addImage() {
-	 * Log.i("addimagetoaisle", "addimagetoaisle  method call1"); VueImage image
-	 * = null; if (mImageList.size() > 0) { image = mImageList.remove(0); } else
-	 * { Log.i("addimagetoaisle", "addimagetoaisle  method call returning");
-	 * return; } Log.i("addimagetoaisle", "addimagetoaisle  method call2");
-	 * 
-	 * AisleManager aisleManager = AisleManager.getAisleManager();
-	 * aisleManager.addImageToAisle(image, new AisleManager.ImageAddedCallback()
-	 * {
-	 * 
-	 * @Override public void onImageAdded(AisleImageDetails imageDetails) { if
-	 * (aisleItem != null) { ArrayList<AisleImageDetails> mAisleImagesList =
-	 * aisleItem .getImageList(); mAisleImagesList.add(imageDetails);
-	 * aisleItem.addAisleContent( aisleItem.getAisleContext(),
-	 * mAisleImagesList); } addImage();
-	 * 
-	 * } }); }
-	 */
+	public void addImageToAisleToServer(String ownerUserId, String ownerAisleId, boolean fromDetailsScreenFlag) {
+		String imageSourceUrl = mFindAtText.getText().toString();
+		if (imageSourceUrl != null && imageSourceUrl.trim().length() > 0) {
+			VueImage image = new VueImage();
+			image.setDetailsUrl("Got this image from a random url"); // TODO By
+																		// Krishna
+			image.setHeight(mOtherSourceImageOriginalHeight);
+			image.setWidth(mOtherSourceImageOriginalWidth);
+			image.setImageUrl(imageSourceUrl);
+			String store = "UnKnown";
+			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
+					&& VueApplication.getInstance().mShoppingApplicationDetailsList
+							.size() > 0) {
+				for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
+						.size(); i++) {
+					if (imageSourceUrl
+							.toLowerCase()
+							.contains(
+									VueApplication.getInstance().mShoppingApplicationDetailsList
+											.get(i).getAppName().toLowerCase())) {
+						store = VueApplication.getInstance().mShoppingApplicationDetailsList
+								.get(i).getAppName();
+					}
+				}
+			}
+			image.setStore(store);
+			image.setTitle("Android Test"); // TODO By Krishna
+			image.setOwnerUserId(Long.valueOf(ownerUserId));
+			image.setOwnerAisleId(Long.valueOf(ownerAisleId));
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance())
+					.getNetworkHandler()
+					.requestForAddImage(fromDetailsScreenFlag, image, new ImageAddedCallback() {
+						@Override
+						public void onImageAdded(AisleImageDetails imageDetails) {
+							// //
+						}
+					});
+		} else {
+			Toast.makeText(
+					getActivity(),
+					getResources()
+							.getString(
+									R.string.dataentry_mandtory_field_add_aisleimage_mesg),
+					Toast.LENGTH_LONG).show();
+		}
+	}
 
 	private class ImageResizeAsynTask extends
 			AsyncTask<Activity, Activity, Activity> {
@@ -1779,111 +1822,4 @@ public class DataEntryFragment extends Fragment {
 		getImagesTask.execute();
 	}
 
-	// create aisle window and add to list so that aisle will be visible in
-	// list.
-
-	private void setAisleContent(AisleContext userInfo, final String aisleId) {
-		Log.i("imageurl", "imageurl  aisle creation success ");
-		aisleItem = VueTrendingAislesDataModel.getInstance(getActivity())
-				.getAisle(aisleId);
-		aisleItem.setAisleId(aisleId);
-		aisleItem.setAisleContext(userInfo);
-		// VueImage image = mImageList.remove(0);
-		// boolean isFirstImage = true;
-		// addImageToAisle(image, aisleId, isFirstImage);
-		// VueTrendingAislesDataModel.getInstance(getActivity()).insertNewAisleToDb(aisleId);
-
-	}
-
-	/*
-	 * private Bitmap saveBitmap(String sourcePath, String destPath) {
-	 * 
-	 * FileCache fileCache = new FileCache(getActivity()); File f =
-	 * fileCache.getFile(destPath); File sourceFile = new File(sourcePath);
-	 * Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-	 * VueApplication.getInstance().mScreenHeight); Utils.saveBitmap(bmp, f);
-	 * return bmp; }
-	 */
-
-	/*
-	 * // add image to the created aisle for now, we are creating the aisle //
-	 * depending the // response from the server but for adding image without
-	 * waiting for the // server // response add immediately after that send
-	 * that image data to the back end. // because to create an aisle requires
-	 * aisle id but to add image need not // wait for server response.
-	 * 
-	 * private void addImageToAisle(VueImage image, final String aisleId, final
-	 * boolean isFirstImage) { // Bitmap bmp = saveBitmap(image.getImageUrl(),
-	 * image.getImageUrl()); Log.i("aisleId",
-	 * "aisleId: newly create aile id: "+aisleId); image.setHeight(340);
-	 * image.setWidth(340); Log.i("imageurl",
-	 * "imageurl adding image to aisle "); VueUser storedVueUser = null; try {
-	 * storedVueUser = Utils.readUserObjectFromFile(getActivity(),
-	 * VueConstants.VUE_APP_USEROBJECT__FILENAME); } catch (Exception e2) {
-	 * e2.printStackTrace(); } image = getImage(image.getImageUrl(),
-	 * image.getWidth(), image.getHeight(), "",
-	 * Long.valueOf(aisleItem.getAisleId()),
-	 * Long.valueOf(storedVueUser.getVueId())); // AisleManager aisleManager =
-	 * AisleManager.getAisleManager(); VueTrendingAislesDataModel
-	 * .getInstance(VueApplication.getInstance()) .getNetworkHandler()
-	 * .requestForAddImage(image, new AisleManager.ImageAddedCallback() {
-	 * 
-	 * @Override public void onImageAdded( final AisleImageDetails imageDetails)
-	 * { new Thread(new Runnable() {
-	 * 
-	 * @Override public void run() { Log.i("imageurl",
-	 * "imageurl image added suucessfully "); if (aisleItem != null) {
-	 * ArrayList<AisleImageDetails> imageItemsArray = null; imageItemsArray =
-	 * aisleItem .getImageList(); if (imageItemsArray == null) { imageItemsArray
-	 * = new ArrayList<AisleImageDetails>(); }
-	 * imageItemsArray.add(imageDetails); Log.i("imageurl", "imageurl is: " +
-	 * imageDetails.mImageUrl); int tempHeight = 340; Bitmap bmp =
-	 * BitmapLoaderUtils .getInstance() .getBitmap( imageDetails.mImageUrl,
-	 * imageDetails.mImageUrl, true, tempHeight); if(bmp == null){ bmp =
-	 * saveBitmap(imageDetails.mImageUrl, imageDetails.mImageUrl); }
-	 * 
-	 * cacheBitmap(imageDetails.mImageUrl, bmp);
-	 * 
-	 * if (isFirstImage) { testId = aisleId; aisleItem.addAisleContent(
-	 * aisleItem .getAisleContext(), imageItemsArray);
-	 * imageDetails.mCustomImageUrl = aisleItem
-	 * .getImageList().get(0).mCustomImageUrl; testCutomUrl =
-	 * imageDetails.mCustomImageUrl; cacheBitmap( imageDetails.mCustomImageUrl,
-	 * bmp); Log.i("imageurl",
-	 * "imageurl original  imageDetails.mCustomImageUrl:  " +
-	 * imageDetails.mCustomImageUrl); // Bitmap bmp2 = //
-	 * BitmapLoaderUtils.getInstance().getBitmap(imageDetails.mCustomImageUrl,
-	 * // true, 340); // Log.i("imageurl", //
-	 * "imageurl original bitmap1 widht and height2:  "
-	 * +bmp2.getWidth()+" height: "+bmp2.getHeight()); //
-	 * saveBitmap(imageDetails.mImageUrl, // imageDetails.mCustomImageUrl);
-	 * VueTrendingAislesDataModel .getInstance( getActivity()) .addItemToListAt(
-	 * aisleId, aisleItem, 0); } else { if (imageDetails.mAvailableHeight <
-	 * aisleItem.mWindowSmallestHeight || aisleItem.mWindowSmallestHeight == 0)
-	 * aisleItem.mWindowSmallestHeight = imageDetails.mAvailableHeight;
-	 * aisleItem .prepareCustomUrl(imageDetails); saveBitmap(
-	 * imageDetails.mImageUrl, imageDetails.mCustomImageUrl); cacheBitmap(
-	 * imageDetails.mCustomImageUrl, bmp); } getActivity().runOnUiThread(new
-	 * Runnable() {
-	 * 
-	 * @Override public void run() { VueTrendingAislesDataModel
-	 * .getInstance(VueApplication.getInstance()) .dataObserver();
-	 * 
-	 * } });
-	 * 
-	 * }
-	 * 
-	 * } }).start();
-	 * 
-	 * } }); }
-	 */
-
-	/*
-	 * private void cacheBitmap(String imagePath, Bitmap bmp) { try { FileCache
-	 * fileCache = new FileCache(VueApplication.getInstance()); File f =
-	 * fileCache.getFile(imagePath); Utils.saveBitmap(bmp, f); } catch
-	 * (Exception e) { e.printStackTrace(); }
-	 * 
-	 * }
-	 */
 }

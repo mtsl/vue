@@ -132,8 +132,8 @@ public class NetworkHandler {
 		AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
 	}
 
-	public void requestForAddImage(VueImage image, ImageAddedCallback callback) {
-		AisleManager.getAisleManager().addImageToAisle(image, callback);
+	public void requestForAddImage(boolean fromDetailsScreenFlag, VueImage image, ImageAddedCallback callback) {
+		AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag, image, callback);
 	}
 
 	// get aisles related to search keyword

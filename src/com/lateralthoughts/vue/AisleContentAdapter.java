@@ -48,28 +48,28 @@ import com.lateralthoughts.vue.utils.FileCache;
 
 /**
  * The AisleContentAdapter object will be associated with aisles on a per-aisle
- * basis. Within each aisle's content, this object will manage resources such
- * as determining the number of images per aisle that need to be kept in memory
- * when to fetch these images etc.
- * Here is the general outline:
- * The AisleLoader class is associated with the TrendingAislesPage and will help
- * load up the first images in each of the ViewFlipper.
- * During startup, we don't want to consume more resources (threads, CPU cycles) to
- * download content that is not visible right away. For example, even though an aisle
- * has multiple images these images are visible one at a time.
- * The AisleContentAdapter will instead perform this function. At startup, this object
- * will download either max of N items or the most number of items in the aisle - whichever
- * is lowest. Say an aisle contains 10 images, we will download just N where N is set to 1 or 2
- * or other number based on trial & error.
- * When the user swipes through images and the ViewFlipper instance will seek the next item from
- * this adapter. At this point, we will adjust the currentPivotIndex and ensure that we have 1 image
- * on either side readily available in the content cache. This should help with performance and also
- * optimize how much we need to do during startup time.
+ * basis. Within each aisle's content, this object will manage resources such as
+ * determining the number of images per aisle that need to be kept in memory
+ * when to fetch these images etc. Here is the general outline: The AisleLoader
+ * class is associated with the TrendingAislesPage and will help load up the
+ * first images in each of the ViewFlipper. During startup, we don't want to
+ * consume more resources (threads, CPU cycles) to download content that is not
+ * visible right away. For example, even though an aisle has multiple images
+ * these images are visible one at a time. The AisleContentAdapter will instead
+ * perform this function. At startup, this object will download either max of N
+ * items or the most number of items in the aisle - whichever is lowest. Say an
+ * aisle contains 10 images, we will download just N where N is set to 1 or 2 or
+ * other number based on trial & error. When the user swipes through images and
+ * the ViewFlipper instance will seek the next item from this adapter. At this
+ * point, we will adjust the currentPivotIndex and ensure that we have 1 image
+ * on either side readily available in the content cache. This should help with
+ * performance and also optimize how much we need to do during startup time.
  */
 public class AisleContentAdapter implements IAisleContentAdapter {
 
-   // private VueMemoryCache<Bitmap> mContentImagesCache;
+	// private VueMemoryCache<Bitmap> mContentImagesCache;
 	private BitmapLruCache mContentImagesCache;
+ 
     private ArrayList<AisleImageDetails> mAisleImageDetails;
     private AisleWindowContent mWindowContent;
     
@@ -371,8 +371,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                 }else {
                 	Log.i("adapter swiping", "adapter swiping details case. " );
                 }
-            
-            
+ 
 			if (bmp != null) {
 				if (aisleContentBrowser.getmSourceName() != null
 						&& aisleContentBrowser.getmSourceName()
@@ -381,20 +380,20 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 							mAVailableWidth, mAvailabeHeight);
 					mAvailabeHeight = mImageDimension.mImgHeight;
 					if (bmp.getHeight() < mImageDimension.mImgHeight) {
-						bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true,
-								mImageDimension.mImgHeight);
+						bmp = mBitmapLoaderUtils.getBitmap(url, params[1],
+								true, mImageDimension.mImgHeight);
 						mAvailabeHeight = bmp.getHeight();
-				     	 
-					} 
+
+					}
 
 				}
-			} 
-            
-            return bmp;            
-        }
+			}
 
-        // Once complete, see if ImageView is still around and set bitmap.
-        @Override
+			return bmp;
+		}
+
+		// Once complete, see if ImageView is still around and set bitmap.
+		@Override
 		protected void onPostExecute(Bitmap bitmap) {
 			if (viewFlipperReference != null && imageViewReference != null
 					&& bitmap != null) {
@@ -405,86 +404,90 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 
 				if (this == bitmapWorkerTask) {
 					vFlipper.invalidate();
- 				imageView.setImageBitmap(bitmap);
+					imageView.setImageBitmap(bitmap);
 				}
 			}
 		}
-    }
-    
-    //utility functions to keep track of all the async tasks that we instantiate
-    private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
-        if (imageView != null) {
-            Object task = ((ScaleImageView)imageView).getOpaqueWorkerObject();
-            if (task instanceof BitmapWorkerTask) {
-                BitmapWorkerTask workerTask = (BitmapWorkerTask)task;
-                return workerTask;
-            }
-        }
-        return null;
-    }
-    
-    private static boolean cancelPotentialDownload(String url, ImageView imageView) {
-        BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-        
-        if (bitmapWorkerTask != null) {
-            String bitmapUrl = bitmapWorkerTask.url;
-            if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
-                bitmapWorkerTask.cancel(true);
-            } else {
-                // The same URL is already being downloaded.
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    /*
-     * This function is strictly for use by internal APIs. Not that we have anything external but
-     * there is some trickery here! The getBitmap function cannot be invoked from the UI thread.
-     * Having to deal with complexity of when & how to call this API is too much for those who
-     * just want to have the bitmap. This is a utility function and is public because it is to 
-     * be shared by other components in the internal implementation.   
-     */
-    public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight) 
-    {
-        File f = mFileCache.getFile(url);
-        
-        //from SD cache
-        Bitmap b = decodeFile(f, bestHeight);
-        if(b != null){
-            //Log.e("AisleContentAdapter","found file in file cache");
-            mContentImagesCache.put(url, b);
-            return b;
-        }
-        
-        //from web
-        try {
-            Bitmap bitmap=null;
-            System.setProperty("http.keepAlive", "false");
-            URL imageUrl = new URL(serverUrl);
-            HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
-            conn.setConnectTimeout(30000);
-            conn.setReadTimeout(30000);
-            conn.setInstanceFollowRedirects(true);
-            InputStream is=conn.getInputStream();
-            OutputStream os = new FileOutputStream(f);
-            Utils.CopyStream(is, os);
-            os.close();
-            bitmap = decodeFile(f, bestHeight);
-            //if(cacheBitmap)
-                mContentImagesCache.put(url, bitmap);
-            
-            return bitmap;
-        } catch (Throwable ex){
-           ex.printStackTrace();
-           if(ex instanceof OutOfMemoryError) {
-              // mContentImagesCache.clear();
-           }
-           return null;
-        }
-    }
+	}
 
-    //decodes image and scales it to reduce memory consumption
+	// utility functions to keep track of all the async tasks that we
+	// instantiate
+	private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+		if (imageView != null) {
+			Object task = ((ScaleImageView) imageView).getOpaqueWorkerObject();
+			if (task instanceof BitmapWorkerTask) {
+				BitmapWorkerTask workerTask = (BitmapWorkerTask) task;
+				return workerTask;
+			}
+		}
+		return null;
+	}
+
+	private static boolean cancelPotentialDownload(String url,
+			ImageView imageView) {
+		BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+
+		if (bitmapWorkerTask != null) {
+			String bitmapUrl = bitmapWorkerTask.url;
+			if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+				bitmapWorkerTask.cancel(true);
+			} else {
+				// The same URL is already being downloaded.
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/*
+	 * This function is strictly for use by internal APIs. Not that we have
+	 * anything external but there is some trickery here! The getBitmap function
+	 * cannot be invoked from the UI thread. Having to deal with complexity of
+	 * when & how to call this API is too much for those who just want to have
+	 * the bitmap. This is a utility function and is public because it is to be
+	 * shared by other components in the internal implementation.
+	 */
+	public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap,
+			int bestHeight) {
+		File f = mFileCache.getFile(url);
+
+		// from SD cache
+		Bitmap b = decodeFile(f, bestHeight);
+		if (b != null) {
+			// Log.e("AisleContentAdapter","found file in file cache");
+			mContentImagesCache.put(url, b);
+			return b;
+		}
+
+		// from web
+		try {
+			Bitmap bitmap = null;
+			System.setProperty("http.keepAlive", "false");
+			URL imageUrl = new URL(serverUrl);
+			HttpURLConnection conn = (HttpURLConnection) imageUrl
+					.openConnection();
+			conn.setConnectTimeout(30000);
+			conn.setReadTimeout(30000);
+			conn.setInstanceFollowRedirects(true);
+			InputStream is = conn.getInputStream();
+			OutputStream os = new FileOutputStream(f);
+			Utils.CopyStream(is, os);
+			os.close();
+			bitmap = decodeFile(f, bestHeight);
+			// if(cacheBitmap)
+			mContentImagesCache.put(url, bitmap);
+
+			return bitmap;
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+			if (ex instanceof OutOfMemoryError) {
+				// mContentImagesCache.clear();
+			}
+			return null;
+		}
+	}
+
+	// decodes image and scales it to reduce memory consumption
 	private Bitmap decodeFile(File f, int bestHeight) {
 		try {
 			// decode image size
@@ -529,13 +532,19 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 		}
 		return null;
 	}
-	private void createLayout(ScaleImageView image,AisleContentBrowser contentBrowser,int id){
-		RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+	private void createLayout(ScaleImageView image,
+			AisleContentBrowser contentBrowser, int id) {
+		RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params2.addRule(RelativeLayout.CENTER_IN_PARENT);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(VueApplication.getInstance().getPixel(32), VueApplication.getInstance().getPixel(32));
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				VueApplication.getInstance().getPixel(32), VueApplication
+						.getInstance().getPixel(32));
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 		RelativeLayout imageParent = new RelativeLayout(mContext);
-		RelativeLayout.LayoutParams paramsRel = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		RelativeLayout.LayoutParams paramsRel = new RelativeLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		imageParent.setLayoutParams(paramsRel);
 		image.setLayoutParams(params2);
 		imageParent.addView(image);

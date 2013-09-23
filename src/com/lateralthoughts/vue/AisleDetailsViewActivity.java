@@ -592,7 +592,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			url = params[0];
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
-			bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true,
+			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
 					mBestHeight);
 
 			// bmp = getBitmap(url, true, mBestHeight);
@@ -654,9 +654,24 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				imagePath);
 		b1.putBoolean(
 				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG, true);
+		VueUser storedVueUser = null;
+		boolean isUserAisleFlag = false;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(this,
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			if (VueTrendingAislesDataModel
+					.getInstance(this)
+					.getAisleAt(
+							VueApplication.getInstance().getClickedWindowID())
+					.getAisleContext().mUserId.equals(storedVueUser.getVueId())) {
+				isUserAisleFlag = true;
+			}
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
 		b1.putBoolean(
 				VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
-				false);
+				isUserAisleFlag);
 		b1.putString(
 				VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
 				lookingFor);
@@ -696,7 +711,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	 * the bitmap. This is a utility function and is public because it is to be
 	 * shared by other components in the internal implementation.
 	 */
-	private Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight) {
+	private Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap,
+			int bestHeight) {
 		Log.i("added url", "added url  getBitmap " + url);
 		File f = mFileCache.getFile(url);
 		Log.i("added url", "added url  getBitmap " + f);
