@@ -218,8 +218,12 @@ public class NetworkHandler {
 				mTrendingAislesParser, loadMore);
 	}
 
-	public void requestAislesByUser() {
+	public void requestAislesByUser(boolean fromServer) {
 		mOffset = 0;
+		if(!fromServer){
+			//TODO get data from local db.
+		} else {
+		
 		// TODO: CHANGE THIS REQUEST TO VOLLEY
 		if (VueConnectivityManager.isNetworkConnected(VueApplication
 				.getInstance())) {
@@ -324,6 +328,7 @@ public class NetworkHandler {
 					VueApplication.getInstance().getResources()
 							.getString(R.string.no_network), Toast.LENGTH_LONG)
 					.show();
+		}
 		}
 	}
 

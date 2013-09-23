@@ -22,6 +22,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
@@ -102,6 +103,7 @@ public class AisleManager {
 						// TODO: GET THE AISLE OBJECT FROM THE PARSER CLASE SEND
 						// THE AISLE AND AISLE ID BACK.
 						callback.onAisleUpdated(aileItem.getAisleContext().mAisleId);
+						FlurryAgent.logEvent("Create_Aisle_Success");
 						// VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
 					} catch (Exception ex) {
 						Log.e("Profiling",

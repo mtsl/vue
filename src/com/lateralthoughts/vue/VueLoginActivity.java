@@ -573,6 +573,7 @@ public class VueLoginActivity extends FragmentActivity implements
 					com.facebook.Response response) {
 				if (user != null) {
 					FlurryAgent.logEvent("Facebook_Logins");
+					FlurryAgent.logEvent("Login_Success");
 					String location = "";
 					VueUserManager userManager = VueUserManager
 							.getUserManager();
@@ -1044,6 +1045,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		if (connectionresult.getErrorCode() == ConnectionResult.SUCCESS) {
 			 
 			FlurryAgent.logEvent("GooglePlus_Logins");
+			FlurryAgent.logEvent("Login_Success");
 			mSharedPreferencesObj = this.getSharedPreferences(
 					VueConstants.SHAREDPREFERENCE_NAME, 0);
 			VueUserManager userManager = VueUserManager.getUserManager();
@@ -1151,6 +1153,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	private void saveInstagramUserDetails() {
 		if (mInstagramApp != null) {
 			FlurryAgent.logEvent("Instagram_Logins");
+			FlurryAgent.logEvent("Login_Success");
 			mSharedPreferencesObj = this.getSharedPreferences(
 					VueConstants.SHAREDPREFERENCE_NAME, 0);
 			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();

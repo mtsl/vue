@@ -190,9 +190,20 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 						adapter.notifyDataSetChanged();
 						Log.i("myailsedebug",
 								"myailsedebug:  requestAislesByUser method calling1  ");
-						VueTrendingAislesDataModel
-								.getInstance(VueApplication.getInstance())
-								.getNetworkHandler().requestAislesByUser();
+					
+///////////////////////////////////////////////////
+						AisleWindowContentFactory.getInstance(
+								getActivity()).clearObjectsInUse();
+						VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
+						vueLandingPageActivity1.showCategory(s);
+						
+						
+						
+						
+						
+						
+						/////////////////////////////////////////////////
+		 
 						/*
 						 * VueTrendingAislesDataModel.getInstance(getActivity())
 						 * .clearAisles();
@@ -235,6 +246,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 								R.drawable.profile, null);
 						adapter.groups.add(groupPosition, item);
 						adapter.notifyDataSetChanged();
+						
+			/*			 
 						VueTrendingAislesDataModel model = VueTrendingAislesDataModel
 								.getInstance(getActivity());
 						model.clearAisles();
@@ -244,7 +257,14 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 						VueTrendingAislesDataModel
 								.getInstance(VueApplication.getInstance())
 								.getNetworkHandler()
-								.loadTrendingAisle(loadMore);
+								.loadTrendingAisle(loadMore);*/
+						
+						
+						VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
+						vueLandingPageActivity1.showCategory(s);
+						
+						
+						
 						if (getActivity() instanceof SlidingFragmentActivity) {
 							SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
 							activity.getSlidingMenu().toggle();
@@ -316,6 +336,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 								});
 					} else if (s
 							.equals(getString(R.string.sidemenu_option_Login))) {
+						FlurryAgent.logEvent("Login_Without_Prompt" );
 						sharedPreferencesObj = getActivity()
 								.getSharedPreferences(
 										VueConstants.SHAREDPREFERENCE_NAME, 0);

@@ -1643,7 +1643,7 @@ public class DataEntryFragment extends Fragment {
 			image.setTitle("Android Test"); // TODO By Krishna
 			FlurryAgent.logEvent("New_Aisle_Creation");
 			image.setOwnerUserId(Long.valueOf(ownerUserId));
- 
+			FlurryAgent.logEvent("Create_Aisle");
 			aisle.setAisleImage(image);
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())

@@ -84,6 +84,7 @@ public class VueLandingPageActivity extends BaseActivity {
 					@Override
 					public void onClick(View arg0) {
 						if (mOtherSourceImagePath == null) {
+							FlurryAgent.logEvent("Create_Aisle_Button_Click");
 							Intent intent = new Intent(
 									VueLandingPageActivity.this,
 									CreateAisleSelectionActivity.class);
@@ -481,52 +482,57 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-	public void showCategory(final String catName) {/*
-													 * if (mFragment == null) {
-													 * mFragment =
-													 * (VueLandingAislesFragment
-													 * )
-													 * getSupportFragmentManager
-													 * ()
-													 * .findFragmentById(R.id.
-													 * aisles_view_fragment); }
-													 * if (
-													 * mVueLandingActionbarScreenName
-													 * .getText().toString()
-													 * .equalsIgnoreCase
-													 * (catName)) { return; }
-													 * ViewInfo viewInfo = new
-													 * ViewInfo();
-													 * viewInfo.mVueName =
-													 * mVueLandingActionbarScreenName
-													 * .getText().toString();
-													 * viewInfo.mPosition =
-													 * mFragment
-													 * .getListPosition();
-													 * viewInfo.mOffset =
-													 * VueTrendingAislesDataModel
-													 * .getInstance(
-													 * VueLandingPageActivity
-													 * .this
-													 * ).getNetworkHandler()
-													 * .getmOffset();
-													 * StackViews.
-													 * getInstance().push
-													 * (viewInfo);
-													 * mVueLandingActionbarScreenName
-													 * .setText(catName);
-													 * VueTrendingAislesDataModel
-													 * .getInstance(
-													 * VueLandingPageActivity
-													 * .this)
-													 * .getNetworkHandler()
-													 * .reqestByCategory
-													 * (catName, new
-													 * ProgresStatus(), true,
-													 * false);
-													 * FlurryAgent.logEvent
-													 * (catName);
-													 */
+	public void showCategory(final String catName) {
+		if (mFragment == null) {
+			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisles_view_fragment);
+		}
+		if (mVueLandingActionbarScreenName.getText().toString()
+				.equalsIgnoreCase(catName)) {
+			return;
+		}
+		ViewInfo viewInfo = new ViewInfo();
+		viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
+		viewInfo.mPosition = mFragment.getListPosition();
+		viewInfo.mOffset = VueTrendingAislesDataModel
+				.getInstance(VueLandingPageActivity.this).getNetworkHandler()
+				.getmOffset();
+		boolean isCategoryExistInDb = StackViews.getInstance().categoryCheck(catName);
+		StackViews.getInstance().push(viewInfo);
+		mVueLandingActionbarScreenName.setText(catName);
+		boolean loadMore = false;
+		boolean fromServer = true;
+		if(catName.equalsIgnoreCase(getString(R.string.sidemenu_option_My_Aisles))){
+			if(isCategoryExistInDb){
+				fromServer = false;
+			} else {
+				fromServer = true;
+			}
+			VueTrendingAislesDataModel
+			.getInstance(VueApplication.getInstance())
+			.getNetworkHandler().requestAislesByUser(fromServer);
+			
+		} else if(catName.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))){
+			 
+			VueTrendingAislesDataModel model = VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance());
+			model.clearAisles();
+			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
+					.clearObjectsInUse();
+			  loadMore = true;
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance())
+					.getNetworkHandler()
+					.loadTrendingAisle(loadMore);
+			
+		} else {
+			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+			.getNetworkHandler()
+			.reqestByCategory(catName, new ProgresStatus(), fromServer, loadMore);
+		}
+
+		FlurryAgent.logEvent(catName);
+
 	}
 
 	class ProgresStatus implements NotifyProgress {
