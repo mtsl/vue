@@ -565,8 +565,8 @@ public class DataBaseManager {
   }
   
   
-  public ArrayList<AisleWindowContent> getAislesByUserId(long userId) {  
-    return getAisles(getAislesCursor(Long.toString(userId), VueConstants.USER_ID));
+  public ArrayList<AisleWindowContent> getAislesByUserId(String userId) {  
+    return getAisles(getAislesCursor(userId, VueConstants.USER_ID));
   }
   
   public ArrayList<AisleWindowContent> getAislesByCategory(String category) {
