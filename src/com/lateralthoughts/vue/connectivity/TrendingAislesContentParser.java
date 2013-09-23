@@ -161,7 +161,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			DataBaseManager.addTrentingAislesFromServerToDB(
+			DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(
 					VueApplication.getInstance(), mAislesList);
 			return null;
 		}

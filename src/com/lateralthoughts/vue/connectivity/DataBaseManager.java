@@ -75,7 +75,7 @@ public class DataBaseManager {
    * 
    * @param Context context.
    * */
-  public static void addAislesToDB(Context context, List<AisleWindowContent> contentList) {
+  private void addAislesToDB(Context context, List<AisleWindowContent> contentList) {
 	  int imgCount = 0;
     Cursor aisleIdCursor = context.getContentResolver().query(
         VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id}, null,
