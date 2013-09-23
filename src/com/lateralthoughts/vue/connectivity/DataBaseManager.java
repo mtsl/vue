@@ -556,6 +556,15 @@ public class DataBaseManager {
   }
   
   
+  public ArrayList<AisleWindowContent> getAislesById() {
+    LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
+    ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
+    ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
+    Cursor aislesCursor = mContext.getContentResolver().query(
+        VueConstants.CONTENT_URI, null, /*VueConstants.CATEGORY + "=?"*/null,
+        /*new String[] {category}*/null, VueConstants.ID + " ASC");
+    return null;
+  }
   
   
 }
