@@ -467,7 +467,7 @@ public class DataBaseManager {
         + ", Total Comments deleted : " + deletedComments);
   }
   
-  public ArrayList<AisleWindowContent> getAislesByCategory(String category) {
+  private ArrayList<AisleWindowContent> getAisles(Cursor aislesCursor) {
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
     AisleWindowContent aisleItem = null;
@@ -479,9 +479,9 @@ public class DataBaseManager {
     ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
     ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
     
-    Cursor aislesCursor = mContext.getContentResolver().query(
-        VueConstants.CONTENT_URI, null, /*VueConstants.CATEGORY + "=?"*/null,
-        /*new String[] {category}*/null, VueConstants.ID + " ASC");
+    /*Cursor aislesCursor = mContext.getContentResolver().query(
+        VueConstants.CONTENT_URI, null, VueConstants.CATEGORY + "=?"null,
+        new String[] {category}null, VueConstants.ID + " ASC");*/
     Log.i("cursize", "cursize: "+aislesCursor.getCount());
     
     if (aislesCursor.moveToFirst()) {
@@ -556,15 +556,18 @@ public class DataBaseManager {
   }
   
   
-  public ArrayList<AisleWindowContent> getAislesById() {
-    LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
-    ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
-    ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
-    Cursor aislesCursor = mContext.getContentResolver().query(
-        VueConstants.CONTENT_URI, null, /*VueConstants.CATEGORY + "=?"*/null,
-        /*new String[] {category}*/null, VueConstants.ID + " ASC");
-    return null;
+  public ArrayList<AisleWindowContent> getAislesByUserId(long userId) {  
+    return getAisles(getAislesCursor(Long.toString(userId), VueConstants.USER_ID));
   }
   
+  public ArrayList<AisleWindowContent> getAislesByCategory(String category) {
+    return getAisles(getAislesCursor(category, VueConstants.CATEGORY));
+  }
   
+  private Cursor getAislesCursor(String searchString, String searchBy) {
+    Cursor aislesCursor = mContext.getContentResolver().query(
+        VueConstants.CONTENT_URI, null, searchBy + "=?",
+        new String[] {searchString}, VueConstants.ID + " ASC");
+    return aislesCursor;
+  }
 }

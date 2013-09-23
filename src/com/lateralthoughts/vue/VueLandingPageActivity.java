@@ -47,7 +47,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 	private VueLandingAislesFragment mFragment;
-	public TextView mVueLandingActionbarScreenName;
+	public static TextView mVueLandingActionbarScreenName;
 	private LinearLayout mVueLandingActionbarRightLayout;
 	private View mVueLandingActionbarView;
 	private RelativeLayout mVueLandingActionbarAppIconLayout;
@@ -113,9 +113,23 @@ public class VueLandingPageActivity extends BaseActivity {
 				VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG, true);
 		// Application opens first time.
 		if (isFirstTimeFlag) {
+			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
+			editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG,
+					false);
+			editor.commit();
+			showLogInDialog(false);
+		}
+
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(this,
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		if (storedVueUser == null) {
 			VueUserManager userManager = VueUserManager.getUserManager();
 			userManager.createUnidentifiedUser(new UserUpdateCallback() {
-
 				@Override
 				public void onUserUpdated(VueUser user) {
 					try {
@@ -129,11 +143,6 @@ public class VueLandingPageActivity extends BaseActivity {
 					}
 				}
 			});
-			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
-			editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG,
-					false);
-			editor.commit();
-			showLogInDialog(false);
 		}
 
 		mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
@@ -472,28 +481,52 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-	public void showCategory(final String catName) {
-		if (mFragment == null) {
-			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisles_view_fragment);
-		}
-		if (mVueLandingActionbarScreenName.getText().toString()
-				.equalsIgnoreCase(catName)) {
-			return;
-		}
-		ViewInfo viewInfo = new ViewInfo();
-		viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
-		viewInfo.mPosition = mFragment.getListPosition();
-		viewInfo.mOffset = VueTrendingAislesDataModel
-				.getInstance(VueLandingPageActivity.this).getNetworkHandler()
-				.getmOffset();
-		StackViews.getInstance().push(viewInfo);
-		mVueLandingActionbarScreenName.setText(catName);
-		VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
-				.getNetworkHandler()
-				.reqestByCategory(catName, new ProgresStatus(), true, false);
-		FlurryAgent.logEvent(catName);
-
+	public void showCategory(final String catName) {/*
+													 * if (mFragment == null) {
+													 * mFragment =
+													 * (VueLandingAislesFragment
+													 * )
+													 * getSupportFragmentManager
+													 * ()
+													 * .findFragmentById(R.id.
+													 * aisles_view_fragment); }
+													 * if (
+													 * mVueLandingActionbarScreenName
+													 * .getText().toString()
+													 * .equalsIgnoreCase
+													 * (catName)) { return; }
+													 * ViewInfo viewInfo = new
+													 * ViewInfo();
+													 * viewInfo.mVueName =
+													 * mVueLandingActionbarScreenName
+													 * .getText().toString();
+													 * viewInfo.mPosition =
+													 * mFragment
+													 * .getListPosition();
+													 * viewInfo.mOffset =
+													 * VueTrendingAislesDataModel
+													 * .getInstance(
+													 * VueLandingPageActivity
+													 * .this
+													 * ).getNetworkHandler()
+													 * .getmOffset();
+													 * StackViews.
+													 * getInstance().push
+													 * (viewInfo);
+													 * mVueLandingActionbarScreenName
+													 * .setText(catName);
+													 * VueTrendingAislesDataModel
+													 * .getInstance(
+													 * VueLandingPageActivity
+													 * .this)
+													 * .getNetworkHandler()
+													 * .reqestByCategory
+													 * (catName, new
+													 * ProgresStatus(), true,
+													 * false);
+													 * FlurryAgent.logEvent
+													 * (catName);
+													 */
 	}
 
 	class ProgresStatus implements NotifyProgress {
@@ -621,5 +654,9 @@ public class VueLandingPageActivity extends BaseActivity {
 			otherSourcesImageDetailsList.add(otherSourceImageDetails);
 		}
 		return otherSourcesImageDetailsList;
+	}
+
+	public String getScreenName() {
+		return mVueLandingActionbarScreenName.getText().toString();
 	}
 }

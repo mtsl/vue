@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue;
 
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.utils.Utils;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -14,6 +16,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class LoginWarningMessage {
 
@@ -73,6 +76,27 @@ public class LoginWarningMessage {
 								.getSupportFragmentManager().findFragmentById(
 										R.id.create_aisles_view_fragment);
 						fragment.storeMetaAisleDataIntoLocalStorage();
+						VueUser storedVueUser = null;
+						try {
+							storedVueUser = Utils.readUserObjectFromFile(
+									mContext,
+									VueConstants.VUE_APP_USEROBJECT__FILENAME);
+						} catch (Exception e2) {
+							e2.printStackTrace();
+						}
+						if (storedVueUser != null
+								&& storedVueUser.getVueId() != null) {
+							if (VueConnectivityManager
+									.isNetworkConnected(mContext)) {
+								fragment.addAisleToServer(storedVueUser.getVueId());
+							} else {
+								Toast.makeText(
+										mContext,
+										mContext.getResources().getString(
+												R.string.no_network),
+										Toast.LENGTH_LONG).show();
+							}
+						}
 					} else {
 						SharedPreferences sharedPreferencesObj = mContext
 								.getSharedPreferences(

@@ -171,8 +171,9 @@ public class VueTrendingAislesDataModel {
 		} 
 		loadOnRequest = true;
   }
-  public void listSize(){
-	  Log.i("mAisleContentList", "mAisleContentList: "+mAisleContentList.size());
+  public int listSize(){
+	   return mAisleContentList.size();
+	 
   }
 	protected Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {

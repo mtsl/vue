@@ -237,8 +237,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				}
 
 			}
+			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
 
-			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest) {
+			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest && lan.getScreenName().equalsIgnoreCase(getResources().getString(R.string.trending))) {
 				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
 				int totalItems = 0;
 				if (view.equals(mLeftColumnView)) {

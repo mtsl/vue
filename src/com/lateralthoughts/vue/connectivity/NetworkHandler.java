@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.AisleWindowContentFactory;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
@@ -73,15 +74,15 @@ public class NetworkHandler {
 				.isMoreDataAvailable()) {
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
-			if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
-				mOffset += mLimit;
-			else {
-				mOffset += mLimit;
-				mLimit = TRENDING_AISLES_BATCH_SIZE;
-			}
+			/*
+			 * if (mOffset < NOTIFICATION_THRESHOLD *
+			 * TRENDING_AISLES_BATCH_SIZE) mOffset += mLimit; else { mOffset +=
+			 * mLimit; mLimit = TRENDING_AISLES_BATCH_SIZE; }
+			 */
 			Log.i("offeset and limit", "offeset1: " + mOffset + " and limit: "
 					+ mLimit);
-
+			mOffset = VueTrendingAislesDataModel.getInstance(
+					VueApplication.getInstance()).listSize();
 			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 					mTrendingAislesParser, loadMore);
 		} else {
@@ -110,7 +111,7 @@ public class NetworkHandler {
 					.setMoreDataAVailable(true);
 			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 					mTrendingAislesParser, loadMore);
-			Log.i("loading from db", "loading from server");
+			 
 
 		} else {
 			Log.i("loading from db", "loading from db");
@@ -131,8 +132,8 @@ public class NetworkHandler {
 		AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
 	}
 
-	public void requestForAddImage(VueImage image, ImageAddedCallback callback) {
-		AisleManager.getAisleManager().addImageToAisle(image, callback);
+	public void requestForAddImage(boolean fromDetailsScreenFlag, VueImage image, ImageAddedCallback callback) {
+		AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag, image, callback);
 	}
 
 	// get aisles related to search keyword
@@ -194,7 +195,7 @@ public class NetworkHandler {
 	}
 
 	public void loadInitialData(boolean loadMore, Handler mHandler) {
-
+		mOffset = 0;
 		if (!VueConnectivityManager.isNetworkConnected(mContext)) {
 			Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
 					.show();
@@ -207,101 +208,124 @@ public class NetworkHandler {
 			msg.obj = aisleContentArray;
 			mHandler.sendMessage(msg);
 		} else {
-			Log.i("Gateway", "loadInitialData:  " + loadMore);
-			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-					mTrendingAislesParser, loadMore);
+			loadTrendingAisle(loadMore);
 		}
 
 	}
 
+	public void loadTrendingAisle(boolean loadMore) {
+		mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+				mTrendingAislesParser, loadMore);
+	}
+
 	public void requestAislesByUser() {
-		/*
-		 * String userId = null; try{ VueUser storedVueUser = null;
-		 * storedVueUser =
-		 * Utils.readUserObjectFromFile(VueApplication.getInstance(),
-		 * VueConstants.VUE_APP_USEROBJECT__FILENAME);
-		 * 
-		 * if (storedVueUser != null) { userId =
-		 * Long.valueOf(storedVueUser.getVueId()).toString(); } }catch(Exception
-		 * e){ e.printStackTrace(); } Log.i("getAisleByuser",
-		 * "getAisleByuser getailselistmethod get user iD " ); String requestUrl
-		 * = UrlConstants.GET_AISLELIST_BYUSER_RESTURL+"/"+userId;
-		 * 
-		 * Log.i("getAisleByuser",
-		 * "getAisleByuser getailselistmethod requestUrl:  "+requestUrl );
-		 * 
-		 * 
-		 * 
-		 * JsonObjectRequest vueRequest = new JsonObjectRequest(requestUrl ,
-		 * null, new Response.Listener<JSONObject>() {
-		 * 
-		 * @Override public void onResponse(JSONObject response) { if (null !=
-		 * response) { Log.i("getAisleByuser",
-		 * "getAisleByuser getailselistmethod response:  "+ response ); Bundle
-		 * responseBundle = new Bundle();
-		 * responseBundle.putString("Search result", response.toString());
-		 * responseBundle.putBoolean("loadMore", false);
-		 * mTrendingAislesParser.send(1, responseBundle); }
-		 * Log.e("Search Resopnse", "SURU Search Resopnse : " + response); } },
-		 * new Response.ErrorListener() {
-		 * 
-		 * @Override public void onErrorResponse(VolleyError error) {
-		 * Log.i("getAisleByuser",
-		 * "getAisleByuser getailselistmethod Error response:  "+error );
-		 * 
-		 * } });
-		 * 
-		 * VueApplication.getInstance().getRequestQueue().add(vueRequest);
-		 */
-
+		mOffset = 0;
 		// TODO: CHANGE THIS REQUEST TO VOLLEY
-		new Thread(new Runnable() {
+		if (VueConnectivityManager.isNetworkConnected(VueApplication
+				.getInstance())) {
 
-			@Override
-			public void run() {
-				try {
-					aislesList = null;
-					aislesList = testGetAisleList();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				if (VueLandingPageActivity.landingPageActivity != null) {
-					VueLandingPageActivity.landingPageActivity
-							.runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = true;
-									if (aislesList != null
-											&& aislesList.size() > 0) {
-										for (int i = 0; i < aislesList.size(); i++) {
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						aislesList = null;
+						aislesList = testGetAisleList();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (VueLandingPageActivity.landingPageActivity != null
+							&& (VueLandingPageActivity.mVueLandingActionbarScreenName
+									.getText().toString()
+									.equals(VueApplication
+											.getInstance()
+											.getString(
+													R.string.sidemenu_option_My_Aisles)))) {
+						VueLandingPageActivity.landingPageActivity
+								.runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										VueTrendingAislesDataModel.getInstance(
+												VueApplication.getInstance())
+												.clearAisles();
+										AisleWindowContentFactory.getInstance(
+												VueApplication.getInstance())
+												.clearObjectsInUse();
+										VueTrendingAislesDataModel
+												.getInstance(VueApplication
+														.getInstance()).loadOnRequest = false;
+										Log.i("myailsedebug",
+												"myailsedebug: recieved my runonuithread:  ");
+										if (aislesList != null
+												&& aislesList.size() > 0) {
+											Log.i("myailsedebug",
+													"myailsedebug: recieved my runonuithread: if ");
+											for (int i = 0; i < aislesList
+													.size(); i++) {
+												VueTrendingAislesDataModel
+														.getInstance(
+																VueApplication
+																		.getInstance())
+														.addItemToList(
+																aislesList
+																		.get(i)
+																		.getAisleContext().mAisleId,
+																aislesList
+																		.get(i));
+											}
+											/*
+											 * VueTrendingAislesDataModel
+											 * .getInstance( VueApplication
+											 * .getInstance()) .listSize();
+											 */
+
 											VueTrendingAislesDataModel
 													.getInstance(
 															VueApplication
 																	.getInstance())
-													.addItemToList(
-															aislesList
-																	.get(i)
-																	.getAisleContext().mAisleId,
-															aislesList.get(i));
+													.dismissProgress();
+											// if this is the first set of data
+											// we
+											// are receiving
+											// go
+											// ahead
+											// notify the data set changed
+											VueTrendingAislesDataModel
+													.getInstance(
+															VueApplication
+																	.getInstance())
+													.dataObserver();
+										} else {
+											// if this is the first set of data
+											// we
+											// are receiving
+											// go
+											// ahead
+											// notify the data set changed
+											VueTrendingAislesDataModel
+													.getInstance(
+															VueApplication
+																	.getInstance())
+													.dataObserver();
+											Toast.makeText(
+													VueLandingPageActivity.landingPageActivity,
+													"There are no Aisles for this User.",
+													Toast.LENGTH_LONG).show();
 										}
-
-										VueTrendingAislesDataModel.getInstance(
-												VueApplication.getInstance())
-												.dismissProgress();
-										// if this is the first set of data we
-										// are receiving
-										// go
-										// ahead
-										// notify the data set changed
-										VueTrendingAislesDataModel.getInstance(
-												VueApplication.getInstance())
-												.dataObserver();
 									}
-								}
-							});
+								});
+					}
 				}
-			}
-		}).start();
+			}).start();
+		} else {
+			Toast.makeText(
+					VueApplication.getInstance(),
+					VueApplication.getInstance().getResources()
+							.getString(R.string.no_network), Toast.LENGTH_LONG)
+					.show();
+		}
 	}
 
 	public int getmOffset() {
@@ -330,7 +354,8 @@ public class NetworkHandler {
 		if (response.getEntity() != null
 				&& response.getStatusLine().getStatusCode() == 200) {
 			String responseMessage = EntityUtils.toString(response.getEntity());
-			System.out.println("Response: " + responseMessage);
+			Log.i("aisleWindowImageUrl",
+					"aisleWindowImageUrl response Message: " + responseMessage);
 			return new Parser().getUserAilseLIst(responseMessage);
 		}
 		return null;
