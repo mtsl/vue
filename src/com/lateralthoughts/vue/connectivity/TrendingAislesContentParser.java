@@ -2,13 +2,11 @@ package com.lateralthoughts.vue.connectivity;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
-
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
@@ -69,11 +67,12 @@ public class TrendingAislesContentParser extends ResultReceiver {
 						}
 					}
 
-				/*	if (aislesList.size() == 0) {
-						VueTrendingAislesDataModel.getInstance(
-								VueApplication.getInstance())
-								.setMoreDataAVailable(false); // TODO
-					}*/
+					/*
+					 * if (aislesList.size() == 0) {
+					 * VueTrendingAislesDataModel.getInstance(
+					 * VueApplication.getInstance())
+					 * .setMoreDataAVailable(false); // TODO }
+					 */
 
 					if (refreshListFlag) {
 						VueLandingPageActivity.landingPageActivity

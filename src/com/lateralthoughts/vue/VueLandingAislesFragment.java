@@ -102,6 +102,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 
+		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
 		mRightColumnView.setAdapter(mRightColumnAdapter);
 
@@ -239,7 +242,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			}
 			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
 
-			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest && lan.getScreenName().equalsIgnoreCase(getResources().getString(R.string.trending))) {
+			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
+					&& lan.getScreenName().equalsIgnoreCase(
+							getResources().getString(R.string.trending))) {
 				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
 				int totalItems = 0;
 				if (view.equals(mLeftColumnView)) {
@@ -249,9 +254,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				}
 				if ((totalItems - lastVisiblePosition) < 5) {
 					Log.i("offeset and limit", "offeset00000: load moredata");
-					VueTrendingAislesDataModel.getInstance(mContext).getNetworkHandler().requestMoreAisle(true);
+					VueTrendingAislesDataModel.getInstance(mContext)
+							.getNetworkHandler().requestMoreAisle(true);
 				}
-			}else {
+			} else {
 				Log.i("offeset and limit", "offeset00000: load moredata else ");
 			}
 
