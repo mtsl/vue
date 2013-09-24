@@ -360,18 +360,11 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             Bitmap bmp = null;            
             //we want to get the bitmap and also add it into the memory cache
             //bmp = getBitmap(url, true, mBestHeightForImage); 
-            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeightForImage);
-            
-            if(!(aisleContentBrowser.getmSourceName() != null && aisleContentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG))&& bmp != null) {
-                Log.i("adapter swiping", "adapter swiping doing  ++++++++++++++++++++++++++++++++++++++++++++ " );
-                Log.i("adapter swiping", "adapter swiping doing mCustomImageUrl : "+url);
-                Log.i("adapter swiping", "adapter swiping doing bitmap.width: "+bmp.getWidth());
-                Log.i("adapter swiping", "adapter swiping doing bitmap.height: "+bmp.getHeight());
-                Log.i("adapter swiping", "adapter swiping  -------------------------------------------- " );
-                }else {
-                	Log.i("adapter swiping", "adapter swiping details case. " );
-                }
- 
+            if(!(aisleContentBrowser.getmSourceName() != null && aisleContentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG))) {
+            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeightForImage,VueApplication.getInstance().getVueDetailsCardWidth()/2);
+            } else {
+            	 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeightForImage,VueApplication.getInstance().getVueDetailsCardWidth()/2);
+            }
 			if (bmp != null) {
 				if (aisleContentBrowser.getmSourceName() != null
 						&& aisleContentBrowser.getmSourceName()
@@ -380,8 +373,24 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 							mAVailableWidth, mAvailabeHeight);
 					mAvailabeHeight = mImageDimension.mImgHeight;
 					if (bmp.getHeight() < mImageDimension.mImgHeight) {
-						bmp = mBitmapLoaderUtils.getBitmap(url, params[1],
-								true, mImageDimension.mImgHeight);
+
+						if (!(aisleContentBrowser.getmSourceName() != null && aisleContentBrowser
+								.getmSourceName().equalsIgnoreCase(
+										AisleDetailsViewAdapter.TAG))
+								&& bmp != null) {
+
+							bmp = mBitmapLoaderUtils.getBitmap(url, params[1],
+									true, mImageDimension.mImgHeight,
+									VueApplication.getInstance()
+											.getVueDetailsCardWidth() / 2);
+
+						} else {
+							bmp = mBitmapLoaderUtils.getBitmap(url, params[1],
+									true, mImageDimension.mImgHeight,
+									VueApplication.getInstance()
+											.getVueDetailsCardWidth());
+						}
+
 						mAvailabeHeight = bmp.getHeight();
 
 					}

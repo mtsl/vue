@@ -112,9 +112,6 @@ public class AisleDetailsViewListLoader {
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			 
 			 for(int i = 0;i<imageDetailsArr.size();i++) {
-				 Log.i("urldata", "urldata: mCustomUrl: "+imageDetailsArr.get(i).mCustomImageUrl);
-				 Log.i("urldata", "urldata: mImageUrl: "+imageDetailsArr.get(i).mImageUrl);
-				 
 				  if(mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
 					  mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
 				  }
@@ -123,6 +120,14 @@ public class AisleDetailsViewListLoader {
 			holder.aisleContentBrowser.mSwipeListener
 					.onReceiveImageCount(imageDetailsArr.size());
 			itemDetails = imageDetailsArr.get(0);
+			
+			if(VueApplication.getInstance().getClickedWindowID() != null) {
+				if(VueApplication.getInstance().getClickedWindowID().equalsIgnoreCase(desiredContentId)){
+					Log.i("clickedwindow", "clickedwindow ID detatils matched: " + desiredContentId);
+					Log.i("clickedwindow", "clickedwindow ID  detatils url: " + itemDetails.mImageUrl);
+				}
+				}
+			
 			imageView = mViewFactory.getEmptyImageView();
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -131,12 +136,13 @@ public class AisleDetailsViewListLoader {
 			imageView.setContainerObject(holder);
 			// imgConnectivity.setImageClick(imageView);
 			Bitmap bitmap = mBitmapLoaderUtils
-					.getCachedBitmap(itemDetails.mCustomImageUrl);
+					.getCachedBitmap(itemDetails.mImageUrl);
 			if (bitmap != null) {
 				// get the dimensions of the image.
 				mImageDimension = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
 						itemDetails.mAvailableHeight);
+				mBestHeight = mImageDimension.mImgHeight;
 				setParams(holder.aisleContentBrowser, imageView, mBestHeight);
 				if (bitmap.getHeight() < mImageDimension.mImgHeight) {
 					loadBitmap(itemDetails, contentBrowser, imageView,
@@ -196,13 +202,14 @@ public class AisleDetailsViewListLoader {
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight);
+            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth());
             if(bmp != null) {
            	 mImageDimension = Utils.getScalledImage(bmp,
            			mAvailabeWidth, mAvailableHeight);
+           	 Log.i("imageSize", "imageSize mImageDimension Height: "+mImageDimension.mImgHeight);
            	mAvailableHeight = mImageDimension.mImgHeight;
             	 if(bmp.getHeight()<mImageDimension.mImgHeight) {
-            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mImageDimension.mImgHeight);
+            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mImageDimension.mImgHeight, VueApplication.getInstance().getVueDetailsCardWidth());
 				 }
             }
             return bmp;            
@@ -256,12 +263,10 @@ public class AisleDetailsViewListLoader {
     }  
 public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 	 if (contentBrowser != null) {
-		 Log.i("bitmap reclying", "bitmap reclying  contentBrowser.getChildCount(): "+contentBrowser.getChildCount());
 			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
 				mViewFactory
 				.returnUsedImageView((ScaleImageView)contentBrowser
 						.getChildAt(i));
-				Log.i("bitmap reclying", "bitmap reclying  images are returned");
 			} 
 			 mContentAdapterFactory.returnUsedAdapter(contentBrowser.getCustomAdapter());
 			 contentBrowser.setCustomAdapter(null);
@@ -271,9 +276,7 @@ public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 			for(int i = 0;i<imageList.size();i++){
 				Bitmap bitmap = mBitmapLoaderUtils
 						.getCachedBitmap(imageList.get(i).mImageUrl);
-				Log.i("bitmap reclying", "bitmap reclying 1");
 				if(bitmap != null){
-					Log.i("bitmap reclying", "bitmap reclying 2");
 					bitmap.recycle();
 				}
 			}
@@ -284,9 +287,10 @@ public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 }
    private void setParams(AisleContentBrowser vFlipper, ImageView imageView,int imgScreenHeight
           ) {
+	   Log.i("imageSize", "imageSize params Height: "+imgScreenHeight);
       if (vFlipper != null && imageView != null) {
          FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-               LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+               LayoutParams.MATCH_PARENT, imgScreenHeight);
          params.gravity = Gravity.CENTER;
          imageView.setLayoutParams(params);
       } 

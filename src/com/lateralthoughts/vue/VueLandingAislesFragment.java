@@ -102,6 +102,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 
+		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+		
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
 		mRightColumnView.setAdapter(mRightColumnAdapter);
 
@@ -262,7 +265,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		@Override
 		public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-			Log.i("bestHeigth", "bestHeigth windowID: " + id);
+			Log.i("clickedwindow", "clickedwindow ID: " + id);
 			Intent intent = new Intent();
 			intent.setClass(VueApplication.getInstance(),
 					AisleDetailsViewActivity.class);

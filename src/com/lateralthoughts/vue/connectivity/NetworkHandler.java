@@ -94,11 +94,11 @@ public class NetworkHandler {
 	// get the aisle based on the category
 	public void reqestByCategory(String category, NotifyProgress progress,
 			boolean fromServer, boolean loadMore) {
-
+		
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.setNotificationProgress(progress, fromServer);
 		String downLoadFromServer = "fromDb";
-		if (fromServer == true) {
+		if (fromServer) {
 			downLoadFromServer = "fromServer";
 			mOffset = 0;
 			mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
@@ -114,10 +114,20 @@ public class NetworkHandler {
 			 
 
 		} else {
-			Log.i("loading from db", "loading from db");
-			downLoadFromServer = "fromDb";
+			Log.i("loading from db", "loading from db ***###");
+		/*	downLoadFromServer = "fromDb";
 			DbDataGetter dBgetter = new DbDataGetter(progress);
-			dBgetter.execute(category, downLoadFromServer);
+			dBgetter.execute(category, downLoadFromServer);*/
+			DataBaseManager.getInstance(VueApplication.getInstance()).resetDbParams();
+			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
+					.getAislesFromDB(null);
+			if (aisleContentArray.size() == 0) {
+				return;
+			}
+			Message msg = new Message();
+			msg.obj = aisleContentArray;
+			VueTrendingAislesDataModel.getInstance(mContext).mHandler.sendMessage(msg);
+	 
 		}
 
 	}
@@ -160,6 +170,7 @@ public class NetworkHandler {
 						+ error.getMessage());
 			}
 		});
+		 
 
 		VueApplication.getInstance().getRequestQueue().add(vueRequest);
 
@@ -207,6 +218,7 @@ public class NetworkHandler {
 			Message msg = new Message();
 			msg.obj = aisleContentArray;
 			mHandler.sendMessage(msg);
+			
 		} else {
 			loadTrendingAisle(loadMore);
 		}
@@ -214,16 +226,47 @@ public class NetworkHandler {
 	}
 
 	public void loadTrendingAisle(boolean loadMore) {
+		 
 		mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 				mTrendingAislesParser, loadMore);
 	}
 
-	public void requestAislesByUser(boolean fromServer) {
+	public void requestAislesByUser(boolean fromServer,NotifyProgress progress) {
+	clearList();
 		mOffset = 0;
 		if(!fromServer){
 			//TODO get data from local db.
+			Log.i("myaisledbcheck", "myaisledbcheck aisle are my aisles are fetching from db $$$$: " );
+			String userId = getUserId();
+			if(userId != null){
+			
+			ArrayList<AisleWindowContent> windowList = DataBaseManager.getInstance(VueApplication.getInstance()).getAislesByUserId(userId);
+			 
+			for (int i = 0; i < windowList
+					.size(); i++) {
+				VueTrendingAislesDataModel
+						.getInstance(
+								VueApplication
+										.getInstance())
+						.addItemToList(
+								windowList
+										.get(i)
+										.getAisleContext().mAisleId,
+										windowList
+										.get(i));
+			}
+			VueTrendingAislesDataModel
+			.getInstance(
+					VueApplication
+							.getInstance())
+			.dataObserver();
+			} else {
+				Toast.makeText(VueApplication.getInstance(), "Unable to get user id", Toast.LENGTH_SHORT).show();
+			}
 		} else {
-		
+			VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).setNotificationProgress(progress, fromServer);
+			VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).showProgress();
+			Log.i("myaisledbcheck", "myaisledbcheck aisle are my aisles are fetching from ser12 $$$$: " );
 		// TODO: CHANGE THIS REQUEST TO VOLLEY
 		if (VueConnectivityManager.isNetworkConnected(VueApplication
 				.getInstance())) {
@@ -278,11 +321,14 @@ public class NetworkHandler {
 																aislesList
 																		.get(i));
 											}
-											/*
-											 * VueTrendingAislesDataModel
-											 * .getInstance( VueApplication
-											 * .getInstance()) .listSize();
-											 */
+											if(aislesList != null){
+											Log.i("myaisledbcheck", "myaisledbcheck aisle are fetching from server inserting to db  windowList size is: "+aislesList.size());
+											} else {
+												Log.i("myaisledbcheck", "myaisledbcheck aisle are fetching from server inserting to db  aislesList is null: " );
+											}
+											//adding my aisle to db.		
+											DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(VueApplication.getInstance(),aislesList);
+										 
 
 											VueTrendingAislesDataModel
 													.getInstance(
@@ -300,6 +346,7 @@ public class NetworkHandler {
 															VueApplication
 																	.getInstance())
 													.dataObserver();
+											Log.i("myaisledbcheck", "myaisledbcheck aisle are fetching from server inserting to db success: " );
 										} else {
 											// if this is the first set of data
 											// we
@@ -317,7 +364,9 @@ public class NetworkHandler {
 													"There are no Aisles for this User.",
 													Toast.LENGTH_LONG).show();
 										}
+										VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
 									}
+									
 								});
 					}
 				}
@@ -365,5 +414,33 @@ public class NetworkHandler {
 		return null;
 
 	}
+	private String getUserId(){
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(
+					VueApplication.getInstance(),
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String userId = null;
+		if (storedVueUser != null) {
+			userId = Long.valueOf(storedVueUser.getVueId()).toString();
+		}
+		return userId;
+		 
+	}
 
+private void  clearList(){
+	VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+	  .clearAisles();
+	  AisleWindowContentFactory.getInstance(VueApplication.getInstance())
+	  .clearObjectsInUse();
+		VueTrendingAislesDataModel
+		.getInstance(
+				VueApplication
+						.getInstance())
+		.dataObserver();
+}
 }

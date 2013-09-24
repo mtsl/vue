@@ -188,22 +188,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 								R.drawable.profile, null);
 						adapter.groups.add(groupPosition, item);
 						adapter.notifyDataSetChanged();
-						Log.i("myailsedebug",
-								"myailsedebug:  requestAislesByUser method calling1  ");
-					
-///////////////////////////////////////////////////
-						AisleWindowContentFactory.getInstance(
-								getActivity()).clearObjectsInUse();
 						VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
 						vueLandingPageActivity1.showCategory(s);
-						
-						
-						
-						
-						
-						
-						/////////////////////////////////////////////////
-		 
 						/*
 						 * VueTrendingAislesDataModel.getInstance(getActivity())
 						 * .clearAisles();
@@ -230,13 +216,13 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 							}
 						}
 
-						ArrayList<AisleWindowContent> aislesList = DataBaseManager
+					/*	ArrayList<AisleWindowContent> aislesList = DataBaseManager
 								.getInstance(getActivity()).getAislesFromDB(
 										null);
 						Message msg = new Message();
 						msg.obj = aislesList;
 						VueTrendingAislesDataModel.getInstance(getActivity()).mHandler
-								.sendMessage(msg);
+								.sendMessage(msg);*/
 					} else if (s
 							.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
 						VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;

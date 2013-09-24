@@ -771,7 +771,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				.getImageList().get(mCurrentDispImageIndex).mCustomImageUrl);
 		File sourceFile = new File(uri);
 		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-				getItem(mCurrentAislePosition).getBestHeightForWindow());
+				getItem(mCurrentAislePosition).getBestHeightForWindow(), VueApplication.getInstance().getVueDetailsCardWidth()/2);
 		Utils.saveBitmap(bmp, f);
 		getItem(mCurrentAislePosition).mIsDataChanged = true;
 		mImageRefresh = true;

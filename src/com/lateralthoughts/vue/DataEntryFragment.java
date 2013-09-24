@@ -1387,14 +1387,14 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	private void addImageToAisle() {
-		if (checkLimitForLoginDialog()) {
+		/*if (checkLimitForLoginDialog()) {
 			if (mLoginWarningMessage == null) {
 				mLoginWarningMessage = new LoginWarningMessage(getActivity());
 			}
 			mLoginWarningMessage.showLoginWarningMessageDialog(
 					"You need to Login with the app to add image to aisle.",
 					true, true, 0, null, null);
-		} else {
+		} else {*/
 			storeMetaAisleDataIntoLocalStorage();
 			if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
 				VueUser storedVueUser = null;
@@ -1423,13 +1423,13 @@ public class DataEntryFragment extends Fragment {
 				Toast.makeText(getActivity(), "This Aisle is not created.",
 						Toast.LENGTH_LONG).show();
 			}
-		}
+		//}
 	}
 
 	private void addAisle() {
 		// Updating Aisles Count in Preference to show LoginDialog.
 		if (!Utils.getDataentryEditAisleFlag(getActivity())) {
-			if (checkLimitForLoginDialog()) {
+			/*if (checkLimitForLoginDialog()) {
 				if (mLoginWarningMessage == null) {
 					mLoginWarningMessage = new LoginWarningMessage(
 							getActivity());
@@ -1437,7 +1437,7 @@ public class DataEntryFragment extends Fragment {
 				mLoginWarningMessage.showLoginWarningMessageDialog(
 						"You need to Login with the app to create aisle.",
 						true, true, 0, null, null);
-			} else {
+			} else {*/
 				SharedPreferences sharedPreferencesObj = getActivity()
 						.getSharedPreferences(
 								VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -1445,7 +1445,7 @@ public class DataEntryFragment extends Fragment {
 						VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
 				boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
 						VueConstants.VUE_LOGIN, false);
-				if (createdAisleCount == 4 && !isUserLoggedInFlag) {
+				/*if (createdAisleCount == 4 && !isUserLoggedInFlag) {
 					if (mLoginWarningMessage == null) {
 						mLoginWarningMessage = new LoginWarningMessage(
 								getActivity());
@@ -1454,7 +1454,7 @@ public class DataEntryFragment extends Fragment {
 							.showLoginWarningMessageDialog(
 									"You have 1 aisle left to create aisle without logging in.",
 									false, true, 4, null, null);
-				} else {
+				} else {*/
 					SharedPreferences.Editor editor = sharedPreferencesObj
 							.edit();
 					editor.putInt(
@@ -1487,8 +1487,8 @@ public class DataEntryFragment extends Fragment {
 						// In User Creation response Listener we need to call
 						// CreateAisle
 					}
-				}
-			}
+				//}
+			//}
 		} else {
 			storeMetaAisleDataIntoLocalStorage();
 		}

@@ -593,7 +593,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
 			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
-					mBestHeight);
+					mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2);
 
 			// bmp = getBitmap(url, true, mBestHeight);
 			return bmp;
@@ -890,7 +890,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		File f = fileCache.getFile(imagePath);
 		File sourceFile = new File(imagePath);
 		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-				VueApplication.getInstance().mScreenHeight);
+				VueApplication.getInstance().mScreenHeight, VueApplication.getInstance().getVueDetailsCardWidth());
 		Utils.saveBitmap(bmp, f);
 		if (mVueAiselFragment == null) {
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()

@@ -3,10 +3,18 @@ package com.lateralthoughts.vue;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,6 +31,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
@@ -70,6 +79,74 @@ public class AisleManager {
 	// be invoked and the VueUser object is created and set at that point.
 	public void createEmptyAisle(final Aisle aisle,
 			final AisleUpdateCallback callback) {
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					final String response = testCreateAisle(aisle);
+					VueLandingPageActivity.landingPageActivity
+					.runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							////////////////////////////////////////////////// 
+							
+							if (null != response) {
+
+								Log.i("myailsedebug", "myailsedebug: recieved response:  "
+										+ response);
+								try {
+									// JSONObject userInfo = new JSONObject(jsonArray);
+
+									AisleWindowContent aileItem = new Parser()
+											.getAisleCotent(response);
+									VueTrendingAislesDataModel.getInstance(
+											VueApplication.getInstance()).addItemToListAt(
+											aileItem.getAisleContext().mAisleId, aileItem,
+											0);
+									VueTrendingAislesDataModel.getInstance(
+											VueApplication.getInstance()).dataObserver();
+									ArrayList<AisleWindowContent> list = new ArrayList<AisleWindowContent>();
+									list.add(aileItem);
+									DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(VueApplication.getInstance(),list);
+									// JSONObject user = userInfo.getJSONObject("user");
+									// TODO: GET THE AISLE OBJECT FROM THE PARSER CLASE SEND
+									// THE AISLE AND AISLE ID BACK.
+									callback.onAisleUpdated(aileItem.getAisleContext().mAisleId);
+									FlurryAgent.logEvent("Create_Aisle_Success");
+									// VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
+								} catch (Exception ex) {
+									Log.e("Profiling",
+											"Profiling : onResponse() **************** error");
+									ex.printStackTrace();
+								}
+							} else {
+								Toast.makeText(VueApplication.getInstance(),
+										"New Aisle Creation in server is failed.",
+										Toast.LENGTH_LONG).show();
+
+							}
+							
+							
+							
+							
+							
+							/////////////////////////////////////////////////////////////
+							
+						}
+					});
+				} catch (Exception e) {
+					Log.i("myailsedebug", "myailsedebug: recieved response****: got excetption  "
+							  );
+					e.printStackTrace();
+				}
+				
+			}
+		}).start();
+		
+	
+		/*
 		if (null == aisle)
 			throw new RuntimeException(
 					"Can't create Aisle without a non null aisle object");
@@ -98,7 +175,9 @@ public class AisleManager {
 								0);
 						VueTrendingAislesDataModel.getInstance(
 								VueApplication.getInstance()).dataObserver();
-
+						ArrayList<AisleWindowContent> list = new ArrayList<AisleWindowContent>();
+						list.add(aileItem);
+						DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(VueApplication.getInstance(),list);
 						// JSONObject user = userInfo.getJSONObject("user");
 						// TODO: GET THE AISLE OBJECT FROM THE PARSER CLASE SEND
 						// THE AISLE AND AISLE ID BACK.
@@ -142,7 +221,7 @@ public class AisleManager {
 		AislePutRequest request = new AislePutRequest(aisleAsString, listener,
 				errorListener, requestUrl);
 		VueApplication.getInstance().getRequestQueue().add(request);
-	}
+	*/}
 
 	private AisleContext parseAisleContent(JSONObject user) {
 		AisleContext aisle = null;
@@ -197,6 +276,12 @@ public class AisleManager {
 								VueTrendingAislesDataModel.getInstance(
 										VueApplication.getInstance())
 										.dataObserver();
+								  String s[] = {aisleImageDetails.mOwnerAisleId};
+							ArrayList<AisleWindowContent> list =DataBaseManager.getInstance(VueApplication.getInstance()).getAislesFromDB(s);
+							if(list != null){
+					         list.get(0).getImageList().add(aisleImageDetails);
+					         DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(VueApplication.getInstance(), list);
+							}
 							}
 						} catch (JSONException e) {
 							e.printStackTrace();
@@ -286,5 +371,33 @@ public class AisleManager {
 		protected void deliverResponse(String s) {
 			mListener.onResponse(s);
 		}
+	}
+	public String testCreateAisle(Aisle aisle) throws Exception
+	{
+	Aisle createdAisle = null;
+	ObjectMapper mapper = new ObjectMapper();
+	String responseMessage = null;
+	URL url = new URL(UrlConstants.CREATE_AISLE_RESTURL);
+	HttpPut httpPut = new HttpPut(url.toString());
+	StringEntity entity = new StringEntity(mapper.writeValueAsString(aisle));
+	System.out.println("Aisle create request: "+mapper.writeValueAsString(aisle));
+	entity.setContentType("application/json;charset=UTF-8");
+	entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
+	httpPut.setEntity(entity);
+
+	DefaultHttpClient httpClient = new DefaultHttpClient();
+	HttpResponse response = httpClient.execute(httpPut);
+	if(response.getEntity()!=null &&
+	response.getStatusLine().getStatusCode() == 200) {
+	  responseMessage = EntityUtils.toString(response.getEntity());
+	System.out.println("AISLE CREATED Response: "+responseMessage);
+	Log.i("myailsedebug", "myailsedebug: recieved response*******:  "
+			+ responseMessage);
+	} else {
+		Log.i("myailsedebug", "myailsedebug: recieved response******* response code :  "
+				+ response.getStatusLine().getStatusCode());
+	}
+	return responseMessage;
+ 
 	}
 }
