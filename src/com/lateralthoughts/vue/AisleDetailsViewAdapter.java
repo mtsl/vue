@@ -457,6 +457,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 							mBookmarksCount);
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							true);
+					handleBookmark(false, getItem(mCurrentAislePosition).getAisleId());
 				}
 				sendDataToDb(mCurrentDispImageIndex, CHANGE_BOOKMARK);
 				notifyDataSetChanged();
