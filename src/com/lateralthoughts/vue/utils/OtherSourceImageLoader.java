@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.widget.ImageView;
 
 public class OtherSourceImageLoader {
@@ -98,7 +99,10 @@ public class OtherSourceImageLoader {
 			int scale = 1;
 			int heightRatio = 0;
 			int widthRatio = 0;
-
+			Log.e("Utils bitmap width",
+					width + "..." + VueApplication.getInstance().mScreenWidth);
+			Log.e("Utils bitmap height",
+					height + "..." + VueApplication.getInstance().mScreenHeight);
 			if (height > VueApplication.getInstance().mScreenHeight) {
 				// Calculate ratios of height and width to requested height and
 				// width
@@ -115,7 +119,12 @@ public class OtherSourceImageLoader {
 
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
-			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+
+			Bitmap resizedBitmap = BitmapFactory.decodeStream(
+					new FileInputStream(f), null, o2);
+
+
+			return resizedBitmap;
 		} catch (FileNotFoundException e) {
 		}
 		return null;

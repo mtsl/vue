@@ -202,6 +202,14 @@ public class TrendingAislesLeftColumnAdapter extends
 			index = 0;
 		String lookingFor = mPossibleCategories[index];
 		// holder.aisleContext.setText(contextBuilder.toString());
+		
+		
+		if(context.mOccasion != null && context.mOccasion.length() >1){
+			occasion = context.mOccasion;
+		}
+		if(context.mLookingForItem != null && context.mLookingForItem.length() > 1){
+			lookingFor = context.mLookingForItem;
+		}
 		holder.aisleContext.setText(occasion + " : " + lookingFor);
 		// ((ViewGroup)(convertView)).setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 		// convertView.setOnClickListener(mClickListener);

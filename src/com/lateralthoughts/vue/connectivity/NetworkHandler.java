@@ -220,13 +220,15 @@ public class NetworkHandler {
 			mHandler.sendMessage(msg);
 			
 		} else {
-			loadTrendingAisle(loadMore);
+			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+					mTrendingAislesParser, loadMore);
 		}
 
 	}
 
-	public void loadTrendingAisle(boolean loadMore) {
-		 
+	public void loadTrendingAisle(boolean loadMore,boolean fromServer,NotifyProgress progress) {
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).setNotificationProgress(progress, fromServer);
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).showProgress();
 		mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 				mTrendingAislesParser, loadMore);
 	}

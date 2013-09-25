@@ -1,6 +1,9 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,8 +23,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
+import com.lateralthoughts.vue.utils.Utils;
 
 //java utils
 
@@ -264,6 +269,22 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	private class AisleClickListener implements AisleContentClickListener {
 		@Override
 		public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
+			Map<String, String> articleParams = new HashMap<String, String>();
+			VueUser storedVueUser = null;
+			try {
+				storedVueUser = Utils.readUserObjectFromFile(
+						getActivity(),
+						VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+			if(storedVueUser != null){
+			articleParams.put("User_Id", storedVueUser.getVueId());
+			} else {
+				articleParams.put("User_Id","anonymous");
+			}
+			FlurryAgent.logEvent("User_Select_Aisle", articleParams);
+ 
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
 			Log.i("clickedwindow", "clickedwindow ID: " + id);
 			Intent intent = new Intent();

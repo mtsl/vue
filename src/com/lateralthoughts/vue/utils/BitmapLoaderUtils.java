@@ -133,6 +133,10 @@ public class BitmapLoaderUtils {
             //decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
+            Log.i("imageHeight", "imageHeight: "+o.outHeight);
+            Log.i("imageHeight", "imageHeight: "+o.outWidth);
+            Log.i("imageHeight", "imageUri: "+f.getAbsolutePath());
+            
             FileInputStream stream1 = new FileInputStream(f);
        BitmapFactory.decodeStream(stream1,null,o);
             stream1.close();
@@ -189,6 +193,8 @@ public class BitmapLoaderUtils {
             } else {
             	 Log.i("added url", "added urldecodeFile  bitmap null " );
             }
+            Log.i("imageHeight", "imageHeight after resized: "+bitmap.getHeight());
+            Log.i("imageHeight", "imageHeight after resized: "+bitmap.getWidth());
             return bitmap;
         } catch (FileNotFoundException e) {
         	Log.i("added url", "added urldecodeFile  filenotfound exception " );

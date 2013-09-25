@@ -166,7 +166,14 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         if(index >= mPossibleCategories.length)
             index = 0;
         String lookingFor = mPossibleCategories[index];
-        holder.aisleContext.setText(occasion + " : " + lookingFor);
+    	if(context.mOccasion != null && context.mOccasion.length() >1){
+			occasion = context.mOccasion;
+		}
+		if(context.mLookingForItem != null && context.mLookingForItem.length() > 1){
+			lookingFor = context.mLookingForItem;
+		}
+		holder.aisleContext.setText(occasion + " : " + lookingFor);
+     
         //holder.aisleContext.setText(contextBuilder.toString());
         return convertView;
     }

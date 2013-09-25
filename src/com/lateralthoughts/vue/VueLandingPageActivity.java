@@ -203,6 +203,7 @@ public class VueLandingPageActivity extends BaseActivity {
 
 			}
 			FlurryAgent.logEvent("Rigestered_Users", articleParams);
+			FlurryAgent.logEvent("Login_Time_Ends", articleParams,true);
 
 		}
 		/*
@@ -535,7 +536,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
-					.loadTrendingAisle(loadMore);
+					.loadTrendingAisle(loadMore,fromServer,new ProgresStatus());
 			
 		} else {
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
