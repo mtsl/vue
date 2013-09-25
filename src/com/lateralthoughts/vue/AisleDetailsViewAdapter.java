@@ -7,9 +7,12 @@
 package com.lateralthoughts.vue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.http.client.ClientProtocolException;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -37,6 +40,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
@@ -445,6 +449,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 							mBookmarksCount);
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							false);
+					handleBookmark(false, getItem(mCurrentAislePosition).getAisleId());
 				} else {
 					FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
 					mBookmarksCount++;
@@ -920,4 +925,17 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		mViewHolder.edtCommentLay.setVisibility(View.GONE);
 		mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
 	}
+	
+  private void handleBookmark(boolean isBookmarked, String aisleId) {
+    AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
+        Long.parseLong(aisleId));
+
+    try {
+      VueUser storedVueUser = Utils.readUserObjectFromFile(mContext,
+          VueConstants.VUE_APP_USEROBJECT__FILENAME);
+      AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark, storedVueUser.getVueId());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }
