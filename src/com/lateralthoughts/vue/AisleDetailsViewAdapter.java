@@ -40,6 +40,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
@@ -457,7 +459,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 							mBookmarksCount);
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							true);
-					handleBookmark(false, getItem(mCurrentAislePosition).getAisleId());
+					handleBookmark(true, getItem(mCurrentAislePosition).getAisleId());
 				}
 				sendDataToDb(mCurrentDispImageIndex, CHANGE_BOOKMARK);
 				notifyDataSetChanged();
@@ -930,13 +932,14 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
   private void handleBookmark(boolean isBookmarked, String aisleId) {
     AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
         Long.parseLong(aisleId));
-
-    try {
-      VueUser storedVueUser = Utils.readUserObjectFromFile(mContext,
-          VueConstants.VUE_APP_USEROBJECT__FILENAME);
-      AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark, storedVueUser.getVueId());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+        VueUser storedVueUser = null;
+        try {
+          storedVueUser = Utils.readUserObjectFromFile(mContext,
+              VueConstants.VUE_APP_USEROBJECT__FILENAME);
+          AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark, storedVueUser.getVueId());
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
   }
 }

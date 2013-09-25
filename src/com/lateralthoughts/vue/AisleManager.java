@@ -17,6 +17,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,15 +31,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.UrlConstants;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleManager {
 
@@ -61,7 +65,7 @@ public class AisleManager {
   private static AisleManager sAisleManager = null;
 
   private VueUser mCurrentUser;
-
+  private boolean isDirty;
   private AisleManager() {
     mObjectMapper = new ObjectMapper();
   }
@@ -380,30 +384,102 @@ public class AisleManager {
 
   }
   
-  public void aisleBookmarkUpdate(AisleBookmark aisleBookmark, String userId) throws ClientProtocolException, IOException {
-    URL url = new URL(UrlConstants.CREATE_BOOKMARK_RESTURL + 
-        "/" +  userId);
+  private AisleBookmark createdAisleBookmark = null;
+  public void aisleBookmarkUpdate(AisleBookmark aisleBookmark, String userId)
+      throws ClientProtocolException, IOException {
     
-    ObjectMapper mapper = 
-        new ObjectMapper();
-    HttpPut httpPut = new HttpPut(url.toString());
-    StringEntity entity = new StringEntity(mapper.writeValueAsString(aisleBookmark));
-    System.out.println("AisleBookmark create request: "+mapper.writeValueAsString(aisleBookmark));
-    entity.setContentType("application/json;charset=UTF-8");
-    entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
-    httpPut.setEntity(entity);
+    isDirty = true;
+    final ArrayList<AisleWindowContent> windowList = DataBaseManager.getInstance(
+        VueApplication.getInstance()).getAisleByAisleId(
+        Long.toString(aisleBookmark.getAisleId()));
+    if (VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
+      VueUser storedVueUser = null;
+      try {
+        storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
+            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+      } catch(Exception e) {
+        e.printStackTrace();
+      }
+      JsonArrayRequest vueRequest = new JsonArrayRequest(UrlConstants.CREATE_BOOKMARK_RESTURL
+          + storedVueUser.getVueId(), new Response.Listener<JSONArray>() {
 
-    DefaultHttpClient httpClient = new DefaultHttpClient();
-    HttpResponse response = httpClient.execute(httpPut);                     
-    if(response.getEntity()!=null && 
-            response.getStatusLine().getStatusCode() == 200) {
+      @Override
+      public void onResponse(JSONArray response) {
+        isDirty = false;
+        if (null != response) {
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+              createdAisleBookmark = (new ObjectMapper()).readValue(
+                  response.toString(), AisleBookmark.class);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+            updateBookmartToDb(windowList, createdAisleBookmark);
+           /* Bundle responseBundle = new Bundle();
+              responseBundle.putString("Search result",
+                      response.toString());
+              responseBundle.putBoolean("loadMore", false);
+              mTrendingAislesParser.send(1, responseBundle);*/
+          }
+          Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
+      }
+  }, new Response.ErrorListener() {
+
+      @Override
+      public void onErrorResponse(VolleyError error) {
+        isDirty = true;
+          Log.e("Search Resopnse", "SURU Search Error Resopnse : "
+                  + error.getMessage());
+          updateBookmartToDb(windowList, createdAisleBookmark);
+      }
+  });
+   
+
+  VueApplication.getInstance().getRequestQueue().add(vueRequest);    
+    
+      
+      
+     /* URL url = new URL(UrlConstants.CREATE_BOOKMARK_RESTURL + "/" + userId);
+
+      ObjectMapper mapper = new ObjectMapper();
+      HttpPut httpPut = new HttpPut(url.toString());
+      StringEntity entity = new StringEntity(
+          mapper.writeValueAsString(aisleBookmark));
+      System.out.println("AisleBookmark create request: "
+          + mapper.writeValueAsString(aisleBookmark));
+      entity.setContentType("application/json;charset=UTF-8");
+      entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+          "application/json;charset=UTF-8"));
+      httpPut.setEntity(entity);
+
+      DefaultHttpClient httpClient = new DefaultHttpClient();
+      HttpResponse response = httpClient.execute(httpPut);
+      if (response.getEntity() != null
+          && response.getStatusLine().getStatusCode() == 200) {
         String responseMessage = EntityUtils.toString(response.getEntity());
-        System.out.println("Response: "+responseMessage);
-        if (responseMessage.length() > 0)
-        {
+        System.out.println("Response: " + responseMessage);
+        if (responseMessage.length() > 0) {
           Log.e("Bookmark", "aisle bookmarked responce: " + responseMessage);
-          AisleBookmark createdAisleBookmark = (new ObjectMapper()).readValue(responseMessage, AisleBookmark.class);
+          createdAisleBookmark = (new ObjectMapper()).readValue(
+              responseMessage, AisleBookmark.class);
         }
+        isDirty = false;
+      } else {
+        isDirty = true;
+      }*/
+    } else {
+      updateBookmartToDb(windowList, createdAisleBookmark);
+    }
+    
+  }
+  
+  private void updateBookmartToDb(ArrayList<AisleWindowContent> windowList, AisleBookmark aisleBookmark) {
+    for (AisleWindowContent aisleWindow : windowList) {
+      AisleContext context = aisleWindow.getAisleContext();
+      DataBaseManager.getInstance(VueApplication.getInstance())
+          .bookMarkOrUnBookmarkAisle(aisleBookmark.getBookmarked(),
+              (aisleBookmark.getBookmarked()) ? context.mBookmarkCount + 1 : context.mBookmarkCount - 1,
+              Long.toString(aisleBookmark.getAisleId()), isDirty);
     }
   }
 }
