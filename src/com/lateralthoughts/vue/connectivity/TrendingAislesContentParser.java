@@ -2,13 +2,11 @@ package com.lateralthoughts.vue.connectivity;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
-
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
@@ -39,9 +37,11 @@ public class TrendingAislesContentParser extends ResultReceiver {
 							.parseTrendingAislesResultData(
 									resultData.getString("result"),
 									resultData.getBoolean("loadMore"));
-					Log.i("dbInsert", "dbInsert1 aislesListSize: "+aislesList.size());
-					DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(
-							VueApplication.getInstance(), aislesList);
+					Log.i("dbInsert",
+							"dbInsert1 aislesListSize: " + aislesList.size());
+					DataBaseManager.getInstance(VueApplication.getInstance())
+							.addTrentingAislesFromServerToDB(
+									VueApplication.getInstance(), aislesList);
 
 					/*
 					 * if (aislesList != null && aislesList.size() > 0) { int
@@ -72,19 +72,23 @@ public class TrendingAislesContentParser extends ResultReceiver {
 						}
 					}
 
-				/*	if (aislesList.size() == 0) {
-						VueTrendingAislesDataModel.getInstance(
-								VueApplication.getInstance())
-								.setMoreDataAVailable(false); // TODO
-					}*/
-					VueLandingPageActivity.landingPageActivity.runOnUiThread(new Runnable() {
-						
-						@Override
-						public void run() {
-							VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
-							
-						}
-					});
+					/*
+					 * if (aislesList.size() == 0) {
+					 * VueTrendingAislesDataModel.getInstance(
+					 * VueApplication.getInstance())
+					 * .setMoreDataAVailable(false); // TODO }
+					 */
+					VueLandingPageActivity.landingPageActivity
+							.runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() {
+									VueTrendingAislesDataModel.getInstance(
+											VueApplication.getInstance())
+											.dismissProgress();
+
+								}
+							});
 					if (refreshListFlag) {
 						VueLandingPageActivity.landingPageActivity
 								.runOnUiThread(new Runnable() {
@@ -156,30 +160,22 @@ public class TrendingAislesContentParser extends ResultReceiver {
 		}
 	}
 
-/*	private class DbDataSetter extends AsyncTask<Void, Void, Void> {
-		ArrayList<AisleWindowContent> mAislesList;
-
-		public DbDataSetter(ArrayList<AisleWindowContent> aislesList) {
-			mAislesList = aislesList;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			// TODO Auto-generated method stub
-			super.onPreExecute();
-		}
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(
-					VueApplication.getInstance(), mAislesList);
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			mAislesList.clear();
-			super.onPostExecute(result);
-		}
-	}*/
+	/*
+	 * private class DbDataSetter extends AsyncTask<Void, Void, Void> {
+	 * ArrayList<AisleWindowContent> mAislesList;
+	 * 
+	 * public DbDataSetter(ArrayList<AisleWindowContent> aislesList) {
+	 * mAislesList = aislesList; }
+	 * 
+	 * @Override protected void onPreExecute() { // TODO Auto-generated method
+	 * stub super.onPreExecute(); }
+	 * 
+	 * @Override protected Void doInBackground(Void... params) {
+	 * DataBaseManager.
+	 * getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB
+	 * ( VueApplication.getInstance(), mAislesList); return null; }
+	 * 
+	 * @Override protected void onPostExecute(Void result) {
+	 * mAislesList.clear(); super.onPostExecute(result); } }
+	 */
 }
