@@ -60,7 +60,7 @@ public class VueTrendingAislesDataModel {
 	public boolean loadOnRequest = false;
 	private ThreadPoolExecutor threadPool;
 	private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
-	private DataBaseManager mDbManager;
+	public DataBaseManager mDbManager;
 	NetworkHandler mNetworkHandler;
 
 	private VueTrendingAislesDataModel(Context context) {
@@ -175,7 +175,7 @@ public class VueTrendingAislesDataModel {
 	   return mAisleContentList.size();
 	 
   }
-	protected Handler mHandler = new Handler() {
+	public Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			@SuppressWarnings("unchecked")
 			ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
@@ -193,12 +193,14 @@ public class VueTrendingAislesDataModel {
 				public void run() {
 					ArrayList<AisleWindowContent> aislesList = mDbManager
 							.getAislesFromDB(null);
+					Log.i("arrayList", "arrayList from db sized1: "+aislesList.size());
 					if (aislesList.size() == 0) {
+						
 						return;
 					}
-					Message msg = new Message();
-					msg.obj = aislesList;
-					mHandler.sendMessage(msg);
+//					Message msg = new Message();
+//					msg.obj = aislesList;
+//					mHandler.sendMessage(msg);
 				};
 			});
 

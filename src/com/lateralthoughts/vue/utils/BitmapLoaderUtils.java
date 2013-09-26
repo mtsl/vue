@@ -61,13 +61,13 @@ public class BitmapLoaderUtils {
      * just want to have the bitmap. This is a utility function and is public because it is to 
      * be shared by other components in the internal implementation.   
      */
-    public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight) 
+    public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight,int bestWidth) 
     {
     	 Log.i("added url", "added url  getBitmap "+url);
         File f = mFileCache.getFile(url);
         Log.i("added url", "added url  getBitmap "+f);
         //from SD cache
-        Bitmap b = decodeFile(f, bestHeight);
+        Bitmap b = decodeFile(f, bestHeight,bestWidth);
     	if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
 			Log.i("imageurl", "imageurl original   bitmap check2:  "+b);
 			Log.i("imageurl", "imageurl hashcode " + f.getPath());
@@ -105,7 +105,7 @@ public class BitmapLoaderUtils {
             OutputStream os = new FileOutputStream(f);
             Utils.CopyStream(is, os);
             os.close();
-            bitmap = decodeFile(f, bestHeight);
+            bitmap = decodeFile(f, bestHeight,bestWidth);
             if(cacheBitmap) 
             	mAisleImagesCache.putBitmap(url, bitmap);
         	if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
@@ -126,7 +126,7 @@ public class BitmapLoaderUtils {
     }
 
     //decodes image and scales it to reduce memory consumption
-    public Bitmap decodeFile(File f, int bestHeight){
+    public Bitmap decodeFile(File f, int bestHeight,int bestWidth){
         Log.i("added url", "added url in  decodeFile: bestheight is "+bestHeight );
    
         try {
@@ -142,8 +142,8 @@ public class BitmapLoaderUtils {
             int width = o.outWidth;
             Log.i("added url", "added urldecodeFile  bitmap o.height : "+height );
             Log.i("added url", "added urldecodeFile  bitmap o.width : "+width );
-          int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth();
-            
+         // int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth()/2;
+            int reqWidth = bestWidth;
             int scale=1;
             
             if (height > bestHeight) {

@@ -253,6 +253,8 @@ public class Utils {
 
 	public static ImageDimension getScalledImage(Bitmap bitmap,
 			int availableWidth, int availableHeight) {
+		Log.i("imageSize", "imageSize originalImageHeight: "+availableHeight);
+		Log.i("imageSize", "imageSize originalImageWidth: "+availableWidth);
 
 		ImageDimension imgDimension = new ImageDimension();
 		float requiredWidth, requiredHeight;
@@ -260,6 +262,11 @@ public class Utils {
 		float bitmapOriginalHeight = bitmap.getHeight();
 		float scaleFactor;
 		requiredHeight = availableHeight;
+		
+		Log.i("imageSize", "imageSize cardHeight: "+ VueApplication
+				.getInstance().getVueDetailsCardHeight());
+		Log.i("imageSize", "imageSize cardWidth: "+VueApplication.getInstance()
+				.getVueDetailsCardWidth());
 		if (availableWidth > VueApplication.getInstance()
 				.getVueDetailsCardWidth()) {
 			requiredWidth = VueApplication.getInstance()

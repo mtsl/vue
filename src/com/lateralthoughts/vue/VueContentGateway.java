@@ -10,14 +10,8 @@
  */
 package com.lateralthoughts.vue;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import android.content.Context;
@@ -29,10 +23,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
-import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.utils.UrlConstants;
 
@@ -48,9 +39,6 @@ public class VueContentGateway {
 	private String mTrendingAislesTag;
 	private String mLimitTag;
 	private String mOffsetTag;
-
-
-
 	public static VueContentGateway getInstance() {
 		if (null == sInstance) {
 			sInstance = new VueContentGateway();
@@ -82,17 +70,6 @@ public class VueContentGateway {
 		Log.i("datarequest", "datarequest parsing data offset: " + offset
 				+ "  limit: " + limit);
 		mParams.clear();
-/*		StringBuilder baseUri = new StringBuilder();
-
-		addParams(mLimitTag, String.valueOf(limit));
-		addParams(mOffsetTag, String.valueOf(offset));
-		baseUri.append(VUE_CONTENT_PROVIDER_BASE_URI);
-		// String baseUri = VUE_CONTENT_PROVIDER_BASE_URI;
-		// we want to get the current trending aisles
-		baseUri.append(mTrendingAislesTag);
-		if (DEBUG)
-			Log.e(TAG, "uri we are sending = " + baseUri.toString());*/
-
 		boolean isConnection = VueConnectivityManager
 				.isNetworkConnected(mContext);
 		if (!isConnection) {
@@ -101,22 +78,8 @@ public class VueContentGateway {
 			Log.e(TAG, "network connection No");
 			return status;
 		} else if (isConnection) {
-			/*
-			 * Intent intent = new Intent(mContext,
-			 * VueContentRestService.class);
-			 * intent.putExtra("url",baseUri.toString());
-			 * intent.putParcelableArrayListExtra("headers", mHeaders);
-			 * intent.putParcelableArrayListExtra("params",mParams);
-			 * intent.putExtra("receiver", receiver);
-			 */
-
-			// String requestUrlBase = VUE_CONTENT_PROVIDER_BASE_URI +
-			// "aisle/trending?limit=%s&offset=%s";
-			final String requestUrl = UrlConstants.SERVER_BASE_URL + "api/trendingaislesgetorderedbytime/" + limit
-					+ "/" + offset; /*
-									 * String.format(requestUrlBase, limit,
-									 * offset);
-									 */
+			final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL + "/" + limit
+					+ "/" + offset;  
 			Log.i("Gateway", "jsonresponse trendig requestUrl:  " + requestUrl);
 			Response.Listener listener = new Response.Listener<JSONArray>() {
 				@Override
@@ -167,23 +130,6 @@ public class VueContentGateway {
 		}
 		return status;
 	}
-
-	/*
-	 * public static List<Aisle> testGetTrendingAislesSortedByCreationTime( int
-	 * limit, int offset) throws Exception { List<Aisle> retrievedAisles = null;
-	 * 
-	 * URL url = new URL(VUE_CONTENT_PROVIDER_BASE_URI + "/" + limit + "/" +
-	 * offset); HttpGet httpGet = new HttpGet(url.toString()); DefaultHttpClient
-	 * httpClient = new DefaultHttpClient(); HttpResponse response =
-	 * httpClient.execute(httpGet); if (response.getEntity() != null &&
-	 * response.getStatusLine().getStatusCode() == 200) { String responseMessage
-	 * = EntityUtils.toString(response.getEntity());
-	 * System.out.println("GET Trending Aisles Response: " + responseMessage);
-	 * if (responseMessage.length() > 0) { retrievedAisles = (new
-	 * ObjectMapper()).readValue( responseMessage, new
-	 * TypeReference<List<Aisle>>() { }); } } return retrievedAisles; }
-	 */
-
 	private void initializeHttpFields() {
 		mHeaders = new ArrayList<ParcelableNameValuePair>();
 		mParams = new ArrayList<ParcelableNameValuePair>();

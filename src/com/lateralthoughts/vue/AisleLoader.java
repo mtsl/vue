@@ -20,6 +20,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 
 public class AisleLoader {
@@ -32,6 +33,7 @@ public class AisleLoader {
 	private static AisleLoader sAisleLoaderInstance = null;
 	private ScaledImageViewFactory mViewFactory = null;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
+	int mTopBottomMargin = 16;
 
 	// private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String,
 	// ViewHolder>();
@@ -86,6 +88,7 @@ public class AisleLoader {
 		mViewFactory = ScaledImageViewFactory.getInstance(context);
 		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
 		mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
+		mTopBottomMargin = (int) Utils.dipToPixels(VueApplication.getInstance(), mTopBottomMargin);
 		if (DEBUG)
 			Log.e(TAG, "Log something to remove warning");
 	}
@@ -131,7 +134,9 @@ public class AisleLoader {
 			return;
 
 		// String currentContentId = holder.aisleContentBrowser.getUniqueId();
+		 
 		String desiredContentId = windowContent.getAisleId();
+		Log.i("clickedwindow", "clickedwi**id: " + desiredContentId);
 		contentBrowser = holder.aisleContentBrowser;
 		if (holder.uniqueContentId.equals(desiredContentId)) {
 			// we are looking at a visual object that has either not been used
@@ -167,11 +172,12 @@ public class AisleLoader {
 			holder.uniqueContentId = desiredContentId;
 			// mContentViewMap.put(holder.uniqueContentId, holder);
 		}
+	
 		imageDetailsArr = windowContent.getImageList();
-		LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
+	/*	LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
 				VueApplication.getInstance().getScreenWidth() / 2,
 				windowContent.getBestHeightForWindow());
-		holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+		holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);*/
 
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			itemDetails = imageDetailsArr.get(0);
@@ -186,10 +192,17 @@ public class AisleLoader {
 				Log.i("imageurl", "imageurl original   bitmap check:  "
 						+ bitmap);
 			}
-
+			if(VueApplication.getInstance().getClickedWindowID() != null) {
+				if(VueApplication.getInstance().getClickedWindowID().equalsIgnoreCase(desiredContentId)){
+					Log.i("clickedwindow", "clickedwindow ID matched: " + desiredContentId);
+					Log.i("clickedwindow", "clickedwindow ID  url: " + itemDetails.mImageUrl);
+				}
+				}
 			int bestHeight = windowContent.getBestHeightForWindow();
 			if (bitmap != null) {
-
+				LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
+						VueApplication.getInstance().getScreenWidth() / 2,
+						bitmap.getHeight()+mTopBottomMargin);
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
@@ -239,7 +252,7 @@ public class AisleLoader {
 			// we want to get the bitmap and also add it into the memory cache
 			Log.e("Profiling", "Profiling New doInBackground()");
 			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
-					mBestHeight);
+					mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2);
 			return bmp;
 		}
 
@@ -263,6 +276,10 @@ public class AisleLoader {
 						holder.profileThumbnail.setVisibility(View.VISIBLE);
 						holder.aisleDescriptor.setVisibility(View.VISIBLE);
 					}
+					LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
+							VueApplication.getInstance().getScreenWidth() / 2,
+							bitmap.getHeight()+mTopBottomMargin);
+					holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
 					imageView.setImageBitmap(bitmap);
 				}
 			}

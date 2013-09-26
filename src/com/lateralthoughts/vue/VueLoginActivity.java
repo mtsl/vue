@@ -65,6 +65,7 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.facebook.widget.WebDialog;
 import com.facebook.widget.WebDialog.OnCompleteListener;
+import com.flurry.android.FlurryAgent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.plus.PlusClient;
 import com.google.android.gms.plus.PlusClient.OnPeopleLoadedListener;
@@ -571,6 +572,8 @@ public class VueLoginActivity extends FragmentActivity implements
 			public void onCompleted(GraphUser user,
 					com.facebook.Response response) {
 				if (user != null) {
+					FlurryAgent.logEvent("Facebook_Logins");
+					FlurryAgent.logEvent("Login_Success");
 					String location = "";
 					VueUserManager userManager = VueUserManager
 							.getUserManager();
@@ -1040,6 +1043,9 @@ public class VueLoginActivity extends FragmentActivity implements
 	@Override
 	public void onPersonLoaded(ConnectionResult connectionresult, Person person) {
 		if (connectionresult.getErrorCode() == ConnectionResult.SUCCESS) {
+
+			FlurryAgent.logEvent("GooglePlus_Logins");
+			FlurryAgent.logEvent("Login_Success");
 			mSharedPreferencesObj = this.getSharedPreferences(
 					VueConstants.SHAREDPREFERENCE_NAME, 0);
 			VueUserManager userManager = VueUserManager.getUserManager();
@@ -1146,6 +1152,8 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	private void saveInstagramUserDetails() {
 		if (mInstagramApp != null) {
+			FlurryAgent.logEvent("Instagram_Logins");
+			FlurryAgent.logEvent("Login_Success");
 			mSharedPreferencesObj = this.getSharedPreferences(
 					VueConstants.SHAREDPREFERENCE_NAME, 0);
 			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();

@@ -1,61 +1,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_marginBottom="1dp"
-    android:focusable="true"
-    android:gravity="center_vertical|center_horizontal"
-    android:orientation="vertical" >
-
-    <com.lateralthoughts.vue.ui.AisleContentBrowser
-        android:id="@+id/aisle_content_flipper"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:focusable="true" >
-    </com.lateralthoughts.vue.ui.AisleContentBrowser>
+    android:focusable="true" >
 
     <LinearLayout
-        android:id="@id/aisle_descriptor"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="1dp"
-        android:background="#FFFFFF"
-        android:orientation="horizontal" >
+        android:layout_height="fill_parent"
+        android:layout_margin="4dip"
+        android:focusable="true"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="vertical" >
 
-        <ImageView
-            android:id="@id/profile_icon_descriptor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:contentDescription="@string/aisle_owner_profile_desc"
-            android:cropToPadding="true"
-            android:paddingBottom="3dp"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:paddingTop="3dp"
-            android:scaleType="center"
-            android:src="@drawable/profile_thumbnail" />
+        <com.lateralthoughts.vue.ui.AisleContentBrowser
+            android:id="@+id/aisle_content_flipper"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:focusable="true" >
+        </com.lateralthoughts.vue.ui.AisleContentBrowser>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:orientation="vertical" >
+            android:id="@id/aisle_descriptor"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="1dp"
+            android:background="#FFFFFF"
+            android:orientation="horizontal" >
 
-            <TextView
-                android:id="@id/descriptor_aisle_owner_name"
+            <ImageView
+                android:id="@id/profile_icon_descriptor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:gravity="left"
-                android:text="@string/profile_owner" />
+                android:contentDescription="@string/aisle_owner_profile_desc"
+                android:cropToPadding="true"
+                android:paddingBottom="3dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:paddingTop="3dp"
+                android:scaleType="center"
+                android:src="@drawable/profile_thumbnail" />
 
-            <TextView
-                android:id="@id/descriptor_aisle_context"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:text="@string/middle_earth"
-                android:textSize="12sp" />
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@id/descriptor_aisle_owner_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:gravity="left"
+                    android:text="@string/profile_owner" />
+
+                <TextView
+                    android:id="@id/descriptor_aisle_context"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="@string/middle_earth"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

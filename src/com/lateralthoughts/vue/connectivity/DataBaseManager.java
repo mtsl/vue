@@ -1,5 +1,9 @@
 package com.lateralthoughts.vue.connectivity;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -13,6 +17,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 import com.lateralthoughts.vue.AisleContext;
@@ -26,7 +31,7 @@ public class DataBaseManager {
   private static final String FORMATE = "%09d";
   private static final String DELETE_ROW = "1";
   private int mStartPosition = 0;
-  private int mEndPosition = 0;
+  public int mEndPosition = 0;
   private int mLocalAislesLimit = 10;
   private Context mContext;
   private int mPoolSize = 1;
@@ -59,14 +64,25 @@ public class DataBaseManager {
     threadPool.execute(task);
   }
 
-
+ public void addTrentingAislesFromServerToDB(final Context context, final List<AisleWindowContent> contentList) {
+   runTask(new Runnable() {
+    
+    @Override
+    public void run() {
+    	Log.i("dbInsert", "dbInsert1 calling threadpool: " );
+      addAislesToDB(context, contentList);
+    }
+  });
+ }
+  
   /**
    * add all the aisles pulled from server to sqlite, if the aisle is already
    * there in sqlite then it will delete and insert the new data for that aisle.
    * 
    * @param Context context.
    * */
-  public static void addTrentingAislesFromServerToDB(Context context, List<AisleWindowContent> contentList) {
+  private void addAislesToDB(Context context, List<AisleWindowContent> contentList) {
+		Log.i("dbInsert", "dbInsert1 calling threadpool execute to db contentList.size: "+contentList.size() );
 	  int imgCount = 0;
     Cursor aisleIdCursor = context.getContentResolver().query(
         VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id}, null,
@@ -132,8 +148,10 @@ public class DataBaseManager {
           imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
           imgValues.put(VueConstants.ID, String.format(FORMATE, ++imgCount));
           try{
-        	  context.getContentResolver().insert(VueConstants.IMAGES_CONTENT_URI,
+        	  Log.i("dbInsert", "dbInsert1 calling threadpool execute to db before insert: "  );
+          Uri x = context.getContentResolver().insert(VueConstants.IMAGES_CONTENT_URI,
                       imgValues);
+        	  Log.i("dbInsert", "dbInsert1 calling threadpool execute to db after insert:uri " +x );
           }catch(Exception e) {
         	  e.printStackTrace();
           }
@@ -142,7 +160,8 @@ public class DataBaseManager {
       }
       Log.e("Profiling", "Profiling inserting new aisles to db");
     }
-    deleteOutDatedAisles(context);
+   
+  //  copydbToSdcard();
   }
 
   /**
@@ -163,22 +182,26 @@ public class DataBaseManager {
     LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
     ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
     ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
-    if (aislesIds == null) {
-      selection = VueConstants.ID + ">? AND " + VueConstants.ID + "<=?";
+    //if (aislesIds == null) {
+      selection = VueConstants.ID + " >? AND " + VueConstants.ID + " <=? ";
       String[] allAislesArgs = {String.format(FORMATE, mStartPosition),
           String.format(FORMATE, mEndPosition)};
       args = allAislesArgs;
       sortOrder = VueConstants.ID + " ASC";
-    } else {
+   /* }*/ /*else {
       String questionSymbols = "?";
       for (int i = 1; i < aislesIds.length; i++) {
         questionSymbols = questionSymbols + ",?";
       }
       selection = VueConstants.AISLE_Id + " IN (" + questionSymbols + ") ";
       args = aislesIds;
-    }
+    }*/
+      Log.i("arrayList", "arrayList from db ***: "+selection);
+     
     Cursor aislesCursor = mContext.getContentResolver().query(
-        VueConstants.CONTENT_URI, null, selection, args, sortOrder);
+        VueConstants.CONTENT_URI, null, null, null, null);
+    Log.i("arrayList", "arrayList from db aislesCursor count ***: "+aislesCursor.getCount());
+    
     if (aislesCursor.moveToFirst()) {
       do {
         userInfo = new AisleContext();
@@ -467,7 +490,7 @@ public class DataBaseManager {
         + ", Total Comments deleted : " + deletedComments);
   }
   
-  public ArrayList<AisleWindowContent> getAislesByCategory(String category) {
+  private ArrayList<AisleWindowContent> getAisles(Cursor aislesCursor) {
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
     AisleWindowContent aisleItem = null;
@@ -479,9 +502,9 @@ public class DataBaseManager {
     ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
     ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
     
-    Cursor aislesCursor = mContext.getContentResolver().query(
-        VueConstants.CONTENT_URI, null, /*VueConstants.CATEGORY + "=?"*/null,
-        /*new String[] {category}*/null, VueConstants.ID + " ASC");
+    /*Cursor aislesCursor = mContext.getContentResolver().query(
+        VueConstants.CONTENT_URI, null, VueConstants.CATEGORY + "=?"null,
+        new String[] {category}null, VueConstants.ID + " ASC");*/
     Log.i("cursize", "cursize: "+aislesCursor.getCount());
     
     if (aislesCursor.moveToFirst()) {
@@ -556,6 +579,57 @@ public class DataBaseManager {
   }
   
   
+  public ArrayList<AisleWindowContent> getAislesByUserId(String userId) {  
+    return getAisles(getAislesCursor(userId, VueConstants.USER_ID));
+  }
   
+  public ArrayList<AisleWindowContent> getAislesByCategory(String category) {
+    return getAisles(getAislesCursor(category, VueConstants.CATEGORY));
+  }
   
+  private Cursor getAislesCursor(String searchString, String searchBy) {
+    Cursor aislesCursor = mContext.getContentResolver().query(
+        VueConstants.CONTENT_URI, null, searchBy + "=?",
+        new String[] {searchString}, VueConstants.ID + " ASC");
+    return aislesCursor;
+  }
+  public void resetDbParams(){
+	 mStartPosition = 0;
+	  mEndPosition = 0;
+  }
+  
+  private void changeDeleteFlag() {
+	  ContentValues values = new ContentValues();
+	  values.put(VueConstants.DELETE_FLAG, 1);
+	 int rowsUpdated = mContext.getContentResolver().update(VueConstants.CONTENT_URI, values, null, null);
+	 Log.e("DataBaseManager", "rowsUpdated: " + rowsUpdated);
+  }
+  
+  /**
+   * FOR TESTING PERPOES ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS
+   * CALLING AFTER TESTING, to copy FishWrap.db to sdCard.
+   */
+  private void copydbToSdcard() {
+    try {
+      File sd = Environment.getExternalStorageDirectory();
+      File data = Environment.getDataDirectory();
+
+      if (sd.canWrite()) {
+        String currentDBPath = "//data//com.lateralthoughts.vue//databases//Vue.db";
+        String backupDBPath = "Vue.db";
+        File currentDB = new File(data, currentDBPath);
+        File backupDB = new File(sd, backupDBPath);
+
+        if (currentDB.exists()) {
+          FileChannel src = new FileInputStream(currentDB).getChannel();
+          FileChannel dst = new FileOutputStream(backupDB).getChannel();
+          dst.transferFrom(src, 0, src.size());
+          src.close();
+          dst.close();
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

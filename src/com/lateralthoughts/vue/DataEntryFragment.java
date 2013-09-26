@@ -2,6 +2,9 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -47,7 +50,10 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+ 
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
+ 
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
@@ -1381,14 +1387,14 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	private void addImageToAisle() {
-		if (checkLimitForLoginDialog()) {
+		/*if (checkLimitForLoginDialog()) {
 			if (mLoginWarningMessage == null) {
 				mLoginWarningMessage = new LoginWarningMessage(getActivity());
 			}
 			mLoginWarningMessage.showLoginWarningMessageDialog(
 					"You need to Login with the app to add image to aisle.",
 					true, true, 0, null, null);
-		} else {
+		} else {*/
 			storeMetaAisleDataIntoLocalStorage();
 			if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
 				VueUser storedVueUser = null;
@@ -1417,13 +1423,13 @@ public class DataEntryFragment extends Fragment {
 				Toast.makeText(getActivity(), "This Aisle is not created.",
 						Toast.LENGTH_LONG).show();
 			}
-		}
+		//}
 	}
 
 	private void addAisle() {
 		// Updating Aisles Count in Preference to show LoginDialog.
 		if (!Utils.getDataentryEditAisleFlag(getActivity())) {
-			if (checkLimitForLoginDialog()) {
+			/*if (checkLimitForLoginDialog()) {
 				if (mLoginWarningMessage == null) {
 					mLoginWarningMessage = new LoginWarningMessage(
 							getActivity());
@@ -1431,7 +1437,7 @@ public class DataEntryFragment extends Fragment {
 				mLoginWarningMessage.showLoginWarningMessageDialog(
 						"You need to Login with the app to create aisle.",
 						true, true, 0, null, null);
-			} else {
+			} else {*/
 				SharedPreferences sharedPreferencesObj = getActivity()
 						.getSharedPreferences(
 								VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -1439,7 +1445,7 @@ public class DataEntryFragment extends Fragment {
 						VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
 				boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
 						VueConstants.VUE_LOGIN, false);
-				if (createdAisleCount == 4 && !isUserLoggedInFlag) {
+				/*if (createdAisleCount == 4 && !isUserLoggedInFlag) {
 					if (mLoginWarningMessage == null) {
 						mLoginWarningMessage = new LoginWarningMessage(
 								getActivity());
@@ -1448,7 +1454,7 @@ public class DataEntryFragment extends Fragment {
 							.showLoginWarningMessageDialog(
 									"You have 1 aisle left to create aisle without logging in.",
 									false, true, 4, null, null);
-				} else {
+				} else {*/
 					SharedPreferences.Editor editor = sharedPreferencesObj
 							.edit();
 					editor.putInt(
@@ -1481,8 +1487,8 @@ public class DataEntryFragment extends Fragment {
 						// In User Creation response Listener we need to call
 						// CreateAisle
 					}
-				}
-			}
+				//}
+			//}
 		} else {
 			storeMetaAisleDataIntoLocalStorage();
 		}
@@ -1635,7 +1641,9 @@ public class DataEntryFragment extends Fragment {
 			}
 			image.setStore(store);
 			image.setTitle("Android Test"); // TODO By Krishna
+			FlurryAgent.logEvent("New_Aisle_Creation");
 			image.setOwnerUserId(Long.valueOf(ownerUserId));
+			FlurryAgent.logEvent("Create_Aisle");
 			aisle.setAisleImage(image);
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())

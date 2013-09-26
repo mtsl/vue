@@ -80,12 +80,12 @@ public class TrendingAislesLeftColumnAdapter extends
 	@Override
 	public int getCount() {
 
-		if (mVueTrendingAislesDataModel.getAisleCount() % 2 == 0) {
-			return mVueTrendingAislesDataModel.getAisleCount() / 2;
-		} else {
-			return mVueTrendingAislesDataModel.getAisleCount() / 2 + 1;
-		}
-
+		/*
+		 * if (mVueTrendingAislesDataModel.getAisleCount() % 2 == 0) { return
+		 * mVueTrendingAislesDataModel.getAisleCount() / 2; } else { return
+		 * mVueTrendingAislesDataModel.getAisleCount() / 2 + 1; }
+		 */
+		return mVueTrendingAislesDataModel.getAisleCount();
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class TrendingAislesLeftColumnAdapter extends
 		if (0 != position)
 			actualPosition = (position * 2);
 
-		return mVueTrendingAislesDataModel.getAisleAt(actualPosition);
+		return mVueTrendingAislesDataModel.getAisleAt(position);
 	}
 
 	// create a new ImageView for each item referenced by the Adapter
@@ -213,7 +213,7 @@ public class TrendingAislesLeftColumnAdapter extends
 		if (0 != viewPosition)
 			actualPosition = (viewPosition * 2);
 
-		return actualPosition;
+		return viewPosition;
 	}
 
 	@Override

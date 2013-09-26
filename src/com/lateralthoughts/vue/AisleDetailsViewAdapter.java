@@ -57,6 +57,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	private static final boolean DEBUG = false;
 	private AisleDetailsViewListLoader mViewLoader;
 	private AisleDetailSwipeListener mswipeListner;
+	VueUser storedVueUser = null;
 	// we need to customize the layout depending on screen height & width which
 	// we will get on the fly
 	private int mListCount;
@@ -770,7 +771,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				.getImageList().get(mCurrentDispImageIndex).mCustomImageUrl);
 		File sourceFile = new File(uri);
 		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-				getItem(mCurrentAislePosition).getBestHeightForWindow());
+				getItem(mCurrentAislePosition).getBestHeightForWindow(), VueApplication.getInstance().getVueDetailsCardWidth()/2);
 		Utils.saveBitmap(bmp, f);
 		getItem(mCurrentAislePosition).mIsDataChanged = true;
 		mImageRefresh = true;
@@ -864,6 +865,21 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
 		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+			
+		 if(storedVueUser == null){
+			try {
+				storedVueUser = Utils.readUserObjectFromFile(
+						mContext,
+						VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		 }
+			Map<String, String> articleParams1 = new HashMap<String, String>();
+			articleParams1.put("Unique_Aisle_Likes", ""+ getItem(mCurrentAislePosition).getAisleId());
+			articleParams1
+			.put("Unique_User_Like", ""+storedVueUser);
+			FlurryAgent.logEvent("Aisle_Likes", articleParams1);
 		} else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
 
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(

@@ -85,6 +85,7 @@ public class VueLandingPageActivity extends BaseActivity {
 					@Override
 					public void onClick(View arg0) {
 						if (mOtherSourceImagePath == null) {
+							FlurryAgent.logEvent("Create_Aisle_Button_Click");
 							Intent intent = new Intent(
 									VueLandingPageActivity.this,
 									CreateAisleSelectionActivity.class);
@@ -373,6 +374,8 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			
+			Log.i("stackcount", "stackcount onbckpresed: "+StackViews.getInstance().getStackCount());
 			if (getSlidingMenu().isMenuShowing()) {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
@@ -380,6 +383,10 @@ public class VueLandingPageActivity extends BaseActivity {
 			} else if (StackViews.getInstance().getStackCount() > 0) {
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
 				if (viewInfo != null) {
+					mVueLandingActionbarScreenName
+					.setText(viewInfo.mVueName);
+					showPreviousScreen(viewInfo.mVueName);
+					/*
 					if (!mVueLandingActionbarScreenName.getText().toString()
 							.equalsIgnoreCase("Trending")) {
 						mVueLandingActionbarScreenName
@@ -395,7 +402,7 @@ public class VueLandingPageActivity extends BaseActivity {
 						mOtherSourceImagePath = null;
 						super.onBackPressed();
 					}
-				} else {
+				*/} else {
 					mOtherSourceImagePath = null;
 					super.onBackPressed();
 				}
@@ -482,52 +489,81 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-	public void showCategory(final String catName) {/*
-													 * if (mFragment == null) {
-													 * mFragment =
-													 * (VueLandingAislesFragment
-													 * )
-													 * getSupportFragmentManager
-													 * ()
-													 * .findFragmentById(R.id.
-													 * aisles_view_fragment); }
-													 * if (
-													 * mVueLandingActionbarScreenName
-													 * .getText().toString()
-													 * .equalsIgnoreCase
-													 * (catName)) { return; }
-													 * ViewInfo viewInfo = new
-													 * ViewInfo();
-													 * viewInfo.mVueName =
-													 * mVueLandingActionbarScreenName
-													 * .getText().toString();
-													 * viewInfo.mPosition =
-													 * mFragment
-													 * .getListPosition();
-													 * viewInfo.mOffset =
-													 * VueTrendingAislesDataModel
-													 * .getInstance(
-													 * VueLandingPageActivity
-													 * .this
-													 * ).getNetworkHandler()
-													 * .getmOffset();
-													 * StackViews.
-													 * getInstance().push
-													 * (viewInfo);
-													 * mVueLandingActionbarScreenName
-													 * .setText(catName);
-													 * VueTrendingAislesDataModel
-													 * .getInstance(
-													 * VueLandingPageActivity
-													 * .this)
-													 * .getNetworkHandler()
-													 * .reqestByCategory
-													 * (catName, new
-													 * ProgresStatus(), true,
-													 * false);
-													 * FlurryAgent.logEvent
-													 * (catName);
-													 */
+	public void showCategory(final String catName) {
+		if (mFragment == null) {
+			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisles_view_fragment);
+		}
+		if (mVueLandingActionbarScreenName.getText().toString()
+				.equalsIgnoreCase(catName)) {
+			return;
+		}
+		ViewInfo viewInfo = new ViewInfo();
+		viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
+		viewInfo.mPosition = mFragment.getListPosition();
+		viewInfo.mOffset = VueTrendingAislesDataModel
+				.getInstance(VueLandingPageActivity.this).getNetworkHandler()
+				.getmOffset();
+		boolean isCategoryExistInDb = StackViews.getInstance().categoryCheck(catName);
+		StackViews.getInstance().push(viewInfo);
+		Log.i("stackcount", "stackcount insert one: "+StackViews.getInstance().getStackCount());
+		mVueLandingActionbarScreenName.setText(catName);
+		boolean loadMore = false;
+		boolean fromServer = true;
+		if(catName.equalsIgnoreCase(getString(R.string.sidemenu_option_My_Aisles))){
+			if(isCategoryExistInDb){
+				fromServer = true;
+			} else {
+				fromServer = true;
+			}
+			Log.i("myaisledbcheck", "myaisledbcheck aisle are my aisles are fetching fromServer$$$$: "+fromServer);
+			VueTrendingAislesDataModel
+			.getInstance(VueApplication.getInstance())
+			.getNetworkHandler().requestAislesByUser(fromServer,new ProgresStatus());
+			
+		} else if(catName.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))){
+			VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+			  .clearAisles();
+			  AisleWindowContentFactory.getInstance(VueApplication.getInstance())
+			  .clearObjectsInUse();
+				VueTrendingAislesDataModel
+				.getInstance(
+						VueApplication
+								.getInstance())
+				.dataObserver();
+			
+			  loadMore = true;
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance())
+					.getNetworkHandler()
+					.loadTrendingAisle(loadMore);
+			
+		} else {
+			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+			.getNetworkHandler()
+			.reqestByCategory(catName, new ProgresStatus(), fromServer, loadMore);
+		}
+
+		FlurryAgent.logEvent(catName);
+
+	}
+	private void showPreviousScreen(String screenName){
+		boolean fromServer = false;
+		boolean loadMore = false;
+		if(screenName.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))){
+			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+			.getNetworkHandler().reqestByCategory(screenName, new ProgresStatus(), fromServer, loadMore);
+		} else if(screenName.equalsIgnoreCase(getString(R.string.sidemenu_option_My_Aisles))){
+			Log.i("myaisledbcheck", "myaisledbcheck  when back pressed aisle are fetching from db");
+			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+			.getNetworkHandler().requestAislesByUser(fromServer,new ProgresStatus());
+			
+			/*VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+			.getNetworkHandler().reqestByCategory(screenName, new ProgresStatus(), fromServer, loadMore);*/
+		} else {
+			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+			.getNetworkHandler().reqestByCategory(screenName, new ProgresStatus(), fromServer, loadMore);
+		}
 	}
 
 	class ProgresStatus implements NotifyProgress {
