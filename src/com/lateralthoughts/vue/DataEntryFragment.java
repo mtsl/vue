@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -18,8 +17,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
@@ -1502,7 +1499,7 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	public void storeMetaAisleDataIntoLocalStorage() {
-		showDataProgressOnNotification();
+		saveAisleLookingForOccassionCategoryDataToDB();
 		renderUIAfterAddingAisleToServer();
 	}
 
@@ -1538,15 +1535,7 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	private void showDataProgressOnNotification() {
-		final NotificationManager notifyManager = (NotificationManager) getActivity()
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		final Builder builder = new NotificationCompat.Builder(getActivity());
-		builder.setContentTitle(getResources().getString(R.string.app_name))
-				.setContentText(
-						getResources().getString(R.string.uploading_mesg))
-				.setSmallIcon(R.drawable.vue_launcher_icon);
-		// Start a lengthy operation in a background thread
+	private void saveAisleLookingForOccassionCategoryDataToDB() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -1601,17 +1590,8 @@ public class DataEntryFragment extends Fragment {
 				categoryAisleDataObj.time = currentTime;
 				mDbManager.addAisleMetaDataToDB(VueConstants.CATEGORY_TABLE,
 						categoryAisleDataObj);
-				// When the loop is finished, updates the notification
-				builder.setContentText("Uploading completed")
-				// Removes the progress bar
-						.setProgress(0, 0, false);
-				notifyManager.notify(0, builder.build());
 			}
-		}
-		// Starts the thread by calling the run() method in its Runnable
-		).start();
-		// upload empty aisle to server.
-
+		}).start();
 	}
 
 	// create ailse and send to server.
