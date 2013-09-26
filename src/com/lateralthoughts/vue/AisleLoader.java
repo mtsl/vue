@@ -88,7 +88,7 @@ public class AisleLoader {
 		mViewFactory = ScaledImageViewFactory.getInstance(context);
 		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
 		mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
-		mTopBottomMargin = (int) Utils.dipToPixels(VueApplication.getInstance(), mTopBottomMargin);
+		//mTopBottomMargin = (int) Utils.dipToPixels(VueApplication.getInstance(), mTopBottomMargin);
 		if (DEBUG)
 			Log.e(TAG, "Log something to remove warning");
 	}
