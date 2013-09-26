@@ -164,6 +164,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			}
 			mShowingList = getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList;
 			mLikes = getItem(mCurrentAislePosition).getImageList().get(0).mLikesCount;
+		boolean isBookmarked =	VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().isAisleBookmarked(getItem(mCurrentAislePosition).getAisleId());
+		getItem(mCurrentAislePosition).setWindowBookmarkIndicator(isBookmarked);
 			new Handler().postDelayed(new Runnable() {
 
 				@Override
