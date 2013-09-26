@@ -64,6 +64,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		landingPageActivity = this;
+		Log.e("VueLandingPageActivity", "Oncreate called to test sssssssss");
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
 		mLoadProgress = (ProgressBar) findViewById(R.id.adprogress_progressBar);
@@ -145,6 +146,8 @@ public class VueLandingPageActivity extends BaseActivity {
 					}
 				}
 			});
+		} else {
+		  VueTrendingAislesDataModel.getInstance(this).getNetworkHandler().getBookmarkAisleByUser();
 		}
 
 		mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
@@ -167,6 +170,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				handleSendMultipleImages(intent, true);
 			}
 		}
+		
+		
 	}
 
 	@Override

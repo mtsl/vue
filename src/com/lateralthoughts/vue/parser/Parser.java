@@ -110,9 +110,10 @@ public class Parser {
 				.getInt(VueConstants.AISLE_IMAGE_WIDTH);
 		aisleImageDetails.mImageUrl = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_IMAGE_URL);
-		Log.i("bookmarkfeaturetest", "bookmarkfeaturetest:url "+aisleImageDetails.mImageUrl);
-		
-		Log.i("urlserver", "urlserver: "+aisleImageDetails.mImageUrl);
+		Log.i("bookmarkfeaturetest", "bookmarkfeaturetest:url "
+				+ aisleImageDetails.mImageUrl);
+
+		Log.i("urlserver", "urlserver: " + aisleImageDetails.mImageUrl);
 		aisleImageDetails.mRating = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_RATING);
 		aisleImageDetails.mStore = jsonObject
@@ -226,12 +227,37 @@ public class Parser {
 			}
 			aisleContext.mBookmarkCount = josnObject
 					.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
-			Log.i("bookmarkfeaturetest", "bookmarkfeaturetest: count "+aisleContext.mBookmarkCount);
-			Log.i("bookmarkfeaturetest", "bookmarkfeaturetest id: "+aisleContext.mAisleId);
-			
+			Log.i("bookmarkfeaturetest", "bookmarkfeaturetest: count "
+					+ aisleContext.mBookmarkCount);
+			Log.i("bookmarkfeaturetest", "bookmarkfeaturetest id: "
+					+ aisleContext.mAisleId);
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return aisleContext;
+	}
+
+	public ArrayList<String> parseBookmarkedAisles(String response) {
+	  Log.i("bookmarked aisle", "bookmarked aisle: "+response);
+		ArrayList<String> aisleIdList = new ArrayList<String>();
+		try {
+			JSONArray jsonArray = new JSONArray(response);
+			if (jsonArray != null && jsonArray.length() > 0) {
+				for (int i = 0; i < jsonArray.length(); i++) {
+					aisleIdList.add(jsonArray.getJSONObject(i).getString(
+							VueConstants.AISLE_ID));
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		if(aisleIdList != null && aisleIdList.size() > 0){
+		 Log.i("bookmarked aisle", "bookmarked aisle: "+aisleIdList.size());
+		} else {
+		  Log.i("bookmarked aisle", "bookmarked aisle not found: " );
+
+		}
+		return aisleIdList;
 	}
 }
