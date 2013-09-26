@@ -175,13 +175,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			mShowingList = getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList;
 			mLikes = getItem(mCurrentAislePosition).getImageList().get(0).mLikesCount;
 		boolean isBookmarked =	VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().isAisleBookmarked(getItem(mCurrentAislePosition).getAisleId());
-		 Log.i("bookmarked aisle", "bookmarked aisle  detailsview adapter ailseId: "+getItem(mCurrentAislePosition).getAisleId());
+		 
 		if(isBookmarked){
-	     Log.i("bookmarked aisle", "bookmarked aisle  detailsview adapter isBookmarked: "+isBookmarked);
 		getItem(mCurrentAislePosition).setWindowBookmarkIndicator(isBookmarked);
-	   } else {
-	     Log.i("bookmarked aisle", "bookmarked aisle  detailsview adapter isBookmarked: "+isBookmarked);
-	   }
+	   } 
 		  mBookmarksCount = getItem(mCurrentAislePosition)
               .getmAisleBookmarksCount();
        Log.i("bookmarked aisle", "bookmarked count in window2: "+mBookmarksCount);
@@ -462,6 +459,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			@Override
 			public void onClick(View v) {
 				mIsBookImageClciked = true;
+				boolean bookmarkStatus = false;
 				if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
 					FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
 					if(mBookmarksCount > 0){
@@ -472,17 +470,18 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				 // getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
 					 
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
-							false);
-					handleBookmark(false, getItem(mCurrentAislePosition).getAisleId());
+							bookmarkStatus);
+					handleBookmark(bookmarkStatus, getItem(mCurrentAislePosition).getAisleId());
 				} else {
+					bookmarkStatus = true;
 					FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
 					mBookmarksCount++;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 							mBookmarksCount);
 					 //getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
-							true);
-					handleBookmark(true, getItem(mCurrentAislePosition).getAisleId());
+							bookmarkStatus);
+					handleBookmark(bookmarkStatus, getItem(mCurrentAislePosition).getAisleId());
 				}
 				sendDataToDb(mCurrentDispImageIndex, CHANGE_BOOKMARK);
 				notifyDataSetChanged();
