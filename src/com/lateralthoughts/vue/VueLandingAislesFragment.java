@@ -1,6 +1,9 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,14 +18,15 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
+import com.lateralthoughts.vue.utils.Utils;
 
 //java utils
 
@@ -38,9 +42,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	private TrendingAislesLeftColumnAdapter mLeftColumnAdapter;
 	private TrendingAislesRightColumnAdapter mRightColumnAdapter;
 
-	// private ListView mLeftColumnView;
-	// private ListView mRightColumnView;
-	private GridView gridView1;
+	private ListView mLeftColumnView;
+	private ListView mRightColumnView;
 	private AisleClickListener mAisleClickListener;
 	// private MultiColumnListView mView;
 	int[] mLeftViewsHeights;
@@ -101,70 +104,33 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		// synchronized list view approach
 		View v = inflater.inflate(R.layout.aisles_view_fragment2, container,
 				false);
-		/*
-		 * mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
-		 * mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
-		 * 
-		 * mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-		 * mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-		 * 
-		 * mLeftColumnView.setAdapter(mLeftColumnAdapter);
-		 * mRightColumnView.setAdapter(mRightColumnAdapter);
-		 * 
-		 * mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		 * mRightColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		 * mLeftColumnView.setOnTouchListener(touchListener);
-		 * mRightColumnView.setOnTouchListener(touchListener);
-		 * mLeftColumnView.setOnScrollListener(scrollListener);
-		 * mRightColumnView.setOnScrollListener(scrollListener);
-		 * 
-		 * mLeftColumnView.setClickable(true); mLeftColumnView
-		 * .setOnItemClickListener(new AdapterView.OnItemClickListener() {
-		 * 
-		 * @Override public void onItemClick(AdapterView<?> parent, View view,
-		 * int position, long id) { Log.e("Vinodh Clicks",
-		 * "ok...we are getting item clicks!!");
-		 * 
-		 * } });
-		 */
-		gridView1 = (GridView) v.findViewById(R.id.gridView1);
-		gridView1.setAdapter(mLeftColumnAdapter);
-		gridView1.setOnScrollListener(new OnScrollListener() {
+		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
+		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 
-			@Override
-			public void onScrollStateChanged(AbsListView arg0, int arg1) {
+		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+		
+		mLeftColumnView.setAdapter(mLeftColumnAdapter);
+		mRightColumnView.setAdapter(mRightColumnAdapter);
 
-			}
+		mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		mRightColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		mLeftColumnView.setOnTouchListener(touchListener);
+		mRightColumnView.setOnTouchListener(touchListener);
+		mLeftColumnView.setOnScrollListener(scrollListener);
+		mRightColumnView.setOnScrollListener(scrollListener);
 
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-				VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
+		mLeftColumnView.setClickable(true);
+		mLeftColumnView
+				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						Log.e("Vinodh Clicks",
+								"ok...we are getting item clicks!!");
 
-				if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
-						&& lan.getScreenName().equalsIgnoreCase(
-								getResources().getString(R.string.trending))) {
-					int lastVisiblePosition = firstVisibleItem
-							+ visibleItemCount;
-					int totalItems = 0;
-					// if (view.equals(mLeftColumnView)) {
-					totalItems = mLeftColumnAdapter.getCount();
-					/*
-					 * } else if (view.equals(mRightColumnView)) { totalItems =
-					 * mRightColumnAdapter.getCount(); }
-					 */
-					if ((totalItems - lastVisiblePosition) < 5) {
-						Log.i("offeset and limit",
-								"offeset00000: load moredata");
-						VueTrendingAislesDataModel.getInstance(mContext)
-								.getNetworkHandler().requestMoreAisle(true);
 					}
-				} else {
-					Log.i("offeset and limit",
-							"offeset00000: load moredata else ");
-				}
-			}
-		});
+				});
 
 		mLeftViewsHeights = new int[1000];
 		mRightViewsHeights = new int[1000];
@@ -174,101 +140,151 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		return v;
 	}
 
-	/*
-	 * // Passing the touch event to the opposite list OnTouchListener
-	 * touchListener = new OnTouchListener() { boolean dispatched = false;
-	 * 
-	 * @Override public boolean onTouch(View v, MotionEvent event) { if
-	 * (v.equals(mLeftColumnView) && !dispatched) { dispatched = true;
-	 * mRightColumnView.dispatchTouchEvent(event); } else if
-	 * (v.equals(mRightColumnView) && !dispatched) { dispatched = true;
-	 * mLeftColumnView.dispatchTouchEvent(event); }
-	 * 
-	 * dispatched = false; return false; } };
-	 *//**
+	// Passing the touch event to the opposite list
+	OnTouchListener touchListener = new OnTouchListener() {
+		boolean dispatched = false;
+
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			if (v.equals(mLeftColumnView) && !dispatched) {
+				dispatched = true;
+				mRightColumnView.dispatchTouchEvent(event);
+			} else if (v.equals(mRightColumnView) && !dispatched) {
+				dispatched = true;
+				mLeftColumnView.dispatchTouchEvent(event);
+			}
+
+			dispatched = false;
+			return false;
+		}
+	};
+
+	/**
 	 * Synchronizing scrolling Distance from the top of the first visible
 	 * element opposite list: sum_heights(opposite invisible screens) -
 	 * sum_heights(invisible screens) + distance from top of the first visible
 	 * child
 	 */
-	/*
-	 * OnScrollListener scrollListener = new OnScrollListener() {
-	 * 
-	 * @Override public void onScrollStateChanged(AbsListView view, int
-	 * scrollState) { mLeftColumnAdapter.setIsScrolling(scrollState !=
-	 * SCROLL_STATE_IDLE); mRightColumnAdapter .setIsScrolling(scrollState !=
-	 * SCROLL_STATE_IDLE); if (scrollState == SCROLL_STATE_FLING) {
-	 * mIsFlingCalled = true; } else if (scrollState == SCROLL_STATE_IDLE) {
-	 * 
-	 * // notify the adapters.
-	 * 
-	 * if (mIsFlingCalled == true) { Log.i("flingcheck",
-	 * "flingcheck  scrollstate idle"); mIsFlingCalled = false;
-	 * Log.i("flingcheck", "flingcheck  before notified adapter");
-	 * mLeftColumnAdapter.notifyDataSetChanged();
-	 * mRightColumnAdapter.notifyDataSetChanged();
-	 * 
-	 * Log.i("flingcheck", "flingcheck  after notified adapter"); }
-	 * 
-	 * } int first = view.getFirstVisiblePosition(); int count =
-	 * view.getChildCount();
-	 * 
-	 * if (scrollState == SCROLL_STATE_IDLE || (first + count >
-	 * mLeftColumnAdapter.getCount()) || (first + count >
-	 * mRightColumnAdapter.getCount())) { mLeftColumnView.invalidateViews();
-	 * mRightColumnView.invalidateViews(); } }
-	 * 
-	 * @Override public void onScroll(AbsListView view, int firstVisibleItem,
-	 * int visibleItemCount, int totalItemCount) {
-	 * 
-	 * if (view.getChildAt(0) != null) { if (view.equals(mLeftColumnView)) {
-	 * mLeftViewsHeights[view.getFirstVisiblePosition()] = view
-	 * .getChildAt(0).getHeight();
-	 * 
-	 * int h = 0; for (int i = 0; i < mRightColumnView
-	 * .getFirstVisiblePosition(); i++) { h += mRightViewsHeights[i]; }
-	 * 
-	 * int hi = 0; for (int i = 0; i < mLeftColumnView
-	 * .getFirstVisiblePosition(); i++) { hi += mLeftViewsHeights[i]; }
-	 * 
-	 * int top = h - hi + view.getChildAt(0).getTop();
-	 * mRightColumnView.setSelectionFromTop(
-	 * mRightColumnView.getFirstVisiblePosition(), top); } else if
-	 * (view.equals(mRightColumnView)) {
-	 * mRightViewsHeights[view.getFirstVisiblePosition()] = view
-	 * .getChildAt(0).getHeight();
-	 * 
-	 * int h = 0; for (int i = 0; i < mLeftColumnView
-	 * .getFirstVisiblePosition(); i++) { h += mLeftViewsHeights[i]; }
-	 * 
-	 * int hi = 0; for (int i = 0; i < mRightColumnView
-	 * .getFirstVisiblePosition(); i++) { hi += mRightViewsHeights[i]; }
-	 * 
-	 * int top = h - hi + view.getChildAt(0).getTop();
-	 * mLeftColumnView.setSelectionFromTop(
-	 * mLeftColumnView.getFirstVisiblePosition(), top); }
-	 * 
-	 * } VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
-	 * 
-	 * if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest &&
-	 * lan.getScreenName().equalsIgnoreCase(
-	 * getResources().getString(R.string.trending))) { int lastVisiblePosition =
-	 * firstVisibleItem + visibleItemCount; int totalItems = 0; if
-	 * (view.equals(mLeftColumnView)) { totalItems =
-	 * mLeftColumnAdapter.getCount(); } else if (view.equals(mRightColumnView))
-	 * { totalItems = mRightColumnAdapter.getCount(); } if ((totalItems -
-	 * lastVisiblePosition) < 5) { Log.i("offeset and limit",
-	 * "offeset00000: load moredata");
-	 * VueTrendingAislesDataModel.getInstance(mContext)
-	 * .getNetworkHandler().requestMoreAisle(true); } } else {
-	 * Log.i("offeset and limit", "offeset00000: load moredata else "); }
-	 * 
-	 * } };
-	 */
+	OnScrollListener scrollListener = new OnScrollListener() {
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			mLeftColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
+			mRightColumnAdapter
+					.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
+			if (scrollState == SCROLL_STATE_FLING) {
+				mIsFlingCalled = true;
+			} else if (scrollState == SCROLL_STATE_IDLE) {
+
+				// notify the adapters.
+
+				if (mIsFlingCalled == true) {
+					Log.i("flingcheck", "flingcheck  scrollstate idle");
+					mIsFlingCalled = false;
+					Log.i("flingcheck", "flingcheck  before notified adapter");
+					mLeftColumnAdapter.notifyDataSetChanged();
+					mRightColumnAdapter.notifyDataSetChanged();
+
+					Log.i("flingcheck", "flingcheck  after notified adapter");
+				}
+
+			}
+			int first = view.getFirstVisiblePosition();
+			int count = view.getChildCount();
+
+			if (scrollState == SCROLL_STATE_IDLE
+					|| (first + count > mLeftColumnAdapter.getCount())
+					|| (first + count > mRightColumnAdapter.getCount())) {
+				mLeftColumnView.invalidateViews();
+				mRightColumnView.invalidateViews();
+			}
+		}
+
+		@Override
+		public void onScroll(AbsListView view, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+
+			if (view.getChildAt(0) != null) {
+				if (view.equals(mLeftColumnView)) {
+					mLeftViewsHeights[view.getFirstVisiblePosition()] = view
+							.getChildAt(0).getHeight();
+
+					int h = 0;
+					for (int i = 0; i < mRightColumnView
+							.getFirstVisiblePosition(); i++) {
+						h += mRightViewsHeights[i];
+					}
+
+					int hi = 0;
+					for (int i = 0; i < mLeftColumnView
+							.getFirstVisiblePosition(); i++) {
+						hi += mLeftViewsHeights[i];
+					}
+
+					int top = h - hi + view.getChildAt(0).getTop();
+					mRightColumnView.setSelectionFromTop(
+							mRightColumnView.getFirstVisiblePosition(), top);
+				} else if (view.equals(mRightColumnView)) {
+					mRightViewsHeights[view.getFirstVisiblePosition()] = view
+							.getChildAt(0).getHeight();
+
+					int h = 0;
+					for (int i = 0; i < mLeftColumnView
+							.getFirstVisiblePosition(); i++) {
+						h += mLeftViewsHeights[i];
+					}
+
+					int hi = 0;
+					for (int i = 0; i < mRightColumnView
+							.getFirstVisiblePosition(); i++) {
+						hi += mRightViewsHeights[i];
+					}
+
+					int top = h - hi + view.getChildAt(0).getTop();
+					mLeftColumnView.setSelectionFromTop(
+							mLeftColumnView.getFirstVisiblePosition(), top);
+				}
+
+			}
+			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
+
+			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest && lan.getScreenName().equalsIgnoreCase(getResources().getString(R.string.trending))) {
+				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
+				int totalItems = 0;
+				if (view.equals(mLeftColumnView)) {
+					totalItems = mLeftColumnAdapter.getCount();
+				} else if (view.equals(mRightColumnView)) {
+					totalItems = mRightColumnAdapter.getCount();
+				}
+				if ((totalItems - lastVisiblePosition) < 5) {
+					Log.i("offeset and limit", "offeset00000: load moredata");
+					VueTrendingAislesDataModel.getInstance(mContext).getNetworkHandler().requestMoreAisle(true);
+				}
+			}else {
+				Log.i("offeset and limit", "offeset00000: load moredata else ");
+			}
+
+		}
+	};
 
 	private class AisleClickListener implements AisleContentClickListener {
 		@Override
 		public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
+			Map<String, String> articleParams = new HashMap<String, String>();
+			VueUser storedVueUser = null;
+			try {
+				storedVueUser = Utils.readUserObjectFromFile(
+						getActivity(),
+						VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+			if(storedVueUser != null){
+			articleParams.put("User_Id", storedVueUser.getVueId());
+			} else {
+				articleParams.put("User_Id","anonymous");
+			}
+			FlurryAgent.logEvent("User_Select_Aisle", articleParams);
+ 
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
 			Log.i("clickedwindow", "clickedwindow ID: " + id);
 			Intent intent = new Intent();
@@ -294,13 +310,12 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	}
 
 	public void moveListToPosition(int position) {
-		// / mLeftColumnView.setSelection(position);
-		// mLeftColumnView.smoothScrollToPosition(position);
+		mLeftColumnView.setSelection(position);
+		mLeftColumnView.smoothScrollToPosition(position);
 	}
 
 	public int getListPosition() {
-		return 0;
-		// return mLeftColumnView.getFirstVisiblePosition();
+		return mLeftColumnView.getFirstVisiblePosition();
 
 	}
 

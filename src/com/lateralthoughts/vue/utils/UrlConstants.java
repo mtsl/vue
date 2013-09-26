@@ -27,5 +27,7 @@ public class UrlConstants {
 			+ "api/getaisleswithmatchingoccassion/";
 	public static final String SEARCH_BY_USER = SERVER_BASE_URL
 			+ "api/getaisleswithmatchingfacebookORGPlus/";
+	public static final String CREATE_BOOKMARK_RESTURL = SERVER_BASE_URL
+	    + "api/aislebookmarksaveorupdate";
 
 }

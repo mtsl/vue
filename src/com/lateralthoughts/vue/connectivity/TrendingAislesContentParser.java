@@ -37,9 +37,11 @@ public class TrendingAislesContentParser extends ResultReceiver {
 							.parseTrendingAislesResultData(
 									resultData.getString("result"),
 									resultData.getBoolean("loadMore"));
-					Log.i("dbInsert", "dbInsert1 aislesListSize: "+aislesList.size());
-					DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(
-							VueApplication.getInstance(), aislesList);
+					Log.i("dbInsert",
+							"dbInsert1 aislesListSize: " + aislesList.size());
+					DataBaseManager.getInstance(VueApplication.getInstance())
+							.addTrentingAislesFromServerToDB(
+									VueApplication.getInstance(), aislesList);
 
 					/*
 					 * if (aislesList != null && aislesList.size() > 0) { int
@@ -76,7 +78,17 @@ public class TrendingAislesContentParser extends ResultReceiver {
 					 * VueApplication.getInstance())
 					 * .setMoreDataAVailable(false); // TODO }
 					 */
+					VueLandingPageActivity.landingPageActivity
+							.runOnUiThread(new Runnable() {
 
+								@Override
+								public void run() {
+									VueTrendingAislesDataModel.getInstance(
+											VueApplication.getInstance())
+											.dismissProgress();
+
+								}
+							});
 					if (refreshListFlag) {
 						VueLandingPageActivity.landingPageActivity
 								.runOnUiThread(new Runnable() {
@@ -148,30 +160,22 @@ public class TrendingAislesContentParser extends ResultReceiver {
 		}
 	}
 
-/*	private class DbDataSetter extends AsyncTask<Void, Void, Void> {
-		ArrayList<AisleWindowContent> mAislesList;
-
-		public DbDataSetter(ArrayList<AisleWindowContent> aislesList) {
-			mAislesList = aislesList;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			// TODO Auto-generated method stub
-			super.onPreExecute();
-		}
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(
-					VueApplication.getInstance(), mAislesList);
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			mAislesList.clear();
-			super.onPostExecute(result);
-		}
-	}*/
+	/*
+	 * private class DbDataSetter extends AsyncTask<Void, Void, Void> {
+	 * ArrayList<AisleWindowContent> mAislesList;
+	 * 
+	 * public DbDataSetter(ArrayList<AisleWindowContent> aislesList) {
+	 * mAislesList = aislesList; }
+	 * 
+	 * @Override protected void onPreExecute() { // TODO Auto-generated method
+	 * stub super.onPreExecute(); }
+	 * 
+	 * @Override protected Void doInBackground(Void... params) {
+	 * DataBaseManager.
+	 * getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB
+	 * ( VueApplication.getInstance(), mAislesList); return null; }
+	 * 
+	 * @Override protected void onPostExecute(Void result) {
+	 * mAislesList.clear(); super.onPostExecute(result); } }
+	 */
 }

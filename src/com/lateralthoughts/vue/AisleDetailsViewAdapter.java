@@ -7,9 +7,12 @@
 package com.lateralthoughts.vue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.http.client.ClientProtocolException;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -37,6 +40,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
@@ -445,6 +449,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 							mBookmarksCount);
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							false);
+					handleBookmark(false, getItem(mCurrentAislePosition).getAisleId());
 				} else {
 					FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
 					mBookmarksCount++;
@@ -452,6 +457,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 							mBookmarksCount);
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							true);
+					handleBookmark(true, getItem(mCurrentAislePosition).getAisleId());
 				}
 				sendDataToDb(mCurrentDispImageIndex, CHANGE_BOOKMARK);
 				notifyDataSetChanged();
@@ -855,6 +861,15 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	}
 
 	private void onChangeLikesCount(int position) {
+		 if(storedVueUser == null){
+				try {
+					storedVueUser = Utils.readUserObjectFromFile(
+							mContext,
+							VueConstants.VUE_APP_USEROBJECT__FILENAME);
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+			 }
 		Map<String, String> articleParams = new HashMap<String, String>();
 		articleParams.put("Category", getItem(mCurrentAislePosition)
 				.getAisleContext().mCategory);
@@ -862,23 +877,27 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				.getAisleContext().mLookingForItem);
 		articleParams.put("Occasion", getItem(mCurrentAislePosition)
 				.getAisleContext().mOccasion);
+		if(storedVueUser != null){
+			articleParams
+			.put("Unique_User_Like", ""+storedVueUser.getVueId());
+			} else {
+				articleParams
+				.put("Unique_User_Like", "anonymous");
+			}
 		FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
 		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
 			
-		 if(storedVueUser == null){
-			try {
-				storedVueUser = Utils.readUserObjectFromFile(
-						mContext,
-						VueConstants.VUE_APP_USEROBJECT__FILENAME);
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		 }
+	
 			Map<String, String> articleParams1 = new HashMap<String, String>();
 			articleParams1.put("Unique_Aisle_Likes", ""+ getItem(mCurrentAislePosition).getAisleId());
+			if(storedVueUser != null){
 			articleParams1
-			.put("Unique_User_Like", ""+storedVueUser);
+			.put("Unique_User_Like", ""+storedVueUser.getVueId());
+			} else {
+				articleParams1
+				.put("Unique_User_Like", "anonymous");
+			}
 			FlurryAgent.logEvent("Aisle_Likes", articleParams1);
 		} else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
 
@@ -920,4 +939,28 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		mViewHolder.edtCommentLay.setVisibility(View.GONE);
 		mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
 	}
+	
+  private void handleBookmark(final boolean isBookmarked, final String aisleId) {
+	  new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+			  Log.e("Bookmark", "aisle bookmarked  method call 1 "  );
+			    AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
+			        Long.parseLong(aisleId));
+
+			    try {
+			      VueUser storedVueUser = Utils.readUserObjectFromFile(mContext,
+			          VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			      Log.e("Bookmark", "aisle bookmarked  method call 2 "  );
+			      AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark, storedVueUser.getVueId());
+			      ;
+			    } catch (Exception e) {
+			      e.printStackTrace();
+			    }
+			
+		}
+	}).start();
+
+  }
 }

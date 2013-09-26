@@ -23,7 +23,7 @@ public class AisleWindowContent {
 																// pattern we
 																// look for
 	private String mImageFormatSpecifier = "._SY%d.jpg";
-	private int mAisleBookmarksCount = 15;
+	private int mAisleBookmarksCount = 0;
 	private boolean mAisleBookmarkIndicator = false;
 	public boolean mIsDataChanged = false;
 
@@ -72,6 +72,7 @@ public class AisleWindowContent {
 	@SuppressWarnings("unchecked")
 	public void addAisleContent(AisleContext context,
 			ArrayList<AisleImageDetails> items) {
+		mAisleBookmarksCount = context.mBookmarkCount;
 		if (null != mAisleImagesList) {
 			mAisleImagesList = null;
 		}

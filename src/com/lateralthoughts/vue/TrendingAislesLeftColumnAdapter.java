@@ -80,12 +80,12 @@ public class TrendingAislesLeftColumnAdapter extends
 	@Override
 	public int getCount() {
 
-		/*
-		 * if (mVueTrendingAislesDataModel.getAisleCount() % 2 == 0) { return
-		 * mVueTrendingAislesDataModel.getAisleCount() / 2; } else { return
-		 * mVueTrendingAislesDataModel.getAisleCount() / 2 + 1; }
-		 */
-		return mVueTrendingAislesDataModel.getAisleCount();
+		if (mVueTrendingAislesDataModel.getAisleCount() % 2 == 0) {
+			return mVueTrendingAislesDataModel.getAisleCount() / 2;
+		} else {
+			return mVueTrendingAislesDataModel.getAisleCount() / 2 + 1;
+		}
+
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class TrendingAislesLeftColumnAdapter extends
 		if (0 != position)
 			actualPosition = (position * 2);
 
-		return mVueTrendingAislesDataModel.getAisleAt(position);
+		return mVueTrendingAislesDataModel.getAisleAt(actualPosition);
 	}
 
 	// create a new ImageView for each item referenced by the Adapter
@@ -202,6 +202,14 @@ public class TrendingAislesLeftColumnAdapter extends
 			index = 0;
 		String lookingFor = mPossibleCategories[index];
 		// holder.aisleContext.setText(contextBuilder.toString());
+
+		if (context.mOccasion != null && context.mOccasion.length() > 1) {
+			occasion = context.mOccasion;
+		}
+		if (context.mLookingForItem != null
+				&& context.mLookingForItem.length() > 1) {
+			lookingFor = context.mLookingForItem;
+		}
 		holder.aisleContext.setText(occasion + " : " + lookingFor);
 		// ((ViewGroup)(convertView)).setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 		// convertView.setOnClickListener(mClickListener);
@@ -213,7 +221,7 @@ public class TrendingAislesLeftColumnAdapter extends
 		if (0 != viewPosition)
 			actualPosition = (viewPosition * 2);
 
-		return viewPosition;
+		return actualPosition;
 	}
 
 	@Override
