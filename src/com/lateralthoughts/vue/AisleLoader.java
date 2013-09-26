@@ -203,6 +203,8 @@ public class AisleLoader {
 				LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
 						VueApplication.getInstance().getScreenWidth() / 2,
 						bitmap.getHeight()+mTopBottomMargin);
+		 
+				contentBrowser.setLayoutParams(mShowpieceParams2);
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {

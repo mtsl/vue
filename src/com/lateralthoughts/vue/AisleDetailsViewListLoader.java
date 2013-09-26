@@ -124,7 +124,7 @@ public class AisleDetailsViewListLoader {
 			if(VueApplication.getInstance().getClickedWindowID() != null) {
 				if(VueApplication.getInstance().getClickedWindowID().equalsIgnoreCase(desiredContentId)){
 					Log.i("clickedwindow", "clickedwindow ID detatils matched: " + desiredContentId);
-					Log.i("clickedwindow", "clickedwindow ID  detatils url: " + itemDetails.mImageUrl);
+					Log.i("clickedwindow", "clickedwindow ID  image url: " + itemDetails.mImageUrl);
 				}
 				}
 			
@@ -137,11 +137,16 @@ public class AisleDetailsViewListLoader {
 			// imgConnectivity.setImageClick(imageView);
 			Bitmap bitmap = mBitmapLoaderUtils
 					.getCachedBitmap(itemDetails.mImageUrl);
+			
+			
 			if (bitmap != null) {
 				// get the dimensions of the image.
+			
 				mImageDimension = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
 						itemDetails.mAvailableHeight);
+				Log.i("window", "clickedwindow ID bitmap Height1: "+bitmap.getHeight());
+				Log.i("window", "clickedwindow ID  required height1: "+mImageDimension.mImgHeight);
 				mBestHeight = mImageDimension.mImgHeight;
 				setParams(holder.aisleContentBrowser, imageView, mBestHeight);
 				if (bitmap.getHeight() < mImageDimension.mImgHeight) {
@@ -203,14 +208,19 @@ public class AisleDetailsViewListLoader {
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
             bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth());
+            Log.i("window", "clickedwindow ID bitmap Height2 original: "+bmp.getHeight());
+			Log.i("window", "clickedwindow ID  required height2 original: "+mBestHeight);
             if(bmp != null) {
            	 mImageDimension = Utils.getScalledImage(bmp,
            			mAvailabeWidth, mAvailableHeight);
            	 Log.i("imageSize", "imageSize mImageDimension Height: "+mImageDimension.mImgHeight);
            	mAvailableHeight = mImageDimension.mImgHeight;
-            	 if(bmp.getHeight()<mImageDimension.mImgHeight) {
+            	 if(bmp.getHeight()> mImageDimension.mImgHeight) {
             		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mImageDimension.mImgHeight, VueApplication.getInstance().getVueDetailsCardWidth());
-				 }
+				
+            	      Log.i("window", "clickedwindow ID bitmap Height3 modified original: "+bmp.getHeight());
+          			Log.i("window", "clickedwindow ID  required height3  modiried original: "+mImageDimension.mImgHeight);
+            	 }
             }
             return bmp;            
         }

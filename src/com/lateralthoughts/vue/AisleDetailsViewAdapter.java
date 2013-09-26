@@ -7,12 +7,9 @@
 package com.lateralthoughts.vue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.http.client.ClientProtocolException;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
