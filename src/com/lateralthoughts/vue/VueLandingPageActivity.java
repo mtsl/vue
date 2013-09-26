@@ -64,6 +64,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		landingPageActivity = this;
+		Log.e("VueLandingPageActivity", "Oncreate called to test sssssssss");
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
 		mLoadProgress = (ProgressBar) findViewById(R.id.adprogress_progressBar);
