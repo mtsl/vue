@@ -72,7 +72,6 @@ public class AisleWindowContent {
 	@SuppressWarnings("unchecked")
 	public void addAisleContent(AisleContext context,
 			ArrayList<AisleImageDetails> items) {
-		mAisleBookmarksCount = context.mBookmarkCount;
 		if (null != mAisleImagesList) {
 			mAisleImagesList = null;
 		}
@@ -102,7 +101,7 @@ public class AisleWindowContent {
 	private boolean udpateImageUrlsForDevice() {
 		AisleImageDetails imageDetails;
 		//TODO: when more images available set this variable to smallest height among all
-		mWindowSmallestHeight = 340;
+		mWindowSmallestHeight = /*34*/0;
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 
 			imageDetails = mAisleImagesList.get(i);

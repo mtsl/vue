@@ -69,12 +69,6 @@ public class BitmapLoaderUtils {
         Log.i("added url", "added url  getBitmap "+f);
         //from SD cache
         Bitmap b = decodeFile(f, bestHeight,bestWidth);
-    	if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
-			Log.i("imageurl", "imageurl original   bitmap check2:  "+b);
-			Log.i("imageurl", "imageurl hashcode " + f.getPath());
-			Log.i("imageurl", "imageurl imagepath " + url);
-		}
-        Log.i("added url", "added url  getBitmap "+b);
         if(b != null){
           
             if(cacheBitmap)
@@ -84,12 +78,10 @@ public class BitmapLoaderUtils {
         
         //from web
         try {
-        	Log.i("imageurl", "imageurl original vue  bitmap check4:  error" + url);
         	if(serverUrl == null || serverUrl.length() < 1) {
        
         		return null;
         	}
-        	Log.i("imageurl", "imageurl original vue  bitmap check4:  error" + url);
             Bitmap bitmap=null;
             URL imageUrl = new URL(serverUrl);
             HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
@@ -97,28 +89,17 @@ public class BitmapLoaderUtils {
             conn.setReadTimeout(30000);
             conn.setInstanceFollowRedirects(true);
             InputStream is=conn.getInputStream();
-            Log.i("added url", "added url  InputStream "+is);
-            Log.i("added url", "added url  InputStream url "+url);
-   		 
     		int hashCode = url.hashCode();
     		String filename = String.valueOf(hashCode);
-            Log.i("added url", "added url  InputStream imgname "+filename);
             OutputStream os = new FileOutputStream(f);
             Utils.CopyStream(is, os);
             os.close();
             bitmap = decodeFile(f, bestHeight,bestWidth);
             if(cacheBitmap) 
             	mAisleImagesCache.putBitmap(url, bitmap);
-        	if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
-    			Log.i("imageurl", "imageurl original   bitmap check3:  "+bitmap);
-    		}
-
             return bitmap;
         } catch (Throwable ex){
            ex.printStackTrace();
-           if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
-   			Log.i("imageurl", "imageurl original vue  bitmap check4:  error");
-   		}
            if(ex instanceof OutOfMemoryError) {
              // mAisleImagesCache.clear();
            }

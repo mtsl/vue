@@ -187,6 +187,7 @@ public class Parser {
 								aisleContext.mAisleId);
 				aisleWindowContent.addAisleContent(aisleContext,
 						aisleImageDetailsList);
+				aisleWindowContent.setmAisleBookmarksCount(aisleContext.mBookmarkCount);
 				aisleWindowContentList.add(aisleWindowContent);
 			}
 		}

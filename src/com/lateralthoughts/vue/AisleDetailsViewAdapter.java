@@ -115,18 +115,18 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 						+ getItem(mCurrentAislePosition)
 								.getBestHeightForWindow());
 		if (getItem(mCurrentAislePosition) != null) {
-<<<<<<< HEAD
+			mBookmarksCount = getItem(mCurrentAislePosition).getmAisleBookmarksCount();
 			
-			mBookmarksCount = getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount;
 			Log.i("bookmarkscount", "bookmarkscount: "+mBookmarksCount);
+			Log.i("bookmarkscount", "bookmarkscount aisle id: "+getItem(mCurrentAislePosition).getAisleContext().mAisleId);
+			Log.i("bookmarkscount", "bookmarkscount: aisle looking for "+getItem(mCurrentAislePosition).getAisleContext().mLookingForItem);
+			Log.i("bookmarkscount", "bookmarkscount: occassion "+getItem(mCurrentAislePosition).getAisleContext().mOccasion);
+		 
+			
 			
 			 getItem(mCurrentAislePosition).setmAisleBookmarksCount(mBookmarksCount);
 					 
-=======
-			mBookmarksCount = getItem(mCurrentAislePosition)
-					.getmAisleBookmarksCount();
-			 Log.i("bookmarked aisle", "bookmarked count in window1: "+mBookmarksCount);
->>>>>>> 539de5d50b8756509d4adb8e6ef8ade754858193
+ 
 			VueApplication.getInstance().setClickedWindowCount(
 					getItem(mCurrentAislePosition).getImageList().size());
 
@@ -464,11 +464,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				mIsBookImageClciked = true;
 				if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
 					FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
-					if(mBookmarksCount != 0)
+					if(mBookmarksCount > 0){
 					mBookmarksCount--;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 							mBookmarksCount);
-				  getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
+					}
+				 // getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
 					 
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							false);
@@ -478,7 +479,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 					mBookmarksCount++;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 							mBookmarksCount);
-					 getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
+					 //getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							true);
 					handleBookmark(true, getItem(mCurrentAislePosition).getAisleId());
