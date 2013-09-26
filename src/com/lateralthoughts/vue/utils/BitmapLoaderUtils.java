@@ -23,6 +23,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Environment;
 import android.util.Log;
+import android.webkit.WebView.HitTestResult;
 
 public class BitmapLoaderUtils {
 
@@ -144,8 +145,9 @@ public class BitmapLoaderUtils {
             //final int REQUIRED_SIZE = mScreenWidth/2;
             int height=o.outHeight;
             int width = o.outWidth;
-            Log.i("added url", "added urldecodeFile  bitmap o.height : "+height );
-            Log.i("added url", "added urldecodeFile  bitmap o.width : "+width );
+  	      Log.i("window", "clickedwindow ID bitmap Height4 bestHeight: "+bestHeight);
+			Log.i("window", "clickedwindow ID original height: "+height);
+ 
          // int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth()/2;
             int reqWidth = bestWidth;
             int scale=1;
@@ -160,7 +162,7 @@ public class BitmapLoaderUtils {
                 // a final image with both dimensions larger than or equal to the
                 // requested height and width.
                 scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
- 
+                
             }
             
             //decode with inSampleSize
@@ -170,31 +172,33 @@ public class BitmapLoaderUtils {
             //if(DEBUG) Log.d("Jaws","using inSampleSizeScale = " + scale + " original width = " + o.outWidth + "screen width = " + mScreenWidth);
             FileInputStream stream2=new FileInputStream(f);
             Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);
-       
+            Log.i("window", "clickedwindow ID  new bitmap height1 : "+bitmap.getHeight());
+      			Log.i("window", "clickedwindow ID new bitmap widht1: "+bitmap.getWidth());
             stream2.close();
+            
+            if(bitmap != null){
+            	 width = bitmap.getWidth();
+                 height = bitmap.getHeight();
+                 if(height > bestHeight){
+                	 float tempWidth = (width * bestHeight)/height;
+                	 width = (int) tempWidth;
+                	 bitmap = getModifiedBitmap(bitmap,width,bestHeight);
+                 }
+            }
+            
+            
             if(bitmap != null) {
             width = bitmap.getWidth();
             height = bitmap.getHeight();
           
             if(width > reqWidth) {
-            	 
                float tempHeight = (height * reqWidth)/width;
                 height = (int)tempHeight;
-              /* Bitmap bitmaptest = Bitmap.createScaledBitmap(bitmap, reqWidth, height,
-						true);*/
             	bitmap = getModifiedBitmap(bitmap,reqWidth,height);
-       
             }
             }
-            if(bitmap != null) {
-            	 Log.i("added url", "added url  urldecodeFile width "+bitmap.getWidth());
-            	 
-            
-            } else {
-            	 Log.i("added url", "added urldecodeFile  bitmap null " );
-            }
-            Log.i("imageHeight", "imageHeight after resized: "+bitmap.getHeight());
-            Log.i("imageHeight", "imageHeight after resized: "+bitmap.getWidth());
+            Log.i("window", "clickedwindow ID  new bitmap height2 : "+bitmap.getHeight());
+  			Log.i("window", "clickedwindow ID new bitmap widht2: "+bitmap.getWidth());
             return bitmap;
         } catch (FileNotFoundException e) {
         	Log.i("added url", "added urldecodeFile  filenotfound exception " );

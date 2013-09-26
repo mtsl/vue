@@ -7,12 +7,9 @@
 package com.lateralthoughts.vue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.http.client.ClientProtocolException;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -40,6 +37,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
@@ -424,7 +423,6 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		}
 		mViewHolder.exapandHolder.setOnClickListener(new OnClickListener() {
 
-			@Override
 			public void onClick(View v) {
 				// mswipeListner.onResetAdapter();
 				int showFixedRowCount = 3;
@@ -939,28 +937,19 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		mViewHolder.edtCommentLay.setVisibility(View.GONE);
 		mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
 	}
-	
-  private void handleBookmark(final boolean isBookmarked, final String aisleId) {
-	  new Thread(new Runnable() {
-		
-		@Override
-		public void run() {
-			  Log.e("Bookmark", "aisle bookmarked  method call 1 "  );
-			    AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
-			        Long.parseLong(aisleId));
 
-			    try {
-			      VueUser storedVueUser = Utils.readUserObjectFromFile(mContext,
-			          VueConstants.VUE_APP_USEROBJECT__FILENAME);
-			      Log.e("Bookmark", "aisle bookmarked  method call 2 "  );
-			      AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark, storedVueUser.getVueId());
-			      ;
-			    } catch (Exception e) {
-			      e.printStackTrace();
-			    }
-			
-		}
-	}).start();
+  private void handleBookmark(boolean isBookmarked, String aisleId) {
+    AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
+        Long.parseLong(aisleId));
+        VueUser storedVueUser = null;
+        try {
+          storedVueUser = Utils.readUserObjectFromFile(mContext,
+              VueConstants.VUE_APP_USEROBJECT__FILENAME);
+          AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark, storedVueUser.getVueId());
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
 
   }
 }

@@ -210,6 +210,8 @@ public class NetworkHandler {
 	}
 
 	public void loadInitialData(boolean loadMore, Handler mHandler) {
+		Log.i("bookmarked aisle", "bookmarked aisle O");
+		getBookmarkAisleByUser();
 		mOffset = 0;
 		if (!VueConnectivityManager.isNetworkConnected(mContext)) {
 			Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
@@ -396,6 +398,7 @@ public class NetworkHandler {
 	}
 
 	public ArrayList<AisleWindowContent> testGetAisleList() throws Exception {
+		//TODO: change to volley
 		VueUser storedVueUser = null;
 		storedVueUser = Utils.readUserObjectFromFile(
 				VueApplication.getInstance(),
@@ -420,6 +423,41 @@ public class NetworkHandler {
 		return null;
 
 	}
+	
+	public void getBookmarkAisleByUser() {
+Log.i("bookmarked aisle", "bookmarked aisle 1");
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					String userId = getUserId();
+					if (userId == null) {
+						Log.i("bookmarked aisle", "bookmarked aisle ID IS NULL RETURNING");
+						return;
+					}
+					Log.i("bookmarked aisle", "bookmarked aisle 2");
+					URL url = new URL(UrlConstants.GET_BOOKMARK_Aisles + "/"
+							+ userId + "/" + "0");
+					HttpGet httpGet = new HttpGet(url.toString());
+					DefaultHttpClient httpClient = new DefaultHttpClient();
+					HttpResponse response = httpClient.execute(httpGet);
+					if (response.getEntity() != null
+							&& response.getStatusLine().getStatusCode() == 200) {
+						String responseMessage = EntityUtils.toString(response
+								.getEntity());
+						Log.i("bookmarked aisle", "bookmarked aisle 3 response: "+responseMessage);
+					}
+				} catch (Exception e) {
+					Log.i("bookmarked aisle", "bookmarked aisle 3 error: " );
+					e.printStackTrace();
+				}
+
+			}
+		}).start();
+
+	}
+	
 	private String getUserId(){
 		VueUser storedVueUser = null;
 		try {

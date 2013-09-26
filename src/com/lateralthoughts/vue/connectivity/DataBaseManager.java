@@ -301,12 +301,12 @@ public class DataBaseManager {
   }
 
   public void bookMarkOrUnBookmarkAisle(final boolean isBookmarked,
-      final int bookmarkCount, final String aisleID) {
+      final int bookmarkCount, final String aisleID, final boolean isDirty) {
     runTask(new Runnable() {
 
       @Override
       public void run() {
-        bookMarkOrUnBookmarkAisleToDb(isBookmarked, bookmarkCount, aisleID);
+        bookMarkOrUnBookmarkAisleToDb(isBookmarked, bookmarkCount, aisleID, isDirty);
       }
     });
   }
@@ -355,10 +355,11 @@ public class DataBaseManager {
    * @param String aisleID
    * */
   private void bookMarkOrUnBookmarkAisleToDb(boolean isBookmarked,
-      int bookmarkCount, String aisleID) {
+      int bookmarkCount, String aisleID, boolean isDirty) {
     ContentValues values = new ContentValues();
     values.put(VueConstants.IS_BOOKMARKED, isBookmarked);
     values.put(VueConstants.BOOKMARK_COUNT, bookmarkCount);
+    values.put(VueConstants.DIRTY_FLAG, isDirty);
     mContext.getContentResolver().update(VueConstants.CONTENT_URI, values,
         VueConstants.AISLE_Id + "=?", new String[] {aisleID});
   }
@@ -579,12 +580,20 @@ public class DataBaseManager {
   }
   
   
-  public ArrayList<AisleWindowContent> getAislesByUserId(String userId) {  
+  public ArrayList<AisleWindowContent> getAislesByUserId(String userId) {
     return getAisles(getAislesCursor(userId, VueConstants.USER_ID));
   }
   
   public ArrayList<AisleWindowContent> getAislesByCategory(String category) {
     return getAisles(getAislesCursor(category, VueConstants.CATEGORY));
+  }
+  
+  public ArrayList<AisleWindowContent> getAisleByAisleId(String aisleId) {
+    return getAisles(getAislesCursor(aisleId, VueConstants.AISLE_Id));
+  }
+  
+  public ArrayList<AisleWindowContent> getDirtyAisles(String dirtyFlag) {
+    return getAisles(getAislesCursor(dirtyFlag, VueConstants.DIRTY_FLAG));
   }
   
   private Cursor getAislesCursor(String searchString, String searchBy) {
@@ -593,10 +602,13 @@ public class DataBaseManager {
         new String[] {searchString}, VueConstants.ID + " ASC");
     return aislesCursor;
   }
+
   public void resetDbParams(){
 	 mStartPosition = 0;
 	  mEndPosition = 0;
   }
+  
+
   
   private void changeDeleteFlag() {
 	  ContentValues values = new ContentValues();

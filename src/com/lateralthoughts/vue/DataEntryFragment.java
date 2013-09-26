@@ -1,7 +1,12 @@
 package com.lateralthoughts.vue;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -16,6 +21,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -1632,6 +1638,10 @@ public class DataEntryFragment extends Fragment {
 			image.setOwnerUserId(Long.valueOf(ownerUserId));
 			FlurryAgent.logEvent("Create_Aisle");
 			aisle.setAisleImage(image);
+			if(mFindAtText != null && mFindAtText.getText().toString() != null){
+				Log.i("pathsaving", "pathsaving in sdcard1");
+			writeToSdcard(mFindAtText.getText().toString());
+			}
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
@@ -1811,5 +1821,30 @@ public class DataEntryFragment extends Fragment {
 				sourceUrl, getActivity(), false);
 		getImagesTask.execute();
 	}
-
+	  private  void writeToSdcard(String message) {
+		    
+		    String path = Environment.getExternalStorageDirectory().toString();
+		    File dir = new File(path + "/vueLogs/");
+		    if(!dir.isDirectory()) {
+		      dir.mkdir();
+		    }
+		    File file = new File(dir, "/" + Calendar.getInstance().get(Calendar.DATE) + ".txt");
+		      try {
+		        file.createNewFile();
+		      } catch (IOException e) {
+		    	  Log.i("pathsaving", "pathsaving in sdcard2 error");
+		        e.printStackTrace();
+		      }
+		      
+		      try {
+		        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+		        out.write("\n"+message+"\n");
+		        out.flush();
+		        out.close();
+		        Log.i("pathsaving", "pathsaving in sdcard2 success");
+		      } catch (IOException e) {
+		    	  Log.i("pathsaving", "pathsaving in sdcard3 error");
+		        e.printStackTrace();
+		      }
+		  }
 }

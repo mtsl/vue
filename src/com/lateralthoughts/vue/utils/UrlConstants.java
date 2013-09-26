@@ -29,5 +29,9 @@ public class UrlConstants {
 			+ "api/getaisleswithmatchingfacebookORGPlus/";
 	public static final String CREATE_BOOKMARK_RESTURL = SERVER_BASE_URL
 	    + "api/aislebookmarksaveorupdate";
+	
+	public static final String GET_BOOKMARK_Aisles = SERVER_BASE_URL
+		    + "api/aislebookmarksgetall";
+	
 
 }
