@@ -75,7 +75,6 @@ public class LoginWarningMessage {
 						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mContext)
 								.getSupportFragmentManager().findFragmentById(
 										R.id.create_aisles_view_fragment);
-						fragment.storeMetaAisleDataIntoLocalStorage();
 						VueUser storedVueUser = null;
 						try {
 							storedVueUser = Utils.readUserObjectFromFile(
@@ -88,6 +87,7 @@ public class LoginWarningMessage {
 								&& storedVueUser.getVueId() != null) {
 							if (VueConnectivityManager
 									.isNetworkConnected(mContext)) {
+								fragment.storeMetaAisleDataIntoLocalStorage();
 								fragment.addAisleToServer(storedVueUser.getVueId());
 							} else {
 								Toast.makeText(

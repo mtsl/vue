@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -29,6 +30,7 @@ import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueContentGateway;
+import com.lateralthoughts.vue.VueLandingAislesFragment;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
@@ -72,6 +74,7 @@ public class NetworkHandler {
 		if (VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance())
 				.isMoreDataAvailable()) {
+
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 			/*
@@ -111,7 +114,6 @@ public class NetworkHandler {
 					.setMoreDataAVailable(true);
 			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 					mTrendingAislesParser, loadMore);
-			 
 
 		} else {
 			Log.i("loading from db", "loading from db ***###");
@@ -142,8 +144,10 @@ public class NetworkHandler {
 		AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
 	}
 
-	public void requestForAddImage(boolean fromDetailsScreenFlag, VueImage image, ImageAddedCallback callback) {
-		AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag, image, callback);
+	public void requestForAddImage(boolean fromDetailsScreenFlag,
+			VueImage image, ImageAddedCallback callback) {
+		AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag,
+				image, callback);
 	}
 
 	// get aisles related to search keyword
