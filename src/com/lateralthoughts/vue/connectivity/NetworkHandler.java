@@ -419,7 +419,8 @@ public class NetworkHandler {
             String responseMessage = EntityUtils.toString(response.getEntity());
             Log.i("bookmarked aisle", "bookmarked aisle 3 response: "
                 + responseMessage);
-            bookmarkedAisles =  new Parser().
+            if(responseMessage != null)
+            bookmarkedAisles =  new Parser().parseBookmarkedAisles(responseMessage);
           }
         } catch (Exception e) {
           Log.i("bookmarked aisle", "bookmarked aisle 3 error: ");
@@ -430,10 +431,21 @@ public class NetworkHandler {
     }).start();
 
   }
-
+  public void addBookmarked(String aisleId){
+    if(aisleId != null)
+    bookmarkedAisles.add(aisleId);
+  }
   public boolean isAisleBookmarked(String aisleId) {
+    Log.i("bookmarked aisle", "bookmarked my bookmarks id enter in method: "+aisleId);
     if(bookmarkedAisles.size() < 1){
+      Log.i("bookmarked aisle", "bookmarked my bookmarks size is zero: " );
       return false;
+    }
+    for(String id: bookmarkedAisles){
+      Log.i("bookmarked aisle", "bookmarked my bookmarks id: "+id);
+      if(aisleId.equalsIgnoreCase(id)){
+        Log.i("bookmarked aisle", "bookmarked my bookmarks id matched: "+id);
+      }
     }
      boolean isAisleBookmared = false;
     for(String id: bookmarkedAisles){

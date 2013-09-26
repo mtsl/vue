@@ -117,6 +117,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 		if (getItem(mCurrentAislePosition) != null) {
 			mBookmarksCount = getItem(mCurrentAislePosition)
 					.getmAisleBookmarksCount();
+			 Log.i("bookmarked aisle", "bookmarked count in window1: "+mBookmarksCount);
 			VueApplication.getInstance().setClickedWindowCount(
 					getItem(mCurrentAislePosition).getImageList().size());
 
@@ -165,7 +166,16 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			mShowingList = getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList;
 			mLikes = getItem(mCurrentAislePosition).getImageList().get(0).mLikesCount;
 		boolean isBookmarked =	VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().isAisleBookmarked(getItem(mCurrentAislePosition).getAisleId());
+		 Log.i("bookmarked aisle", "bookmarked aisle  detailsview adapter ailseId: "+getItem(mCurrentAislePosition).getAisleId());
+		if(isBookmarked){
+	     Log.i("bookmarked aisle", "bookmarked aisle  detailsview adapter isBookmarked: "+isBookmarked);
 		getItem(mCurrentAislePosition).setWindowBookmarkIndicator(isBookmarked);
+	   } else {
+	     Log.i("bookmarked aisle", "bookmarked aisle  detailsview adapter isBookmarked: "+isBookmarked);
+	   }
+		  mBookmarksCount = getItem(mCurrentAislePosition)
+              .getmAisleBookmarksCount();
+       Log.i("bookmarked aisle", "bookmarked count in window2: "+mBookmarksCount);
 			new Handler().postDelayed(new Runnable() {
 
 				@Override
@@ -375,6 +385,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 						R.anim.bounce);
 				mViewHolder.vueWindowBookmarkImg.startAnimation(rotate);
 			}
+			
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
 			mViewHolder.addCommentlay.setVisibility(View.GONE);
@@ -444,6 +455,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 				mIsBookImageClciked = true;
 				if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
 					FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
+					if(mBookmarksCount != 0)
 					mBookmarksCount--;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 							mBookmarksCount);

@@ -239,6 +239,7 @@ public class Parser {
 	}
 
 	public ArrayList<String> parseBookmarkedAisles(String response) {
+	  Log.i("bookmarked aisle", "bookmarked aisle: "+response);
 		ArrayList<String> aisleIdList = new ArrayList<String>();
 		try {
 			JSONArray jsonArray = new JSONArray(response);
@@ -250,6 +251,12 @@ public class Parser {
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
+		}
+		if(aisleIdList != null && aisleIdList.size() > 0){
+		 Log.i("bookmarked aisle", "bookmarked aisle: "+aisleIdList.size());
+		} else {
+		  Log.i("bookmarked aisle", "bookmarked aisle not found: " );
+
 		}
 		return aisleIdList;
 	}
