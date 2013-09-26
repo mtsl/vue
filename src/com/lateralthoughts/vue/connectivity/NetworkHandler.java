@@ -419,6 +419,7 @@ public class NetworkHandler {
             String responseMessage = EntityUtils.toString(response.getEntity());
             Log.i("bookmarked aisle", "bookmarked aisle 3 response: "
                 + responseMessage);
+            bookmarkedAisles =  new Parser().
           }
         } catch (Exception e) {
           Log.i("bookmarked aisle", "bookmarked aisle 3 error: ");
@@ -431,6 +432,9 @@ public class NetworkHandler {
   }
 
   public boolean isAisleBookmarked(String aisleId) {
+    if(bookmarkedAisles.size() < 1){
+      return false;
+    }
      boolean isAisleBookmared = false;
     for(String id: bookmarkedAisles){
       if(aisleId.equalsIgnoreCase(id)){
