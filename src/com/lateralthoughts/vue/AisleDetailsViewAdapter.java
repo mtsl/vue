@@ -115,8 +115,12 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 						+ getItem(mCurrentAislePosition)
 								.getBestHeightForWindow());
 		if (getItem(mCurrentAislePosition) != null) {
-			mBookmarksCount = getItem(mCurrentAislePosition)
-					.getmAisleBookmarksCount();
+			
+			mBookmarksCount = getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount;
+			Log.i("bookmarkscount", "bookmarkscount: "+mBookmarksCount);
+			
+			 getItem(mCurrentAislePosition).setmAisleBookmarksCount(mBookmarksCount);
+					 
 			VueApplication.getInstance().setClickedWindowCount(
 					getItem(mCurrentAislePosition).getImageList().size());
 
@@ -445,6 +449,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 					mBookmarksCount--;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 							mBookmarksCount);
+				  getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
+					 
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							false);
 					handleBookmark(false, getItem(mCurrentAislePosition).getAisleId());
@@ -453,6 +459,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 					mBookmarksCount++;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 							mBookmarksCount);
+					 getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							true);
 					handleBookmark(true, getItem(mCurrentAislePosition).getAisleId());
