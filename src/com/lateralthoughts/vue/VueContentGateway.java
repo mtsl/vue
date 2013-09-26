@@ -75,6 +75,7 @@ public class VueContentGateway {
 		if (!isConnection) {
 			Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_LONG)
 					.show();
+			VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
 			Log.e(TAG, "network connection No");
 			return status;
 		} else if (isConnection) {
@@ -105,29 +106,24 @@ public class VueContentGateway {
 					Log.e("VueNetworkError",
 							"Vue encountered network operations error. Error = "
 									+ error.networkResponse);
+ 
+							VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
+					 
 				}
 			};
 			JsonArrayRequest vueRequest = new JsonArrayRequest(requestUrl,
-					listener, errorListener)/*
-											 * {
-											 * 
-											 * @Override public Map<String,
-											 * String> getHeaders() throws
-											 * AuthFailureError{ HashMap<String,
-											 * String> headersMap = new
-											 * HashMap<String, String>();
-											 * headersMap.put("Accept-Encoding",
-											 * "gzip");
-											 * headersMap.put("Content-Type"
-											 * ,"application/json"); return
-											 * headersMap; } }
-											 */;
-	 
-			
-			
-			VueApplication.getInstance().getRequestQueue().add(vueRequest);
- 
-		}
+					listener, errorListener) {
+
+        /*@Override
+        public Map<String, String> getHeaders() throws AuthFailureError {
+          HashMap<String, String> headersMap = new HashMap<String, String>();
+          headersMap.put("Accept-Encoding", "gzip");
+          headersMap.put("Content-Type", "application/json");
+          return headersMap;
+        }*/
+      };
+       VueApplication.getInstance().getRequestQueue().add(vueRequest);
+      }
 		return status;
 	}
 	private void initializeHttpFields() {

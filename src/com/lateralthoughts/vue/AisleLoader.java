@@ -33,7 +33,7 @@ public class AisleLoader {
 	private static AisleLoader sAisleLoaderInstance = null;
 	private ScaledImageViewFactory mViewFactory = null;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
-	int mTopBottomMargin = 16;
+	int mTopBottomMargin = 0;
 
 	// private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String,
 	// ViewHolder>();

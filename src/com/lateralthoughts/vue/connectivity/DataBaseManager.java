@@ -589,7 +589,7 @@ public class DataBaseManager {
   }
   
   public ArrayList<AisleWindowContent> getAisleByAisleId(String aisleId) {
-    return getAisles(getAislesCursor(aisleId, VueConstants.AISLE_ID));
+    return getAisles(getAislesCursor(aisleId, VueConstants.AISLE_Id));
   }
   
   public ArrayList<AisleWindowContent> getDirtyAisles(String dirtyFlag) {

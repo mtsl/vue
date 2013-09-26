@@ -77,7 +77,14 @@ public class TrendingAislesContentParser extends ResultReceiver {
 								VueApplication.getInstance())
 								.setMoreDataAVailable(false); // TODO
 					}*/
-
+					VueLandingPageActivity.landingPageActivity.runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
+							
+						}
+					});
 					if (refreshListFlag) {
 						VueLandingPageActivity.landingPageActivity
 								.runOnUiThread(new Runnable() {

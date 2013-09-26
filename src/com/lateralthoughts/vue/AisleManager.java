@@ -28,11 +28,14 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
@@ -65,6 +68,7 @@ public class AisleManager {
   private static AisleManager sAisleManager = null;
 
   private VueUser mCurrentUser;
+  private AisleBookmark createdAisleBookmark;
   private boolean isDirty;
   private AisleManager() {
     mObjectMapper = new ObjectMapper();
@@ -150,7 +154,7 @@ public class AisleManager {
       }
     }).start();
 
-
+    //TODO: change to vally.
     /*
      * if (null == aisle) throw new RuntimeException(
      * "Can't create Aisle without a non null aisle object"); String
@@ -384,96 +388,80 @@ public class AisleManager {
 
   }
   
-  private AisleBookmark createdAisleBookmark = null;
-  public void aisleBookmarkUpdate(AisleBookmark aisleBookmark, String userId)
-      throws ClientProtocolException, IOException {
-    
+  /**
+   * send the book mark information to server and writes the response to db if
+   * network is not available then it will write the book mark info to db and
+   * automatically sync to the server later, when ever the network is available.
+   * 
+   * @param AisleBookmark aisleBookmark
+   * @param String userId
+   * @throws ClientProtocolException, IOException
+   * */
+  public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark, String userId)
+ throws ClientProtocolException, IOException {
+
     isDirty = true;
-    final ArrayList<AisleWindowContent> windowList = DataBaseManager.getInstance(
-        VueApplication.getInstance()).getAisleByAisleId(
-        Long.toString(aisleBookmark.getAisleId()));
+    final ArrayList<AisleWindowContent> windowList = DataBaseManager
+        .getInstance(VueApplication.getInstance()).getAisleByAisleId(
+            Long.toString(aisleBookmark.getAisleId()));
     if (VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
       VueUser storedVueUser = null;
       try {
-        storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
+        storedVueUser = Utils.readUserObjectFromFile(
+            VueApplication.getInstance(),
             VueConstants.VUE_APP_USEROBJECT__FILENAME);
-      } catch(Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
-      JsonArrayRequest vueRequest = new JsonArrayRequest(UrlConstants.CREATE_BOOKMARK_RESTURL
-          + storedVueUser.getVueId(), new Response.Listener<JSONArray>() {
+      ObjectMapper mapper = new ObjectMapper();
+      String bookmarkAisleAsString = mapper.writeValueAsString(aisleBookmark);
+      Response.Listener listener = new Response.Listener<String>() {
 
-      @Override
-      public void onResponse(JSONArray response) {
-        isDirty = false;
-        if (null != response) {
-            ObjectMapper mapper = new ObjectMapper();
+        @Override
+        public void onResponse(String jsonArray) {
+          if (jsonArray != null) {
             try {
-              createdAisleBookmark = (new ObjectMapper()).readValue(
-                  response.toString(), AisleBookmark.class);
+              createdAisleBookmark = (new ObjectMapper()).readValue(jsonArray,
+                  AisleBookmark.class);
+              updateBookmartToDb(windowList, createdAisleBookmark, isDirty);
             } catch (Exception e) {
               e.printStackTrace();
             }
-            updateBookmartToDb(windowList, createdAisleBookmark);
-           /* Bundle responseBundle = new Bundle();
-              responseBundle.putString("Search result",
-                      response.toString());
-              responseBundle.putBoolean("loadMore", false);
-              mTrendingAislesParser.send(1, responseBundle);*/
           }
-          Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
-      }
-  }, new Response.ErrorListener() {
-
-      @Override
-      public void onErrorResponse(VolleyError error) {
-        isDirty = true;
-          Log.e("Search Resopnse", "SURU Search Error Resopnse : "
-                  + error.getMessage());
-          updateBookmartToDb(windowList, createdAisleBookmark);
-      }
-  });
-   
-
-  VueApplication.getInstance().getRequestQueue().add(vueRequest);    
-    
-      
-      
-     /* URL url = new URL(UrlConstants.CREATE_BOOKMARK_RESTURL + "/" + userId);
-
-      ObjectMapper mapper = new ObjectMapper();
-      HttpPut httpPut = new HttpPut(url.toString());
-      StringEntity entity = new StringEntity(
-          mapper.writeValueAsString(aisleBookmark));
-      System.out.println("AisleBookmark create request: "
-          + mapper.writeValueAsString(aisleBookmark));
-      entity.setContentType("application/json;charset=UTF-8");
-      entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
-          "application/json;charset=UTF-8"));
-      httpPut.setEntity(entity);
-
-      DefaultHttpClient httpClient = new DefaultHttpClient();
-      HttpResponse response = httpClient.execute(httpPut);
-      if (response.getEntity() != null
-          && response.getStatusLine().getStatusCode() == 200) {
-        String responseMessage = EntityUtils.toString(response.getEntity());
-        System.out.println("Response: " + responseMessage);
-        if (responseMessage.length() > 0) {
-          Log.e("Bookmark", "aisle bookmarked responce: " + responseMessage);
-          createdAisleBookmark = (new ObjectMapper()).readValue(
-              responseMessage, AisleBookmark.class);
         }
-        isDirty = false;
-      } else {
-        isDirty = true;
-      }*/
+
+      };
+
+      Response.ErrorListener errorListener = new ErrorListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+          isDirty = true;
+          Log.e("Search Resopnse",
+              "SURU Search Error Resopnse : " + error.getMessage());
+        }
+
+      };
+      BookmarkPutRequest request = new BookmarkPutRequest(
+          bookmarkAisleAsString, listener, errorListener,
+          UrlConstants.CREATE_BOOKMARK_RESTURL + "/" + storedVueUser.getVueId());
+      VueApplication.getInstance().getRequestQueue().add(request);
     } else {
-      updateBookmartToDb(windowList, createdAisleBookmark);
+      updateBookmartToDb(windowList, aisleBookmark, isDirty);
     }
-    
+
   }
   
-  private void updateBookmartToDb(ArrayList<AisleWindowContent> windowList, AisleBookmark aisleBookmark) {
+  /**
+   * update book mark info to db if the aisle is bookmarked by the user
+   * 
+   * @param ArrayList<AisleWindowContent> windowList
+   * @param AisleBookmark aisleBookmark
+   * @param boolean isDirty if bookmark info is writing to db when there is no
+   *        network then it should be true so that when network comes app should
+   *        identify that this info needs to send to the server.
+   * */
+  public void updateBookmartToDb(ArrayList<AisleWindowContent> windowList, AisleBookmark aisleBookmark, boolean isDirty) {
     for (AisleWindowContent aisleWindow : windowList) {
       AisleContext context = aisleWindow.getAisleContext();
       DataBaseManager.getInstance(VueApplication.getInstance())
@@ -482,4 +470,5 @@ public class AisleManager {
               Long.toString(aisleBookmark.getAisleId()), isDirty);
     }
   }
+  
 }
