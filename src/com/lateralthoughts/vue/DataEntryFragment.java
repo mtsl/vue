@@ -2,9 +2,6 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -49,11 +46,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
-
- 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
- 
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
@@ -879,56 +873,67 @@ public class DataEntryFragment extends Fragment {
 							Log.e("Land", "vueland 10");
 							VueUser storedVueUser = null;
 							try {
-								storedVueUser = Utils.readUserObjectFromFile(getActivity(),
-										VueConstants.VUE_APP_USEROBJECT__FILENAME);
+								storedVueUser = Utils
+										.readUserObjectFromFile(
+												getActivity(),
+												VueConstants.VUE_APP_USEROBJECT__FILENAME);
 							} catch (Exception e2) {
 								e2.printStackTrace();
 							}
-							if (storedVueUser != null && storedVueUser.getVueId() != null) {
+							if (storedVueUser != null
+									&& storedVueUser.getVueId() != null) {
 								if (VueConnectivityManager
 										.isNetworkConnected(getActivity())) {
-									addImageToAisleToServer(storedVueUser.getVueId(),
-											VueApplication.getInstance().getClickedWindowID(), true);
+									Intent intent = new Intent();
+									Bundle b = new Bundle();
+									b.putString(
+											VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+											mImagePath);
+									if (!mIsUserAisleFlag) {
+										b.putString(
+												VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
+												mLookingForBigText.getText()
+														.toString());
+										b.putString(
+												VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
+												mOccassionBigText.getText()
+														.toString());
+										b.putString(
+												VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
+												mCategoryText.getText()
+														.toString());
+										b.putString(
+												VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
+												mSaySomethingAboutAisle
+														.getText().toString());
+									}
+									b.putString(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
+											mFindAtText.getText().toString());
+									intent.putExtras(b);
+									Log.e("Land", "vueland 11");
+									getActivity()
+											.setResult(
+													VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT,
+													intent);
+									getActivity().finish();
+									addImageToAisleToServer(
+											storedVueUser.getVueId(),
+											VueApplication.getInstance()
+													.getClickedWindowID(), true);
 								} else {
-									Toast.makeText(getActivity(),
-											getResources().getString(R.string.no_network),
+									Toast.makeText(
+											getActivity(),
+											getResources().getString(
+													R.string.no_network),
 											Toast.LENGTH_LONG).show();
 								}
 							} else {
 								// TODO By Krishna
-								// In User Creation response Listener we need to call
+								// In User Creation response Listener we need to
+								// call
 								// CreateAisle
 							}
-							Intent intent = new Intent();
-							Bundle b = new Bundle();
-							b.putString(
-									VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
-									mImagePath);
-							if (!mIsUserAisleFlag) {
-								b.putString(
-										VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
-										mLookingForBigText.getText().toString());
-								b.putString(
-										VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
-										mOccassionBigText.getText().toString());
-								b.putString(
-										VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
-										mCategoryText.getText().toString());
-								b.putString(
-										VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
-										mSaySomethingAboutAisle.getText()
-												.toString());
-							}
-							b.putString(
-									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
-									mFindAtText.getText().toString());
-							intent.putExtras(b);
-							Log.e("Land", "vueland 11");
-							getActivity()
-									.setResult(
-											VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT,
-											intent);
-							getActivity().finish();
 						} else {
 							showAlertForMandotoryFields(getResources()
 									.getString(
@@ -1387,15 +1392,14 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	private void addImageToAisle() {
-		/*if (checkLimitForLoginDialog()) {
+		if (checkLimitForLoginDialog()) {
 			if (mLoginWarningMessage == null) {
 				mLoginWarningMessage = new LoginWarningMessage(getActivity());
 			}
 			mLoginWarningMessage.showLoginWarningMessageDialog(
 					"You need to Login with the app to add image to aisle.",
 					true, true, 0, null, null);
-		} else {*/
-			storeMetaAisleDataIntoLocalStorage();
+		} else {
 			if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
 				VueUser storedVueUser = null;
 				try {
@@ -1407,8 +1411,10 @@ public class DataEntryFragment extends Fragment {
 				if (storedVueUser != null && storedVueUser.getVueId() != null) {
 					if (VueConnectivityManager
 							.isNetworkConnected(getActivity())) {
+						storeMetaAisleDataIntoLocalStorage();
 						addImageToAisleToServer(storedVueUser.getVueId(),
-								Utils.getDataentryScreenAisleId(getActivity()), false);
+								Utils.getDataentryScreenAisleId(getActivity()),
+								false);
 					} else {
 						Toast.makeText(getActivity(),
 								getResources().getString(R.string.no_network),
@@ -1420,16 +1426,17 @@ public class DataEntryFragment extends Fragment {
 					// CreateAisle
 				}
 			} else {
-				Toast.makeText(getActivity(), "This Aisle is not created.",
+				Toast.makeText(getActivity(),
+						"This Aisle is not uploaded to server.",
 						Toast.LENGTH_LONG).show();
 			}
-		//}
+		}
 	}
 
 	private void addAisle() {
 		// Updating Aisles Count in Preference to show LoginDialog.
 		if (!Utils.getDataentryEditAisleFlag(getActivity())) {
-			/*if (checkLimitForLoginDialog()) {
+			if (checkLimitForLoginDialog()) {
 				if (mLoginWarningMessage == null) {
 					mLoginWarningMessage = new LoginWarningMessage(
 							getActivity());
@@ -1437,7 +1444,7 @@ public class DataEntryFragment extends Fragment {
 				mLoginWarningMessage.showLoginWarningMessageDialog(
 						"You need to Login with the app to create aisle.",
 						true, true, 0, null, null);
-			} else {*/
+			} else {
 				SharedPreferences sharedPreferencesObj = getActivity()
 						.getSharedPreferences(
 								VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -1445,7 +1452,7 @@ public class DataEntryFragment extends Fragment {
 						VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
 				boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
 						VueConstants.VUE_LOGIN, false);
-				/*if (createdAisleCount == 4 && !isUserLoggedInFlag) {
+				if (createdAisleCount == 4 && !isUserLoggedInFlag) {
 					if (mLoginWarningMessage == null) {
 						mLoginWarningMessage = new LoginWarningMessage(
 								getActivity());
@@ -1454,14 +1461,13 @@ public class DataEntryFragment extends Fragment {
 							.showLoginWarningMessageDialog(
 									"You have 1 aisle left to create aisle without logging in.",
 									false, true, 4, null, null);
-				} else {*/
+				} else {
 					SharedPreferences.Editor editor = sharedPreferencesObj
 							.edit();
 					editor.putInt(
 							VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE,
 							createdAisleCount + 1);
 					editor.commit();
-					storeMetaAisleDataIntoLocalStorage();
 					VueUser storedVueUser = null;
 					try {
 						storedVueUser = Utils.readUserObjectFromFile(
@@ -1474,6 +1480,7 @@ public class DataEntryFragment extends Fragment {
 							&& storedVueUser.getVueId() != null) {
 						if (VueConnectivityManager
 								.isNetworkConnected(getActivity())) {
+							storeMetaAisleDataIntoLocalStorage();
 							addAisleToServer(storedVueUser.getVueId());
 						} else {
 							Toast.makeText(
@@ -1487,8 +1494,8 @@ public class DataEntryFragment extends Fragment {
 						// In User Creation response Listener we need to call
 						// CreateAisle
 					}
-				//}
-			//}
+				}
+			}
 		} else {
 			storeMetaAisleDataIntoLocalStorage();
 		}
@@ -1666,7 +1673,8 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	public void addImageToAisleToServer(String ownerUserId, String ownerAisleId, boolean fromDetailsScreenFlag) {
+	public void addImageToAisleToServer(String ownerUserId,
+			String ownerAisleId, boolean fromDetailsScreenFlag) {
 		String imageSourceUrl = mFindAtText.getText().toString();
 		if (imageSourceUrl != null && imageSourceUrl.trim().length() > 0) {
 			VueImage image = new VueImage();
@@ -1698,12 +1706,14 @@ public class DataEntryFragment extends Fragment {
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
-					.requestForAddImage(fromDetailsScreenFlag, image, new ImageAddedCallback() {
-						@Override
-						public void onImageAdded(AisleImageDetails imageDetails) {
-							// //
-						}
-					});
+					.requestForAddImage(fromDetailsScreenFlag, image,
+							new ImageAddedCallback() {
+								@Override
+								public void onImageAdded(
+										AisleImageDetails imageDetails) {
+									// //
+								}
+							});
 		} else {
 			Toast.makeText(
 					getActivity(),
