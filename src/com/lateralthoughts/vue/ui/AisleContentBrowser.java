@@ -368,6 +368,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	public interface AisleContentClickListener{
 	    public void onAisleClicked(String id,int count,int currentPosition);
 		public boolean isFlingCalled();
+		public boolean isIdelState();
 	}
 	public interface DetailClickListener{
 	    public void onImageClicked();

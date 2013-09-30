@@ -69,11 +69,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private int mTotalPageCount;
 	private int mListCount = 5;
 	private int mTotalScreenCount;
-	private VueContentGateway mVueContentGateway;
+	//private VueContentGateway mVueContentGateway;
 	AisleDetailsViewAdapter mAisleDetailsAdapter;
 	AisleDetailsSwipeListner mSwipeListener;
 	private ActionBarHandler mHandleActionBar;
-	private ScaledImageViewFactory mImageViewFactory;
+	//private ScaledImageViewFactory mImageViewFactory;
 	private ImageView mDetailsAddImageToAisle = null, mAddVueAisle;
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
@@ -99,10 +99,10 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		// adding test comment
 		// without much ado lets get started with retrieving the trending aisles
 		// list
-		mVueContentGateway = VueContentGateway.getInstance();
+		/*mVueContentGateway = VueContentGateway.getInstance();
 		if (null == mVueContentGateway) {
 			// assert here: this is a no go!
-		}
+		}*/
 		mSwipeListener = new AisleDetailsSwipeListner();
 		mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
 				mSwipeListener, mListCount, null);

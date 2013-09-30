@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -49,7 +50,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
 
-public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
+public class AisleDetailsViewAdapter extends  BaseAdapter {
 	private Context mContext;
 	public static final String TAG = "AisleDetailsViewAdapter";
 	public static final int IMG_LIKE_STATUS = 1;
@@ -82,7 +83,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	boolean mImageRefresh = true;
 	private boolean mSetPosition;
 	private static final int mWaitTime = 1000;
-
+	VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
 
@@ -90,7 +91,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	public AisleDetailsViewAdapter(Context c,
 			AisleDetailSwipeListener swipeListner, int listCount,
 			ArrayList<AisleWindowContent> content) {
-		super(c, content);
+		/*super(c, content);*/
+	       mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(VueApplication.getInstance());
+	        
 		mSetPosition = true;
 		mContext = c;
 
@@ -116,17 +119,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 								.getBestHeightForWindow());
 		if (getItem(mCurrentAislePosition) != null) {
 			mBookmarksCount = getItem(mCurrentAislePosition).getmAisleBookmarksCount();
-			
-			Log.i("bookmarkscount", "bookmarkscount: "+mBookmarksCount);
-			Log.i("bookmarkscount", "bookmarkscount aisle id: "+getItem(mCurrentAislePosition).getAisleContext().mAisleId);
-			Log.i("bookmarkscount", "bookmarkscount: aisle looking for "+getItem(mCurrentAislePosition).getAisleContext().mLookingForItem);
-			Log.i("bookmarkscount", "bookmarkscount: occassion "+getItem(mCurrentAislePosition).getAisleContext().mOccasion);
-		 
-			
-			
 			 getItem(mCurrentAislePosition).setmAisleBookmarksCount(mBookmarksCount);
-					 
- 
 			VueApplication.getInstance().setClickedWindowCount(
 					getItem(mCurrentAislePosition).getImageList().size());
 
@@ -978,4 +971,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         }
 
   }
+
+@Override
+public long getItemId(int position) {
+	// TODO Auto-generated method stub
+	return position;
+}
 }
