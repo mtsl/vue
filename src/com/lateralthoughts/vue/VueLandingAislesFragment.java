@@ -89,6 +89,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	public void notifyAdapters() {
 		if (mLeftColumnAdapter != null) {
+			 
 			mLeftColumnAdapter.notifyDataSetChanged();
 			Log.i("listadapter", "adapter leftadapter notified");
 		}
@@ -226,7 +227,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 					int top = h - hi + view.getChildAt(0).getTop();
 					mRightColumnView.setSelectionFromTop(
-							mRightColumnView.getFirstVisiblePosition(), top+100);
+							mRightColumnView.getFirstVisiblePosition(), top);
 				} else if (view.equals(mRightColumnView)) {
 					mRightViewsHeights[view.getFirstVisiblePosition()] = view
 							.getChildAt(0).getHeight();
@@ -245,7 +246,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 					int top = h - hi + view.getChildAt(0).getTop();
 					mLeftColumnView.setSelectionFromTop(
-							mLeftColumnView.getFirstVisiblePosition(), top+100);
+							mLeftColumnView.getFirstVisiblePosition(), top);
 				}
 			}
 			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
