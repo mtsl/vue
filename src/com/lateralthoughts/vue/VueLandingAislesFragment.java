@@ -44,11 +44,13 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	private ListView mLeftColumnView;
 	private ListView mRightColumnView;
+
 	private AisleClickListener mAisleClickListener;
 	// private MultiColumnListView mView;
 	int[] mLeftViewsHeights;
 	int[] mRightViewsHeights;
 	public boolean mIsFlingCalled;
+	private boolean mListFooterFlag = false;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -109,7 +111,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-		
+
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
 		mRightColumnView.setAdapter(mRightColumnAdapter);
 
@@ -243,11 +245,12 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					mLeftColumnView.setSelectionFromTop(
 							mLeftColumnView.getFirstVisiblePosition(), top);
 				}
-
 			}
 			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
 
-			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest && lan.getScreenName().equalsIgnoreCase(getResources().getString(R.string.trending))) {
+			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
+					&& lan.getScreenName().equalsIgnoreCase(
+							getResources().getString(R.string.trending))) {
 				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
 				int totalItems = 0;
 				if (view.equals(mLeftColumnView)) {
@@ -257,9 +260,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				}
 				if ((totalItems - lastVisiblePosition) < 5) {
 					Log.i("offeset and limit", "offeset00000: load moredata");
-					VueTrendingAislesDataModel.getInstance(mContext).getNetworkHandler().requestMoreAisle(true);
+					VueTrendingAislesDataModel.getInstance(mContext)
+							.getNetworkHandler().requestMoreAisle(true);
 				}
-			}else {
+			} else {
 				Log.i("offeset and limit", "offeset00000: load moredata else ");
 			}
 
@@ -272,19 +276,18 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			Map<String, String> articleParams = new HashMap<String, String>();
 			VueUser storedVueUser = null;
 			try {
-				storedVueUser = Utils.readUserObjectFromFile(
-						getActivity(),
+				storedVueUser = Utils.readUserObjectFromFile(getActivity(),
 						VueConstants.VUE_APP_USEROBJECT__FILENAME);
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
-			if(storedVueUser != null){
-			articleParams.put("User_Id", storedVueUser.getVueId());
+			if (storedVueUser != null) {
+				articleParams.put("User_Id", storedVueUser.getVueId());
 			} else {
-				articleParams.put("User_Id","anonymous");
+				articleParams.put("User_Id", "anonymous");
 			}
 			FlurryAgent.logEvent("User_Select_Aisle", articleParams);
- 
+
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
 			Log.i("clickedwindow", "clickedwindow ID: " + id);
 			Intent intent = new Intent();
