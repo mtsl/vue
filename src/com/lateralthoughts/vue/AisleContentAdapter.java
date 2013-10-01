@@ -285,6 +285,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             Bitmap bitmap = null;
             if(contentBrowser.getmSourceName()!= null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             	 bitmap = getCachedBitmap(itemDetails.mImageUrl);
+            	 Log.i("detailscrop", "detailscrop -1");
+            	 if(bitmap != null)
+            	 Log.i("detailscrop", "detailscrop -1 bitmap Height : "+bitmap.getHeight()+" widht: "+bitmap.getWidth());
+            	 Log.i("detailscrop", "detailscrop -1 browserHeight : "+contentBrowser.getHeight()+" widht: "+contentBrowser.getWidth());
             } else {
               bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
                
@@ -293,14 +297,18 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             	 if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             		 Log.i("detailscrop", "detailscrop 0 browserHeight : "+contentBrowser.getHeight()+" widht: "+contentBrowser.getWidth());
             			mImageDimension = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
+            			FrameLayout.LayoutParams mShowpieceParams = new FrameLayout.LayoutParams(
+    							VueApplication.getInstance().getScreenWidth() ,
+    							bitmap.getHeight());
+                		contentBrowser .setLayoutParams(mShowpieceParams);
             			if(bitmap.getHeight() < mImageDimension.mImgHeight) {
             				 Log.i("detailscrop", "detailscrop resize agian");
             				   loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView);
             			}
             	 }
-            	 Log.i("imageviewsetted", "imageviewset  here "+bitmap.getHeight());
+            	 Log.i("detailscrop", "detailscrop 0");
             
-                    imageView.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bitmap);
                 	contentBrowser.addView(imageView);
                  
             }
@@ -313,9 +321,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             		Log.i("detailscrop", "detailscrop 2");
             		//int bestHeight = mWindowContent.getBestHeightForWindow();
             		int bestHeight = contentBrowser.getHeight();
-                	contentBrowser.addView(imageView);
             		 loadBitmap(itemDetails,bestHeight,contentBrowser, imageView);
-                       
+                           	contentBrowser.addView(imageView);
                            	Log.i("bestHeight", "bestHeight in adapter: "+bestHeight);
             	}
             }
@@ -349,7 +356,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         private int mBestHeightForImage;
         AisleContentBrowser aisleContentBrowser ;
         private int mAVailableWidth,mAvailabeHeight;
-        AisleContentBrowser flipperTest;
 
         public BitmapWorkerTask( AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
@@ -359,54 +365,44 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             aisleContentBrowser = vFlipper;
             mAVailableWidth = itemDetails.mAvailableWidth;
             mAvailabeHeight = itemDetails.mAvailableHeight;
-            flipperTest = vFlipper;
         }
 
         // Decode image in background.
         @Override
-        protected Bitmap doInBackground(String... params) {
-            url = params[0];
-            Bitmap bmp = null;            
-            //we want to get the bitmap and also add it into the memory cache
-            //bmp = getBitmap(url, true, mBestHeightForImage); 
-     /*       if(!(aisleContentBrowser.getmSourceName() != null && aisleContentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG))) {*/
-            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeightForImage,VueApplication.getInstance().getVueDetailsCardWidth());
-           /* } else {
-            	 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeightForImage,VueApplication.getInstance().getVueDetailsCardWidth());
-            }*/
-			if (bmp != null) {
-				if (aisleContentBrowser.getmSourceName() != null
-						&& aisleContentBrowser.getmSourceName()
-								.equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
+		protected Bitmap doInBackground(String... params) {
+			url = params[0];
+			Bitmap bmp = null;
+			// we want to get the bitmap and also add it into the memory cache
+			// bmp = getBitmap(url, true, mBestHeightForImage);
+			if (aisleContentBrowser.getmSourceName() != null
+					&& aisleContentBrowser.getmSourceName().equalsIgnoreCase(
+							AisleDetailsViewAdapter.TAG)) {
+
+				bmp = mBitmapLoaderUtils
+						.getBitmap(url, params[1], true, mBestHeightForImage,
+								VueApplication.getInstance()
+										.getVueDetailsCardWidth(),
+								Utils.DETAILS_SCREEN);
+				if (bmp != null) {
 					mImageDimension = Utils.getScalledImage(bmp,
 							mAVailableWidth, mAvailabeHeight);
 					mAvailabeHeight = mImageDimension.mImgHeight;
-					if (bmp.getHeight() < mImageDimension.mImgHeight) {
-
-						if (!(aisleContentBrowser.getmSourceName() != null && aisleContentBrowser
-								.getmSourceName().equalsIgnoreCase(
-										AisleDetailsViewAdapter.TAG))
-								&& bmp != null) {
-/*
-							bmp = mBitmapLoaderUtils.getBitmap(url, params[1],
-									true, mImageDimension.mImgHeight,
-									VueApplication.getInstance()
-											.getVueDetailsCardWidth() / 2);*/
-
-						} else {
-							bmp = mBitmapLoaderUtils.getBitmap(url, params[1],
-									true, mImageDimension.mImgHeight,
-									VueApplication.getInstance()
-											.getVueDetailsCardWidth());
-						}
-
-						mAvailabeHeight = bmp.getHeight();
-
+					if (bmp.getHeight() > mImageDimension.mImgHeight) {
+						bmp = mBitmapLoaderUtils.getBitmap(url, params[1],
+								true, mImageDimension.mImgHeight,
+								VueApplication.getInstance()
+										.getVueDetailsCardWidth(),
+								Utils.DETAILS_SCREEN);
 					}
-
 				}
+
+			} else {
+				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
+						mBestHeightForImage, VueApplication.getInstance()
+								.getVueDetailsCardWidth(),
+						Utils.TRENDING_SCREEN);
 			}
-			 Log.i("detailscrop", "detailscrop -1 bitmap Height bg: "+bmp.getHeight()+" widht: "+bmp.getWidth());
+
 			return bmp;
 		}
 
@@ -421,8 +417,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 				BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
 				if (this == bitmapWorkerTask) {
-					flipperTest.invalidate();
-					 Log.i("imageviewsetted", "imageviewset  here1 "+bitmap.getHeight());
+					vFlipper.invalidate();
 					imageView.setImageBitmap(bitmap);
 				}
 			}

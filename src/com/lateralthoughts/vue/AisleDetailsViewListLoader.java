@@ -203,7 +203,7 @@ public class AisleDetailsViewListLoader {
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth());
+            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
             Log.i("window", "clickedwindow ID bitmap Height2 original: "+bmp.getHeight());
 			Log.i("window", "clickedwindow ID  required height2 original: "+mBestHeight);
             if(bmp != null) {
@@ -212,7 +212,7 @@ public class AisleDetailsViewListLoader {
            	 Log.i("imageSize", "imageSize mImageDimension Height: "+mImageDimension.mImgHeight);
            	mAvailableHeight = mImageDimension.mImgHeight;
             	 if(bmp.getHeight()> mImageDimension.mImgHeight) {
-            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mImageDimension.mImgHeight, VueApplication.getInstance().getVueDetailsCardWidth());
+            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mImageDimension.mImgHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
 				
             	      Log.i("window", "clickedwindow ID bitmap Height3 modified original: "+bmp.getHeight());
           			Log.i("window", "clickedwindow ID  required height3  modiried original: "+mImageDimension.mImgHeight);
