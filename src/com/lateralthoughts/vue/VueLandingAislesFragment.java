@@ -180,18 +180,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			} else if (scrollState == SCROLL_STATE_IDLE) {
 				mIsIdleState = true;
 				mIsFlingCalled = false;
-				Log.i("SCROLL_STATE_IDLE", "SCROLL_STATE_IDLE 1");
-				
 				// notify the adapters.
-			 
 				if (mIsFlingCalled == true) {
-					Log.i("flingcheck", "flingcheck  scrollstate idle");
 					mIsFlingCalled = false;
-					Log.i("flingcheck", "flingcheck  before notified adapter");
-					mLeftColumnAdapter.notifyDataSetChanged();
-					mRightColumnAdapter.notifyDataSetChanged();
-
-					Log.i("flingcheck", "flingcheck  after notified adapter");
+					//mLeftColumnAdapter.notifyDataSetChanged();
+					//mRightColumnAdapter.notifyDataSetChanged();
 				}
 
 			} else if(scrollState == SCROLL_STATE_TOUCH_SCROLL){
@@ -199,7 +192,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			}
 			int first = view.getFirstVisiblePosition();
 			int count = view.getChildCount();
-
 			if (scrollState == SCROLL_STATE_IDLE
 					|| (first + count > mLeftColumnAdapter.getCount())
 					|| (first + count > mRightColumnAdapter.getCount())) {
@@ -266,7 +258,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				} else if (view.equals(mRightColumnView)) {
 					totalItems = mRightColumnAdapter.getCount();
 				}
-				if ((totalItems - lastVisiblePosition) < 5) {
+				if ((totalItems - lastVisiblePosition) < 10) {
 					Log.i("offeset and limit", "offeset00000: load moredata");
 					VueTrendingAislesDataModel.getInstance(mContext)
 							.getNetworkHandler().requestMoreAisle(true);

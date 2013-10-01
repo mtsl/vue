@@ -126,10 +126,11 @@ public class BitmapLoaderUtils {
             //final int REQUIRED_SIZE = mScreenWidth/2;
             int height=o.outHeight;
             int width = o.outWidth;
-  	      Log.i("window", "clickedwindow ID bitmap Height4 bestHeight: "+bestHeight);
+  	      Log.i("window", "clickedwindow ID bitmap Height4 bestHeight: "+bestHeight); 
 			Log.i("window", "clickedwindow ID original height: "+height);
  
-         // int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth()/2;
+          int reqWidth1 = VueApplication.getInstance().getVueDetailsCardWidth()/2;
+          Log.i("added url", "added url in  decodeFile: cardwidth "+reqWidth1 );
             int reqWidth = bestWidth;
             int scale=1;
             

@@ -188,12 +188,21 @@ public class AisleLoader {
 			Bitmap bitmap = mBitmapLoaderUtils
 					.getCachedBitmap(itemDetails.mCustomImageUrl);
 			int bestHeight = windowContent.getBestHeightForWindow();
+			                                             
+			 if(holder.uniqueContentId.equalsIgnoreCase("6339895714906112")){
+				 Log.i("missingimage", "missingimage: customImageUrl: "+itemDetails.mCustomImageUrl);
+				 Log.i("missingimage", "missingimage: mImageUrl: "+itemDetails.mImageUrl);
+				 if(bitmap != null){
+					 Log.i("missingimage", "missingimage: bitmapWidth: "+bitmap.getWidth()+" bitmapHeight: "+bitmap.getHeight());
+				 } else {
+					 Log.i("missingimage", "missingimage: bitmap is null");
+				 }
+			 }
 			if (bitmap != null) {
-				LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
+			/*	LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
 						VueApplication.getInstance().getScreenWidth() / 2,
 						bitmap.getHeight());
-		 
-				contentBrowser.setLayoutParams(mShowpieceParams2);
+				contentBrowser.setLayoutParams(mShowpieceParams2);*/
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
@@ -224,7 +233,7 @@ public class AisleLoader {
 		private final WeakReference<AisleContentBrowser> viewFlipperReference;
 		private String url = null;
 		private int mBestHeight;
-		private String mTempHeight;
+		 
 
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
 				ImageView imageView, int bestHeight,String temp) {
@@ -234,7 +243,7 @@ public class AisleLoader {
 			viewFlipperReference = new WeakReference<AisleContentBrowser>(
 					vFlipper);
 			mBestHeight = bestHeight;
-			mTempHeight = temp;
+			 
 		}
 
 		// Decode image in background.
@@ -246,9 +255,6 @@ public class AisleLoader {
 			Log.e("Profiling", "Profiling New doInBackground()");
 			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
 					mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2);
-			 if(mTempHeight.equalsIgnoreCase("5766466041282560")){ 
-				 Log.i("clickedwindow", "clickedwindow ID   downloaed bitmap height: " + bmp.getHeight());
-			 }
 			return bmp;
 		}
 
@@ -271,10 +277,10 @@ public class AisleLoader {
 						holder.profileThumbnail.setVisibility(View.VISIBLE);
 						holder.aisleDescriptor.setVisibility(View.VISIBLE);
 					}
-					LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
+			/*		LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
 							VueApplication.getInstance().getScreenWidth() / 2,
 							bitmap.getHeight());
-					holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+					holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);*/
 					imageView.setImageBitmap(bitmap);
 				}
 			}
