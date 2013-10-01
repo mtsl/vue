@@ -162,7 +162,7 @@ public class BitmapLoaderUtils {
             	//scaling factor becomes 1 even there is slight difference in sizes
             	//so to avoid croping in that cases in Detailsview screen
             	//compare sizes after scaling.
-            if(bitmap != null){
+         /*   if(bitmap != null){
             	 width = bitmap.getWidth();
                  height = bitmap.getHeight();
                  if(height > bestHeight){
@@ -170,7 +170,7 @@ public class BitmapLoaderUtils {
                 	 width = (int) tempWidth;
                 	 bitmap = getModifiedBitmap(bitmap,width,bestHeight);
                  }
-            }
+            }*/
             }
             
             

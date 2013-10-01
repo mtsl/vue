@@ -377,7 +377,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 			if (aisleContentBrowser.getmSourceName() != null
 					&& aisleContentBrowser.getmSourceName().equalsIgnoreCase(
 							AisleDetailsViewAdapter.TAG)) {
-				Log.i("SCREEN_CHECK", "SCREEN_CHECK: DETAILS");
+				 
 				bmp = mBitmapLoaderUtils
 						.getBitmap(url, params[1], true, mBestHeightForImage,
 								VueApplication.getInstance()
@@ -401,7 +401,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 						mBestHeightForImage, VueApplication.getInstance()
 								.getVueDetailsCardWidth(),
 						Utils.TRENDING_SCREEN);
-				Log.i("SCREEN_CHECK", "SCREEN_CHECK: TRENDING");
 			}
 
 			return bmp;
