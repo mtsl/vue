@@ -180,51 +180,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 							.findViewById(R.id.vue_list_fragment_itemTextview);
 					String s = textView.getText().toString();
 					FlurryAgent.logEvent(s);
-					if (s.equals(getString(R.string.sidemenu_option_My_Aisles))) {
-						VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
-						adapter.groups.remove(groupPosition);
-						ListOptionItem item = new ListOptionItem(
-								getString(R.string.sidemenu_option_Trending_Aisles),
-								R.drawable.profile, null);
-						adapter.groups.add(groupPosition, item);
-						adapter.notifyDataSetChanged();
-						VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
-						vueLandingPageActivity1.showCategory(s);
-						/*
-						 * VueTrendingAislesDataModel.getInstance(getActivity())
-						 * .clearAisles();
-						 * AisleWindowContentFactory.getInstance(getActivity())
-						 * .clearObjectsInUse();
-						 */
-
-						if (getActivity() instanceof SlidingFragmentActivity) {
-							SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-							activity.getSlidingMenu().toggle();
-							if (getActivity() instanceof VueLandingPageActivity) {
-								VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-								vueLandingPageActivity.mVueLandingActionbarScreenName
-										.setText(getString(R.string.sidemenu_option_My_Aisles));
-							}
-							if (getActivity() instanceof AisleDetailsViewActivity) {
-								startActivity(new Intent(
-										(AisleDetailsViewActivity) getActivity(),
-										VueLandingPageActivity.class));
-							} else if (getActivity() instanceof DataEntryActivity) {
-								startActivity(new Intent(
-										(DataEntryActivity) getActivity(),
-										VueLandingPageActivity.class));
-							}
-						}
-
-					/*	ArrayList<AisleWindowContent> aislesList = DataBaseManager
-								.getInstance(getActivity()).getAislesFromDB(
-										null);
-						Message msg = new Message();
-						msg.obj = aislesList;
-						VueTrendingAislesDataModel.getInstance(getActivity()).mHandler
-								.sendMessage(msg);*/
-					} else if (s
-							.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
+					if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
 						VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;
 						adapter.groups.remove(groupPosition);
 						ListOptionItem item = new ListOptionItem(
@@ -373,6 +329,57 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id) {
+			  
+			  //Added sidemenu_sub_option_My_Aisles functionality
+			  TextView textView = (TextView) v
+                  .findViewById(R.id.child_itemTextview);
+          String s = textView.getText().toString();
+			  if (s.equals(getString(R.string.sidemenu_sub_option_My_Aisles))) {
+                VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
+                adapter.groups.remove(groupPosition);
+                ListOptionItem item = new ListOptionItem(
+                        getString(R.string.sidemenu_option_Trending_Aisles),
+                        R.drawable.profile, null);
+                adapter.groups.add(groupPosition, item);
+                adapter.notifyDataSetChanged();
+                VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
+                vueLandingPageActivity1.showCategory(s);
+                /*
+                 * VueTrendingAislesDataModel.getInstance(getActivity())
+                 * .clearAisles();
+                 * AisleWindowContentFactory.getInstance(getActivity())
+                 * .clearObjectsInUse();
+                 */
+
+                if (getActivity() instanceof SlidingFragmentActivity) {
+                    SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+                    activity.getSlidingMenu().toggle();
+                    if (getActivity() instanceof VueLandingPageActivity) {
+                        VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+                        vueLandingPageActivity.mVueLandingActionbarScreenName
+                                .setText(getString(R.string.sidemenu_sub_option_My_Aisles));
+                    }
+                    if (getActivity() instanceof AisleDetailsViewActivity) {
+                        startActivity(new Intent(
+                                (AisleDetailsViewActivity) getActivity(),
+                                VueLandingPageActivity.class));
+                    } else if (getActivity() instanceof DataEntryActivity) {
+                        startActivity(new Intent(
+                                (DataEntryActivity) getActivity(),
+                                VueLandingPageActivity.class));
+                    }
+                }
+
+            /*  ArrayList<AisleWindowContent> aislesList = DataBaseManager
+                        .getInstance(getActivity()).getAislesFromDB(
+                                null);
+                Message msg = new Message();
+                msg.obj = aislesList;
+                VueTrendingAislesDataModel.getInstance(getActivity()).mHandler
+                        .sendMessage(msg);*/
+            }
+			  
+			  
 				if (VueLandingPageActivity.mOtherSourceImagePath == null) {
 					TextView textView = (TextView) v
 							.findViewById(R.id.child_itemTextview);
@@ -447,8 +454,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 	private List<ListOptionItem> getBezelMenuOptionItems() {
 		List<ListOptionItem> groups = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
-				getString(R.string.sidemenu_option_My_Aisles),
-				R.drawable.profile, null);
+				getString(R.string.sidemenu_option_Me),
+				R.drawable.profile, getMeChildren());
 		groups.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Categories),
@@ -542,6 +549,19 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		settingsChildren.add(item);
 		return settingsChildren;
 	}
+	
+	private List<ListOptionItem> getMeChildren() {
+	  List<ListOptionItem> meChildren = new ArrayList<VueListFragment.ListOptionItem>();
+	  ListOptionItem item = new ListOptionItem(getString(R.string.sidemenu_sub_option_My_Aisles), R.drawable.profile, null);
+	  meChildren.add(item);
+	  item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Interactions), R.drawable.profile, null);
+	  meChildren.add(item);
+	  item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Bookmarks), R.drawable.profile, null);
+	  meChildren.add(item);
+	  item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles), R.drawable.profile, null);
+	  meChildren.add(item);
+	  return meChildren;
+	}
 
 	/***/
 	private class ListOptionItem {
@@ -616,10 +636,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-			if (groups.get(groupPosition).tag.equals("Categories")
-					|| (groups.get(groupPosition).tag
-							.equals(getString(R.string.sidemenu_option_Invite_Friends)))
-					|| groups.get(groupPosition).tag.equals("Settings")) {
+      if (groups.get(groupPosition).tag.equals("Categories")
+          || (groups.get(groupPosition).tag
+              .equals(getString(R.string.sidemenu_option_Invite_Friends)))
+          || groups.get(groupPosition).tag.equals("Settings")
+          || groups.get(groupPosition).tag
+              .equals(getString(R.string.sidemenu_option_Me))) {
 				return groups.get(groupPosition).children.size();
 			}
 			return 0;

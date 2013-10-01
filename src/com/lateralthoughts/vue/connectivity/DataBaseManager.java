@@ -182,24 +182,24 @@ public class DataBaseManager {
     LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
     ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
     ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
-    //if (aislesIds == null) {
+    if (aislesIds == null) {
       selection = VueConstants.ID + " >? AND " + VueConstants.ID + " <=? ";
       String[] allAislesArgs = {String.format(FORMATE, mStartPosition),
           String.format(FORMATE, mEndPosition)};
       args = allAislesArgs;
       sortOrder = VueConstants.ID + " ASC";
-   /* }*/ /*else {
+    } else {
       String questionSymbols = "?";
       for (int i = 1; i < aislesIds.length; i++) {
         questionSymbols = questionSymbols + ",?";
       }
       selection = VueConstants.AISLE_Id + " IN (" + questionSymbols + ") ";
       args = aislesIds;
-    }*/
+    }
       Log.i("arrayList", "arrayList from db ***: "+selection);
      
     Cursor aislesCursor = mContext.getContentResolver().query(
-        VueConstants.CONTENT_URI, null, null, null, null);
+        VueConstants.CONTENT_URI, null, selection, args, null);
     Log.i("arrayList", "arrayList from db aislesCursor count ***: "+aislesCursor.getCount());
     
     if (aislesCursor.moveToFirst()) {
