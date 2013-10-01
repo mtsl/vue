@@ -78,6 +78,7 @@ public class Parser {
 				aisleContext = parseAisleData(jsonObject);
 				AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject
 						.getJSONObject("aisleImage"));
+
 				if (aisleImageDetails.mImageUrl != null
 						&& aisleImageDetails.mImageUrl.trim().length() > 0) {
 					arrayList.add(aisleImageDetails);
@@ -159,7 +160,9 @@ public class Parser {
 					JSONObject jsonObject = jsonArray.getJSONObject(i);
 					AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject);
 					if (aisleImageDetails.mImageUrl != null
-							&& aisleImageDetails.mImageUrl.trim().length() > 0) {
+							&& aisleImageDetails.mImageUrl.trim().length() > 0
+							&& aisleImageDetails.mAvailableHeight != 0
+							&& aisleImageDetails.mAvailableWidth != 0) {
 						imageList.add(aisleImageDetails);
 					}
 				}
@@ -187,6 +190,8 @@ public class Parser {
 								aisleContext.mAisleId);
 				aisleWindowContent.addAisleContent(aisleContext,
 						aisleImageDetailsList);
+				aisleWindowContent
+						.setmAisleBookmarksCount(aisleContext.mBookmarkCount);
 				aisleWindowContentList.add(aisleWindowContent);
 			}
 		}
@@ -239,7 +244,7 @@ public class Parser {
 	}
 
 	public ArrayList<String> parseBookmarkedAisles(String response) {
-	  Log.i("bookmarked aisle", "bookmarked aisle: "+response);
+		Log.i("bookmarked aisle", "bookmarked aisle: " + response);
 		ArrayList<String> aisleIdList = new ArrayList<String>();
 		try {
 			JSONArray jsonArray = new JSONArray(response);
@@ -252,10 +257,10 @@ public class Parser {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		if(aisleIdList != null && aisleIdList.size() > 0){
-		 Log.i("bookmarked aisle", "bookmarked aisle: "+aisleIdList.size());
+		if (aisleIdList != null && aisleIdList.size() > 0) {
+			Log.i("bookmarked aisle", "bookmarked aisle: " + aisleIdList.size());
 		} else {
-		  Log.i("bookmarked aisle", "bookmarked aisle not found: " );
+			Log.i("bookmarked aisle", "bookmarked aisle not found: ");
 
 		}
 		return aisleIdList;

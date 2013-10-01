@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -49,7 +50,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
 
-public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
+public class AisleDetailsViewAdapter extends  BaseAdapter {
 	private Context mContext;
 	public static final String TAG = "AisleDetailsViewAdapter";
 	public static final int IMG_LIKE_STATUS = 1;
@@ -82,7 +83,7 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	boolean mImageRefresh = true;
 	private boolean mSetPosition;
 	private static final int mWaitTime = 1000;
-
+	VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
 
@@ -90,7 +91,9 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 	public AisleDetailsViewAdapter(Context c,
 			AisleDetailSwipeListener swipeListner, int listCount,
 			ArrayList<AisleWindowContent> content) {
-		super(c, content);
+		/*super(c, content);*/
+	       mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(VueApplication.getInstance());
+	        
 		mSetPosition = true;
 		mContext = c;
 
@@ -115,9 +118,8 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 						+ getItem(mCurrentAislePosition)
 								.getBestHeightForWindow());
 		if (getItem(mCurrentAislePosition) != null) {
-			mBookmarksCount = getItem(mCurrentAislePosition)
-					.getmAisleBookmarksCount();
-			 Log.i("bookmarked aisle", "bookmarked count in window1: "+mBookmarksCount);
+			mBookmarksCount = getItem(mCurrentAislePosition).getmAisleBookmarksCount();
+			 getItem(mCurrentAislePosition).setmAisleBookmarksCount(mBookmarksCount);
 			VueApplication.getInstance().setClickedWindowCount(
 					getItem(mCurrentAislePosition).getImageList().size());
 
@@ -166,13 +168,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			mShowingList = getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList;
 			mLikes = getItem(mCurrentAislePosition).getImageList().get(0).mLikesCount;
 		boolean isBookmarked =	VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().isAisleBookmarked(getItem(mCurrentAislePosition).getAisleId());
-		 Log.i("bookmarked aisle", "bookmarked aisle  detailsview adapter ailseId: "+getItem(mCurrentAislePosition).getAisleId());
+		 
 		if(isBookmarked){
-	     Log.i("bookmarked aisle", "bookmarked aisle  detailsview adapter isBookmarked: "+isBookmarked);
 		getItem(mCurrentAislePosition).setWindowBookmarkIndicator(isBookmarked);
-	   } else {
-	     Log.i("bookmarked aisle", "bookmarked aisle  detailsview adapter isBookmarked: "+isBookmarked);
-	   }
+	   } 
 		  mBookmarksCount = getItem(mCurrentAislePosition)
               .getmAisleBookmarksCount();
        Log.i("bookmarked aisle", "bookmarked count in window2: "+mBookmarksCount);
@@ -453,23 +452,29 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
 			@Override
 			public void onClick(View v) {
 				mIsBookImageClciked = true;
+				boolean bookmarkStatus = false;
 				if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
 					FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
-					if(mBookmarksCount != 0)
+					if(mBookmarksCount > 0){
 					mBookmarksCount--;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 							mBookmarksCount);
+					}
+				 // getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
+					 
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
-							false);
-					handleBookmark(false, getItem(mCurrentAislePosition).getAisleId());
+							bookmarkStatus);
+					handleBookmark(bookmarkStatus, getItem(mCurrentAislePosition).getAisleId());
 				} else {
+					bookmarkStatus = true;
 					FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
 					mBookmarksCount++;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 							mBookmarksCount);
+					 //getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
-							true);
-					handleBookmark(true, getItem(mCurrentAislePosition).getAisleId());
+							bookmarkStatus);
+					handleBookmark(bookmarkStatus, getItem(mCurrentAislePosition).getAisleId());
 				}
 				sendDataToDb(mCurrentDispImageIndex, CHANGE_BOOKMARK);
 				notifyDataSetChanged();
@@ -966,4 +971,10 @@ public class AisleDetailsViewAdapter extends TrendingAislesGenericAdapter {
         }
 
   }
+
+@Override
+public long getItemId(int position) {
+	// TODO Auto-generated method stub
+	return position;
+}
 }

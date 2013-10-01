@@ -182,12 +182,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 					FlurryAgent.logEvent(s);
 					if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
 						VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;
-						adapter.groups.remove(groupPosition);
+						/*adapter.groups.remove(groupPosition);
 						ListOptionItem item = new ListOptionItem(
 								getString(R.string.sidemenu_option_My_Aisles),
 								R.drawable.profile, null);
 						adapter.groups.add(groupPosition, item);
-						adapter.notifyDataSetChanged();
+						adapter.notifyDataSetChanged();*/
 						
 			/*			 
 						VueTrendingAislesDataModel model = VueTrendingAislesDataModel
@@ -381,9 +381,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 			  
 			  
 				if (VueLandingPageActivity.mOtherSourceImagePath == null) {
-					TextView textView = (TextView) v
-							.findViewById(R.id.child_itemTextview);
-					String s = textView.getText().toString();
 					if (s.equals(getString(R.string.sidemenu_option_Profile))) {
 						FlurryAgent.logEvent("Settings_" + s);
 						getUserInfo();
@@ -454,8 +451,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 	private List<ListOptionItem> getBezelMenuOptionItems() {
 		List<ListOptionItem> groups = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
-				getString(R.string.sidemenu_option_Me),
-				R.drawable.profile, getMeChildren());
+				getString(R.string.sidemenu_option_Trending_Aisles),
+				R.drawable.profile, null);
+		item = new ListOptionItem(
+            getString(R.string.sidemenu_option_Me),
+            R.drawable.profile, getMeChildren());
 		groups.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Categories),

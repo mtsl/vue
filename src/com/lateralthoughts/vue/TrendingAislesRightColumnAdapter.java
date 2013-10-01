@@ -33,15 +33,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.util.Log;
 
 //java util imports
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 //internal imports
+import com.lateralthoughts.vue.TrendingAislesLeftColumnAdapter.BitmapWorkerTask;
+import com.lateralthoughts.vue.TrendingAislesLeftColumnAdapter.TestViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
+import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
 public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
@@ -57,6 +63,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     public static boolean mIsRightDataChanged = false;
     AisleContentClickListener listener;
     LinearLayout.LayoutParams mShowpieceParams,mShowpieceParamsDefault;
+    BitmapLoaderUtils mBitmapLoaderUtils;
     public TrendingAislesRightColumnAdapter(Context c, ArrayList<AisleWindowContent> content) {
         super(c,content);
         mContext = c;
@@ -66,6 +73,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     
     public TrendingAislesRightColumnAdapter(Context c, AisleContentClickListener listener, ArrayList<AisleWindowContent> content) {
         super(c, listener, content);
+        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
         mContext = c;
         mLoader = AisleLoader.getInstance(mContext);
         this.listener = listener;
@@ -90,7 +98,8 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     }
     
     // create a new ImageView for each item referenced by the Adapter
-    public View getView(int position, View convertView, ViewGroup parent) {     
+    public View getView(int position, View convertView, ViewGroup parent) {
+    		Log.i("SCROLL_STATE_IDLE", "SCROLL_STATE_IDLE 3 getview");
         ViewHolder holder;
         StringBuilder sb = new StringBuilder();
         Log.i("TrendingDataModel", "DataObserver for List Refresh:  Right getview ");
@@ -110,15 +119,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
             holder.aisleContext = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_context);
             holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
             convertView.setTag(holder);
-            mShowpieceParams = new LinearLayout.LayoutParams(
-    				VueApplication.getInstance().getScreenWidth()/2,
-    				 300);
-        
-            //holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
-            
-          mShowpieceParamsDefault = new LinearLayout.LayoutParams(
-    				 LayoutParams.MATCH_PARENT,
-    				 LayoutParams.MATCH_PARENT);
+          
             if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position2 = " + position);
         }
         //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
@@ -132,22 +133,6 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
         mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,listener);
-         /*   if(!listener.isFlingCalled()) {
-           	 mLoader.getAisleContentIntoView(holder, scrollIndex, position, false);
-           	 holder.aisleContentBrowser.setLayoutParams(mShowpieceParamsDefault);
-           	for(int i=0;i<holder.aisleContentBrowser.getChildCount();i++){
-    		    ((ScaleImageView)holder.aisleContentBrowser.getChildAt(i)).setVisibility(View.VISIBLE);
-    			 
-    		}
-           	 
-           } else {
-           	holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
-           	for(int i=0;i<holder.aisleContentBrowser.getChildCount();i++){
-    		    ((ScaleImageView)holder.aisleContentBrowser.getChildAt(i)).setVisibility(View.INVISIBLE);
-    			 
-    		}
-           	Log.i("fling", "fling dont set holder it is fling call");
-           }*/
         AisleContext context = holder.mWindowContent.getAisleContext();
 
         sb.append(context.mFirstName).append(" ").append(context.mLastName);
@@ -176,7 +161,8 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
      
         //holder.aisleContext.setText(contextBuilder.toString());
         return convertView;
-    }
+    	}
+    
 
     @Override
     public void onAisleDataUpdated(int newCount){
@@ -184,4 +170,90 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         notifyDataSetChanged();
     }
 
+	private int calculateActualPosition(int viewPosition) {
+		int actualPosition = 0;
+		if (0 != viewPosition)
+			actualPosition = (viewPosition * 2);
+
+		return actualPosition;
+	}
+
+ 
+	  static class TestViewHolder {
+	        TextView aisleOwnersName;
+	        TextView aisleContext;
+	        ImageView profileThumbnail;
+	        ImageView image;
+	        String uniqueContentId;
+	        LinearLayout aisleDescriptor;
+	        AisleWindowContent mWindowContent;
+	    }
+		class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+			private final WeakReference<ImageView> imageViewReference;
+			private String url = null;
+			private int mBestHeight;
+
+			public BitmapWorkerTask(
+					ImageView imageView, int bestHeight) {
+				// Use a WeakReference to ensure the ImageView can be garbage
+				// collected
+				imageViewReference = new WeakReference<ImageView>(imageView);
+		 
+				mBestHeight = bestHeight;
+			}
+
+			// Decode image in background.
+			@Override
+			protected Bitmap doInBackground(String... params) {
+				url = params[0];
+				Bitmap bmp = null;
+				// we want to get the bitmap and also add it into the memory cache
+				Log.e("Profiling", "Profiling New doInBackground()");
+				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
+						mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2);
+				return bmp;
+			}
+
+			// Once complete, see if ImageView is still around and set bitmap.
+			@Override
+			protected void onPostExecute(Bitmap bitmap) {
+
+				if (imageViewReference != null
+						&& bitmap != null) {
+					final ImageView imageView = imageViewReference.get();
+					imageView.setImageBitmap(bitmap);
+					// final AisleContentBrowser vFlipper =
+					// viewFlipperReference.get();
+		 
+				}
+			}
+		}
+		// utility functions to keep track of all the async tasks that we
+		// instantiate
+		private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+			if (imageView != null) {
+				Object task = ((ScaleImageView) imageView).getOpaqueWorkerObject();
+				if (task instanceof BitmapWorkerTask) {
+					BitmapWorkerTask workerTask = (BitmapWorkerTask) task;
+					return workerTask;
+				}
+			}
+			return null;
+		}
+
+		private static boolean cancelPotentialDownload(String url,
+				ImageView imageView) {
+			BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+
+			if (bitmapWorkerTask != null) {
+				String bitmapUrl = bitmapWorkerTask.url;
+				if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+					bitmapWorkerTask.cancel(true);
+				} else {
+					// The same URL is already being downloaded.
+					return false;
+				}
+			}
+			return true;
+		}
 }

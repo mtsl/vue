@@ -47,7 +47,6 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
     private final String TAG = "TrendingAislesGenericAdapter";
     
     protected AisleLoader mLoader;
-    
     private static final boolean DEBUG = false;
     
     public int firstX;
@@ -139,4 +138,6 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleD
         LinearLayout aisleDescriptor;
         AisleWindowContent mWindowContent;
     }
+    
+  
 }

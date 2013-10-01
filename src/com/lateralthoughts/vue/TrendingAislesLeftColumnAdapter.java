@@ -32,16 +32,22 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.util.Log;
 
 //java util imports
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 //internal imports
 import com.flurry.android.monolithic.sdk.impl.mw;
+import com.lateralthoughts.vue.AisleLoader.BitmapWorkerTask;
+import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
+import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
 public class TrendingAislesLeftColumnAdapter extends
 		TrendingAislesGenericAdapter {
@@ -55,6 +61,8 @@ public class TrendingAislesLeftColumnAdapter extends
 	public static boolean mIsLeftDataChanged = false;
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
+	BitmapLoaderUtils mBitmapLoaderUtils;
+	 
 
 	public TrendingAislesLeftColumnAdapter(Context c,
 			ArrayList<AisleWindowContent> content) {
@@ -70,6 +78,7 @@ public class TrendingAislesLeftColumnAdapter extends
 			AisleContentClickListener listener,
 			ArrayList<AisleWindowContent> content) {
 		super(c, listener, content);
+		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
 		mContext = c;
 		this.listener = listener;
 		if (DEBUG)
@@ -124,11 +133,7 @@ public class TrendingAislesLeftColumnAdapter extends
 					.findViewById(R.id.descriptor_aisle_context);
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			convertView.setTag(holder);
-			mShowpieceParams = new LinearLayout.LayoutParams(VueApplication
-					.getInstance().getScreenWidth() / 2, 250);
-			// holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
-			mShowpieceParamsDefault = new LinearLayout.LayoutParams(
-					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		 
 			if (DEBUG)
 				Log.e("Jaws2", "getView invoked for a new view at position1 = "
 						+ position);
@@ -149,32 +154,8 @@ public class TrendingAislesLeftColumnAdapter extends
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 
 		}
-
 		mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
 				false, listener);
-		/*
-		 * if(!listener.isFlingCalled()) {
-		 * mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
-		 * false);
-		 * holder.aisleContentBrowser.setLayoutParams(mShowpieceParamsDefault);
-		 * 
-		 * for(int i=0;i<holder.aisleContentBrowser.getChildCount();i++){
-		 * ((ScaleImageView
-		 * )holder.aisleContentBrowser.getChildAt(i)).setVisibility
-		 * (View.VISIBLE);
-		 * 
-		 * }
-		 * 
-		 * } else {
-		 * holder.aisleContentBrowser.setLayoutParams(mShowpieceParams); for(int
-		 * i=0;i<holder.aisleContentBrowser.getChildCount();i++){
-		 * ((ScaleImageView
-		 * )holder.aisleContentBrowser.getChildAt(i)).setVisibility
-		 * (View.INVISIBLE);
-		 * 
-		 * } Log.i("fling", "fling dont set holder it is fling call"); }
-		 */
-
 		AisleContext context = holder.mWindowContent.getAisleContext();
 
 		sb.append(context.mFirstName).append(" ").append(context.mLastName);
@@ -214,7 +195,8 @@ public class TrendingAislesLeftColumnAdapter extends
 		// ((ViewGroup)(convertView)).setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 		// convertView.setOnClickListener(mClickListener);
 		return convertView;
-	}
+		 
+	 }
 
 	private int calculateActualPosition(int viewPosition) {
 		int actualPosition = 0;
@@ -230,4 +212,81 @@ public class TrendingAislesLeftColumnAdapter extends
 				"DataObserver for List Refresh: Right List AisleUpdate Called ");
 		notifyDataSetChanged();
 	}
+	  static class TestViewHolder {
+	        TextView aisleOwnersName;
+	        TextView aisleContext;
+	        ImageView profileThumbnail;
+	        ImageView image;
+	        String uniqueContentId;
+	        LinearLayout aisleDescriptor;
+	        AisleWindowContent mWindowContent;
+	    }
+		class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+			private final WeakReference<ImageView> imageViewReference;
+			private String url = null;
+			private int mBestHeight;
+
+			public BitmapWorkerTask(
+					ImageView imageView, int bestHeight) {
+				// Use a WeakReference to ensure the ImageView can be garbage
+				// collected
+				imageViewReference = new WeakReference<ImageView>(imageView);
+		 
+				mBestHeight = bestHeight;
+			}
+
+			// Decode image in background.
+			@Override
+			protected Bitmap doInBackground(String... params) {
+				url = params[0];
+				Bitmap bmp = null;
+				// we want to get the bitmap and also add it into the memory cache
+				Log.e("Profiling", "Profiling New doInBackground()");
+				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
+						mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2);
+				return bmp;
+			}
+
+			// Once complete, see if ImageView is still around and set bitmap.
+			@Override
+			protected void onPostExecute(Bitmap bitmap) {
+
+				if (imageViewReference != null
+						&& bitmap != null) {
+					final ImageView imageView = imageViewReference.get();
+					imageView.setImageBitmap(bitmap);
+					// final AisleContentBrowser vFlipper =
+					// viewFlipperReference.get();
+		 
+				}
+			}
+		}
+		// utility functions to keep track of all the async tasks that we
+		// instantiate
+		private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+			if (imageView != null) {
+				Object task = ((ScaleImageView) imageView).getOpaqueWorkerObject();
+				if (task instanceof BitmapWorkerTask) {
+					BitmapWorkerTask workerTask = (BitmapWorkerTask) task;
+					return workerTask;
+				}
+			}
+			return null;
+		}
+
+		private static boolean cancelPotentialDownload(String url,
+				ImageView imageView) {
+			BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+
+			if (bitmapWorkerTask != null) {
+				String bitmapUrl = bitmapWorkerTask.url;
+				if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+					bitmapWorkerTask.cancel(true);
+				} else {
+					// The same URL is already being downloaded.
+					return false;
+				}
+			}
+			return true;
+		}
 }

@@ -33,7 +33,9 @@ public class AisleLoader {
 	private static AisleLoader sAisleLoaderInstance = null;
 	private ScaledImageViewFactory mViewFactory = null;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
-	int mTopBottomMargin = 0;
+	private String tempId;
+
+	AisleContentClickListener mAisleListener;
 
 	// private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String,
 	// ViewHolder>();
@@ -88,7 +90,8 @@ public class AisleLoader {
 		mViewFactory = ScaledImageViewFactory.getInstance(context);
 		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
 		mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
-		//mTopBottomMargin = (int) Utils.dipToPixels(VueApplication.getInstance(), mTopBottomMargin);
+		// mTopBottomMargin = (int)
+		// Utils.dipToPixels(VueApplication.getInstance(), mTopBottomMargin);
 		if (DEBUG)
 			Log.e(TAG, "Log something to remove warning");
 	}
@@ -119,13 +122,13 @@ public class AisleLoader {
 			AisleContentClickListener listener) {
 		Log.i("TrendingDataModel",
 				"DataObserver for List Refresh: getAisleContentView called "
-						+ holder.mWindowContent.getAisleId() + "???" + position + "????"
-						+ placeholderOnly);
+						+ holder.mWindowContent.getAisleId() + "???" + position
+						+ "????" + placeholderOnly);
 		ScaleImageView imageView = null;
 		ArrayList<AisleImageDetails> imageDetailsArr = null;
 		AisleImageDetails itemDetails = null;
 		AisleContentBrowser contentBrowser = null;
-
+		mAisleListener = listener;
 		if (null == holder)
 			return;
 		AisleWindowContent windowContent = holder.mWindowContent;
@@ -134,16 +137,14 @@ public class AisleLoader {
 			return;
 
 		// String currentContentId = holder.aisleContentBrowser.getUniqueId();
-		 
+
 		String desiredContentId = windowContent.getAisleId();
-		Log.i("clickedwindow", "clickedwi**id: " + desiredContentId);
 		contentBrowser = holder.aisleContentBrowser;
 		if (holder.uniqueContentId.equals(desiredContentId)) {
 			// we are looking at a visual object that has either not been used
 			// before or has to be filled with same content. Either way, no need
 			// to worry about cleaning up anything!
 			holder.aisleContentBrowser.setScrollIndex(scrollIndex);
-			Log.i("listadapter", "adapter leftadapter uniquecontentId equals");
 			return;
 		} else {
 
@@ -172,12 +173,13 @@ public class AisleLoader {
 			holder.uniqueContentId = desiredContentId;
 			// mContentViewMap.put(holder.uniqueContentId, holder);
 		}
-	
+
 		imageDetailsArr = windowContent.getImageList();
-	/*	LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
+		LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
 				VueApplication.getInstance().getScreenWidth() / 2,
 				windowContent.getBestHeightForWindow());
-		holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);*/
+		holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+		tempId = desiredContentId;
 
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			itemDetails = imageDetailsArr.get(0);
@@ -187,24 +189,29 @@ public class AisleLoader {
 					+ itemDetails.mCustomImageUrl);
 			Bitmap bitmap = mBitmapLoaderUtils
 					.getCachedBitmap(itemDetails.mCustomImageUrl);
-			if (DataEntryFragment.testId.equalsIgnoreCase(windowContent
-					.getAisleId())) {
-				Log.i("imageurl", "imageurl original   bitmap check:  "
-						+ bitmap);
-			}
-			if(VueApplication.getInstance().getClickedWindowID() != null) {
-				if(VueApplication.getInstance().getClickedWindowID().equalsIgnoreCase(desiredContentId)){
-					Log.i("clickedwindow", "clickedwindow ID matched: " + desiredContentId);
-					Log.i("clickedwindow", "clickedwindow ID  url: " + itemDetails.mImageUrl);
-				}
-				}
 			int bestHeight = windowContent.getBestHeightForWindow();
+
+			if (holder.uniqueContentId.equalsIgnoreCase("6339895714906112")) {
+				Log.i("missingimage", "missingimage: customImageUrl: "
+						+ itemDetails.mCustomImageUrl);
+				Log.i("missingimage", "missingimage: mImageUrl: "
+						+ itemDetails.mImageUrl);
+				if (bitmap != null) {
+					Log.i("missingimage",
+							"missingimage: bitmapWidth: " + bitmap.getWidth()
+									+ " bitmapHeight: " + bitmap.getHeight());
+				} else {
+					Log.i("missingimage", "missingimage: bitmap is null");
+				}
+			}
 			if (bitmap != null) {
-				LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
-						VueApplication.getInstance().getScreenWidth() / 2,
-						bitmap.getHeight()+mTopBottomMargin);
-		 
-				contentBrowser.setLayoutParams(mShowpieceParams2);
+				/*
+				 * LinearLayout.LayoutParams mShowpieceParams2 = new
+				 * LinearLayout.LayoutParams(
+				 * VueApplication.getInstance().getScreenWidth() / 2,
+				 * bitmap.getHeight());
+				 * contentBrowser.setLayoutParams(mShowpieceParams2);
+				 */
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
@@ -214,16 +221,17 @@ public class AisleLoader {
 				if (!placeholderOnly)
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
-							bestHeight);
+							bestHeight, tempId);
 			}
 		}
 	}
 
 	public void loadBitmap(String loc, String serverImageUrl,
-			AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
+			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
+			String tempid) {
 		if (cancelPotentialDownload(loc, imageView)) {
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight);
+					bestHeight, tempid);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
 			String[] urlsArray = { loc, serverImageUrl };
 			task.execute(urlsArray);
@@ -237,13 +245,14 @@ public class AisleLoader {
 		private int mBestHeight;
 
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
-				ImageView imageView, int bestHeight) {
+				ImageView imageView, int bestHeight, String temp) {
 			// Use a WeakReference to ensure the ImageView can be garbage
 			// collected
 			imageViewReference = new WeakReference<ImageView>(imageView);
 			viewFlipperReference = new WeakReference<AisleContentBrowser>(
 					vFlipper);
 			mBestHeight = bestHeight;
+
 		}
 
 		// Decode image in background.
@@ -254,34 +263,46 @@ public class AisleLoader {
 			// we want to get the bitmap and also add it into the memory cache
 			Log.e("Profiling", "Profiling New doInBackground()");
 			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
-					mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2);
+					mBestHeight, VueApplication.getInstance()
+							.getVueDetailsCardWidth() / 2);
+			Log.e("BitmapWorkerTask",
+					"BitmapWorkerTask image refreshing doin bg " + params[0]
+							+ "??? " + params[1] + "??? " + bmp);
 			return bmp;
 		}
 
 		// Once complete, see if ImageView is still around and set bitmap.
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
-
 			if (viewFlipperReference != null && imageViewReference != null
 					&& bitmap != null) {
 				final ImageView imageView = imageViewReference.get();
 				// final AisleContentBrowser vFlipper =
 				// viewFlipperReference.get();
 				BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
+				Log.e("BitmapWorkerTask",
+						"BitmapWorkerTask image refreshing onpost " + imageView);
 				if (this == bitmapWorkerTask) {
+					Log.e("BitmapWorkerTask",
+							"BitmapWorkerTask image refreshing onpost if");
 					ViewHolder holder = (ViewHolder) ((ScaleImageView) imageView)
 							.getContainerObject();
 					if (null != holder) {
+						Log.e("BitmapWorkerTask",
+								"BitmapWorkerTask image refreshing onpost if if ");
 						holder.aisleContext.setVisibility(View.VISIBLE);
 						holder.aisleOwnersName.setVisibility(View.VISIBLE);
 						holder.profileThumbnail.setVisibility(View.VISIBLE);
 						holder.aisleDescriptor.setVisibility(View.VISIBLE);
 					}
-					LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
-							VueApplication.getInstance().getScreenWidth() / 2,
-							bitmap.getHeight()+mTopBottomMargin);
-					holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+					/*
+					 * LinearLayout.LayoutParams mShowpieceParams = new
+					 * LinearLayout.LayoutParams(
+					 * VueApplication.getInstance().getScreenWidth() / 2,
+					 * bitmap.getHeight());
+					 * holder.aisleContentBrowser.setLayoutParams
+					 * (mShowpieceParams);
+					 */
 					imageView.setImageBitmap(bitmap);
 				}
 			}

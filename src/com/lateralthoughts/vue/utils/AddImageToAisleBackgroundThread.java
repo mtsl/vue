@@ -92,36 +92,39 @@ public class AddImageToAisleBackgroundThread implements Runnable,
           "application/json;charset=UTF-8"));
       httpPut.setEntity(entity);
 
-      DefaultHttpClient httpClient = new DefaultHttpClient();
-      HttpResponse response = httpClient.execute(httpPut);
-      if (response.getEntity() != null
-          && response.getStatusLine().getStatusCode() == 200) {
-        mNotification.setLatestEventInfo(VueApplication.getInstance(),
-            "Image is Added.", "Image is Added to Aisle.", contentIntent);
-        mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-        mNotificationManager.notify(1, mNotification);
-        mResponseMessage = EntityUtils.toString(response.getEntity());
-        System.out.println("AISLE CREATED Response: " + mResponseMessage);
-        Log.i("myailsedebug", "myailsedebug: recieved response*******:  "
-            + mResponseMessage);
-      } else {
-        mNotification.setLatestEventInfo(VueApplication.getInstance(),
-            "Uploading Failed.", "Image adding is failed.", contentIntent);
-        mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-        mNotificationManager.notify(1, mNotification);
-        Log.i("myailsedebug",
-            "myailsedebug: recieved response******* response code :  "
-                + response.getStatusLine().getStatusCode());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    VueLandingPageActivity.landingPageActivity.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        // ////////////////////////////////////////////////
-
-        if (null != mResponseMessage) {
+			DefaultHttpClient httpClient = new DefaultHttpClient();
+			HttpResponse response = httpClient.execute(httpPut);
+			if (response.getEntity() != null
+					&& response.getStatusLine().getStatusCode() == 200) {
+				mNotification.setLatestEventInfo(VueApplication.getInstance(),
+						"Image is Added.",
+						"Image is Added to Aisle.", contentIntent);
+				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+				mNotificationManager.notify(1, mNotification);
+				mResponseMessage = EntityUtils.toString(response.getEntity());
+				System.out.println("AISLE CREATED Response: "
+						+ mResponseMessage);
+				Log.i("myailsedebug",
+						"myailsedebug: recieved response*******:  "
+								+ mResponseMessage);
+			} else {
+				mNotification.setLatestEventInfo(VueApplication.getInstance(),
+						"Uploading Failed.",
+						"Image adding is failed.", contentIntent);
+				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+				mNotificationManager.notify(1, mNotification);
+				Log.i("myailsedebug",
+						"myailsedebug: recieved response******* response code :  "
+								+ response.getStatusLine().getStatusCode());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		VueLandingPageActivity.landingPageActivity
+				.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						if (null != mResponseMessage) {
 
           if (!mFromDetailsScreenFlag) {
             Log.i("addimagefuncitonality",
@@ -160,11 +163,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
               "Add Image To Aisle in server is failed.", Toast.LENGTH_LONG)
               .show();
 
-        }
-
-        // ///////////////////////////////////////////////////////////
-
-      }
-    });
-  }
+						}
+					}
+				});
+	}
 }
