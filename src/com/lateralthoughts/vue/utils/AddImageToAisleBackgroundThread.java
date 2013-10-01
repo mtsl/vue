@@ -64,35 +64,33 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void run() {
-		try {
-			Intent notificationIntent = new Intent();
-			PendingIntent contentIntent = PendingIntent.getActivity(
-					VueApplication.getInstance(), 0, notificationIntent, 0);
-			mNotification = new Notification(R.drawable.vue_notification_icon,
-					"Adding Image to Aisle to server",
-					System.currentTimeMillis());
-			mNotification.flags = mNotification.flags
-					| Notification.FLAG_ONGOING_EVENT;
-			mNotification.contentView = new RemoteViews(VueApplication
-					.getInstance().getPackageName(),
-					R.layout.upload_progress_bar);
-			mNotification.contentIntent = contentIntent;
-			mNotification.contentView.setProgressBar(R.id.progressBar1, 100, 0,
-					false);
-			mNotificationManager.notify(1, mNotification);
-			ObjectMapper mapper = new ObjectMapper();
-			URL url = new URL(UrlConstants.CREATE_IMAGE_RESTURL);
-			HttpPut httpPut = new HttpPut(url.toString());
-			CountingStringEntity entity = new CountingStringEntity(
-					mapper.writeValueAsString(mVueImage));
-			entity.setUploadListener(this);
-			System.out.println("Aisle create request: "
-					+ mapper.writeValueAsString(mVueImage));
-			entity.setContentType("application/json;charset=UTF-8");
-			entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
-					"application/json;charset=UTF-8"));
-			httpPut.setEntity(entity);
+  public void run() {
+    try {
+      Intent notificationIntent = new Intent();
+      PendingIntent contentIntent = PendingIntent.getActivity(
+          VueApplication.getInstance(), 0, notificationIntent, 0);
+      mNotification = new Notification(R.drawable.vue_notification_icon,
+          "Adding Image to Aisle to server", System.currentTimeMillis());
+      mNotification.flags = mNotification.flags
+          | Notification.FLAG_ONGOING_EVENT;
+      mNotification.contentView = new RemoteViews(VueApplication.getInstance()
+          .getPackageName(), R.layout.upload_progress_bar);
+      mNotification.contentIntent = contentIntent;
+      mNotification.contentView
+          .setProgressBar(R.id.progressBar1, 100, 0, false);
+      mNotificationManager.notify(1, mNotification);
+      ObjectMapper mapper = new ObjectMapper();
+      URL url = new URL(UrlConstants.CREATE_IMAGE_RESTURL);
+      HttpPut httpPut = new HttpPut(url.toString());
+      CountingStringEntity entity = new CountingStringEntity(
+          mapper.writeValueAsString(mVueImage));
+      entity.setUploadListener(this);
+      System.out.println("Aisle create request: "
+          + mapper.writeValueAsString(mVueImage));
+      entity.setContentType("application/json;charset=UTF-8");
+      entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+          "application/json;charset=UTF-8"));
+      httpPut.setEntity(entity);
 
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpResponse response = httpClient.execute(httpPut);
@@ -128,58 +126,42 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 					public void run() {
 						if (null != mResponseMessage) {
 
-							if (!mFromDetailsScreenFlag) {
-								Log.i("addimagefuncitonality",
-										"addimagefuncitonality jsonArray response: "
-												+ mFromDetailsScreenFlag);
-								try {
-									AisleImageDetails aisleImageDetails = new Parser()
-											.parseAisleImageData(new JSONObject(
-													mResponseMessage));
-									if (aisleImageDetails != null) {
-										AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
-												.getInstance(
-														VueApplication
-																.getInstance())
-												.getAisleAt(
-														aisleImageDetails.mOwnerAisleId);
-										aisleWindowContent
-												.prepareCustomUrl(aisleImageDetails);
-										Log.i("Ailse Manager",
-												"customimageurl add image to aisle: "
-														+ aisleImageDetails.mCustomImageUrl);
-										aisleWindowContent.getImageList().add(
-												aisleImageDetails);
-										VueTrendingAislesDataModel.getInstance(
-												VueApplication.getInstance())
-												.dataObserver();
-										String s[] = { aisleImageDetails.mOwnerAisleId };
-										ArrayList<AisleWindowContent> list = DataBaseManager
-												.getInstance(
-														VueApplication
-																.getInstance())
-												.getAislesFromDB(s);
-										if (list != null) {
-											list.get(0).getImageList()
-													.add(aisleImageDetails);
-											DataBaseManager
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.addTrentingAislesFromServerToDB(
-															VueApplication
-																	.getInstance(),
-															list);
-										}
-									}
-								} catch (JSONException e) {
-									e.printStackTrace();
-								}
-							}
-						} else {
-							Toast.makeText(VueApplication.getInstance(),
-									"Add Image To Aisle in server is failed.",
-									Toast.LENGTH_LONG).show();
+          if (!mFromDetailsScreenFlag) {
+            Log.i("addimagefuncitonality",
+                "addimagefuncitonality jsonArray response: "
+                    + mFromDetailsScreenFlag);
+            try {
+              AisleImageDetails aisleImageDetails = new Parser()
+                  .parseAisleImageData(new JSONObject(mResponseMessage));
+              if (aisleImageDetails != null) {
+                AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance()).getAisleAt(
+                        aisleImageDetails.mOwnerAisleId);
+                aisleWindowContent.prepareCustomUrl(aisleImageDetails);
+                Log.i("Ailse Manager", "customimageurl add image to aisle: "
+                    + aisleImageDetails.mCustomImageUrl);
+                aisleWindowContent.getImageList().add(aisleImageDetails);
+                VueTrendingAislesDataModel.getInstance(
+                    VueApplication.getInstance()).dataObserver();
+                String s[] = {aisleImageDetails.mOwnerAisleId};
+                ArrayList<AisleWindowContent> list = DataBaseManager
+                    .getInstance(VueApplication.getInstance()).getAislesFromDB(
+                        s);
+                if (list != null) {
+                  list.get(0).getImageList().add(aisleImageDetails);
+                  DataBaseManager.getInstance(VueApplication.getInstance())
+                      .addTrentingAislesFromServerToDB(
+                          VueApplication.getInstance(), list);
+                }
+              }
+            } catch (JSONException e) {
+              e.printStackTrace();
+            }
+          }
+        } else {
+          Toast.makeText(VueApplication.getInstance(),
+              "Add Image To Aisle in server is failed.", Toast.LENGTH_LONG)
+              .show();
 
 						}
 					}

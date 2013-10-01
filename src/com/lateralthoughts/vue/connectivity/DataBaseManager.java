@@ -199,7 +199,7 @@ public class DataBaseManager {
       Log.i("arrayList", "arrayList from db ***: "+selection);
      
     Cursor aislesCursor = mContext.getContentResolver().query(
-        VueConstants.CONTENT_URI, null, null, null, null);
+        VueConstants.CONTENT_URI, null, selection, args, null);
     Log.i("arrayList", "arrayList from db aislesCursor count ***: "+aislesCursor.getCount());
     
     if (aislesCursor.moveToFirst()) {

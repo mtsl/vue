@@ -285,7 +285,7 @@ public class NetworkHandler {
             if (VueLandingPageActivity.landingPageActivity != null
                 && (VueLandingPageActivity.mVueLandingActionbarScreenName
                     .getText().toString().equals(VueApplication.getInstance()
-                    .getString(R.string.sidemenu_option_My_Aisles)))) {
+                    .getString(R.string.sidemenu_sub_option_My_Aisles)))) {
               VueLandingPageActivity.landingPageActivity
                   .runOnUiThread(new Runnable() {
                     @Override
