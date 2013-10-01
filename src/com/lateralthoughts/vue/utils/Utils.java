@@ -42,6 +42,8 @@ public class Utils {
 	public static final int LARGE_TEXT_SIZE = 22;
 	public static final int MEDIUM_TEXT_SIZE = 18;
 	public static final int SMALL_TEXT_SIZE = 14;
+	public static final String DETAILS_SCREEN = "details_screen";
+	public static final String TRENDING_SCREEN = "trending_screen";
 	public static final String FLURRY_APP_KEY = "6938R8DC7R5HZWF976TJ";
 
 	public static void CopyStream(InputStream is, OutputStream os) {

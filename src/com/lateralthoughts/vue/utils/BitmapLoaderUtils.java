@@ -62,13 +62,13 @@ public class BitmapLoaderUtils {
      * just want to have the bitmap. This is a utility function and is public because it is to 
      * be shared by other components in the internal implementation.   
      */
-    public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight,int bestWidth) 
+    public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight,int bestWidth,String source) 
     {
     	 Log.i("added url", "added url  getBitmap "+url);
         File f = mFileCache.getFile(url);
         Log.i("added url", "added url  getBitmap "+f);
         //from SD cache
-        Bitmap b = decodeFile(f, bestHeight,bestWidth);
+        Bitmap b = decodeFile(f, bestHeight,bestWidth,source);
         if(b != null){
           
             if(cacheBitmap)
@@ -94,7 +94,7 @@ public class BitmapLoaderUtils {
             OutputStream os = new FileOutputStream(f);
             Utils.CopyStream(is, os);
             os.close();
-            bitmap = decodeFile(f, bestHeight,bestWidth);
+            bitmap = decodeFile(f, bestHeight,bestWidth,source);
             if(cacheBitmap) 
             	mAisleImagesCache.putBitmap(url, bitmap);
             return bitmap;
@@ -108,7 +108,7 @@ public class BitmapLoaderUtils {
     }
 
     //decodes image and scales it to reduce memory consumption
-    public Bitmap decodeFile(File f, int bestHeight,int bestWidth){
+    public Bitmap decodeFile(File f, int bestHeight,int bestWidth,String source){
         Log.i("added url", "added url in  decodeFile: bestheight is "+bestHeight );
    
         try {
@@ -129,8 +129,8 @@ public class BitmapLoaderUtils {
   	      Log.i("window", "clickedwindow ID bitmap Height4 bestHeight: "+bestHeight); 
 			Log.i("window", "clickedwindow ID original height: "+height);
  
-          int reqWidth1 = VueApplication.getInstance().getVueDetailsCardWidth()/2;
-          Log.i("added url", "added url in  decodeFile: cardwidth "+reqWidth1 );
+      /*    int reqWidth1 = VueApplication.getInstance().getVueDetailsCardWidth()/2;
+          Log.i("added url", "added url in  decodeFile: cardwidth "+reqWidth1 );*/
             int reqWidth = bestWidth;
             int scale=1;
             
@@ -157,8 +157,12 @@ public class BitmapLoaderUtils {
             Log.i("window", "clickedwindow ID  new bitmap height1 : "+bitmap.getHeight());
       			Log.i("window", "clickedwindow ID new bitmap widht1: "+bitmap.getWidth());
             stream2.close();
-            
-            if(bitmap != null){
+            if(source.equalsIgnoreCase(Utils.DETAILS_SCREEN)){
+            	//scaling factor considers only integers may be some times 
+            	//scaling factor becomes 1 even there is slight difference in sizes
+            	//so to avoid croping in that cases in Detailsview screen
+            	//compare sizes after scaling.
+         /*   if(bitmap != null){
             	 width = bitmap.getWidth();
                  height = bitmap.getHeight();
                  if(height > bestHeight){
@@ -166,6 +170,7 @@ public class BitmapLoaderUtils {
                 	 width = (int) tempWidth;
                 	 bitmap = getModifiedBitmap(bitmap,width,bestHeight);
                  }
+            }*/
             }
             
             

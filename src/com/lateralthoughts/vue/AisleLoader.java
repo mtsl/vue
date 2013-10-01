@@ -205,13 +205,12 @@ public class AisleLoader {
 				}
 			}
 			if (bitmap != null) {
-				/*
-				 * LinearLayout.LayoutParams mShowpieceParams2 = new
-				 * LinearLayout.LayoutParams(
-				 * VueApplication.getInstance().getScreenWidth() / 2,
-				 * bitmap.getHeight());
-				 * contentBrowser.setLayoutParams(mShowpieceParams2);
-				 */
+ 
+				LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
+						VueApplication.getInstance().getScreenWidth() / 2,
+						bitmap.getHeight());
+				contentBrowser.setLayoutParams(mShowpieceParams2);
+ 
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
@@ -263,11 +262,9 @@ public class AisleLoader {
 			// we want to get the bitmap and also add it into the memory cache
 			Log.e("Profiling", "Profiling New doInBackground()");
 			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
-					mBestHeight, VueApplication.getInstance()
-							.getVueDetailsCardWidth() / 2);
-			Log.e("BitmapWorkerTask",
-					"BitmapWorkerTask image refreshing doin bg " + params[0]
-							+ "??? " + params[1] + "??? " + bmp);
+ 
+					mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2,Utils.TRENDING_SCREEN);
+ 
 			return bmp;
 		}
 
@@ -295,14 +292,11 @@ public class AisleLoader {
 						holder.profileThumbnail.setVisibility(View.VISIBLE);
 						holder.aisleDescriptor.setVisibility(View.VISIBLE);
 					}
-					/*
-					 * LinearLayout.LayoutParams mShowpieceParams = new
-					 * LinearLayout.LayoutParams(
-					 * VueApplication.getInstance().getScreenWidth() / 2,
-					 * bitmap.getHeight());
-					 * holder.aisleContentBrowser.setLayoutParams
-					 * (mShowpieceParams);
-					 */
+					LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
+							VueApplication.getInstance().getScreenWidth() / 2,
+							bitmap.getHeight());
+					holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+ 
 					imageView.setImageBitmap(bitmap);
 				}
 			}

@@ -24,28 +24,19 @@
 
 package com.lateralthoughts.vue;
 
+import java.util.ArrayList;
+
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.util.Log;
+import android.widget.TextView;
 
-//java util imports
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-
-//internal imports
-import com.lateralthoughts.vue.TrendingAislesLeftColumnAdapter.BitmapWorkerTask;
-import com.lateralthoughts.vue.TrendingAislesLeftColumnAdapter.TestViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
-import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
@@ -177,83 +168,4 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
 
 		return actualPosition;
 	}
-
- 
-	  static class TestViewHolder {
-	        TextView aisleOwnersName;
-	        TextView aisleContext;
-	        ImageView profileThumbnail;
-	        ImageView image;
-	        String uniqueContentId;
-	        LinearLayout aisleDescriptor;
-	        AisleWindowContent mWindowContent;
-	    }
-		class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
-			private final WeakReference<ImageView> imageViewReference;
-			private String url = null;
-			private int mBestHeight;
-
-			public BitmapWorkerTask(
-					ImageView imageView, int bestHeight) {
-				// Use a WeakReference to ensure the ImageView can be garbage
-				// collected
-				imageViewReference = new WeakReference<ImageView>(imageView);
-		 
-				mBestHeight = bestHeight;
-			}
-
-			// Decode image in background.
-			@Override
-			protected Bitmap doInBackground(String... params) {
-				url = params[0];
-				Bitmap bmp = null;
-				// we want to get the bitmap and also add it into the memory cache
-				Log.e("Profiling", "Profiling New doInBackground()");
-				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
-						mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2);
-				return bmp;
-			}
-
-			// Once complete, see if ImageView is still around and set bitmap.
-			@Override
-			protected void onPostExecute(Bitmap bitmap) {
-
-				if (imageViewReference != null
-						&& bitmap != null) {
-					final ImageView imageView = imageViewReference.get();
-					imageView.setImageBitmap(bitmap);
-					// final AisleContentBrowser vFlipper =
-					// viewFlipperReference.get();
-		 
-				}
-			}
-		}
-		// utility functions to keep track of all the async tasks that we
-		// instantiate
-		private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
-			if (imageView != null) {
-				Object task = ((ScaleImageView) imageView).getOpaqueWorkerObject();
-				if (task instanceof BitmapWorkerTask) {
-					BitmapWorkerTask workerTask = (BitmapWorkerTask) task;
-					return workerTask;
-				}
-			}
-			return null;
-		}
-
-		private static boolean cancelPotentialDownload(String url,
-				ImageView imageView) {
-			BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
-			if (bitmapWorkerTask != null) {
-				String bitmapUrl = bitmapWorkerTask.url;
-				if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
-					bitmapWorkerTask.cancel(true);
-				} else {
-					// The same URL is already being downloaded.
-					return false;
-				}
-			}
-			return true;
-		}
 }
