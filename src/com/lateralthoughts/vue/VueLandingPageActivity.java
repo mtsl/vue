@@ -516,7 +516,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		mVueLandingActionbarScreenName.setText(catName);
 		boolean loadMore = false;
 		boolean fromServer = true;
-		if(catName.equalsIgnoreCase(getString(R.string.sidemenu_option_My_Aisles))){
+		if(catName.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))){
 			if(isCategoryExistInDb){
 				fromServer = true;
 			} else {
@@ -559,7 +559,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		if(screenName.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))){
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 			.getNetworkHandler().reqestByCategory(screenName, new ProgresStatus(), fromServer, loadMore);
-		} else if(screenName.equalsIgnoreCase(getString(R.string.sidemenu_option_My_Aisles))){
+		} else if(screenName.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))){
 			Log.i("myaisledbcheck", "myaisledbcheck  when back pressed aisle are fetching from db");
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 			.getNetworkHandler().requestAislesByUser(fromServer,new ProgresStatus());

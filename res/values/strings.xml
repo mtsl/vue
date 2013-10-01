@@ -91,7 +91,7 @@
     <string name="create_aisle_screen_title">Create Aisle</string>
     <string name="hint_search">Search</string>
     <string name="sidemenu_option_Trending_Aisles">Trending</string>
-    <string name="sidemenu_option_My_Aisles">My Aisles</string>
+   <string name="sidemenu_option_Me">Me</string>
     <string name="sidemenu_option_Categories">Categories</string>
     <string name="sidemeun_option_Settings">Settings</string>
     <string name="sidemenu_option_Profile">Profile</string>
@@ -110,6 +110,10 @@
     <string name="sidemenu_sub_option_Facebook">Facebook</string>
     <string name="sidemenu_sub_option_Twitter">Twitter</string>
     <string name="sidemenu_sub_option_Googleplus">Google+</string>
+    <string name="sidemenu_sub_option_My_Aisles">My Aisles</string>
+    <string name="sidemenu_sub_option_Interactions">Interactions</string>
+    <string name="sidemenu_sub_option_Bookmarks">Bookmarks</string>
+    <string name="sidemenu_sub_option_Recently_Viewed_Aisles">Recently viewed aisles</string>
     <string name="done">Done</string>
     <string name="about_Vue">About Vue</string>
     <string name="sharing_mesg">Sharing....</string>

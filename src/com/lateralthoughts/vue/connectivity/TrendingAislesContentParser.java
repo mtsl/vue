@@ -61,7 +61,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
 									.equals(VueApplication
 											.getInstance()
 											.getString(
-													R.string.sidemenu_option_My_Aisles)))) {
+													R.string.sidemenu_sub_option_My_Aisles)))) {
 						if (VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag) {
 							VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
 							if (resultData.getInt("offset") == 0) {
