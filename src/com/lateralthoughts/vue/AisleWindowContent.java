@@ -84,20 +84,6 @@ public class AisleWindowContent {
 		}
 		mAisleId = context.mAisleId;
 		mContext = context;
-		if (mContext.mOccasion != null) {
-			if (mContext.mOccasion.trim().equalsIgnoreCase("hubby")
-					|| mContext.mOccasion.trim().equalsIgnoreCase("vintage cars")) {
-				for (int j = 0; j < mAisleImagesList.size(); j++) {
-					Log.i("imageUrlParser", "imageUrlParser url: "
-							+ mAisleImagesList.get(j));
-					Log.i("imageUrlParser", "imageUrlParser height: "
-							+ mAisleImagesList.get(j).mAvailableHeight
-							+ " Width: "
-							+ mAisleImagesList.get(j).mAvailableWidth);
-				}
-
-			}
-		}
 		// lets parse through the image urls and update the image resolution
 		// VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
 		udpateImageUrlsForDevice();
@@ -117,24 +103,16 @@ public class AisleWindowContent {
 		// among all
 		mWindowSmallestHeight = /* 34 */0;
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
-
 			imageDetails = mAisleImagesList.get(i);
-			if (mWindowSmallestHeight == 0) {
-				mWindowSmallestHeight = mAisleImagesList.get(i).mAvailableHeight;
+			if (imageDetails.mAvailableHeight < mWindowSmallestHeight
+					|| mWindowSmallestHeight == 0) {
+				mWindowSmallestHeight = imageDetails.mAvailableHeight;
 			}
-			mWindowSmallestHeight = getBestHeight(
-					mAisleImagesList.get(i).mAvailableHeight,
-					mAisleImagesList.get(i).mAvailableWidth,
-					mWindowSmallestHeight, mAisleImagesList.get(i).mImageUrl);
-			/*
-			 * if (imageDetails.mAvailableHeight < mWindowSmallestHeight ||
-			 * mWindowSmallestHeight == 0) mWindowSmallestHeight =
-			 * imageDetails.mAvailableHeight;
-			 */
 		}
-
+		mWindowSmallestHeight = getBestHeight(
+				mAisleImagesList.get(0).mAvailableHeight,
+				mAisleImagesList.get(0).mAvailableWidth, mWindowSmallestHeight);
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
-
 			prepareCustomUrl(mAisleImagesList.get(i));
 		}
 		return true;
@@ -191,7 +169,7 @@ public class AisleWindowContent {
 		return mWindowLargestHeight;
 	}
 
-	public int getBestHeight(int height, int width, int bestHeight, String url) {
+	public int getBestHeight(int height, int width, int bestHeight) {
 		try {
 			int trendingCardWidth = VueApplication.getInstance()
 					.getVueDetailsCardWidth() / 2;
@@ -206,12 +184,11 @@ public class AisleWindowContent {
 			}
 			Log.e("getBestHeight", "BestHeight ???" + bestHeight + "??width??"
 					+ width + "??height??" + height + "??trending card width??"
-					+ trendingCardWidth + "??url??" + url);
+					+ trendingCardWidth);
 			return bestHeight;
 		} catch (Exception e) {
 			Log.e("getBestHeight", "BestHeight ??? catch" + bestHeight
-					+ "??width??" + width + "??height??" + height + "??url??"
-					+ url);
+					+ "??width??" + width + "??height??" + height + "??url??");
 			e.printStackTrace();
 		}
 		return bestHeight;

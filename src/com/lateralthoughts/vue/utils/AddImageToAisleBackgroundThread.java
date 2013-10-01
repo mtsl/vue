@@ -126,8 +126,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 				.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						// ////////////////////////////////////////////////
-
 						if (null != mResponseMessage) {
 
 							if (!mFromDetailsScreenFlag) {
@@ -184,9 +182,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 									Toast.LENGTH_LONG).show();
 
 						}
-
-						// ///////////////////////////////////////////////////////////
-
 					}
 				});
 	}

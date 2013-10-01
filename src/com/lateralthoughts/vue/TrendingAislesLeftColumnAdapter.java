@@ -108,78 +108,6 @@ public class TrendingAislesLeftColumnAdapter extends
 
 	// create a new ImageView for each item referenced by the Adapter
 	public View getView(int position, View convertView, ViewGroup parent) {
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-		if(!oldval){
-		int actualPosition = calculateActualPosition(position);
-		StringBuilder sb = new StringBuilder();
-		ArrayList<AisleImageDetails> imageDetailsArr = null;
-		AisleImageDetails itemDetails = null;
-
-		TestViewHolder holder;
-		if(convertView == null){
-			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
-			convertView = layoutInflator.inflate(R.layout.trendingtest,
-					null);
-			holder = new TestViewHolder();
-			holder.image = (ImageView)convertView.findViewById(R.id.image);
-			holder.profileThumbnail = (ImageView)convertView.findViewById(R.id.userimage);
-			holder.aisleContext = (TextView)convertView.findViewById(R.id.ananymous);
-			holder.aisleOwnersName = (TextView)convertView.findViewById(R.id.occasiontxt);
-			convertView.setTag(holder);
-		} else {
-			holder = (TestViewHolder) convertView.getTag();
-		}
-		holder.mWindowContent = (AisleWindowContent) getItem(position);
-		AisleContext context = holder.mWindowContent.getAisleContext();
-
-		sb.append(context.mFirstName).append(" ").append(context.mLastName);
-		Log.i("Left adapter", "Context fn ln " + context.mFirstName + "??? "
-				+ context.mLastName + "??? " + sb);
-		holder.aisleOwnersName.setText(sb.toString());
-		StringBuilder contextBuilder = new StringBuilder();
-		contextBuilder.append(context.mOccasion).append(" : ")
-				.append(context.mLookingForItem);
-		
-		int index = position / mPossibleOccasions.length;
-		if (index >= mPossibleOccasions.length)
-			index = 0;
-
-		String occasion = mPossibleOccasions[index];
-		index = position / mPossibleCategories.length;
-		if (index >= mPossibleCategories.length)
-			index = 0;
-		String lookingFor = mPossibleCategories[index];
-		// holder.aisleContext.setText(contextBuilder.toString());
-
-		if (context.mOccasion != null && context.mOccasion.length() > 1) {
-			occasion = context.mOccasion;
-		}
-		if (context.mLookingForItem != null
-				&& context.mLookingForItem.length() > 1) {
-			lookingFor = context.mLookingForItem;
-		}
-		holder.aisleContext.setText(occasion + " : " + lookingFor);
-		
-		imageDetailsArr = holder.mWindowContent.getImageList();
-		
-		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
-			itemDetails = imageDetailsArr.get(0);
-			Bitmap bitmap = mBitmapLoaderUtils
-					.getCachedBitmap(itemDetails.mCustomImageUrl);
-			
-			int bestHeight =  holder.mWindowContent.getBestHeightForWindow();
-			if (bitmap != null) {
-				holder.image.setImageBitmap(bitmap);
-			} else {
-				BitmapWorkerTask task = new BitmapWorkerTask( holder.image,
-						bestHeight);
-				String[] urlsArray = { itemDetails.mCustomImageUrl, itemDetails.mImageUrl };
-				task.execute(urlsArray);
-			}
-		}
-		return convertView;
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		} else {
 		ViewHolder holder;
 		StringBuilder sb = new StringBuilder();
 
@@ -271,7 +199,7 @@ public class TrendingAislesLeftColumnAdapter extends
 		// ((ViewGroup)(convertView)).setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 		// convertView.setOnClickListener(mClickListener);
 		return convertView;
-		}
+		 
 	 }
 
 	private int calculateActualPosition(int viewPosition) {
