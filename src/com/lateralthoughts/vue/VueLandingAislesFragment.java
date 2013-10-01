@@ -108,10 +108,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				false);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
-		
-		
-		View footerView = ((LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.footer_layout, null, false);
-		mRightColumnView.addFooterView(footerView);
+	 
 		
 
 		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
