@@ -183,11 +183,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				// notify the adapters.
 				if (mIsFlingCalled == true) {
 					mIsFlingCalled = false;
-					//mLeftColumnAdapter.notifyDataSetChanged();
-					//mRightColumnAdapter.notifyDataSetChanged();
+					// mLeftColumnAdapter.notifyDataSetChanged();
+					// mRightColumnAdapter.notifyDataSetChanged();
 				}
 
-			} else if(scrollState == SCROLL_STATE_TOUCH_SCROLL){
+			} else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
 				mIsFlingCalled = false;
 			}
 			int first = view.getFirstVisiblePosition();
@@ -309,7 +309,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public boolean isIdelState() {
-			 
+
 			return mIsIdleState;
 		}
 	}
