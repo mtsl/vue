@@ -401,6 +401,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 						mBestHeightForImage, VueApplication.getInstance()
 								.getVueDetailsCardWidth(),
 						Utils.TRENDING_SCREEN);
+				Log.i("SCREEN_CHECK", "SCREEN_CHECK: TRENDING");
 			}
 
 			return bmp;
@@ -419,6 +420,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 				if (this == bitmapWorkerTask) {
 					vFlipper.invalidate();
 					imageView.setImageBitmap(bitmap);
+					VueTrendingAislesDataModel.getInstance(
+							VueApplication.getInstance()).dataObserver();
 				}
 			}
 		}

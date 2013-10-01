@@ -110,15 +110,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
             holder.aisleContext = (TextView)holder.aisleDescriptor.findViewById(R.id.descriptor_aisle_context);
             holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
             convertView.setTag(holder);
-            mShowpieceParams = new LinearLayout.LayoutParams(
-    				VueApplication.getInstance().getScreenWidth()/2,
-    				 300);
-        
-            //holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
-            
-          mShowpieceParamsDefault = new LinearLayout.LayoutParams(
-    				 LayoutParams.MATCH_PARENT,
-    				 LayoutParams.MATCH_PARENT);
+          
             if(DEBUG) Log.e("Jaws2","getView invoked for a new view at position2 = " + position);
         }
         //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
