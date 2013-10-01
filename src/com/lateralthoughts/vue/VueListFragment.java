@@ -336,12 +336,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           String s = textView.getText().toString();
 			  if (s.equals(getString(R.string.sidemenu_sub_option_My_Aisles))) {
                 VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
-                adapter.groups.remove(groupPosition);
+               /* adapter.groups.remove(groupPosition);
                 ListOptionItem item = new ListOptionItem(
                         getString(R.string.sidemenu_option_Trending_Aisles),
                         R.drawable.profile, null);
                 adapter.groups.add(groupPosition, item);
-                adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();*/
                 VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
                 vueLandingPageActivity1.showCategory(s);
                 /*
