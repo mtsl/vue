@@ -89,12 +89,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	public void notifyAdapters() {
 		if (mLeftColumnAdapter != null) {
-			// TrendingAislesLeftColumnAdapter.mIsLeftDataChanged = true;
 			mLeftColumnAdapter.notifyDataSetChanged();
 			Log.i("listadapter", "adapter leftadapter notified");
 		}
 		if (mRightColumnAdapter != null) {
-			// TrendingAislesRightColumnAdapter.mIsRightDataChanged = true;
 			mRightColumnAdapter.notifyDataSetChanged();
 			Log.i("listadapter", "adapter adapter notified");
 		}
@@ -109,6 +107,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				false);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
+		
+		
+		View footerView = ((LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.footer_layout, null, false);
+		mRightColumnView.addFooterView(footerView);
+		
 
 		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -223,7 +226,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 					int top = h - hi + view.getChildAt(0).getTop();
 					mRightColumnView.setSelectionFromTop(
-							mRightColumnView.getFirstVisiblePosition(), top);
+							mRightColumnView.getFirstVisiblePosition(), top+100);
 				} else if (view.equals(mRightColumnView)) {
 					mRightViewsHeights[view.getFirstVisiblePosition()] = view
 							.getChildAt(0).getHeight();
@@ -242,7 +245,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 					int top = h - hi + view.getChildAt(0).getTop();
 					mLeftColumnView.setSelectionFromTop(
-							mLeftColumnView.getFirstVisiblePosition(), top);
+							mLeftColumnView.getFirstVisiblePosition(), top+100);
 				}
 			}
 			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();

@@ -58,7 +58,7 @@ public class TrendingAislesLeftColumnAdapter extends
 
 	public int firstX;
 	public int lastX;
-	public static boolean mIsLeftDataChanged = false;
+	//public static boolean mIsLeftDataChanged = false;
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
 	BitmapLoaderUtils mBitmapLoaderUtils;
@@ -141,11 +141,6 @@ public class TrendingAislesLeftColumnAdapter extends
 		// AisleWindowContent windowContent =
 		// (AisleWindowContent)getItem(position);
 		holder = (ViewHolder) convertView.getTag();
-		if (mIsLeftDataChanged) {
-			mIsLeftDataChanged = false;
-			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-		}
-
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
 		int scrollIndex = 0;

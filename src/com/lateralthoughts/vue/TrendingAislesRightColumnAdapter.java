@@ -51,7 +51,6 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     
     public int firstX;
     public int lastX;
-    public static boolean mIsRightDataChanged = false;
     AisleContentClickListener listener;
     LinearLayout.LayoutParams mShowpieceParams,mShowpieceParamsDefault;
     BitmapLoaderUtils mBitmapLoaderUtils;
@@ -116,11 +115,6 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         //AisleWindowContent windowContent = (AisleWindowContent)getItem(position);
         holder = (ViewHolder) convertView.getTag();
         holder.mWindowContent = (AisleWindowContent)getItem(position);
-        if(holder.mWindowContent.mIsDataChanged) {
-        	holder.mWindowContent.mIsDataChanged = false;
-        	 holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-        }
-
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
         mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,listener);
