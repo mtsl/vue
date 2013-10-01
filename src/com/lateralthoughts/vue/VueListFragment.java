@@ -446,13 +446,14 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 	 * bezel.
 	 * 
 	 * @return List<ListOptionItem> each ListOptionItem contains item name to
-	 *         display on screen, image to diaplay and list of sub options.
+	 *         display on screen, image to display and list of sub options.
 	 * */
 	private List<ListOptionItem> getBezelMenuOptionItems() {
 		List<ListOptionItem> groups = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Trending_Aisles),
 				R.drawable.profile, null);
+		groups.add(item);
 		item = new ListOptionItem(
             getString(R.string.sidemenu_option_Me),
             R.drawable.profile, getMeChildren());
