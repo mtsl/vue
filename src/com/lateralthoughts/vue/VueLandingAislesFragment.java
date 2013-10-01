@@ -50,7 +50,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	int[] mLeftViewsHeights;
 	int[] mRightViewsHeights;
 	public boolean mIsFlingCalled;
-	private boolean mListFooterFlag = false;
+
+	public boolean mIsIdleState;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -175,10 +176,14 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
 			if (scrollState == SCROLL_STATE_FLING) {
 				mIsFlingCalled = true;
+				mIsIdleState = false;
 			} else if (scrollState == SCROLL_STATE_IDLE) {
-
+				mIsIdleState = true;
+				mIsFlingCalled = false;
+				Log.i("SCROLL_STATE_IDLE", "SCROLL_STATE_IDLE 1");
+				
 				// notify the adapters.
-
+			 
 				if (mIsFlingCalled == true) {
 					Log.i("flingcheck", "flingcheck  scrollstate idle");
 					mIsFlingCalled = false;
@@ -189,6 +194,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					Log.i("flingcheck", "flingcheck  after notified adapter");
 				}
 
+			} else if(scrollState == SCROLL_STATE_TOUCH_SCROLL){
+				mIsFlingCalled = false;
 			}
 			int first = view.getFirstVisiblePosition();
 			int count = view.getChildCount();
@@ -204,7 +211,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
-
+			mIsIdleState = false;
 			if (view.getChildAt(0) != null) {
 				if (view.equals(mLeftColumnView)) {
 					mLeftViewsHeights[view.getFirstVisiblePosition()] = view
@@ -252,6 +259,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					&& lan.getScreenName().equalsIgnoreCase(
 							getResources().getString(R.string.trending))) {
 				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
+				Log.i("more aisle request", "more aisle request calling");
 				int totalItems = 0;
 				if (view.equals(mLeftColumnView)) {
 					totalItems = mLeftColumnAdapter.getCount();
@@ -305,6 +313,12 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			Log.i("flingcheck", "flingcheck  isFlingCalled val: "
 					+ mIsFlingCalled);
 			return mIsFlingCalled;
+		}
+
+		@Override
+		public boolean isIdelState() {
+			 
+			return mIsIdleState;
 		}
 	}
 

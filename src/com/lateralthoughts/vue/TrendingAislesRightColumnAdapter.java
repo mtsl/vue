@@ -33,15 +33,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.util.Log;
 
 //java util imports
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 //internal imports
+import com.lateralthoughts.vue.TrendingAislesLeftColumnAdapter.BitmapWorkerTask;
+import com.lateralthoughts.vue.TrendingAislesLeftColumnAdapter.TestViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
+import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
 public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
@@ -57,6 +63,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     public static boolean mIsRightDataChanged = false;
     AisleContentClickListener listener;
     LinearLayout.LayoutParams mShowpieceParams,mShowpieceParamsDefault;
+    BitmapLoaderUtils mBitmapLoaderUtils;
     public TrendingAislesRightColumnAdapter(Context c, ArrayList<AisleWindowContent> content) {
         super(c,content);
         mContext = c;
@@ -66,6 +73,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     
     public TrendingAislesRightColumnAdapter(Context c, AisleContentClickListener listener, ArrayList<AisleWindowContent> content) {
         super(c, listener, content);
+        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
         mContext = c;
         mLoader = AisleLoader.getInstance(mContext);
         this.listener = listener;
@@ -90,7 +98,86 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     }
     
     // create a new ImageView for each item referenced by the Adapter
-    public View getView(int position, View convertView, ViewGroup parent) {     
+    public View getView(int position, View convertView, ViewGroup parent) {
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+    	if(!oldval){
+		int actualPosition = calculateActualPosition(position);
+		StringBuilder sb = new StringBuilder();
+		ArrayList<AisleImageDetails> imageDetailsArr = null;
+		AisleImageDetails itemDetails = null;
+
+		TestViewHolder holder;
+		if(convertView == null){
+			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
+			convertView = layoutInflator.inflate(R.layout.trendingtest,
+					null);
+			holder = new TestViewHolder();
+			holder.image = (ImageView)convertView.findViewById(R.id.image);
+			holder.profileThumbnail = (ImageView)convertView.findViewById(R.id.userimage);
+			holder.aisleContext = (TextView)convertView.findViewById(R.id.ananymous);
+			holder.aisleOwnersName = (TextView)convertView.findViewById(R.id.occasiontxt);
+			convertView.setTag(holder);
+		} else {
+			holder = (TestViewHolder) convertView.getTag();
+		}
+		holder.mWindowContent = (AisleWindowContent) getItem(position);
+		AisleContext context = holder.mWindowContent.getAisleContext();
+
+		sb.append(context.mFirstName).append(" ").append(context.mLastName);
+		Log.i("Left adapter", "Context fn ln " + context.mFirstName + "??? "
+				+ context.mLastName + "??? " + sb);
+		holder.aisleOwnersName.setText(sb.toString());
+		StringBuilder contextBuilder = new StringBuilder();
+		contextBuilder.append(context.mOccasion).append(" : ")
+				.append(context.mLookingForItem);
+		
+		int index = position / mPossibleOccasions.length;
+		if (index >= mPossibleOccasions.length)
+			index = 0;
+
+		String occasion = mPossibleOccasions[index];
+		index = position / mPossibleCategories.length;
+		if (index >= mPossibleCategories.length)
+			index = 0;
+		String lookingFor = mPossibleCategories[index];
+		// holder.aisleContext.setText(contextBuilder.toString());
+
+		if (context.mOccasion != null && context.mOccasion.length() > 1) {
+			occasion = context.mOccasion;
+		}
+		if (context.mLookingForItem != null
+				&& context.mLookingForItem.length() > 1) {
+			lookingFor = context.mLookingForItem;
+		}
+		holder.aisleContext.setText(occasion + " : " + lookingFor);
+		
+		imageDetailsArr = holder.mWindowContent.getImageList();
+		
+		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
+			itemDetails = imageDetailsArr.get(0);
+			Bitmap bitmap = mBitmapLoaderUtils
+					.getCachedBitmap(itemDetails.mCustomImageUrl);
+			
+			int bestHeight =  holder.mWindowContent.getBestHeightForWindow();
+			if (bitmap != null) {
+			 
+		  
+				holder.image.setImageBitmap(bitmap);
+				 
+			} else {
+
+			 
+				BitmapWorkerTask task = new BitmapWorkerTask( holder.image,
+						bestHeight);
+				String[] urlsArray = { itemDetails.mCustomImageUrl, itemDetails.mImageUrl };
+				task.execute(urlsArray);
+			}
+		}
+		return convertView;
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+    	
+    	} else {
+    		Log.i("SCROLL_STATE_IDLE", "SCROLL_STATE_IDLE 3 getview");
         ViewHolder holder;
         StringBuilder sb = new StringBuilder();
         Log.i("TrendingDataModel", "DataObserver for List Refresh:  Right getview ");
@@ -132,7 +219,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         int scrollIndex = 0; //getContentBrowserIndexForId(windowContent.getAisleId());
         mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,listener);
-         /*   if(!listener.isFlingCalled()) {
+    /*        if(!listener.isFlingCalled()) {
            	 mLoader.getAisleContentIntoView(holder, scrollIndex, position, false);
            	 holder.aisleContentBrowser.setLayoutParams(mShowpieceParamsDefault);
            	for(int i=0;i<holder.aisleContentBrowser.getChildCount();i++){
@@ -176,6 +263,7 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
      
         //holder.aisleContext.setText(contextBuilder.toString());
         return convertView;
+    	}
     }
 
     @Override
@@ -184,4 +272,90 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
         notifyDataSetChanged();
     }
 
+	private int calculateActualPosition(int viewPosition) {
+		int actualPosition = 0;
+		if (0 != viewPosition)
+			actualPosition = (viewPosition * 2);
+
+		return actualPosition;
+	}
+
+ 
+	  static class TestViewHolder {
+	        TextView aisleOwnersName;
+	        TextView aisleContext;
+	        ImageView profileThumbnail;
+	        ImageView image;
+	        String uniqueContentId;
+	        LinearLayout aisleDescriptor;
+	        AisleWindowContent mWindowContent;
+	    }
+		class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+			private final WeakReference<ImageView> imageViewReference;
+			private String url = null;
+			private int mBestHeight;
+
+			public BitmapWorkerTask(
+					ImageView imageView, int bestHeight) {
+				// Use a WeakReference to ensure the ImageView can be garbage
+				// collected
+				imageViewReference = new WeakReference<ImageView>(imageView);
+		 
+				mBestHeight = bestHeight;
+			}
+
+			// Decode image in background.
+			@Override
+			protected Bitmap doInBackground(String... params) {
+				url = params[0];
+				Bitmap bmp = null;
+				// we want to get the bitmap and also add it into the memory cache
+				Log.e("Profiling", "Profiling New doInBackground()");
+				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
+						mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2);
+				return bmp;
+			}
+
+			// Once complete, see if ImageView is still around and set bitmap.
+			@Override
+			protected void onPostExecute(Bitmap bitmap) {
+
+				if (imageViewReference != null
+						&& bitmap != null) {
+					final ImageView imageView = imageViewReference.get();
+					imageView.setImageBitmap(bitmap);
+					// final AisleContentBrowser vFlipper =
+					// viewFlipperReference.get();
+		 
+				}
+			}
+		}
+		// utility functions to keep track of all the async tasks that we
+		// instantiate
+		private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+			if (imageView != null) {
+				Object task = ((ScaleImageView) imageView).getOpaqueWorkerObject();
+				if (task instanceof BitmapWorkerTask) {
+					BitmapWorkerTask workerTask = (BitmapWorkerTask) task;
+					return workerTask;
+				}
+			}
+			return null;
+		}
+
+		private static boolean cancelPotentialDownload(String url,
+				ImageView imageView) {
+			BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+
+			if (bitmapWorkerTask != null) {
+				String bitmapUrl = bitmapWorkerTask.url;
+				if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+					bitmapWorkerTask.cancel(true);
+				} else {
+					// The same URL is already being downloaded.
+					return false;
+				}
+			}
+			return true;
+		}
 }

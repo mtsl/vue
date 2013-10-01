@@ -26,6 +26,7 @@ public class AisleWindowContent {
 	private int mAisleBookmarksCount = 0;
 	private boolean mAisleBookmarkIndicator = false;
 	public boolean mIsDataChanged = false;
+	public int mTrendingBestHeight = 0;
 
 	public boolean getWindowBookmarkIndicator() {
 		return mAisleBookmarkIndicator;
@@ -72,20 +73,31 @@ public class AisleWindowContent {
 	@SuppressWarnings("unchecked")
 	public void addAisleContent(AisleContext context,
 			ArrayList<AisleImageDetails> items) {
-		mAisleBookmarksCount = context.mBookmarkCount;
 		if (null != mAisleImagesList) {
 			mAisleImagesList = null;
 		}
 		if (null != mContext) {
 			mContext = null;
 		}
-		if (items != null)
-		{
+		if (items != null) {
 			mAisleImagesList = (ArrayList<AisleImageDetails>) items.clone();
 		}
 		mAisleId = context.mAisleId;
 		mContext = context;
-	
+		if (mContext.mOccasion != null) {
+			if (mContext.mOccasion.trim().equalsIgnoreCase("hubby")
+					|| mContext.mOccasion.trim().equalsIgnoreCase("vintage cars")) {
+				for (int j = 0; j < mAisleImagesList.size(); j++) {
+					Log.i("imageUrlParser", "imageUrlParser url: "
+							+ mAisleImagesList.get(j));
+					Log.i("imageUrlParser", "imageUrlParser height: "
+							+ mAisleImagesList.get(j).mAvailableHeight
+							+ " Width: "
+							+ mAisleImagesList.get(j).mAvailableWidth);
+				}
+
+			}
+		}
 		// lets parse through the image urls and update the image resolution
 		// VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
 		udpateImageUrlsForDevice();
@@ -101,14 +113,24 @@ public class AisleWindowContent {
 
 	private boolean udpateImageUrlsForDevice() {
 		AisleImageDetails imageDetails;
-		//TODO: when more images available set this variable to smallest height among all
-		mWindowSmallestHeight = 340;
+		// TODO: when more images available set this variable to smallest height
+		// among all
+		mWindowSmallestHeight = /* 34 */0;
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 
 			imageDetails = mAisleImagesList.get(i);
-			if (imageDetails.mAvailableHeight < mWindowSmallestHeight
-					|| mWindowSmallestHeight == 0)
-				mWindowSmallestHeight = imageDetails.mAvailableHeight;
+			if (mWindowSmallestHeight == 0) {
+				mWindowSmallestHeight = mAisleImagesList.get(i).mAvailableHeight;
+			}
+			mWindowSmallestHeight = getBestHeight(
+					mAisleImagesList.get(i).mAvailableHeight,
+					mAisleImagesList.get(i).mAvailableWidth,
+					mWindowSmallestHeight, mAisleImagesList.get(i).mImageUrl);
+			/*
+			 * if (imageDetails.mAvailableHeight < mWindowSmallestHeight ||
+			 * mWindowSmallestHeight == 0) mWindowSmallestHeight =
+			 * imageDetails.mAvailableHeight;
+			 */
 		}
 
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
@@ -139,7 +161,9 @@ public class AisleWindowContent {
 		imageDetails.mCustomImageUrl = Utils.addImageInfo(
 				imageDetails.mCustomImageUrl, imageDetails.mAvailableWidth,
 				imageDetails.mAvailableHeight);
-		Log.i("AisleWindowContent", "Image Url and CustominageUrl : " + imageDetails.mCustomImageUrl + " ??? " + imageDetails.mImageUrl);
+		Log.i("AisleWindowContent", "Image Url and CustominageUrl : "
+				+ imageDetails.mCustomImageUrl + " ??? "
+				+ imageDetails.mImageUrl);
 
 	}
 
@@ -165,6 +189,32 @@ public class AisleWindowContent {
 
 	public int getBestLargetHeightForWindow() {
 		return mWindowLargestHeight;
+	}
+
+	public int getBestHeight(int height, int width, int bestHeight, String url) {
+		try {
+			int trendingCardWidth = VueApplication.getInstance()
+					.getVueDetailsCardWidth() / 2;
+			int newwidth = (width * trendingCardWidth) / width;
+			int newHeight = (height * trendingCardWidth) / width;
+
+			if (newHeight > bestHeight) {
+				newHeight = (newHeight * bestHeight) / newHeight;
+			}
+			if (newHeight < bestHeight) {
+				bestHeight = newHeight;
+			}
+			Log.e("getBestHeight", "BestHeight ???" + bestHeight + "??width??"
+					+ width + "??height??" + height + "??trending card width??"
+					+ trendingCardWidth + "??url??" + url);
+			return bestHeight;
+		} catch (Exception e) {
+			Log.e("getBestHeight", "BestHeight ??? catch" + bestHeight
+					+ "??width??" + width + "??height??" + height + "??url??"
+					+ url);
+			e.printStackTrace();
+		}
+		return bestHeight;
 	}
 
 	private AisleContext mContext;

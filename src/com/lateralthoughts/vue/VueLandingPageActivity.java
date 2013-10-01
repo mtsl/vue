@@ -146,6 +146,8 @@ public class VueLandingPageActivity extends BaseActivity {
 					}
 				}
 			});
+		} else {
+		  VueTrendingAislesDataModel.getInstance(this).getNetworkHandler().getBookmarkAisleByUser();
 		}
 
 		mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
@@ -168,6 +170,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				handleSendMultipleImages(intent, true);
 			}
 		}
+		
+		
 	}
 
 	@Override

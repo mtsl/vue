@@ -285,28 +285,42 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             Bitmap bitmap = null;
             if(contentBrowser.getmSourceName()!= null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             	 bitmap = getCachedBitmap(itemDetails.mImageUrl);
+            	 Log.i("detailscrop", "detailscrop -1");
+            	 if(bitmap != null)
+            	 Log.i("detailscrop", "detailscrop -1 bitmap Height : "+bitmap.getHeight()+" widht: "+bitmap.getWidth());
+            	 Log.i("detailscrop", "detailscrop -1 browserHeight : "+contentBrowser.getHeight()+" widht: "+contentBrowser.getWidth());
             } else {
               bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
                
             }
             if(bitmap != null){
             	 if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-            	 
+            		 Log.i("detailscrop", "detailscrop 0 browserHeight : "+contentBrowser.getHeight()+" widht: "+contentBrowser.getWidth());
             			mImageDimension = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
+            			FrameLayout.LayoutParams mShowpieceParams = new FrameLayout.LayoutParams(
+    							VueApplication.getInstance().getScreenWidth() ,
+    							bitmap.getHeight());
+                		contentBrowser .setLayoutParams(mShowpieceParams);
             			if(bitmap.getHeight() < mImageDimension.mImgHeight) {
+            				 Log.i("detailscrop", "detailscrop resize agian");
             				   loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView);
             			}
             	 }
+            	 Log.i("detailscrop", "detailscrop 0");
+            
                 imageView.setImageBitmap(bitmap);
                 	contentBrowser.addView(imageView);
                  
             }
             else{
             	if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-                loadBitmap(itemDetails,itemDetails.mAvailableHeight,contentBrowser, imageView);
+                 Log.i("detailscrop", "detailscrop 1");
+            		loadBitmap(itemDetails,itemDetails.mAvailableHeight,contentBrowser, imageView);
                 contentBrowser.addView(imageView);
             	} else {
-            		int bestHeight = mWindowContent.getBestHeightForWindow();
+            		Log.i("detailscrop", "detailscrop 2");
+            		//int bestHeight = mWindowContent.getBestHeightForWindow();
+            		int bestHeight = contentBrowser.getHeight();
             		 loadBitmap(itemDetails,bestHeight,contentBrowser, imageView);
                            	contentBrowser.addView(imageView);
                            	Log.i("bestHeight", "bestHeight in adapter: "+bestHeight);
@@ -397,7 +411,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 
 				}
 			}
-
+			 Log.i("detailscrop", "detailscrop -1 bitmap Height bg: "+bmp.getHeight()+" widht: "+bmp.getWidth());
 			return bmp;
 		}
 

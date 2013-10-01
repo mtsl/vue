@@ -42,6 +42,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flurry.android.FlurryAgent;
+import com.flurry.android.monolithic.sdk.impl.vy;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
@@ -340,7 +341,7 @@ public class AisleManager {
 	 * */
 	public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark,
 			String userId) throws ClientProtocolException, IOException {
-
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().addBookmarked(aisleBookmark.getAisleId() + "");
 		isDirty = true;
 		final ArrayList<AisleWindowContent> windowList = DataBaseManager
 				.getInstance(VueApplication.getInstance()).getAisleByAisleId(
