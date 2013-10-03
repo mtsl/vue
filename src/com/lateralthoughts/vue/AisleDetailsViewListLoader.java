@@ -2,7 +2,6 @@ package com.lateralthoughts.vue;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -20,7 +19,6 @@ import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.ImageDimension;
 import com.lateralthoughts.vue.utils.Utils;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -131,13 +129,11 @@ public class AisleDetailsViewListLoader {
 			imageView.setLayoutParams(params);
 			imageView.setContainerObject(holder);
 			// imgConnectivity.setImageClick(imageView);
-			Bitmap bitmap = mBitmapLoaderUtils
-					.getCachedBitmap(itemDetails.mImageUrl);
+			Bitmap bitmap = null; //mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
 			
 			
 			if (bitmap != null) {
 				// get the dimensions of the image.
-			
 				mImageDimension = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
 						itemDetails.mAvailableHeight);
@@ -173,105 +169,9 @@ public class AisleDetailsViewListLoader {
     	String serverImageUrl = itemDetails.mImageUrl;
         ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
                 new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));
-
-
-        //  if (cancelPotentialDownload(loc, imageView)) {
-        //    BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
-          //  ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
-            //String imagesArray[] = {loc, serverImageUrl};
-         //   task.execute(imagesArray);
-       // }
     }
-    
-    class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
-        private final WeakReference<ImageView> imageViewReference;
-        //private final WeakReference<AisleContentBrowser>viewFlipperReference;
-        private String url = null;
-        private int mBestHeight;
-        AisleContentBrowser aisleContentBrowser ;
-        int mAvailabeWidth,mAvailableHeight;
 
-        public BitmapWorkerTask(AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
-            // Use a WeakReference to ensure the ImageView can be garbage collected
-            imageViewReference = new WeakReference<ImageView>(imageView);
-            mBestHeight = bestHeight;
-            aisleContentBrowser = vFlipper;
-            mAvailabeWidth = itemDetails.mAvailableWidth;
-            mAvailableHeight = itemDetails.mAvailableHeight;
-        }
-
-        // Decode image in background.
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            url = params[0];
-            Bitmap bmp = null; 
-            Log.i("added url", "added url  listloader "+url);
-            //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
-            Log.i("window", "clickedwindow ID bitmap Height2 original: "+bmp.getHeight());
-			Log.i("window", "clickedwindow ID  required height2 original: "+mBestHeight);
-            if(bmp != null) {
-           	 mImageDimension = Utils.getScalledImage(bmp,
-           			mAvailabeWidth, mAvailableHeight);
-           	 Log.i("imageSize", "imageSize mImageDimension Height: "+mImageDimension.mImgHeight);
-           	mAvailableHeight = mImageDimension.mImgHeight;
-            	 if(bmp.getHeight()> mImageDimension.mImgHeight) {
-            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mImageDimension.mImgHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
-				
-            	      Log.i("window", "clickedwindow ID bitmap Height3 modified original: "+bmp.getHeight());
-          			Log.i("window", "clickedwindow ID  required height3  modiried original: "+mImageDimension.mImgHeight);
-            	 }
-            }
-            return bmp;            
-        }
-
-        // Once complete, see if ImageView is still around and set bitmap.
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-        	 final ImageView imageView = imageViewReference.get();
-        	  setParams( aisleContentBrowser, imageView,mAvailableHeight);
-            if (imageViewReference != null && bitmap != null) {
-               
-                //final AisleContentBrowser vFlipper = viewFlipperReference.get();
-                BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-                
-                if (this == bitmapWorkerTask) {
-                   //aisleContentBrowser.addView(imageView);
-                  setParams( aisleContentBrowser, imageView,mAvailableHeight);
-                  // bitmap = Utils.getScalledImage(bitmap, mAvailabeWidth,mAvailableHeight);
-                    imageView.setImageBitmap(bitmap);
-                }
-            }
-        }
-    }
-    
-    //utility functions to keep track of all the async tasks that we instantiate
-    private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
-        if (imageView != null) {
-            Object task = ((ScaleImageView)imageView).getOpaqueWorkerObject();
-            if (task instanceof BitmapWorkerTask) {
-                BitmapWorkerTask workerTask = (BitmapWorkerTask)task;
-                return workerTask;
-            }
-        }
-        return null;
-    }
-    
-    private static boolean cancelPotentialDownload(String url, ImageView imageView) {
-        BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-        
-        if (bitmapWorkerTask != null) {
-            String bitmapUrl = bitmapWorkerTask.url;
-            if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
-                bitmapWorkerTask.cancel(true);
-            } else {
-                // The same URL is already being downloaded.
-                return false;
-            }
-        }
-        return true;
-    }  
-public void clearBrowser(ArrayList<AisleImageDetails> imageList){
+    public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 	 if (contentBrowser != null) {
 			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
 				mViewFactory
@@ -282,14 +182,7 @@ public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 			 contentBrowser.setCustomAdapter(null);
 			contentBrowser.removeAllViews();
 			contentBrowser = null;
-			
-		/*	for(int i = 0;i<imageList.size();i++){
-				Bitmap bitmap = mBitmapLoaderUtils
-						.getCachedBitmap(imageList.get(i).mImageUrl);
-				if(bitmap != null){
-					bitmap.recycle();
-				}
-			}*/
+
 		} else {
 			Log.i("bitmap reclying", "bitmap reclying  contentBrowser is null ");
 		}
