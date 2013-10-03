@@ -128,9 +128,7 @@ public class BitmapLoaderUtils {
             int width = o.outWidth;
   	        Log.i("window", "clickedwindow ID bitmap Height4 bestHeight: "+bestHeight); 
 			Log.i("window", "clickedwindow ID original height: "+height);
- 
-      /*    int reqWidth1 = VueApplication.getInstance().getVueDetailsCardWidth()/2;
-          Log.i("added url", "added url in  decodeFile: cardwidth "+reqWidth1 );*/
+  
             int reqWidth = bestWidth;
             int scale=1;
             
@@ -162,7 +160,7 @@ public class BitmapLoaderUtils {
             	//scaling factor becomes 1 even there is slight difference in sizes
             	//so to avoid croping in that cases in Detailsview screen
             	//compare sizes after scaling.
-        /*    if(bitmap != null){
+            if(bitmap != null){
             	 width = bitmap.getWidth();
                  height = bitmap.getHeight();
                  if(height > bestHeight){
@@ -170,11 +168,11 @@ public class BitmapLoaderUtils {
                 	 width = (int) tempWidth;
                 	 bitmap = getModifiedBitmap(bitmap,width,bestHeight);
                  }
-            }*/
+            }
             }
             
             
-       /*     if(bitmap != null) {
+            if(bitmap != null) {
             width = bitmap.getWidth();
             height = bitmap.getHeight();
           
@@ -183,7 +181,7 @@ public class BitmapLoaderUtils {
                 height = (int)tempHeight;
             	bitmap = getModifiedBitmap(bitmap,reqWidth,height);
             }
-            }*/
+            }
             Log.i("window", "clickedwindow ID  new bitmap height2 : "+bitmap.getHeight());
   			Log.i("window", "clickedwindow ID new bitmap widht2: "+bitmap.getWidth());
             return bitmap;
