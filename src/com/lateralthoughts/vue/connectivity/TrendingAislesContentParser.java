@@ -1,21 +1,13 @@
 package com.lateralthoughts.vue.connectivity;
 
-import java.util.ArrayList;
-
-import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
-
-import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueLandingPageActivity;
-import com.lateralthoughts.vue.VueTrendingAislesDataModel;
+import com.lateralthoughts.vue.*;
 import com.lateralthoughts.vue.parser.Parser;
+
+import java.util.ArrayList;
 
 public class TrendingAislesContentParser extends ResultReceiver {
 	private int mState;
@@ -31,6 +23,9 @@ public class TrendingAislesContentParser extends ResultReceiver {
 	protected void onReceiveResult(int resultCode, final Bundle resultData) {
 		switch (mState) {
 		case VueConstants.AISLE_TRENDING_LIST_DATA:
+            long elapsedTime = System.currentTimeMillis() - VueApplication.getInstance().mLastRecordedTime;
+            Log.e("PERF_VUE","AISLE_TRENDING_LIST_DATA is the state. Received content. Time elapsed = " + elapsedTime);
+            VueApplication.getInstance().mLastRecordedTime = System.currentTimeMillis();
 
 			Thread t = new Thread(new Runnable() {
 				@Override
@@ -42,13 +37,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
 					Log.i("dbInsert", "dbInsert1 aislesListSize: "+aislesList.size());
 					DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(
 							VueApplication.getInstance(), aislesList);
-
-					/*
-					 * if (aislesList != null && aislesList.size() > 0) { int
-					 * size = aislesList.size(); Log.i("ailsesize",
-					 * "ailseListSize: " + size); new
-					 * DbDataSetter(aislesList).execute(); }
-					 */
 
 					Log.i("ailsesize", "ailseListSizemaintrending: "
 							+ aislesList.size());
@@ -71,14 +59,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
 							refreshListFlag = true;
 						}
 					}
-
-				/*	if (aislesList.size() == 0) {
-						VueTrendingAislesDataModel.getInstance(
-								VueApplication.getInstance())
-								.setMoreDataAVailable(false); // TODO
-					}*/
 					VueLandingPageActivity.landingPageActivity.runOnUiThread(new Runnable() {
-						
 						@Override
 						public void run() {
 							VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
@@ -86,55 +67,24 @@ public class TrendingAislesContentParser extends ResultReceiver {
 						}
 					});
 					if (refreshListFlag) {
-						VueLandingPageActivity.landingPageActivity
-								.runOnUiThread(new Runnable() {
+						VueLandingPageActivity.landingPageActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = true;
+                                if (aislesList != null && aislesList.size() > 0) {
+                                    for (int i = 0; i < aislesList.size(); i++) {
+                                        VueTrendingAislesDataModel model = VueTrendingAislesDataModel.getInstance(VueApplication.getInstance());
+                                        model.addItemToList(aislesList.get(i).getAisleContext().mAisleId,aislesList.get(i));
+                                    }
 
-									@Override
-									public void run() {
-										VueTrendingAislesDataModel
-												.getInstance(VueApplication
-														.getInstance()).loadOnRequest = true;
-										if (aislesList != null
-												&& aislesList.size() > 0) {
-											for (int i = 0; i < aislesList
-													.size(); i++) {
-												VueTrendingAislesDataModel
-														.getInstance(
-																VueApplication
-																		.getInstance())
-														.addItemToList(
-																aislesList
-																		.get(i)
-																		.getAisleContext().mAisleId,
-																aislesList
-																		.get(i));
-											}
-
-											VueTrendingAislesDataModel
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.dismissProgress();
-											// if this is the first set of data
-											// we
-											// are receiving
-											// go
-											// ahead
-											// notify the data set changed
-											VueTrendingAislesDataModel
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.dataObserver();
-										}
-									}
-								});
+                                    VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
+                                    //if this is the first set of data we are receiving go ahead
+                                    //notify the data set changed
+                                    VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dataObserver();
+                                }
+                            }
+                        });
 					}
-					/*
-					 * TrendingAislesContentParser mTrendingAislesParser = new
-					 * TrendingAislesContentParser( new Handler(), 1);
-					 * mTrendingAislesParser.send(1, null);
-					 */
 				}
 			});
 			t.start();
@@ -155,31 +105,4 @@ public class TrendingAislesContentParser extends ResultReceiver {
 			break;
 		}
 	}
-
-/*	private class DbDataSetter extends AsyncTask<Void, Void, Void> {
-		ArrayList<AisleWindowContent> mAislesList;
-
-		public DbDataSetter(ArrayList<AisleWindowContent> aislesList) {
-			mAislesList = aislesList;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			// TODO Auto-generated method stub
-			super.onPreExecute();
-		}
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(
-					VueApplication.getInstance(), mAislesList);
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			mAislesList.clear();
-			super.onPostExecute(result);
-		}
-	}*/
 }

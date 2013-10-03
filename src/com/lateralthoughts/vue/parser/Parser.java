@@ -1,8 +1,7 @@
 package com.lateralthoughts.vue.parser;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import android.util.Log;
+import com.lateralthoughts.vue.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -10,14 +9,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.util.Log;
-import com.lateralthoughts.vue.AisleContext;
-import com.lateralthoughts.vue.AisleImageDetails;
-import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.connectivity.DataBaseManager;
+
+import java.net.URL;
+import java.util.ArrayList;
 
 public class Parser {
 	// ========================= START OF PARSING TAGS
@@ -38,7 +32,7 @@ public class Parser {
 
 		JSONArray contentArray = null;
 
-		contentArray = handleResponce(resultString, loadMore);
+		contentArray = handleResponse(resultString, loadMore);
 		if (contentArray == null) {
 			return aisleWindowContentList;
 		}
@@ -52,7 +46,7 @@ public class Parser {
 		return aisleWindowContentList;
 	}
 
-	private JSONArray handleResponce(String resultString, boolean loadMore) {
+	private JSONArray handleResponse(String resultString, boolean loadMore) {
 		JSONArray contentArray = null;
 		try {
 			contentArray = new JSONArray(resultString);

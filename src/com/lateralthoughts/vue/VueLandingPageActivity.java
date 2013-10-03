@@ -1,11 +1,5 @@
 package com.lateralthoughts.vue;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -15,31 +9,24 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
-import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
-import com.lateralthoughts.vue.utils.ExceptionHandler;
-import com.lateralthoughts.vue.utils.FbGPlusDetails;
-import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
-import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
-import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class VueLandingPageActivity extends BaseActivity {
 
@@ -63,6 +50,8 @@ public class VueLandingPageActivity extends BaseActivity {
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		landingPageActivity = this;
+        VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
+        VueApplication.getInstance().mLastRecordedTime = System.currentTimeMillis();
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
 		mLoadProgress = (ProgressBar) findViewById(R.id.adprogress_progressBar);

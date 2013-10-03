@@ -1,44 +1,31 @@
 package com.lateralthoughts.vue.connectivity;
 
-import java.net.URL;
-import java.util.ArrayList;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.lateralthoughts.vue.AisleManager;
-import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
-import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.AisleWindowContentFactory;
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueContentGateway;
-import com.lateralthoughts.vue.VueLandingPageActivity;
-import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.VueUser;
+import com.lateralthoughts.vue.*;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
+import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+
+import java.net.URL;
+import java.util.ArrayList;
 
 public class NetworkHandler {
 	Context mContext;

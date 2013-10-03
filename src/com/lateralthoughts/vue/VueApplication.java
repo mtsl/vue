@@ -1,11 +1,5 @@
 package com.lateralthoughts.vue;
 
-import java.util.ArrayList;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
@@ -19,6 +13,12 @@ import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class VueApplication extends Application {
 	private static VueApplication sInstance;
@@ -39,6 +39,10 @@ public class VueApplication extends Application {
 			R.drawable.composer_camera, R.drawable.composer_music,
 			R.drawable.composer_place, R.drawable.composer_sleep,
 			R.drawable.composer_thought };
+
+
+    public long mLaunchTime;
+    public long mLastRecordedTime;
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
@@ -243,5 +247,13 @@ public class VueApplication extends Application {
 	 * public void setNewVueTrendingAislesDataModel (boolean createNewObject) {
 	 * newVueTrendingAislesDataModel = createNewObject; }
 	 */
+
+    public BitmapCache getBitmapCache(){
+        if(sBitmapCache == null)
+            sBitmapCache = new BitmapCache(512);
+
+        return sBitmapCache;
+    }
+    private BitmapCache sBitmapCache;
 
 }

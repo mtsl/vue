@@ -1,9 +1,5 @@
 package com.lateralthoughts.vue;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -15,7 +11,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
+import com.android.volley.toolbox.ImageLoader;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
@@ -23,6 +19,10 @@ import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.ImageDimension;
 import com.lateralthoughts.vue.utils.Utils;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AisleDetailsViewListLoader {
     private static final boolean DEBUG = false;
@@ -170,11 +170,15 @@ public class AisleDetailsViewListLoader {
     public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
     	String loc = itemDetails.mImageUrl;
     	String serverImageUrl = itemDetails.mImageUrl;
-      //  if (cancelPotentialDownload(loc, imageView)) { 
-            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
-            ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
-            String imagesArray[] = {loc, serverImageUrl};
-            task.execute(imagesArray);
+        ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
+                new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));
+
+
+        //  if (cancelPotentialDownload(loc, imageView)) {
+        //    BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
+          //  ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
+            //String imagesArray[] = {loc, serverImageUrl};
+         //   task.execute(imagesArray);
        // }
     }
     
