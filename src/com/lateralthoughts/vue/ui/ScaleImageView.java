@@ -11,21 +11,15 @@
  */
 package com.lateralthoughts.vue.ui;
 
- 
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.utils.Utils;
-
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.util.AttributeSet;
+import com.android.volley.toolbox.NetworkImageView;
 
-public class ScaleImageView extends ImageView {
+public class ScaleImageView extends NetworkImageView {
 	private ImageChangeListener imageChangeListener;
 	private boolean scaleToWidth = false; // this flag determines if should measure height manually dependent of width
 

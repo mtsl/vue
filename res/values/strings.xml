@@ -86,7 +86,7 @@
     <string name="fontsize">Font Size</string>
     <string name="wifyonly">Wi-Fi only</string>
     -->
-    <string name=" AlreadyLoggedinmesg"> Already Logged in</string>
+    <string name=" already_logged_in_msg"> Already Logged in</string>
     <!-- <string name="connectivity_management">Connectivity Management</string> -->
     <string name="create_aisle_screen_title">Create Aisle</string>
     <string name="hint_search">Search</string>

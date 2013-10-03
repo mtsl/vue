@@ -1,50 +1,33 @@
 package com.lateralthoughts.vue;
 
 //android imports
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import android.view.Gravity;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ImageView.ScaleType;
-import android.widget.Toast;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.*;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import com.android.volley.toolbox.ImageLoader;
+import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.lateralthoughts.vue.utils.*;
 
-//java imports
+import java.io.*;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+//java imports
 //internal imports
-import com.lateralthoughts.vue.ui.AisleContentBrowser;
-import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.ScaledImageViewFactory;
-import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
-import com.lateralthoughts.vue.utils.ImageDimension;
-import com.lateralthoughts.vue.utils.Utils;
-import com.lateralthoughts.vue.utils.FileCache;
 
 /**
  * The AisleContentAdapter object will be associated with aisles on a per-aisle
@@ -342,11 +325,13 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     	 } else {
     		 loc = itemDetails.mCustomImageUrl;
     	 }
-       // if (cancelPotentialDownload(loc, imageView)) {          
+
+        ((ScaleImageView) imageView).setImageUrl(loc,
+                new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));
+
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
             task.execute(loc,serverUrl);
-       // }
     }
     
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {

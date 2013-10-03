@@ -305,8 +305,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 						} else {
 							Toast.makeText(
 									getActivity(),
-									getActivity().getResources().getString(
-											R.string.AlreadyLoggedinmesg),
+									getActivity().getResources().getString(R.string.already_logged_in_msg),
 									Toast.LENGTH_LONG).show();
 						}
 					}
