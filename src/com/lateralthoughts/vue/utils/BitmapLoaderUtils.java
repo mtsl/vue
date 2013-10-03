@@ -142,7 +142,7 @@ public class BitmapLoaderUtils {
                 // a final image with both dimensions larger than or equal to the
                 // requested height and width.
                 scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
-                
+                scale = 1;
             }
             
             //decode with inSampleSize
@@ -201,6 +201,34 @@ public class BitmapLoaderUtils {
             return null;
          }
         return null;
+    }
+    public Bitmap getBitmap(Bitmap bitmap,int bestWidth,int bestHeight) {
+		int width,height;
+        if(bitmap != null){
+       	 width = bitmap.getWidth();
+            height = bitmap.getHeight();
+            if(height > bestHeight){
+           	 float tempWidth = (width * bestHeight)/height;
+           	 width = (int) tempWidth;
+           	 bitmap = getModifiedBitmap(bitmap,width,bestHeight);
+            }
+            
+            if(bitmap != null) {
+            width = bitmap.getWidth();
+            height = bitmap.getHeight();
+          
+            if(width > bestWidth) {
+               float tempHeight = (height * bestWidth)/width;
+                height = (int)tempHeight;
+            	bitmap = getModifiedBitmap(bitmap,bestWidth,height);
+            }
+            }
+       }
+    	if(bestHeight == 190){
+    		Log.i("bestwidht", "bestwidth height: "+bitmap.getHeight());
+    		Log.i("bestwidht", "bestwidth width: "+bitmap.getWidth());
+    	}
+    	return bitmap;
     }
     private Bitmap getModifiedBitmap(Bitmap originalImage, int width, int height){
         //here width & height are the desired width & height values)

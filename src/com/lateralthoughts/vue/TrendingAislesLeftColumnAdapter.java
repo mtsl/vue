@@ -42,7 +42,6 @@ import java.util.ArrayList;
 
 //internal imports
 import com.flurry.android.monolithic.sdk.impl.mw;
-import com.lateralthoughts.vue.AisleLoader.BitmapWorkerTask;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;

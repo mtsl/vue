@@ -150,7 +150,9 @@ public class AisleLoader {
 			// lets release the scale image views first
 			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
 				// ((ScaleImageView)contentBrowser.getChildAt(i)).setContainerObject(null);
-				mViewFactory.returnUsedImageView((ScaleImageView) contentBrowser.getChildAt(i));
+				mViewFactory
+						.returnUsedImageView((ScaleImageView) contentBrowser
+								.getChildAt(i));
 			}
 
 			IAisleContentAdapter adapter = mContentAdapterFactory
@@ -183,42 +185,17 @@ public class AisleLoader {
 			Log.i("AisleLoader", "CustomImageUrl:? "
 					+ itemDetails.mCustomImageUrl);
 
-            Bitmap bitmap = mBitmapLoaderUtils
+			Bitmap bitmap = mBitmapLoaderUtils
 					.getCachedBitmap(itemDetails.mCustomImageUrl);
-			if (DataEntryFragment.testId.equalsIgnoreCase(windowContent
-					.getAisleId())) {
-				Log.i("imageurl", "imageurl original   bitmap check:  "
-						+ bitmap);
-			}
-			if(VueApplication.getInstance().getClickedWindowID() != null) {
-				if(VueApplication.getInstance().getClickedWindowID().equalsIgnoreCase(desiredContentId)){
-					Log.i("clickedwindow", "clickedwindow ID matched: " + desiredContentId);
-					Log.i("clickedwindow", "clickedwindow ID  url: " + itemDetails.mImageUrl);
-                }
-            }
-
 			int bestHeight = windowContent.getBestHeightForWindow();
 
-			if (holder.uniqueContentId.equalsIgnoreCase("6339895714906112")) {
-				Log.i("missingimage", "missingimage: customImageUrl: "
-						+ itemDetails.mCustomImageUrl);
-				Log.i("missingimage", "missingimage: mImageUrl: "
-						+ itemDetails.mImageUrl);
-				if (bitmap != null) {
-					Log.i("missingimage",
-							"missingimage: bitmapWidth: " + bitmap.getWidth()
-									+ " bitmapHeight: " + bitmap.getHeight());
-				} else {
-					Log.i("missingimage", "missingimage: bitmap is null");
-				}
-			}
 			if (bitmap != null) {
- 
+
 				LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
 						VueApplication.getInstance().getScreenWidth() / 2,
 						bitmap.getHeight());
 				contentBrowser.setLayoutParams(mShowpieceParams2);
- 
+
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
@@ -233,105 +210,85 @@ public class AisleLoader {
 
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
-        if(serverImageUrl.equals("Niles district"))
-            return;
+		if (serverImageUrl.equals("Niles district"))
+			return;
 
-        ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
-                new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));
+		((ScaleImageView) imageView).setImageUrl(serverImageUrl,
+				new ImageLoader(VueApplication.getInstance().getRequestQueue(),
+						VueApplication.getInstance().getBitmapCache()),
+				VueApplication.getInstance().getVueDetailsCardWidth() / 2,
+				bestHeight);
 	}
 
-	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
-		private final WeakReference<ImageView> imageViewReference;
-		private final WeakReference<AisleContentBrowser> viewFlipperReference;
-		private String url = null;
-		private int mBestHeight;
+	/*
+	 * class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> { private
+	 * final WeakReference<ImageView> imageViewReference; private final
+	 * WeakReference<AisleContentBrowser> viewFlipperReference; private String
+	 * url = null; private int mBestHeight;
+	 * 
+	 * public BitmapWorkerTask(AisleContentBrowser vFlipper, ImageView
+	 * imageView, int bestHeight, String temp) { // Use a WeakReference to
+	 * ensure the ImageView can be garbage // collected imageViewReference = new
+	 * WeakReference<ImageView>(imageView); viewFlipperReference = new
+	 * WeakReference<AisleContentBrowser>( vFlipper); mBestHeight = bestHeight;
+	 * 
+	 * }
+	 * 
+	 * // Decode image in background.
+	 * 
+	 * @Override protected Bitmap doInBackground(String... params) { url =
+	 * params[0]; Bitmap bmp = null; // we want to get the bitmap and also add
+	 * it into the memory cache Log.e("Profiling",
+	 * "Profiling New doInBackground()"); bmp =
+	 * mBitmapLoaderUtils.getBitmap(url, params[1], true,
+	 * 
+	 * mBestHeight,
+	 * VueApplication.getInstance().getVueDetailsCardWidth()/2,Utils
+	 * .TRENDING_SCREEN);
+	 * 
+	 * return bmp; }
+	 */
 
-		public BitmapWorkerTask(AisleContentBrowser vFlipper,
-				ImageView imageView, int bestHeight, String temp) {
-			// Use a WeakReference to ensure the ImageView can be garbage
-			// collected
-			imageViewReference = new WeakReference<ImageView>(imageView);
-			viewFlipperReference = new WeakReference<AisleContentBrowser>(
-					vFlipper);
-			mBestHeight = bestHeight;
-
-		}
-
-		// Decode image in background.
-		@Override
-		protected Bitmap doInBackground(String... params) {
-			url = params[0];
-			Bitmap bmp = null;
-			// we want to get the bitmap and also add it into the memory cache
-			Log.e("Profiling", "Profiling New doInBackground()");
-			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
- 
-					mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2,Utils.TRENDING_SCREEN);
- 
-			return bmp;
-		}
-
-		// Once complete, see if ImageView is still around and set bitmap.
-		@Override
-		protected void onPostExecute(Bitmap bitmap) {
-			if (viewFlipperReference != null && imageViewReference != null
-					&& bitmap != null) {
-				final ImageView imageView = imageViewReference.get();
-				// final AisleContentBrowser vFlipper =
-				// viewFlipperReference.get();
-				BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-				Log.e("BitmapWorkerTask",
-						"BitmapWorkerTask image refreshing onpost " + imageView);
-				if (this == bitmapWorkerTask) {
-					Log.e("BitmapWorkerTask",
-							"BitmapWorkerTask image refreshing onpost if");
-					ViewHolder holder = (ViewHolder) ((ScaleImageView) imageView)
-							.getContainerObject();
-					if (null != holder) {
-						Log.e("BitmapWorkerTask",
-								"BitmapWorkerTask image refreshing onpost if if ");
-						holder.aisleContext.setVisibility(View.VISIBLE);
-						holder.aisleOwnersName.setVisibility(View.VISIBLE);
-						holder.profileThumbnail.setVisibility(View.VISIBLE);
-						holder.aisleDescriptor.setVisibility(View.VISIBLE);
-					}
-					LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
-							VueApplication.getInstance().getScreenWidth() / 2,
-							bitmap.getHeight());
-					holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
- 
-					imageView.setImageBitmap(bitmap);
-				}
-			}
-		}
-	}
-
-	// utility functions to keep track of all the async tasks that we
-	// instantiate
-	private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
-		if (imageView != null) {
-			Object task = ((ScaleImageView) imageView).getOpaqueWorkerObject();
-			if (task instanceof BitmapWorkerTask) {
-				BitmapWorkerTask workerTask = (BitmapWorkerTask) task;
-				return workerTask;
-			}
-		}
-		return null;
-	}
-
-	private static boolean cancelPotentialDownload(String url,
-			ImageView imageView) {
-		BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
-		if (bitmapWorkerTask != null) {
-			String bitmapUrl = bitmapWorkerTask.url;
-			if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
-				bitmapWorkerTask.cancel(true);
-			} else {
-				// The same URL is already being downloaded.
-				return false;
-			}
-		}
-		return true;
-	}
+	/*
+	 * // Once complete, see if ImageView is still around and set bitmap.
+	 * 
+	 * @Override protected void onPostExecute(Bitmap bitmap) { if
+	 * (viewFlipperReference != null && imageViewReference != null && bitmap !=
+	 * null) { final ImageView imageView = imageViewReference.get(); // final
+	 * AisleContentBrowser vFlipper = // viewFlipperReference.get();
+	 * BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+	 * Log.e("BitmapWorkerTask", "BitmapWorkerTask image refreshing onpost " +
+	 * imageView); if (this == bitmapWorkerTask) { Log.e("BitmapWorkerTask",
+	 * "BitmapWorkerTask image refreshing onpost if"); ViewHolder holder =
+	 * (ViewHolder) ((ScaleImageView) imageView) .getContainerObject(); if (null
+	 * != holder) { Log.e("BitmapWorkerTask",
+	 * "BitmapWorkerTask image refreshing onpost if if ");
+	 * holder.aisleContext.setVisibility(View.VISIBLE);
+	 * holder.aisleOwnersName.setVisibility(View.VISIBLE);
+	 * holder.profileThumbnail.setVisibility(View.VISIBLE);
+	 * holder.aisleDescriptor.setVisibility(View.VISIBLE); }
+	 * LinearLayout.LayoutParams mShowpieceParams = new
+	 * LinearLayout.LayoutParams( VueApplication.getInstance().getScreenWidth()
+	 * / 2, bitmap.getHeight());
+	 * holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+	 * 
+	 * imageView.setImageBitmap(bitmap); } } } }
+	 */
+	/*
+	 * // utility functions to keep track of all the async tasks that we //
+	 * instantiate private static BitmapWorkerTask getBitmapWorkerTask(ImageView
+	 * imageView) { if (imageView != null) { Object task = ((ScaleImageView)
+	 * imageView).getOpaqueWorkerObject(); if (task instanceof BitmapWorkerTask)
+	 * { BitmapWorkerTask workerTask = (BitmapWorkerTask) task; return
+	 * workerTask; } } return null; }
+	 * 
+	 * private static boolean cancelPotentialDownload(String url, ImageView
+	 * imageView) { BitmapWorkerTask bitmapWorkerTask =
+	 * getBitmapWorkerTask(imageView);
+	 * 
+	 * if (bitmapWorkerTask != null) { String bitmapUrl = bitmapWorkerTask.url;
+	 * if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+	 * bitmapWorkerTask.cancel(true); } else { // The same URL is already being
+	 * downloaded. return false; } } return true; }
+	 */
 }
