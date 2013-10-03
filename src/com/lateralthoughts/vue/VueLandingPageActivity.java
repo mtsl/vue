@@ -15,7 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.*;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.toolbox.ImageLoader;
+
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -50,8 +57,10 @@ public class VueLandingPageActivity extends BaseActivity {
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		landingPageActivity = this;
+
         VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
         VueApplication.getInstance().mLastRecordedTime = System.currentTimeMillis();
+		Log.e("VueLandingPageActivity", "Oncreate called to test sssssssss");
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
 		mLoadProgress = (ProgressBar) findViewById(R.id.adprogress_progressBar);
@@ -133,6 +142,8 @@ public class VueLandingPageActivity extends BaseActivity {
 					}
 				}
 			});
+		} else {
+		  VueTrendingAislesDataModel.getInstance(this).getNetworkHandler().getBookmarkAisleByUser();
 		}
 
 		mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
@@ -155,6 +166,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				handleSendMultipleImages(intent, true);
 			}
 		}
+		
+		
 	}
 
 	@Override
@@ -499,7 +512,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		mVueLandingActionbarScreenName.setText(catName);
 		boolean loadMore = false;
 		boolean fromServer = true;
-		if(catName.equalsIgnoreCase(getString(R.string.sidemenu_option_My_Aisles))){
+		if(catName.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))){
 			if(isCategoryExistInDb){
 				fromServer = true;
 			} else {
@@ -542,7 +555,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		if(screenName.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))){
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 			.getNetworkHandler().reqestByCategory(screenName, new ProgresStatus(), fromServer, loadMore);
-		} else if(screenName.equalsIgnoreCase(getString(R.string.sidemenu_option_My_Aisles))){
+		} else if(screenName.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))){
 			Log.i("myaisledbcheck", "myaisledbcheck  when back pressed aisle are fetching from db");
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 			.getNetworkHandler().requestAislesByUser(fromServer,new ProgresStatus());

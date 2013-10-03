@@ -32,16 +32,22 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.util.Log;
 
 //java util imports
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 //internal imports
 import com.flurry.android.monolithic.sdk.impl.mw;
+import com.lateralthoughts.vue.AisleLoader.BitmapWorkerTask;
+import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
+import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
 public class TrendingAislesLeftColumnAdapter extends
 		TrendingAislesGenericAdapter {
@@ -52,9 +58,11 @@ public class TrendingAislesLeftColumnAdapter extends
 
 	public int firstX;
 	public int lastX;
-	public static boolean mIsLeftDataChanged = false;
+	//public static boolean mIsLeftDataChanged = false;
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
+	BitmapLoaderUtils mBitmapLoaderUtils;
+	 
 
 	public TrendingAislesLeftColumnAdapter(Context c,
 			ArrayList<AisleWindowContent> content) {
@@ -70,6 +78,7 @@ public class TrendingAislesLeftColumnAdapter extends
 			AisleContentClickListener listener,
 			ArrayList<AisleWindowContent> content) {
 		super(c, listener, content);
+		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
 		mContext = c;
 		this.listener = listener;
 		if (DEBUG)
@@ -124,11 +133,7 @@ public class TrendingAislesLeftColumnAdapter extends
 					.findViewById(R.id.descriptor_aisle_context);
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			convertView.setTag(holder);
-			mShowpieceParams = new LinearLayout.LayoutParams(VueApplication
-					.getInstance().getScreenWidth() / 2, 250);
-			// holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
-			mShowpieceParamsDefault = new LinearLayout.LayoutParams(
-					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		 
 			if (DEBUG)
 				Log.e("Jaws2", "getView invoked for a new view at position1 = "
 						+ position);
@@ -136,11 +141,6 @@ public class TrendingAislesLeftColumnAdapter extends
 		// AisleWindowContent windowContent =
 		// (AisleWindowContent)getItem(position);
 		holder = (ViewHolder) convertView.getTag();
-		if (mIsLeftDataChanged) {
-			mIsLeftDataChanged = false;
-			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-		}
-
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
 		int scrollIndex = 0;
@@ -149,32 +149,8 @@ public class TrendingAislesLeftColumnAdapter extends
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 
 		}
-
 		mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
 				false, listener);
-		/*
-		 * if(!listener.isFlingCalled()) {
-		 * mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
-		 * false);
-		 * holder.aisleContentBrowser.setLayoutParams(mShowpieceParamsDefault);
-		 * 
-		 * for(int i=0;i<holder.aisleContentBrowser.getChildCount();i++){
-		 * ((ScaleImageView
-		 * )holder.aisleContentBrowser.getChildAt(i)).setVisibility
-		 * (View.VISIBLE);
-		 * 
-		 * }
-		 * 
-		 * } else {
-		 * holder.aisleContentBrowser.setLayoutParams(mShowpieceParams); for(int
-		 * i=0;i<holder.aisleContentBrowser.getChildCount();i++){
-		 * ((ScaleImageView
-		 * )holder.aisleContentBrowser.getChildAt(i)).setVisibility
-		 * (View.INVISIBLE);
-		 * 
-		 * } Log.i("fling", "fling dont set holder it is fling call"); }
-		 */
-
 		AisleContext context = holder.mWindowContent.getAisleContext();
 
 		sb.append(context.mFirstName).append(" ").append(context.mLastName);
@@ -202,19 +178,20 @@ public class TrendingAislesLeftColumnAdapter extends
 			index = 0;
 		String lookingFor = mPossibleCategories[index];
 		// holder.aisleContext.setText(contextBuilder.toString());
-		
-		
-		if(context.mOccasion != null && context.mOccasion.length() >1){
+
+		if (context.mOccasion != null && context.mOccasion.length() > 1) {
 			occasion = context.mOccasion;
 		}
-		if(context.mLookingForItem != null && context.mLookingForItem.length() > 1){
+		if (context.mLookingForItem != null
+				&& context.mLookingForItem.length() > 1) {
 			lookingFor = context.mLookingForItem;
 		}
 		holder.aisleContext.setText(occasion + " : " + lookingFor);
 		// ((ViewGroup)(convertView)).setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 		// convertView.setOnClickListener(mClickListener);
 		return convertView;
-	}
+		 
+	 }
 
 	private int calculateActualPosition(int viewPosition) {
 		int actualPosition = 0;
@@ -230,4 +207,5 @@ public class TrendingAislesLeftColumnAdapter extends
 				"DataObserver for List Refresh: Right List AisleUpdate Called ");
 		notifyDataSetChanged();
 	}
+ 
 }

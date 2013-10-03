@@ -1044,7 +1044,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	@Override
 	public void onPersonLoaded(ConnectionResult connectionresult, Person person) {
 		if (connectionresult.getErrorCode() == ConnectionResult.SUCCESS) {
-			 
+
 			FlurryAgent.logEvent("GooglePlus_Logins");
 			FlurryAgent.endTimedEvent("Login_Time_Ends");
 			FlurryAgent.logEvent("Login_Success");

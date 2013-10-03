@@ -23,6 +23,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Environment;
 import android.util.Log;
+import android.webkit.WebView.HitTestResult;
 
 public class BitmapLoaderUtils {
 
@@ -61,19 +62,13 @@ public class BitmapLoaderUtils {
      * just want to have the bitmap. This is a utility function and is public because it is to 
      * be shared by other components in the internal implementation.   
      */
-    public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight,int bestWidth) 
+    public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap, int bestHeight,int bestWidth,String source) 
     {
     	 Log.i("added url", "added url  getBitmap "+url);
         File f = mFileCache.getFile(url);
         Log.i("added url", "added url  getBitmap "+f);
         //from SD cache
-        Bitmap b = decodeFile(f, bestHeight,bestWidth);
-    	if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
-			Log.i("imageurl", "imageurl original   bitmap check2:  "+b);
-			Log.i("imageurl", "imageurl hashcode " + f.getPath());
-			Log.i("imageurl", "imageurl imagepath " + url);
-		}
-        Log.i("added url", "added url  getBitmap "+b);
+        Bitmap b = decodeFile(f, bestHeight,bestWidth,source);
         if(b != null){
           
             if(cacheBitmap)
@@ -83,12 +78,10 @@ public class BitmapLoaderUtils {
         
         //from web
         try {
-        	Log.i("imageurl", "imageurl original vue  bitmap check4:  error" + url);
         	if(serverUrl == null || serverUrl.length() < 1) {
        
         		return null;
         	}
-        	Log.i("imageurl", "imageurl original vue  bitmap check4:  error" + url);
             Bitmap bitmap=null;
             URL imageUrl = new URL(serverUrl);
             HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
@@ -96,28 +89,17 @@ public class BitmapLoaderUtils {
             conn.setReadTimeout(30000);
             conn.setInstanceFollowRedirects(true);
             InputStream is=conn.getInputStream();
-            Log.i("added url", "added url  InputStream "+is);
-            Log.i("added url", "added url  InputStream url "+url);
-   		 
     		int hashCode = url.hashCode();
     		String filename = String.valueOf(hashCode);
-            Log.i("added url", "added url  InputStream imgname "+filename);
             OutputStream os = new FileOutputStream(f);
             Utils.CopyStream(is, os);
             os.close();
-            bitmap = decodeFile(f, bestHeight,bestWidth);
+            bitmap = decodeFile(f, bestHeight,bestWidth,source);
             if(cacheBitmap) 
             	mAisleImagesCache.putBitmap(url, bitmap);
-        	if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
-    			Log.i("imageurl", "imageurl original   bitmap check3:  "+bitmap);
-    		}
-
             return bitmap;
         } catch (Throwable ex){
            ex.printStackTrace();
-           if(DataEntryFragment.testCutomUrl.equalsIgnoreCase(url)){
-   			Log.i("imageurl", "imageurl original vue  bitmap check4:  error");
-   		}
            if(ex instanceof OutOfMemoryError) {
              // mAisleImagesCache.clear();
            }
@@ -126,7 +108,7 @@ public class BitmapLoaderUtils {
     }
 
     //decodes image and scales it to reduce memory consumption
-    public Bitmap decodeFile(File f, int bestHeight,int bestWidth){
+    public Bitmap decodeFile(File f, int bestHeight,int bestWidth,String source){
         Log.i("added url", "added url in  decodeFile: bestheight is "+bestHeight );
    
         try {
@@ -144,9 +126,11 @@ public class BitmapLoaderUtils {
             //final int REQUIRED_SIZE = mScreenWidth/2;
             int height=o.outHeight;
             int width = o.outWidth;
-            Log.i("added url", "added urldecodeFile  bitmap o.height : "+height );
-            Log.i("added url", "added urldecodeFile  bitmap o.width : "+width );
-         // int reqWidth = VueApplication.getInstance().getVueDetailsCardWidth()/2;
+  	        Log.i("window", "clickedwindow ID bitmap Height4 bestHeight: "+bestHeight); 
+			Log.i("window", "clickedwindow ID original height: "+height);
+ 
+      /*    int reqWidth1 = VueApplication.getInstance().getVueDetailsCardWidth()/2;
+          Log.i("added url", "added url in  decodeFile: cardwidth "+reqWidth1 );*/
             int reqWidth = bestWidth;
             int scale=1;
             
@@ -160,7 +144,7 @@ public class BitmapLoaderUtils {
                 // a final image with both dimensions larger than or equal to the
                 // requested height and width.
                 scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
- 
+                
             }
             
             //decode with inSampleSize
@@ -170,31 +154,38 @@ public class BitmapLoaderUtils {
             //if(DEBUG) Log.d("Jaws","using inSampleSizeScale = " + scale + " original width = " + o.outWidth + "screen width = " + mScreenWidth);
             FileInputStream stream2=new FileInputStream(f);
             Bitmap bitmap=BitmapFactory.decodeStream(stream2, null, o2);
-       
+            Log.i("window", "clickedwindow ID  new bitmap height1 : "+bitmap.getHeight());
+      			Log.i("window", "clickedwindow ID new bitmap widht1: "+bitmap.getWidth());
             stream2.close();
-            if(bitmap != null) {
+            if(source.equalsIgnoreCase(Utils.DETAILS_SCREEN)){
+            	//scaling factor considers only integers may be some times 
+            	//scaling factor becomes 1 even there is slight difference in sizes
+            	//so to avoid croping in that cases in Detailsview screen
+            	//compare sizes after scaling.
+        /*    if(bitmap != null){
+            	 width = bitmap.getWidth();
+                 height = bitmap.getHeight();
+                 if(height > bestHeight){
+                	 float tempWidth = (width * bestHeight)/height;
+                	 width = (int) tempWidth;
+                	 bitmap = getModifiedBitmap(bitmap,width,bestHeight);
+                 }
+            }*/
+            }
+            
+            
+       /*     if(bitmap != null) {
             width = bitmap.getWidth();
             height = bitmap.getHeight();
           
             if(width > reqWidth) {
-            	 
                float tempHeight = (height * reqWidth)/width;
                 height = (int)tempHeight;
-              /* Bitmap bitmaptest = Bitmap.createScaledBitmap(bitmap, reqWidth, height,
-						true);*/
             	bitmap = getModifiedBitmap(bitmap,reqWidth,height);
-       
             }
-            }
-            if(bitmap != null) {
-            	 Log.i("added url", "added url  urldecodeFile width "+bitmap.getWidth());
-            	 
-            
-            } else {
-            	 Log.i("added url", "added urldecodeFile  bitmap null " );
-            }
-            Log.i("imageHeight", "imageHeight after resized: "+bitmap.getHeight());
-            Log.i("imageHeight", "imageHeight after resized: "+bitmap.getWidth());
+            }*/
+            Log.i("window", "clickedwindow ID  new bitmap height2 : "+bitmap.getHeight());
+  			Log.i("window", "clickedwindow ID new bitmap widht2: "+bitmap.getWidth());
             return bitmap;
         } catch (FileNotFoundException e) {
         	Log.i("added url", "added urldecodeFile  filenotfound exception " );

@@ -28,7 +28,7 @@ public class AisleDetailsViewListLoader {
     private static final boolean DEBUG = false;
     private static final String TAG = "AisleDetailsViewListLoader";
     Handler handler = new Handler();
-    private Context mContext;
+   // private Context mContext;
     private ContentAdapterFactory mContentAdapterFactory;
     
     private static AisleDetailsViewListLoader sAisleDetailsViewLoaderInstance = null;
@@ -50,11 +50,11 @@ public class AisleDetailsViewListLoader {
         //we don't want everyone creating an instance of this. We will
         //instead use a factory pattern and return an instance using a
         //static method
-        mContext = context;
-        mViewFactory = ScaledImageViewFactory.getInstance(context);
+       // mContext = context;
+        mViewFactory = ScaledImageViewFactory.getInstance(VueApplication.getInstance());
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
-        mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
-        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
+        mContentAdapterFactory = ContentAdapterFactory.getInstance(VueApplication.getInstance());
+        DisplayMetrics dm = VueApplication.getInstance().getResources().getDisplayMetrics();
        //mBitmapLoaderUtils.clearCache();
         if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
@@ -112,22 +112,18 @@ public class AisleDetailsViewListLoader {
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			 
 			 for(int i = 0;i<imageDetailsArr.size();i++) {
-				  if(mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
+				 Log.i("clickedwindow", "clickedwindow ID***: width" + imageDetailsArr.get(i).mAvailableWidth+" height: "+imageDetailsArr.get(i).mAvailableHeight);
+				 Log.i("clickedwindow", "clickedwindow ID**: imageUrl" +imageDetailsArr.get(i).mImageUrl);
+				  if(mBestHeight > imageDetailsArr.get(i).mAvailableHeight) {
 					  mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
 				  }
+				 
 			 }
+			 Log.i("clickedwindow", "clickedwindow ID***: bestHeight : " +windowContent.getBestHeightForWindow());
 		     setParams(holder.aisleContentBrowser, imageView, mBestHeight);
 			holder.aisleContentBrowser.mSwipeListener
 					.onReceiveImageCount(imageDetailsArr.size());
 			itemDetails = imageDetailsArr.get(0);
-			
-			if(VueApplication.getInstance().getClickedWindowID() != null) {
-				if(VueApplication.getInstance().getClickedWindowID().equalsIgnoreCase(desiredContentId)){
-					Log.i("clickedwindow", "clickedwindow ID detatils matched: " + desiredContentId);
-					Log.i("clickedwindow", "clickedwindow ID  detatils url: " + itemDetails.mImageUrl);
-				}
-				}
-			
 			imageView = mViewFactory.getEmptyImageView();
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -137,11 +133,16 @@ public class AisleDetailsViewListLoader {
 			// imgConnectivity.setImageClick(imageView);
 			Bitmap bitmap = mBitmapLoaderUtils
 					.getCachedBitmap(itemDetails.mImageUrl);
+			
+			
 			if (bitmap != null) {
 				// get the dimensions of the image.
+			
 				mImageDimension = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
 						itemDetails.mAvailableHeight);
+				Log.i("window", "clickedwindow ID bitmap Height1: "+bitmap.getHeight());
+				Log.i("window", "clickedwindow ID  required height1: "+mImageDimension.mImgHeight);
 				mBestHeight = mImageDimension.mImgHeight;
 				setParams(holder.aisleContentBrowser, imageView, mBestHeight);
 				if (bitmap.getHeight() < mImageDimension.mImgHeight) {
@@ -206,15 +207,20 @@ public class AisleDetailsViewListLoader {
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth());
+            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
+            Log.i("window", "clickedwindow ID bitmap Height2 original: "+bmp.getHeight());
+			Log.i("window", "clickedwindow ID  required height2 original: "+mBestHeight);
             if(bmp != null) {
            	 mImageDimension = Utils.getScalledImage(bmp,
            			mAvailabeWidth, mAvailableHeight);
            	 Log.i("imageSize", "imageSize mImageDimension Height: "+mImageDimension.mImgHeight);
            	mAvailableHeight = mImageDimension.mImgHeight;
-            	 if(bmp.getHeight()<mImageDimension.mImgHeight) {
-            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mImageDimension.mImgHeight, VueApplication.getInstance().getVueDetailsCardWidth());
-				 }
+            	 if(bmp.getHeight()> mImageDimension.mImgHeight) {
+            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mImageDimension.mImgHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
+				
+            	      Log.i("window", "clickedwindow ID bitmap Height3 modified original: "+bmp.getHeight());
+          			Log.i("window", "clickedwindow ID  required height3  modiried original: "+mImageDimension.mImgHeight);
+            	 }
             }
             return bmp;            
         }
@@ -277,13 +283,13 @@ public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 			contentBrowser.removeAllViews();
 			contentBrowser = null;
 			
-			for(int i = 0;i<imageList.size();i++){
+		/*	for(int i = 0;i<imageList.size();i++){
 				Bitmap bitmap = mBitmapLoaderUtils
 						.getCachedBitmap(imageList.get(i).mImageUrl);
 				if(bitmap != null){
 					bitmap.recycle();
 				}
-			}
+			}*/
 		} else {
 			Log.i("bitmap reclying", "bitmap reclying  contentBrowser is null ");
 		}

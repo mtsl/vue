@@ -331,6 +331,9 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
+				Utils.putDataentryAddImageAisleFlag(DataEntryActivity.this,
+						false);
+				Utils.putDataentryEditAisleFlag(DataEntryActivity.this, false);
 				Utils.putDataentryScreenAisleId(this, null);
 				VueApplication.getInstance().mAisleImagePathList.clear();
 				super.onBackPressed();

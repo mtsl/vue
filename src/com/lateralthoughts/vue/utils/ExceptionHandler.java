@@ -1,13 +1,15 @@
 package com.lateralthoughts.vue.utils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.logging.Logger;
+import java.util.Calendar;
 
 import android.app.Activity;
-import android.os.Process;
+import android.os.Environment;
 import android.util.Log;
 
 public class ExceptionHandler implements
@@ -32,36 +34,34 @@ public class ExceptionHandler implements
 	public void uncaughtException(Thread thread, Throwable exception) {
 		final StringWriter stackTrace = new StringWriter();
 		exception.printStackTrace(new PrintWriter(stackTrace));
+		writeToSdcard(stackTrace.toString());
 		Log.i("Vue", "" + stackTrace);
-
-		Thread t = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-
-					Logger.log("ERROR", "CrashActivity", stackTrace + "");
-
-					GMailSender sender = new GMailSender(
-							VueConstants.GMAIL_USERNAME_FOR_SENDING_ERROR_TO_MAIL,
-							VueConstants.GMAIL_PASSWORD_FOR_SENDING_ERROR_TO_MAIL);
-					sender.sendMail(
-							VueConstants.GMAIL_SUBJECT_FOR_SENDING_ERROR_TO_MAIL
-									+ Utils.date() + " (APK From Krishna)",
-							stackTrace + "",
-							VueConstants.GMAIL_SENDER_FOR_SENDING_ERROR_TO_MAIL,
-							VueConstants.GMAIL_RECIPIENTS_FOR_SENDING_ERROR_TO_MAIL);
-
-					Process.killProcess(Process.myPid());
-					System.exit(10);
-
-				} catch (Exception e) {
-					Log.e("SendMail", e.getMessage(), e);
-				}
-
-			}
-		});
-		t.start();
-
+		
 	}
+	  private  void writeToSdcard(String message) {
+		    
+		    String path = Environment.getExternalStorageDirectory().toString();
+		    File dir = new File(path + "/vueExceptions/");
+		    if(!dir.isDirectory()) {
+		      dir.mkdir();
+		    }
+		    File file = new File(dir, "/" + Calendar.getInstance().get(Calendar.DATE) + ".txt");
+		      try {
+		        file.createNewFile();
+		      } catch (IOException e) {
+		    	  Log.i("pathsaving", "pathsaving in sdcard2 error");
+		        e.printStackTrace();
+		      }
+		      
+		      try {
+		        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+		        out.write("\n"+message+"\n");
+		        out.flush();
+		        out.close();
+		        Log.i("pathsaving", "pathsaving in sdcard2 success");
+		      } catch (IOException e) {
+		    	  Log.i("pathsaving", "pathsaving in sdcard3 error");
+		        e.printStackTrace();
+		      }
+		  }
 }

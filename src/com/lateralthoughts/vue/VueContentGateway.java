@@ -109,9 +109,19 @@ public class VueContentGateway {
 					 
 				}
 			};
-			JsonArrayRequest vueRequest = new JsonArrayRequest(requestUrl,listener, errorListener);
-			VueApplication.getInstance().getRequestQueue().add(vueRequest);
-		}
+			JsonArrayRequest vueRequest = new JsonArrayRequest(requestUrl,
+					listener, errorListener) {
+
+        /*@Override
+        public Map<String, String> getHeaders() throws AuthFailureError {
+          HashMap<String, String> headersMap = new HashMap<String, String>();
+          headersMap.put("Accept-Encoding", "gzip");
+          headersMap.put("Content-Type", "application/json");
+          return headersMap;
+        }*/
+      };
+       VueApplication.getInstance().getRequestQueue().add(vueRequest);
+      }
 		return status;
 	}
 	private void initializeHttpFields() {

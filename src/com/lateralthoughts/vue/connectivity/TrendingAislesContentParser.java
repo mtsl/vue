@@ -1,10 +1,21 @@
 package com.lateralthoughts.vue.connectivity;
 
+import java.util.ArrayList;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
+
 import com.lateralthoughts.vue.*;
+
+import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.parser.Parser;
 
 import java.util.ArrayList;
@@ -34,9 +45,11 @@ public class TrendingAislesContentParser extends ResultReceiver {
 							.parseTrendingAislesResultData(
 									resultData.getString("result"),
 									resultData.getBoolean("loadMore"));
-					Log.i("dbInsert", "dbInsert1 aislesListSize: "+aislesList.size());
-					DataBaseManager.getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB(
-							VueApplication.getInstance(), aislesList);
+					Log.i("dbInsert",
+							"dbInsert1 aislesListSize: " + aislesList.size());
+					DataBaseManager.getInstance(VueApplication.getInstance())
+							.addTrentingAislesFromServerToDB(
+									VueApplication.getInstance(), aislesList);
 
 					Log.i("ailsesize", "ailseListSizemaintrending: "
 							+ aislesList.size());
@@ -49,7 +62,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
 									.equals(VueApplication
 											.getInstance()
 											.getString(
-													R.string.sidemenu_option_My_Aisles)))) {
+													R.string.sidemenu_sub_option_My_Aisles)))) {
 						if (VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag) {
 							VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
 							if (resultData.getInt("offset") == 0) {
@@ -105,4 +118,24 @@ public class TrendingAislesContentParser extends ResultReceiver {
 			break;
 		}
 	}
+
+	/*
+	 * private class DbDataSetter extends AsyncTask<Void, Void, Void> {
+	 * ArrayList<AisleWindowContent> mAislesList;
+	 * 
+	 * public DbDataSetter(ArrayList<AisleWindowContent> aislesList) {
+	 * mAislesList = aislesList; }
+	 * 
+	 * @Override protected void onPreExecute() { // TODO Auto-generated method
+	 * stub super.onPreExecute(); }
+	 * 
+	 * @Override protected Void doInBackground(Void... params) {
+	 * DataBaseManager.
+	 * getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB
+	 * ( VueApplication.getInstance(), mAislesList); return null; }
+	 * 
+	 * @Override protected void onPostExecute(Void result) {
+	 * mAislesList.clear(); super.onPostExecute(result); } }
+	 */
+
 }
