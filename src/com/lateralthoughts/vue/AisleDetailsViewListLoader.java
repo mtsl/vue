@@ -131,7 +131,8 @@ public class AisleDetailsViewListLoader {
 			imageView.setLayoutParams(params);
 			imageView.setContainerObject(holder);
 			// imgConnectivity.setImageClick(imageView);
-			Bitmap bitmap = null; //mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
+			Bitmap bitmap = null; 
+			bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
 			
 			
 			if (bitmap != null) {
@@ -238,7 +239,7 @@ public class AisleDetailsViewListLoader {
                    //aisleContentBrowser.addView(imageView);
                   setParams( aisleContentBrowser, imageView,mAvailableHeight);
                   // bitmap = Utils.getScalledImage(bitmap, mAvailabeWidth,mAvailableHeight);
-                    //imageView.setImageBitmap(bitmap);
+                    imageView.setImageBitmap(bitmap);
                 }
             }
         }

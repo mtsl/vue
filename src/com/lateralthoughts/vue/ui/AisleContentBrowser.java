@@ -313,13 +313,10 @@ public class AisleContentBrowser extends ViewFlipper {
 	    }
 	//}
 	public void setCurrentImage(){
-		Log.i("currentimage", "currentimage1: "+VueApplication.getInstance().getmAisleImgCurrentPos()); 
 		for(int i=0;i<VueApplication.getInstance().getmAisleImgCurrentPos();i++) {
 		 mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,i, i+1, true);
-		 Log.i("currentimage", "currentimage2"); 
 		}
 		final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
-		 
 		  aisleContentBrowser.setDisplayedChild(VueApplication.getInstance().getmAisleImgCurrentPos());
 	}
 	public void setCustomAdapter(IAisleContentAdapter adapter){
