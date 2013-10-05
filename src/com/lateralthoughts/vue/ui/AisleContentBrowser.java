@@ -391,6 +391,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	    public void onAddCommentClick(RelativeLayout view,EditText editText,ImageView commentSend,FrameLayout editLay);
 	    public void onDissAllowListResponse();
 	    public void onAllowListResponse();
+	    public void setOccasion(String occasion);
 	}
 	public void setAisleDetailSwipeListener(AisleDetailSwipeListener swipListener) {
 		mSwipeListener = swipListener; 

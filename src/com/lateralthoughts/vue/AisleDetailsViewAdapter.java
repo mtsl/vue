@@ -118,6 +118,14 @@ public class AisleDetailsViewAdapter extends  BaseAdapter {
 						+ getItem(mCurrentAislePosition)
 								.getBestHeightForWindow());
 		if (getItem(mCurrentAislePosition) != null) {
+			String occasion = getItem(mCurrentAislePosition).getAisleContext().mOccasion;
+			if(occasion != null){
+				occasion = occasion.substring (0,1).toUpperCase() + occasion.substring (1).toLowerCase();
+				String lookingFor =  getItem(mCurrentAislePosition).getAisleContext().mLookingForItem;
+				lookingFor = lookingFor.substring (0,1).toUpperCase() + lookingFor.substring (1).toLowerCase();
+			mswipeListner.setOccasion(occasion+" "+lookingFor);
+			}
+			
 			mBookmarksCount = getItem(mCurrentAislePosition).getmAisleBookmarksCount();
 			 getItem(mCurrentAislePosition).setmAisleBookmarksCount(mBookmarksCount);
 			VueApplication.getInstance().setClickedWindowCount(

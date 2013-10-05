@@ -56,7 +56,9 @@
         android:layout_marginBottom="6dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
-        android:background="@color/bottombar" >
+        android:background="@color/bottombar"
+        android:color="@color/transperent" 
+          >
 
         <ImageView
             android:id="@+id/vue_user_pic"

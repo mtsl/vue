@@ -42,6 +42,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.fasterxml.jackson.databind.deser.impl.SetterlessProperty;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
@@ -83,6 +84,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private ListView mAisleDetailsList;
 	EditTextBackEvent mEditTextFindAt;
 	LinearLayout mDetailsFindAtPopup;
+	TextView  vueAisleHeading;
+	String mOccasion;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -202,7 +205,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		});
 		RelativeLayout bottomBar = (RelativeLayout) mDetailsContentView
 				.findViewById(R.id.vue_bottom_bar);
-		bottomBar.getBackground().setAlpha(25);
+		//bottomBar.getBackground().setAlpha(25);
 		mAddVueAisle = (ImageView) mDetailsContentView
 				.findViewById(R.id.vue_aisle);
 		mAddVueAisle.setOnClickListener(new OnClickListener() {
@@ -229,8 +232,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mVueUserName.setTextSize(Utils.MEDIUM_TEXT_SIZE);
 		final LinearLayout dotIndicatorBg = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.dot_indicator_bg);
-		TextView vueAisleHeading = (TextView) mDetailsContentView
+		 vueAisleHeading = (TextView) mDetailsContentView
 				.findViewById(R.id.vue_aisle_heading);
+		 if(mOccasion != null){
+			 vueAisleHeading.setText(mOccasion); 
+		 }
 		vueAisleHeading.setTextSize(Utils.LARGE_TEXT_SIZE);
 		mDotOne = (ImageView) mDetailsContentView.findViewById(R.id.one);
 		mDotTwo = (ImageView) mDetailsContentView.findViewById(R.id.two);
@@ -365,6 +371,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			@Override
 			public void run() {
 				// TODO need to invisible this view in a smooth way
+				 
 				dotIndicatorBg.setVisibility(View.GONE);
 			}
 		}, AISLE_HEADER_SHOW_TIME);
@@ -406,7 +413,10 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	 * will be called to indicate the current position of the image.
 	 */
 	private class AisleDetailsSwipeListner implements AisleDetailSwipeListener {
-
+          @Override
+        public void setOccasion(String occasion) {
+        	  mOccasion = occasion;
+        }
 		@Override
 		public void onAisleSwipe(String direction, int position) {
 			upDatePageDots(position, direction);
@@ -771,54 +781,54 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 	private void hightLightCurrentPage(int position) {
 		if (position == 0) {
-			mDotOne.setImageResource(R.drawable.number_active);
+			mDotOne.setImageResource(R.drawable.active_dot);
 		} else {
-			mDotOne.setImageResource(R.drawable.number_inactive);
+			mDotOne.setImageResource(R.drawable.inactive_dot);
 		}
 		if (position == 1) {
-			mDotTwo.setImageResource(R.drawable.number_active);
+			mDotTwo.setImageResource(R.drawable.active_dot);
 		} else {
-			mDotTwo.setImageResource(R.drawable.number_inactive);
+			mDotTwo.setImageResource(R.drawable.inactive_dot);
 		}
 		if (position == 2) {
-			mDotThree.setImageResource(R.drawable.number_active);
+			mDotThree.setImageResource(R.drawable.active_dot);
 		} else {
-			mDotThree.setImageResource(R.drawable.number_inactive);
+			mDotThree.setImageResource(R.drawable.inactive_dot);
 		}
 		if (position == 3) {
-			mDotFour.setImageResource(R.drawable.number_active);
+			mDotFour.setImageResource(R.drawable.active_dot);
 		} else {
-			mDotFour.setImageResource(R.drawable.number_inactive);
+			mDotFour.setImageResource(R.drawable.inactive_dot);
 		}
 		if (position == 4) {
-			mDotFive.setImageResource(R.drawable.number_active);
+			mDotFive.setImageResource(R.drawable.active_dot);
 		} else {
-			mDotFive.setImageResource(R.drawable.number_inactive);
+			mDotFive.setImageResource(R.drawable.inactive_dot);
 		}
 		if (position == 5) {
-			mDotSix.setImageResource(R.drawable.number_active);
+			mDotSix.setImageResource(R.drawable.active_dot);
 		} else {
-			mDotSix.setImageResource(R.drawable.number_inactive);
+			mDotSix.setImageResource(R.drawable.inactive_dot);
 		}
 		if (position == 6) {
-			mDotSeven.setImageResource(R.drawable.number_active);
+			mDotSeven.setImageResource(R.drawable.active_dot);
 		} else {
-			mDotSeven.setImageResource(R.drawable.number_inactive);
+			mDotSeven.setImageResource(R.drawable.inactive_dot);
 		}
 		if (position == 7) {
-			mDotEight.setImageResource(R.drawable.number_active);
+			mDotEight.setImageResource(R.drawable.active_dot);
 		} else {
-			mDotEight.setImageResource(R.drawable.number_inactive);
+			mDotEight.setImageResource(R.drawable.inactive_dot);
 		}
 		if (position == 8) {
-			mDotNine.setImageResource(R.drawable.number_active);
+			mDotNine.setImageResource(R.drawable.active_dot);
 		} else {
-			mDotNine.setImageResource(R.drawable.number_inactive);
+			mDotNine.setImageResource(R.drawable.inactive_dot);
 		}
 		if (position == 9) {
-			mDotTen.setImageResource(R.drawable.number_active);
+			mDotTen.setImageResource(R.drawable.active_dot);
 		} else {
-			mDotTen.setImageResource(R.drawable.number_inactive);
+			mDotTen.setImageResource(R.drawable.inactive_dot);
 		}
 
 	}

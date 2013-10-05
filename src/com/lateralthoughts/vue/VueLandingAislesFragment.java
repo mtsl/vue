@@ -184,8 +184,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				// notify the adapters.
 				if (mIsFlingCalled == true) {
 					mIsFlingCalled = false;
-					//mLeftColumnAdapter.notifyDataSetChanged();
-					//mRightColumnAdapter.notifyDataSetChanged();
+					mLeftColumnAdapter.notifyDataSetChanged();
+					mRightColumnAdapter.notifyDataSetChanged();
 				}
 
 			} else if(scrollState == SCROLL_STATE_TOUCH_SCROLL){

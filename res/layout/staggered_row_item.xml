@@ -25,10 +25,8 @@
             android:id="@id/profile_icon_descriptor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
             android:cropToPadding="true"
-            android:paddingBottom="3dp"
-            android:paddingTop="3dp"
+            android:layout_gravity="center_vertical"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:scaleType="center"
@@ -38,8 +36,10 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
             android:orientation="vertical"
-            android:layout_gravity="left" >
+             >
 
         	<TextView
         	    android:id="@id/descriptor_aisle_owner_name"

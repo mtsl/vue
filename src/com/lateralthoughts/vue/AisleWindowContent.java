@@ -178,7 +178,7 @@ public class AisleWindowContent {
 			if (newHeight > bestHeight) {
 				newHeight = (newHeight * bestHeight) / newHeight;
 			}
-			if (newHeight < bestHeight) {
+			if (newHeight <= bestHeight) {
 				bestHeight = newHeight;
 			}
 			Log.e("getBestHeight", "BestHeight ???" + bestHeight + "??width??"

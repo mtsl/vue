@@ -224,10 +224,6 @@ public class BitmapLoaderUtils {
             }
             }
        }
-    	if(bestHeight == 190){
-    		Log.i("bestwidht", "bestwidth height: "+bitmap.getHeight());
-    		Log.i("bestwidht", "bestwidth width: "+bitmap.getWidth());
-    	}
     	return bitmap;
     }
     private Bitmap getModifiedBitmap(Bitmap originalImage, int width, int height){

@@ -19,12 +19,13 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
-public class ScaleImageView extends NetworkImageView {
+public class ScaleImageView extends /*Network*/ImageView {
 	private ImageChangeListener imageChangeListener;
 	private boolean scaleToWidth = false; // this flag determines if should
 											// measure height manually dependent
@@ -56,8 +57,8 @@ public class ScaleImageView extends NetworkImageView {
 	@Override
 	public void setImageBitmap(Bitmap bm) {
 		Log.i("calling here", "calling here");
-		new BitmapReszie().execute(bm);
-		// super.setImageBitmap(bm);
+		//new BitmapReszie().execute(bm);
+		 super.setImageBitmap(bm);
 		// this.setImageBitmap(bm);
 
 		if (imageChangeListener != null)
@@ -166,12 +167,12 @@ public class ScaleImageView extends NetworkImageView {
 		return mContainer;
 	}
 
-	public void setImageUrl(String url, ImageLoader imageLoader, int bestWidth,
+/*	public void setImageUrl(String url, ImageLoader imageLoader, int bestWidth,
 			int bestHeight) {
 		mBestHeight = bestHeight;
 		mBestWidth = bestWidth;
 		super.setImageUrl(url, imageLoader);
-	}
+	}*/
 
 	private Object mObject;
 	private Object mContainer;

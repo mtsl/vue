@@ -185,6 +185,15 @@ public class TrendingAislesLeftColumnAdapter extends
 				&& context.mLookingForItem.length() > 1) {
 			lookingFor = context.mLookingForItem;
 		}
+		if(occasion != null && occasion.length() > 1){
+			occasion = occasion.toLowerCase();
+			occasion = Character.toString(occasion.charAt(0)).toUpperCase()+occasion.substring(1);
+			}
+			if(lookingFor != null && lookingFor.length() > 1){
+			lookingFor = lookingFor.toLowerCase();
+			lookingFor = Character.toString(lookingFor.charAt(0)).toUpperCase()+lookingFor.substring(1);
+			}
+		
 		holder.aisleContext.setText(occasion + " : " + lookingFor);
 		// ((ViewGroup)(convertView)).setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 		// convertView.setOnClickListener(mClickListener);

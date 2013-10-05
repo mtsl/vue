@@ -207,7 +207,7 @@ public class VueApplication extends Application {
 
 	public int getVueDetailsCardWidth() {
 		if (mVueDetailsCardWidth == 0) {
-			int leftRightMargins = 20;
+			int leftRightMargins = 0;
 			mVueDetailsCardWidth = mScreenWidth - getPixel(leftRightMargins);
 		}
 		return mVueDetailsCardWidth;
@@ -248,12 +248,12 @@ public class VueApplication extends Application {
 	 * newVueTrendingAislesDataModel = createNewObject; }
 	 */
 
-    public BitmapCache getBitmapCache(){
+ /*   public BitmapCache getBitmapCache(){
         if(sBitmapCache == null)
             sBitmapCache = new BitmapCache(512);
 
         return sBitmapCache;
-    }
+    }*/
     private BitmapCache sBitmapCache;
 
 }

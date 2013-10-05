@@ -326,8 +326,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     		 loc = itemDetails.mCustomImageUrl;
     	 }
 
-        ((ScaleImageView) imageView).setImageUrl(loc,
-                new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));
+     /*   ((ScaleImageView) imageView).setImageUrl(loc,
+                new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
 
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);

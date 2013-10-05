@@ -171,16 +171,16 @@ public class AisleDetailsViewListLoader {
     public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
     	String loc = itemDetails.mImageUrl;
     	String serverImageUrl = itemDetails.mImageUrl;
-        ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
-                new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));
+      /*  ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
+                new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
 
 
-        //  if (cancelPotentialDownload(loc, imageView)) {
-        //    BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
-          //  ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
-            //String imagesArray[] = {loc, serverImageUrl};
-         //   task.execute(imagesArray);
-       // }
+          if (cancelPotentialDownload(loc, imageView)) {
+            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
+            ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
+            String imagesArray[] = {loc, serverImageUrl};
+            task.execute(imagesArray);
+        }
     }
     
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
