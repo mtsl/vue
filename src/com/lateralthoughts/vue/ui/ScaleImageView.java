@@ -154,7 +154,6 @@ public class ScaleImageView extends ImageView {
 	public Object getContainerObject(){
 		return mContainer;
 	}
-	
 	private Object mObject;
 	private Object mContainer;
 

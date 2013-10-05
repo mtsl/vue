@@ -261,7 +261,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					}
 				});
 		if (VueLandingPageActivity.mOtherSourceImagePath != null) {
-			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath);
+			// TODO need to add imageUrl, imageWidth and ImageHeight for the
+			// below method
+			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath, null,
+					0, 0);
 			VueLandingPageActivity.mOtherSourceImagePath = null;
 		}
 	}
@@ -534,7 +537,11 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				String imagePath = b
 						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 				if (imagePath != null) {
-					addImageToAisle(imagePath);
+					addImageToAisle(
+							imagePath,
+							findAt,
+							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH),
+							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT));
 				}
 
 			}
@@ -592,8 +599,11 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			url = params[0];
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
-			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
-					mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2,Utils.DETAILS_SCREEN);
+			bmp = mBitmapLoaderUtils
+					.getBitmap(url, params[1], true, mBestHeight,
+							VueApplication.getInstance()
+									.getVueDetailsCardWidth() / 2,
+							Utils.DETAILS_SCREEN);
 
 			// bmp = getBitmap(url, true, mBestHeight);
 			return bmp;
@@ -885,17 +895,21 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		return newBitmap;
 	}
 
-	private void addImageToAisle(String imagePath) {
+	private void addImageToAisle(String imagePath, String imageUrl,
+			int imageWidth, int imageHeight) {
 		FileCache fileCache = new FileCache(this);
-		File f = fileCache.getFile(imagePath);
+		File f = fileCache.getFile(imageUrl);
 		File sourceFile = new File(imagePath);
 		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-				VueApplication.getInstance().mScreenHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
+				VueApplication.getInstance().mScreenHeight,
+				VueApplication.getInstance().getVueDetailsCardWidth(),
+				Utils.DETAILS_SCREEN);
 		Utils.saveBitmap(bmp, f);
 		if (mVueAiselFragment == null) {
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.aisle_details_view_fragment);
 		}
-		mVueAiselFragment.addAisleToWindow(bmp, imagePath);
+		mVueAiselFragment.addAisleToWindow(bmp, imagePath, imageUrl,
+				imageWidth, imageHeight);
 	}
 }

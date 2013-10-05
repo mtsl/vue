@@ -185,38 +185,28 @@ public class AisleLoader {
 			itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
-			Log.i("AisleLoader", "CustomImageUrl:? "
-					+ itemDetails.mCustomImageUrl);
-			Bitmap bitmap = mBitmapLoaderUtils
-					.getCachedBitmap(itemDetails.mCustomImageUrl);
+			/*
+			 * if (position == 1) { Log.i("AisleLoader", "CustomImageUrl:? " +
+			 * itemDetails.mCustomImageUrl + "??? " + itemDetails.mImageUrl); }
+			 */
+			/*
+			 * Bitmap bitmap = mBitmapLoaderUtils
+			 * .getCachedBitmap(itemDetails.mCustomImageUrl);
+			 */
+			Bitmap bitmap = null;
 			int bestHeight = windowContent.getBestHeightForWindow();
-
-			if (holder.uniqueContentId.equalsIgnoreCase("6339895714906112")) {
-				Log.i("missingimage", "missingimage: customImageUrl: "
-						+ itemDetails.mCustomImageUrl);
-				Log.i("missingimage", "missingimage: mImageUrl: "
-						+ itemDetails.mImageUrl);
-				if (bitmap != null) {
-					Log.i("missingimage",
-							"missingimage: bitmapWidth: " + bitmap.getWidth()
-									+ " bitmapHeight: " + bitmap.getHeight());
-				} else {
-					Log.i("missingimage", "missingimage: bitmap is null");
-				}
-			}
 			if (bitmap != null) {
- 
 				LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
 						VueApplication.getInstance().getScreenWidth() / 2,
 						bitmap.getHeight());
 				contentBrowser.setLayoutParams(mShowpieceParams2);
- 
+
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
 
 				contentBrowser.addView(imageView);
-
+				tempId = desiredContentId;
 				if (!placeholderOnly)
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
@@ -242,6 +232,7 @@ public class AisleLoader {
 		private final WeakReference<AisleContentBrowser> viewFlipperReference;
 		private String url = null;
 		private int mBestHeight;
+		private String mAilseId;
 
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
 				ImageView imageView, int bestHeight, String temp) {
@@ -251,6 +242,7 @@ public class AisleLoader {
 			viewFlipperReference = new WeakReference<AisleContentBrowser>(
 					vFlipper);
 			mBestHeight = bestHeight;
+			mAilseId = temp;
 
 		}
 
@@ -262,9 +254,11 @@ public class AisleLoader {
 			// we want to get the bitmap and also add it into the memory cache
 			Log.e("Profiling", "Profiling New doInBackground()");
 			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
- 
-					mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2,Utils.TRENDING_SCREEN);
- 
+
+			mBestHeight,
+					VueApplication.getInstance().getVueDetailsCardWidth() / 2,
+					Utils.TRENDING_SCREEN);
+
 			return bmp;
 		}
 
@@ -295,8 +289,8 @@ public class AisleLoader {
 					LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
 							VueApplication.getInstance().getScreenWidth() / 2,
 							bitmap.getHeight());
-					holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
- 
+					holder.aisleContentBrowser
+							.setLayoutParams(mShowpieceParams);
 					imageView.setImageBitmap(bitmap);
 				}
 			}

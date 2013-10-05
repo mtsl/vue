@@ -913,6 +913,12 @@ public class DataEntryFragment extends Fragment {
 									b.putString(
 											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
 											mFindAtText.getText().toString());
+									b.putInt(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH,
+											mOtherSourceImageOriginalWidth);
+									b.putInt(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT,
+											mOtherSourceImageOriginalHeight);
 									intent.putExtras(b);
 									Log.e("Land", "vueland 11");
 									getActivity()
@@ -1638,9 +1644,9 @@ public class DataEntryFragment extends Fragment {
 			image.setOwnerUserId(Long.valueOf(ownerUserId));
 			FlurryAgent.logEvent("Create_Aisle");
 			aisle.setAisleImage(image);
-			if(mFindAtText != null && mFindAtText.getText().toString() != null){
+			if (mFindAtText != null && mFindAtText.getText().toString() != null) {
 				Log.i("pathsaving", "pathsaving in sdcard1");
-			writeToSdcard(mFindAtText.getText().toString());
+				writeToSdcard(mFindAtText.getText().toString());
 			}
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
@@ -1821,30 +1827,33 @@ public class DataEntryFragment extends Fragment {
 				sourceUrl, getActivity(), false);
 		getImagesTask.execute();
 	}
-	  private  void writeToSdcard(String message) {
-		    
-		    String path = Environment.getExternalStorageDirectory().toString();
-		    File dir = new File(path + "/vueLogs/");
-		    if(!dir.isDirectory()) {
-		      dir.mkdir();
-		    }
-		    File file = new File(dir, "/" + Calendar.getInstance().get(Calendar.DATE) + ".txt");
-		      try {
-		        file.createNewFile();
-		      } catch (IOException e) {
-		    	  Log.i("pathsaving", "pathsaving in sdcard2 error");
-		        e.printStackTrace();
-		      }
-		      
-		      try {
-		        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-		        out.write("\n"+message+"\n");
-		        out.flush();
-		        out.close();
-		        Log.i("pathsaving", "pathsaving in sdcard2 success");
-		      } catch (IOException e) {
-		    	  Log.i("pathsaving", "pathsaving in sdcard3 error");
-		        e.printStackTrace();
-		      }
-		  }
+
+	private void writeToSdcard(String message) {
+
+		String path = Environment.getExternalStorageDirectory().toString();
+		File dir = new File(path + "/vueLogs/");
+		if (!dir.isDirectory()) {
+			dir.mkdir();
+		}
+		File file = new File(dir, "/"
+				+ Calendar.getInstance().get(Calendar.DATE) + ".txt");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			Log.i("pathsaving", "pathsaving in sdcard2 error");
+			e.printStackTrace();
+		}
+
+		try {
+			PrintWriter out = new PrintWriter(new BufferedWriter(
+					new FileWriter(file, true)));
+			out.write("\n" + message + "\n");
+			out.flush();
+			out.close();
+			Log.i("pathsaving", "pathsaving in sdcard2 success");
+		} catch (IOException e) {
+			Log.i("pathsaving", "pathsaving in sdcard3 error");
+			e.printStackTrace();
+		}
+	}
 }

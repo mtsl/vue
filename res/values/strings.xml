@@ -20,6 +20,7 @@
     <string name="aisle_owner_profile_desc">Profile of the aisle owner</string>
     <string name="progress_message">Signing in to Google&#8230;</string>
     <string name="app_installation_mesg">Enable Share via</string>
+    <string name="no_thanks_click_alert_mesg">To be friendly, please provide initials</string>
     <string name="plus_example_deep_link_id">/+/mobile/android/</string>
     <string name="plus_example_deep_link_url">        https://developers.google.com/+/mobile/android/</string>
     <string name="googleplus_button_text">Sign In with Google</string>
@@ -91,7 +92,7 @@
     <string name="create_aisle_screen_title">Create Aisle</string>
     <string name="hint_search">Search</string>
     <string name="sidemenu_option_Trending_Aisles">Trending</string>
-   <string name="sidemenu_option_Me">Me</string>
+    <string name="sidemenu_option_Me">Me</string>
     <string name="sidemenu_option_Categories">Categories</string>
     <string name="sidemeun_option_Settings">Settings</string>
     <string name="sidemenu_option_Profile">Profile</string>

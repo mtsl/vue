@@ -245,27 +245,27 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 							mLeftColumnView.getFirstVisiblePosition(), top);
 				}
 			}
-			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
-
-			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
-					&& lan.getScreenName().equalsIgnoreCase(
-							getResources().getString(R.string.trending))) {
-				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
-				Log.i("more aisle request", "more aisle request calling");
-				int totalItems = 0;
-				if (view.equals(mLeftColumnView)) {
-					totalItems = mLeftColumnAdapter.getCount();
-				} else if (view.equals(mRightColumnView)) {
-					totalItems = mRightColumnAdapter.getCount();
-				}
-				if ((totalItems - lastVisiblePosition) < 20) {
-					Log.i("offeset and limit", "offeset00000: load moredata");
-					VueTrendingAislesDataModel.getInstance(mContext)
-							.getNetworkHandler().requestMoreAisle(true);
-				}
-			} else {
-				Log.i("offeset and limit", "offeset00000: load moredata else ");
-			}
+			/*
+			 * VueLandingPageActivity lan = (VueLandingPageActivity)
+			 * getActivity();
+			 * 
+			 * if
+			 * (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
+			 * && lan.getScreenName().equalsIgnoreCase(
+			 * getResources().getString(R.string.trending))) { int
+			 * lastVisiblePosition = firstVisibleItem + visibleItemCount;
+			 * Log.i("more aisle request", "more aisle request calling"); int
+			 * totalItems = 0; if (view.equals(mLeftColumnView)) { totalItems =
+			 * mLeftColumnAdapter.getCount(); } else if
+			 * (view.equals(mRightColumnView)) { totalItems =
+			 * mRightColumnAdapter.getCount(); } if ((totalItems -
+			 * lastVisiblePosition) < 20) { Log.i("offeset and limit",
+			 * "offeset00000: load moredata");
+			 * VueTrendingAislesDataModel.getInstance(mContext)
+			 * .getNetworkHandler().requestMoreAisle(true); } } else {
+			 * Log.i("offeset and limit", "offeset00000: load moredata else ");
+			 * }
+			 */
 
 		}
 	};

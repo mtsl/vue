@@ -51,7 +51,7 @@ public class NetworkHandler {
   protected TrendingAislesContentParser mTrendingAislesParser;
   private static final int NOTIFICATION_THRESHOLD = 4;
   private static final int TRENDING_AISLES_BATCH_SIZE = 10;
-  public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
+  public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 50;
   private static String MY_AISLES = "aislesget/user/";
   protected int mLimit;
   protected int mOffset;

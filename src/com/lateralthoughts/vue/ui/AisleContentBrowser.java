@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ViewFlipper;
 
+import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleDetailsViewActivity;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
@@ -391,6 +392,7 @@ public class AisleContentBrowser extends ViewFlipper {
 	    public void onAddCommentClick(RelativeLayout view,EditText editText,ImageView commentSend,FrameLayout editLay);
 	    public void onDissAllowListResponse();
 	    public void onAllowListResponse();
+	    public void setFindAtText(String findAtText);
 	}
 	public void setAisleDetailSwipeListener(AisleDetailSwipeListener swipListener) {
 		mSwipeListener = swipListener; 
