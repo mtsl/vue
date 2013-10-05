@@ -82,6 +82,7 @@
     <string name="no_network">No network, check network settings</string>
     <!-- <string name="no_wifi">No wifi connection, check wifi settings</string> -->
     <string name="image_contentDescription">image</string>
+    <string name="add_comment">Add Comment</string>
     <!--
     <string name="fontsize">Font Size</string>
     <string name="wifyonly">Wi-Fi only</string>
