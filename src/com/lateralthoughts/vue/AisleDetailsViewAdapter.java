@@ -966,6 +966,7 @@ public class AisleDetailsViewAdapter extends  BaseAdapter {
 	}
 
   private void handleBookmark(boolean isBookmarked, String aisleId) {
+    
     AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
         Long.parseLong(aisleId));
         VueUser storedVueUser = null;
@@ -977,7 +978,7 @@ public class AisleDetailsViewAdapter extends  BaseAdapter {
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
-
+        
   }
 
 @Override

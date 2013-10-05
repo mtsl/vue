@@ -131,13 +131,11 @@ public class AisleDetailsViewListLoader {
 			imageView.setLayoutParams(params);
 			imageView.setContainerObject(holder);
 			// imgConnectivity.setImageClick(imageView);
-			Bitmap bitmap = mBitmapLoaderUtils
-					.getCachedBitmap(itemDetails.mImageUrl);
+			Bitmap bitmap = null; //mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
 			
 			
 			if (bitmap != null) {
 				// get the dimensions of the image.
-			
 				mImageDimension = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
 						itemDetails.mAvailableHeight);
@@ -171,6 +169,7 @@ public class AisleDetailsViewListLoader {
     public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
     	String loc = itemDetails.mImageUrl;
     	String serverImageUrl = itemDetails.mImageUrl;
+ 
       /*  ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
                 new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
 
@@ -181,8 +180,8 @@ public class AisleDetailsViewListLoader {
             String imagesArray[] = {loc, serverImageUrl};
             task.execute(imagesArray);
         }
+ 
     }
-    
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
         //private final WeakReference<AisleContentBrowser>viewFlipperReference;
@@ -239,7 +238,7 @@ public class AisleDetailsViewListLoader {
                    //aisleContentBrowser.addView(imageView);
                   setParams( aisleContentBrowser, imageView,mAvailableHeight);
                   // bitmap = Utils.getScalledImage(bitmap, mAvailabeWidth,mAvailableHeight);
-                    imageView.setImageBitmap(bitmap);
+                    //imageView.setImageBitmap(bitmap);
                 }
             }
         }
@@ -270,8 +269,8 @@ public class AisleDetailsViewListLoader {
             }
         }
         return true;
-    }  
-public void clearBrowser(ArrayList<AisleImageDetails> imageList){
+    } 
+    public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 	 if (contentBrowser != null) {
 			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
 				mViewFactory
@@ -282,14 +281,7 @@ public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 			 contentBrowser.setCustomAdapter(null);
 			contentBrowser.removeAllViews();
 			contentBrowser = null;
-			
-		/*	for(int i = 0;i<imageList.size();i++){
-				Bitmap bitmap = mBitmapLoaderUtils
-						.getCachedBitmap(imageList.get(i).mImageUrl);
-				if(bitmap != null){
-					bitmap.recycle();
-				}
-			}*/
+
 		} else {
 			Log.i("bitmap reclying", "bitmap reclying  contentBrowser is null ");
 		}

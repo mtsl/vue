@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.Utils;
@@ -287,6 +288,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			} else {
 				articleParams.put("User_Id", "anonymous");
 			}
+			Log.e("VueLandingAisleFragment", "Suru aisle clicked aisle Id: " + id);
+			DataBaseManager.getInstance(mContext).updateOrAddRecentlyViewedAisles(id);
 			FlurryAgent.logEvent("User_Select_Aisle", articleParams);
 
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();

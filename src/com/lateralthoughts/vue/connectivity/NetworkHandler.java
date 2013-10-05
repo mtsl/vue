@@ -56,6 +56,7 @@ public class NetworkHandler {
   protected int mOffset;
   ArrayList<AisleWindowContent> aislesList = null;
   public ArrayList<String> bookmarkedAisles = new ArrayList<String>();
+  //public ArrayList<AisleWindowContent> bookmarkedAisleContent = new ArrayList<AisleWindowContent>();
 
   public NetworkHandler(Context context) {
     mContext = context;
@@ -407,12 +408,13 @@ public class NetworkHandler {
             Log.i("bookmarked aisle", "bookmarked aisle ID IS NULL RETURNING");
             return;
           }
-          Log.i("bookmarked aisle", "bookmarked aisle 2");
+          Log.i("bookmarked aisle", "bookmarked aisle 2 User Id; " + userId);
           URL url = new URL(UrlConstants.GET_BOOKMARK_Aisles + "/" + userId
               + "/" + "0");
           HttpGet httpGet = new HttpGet(url.toString());
           DefaultHttpClient httpClient = new DefaultHttpClient();
           HttpResponse response = httpClient.execute(httpGet);
+          Log.e("bookmarked aisle", "bookmarked aisle response.getStatusLine().getStatusCode(); " + response.getStatusLine().getStatusCode());
           if (response.getEntity() != null
               && response.getStatusLine().getStatusCode() == 200) {
             String responseMessage = EntityUtils.toString(response.getEntity());
@@ -420,6 +422,7 @@ public class NetworkHandler {
                 + responseMessage);
             if(responseMessage != null)
             bookmarkedAisles =  new Parser().parseBookmarkedAisles(responseMessage);
+            Log.e("bookmarked aisle", "bookmarked aisle bookmarkedAisles size(); " + bookmarkedAisles.size());
           }
         } catch (Exception e) {
           Log.i("bookmarked aisle", "bookmarked aisle 3 error: ");

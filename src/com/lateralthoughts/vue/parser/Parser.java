@@ -2,6 +2,7 @@ package com.lateralthoughts.vue.parser;
 
 import android.util.Log;
 import com.lateralthoughts.vue.*;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -193,6 +194,11 @@ public class Parser {
 	}
 
 	private AisleContext parseAisleData(JSONObject josnObject) {
+	    //TODO:
+	  if (VueLandingPageActivity.mVueLandingActionbarScreenName.equals(
+	      VueApplication.getInstance().getString(R.string.sidemenu_sub_option_Bookmarks))) {
+        return null;
+      }
 		AisleContext aisleContext = new AisleContext();
 		try {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
@@ -245,7 +251,7 @@ public class Parser {
 			if (jsonArray != null && jsonArray.length() > 0) {
 				for (int i = 0; i < jsonArray.length(); i++) {
 					aisleIdList.add(jsonArray.getJSONObject(i).getString(
-							VueConstants.AISLE_ID));
+							VueConstants.AISLE_Id));
 				}
 			}
 		} catch (JSONException e) {

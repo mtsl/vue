@@ -128,6 +128,7 @@ public class VueConstants {
 	public static final String OCCASION_TABLE = "occasion";
 	public static final String CATEGORY_TABLE = "category";
 	public static final String COMMENTS_ON_IMAGES_TABLE = "commentsOnImages";
+	public static final String RECENTLY_VIEWED_AISLES = "recentlyViewAisles";
 
 	// Define MIME types
 	public static final String ARTICLES_MIME_TYPE = "vnd.android.cursor.dir/vnd.vue.articles";
@@ -146,6 +147,9 @@ public class VueConstants {
 			+ AUTHORITY + "/" + CATEGORY_TABLE);
 	public static final Uri COMMENTS_ON_IMAGE_URI = Uri.parse("content://"
 			+ AUTHORITY + "/" + COMMENTS_ON_IMAGES_TABLE);
+	public static final Uri RECENTLY_VIEW_AISLES_URI = Uri.parse("content://"
+	        + AUTHORITY + "/" + RECENTLY_VIEWED_AISLES);
+	
 	public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
 	public static final String INVITATION_MESG = "Invitation from Vue application.";
 	public static final String FACEBOOK_GRAPHIC_OBJECT_NAME_KEY = "name";
@@ -177,4 +181,7 @@ public class VueConstants {
 	// Reciver constants
 	public static final int AISLE_TRENDING_LIST_DATA = 1;
 	public static final int AISLE_TRENDING_PARSED_DATA = 2;
+	
+	public static final String RECENTLY_VIEWED_AISLE_ID = "recentlyViewedAisleId";
+	public static final String VIEW_TIME = "viewTime";
 }

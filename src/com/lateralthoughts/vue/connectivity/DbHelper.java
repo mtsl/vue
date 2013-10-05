@@ -16,6 +16,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	 public static final String DATABASE_TABLE_OCCASION = "occasion";
 	 public static final String DATABASE_TABLE_CATEGORY = "category";
 	 public static final String DATABASE_TABLE_COMMENTS_ON_IMAGES = "commentsOnImages";
+	 public static final String DATABASE_TABLE_RECENTLY_VIEWED_AISLES = "recentlyViewAisles";
 	 public static final int DATABASE_VERSION = 1;
 	 
      private String createAislesTable = "create table if not exists " + DATABASE_TABLE_AISLES
@@ -80,6 +81,11 @@ public class DbHelper extends SQLiteOpenHelper {
         + VueConstants.KEYWORD + " text, "
         + VueConstants.LAST_USED_TIME + " text, "
         + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
+    
+    private String createRecentViewTable = "create table if not exists " + DATABASE_TABLE_RECENTLY_VIEWED_AISLES
+    + " (" + VueConstants.ID + " integer primary key autoincrement, "
+    + VueConstants.RECENTLY_VIEWED_AISLE_ID + " text, "
+    + VueConstants.VIEW_TIME + " text);";
         
 
 	public DbHelper(Context context) {
@@ -95,6 +101,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		db.execSQL(createLookingForTable);
 		db.execSQL(createOccasionTable);
 		db.execSQL(createCategoryTable);
+		db.execSQL(createRecentViewTable);
 	}
 
 	@Override
