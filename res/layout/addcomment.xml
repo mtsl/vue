@@ -77,5 +77,8 @@
             android:layout_marginRight="16dp"
             android:background="@color/grey" />
     </RelativeLayout>
-
+       <View
+            android:layout_width="fill_parent"
+            android:layout_height="56dp"
+            android:background="@color/transperent" />
 </LinearLayout>

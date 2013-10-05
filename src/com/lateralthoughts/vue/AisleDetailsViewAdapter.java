@@ -47,6 +47,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.Logger;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
 
@@ -958,18 +959,20 @@ public class AisleDetailsViewAdapter extends  BaseAdapter {
 	}
 
   private void handleBookmark(boolean isBookmarked, String aisleId) {
+    
     AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
         Long.parseLong(aisleId));
         VueUser storedVueUser = null;
         try {
           storedVueUser = Utils.readUserObjectFromFile(mContext,
               VueConstants.VUE_APP_USEROBJECT__FILENAME);
+          Logger.writeToSdcard("Aisle to bookmark Id: " + aisleId + ", UserId: " + storedVueUser.getVueId());
           AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark, storedVueUser.getVueId());
         } catch (Exception e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
-
+        
   }
 
 @Override

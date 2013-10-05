@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -200,9 +201,10 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				}
 			}
 		});
-		RelativeLayout bottomBar = (RelativeLayout) mDetailsContentView
-				.findViewById(R.id.vue_bottom_bar);
-		bottomBar.getBackground().setAlpha(25);
+		/*RelativeLayout bottomBar = (RelativeLayout) mDetailsContentView
+				.findViewById(R.id.vue_bottom_bar);*/
+		
+		//bottomBar.getBackground().setAlpha(25);
 		mAddVueAisle = (ImageView) mDetailsContentView
 				.findViewById(R.id.vue_aisle);
 		mAddVueAisle.setOnClickListener(new OnClickListener() {

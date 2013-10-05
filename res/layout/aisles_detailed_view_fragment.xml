@@ -8,7 +8,6 @@
         android:id="@+id/aisle_details_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/vue_bottom_bar"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
         android:layout_marginTop="6dp"
@@ -16,7 +15,7 @@
         android:divider="@null"
         android:scrollbars="none" >
     </ListView>
-
+<!-- android:layout_above="@+id/vue_bottom_bar" -->
     <RelativeLayout
         android:id="@+id/vue_image_indicator"
         android:layout_width="fill_parent"
@@ -56,7 +55,7 @@
         android:layout_marginBottom="6dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
-        android:background="@color/bottombar" >
+        android:background="@drawable/bottombar" >
 
         <ImageView
             android:id="@+id/vue_user_pic"

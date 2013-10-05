@@ -24,7 +24,6 @@ import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class DataBaseManager {
@@ -158,6 +157,7 @@ public class DataBaseManager {
         
         }
       }
+      copydbToSdcard();
       Log.e("Profiling", "Profiling inserting new aisles to db");
     }
    
@@ -311,6 +311,17 @@ public class DataBaseManager {
     });
   }
 
+  public void updateOrAddRecentlyViewedAisles(final String aisleId) {
+    runTask(new Runnable() {
+      
+      @Override
+      public void run() {
+        updateOrAddRecentlyViewedAislesList(aisleId);
+        
+      }
+    });
+  }
+  
   /**
    * add new Comment on images and sets the DIRTY_FLAG true to indicate that
    * there is some new data to be uploaded to server.
@@ -362,6 +373,7 @@ public class DataBaseManager {
     values.put(VueConstants.DIRTY_FLAG, isDirty);
     mContext.getContentResolver().update(VueConstants.CONTENT_URI, values,
         VueConstants.AISLE_Id + "=?", new String[] {aisleID});
+    copydbToSdcard();
   }
 
 
@@ -600,6 +612,8 @@ public class DataBaseManager {
     Cursor aislesCursor = mContext.getContentResolver().query(
         VueConstants.CONTENT_URI, null, searchBy + "=?",
         new String[] {searchString}, VueConstants.ID + " ASC");
+    Log.e("DataBaseManager", "aislesCursor.getCount() aisleId: " + searchString);
+    Log.e("DataBaseManager", "aislesCursor.getCount(): " + aislesCursor.getCount());
     return aislesCursor;
   }
 
@@ -611,10 +625,68 @@ public class DataBaseManager {
 
   
   private void changeDeleteFlag() {
-	  ContentValues values = new ContentValues();
-	  values.put(VueConstants.DELETE_FLAG, 1);
-	 int rowsUpdated = mContext.getContentResolver().update(VueConstants.CONTENT_URI, values, null, null);
-	 Log.e("DataBaseManager", "rowsUpdated: " + rowsUpdated);
+    ContentValues values = new ContentValues();
+    values.put(VueConstants.DELETE_FLAG, 1);
+    int rowsUpdated = mContext.getContentResolver().update(
+        VueConstants.CONTENT_URI, values, null, null);
+    Log.e("DataBaseManager", "rowsUpdated: " + rowsUpdated);
+  }
+  
+  public ArrayList<AisleWindowContent> getRecentlyViewedAisles() {
+    ArrayList<AisleWindowContent> aisles = new ArrayList<AisleWindowContent>();
+    for (String aisleId : getRecentlyViewedAislesId()) {
+      aisles.addAll(getAisleByAisleId(aisleId));
+    }
+    return aisles;
+  }
+  
+  private ArrayList<String> getRecentlyViewedAislesId() {
+    Cursor cursor = mContext.getContentResolver().query(
+        VueConstants.RECENTLY_VIEW_AISLES_URI, null, null, null,
+        VueConstants.VIEW_TIME + " DESC");
+    ArrayList<String> aisleIds = new ArrayList<String>();
+    if (cursor.moveToFirst()) {
+      do {
+        aisleIds.add(cursor.getString(cursor
+            .getColumnIndex(VueConstants.RECENTLY_VIEWED_AISLE_ID)));
+      } while (cursor.moveToNext());
+    }
+    return aisleIds;
+  }  
+  
+
+  private void updateOrAddRecentlyViewedAislesList(String aisleId) {
+    Cursor cursor = mContext.getContentResolver().query(
+        VueConstants.RECENTLY_VIEW_AISLES_URI, null, null, null,
+        VueConstants.VIEW_TIME + " DESC");
+    boolean isAisleViewed = false;
+    String viewedId = null;
+    if (cursor.moveToFirst()) {
+      do {
+        String id = cursor.getString(cursor
+            .getColumnIndex(VueConstants.RECENTLY_VIEWED_AISLE_ID));
+        if(id.equals(aisleId)) {
+          isAisleViewed = true;
+          viewedId = cursor.getString(cursor
+              .getColumnIndex(VueConstants.RECENTLY_VIEWED_AISLE_ID));
+          break;
+        }
+      } while (cursor.moveToNext());
+    }
+    ContentValues values = null;
+    if(isAisleViewed) {
+      Log.e("DataBaseManager", "Suru updateOrAddRecentlyViewedAislesList isAisleViewed: " + isAisleViewed);
+      values = new ContentValues();
+      values.put(VueConstants.VIEW_TIME, System.currentTimeMillis());
+      Uri url = Uri.parse(VueConstants.RECENTLY_VIEW_AISLES_URI + "/" + viewedId);
+      mContext.getContentResolver().update(url, values, null, null);
+    } else {
+      Log.e("DataBaseManager", "Suru updateOrAddRecentlyViewedAislesList isAisleViewed: " + isAisleViewed);
+      values = new ContentValues();
+      values.put(VueConstants.RECENTLY_VIEWED_AISLE_ID, aisleId);
+      values.put(VueConstants.VIEW_TIME, System.currentTimeMillis());
+      mContext.getContentResolver().insert(VueConstants.RECENTLY_VIEW_AISLES_URI, values);
+    }
   }
   
   /**
