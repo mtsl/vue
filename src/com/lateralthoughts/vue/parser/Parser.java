@@ -181,7 +181,7 @@ public class Parser {
 			if (aisleImageDetailsList != null
 					&& aisleImageDetailsList.size() > 0) {
 				AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
-						.getInstance(VueApplication.getInstance()).getAisle(
+						.getInstance(VueApplication.getInstance()).getAisleItem(
 								aisleContext.mAisleId);
 				aisleWindowContent.addAisleContent(aisleContext,
 						aisleImageDetailsList);

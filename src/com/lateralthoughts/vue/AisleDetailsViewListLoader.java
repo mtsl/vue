@@ -149,7 +149,15 @@ public class AisleDetailsViewListLoader {
 							itemDetails.mAvailableHeight);
 			 
 				}
-	 
+				Log.i("TrendingCrop", "TrendingCrop3:*********************");
+				Log.i("TrendingCrop", "TrendingCrop3: card Height "+VueApplication.getInstance().getVueDetailsCardHeight());
+				Log.i("TrendingCrop", "TrendingCrop3: card Height "+VueApplication.getInstance().getVueDetailsCardWidth());
+				Log.i("TrendingCrop", "TrendingCrop3: Screen Height "+VueApplication.getInstance().getScreenHeight());
+				Log.i("TrendingCrop", "TrendingCrop3: Screen Width "+VueApplication.getInstance().getScreenWidth());
+				Log.i("TrendingCrop", "TrendingCrop3: Item Height "+itemDetails.mAvailableHeight);
+				Log.i("TrendingCrop", "TrendingCrop3: Item Width "+itemDetails.mAvailableWidth);
+				Log.i("TrendingCrop", "TrendingCrop3:mBestHeight "+mBestHeight);
+				Log.i("TrendingCrop", "TrendingCrop3:##########################");
 				 
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);

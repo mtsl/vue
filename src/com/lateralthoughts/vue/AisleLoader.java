@@ -181,6 +181,7 @@ public class AisleLoader {
 			itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
+
 			Log.i("AisleLoader", "CustomImageUrl:? "
 					+ itemDetails.mCustomImageUrl);
 			Bitmap bitmap = null;
@@ -193,12 +194,12 @@ public class AisleLoader {
 						bitmap.getHeight());
 		 
 				contentBrowser.setLayoutParams(mShowpieceParams2);
+
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
 
 				contentBrowser.addView(imageView);
-
 				if (!placeholderOnly)
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
@@ -230,7 +231,6 @@ public class AisleLoader {
 		private int mBestHeight;
 		String mAisleId;
 		 AisleImageDetails mItemDetails;
-
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
 				ImageView imageView, int bestHeight,String aisleId,AisleImageDetails itemDetails) {
 			// Use a WeakReference to ensure the ImageView can be garbage

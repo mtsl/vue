@@ -90,7 +90,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	public void notifyAdapters() {
 		if (mLeftColumnAdapter != null) {
-			 
+
 			mLeftColumnAdapter.notifyDataSetChanged();
 			Log.i("listadapter", "adapter leftadapter notified");
 		}
@@ -109,8 +109,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				false);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
-	 
-		
 
 		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -189,7 +187,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					mRightColumnAdapter.notifyDataSetChanged();
 				}
 
-			} else if(scrollState == SCROLL_STATE_TOUCH_SCROLL){
+			} else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
 				mIsFlingCalled = false;
 			}
 			int first = view.getFirstVisiblePosition();
@@ -247,6 +245,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 							mLeftColumnView.getFirstVisiblePosition(), top);
 				}
 			}
+
 			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
 
 			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
@@ -288,8 +287,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			} else {
 				articleParams.put("User_Id", "anonymous");
 			}
-			Log.e("VueLandingAisleFragment", "Suru aisle clicked aisle Id: " + id);
-			DataBaseManager.getInstance(mContext).updateOrAddRecentlyViewedAisles(id);
+			Log.e("VueLandingAisleFragment", "Suru aisle clicked aisle Id: "
+					+ id);
+			DataBaseManager.getInstance(mContext)
+					.updateOrAddRecentlyViewedAisles(id);
 			FlurryAgent.logEvent("User_Select_Aisle", articleParams);
 
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
@@ -313,7 +314,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public boolean isIdelState() {
-			 
+
 			return mIsIdleState;
 		}
 	}

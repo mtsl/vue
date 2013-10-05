@@ -167,6 +167,7 @@ public class ScaleImageView extends /*Network*/ImageView {
 		return mContainer;
 	}
 
+
 /*	public void setImageUrl(String url, ImageLoader imageLoader, int bestWidth,
 			int bestHeight) {
 		mBestHeight = bestHeight;

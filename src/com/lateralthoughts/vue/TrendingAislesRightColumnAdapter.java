@@ -40,6 +40,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
+
 public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
     
@@ -139,7 +140,8 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
     	if(context.mOccasion != null && context.mOccasion.length() >1){
 			occasion = context.mOccasion;
 		}
-		if(context.mLookingForItem != null && context.mLookingForItem.length() > 1){
+		if (context.mLookingForItem != null
+				&& context.mLookingForItem.length() > 1) {
 			lookingFor = context.mLookingForItem;
 		}
 		if(occasion != null && occasion.length() > 1){
@@ -152,23 +154,23 @@ public class TrendingAislesRightColumnAdapter extends TrendingAislesGenericAdapt
 		}
 
 		holder.aisleContext.setText(occasion + " : " + lookingFor);
-     
-        //holder.aisleContext.setText(contextBuilder.toString());
-        return convertView;
-    	}
-    
 
-    @Override
-    public void onAisleDataUpdated(int newCount){
-    	Log.i("TrendingDataModel", "DataObserver for List Refresh: Right List AisleUpdate Called ");
-        notifyDataSetChanged();
-    }
+		// holder.aisleContext.setText(contextBuilder.toString());
+		return convertView;
+	}
 
-	private int calculateActualPosition(int viewPosition) {
-		int actualPosition = 0;
-		if (0 != viewPosition)
-			actualPosition = (viewPosition * 2);
+	@Override
+	public void onAisleDataUpdated(int newCount) {
+		Log.i("TrendingDataModel",
+				"DataObserver for List Refresh: Right List AisleUpdate Called ");
+		notifyDataSetChanged();
+	}
 
+	private int calculateActualPosition(int position) {
+		int positionFactor = 2;
+		int actualPosition = 1;
+		if (0 != position)
+			actualPosition = (positionFactor * position) + actualPosition;
 		return actualPosition;
 	}
 }

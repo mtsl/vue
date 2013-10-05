@@ -20,7 +20,7 @@ public class BookmarkPutRequest extends Request<String> {
   // ... other methods go here
   private Map<String, String> mParams;
   Response.Listener<String> mListener;
-  private String mAisleAsString;
+  private String mBookmarkString;
   private StringEntity mEntity;
 
   public BookmarkPutRequest(String aisleAsString,
@@ -28,9 +28,9 @@ public class BookmarkPutRequest extends Request<String> {
       Response.ErrorListener errorListener, String url) {
     super(Method.PUT, url, errorListener);
     mListener = listener;
-    mAisleAsString = aisleAsString;
+    mBookmarkString = aisleAsString;
     try {
-      mEntity = new StringEntity(mAisleAsString);
+      mEntity = new StringEntity(mBookmarkString);
     } catch (UnsupportedEncodingException ex) {
     }
   }
