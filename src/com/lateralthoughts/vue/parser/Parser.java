@@ -1,8 +1,8 @@
 package com.lateralthoughts.vue.parser;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import android.util.Log;
+import com.lateralthoughts.vue.*;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -10,14 +10,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.util.Log;
-import com.lateralthoughts.vue.AisleContext;
-import com.lateralthoughts.vue.AisleImageDetails;
-import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.connectivity.DataBaseManager;
+
+import java.net.URL;
+import java.util.ArrayList;
 
 public class Parser {
 	// ========================= START OF PARSING TAGS
@@ -38,7 +33,7 @@ public class Parser {
 
 		JSONArray contentArray = null;
 
-		contentArray = handleResponce(resultString, loadMore);
+		contentArray = handleResponse(resultString, loadMore);
 		if (contentArray == null) {
 			return aisleWindowContentList;
 		}
@@ -52,7 +47,7 @@ public class Parser {
 		return aisleWindowContentList;
 	}
 
-	private JSONArray handleResponce(String resultString, boolean loadMore) {
+	private JSONArray handleResponse(String resultString, boolean loadMore) {
 		JSONArray contentArray = null;
 		try {
 			contentArray = new JSONArray(resultString);
@@ -199,6 +194,11 @@ public class Parser {
 	}
 
 	private AisleContext parseAisleData(JSONObject josnObject) {
+	    //TODO:
+	  if (VueLandingPageActivity.mVueLandingActionbarScreenName.equals(
+	      VueApplication.getInstance().getString(R.string.sidemenu_sub_option_Bookmarks))) {
+        return null;
+      }
 		AisleContext aisleContext = new AisleContext();
 		try {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
@@ -251,7 +251,7 @@ public class Parser {
 			if (jsonArray != null && jsonArray.length() > 0) {
 				for (int i = 0; i < jsonArray.length(); i++) {
 					aisleIdList.add(jsonArray.getJSONObject(i).getString(
-							VueConstants.AISLE_ID));
+							VueConstants.AISLE_Id));
 				}
 			}
 		} catch (JSONException e) {

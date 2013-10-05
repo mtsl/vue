@@ -65,6 +65,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	public static final String BOTTOM_SCROLLER = "bottomscroller";
 	private static final String DETAILS_SCREEN_VISITOR = "Details_Screen_Visitors";
 	HorizontalListView mTopScroller, mBottomScroller;
+	private int mComparisionDelay = 500;
 	// int mStatusbarHeight;
 	int mScreenTotalHeight;
 	int mComparisionScreenHeight;
@@ -166,7 +167,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					final int position, long arg3) {
 				final ImageView img = (ImageView) arg1
 						.findViewById(R.id.compare_like_dislike);
-				img.setImageResource(R.drawable.thumb_up);
+				img.setImageResource(R.drawable.heart);
 				img.setVisibility(View.VISIBLE);
 				new Handler().postDelayed(new Runnable() {
 					@Override
@@ -191,7 +192,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					final int position, long arg3) {
 				final ImageView img = (ImageView) arg1
 						.findViewById(R.id.compare_like_dislike);
-				img.setImageResource(R.drawable.thdown);
+				img.setImageResource(R.drawable.heart_dark);
 				img.setVisibility(View.VISIBLE);
 				new Handler().postDelayed(new Runnable() {
 					@Override
@@ -216,7 +217,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					final int position, long arg3) {
 				final ImageView img = (ImageView) arg1
 						.findViewById(R.id.compare_like_dislike);
-				img.setImageResource(R.drawable.thumb_up);
+				img.setImageResource(R.drawable.heart);
 				img.setVisibility(View.VISIBLE);
 				new Handler().postDelayed(new Runnable() {
 					@Override
@@ -242,7 +243,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 							View arg1, final int position, long arg3) {
 						final ImageView img = (ImageView) arg1
 								.findViewById(R.id.compare_like_dislike);
-						img.setImageResource(R.drawable.thdown);
+						img.setImageResource(R.drawable.heart_dark);
 						img.setVisibility(View.VISIBLE);
 						new Handler().postDelayed(new Runnable() {
 							@Override
@@ -451,7 +452,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					}
 				}
 
-			}, 500);
+			}, mComparisionDelay);
 		}
 
 	}

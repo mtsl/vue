@@ -10,22 +10,20 @@
  */
 package com.lateralthoughts.vue;
 
-import java.util.ArrayList;
-
-import org.json.JSONArray;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.utils.UrlConstants;
+import org.json.JSONArray;
+
+import java.util.ArrayList;
 
 public class VueContentGateway {
 	private final String TAG = "VueContentGateway";

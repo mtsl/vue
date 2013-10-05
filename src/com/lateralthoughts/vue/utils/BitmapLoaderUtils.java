@@ -137,12 +137,6 @@ public class BitmapLoaderUtils {
 					+ bestHeight);
 			Log.i("window", "clickedwindow ID original height: " + height);
 
-			/*
-			 * int reqWidth1 =
-			 * VueApplication.getInstance().getVueDetailsCardWidth()/2;
-			 * Log.i("added url",
-			 * "added url in  decodeFile: cardwidth "+reqWidth1 );
-			 */
 			int reqWidth = bestWidth;
 			int scale = 1;
 
@@ -160,9 +154,8 @@ public class BitmapLoaderUtils {
 				// a final image with both dimensions larger than or equal to
 				// the
 				// requested height and width.
-				// scale = heightRatio; // < widthRatio ? heightRatio :
-				// widthRatio;
-
+				scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
+				scale = 1;
 			}
 
 			// decode with inSampleSize
@@ -180,11 +173,23 @@ public class BitmapLoaderUtils {
 			Log.i("window",
 					"clickedwindow ID new bitmap widht1: " + bitmap.getWidth());
 			stream2.close();
-			/* if(source.equalsIgnoreCase(Utils.DETAILS_SCREEN)){ */
-			// scaling factor considers only integers may be some times
-			// scaling factor becomes 1 even there is slight difference in sizes
-			// so to avoid croping in that cases in Detailsview screen
-			// compare sizes after scaling.
+			if (source.equalsIgnoreCase(Utils.DETAILS_SCREEN)) {
+				// scaling factor considers only integers may be some times
+				// scaling factor becomes 1 even there is slight difference in
+				// sizes
+				// so to avoid croping in that cases in Detailsview screen
+				// compare sizes after scaling.
+				if (bitmap != null) {
+					width = bitmap.getWidth();
+					height = bitmap.getHeight();
+					if (height > bestHeight) {
+						float tempWidth = (width * bestHeight) / height;
+						width = (int) tempWidth;
+						bitmap = getModifiedBitmap(bitmap, width, bestHeight);
+					}
+				}
+			}
+
 			if (bitmap != null) {
 				width = bitmap.getWidth();
 				height = bitmap.getHeight();
@@ -195,17 +200,6 @@ public class BitmapLoaderUtils {
 					bitmap = getModifiedBitmap(bitmap, reqWidth, height);
 				}
 			}
-			if (bitmap != null) {
-				width = bitmap.getWidth();
-				height = bitmap.getHeight();
-				if (height > bestHeight) {
-					float tempWidth = (width * bestHeight) / height;
-					width = (int) tempWidth;
-					bitmap = getModifiedBitmap(bitmap, width, bestHeight);
-				}
-			}
-			/* } */
-
 			Log.i("window",
 					"clickedwindow ID  new bitmap height2 : "
 							+ bitmap.getHeight());
@@ -226,6 +220,31 @@ public class BitmapLoaderUtils {
 			return null;
 		}
 		return null;
+	}
+
+	public Bitmap getBitmap(Bitmap bitmap, int bestWidth, int bestHeight) {
+		int width, height;
+		if (bitmap != null) {
+			width = bitmap.getWidth();
+			height = bitmap.getHeight();
+			if (height > bestHeight) {
+				float tempWidth = (width * bestHeight) / height;
+				width = (int) tempWidth;
+				bitmap = getModifiedBitmap(bitmap, width, bestHeight);
+			}
+
+			if (bitmap != null) {
+				width = bitmap.getWidth();
+				height = bitmap.getHeight();
+
+				if (width > bestWidth) {
+					float tempHeight = (height * bestWidth) / width;
+					height = (int) tempHeight;
+					bitmap = getModifiedBitmap(bitmap, bestWidth, height);
+				}
+			}
+		}
+		return bitmap;
 	}
 
 	private Bitmap getModifiedBitmap(Bitmap originalImage, int width, int height) {

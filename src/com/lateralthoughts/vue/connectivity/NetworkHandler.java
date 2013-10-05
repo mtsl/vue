@@ -1,15 +1,5 @@
 package com.lateralthoughts.vue.connectivity;
 
-import java.net.URL;
-import java.util.ArrayList;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,10 +7,10 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
@@ -35,12 +25,21 @@ import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
+import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+
+import java.net.URL;
+import java.util.ArrayList;
 
 public class NetworkHandler {
   Context mContext;
@@ -51,12 +50,13 @@ public class NetworkHandler {
   protected TrendingAislesContentParser mTrendingAislesParser;
   private static final int NOTIFICATION_THRESHOLD = 4;
   private static final int TRENDING_AISLES_BATCH_SIZE = 10;
-  public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 50;
+  public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
   private static String MY_AISLES = "aislesget/user/";
   protected int mLimit;
   protected int mOffset;
   ArrayList<AisleWindowContent> aislesList = null;
   public ArrayList<String> bookmarkedAisles = new ArrayList<String>();
+  //public ArrayList<AisleWindowContent> bookmarkedAisleContent = new ArrayList<AisleWindowContent>();
 
   public NetworkHandler(Context context) {
     mContext = context;
@@ -408,12 +408,13 @@ public class NetworkHandler {
             Log.i("bookmarked aisle", "bookmarked aisle ID IS NULL RETURNING");
             return;
           }
-          Log.i("bookmarked aisle", "bookmarked aisle 2");
+          Log.i("bookmarked aisle", "bookmarked aisle 2 User Id; " + userId);
           URL url = new URL(UrlConstants.GET_BOOKMARK_Aisles + "/" + userId
               + "/" + "0");
           HttpGet httpGet = new HttpGet(url.toString());
           DefaultHttpClient httpClient = new DefaultHttpClient();
           HttpResponse response = httpClient.execute(httpGet);
+          Log.e("bookmarked aisle", "bookmarked aisle response.getStatusLine().getStatusCode(); " + response.getStatusLine().getStatusCode());
           if (response.getEntity() != null
               && response.getStatusLine().getStatusCode() == 200) {
             String responseMessage = EntityUtils.toString(response.getEntity());
@@ -421,6 +422,7 @@ public class NetworkHandler {
                 + responseMessage);
             if(responseMessage != null)
             bookmarkedAisles =  new Parser().parseBookmarkedAisles(responseMessage);
+            Log.e("bookmarked aisle", "bookmarked aisle bookmarkedAisles size(); " + bookmarkedAisles.size());
           }
         } catch (Exception e) {
           Log.i("bookmarked aisle", "bookmarked aisle 3 error: ");

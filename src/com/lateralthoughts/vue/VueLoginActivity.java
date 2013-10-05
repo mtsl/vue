@@ -13,16 +13,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -37,14 +34,17 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -80,7 +80,6 @@ import com.instagram.InstagramApp;
 import com.instagram.InstagramApp.OAuthAuthenticationListener;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
-import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
@@ -333,7 +332,19 @@ public class VueLoginActivity extends FragmentActivity implements
 				cancellayout.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						finish();
+						VueUser storedVueUser = null;
+						try {
+							storedVueUser = Utils.readUserObjectFromFile(
+									VueLoginActivity.this,
+									VueConstants.VUE_APP_USEROBJECT__FILENAME);
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+						if (storedVueUser == null) {
+							showDialogForEnterUserInitials();
+						} else {
+							finish();
+						}
 					}
 				});
 			}
@@ -1054,7 +1065,8 @@ public class VueLoginActivity extends FragmentActivity implements
 			VueUser vueUser = new VueUser(null, person.getDisplayName(), null,
 					null, mSharedPreferencesObj.getString(
 							VueConstants.GOOGLEPLUS_USER_EMAIL, null));
-			vueUser.setUsersName(person.getDisplayName(), "");
+			vueUser.setFirstName(person.getDisplayName());
+			vueUser.setLastName("");
 			VueUser storedVueUser = null;
 			try {
 				storedVueUser = Utils.readUserObjectFromFile(
@@ -1167,7 +1179,8 @@ public class VueLoginActivity extends FragmentActivity implements
 			VueUserManager userManager = VueUserManager.getUserManager();
 			VueUser vueUser = new VueUser(null, null, mInstagramApp.getName(),
 					null, null);
-			vueUser.setUsersName(mInstagramApp.getName(), "");
+			vueUser.setFirstName(mInstagramApp.getName());
+			vueUser.setLastName("");
 			VueUser storedVueUser = null;
 			try {
 				storedVueUser = Utils.readUserObjectFromFile(
@@ -1259,6 +1272,75 @@ public class VueLoginActivity extends FragmentActivity implements
 				finish();
 			}
 		}
+	}
+
+	private void showDialogForEnterUserInitials() {
+		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.no_thanks_alert);
+		final EditText noThanksAlertNameBox = (EditText) dialog
+				.findViewById(R.id.nothanks_alert_name_box);
+		TextView noThanksAlertOk = (TextView) dialog
+				.findViewById(R.id.nothanks_alert_ok);
+		noThanksAlertOk.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (noThanksAlertNameBox.getText().toString().trim().length() > 0) {
+					dialog.dismiss();
+					createUserInServer(noThanksAlertNameBox.getText()
+							.toString());
+				} else {
+					Toast.makeText(VueLoginActivity.this,
+							"Please provide initials", Toast.LENGTH_LONG)
+							.show();
+				}
+			}
+		});
+		noThanksAlertNameBox
+				.setOnEditorActionListener(new OnEditorActionListener() {
+					@Override
+					public boolean onEditorAction(TextView arg0, int actionId,
+							KeyEvent arg2) {
+						if (noThanksAlertNameBox.getText().toString().trim()
+								.length() > 0) {
+							dialog.dismiss();
+							createUserInServer(noThanksAlertNameBox.getText()
+									.toString());
+						} else {
+							Toast.makeText(VueLoginActivity.this,
+									"Please provide initials",
+									Toast.LENGTH_LONG).show();
+						}
+						return true;
+					};
+				});
+		dialog.show();
+		dialog.setCancelable(false);
+		dialog.setCanceledOnTouchOutside(false);
+	}
+
+	private void createUserInServer(String userInitials) {
+		VueUserManager userManager = VueUserManager.getUserManager();
+		userManager.createUnidentifiedUser(userInitials, Utils.getDeviceId(),
+				new UserUpdateCallback() {
+					@Override
+					public void onUserUpdated(VueUser user) {
+						try {
+							Log.i("userid",
+									"userid123456 null check storedVueUser seting loging page: ");
+							Utils.writeUserObjectToFile(VueLoginActivity.this,
+									VueConstants.VUE_APP_USEROBJECT__FILENAME,
+									user);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+		finish();
+	}
+
+	@Override
+	public void onBackPressed() {
+
 	}
 
 }

@@ -88,7 +88,7 @@ public class LoginWarningMessage {
 							if (VueConnectivityManager
 									.isNetworkConnected(mContext)) {
 								fragment.storeMetaAisleDataIntoLocalStorage();
-								fragment.addAisleToServer(storedVueUser.getVueId());
+								fragment.addAisleToServer(storedVueUser);
 							} else {
 								Toast.makeText(
 										mContext,

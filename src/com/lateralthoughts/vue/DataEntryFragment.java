@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -29,26 +30,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.connectivity.AisleData;
@@ -56,12 +45,10 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
-import com.lateralthoughts.vue.utils.EditTextBackEvent;
-import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
-import com.lateralthoughts.vue.utils.OnInterceptListener;
-import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
-import com.lateralthoughts.vue.utils.Utils;
-import com.lateralthoughts.vue.utils.clsShare;
+import com.lateralthoughts.vue.utils.*;
+
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Fragment for creating Aisle
@@ -1490,7 +1477,7 @@ public class DataEntryFragment extends Fragment {
 						if (VueConnectivityManager
 								.isNetworkConnected(getActivity())) {
 							storeMetaAisleDataIntoLocalStorage();
-							addAisleToServer(storedVueUser.getVueId());
+							addAisleToServer(storedVueUser);
 						} else {
 							Toast.makeText(
 									getActivity(),
@@ -1602,12 +1589,15 @@ public class DataEntryFragment extends Fragment {
 				categoryAisleDataObj.time = currentTime;
 				mDbManager.addAisleMetaDataToDB(VueConstants.CATEGORY_TABLE,
 						categoryAisleDataObj);
+				// When the loop is finished, updates the notification
+				// builder.setContentText("Uploading completed");
+				// notifyManager.notify(0, builder.getNotification());
 			}
 		}).start();
 	}
 
 	// create ailse and send to server.
-	public void addAisleToServer(String ownerUserId) {
+	public void addAisleToServer(VueUser vueUser) {
 		String imageSourceUrl = mFindAtText.getText().toString();
 		if (imageSourceUrl != null && imageSourceUrl.trim().length() > 0) {
 			Aisle aisle = new Aisle();
@@ -1615,7 +1605,9 @@ public class DataEntryFragment extends Fragment {
 			aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
 			aisle.setName("Super Aisle"); // TODO By Krishna
 			aisle.setOccassion(mOccassionBigText.getText().toString().trim());
-			aisle.setOwnerUserId(Long.valueOf(ownerUserId));
+			aisle.setOwnerUserId(Long.valueOf(vueUser.getVueId()));
+			aisle.setAisleOwnerFirstName(vueUser.getmFirstName());
+			aisle.setAisleOwnerLastName(vueUser.getmLastName());
 			VueImage image = new VueImage();
 			image.setDetailsUrl("Got this image from a random url"); // TODO By
 																		// Krishna
@@ -1641,7 +1633,7 @@ public class DataEntryFragment extends Fragment {
 			image.setStore(store);
 			image.setTitle("Android Test"); // TODO By Krishna
 			FlurryAgent.logEvent("New_Aisle_Creation");
-			image.setOwnerUserId(Long.valueOf(ownerUserId));
+			image.setOwnerUserId(Long.valueOf(vueUser.getVueId()));
 			FlurryAgent.logEvent("Create_Aisle");
 			aisle.setAisleImage(image);
 			if (mFindAtText != null && mFindAtText.getText().toString() != null) {

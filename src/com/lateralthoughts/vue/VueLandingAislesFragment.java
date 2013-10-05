@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.Utils;
@@ -89,12 +90,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	public void notifyAdapters() {
 		if (mLeftColumnAdapter != null) {
-			// TrendingAislesLeftColumnAdapter.mIsLeftDataChanged = true;
+
 			mLeftColumnAdapter.notifyDataSetChanged();
 			Log.i("listadapter", "adapter leftadapter notified");
 		}
 		if (mRightColumnAdapter != null) {
-			// TrendingAislesRightColumnAdapter.mIsRightDataChanged = true;
 			mRightColumnAdapter.notifyDataSetChanged();
 			Log.i("listadapter", "adapter adapter notified");
 		}
@@ -183,8 +183,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				// notify the adapters.
 				if (mIsFlingCalled == true) {
 					mIsFlingCalled = false;
-					// mLeftColumnAdapter.notifyDataSetChanged();
-					// mRightColumnAdapter.notifyDataSetChanged();
+					mLeftColumnAdapter.notifyDataSetChanged();
+					mRightColumnAdapter.notifyDataSetChanged();
 				}
 
 			} else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
@@ -245,27 +245,28 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 							mLeftColumnView.getFirstVisiblePosition(), top);
 				}
 			}
-			/*
-			 * VueLandingPageActivity lan = (VueLandingPageActivity)
-			 * getActivity();
-			 * 
-			 * if
-			 * (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
-			 * && lan.getScreenName().equalsIgnoreCase(
-			 * getResources().getString(R.string.trending))) { int
-			 * lastVisiblePosition = firstVisibleItem + visibleItemCount;
-			 * Log.i("more aisle request", "more aisle request calling"); int
-			 * totalItems = 0; if (view.equals(mLeftColumnView)) { totalItems =
-			 * mLeftColumnAdapter.getCount(); } else if
-			 * (view.equals(mRightColumnView)) { totalItems =
-			 * mRightColumnAdapter.getCount(); } if ((totalItems -
-			 * lastVisiblePosition) < 20) { Log.i("offeset and limit",
-			 * "offeset00000: load moredata");
-			 * VueTrendingAislesDataModel.getInstance(mContext)
-			 * .getNetworkHandler().requestMoreAisle(true); } } else {
-			 * Log.i("offeset and limit", "offeset00000: load moredata else ");
-			 * }
-			 */
+
+			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
+
+			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
+					&& lan.getScreenName().equalsIgnoreCase(
+							getResources().getString(R.string.trending))) {
+				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
+				Log.i("more aisle request", "more aisle request calling");
+				int totalItems = 0;
+				if (view.equals(mLeftColumnView)) {
+					totalItems = mLeftColumnAdapter.getCount();
+				} else if (view.equals(mRightColumnView)) {
+					totalItems = mRightColumnAdapter.getCount();
+				}
+				if ((totalItems - lastVisiblePosition) < 20) {
+					Log.i("offeset and limit", "offeset00000: load moredata");
+					VueTrendingAislesDataModel.getInstance(mContext)
+							.getNetworkHandler().requestMoreAisle(true);
+				}
+			} else {
+				Log.i("offeset and limit", "offeset00000: load moredata else ");
+			}
 
 		}
 	};
@@ -286,6 +287,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			} else {
 				articleParams.put("User_Id", "anonymous");
 			}
+			Log.e("VueLandingAisleFragment", "Suru aisle clicked aisle Id: "
+					+ id);
+			DataBaseManager.getInstance(mContext)
+					.updateOrAddRecentlyViewedAisles(id);
 			FlurryAgent.logEvent("User_Select_Aisle", articleParams);
 
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();

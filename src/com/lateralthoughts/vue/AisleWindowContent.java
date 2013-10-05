@@ -10,11 +10,10 @@
  */
 package com.lateralthoughts.vue;
 
-import java.util.ArrayList;
-
+import android.util.Log;
 import com.lateralthoughts.vue.utils.Utils;
 
-import android.util.Log;
+import java.util.ArrayList;
 
 public class AisleWindowContent {
 	public static final String EMPTY_AISLE_CONTENT_ID = "EmptyAisleWindow";
@@ -179,7 +178,7 @@ public class AisleWindowContent {
 			if (newHeight > bestHeight) {
 				newHeight = (newHeight * bestHeight) / newHeight;
 			}
-			if (newHeight < bestHeight) {
+			if (newHeight <= bestHeight) {
 				bestHeight = newHeight;
 			}
 			Log.e("getBestHeight", "BestHeight ???" + bestHeight + "??width??"

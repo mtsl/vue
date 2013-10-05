@@ -3,7 +3,6 @@ package com.lateralthoughts.vue;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,16 +16,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.util.Log;
-import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -36,19 +27,12 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flurry.android.FlurryAgent;
-import com.flurry.android.monolithic.sdk.impl.vy;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.VueImage;
-import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.AddImageToAisleBackgroundThread;
 import com.lateralthoughts.vue.utils.AisleCreationBackgroundThread;
 import com.lateralthoughts.vue.utils.UrlConstants;
@@ -75,7 +59,7 @@ public class AisleManager {
 	private static AisleManager sAisleManager = null;
 
 	private VueUser mCurrentUser;
-	private AisleBookmark createdAisleBookmark;
+	
 	private boolean isDirty;
 
 	private AisleManager() {
@@ -365,8 +349,9 @@ public class AisleManager {
 				public void onResponse(String jsonArray) {
 					if (jsonArray != null) {
 						try {
-							createdAisleBookmark = (new ObjectMapper())
+						  AisleBookmark createdAisleBookmark = (new ObjectMapper())
 									.readValue(jsonArray, AisleBookmark.class);
+							isDirty = false;
 							updateBookmartToDb(windowList,
 									createdAisleBookmark, isDirty);
 						} catch (Exception e) {
