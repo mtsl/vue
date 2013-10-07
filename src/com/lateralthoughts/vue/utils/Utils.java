@@ -264,23 +264,23 @@ public class Utils {
 		float scaleFactor;
 		requiredHeight = availableHeight;
 
-		Log.i("imageSize", "imageSize cardHeight: "
-				+ VueApplication.getInstance().getVueDetailsCardHeight());
 		Log.i("imageSize", "imageSize cardWidth: "
-				+ VueApplication.getInstance().getVueDetailsCardWidth());
+				+ VueApplication.getInstance().getScreenWidth());
+		Log.i("imageSize", "imageSize cardHeight: "
+				+ VueApplication.getInstance().getScreenHeight());
 	
 		if ((availableWidth < VueApplication.getInstance()
-				.getVueDetailsCardWidth() && availableHeight < VueApplication
-				.getInstance().getVueDetailsCardHeight())) {
+				.getScreenWidth() && availableHeight < VueApplication
+				.getInstance().getScreenHeight())) {
 			imgDimension.mImgWidth = availableWidth;
 			imgDimension.mImgHeight = availableHeight;
 			return imgDimension;
 		}
 		
 		if (availableWidth > VueApplication.getInstance()
-				.getVueDetailsCardWidth()) {
+				.getScreenWidth()) {
 			requiredWidth = VueApplication.getInstance()
-					.getVueDetailsCardWidth();
+					.getScreenWidth();
 		} else {
 			requiredWidth = availableWidth;
 			// requiredWidth =
@@ -302,11 +302,11 @@ public class Utils {
 			requiredWidth = Math.round(bitmapOriginalWidth * scaleFactor);
 		}
 		if (requiredHeight > VueApplication.getInstance()
-				.getVueDetailsCardHeight()) {
+				.getScreenHeight()) {
 			// decrease the image to card height and decrease the imageWidht
 			// proportioned to height
 			scaleFactor = VueApplication.getInstance()
-					.getVueDetailsCardHeight() / requiredHeight;
+					.getScreenHeight() / requiredHeight;
 			requiredHeight = Math.round(requiredHeight * scaleFactor);
 			requiredWidth = Math.round(requiredWidth * scaleFactor);
 		}

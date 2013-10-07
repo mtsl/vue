@@ -130,272 +130,206 @@ public class AisleContentBrowser extends ViewFlipper {
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser) this;
-		/*
-		 * if(aisleContentBrowser.getCurrentView() == null) { return false; }
-		 */
-		boolean result = mDetector.onTouchEvent(event);
-		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			mAnimationInProgress = false;
-			mFirstX = (int) event.getX();
-			mFirstY = (int) event.getY();
-			mDownPressStartTime = System.currentTimeMillis();
-			return super.onTouchEvent(event);
-		} else if (event.getAction() == MotionEvent.ACTION_UP) {
-			// long elapsedTimeFromDown = System.currentTimeMillis() -
-			// mDownPressStartTime;
-			if (mTouchMoved) {
-				mTouchMoved = false;
-				return true;
-			}
-			mAnimationInProgress = false;
+ 
+	public boolean onTouchEvent(MotionEvent event){
+	        final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
+	      /*  if(aisleContentBrowser.getCurrentView() == null) {
+    		    return false;
+	        }*/
+	        boolean result = mDetector.onTouchEvent(event);
+	        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	            mAnimationInProgress= false;
+	            mFirstX = (int) event.getX();
+	            mFirstY = (int)event.getY();
+	            mDownPressStartTime = System.currentTimeMillis();
+	            return super.onTouchEvent(event);
+	        }else if(event.getAction() == MotionEvent.ACTION_UP){
+	            //long elapsedTimeFromDown = System.currentTimeMillis() - mDownPressStartTime;
+	            if(mTouchMoved){
+	                mTouchMoved = false;
+	                return true;
+	            }
+	            mAnimationInProgress = false;
+	            
+	            mFirstX = 0;
+	            mLastX = 0;
+	            return super.onTouchEvent(event);
+	        }
 
-			mFirstX = 0;
-			mLastX = 0;
-			return super.onTouchEvent(event);
+	        else if(event.getAction() == MotionEvent.ACTION_MOVE){	
+	        	Log.i("browsermove", "browsermove1");
+	            mLastX = (int)event.getX();
+	            mLastY = (int)event.getY();
+	            if(mFirstY - mLastY > SWIPE_MIN_DISTANCE ||
+	                    mLastY - mFirstY > SWIPE_MIN_DISTANCE){
+	                return super.onTouchEvent(event);
+	            }
+                 
+	            if (mFirstX - mLastX > SWIPE_MIN_DISTANCE) {
+	                //In this case, the user is moving the finger right to left
+	                //The current image needs to slide out left and the "next" image
+	                //needs to fade in
+	                mTouchMoved = true;
+	                requestDisallowInterceptTouchEvent(true);
+	                if(false == mAnimationInProgress){
+	                	View nextView = null;
+	                    final int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
+	                    	  nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex+1);
+	                    	  
+	                
+	                   // if((currentIndex+1)>=0 && (currentIndex+1) < aisleContentBrowser.getChildCount() )
+	                  
+	                    if(null != mSpecialNeedsAdapter && null == nextView){
+	                    	
+	                        if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,currentIndex, currentIndex+1, true)){
+	                            mAnimationInProgress = true;
+	                          
+	                            Animation cantWrapRight = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right);
+	                            cantWrapRight.setAnimationListener(new Animation.AnimationListener(){
+	                                public void onAnimationEnd(Animation animation) {
+	                                    Animation cantWrapRightPart2 = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_right2);
+	                                    aisleContentBrowser.getCurrentView().startAnimation(cantWrapRightPart2);
+	                                    if(mSwipeListener != null) {
+                                          	 
+                                           	mSwipeListener.onAllowListResponse();
+                                           }
+	                                  
+	                                 
+	                                }
+	                                public void onAnimationStart(Animation animation) {
+
+	                                }
+	                                public void onAnimationRepeat(Animation animation) {
+
+	                                }
+	                            });
+	                            aisleContentBrowser.getCurrentView().startAnimation(cantWrapRight);
+	                            return super.onTouchEvent(event);
+	                        }
+	                    }
+	                  
+	                    Animation currentGoLeft = AnimationUtils.loadAnimation(mContext, R.anim.right_out);
+	                    final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
+	                    mAnimationInProgress = true;
+	                    aisleContentBrowser.setInAnimation(nextFadeIn);
+	                    aisleContentBrowser.setOutAnimation(currentGoLeft);
+	                    currentGoLeft.setAnimationListener(new Animation.AnimationListener(){
+                            public void onAnimationEnd(Animation animation) {
+                                Log.e("AisleContentAdapter","End of go left animtation");
+                                if(mSwipeListener != null) {
+                                  	 
+                                   	mSwipeListener.onAllowListResponse();
+                                   }
+                                if(mSwipeListener != null) {
+                                	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT,currentIndex+1);
+                                	//mSwipeListener.onDissAllowListResponse();
+                                }
+        	                    mCurrentIndex = currentIndex+1;
+        	                    if(detailImgClickListenr != null) {
+        		                    detailImgClickListenr.onImageSwipe(currentIndex+1);
+        		                    }
+        	                   // aisleContentBrowser.setDisplayedChild(currentIndex+1);
+                            }
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+	                   
+	                    aisleContentBrowser.setDisplayedChild(currentIndex+1);
+	                    //aisleContentBrowser.invalidate();
+	                    return super.onTouchEvent(event);
+	                }                           
+	            } else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE){
+	                requestDisallowInterceptTouchEvent(true);
+	                Log.i("browsermove", "browsermove1 right");
+	                mTouchMoved = true;
+	                if(false == mAnimationInProgress){
+	                       final int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
+	                       View nextView = null;
+		                    	  nextView = (ScaleImageView)aisleContentBrowser.getChildAt(currentIndex-1);
+	                    
+	                       
+	                      // if((currentIndex-1)>=0 && (currentIndex-1) < aisleContentBrowser.getChildCount() )
+	                      
+	                        if(null != mSpecialNeedsAdapter && null == nextView){
+	                        	
+	                            if(!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,currentIndex, currentIndex-1, true)){
+	                            	
+	                                Animation cantWrapLeft = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left);
+	                                
+	                                cantWrapLeft.setAnimationListener(new Animation.AnimationListener(){
+	                                    public void onAnimationEnd(Animation animation) {
+	                                        Animation cantWrapLeftPart2 = AnimationUtils.loadAnimation(mContext, R.anim.cant_wrap_left2);
+	                                        aisleContentBrowser.getCurrentView().startAnimation(cantWrapLeftPart2);
+	                                        if(mSwipeListener != null) {
+	                                           	 
+	                                           	mSwipeListener.onAllowListResponse();
+	                                           }
+	                                    }
+	                                    public void onAnimationStart(Animation animation) {
+
+	                                    }
+	                                    public void onAnimationRepeat(Animation animation) {
+
+	                                    }
+	                                });
+	                                aisleContentBrowser.getCurrentView().startAnimation(cantWrapLeft);
+	                                return super.onTouchEvent(event);
+	                            }
+	                        }
+	                   
+	                    Animation currentGoRight = AnimationUtils.loadAnimation(mContext, R.anim.left_in);
+	                    final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
+	                    mAnimationInProgress = true;
+	                    aisleContentBrowser.setInAnimation(nextFadeIn);
+	                    aisleContentBrowser.setOutAnimation(currentGoRight);
+	                    currentGoRight.setAnimationListener(new Animation.AnimationListener(){
+                            public void onAnimationEnd(Animation animation) {
+                                Log.e("AisleContentAdapter","End of go right animtation");
+                                if(mSwipeListener != null) {
+                                  	 
+                                   	mSwipeListener.onAllowListResponse();
+                                   }
+                                mCurrentIndex = currentIndex-1;
+    	                        if(mSwipeListener != null) {
+    	                           	mSwipeListener.onAisleSwipe(VueAisleDetailsViewFragment.SWIPE_RIGHT_TO_LEFT,currentIndex-1);
+    	                          // 	mSwipeListener.onDissAllowListResponse();
+    	                           }
+    	                        if(detailImgClickListenr != null) {
+    	 	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
+    	 	                       }
+    	                       // aisleContentBrowser.setDisplayedChild(currentIndex-1);
+                            }
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+	                    aisleContentBrowser.setDisplayedChild(currentIndex-1);
+	                   
+	                    return super.onTouchEvent(event);
+	                }
+	            }
+	        }
+	        return super.onTouchEvent(event);
+	    }
+	//}
+	public void setCurrentImage(){
+		for(int i=0;i<VueApplication.getInstance().getmAisleImgCurrentPos();i++) {
+		 mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,i, i+1, true);
 		}
-
-		else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			Log.i("browsermove", "browsermove1");
-			mLastX = (int) event.getX();
-			mLastY = (int) event.getY();
-			if (mFirstY - mLastY > SWIPE_MIN_DISTANCE
-					|| mLastY - mFirstY > SWIPE_MIN_DISTANCE) {
-				return super.onTouchEvent(event);
-			}
-
-			if (mFirstX - mLastX > SWIPE_MIN_DISTANCE) {
-				// In this case, the user is moving the finger right to left
-				// The current image needs to slide out left and the "next"
-				// image
-				// needs to fade in
-				mTouchMoved = true;
-				requestDisallowInterceptTouchEvent(true);
-				if (false == mAnimationInProgress) {
-					View nextView = null;
-					final int currentIndex = aisleContentBrowser
-							.indexOfChild(aisleContentBrowser.getCurrentView());
-					nextView = (ScaleImageView) aisleContentBrowser
-							.getChildAt(currentIndex + 1);
-
-					// if((currentIndex+1)>=0 && (currentIndex+1) <
-					// aisleContentBrowser.getChildCount() )
-
-					if (null != mSpecialNeedsAdapter && null == nextView) {
-
-						if (!mSpecialNeedsAdapter.setAisleContent(
-								AisleContentBrowser.this, currentIndex,
-								currentIndex + 1, true)) {
-							mAnimationInProgress = true;
-
-							Animation cantWrapRight = AnimationUtils
-									.loadAnimation(mContext,
-											R.anim.cant_wrap_right);
-							cantWrapRight
-									.setAnimationListener(new Animation.AnimationListener() {
-										public void onAnimationEnd(
-												Animation animation) {
-											Animation cantWrapRightPart2 = AnimationUtils
-													.loadAnimation(
-															mContext,
-															R.anim.cant_wrap_right2);
-											aisleContentBrowser
-													.getCurrentView()
-													.startAnimation(
-															cantWrapRightPart2);
-											if (mSwipeListener != null) {
-
-												mSwipeListener
-														.onAllowListResponse();
-											}
-
-										}
-
-										public void onAnimationStart(
-												Animation animation) {
-
-										}
-
-										public void onAnimationRepeat(
-												Animation animation) {
-
-										}
-									});
-							aisleContentBrowser.getCurrentView()
-									.startAnimation(cantWrapRight);
-							return super.onTouchEvent(event);
-						}
-					}
-
-					Animation currentGoLeft = AnimationUtils.loadAnimation(
-							mContext, R.anim.right_out);
-					final Animation nextFadeIn = AnimationUtils.loadAnimation(
-							mContext, R.anim.fade_in);
-					mAnimationInProgress = true;
-					aisleContentBrowser.setInAnimation(nextFadeIn);
-					aisleContentBrowser.setOutAnimation(currentGoLeft);
-					currentGoLeft
-							.setAnimationListener(new Animation.AnimationListener() {
-								public void onAnimationEnd(Animation animation) {
-									Log.e("AisleContentAdapter",
-											"End of go left animtation");
-									if (mSwipeListener != null) {
-
-										mSwipeListener.onAllowListResponse();
-									}
-									if (mSwipeListener != null) {
-										mSwipeListener
-												.onAisleSwipe(
-														VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT,
-														currentIndex + 1);
-										// mSwipeListener.onDissAllowListResponse();
-									}
-									mCurrentIndex = currentIndex + 1;
-									if (detailImgClickListenr != null) {
-										detailImgClickListenr
-												.onImageSwipe(currentIndex + 1);
-									}
-									// aisleContentBrowser.setDisplayedChild(currentIndex+1);
-								}
-
-								public void onAnimationStart(Animation animation) {
-
-								}
-
-								public void onAnimationRepeat(
-										Animation animation) {
-
-								}
-							});
-
-					aisleContentBrowser.setDisplayedChild(currentIndex + 1);
-					// aisleContentBrowser.invalidate();
-					return super.onTouchEvent(event);
-				}
-			} else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE) {
-				requestDisallowInterceptTouchEvent(true);
-				Log.i("browsermove", "browsermove1 right");
-				mTouchMoved = true;
-				if (false == mAnimationInProgress) {
-					final int currentIndex = aisleContentBrowser
-							.indexOfChild(aisleContentBrowser.getCurrentView());
-					View nextView = null;
-					nextView = (ScaleImageView) aisleContentBrowser
-							.getChildAt(currentIndex - 1);
-
-					// if((currentIndex-1)>=0 && (currentIndex-1) <
-					// aisleContentBrowser.getChildCount() )
-
-					if (null != mSpecialNeedsAdapter && null == nextView) {
-
-						if (!mSpecialNeedsAdapter.setAisleContent(
-								AisleContentBrowser.this, currentIndex,
-								currentIndex - 1, true)) {
-
-							Animation cantWrapLeft = AnimationUtils
-									.loadAnimation(mContext,
-											R.anim.cant_wrap_left);
-
-							cantWrapLeft
-									.setAnimationListener(new Animation.AnimationListener() {
-										public void onAnimationEnd(
-												Animation animation) {
-											Animation cantWrapLeftPart2 = AnimationUtils
-													.loadAnimation(
-															mContext,
-															R.anim.cant_wrap_left2);
-											aisleContentBrowser
-													.getCurrentView()
-													.startAnimation(
-															cantWrapLeftPart2);
-											if (mSwipeListener != null) {
-
-												mSwipeListener
-														.onAllowListResponse();
-											}
-										}
-
-										public void onAnimationStart(
-												Animation animation) {
-
-										}
-
-										public void onAnimationRepeat(
-												Animation animation) {
-
-										}
-									});
-							aisleContentBrowser.getCurrentView()
-									.startAnimation(cantWrapLeft);
-							return super.onTouchEvent(event);
-						}
-					}
-
-					Animation currentGoRight = AnimationUtils.loadAnimation(
-							mContext, R.anim.left_in);
-					final Animation nextFadeIn = AnimationUtils.loadAnimation(
-							mContext, R.anim.fade_in);
-					mAnimationInProgress = true;
-					aisleContentBrowser.setInAnimation(nextFadeIn);
-					aisleContentBrowser.setOutAnimation(currentGoRight);
-					currentGoRight
-							.setAnimationListener(new Animation.AnimationListener() {
-								public void onAnimationEnd(Animation animation) {
-									Log.e("AisleContentAdapter",
-											"End of go right animtation");
-									if (mSwipeListener != null) {
-
-										mSwipeListener.onAllowListResponse();
-									}
-									mCurrentIndex = currentIndex - 1;
-									if (mSwipeListener != null) {
-										mSwipeListener
-												.onAisleSwipe(
-														VueAisleDetailsViewFragment.SWIPE_RIGHT_TO_LEFT,
-														currentIndex - 1);
-										// mSwipeListener.onDissAllowListResponse();
-									}
-									if (detailImgClickListenr != null) {
-										detailImgClickListenr
-												.onImageSwipe(currentIndex - 1);
-									}
-									// aisleContentBrowser.setDisplayedChild(currentIndex-1);
-								}
-
-								public void onAnimationStart(Animation animation) {
-
-								}
-
-								public void onAnimationRepeat(
-										Animation animation) {
-
-								}
-							});
-					aisleContentBrowser.setDisplayedChild(currentIndex - 1);
-
-					return super.onTouchEvent(event);
-				}
-			}
-		}
-		return super.onTouchEvent(event);
+		final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
+		  aisleContentBrowser.setDisplayedChild(VueApplication.getInstance().getmAisleImgCurrentPos());
+ 
 	}
 
 	// }
-	public void setCurrentImage() {
-		Log.i("currentimage", "currentimage1: "
-				+ VueApplication.getInstance().getmAisleImgCurrentPos());
-		for (int i = 0; i < VueApplication.getInstance()
-				.getmAisleImgCurrentPos(); i++) {
-			mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, i,
-					i + 1, true);
-			Log.i("currentimage", "currentimage2");
-		}
-		final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser) this;
-
-		aisleContentBrowser.setDisplayedChild(VueApplication.getInstance()
-				.getmAisleImgCurrentPos());
-	}
+ 
 
 	public void setCustomAdapter(IAisleContentAdapter adapter) {
 		mSpecialNeedsAdapter = adapter;
@@ -415,6 +349,9 @@ public class AisleContentBrowser extends ViewFlipper {
 		public boolean onDoubleTap(MotionEvent e) {
 			if (detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
 				detailImgClickListenr.onImageDoubleTap();
+			}
+			if(mClickListener != null && null != mSpecialNeedsAdapter){
+				mClickListener.onDoubleTap(mAisleUniqueId);
 			}
 			return super.onDoubleTap(e);
 		}
@@ -449,8 +386,9 @@ public class AisleContentBrowser extends ViewFlipper {
 		public void onAisleClicked(String id, int count, int currentPosition);
 
 		public boolean isFlingCalled();
-
 		public boolean isIdelState();
+		public boolean onDoubleTap(String id);
+		public void refreshList();
 	}
 
 	public interface DetailClickListener {

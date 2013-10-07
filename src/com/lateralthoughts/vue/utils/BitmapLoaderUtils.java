@@ -173,6 +173,11 @@ public class BitmapLoaderUtils {
 			Log.i("window",
 					"clickedwindow ID new bitmap widht1: " + bitmap.getWidth());
 			stream2.close();
+			if(source.equalsIgnoreCase(Utils.TRENDING_SCREEN)){
+				return getBitmap(bitmap,bestWidth,bestHeight);
+			}
+			
+			
 			if (source.equalsIgnoreCase(Utils.DETAILS_SCREEN)) {
 				// scaling factor considers only integers may be some times
 				// scaling factor becomes 1 even there is slight difference in

@@ -373,6 +373,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.edtCommentLay.setVisibility(View.GONE);
 			// mViewHolder.mWindowContent = mWindowContentTemp;
 			try {
+				if(getItem(mCurrentAislePosition).getAisleContext().mDescription != null){
+				mViewHolder.aisleDescription.setText(getItem(mCurrentAislePosition).getAisleContext().mDescription);
+				}
+				
 				mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName;
 				if (mVueusername != null && mVueusername.equals("Anonymous")) {
 					if (VueApplication.getInstance().getmUserInitials() != null) {

@@ -26,6 +26,8 @@ public class AisleWindowContent {
 	private boolean mAisleBookmarkIndicator = false;
 	public boolean mIsDataChanged = false;
 	public int mTrendingBestHeight = 0;
+	
+	public int mTrendingTestBestHeight,mTrendingTestBestWidth;
 
 	public boolean getWindowBookmarkIndicator() {
 		return mAisleBookmarkIndicator;
@@ -108,9 +110,17 @@ public class AisleWindowContent {
 				mWindowSmallestHeight = imageDetails.mAvailableHeight;
 			}
 		}
-		mWindowSmallestHeight = getBestHeight(
+		for(int i = 0;i<mAisleImagesList.size();i++){
+			imageDetails = mAisleImagesList.get(i);
+			if (imageDetails.mAvailableHeight > mWindowLargestHeight
+					|| mWindowLargestHeight == 0) {
+				mWindowLargestHeight = imageDetails.mAvailableHeight;
+			}
+			
+		}
+/*		mWindowSmallestHeight = getBestHeight(
 				mAisleImagesList.get(0).mAvailableHeight,
-				mAisleImagesList.get(0).mAvailableWidth, mWindowSmallestHeight);
+				mAisleImagesList.get(0).mAvailableWidth, mWindowSmallestHeight);*/
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			prepareCustomUrl(mAisleImagesList.get(i));
 		}
@@ -169,9 +179,9 @@ public class AisleWindowContent {
 	}
 
 	public int getBestHeight(int height, int width, int bestHeight) {
+		int trendingCardWidth = VueApplication.getInstance()
+				.getScreenWidth()/2;
 		try {
-			int trendingCardWidth = VueApplication.getInstance()
-					.getVueDetailsCardWidth() / 2;
 			int newwidth = (width * trendingCardWidth) / width;
 			int newHeight = (height * trendingCardWidth) / width;
 
@@ -184,12 +194,20 @@ public class AisleWindowContent {
 			Log.e("getBestHeight", "BestHeight ???" + bestHeight + "??width??"
 					+ width + "??height??" + height + "??trending card width??"
 					+ trendingCardWidth);
+			mTrendingTestBestHeight = bestHeight;
+			mTrendingTestBestWidth = trendingCardWidth;
+			Log.i("TrendingCrop", "TrendingCrop1:*********************");
+			Log.i("TrendingCrop", "TrendingCrop1: bestHeight "+mTrendingTestBestHeight);
+			Log.i("TrendingCrop", "TrendingCrop1: bestWidth "+mTrendingTestBestWidth);
+			Log.i("TrendingCrop", "TrendingCrop1: aisle "+mAisleId);
+			Log.i("TrendingCrop", "TrendingCrop1:##########################");
 			return bestHeight;
 		} catch (Exception e) {
 			Log.e("getBestHeight", "BestHeight ??? catch" + bestHeight
 					+ "??width??" + width + "??height??" + height + "??url??");
 			e.printStackTrace();
 		}
+
 		return bestHeight;
 	}
 
