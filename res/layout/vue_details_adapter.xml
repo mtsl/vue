@@ -42,7 +42,6 @@
                 android:layout_marginTop="6dp"
                 android:ellipsize="end"
                 android:maxLines="3"
-                android:text="Dressing up for a pool party during the coming weekend. I like greens whites and flowers.This is one idea, but would like to see more ideas."
                 android:textColor="@color/black" />
         </LinearLayout>
     </LinearLayout>

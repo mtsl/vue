@@ -150,8 +150,8 @@ public class VueConstants {
 	public static final Uri COMMENTS_ON_IMAGE_URI = Uri.parse("content://"
 			+ AUTHORITY + "/" + COMMENTS_ON_IMAGES_TABLE);
 	public static final Uri RECENTLY_VIEW_AISLES_URI = Uri.parse("content://"
-	        + AUTHORITY + "/" + RECENTLY_VIEWED_AISLES);
-	
+			+ AUTHORITY + "/" + RECENTLY_VIEWED_AISLES);
+
 	public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
 	public static final String INVITATION_MESG = "Invitation from Vue application.";
 	public static final String FACEBOOK_GRAPHIC_OBJECT_NAME_KEY = "name";
@@ -166,6 +166,7 @@ public class VueConstants {
 	public static final String AISLE_NAME = "name";
 	public static final String AISLE_OCCASSION = "occassion";
 	public static final String AISLE_OWNER_USER_ID = "ownerUserId";
+	public static final String AISLE_DESCRIPTION = "description";
 	public static final String AISLE_OWNER_FIRSTNAME = "aisleOwnerFirstName";
 	public static final String AISLE_OWNER_LASTNAME = "aisleOwnerLastName";
 	public static final String AISLE_BOOKMARK_COUNT = "bookmarkCount";
@@ -183,7 +184,7 @@ public class VueConstants {
 	// Reciver constants
 	public static final int AISLE_TRENDING_LIST_DATA = 1;
 	public static final int AISLE_TRENDING_PARSED_DATA = 2;
-	
+
 	public static final String RECENTLY_VIEWED_AISLE_ID = "recentlyViewedAisleId";
 	public static final String VIEW_TIME = "viewTime";
 }
