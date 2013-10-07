@@ -28,8 +28,6 @@ import com.lateralthoughts.vue.utils.Utils;
 public class CreateAisleSelectionActivity extends Activity {
 
 	private RelativeLayout mDataentryPopupMainLayout = null;
-	private LinearLayout mDataEntryMoreTopListLayout = null;
-	private ListView mDataEntryMoreTopListview;
 	private boolean mFromCreateAilseScreenFlag = false,
 			mFromDetailsScreenFlag = false;
 	private String mCameraImageName = null;
@@ -41,6 +39,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	private ArcMenu mDataentryArcMenu = null;
 	private static final int ANIM_DELAY = 100;
 	private boolean isClickedFlag = false;
+	private ShareDialog mShareDialog = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +54,6 @@ public class CreateAisleSelectionActivity extends Activity {
 			mFromDetailsScreenFlag = b
 					.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG);
 		}
-		mDataEntryMoreTopListLayout = (LinearLayout) findViewById(R.id.data_entry_more_top_list_layout);
-		mDataEntryMoreTopListview = (ListView) findViewById(R.id.data_entry_more_top_listview);
 		mDataentryPopupMainLayout = (RelativeLayout) findViewById(R.id.dataentrypopup_mainlayout);
 		mDataentryArcMenu = (ArcMenu) findViewById(R.id.dataentry_arc_menu);
 		mDataentryArcMenu.initArcMenu(mDataentryArcMenu,
@@ -89,14 +86,11 @@ public class CreateAisleSelectionActivity extends Activity {
 								.getInstance().mShoppingApplicationDetailsList
 								.get(i).getActivityName(), VueApplication
 								.getInstance().mShoppingApplicationDetailsList
-								.get(i).getPackageName());
+								.get(i).getPackageName(), VueApplication
+								.getInstance().mShoppingApplicationDetailsList
+								.get(i).getAppIcon());
 				mDataEntryShoppingApplicationsList
 						.add(shoppingApplicationDetails);
-			}
-			if (mDataEntryShoppingApplicationsList != null
-					&& mDataEntryShoppingApplicationsList.size() > 0) {
-				mDataEntryMoreTopListview
-						.setAdapter(new ShoppingApplicationsAdapter(this));
 			}
 		}
 	}
@@ -138,11 +132,11 @@ public class CreateAisleSelectionActivity extends Activity {
 		FlurryAgent.logEvent("ADD_IMAGE_MORE");
 		if (mDataEntryShoppingApplicationsList != null
 				&& mDataEntryShoppingApplicationsList.size() > 0) {
-			if (mDataEntryMoreTopListLayout != null) {
-				mDataEntryMoreTopListLayout.setVisibility(View.VISIBLE);
-			} else if (mDataEntryMoreTopListLayout != null) {
-				mDataEntryMoreTopListLayout.setVisibility(View.VISIBLE);
+			if (mShareDialog == null) {
+				mShareDialog = new ShareDialog(this, this);
 			}
+			mShareDialog
+					.loadShareApplications(mDataEntryShoppingApplicationsList);
 		} else {
 			Toast.makeText(this, "There are no applications.",
 					Toast.LENGTH_LONG).show();

@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.util.ArrayList;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
@@ -42,9 +43,8 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 		ImageView dataEntryRowAisleImage = (ImageView) view
 				.findViewById(R.id.dataentry_row_aisele_image);
 		try {
-			Log.e("Adapter", "file path :::: " + mImagePathsList.get(position));
-			dataEntryRowAisleImage.setImageURI(Uri.fromFile(new File(
-					mImagePathsList.get(position))));
+			Log.e("Adapter", "file path :::: " + mImagePathsList.get(position));			
+			dataEntryRowAisleImage.setImageBitmap(BitmapFactory.decodeFile(mImagePathsList.get(position)));					
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

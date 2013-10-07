@@ -115,6 +115,8 @@ public class VueUserManager {
 								Utils.getDeviceId(), null);
 						vueUser.setVueUserId(id);
 						vueUser.setFirstName(userInitals);
+						VueApplication.getInstance().setmUserInitials(
+								userInitals);
 						vueUser.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
 						VueUserManager.this.setCurrentUser(vueUser);
 						Log.i("imageurl", "imageurl is ok got user id: "

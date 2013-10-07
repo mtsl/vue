@@ -374,6 +374,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			// mViewHolder.mWindowContent = mWindowContentTemp;
 			try {
 				mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName;
+				if (mVueusername != null && mVueusername.equals("Anonymous")) {
+					if (VueApplication.getInstance().getmUserInitials() != null) {
+						mVueusername = VueApplication.getInstance()
+								.getmUserInitials();
+					}
+				}
 				int scrollIndex = VueApplication.getInstance()
 						.getmAisleImgCurrentPos();
 				// mWindowContentTemp = mViewHolder.mWindowContent;
@@ -561,7 +567,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					Response.ErrorListener errorListener = new Response.ErrorListener() {
 						@Override
 						public void onErrorResponse(VolleyError arg0) {
-							Log.e(TAG, arg0.getMessage());
 						}
 					};
 					if (getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl != null) {

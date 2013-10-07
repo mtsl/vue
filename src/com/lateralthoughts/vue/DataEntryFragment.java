@@ -36,7 +36,6 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
@@ -46,9 +45,6 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.utils.*;
-
-import java.io.File;
-import java.util.ArrayList;
 
 /**
  * Fragment for creating Aisle
@@ -1340,6 +1336,7 @@ public class DataEntryFragment extends Fragment {
 
 	public void setGalleryORCameraImage(String picturePath,
 			boolean dontResizeImageFlag) {
+		mLookingForPopup.setVisibility(View.VISIBLE);
 		try {
 			Log.e("frag1", "gallery called,,,," + picturePath);
 			Log.e("cs", "8");
@@ -1354,6 +1351,12 @@ public class DataEntryFragment extends Fragment {
 					mAisleImageBitmap = BitmapFactory.decodeFile(mImagePath);
 				}
 				if (mAisleImageBitmap != null) {
+					RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+							(int) mAisleImageBitmap.getWidth(),
+							(int) mAisleImageBitmap.getHeight());
+					lp.addRule(RelativeLayout.CENTER_IN_PARENT,
+							RelativeLayout.TRUE);
+					mTouchToChangeImage.setLayoutParams(lp);
 					mCreateAisleBg.setImageBitmap(mAisleImageBitmap);
 				} else {
 					mCreateAisleBg.setImageDrawable(getResources().getDrawable(
@@ -1512,9 +1515,13 @@ public class DataEntryFragment extends Fragment {
 				.setVisibility(View.VISIBLE);
 		mDataEntryActivity.mVueDataentryActionbarTopLayout
 				.setVisibility(View.GONE);
-		if (Utils.getDataentryEditAisleFlag(getActivity())) {
-			VueApplication.getInstance().mAisleImagePathList
-					.remove(mCurrentPagePosition);
+		try {
+			if (Utils.getDataentryEditAisleFlag(getActivity())) {
+				VueApplication.getInstance().mAisleImagePathList
+						.remove(mCurrentPagePosition);
+			}
+		} catch (Exception e1) {
+
 		}
 		Utils.putDataentryEditAisleFlag(getActivity(), false);
 		mMainHeadingRow.setVisibility(View.GONE);
@@ -1608,6 +1615,12 @@ public class DataEntryFragment extends Fragment {
 			aisle.setOwnerUserId(Long.valueOf(vueUser.getVueId()));
 			aisle.setAisleOwnerFirstName(vueUser.getmFirstName());
 			aisle.setAisleOwnerLastName(vueUser.getmLastName());
+			if (mSaySomethingAboutAisle.getText().toString().trim().length() > 0) {
+				aisle.setDescription(mSaySomethingAboutAisle.getText()
+						.toString());
+			} else {
+				aisle.setDescription("");
+			}
 			VueImage image = new VueImage();
 			image.setDetailsUrl("Got this image from a random url"); // TODO By
 																		// Krishna
@@ -1722,6 +1735,11 @@ public class DataEntryFragment extends Fragment {
 			mAisleBgProgressbar.setVisibility(View.GONE);
 			mCreateAisleBg.setVisibility(View.VISIBLE);
 			if (mAisleImageBitmap != null) {
+				RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+						(int) mAisleImageBitmap.getWidth(),
+						(int) mAisleImageBitmap.getHeight());
+				lp.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+				mTouchToChangeImage.setLayoutParams(lp);
 				mCreateAisleBg.setImageBitmap(mAisleImageBitmap);
 			} else {
 				mCreateAisleBg.setImageDrawable(getResources().getDrawable(

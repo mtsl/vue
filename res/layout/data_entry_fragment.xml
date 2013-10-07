@@ -29,6 +29,20 @@
                 android:layout_centerInParent="true"
                 android:adjustViewBounds="true" />
 
+            <TextView
+                android:id="@+id/touchtochangeimage"
+                android:layout_width="match_parent"
+                android:layout_height="48dip"
+                android:layout_centerInParent="true"
+                android:background="#90000000"
+                android:clickable="true"
+                android:gravity="center"
+                android:padding="8dip"
+                android:text="Touch To Change Image"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
             <android.support.v4.view.ViewPager
                 android:id="@+id/dataentry_aisles_viewpager"
                 android:layout_width="match_parent"
@@ -43,20 +57,6 @@
             android:layout_alignParentBottom="true"
             android:orientation="horizontal" >
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/touchtochangeimage"
-            android:layout_width="match_parent"
-            android:layout_height="48dip"
-            android:layout_centerInParent="true"
-            android:background="#90000000"
-            android:clickable="true"
-            android:gravity="center"
-            android:padding="8dip"
-            android:text="Touch To Change Image"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -117,7 +117,7 @@
                 android:layout_marginLeft="8dip"
                 android:background="@drawable/popup_bg"
                 android:orientation="vertical"
-                android:visibility="visible" >
+                android:visibility="gone" >
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -157,6 +157,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="4dip"
                         android:hint="Looking for"
+                        android:inputType="textCapSentences"
                         android:singleLine="true"
                         android:textColor="@color/dataentrytextcolor"
                         android:textSize="15sp" />
@@ -286,6 +287,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="4dip"
                         android:hint="Occasion"
+                        android:inputType="textCapSentences"
                         android:singleLine="true"
                         android:textColor="@color/dataentrytextcolor"
                         android:textSize="15sp" />

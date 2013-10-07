@@ -9,7 +9,16 @@ public class Aisle {
 	String mOccassion;
 	Long mRefImageId;
 	VueImage mAisleImage;
-	/* String mDescription; */
+	String mDescription;
+
+	public String getDescription() {
+		return mDescription;
+	}
+
+	public void setDescription(String description) {
+		this.mDescription = description;
+	}
+
 	String mAisleOwnerFirstName;
 	String mAisleOwnerLastName;
 
@@ -41,9 +50,7 @@ public class Aisle {
 		this.mRefImageId = refImageId;
 		this.mOwnerUserId = ownerUserId;
 		this.mAisleImage = aisleImage;
-		/*
-		 * this.mDescription = descreption; this.mFisrtName = firstName;
-		 */
+		this.mDescription = descreption;
 		this.mAisleOwnerLastName = aisleOwnerLastName;
 		this.mAisleOwnerFirstName = aisleOwnerFirstName;
 	}

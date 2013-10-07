@@ -118,6 +118,8 @@ public class VueLandingPageActivity extends BaseActivity {
 			e1.printStackTrace();
 		}
 		if (storedVueUser != null) {
+			VueApplication.getInstance().setmUserInitials(
+					storedVueUser.getmFirstName());
 			VueTrendingAislesDataModel.getInstance(this).getNetworkHandler()
 					.getBookmarkAisleByUser();
 		}
@@ -131,21 +133,22 @@ public class VueLandingPageActivity extends BaseActivity {
 		} else {
 			if (storedVueUser == null) {
 				VueUserManager userManager = VueUserManager.getUserManager();
-				userManager.createUnidentifiedUser(null, Utils.getDeviceId(), new UserUpdateCallback() {
-					@Override
-					public void onUserUpdated(VueUser user) {
-						try {
-							Log.i("userid",
-									"userid123456 null check storedVueUser seting loging page: ");
-							Utils.writeUserObjectToFile(
-									VueLandingPageActivity.this,
-									VueConstants.VUE_APP_USEROBJECT__FILENAME,
-									user);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
+				userManager.createUnidentifiedUser(null, Utils.getDeviceId(),
+						new UserUpdateCallback() {
+							@Override
+							public void onUserUpdated(VueUser user) {
+								try {
+									Log.i("userid",
+											"userid123456 null check storedVueUser seting loging page: ");
+									Utils.writeUserObjectToFile(
+											VueLandingPageActivity.this,
+											VueConstants.VUE_APP_USEROBJECT__FILENAME,
+											user);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
 			}
 		}
 

@@ -57,11 +57,10 @@ public class TrendingAislesLeftColumnAdapter extends
 
 	public int firstX;
 	public int lastX;
-	//public static boolean mIsLeftDataChanged = false;
+	// public static boolean mIsLeftDataChanged = false;
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
 	BitmapLoaderUtils mBitmapLoaderUtils;
-	 
 
 	public TrendingAislesLeftColumnAdapter(Context c,
 			ArrayList<AisleWindowContent> content) {
@@ -132,7 +131,7 @@ public class TrendingAislesLeftColumnAdapter extends
 					.findViewById(R.id.descriptor_aisle_context);
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			convertView.setTag(holder);
-		 
+
 			if (DEBUG)
 				Log.e("Jaws2", "getView invoked for a new view at position1 = "
 						+ position);
@@ -155,7 +154,14 @@ public class TrendingAislesLeftColumnAdapter extends
 		sb.append(context.mFirstName).append(" ").append(context.mLastName);
 		Log.i("Left adapter", "Context fn ln " + context.mFirstName + "??? "
 				+ context.mLastName + "??? " + sb);
-		holder.aisleOwnersName.setText(sb.toString());
+		if (sb.toString().replace(" ", "").equals("Anonymous")) {
+			if (VueApplication.getInstance().getmUserInitials() != null) {
+				holder.aisleOwnersName.setText(VueApplication.getInstance()
+						.getmUserInitials());
+			}
+		} else {
+			holder.aisleOwnersName.setText(sb.toString());
+		}
 		StringBuilder contextBuilder = new StringBuilder();
 		contextBuilder.append(context.mOccasion).append(" : ")
 				.append(context.mLookingForItem);
@@ -185,21 +191,23 @@ public class TrendingAislesLeftColumnAdapter extends
 				&& context.mLookingForItem.length() > 1) {
 			lookingFor = context.mLookingForItem;
 		}
-		if(occasion != null && occasion.length() > 1){
+		if (occasion != null && occasion.length() > 1) {
 			occasion = occasion.toLowerCase();
-			occasion = Character.toString(occasion.charAt(0)).toUpperCase()+occasion.substring(1);
-			}
-			if(lookingFor != null && lookingFor.length() > 1){
+			occasion = Character.toString(occasion.charAt(0)).toUpperCase()
+					+ occasion.substring(1);
+		}
+		if (lookingFor != null && lookingFor.length() > 1) {
 			lookingFor = lookingFor.toLowerCase();
-			lookingFor = Character.toString(lookingFor.charAt(0)).toUpperCase()+lookingFor.substring(1);
-			}
-		
+			lookingFor = Character.toString(lookingFor.charAt(0)).toUpperCase()
+					+ lookingFor.substring(1);
+		}
+
 		holder.aisleContext.setText(occasion + " : " + lookingFor);
 		// ((ViewGroup)(convertView)).setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 		// convertView.setOnClickListener(mClickListener);
 		return convertView;
-		 
-	 }
+
+	}
 
 	private int calculateActualPosition(int viewPosition) {
 		int actualPosition = 0;
@@ -215,5 +223,5 @@ public class TrendingAislesLeftColumnAdapter extends
 				"DataObserver for List Refresh: Right List AisleUpdate Called ");
 		notifyDataSetChanged();
 	}
- 
+
 }

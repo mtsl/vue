@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
@@ -40,9 +41,8 @@ public class VueApplication extends Application {
 			R.drawable.composer_place, R.drawable.composer_sleep,
 			R.drawable.composer_thought };
 
-
-    public long mLaunchTime;
-    public long mLastRecordedTime;
+	public long mLaunchTime;
+	public long mLastRecordedTime;
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
@@ -57,6 +57,15 @@ public class VueApplication extends Application {
 	private int mTextSize = 18;
 	public Context mVueApplicationContext;
 	private int mAisleImgCurrentPos;
+	private String mUserInitials = null;
+
+	public String getmUserInitials() {
+		return mUserInitials;
+	}
+
+	public void setmUserInitials(String mUserInitials) {
+		this.mUserInitials = mUserInitials;
+	}
 
 	public int getmAisleImgCurrentPos() {
 		return mAisleImgCurrentPos;
@@ -134,10 +143,16 @@ public class VueApplication extends Application {
 		mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
 		for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
 			if (Utils.appInstalledOrNot(SHOPPINGAPP_PACKAGES_ARRAY[i], this)) {
+				Drawable appIcon = null;
+				try {
+					appIcon = this.getPackageManager().getApplicationIcon(
+							SHOPPINGAPP_PACKAGES_ARRAY[i]);
+				} catch (NameNotFoundException e) {
+				}
 				ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
 						SHOPPINGAPP_NAMES_ARRAY[i],
 						SHOPPINGAPP_ACTIVITIES_ARRAY[i],
-						SHOPPINGAPP_PACKAGES_ARRAY[i]);
+						SHOPPINGAPP_PACKAGES_ARRAY[i], appIcon);
 				mShoppingApplicationDetailsList.add(shoppingApplicationDetails);
 			}
 		}
@@ -248,12 +263,12 @@ public class VueApplication extends Application {
 	 * newVueTrendingAislesDataModel = createNewObject; }
 	 */
 
- /*   public BitmapCache getBitmapCache(){
-        if(sBitmapCache == null)
-            sBitmapCache = new BitmapCache(512);
-
-        return sBitmapCache;
-    }*/
-    private BitmapCache sBitmapCache;
+	/*
+	 * public BitmapCache getBitmapCache(){ if(sBitmapCache == null)
+	 * sBitmapCache = new BitmapCache(512);
+	 * 
+	 * return sBitmapCache; }
+	 */
+	private BitmapCache sBitmapCache;
 
 }
