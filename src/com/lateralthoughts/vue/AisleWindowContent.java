@@ -110,9 +110,17 @@ public class AisleWindowContent {
 				mWindowSmallestHeight = imageDetails.mAvailableHeight;
 			}
 		}
-		mWindowSmallestHeight = getBestHeight(
+		for(int i = 0;i<mAisleImagesList.size();i++){
+			imageDetails = mAisleImagesList.get(i);
+			if (imageDetails.mAvailableHeight > mWindowLargestHeight
+					|| mWindowLargestHeight == 0) {
+				mWindowLargestHeight = imageDetails.mAvailableHeight;
+			}
+			
+		}
+/*		mWindowSmallestHeight = getBestHeight(
 				mAisleImagesList.get(0).mAvailableHeight,
-				mAisleImagesList.get(0).mAvailableWidth, mWindowSmallestHeight);
+				mAisleImagesList.get(0).mAvailableWidth, mWindowSmallestHeight);*/
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			prepareCustomUrl(mAisleImagesList.get(i));
 		}

@@ -33,6 +33,7 @@ public class AisleLoader {
 	private static AisleLoader sAisleLoaderInstance = null;
 	private ScaledImageViewFactory mViewFactory = null;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
+	AisleContentClickListener mListener;
 	// private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String,
 	// ViewHolder>();
 	// private List<ViewHolder> browserList = new
@@ -115,6 +116,7 @@ public class AisleLoader {
 	public void getAisleContentIntoView(ViewHolder holder, int scrollIndex,
 			int position, boolean placeholderOnly,
 			AisleContentClickListener listener) {
+		
 		Log.i("TrendingDataModel",
 				"DataObserver for List Refresh: getAisleContentView called "
 						+ holder.mWindowContent.getAisleId() + "???" + position + "????"
@@ -170,13 +172,8 @@ public class AisleLoader {
 			holder.uniqueContentId = desiredContentId;
 			// mContentViewMap.put(holder.uniqueContentId, holder);
 		}
-	 
+		mListener = listener;
 		imageDetailsArr = windowContent.getImageList();
-	/*	LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
-				VueApplication.getInstance().getScreenWidth() / 2,
-				windowContent.getBestHeightForWindow());
-		holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);*/
-
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getPreconfiguredImageView(position);
@@ -289,9 +286,10 @@ public class AisleLoader {
 					Log.i("TrendingCrop", "TrendingCrop2: bestHeight bitmap "+bitmap.getHeight());
 					Log.i("TrendingCrop", "TrendingCrop2: bestWidth bitmap "+bitmap.getWidth());
 					Log.i("TrendingCrop", "TrendingCrop2:###########################");
-				 
-					 
 					imageView.setImageBitmap(bitmap);
+					if(mListener.isFlingCalled()){
+						mListener.refreshList();
+					}
 				}
 			}
 		}

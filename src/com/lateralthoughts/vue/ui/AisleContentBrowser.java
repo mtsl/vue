@@ -350,6 +350,9 @@ public class AisleContentBrowser extends ViewFlipper {
 			if (detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
 				detailImgClickListenr.onImageDoubleTap();
 			}
+			if(mClickListener != null && null != mSpecialNeedsAdapter){
+				mClickListener.onDoubleTap(mAisleUniqueId);
+			}
 			return super.onDoubleTap(e);
 		}
 
@@ -383,8 +386,9 @@ public class AisleContentBrowser extends ViewFlipper {
 		public void onAisleClicked(String id, int count, int currentPosition);
 
 		public boolean isFlingCalled();
-
 		public boolean isIdelState();
+		public boolean onDoubleTap(String id);
+		public void refreshList();
 	}
 
 	public interface DetailClickListener {
