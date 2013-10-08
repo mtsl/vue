@@ -23,6 +23,7 @@ import android.util.Log;
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -120,6 +121,7 @@ public class DataBaseManager {
       values.put(VueConstants.OCCASION, info.mOccasion);
       values.put(VueConstants.USER_ID, info.mUserId);
       values.put(VueConstants.AISLE_Id, info.mAisleId);
+      values.put(VueConstants.BOOKMARK_COUNT, info.mBookmarkCount);
       values.put(VueConstants.DELETE_FLAG, 0);
       if (aisleIds.contains(info.mAisleId)) {
         context.getContentResolver().update(VueConstants.CONTENT_URI, values,
@@ -290,12 +292,12 @@ public class DataBaseManager {
   }
 
   public void addLikeOrDisLike(final int likeStatus, final int likeCount,
-      final String imageID, final String aisleID) {
+      final String imageID, final String aisleID, final boolean dirtyFlag) {
     runTask(new Runnable() {
 
       @Override
       public void run() {
-        addLikeOrDisLikeToDb(likeStatus, likeCount, imageID, aisleID);
+        addLikeOrDisLikeToDb(likeStatus, likeCount, imageID, aisleID, dirtyFlag);
       }
     });
   }
@@ -345,13 +347,15 @@ public class DataBaseManager {
   }
 
   private void addLikeOrDisLikeToDb(int likeStatus, int likeCount,
-      String imageID, String aisleID) {
+      String imageID, String aisleID, boolean dirtyFlag) {
     ContentValues aisleValues = new ContentValues();
     aisleValues.put(VueConstants.DIRTY_FLAG, true);
-    mContext.getContentResolver().update(VueConstants.CONTENT_URI, aisleValues,
+    mContext.getContentResolver().update(VueConstants.IMAGES_CONTENT_URI, aisleValues,
         VueConstants.AISLE_Id + "=?", new String[] {aisleID});
     aisleValues.put(VueConstants.LIKE_OR_DISLIKE, likeStatus);
+    if(likeCount != 0)
     aisleValues.put(VueConstants.LIKES_COUNT, likeCount);
+    aisleValues.put(VueConstants.DIRTY_FLAG, (dirtyFlag == true) ? 1 : 0);
     mContext.getContentResolver().update(VueConstants.IMAGES_CONTENT_URI,
         aisleValues,
         VueConstants.AISLE_Id + "=? AND " + VueConstants.IMAGE_ID + "=?",
@@ -608,6 +612,25 @@ public class DataBaseManager {
     return getAisles(getAislesCursor(dirtyFlag, VueConstants.DIRTY_FLAG));
   }
   
+  public ArrayList<ImageRating> getDirtyImages(String dirtyFlag) {
+    ArrayList<ImageRating> images = new ArrayList<ImageRating>();
+    Cursor cursor = mContext.getContentResolver().query(
+        VueConstants.IMAGES_CONTENT_URI, null, VueConstants.DIRTY_FLAG + "=?",
+        new String[] {dirtyFlag}, null);
+    if(cursor.moveToFirst()) {
+      do {
+        if(cursor.getInt(cursor.getColumnIndex(VueConstants.DIRTY_FLAG)) == 1) {
+        ImageRating imgRating = new ImageRating();
+        imgRating.setImageId((long)cursor.getInt(cursor.getColumnIndex(VueConstants.IMAGE_ID)));
+        imgRating.setAisleId((long)cursor.getInt(cursor.getColumnIndex(VueConstants.AISLE_Id)));
+        imgRating.setLiked((cursor.getInt(cursor.getColumnIndex(VueConstants.LIKE_OR_DISLIKE)) == 1) ? true : false);
+        images.add(imgRating);
+        }
+      } while(cursor.moveToNext());
+    }
+    return images;
+  }
+  
   private Cursor getAislesCursor(String searchString, String searchBy) {
     Cursor aislesCursor = mContext.getContentResolver().query(
         VueConstants.CONTENT_URI, null, searchBy + "=?",
@@ -688,6 +711,7 @@ public class DataBaseManager {
       mContext.getContentResolver().insert(VueConstants.RECENTLY_VIEW_AISLES_URI, values);
     }
   }
+  
   
   /**
    * FOR TESTING PERPOES ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS

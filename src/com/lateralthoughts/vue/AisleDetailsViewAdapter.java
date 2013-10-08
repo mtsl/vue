@@ -7,9 +7,12 @@
 package com.lateralthoughts.vue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.http.client.ClientProtocolException;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -520,7 +523,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					handleBookmark(bookmarkStatus,
 							getItem(mCurrentAislePosition).getAisleId());
 				}
-				sendDataToDb(mCurrentDispImageIndex, CHANGE_BOOKMARK);
 				notifyDataSetChanged();
 			}
 		});
@@ -698,6 +700,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							mCurrentDispImageIndex).mLikesCount = getItem(
 							mCurrentAislePosition).getImageList().get(
 							mCurrentDispImageIndex).mLikesCount - 1;
+					sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, false);
+
 				} else {
 					getItem(mCurrentAislePosition).getImageList().get(
 							mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
@@ -705,6 +709,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							mCurrentDispImageIndex).mLikesCount = getItem(
 							mCurrentAislePosition).getImageList().get(
 							mCurrentDispImageIndex).mLikesCount + 1;
+					sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, true);
+					
 				}
 				mLikes = getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mLikesCount;
@@ -870,37 +876,55 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		return getItem(mCurrentAislePosition).getImageList();
 	}
 
-	public void sendDataToDb(int imgPosition, String reqType) {
-		String aisleId;
-		String imageId;
-		AisleImageDetails itemDetails;
+  int likeCount = 0;
+  ImageRating imgRating;
+  public void sendDataToDb(int imgPosition, String reqType,
+      boolean likeOrDislike) {
+    String aisleId = null;
+    String imageId = null;
+    AisleImageDetails itemDetails;
+    
+    int likeStatus = 0;
+    
+    Log.e("ImageRating Resopnse",
+        "SURU ImageRating sendDataToDb() called");
+    if (getItem(mCurrentAislePosition).getImageList() != null
+        && getItem(mCurrentAislePosition).getImageList().size() != 0) {
+      aisleId = getItem(mCurrentAislePosition).getAisleId();
+      itemDetails = getItem(mCurrentAislePosition).getImageList().get(
+          imgPosition);
+      imageId = itemDetails.mId;
+      if (reqType.equals(CHANGE_BOOKMARK)) {
+        // aisleId,imageId,bookMarksCount,bookmarkIndicator
+        int bookMarksCount = getItem(mCurrentAislePosition)
+            .getmAisleBookmarksCount();
+        boolean bookmarkIndicator = getItem(mCurrentAislePosition)
+            .getWindowBookmarkIndicator();
+      } else if (reqType.equals(CHANGE_COMMENT)) {
+        // aisleId,imageId,comment
+        if (itemDetails.mCommentsList == null) {
+          getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList = new ArrayList<String>();
+        }
+        String commentAdded = itemDetails.mCommentsList.get(0);
+      } else if (reqType.equals(CHANGE_LIKES)) {
+        // aisleId,imageId,likesCount,likeStatus
+        likeCount = itemDetails.mLikesCount;
+        likeStatus = itemDetails.mLikeDislikeStatus;
+        imgRating = new ImageRating();
+        imgRating.setAisleId(Long.parseLong(aisleId));
+        imgRating.setImageId(Long.parseLong(imageId));
+        imgRating.setLiked(likeOrDislike);
+        try {
+          Log.e("ImageRating Resopnse",
+              "SURU ImageRating sendDataToDb in LIKES condution");
+          AisleManager.getAisleManager().updateRating(imgRating, likeCount);
+        }catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
 
-		if (getItem(mCurrentAislePosition).getImageList() != null
-				&& getItem(mCurrentAislePosition).getImageList().size() != 0) {
-			aisleId = getItem(mCurrentAislePosition).getAisleId();
-			itemDetails = getItem(mCurrentAislePosition).getImageList().get(
-					imgPosition);
-			imageId = itemDetails.mId;
-			if (reqType.equals(CHANGE_BOOKMARK)) {
-				// aisleId,imageId,bookMarksCount,bookmarkIndicator
-				int bookMarksCount = getItem(mCurrentAislePosition)
-						.getmAisleBookmarksCount();
-				boolean bookmarkIndicator = getItem(mCurrentAislePosition)
-						.getWindowBookmarkIndicator();
-			} else if (reqType.equals(CHANGE_COMMENT)) {
-				// aisleId,imageId,comment
-				if (itemDetails.mCommentsList == null) {
-					getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList = new ArrayList<String>();
-				}
-				String commentAdded = itemDetails.mCommentsList.get(0);
-			} else if (reqType.equals(CHANGE_LIKES)) {
-				// aisleId,imageId,likesCount,likeStatus
-				int likeCount = itemDetails.mLikesCount;
-				int likeStatus = itemDetails.mLikeDislikeStatus;
-			}
-
-		}
-	}
+  }
 
 	public AisleContext getAisleContext() {
 		return getItem(mCurrentAislePosition).getAisleContext();
@@ -972,7 +996,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
 					mCurrentAislePosition).getImageList().get(position).mLikesCount + 1;
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
-			sendDataToDb(position, CHANGE_LIKES);
+			sendDataToDb(position, CHANGE_LIKES, true);
 		}
 		if (position == mCurrentDispImageIndex) {
 			mLikes = getItem(mCurrentAislePosition).getImageList()
@@ -984,13 +1008,13 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	private void onChangeDislikesCount(int position) {
 		FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
 		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+		  //false
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
 					mCurrentAislePosition).getImageList().get(position).mLikesCount - 1;
-			sendDataToDb(position, CHANGE_LIKES);
+			sendDataToDb(position, CHANGE_LIKES, false);
 		} else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
-			sendDataToDb(position, CHANGE_LIKES);
 		}
 		if (position == mCurrentDispImageIndex) {
 			mLikes = getItem(mCurrentAislePosition).getImageList()
@@ -1008,22 +1032,21 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
 	}
 
-	private void handleBookmark(boolean isBookmarked, String aisleId) {
+  private void handleBookmark(boolean isBookmarked, String aisleId) {
+    
+    AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
+        Long.parseLong(aisleId));
+        VueUser storedVueUser = null;
+        try {
+          storedVueUser = Utils.readUserObjectFromFile(mContext,
+              VueConstants.VUE_APP_USEROBJECT__FILENAME);
+          AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark, storedVueUser.getVueId());
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+  }
 
-		AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
-				Long.parseLong(aisleId));
-		VueUser storedVueUser = null;
-		try {
-			storedVueUser = Utils.readUserObjectFromFile(mContext,
-					VueConstants.VUE_APP_USEROBJECT__FILENAME);
-			AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
-					storedVueUser.getVueId());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
 
 	@Override
 	public long getItemId(int position) {
@@ -1040,4 +1063,4 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		  return largeHeight;
 		  
 	  }
-}
+ }

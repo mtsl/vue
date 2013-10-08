@@ -243,9 +243,7 @@ public class AisleDetailsViewListLoader {
                
                 //final AisleContentBrowser vFlipper = viewFlipperReference.get();
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-                
                 if (this == bitmapWorkerTask) {
-                   
                  //setParams( aisleContentBrowser, imageView,bitmap.getHeight());
                     imageView.setImageBitmap(bitmap);
                 }
