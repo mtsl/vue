@@ -383,8 +383,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 						+ " Height: "
 						+ windowItem.getImageList().get(i).mAvailableHeight;
 			}
-			writeSdCard = writeSdCard + "\n\n Final Resized Width: "
-					+ finalWidth + " Final Resize Height: " + finaHeight;
+			writeSdCard = writeSdCard + "\n\n After Resized Aisle Width: "
+					+ finalWidth + " After Resized Aisle Height: " + finaHeight;
 			writeSdCard = writeSdCard
 					+ "\n###################### info end ################################";
 			writeToSdcard(writeSdCard);

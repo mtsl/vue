@@ -243,7 +243,7 @@ public class AisleDetailsViewListLoader {
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
                 
                 if (this == bitmapWorkerTask) {
-                	Log.i("setparam", "setparam background: "+bitmap.getHeight());
+                   
                  setParams( aisleContentBrowser, imageView,bitmap.getHeight());
                     imageView.setImageBitmap(bitmap);
                 }
@@ -299,7 +299,7 @@ public class AisleDetailsViewListLoader {
 	   Log.i("imageSize", "imageSize params Height: "+imgScreenHeight);
       if (vFlipper != null && imageView != null) {
          FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-               LayoutParams.MATCH_PARENT, imgScreenHeight);
+        		 VueApplication.getInstance().getScreenWidth(), imgScreenHeight+VueApplication.getInstance().getPixel(12));
          //params.gravity = Gravity.CENTER;
          vFlipper.setLayoutParams(params);
          

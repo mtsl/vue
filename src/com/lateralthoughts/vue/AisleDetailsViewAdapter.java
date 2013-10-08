@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.support.v4.view.ViewPager.LayoutParams;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -321,10 +322,15 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.userComment.setTextSize(VueApplication.getInstance()
 					.getmTextSize());
 			mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
-			FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-					VueApplication.getInstance().getScreenWidth(),
-					(mBestHeight + mTopBottomMargin));
-			mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+/*			FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+					 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
+					 );
+			mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);*/
+			   int bestHeightTempHeight = VueApplication.getInstance().getPixel(100) ;
+	            
+				FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+						VueApplication.getInstance().getScreenWidth(), bestHeightTempHeight );
+				mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
 			mViewHolder.aisleContentBrowser
 					.setAisleDetailSwipeListener(mswipeListner);
 
@@ -333,11 +339,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		} else {
 			mViewHolder = (ViewHolder) convertView.getTag();
 		}
-		FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-				VueApplication.getInstance().getScreenWidth(), mBestHeight
-						+ mTopBottomMargin);
-		if (mViewHolder.aisleContentBrowser != null)
-			mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+         
+	/*	if (mViewHolder.aisleContentBrowser != null)
+			mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);*/
 
 		if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
 			mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
@@ -1021,4 +1025,14 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		// TODO Auto-generated method stub
 		return position;
 	}
+	  private int getBestHeight(int largeHeight) {
+		   int screenHeight = VueApplication.getInstance().getScreenHeight();
+		   int screenWidth = VueApplication.getInstance().getScreenWidth();
+		   if(largeHeight > screenHeight){
+			   largeHeight = screenHeight;
+		   }
+		  
+		  return largeHeight;
+		  
+	  }
 }
