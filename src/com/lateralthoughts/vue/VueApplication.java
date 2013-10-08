@@ -79,19 +79,17 @@ public class VueApplication extends Application {
 	public boolean mFbsharingflag = false;
 	private RequestQueue mVolleyRequestQueue;
 	private static final String[] SHOPPINGAPP_NAMES_ARRAY = { "Amazon", "eBay",
-			"Etsy", "Fancy", "iShop", "Jewellery", "OLX", "Pinterest", "ZOVI" };
+			"iShop", "Jewellery", "OLX", "Pinterest", "ZOVI" };
 	private static final String[] SHOPPINGAPP_ACTIVITIES_ARRAY = {
 			"com.amazon.mShop.home.HomeActivity",
-			"com.ebay.mobile.activities.eBay",
-			"com.etsy.android.ui.HomeActivity", "com.thefancy.app.common.Main",
-			"com.shopping.StartPage", "com.greybit.jewellery.activity.Start",
-			"com.olx.olx.activity.Olx",
+			"com.ebay.mobile.activities.eBay", "com.shopping.StartPage",
+			"com.greybit.jewellery.activity.Start", "com.olx.olx.activity.Olx",
 			"com.pinterest.activity.PinterestActivity",
 			"com.robemall.zovi.HomeActivity" };
 	private static final String[] SHOPPINGAPP_PACKAGES_ARRAY = {
-			"com.amazon.mShop.android", "com.ebay.mobile", "com.etsy.android",
-			"com.thefancy.app", "com.shopping", "com.greybit.jewellery",
-			"com.olx.olx", "com.pinterest", "com.robemall.zovi" };
+			"com.amazon.mShop.android", "com.ebay.mobile", "com.shopping",
+			"com.greybit.jewellery", "com.olx.olx", "com.pinterest",
+			"com.robemall.zovi" };
 
 	public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
 
