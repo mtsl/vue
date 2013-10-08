@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ViewFlipper;
 
+import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleDetailsViewActivity;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
@@ -25,38 +26,40 @@ import com.lateralthoughts.vue.VueAisleDetailsViewFragment;
 import com.lateralthoughts.vue.VueApplication;
 
 public class AisleContentBrowser extends ViewFlipper {
-    private String mAisleUniqueId;
-    private String mSourceName;
-    int mCurrentIndex;
-    public String getmSourceName() {
+	private String mAisleUniqueId;
+	private String mSourceName;
+	int mCurrentIndex;
+
+	public String getmSourceName() {
 		return mSourceName;
 	}
 
 	public void setmSourceName(String mSourceName) {
 		this.mSourceName = mSourceName;
 	}
+
 	private int mScrollIndex;
-    //private AisleContentTouchListener mCustomTouchListener;
-    private Context mContext;
-    
-    public boolean mAnimationInProgress;
-    private int mDebugTapCount = 0;
-    private long mDownPressStartTime = 0;
-    private final int MAX_ELAPSED_DURATION_FOR_TAP = 200;
-    public static final int SWIPE_MIN_DISTANCE = 30;
-    private IAisleContentAdapter mSpecialNeedsAdapter;
-    
-    public int mFirstX;
-    public int mLastX;
-    public int mFirstY;
-    public int mLastY;
-    private boolean mTouchMoved;
-    private int mTapTimeout;
-    private String holderName;
-    private String mBrowserArea;
-    private boolean mSetPosition;
- 
-    public String getmBrowserArea() {
+	// private AisleContentTouchListener mCustomTouchListener;
+	private Context mContext;
+
+	public boolean mAnimationInProgress;
+	private int mDebugTapCount = 0;
+	private long mDownPressStartTime = 0;
+	private final int MAX_ELAPSED_DURATION_FOR_TAP = 200;
+	public static final int SWIPE_MIN_DISTANCE = 30;
+	private IAisleContentAdapter mSpecialNeedsAdapter;
+
+	public int mFirstX;
+	public int mLastX;
+	public int mFirstY;
+	public int mLastY;
+	private boolean mTouchMoved;
+	private int mTapTimeout;
+	private String holderName;
+	private String mBrowserArea;
+	private boolean mSetPosition;
+
+	public String getmBrowserArea() {
 		return mBrowserArea;
 	}
 
@@ -71,59 +74,63 @@ public class AisleContentBrowser extends ViewFlipper {
 	public void setHolderName(String holderName) {
 		this.holderName = holderName;
 	}
+
 	private GestureDetector mDetector;
-    
-	public AisleContentBrowser(Context context){
+
+	public AisleContentBrowser(Context context) {
 		super(context);
 		mContext = context;
 		mAisleUniqueId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 		mScrollIndex = 0;
 	}
-	
-	public AisleContentBrowser(Context context, AttributeSet attribs){
+
+	public AisleContentBrowser(Context context, AttributeSet attribs) {
 		super(context, attribs);
 		mAisleUniqueId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 		mScrollIndex = 0;
 		mAnimationInProgress = false;
 		mContext = context;
-	    this.setOnClickListener(new OnClickListener(){
-	            @Override
-	            public void onClick(View v){
-	                //Intent intent = new Intent();
-	                //intent.setClass(VueApplication.getInstance(), AisleDetailsViewActivity.class);
-	                //callOnClick();
-	                //mContext.startActivity(intent);
-  	            }           
-	        });
-	    mTapTimeout = ViewConfiguration.getTapTimeout();
+		this.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Intent intent = new Intent();
+				// intent.setClass(VueApplication.getInstance(),
+				// AisleDetailsViewActivity.class);
+				// callOnClick();
+				// mContext.startActivity(intent);
+			}
+		});
+		mTapTimeout = ViewConfiguration.getTapTimeout();
 		this.setBackgroundColor(Color.WHITE);
-		mDetector = new GestureDetector(AisleContentBrowser.this.getContext(), new mListener());
+		mDetector = new GestureDetector(AisleContentBrowser.this.getContext(),
+				new mListener());
 	}
-	
-	public void setUniqueId(String id){
+
+	public void setUniqueId(String id) {
 		mAisleUniqueId = id;
 	}
-	
-	public String getUniqueId(){
+
+	public String getUniqueId() {
 		return mAisleUniqueId;
 	}
-	
-	public void setScrollIndex(int scrollIndex){
+
+	public void setScrollIndex(int scrollIndex) {
 		mScrollIndex = scrollIndex;
-		 
+
 	}
-	
-	public int getScrollIndex(){
+
+	public int getScrollIndex() {
 		return mScrollIndex;
-	}
-	
-	@Override
-	public void onAnimationEnd(){
-	    super.onAnimationEnd();
-	    Log.e("AisleContentAdapter","onAnimationEnd is called!");
 	}
 
 	@Override
+	public void onAnimationEnd() {
+		super.onAnimationEnd();
+		Log.e("AisleContentAdapter", "onAnimationEnd is called!");
+	}
+
+	@Override
+ 
 	public boolean onTouchEvent(MotionEvent event){
 	        final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
 	      /*  if(aisleContentBrowser.getCurrentView() == null) {
@@ -313,96 +320,133 @@ public class AisleContentBrowser extends ViewFlipper {
 	    }
 	//}
 	public void setCurrentImage(){
-		Log.i("currentimage", "currentimage1: "+VueApplication.getInstance().getmAisleImgCurrentPos()); 
 		for(int i=0;i<VueApplication.getInstance().getmAisleImgCurrentPos();i++) {
 		 mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,i, i+1, true);
-		 Log.i("currentimage", "currentimage2"); 
 		}
 		final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
-		 
 		  aisleContentBrowser.setDisplayedChild(VueApplication.getInstance().getmAisleImgCurrentPos());
+ 
 	}
-	public void setCustomAdapter(IAisleContentAdapter adapter){
-	    mSpecialNeedsAdapter = adapter;
+
+	// }
+ 
+
+	public void setCustomAdapter(IAisleContentAdapter adapter) {
+		mSpecialNeedsAdapter = adapter;
 	}
-	
-	public IAisleContentAdapter getCustomAdapter(){
-	    return mSpecialNeedsAdapter;
+
+	public IAisleContentAdapter getCustomAdapter() {
+		return mSpecialNeedsAdapter;
 	}
-	
+
 	class mListener extends GestureDetector.SimpleOnGestureListener {
-	    @Override
-	    public boolean onDown(MotionEvent e) {
-	        return true;
-	    }
-	    @Override
-	    public boolean onDoubleTap(MotionEvent e) {
-	    	   if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
-		        	detailImgClickListenr.onImageDoubleTap();
-		        }
-	    	return super.onDoubleTap(e);
-	    }
-	    @Override
-	    public boolean onSingleTapConfirmed(MotionEvent event){
-	        if(mClickListener != null && null != mSpecialNeedsAdapter) {
-	        mClickListener.onAisleClicked(mAisleUniqueId,mSpecialNeedsAdapter.getAisleItemsCount(),mCurrentIndex);
-	          
-	        }
-	        if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
-	        	detailImgClickListenr.onSetBrowserArea(getmBrowserArea());
-	        	detailImgClickListenr.onImageClicked();
-	        }
-	        
-	        return true;
-	    }
-	    @Override
-	    public void onLongPress(MotionEvent e) {
-	    	  if(detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
-	    		  detailImgClickListenr.onSetBrowserArea(getmBrowserArea());
-		        	detailImgClickListenr.onImageLongPress();
-		        }
-	    	super.onLongPress(e);
-	    }
-	 }
-	
-	public interface AisleContentClickListener{
-	    public void onAisleClicked(String id,int count,int currentPosition);
+		@Override
+		public boolean onDown(MotionEvent e) {
+			return true;
+		}
+
+		@Override
+		public boolean onDoubleTap(MotionEvent e) {
+			if (detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
+				detailImgClickListenr.onImageDoubleTap();
+			}
+			if(mClickListener != null && null != mSpecialNeedsAdapter){
+				mClickListener.onDoubleTap(mAisleUniqueId);
+			}
+			return super.onDoubleTap(e);
+		}
+
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent event) {
+			if (mClickListener != null && null != mSpecialNeedsAdapter) {
+				mClickListener.onAisleClicked(mAisleUniqueId,
+						mSpecialNeedsAdapter.getAisleItemsCount(),
+						mCurrentIndex);
+
+			}
+			if (detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
+				detailImgClickListenr.onSetBrowserArea(getmBrowserArea());
+				detailImgClickListenr.onImageClicked();
+			}
+
+			return true;
+		}
+
+		@Override
+		public void onLongPress(MotionEvent e) {
+			if (detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
+				detailImgClickListenr.onSetBrowserArea(getmBrowserArea());
+				detailImgClickListenr.onImageLongPress();
+			}
+			super.onLongPress(e);
+		}
+	}
+
+	public interface AisleContentClickListener {
+		public void onAisleClicked(String id, int count, int currentPosition);
+
 		public boolean isFlingCalled();
 		public boolean isIdelState();
+		public boolean onDoubleTap(String id);
+		public void refreshList();
 	}
-	public interface DetailClickListener{
-	    public void onImageClicked();
-	    public void onImageLongPress();
-	    public void onImageSwipe(int position);
-	    public void onImageDoubleTap();
-	    public void onSetBrowserArea(String area);
+
+	public interface DetailClickListener {
+		public void onImageClicked();
+
+		public void onImageLongPress();
+
+		public void onImageSwipe(int position);
+
+		public void onImageDoubleTap();
+
+		public void onSetBrowserArea(String area);
+		public void onRefreshAdaptaers();
 	}
+
 	DetailClickListener detailImgClickListenr;
-	public  void setDetailImageClickListener(DetailClickListener detailLestener) {
+
+	public void setDetailImageClickListener(DetailClickListener detailLestener) {
 		detailImgClickListenr = detailLestener;
 	}
-	public void setAisleContentClickListener(AisleContentClickListener listener){
-	    mClickListener = listener;
+
+	public void setAisleContentClickListener(AisleContentClickListener listener) {
+		mClickListener = listener;
 	}
-	public interface AisleDetailSwipeListener{
-	    public void onAisleSwipe(String id,int position);
-	    public void onReceiveImageCount(int count);
-	    public void onResetAdapter();
-	    public void onAddCommentClick(RelativeLayout view,EditText editText,ImageView commentSend,FrameLayout editLay);
-	    public void onDissAllowListResponse();
-	    public void onAllowListResponse();
-	    public void setOccasion(String occasion);
+
+	public interface AisleDetailSwipeListener {
+		public void onAisleSwipe(String id, int position);
+
+		public void onReceiveImageCount(int count);
+
+		public void onResetAdapter();
+
+		public void onAddCommentClick(RelativeLayout view, EditText editText,
+				ImageView commentSend, FrameLayout editLay);
+
+		public void onDissAllowListResponse();
+
+		public void onAllowListResponse();
+
+		public void setFindAtText(String findAt);
+
+		public void setOccasion(String occasion);
 	}
-	public void setAisleDetailSwipeListener(AisleDetailSwipeListener swipListener) {
-		mSwipeListener = swipListener; 
+
+	public void setAisleDetailSwipeListener(
+			AisleDetailSwipeListener swipListener) {
+		mSwipeListener = swipListener;
 	}
-	public void setReferedObjectsNull(){
-		//To relese the refrence objects form the browser to avoid the memory leaks.
+
+	public void setReferedObjectsNull() {
+		// To relese the refrence objects form the browser to avoid the memory
+		// leaks.
 		mSwipeListener = null;
 		mClickListener = null;
 		detailImgClickListenr = null;
 	}
+
 	private AisleContentClickListener mClickListener;
 	public AisleDetailSwipeListener mSwipeListener;
- 
+
 }

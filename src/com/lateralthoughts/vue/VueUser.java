@@ -50,11 +50,6 @@ public class VueUser implements Serializable {
 		return mVueId;
 	}
 
-	public void setUsersName(String firstName, String lastName) {
-		mFirstName = firstName;
-		mLastName = lastName;
-	}
-
 	public void setBirthday(String birthday) {
 		mBirthday = birthday;
 	}
@@ -95,6 +90,14 @@ public class VueUser implements Serializable {
 
 	public String getmLastName() {
 		return mLastName;
+	}
+
+	public void setFirstName(String firstName) {
+		mFirstName = firstName;
+	}
+
+	public void setLastName(String lastName) {
+		mLastName = lastName;
 	}
 
 	private String mFirstName;

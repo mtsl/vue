@@ -61,6 +61,10 @@ public class VueConstants {
 	public static final String FROM_DETAILS_SCREEN_TO_DATAENTRY_CREATE_AISLESCREEN_FLAG = "FromDetailsScreenToDataentryCreateAisleScreenFlag";
 	public static final String DATAENTRY_ADDIMAGE_AISLE_FLAG = "DataentryAddImageAisleFlag";
 	public static final String DATAENTRY_EDIT_AISLE_FLAG = "DataentryEditAisleFlag";
+	public static final String ETSY_PACKAGE_NAME = "com.etsy.android";
+	public static final String FANCY_PACKAGE_NAME = "com.thefancy.app";
+	public static final String ETSY_ACTIVITY_NAME = "com.etsy.android.ui.HomeActivity";
+	public static final String FANCY_ACTIVITY_NAME = "com.thefancy.app.common.Main";
 	public static final String DATAENTRY_SCREEN_AISLE_ID = "DataentryScreenAisleId";
 	// Column names for aisles table.
 	public static final String ID = "_id";
@@ -100,6 +104,8 @@ public class VueConstants {
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE";
 	public static final String FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG = "fromDetailsscreentoDataentryScreenflag";
+	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH";
+	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT";
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
 	public static final int FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT = 64;
 	public static final int FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT = 65;
@@ -148,8 +154,8 @@ public class VueConstants {
 	public static final Uri COMMENTS_ON_IMAGE_URI = Uri.parse("content://"
 			+ AUTHORITY + "/" + COMMENTS_ON_IMAGES_TABLE);
 	public static final Uri RECENTLY_VIEW_AISLES_URI = Uri.parse("content://"
-	        + AUTHORITY + "/" + RECENTLY_VIEWED_AISLES);
-	
+			+ AUTHORITY + "/" + RECENTLY_VIEWED_AISLES);
+
 	public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
 	public static final String INVITATION_MESG = "Invitation from Vue application.";
 	public static final String FACEBOOK_GRAPHIC_OBJECT_NAME_KEY = "name";
@@ -164,6 +170,7 @@ public class VueConstants {
 	public static final String AISLE_NAME = "name";
 	public static final String AISLE_OCCASSION = "occassion";
 	public static final String AISLE_OWNER_USER_ID = "ownerUserId";
+	public static final String AISLE_DESCRIPTION = "description";
 	public static final String AISLE_OWNER_FIRSTNAME = "aisleOwnerFirstName";
 	public static final String AISLE_OWNER_LASTNAME = "aisleOwnerLastName";
 	public static final String AISLE_BOOKMARK_COUNT = "bookmarkCount";
@@ -181,7 +188,7 @@ public class VueConstants {
 	// Reciver constants
 	public static final int AISLE_TRENDING_LIST_DATA = 1;
 	public static final int AISLE_TRENDING_PARSED_DATA = 2;
-	
+
 	public static final String RECENTLY_VIEWED_AISLE_ID = "recentlyViewedAisleId";
 	public static final String VIEW_TIME = "viewTime";
 	

@@ -3,20 +3,19 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.util.ArrayList;
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnDismissListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.Window;
 import android.view.View.OnClickListener;
-import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,8 +27,6 @@ import com.lateralthoughts.vue.utils.Utils;
 public class CreateAisleSelectionActivity extends Activity {
 
 	private RelativeLayout mDataentryPopupMainLayout = null;
-	private LinearLayout mDataEntryMoreTopListLayout = null;
-	private ListView mDataEntryMoreTopListview;
 	private boolean mFromCreateAilseScreenFlag = false,
 			mFromDetailsScreenFlag = false;
 	private String mCameraImageName = null;
@@ -41,6 +38,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	private ArcMenu mDataentryArcMenu = null;
 	private static final int ANIM_DELAY = 100;
 	private boolean isClickedFlag = false;
+	private ShareDialog mShareDialog = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +53,6 @@ public class CreateAisleSelectionActivity extends Activity {
 			mFromDetailsScreenFlag = b
 					.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG);
 		}
-		mDataEntryMoreTopListLayout = (LinearLayout) findViewById(R.id.data_entry_more_top_list_layout);
-		mDataEntryMoreTopListview = (ListView) findViewById(R.id.data_entry_more_top_listview);
 		mDataentryPopupMainLayout = (RelativeLayout) findViewById(R.id.dataentrypopup_mainlayout);
 		mDataentryArcMenu = (ArcMenu) findViewById(R.id.dataentry_arc_menu);
 		mDataentryArcMenu.initArcMenu(mDataentryArcMenu,
@@ -78,7 +74,7 @@ public class CreateAisleSelectionActivity extends Activity {
 		});
 
 		if (VueApplication.getInstance().mShoppingApplicationDetailsList != null) {
-			for (int i = 2; i < VueApplication.getInstance().mShoppingApplicationDetailsList
+			for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
 					.size(); i++) {
 				if (mDataEntryShoppingApplicationsList == null) {
 					mDataEntryShoppingApplicationsList = new ArrayList<ShoppingApplicationDetails>();
@@ -89,14 +85,11 @@ public class CreateAisleSelectionActivity extends Activity {
 								.getInstance().mShoppingApplicationDetailsList
 								.get(i).getActivityName(), VueApplication
 								.getInstance().mShoppingApplicationDetailsList
-								.get(i).getPackageName());
+								.get(i).getPackageName(), VueApplication
+								.getInstance().mShoppingApplicationDetailsList
+								.get(i).getAppIcon());
 				mDataEntryShoppingApplicationsList
 						.add(shoppingApplicationDetails);
-			}
-			if (mDataEntryShoppingApplicationsList != null
-					&& mDataEntryShoppingApplicationsList.size() > 0) {
-				mDataEntryMoreTopListview
-						.setAdapter(new ShoppingApplicationsAdapter(this));
 			}
 		}
 	}
@@ -138,11 +131,11 @@ public class CreateAisleSelectionActivity extends Activity {
 		FlurryAgent.logEvent("ADD_IMAGE_MORE");
 		if (mDataEntryShoppingApplicationsList != null
 				&& mDataEntryShoppingApplicationsList.size() > 0) {
-			if (mDataEntryMoreTopListLayout != null) {
-				mDataEntryMoreTopListLayout.setVisibility(View.VISIBLE);
-			} else if (mDataEntryMoreTopListLayout != null) {
-				mDataEntryMoreTopListLayout.setVisibility(View.VISIBLE);
+			if (mShareDialog == null) {
+				mShareDialog = new ShareDialog(this, this);
 			}
+			mShareDialog
+					.loadShareApplications(mDataEntryShoppingApplicationsList);
 		} else {
 			Toast.makeText(this, "There are no applications.",
 					Toast.LENGTH_LONG).show();
@@ -267,63 +260,6 @@ public class CreateAisleSelectionActivity extends Activity {
 		}
 	}
 
-	// Shopping Category Applications List ....
-	private class ShoppingApplicationsAdapter extends BaseAdapter {
-		Activity context;
-
-		public ShoppingApplicationsAdapter(Activity context) {
-			super();
-			this.context = context;
-		}
-
-		class ViewHolder {
-			TextView dataentryitemname;
-		}
-
-		public View getView(final int position, View convertView,
-				ViewGroup parent) {
-			ViewHolder holder = null;
-			View rowView = convertView;
-			if (rowView == null) {
-				LayoutInflater inflater = context.getLayoutInflater();
-				rowView = inflater.inflate(R.layout.dataentry_row, null, true);
-				holder = new ViewHolder();
-				holder.dataentryitemname = (TextView) rowView
-						.findViewById(R.id.dataentryitemname);
-				rowView.setTag(holder);
-			} else {
-				holder = (ViewHolder) rowView.getTag();
-			}
-			holder.dataentryitemname.setText(mDataEntryShoppingApplicationsList
-					.get(position).getAppName());
-			rowView.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View arg0) {
-					loadShoppingApplication(mDataEntryShoppingApplicationsList
-							.get(position).getActivityName(),
-							mDataEntryShoppingApplicationsList.get(position)
-									.getPackageName());
-				}
-			});
-			return rowView;
-		}
-
-		@Override
-		public int getCount() {
-			return mDataEntryShoppingApplicationsList.size();
-		}
-
-		@Override
-		public Object getItem(int arg0) {
-			return arg0;
-		}
-
-		@Override
-		public long getItemId(int arg0) {
-			return arg0;
-		}
-	}
-
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -342,6 +278,27 @@ public class CreateAisleSelectionActivity extends Activity {
 
 	public void closeScreen() {
 		finish();
+	}
+
+	public void showAlertMessageForAppInstalation(final String packageName) {
+		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.vue_popup);
+		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
+		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+		messagetext.setText("Install from Play Store");
+		okButton.setText("OK");
+		noButton.setVisibility(View.GONE);
+		okButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				dialog.dismiss();
+				Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
+						.parse("market://details?id=" + packageName));
+				startActivity(goToMarket);
+			}
+		});
+		dialog.show();
 	}
 
 }

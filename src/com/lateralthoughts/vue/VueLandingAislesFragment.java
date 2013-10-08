@@ -1,6 +1,12 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,15 +14,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -90,7 +99,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	public void notifyAdapters() {
 		if (mLeftColumnAdapter != null) {
-			 
+
 			mLeftColumnAdapter.notifyDataSetChanged();
 			Log.i("listadapter", "adapter leftadapter notified");
 		}
@@ -109,8 +118,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				false);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
-	 
-		
 
 		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -189,7 +196,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					mRightColumnAdapter.notifyDataSetChanged();
 				}
 
-			} else if(scrollState == SCROLL_STATE_TOUCH_SCROLL){
+			} else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+				mIsIdleState = false;
 				mIsFlingCalled = false;
 			}
 			int first = view.getFirstVisiblePosition();
@@ -247,6 +255,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 							mLeftColumnView.getFirstVisiblePosition(), top);
 				}
 			}
+
 			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
 
 			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
@@ -288,8 +297,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			} else {
 				articleParams.put("User_Id", "anonymous");
 			}
-			Log.e("VueLandingAisleFragment", "Suru aisle clicked aisle Id: " + id);
-			DataBaseManager.getInstance(mContext).updateOrAddRecentlyViewedAisles(id);
+			Log.e("VueLandingAisleFragment", "Suru aisle clicked aisle Id: "
+					+ id);
+			DataBaseManager.getInstance(mContext)
+					.updateOrAddRecentlyViewedAisles(id);
 			FlurryAgent.logEvent("User_Select_Aisle", articleParams);
 
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
@@ -313,8 +324,77 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public boolean isIdelState() {
-			 
+
 			return mIsIdleState;
+		}
+
+		@Override
+		public boolean onDoubleTap(String id) {
+			AisleWindowContent windowItem = VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).getAisleAt(id);
+
+			Log.i("aisleItem", "aisleItem: id " + windowItem.getAisleId());
+			Log.i("aisleItem",
+					"aisleItem:best smallest Height : "
+							+ windowItem.getBestHeightForWindow());
+			Log.i("aisleItem", "aisleItem:best cardwidth : "
+					+ VueApplication.getInstance().getScreenWidth() / 2);
+			String imageUrls = "";
+			for (int i = 0; i < windowItem.getImageList().size(); i++) {
+				Log.i("aisleItem", "aisleItem: imageUrl "
+						+ windowItem.getImageList().get(i).mImageUrl);
+				Log.i("aisleItem", "aisleItem: imageUrl height"
+						+ windowItem.getImageList().get(i).mAvailableHeight
+						+ " width: "
+						+ windowItem.getImageList().get(i).mAvailableWidth);
+			}
+			int finalWidth = 0, finaHeight = 0;
+			if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
+					.getBestHeightForWindow()) {
+				finalWidth = (windowItem.getImageList().get(0).mAvailableWidth * windowItem
+						.getBestHeightForWindow())
+						/ windowItem.getImageList().get(0).mAvailableHeight;
+				finaHeight = windowItem.getBestHeightForWindow();
+			}
+
+			if (finalWidth > VueApplication.getInstance().getScreenWidth() / 2) {
+
+				
+				finaHeight = (finaHeight
+						* VueApplication.getInstance().getScreenWidth() / 2)
+						/ finalWidth;
+				finalWidth = VueApplication.getInstance().getScreenWidth() / 2;
+			}
+			Log.i("aisleItem", "aisleItem: after resize aisle width "
+					+ finalWidth + " height: " + finaHeight);
+
+			String writeSdCard = null;
+			writeSdCard = "*************************aisle info:"
+					+ windowItem.getAisleId()
+					+ " started***********************\n";
+			writeSdCard = writeSdCard + "\nAisleId: " + windowItem.getAisleId()
+					+ "\n" + "Smallest Image Height: "
+					+ windowItem.getBestHeightForWindow() + "\n"+"Card Width: "+VueApplication.getInstance().getScreenWidth() / 2 + "\n";
+			for (int i = 0; i < windowItem.getImageList().size(); i++) {
+				writeSdCard = writeSdCard + "\n ImageUrl: "
+						+ windowItem.getImageList().get(i).mImageUrl;
+				writeSdCard = writeSdCard + "\n" + "image Width: "
+						+ windowItem.getImageList().get(i).mAvailableWidth
+						+ " Height: "
+						+ windowItem.getImageList().get(i).mAvailableHeight;
+			}
+			writeSdCard = writeSdCard + "\n\n After Resized Aisle Width: "
+					+ finalWidth + " After Resized Aisle Height: " + finaHeight;
+			writeSdCard = writeSdCard
+					+ "\n###################### info end ################################";
+			writeToSdcard(writeSdCard);
+			return false;
+		}
+
+		@Override
+		public void refreshList() {
+			mLeftColumnAdapter.notifyDataSetChanged();
+			mRightColumnAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -337,9 +417,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		for (int i = 0; i < itemCount; i++) {
 			ImageView item = new ImageView(getActivity());
 			item.setImageResource(itemDrawables[i]);
-
+			LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
+					LayoutParams.WRAP_CONTENT);
+			lp.setMargins(4, 4, 4, 4);
 			final int position = i;
-			menu.addItem(i, item, new OnClickListener() {
+			menu.addItem(i, lp, item, new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
@@ -347,6 +429,34 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 							Toast.LENGTH_SHORT).show();
 				}
 			});
+		}
+	}
+	private void writeToSdcard(String message) {
+
+		String path = Environment.getExternalStorageDirectory().toString();
+		File dir = new File(path + "/vueImageDetails/");
+		if (!dir.isDirectory()) {
+			dir.mkdir();
+		}
+		File file = new File(dir, "/"
+				+ Calendar.getInstance().get(Calendar.DATE) + ".txt");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			Log.i("pathsaving", "pathsaving in sdcard2 error");
+			e.printStackTrace();
+		}
+
+		try {
+			PrintWriter out = new PrintWriter(new BufferedWriter(
+					new FileWriter(file, true)));
+			out.write("\n" + message + "\n");
+			out.flush();
+			out.close();
+			Log.i("pathsaving", "pathsaving in sdcard2 success");
+		} catch (IOException e) {
+			Log.i("pathsaving", "pathsaving in sdcard3 error");
+			e.printStackTrace();
 		}
 	}
 

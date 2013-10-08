@@ -1,41 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
- <color name="black">#000000</color>
-  <color name="indicatorbg">#CCCCCC</color>
-   <color name="white">#ffffff</color>
-   <color name="fashion_title_color">#d81417</color>
- <color name="blue">#0066cc</color>
- <color name="thinkbule">#FF3193CB</color>
- <color name="purple">#800080</color>
- <color name="green">#669900</color>
- <color name="brown">#A52A2A</color>
-   <color name="yellow">#FFFF00</color> 
-   <color name="homecolor">#A0CFEC</color>
-   <color name="red">#b91c20</color>
-   <color name="redtwo">#ea7171</color>
-   <color name="orange">#CD3700</color>
-   <color name="lemon">#FFFBD0</color>
-   <color name="orange1">#B232B2</color>
-   <color name="barred">#ff0000</color>
-   <color name="appbg">#e54a24</color>
-   <color name="actionbarclor">#ebebeb</color>
-   <color name="gallerybg">#ef6452</color>
-   <color name="burntorange">#CF5300</color>
-   <color name="lightgreen">#C5D000</color>
-   <color name="lightblack">#383838</color>
-   <color name="grey">#666666</color>
-   <color name="offwhitebg">#ebebeb</color>
-   <color name="dataentrytextcolor">#606060</color>
-   <color name="yellowbgcolor">#f8db7a</color>
-   <color name="popupbgcolor">#c0c0c0</color>
-   <color name="dataentrylistbordercolor">#b6b6b6</color>
-   <color name="dataentrylistshadowbordercolor1">#292822</color>
-   <color name="dataentrylistshadowbordercolor2">#35342c</color>
-   <color name="dataentrylistshadowbordercolor3">#656556</color>
-   <color name="whitbgshade">#EEEEEE</color>
-   <color name="bottombar">#88bcbcbc</color>
-   <color name="transperent">#00000000</color>
-</resources>  
-                            
-                               
-                               
+
+    <color name="black">#000000</color>
+    <color name="indicatorbg">#CCCCCC</color>
+    <color name="white">#ffffff</color>
+    <color name="fashion_title_color">#d81417</color>
+    <color name="blue">#0066cc</color>
+    <color name="thinkbule">#FF3193CB</color>
+    <color name="purple">#800080</color>
+    <color name="green">#669900</color>
+    <color name="brown">#A52A2A</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="homecolor">#A0CFEC</color>
+    <color name="red">#b91c20</color>
+    <color name="redtwo">#ea7171</color>
+    <color name="orange">#CD3700</color>
+    <color name="lemon">#FFFBD0</color>
+    <color name="orange1">#B232B2</color>
+    <color name="barred">#ff0000</color>
+    <color name="appbg">#e54a24</color>
+    <color name="actionbarclor">#ebebeb</color>
+    <color name="gallerybg">#ef6452</color>
+    <color name="burntorange">#CF5300</color>
+    <color name="lightgreen">#C5D000</color>
+    <color name="lightblack">#383838</color>
+    <color name="grey">#666666</color>
+    <color name="offwhitebg">#ebebeb</color>
+    <color name="dataentrytextcolor">#606060</color>
+    <color name="yellowbgcolor">#f8db7a</color>
+    <color name="popupbgcolor">#c0c0c0</color>
+    <color name="dataentrylistbordercolor">#b6b6b6</color>
+    <color name="dataentrylistshadowbordercolor1">#292822</color>
+    <color name="dataentrylistshadowbordercolor2">#35342c</color>
+    <color name="dataentrylistshadowbordercolor3">#656556</color>
+    <color name="whitbgshade">#EEEEEE</color>
+    <color name="bottombar">#88bcbcbc</color>
+    <color name="transperent">#00000000</color>
+    <color name="share_dailog_bg_color">#f5f5f1</color>
+    <color name="share_dailog_text_color">#666666</color>
+    <color name="share_dailog_divider_color">#e5e5e5</color>
+
+</resources>

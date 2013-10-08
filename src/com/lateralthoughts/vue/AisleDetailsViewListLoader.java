@@ -35,9 +35,10 @@ public class AisleDetailsViewListLoader {
     private ScaledImageViewFactory mViewFactory = null;
     private BitmapLoaderUtils mBitmapLoaderUtils;
     private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
-    private ImageDimension mImageDimension;
+   // private ImageDimension mImageDimension;
     private int mBestHeight = 0;
     AisleContentBrowser contentBrowser = null;
+    DetailClickListener mDetailListener;
     
    /* public static AisleDetailsViewListLoader getInstance(Context context){
         if(null == sAisleDetailsViewLoaderInstance){
@@ -61,7 +62,7 @@ public class AisleDetailsViewListLoader {
     public void getAisleContentIntoView(AisleDetailsViewAdapter.ViewHolder holder,
             int scrollIndex, int position,DetailClickListener detailListener,AisleWindowContent windowContent,boolean setPosistion){
     	 mBestHeight = 0;
-    	 Log.i("currentimage", "currentimage: getAisleContentIntoView1 " );
+    	 mDetailListener = detailListener;
         ScaleImageView imageView = null;
         ArrayList<AisleImageDetails> imageDetailsArr = null;
         AisleImageDetails itemDetails = null;
@@ -81,14 +82,11 @@ public class AisleDetailsViewListLoader {
             //before or has to be filled with same content. Either way, no need
             //to worry about cleaning up anything!
             holder.aisleContentBrowser.setScrollIndex(scrollIndex);
-            Log.i("currentimage", "currentimage: setPosistion1 " ); 
             if(setPosistion){
-            	Log.i("currentimage", "currentimage: setPosistion2 " ); 
             	 holder.aisleContentBrowser.setCurrentImage();
             }
             return;
         }else{
-        	 Log.i("currentimage", "currentimage: getAisleContentIntoView2 else part " );
             //we are going to re-use an existing object to show some new content
             //lets release the scaleimageviews first
             for(int i=0;i<contentBrowser.getChildCount();i++){
@@ -112,54 +110,67 @@ public class AisleDetailsViewListLoader {
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			 
 			 for(int i = 0;i<imageDetailsArr.size();i++) {
-				 Log.i("clickedwindow", "clickedwindow ID***: width" + imageDetailsArr.get(i).mAvailableWidth+" height: "+imageDetailsArr.get(i).mAvailableHeight);
-				 Log.i("clickedwindow", "clickedwindow ID**: imageUrl" +imageDetailsArr.get(i).mImageUrl);
-				  if(mBestHeight > imageDetailsArr.get(i).mAvailableHeight) {
+				 Log.i("clickedwindow", "TrendingCrop3: width**" + imageDetailsArr.get(i).mAvailableWidth+" height: "+imageDetailsArr.get(i).mAvailableHeight);
+				 Log.i("clickedwindow", "TrendingCrop3: imageUrl**" +imageDetailsArr.get(i).mImageUrl);
+				  if(mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
 					  mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
 				  }
 				 
 			 }
-			 Log.i("clickedwindow", "clickedwindow ID***: bestHeight : " +windowContent.getBestHeightForWindow());
-		     setParams(holder.aisleContentBrowser, imageView, mBestHeight);
 			holder.aisleContentBrowser.mSwipeListener
 					.onReceiveImageCount(imageDetailsArr.size());
 			itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getEmptyImageView();
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-			params.gravity = Gravity.CENTER;
-			imageView.setLayoutParams(params);
 			imageView.setContainerObject(holder);
-			// imgConnectivity.setImageClick(imageView);
 			Bitmap bitmap = null; 
-			mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
-			
-			
+			bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
+			mBestHeight = getBestHeight(windowContent.getBestLargetHeightForWindow());
+			contentBrowser.addView(imageView);
 			if (bitmap != null) {
 				// get the dimensions of the image.
-				mImageDimension = Utils.getScalledImage(bitmap,
+	/*			mImageDimension = Utils.getScalledImage(bitmap,
 						itemDetails.mAvailableWidth,
 						itemDetails.mAvailableHeight);
-				Log.i("window", "clickedwindow ID bitmap Height1: "+bitmap.getHeight());
-				Log.i("window", "clickedwindow ID  required height1: "+mImageDimension.mImgHeight);
-				mBestHeight = mImageDimension.mImgHeight;
-				setParams(holder.aisleContentBrowser, imageView, mBestHeight);
-				if (bitmap.getHeight() < mImageDimension.mImgHeight) {
+				Log.i("window",
+						"clickedwindow ID bitmap Height1: "
+								+ bitmap.getHeight());
+				Log.i("window", "clickedwindow ID  required height1: "
+						+ mImageDimension.mImgHeight);
+				mBestHeight = mImageDimension.mImgHeight;*/
+				
+				
+				if (bitmap.getHeight() > mBestHeight) {
 					loadBitmap(itemDetails, contentBrowser, imageView,
-							itemDetails.mAvailableHeight);
-			 
+							mBestHeight);
+
+				} else {
+					Log.i("setparam", "setparam cache: "+bitmap.getHeight());
+					setParams(holder.aisleContentBrowser, imageView, bitmap.getHeight());
 				}
-	 
-				 
+				Log.i("TrendingCrop", "TrendingCrop3:*********************");
+				Log.i("TrendingCrop", "TrendingCrop3: Screen Height "
+						+ VueApplication.getInstance().getScreenHeight());
+				Log.i("TrendingCrop", "TrendingCrop3: Screen Width "
+						+ VueApplication.getInstance().getScreenWidth());
+				Log.i("TrendingCrop", "TrendingCrop3: Item Height "
+						+ itemDetails.mAvailableHeight);
+				Log.i("TrendingCrop", "TrendingCrop3: Item Width "
+						+ itemDetails.mAvailableWidth);
+				Log.i("TrendingCrop", "TrendingCrop3:mBestHeight "
+						+ mBestHeight);
+				Log.i("TrendingCrop",
+						"TrendingCrop3:##########################");
+
 				imageView.setImageBitmap(bitmap);
-				contentBrowser.addView(imageView);
-				if(scrollIndex != 0){
-				contentBrowser.setCurrentImage();
+				//contentBrowser.addView(imageView);
+				if (scrollIndex != 0) {
+					contentBrowser.setCurrentImage();
 				}
 			} else {
-				contentBrowser.addView(imageView);
+				
 				loadBitmap(itemDetails, contentBrowser, imageView,
-						itemDetails.mAvailableHeight);
+						mBestHeight);
+				//contentBrowser.addView(imageView);
 				if(scrollIndex != 0){
 					contentBrowser.setCurrentImage();
 					}
@@ -207,38 +218,32 @@ public class AisleDetailsViewListLoader {
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
-            Log.i("window", "clickedwindow ID bitmap Height2 original: "+bmp.getHeight());
-			Log.i("window", "clickedwindow ID  required height2 original: "+mBestHeight);
+            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getScreenWidth(),Utils.DETAILS_SCREEN);
+            Log.i("window", "TrendingCrop3 height original: "+bmp.getHeight());
+			 
             if(bmp != null) {
-           	 mImageDimension = Utils.getScalledImage(bmp,
-           			mAvailabeWidth, mAvailableHeight);
-           	 Log.i("imageSize", "imageSize mImageDimension Height: "+mImageDimension.mImgHeight);
-           	mAvailableHeight = mImageDimension.mImgHeight;
-            	 if(bmp.getHeight()> mImageDimension.mImgHeight) {
-            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mImageDimension.mImgHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
-				
-            	      Log.i("window", "clickedwindow ID bitmap Height3 modified original: "+bmp.getHeight());
-          			Log.i("window", "clickedwindow ID  required height3  modiried original: "+mImageDimension.mImgHeight);
+ 
+            	 if(bmp.getHeight()> mBestHeight) {
+            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getScreenWidth(),Utils.DETAILS_SCREEN);
+				 
             	 }
             }
+			Log.i("TrendingCrop", "TrendingCrop3: bitmapheight "
+					+ bmp.getHeight());
             return bmp;            
         }
-
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
         protected void onPostExecute(Bitmap bitmap) {
         	 final ImageView imageView = imageViewReference.get();
-        	  setParams( aisleContentBrowser, imageView,mAvailableHeight);
+        	 // setParams( aisleContentBrowser, imageView,bitmap.getHeight());
             if (imageViewReference != null && bitmap != null) {
                
                 //final AisleContentBrowser vFlipper = viewFlipperReference.get();
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
                 
-                if (this == bitmapWorkerTask) {
-                   //aisleContentBrowser.addView(imageView);
-                  setParams( aisleContentBrowser, imageView,mAvailableHeight);
-                  // bitmap = Utils.getScalledImage(bitmap, mAvailabeWidth,mAvailableHeight);
+                if (this == bitmapWorkerTask) {     
+                 setParams( aisleContentBrowser, imageView,bitmap.getHeight());
                     imageView.setImageBitmap(bitmap);
                 }
             }
@@ -293,10 +298,37 @@ public class AisleDetailsViewListLoader {
 	   Log.i("imageSize", "imageSize params Height: "+imgScreenHeight);
       if (vFlipper != null && imageView != null) {
          FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-               LayoutParams.MATCH_PARENT, imgScreenHeight);
-         params.gravity = Gravity.CENTER;
-         imageView.setLayoutParams(params);
+        		 VueApplication.getInstance().getScreenWidth(), imgScreenHeight+VueApplication.getInstance().getPixel(12));
+         //params.gravity = Gravity.CENTER;
+         vFlipper.setLayoutParams(params);
+         
+       /*  FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(
+                 LayoutParams.MATCH_PARENT, imgScreenHeight);
+         params2.gravity = Gravity.CENTER;
+         imageView.setLayoutParams(params2);*/
+         mDetailListener.onRefreshAdaptaers();
       } 
        
    }
+   private void setMaxHeight(int imageHeight,int imageWidth){
+	   int screenHeight = VueApplication.getInstance().getScreenHeight();
+	   int screenWidth = VueApplication.getInstance().getScreenWidth();
+	    int bestWidht;
+	    int bestHeight;
+	   if(screenHeight < imageHeight){
+		   bestHeight = screenHeight;  
+		   bestWidht =  (imageWidth * screenHeight)/imageHeight;
+		   
+	   }
+   }
+  private int getBestHeight(int largeHeight) {
+	   int screenHeight = VueApplication.getInstance().getScreenHeight();
+	   int screenWidth = VueApplication.getInstance().getScreenWidth();
+	   if(largeHeight > screenHeight){
+		   largeHeight = screenHeight;
+	   }
+	  
+	  return largeHeight;
+	  
+  }
 }

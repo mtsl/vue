@@ -15,15 +15,19 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
 import com.lateralthoughts.vue.CreateAisleSelectionActivity;
 import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class ArcMenu extends RelativeLayout {
 	public ArcLayout mArcLayout;
+
+	public RelativeLayout mCameraLayout;
+	public RelativeLayout mGalleryLayout;
+	public RelativeLayout mEtsyLayout;
+	public RelativeLayout mFancyLayout;
+	public RelativeLayout mMoreLayout;
 
 	public ImageView mHintView;
 
@@ -48,6 +52,44 @@ public class ArcMenu extends RelativeLayout {
 
 		mArcLayout = (ArcLayout) findViewById(R.id.item_layout);
 		mArcLayout.setVisibility(View.INVISIBLE);
+
+		mFancyLayout = (RelativeLayout) findViewById(R.id.fancy_layout);
+		mCameraLayout = (RelativeLayout) findViewById(R.id.camera_layout);
+		mGalleryLayout = (RelativeLayout) findViewById(R.id.gallery_layout);
+		mMoreLayout = (RelativeLayout) findViewById(R.id.more_layout);
+		mEtsyLayout = (RelativeLayout) findViewById(R.id.etsy_layout);
+
+		mFancyLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				itemClickFunctionality(mFancyLayout, 2);
+			}
+		});
+		mCameraLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				itemClickFunctionality(mCameraLayout, 0);
+			}
+		});
+		mGalleryLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				itemClickFunctionality(mGalleryLayout, 4);
+			}
+		});
+		mMoreLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
+				createAisleSelectionActivity.moreClickFunctionality();
+			}
+		});
+		mEtsyLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				itemClickFunctionality(mEtsyLayout, 1);
+			}
+		});
 
 		final ViewGroup controlLayout = (ViewGroup) findViewById(R.id.control_layout);
 		controlLayout.setClickable(true);
@@ -87,8 +129,9 @@ public class ArcMenu extends RelativeLayout {
 		}
 	}
 
-	public void addItem(int position, View item, OnClickListener listener) {
-		mArcLayout.addView(item);
+	public void addItem(int position, LayoutParams lp, View item,
+			OnClickListener listener) {
+		mArcLayout.addView(item, lp);
 		item.setOnClickListener(getItemClickListener(position, listener));
 	}
 
@@ -98,8 +141,8 @@ public class ArcMenu extends RelativeLayout {
 
 			@Override
 			public void onClick(final View viewClicked) {
-
-				if (position == 4) {
+				// More
+				if (position == 3) {
 					CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
 					createAisleSelectionActivity.moreClickFunctionality();
 				} else {
@@ -156,6 +199,44 @@ public class ArcMenu extends RelativeLayout {
 		return animation;
 	}
 
+	private void itemClickFunctionality(View viewClicked, final int position) {
+
+		Animation animation = bindItemAnimation(viewClicked, true, 400);
+		animation.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						itemDidDisappear(position);
+					}
+				}, 0);
+			}
+		});
+
+		final int itemCount = mArcLayout.getChildCount();
+		for (int i = 0; i < itemCount; i++) {
+			View item = mArcLayout.getChildAt(i);
+			if (viewClicked != item) {
+				bindItemAnimation(item, false, 300);
+			}
+		}
+		mArcLayout.invalidate();
+		mHintView.startAnimation(createHintSwitchAnimation(true));
+	}
+
 	private void itemDidDisappear(int position) {
 		final int itemCount = mArcLayout.getChildCount();
 		for (int i = 0; i < itemCount; i++) {
@@ -165,43 +246,36 @@ public class ArcMenu extends RelativeLayout {
 		mArcLayout.setVisibility(View.INVISIBLE);
 		CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
 		switch (position) {
+		// Camera
 		case 0:
 			createAisleSelectionActivity.cameraFunctionality();
 			break;
+		// Etsy
 		case 1:
-			createAisleSelectionActivity.galleryFunctionality();
+			if (Utils.appInstalledOrNot(VueConstants.ETSY_PACKAGE_NAME,
+					mContext)) {
+				createAisleSelectionActivity.loadShoppingApplication(
+						VueConstants.ETSY_ACTIVITY_NAME,
+						VueConstants.ETSY_PACKAGE_NAME);
+			} else {
+				createAisleSelectionActivity
+						.showAlertMessageForAppInstalation(VueConstants.ETSY_PACKAGE_NAME);
+			}
 			break;
+		// Fancy
 		case 2:
-			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
-					&& VueApplication.getInstance().mShoppingApplicationDetailsList
-							.size() > 0) {
-				createAisleSelectionActivity
-						.loadShoppingApplication(
-								VueApplication.getInstance().mShoppingApplicationDetailsList
-										.get(0).getActivityName(),
-								VueApplication.getInstance().mShoppingApplicationDetailsList
-										.get(0).getPackageName());
+			if (Utils.appInstalledOrNot(VueConstants.FANCY_PACKAGE_NAME,
+					mContext)) {
+				createAisleSelectionActivity.loadShoppingApplication(
+						VueConstants.FANCY_ACTIVITY_NAME,
+						VueConstants.FANCY_PACKAGE_NAME);
 			} else {
-				Toast.makeText(mContext, "There is no application.",
-						Toast.LENGTH_LONG).show();
-				createAisleSelectionActivity.finish();
-			}
-			break;
-		case 3:
-			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
-					&& VueApplication.getInstance().mShoppingApplicationDetailsList
-							.size() > 1) {
 				createAisleSelectionActivity
-						.loadShoppingApplication(
-								VueApplication.getInstance().mShoppingApplicationDetailsList
-										.get(1).getActivityName(),
-								VueApplication.getInstance().mShoppingApplicationDetailsList
-										.get(1).getPackageName());
-			} else {
-				Toast.makeText(mContext, "There is no application.",
-						Toast.LENGTH_LONG).show();
-				createAisleSelectionActivity.finish();
+						.showAlertMessageForAppInstalation(VueConstants.FANCY_PACKAGE_NAME);
 			}
+			// Gallery
+		case 4:
+			createAisleSelectionActivity.galleryFunctionality();
 			break;
 		default:
 			createAisleSelectionActivity.finish();
@@ -239,21 +313,70 @@ public class ArcMenu extends RelativeLayout {
 		return animation;
 	}
 
-	public void initArcMenu(ArcMenu menu, int[] itemDrawables) {
-		final int itemCount = itemDrawables.length;
-		for (int i = 0; i < itemCount; i++) {
-			ImageView item = new ImageView(mContext);
-			item.setImageResource(itemDrawables[i]);
-
-			final int position = i;
-			menu.addItem(i, item, new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Toast.makeText(mContext, "position:" + position,
-							Toast.LENGTH_SHORT).show();
-				}
-			});
-		}
+	@SuppressWarnings("deprecation")
+	public void initArcMenu(ArcMenu menu, int[] itemDrawables) {/*
+																 * final int
+																 * itemCount =
+																 * itemDrawables
+																 * .length; for
+																 * (int i = 0; i
+																 * < itemCount;
+																 * i++) { //
+																 * ImageView
+																 * item = new
+																 * ImageView
+																 * (mContext);
+																 * // item.
+																 * setImageResource
+																 * (
+																 * itemDrawables
+																 * [i]);
+																 * 
+																 * Button item =
+																 * new
+																 * Button(mContext
+																 * ); item.
+																 * setBackgroundResource
+																 * (R.drawable.
+																 * black_round_circle
+																 * );
+																 * item.setTextColor
+																 * (
+																 * R.color.red);
+																 * item.setText(
+																 * "Gallery");
+																 * LayoutParams
+																 * lp = new
+																 * LayoutParams
+																 * (LayoutParams
+																 * .
+																 * WRAP_CONTENT,
+																 * LayoutParams
+																 * .WRAP_CONTENT
+																 * ); //
+																 * lp.setMargins
+																 * (4, 4, 4, 4);
+																 * 
+																 * final int
+																 * position = i;
+																 * menu
+																 * .addItem(i,
+																 * lp, item, new
+																 * OnClickListener
+																 * () {
+																 * 
+																 * @Override
+																 * public void
+																 * onClick(View
+																 * v) {
+																 * Toast.makeText
+																 * (mContext,
+																 * "position:" +
+																 * position,
+																 * Toast
+																 * .LENGTH_SHORT
+																 * ).show(); }
+																 * }); }
+																 */
 	}
 }

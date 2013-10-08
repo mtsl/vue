@@ -12,21 +12,4 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
-    <LinearLayout
-        android:id="@+id/data_entry_more_top_list_layout"
-        android:layout_width="150dip"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/dataentry_arc_menu"
-        android:background="@drawable/dataentry_list_border"
-        android:maxHeight="150dip"
-        android:visibility="gone" >
-
-        <ListView
-            android:id="@+id/data_entry_more_top_listview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="2dip" >
-        </ListView>
-    </LinearLayout>
-
 </RelativeLayout>

@@ -1,135 +1,144 @@
 package com.lateralthoughts.vue.domain;
 
 public class Aisle {
-       // Long id;
-        Long mOwnerUserId;
-        String mCategory;
-        String mLookingFor;
-        String mName;
-        String mOccassion;
-        Long mRefImageId;
-        VueImage mAisleImage;
-     /* String mDescription;
-		String mFisrtName;
-        String mLastName;*/
+	// Long id;
+	Long mOwnerUserId;
+	String mCategory;
+	String mLookingFor;
+	String mName;
+	String mOccassion;
+	Long mRefImageId;
+	VueImage mAisleImage;
+	String mDescription;
 
+	public String getDescription() {
+		return mDescription;
+	}
 
+	public void setDescription(String description) {
+		this.mDescription = description;
+	}
 
-		public VueImage getAisleImage() {
-			return mAisleImage;
-		}
+	String mAisleOwnerFirstName;
+	String mAisleOwnerLastName;
 
-		public void setAisleImage(VueImage mAisleImage) {
-			this.mAisleImage = mAisleImage;
-		}
+	public VueImage getAisleImage() {
+		return mAisleImage;
+	}
 
-		/** ImageList should never be uploaded with the aisle */
-        //@JsonIgnore
-        //ImageList imageList;
+	public void setAisleImage(VueImage mAisleImage) {
+		this.mAisleImage = mAisleImage;
+	}
 
-        public Aisle() {}
+	/** ImageList should never be uploaded with the aisle */
+	// @JsonIgnore
+	// ImageList imageList;
 
-        public Aisle(Long id, String category, String lookingFor, String name,
-                     String occassion, Long refImageId, Long ownerUserId,String firstName,String lastName,String descreption,  VueImage aisleImage) {
-            super();
-          //this.id = id;
-            this.mCategory = category;
-            this.mLookingFor = lookingFor;
-            this.mName = name;
-            this.mOccassion = occassion;
-            this.mRefImageId = refImageId;
-            this.mOwnerUserId = ownerUserId;
-            this.mAisleImage = aisleImage;
-         /* this.mDescription = descreption;
-            this.mFisrtName = firstName;
-            this.mLastName = lastName;*/
-        }
+	public Aisle() {
+	}
 
-       /* public Long getId() {
-            return id;
-        }*/
+	public Aisle(Long id, String category, String lookingFor, String name,
+			String occassion, Long refImageId, Long ownerUserId,
+			String aisleOwnerFirstName, String aisleOwnerLastName,
+			String descreption, VueImage aisleImage) {
+		super();
+		// this.id = id;
+		this.mCategory = category;
+		this.mLookingFor = lookingFor;
+		this.mName = name;
+		this.mOccassion = occassion;
+		this.mRefImageId = refImageId;
+		this.mOwnerUserId = ownerUserId;
+		this.mAisleImage = aisleImage;
+		this.mDescription = descreption;
+		this.mAisleOwnerLastName = aisleOwnerLastName;
+		this.mAisleOwnerFirstName = aisleOwnerFirstName;
+	}
 
-       /* public void setId(Long id) {
-            this.id = id;
-        }*/
+	/*
+	 * public Long getId() { return id; }
+	 */
 
- /*       public String getmLastName() {
-			return mLastName;
-		}
+	/*
+	 * public void setId(Long id) { this.id = id; }
+	 */
 
-		public void setmLastName(String mLastName) {
-			this.mLastName = mLastName;
-		}
+	/*
+	 * public void setmDescription(String mDescription) { this.mDescription =
+	 * mDescription; }
+	 */
 
-		public String getmFisrtName() {
-			return mFisrtName;
-		}
+	public String getAisleOwnerLastName() {
+		return mAisleOwnerLastName;
+	}
 
-		public void setmFisrtName(String mFisrtName) {
-			this.mFisrtName = mFisrtName;
-		}
-		  public String getmDescription() {
-				return mDescription;
-			}
+	public void setAisleOwnerLastName(String mAisleOwnerLastName) {
+		this.mAisleOwnerLastName = mAisleOwnerLastName;
+	}
 
-			public void setmDescription(String mDescription) {
-				this.mDescription = mDescription;
-			}*/
-        public String getCategory() {
-            return mCategory;
-        }
+	public String getAisleOwnerFirstName() {
+		return mAisleOwnerFirstName;
+	}
 
-        public void setCategory(String category) {
-            this.mCategory = category;
-        }
+	public void setAisleOwnerFirstName(String mAisleOwnerFirstName) {
+		this.mAisleOwnerFirstName = mAisleOwnerFirstName;
+	}
 
-        public String getLookingFor() {
-            return mLookingFor;
-        }
+	public String getCategory() {
+		return mCategory;
+	}
 
-        public void setLookingFor(String lookingFor) {
-            this.mLookingFor = lookingFor;
-        }
+	public void setCategory(String category) {
+		this.mCategory = category;
+	}
 
-        public String getName() {
-            return mName;
-        }
+	public String getLookingFor() {
+		return mLookingFor;
+	}
 
-        public void setName(String name) {
-            this.mName = name;
-        }
+	public void setLookingFor(String lookingFor) {
+		this.mLookingFor = lookingFor;
+	}
 
-        public String getOccassion() {
-            return mOccassion;
-        }
+	public String getName() {
+		return mName;
+	}
 
-        public void setOccassion(String occassion) {
-            this.mOccassion = occassion;
-        }
+	public void setName(String name) {
+		this.mName = name;
+	}
 
-        public Long getRefImageId() {
-            return mRefImageId;
-        }
+	public String getOccassion() {
+		return mOccassion;
+	}
 
-        public void setRefImageId(Long refImageId) {
-            this.mRefImageId = refImageId;
-        }
+	public void setOccassion(String occassion) {
+		this.mOccassion = occassion;
+	}
 
-        public Long getOwnerUserId() {
-            return mOwnerUserId;
-        }
+	public Long getRefImageId() {
+		return mRefImageId;
+	}
 
-        public void setOwnerUserId(Long ownerUserId) {
-            this.mOwnerUserId = ownerUserId;
-        }
+	public void setRefImageId(Long refImageId) {
+		this.mRefImageId = refImageId;
+	}
 
-        //@JsonIgnore
-        //public ImageList getImageList() {
-        //    return imageList;
-        //}
+	public Long getOwnerUserId() {
+		return mOwnerUserId;
+	}
 
-        //@JsonIgnore
-        //public void setImageList(ImageList imageList) {
-        //    this.imageList = imageList;
-        //}
- }
+	public void setOwnerUserId(Long ownerUserId) {
+		this.mOwnerUserId = ownerUserId;
+	}
+
+	// @JsonIgnore
+	// public ImageList getImageList() {
+	// return imageList;
+	// }
+
+	// @JsonIgnore
+	// public void setImageList(ImageList imageList) {
+	// this.imageList = imageList;
+	// }
+}

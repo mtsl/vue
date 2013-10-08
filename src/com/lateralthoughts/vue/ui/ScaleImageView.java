@@ -51,7 +51,7 @@ public class ScaleImageView extends /*Network*/ImageView {
 	}
 
 	private void init() {
-		this.setScaleType(ScaleType.CENTER);
+		this.setScaleType(ScaleType.CENTER_CROP);
 	}
 
 	@Override
@@ -166,6 +166,7 @@ public class ScaleImageView extends /*Network*/ImageView {
 	public Object getContainerObject() {
 		return mContainer;
 	}
+
 
 /*	public void setImageUrl(String url, ImageLoader imageLoader, int bestWidth,
 			int bestHeight) {

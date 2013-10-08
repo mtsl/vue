@@ -36,7 +36,6 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
@@ -46,9 +45,6 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.utils.*;
-
-import java.io.File;
-import java.util.ArrayList;
 
 /**
  * Fragment for creating Aisle
@@ -900,6 +896,12 @@ public class DataEntryFragment extends Fragment {
 									b.putString(
 											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
 											mFindAtText.getText().toString());
+									b.putInt(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH,
+											mOtherSourceImageOriginalWidth);
+									b.putInt(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT,
+											mOtherSourceImageOriginalHeight);
 									intent.putExtras(b);
 									Log.e("Land", "vueland 11");
 									getActivity()
@@ -1334,6 +1336,7 @@ public class DataEntryFragment extends Fragment {
 
 	public void setGalleryORCameraImage(String picturePath,
 			boolean dontResizeImageFlag) {
+		mLookingForPopup.setVisibility(View.VISIBLE);
 		try {
 			Log.e("frag1", "gallery called,,,," + picturePath);
 			Log.e("cs", "8");
@@ -1348,6 +1351,12 @@ public class DataEntryFragment extends Fragment {
 					mAisleImageBitmap = BitmapFactory.decodeFile(mImagePath);
 				}
 				if (mAisleImageBitmap != null) {
+					RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+							(int) mAisleImageBitmap.getWidth(),
+							(int) mAisleImageBitmap.getHeight());
+					lp.addRule(RelativeLayout.CENTER_IN_PARENT,
+							RelativeLayout.TRUE);
+					mTouchToChangeImage.setLayoutParams(lp);
 					mCreateAisleBg.setImageBitmap(mAisleImageBitmap);
 				} else {
 					mCreateAisleBg.setImageDrawable(getResources().getDrawable(
@@ -1471,7 +1480,7 @@ public class DataEntryFragment extends Fragment {
 						if (VueConnectivityManager
 								.isNetworkConnected(getActivity())) {
 							storeMetaAisleDataIntoLocalStorage();
-							addAisleToServer(storedVueUser.getVueId());
+							addAisleToServer(storedVueUser);
 						} else {
 							Toast.makeText(
 									getActivity(),
@@ -1506,9 +1515,13 @@ public class DataEntryFragment extends Fragment {
 				.setVisibility(View.VISIBLE);
 		mDataEntryActivity.mVueDataentryActionbarTopLayout
 				.setVisibility(View.GONE);
-		if (Utils.getDataentryEditAisleFlag(getActivity())) {
-			VueApplication.getInstance().mAisleImagePathList
-					.remove(mCurrentPagePosition);
+		try {
+			if (Utils.getDataentryEditAisleFlag(getActivity())) {
+				VueApplication.getInstance().mAisleImagePathList
+						.remove(mCurrentPagePosition);
+			}
+		} catch (Exception e1) {
+
 		}
 		Utils.putDataentryEditAisleFlag(getActivity(), false);
 		mMainHeadingRow.setVisibility(View.GONE);
@@ -1584,14 +1597,14 @@ public class DataEntryFragment extends Fragment {
 				mDbManager.addAisleMetaDataToDB(VueConstants.CATEGORY_TABLE,
 						categoryAisleDataObj);
 				// When the loop is finished, updates the notification
-				//builder.setContentText("Uploading completed");
-				//notifyManager.notify(0, builder.getNotification());
+				// builder.setContentText("Uploading completed");
+				// notifyManager.notify(0, builder.getNotification());
 			}
 		}).start();
 	}
 
 	// create ailse and send to server.
-	public void addAisleToServer(String ownerUserId) {
+	public void addAisleToServer(VueUser vueUser) {
 		String imageSourceUrl = mFindAtText.getText().toString();
 		if (imageSourceUrl != null && imageSourceUrl.trim().length() > 0) {
 			Aisle aisle = new Aisle();
@@ -1599,7 +1612,15 @@ public class DataEntryFragment extends Fragment {
 			aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
 			aisle.setName("Super Aisle"); // TODO By Krishna
 			aisle.setOccassion(mOccassionBigText.getText().toString().trim());
-			aisle.setOwnerUserId(Long.valueOf(ownerUserId));
+			aisle.setOwnerUserId(Long.valueOf(vueUser.getVueId()));
+			aisle.setAisleOwnerFirstName(vueUser.getmFirstName());
+			aisle.setAisleOwnerLastName(vueUser.getmLastName());
+			if (mSaySomethingAboutAisle.getText().toString().trim().length() > 0) {
+				aisle.setDescription(mSaySomethingAboutAisle.getText()
+						.toString());
+			} else {
+				aisle.setDescription("");
+			}
 			VueImage image = new VueImage();
 			image.setDetailsUrl("Got this image from a random url"); // TODO By
 																		// Krishna
@@ -1625,12 +1646,12 @@ public class DataEntryFragment extends Fragment {
 			image.setStore(store);
 			image.setTitle("Android Test"); // TODO By Krishna
 			FlurryAgent.logEvent("New_Aisle_Creation");
-			image.setOwnerUserId(Long.valueOf(ownerUserId));
+			image.setOwnerUserId(Long.valueOf(vueUser.getVueId()));
 			FlurryAgent.logEvent("Create_Aisle");
 			aisle.setAisleImage(image);
-			if(mFindAtText != null && mFindAtText.getText().toString() != null){
+			if (mFindAtText != null && mFindAtText.getText().toString() != null) {
 				Log.i("pathsaving", "pathsaving in sdcard1");
-			writeToSdcard(mFindAtText.getText().toString());
+				writeToSdcard(mFindAtText.getText().toString());
 			}
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
@@ -1714,6 +1735,11 @@ public class DataEntryFragment extends Fragment {
 			mAisleBgProgressbar.setVisibility(View.GONE);
 			mCreateAisleBg.setVisibility(View.VISIBLE);
 			if (mAisleImageBitmap != null) {
+				RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+						(int) mAisleImageBitmap.getWidth(),
+						(int) mAisleImageBitmap.getHeight());
+				lp.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+				mTouchToChangeImage.setLayoutParams(lp);
 				mCreateAisleBg.setImageBitmap(mAisleImageBitmap);
 			} else {
 				mCreateAisleBg.setImageDrawable(getResources().getDrawable(
@@ -1811,30 +1837,33 @@ public class DataEntryFragment extends Fragment {
 				sourceUrl, getActivity(), false);
 		getImagesTask.execute();
 	}
-	  private  void writeToSdcard(String message) {
-		    
-		    String path = Environment.getExternalStorageDirectory().toString();
-		    File dir = new File(path + "/vueLogs/");
-		    if(!dir.isDirectory()) {
-		      dir.mkdir();
-		    }
-		    File file = new File(dir, "/" + Calendar.getInstance().get(Calendar.DATE) + ".txt");
-		      try {
-		        file.createNewFile();
-		      } catch (IOException e) {
-		    	  Log.i("pathsaving", "pathsaving in sdcard2 error");
-		        e.printStackTrace();
-		      }
-		      
-		      try {
-		        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-		        out.write("\n"+message+"\n");
-		        out.flush();
-		        out.close();
-		        Log.i("pathsaving", "pathsaving in sdcard2 success");
-		      } catch (IOException e) {
-		    	  Log.i("pathsaving", "pathsaving in sdcard3 error");
-		        e.printStackTrace();
-		      }
-		  }
+
+	private void writeToSdcard(String message) {
+
+		String path = Environment.getExternalStorageDirectory().toString();
+		File dir = new File(path + "/vueLogs/");
+		if (!dir.isDirectory()) {
+			dir.mkdir();
+		}
+		File file = new File(dir, "/"
+				+ Calendar.getInstance().get(Calendar.DATE) + ".txt");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			Log.i("pathsaving", "pathsaving in sdcard2 error");
+			e.printStackTrace();
+		}
+
+		try {
+			PrintWriter out = new PrintWriter(new BufferedWriter(
+					new FileWriter(file, true)));
+			out.write("\n" + message + "\n");
+			out.flush();
+			out.close();
+			Log.i("pathsaving", "pathsaving in sdcard2 success");
+		} catch (IOException e) {
+			Log.i("pathsaving", "pathsaving in sdcard3 error");
+			e.printStackTrace();
+		}
+	}
 }

@@ -31,6 +31,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
+import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
 
@@ -46,6 +47,7 @@ public class ShareDialog {
 	private LayoutInflater mLayoutInflater;
 	private AlertDialog.Builder mScreenDialog;
 	private ArrayList<String> mAppNames = new ArrayList<String>();
+	private ArrayList<String> mActivityNames = new ArrayList<String>();
 	private ArrayList<String> mPackageNames = new ArrayList<String>();
 	private ArrayList<Drawable> mAppIcons = new ArrayList<Drawable>();
 	private Intent mSendIntent;
@@ -59,6 +61,7 @@ public class ShareDialog {
 	private ArrayList<clsShare> mImagePathArray;
 	private ProgressDialog mShareDialog;
 	private static final String TAG = "ShareDialog";
+	private boolean mFromCreateAislePopupFlag = false;
 
 	public void dismisDialog() {
 		mShareDialog.dismiss();
@@ -86,6 +89,15 @@ public class ShareDialog {
 		openScreenDialog();
 	}
 
+	public void loadShareApplications(
+			ArrayList<ShoppingApplicationDetails> dataEntryShoppingApplicationsList) {
+		mFromCreateAislePopupFlag = true;
+		if (mAppNames.size() == 0) {
+			prepareDisplayData(dataEntryShoppingApplicationsList);
+		}
+		openScreenDialog();
+	}
+
 	/** to show pop-up */
 	private void openScreenDialog() {
 		mShareDialog = ProgressDialog.show(mContext, mContext
@@ -95,13 +107,30 @@ public class ShareDialog {
 		mDialog = new Dialog(mContext, R.style.Theme_Dialog_Translucent);
 		mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mDialog.setContentView(R.layout.sharedialogue);
+		TextView dialogtitle = (TextView) mDialog
+				.findViewById(R.id.dialogtitle);
 		ListView listview = (ListView) mDialog.findViewById(R.id.networklist);
 		TextView okbuton = (TextView) mDialog.findViewById(R.id.shownetworkok);
+		if (mFromCreateAislePopupFlag) {
+			dialogtitle.setText("Open ...");
+		}
 		listview.setAdapter(new CustomAdapter());
+		listview.setDivider(mContext.getResources().getDrawable(
+				R.drawable.share_dialog_divider));
 		listview.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> adapter, View v,
 					int position, long id) {
-				shareIntent(position);
+				if (mFromCreateAislePopupFlag) {
+					CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
+					if (createAisleSelectionActivity != null) {
+						mDialog.dismiss();
+						createAisleSelectionActivity.loadShoppingApplication(
+								mActivityNames.get(position),
+								mPackageNames.get(position));
+					}
+				} else {
+					shareIntent(position);
+				}
 			}
 		});
 		mDialog.setOnDismissListener(new OnDismissListener() {
@@ -263,6 +292,23 @@ public class ShareDialog {
 			mAppIcons = mShareIntentObj.getDrawables();
 			mSendIntent = new Intent(android.content.Intent.ACTION_SEND);
 			mSendIntent.setType("text/plain");
+		}
+	}
+
+	private void prepareDisplayData(
+			ArrayList<ShoppingApplicationDetails> dataEntryShoppingApplicationsList) {
+		if (dataEntryShoppingApplicationsList != null
+				&& dataEntryShoppingApplicationsList.size() > 0) {
+			for (int i = 0; i < dataEntryShoppingApplicationsList.size(); i++) {
+				mAppNames.add(dataEntryShoppingApplicationsList.get(i)
+						.getAppName());
+				mPackageNames.add(dataEntryShoppingApplicationsList.get(i)
+						.getPackageName());
+				mAppIcons.add(dataEntryShoppingApplicationsList.get(i)
+						.getAppIcon());
+				mActivityNames.add(dataEntryShoppingApplicationsList.get(i)
+						.getActivityName());
+			}
 		}
 	}
 

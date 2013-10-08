@@ -1,5 +1,7 @@
 package com.lateralthoughts.vue.utils;
 
+import android.graphics.drawable.Drawable;
+
 public class ShoppingApplicationDetails {
 	private String appName;
 
@@ -30,10 +32,21 @@ public class ShoppingApplicationDetails {
 	private String activityName;
 	private String packageName;
 
+	public Drawable getAppIcon() {
+		return appIcon;
+	}
+
+	public void setAppIcon(Drawable appIcon) {
+		this.appIcon = appIcon;
+	}
+
+	private Drawable appIcon;
+
 	public ShoppingApplicationDetails(String appName, String activityName,
-			String packageName) {
+			String packageName, Drawable appIcon) {
 		this.appName = appName;
 		this.activityName = activityName;
 		this.packageName = packageName;
+		this.appIcon = appIcon;
 	}
 }

@@ -33,8 +33,7 @@ public class AisleLoader {
 	private static AisleLoader sAisleLoaderInstance = null;
 	private ScaledImageViewFactory mViewFactory = null;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
-	int mTopBottomMargin = 0;
-
+	AisleContentClickListener mListener;
 	// private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String,
 	// ViewHolder>();
 	// private List<ViewHolder> browserList = new
@@ -117,6 +116,7 @@ public class AisleLoader {
 	public void getAisleContentIntoView(ViewHolder holder, int scrollIndex,
 			int position, boolean placeholderOnly,
 			AisleContentClickListener listener) {
+		
 		Log.i("TrendingDataModel",
 				"DataObserver for List Refresh: getAisleContentView called "
 						+ holder.mWindowContent.getAisleId() + "???" + position + "????"
@@ -172,59 +172,44 @@ public class AisleLoader {
 			holder.uniqueContentId = desiredContentId;
 			// mContentViewMap.put(holder.uniqueContentId, holder);
 		}
-	
+		mListener = listener;
 		imageDetailsArr = windowContent.getImageList();
-	/*	LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
-				VueApplication.getInstance().getScreenWidth() / 2,
-				windowContent.getBestHeightForWindow());
-		holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);*/
-
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
+
 			Log.i("AisleLoader", "CustomImageUrl:? "
 					+ itemDetails.mCustomImageUrl);
 			Bitmap bitmap = null;
 			/*Bitmap bitmap = mBitmapLoaderUtils
 					.getCachedBitmap(itemDetails.mCustomImageUrl);*/
-			if (DataEntryFragment.testId.equalsIgnoreCase(windowContent
-					.getAisleId())) {
-				Log.i("imageurl", "imageurl original   bitmap check:  "
-						+ bitmap);
-			}
-			if(VueApplication.getInstance().getClickedWindowID() != null) {
-				if(VueApplication.getInstance().getClickedWindowID().equalsIgnoreCase(desiredContentId)){
-					Log.i("clickedwindow", "clickedwindow ID matched: " + desiredContentId);
-					Log.i("clickedwindow", "clickedwindow ID  url: " + itemDetails.mImageUrl);
-				}
-				}
 			int bestHeight = windowContent.getBestHeightForWindow();
 			if (bitmap != null) {
 				LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
 						VueApplication.getInstance().getScreenWidth() / 2,
-						bitmap.getHeight()+mTopBottomMargin);
+						bitmap.getHeight());
 		 
 				contentBrowser.setLayoutParams(mShowpieceParams2);
+
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
 
 				contentBrowser.addView(imageView);
-
 				if (!placeholderOnly)
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
-							bestHeight);
+							bestHeight,windowContent.getAisleId(),itemDetails);
 			}
 		}
 	}
 
 	public void loadBitmap(String loc, String serverImageUrl,
-			AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
+			AisleContentBrowser flipper, ImageView imageView, int bestHeight,String asileId,AisleImageDetails itemDetails) {
 		if (cancelPotentialDownload(loc, imageView)) {
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight);
+					bestHeight,asileId,itemDetails);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
 			String[] urlsArray = { loc, serverImageUrl };
 			task.execute(urlsArray);
@@ -241,15 +226,18 @@ public class AisleLoader {
 		private final WeakReference<AisleContentBrowser> viewFlipperReference;
 		private String url = null;
 		private int mBestHeight;
-
+		String mAisleId;
+		 AisleImageDetails mItemDetails;
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
-				ImageView imageView, int bestHeight) {
+				ImageView imageView, int bestHeight,String aisleId,AisleImageDetails itemDetails) {
 			// Use a WeakReference to ensure the ImageView can be garbage
 			// collected
 			imageViewReference = new WeakReference<ImageView>(imageView);
 			viewFlipperReference = new WeakReference<AisleContentBrowser>(
 					vFlipper);
 			mBestHeight = bestHeight;
+			  mAisleId = aisleId;
+			    mItemDetails = itemDetails;
 		}
 
 		// Decode image in background.
@@ -259,8 +247,9 @@ public class AisleLoader {
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
 			Log.e("Profiling", "Profiling New doInBackground()");
-			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
-					mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth()/2,Utils.TRENDING_SCREEN);
+			boolean cacheBitmap = false;
+			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheBitmap,
+					mBestHeight, VueApplication.getInstance().getScreenWidth()/2,Utils.TRENDING_SCREEN);
 			return bmp;
 		}
 
@@ -286,11 +275,22 @@ public class AisleLoader {
 					}
 					LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
 							VueApplication.getInstance().getScreenWidth() / 2,
-							bitmap.getHeight()+mTopBottomMargin);
+							bitmap.getHeight());
 					holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
+					Log.i("TrendingCrop", "TrendingCrop2:*********************");
+					Log.i("TrendingCrop", "TrendingCrop2: mbestHeight original Height "+mItemDetails.mAvailableHeight);
+					Log.i("TrendingCrop", "TrendingCrop2: mbestHeight original Width "+mItemDetails.mAvailableWidth);
+					Log.i("TrendingCrop", "TrendingCrop2: mbestHeight window "+mBestHeight);
+					Log.i("TrendingCrop", "TrendingCrop2: bestHeight aisleContentBrowser"+mShowpieceParams.height);
+					Log.i("TrendingCrop", "TrendingCrop2: bestWidth aisleContentBrowser "+mShowpieceParams.width);
+					Log.i("TrendingCrop", "TrendingCrop2: aisle "+mAisleId);
+					Log.i("TrendingCrop", "TrendingCrop2: bestHeight bitmap "+bitmap.getHeight());
+					Log.i("TrendingCrop", "TrendingCrop2: bestWidth bitmap "+bitmap.getWidth());
+					Log.i("TrendingCrop", "TrendingCrop2:###########################");
 					imageView.setImageBitmap(bitmap);
-				/*	VueTrendingAislesDataModel.getInstance(
-							VueApplication.getInstance()).dataObserver();*/
+					if(mListener.isFlingCalled()){
+						mListener.refreshList();
+					}
 				}
 			}
 		}

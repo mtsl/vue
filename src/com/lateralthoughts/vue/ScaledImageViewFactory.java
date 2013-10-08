@@ -99,6 +99,7 @@ public class ScaledImageViewFactory {
 		if(0 != position % 2){
 			background = mOddColumnBackground;
 		}else{
+		//	background =mOddColumnBackground;
 			background = mEvenColumnBackground;
 		}
 

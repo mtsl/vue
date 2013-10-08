@@ -181,8 +181,8 @@ public class Parser {
 			if (aisleImageDetailsList != null
 					&& aisleImageDetailsList.size() > 0) {
 				AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
-						.getInstance(VueApplication.getInstance()).getAisle(
-								aisleContext.mAisleId);
+						.getInstance(VueApplication.getInstance())
+						.getAisleItem(aisleContext.mAisleId);
 				aisleWindowContent.addAisleContent(aisleContext,
 						aisleImageDetailsList);
 				aisleWindowContent
@@ -195,7 +195,7 @@ public class Parser {
 
 	private AisleContext parseAisleData(JSONObject josnObject) {
 	    //TODO:
-	  
+
 		AisleContext aisleContext = new AisleContext();
 		try {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
@@ -226,6 +226,13 @@ public class Parser {
 			}
 			if (firstName == null && lastName == null) {
 				aisleContext.mFirstName = "Anonymous";
+			}
+			String description = josnObject
+					.getString(VueConstants.AISLE_DESCRIPTION);
+			if (description == null || description.equals("null")) {
+				aisleContext.mDescription = "";
+			} else {
+				aisleContext.mDescription = description;
 			}
 			aisleContext.mBookmarkCount = josnObject
 					.getInt(VueConstants.AISLE_BOOKMARK_COUNT);

@@ -13,5 +13,7 @@ public class AisleContext {
 	public String mUserId;
 	public String mCategory;
 	public String mName;
+	public String mDescription;
 	public int mBookmarkCount;
+	
 }

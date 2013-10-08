@@ -2,38 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-   android:layout_marginLeft="16dp"
+    android:layout_marginBottom="72dp"
+    android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     android:layout_marginTop="48dp"
-    android:layout_marginBottom="72dp"
-    android:background="@color/lightblack"
+    android:background="@color/share_dailog_bg_color"
     android:orientation="vertical" >
-    <include android:id="@+id/showpopop" layout="@layout/popupheading"/>
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_above="@+id/bellwolay"
-                  android:layout_below="@+id/showpopop"
-                   >
-    <ListView android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:id="@+id/networklist"></ListView>
+
+    <include
+        android:id="@+id/showpopop"
+        layout="@layout/share_dialog_popup_heading" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bellwolay"
+        android:layout_below="@+id/showpopop" >
+
+        <ListView
+            android:id="@+id/networklist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+        </ListView>
     </LinearLayout>
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_alignParentBottom="true"
-                   android:id="@+id/bellwolay" 
-                  android:orientation="vertical">
-    <View android:layout_width="fill_parent"
-   
-          android:layout_height="1dp"
-          android:background="@color/thinkbule"/>
-    <TextView 
-              style="@style/popupbottom"
-              android:id="@+id/shownetworkok"
-          
-              android:text="@string/cancel"
-              android:gravity="center"/>
+
+    <LinearLayout
+        android:id="@+id/bellwolay"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/popupbgcolor" />
+
+        <TextView
+            android:id="@+id/shownetworkok"
+            style="@style/popupbottom"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -71,11 +71,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private int mTotalPageCount;
 	private int mListCount = 5;
 	private int mTotalScreenCount;
-	//private VueContentGateway mVueContentGateway;
+	// private VueContentGateway mVueContentGateway;
 	AisleDetailsViewAdapter mAisleDetailsAdapter;
 	AisleDetailsSwipeListner mSwipeListener;
 	private ActionBarHandler mHandleActionBar;
-	//private ScaledImageViewFactory mImageViewFactory;
+	// private ScaledImageViewFactory mImageViewFactory;
 	private ImageView mDetailsAddImageToAisle = null, mAddVueAisle;
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
@@ -103,10 +103,10 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		// adding test comment
 		// without much ado lets get started with retrieving the trending aisles
 		// list
-		/*mVueContentGateway = VueContentGateway.getInstance();
-		if (null == mVueContentGateway) {
-			// assert here: this is a no go!
-		}*/
+		/*
+		 * mVueContentGateway = VueContentGateway.getInstance(); if (null ==
+		 * mVueContentGateway) { // assert here: this is a no go! }
+		 */
 		mSwipeListener = new AisleDetailsSwipeListner();
 		mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
 				mSwipeListener, mListCount, null);
@@ -140,6 +140,20 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				.findViewById(R.id.details_add_image_to_aisle);
 		mEditTextFindAt = (EditTextBackEvent) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_text);
+		String imageUrl = null;
+		try {
+			imageUrl = VueTrendingAislesDataModel
+					.getInstance(getActivity())
+					.getAisleItem(
+							VueApplication.getInstance().getClickedWindowID())
+					.getImageList()
+					.get(VueApplication.getInstance().getmAisleImgCurrentPos()).mImageUrl;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (imageUrl != null) {
+			mEditTextFindAt.setText(imageUrl);
+		}
 		mEditTextFindAt.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId,
@@ -360,7 +374,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 								leftRightMargin, topBottomMargin);
 						v.setMaxLines(Integer.MAX_VALUE);
 					} else {
-						 
+
 						v.setMaxLines(3);
 					}
 				}
@@ -467,13 +481,12 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			inputMethodManager.toggleSoftInputFromWindow(
 					editText.getApplicationWindowToken(),
 					InputMethodManager.SHOW_FORCED, 0);
-			
+
 			editText.requestFocus();
 			final InputMethodManager mInputMethodManager = (InputMethodManager) getActivity()
 					.getSystemService(Context.INPUT_METHOD_SERVICE);
 			mInputMethodManager.showSoftInput(editText, 0);
-			
-			
+
 			edtCommentLay.setVisibility(View.VISIBLE);
 			editText.setVisibility(View.VISIBLE);
 			editText.setCursorVisible(true);
@@ -491,12 +504,10 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 						@Override
 						public void onKeyBackPressed() {
-						 
-							
+
 							mInputMethodManager.hideSoftInputFromWindow(
 									editText.getWindowToken(), 0);
-							
-							
+
 							editText.setText("");
 							edtCommentLay.setVisibility(View.GONE);
 							view.setVisibility(View.VISIBLE);
@@ -614,6 +625,14 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		public void onAllowListResponse() {
 			mAisleDetailsList.requestDisallowInterceptTouchEvent(false);
 		}
+
+		@Override
+		public void setFindAtText(String findAt) {
+			// TODO Auto-generated method stub
+			mEditTextFindAt.setText(findAt);
+
+		}
+		
 	}
 
 	public void addComment(EditText editText, RelativeLayout view) {
@@ -669,14 +688,16 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		super.onDestroy();
 	}
 
-	public void addAisleToWindow(Bitmap bitmap, String imgUrl) {
+	public void addAisleToWindow(Bitmap bitmap, String imgPath,
+			String imageUrl, int imageWidth, int imageHeight) {
 		mTotalScreenCount = VueApplication.getInstance()
 				.getClickedWindowCount();
 		VueApplication.getInstance().setClickedWindowCount(
 				mTotalScreenCount + 1);
 		mTotalScreenCount = mTotalScreenCount + 1;
 		upDatePageDots(0, "right");
-		mAisleDetailsAdapter.addAisleToContentWindow(bitmap, imgUrl, "title");
+		mAisleDetailsAdapter.addAisleToContentWindow(bitmap, imgPath, imageUrl,
+				imageWidth, imageHeight, "title");
 
 	}
 
