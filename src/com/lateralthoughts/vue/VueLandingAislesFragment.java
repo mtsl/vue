@@ -25,6 +25,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -415,9 +416,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		for (int i = 0; i < itemCount; i++) {
 			ImageView item = new ImageView(getActivity());
 			item.setImageResource(itemDrawables[i]);
-
+			LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
+					LayoutParams.WRAP_CONTENT);
+			lp.setMargins(4, 4, 4, 4);
 			final int position = i;
-			menu.addItem(i, item, new OnClickListener() {
+			menu.addItem(i, lp, item, new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {

@@ -3,20 +3,19 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.util.ArrayList;
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnDismissListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.Window;
 import android.view.View.OnClickListener;
-import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,7 +74,7 @@ public class CreateAisleSelectionActivity extends Activity {
 		});
 
 		if (VueApplication.getInstance().mShoppingApplicationDetailsList != null) {
-			for (int i = 2; i < VueApplication.getInstance().mShoppingApplicationDetailsList
+			for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
 					.size(); i++) {
 				if (mDataEntryShoppingApplicationsList == null) {
 					mDataEntryShoppingApplicationsList = new ArrayList<ShoppingApplicationDetails>();
@@ -261,63 +260,6 @@ public class CreateAisleSelectionActivity extends Activity {
 		}
 	}
 
-	// Shopping Category Applications List ....
-	private class ShoppingApplicationsAdapter extends BaseAdapter {
-		Activity context;
-
-		public ShoppingApplicationsAdapter(Activity context) {
-			super();
-			this.context = context;
-		}
-
-		class ViewHolder {
-			TextView dataentryitemname;
-		}
-
-		public View getView(final int position, View convertView,
-				ViewGroup parent) {
-			ViewHolder holder = null;
-			View rowView = convertView;
-			if (rowView == null) {
-				LayoutInflater inflater = context.getLayoutInflater();
-				rowView = inflater.inflate(R.layout.dataentry_row, null, true);
-				holder = new ViewHolder();
-				holder.dataentryitemname = (TextView) rowView
-						.findViewById(R.id.dataentryitemname);
-				rowView.setTag(holder);
-			} else {
-				holder = (ViewHolder) rowView.getTag();
-			}
-			holder.dataentryitemname.setText(mDataEntryShoppingApplicationsList
-					.get(position).getAppName());
-			rowView.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View arg0) {
-					loadShoppingApplication(mDataEntryShoppingApplicationsList
-							.get(position).getActivityName(),
-							mDataEntryShoppingApplicationsList.get(position)
-									.getPackageName());
-				}
-			});
-			return rowView;
-		}
-
-		@Override
-		public int getCount() {
-			return mDataEntryShoppingApplicationsList.size();
-		}
-
-		@Override
-		public Object getItem(int arg0) {
-			return arg0;
-		}
-
-		@Override
-		public long getItemId(int arg0) {
-			return arg0;
-		}
-	}
-
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -336,6 +278,27 @@ public class CreateAisleSelectionActivity extends Activity {
 
 	public void closeScreen() {
 		finish();
+	}
+
+	public void showAlertMessageForAppInstalation(final String packageName) {
+		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.vue_popup);
+		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
+		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+		messagetext.setText("Install from Play Store");
+		okButton.setText("OK");
+		noButton.setVisibility(View.GONE);
+		okButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				dialog.dismiss();
+				Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
+						.parse("market://details?id=" + packageName));
+				startActivity(goToMarket);
+			}
+		});
+		dialog.show();
 	}
 
 }
