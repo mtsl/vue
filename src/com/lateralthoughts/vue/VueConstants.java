@@ -184,4 +184,7 @@ public class VueConstants {
 	
 	public static final String RECENTLY_VIEWED_AISLE_ID = "recentlyViewedAisleId";
 	public static final String VIEW_TIME = "viewTime";
+	
+	public static final String IS_AISLE_DIRTY = "isAisleDirty";
+	public static final String IS_IMAGE_DIRTY = "isImageDirty";
 }

@@ -629,9 +629,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		if (commentList != null) {
 			commentList.add(0, etText);
 		}
-		mAisleDetailsAdapter.sendDataToDb(
+	/*	mAisleDetailsAdapter.sendDataToDb(
 				mAisleDetailsAdapter.mCurrentDispImageIndex,
-				mAisleDetailsAdapter.CHANGE_COMMENT);
+				mAisleDetailsAdapter.CHANGE_COMMENT);*/
 		mAisleDetailsAdapter.mShowingList = commentList;
 		editText.setVisibility(View.GONE);
 		editText.setText("");

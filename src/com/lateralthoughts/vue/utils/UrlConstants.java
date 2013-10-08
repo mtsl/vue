@@ -1,7 +1,7 @@
 package com.lateralthoughts.vue.utils;
 
 public class UrlConstants {
-	public static final String SERVER_BASE_URL = "http://2-java.vueapi-canary-development1.appspot.com/";
+	public static final String SERVER_BASE_URL = "http://2dot1-java.vueapi-canary-development1.appspot.com/";/*"http://2dot1-java.vueapi-canary-development1.appspot.com/"*/;
 	/**
 	 * (C)reate routine URL's
 	 */
@@ -33,5 +33,7 @@ public class UrlConstants {
 	public static final String GET_BOOKMARK_Aisles = SERVER_BASE_URL
 		    + "api/aislebookmarksgetall";
 	
+	   public static final String CREATE_RATING_RESTURL = SERVER_BASE_URL 
+	       + "api/imageratingsaveorupdate";
 
 }

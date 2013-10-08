@@ -195,10 +195,7 @@ public class Parser {
 
 	private AisleContext parseAisleData(JSONObject josnObject) {
 	    //TODO:
-	  if (VueLandingPageActivity.mVueLandingActionbarScreenName.equals(
-	      VueApplication.getInstance().getString(R.string.sidemenu_sub_option_Bookmarks))) {
-        return null;
-      }
+	  
 		AisleContext aisleContext = new AisleContext();
 		try {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
