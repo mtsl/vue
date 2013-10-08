@@ -348,7 +348,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 						+ windowItem.getImageList().get(i).mAvailableWidth);
 			}
 			int finalWidth = 0, finaHeight = 0;
-			if (windowItem.getImageList().get(0).mAvailableHeight > windowItem
+			if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
 					.getBestHeightForWindow()) {
 				finalWidth = (windowItem.getImageList().get(0).mAvailableWidth * windowItem
 						.getBestHeightForWindow())
@@ -358,10 +358,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 			if (finalWidth > VueApplication.getInstance().getScreenWidth() / 2) {
 
-				finalWidth = VueApplication.getInstance().getScreenWidth() / 2;
+				
 				finaHeight = (finaHeight
 						* VueApplication.getInstance().getScreenWidth() / 2)
 						/ finalWidth;
+				finalWidth = VueApplication.getInstance().getScreenWidth() / 2;
 			}
 			Log.i("aisleItem", "aisleItem: after resize aisle width "
 					+ finalWidth + " height: " + finaHeight);
@@ -372,7 +373,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					+ " started***********************\n";
 			writeSdCard = writeSdCard + "\nAisleId: " + windowItem.getAisleId()
 					+ "\n" + "Smallest Image Height: "
-					+ windowItem.getBestHeightForWindow() + "\n";
+					+ windowItem.getBestHeightForWindow() + "\n"+"Card Width: "+VueApplication.getInstance().getScreenWidth() / 2 + "\n";
 			for (int i = 0; i < windowItem.getImageList().size(); i++) {
 				writeSdCard = writeSdCard + "\n ImageUrl: "
 						+ windowItem.getImageList().get(i).mImageUrl;

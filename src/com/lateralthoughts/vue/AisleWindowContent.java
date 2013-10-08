@@ -102,12 +102,14 @@ public class AisleWindowContent {
 		AisleImageDetails imageDetails;
 		// TODO: when more images available set this variable to smallest height
 		// among all
+		int smallestHeightPosition = 0;
 		mWindowSmallestHeight = /* 34 */0;
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			imageDetails = mAisleImagesList.get(i);
 			if (imageDetails.mAvailableHeight < mWindowSmallestHeight
 					|| mWindowSmallestHeight == 0) {
 				mWindowSmallestHeight = imageDetails.mAvailableHeight;
+				smallestHeightPosition = i;
 			}
 		}
 		for(int i = 0;i<mAisleImagesList.size();i++){
@@ -119,8 +121,8 @@ public class AisleWindowContent {
 			
 		}
 /*		mWindowSmallestHeight = getBestHeight(
-				mAisleImagesList.get(0).mAvailableHeight,
-				mAisleImagesList.get(0).mAvailableWidth, mWindowSmallestHeight);*/
+				mAisleImagesList.get(smallestHeightPosition).mAvailableHeight,
+				mAisleImagesList.get(smallestHeightPosition).mAvailableWidth, mWindowSmallestHeight);*/
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			prepareCustomUrl(mAisleImagesList.get(i));
 		}

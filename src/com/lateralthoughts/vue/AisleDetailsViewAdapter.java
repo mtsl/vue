@@ -236,7 +236,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		String uniqueContentId;
 		LinearLayout aisleDescriptor;
 		LinearLayout imgContentlay, commentContentlay;
-		LinearLayout vueCommentheader, addCommentlay;
+		LinearLayout vueCommentheader, addCommentlay,descriptionlay;
 		TextView userComment, enterComment;
 		ImageView userPic, commentImg, likeImg;
 		RelativeLayout exapandHolder;
@@ -272,6 +272,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					.findViewById(R.id.vue_user_coment_lay);
 			mViewHolder.vueCommentheader = (LinearLayout) convertView
 					.findViewById(R.id.vue_comment_header);
+			mViewHolder.descriptionlay = (LinearLayout) convertView.findViewById(R.id.descriptionlayout);
 			mViewHolder.aisleDescription = (TextView) convertView
 					.findViewById(R.id.vue_details_descreption);
 			mViewHolder.separator = (View) convertView
@@ -373,8 +374,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.edtCommentLay.setVisibility(View.GONE);
 			// mViewHolder.mWindowContent = mWindowContentTemp;
 			try {
-				if(getItem(mCurrentAislePosition).getAisleContext().mDescription != null){
+				if(getItem(mCurrentAislePosition).getAisleContext().mDescription != null && getItem(mCurrentAislePosition).getAisleContext().mDescription.length() > 1){
+					mViewHolder.descriptionlay.setVisibility(View.VISIBLE);
 				mViewHolder.aisleDescription.setText(getItem(mCurrentAislePosition).getAisleContext().mDescription);
+				} else {
+					 
+					mViewHolder.descriptionlay.setVisibility(View.GONE);
 				}
 				
 				mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName;
@@ -659,6 +664,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		public void onSetBrowserArea(String area) {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public void onRefreshAdaptaers() {
+			 notifyAdapter();
+			
 		}
 
 	}

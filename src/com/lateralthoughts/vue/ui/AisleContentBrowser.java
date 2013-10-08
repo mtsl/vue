@@ -401,6 +401,7 @@ public class AisleContentBrowser extends ViewFlipper {
 		public void onImageDoubleTap();
 
 		public void onSetBrowserArea(String area);
+		public void onRefreshAdaptaers();
 	}
 
 	DetailClickListener detailImgClickListenr;

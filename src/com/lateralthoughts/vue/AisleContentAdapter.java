@@ -268,17 +268,13 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             Bitmap bitmap = null;
             if(contentBrowser.getmSourceName()!= null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             	 bitmap = getCachedBitmap(itemDetails.mImageUrl);
-            	 Log.i("detailscrop", "detailscrop -1");
-            	 if(bitmap != null)
-            	 Log.i("detailscrop", "detailscrop -1 bitmap Height : "+bitmap.getHeight()+" widht: "+bitmap.getWidth());
-            	 Log.i("detailscrop", "detailscrop -1 browserHeight : "+contentBrowser.getHeight()+" widht: "+contentBrowser.getWidth());
             } else {
               bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
+              Log.i("imageResize", "imageResize custom from cache 1");
                
             }
             if(bitmap != null){
             	 if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-            		 Log.i("detailscrop", "detailscrop 0 browserHeight : "+contentBrowser.getHeight()+" widht: "+contentBrowser.getWidth());
             			mImageDimension = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
             			FrameLayout.LayoutParams mShowpieceParams = new FrameLayout.LayoutParams(
     							VueApplication.getInstance().getScreenWidth() ,
@@ -289,7 +285,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             				   loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView);
             			}
             	 }
-            	 Log.i("detailscrop", "detailscrop 0");
+            	
             
                 imageView.setImageBitmap(bitmap);
                 	contentBrowser.addView(imageView);
@@ -301,9 +297,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             		loadBitmap(itemDetails,itemDetails.mAvailableHeight,contentBrowser, imageView);
                 contentBrowser.addView(imageView);
             	} else {
-            		Log.i("detailscrop", "detailscrop 2");
-            		//int bestHeight = mWindowContent.getBestHeightForWindow();
-            		int bestHeight = contentBrowser.getHeight();
+            		Log.i("imageResize", "imageResize custom from cache 2");
+            		int bestHeight = mWindowContent.getBestHeightForWindow();
             		 loadBitmap(itemDetails,bestHeight,contentBrowser, imageView);
                            	contentBrowser.addView(imageView);
                            	Log.i("bestHeight", "bestHeight in adapter: "+bestHeight);
@@ -385,8 +380,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
 						mBestHeightForImage, VueApplication.getInstance()
 								.getVueDetailsCardWidth(),
-						Utils.TRENDING_SCREEN);
-				Log.i("SCREEN_CHECK", "SCREEN_CHECK: TRENDING");
+						Utils.DETAILS_SCREEN);
 			}
 
 			return bmp;

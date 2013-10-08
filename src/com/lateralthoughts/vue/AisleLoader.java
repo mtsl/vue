@@ -247,7 +247,8 @@ public class AisleLoader {
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
 			Log.e("Profiling", "Profiling New doInBackground()");
-			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
+			boolean cacheBitmap = false;
+			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheBitmap,
 					mBestHeight, VueApplication.getInstance().getScreenWidth()/2,Utils.TRENDING_SCREEN);
 			return bmp;
 		}
