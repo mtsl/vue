@@ -269,17 +269,17 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             if(contentBrowser.getmSourceName()!= null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             	 bitmap = getCachedBitmap(itemDetails.mImageUrl);
             } else {
-              bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
+             // bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
               Log.i("imageResize", "imageResize custom from cache 1");
                
             }
             if(bitmap != null){
             	 if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             			mImageDimension = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
-            			FrameLayout.LayoutParams mShowpieceParams = new FrameLayout.LayoutParams(
+            		/*	FrameLayout.LayoutParams mShowpieceParams = new FrameLayout.LayoutParams(
     							VueApplication.getInstance().getScreenWidth() ,
     							bitmap.getHeight());
-                		contentBrowser .setLayoutParams(mShowpieceParams);
+                		contentBrowser .setLayoutParams(mShowpieceParams);*/
             			if(bitmap.getHeight() < mImageDimension.mImgHeight) {
             				 Log.i("detailscrop", "detailscrop resize agian");
             				   loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView);
@@ -357,9 +357,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 			if (aisleContentBrowser.getmSourceName() != null
 					&& aisleContentBrowser.getmSourceName().equalsIgnoreCase(
 							AisleDetailsViewAdapter.TAG)) {
-				 
+				boolean cacheval = false;
 				bmp = mBitmapLoaderUtils
-						.getBitmap(url, params[1], true, mBestHeightForImage,
+						.getBitmap(url, params[1], cacheval, mBestHeightForImage,
 								VueApplication.getInstance()
 										.getVueDetailsCardWidth(),
 								Utils.DETAILS_SCREEN);
@@ -369,7 +369,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 					mAvailabeHeight = mImageDimension.mImgHeight;
 					if (bmp.getHeight() > mImageDimension.mImgHeight) {
 						bmp = mBitmapLoaderUtils.getBitmap(url, params[1],
-								true, mImageDimension.mImgHeight,
+								cacheval, mImageDimension.mImgHeight,
 								VueApplication.getInstance()
 										.getVueDetailsCardWidth(),
 								Utils.DETAILS_SCREEN);
@@ -377,12 +377,14 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 				}
 
 			} else {
-				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
-						mBestHeightForImage, VueApplication.getInstance()
+				boolean cacheval = false;
+				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheval,
+						VueApplication.getInstance()
+						.getVueDetailsCardHeight(), VueApplication.getInstance()
 								.getVueDetailsCardWidth(),
 						Utils.DETAILS_SCREEN);
 			}
-
+//if("5233838556971008".equalsIgnoreCase(string))
 			return bmp;
 		}
 

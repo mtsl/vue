@@ -817,13 +817,17 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		AisleImageDetails imgDetails = new AisleImageDetails();
 		imgDetails.mAvailableHeight = imageHeight;
 		imgDetails.mAvailableWidth = imageWidth;
-		if (imgDetails.mAvailableHeight > VueApplication.getInstance()
-				.getVueDetailsCardHeight()) {
-			imgDetails.mAvailableHeight = VueApplication.getInstance()
-					.getVueDetailsCardHeight();
-		}
-		if (imgDetails.mAvailableHeight > mBestHeight) {
+		Log.i("new image", "new image height: "+imgDetails.mAvailableHeight);
+		if (imgDetails.mAvailableHeight > getItem(mCurrentAislePosition).getBestLargetHeightForWindow()) {
 			mBestHeight = imgDetails.mAvailableHeight;
+			getItem(mCurrentAislePosition).setBestLargestHeightForWindow(imgDetails.mAvailableHeight,imgDetails.mAvailableWidth );
+			Log.i("new image", "new image height: changed");
+		}
+		if(imgDetails.mAvailableHeight < getItem(mCurrentAislePosition).getBestHeightForWindow()){
+			getItem(mCurrentAislePosition).setBestHeightForWindow(imgDetails.mAvailableHeight);
+			Log.i("bestsamallest", "bestsamallest height1: "+imgDetails.mAvailableHeight);
+		} else {
+			Log.i("bestsamallest", "bestsamallest height1 else: window samallest height has not changed " );
 		}
 		imgDetails.mTitle = title;
 		imgDetails.mImageUrl = imageUrl;
@@ -852,6 +856,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		} else {
 			mswipeListner.onResetAdapter();
 		}
+		
 	}
 
 	public ArrayList<AisleImageDetails> getImageList() {

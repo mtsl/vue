@@ -153,8 +153,9 @@ public class Parser {
 				JSONArray jsonArray = mainJsonObject.getJSONArray("images");
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject jsonObject = jsonArray.getJSONObject(i);
-					AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject);
-					if (aisleImageDetails.mImageUrl != null
+					AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject); ///randomimage.jpg
+
+					if (aisleImageDetails.mImageUrl != null && (!aisleImageDetails.mImageUrl.contains("randomurl.com"))
 							&& aisleImageDetails.mImageUrl.trim().length() > 0
 							&& aisleImageDetails.mAvailableHeight != 0
 							&& aisleImageDetails.mAvailableWidth != 0) {
