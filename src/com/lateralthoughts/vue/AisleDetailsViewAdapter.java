@@ -55,6 +55,7 @@ import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
 
 public class AisleDetailsViewAdapter extends BaseAdapter {
+
 	private Context mContext;
 	public static final String TAG = "AisleDetailsViewAdapter";
 	public static final int IMG_LIKE_STATUS = 1;
@@ -118,6 +119,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				break;
 			}
 		}
+		setImageRating();
 		Log.i("bestHeight",
 				"bestHeight in details adapter: "
 						+ getItem(mCurrentAislePosition)
@@ -878,16 +880,16 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
   int likeCount = 0;
   ImageRating imgRating;
+
   public void sendDataToDb(int imgPosition, String reqType,
       boolean likeOrDislike) {
     String aisleId = null;
     String imageId = null;
     AisleImageDetails itemDetails;
-    
+
     int likeStatus = 0;
-    
-    Log.e("ImageRating Resopnse",
-        "SURU ImageRating sendDataToDb() called");
+
+    Log.e("ImageRating Resopnse", "SURU ImageRating sendDataToDb() called");
     if (getItem(mCurrentAislePosition).getImageList() != null
         && getItem(mCurrentAislePosition).getImageList().size() != 0) {
       aisleId = getItem(mCurrentAislePosition).getAisleId();
@@ -918,7 +920,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
           Log.e("ImageRating Resopnse",
               "SURU ImageRating sendDataToDb in LIKES condution");
           AisleManager.getAisleManager().updateRating(imgRating, likeCount);
-        }catch (Exception e) {
+        } catch (Exception e) {
           e.printStackTrace();
         }
       }
@@ -926,141 +928,155 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
   }
 
-	public AisleContext getAisleContext() {
-		return getItem(mCurrentAislePosition).getAisleContext();
-	}
+  public AisleContext getAisleContext() {
+    return getItem(mCurrentAislePosition).getAisleContext();
+  }
 
-	public boolean checkLimitForLoginDialog() {
-		if (mContext != null) {
-			SharedPreferences sharedPreferencesObj = mContext
-					.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-			boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
-					VueConstants.VUE_LOGIN, false);
-			if (!isUserLoggedInFlag) {
-				int createdAisleCount = sharedPreferencesObj.getInt(
-						VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-				int commentsCount = sharedPreferencesObj.getInt(
-						VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
-				if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
-						|| commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
+  public boolean checkLimitForLoginDialog() {
+    if (mContext != null) {
+      SharedPreferences sharedPreferencesObj = mContext.getSharedPreferences(
+          VueConstants.SHAREDPREFERENCE_NAME, 0);
+      boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+          VueConstants.VUE_LOGIN, false);
+      if (!isUserLoggedInFlag) {
+        int createdAisleCount = sharedPreferencesObj.getInt(
+            VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
+        int commentsCount = sharedPreferencesObj.getInt(
+            VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
+        if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
+            || commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
 
-	private void onChangeLikesCount(int position) {
-		if (storedVueUser == null) {
-			try {
-				storedVueUser = Utils.readUserObjectFromFile(mContext,
-						VueConstants.VUE_APP_USEROBJECT__FILENAME);
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-		Map<String, String> articleParams = new HashMap<String, String>();
-		articleParams.put("Category", getItem(mCurrentAislePosition)
-				.getAisleContext().mCategory);
-		articleParams.put("Lookingfor", getItem(mCurrentAislePosition)
-				.getAisleContext().mLookingForItem);
-		articleParams.put("Occasion", getItem(mCurrentAislePosition)
-				.getAisleContext().mOccasion);
-		if (storedVueUser != null) {
-			articleParams
-					.put("Unique_User_Like", "" + storedVueUser.getVueId());
-		} else {
-			articleParams.put("Unique_User_Like", "anonymous");
-		}
-		FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
-		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+  private void onChangeLikesCount(int position) {
+    if (storedVueUser == null) {
+      try {
+        storedVueUser = Utils.readUserObjectFromFile(mContext,
+            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+      } catch (Exception e2) {
+        e2.printStackTrace();
+      }
+    }
+    Map<String, String> articleParams = new HashMap<String, String>();
+    articleParams.put("Category", getItem(mCurrentAislePosition)
+        .getAisleContext().mCategory);
+    articleParams.put("Lookingfor", getItem(mCurrentAislePosition)
+        .getAisleContext().mLookingForItem);
+    articleParams.put("Occasion", getItem(mCurrentAislePosition)
+        .getAisleContext().mOccasion);
+    if (storedVueUser != null) {
+      articleParams.put("Unique_User_Like", "" + storedVueUser.getVueId());
+    } else {
+      articleParams.put("Unique_User_Like", "anonymous");
+    }
+    FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
+    if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+      getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
 
-			Map<String, String> articleParams1 = new HashMap<String, String>();
-			articleParams1.put("Unique_Aisle_Likes",
-					"" + getItem(mCurrentAislePosition).getAisleId());
-			if (storedVueUser != null) {
-				articleParams1.put("Unique_User_Like",
-						"" + storedVueUser.getVueId());
-			} else {
-				articleParams1.put("Unique_User_Like", "anonymous");
-			}
-			FlurryAgent.logEvent("Aisle_Likes", articleParams1);
-		} else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
+      Map<String, String> articleParams1 = new HashMap<String, String>();
+      articleParams1.put("Unique_Aisle_Likes",
+          "" + getItem(mCurrentAislePosition).getAisleId());
+      if (storedVueUser != null) {
+        articleParams1.put("Unique_User_Like", "" + storedVueUser.getVueId());
+      } else {
+        articleParams1.put("Unique_User_Like", "anonymous");
+      }
+      FlurryAgent.logEvent("Aisle_Likes", articleParams1);
+    } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
 
-			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
-					mCurrentAislePosition).getImageList().get(position).mLikesCount + 1;
-			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
-			sendDataToDb(position, CHANGE_LIKES, true);
-		}
-		if (position == mCurrentDispImageIndex) {
-			mLikes = getItem(mCurrentAislePosition).getImageList()
-					.get(position).mLikesCount;
-			notifyAdapter();
-		}
-	}
+      getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
+          mCurrentAislePosition).getImageList().get(position).mLikesCount + 1;
+      getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+      sendDataToDb(position, CHANGE_LIKES, true);
+    }
+    if (position == mCurrentDispImageIndex) {
+      mLikes = getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount;
+      notifyAdapter();
+    }
+  }
 
-	private void onChangeDislikesCount(int position) {
-		FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
-		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-		  //false
-			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
-			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
-					mCurrentAislePosition).getImageList().get(position).mLikesCount - 1;
-			sendDataToDb(position, CHANGE_LIKES, false);
-		} else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
-			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
-		}
-		if (position == mCurrentDispImageIndex) {
-			mLikes = getItem(mCurrentAislePosition).getImageList()
-					.get(position).mLikesCount;
-			notifyAdapter();
-		}
-	}
+  private void onChangeDislikesCount(int position) {
+    FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
+    if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+      // false
+      getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
+      getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
+          mCurrentAislePosition).getImageList().get(position).mLikesCount - 1;
+      sendDataToDb(position, CHANGE_LIKES, false);
+    } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
+      getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
+    }
+    if (position == mCurrentDispImageIndex) {
+      mLikes = getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount;
+      notifyAdapter();
+    }
+  }
 
-	public void closeKeyboard() {
-		final InputMethodManager mInputMethodManager = (InputMethodManager) mContext
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mViewHolder.edtComment.getWindowToken(), 0);
-		mViewHolder.edtCommentLay.setVisibility(View.GONE);
-		mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
-	}
+  public void closeKeyboard() {
+    final InputMethodManager mInputMethodManager = (InputMethodManager) mContext
+        .getSystemService(Context.INPUT_METHOD_SERVICE);
+    mInputMethodManager.hideSoftInputFromWindow(
+        mViewHolder.edtComment.getWindowToken(), 0);
+    mViewHolder.edtCommentLay.setVisibility(View.GONE);
+    mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
+  }
 
   private void handleBookmark(boolean isBookmarked, String aisleId) {
-    
+
     AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
         Long.parseLong(aisleId));
-        VueUser storedVueUser = null;
-        try {
-          storedVueUser = Utils.readUserObjectFromFile(mContext,
-              VueConstants.VUE_APP_USEROBJECT__FILENAME);
-          AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark, storedVueUser.getVueId());
-        } catch (Exception e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+    VueUser storedVueUser = null;
+    try {
+      storedVueUser = Utils.readUserObjectFromFile(mContext,
+          VueConstants.VUE_APP_USEROBJECT__FILENAME);
+      AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
+          storedVueUser.getVueId());
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
 
-	@Override
-	public long getItemId(int position) {
-		// TODO Auto-generated method stub
-		return position;
-	}
-	  private int getBestHeight(int largeHeight) {
-		   int screenHeight = VueApplication.getInstance().getScreenHeight();
-		   int screenWidth = VueApplication.getInstance().getScreenWidth();
-		   if(largeHeight > screenHeight){
-			   largeHeight = screenHeight;
-		   }
-		  
-		  return largeHeight;
-		  
-	  }
- }
+  @Override
+  public long getItemId(int position) {
+    // TODO Auto-generated method stub
+    return position;
+  }
+
+  private int getBestHeight(int largeHeight) {
+    int screenHeight = VueApplication.getInstance().getScreenHeight();
+    int screenWidth = VueApplication.getInstance().getScreenWidth();
+    if (largeHeight > screenHeight) {
+      largeHeight = screenHeight;
+    }
+
+    return largeHeight;
+
+  }
+
+  private void setImageRating() {
+    ArrayList<AisleImageDetails> aisleImgDetais = getItem(mCurrentAislePosition)
+        .getImageList();
+    ArrayList<ImageRating> imgRatingList = DataBaseManager
+        .getInstance(mContext).getRatedImagesList(
+            getItem(mCurrentAislePosition).getAisleId());
+    for (AisleImageDetails imgDetail : aisleImgDetais) {
+      for (ImageRating imgRating : imgRatingList) {
+        if (imgRating.getImageId() == Long.parseLong(imgDetail.mId)) {
+          imgDetail.mLikeDislikeStatus = IMG_LIKE_STATUS;
+        }
+      }
+    }
+  }
+  
+}

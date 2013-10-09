@@ -108,6 +108,7 @@ public class AisleDetailsViewListLoader {
         } 
         Log.i("cardHeight", "cardHeight bestHeight1: "+windowContent.getBestHeightForWindow());
         imageDetailsArr = windowContent.getImageList();
+        Log.e("AisleDetailsViewListLoader", "Aisle Id : " + windowContent.getAisleId());
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			 
 			 for(int i = 0;i<imageDetailsArr.size();i++) {

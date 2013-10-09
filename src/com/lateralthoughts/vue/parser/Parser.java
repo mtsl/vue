@@ -26,6 +26,7 @@ public class Parser {
 	// imageItemsArray. Instead the called function clones and keeps a copy.
 	// This is pretty inconsistent.
 	// Let the allocation happen in one place for both items. Fix this!
+  public boolean logStatus =false;
 	public ArrayList<AisleWindowContent> parseTrendingAislesResultData(
 			String resultString, boolean loadMore) {
 
@@ -91,6 +92,10 @@ public class Parser {
 
 	public AisleImageDetails parseAisleImageData(JSONObject jsonObject)
 			throws JSONException {
+	  if(logStatus) {
+	  Log.e("Parser", "parserAisleImageData: Response " + jsonObject.toString());
+	  logStatus = false;
+	  }
 		AisleImageDetails aisleImageDetails = new AisleImageDetails();
 		aisleImageDetails.mId = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_ID);
@@ -110,8 +115,14 @@ public class Parser {
 				+ aisleImageDetails.mImageUrl);
 
 		Log.i("urlserver", "urlserver: " + aisleImageDetails.mImageUrl);
-		aisleImageDetails.mRating = jsonObject
-				.getString(VueConstants.AISLE_IMAGE_RATING);
+		if(jsonObject
+            .getString(VueConstants.AISLE_IMAGE_RATING) == null || jsonObject
+                .getString(VueConstants.AISLE_IMAGE_RATING).equalsIgnoreCase("null")) {
+		  aisleImageDetails.mLikesCount = 0;
+		} else {
+		aisleImageDetails.mLikesCount = Integer.parseInt(jsonObject
+				.getString(VueConstants.AISLE_IMAGE_RATING));
+		}
 		aisleImageDetails.mStore = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_STORE);
 		aisleImageDetails.mTitle = jsonObject
@@ -202,6 +213,10 @@ public class Parser {
 		AisleContext aisleContext = new AisleContext();
 		try {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
+			if("5279021612924928".equalsIgnoreCase(aisleContext.mAisleId)){
+			  logStatus = true;
+			}
+			
 			aisleContext.mCategory = josnObject
 					.getString(VueConstants.AISLE_CATEGORY);
 			aisleContext.mLookingForItem = josnObject

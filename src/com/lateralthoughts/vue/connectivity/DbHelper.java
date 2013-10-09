@@ -17,8 +17,9 @@ public class DbHelper extends SQLiteOpenHelper {
 	 public static final String DATABASE_TABLE_CATEGORY = "category";
 	 public static final String DATABASE_TABLE_COMMENTS_ON_IMAGES = "commentsOnImages";
 	 public static final String DATABASE_TABLE_RECENTLY_VIEWED_AISLES = "recentlyViewAisles";
+	 public static final String DATABASE_TABLE_RATED_IMAGES = "ratedImages";
 	 public static final int DATABASE_VERSION = 1;
-	 
+
      private String createAislesTable = "create table if not exists " + DATABASE_TABLE_AISLES
      + " (" + VueConstants.AISLE_Id + " integer primary key, "
      + VueConstants.CATEGORY + " text, "
@@ -33,7 +34,7 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.DELETE_FLAG + " integer, "
      + VueConstants.ID + " text);";
-     
+
      private String createAisleImagesTable = "create table if not exists " + DATABASE_TABLE_AISLES_IMAGES
      + " (" + VueConstants.IMAGE_ID + " integer primary key, "
      + VueConstants.AISLE_Id + " text, "
@@ -49,7 +50,7 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.HEIGHT + " text, "
      + VueConstants.WIDTH + " text);";
-     
+
      private String createImageCommentsTable = "create table if not exists " + DATABASE_TABLE_COMMENTS_ON_IMAGES
      + " (" + VueConstants.ID + " integer primary key autoincrement, "
      + VueConstants.AISLE_Id + " text, "
@@ -63,13 +64,13 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.COMMENT + " text, "
      + VueConstants.AISLE_ID + " text, "
      + VueConstants.IMAGE_ID + " text);";*/
-     
+
     private String createLookingForTable = "create table if not exists " + DATABASE_TABLE_LOOKINGFOR
         + " (" + VueConstants.ID + " integer primary key autoincrement, " 
         + VueConstants.KEYWORD + " text, "
         + VueConstants.LAST_USED_TIME + " text, "
         + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
-    
+
     private String createOccasionTable = "create table if not exists " + DATABASE_TABLE_OCCASION
         + " (" + VueConstants.ID + " integer primary key autoincrement, "
         + VueConstants.KEYWORD + " text, "
@@ -81,28 +82,33 @@ public class DbHelper extends SQLiteOpenHelper {
         + VueConstants.KEYWORD + " text, "
         + VueConstants.LAST_USED_TIME + " text, "
         + VueConstants.NUMBER_OF_TIMES_USED + " integer);";
-    
+
     private String createRecentViewTable = "create table if not exists " + DATABASE_TABLE_RECENTLY_VIEWED_AISLES
-    + " (" + VueConstants.ID + " integer primary key autoincrement, "
-    + VueConstants.RECENTLY_VIEWED_AISLE_ID + " text, "
-    + VueConstants.VIEW_TIME + " text);";
-        
+        + " (" + VueConstants.ID + " integer primary key autoincrement, "
+        + VueConstants.RECENTLY_VIEWED_AISLE_ID + " text, "
+        + VueConstants.VIEW_TIME + " text);";
+
+    private String createReatingImagesTable = "create table if not exists " + DATABASE_TABLE_RATED_IMAGES
+        + " (" + VueConstants.ID + " integer primary key autoincrement, "
+        + VueConstants.AISLE_ID + " text, "
+        + VueConstants.IMAGE_ID + " text);";
 
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
 	@Override
-	public void onCreate(SQLiteDatabase db) {
-		db.execSQL(createAislesTable);
-		db.execSQL(createAisleImagesTable);
-		db.execSQL(createImageCommentsTable);
-		//db.execSQL(createQueuedDataToSyncTable);
-		db.execSQL(createLookingForTable);
-		db.execSQL(createOccasionTable);
-		db.execSQL(createCategoryTable);
-		db.execSQL(createRecentViewTable);
-	}
+  public void onCreate(SQLiteDatabase db) {
+    db.execSQL(createAislesTable);
+    db.execSQL(createAisleImagesTable);
+    db.execSQL(createImageCommentsTable);
+    // db.execSQL(createQueuedDataToSyncTable);
+    db.execSQL(createLookingForTable);
+    db.execSQL(createOccasionTable);
+    db.execSQL(createCategoryTable);
+    db.execSQL(createRecentViewTable);
+    db.execSQL(createReatingImagesTable);
+  }
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
