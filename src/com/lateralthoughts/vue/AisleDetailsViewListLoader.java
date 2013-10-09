@@ -127,6 +127,8 @@ public class AisleDetailsViewListLoader {
 			bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
 			mBestHeight = getBestHeight(windowContent.getBestLargetHeightForWindow());
 			contentBrowser.addView(imageView);
+			Log.i("new image", "new image  windowbestHeight:  "+windowContent.getBestLargetHeightForWindow());
+			setParams(holder.aisleContentBrowser, imageView, windowContent.getBestLargetHeightForWindow());
 			if (bitmap != null) {
 				// get the dimensions of the image.
 	/*			mImageDimension = Utils.getScalledImage(bitmap,
@@ -146,7 +148,7 @@ public class AisleDetailsViewListLoader {
 
 				} else {
 					Log.i("setparam", "setparam cache: "+bitmap.getHeight());
-					setParams(holder.aisleContentBrowser, imageView, bitmap.getHeight());
+					//setParams(holder.aisleContentBrowser, imageView, bitmap.getHeight());
 				}
 				Log.i("TrendingCrop", "TrendingCrop3:*********************");
 				Log.i("TrendingCrop", "TrendingCrop3: Screen Height "
@@ -242,9 +244,8 @@ public class AisleDetailsViewListLoader {
                
                 //final AisleContentBrowser vFlipper = viewFlipperReference.get();
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-                
-                if (this == bitmapWorkerTask) {     
-                 setParams( aisleContentBrowser, imageView,bitmap.getHeight());
+                if (this == bitmapWorkerTask) {
+                 //setParams( aisleContentBrowser, imageView,bitmap.getHeight());
                     imageView.setImageBitmap(bitmap);
                 }
             }

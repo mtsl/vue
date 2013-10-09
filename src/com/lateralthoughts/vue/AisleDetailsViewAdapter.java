@@ -55,792 +55,828 @@ import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
 
 public class AisleDetailsViewAdapter extends BaseAdapter {
-  private Context mContext;
-  public static final String TAG = "AisleDetailsViewAdapter";
-  public static final int IMG_LIKE_STATUS = 1;
-  public static final int IMG_NONE_STATUS = 0;
-  private static final String CHANGE_BOOKMARK = "BOOKMARK";
-  public static final String CHANGE_COMMENT = "COMMENT";
-  private static final String CHANGE_LIKES = "LIKES";
-  private static final boolean DEBUG = false;
-  private AisleDetailsViewListLoader mViewLoader;
-  private AisleDetailSwipeListener mswipeListner;
-  VueUser storedVueUser = null;
-  // we need to customize the layout depending on screen height & width which
-  // we will get on the fly
-  private int mListCount;
-  public int mLikes;
-  private int mBookmarksCount;
-  public int mCurrentDispImageIndex;
-  private boolean mIsLikeImageClicked = false;
-  private boolean mIsBookImageClciked = false;
-  public String mVueusername;
-  ShareDialog mShare;
-  public int mCurrentAislePosition;
-  public ArrayList<String> mImageDetailsArr = null;
-  @SuppressLint("UseSparseArrays")
-  Map<Integer, Object> mCommentsMapList = new HashMap<Integer, Object>();
-  ArrayList<String> mShowingList;
-  private int mBestHeight;
-  private int mTopBottomMargin = 24;
-  ViewHolder mViewHolder;
-  boolean mImageRefresh = true;
-  private boolean mSetPosition;
-  private static final int mWaitTime = 1000;
-  VueTrendingAislesDataModel mVueTrendingAislesDataModel;
-  public ArrayList<String> mCustomUrls = new ArrayList<String>();
-  private LoginWarningMessage mLoginWarningMessage = null;
-
-  @SuppressWarnings("unchecked")
-  public AisleDetailsViewAdapter(Context c,
-      AisleDetailSwipeListener swipeListner, int listCount,
-      ArrayList<AisleWindowContent> content) {
-    /* super(c, content); */
-    mVueTrendingAislesDataModel = VueTrendingAislesDataModel
-        .getInstance(VueApplication.getInstance());
-
-    mSetPosition = true;
-    mContext = c;
-
-    mTopBottomMargin = VueApplication.getInstance().getPixel(mTopBottomMargin);
-    mViewLoader = new AisleDetailsViewListLoader(mContext);
-    mswipeListner = swipeListner;
-    mListCount = listCount;
-    mShowingList = new ArrayList<String>();
-    if (DEBUG) Log.e(TAG, "About to initiate request for trending aisles");
-
-    for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
-      if (getItem(i).getAisleId().equalsIgnoreCase(
-          VueApplication.getInstance().getClickedWindowID())) {
-        mCurrentAislePosition = i;
-        break;
-      }
-    }
-    setImageRating();
-    Log.i("bestHeight",
-        "bestHeight in details adapter: "
-            + getItem(mCurrentAislePosition).getBestHeightForWindow());
-    if (getItem(mCurrentAislePosition) != null) {
-      String occasion = getItem(mCurrentAislePosition).getAisleContext().mOccasion;
-      if (occasion != null) {
-        occasion = occasion.substring(0, 1).toUpperCase()
-            + occasion.substring(1).toLowerCase();
-        String lookingFor = getItem(mCurrentAislePosition).getAisleContext().mLookingForItem;
-        lookingFor = lookingFor.substring(0, 1).toUpperCase()
-            + lookingFor.substring(1).toLowerCase();
-        mswipeListner.setOccasion(occasion + " " + lookingFor);
-      }
-
-      mBookmarksCount = getItem(mCurrentAislePosition)
-          .getmAisleBookmarksCount();
-      getItem(mCurrentAislePosition).setmAisleBookmarksCount(mBookmarksCount);
-      VueApplication.getInstance().setClickedWindowCount(
-          getItem(mCurrentAislePosition).getImageList().size());
-
-      for (int i = 0; i < getItem(mCurrentAislePosition).getImageList().size(); i++) {
-        mCustomUrls
-            .add(getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl);
-        Log.i(
-            "clone",
-            "mCustomImageUrl url: "
-                + getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl);
-        if (getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight > mBestHeight) {
-          mBestHeight = getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight;
-        }
-
-        mCommentsMapList.put(i, getItem(mCurrentAislePosition).getImageList()
-            .get(i).mCommentsList);
-        if (getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList == null) {
-          // TODO: for temp comments display need to replace this
-          getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList = new ArrayList<String>();
-          if (i % 2 == 0) {
-            for (int k = 0; k < 6; k++) {
-              getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList
-                  .add("Love Love vue the dress! Simple and fabulous.");
-            }
-          } else {
-            for (int k = 0; k < 10; k++) {
-              getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList
-                  .add("vue vue vue  sample test comments");
-            }
-          }
-          mCommentsMapList.put(i, getItem(mCurrentAislePosition).getImageList()
-              .get(i).mCommentsList);
-        }
-      }
-      mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
-      Log.i("clone", "clone: " + mImageDetailsArr);
-      if (mImageDetailsArr != null) {
-        for (int i = 0; i < mImageDetailsArr.size(); i++) {
-          Log.i("clone", "clone1: " + mImageDetailsArr.get(i));
-        }
-      }
-      mShowingList = getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList;
-      mLikes = getItem(mCurrentAislePosition).getImageList().get(0).mLikesCount;
-      boolean isBookmarked = VueTrendingAislesDataModel
-          .getInstance(VueApplication.getInstance()).getNetworkHandler()
-          .isAisleBookmarked(getItem(mCurrentAislePosition).getAisleId());
-
-      if (isBookmarked) {
-        getItem(mCurrentAislePosition).setWindowBookmarkIndicator(isBookmarked);
-      }
-      mBookmarksCount = getItem(mCurrentAislePosition)
-          .getmAisleBookmarksCount();
-      Log.i("bookmarked aisle", "bookmarked count in window2: "
-          + mBookmarksCount);
-      new Handler().postDelayed(new Runnable() {
-
-        @Override
-        public void run() {
-          Map<String, String> articleParams = new HashMap<String, String>();
-          articleParams.put("Category", getItem(mCurrentAislePosition)
-              .getAisleContext().mCategory);
-          articleParams.put("Lookingfor", getItem(mCurrentAislePosition)
-              .getAisleContext().mLookingForItem);
-          articleParams.put("Occasion", getItem(mCurrentAislePosition)
-              .getAisleContext().mOccasion);
-          FlurryAgent.logEvent("Visited_Categories", articleParams);
-
-        }
-        // wait time for flurry session starts
-      }, mWaitTime);
-
-    }
-    // mswipeListner.setFindAtText(getItem(mCurrentAislePosition).getImageList().get(0).mImageUrl);
-  }
-
-  @Override
-  public AisleWindowContent getItem(int position) {
-    return mVueTrendingAislesDataModel.getAisleAt(position);
-  }
-
-  static class ViewHolder {
-    AisleContentBrowser aisleContentBrowser;
-    TextView aisleDescription;
-    TextView aisleOwnersName;
-    TextView aisleContext, commentCount, likeCount;
-    TextView bookMarkCount;
-    ImageView profileThumbnail;
-    ImageView vueWindowBookmarkImg;
-    ImageView vueWndowCommentImg;
-    String uniqueContentId;
-    LinearLayout aisleDescriptor;
-    LinearLayout imgContentlay, commentContentlay;
-    LinearLayout vueCommentheader, addCommentlay, descriptionlay;
-    TextView userComment, enterComment;
-    ImageView userPic, commentImg, likeImg;
-    RelativeLayout exapandHolder;
-    EditText edtComment;
-    View separator;
-    RelativeLayout enterCommentrellay;
-    RelativeLayout likelay, bookmarklay;
-    FrameLayout edtCommentLay;
-    ImageView commentSend;
-    String tag;
-  }
-
-  @Override
-  public int getCount() {
-    return mListCount;
-  }
-
-  @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
-
-    if (convertView == null) {
-      mViewHolder = new ViewHolder();
-      LayoutInflater layoutInflator = LayoutInflater.from(mContext);
-      convertView = layoutInflator.inflate(R.layout.vue_details_adapter, null);
-      mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
-          .findViewById(R.id.showpieceadapter);
-      Log.i("nullbug", "nullbug  mViewHolder.aisleContentBrowser "
-          + mViewHolder.aisleContentBrowser);
-      mViewHolder.imgContentlay = (LinearLayout) convertView
-          .findViewById(R.id.vueimagcontent);
-      mViewHolder.commentContentlay = (LinearLayout) convertView
-          .findViewById(R.id.vue_user_coment_lay);
-      mViewHolder.vueCommentheader = (LinearLayout) convertView
-          .findViewById(R.id.vue_comment_header);
-      mViewHolder.descriptionlay = (LinearLayout) convertView
-          .findViewById(R.id.descriptionlayout);
-      mViewHolder.aisleDescription = (TextView) convertView
-          .findViewById(R.id.vue_details_descreption);
-      mViewHolder.separator = (View) convertView.findViewById(R.id.separator);
-      mViewHolder.vueWindowBookmarkImg = (ImageView) convertView
-          .findViewById(R.id.vuewndow_bookmark_img);
-      mViewHolder.vueWndowCommentImg = (ImageView) convertView
-          .findViewById(R.id.vuewndow_comment_img);
-      mViewHolder.likelay = (RelativeLayout) convertView
-          .findViewById(R.id.likelay);
-      mViewHolder.bookmarklay = (RelativeLayout) convertView
-          .findViewById(R.id.bookmarklay);
-      mViewHolder.enterCommentrellay = (RelativeLayout) convertView
-          .findViewById(R.id.entercmentrellay);
-
-      mViewHolder.edtComment = (EditText) convertView
-          .findViewById(R.id.edtcomment);
-      mViewHolder.likeImg = (ImageView) convertView
-          .findViewById(R.id.vuewndow_lik_img);
-      mViewHolder.likeCount = (TextView) convertView
-          .findViewById(R.id.vuewndow_lik_count);
-      mViewHolder.addCommentlay = (LinearLayout) convertView
-          .findViewById(R.id.addcommentlay);
-      mViewHolder.exapandHolder = (RelativeLayout) convertView
-          .findViewById(R.id.exapandholder);
-      mViewHolder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
-      mViewHolder.userPic = (ImageView) convertView
-          .findViewById(R.id.vue_user_img);
-      mViewHolder.userComment = (TextView) convertView
-          .findViewById(R.id.vue_user_comment);
-      mViewHolder.commentCount = (TextView) convertView
-          .findViewById(R.id.vuewndow_comment_count);
-      mViewHolder.bookMarkCount = (TextView) convertView
-          .findViewById(R.id.vuewndow_bookmark_count);
-      mViewHolder.commentCount.setTextSize(Utils.SMALL_TEXT_SIZE);
-      mViewHolder.bookMarkCount.setTextSize(Utils.SMALL_TEXT_SIZE);
-      mViewHolder.likeCount.setTextSize(Utils.SMALL_TEXT_SIZE);
-
-      mViewHolder.commentImg = (ImageView) convertView
-          .findViewById(R.id.vuewndow_comment_img);
-      mViewHolder.commentSend = (ImageView) convertView
-          .findViewById(R.id.sendcomment);
-
-      mViewHolder.edtCommentLay = (FrameLayout) convertView
-          .findViewById(R.id.edtcommentlay);
-      mViewHolder.userComment.setTextSize(VueApplication.getInstance()
-          .getmTextSize());
-      mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
-      /*
-       * FrameLayout.LayoutParams showpieceParams = new
-       * FrameLayout.LayoutParams( LayoutParams.MATCH_PARENT,
-       * LayoutParams.MATCH_PARENT );
-       * mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
-       */
-      int bestHeightTempHeight = VueApplication.getInstance().getPixel(100);
-
-      FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-          VueApplication.getInstance().getScreenWidth(), bestHeightTempHeight);
-      mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
-      mViewHolder.aisleContentBrowser
-          .setAisleDetailSwipeListener(mswipeListner);
-
-      mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-      convertView.setTag(mViewHolder);
-    } else {
-      mViewHolder = (ViewHolder) convertView.getTag();
-    }
-
-    /*
-     * if (mViewHolder.aisleContentBrowser != null)
-     * mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
-     */
-
-    if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
-      mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
-    } else {
-      mViewHolder.vueWindowBookmarkImg
-          .setImageResource(R.drawable.save_dark_small);
-    }
-    if (mShowingList.size() != 0) {
-      mViewHolder.vueWndowCommentImg.setImageResource(R.drawable.comment);
-    } else {
-      mViewHolder.vueWndowCommentImg.setImageResource(R.drawable.comment_light);
-    }
-    if (getItem(mCurrentAislePosition).getImageList().get(
-        mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-      mViewHolder.likeImg.setImageResource(R.drawable.heart);
-    } else {
-      mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
-    }
-
-    mViewHolder.commentCount.setText((mShowingList.size() + " Comments"));
-    mViewHolder.bookMarkCount.setText("" + mBookmarksCount);
-    mViewHolder.likeCount.setText("" + mLikes);
-    mViewHolder.imgContentlay.setVisibility(View.VISIBLE);
-    mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
-    mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
-    mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
-    // mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
-    if (position == 0) {
-      mViewHolder.commentContentlay.setVisibility(View.GONE);
-      mViewHolder.vueCommentheader.setVisibility(View.GONE);
-      mViewHolder.addCommentlay.setVisibility(View.GONE);
-      mViewHolder.separator.setVisibility(View.GONE);
-      mViewHolder.edtCommentLay.setVisibility(View.GONE);
-      // mViewHolder.mWindowContent = mWindowContentTemp;
-      try {
-        if (getItem(mCurrentAislePosition).getAisleContext().mDescription != null
-            && getItem(mCurrentAislePosition).getAisleContext().mDescription
-                .length() > 1) {
-          mViewHolder.descriptionlay.setVisibility(View.VISIBLE);
-          mViewHolder.aisleDescription.setText(getItem(mCurrentAislePosition)
-              .getAisleContext().mDescription);
-        } else {
-
-          mViewHolder.descriptionlay.setVisibility(View.GONE);
-        }
-
-        mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName;
-        if (mVueusername != null && mVueusername.equals("Anonymous")) {
-          if (VueApplication.getInstance().getmUserInitials() != null) {
-            mVueusername = VueApplication.getInstance().getmUserInitials();
-          }
-        }
-        int scrollIndex = VueApplication.getInstance().getmAisleImgCurrentPos();
-        // mWindowContentTemp = mViewHolder.mWindowContent;
-        mViewHolder.tag = TAG;
-        if (mImageRefresh) {
-          mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-          mImageRefresh = false;
-          mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
-              position, new DetailImageClickListener(),
-              getItem(mCurrentAislePosition), mSetPosition);
-          mSetPosition = false;
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      // gone comment layoutgone
-    } else if (position == 1) {
-      if (mIsLikeImageClicked) {
-        mIsLikeImageClicked = false;
-        Animation rotate = AnimationUtils
-            .loadAnimation(mContext, R.anim.bounce);
-        mViewHolder.likeImg.startAnimation(rotate);
-
-      }
-      if (mIsBookImageClciked) {
-        mIsBookImageClciked = false;
-        Animation rotate = AnimationUtils
-            .loadAnimation(mContext, R.anim.bounce);
-        mViewHolder.vueWindowBookmarkImg.startAnimation(rotate);
-      }
-
-      mViewHolder.imgContentlay.setVisibility(View.GONE);
-      mViewHolder.commentContentlay.setVisibility(View.GONE);
-      mViewHolder.addCommentlay.setVisibility(View.GONE);
-      mViewHolder.edtCommentLay.setVisibility(View.GONE);
-      // image content gone
-    } else if (position == mListCount - 1) {
-      mViewHolder.separator.setVisibility(View.GONE);
-      mViewHolder.imgContentlay.setVisibility(View.GONE);
-      mViewHolder.vueCommentheader.setVisibility(View.GONE);
-      mViewHolder.commentContentlay.setVisibility(View.GONE);
-      // mViewHolder.edtCommentLay.setVisibility(View.GONE);
-      if (mViewHolder.enterCommentrellay.getVisibility() == View.VISIBLE) {
-        mViewHolder.commentSend.setVisibility(View.GONE);
-      }
-      mViewHolder.enterCommentrellay.setOnClickListener(new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-          mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
-          mViewHolder.enterCommentrellay.setVisibility(View.GONE);
-          mswipeListner.onAddCommentClick(mViewHolder.enterCommentrellay,
-              mViewHolder.edtComment, mViewHolder.commentSend,
-              mViewHolder.edtCommentLay);
-
-        }
-      });
-    }
-
-    else {
-      // first two views are image and comment layout. so use position - 2
-      // to display all the comments from start
-      if (position - 1 < mShowingList.size()) {
-        mViewHolder.userComment.setText(mShowingList.get(position - 2));
-      }
-      mViewHolder.imgContentlay.setVisibility(View.GONE);
-      mViewHolder.vueCommentheader.setVisibility(View.GONE);
-      mViewHolder.addCommentlay.setVisibility(View.GONE);
-      mViewHolder.separator.setVisibility(View.VISIBLE);
-      if (position == mListCount - 2) {
-        mViewHolder.separator.setVisibility(View.GONE);
-      }
-
-    }
-    mViewHolder.exapandHolder.setOnClickListener(new OnClickListener() {
-
-      public void onClick(View v) {
-        // mswipeListner.onResetAdapter();
-        int showFixedRowCount = 3;
-        if (mListCount == (showFixedRowCount + 2)) {
-          mListCount = mShowingList.size() + showFixedRowCount;
-        } else {
-          mListCount = showFixedRowCount + 2;
-        }
-
-        notifyDataSetChanged();
-      }
-    });
-    mViewHolder.bookmarklay.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View v) {
-        mIsBookImageClciked = true;
-        boolean bookmarkStatus = false;
-        if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
-          FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
-          if (mBookmarksCount > 0) {
-            mBookmarksCount--;
-            getItem(mCurrentAislePosition).setmAisleBookmarksCount(
-                mBookmarksCount);
-          }
-          // getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount
-          // = mBookmarksCount;
-
-          getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
-              bookmarkStatus);
-          handleBookmark(bookmarkStatus, getItem(mCurrentAislePosition)
-              .getAisleId());
-        } else {
-          bookmarkStatus = true;
-          FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
-          mBookmarksCount++;
-          getItem(mCurrentAislePosition).setmAisleBookmarksCount(
-              mBookmarksCount);
-          // getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount
-          // = mBookmarksCount;
-          getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
-              bookmarkStatus);
-          handleBookmark(bookmarkStatus, getItem(mCurrentAislePosition)
-              .getAisleId());
-        }
-        notifyDataSetChanged();
-      }
-    });
-    mViewHolder.likelay.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View v) {
-        toggleRatingImage();
-      }
-    });
-    return convertView;
-  }
-
-  private void notifyAdapter() {
-    this.notifyDataSetChanged();
-  }
-
-  public void share(final Context context, Activity activity) {
-    mShare = new ShareDialog(context, activity);
-    FileCache ObjFileCache = new FileCache(context);
-    ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
-    if (getItem(mCurrentAislePosition).getImageList() != null
-        && getItem(mCurrentAislePosition).getImageList().size() > 0) {
-      for (int i = 0; i < getItem(mCurrentAislePosition).getImageList().size(); i++) {
-        clsShare obj = new clsShare(
-            getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl,
-            ObjFileCache
-                .getFile(
-                    getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl)
-                .getPath());
-        imageUrlList.add(obj);
-      }
-      mShare.share(imageUrlList, getItem(mCurrentAislePosition)
-          .getAisleContext().mOccasion, (getItem(mCurrentAislePosition)
-          .getAisleContext().mFirstName + " " + getItem(mCurrentAislePosition)
-          .getAisleContext().mLastName), mCurrentDispImageIndex);
-    }
-    if (getItem(mCurrentAislePosition).getImageList() != null
-        && getItem(mCurrentAislePosition).getImageList().size() > 0) {
-      FileCache ObjFileCache1 = new FileCache(context);
-      for (int i = 0; i < getItem(mCurrentAislePosition).getImageList().size(); i++) {
-        final File f = ObjFileCache1.getFile(getItem(mCurrentAislePosition)
-            .getImageList().get(i).mCustomImageUrl);
-        if (!f.exists()) {
-          @SuppressWarnings("rawtypes")
-          Response.Listener listener = new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap bmp) {
-              Utils.saveBitmap(bmp, f);
-            }
-          };
-          Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError arg0) {
-            }
-          };
-          if (getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl != null) {
-            @SuppressWarnings("unchecked")
-            ImageRequest imagerequestObj = new ImageRequest(getItem(
-                mCurrentAislePosition).getImageList().get(i).mCustomImageUrl,
-                listener, 0, 0, null, errorListener);
-            VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * 
-   * 
-   * To handle the click and long press event on the imageview in the aisle
-   * content and to allow only one like and one dislike allows
-   */
-  private class DetailImageClickListener implements DetailClickListener {
-    @Override
-    public void onImageClicked() {
-      onHandleLikeEvent();
-    }
-
-    @Override
-    public void onImageLongPress() {
-      onHandleDisLikeEvent();
-    }
-
-    @Override
-    public void onImageSwipe(int position) {
-      // int likeCount = 0;
-      if (position >= 0
-          && position < VueApplication.getInstance().getClickedWindowCount()) {
-        mCurrentDispImageIndex = position;
-        @SuppressWarnings("unchecked")
-        ArrayList<String> tempCommentList = (ArrayList<String>) mCommentsMapList
-            .get(position);
-        if (tempCommentList != null) {
-          mShowingList = tempCommentList;
-        }
-        mLikes = getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount;
-
-        notifyDataSetChanged();
-        mswipeListner.setFindAtText(getItem(mCurrentAislePosition)
-            .getImageList().get(position).mImageUrl);
-      } else {
-        return;
-      }
-    }
-
-    @Override
-    public void onImageDoubleTap() {
-      Toast.makeText(
-          mContext,
-          "imgAreaHeight: " + (mTopBottomMargin + mBestHeight) + " AisleID:  "
-              + getItem(mCurrentAislePosition).getAisleId(), 1500).show();
-      Toast.makeText(
-          mContext,
-          "original image height: "
-              + getItem(mCurrentAislePosition).getImageList().get(
-                  mCurrentDispImageIndex).mAvailableHeight + " AisleID:  "
-              + getItem(mCurrentAislePosition).getAisleId(), 1500).show();
-
-      Log.i(
-          "mCustomUrlthispos",
-          "mCustomUrlthispos2:"
-              + getItem(mCurrentAislePosition).getImageList().get(
-                  mCurrentDispImageIndex).mCustomImageUrl);
-      Log.i(
-          "mCustomUrlthispos",
-          "mCustomUrlthispos3:"
-              + getItem(mCurrentAislePosition).getImageList().get(
-                  mCurrentDispImageIndex).mImageUrl);
-    }
-
-    @Override
-    public void onSetBrowserArea(String area) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onRefreshAdaptaers() {
-      notifyAdapter();
-
-    }
-
-  }
-
-  private void toggleRatingImage() {
-    if (checkLimitForLoginDialog()) {
-      if (mLoginWarningMessage == null) {
-        mLoginWarningMessage = new LoginWarningMessage(mContext);
-      }
-      mLoginWarningMessage
-          .showLoginWarningMessageDialog(
-              "You need to Login with the app to Like.", true, false, 0, null,
-              null);
-    } else {
-      if (mCurrentDispImageIndex >= 0
-          && mCurrentDispImageIndex < getItem(mCurrentAislePosition)
-              .getImageList().size()) {
-        if (getItem(mCurrentAislePosition).getImageList().get(
-            mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-          getItem(mCurrentAislePosition).getImageList().get(
-              mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
-          getItem(mCurrentAislePosition).getImageList().get(
-              mCurrentDispImageIndex).mLikesCount = getItem(
-              mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mLikesCount - 1;
-          sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, false);
-
-        } else {
-          getItem(mCurrentAislePosition).getImageList().get(
-              mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
-          getItem(mCurrentAislePosition).getImageList().get(
-              mCurrentDispImageIndex).mLikesCount = getItem(
-              mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mLikesCount + 1;
-          sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, true);
-
-        }
-        mLikes = getItem(mCurrentAislePosition).getImageList().get(
-            mCurrentDispImageIndex).mLikesCount;
-      }
-      mIsLikeImageClicked = true;
-      notifyAdapter();
-    }
-  }
-
-  public void changeLikesCountFromCopmareScreen(int position, String eventType) {
-
-    if (checkLimitForLoginDialog()) {
-      if (mLoginWarningMessage == null) {
-        mLoginWarningMessage = new LoginWarningMessage(mContext);
-      }
-      mLoginWarningMessage
-          .showLoginWarningMessageDialog(
-              "You need to Login with the app to Like.", true, false, 0, null,
-              null);
-    } else {
-      if (position >= 0
-          && position < getItem(mCurrentAislePosition).getImageList().size()) {
-        if (eventType.equalsIgnoreCase(AisleDetailsViewActivity.CLICK_EVENT)) {
-          // increase the like count
-          onChangeLikesCount(position);
-        } else {
-          // decrease the like count
-          onChangeDislikesCount(position);
-        }
-      }
-
-    }
-
-  }
-
-  private void onHandleLikeEvent() {
-    if (checkLimitForLoginDialog()) {
-      if (mLoginWarningMessage == null) {
-        mLoginWarningMessage = new LoginWarningMessage(mContext);
-      }
-      mLoginWarningMessage
-          .showLoginWarningMessageDialog(
-              "You need to Login with the app to Like.", true, false, 0, null,
-              null);
-    } else {
-      // increase the likes count
-      if (mCurrentDispImageIndex >= 0
-          && mCurrentDispImageIndex < getItem(mCurrentAislePosition)
-              .getImageList().size()) {
-        onChangeLikesCount(mCurrentDispImageIndex);
-        mIsLikeImageClicked = true;
-      }
-    }
-  }
-
-  private void onHandleDisLikeEvent() {
-    if (checkLimitForLoginDialog()) {
-      if (mLoginWarningMessage == null) {
-        mLoginWarningMessage = new LoginWarningMessage(mContext);
-      }
-      mLoginWarningMessage
-          .showLoginWarningMessageDialog(
-              "You need to Login with the app to Like.", true, false, 0, null,
-              null);
-    } else {
-      // decrease the likes count
-      if (mCurrentDispImageIndex >= 0
-          && mCurrentDispImageIndex < getItem(mCurrentAislePosition)
-              .getImageList().size()) {
-        mIsLikeImageClicked = true;
-        onChangeDislikesCount(mCurrentDispImageIndex);
-      }
-    }
-  }
-
-  public void setAisleBrowserObjectsNull() {
-
-    if (mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
-      for (int i = 0; i < mCommentsMapList.size(); i++) {
-        mCommentsMapList.remove(i);
-      }
-      mCommentsMapList = null;
-      mViewHolder.aisleContentBrowser.setReferedObjectsNull();
-      mViewLoader.clearBrowser(getItem(mCurrentAislePosition).getImageList());
-      ScaledImageViewFactory mViewFactory = ScaledImageViewFactory
-          .getInstance(mContext);
-      for (int i = 0; i < mViewHolder.aisleContentBrowser.getChildCount(); i++) {
-        mViewFactory
-            .returnUsedImageView((ScaleImageView) mViewHolder.aisleContentBrowser
-                .getChildAt(i));
-        Log.i("bitmap reclying", "bitmap reclying  in adapter");
-      }
-      if (mViewHolder.aisleContentBrowser != null) {
-        ContentAdapterFactory mContentAdapterFactory = ContentAdapterFactory
-            .getInstance(mContext);
-        mContentAdapterFactory
-            .returnUsedAdapter(mViewHolder.aisleContentBrowser
-                .getCustomAdapter());
-        mViewHolder.aisleContentBrowser.setCustomAdapter(null);
-        mViewHolder.aisleContentBrowser.removeAllViews();
-        mViewHolder.aisleContentBrowser = null;
-      }
-
-      // mViewHolder.aisleContentBrowser.removeAllViews();
-    }
-  }
-
-  public void addAisleToContentWindow(Bitmap addedBitmap, String imagePath,
-      String imageUrl, int imageWidth, int imageHeight, String title) {
-    AisleImageDetails imgDetails = new AisleImageDetails();
-    imgDetails.mAvailableHeight = imageHeight;
-    imgDetails.mAvailableWidth = imageWidth;
-    if (imgDetails.mAvailableHeight > VueApplication.getInstance()
-        .getVueDetailsCardHeight()) {
-      imgDetails.mAvailableHeight = VueApplication.getInstance()
-          .getVueDetailsCardHeight();
-    }
-    if (imgDetails.mAvailableHeight > mBestHeight) {
-      mBestHeight = imgDetails.mAvailableHeight;
-    }
-    imgDetails.mTitle = title;
-    imgDetails.mImageUrl = imageUrl;
-    imgDetails.mDetalsUrl = "";
-    imgDetails.mId = "";
-    imgDetails.mStore = "";
-    getItem(mCurrentAislePosition).getImageList().add(mCurrentDispImageIndex,
-        imgDetails);
-    getItem(mCurrentAislePosition).addAisleContent(
-        getItem(mCurrentAislePosition).getAisleContext(),
-        getItem(mCurrentAislePosition).getImageList());
-    FileCache fileCache = new FileCache(mContext);
-    File f = fileCache.getFile(getItem(mCurrentAislePosition).getImageList()
-        .get(mCurrentDispImageIndex).mCustomImageUrl);
-    File sourceFile = new File(imagePath);
-    Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-        getItem(mCurrentAislePosition).getBestHeightForWindow(),
-        VueApplication.getInstance().getVueDetailsCardWidth() / 2,
-        Utils.DETAILS_SCREEN);
-    Utils.saveBitmap(bmp, f);
-    getItem(mCurrentAislePosition).mIsDataChanged = true;
-    mImageRefresh = true;
-    if (mViewHolder != null) {
-      mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-      notifyAdapter();
-    } else {
-      mswipeListner.onResetAdapter();
-    }
-  }
-
-  public ArrayList<AisleImageDetails> getImageList() {
-    // ArrayList<String> imageList = new ArrayList<String>();
-    /*
-     * for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
-     * .size(); i++) { imageList
-     * .add(getItem(mCurrentAislePosition).getImageList
-     * ().get(i).mCustomImageUrl); }
-     */
-    return getItem(mCurrentAislePosition).getImageList();
-  }
+
+	private Context mContext;
+	public static final String TAG = "AisleDetailsViewAdapter";
+	public static final int IMG_LIKE_STATUS = 1;
+	public static final int IMG_NONE_STATUS = 0;
+	private static final String CHANGE_BOOKMARK = "BOOKMARK";
+	public static final String CHANGE_COMMENT = "COMMENT";
+	private static final String CHANGE_LIKES = "LIKES";
+	private static final boolean DEBUG = false;
+	private AisleDetailsViewListLoader mViewLoader;
+	private AisleDetailSwipeListener mswipeListner;
+	VueUser storedVueUser = null;
+	// we need to customize the layout depending on screen height & width which
+	// we will get on the fly
+	private int mListCount;
+	public int mLikes;
+	private int mBookmarksCount;
+	public int mCurrentDispImageIndex;
+	private boolean mIsLikeImageClicked = false;
+	private boolean mIsBookImageClciked = false;
+	public String mVueusername;
+	ShareDialog mShare;
+	public int mCurrentAislePosition;
+	public ArrayList<String> mImageDetailsArr = null;
+	@SuppressLint("UseSparseArrays")
+	Map<Integer, Object> mCommentsMapList = new HashMap<Integer, Object>();
+	ArrayList<String> mShowingList;
+	private int mBestHeight;
+	private int mTopBottomMargin = 24;
+	ViewHolder mViewHolder;
+	boolean mImageRefresh = true;
+	private boolean mSetPosition;
+	private static final int mWaitTime = 1000;
+	VueTrendingAislesDataModel mVueTrendingAislesDataModel;
+	public ArrayList<String> mCustomUrls = new ArrayList<String>();
+	private LoginWarningMessage mLoginWarningMessage = null;
+
+	@SuppressWarnings("unchecked")
+	public AisleDetailsViewAdapter(Context c,
+			AisleDetailSwipeListener swipeListner, int listCount,
+			ArrayList<AisleWindowContent> content) {
+		/* super(c, content); */
+		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
+				.getInstance(VueApplication.getInstance());
+
+		mSetPosition = true;
+		mContext = c;
+
+		mTopBottomMargin = VueApplication.getInstance().getPixel(
+				mTopBottomMargin);
+		mViewLoader = new AisleDetailsViewListLoader(mContext);
+		mswipeListner = swipeListner;
+		mListCount = listCount;
+		mShowingList = new ArrayList<String>();
+		if (DEBUG)
+			Log.e(TAG, "About to initiate request for trending aisles");
+
+		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
+			if (getItem(i).getAisleId().equalsIgnoreCase(
+					VueApplication.getInstance().getClickedWindowID())) {
+				mCurrentAislePosition = i;
+				break;
+			}
+		}
+		setImageRating();
+		Log.i("bestHeight",
+				"bestHeight in details adapter: "
+						+ getItem(mCurrentAislePosition)
+								.getBestHeightForWindow());
+		if (getItem(mCurrentAislePosition) != null) {
+			String occasion = getItem(mCurrentAislePosition).getAisleContext().mOccasion;
+			if (occasion != null) {
+				occasion = occasion.substring(0, 1).toUpperCase()
+						+ occasion.substring(1).toLowerCase();
+				String lookingFor = getItem(mCurrentAislePosition)
+						.getAisleContext().mLookingForItem;
+				lookingFor = lookingFor.substring(0, 1).toUpperCase()
+						+ lookingFor.substring(1).toLowerCase();
+				mswipeListner.setOccasion(occasion + " " + lookingFor);
+			}
+
+			mBookmarksCount = getItem(mCurrentAislePosition)
+					.getmAisleBookmarksCount();
+			getItem(mCurrentAislePosition).setmAisleBookmarksCount(
+					mBookmarksCount);
+			VueApplication.getInstance().setClickedWindowCount(
+					getItem(mCurrentAislePosition).getImageList().size());
+
+			for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
+					.size(); i++) {
+				mCustomUrls.add(getItem(mCurrentAislePosition).getImageList()
+						.get(i).mCustomImageUrl);
+				Log.i("clone",
+						"mCustomImageUrl url: "
+								+ getItem(mCurrentAislePosition).getImageList()
+										.get(i).mCustomImageUrl);
+				if (getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight > mBestHeight) {
+					mBestHeight = getItem(mCurrentAislePosition).getImageList()
+							.get(i).mAvailableHeight;
+				}
+
+				mCommentsMapList.put(i, getItem(mCurrentAislePosition)
+						.getImageList().get(i).mCommentsList);
+				if (getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList == null) {
+					// TODO: for temp comments display need to replace this
+					getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList = new ArrayList<String>();
+					if (i % 2 == 0) {
+						for (int k = 0; k < 6; k++) {
+							getItem(mCurrentAislePosition).getImageList()
+									.get(i).mCommentsList
+									.add("Love Love vue the dress! Simple and fabulous.");
+						}
+					} else {
+						for (int k = 0; k < 10; k++) {
+							getItem(mCurrentAislePosition).getImageList()
+									.get(i).mCommentsList
+									.add("vue vue vue  sample test comments");
+						}
+					}
+					mCommentsMapList.put(i, getItem(mCurrentAislePosition)
+							.getImageList().get(i).mCommentsList);
+				}
+			}
+			mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
+			Log.i("clone", "clone: " + mImageDetailsArr);
+			if (mImageDetailsArr != null) {
+				for (int i = 0; i < mImageDetailsArr.size(); i++) {
+					Log.i("clone", "clone1: " + mImageDetailsArr.get(i));
+				}
+			}
+			mShowingList = getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList;
+			mLikes = getItem(mCurrentAislePosition).getImageList().get(0).mLikesCount;
+			boolean isBookmarked = VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance())
+					.getNetworkHandler()
+					.isAisleBookmarked(
+							getItem(mCurrentAislePosition).getAisleId());
+
+			if (isBookmarked) {
+				getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
+						isBookmarked);
+			}
+			mBookmarksCount = getItem(mCurrentAislePosition)
+					.getmAisleBookmarksCount();
+			Log.i("bookmarked aisle", "bookmarked count in window2: "
+					+ mBookmarksCount);
+			new Handler().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					Map<String, String> articleParams = new HashMap<String, String>();
+					articleParams
+							.put("Category", getItem(mCurrentAislePosition)
+									.getAisleContext().mCategory);
+					articleParams
+							.put("Lookingfor", getItem(mCurrentAislePosition)
+									.getAisleContext().mLookingForItem);
+					articleParams
+							.put("Occasion", getItem(mCurrentAislePosition)
+									.getAisleContext().mOccasion);
+					FlurryAgent.logEvent("Visited_Categories", articleParams);
+
+				}
+				// wait time for flurry session starts
+			}, mWaitTime);
+
+		}
+		// mswipeListner.setFindAtText(getItem(mCurrentAislePosition).getImageList().get(0).mImageUrl);
+	}
+
+	@Override
+	public AisleWindowContent getItem(int position) {
+		return mVueTrendingAislesDataModel.getAisleAt(position);
+	}
+
+	static class ViewHolder {
+		AisleContentBrowser aisleContentBrowser;
+		TextView aisleDescription;
+		TextView aisleOwnersName;
+		TextView aisleContext, commentCount, likeCount;
+		TextView bookMarkCount;
+		ImageView profileThumbnail;
+		ImageView vueWindowBookmarkImg;
+		ImageView vueWndowCommentImg;
+		String uniqueContentId;
+		LinearLayout aisleDescriptor;
+		LinearLayout imgContentlay, commentContentlay;
+		LinearLayout vueCommentheader, addCommentlay,descriptionlay;
+		TextView userComment, enterComment;
+		ImageView userPic, commentImg, likeImg;
+		RelativeLayout exapandHolder;
+		EditText edtComment;
+		View separator;
+		RelativeLayout enterCommentrellay;
+		RelativeLayout likelay, bookmarklay;
+		FrameLayout edtCommentLay;
+		ImageView commentSend;
+		String tag;
+	}
+
+	@Override
+	public int getCount() {
+		return mListCount;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+
+		if (convertView == null) {
+			mViewHolder = new ViewHolder();
+			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
+			convertView = layoutInflator.inflate(R.layout.vue_details_adapter,
+					null);
+			mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
+					.findViewById(R.id.showpieceadapter);
+			Log.i("nullbug", "nullbug  mViewHolder.aisleContentBrowser "
+					+ mViewHolder.aisleContentBrowser);
+			mViewHolder.imgContentlay = (LinearLayout) convertView
+					.findViewById(R.id.vueimagcontent);
+			mViewHolder.commentContentlay = (LinearLayout) convertView
+					.findViewById(R.id.vue_user_coment_lay);
+			mViewHolder.vueCommentheader = (LinearLayout) convertView
+					.findViewById(R.id.vue_comment_header);
+			mViewHolder.descriptionlay = (LinearLayout) convertView.findViewById(R.id.descriptionlayout);
+			mViewHolder.aisleDescription = (TextView) convertView
+					.findViewById(R.id.vue_details_descreption);
+			mViewHolder.separator = (View) convertView
+					.findViewById(R.id.separator);
+			mViewHolder.vueWindowBookmarkImg = (ImageView) convertView
+					.findViewById(R.id.vuewndow_bookmark_img);
+			mViewHolder.vueWndowCommentImg = (ImageView) convertView
+					.findViewById(R.id.vuewndow_comment_img);
+			mViewHolder.likelay = (RelativeLayout) convertView
+					.findViewById(R.id.likelay);
+			mViewHolder.bookmarklay = (RelativeLayout) convertView
+					.findViewById(R.id.bookmarklay);
+			mViewHolder.enterCommentrellay = (RelativeLayout) convertView
+					.findViewById(R.id.entercmentrellay);
+
+			mViewHolder.edtComment = (EditText) convertView
+					.findViewById(R.id.edtcomment);
+			mViewHolder.likeImg = (ImageView) convertView
+					.findViewById(R.id.vuewndow_lik_img);
+			mViewHolder.likeCount = (TextView) convertView
+					.findViewById(R.id.vuewndow_lik_count);
+			mViewHolder.addCommentlay = (LinearLayout) convertView
+					.findViewById(R.id.addcommentlay);
+			mViewHolder.exapandHolder = (RelativeLayout) convertView
+					.findViewById(R.id.exapandholder);
+			mViewHolder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
+			mViewHolder.userPic = (ImageView) convertView
+					.findViewById(R.id.vue_user_img);
+			mViewHolder.userComment = (TextView) convertView
+					.findViewById(R.id.vue_user_comment);
+			mViewHolder.commentCount = (TextView) convertView
+					.findViewById(R.id.vuewndow_comment_count);
+			mViewHolder.bookMarkCount = (TextView) convertView
+					.findViewById(R.id.vuewndow_bookmark_count);
+			mViewHolder.commentCount.setTextSize(Utils.SMALL_TEXT_SIZE);
+			mViewHolder.bookMarkCount.setTextSize(Utils.SMALL_TEXT_SIZE);
+			mViewHolder.likeCount.setTextSize(Utils.SMALL_TEXT_SIZE);
+
+			mViewHolder.commentImg = (ImageView) convertView
+					.findViewById(R.id.vuewndow_comment_img);
+			mViewHolder.commentSend = (ImageView) convertView
+					.findViewById(R.id.sendcomment);
+
+			mViewHolder.edtCommentLay = (FrameLayout) convertView
+					.findViewById(R.id.edtcommentlay);
+			mViewHolder.userComment.setTextSize(VueApplication.getInstance()
+					.getmTextSize());
+			mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
+/*			FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+					 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
+					 );
+			mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);*/
+			   int bestHeightTempHeight = VueApplication.getInstance().getPixel(100) ;
+	            
+				FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+						VueApplication.getInstance().getScreenWidth(), bestHeightTempHeight );
+				mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+			mViewHolder.aisleContentBrowser
+					.setAisleDetailSwipeListener(mswipeListner);
+
+			mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+			convertView.setTag(mViewHolder);
+		} else {
+			mViewHolder = (ViewHolder) convertView.getTag();
+		}
+         
+	/*	if (mViewHolder.aisleContentBrowser != null)
+			mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);*/
+
+		if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
+			mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
+		} else {
+			mViewHolder.vueWindowBookmarkImg
+					.setImageResource(R.drawable.save_dark_small);
+		}
+		if (mShowingList.size() != 0) {
+			mViewHolder.vueWndowCommentImg.setImageResource(R.drawable.comment);
+		} else {
+			mViewHolder.vueWndowCommentImg
+					.setImageResource(R.drawable.comment_light);
+		}
+		if (getItem(mCurrentAislePosition).getImageList().get(
+				mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+			mViewHolder.likeImg.setImageResource(R.drawable.heart);
+		} else {
+			mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
+		}
+
+		mViewHolder.commentCount.setText((mShowingList.size() + " Comments"));
+		mViewHolder.bookMarkCount.setText("" + mBookmarksCount);
+		mViewHolder.likeCount.setText("" + mLikes);
+		mViewHolder.imgContentlay.setVisibility(View.VISIBLE);
+		mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
+		mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
+		mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
+		// mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
+		if (position == 0) {
+			mViewHolder.commentContentlay.setVisibility(View.GONE);
+			mViewHolder.vueCommentheader.setVisibility(View.GONE);
+			mViewHolder.addCommentlay.setVisibility(View.GONE);
+			mViewHolder.separator.setVisibility(View.GONE);
+			mViewHolder.edtCommentLay.setVisibility(View.GONE);
+			// mViewHolder.mWindowContent = mWindowContentTemp;
+			try {
+				if(getItem(mCurrentAislePosition).getAisleContext().mDescription != null && getItem(mCurrentAislePosition).getAisleContext().mDescription.length() > 1){
+					mViewHolder.descriptionlay.setVisibility(View.VISIBLE);
+				mViewHolder.aisleDescription.setText(getItem(mCurrentAislePosition).getAisleContext().mDescription);
+				} else {
+					 
+					mViewHolder.descriptionlay.setVisibility(View.GONE);
+				}
+				
+				mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName;
+				if (mVueusername != null && mVueusername.equals("Anonymous")) {
+					if (VueApplication.getInstance().getmUserInitials() != null) {
+						mVueusername = VueApplication.getInstance()
+								.getmUserInitials();
+					}
+				}
+				int scrollIndex = VueApplication.getInstance()
+						.getmAisleImgCurrentPos();
+				// mWindowContentTemp = mViewHolder.mWindowContent;
+				mViewHolder.tag = TAG;
+				if (mImageRefresh) {
+					mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+					mImageRefresh = false;
+					mViewLoader.getAisleContentIntoView(mViewHolder,
+							scrollIndex, position,
+							new DetailImageClickListener(),
+							getItem(mCurrentAislePosition), mSetPosition);
+					mSetPosition = false;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			// gone comment layoutgone
+		} else if (position == 1) {
+			if (mIsLikeImageClicked) {
+				mIsLikeImageClicked = false;
+				Animation rotate = AnimationUtils.loadAnimation(mContext,
+						R.anim.bounce);
+				mViewHolder.likeImg.startAnimation(rotate);
+
+			}
+			if (mIsBookImageClciked) {
+				mIsBookImageClciked = false;
+				Animation rotate = AnimationUtils.loadAnimation(mContext,
+						R.anim.bounce);
+				mViewHolder.vueWindowBookmarkImg.startAnimation(rotate);
+			}
+
+			mViewHolder.imgContentlay.setVisibility(View.GONE);
+			mViewHolder.commentContentlay.setVisibility(View.GONE);
+			mViewHolder.addCommentlay.setVisibility(View.GONE);
+			mViewHolder.edtCommentLay.setVisibility(View.GONE);
+			// image content gone
+		} else if (position == mListCount - 1) {
+			mViewHolder.separator.setVisibility(View.GONE);
+			mViewHolder.imgContentlay.setVisibility(View.GONE);
+			mViewHolder.vueCommentheader.setVisibility(View.GONE);
+			mViewHolder.commentContentlay.setVisibility(View.GONE);
+			// mViewHolder.edtCommentLay.setVisibility(View.GONE);
+			if (mViewHolder.enterCommentrellay.getVisibility() == View.VISIBLE) {
+				mViewHolder.commentSend.setVisibility(View.GONE);
+			}
+			mViewHolder.enterCommentrellay
+					.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							mViewHolder.edtCommentLay
+									.setVisibility(View.VISIBLE);
+							mViewHolder.enterCommentrellay
+									.setVisibility(View.GONE);
+							mswipeListner.onAddCommentClick(
+									mViewHolder.enterCommentrellay,
+									mViewHolder.edtComment,
+									mViewHolder.commentSend,
+									mViewHolder.edtCommentLay);
+
+						}
+					});
+		}
+
+		else {
+			// first two views are image and comment layout. so use position - 2
+			// to display all the comments from start
+			if (position - 1 < mShowingList.size()) {
+				mViewHolder.userComment.setText(mShowingList.get(position - 2));
+			}
+			mViewHolder.imgContentlay.setVisibility(View.GONE);
+			mViewHolder.vueCommentheader.setVisibility(View.GONE);
+			mViewHolder.addCommentlay.setVisibility(View.GONE);
+			mViewHolder.separator.setVisibility(View.VISIBLE);
+			if (position == mListCount - 2) {
+				mViewHolder.separator.setVisibility(View.GONE);
+			}
+
+		}
+		mViewHolder.exapandHolder.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				// mswipeListner.onResetAdapter();
+				int showFixedRowCount = 3;
+				if (mListCount == (showFixedRowCount + 2)) {
+					mListCount = mShowingList.size() + showFixedRowCount;
+				} else {
+					mListCount = showFixedRowCount + 2;
+				}
+
+				notifyDataSetChanged();
+			}
+		});
+		mViewHolder.bookmarklay.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mIsBookImageClciked = true;
+				boolean bookmarkStatus = false;
+				if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
+					FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
+					if (mBookmarksCount > 0) {
+						mBookmarksCount--;
+						getItem(mCurrentAislePosition).setmAisleBookmarksCount(
+								mBookmarksCount);
+					}
+					// getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount
+					// = mBookmarksCount;
+
+					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
+							bookmarkStatus);
+					handleBookmark(bookmarkStatus,
+							getItem(mCurrentAislePosition).getAisleId());
+				} else {
+					bookmarkStatus = true;
+					FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
+					mBookmarksCount++;
+					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
+							mBookmarksCount);
+					// getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount
+					// = mBookmarksCount;
+					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
+							bookmarkStatus);
+					handleBookmark(bookmarkStatus,
+							getItem(mCurrentAislePosition).getAisleId());
+				}
+				notifyDataSetChanged();
+			}
+		});
+		mViewHolder.likelay.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				toggleRatingImage();
+			}
+		});
+		return convertView;
+	}
+
+	private void notifyAdapter() {
+		this.notifyDataSetChanged();
+	}
+
+	public void share(final Context context, Activity activity) {
+		mShare = new ShareDialog(context, activity);
+		FileCache ObjFileCache = new FileCache(context);
+		ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
+		if (getItem(mCurrentAislePosition).getImageList() != null
+				&& getItem(mCurrentAislePosition).getImageList().size() > 0) {
+			for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
+					.size(); i++) {
+				clsShare obj = new clsShare(getItem(mCurrentAislePosition)
+						.getImageList().get(i).mCustomImageUrl, ObjFileCache
+						.getFile(
+								getItem(mCurrentAislePosition).getImageList()
+										.get(i).mCustomImageUrl).getPath());
+				imageUrlList.add(obj);
+			}
+			mShare.share(
+					imageUrlList,
+					getItem(mCurrentAislePosition).getAisleContext().mOccasion,
+					(getItem(mCurrentAislePosition).getAisleContext().mFirstName
+							+ " " + getItem(mCurrentAislePosition)
+							.getAisleContext().mLastName),
+					mCurrentDispImageIndex);
+		}
+		if (getItem(mCurrentAislePosition).getImageList() != null
+				&& getItem(mCurrentAislePosition).getImageList().size() > 0) {
+			FileCache ObjFileCache1 = new FileCache(context);
+			for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
+					.size(); i++) {
+				final File f = ObjFileCache1
+						.getFile(getItem(mCurrentAislePosition).getImageList()
+								.get(i).mCustomImageUrl);
+				if (!f.exists()) {
+					@SuppressWarnings("rawtypes")
+					Response.Listener listener = new Response.Listener<Bitmap>() {
+						@Override
+						public void onResponse(Bitmap bmp) {
+							Utils.saveBitmap(bmp, f);
+						}
+					};
+					Response.ErrorListener errorListener = new Response.ErrorListener() {
+						@Override
+						public void onErrorResponse(VolleyError arg0) {
+						}
+					};
+					if (getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl != null) {
+						@SuppressWarnings("unchecked")
+						ImageRequest imagerequestObj = new ImageRequest(
+								getItem(mCurrentAislePosition).getImageList()
+										.get(i).mCustomImageUrl, listener, 0,
+								0, null, errorListener);
+						VueApplication.getInstance().getRequestQueue()
+								.add(imagerequestObj);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * 
+	 * To handle the click and long press event on the imageview in the aisle
+	 * content and to allow only one like and one dislike allows
+	 */
+	private class DetailImageClickListener implements DetailClickListener {
+		@Override
+		public void onImageClicked() {
+			onHandleLikeEvent();
+		}
+
+		@Override
+		public void onImageLongPress() {
+			onHandleDisLikeEvent();
+		}
+
+		@Override
+		public void onImageSwipe(int position) {
+			// int likeCount = 0;
+			if (position >= 0
+					&& position < VueApplication.getInstance()
+							.getClickedWindowCount()) {
+				mCurrentDispImageIndex = position;
+				@SuppressWarnings("unchecked")
+				ArrayList<String> tempCommentList = (ArrayList<String>) mCommentsMapList
+						.get(position);
+				if (tempCommentList != null) {
+					mShowingList = tempCommentList;
+				}
+				mLikes = getItem(mCurrentAislePosition).getImageList().get(
+						position).mLikesCount;
+
+				notifyDataSetChanged();
+				mswipeListner.setFindAtText(getItem(mCurrentAislePosition)
+						.getImageList().get(position).mImageUrl);
+			} else {
+				return;
+			}
+		}
+
+		@Override
+		public void onImageDoubleTap() {
+			Toast.makeText(
+					mContext,
+					"imgAreaHeight: " + (mTopBottomMargin + mBestHeight)
+							+ " AisleID:  "
+							+ getItem(mCurrentAislePosition).getAisleId(), 1500)
+					.show();
+			Toast.makeText(
+					mContext,
+					"original image height: "
+							+ getItem(mCurrentAislePosition).getImageList()
+									.get(mCurrentDispImageIndex).mAvailableHeight
+							+ " AisleID:  "
+							+ getItem(mCurrentAislePosition).getAisleId(), 1500)
+					.show();
+
+			Log.i("mCustomUrlthispos",
+					"mCustomUrlthispos2:"
+							+ getItem(mCurrentAislePosition).getImageList()
+									.get(mCurrentDispImageIndex).mCustomImageUrl);
+			Log.i("mCustomUrlthispos",
+					"mCustomUrlthispos3:"
+							+ getItem(mCurrentAislePosition).getImageList()
+									.get(mCurrentDispImageIndex).mImageUrl);
+		}
+
+		@Override
+		public void onSetBrowserArea(String area) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onRefreshAdaptaers() {
+			 notifyAdapter();
+			
+		}
+
+	}
+
+	private void toggleRatingImage() {
+		if (checkLimitForLoginDialog()) {
+			if (mLoginWarningMessage == null) {
+				mLoginWarningMessage = new LoginWarningMessage(mContext);
+			}
+			mLoginWarningMessage.showLoginWarningMessageDialog(
+					"You need to Login with the app to Like.", true, false, 0,
+					null, null);
+		} else {
+			if (mCurrentDispImageIndex >= 0
+					&& mCurrentDispImageIndex < getItem(mCurrentAislePosition)
+							.getImageList().size()) {
+				if (getItem(mCurrentAislePosition).getImageList().get(
+						mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+					getItem(mCurrentAislePosition).getImageList().get(
+							mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
+					getItem(mCurrentAislePosition).getImageList().get(
+							mCurrentDispImageIndex).mLikesCount = getItem(
+							mCurrentAislePosition).getImageList().get(
+							mCurrentDispImageIndex).mLikesCount - 1;
+					sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, false);
+
+				} else {
+					getItem(mCurrentAislePosition).getImageList().get(
+							mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
+					getItem(mCurrentAislePosition).getImageList().get(
+							mCurrentDispImageIndex).mLikesCount = getItem(
+							mCurrentAislePosition).getImageList().get(
+							mCurrentDispImageIndex).mLikesCount + 1;
+					sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, true);
+					
+				}
+				mLikes = getItem(mCurrentAislePosition).getImageList().get(
+						mCurrentDispImageIndex).mLikesCount;
+			}
+			mIsLikeImageClicked = true;
+			notifyAdapter();
+		}
+	}
+
+	public void changeLikesCountFromCopmareScreen(int position, String eventType) {
+
+		if (checkLimitForLoginDialog()) {
+			if (mLoginWarningMessage == null) {
+				mLoginWarningMessage = new LoginWarningMessage(mContext);
+			}
+			mLoginWarningMessage.showLoginWarningMessageDialog(
+					"You need to Login with the app to Like.", true, false, 0,
+					null, null);
+		} else {
+			if (position >= 0
+					&& position < getItem(mCurrentAislePosition).getImageList()
+							.size()) {
+				if (eventType
+						.equalsIgnoreCase(AisleDetailsViewActivity.CLICK_EVENT)) {
+					// increase the like count
+					onChangeLikesCount(position);
+				} else {
+					// decrease the like count
+					onChangeDislikesCount(position);
+				}
+			}
+
+		}
+
+	}
+
+	private void onHandleLikeEvent() {
+		if (checkLimitForLoginDialog()) {
+			if (mLoginWarningMessage == null) {
+				mLoginWarningMessage = new LoginWarningMessage(mContext);
+			}
+			mLoginWarningMessage.showLoginWarningMessageDialog(
+					"You need to Login with the app to Like.", true, false, 0,
+					null, null);
+		} else {
+			// increase the likes count
+			if (mCurrentDispImageIndex >= 0
+					&& mCurrentDispImageIndex < getItem(mCurrentAislePosition)
+							.getImageList().size()) {
+				onChangeLikesCount(mCurrentDispImageIndex);
+				mIsLikeImageClicked = true;
+			}
+		}
+	}
+
+	private void onHandleDisLikeEvent() {
+		if (checkLimitForLoginDialog()) {
+			if (mLoginWarningMessage == null) {
+				mLoginWarningMessage = new LoginWarningMessage(mContext);
+			}
+			mLoginWarningMessage.showLoginWarningMessageDialog(
+					"You need to Login with the app to Like.", true, false, 0,
+					null, null);
+		} else {
+			// decrease the likes count
+			if (mCurrentDispImageIndex >= 0
+					&& mCurrentDispImageIndex < getItem(mCurrentAislePosition)
+							.getImageList().size()) {
+				mIsLikeImageClicked = true;
+				onChangeDislikesCount(mCurrentDispImageIndex);
+			}
+		}
+	}
+
+	public void setAisleBrowserObjectsNull() {
+
+		if (mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
+			for (int i = 0; i < mCommentsMapList.size(); i++) {
+				mCommentsMapList.remove(i);
+			}
+			mCommentsMapList = null;
+			mViewHolder.aisleContentBrowser.setReferedObjectsNull();
+			mViewLoader.clearBrowser(getItem(mCurrentAislePosition)
+					.getImageList());
+			ScaledImageViewFactory mViewFactory = ScaledImageViewFactory
+					.getInstance(mContext);
+			for (int i = 0; i < mViewHolder.aisleContentBrowser.getChildCount(); i++) {
+				mViewFactory
+						.returnUsedImageView((ScaleImageView) mViewHolder.aisleContentBrowser
+								.getChildAt(i));
+				Log.i("bitmap reclying", "bitmap reclying  in adapter");
+			}
+			if (mViewHolder.aisleContentBrowser != null) {
+				ContentAdapterFactory mContentAdapterFactory = ContentAdapterFactory
+						.getInstance(mContext);
+				mContentAdapterFactory
+						.returnUsedAdapter(mViewHolder.aisleContentBrowser
+								.getCustomAdapter());
+				mViewHolder.aisleContentBrowser.setCustomAdapter(null);
+				mViewHolder.aisleContentBrowser.removeAllViews();
+				mViewHolder.aisleContentBrowser = null;
+			}
+
+			// mViewHolder.aisleContentBrowser.removeAllViews();
+		}
+	}
+
+	public void addAisleToContentWindow(Bitmap addedBitmap, String imagePath,
+			String imageUrl, int imageWidth, int imageHeight, String title) {
+		AisleImageDetails imgDetails = new AisleImageDetails();
+		imgDetails.mAvailableHeight = imageHeight;
+		imgDetails.mAvailableWidth = imageWidth;
+		Log.i("new image", "new image height: "+imgDetails.mAvailableHeight);
+		if (imgDetails.mAvailableHeight > getItem(mCurrentAislePosition).getBestLargetHeightForWindow()) {
+			mBestHeight = imgDetails.mAvailableHeight;
+			getItem(mCurrentAislePosition).setBestLargestHeightForWindow(imgDetails.mAvailableHeight,imgDetails.mAvailableWidth );
+			Log.i("new image", "new image height: changed");
+		}
+		if(imgDetails.mAvailableHeight < getItem(mCurrentAislePosition).getBestHeightForWindow()){
+			getItem(mCurrentAislePosition).setBestHeightForWindow(imgDetails.mAvailableHeight);
+			Log.i("bestsamallest", "bestsamallest height1: "+imgDetails.mAvailableHeight);
+		} else {
+			Log.i("bestsamallest", "bestsamallest height1 else: window samallest height has not changed " );
+		}
+		imgDetails.mTitle = title;
+		imgDetails.mImageUrl = imageUrl;
+		imgDetails.mDetalsUrl = "";
+		imgDetails.mId = "";
+		imgDetails.mStore = "";
+		getItem(mCurrentAislePosition).getImageList().add(
+				mCurrentDispImageIndex, imgDetails);
+		getItem(mCurrentAislePosition).addAisleContent(
+				getItem(mCurrentAislePosition).getAisleContext(),
+				getItem(mCurrentAislePosition).getImageList());
+		FileCache fileCache = new FileCache(mContext);
+		File f = fileCache.getFile(getItem(mCurrentAislePosition)
+				.getImageList().get(mCurrentDispImageIndex).mCustomImageUrl);
+		File sourceFile = new File(imagePath);
+		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
+				getItem(mCurrentAislePosition).getBestHeightForWindow(),
+				VueApplication.getInstance().getVueDetailsCardWidth() / 2,
+				Utils.DETAILS_SCREEN);
+		Utils.saveBitmap(bmp, f);
+		getItem(mCurrentAislePosition).mIsDataChanged = true;
+		mImageRefresh = true;
+		if (mViewHolder != null) {
+			mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+			notifyAdapter();
+		} else {
+			mswipeListner.onResetAdapter();
+		}
+		
+	}
+
+	public ArrayList<AisleImageDetails> getImageList() {
+		// ArrayList<String> imageList = new ArrayList<String>();
+		/*
+		 * for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
+		 * .size(); i++) { imageList
+		 * .add(getItem(mCurrentAislePosition).getImageList
+		 * ().get(i).mCustomImageUrl); }
+		 */
+		return getItem(mCurrentAislePosition).getImageList();
+	}
 
   int likeCount = 0;
   ImageRating imgRating;

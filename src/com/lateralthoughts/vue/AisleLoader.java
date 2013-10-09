@@ -185,12 +185,18 @@ public class AisleLoader {
 			/*Bitmap bitmap = mBitmapLoaderUtils
 					.getCachedBitmap(itemDetails.mCustomImageUrl);*/
 			int bestHeight = windowContent.getBestHeightForWindow();
+			LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
+					VueApplication.getInstance().getScreenWidth() / 2,
+					bestHeight);
+	 
+			contentBrowser.setLayoutParams(mShowpieceParams2);
+			Log.i("bestsamallest", "bestsamallest height: "+bestHeight);
 			if (bitmap != null) {
-				LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
+			/*	LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
 						VueApplication.getInstance().getScreenWidth() / 2,
 						bitmap.getHeight());
 		 
-				contentBrowser.setLayoutParams(mShowpieceParams2);
+				contentBrowser.setLayoutParams(mShowpieceParams2);*/
 
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
@@ -248,8 +254,10 @@ public class AisleLoader {
 			// we want to get the bitmap and also add it into the memory cache
 			Log.e("Profiling", "Profiling New doInBackground()");
 			boolean cacheBitmap = false;
+			Log.i("bestsamallest", "bestsama height*******: "+mBestHeight);
 			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheBitmap,
 					mBestHeight, VueApplication.getInstance().getScreenWidth()/2,Utils.TRENDING_SCREEN);
+			Log.i("bestsamallest", "bestsama height BItmap*******: "+bmp.getHeight());
 			return bmp;
 		}
 
