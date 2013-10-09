@@ -30,6 +30,8 @@ public class VueContentProvider extends ContentProvider{
   private static final int COMMENTS_ROW_MATCH = 12;
   private static final int RECENTLY_VIEW_AISLES_MATCH = 13;
   private static final int RECENTLY_VIEW_SINGLE_AISLE_MATCH = 14;
+  private static final int RATED_AISLES_MATCH = 15;
+  private static final int RATED_SINGLE_AISLE_MATCH = 16;
   private DbHelper dbHelper;
   private static final UriMatcher URIMATCHER;
 
@@ -64,6 +66,10 @@ public class VueContentProvider extends ContentProvider{
         RECENTLY_VIEW_AISLES_MATCH);
     URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.RECENTLY_VIEWED_AISLES
         + "/#", RECENTLY_VIEW_SINGLE_AISLE_MATCH);
+    URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.RATED_IMAGES, 
+        RATED_AISLES_MATCH);
+    URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.RATED_IMAGES
+        + "/#", RATED_AISLES_MATCH);
     
   }
 
@@ -142,6 +148,16 @@ public class VueContentProvider extends ContentProvider{
             VueConstants.ID + "=" + id + (!TextUtils.isEmpty(selection) ?
                 " AND (" + selection + ')' : ""),selectionArgs);
         break;
+      case RATED_AISLES_MATCH:
+        rowsDeleted = aislesDB.delete(VueConstants.RATED_IMAGES, selection,
+            selectionArgs);
+        break ;
+      case RATED_SINGLE_AISLE_MATCH:
+        id = uri.getLastPathSegment();
+        rowsDeleted = aislesDB.delete(VueConstants.RATED_IMAGES,
+            VueConstants.ID + "=" + id + (!TextUtils.isEmpty(selection) ?
+                " AND (" + selection + ')' : ""),selectionArgs);
+        break;
       default:
         throw new IllegalArgumentException("Unsupported URI: " + uri);
     }
@@ -213,6 +229,14 @@ public class VueContentProvider extends ContentProvider{
         rowId = aislesDB.insert(VueConstants.RECENTLY_VIEWED_AISLES, null, values);
         if (rowId > 0) {
           rowUri = ContentUris.appendId(VueConstants.RECENTLY_VIEW_AISLES_URI.buildUpon(),
+              rowId).build();
+          return rowUri;
+        }
+        break;
+      case RATED_AISLES_MATCH:
+        rowId = aislesDB.insert(VueConstants.RATED_IMAGES, null, values);
+        if (rowId > 0) {
+          rowUri = ContentUris.appendId(VueConstants.RATED_IMAGES_URI.buildUpon(),
               rowId).build();
           return rowUri;
         }
@@ -333,6 +357,19 @@ public class VueContentProvider extends ContentProvider{
                + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
                    : ""), selectionArgs, null, null, null);  
        break;
+     case RATED_AISLES_MATCH:
+       qb.setTables(VueConstants.RATED_IMAGES);
+       cursor = qb.query(aislesDB, projection, selection, selectionArgs,
+           null, null, sortOrder);
+       break;
+     case RATED_SINGLE_AISLE_MATCH:
+       qb.setTables(VueConstants.RATED_IMAGES);
+       id = uri.getLastPathSegment();
+       cursor = qb.query(aislesDB, projection,
+           VueConstants.ID+ "=" + id
+               + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
+                   : ""), selectionArgs, null, null, null);
+       break;
     }
     
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -364,11 +401,14 @@ public class VueContentProvider extends ContentProvider{
                     : ""), selectionArgs);
         break;
       case AISLE_IMAGES_MATCH:
+          Log.e("Content Provider", "Images Update: Image URL " + values.get(VueConstants.IMAGE_URL));  
         rowsUpdated = aislesDB.update(VueConstants.AISLE_IMAGES, values,
             selection, selectionArgs);
         break;
       case IMAGE_MATCH:
         id = uri.getLastPathSegment();
+        Log.e("Content Provider", "Images Update: Image id " + values.get(VueConstants.IMAGE_ID));
+        Log.e("Content Provider", "Images Update: Image URL " + values.get(VueConstants.IMAGE_URL));
         rowsUpdated = aislesDB.update(VueConstants.AISLE_IMAGES, values,
             VueConstants.IMAGE_ID + "=" + id
                 + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
@@ -414,11 +454,21 @@ public class VueContentProvider extends ContentProvider{
       case RECENTLY_VIEW_SINGLE_AISLE_MATCH:
         id = uri.getLastPathSegment();
         rowsUpdated = aislesDB.update(VueConstants.RECENTLY_VIEWED_AISLES, values,
-            VueConstants.IMAGE_ID + "=" + id
+            VueConstants.ID + "=" + id
                 + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
                     : ""), selectionArgs);
         break;
-        
+      case RATED_AISLES_MATCH:
+        rowsUpdated = aislesDB.update(VueConstants.RATED_IMAGES, values,
+            selection, selectionArgs);
+        break;
+      case RATED_SINGLE_AISLE_MATCH:
+        id = uri.getLastPathSegment();
+        rowsUpdated = aislesDB.update(VueConstants.RATED_IMAGES, values,
+            VueConstants.ID + "=" + id
+                + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
+                    : ""), selectionArgs);
+        break;
     }
     return rowsUpdated;
   }

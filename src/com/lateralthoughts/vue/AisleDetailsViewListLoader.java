@@ -107,6 +107,7 @@ public class AisleDetailsViewListLoader {
             holder.uniqueContentId = desiredContentId;
         }       
         imageDetailsArr = windowContent.getImageList();
+        Log.e("AisleDetailsViewListLoader", "Aisle Id : " + windowContent.getAisleId());
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			 
 			 for(int i = 0;i<imageDetailsArr.size();i++) {
