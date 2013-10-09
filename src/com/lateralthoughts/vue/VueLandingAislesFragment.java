@@ -370,11 +370,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 			String writeSdCard = null;
 			writeSdCard = "*************************aisle info:"
-					+ windowItem.getAisleId()
 					+ " started***********************\n";
 			writeSdCard = writeSdCard + "\nAisleId: " + windowItem.getAisleId()
 					+ "\n" + "Smallest Image Height: "
-					+ windowItem.getBestHeightForWindow() + "\n"+"Card Width: "+VueApplication.getInstance().getScreenWidth() / 2 + "\n";
+					+ windowItem.getImageList().get(0).mTrendingImageHeight + "\n"+"Card Width: "+VueApplication.getInstance().getVueDetailsCardWidth() / 2 + "\n";
 			for (int i = 0; i < windowItem.getImageList().size(); i++) {
 				writeSdCard = writeSdCard + "\n ImageUrl: "
 						+ windowItem.getImageList().get(i).mImageUrl;
@@ -383,8 +382,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 						+ " Height: "
 						+ windowItem.getImageList().get(i).mAvailableHeight;
 			}
-			writeSdCard = writeSdCard + "\n\n After Resized Aisle Width: "
-					+ finalWidth + " After Resized Aisle Height: " + finaHeight;
+			writeSdCard = writeSdCard + "\n\n After Resized Aisle height: "
+					+  windowItem.getImageList().get(0).mTrendingImageHeight + " After Resized Aisle width: " + VueApplication.getInstance().getVueDetailsCardWidth() / 2;
 			writeSdCard = writeSdCard
 					+ "\n###################### info end ################################";
 			writeToSdcard(writeSdCard);

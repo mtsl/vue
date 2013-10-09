@@ -172,6 +172,7 @@ public class Parser {
 		ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject ailseItem = jsonArray.getJSONObject(i);
+			Log.i("aisleItemId", "aisleItemId: "+ailseItem);
 			AisleContext aisleContext = parseAisleData(ailseItem);
 			ArrayList<AisleImageDetails> aisleImageDetailsList = null;
 			try {
@@ -188,6 +189,7 @@ public class Parser {
 						aisleImageDetailsList);
 				aisleWindowContent
 						.setmAisleBookmarksCount(aisleContext.mBookmarkCount);
+				//Log.i("aisleItemId", "aisleItemId: "+aisleContext.mAisleId);
 				aisleWindowContentList.add(aisleWindowContent);
 			}
 		}

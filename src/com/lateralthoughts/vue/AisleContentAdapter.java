@@ -293,15 +293,13 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             }
             else{
             	if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-                 Log.i("detailscrop", "detailscrop 1");
             		loadBitmap(itemDetails,itemDetails.mAvailableHeight,contentBrowser, imageView);
                 contentBrowser.addView(imageView);
             	} else {
-            		Log.i("imageResize", "imageResize custom from cache 2");
             		int bestHeight = mWindowContent.getBestHeightForWindow();
-            		 loadBitmap(itemDetails,bestHeight,contentBrowser, imageView);
+            		 loadBitmap(itemDetails,itemDetails.mTrendingImageHeight,contentBrowser, imageView);
                            	contentBrowser.addView(imageView);
-                           	Log.i("bestHeight", "bestHeight in adapter: "+bestHeight);
+                            
             	}
             }
         }
@@ -336,6 +334,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         private int mBestHeightForImage;
         AisleContentBrowser aisleContentBrowser ;
         private int mAVailableWidth,mAvailabeHeight;
+        AisleImageDetails mItemDetails;
 
         public BitmapWorkerTask( AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
@@ -345,6 +344,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             aisleContentBrowser = vFlipper;
             mAVailableWidth = itemDetails.mAvailableWidth;
             mAvailabeHeight = itemDetails.mAvailableHeight;
+            mItemDetails = itemDetails;
         }
 
         // Decode image in background.
@@ -379,12 +379,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 			} else {
 				boolean cacheval = false;
 				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheval,
-						VueApplication.getInstance()
-						.getVueDetailsCardHeight(), VueApplication.getInstance()
-								.getVueDetailsCardWidth(),
+						mItemDetails.mTrendingImageHeight,mItemDetails.mTrendingImageWidth,
 						Utils.DETAILS_SCREEN);
 			}
-//if("5233838556971008".equalsIgnoreCase(string))
+ 
 			return bmp;
 		}
 

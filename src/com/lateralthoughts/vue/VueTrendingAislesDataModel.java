@@ -126,8 +126,10 @@ public class VueTrendingAislesDataModel {
 		mAisleContentList.add(position, aisleItem);
     }
     public void addItemToList(String aisleId,AisleWindowContent aisleItem) {
+    	  if(mAisleContentListMap.get(aisleId) == null) {
     	mAisleContentListMap.put(aisleId, aisleItem);
 		mAisleContentList.add(aisleItem);
+    	  }
     }
 	public int getAisleCount() {
 		if (null != mAisleContentList) {

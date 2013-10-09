@@ -105,7 +105,8 @@ public class AisleDetailsViewListLoader {
             holder.aisleContentBrowser.setCustomAdapter(adapter);
             holder.aisleContentBrowser.setDetailImageClickListener(detailListener);
             holder.uniqueContentId = desiredContentId;
-        }       
+        } 
+        Log.i("cardHeight", "cardHeight bestHeight1: "+windowContent.getBestHeightForWindow());
         imageDetailsArr = windowContent.getImageList();
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			 
