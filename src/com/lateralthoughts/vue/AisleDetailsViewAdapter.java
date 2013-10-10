@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.util.Log;
@@ -643,6 +644,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		@Override
 		public void onImageDoubleTap() {
+			
+		ImageView image = 	(ImageView) mViewHolder.aisleContentBrowser.getChildAt(mCurrentDispImageIndex);
+		Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+        Log.i("imageHeitht", "imageHeitht: "+bitmap.getWidth());
+
 			Toast.makeText(
 					mContext,
 					"imgAreaHeight: " + (mTopBottomMargin + mBestHeight)

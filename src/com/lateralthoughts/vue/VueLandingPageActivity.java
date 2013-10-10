@@ -154,10 +154,6 @@ public class VueLandingPageActivity extends BaseActivity {
 
 		mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisles_view_fragment);
-		ViewInfo viewInfo = new ViewInfo();
-		viewInfo.mVueName = getResources().getString(R.string.trending);
-		viewInfo.mPosition = 0;
-		StackViews.getInstance().push(viewInfo);
 		Intent intent = getIntent();
 		String action = intent.getAction();
 		String type = intent.getType();
@@ -385,10 +381,12 @@ public class VueLandingPageActivity extends BaseActivity {
 			Log.i("stackcount", "stackcount onbckpresed: "
 					+ StackViews.getInstance().getStackCount());
 			if (getSlidingMenu().isMenuShowing()) {
+				Log.i("stackcount", "stackcount onbckpresed: close window1 " );
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
 			} else if (StackViews.getInstance().getStackCount() > 0) {
+				Log.i("stackcount", "stackcount onbckpresed: close window2 " );
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
 				if (viewInfo != null) {
 					mVueLandingActionbarScreenName.setText(viewInfo.mVueName);
@@ -410,6 +408,8 @@ public class VueLandingPageActivity extends BaseActivity {
 					super.onBackPressed();
 				}
 			} else {
+				Log.i("stackcount", "stackcount onbckpresed: close window0 " );
+						
 				FileCache fileCache = new FileCache(
 						VueApplication.getInstance());
 				fileCache.clearVueAppResizedPictures();
@@ -516,11 +516,7 @@ public class VueLandingPageActivity extends BaseActivity {
     boolean fromServer = true;
     if (catName
         .equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-      if (isCategoryExistInDb) {
         fromServer = true;
-      } else {
-        fromServer = true;
-      }
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
           .getNetworkHandler()
           .requestAislesByUser(fromServer, new ProgresStatus(), catName);
@@ -557,9 +553,9 @@ public class VueLandingPageActivity extends BaseActivity {
             .show();
       }
     } else {
-      VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+/*      VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
           .getNetworkHandler()
-          .reqestByCategory(catName, new ProgresStatus(), fromServer, loadMore, catName);
+          .reqestByCategory(catName, new ProgresStatus(), fromServer, loadMore, catName);*/
     }
 
     FlurryAgent.logEvent(catName);

@@ -63,6 +63,7 @@ public class AisleWindowContent {
 		if (createPlaceHolders) {
 			mContext = new AisleContext();
 			mAisleImagesList = new ArrayList<AisleImageDetails>();
+			mAisleBookmarksCount = mContext.mBookmarkCount;
 		}
 	}
 
