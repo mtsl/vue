@@ -228,7 +228,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 	@Override
 	public AisleWindowContent getItem(int position) {
-		return mVueTrendingAislesDataModel.getAisleAt(position);
+		try {
+			return mVueTrendingAislesDataModel.getAisleAt(position);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	static class ViewHolder {
@@ -243,7 +248,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		String uniqueContentId;
 		LinearLayout aisleDescriptor;
 		LinearLayout imgContentlay, commentContentlay;
-		LinearLayout vueCommentheader, addCommentlay,descriptionlay;
+		LinearLayout vueCommentheader, addCommentlay, descriptionlay;
 		TextView userComment, enterComment;
 		ImageView userPic, commentImg, likeImg;
 		RelativeLayout exapandHolder;
@@ -279,7 +284,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					.findViewById(R.id.vue_user_coment_lay);
 			mViewHolder.vueCommentheader = (LinearLayout) convertView
 					.findViewById(R.id.vue_comment_header);
-			mViewHolder.descriptionlay = (LinearLayout) convertView.findViewById(R.id.descriptionlayout);
+			mViewHolder.descriptionlay = (LinearLayout) convertView
+					.findViewById(R.id.descriptionlayout);
 			mViewHolder.aisleDescription = (TextView) convertView
 					.findViewById(R.id.vue_details_descreption);
 			mViewHolder.separator = (View) convertView
@@ -328,15 +334,19 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.userComment.setTextSize(VueApplication.getInstance()
 					.getmTextSize());
 			mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
-/*			FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-					 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
-					 );
-			mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);*/
-			   int bestHeightTempHeight = VueApplication.getInstance().getPixel(100) ;
-	            
-				FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-						VueApplication.getInstance().getScreenWidth(), bestHeightTempHeight );
-				mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+			/*
+			 * FrameLayout.LayoutParams showpieceParams = new
+			 * FrameLayout.LayoutParams( LayoutParams.MATCH_PARENT,
+			 * LayoutParams.MATCH_PARENT );
+			 * mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+			 */
+			int bestHeightTempHeight = VueApplication.getInstance().getPixel(
+					100);
+
+			FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
+					VueApplication.getInstance().getScreenWidth(),
+					bestHeightTempHeight);
+			mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
 			mViewHolder.aisleContentBrowser
 					.setAisleDetailSwipeListener(mswipeListner);
 
@@ -345,9 +355,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		} else {
 			mViewHolder = (ViewHolder) convertView.getTag();
 		}
-         
-	/*	if (mViewHolder.aisleContentBrowser != null)
-			mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);*/
+
+		/*
+		 * if (mViewHolder.aisleContentBrowser != null)
+		 * mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+		 */
 
 		if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
 			mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
@@ -384,14 +396,19 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.edtCommentLay.setVisibility(View.GONE);
 			// mViewHolder.mWindowContent = mWindowContentTemp;
 			try {
-				if(getItem(mCurrentAislePosition).getAisleContext().mDescription != null && getItem(mCurrentAislePosition).getAisleContext().mDescription.length() > 1){
+
+				if (getItem(mCurrentAislePosition).getAisleContext().mDescription != null
+						&& getItem(mCurrentAislePosition).getAisleContext().mDescription
+								.length() > 1) {
 					mViewHolder.descriptionlay.setVisibility(View.VISIBLE);
-				mViewHolder.aisleDescription.setText(getItem(mCurrentAislePosition).getAisleContext().mDescription);
+					mViewHolder.aisleDescription
+							.setText(getItem(mCurrentAislePosition)
+									.getAisleContext().mDescription);
 				} else {
-					 
+
 					mViewHolder.descriptionlay.setVisibility(View.GONE);
 				}
-				
+
 				mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName;
 				if (mVueusername != null && mVueusername.equals("Anonymous")) {
 					if (VueApplication.getInstance().getmUserInitials() != null) {
@@ -636,7 +653,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 				notifyDataSetChanged();
 				mswipeListner.setFindAtText(getItem(mCurrentAislePosition)
-						.getImageList().get(position).mImageUrl);
+						.getImageList().get(position).mDetalsUrl);
 			} else {
 				return;
 			}
@@ -682,8 +699,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		@Override
 		public void onRefreshAdaptaers() {
-			 notifyAdapter();
-			
+			notifyAdapter();
+
 		}
 
 	}
@@ -718,7 +735,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							mCurrentAislePosition).getImageList().get(
 							mCurrentDispImageIndex).mLikesCount + 1;
 					sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, true);
-					
+
 				}
 				mLikes = getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mLikesCount;
@@ -831,17 +848,23 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		AisleImageDetails imgDetails = new AisleImageDetails();
 		imgDetails.mAvailableHeight = imageHeight;
 		imgDetails.mAvailableWidth = imageWidth;
-		Log.i("new image", "new image height: "+imgDetails.mAvailableHeight);
-		if (imgDetails.mAvailableHeight > getItem(mCurrentAislePosition).getBestLargetHeightForWindow()) {
+		Log.i("new image", "new image height: " + imgDetails.mAvailableHeight);
+		if (imgDetails.mAvailableHeight > getItem(mCurrentAislePosition)
+				.getBestLargetHeightForWindow()) {
 			mBestHeight = imgDetails.mAvailableHeight;
-			getItem(mCurrentAislePosition).setBestLargestHeightForWindow(imgDetails.mAvailableHeight,imgDetails.mAvailableWidth );
+			getItem(mCurrentAislePosition).setBestLargestHeightForWindow(
+					imgDetails.mAvailableHeight, imgDetails.mAvailableWidth);
 			Log.i("new image", "new image height: changed");
 		}
-		if(imgDetails.mAvailableHeight < getItem(mCurrentAislePosition).getBestHeightForWindow()){
-			getItem(mCurrentAislePosition).setBestHeightForWindow(imgDetails.mAvailableHeight);
-			Log.i("bestsamallest", "bestsamallest height1: "+imgDetails.mAvailableHeight);
+		if (imgDetails.mAvailableHeight < getItem(mCurrentAislePosition)
+				.getBestHeightForWindow()) {
+			getItem(mCurrentAislePosition).setBestHeightForWindow(
+					imgDetails.mAvailableHeight);
+			Log.i("bestsamallest", "bestsamallest height1: "
+					+ imgDetails.mAvailableHeight);
 		} else {
-			Log.i("bestsamallest", "bestsamallest height1 else: window samallest height has not changed " );
+			Log.i("bestsamallest",
+					"bestsamallest height1 else: window samallest height has not changed ");
 		}
 		imgDetails.mTitle = title;
 		imgDetails.mImageUrl = imageUrl;
@@ -870,7 +893,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		} else {
 			mswipeListner.onResetAdapter();
 		}
-		
+
 	}
 
 	public ArrayList<AisleImageDetails> getImageList() {
@@ -884,205 +907,209 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		return getItem(mCurrentAislePosition).getImageList();
 	}
 
-  int likeCount = 0;
-  ImageRating imgRating;
+	int likeCount = 0;
+	ImageRating imgRating;
 
-  public void sendDataToDb(int imgPosition, String reqType,
-      boolean likeOrDislike) {
-    String aisleId = null;
-    String imageId = null;
-    AisleImageDetails itemDetails;
+	public void sendDataToDb(int imgPosition, String reqType,
+			boolean likeOrDislike) {
+		String aisleId = null;
+		String imageId = null;
+		AisleImageDetails itemDetails;
 
-    int likeStatus = 0;
+		int likeStatus = 0;
 
-    Log.e("ImageRating Resopnse", "SURU ImageRating sendDataToDb() called");
-    if (getItem(mCurrentAislePosition).getImageList() != null
-        && getItem(mCurrentAislePosition).getImageList().size() != 0) {
-      aisleId = getItem(mCurrentAislePosition).getAisleId();
-      itemDetails = getItem(mCurrentAislePosition).getImageList().get(
-          imgPosition);
-      imageId = itemDetails.mId;
-      if (reqType.equals(CHANGE_BOOKMARK)) {
-        // aisleId,imageId,bookMarksCount,bookmarkIndicator
-        int bookMarksCount = getItem(mCurrentAislePosition)
-            .getmAisleBookmarksCount();
-        boolean bookmarkIndicator = getItem(mCurrentAislePosition)
-            .getWindowBookmarkIndicator();
-      } else if (reqType.equals(CHANGE_COMMENT)) {
-        // aisleId,imageId,comment
-        if (itemDetails.mCommentsList == null) {
-          getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList = new ArrayList<String>();
-        }
-        String commentAdded = itemDetails.mCommentsList.get(0);
-      } else if (reqType.equals(CHANGE_LIKES)) {
-        // aisleId,imageId,likesCount,likeStatus
-        likeCount = itemDetails.mLikesCount;
-        likeStatus = itemDetails.mLikeDislikeStatus;
-        imgRating = new ImageRating();
-        imgRating.setAisleId(Long.parseLong(aisleId));
-        imgRating.setImageId(Long.parseLong(imageId));
-        imgRating.setLiked(likeOrDislike);
-        try {
-          Log.e("ImageRating Resopnse",
-              "SURU ImageRating sendDataToDb in LIKES condution");
-          AisleManager.getAisleManager().updateRating(imgRating, likeCount);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    }
+		Log.e("ImageRating Resopnse", "SURU ImageRating sendDataToDb() called");
+		if (getItem(mCurrentAislePosition).getImageList() != null
+				&& getItem(mCurrentAislePosition).getImageList().size() != 0) {
+			aisleId = getItem(mCurrentAislePosition).getAisleId();
+			itemDetails = getItem(mCurrentAislePosition).getImageList().get(
+					imgPosition);
+			imageId = itemDetails.mId;
+			if (reqType.equals(CHANGE_BOOKMARK)) {
+				// aisleId,imageId,bookMarksCount,bookmarkIndicator
+				int bookMarksCount = getItem(mCurrentAislePosition)
+						.getmAisleBookmarksCount();
+				boolean bookmarkIndicator = getItem(mCurrentAislePosition)
+						.getWindowBookmarkIndicator();
+			} else if (reqType.equals(CHANGE_COMMENT)) {
+				// aisleId,imageId,comment
+				if (itemDetails.mCommentsList == null) {
+					getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList = new ArrayList<String>();
+				}
+				String commentAdded = itemDetails.mCommentsList.get(0);
+			} else if (reqType.equals(CHANGE_LIKES)) {
+				// aisleId,imageId,likesCount,likeStatus
+				likeCount = itemDetails.mLikesCount;
+				likeStatus = itemDetails.mLikeDislikeStatus;
+				imgRating = new ImageRating();
+				imgRating.setAisleId(Long.parseLong(aisleId));
+				imgRating.setImageId(Long.parseLong(imageId));
+				imgRating.setLiked(likeOrDislike);
+				try {
+					Log.e("ImageRating Resopnse",
+							"SURU ImageRating sendDataToDb in LIKES condution");
+					AisleManager.getAisleManager().updateRating(imgRating,
+							likeCount);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
-  }
+	}
 
-  public AisleContext getAisleContext() {
-    return getItem(mCurrentAislePosition).getAisleContext();
-  }
+	public AisleContext getAisleContext() {
+		return getItem(mCurrentAislePosition).getAisleContext();
+	}
 
-  public boolean checkLimitForLoginDialog() {
-    if (mContext != null) {
-      SharedPreferences sharedPreferencesObj = mContext.getSharedPreferences(
-          VueConstants.SHAREDPREFERENCE_NAME, 0);
-      boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
-          VueConstants.VUE_LOGIN, false);
-      if (!isUserLoggedInFlag) {
-        int createdAisleCount = sharedPreferencesObj.getInt(
-            VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-        int commentsCount = sharedPreferencesObj.getInt(
-            VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
-        if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
-            || commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
+	public boolean checkLimitForLoginDialog() {
+		if (mContext != null) {
+			SharedPreferences sharedPreferencesObj = mContext
+					.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+			boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+					VueConstants.VUE_LOGIN, false);
+			if (!isUserLoggedInFlag) {
+				int createdAisleCount = sharedPreferencesObj.getInt(
+						VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
+				int commentsCount = sharedPreferencesObj.getInt(
+						VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
+				if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
+						|| commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 
-  private void onChangeLikesCount(int position) {
-    if (storedVueUser == null) {
-      try {
-        storedVueUser = Utils.readUserObjectFromFile(mContext,
-            VueConstants.VUE_APP_USEROBJECT__FILENAME);
-      } catch (Exception e2) {
-        e2.printStackTrace();
-      }
-    }
-    Map<String, String> articleParams = new HashMap<String, String>();
-    articleParams.put("Category", getItem(mCurrentAislePosition)
-        .getAisleContext().mCategory);
-    articleParams.put("Lookingfor", getItem(mCurrentAislePosition)
-        .getAisleContext().mLookingForItem);
-    articleParams.put("Occasion", getItem(mCurrentAislePosition)
-        .getAisleContext().mOccasion);
-    if (storedVueUser != null) {
-      articleParams.put("Unique_User_Like", "" + storedVueUser.getVueId());
-    } else {
-      articleParams.put("Unique_User_Like", "anonymous");
-    }
-    FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
-    if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-      getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+	private void onChangeLikesCount(int position) {
+		if (storedVueUser == null) {
+			try {
+				storedVueUser = Utils.readUserObjectFromFile(mContext,
+						VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		Map<String, String> articleParams = new HashMap<String, String>();
+		articleParams.put("Category", getItem(mCurrentAislePosition)
+				.getAisleContext().mCategory);
+		articleParams.put("Lookingfor", getItem(mCurrentAislePosition)
+				.getAisleContext().mLookingForItem);
+		articleParams.put("Occasion", getItem(mCurrentAislePosition)
+				.getAisleContext().mOccasion);
+		if (storedVueUser != null) {
+			articleParams
+					.put("Unique_User_Like", "" + storedVueUser.getVueId());
+		} else {
+			articleParams.put("Unique_User_Like", "anonymous");
+		}
+		FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
+		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
 
-      Map<String, String> articleParams1 = new HashMap<String, String>();
-      articleParams1.put("Unique_Aisle_Likes",
-          "" + getItem(mCurrentAislePosition).getAisleId());
-      if (storedVueUser != null) {
-        articleParams1.put("Unique_User_Like", "" + storedVueUser.getVueId());
-      } else {
-        articleParams1.put("Unique_User_Like", "anonymous");
-      }
-      FlurryAgent.logEvent("Aisle_Likes", articleParams1);
-    } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
+			Map<String, String> articleParams1 = new HashMap<String, String>();
+			articleParams1.put("Unique_Aisle_Likes",
+					"" + getItem(mCurrentAislePosition).getAisleId());
+			if (storedVueUser != null) {
+				articleParams1.put("Unique_User_Like",
+						"" + storedVueUser.getVueId());
+			} else {
+				articleParams1.put("Unique_User_Like", "anonymous");
+			}
+			FlurryAgent.logEvent("Aisle_Likes", articleParams1);
+		} else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
 
-      getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
-          mCurrentAislePosition).getImageList().get(position).mLikesCount + 1;
-      getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
-      sendDataToDb(position, CHANGE_LIKES, true);
-    }
-    if (position == mCurrentDispImageIndex) {
-      mLikes = getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount;
-      notifyAdapter();
-    }
-  }
+			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
+					mCurrentAislePosition).getImageList().get(position).mLikesCount + 1;
+			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+			sendDataToDb(position, CHANGE_LIKES, true);
+		}
+		if (position == mCurrentDispImageIndex) {
+			mLikes = getItem(mCurrentAislePosition).getImageList()
+					.get(position).mLikesCount;
+			notifyAdapter();
+		}
+	}
 
-  private void onChangeDislikesCount(int position) {
-    FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
-    if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-      // false
-      getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
-      getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
-          mCurrentAislePosition).getImageList().get(position).mLikesCount - 1;
-      sendDataToDb(position, CHANGE_LIKES, false);
-    } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
-      getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
-    }
-    if (position == mCurrentDispImageIndex) {
-      mLikes = getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount;
-      notifyAdapter();
-    }
-  }
+	private void onChangeDislikesCount(int position) {
+		FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
+		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+			// false
+			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
+			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
+					mCurrentAislePosition).getImageList().get(position).mLikesCount - 1;
+			sendDataToDb(position, CHANGE_LIKES, false);
+		} else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
+			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
+		}
+		if (position == mCurrentDispImageIndex) {
+			mLikes = getItem(mCurrentAislePosition).getImageList()
+					.get(position).mLikesCount;
+			notifyAdapter();
+		}
+	}
 
-  public void closeKeyboard() {
-    final InputMethodManager mInputMethodManager = (InputMethodManager) mContext
-        .getSystemService(Context.INPUT_METHOD_SERVICE);
-    mInputMethodManager.hideSoftInputFromWindow(
-        mViewHolder.edtComment.getWindowToken(), 0);
-    mViewHolder.edtCommentLay.setVisibility(View.GONE);
-    mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
-  }
+	public void closeKeyboard() {
+		final InputMethodManager mInputMethodManager = (InputMethodManager) mContext
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mViewHolder.edtComment.getWindowToken(), 0);
+		mViewHolder.edtCommentLay.setVisibility(View.GONE);
+		mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
+	}
 
-  private void handleBookmark(boolean isBookmarked, String aisleId) {
+	private void handleBookmark(boolean isBookmarked, String aisleId) {
 
-    AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
-        Long.parseLong(aisleId));
-    VueUser storedVueUser = null;
-    try {
-      storedVueUser = Utils.readUserObjectFromFile(mContext,
-          VueConstants.VUE_APP_USEROBJECT__FILENAME);
-      AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
-          storedVueUser.getVueId());
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
+		AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
+				Long.parseLong(aisleId));
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(mContext,
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
+					storedVueUser.getVueId());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return position;
+	}
 
-  @Override
-  public long getItemId(int position) {
-    // TODO Auto-generated method stub
-    return position;
-  }
+	private int getBestHeight(int largeHeight) {
+		int screenHeight = VueApplication.getInstance().getScreenHeight();
+		int screenWidth = VueApplication.getInstance().getScreenWidth();
+		if (largeHeight > screenHeight) {
+			largeHeight = screenHeight;
+		}
 
-  private int getBestHeight(int largeHeight) {
-    int screenHeight = VueApplication.getInstance().getScreenHeight();
-    int screenWidth = VueApplication.getInstance().getScreenWidth();
-    if (largeHeight > screenHeight) {
-      largeHeight = screenHeight;
-    }
+		return largeHeight;
 
-    return largeHeight;
+	}
 
-  }
+	private void setImageRating() {
+		ArrayList<AisleImageDetails> aisleImgDetais = getItem(
+				mCurrentAislePosition).getImageList();
+		ArrayList<ImageRating> imgRatingList = DataBaseManager.getInstance(
+				mContext).getRatedImagesList(
+				getItem(mCurrentAislePosition).getAisleId());
+		for (AisleImageDetails imgDetail : aisleImgDetais) {
+			for (ImageRating imgRating : imgRatingList) {
+				if (imgRating.getImageId() == Long.parseLong(imgDetail.mId)) {
+					imgDetail.mLikeDislikeStatus = IMG_LIKE_STATUS;
+				}
+			}
+		}
+	}
 
-  private void setImageRating() {
-    ArrayList<AisleImageDetails> aisleImgDetais = getItem(mCurrentAislePosition)
-        .getImageList();
-    ArrayList<ImageRating> imgRatingList = DataBaseManager
-        .getInstance(mContext).getRatedImagesList(
-            getItem(mCurrentAislePosition).getAisleId());
-    for (AisleImageDetails imgDetail : aisleImgDetais) {
-      for (ImageRating imgRating : imgRatingList) {
-        if (imgRating.getImageId() == Long.parseLong(imgDetail.mId)) {
-          imgDetail.mLikeDislikeStatus = IMG_LIKE_STATUS;
-        }
-      }
-    }
-  }
-  
 }

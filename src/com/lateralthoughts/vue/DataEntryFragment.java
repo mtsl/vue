@@ -113,6 +113,7 @@ public class DataEntryFragment extends Fragment {
 	private ProgressDialog mProgressDialog;
 	private DataEntryActivity mDataEntryActivity;
 	public int mOtherSourceImageOriginalHeight, mOtherSourceImageOriginalWidth;
+	public String mOtherSourceSelectedImageUrl = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -896,6 +897,9 @@ public class DataEntryFragment extends Fragment {
 									b.putString(
 											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
 											mFindAtText.getText().toString());
+									b.putString(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL,
+											mOtherSourceSelectedImageUrl);
 									b.putInt(
 											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH,
 											mOtherSourceImageOriginalWidth);
@@ -1605,8 +1609,8 @@ public class DataEntryFragment extends Fragment {
 
 	// create ailse and send to server.
 	public void addAisleToServer(VueUser vueUser) {
-		String imageSourceUrl = mFindAtText.getText().toString();
-		if (imageSourceUrl != null && imageSourceUrl.trim().length() > 0) {
+		if (mOtherSourceSelectedImageUrl != null
+				&& mOtherSourceSelectedImageUrl.trim().length() > 0) {
 			Aisle aisle = new Aisle();
 			aisle.setCategory(mCategoryText.getText().toString().trim());
 			aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
@@ -1622,18 +1626,17 @@ public class DataEntryFragment extends Fragment {
 				aisle.setDescription("");
 			}
 			VueImage image = new VueImage();
-			image.setDetailsUrl("Got this image from a random url"); // TODO By
-																		// Krishna
+			image.setDetailsUrl(mFindAtText.getText().toString());
 			image.setHeight(mOtherSourceImageOriginalHeight);
 			image.setWidth(mOtherSourceImageOriginalWidth);
-			image.setImageUrl(imageSourceUrl);
+			image.setImageUrl(mOtherSourceSelectedImageUrl);
 			String store = "UnKnown";
 			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
 					&& VueApplication.getInstance().mShoppingApplicationDetailsList
 							.size() > 0) {
 				for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
 						.size(); i++) {
-					if (imageSourceUrl
+					if (mOtherSourceSelectedImageUrl
 							.toLowerCase()
 							.contains(
 									VueApplication.getInstance().mShoppingApplicationDetailsList
@@ -1649,10 +1652,6 @@ public class DataEntryFragment extends Fragment {
 			image.setOwnerUserId(Long.valueOf(vueUser.getVueId()));
 			FlurryAgent.logEvent("Create_Aisle");
 			aisle.setAisleImage(image);
-			if (mFindAtText != null && mFindAtText.getText().toString() != null) {
-				Log.i("pathsaving", "pathsaving in sdcard1");
-				writeToSdcard(mFindAtText.getText().toString());
-			}
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
@@ -1676,21 +1675,20 @@ public class DataEntryFragment extends Fragment {
 
 	public void addImageToAisleToServer(String ownerUserId,
 			String ownerAisleId, boolean fromDetailsScreenFlag) {
-		String imageSourceUrl = mFindAtText.getText().toString();
-		if (imageSourceUrl != null && imageSourceUrl.trim().length() > 0) {
+		if (mOtherSourceSelectedImageUrl != null
+				&& mOtherSourceSelectedImageUrl.trim().length() > 0) {
 			VueImage image = new VueImage();
-			image.setDetailsUrl("Got this image from a random url"); // TODO By
-																		// Krishna
+			image.setDetailsUrl(mFindAtText.getText().toString());
 			image.setHeight(mOtherSourceImageOriginalHeight);
 			image.setWidth(mOtherSourceImageOriginalWidth);
-			image.setImageUrl(imageSourceUrl);
+			image.setImageUrl(mOtherSourceSelectedImageUrl);
 			String store = "UnKnown";
 			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
 					&& VueApplication.getInstance().mShoppingApplicationDetailsList
 							.size() > 0) {
 				for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
 						.size(); i++) {
-					if (imageSourceUrl
+					if (mOtherSourceSelectedImageUrl
 							.toLowerCase()
 							.contains(
 									VueApplication.getInstance().mShoppingApplicationDetailsList
@@ -1833,37 +1831,10 @@ public class DataEntryFragment extends Fragment {
 			mProgressDialog = ProgressDialog.show(getActivity(), "",
 					"Please wait...");
 		}
+		mFindAtText.setText(sourceUrl);
 		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
 				sourceUrl, getActivity(), false);
 		getImagesTask.execute();
 	}
 
-	private void writeToSdcard(String message) {
-
-		String path = Environment.getExternalStorageDirectory().toString();
-		File dir = new File(path + "/vueLogs/");
-		if (!dir.isDirectory()) {
-			dir.mkdir();
-		}
-		File file = new File(dir, "/"
-				+ Calendar.getInstance().get(Calendar.DATE) + ".txt");
-		try {
-			file.createNewFile();
-		} catch (IOException e) {
-			Log.i("pathsaving", "pathsaving in sdcard2 error");
-			e.printStackTrace();
-		}
-
-		try {
-			PrintWriter out = new PrintWriter(new BufferedWriter(
-					new FileWriter(file, true)));
-			out.write("\n" + message + "\n");
-			out.flush();
-			out.close();
-			Log.i("pathsaving", "pathsaving in sdcard2 success");
-		} catch (IOException e) {
-			Log.i("pathsaving", "pathsaving in sdcard3 error");
-			e.printStackTrace();
-		}
-	}
 }
