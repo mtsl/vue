@@ -137,7 +137,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			}
 
 			mBookmarksCount = getItem(mCurrentAislePosition)
-					.getmAisleBookmarksCount();
+					.getAisleContext().mBookmarkCount;
 			getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 					mBookmarksCount);
 			VueApplication.getInstance().setClickedWindowCount(
@@ -198,7 +198,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						isBookmarked);
 			}
 			mBookmarksCount = getItem(mCurrentAislePosition)
-					.getmAisleBookmarksCount();
+                .getAisleContext().mBookmarkCount;
 			Log.i("bookmarked aisle", "bookmarked count in window2: "
 					+ mBookmarksCount);
 			new Handler().postDelayed(new Runnable() {
@@ -522,6 +522,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					// = mBookmarksCount;
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							bookmarkStatus);
+					 Log.e("AisleManager", "bookmarkfeaturetest: count BOOKMARK RESPONSE: mViewHolder.bookmarklay else called ");
 					handleBookmark(bookmarkStatus,
 							getItem(mCurrentAislePosition).getAisleId());
 				}
@@ -1041,7 +1042,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
       AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
           storedVueUser.getVueId());
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

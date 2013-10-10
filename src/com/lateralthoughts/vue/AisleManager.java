@@ -330,99 +330,95 @@ public class AisleManager {
 	 *             , IOException
 	 * */
 	public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark,
-			String userId) throws ClientProtocolException, IOException {
-        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().addBookmarked(aisleBookmark.getAisleId() + "");
-		isDirty = true;
-		final ArrayList<AisleWindowContent> windowList = DataBaseManager
-				.getInstance(VueApplication.getInstance()).getAisleByAisleId(
-						Long.toString(aisleBookmark.getAisleId()));
-		if (VueConnectivityManager.isNetworkConnected(VueApplication
-				.getInstance())) {
-			VueUser storedVueUser = null;
-			try {
-				storedVueUser = Utils.readUserObjectFromFile(
-						VueApplication.getInstance(),
-						VueConstants.VUE_APP_USEROBJECT__FILENAME);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			ObjectMapper mapper = new ObjectMapper();
-			String bookmarkAisleAsString = mapper
-					.writeValueAsString(aisleBookmark);
-			Response.Listener listener = new Response.Listener<String>() {
+      String userId) throws ClientProtocolException, IOException {
+    VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+        .getNetworkHandler().addBookmarked(aisleBookmark.getAisleId() + "");
+    isDirty = true;
+    final ArrayList<AisleWindowContent> windowList = DataBaseManager
+        .getInstance(VueApplication.getInstance()).getAisleByAisleId(
+            Long.toString(aisleBookmark.getAisleId()));
+    if (VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
+      VueUser storedVueUser = null;
+      try {
+        storedVueUser = Utils.readUserObjectFromFile(
+            VueApplication.getInstance(),
+            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      Log.e("AisleManager", "bookmarkfeaturetest: count BOOKMARK RESPONSE: aisleBookmarkUpdate() called ");
+      ObjectMapper mapper = new ObjectMapper();
+      String bookmarkAisleAsString = mapper.writeValueAsString(aisleBookmark);
+      Response.Listener listener = new Response.Listener<String>() {
 
-				@Override
-				public void onResponse(String jsonArray) {
-					if (jsonArray != null) {
-						try {
-						  AisleBookmark createdAisleBookmark = (new ObjectMapper())
-									.readValue(jsonArray, AisleBookmark.class);
-							isDirty = false;
-							Editor editor = mSharedPreferencesObj.edit();
-		                    editor.putBoolean(VueConstants.IS_AISLE_DIRTY, false);
-		                    editor.commit();
-							updateBookmartToDb(windowList,
-									createdAisleBookmark, isDirty);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
+        @Override
+        public void onResponse(String jsonArray) {
+          if (jsonArray != null) {
+            try {
+              Log.e("AisleManager", "bookmarkfeaturetest: count BOOKMARK RESPONSE: " + jsonArray);
+              AisleBookmark createdAisleBookmark = (new ObjectMapper())
+                  .readValue(jsonArray, AisleBookmark.class);
+              isDirty = false;
+              Editor editor = mSharedPreferencesObj.edit();
+              editor.putBoolean(VueConstants.IS_AISLE_DIRTY, false);
+              editor.commit();
+              updateBookmartToDb(windowList, createdAisleBookmark, isDirty);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+        }
 
-			};
+      };
 
-			Response.ErrorListener errorListener = new ErrorListener() {
+      Response.ErrorListener errorListener = new ErrorListener() {
 
-				@Override
-				public void onErrorResponse(VolleyError error) {
-					isDirty = true;
-					Log.e("Search Resopnse", "SURU Search Error Resopnse : "
-							+ error.getMessage());
-                      Editor editor = mSharedPreferencesObj.edit();
-                      editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
-                      editor.commit();
-					updateBookmartToDb(windowList, aisleBookmark, isDirty);
-				}
-
-			};
-			BookmarkPutRequest request = new BookmarkPutRequest(
-					bookmarkAisleAsString, listener, errorListener,
-					UrlConstants.CREATE_BOOKMARK_RESTURL + "/"
-							+ storedVueUser.getVueId());
-			VueApplication.getInstance().getRequestQueue().add(request);
-		} else {
-		  Editor editor = mSharedPreferencesObj.edit();
+        @Override
+        public void onErrorResponse(VolleyError error) {
+          isDirty = true;
+          Log.e("Search Resopnse",
+              "SURU Search Error Resopnse : " + error.getMessage());
+          Editor editor = mSharedPreferencesObj.edit();
           editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
           editor.commit();
-			updateBookmartToDb(windowList, aisleBookmark, isDirty);
-		}
+          updateBookmartToDb(windowList, aisleBookmark, isDirty);
+        }
 
-	}
+      };
+      BookmarkPutRequest request = new BookmarkPutRequest(
+          bookmarkAisleAsString, listener, errorListener,
+          UrlConstants.CREATE_BOOKMARK_RESTURL + "/" + storedVueUser.getVueId());
+      VueApplication.getInstance().getRequestQueue().add(request);
+    } else {
+      isDirty = true;
+      Editor editor = mSharedPreferencesObj.edit();
+      editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
+      editor.commit();
+      updateBookmartToDb(windowList, aisleBookmark, isDirty);
+    }
 
-	/**
-	 * update book mark info to db if the aisle is bookmarked by the user
-	 * 
-	 * @param ArrayList
-	 *            <AisleWindowContent> windowList
-	 * @param AisleBookmark
-	 *            aisleBookmark
-	 * @param boolean isDirty if bookmark info is writing to db when there is no
-	 *        network then it should be true so that when network comes app
-	 *        should identify that this info needs to send to the server.
-	 * */
-	public void updateBookmartToDb(ArrayList<AisleWindowContent> windowList,
-			AisleBookmark aisleBookmark, boolean isDirty) {
-		for (AisleWindowContent aisleWindow : windowList) {
-			AisleContext context = aisleWindow.getAisleContext();
-			DataBaseManager
-					.getInstance(VueApplication.getInstance())
-					.bookMarkOrUnBookmarkAisle(
-							aisleBookmark.getBookmarked(),
-							(aisleBookmark.getBookmarked()) ? context.mBookmarkCount + 1
-									: context.mBookmarkCount - 1,
-							Long.toString(aisleBookmark.getAisleId()), isDirty);
-		}
-	}
+  }
+
+  /**
+   * update book mark info to db if the aisle is bookmarked by the user
+   * 
+   * @param ArrayList <AisleWindowContent> windowList
+   * @param AisleBookmark aisleBookmark
+   * @param boolean isDirty if bookmark info is writing to db when there is no
+   *        network then it should be true so that when network comes app should
+   *        identify that this info needs to send to the server.
+   * */
+  public void updateBookmartToDb(ArrayList<AisleWindowContent> windowList,
+      AisleBookmark aisleBookmark, boolean isDirty) {
+    for (AisleWindowContent aisleWindow : windowList) {
+      AisleContext context = aisleWindow.getAisleContext();
+      DataBaseManager.getInstance(VueApplication.getInstance())
+          .bookMarkOrUnBookmarkAisle(aisleBookmark.getBookmarked(),
+              (aisleBookmark.getBookmarked()) ? context.mBookmarkCount + 1
+                  : context.mBookmarkCount - 1,
+              Long.toString(aisleBookmark.getAisleId()), isDirty);
+    }
+  }
 
   public void updateRating(final ImageRating imageRating, final int likeCount)
       throws ClientProtocolException, IOException {
