@@ -675,7 +675,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					.getInstance(this)
 					.getAisleAt(
 							VueApplication.getInstance().getClickedWindowID())
-					.getAisleContext().mUserId.equals(storedVueUser.getVueId())) {
+					.getAisleContext().mUserId.equals(storedVueUser.getId())) {
 				isUserAisleFlag = true;
 			}
 		} catch (Exception e2) {

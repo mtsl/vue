@@ -96,6 +96,9 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                 .getInstance(VueApplication.getInstance());
                             model.addItemToList(aislesList.get(i)
                                 .getAisleContext().mAisleId, aislesList.get(i));
+                            Log.e("TrendingAisleContentParser", "bookmarkfeaturetest: count in TrendingAisleContentParser:111111 " + aislesList.get(i).getAisleContext().mBookmarkCount);
+                            Log.e("TrendingAisleContentParser", "bookmarkfeaturetest: count in TrendingAisleContentParser:222222 " + model.getAisleAt(model.listSize() -1).getAisleContext().mBookmarkCount);
+                          
                           }
 
                           VueTrendingAislesDataModel.getInstance(

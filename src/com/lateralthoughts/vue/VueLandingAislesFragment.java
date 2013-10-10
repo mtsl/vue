@@ -272,7 +272,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				if ((totalItems - lastVisiblePosition) < 20) {
 					Log.i("offeset and limit", "offeset00000: load moredata");
 					VueTrendingAislesDataModel.getInstance(mContext)
-							.getNetworkHandler().requestMoreAisle(true,"Trending");
+							.getNetworkHandler()
+							.requestMoreAisle(true, "Trending");
 				}
 			} else {
 				Log.i("offeset and limit", "offeset00000: load moredata else ");
@@ -293,7 +294,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				e2.printStackTrace();
 			}
 			if (storedVueUser != null) {
-				articleParams.put("User_Id", storedVueUser.getVueId());
+				articleParams.put("User_Id", Long
+						.valueOf(storedVueUser.getId()).toString());
 			} else {
 				articleParams.put("User_Id", "anonymous");
 			}
@@ -359,7 +361,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 			if (finalWidth > VueApplication.getInstance().getScreenWidth() / 2) {
 
-				
 				finaHeight = (finaHeight
 						* VueApplication.getInstance().getScreenWidth() / 2)
 						/ finalWidth;
@@ -373,7 +374,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					+ " started***********************\n";
 			writeSdCard = writeSdCard + "\nAisleId: " + windowItem.getAisleId()
 					+ "\n" + "Smallest Image Height: "
-					+ windowItem.getImageList().get(0).mTrendingImageHeight + "\n"+"Card Width: "+VueApplication.getInstance().getVueDetailsCardWidth() / 2 + "\n";
+					+ windowItem.getImageList().get(0).mTrendingImageHeight
+					+ "\n" + "Card Width: "
+					+ VueApplication.getInstance().getVueDetailsCardWidth() / 2
+					+ "\n";
 			for (int i = 0; i < windowItem.getImageList().size(); i++) {
 				writeSdCard = writeSdCard + "\n ImageUrl: "
 						+ windowItem.getImageList().get(i).mImageUrl;
@@ -383,7 +387,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 						+ windowItem.getImageList().get(i).mAvailableHeight;
 			}
 			writeSdCard = writeSdCard + "\n\n After Resized Aisle height: "
-					+  windowItem.getImageList().get(0).mTrendingImageHeight + " After Resized Aisle width: " + VueApplication.getInstance().getVueDetailsCardWidth() / 2;
+					+ windowItem.getImageList().get(0).mTrendingImageHeight
+					+ " After Resized Aisle width: "
+					+ VueApplication.getInstance().getVueDetailsCardWidth() / 2;
 			writeSdCard = writeSdCard
 					+ "\n###################### info end ################################";
 			writeToSdcard(writeSdCard);
@@ -430,6 +436,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			});
 		}
 	}
+
 	private void writeToSdcard(String message) {
 
 		String path = Environment.getExternalStorageDirectory().toString();
@@ -458,6 +465,5 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			e.printStackTrace();
 		}
 	}
- 
 
 }

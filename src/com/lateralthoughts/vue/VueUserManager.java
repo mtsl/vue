@@ -7,6 +7,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.facebook.model.GraphUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -32,7 +33,7 @@ public class VueUserManager {
 	// "http://2-java.vueapi-canary-development1.appspot.com/";
 	// private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
 
-	private String USER_CREATE_ENDPOINT = "api/usercreate/trial";
+	private String USER_CREATE_ENDPOINT = "api/usercreate";
 	private String GPLUS_USER_CREATE_ENDPOINT = "api/usercreate/googleplus";
 	private String INSTAGRAM_USER_CREATE_ENDPOINT = "api/usercreate/instagram";
 	private String FB_USER_CREATE_ENDPOINT = "api/usercreate/facebook/";
@@ -98,36 +99,18 @@ public class VueUserManager {
 				if (null != jsonArray) {
 					Log.e("Profiling", "Create User: Profiling : onResponse()"
 							+ jsonArray);
+					VueUser vueUser = new Parser().parseUserData(jsonArray);
+					VueApplication.getInstance().setmUserInitials(userInitals);
 
+					VueUserManager.this.setCurrentUser(vueUser);
+					Log.i("imageurl", "imageurl is ok got user id: " + vueUser);
+					callback.onUserUpdated(vueUser);
 					try {
-						Log.i("userid",
-								"userid123456 null check storedVueUser response1: ");
-						JSONObject user = new JSONObject(jsonArray);
-						// JSONObject user = userInfo.getJSONObject("user");
-						String id = user.getString("id");
-						String email = user.getString("email");
-						String firstName = user.getString("firstName");
-						String lastName = user.getString("lastName");
-						String deviceId = user.getString("deviceId");
-						Log.i("userid",
-								"userid123456 null check storedVueUser response2: ");
-						VueUser vueUser = new VueUser(null, null, null,
-								Utils.getDeviceId(), null);
-						vueUser.setVueUserId(id);
-						vueUser.setFirstName(userInitals);
-						VueApplication.getInstance().setmUserInitials(
-								userInitals);
-						vueUser.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
-						VueUserManager.this.setCurrentUser(vueUser);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser);
-						callback.onUserUpdated(vueUser);
-					} catch (JSONException ex) {
-						Log.i("userid",
-								"userid123456 null check storedVueUser response exception: ");
-						ex.printStackTrace();
+						VueTrendingAislesDataModel.getInstance(
+								VueApplication.getInstance()).dataObserver();
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-
 				}
 			}
 		};
@@ -145,19 +128,16 @@ public class VueUserManager {
 
 		try {
 			Log.e("VueUserDebug", "vueuser: method called ");
-			/*
-			 * ObjectMapper mapper = new ObjectMapper(); VueUser
-			 * vueuserRequestObject = new VueUser(deviceId,
-			 * "FACEBOOK_ID_UNKNOWN", "GOOGLE_PLUS_ID_UNKNOWN", "", userInitals,
-			 * ""); String userAsString = mapper
-			 * .writeValueAsString(vueuserRequestObject);
-			 */
-			// Log.e("VueUserDebug", "vueuser: request " + userAsString);
-			String s = "{\"email\":\"\",\"firstName\":"
-					+ userInitals + ",\"lastName\":\"\",\"deviceId\":"
-					+ deviceId + "}";
-			UserCreateRequest request = new UserCreateRequest(s, listener,
-					errorListener);
+
+			ObjectMapper mapper = new ObjectMapper();
+			VueUser newUser = new VueUser();
+			newUser.setFirstName(userInitals);
+			newUser.setLastName("");
+			newUser.setDeviceId(deviceId);
+			String userAsString = mapper.writeValueAsString(newUser);
+			Log.e("VueUserDebug", "vueuser: request " + userAsString);
+			UserCreateRequest request = new UserCreateRequest(userAsString,
+					listener, errorListener);
 			VueApplication.getInstance().getRequestQueue().add(request);
 		} catch (Exception e) {
 
@@ -183,7 +163,7 @@ public class VueUserManager {
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
 					VueUserManager.this.setCurrentUser(user);
-					user.setUserIdentityMethod(PreferredIdentityLayer.FB);
+					// user.userIdentifier = PreferredIdentityLayer.FB;
 					callback.onUserUpdated(user);
 				}
 			}
@@ -220,7 +200,7 @@ public class VueUserManager {
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
 					VueUserManager.this.setCurrentUser(vueUser);
-					vueUser.setUserIdentityMethod(PreferredIdentityLayer.GPLUS);
+					// vueUser.userIdentifier = PreferredIdentityLayer.GPLUS;
 					callback.onUserUpdated(vueUser);
 				}
 			}
@@ -257,7 +237,8 @@ public class VueUserManager {
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
 					VueUserManager.this.setCurrentUser(vueUser);
-					vueUser.setUserIdentityMethod(PreferredIdentityLayer.INSTAGRAM);
+					// vueUser.userIdentifier =
+					// PreferredIdentityLayer.INSTAGRAM;
 					callback.onUserUpdated(vueUser);
 				}
 			}
@@ -272,11 +253,13 @@ public class VueUserManager {
 				}
 			}
 		};
-		String requestUrl = UrlConstants.SERVER_BASE_URL
-				+ INSTAGRAM_USER_CREATE_ENDPOINT + vueUser.getInstagramId();
-		UserCreateRequest request = new UserCreateRequest(null, listener,
-				errorListener);
-		VueApplication.getInstance().getRequestQueue().add(request);
+		/*
+		 * String requestUrl = UrlConstants.SERVER_BASE_URL +
+		 * INSTAGRAM_USER_CREATE_ENDPOINT + vueUser.instagramId;
+		 * UserCreateRequest request = new UserCreateRequest(null, listener,
+		 * errorListener);
+		 * VueApplication.getInstance().getRequestQueue().add(request);
+		 */
 
 	}
 
@@ -290,8 +273,8 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					user.setVueUserId(vueUser.getVueId());
-					user.setUserIdentityMethod(vueUser.getUserIdentity());
+					user.setId(vueUser.getId());
+					// user.userIdentifier = vueUser.userIdentifier;
 					user.setDeviceId(vueUser.getDeviceId());
 					user.setGooglePlusId(vueUser.getGooglePlusId());
 					VueUserManager.this.setCurrentUser(user);
@@ -371,11 +354,13 @@ public class VueUserManager {
 				}
 			}
 		};
-		String requestUrl = UrlConstants.SERVER_BASE_URL
-				+ INSTAGRAM_USER_CREATE_ENDPOINT + vueUser.getInstagramId();
-		UserCreateRequest request = new UserCreateRequest(null, listener,
-				errorListener);
-		VueApplication.getInstance().getRequestQueue().add(request);
+		/*
+		 * String requestUrl = UrlConstants.SERVER_BASE_URL +
+		 * INSTAGRAM_USER_CREATE_ENDPOINT + vueUser.instagramId;
+		 * UserCreateRequest request = new UserCreateRequest(null, listener,
+		 * errorListener);
+		 * VueApplication.getInstance().getRequestQueue().add(request);
+		 */
 	}
 
 	public void updateUnidentifiedUser(PreferredIdentityLayer newIdentity,
@@ -514,10 +499,11 @@ public class VueUserManager {
 			}
 			String username = graphUser.getName();
 			String facebookId = graphUser.getId();
-			vueUser = new VueUser(facebookUserId, null, null, null, email);
+			vueUser = new VueUser(null, email, null, null, null, null,
+					facebookUserId, null);
 			vueUser.setFirstName(firstName);
 			vueUser.setLastName(lastName);
-			vueUser.setBirthday(birthday);
+			// vueUser.birthday = birthday;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -543,12 +529,13 @@ public class VueUserManager {
 			String firstName = userObject.optString("firstName");
 			String lastName = userObject.optString("lastName");
 			String deviceId = userObject.optString("deviceId");
-			user = new VueUser(null, null, null, null, email);
-			user.setUserIdentityMethod(PreferredIdentityLayer.DEVICE_ID);
+			user = new VueUser(null, email, null, null, null, null, null, null);
+			// user.userIdentifier = PreferredIdentityLayer.DEVICE_ID;
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
 		return user;
 	}
+
 }

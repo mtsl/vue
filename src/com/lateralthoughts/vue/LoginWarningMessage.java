@@ -84,7 +84,7 @@ public class LoginWarningMessage {
 							e2.printStackTrace();
 						}
 						if (storedVueUser != null
-								&& storedVueUser.getVueId() != null) {
+								&& storedVueUser.getId() != null) {
 							if (VueConnectivityManager
 									.isNetworkConnected(mContext)) {
 								fragment.storeMetaAisleDataIntoLocalStorage();

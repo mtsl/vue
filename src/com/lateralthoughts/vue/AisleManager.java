@@ -67,8 +67,8 @@ public class AisleManager {
 	private SharedPreferences mSharedPreferencesObj;
 
 	private AisleManager() {
-	  mSharedPreferencesObj = VueApplication.getInstance().getSharedPreferences(
-          VueConstants.SHAREDPREFERENCE_NAME, 0);
+		mSharedPreferencesObj = VueApplication.getInstance()
+				.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
 		mObjectMapper = new ObjectMapper();
 	}
 
@@ -330,8 +330,11 @@ public class AisleManager {
 	 *             , IOException
 	 * */
 	public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark,
-			String userId) throws ClientProtocolException, IOException {
-        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().addBookmarked(aisleBookmark.getAisleId() + "");
+
+	String userId) throws ClientProtocolException, IOException {
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+				.getNetworkHandler()
+				.addBookmarked(aisleBookmark.getAisleId() + "");
 		isDirty = true;
 		final ArrayList<AisleWindowContent> windowList = DataBaseManager
 				.getInstance(VueApplication.getInstance()).getAisleByAisleId(
@@ -346,6 +349,8 @@ public class AisleManager {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			Log.e("AisleManager",
+					"bookmarkfeaturetest: count BOOKMARK RESPONSE: aisleBookmarkUpdate() called ");
 			ObjectMapper mapper = new ObjectMapper();
 			String bookmarkAisleAsString = mapper
 					.writeValueAsString(aisleBookmark);
@@ -355,12 +360,16 @@ public class AisleManager {
 				public void onResponse(String jsonArray) {
 					if (jsonArray != null) {
 						try {
-						  AisleBookmark createdAisleBookmark = (new ObjectMapper())
+							Log.e("AisleManager",
+									"bookmarkfeaturetest: count BOOKMARK RESPONSE: "
+											+ jsonArray);
+							AisleBookmark createdAisleBookmark = (new ObjectMapper())
 									.readValue(jsonArray, AisleBookmark.class);
 							isDirty = false;
 							Editor editor = mSharedPreferencesObj.edit();
-		                    editor.putBoolean(VueConstants.IS_AISLE_DIRTY, false);
-		                    editor.commit();
+							editor.putBoolean(VueConstants.IS_AISLE_DIRTY,
+									false);
+							editor.commit();
 							updateBookmartToDb(windowList,
 									createdAisleBookmark, isDirty);
 						} catch (Exception e) {
@@ -378,9 +387,9 @@ public class AisleManager {
 					isDirty = true;
 					Log.e("Search Resopnse", "SURU Search Error Resopnse : "
 							+ error.getMessage());
-                      Editor editor = mSharedPreferencesObj.edit();
-                      editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
-                      editor.commit();
+					Editor editor = mSharedPreferencesObj.edit();
+					editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
+					editor.commit();
 					updateBookmartToDb(windowList, aisleBookmark, isDirty);
 				}
 
@@ -388,12 +397,13 @@ public class AisleManager {
 			BookmarkPutRequest request = new BookmarkPutRequest(
 					bookmarkAisleAsString, listener, errorListener,
 					UrlConstants.CREATE_BOOKMARK_RESTURL + "/"
-							+ storedVueUser.getVueId());
+							+ storedVueUser.getId());
 			VueApplication.getInstance().getRequestQueue().add(request);
 		} else {
-		  Editor editor = mSharedPreferencesObj.edit();
-          editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
-          editor.commit();
+			isDirty = true;
+			Editor editor = mSharedPreferencesObj.edit();
+			editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
+			editor.commit();
 			updateBookmartToDb(windowList, aisleBookmark, isDirty);
 		}
 
@@ -424,75 +434,88 @@ public class AisleManager {
 		}
 	}
 
-  public void updateRating(final ImageRating imageRating, final int likeCount)
-      throws ClientProtocolException, IOException {
-    Log.e("ImageRating Resopnse", "SURU ImageRating updateRating() called");
-    if (VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
-      VueUser storedVueUser = null;
-      Log.e("ImageRating Resopnse", "SURU ImageRating updateRating() called in network condution");
-      try {
-        storedVueUser = Utils.readUserObjectFromFile(
-            VueApplication.getInstance(),
-            VueConstants.VUE_APP_USEROBJECT__FILENAME);
-        Log.e("ImageRating Resopnse", "SURU ImageRating updateRating() called userId: " + storedVueUser.getVueId());
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      ObjectMapper mapper = new ObjectMapper();
-      String imageRatingString = mapper.writeValueAsString(imageRating);
+	public void updateRating(final ImageRating imageRating, final int likeCount)
+			throws ClientProtocolException, IOException {
+		Log.e("ImageRating Resopnse", "SURU ImageRating updateRating() called");
+		if (VueConnectivityManager.isNetworkConnected(VueApplication
+				.getInstance())) {
+			VueUser storedVueUser = null;
+			Log.e("ImageRating Resopnse",
+					"SURU ImageRating updateRating() called in network condution");
+			try {
+				storedVueUser = Utils.readUserObjectFromFile(
+						VueApplication.getInstance(),
+						VueConstants.VUE_APP_USEROBJECT__FILENAME);
+				Log.e("ImageRating Resopnse",
+						"SURU ImageRating updateRating() called userId: "
+								+ storedVueUser.getId());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			ObjectMapper mapper = new ObjectMapper();
+			String imageRatingString = mapper.writeValueAsString(imageRating);
 
-      Response.Listener listener = new Response.Listener<String>() {
+			Response.Listener listener = new Response.Listener<String>() {
 
-        @Override
-        public void onResponse(String jsonArray) {
-          if (jsonArray != null) {
-            try {
-              ImageRating imgRating = (new ObjectMapper()).readValue(jsonArray,
-                  ImageRating.class);
-              Log.e("ImageRating Resopnse",
-                  "SURU ImageRating Resopnse : ImageId: " + imgRating.getImageId() + ", AilseId: " + imgRating.getAisleId());
-              Editor editor = mSharedPreferencesObj.edit();
-              editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, false);
-              editor.commit();
-              updateImageRatingToDb(imgRating, likeCount, false);
-            } catch (Exception e) {
-              e.printStackTrace();
-            }
-          }
-        }
-      };
+				@Override
+				public void onResponse(String jsonArray) {
+					if (jsonArray != null) {
+						try {
+							ImageRating imgRating = (new ObjectMapper())
+									.readValue(jsonArray, ImageRating.class);
+							Log.e("ImageRating Resopnse",
+									"SURU ImageRating Resopnse : ImageId: "
+											+ imgRating.getImageId()
+											+ ", AilseId: "
+											+ imgRating.getAisleId());
+							Editor editor = mSharedPreferencesObj.edit();
+							editor.putBoolean(VueConstants.IS_IMAGE_DIRTY,
+									false);
+							editor.commit();
+							updateImageRatingToDb(imgRating, likeCount, false);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			};
 
-      Response.ErrorListener errorListener = new ErrorListener() {
+			Response.ErrorListener errorListener = new ErrorListener() {
 
-        @Override
-        public void onErrorResponse(VolleyError error) {
-          Log.e("ImageRating Resopnse",
-              "SURU ImageRating Error Resopnse : " + error.getMessage());
-          updateImageRatingToDb(imageRating, likeCount, true);
-          Editor editor = mSharedPreferencesObj.edit();
-          editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
-          editor.commit();
-        }
+				@Override
+				public void onErrorResponse(VolleyError error) {
+					Log.e("ImageRating Resopnse",
+							"SURU ImageRating Error Resopnse : "
+									+ error.getMessage());
+					updateImageRatingToDb(imageRating, likeCount, true);
+					Editor editor = mSharedPreferencesObj.edit();
+					editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+					editor.commit();
+				}
 
-      };
-      ImageRatingPutRequest request = new ImageRatingPutRequest(
-          imageRatingString, listener, errorListener,
-          UrlConstants.CREATE_RATING_RESTURL + "/" + storedVueUser.getVueId());
-      Log.e("ImageRating Resopnse", "SURU ImageRating updateRating() called ImageRatingPutRequest prepared");
-      VueApplication.getInstance().getRequestQueue().add(request);
-      Log.e("ImageRating Resopnse", "SURU ImageRating updateRating() called added to Request Queue");
-    } else {
-      updateImageRatingToDb(imageRating, likeCount, true);
-      Editor editor = mSharedPreferencesObj.edit();
-      editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
-      editor.commit();
-    }
-  }
-  
-  
-  private void updateImageRatingToDb(ImageRating imgRating, int likeCount, boolean isDirty) {
-    DataBaseManager.getInstance(VueApplication.getInstance()).addLikeOrDisLike(
-        (imgRating.getLiked()) ? 1 : 0, likeCount, Long.toString(imgRating.getImageId()),
-            Long.toString(imgRating.getAisleId()), isDirty);
-  }
+			};
+			ImageRatingPutRequest request = new ImageRatingPutRequest(
+					imageRatingString, listener, errorListener,
+					UrlConstants.CREATE_RATING_RESTURL + "/"
+							+ storedVueUser.getId());
+			Log.e("ImageRating Resopnse",
+					"SURU ImageRating updateRating() called ImageRatingPutRequest prepared");
+			VueApplication.getInstance().getRequestQueue().add(request);
+			Log.e("ImageRating Resopnse",
+					"SURU ImageRating updateRating() called added to Request Queue");
+		} else {
+			updateImageRatingToDb(imageRating, likeCount, true);
+			Editor editor = mSharedPreferencesObj.edit();
+			editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+			editor.commit();
+		}
+	}
+
+	private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
+			boolean isDirty) {
+		DataBaseManager.getInstance(VueApplication.getInstance())
+				.addLikeOrDisLike((imgRating.getLiked()) ? 1 : 0, likeCount,
+						Long.toString(imgRating.getImageId()),
+						Long.toString(imgRating.getAisleId()), isDirty);
+	}
 }
