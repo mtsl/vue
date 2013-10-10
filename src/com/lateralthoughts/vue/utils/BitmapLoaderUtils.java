@@ -228,7 +228,7 @@ public class BitmapLoaderUtils {
 	}
 
 	public Bitmap getBitmap(Bitmap bitmap, int bestWidth, int bestHeight) {
-		int width, height;
+/*		int width, height;
 		if (bitmap != null) {
 			width = bitmap.getWidth();
 			height = bitmap.getHeight();
@@ -248,8 +248,8 @@ public class BitmapLoaderUtils {
 					bitmap = getModifiedBitmap(bitmap, bestWidth, height);
 				}
 			}
-		}
-		return bitmap;
+		}*/
+		return getModifiedBitmap(bitmap,bestWidth,bestHeight);
 	}
 
 	private Bitmap getModifiedBitmap(Bitmap originalImage, int width, int height) {

@@ -80,15 +80,15 @@ public class NetworkHandler {
         .isMoreDataAvailable()) {
 
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
-      /*
-       * if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
-       * mOffset += mLimit; else { mOffset += mLimit; mLimit =
-       * TRENDING_AISLES_BATCH_SIZE; }
-       */
+      
+        if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
+        mOffset += mLimit; else { mOffset += mLimit; mLimit =
+        TRENDING_AISLES_BATCH_SIZE; }
+       
       Log.i("offeset and limit", "offeset1: " + mOffset + " and limit: "
           + mLimit);
-      mOffset = VueTrendingAislesDataModel.getInstance(
-          VueApplication.getInstance()).listSize();
+/*      mOffset = VueTrendingAislesDataModel.getInstance(
+          VueApplication.getInstance()).listSize();*/
       mVueContentGateway.getTrendingAisles(mLimit, mOffset,
           mTrendingAislesParser, loadMore, screenname);
     } else {
@@ -118,9 +118,17 @@ public class NetworkHandler {
           mTrendingAislesParser, loadMore, screenname);
 
     } else {
+    	//Log.i("duplicateImages", "duplicateImages from db1");
       DataBaseManager.getInstance(VueApplication.getInstance()).resetDbParams();
       ArrayList<AisleWindowContent> aisleContentArray = mDbManager
           .getAislesFromDB(null);
+      for(int i=0;i<aisleContentArray.size();i++){
+    	 // Log.i("duplicateImages", "duplicateImages imageurl******: "+i);
+    	  for(int j=0;j< aisleContentArray.get(i).getImageList().size();j++){
+    		// Log.i("duplicateImages imageurl", "duplicateImages imageurl: "+ aisleContentArray.get(i).getImageList().get(j).mImageUrl);
+    	  }
+    	 // Log.i("duplicateImages", "duplicateImages imageurl########: "+i);
+      }
       if (aisleContentArray.size() == 0) {
         return;
       }

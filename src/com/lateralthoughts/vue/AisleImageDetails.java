@@ -18,4 +18,6 @@ public class AisleImageDetails {
 	public String mRating;
 	public int mLikeDislikeStatus = AisleDetailsViewAdapter.IMG_NONE_STATUS;
 	public ArrayList<String> mCommentsList;
+	public int mTrendingImageHeight;
+	public int mTrendingImageWidth;
 }

@@ -54,7 +54,7 @@ public class VueTrendingAislesDataModel {
 	private boolean mAisleDataRequested;
 	private long mRequestStartTime;
 	private final String TAG = "VueTrendingAislesModel";
-	public boolean loadOnRequest = false;
+	public boolean loadOnRequest = true;
 	private ThreadPoolExecutor threadPool;
 	private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
 	public DataBaseManager mDbManager;
@@ -128,8 +128,10 @@ public class VueTrendingAislesDataModel {
 		mAisleContentList.add(position, aisleItem);
     }
     public void addItemToList(String aisleId,AisleWindowContent aisleItem) {
+    	  if(mAisleContentListMap.get(aisleId) == null) {
     	mAisleContentListMap.put(aisleId, aisleItem);
 		mAisleContentList.add(aisleItem);
+    	  }
     }
 	public int getAisleCount() {
 		if (null != mAisleContentList) {
@@ -177,6 +179,7 @@ public class VueTrendingAislesDataModel {
 			observer.onAisleDataUpdated(mAisleContentList.size());
 		}
 		loadOnRequest = true;
+		Log.i("TrendingDataModel", "loadOnRequest:  "+loadOnRequest);
   }
   public int listSize(){
 	   return mAisleContentList.size();

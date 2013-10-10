@@ -186,18 +186,12 @@ public class AisleLoader {
 					.getCachedBitmap(itemDetails.mCustomImageUrl);*/
 			int bestHeight = windowContent.getBestHeightForWindow();
 			LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
-					VueApplication.getInstance().getScreenWidth() / 2,
-					bestHeight);
-	 
+					VueApplication.getInstance().getVueDetailsCardWidth() / 2,
+					itemDetails.mTrendingImageHeight);
+			Log.i("cardHeight", "cardHeight bestHeight: "+bestHeight);
 			contentBrowser.setLayoutParams(mShowpieceParams2);
 			Log.i("bestsamallest", "bestsamallest height: "+bestHeight);
 			if (bitmap != null) {
-			/*	LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
-						VueApplication.getInstance().getScreenWidth() / 2,
-						bitmap.getHeight());
-		 
-				contentBrowser.setLayoutParams(mShowpieceParams2);*/
-
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
@@ -232,7 +226,7 @@ public class AisleLoader {
 		private final WeakReference<AisleContentBrowser> viewFlipperReference;
 		private String url = null;
 		private int mBestHeight;
-		String mAisleId;
+	 
 		 AisleImageDetails mItemDetails;
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
 				ImageView imageView, int bestHeight,String aisleId,AisleImageDetails itemDetails) {
@@ -241,8 +235,7 @@ public class AisleLoader {
 			imageViewReference = new WeakReference<ImageView>(imageView);
 			viewFlipperReference = new WeakReference<AisleContentBrowser>(
 					vFlipper);
-			mBestHeight = bestHeight;
-			  mAisleId = aisleId;
+			 
 			    mItemDetails = itemDetails;
 		}
 
@@ -252,12 +245,9 @@ public class AisleLoader {
 			url = params[0];
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
-			Log.e("Profiling", "Profiling New doInBackground()");
 			boolean cacheBitmap = false;
-			Log.i("bestsamallest", "bestsama height*******: "+mBestHeight);
 			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheBitmap,
-					mBestHeight, VueApplication.getInstance().getScreenWidth()/2,Utils.TRENDING_SCREEN);
-			Log.i("bestsamallest", "bestsama height BItmap*******: "+bmp.getHeight());
+					mItemDetails.mTrendingImageHeight,  mItemDetails.mTrendingImageWidth,Utils.TRENDING_SCREEN);
 			return bmp;
 		}
 
@@ -268,8 +258,6 @@ public class AisleLoader {
 			if (viewFlipperReference != null && imageViewReference != null
 					&& bitmap != null) {
 				final ImageView imageView = imageViewReference.get();
-				// final AisleContentBrowser vFlipper =
-				// viewFlipperReference.get();
 				BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
 				if (this == bitmapWorkerTask) {
@@ -281,23 +269,9 @@ public class AisleLoader {
 						holder.profileThumbnail.setVisibility(View.VISIBLE);
 						holder.aisleDescriptor.setVisibility(View.VISIBLE);
 					}
-					LinearLayout.LayoutParams mShowpieceParams = new LinearLayout.LayoutParams(
-							VueApplication.getInstance().getScreenWidth() / 2,
-							bitmap.getHeight());
-					holder.aisleContentBrowser.setLayoutParams(mShowpieceParams);
-					Log.i("TrendingCrop", "TrendingCrop2:*********************");
-					Log.i("TrendingCrop", "TrendingCrop2: mbestHeight original Height "+mItemDetails.mAvailableHeight);
-					Log.i("TrendingCrop", "TrendingCrop2: mbestHeight original Width "+mItemDetails.mAvailableWidth);
-					Log.i("TrendingCrop", "TrendingCrop2: mbestHeight window "+mBestHeight);
-					Log.i("TrendingCrop", "TrendingCrop2: bestHeight aisleContentBrowser"+mShowpieceParams.height);
-					Log.i("TrendingCrop", "TrendingCrop2: bestWidth aisleContentBrowser "+mShowpieceParams.width);
-					Log.i("TrendingCrop", "TrendingCrop2: aisle "+mAisleId);
-					Log.i("TrendingCrop", "TrendingCrop2: bestHeight bitmap "+bitmap.getHeight());
-					Log.i("TrendingCrop", "TrendingCrop2: bestWidth bitmap "+bitmap.getWidth());
-					Log.i("TrendingCrop", "TrendingCrop2:###########################");
 					imageView.setImageBitmap(bitmap);
 					if(mListener.isFlingCalled()){
-						mListener.refreshList();
+						//mListener.refreshList();
 					}
 				}
 			}

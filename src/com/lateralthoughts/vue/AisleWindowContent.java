@@ -26,6 +26,7 @@ public class AisleWindowContent {
 	private boolean mAisleBookmarkIndicator = false;
 	public boolean mIsDataChanged = false;
 	public int mTrendingBestHeight = 0;
+	public int mAisleCardHeight;
 	
 	public int mTrendingTestBestHeight,mTrendingTestBestWidth;
 
@@ -87,6 +88,7 @@ public class AisleWindowContent {
 		}
 		mAisleId = context.mAisleId;
 		mContext = context;
+		
 		// lets parse through the image urls and update the image resolution
 		// VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
 		udpateImageUrlsForDevice();
@@ -124,6 +126,11 @@ public class AisleWindowContent {
 			}
 			
 		}
+		Log.i("imageListSizes", "imageListSizes: **************************" );
+		for(int i=0;i<mAisleImagesList.size();i++){
+			Log.i("imageListSizes", "imageListSizes: "+mAisleImagesList.get(i).mTrendingImageHeight);
+		}
+		Log.i("imageListSizes", "imageListSizes: ###############################" );
 		mWindowLargestHeight = getBestHeightForDetailsScreen(mWindowLargestHeight,mWindowLargestWidth);
 		mWindowSmallestHeight = getBestHeightForTrendingScreen(mWindowSmallestHeight,mWindowSamllestWidth);
 /*		mWindowSmallestHeight = getBestHeight(
@@ -132,6 +139,7 @@ public class AisleWindowContent {
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			prepareCustomUrl(mAisleImagesList.get(i));
 		}
+		mAisleImagesList = modifyHeights(mAisleImagesList);
 		return true;
 	}
 
@@ -255,6 +263,55 @@ public class AisleWindowContent {
 	  
 	  return bestHeight;
 	  
+  }
+  private ArrayList<AisleImageDetails> modifyHeights(ArrayList<AisleImageDetails> imageList){
+	    float[] imageHeightList = new float[imageList.size()];
+	  float availableScreenHeight = VueApplication.getInstance().getScreenHeight();
+	  float adjustedImageHeight,adjustedImageWidth;
+	  float imageHeight,imageWidth;
+	  float cardWidth = VueApplication.getInstance().getVueDetailsCardWidth()/2;
+	  float aisleHeightOnCard = 0;
+	  
+	  Log.i("availableScreenHeight", "availableScreenHeight1: "+availableScreenHeight);
+	  Log.i("availableScreenHeight", "availableScreenHeight cardWidth: "+cardWidth);
+	  
+ 
+		  for(int i = 0;i<imageList.size();i++){
+			  imageHeight = imageList.get(i).mAvailableHeight;
+			  imageWidth = imageList.get(i).mAvailableWidth;
+		   if (imageHeight > availableScreenHeight){
+		      adjustedImageHeight = availableScreenHeight;
+		      adjustedImageWidth = (adjustedImageHeight/imageHeight) * imageWidth;
+		      imageHeight = adjustedImageHeight;
+		      imageWidth = adjustedImageWidth;
+		   }
+		   if(imageWidth > cardWidth){
+		      adjustedImageWidth = cardWidth;
+		      adjustedImageHeight = (adjustedImageWidth/imageWidth) * imageHeight;
+		      imageHeight = adjustedImageHeight;
+		      imageWidth = adjustedImageWidth;
+		   }
+		   imageList.get(i).mTrendingImageHeight = Math.round(imageHeight);
+		   imageList.get(i).mTrendingImageWidth = Math.round(imageWidth);
+		   imageHeightList[i]= imageHeight;
+		    
+		   
+		  }
+		  aisleHeightOnCard =  imageHeightList[0];
+	  int smallestHeightPosition = 0;
+           for(int i = 0;i<imageHeightList.length;i++){
+        	   if(aisleHeightOnCard >  imageHeightList[i]){
+        		   aisleHeightOnCard = imageHeightList[i];
+        		   mWindowSmallestHeight = (int) imageHeightList[i];
+        		   smallestHeightPosition = i;
+        	   }
+           }
+           AisleImageDetails smallestItem = imageList.remove(smallestHeightPosition);
+           imageList.add(0, smallestItem);
+           mAisleCardHeight = Math.round(aisleHeightOnCard) ;
+		return imageList;
+
+ 
   }
 	private AisleContext mContext;
 	private ArrayList<AisleImageDetails> mAisleImagesList;
