@@ -186,7 +186,7 @@ public class VueConstants {
 	public static final String AISLE_IMAGE_HEIGHT = "height";
 	public static final String AISLE_IMAGE_WIDTH = "width";
 	public static final String AISLE_IMAGE_IMAGE_URL = "imageUrl";
-	public static final String AISLE_IMAGE_RATING = "rating";
+	public static final String AISLE_IMAGE_RATING = "likeRatingCount"/*"rating"*/;
 	public static final String AISLE_IMAGE_STORE = "store";
 	public static final String AISLE_IMAGE_TITLE = "title";
 	// Reciver constants
