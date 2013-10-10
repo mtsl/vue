@@ -2,7 +2,9 @@ package com.lateralthoughts.vue;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -409,15 +411,11 @@ public class VueLandingPageActivity extends BaseActivity {
 					 * } else { mOtherSourceImagePath = null;
 					 * super.onBackPressed(); }
 					 */} else {
-					mOtherSourceImagePath = null;
-					mOtherSourceImageUrl = null;
-					mOtherSourceImageWidth = 0;
-					mOtherSourceImageHeight = 0;
 					super.onBackPressed();
 				}
 			} else {
 				Log.i("stackcount", "stackcount onbckpresed: close window0 ");
-
+				CancelNotification(this, 1);
 				FileCache fileCache = new FileCache(
 						VueApplication.getInstance());
 				fileCache.clearVueAppResizedPictures();
@@ -816,6 +814,13 @@ public class VueLandingPageActivity extends BaseActivity {
 			return mVueLandingActionbarScreenName.getText().toString();
 		}
 		return "";
+	}
+
+	public void CancelNotification(Context ctx, int notifyId) {
+		String ns = Context.NOTIFICATION_SERVICE;
+		NotificationManager nMgr = (NotificationManager) ctx
+				.getSystemService(ns);
+		nMgr.cancel(notifyId);
 	}
 
 	private void getRatedImagesList() {
