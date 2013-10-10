@@ -127,7 +127,8 @@ public class AisleDetailsViewListLoader {
 			Bitmap bitmap = null; 
 			bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
 			/*mBestHeight = getBestHeight(windowContent.getBestLargetHeightForWindow());*/
-			mBestHeight = modifyHeightForDetailsView(imageDetailsArr);
+			mBestHeight =Utils.modifyHeightForDetailsView(imageDetailsArr);
+			 
 			contentBrowser.addView(imageView);
 			Log.i("new image", "new image  windowbestHeight:  "+windowContent.getBestLargetHeightForWindow());
 			setParams(holder.aisleContentBrowser, imageView,mBestHeight);
@@ -309,50 +310,7 @@ public class AisleDetailsViewListLoader {
 		   
 	   }
    }
-   private int modifyHeightForDetailsView(ArrayList<AisleImageDetails> imageList) {
-           int mWindowLargestHeight = 0;
-	    float[] imageHeightList = new float[imageList.size()];
-	  float availableScreenHeight = VueApplication.getInstance().getVueDetailsCardHeight();
-	  float adjustedImageHeight,adjustedImageWidth;
-	  float imageHeight,imageWidth;
-	  float cardWidth = VueApplication.getInstance().getVueDetailsCardWidth();
-	 
 
-		  for(int i = 0;i<imageList.size();i++){
-			  imageHeight = imageList.get(i).mAvailableHeight;
-			  imageWidth = imageList.get(i).mAvailableWidth;
-		   if (imageHeight > availableScreenHeight){
-		      adjustedImageHeight = availableScreenHeight;
-		      adjustedImageWidth = (adjustedImageHeight/imageHeight) * imageWidth;
-		      imageHeight = adjustedImageHeight;
-		      imageWidth = adjustedImageWidth;
-		   }
-		   if(imageWidth > cardWidth){
-		      adjustedImageWidth = cardWidth;
-		      adjustedImageHeight = (adjustedImageWidth/imageWidth) * imageHeight;
-		      imageHeight = adjustedImageHeight;
-		      imageWidth = adjustedImageWidth;
-		   }
-		   imageList.get(i).mDetailsImageHeight = Math.round(imageHeight);
-		   imageList.get(i).mDetailsImageWidth = Math.round(imageWidth);
-		   imageHeightList[i]= imageHeight;
-		    
-		   
-		  }
-		  mWindowLargestHeight =  (int) imageHeightList[0];
-	 
-        for(int i = 0;i<imageHeightList.length;i++){
-     	   if(mWindowLargestHeight <  imageHeightList[i]){
-     		   mWindowLargestHeight = (int) imageHeightList[i];
-     		   
-     	   }
-        }
-      
-		return mWindowLargestHeight;
-
-
-
- }
   private int getBestHeight(int largeHeight) {
 	   int screenHeight = VueApplication.getInstance().getVueDetailsCardHeight();
 	   int screenWidth = VueApplication.getInstance().getScreenWidth();

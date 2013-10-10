@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +31,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
@@ -490,4 +492,46 @@ public class Utils {
 		editor.putBoolean(VueConstants.DATAENTRY_EDIT_AISLE_FLAG, flag);
 		editor.commit();
 	}
+	   public static int modifyHeightForDetailsView(ArrayList<AisleImageDetails> imageList) {
+           int mWindowLargestHeight = 0;
+	    float[] imageHeightList = new float[imageList.size()];
+	  //float availableScreenHeight =/* VueApplication.getInstance().getVueDetailsCardHeight()*/;
+	  float availableScreenHeight = 50000.0f;
+	  float adjustedImageHeight,adjustedImageWidth;
+	  float imageHeight,imageWidth;
+	  float cardWidth = VueApplication.getInstance().getVueDetailsCardWidth();
+	 
+
+		  for(int i = 0;i<imageList.size();i++){
+			  imageHeight = imageList.get(i).mAvailableHeight;
+			  imageWidth = imageList.get(i).mAvailableWidth;
+		   if (imageHeight > availableScreenHeight){
+		      adjustedImageHeight = availableScreenHeight;
+		      adjustedImageWidth = (adjustedImageHeight/imageHeight) * imageWidth;
+		      imageHeight = adjustedImageHeight;
+		      imageWidth = adjustedImageWidth;
+		   }
+		   if(imageWidth > cardWidth){
+		      adjustedImageWidth = cardWidth;
+		      adjustedImageHeight = (adjustedImageWidth/imageWidth) * imageHeight;
+		      imageHeight = adjustedImageHeight;
+		      imageWidth = adjustedImageWidth;
+		   }
+		   imageList.get(i).mDetailsImageHeight = Math.round(imageHeight);
+		   imageList.get(i).mDetailsImageWidth = Math.round(imageWidth);
+		   imageHeightList[i]= imageHeight;
+		    
+		   
+		  }
+		  mWindowLargestHeight =  (int) imageHeightList[0];
+	 
+        for(int i = 0;i<imageHeightList.length;i++){
+     	   if(mWindowLargestHeight <  imageHeightList[i]){
+     		   mWindowLargestHeight = (int) imageHeightList[i];
+     		   
+     	   }
+        }
+      
+		return mWindowLargestHeight;
+ }
 }

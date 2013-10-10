@@ -127,12 +127,9 @@ public class AisleWindowContent {
 			}
 			
 		}
-		Log.i("imageListSizes", "imageListSizes: **************************" );
 		for(int i=0;i<mAisleImagesList.size();i++){
 			Log.i("imageListSizes", "imageListSizes: "+mAisleImagesList.get(i).mTrendingImageHeight);
 		}
-		Log.i("imageListSizes", "imageListSizes: ###############################" );
-		mWindowLargestHeight = getBestHeightForDetailsScreen(mWindowLargestHeight,mWindowLargestWidth);
 		mWindowSmallestHeight = getBestHeightForTrendingScreen(mWindowSmallestHeight,mWindowSamllestWidth);
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			prepareCustomUrl(mAisleImagesList.get(i));
@@ -192,32 +189,11 @@ public class AisleWindowContent {
 	public int getBestLargetHeightForWindow() {
 		return mWindowLargestHeight;
 	}
-    public void setBestLargestHeightForWindow(int largestHeight,int width){
+    public void setBestLargestHeightForWindow(int largestHeight){
     	mWindowLargestHeight = largestHeight;
-    	mWindowLargestWidth = width;
-    	mWindowLargestHeight = getBestHeightForDetailsScreen(largestHeight,width);
     }
  
-  private int getBestHeightForDetailsScreen(int height,int width){
-	int bestLargestHeight;
-	int bestWidth = 0;
-	  int screenWidth = VueApplication.getInstance().getScreenWidth();
-	  int screenHeight = VueApplication.getInstance().getScreenHeight();
-	  if(height >= screenHeight){
-		  bestLargestHeight =( height*screenHeight)/height;
-		  bestWidth = (width * screenHeight)/height;
-	  } else {
-		  bestLargestHeight = height;
-		  bestWidth = width;
-	  }
-	  if(bestWidth > screenWidth){
-		  bestLargestHeight = (bestLargestHeight *screenWidth) /bestWidth;
-				  bestWidth = screenWidth ;
-		  
-	  }
-	  return bestLargestHeight;
-	  
-  }
+ 
   private int getBestHeightForTrendingScreen(int height,int width){
 	int bestHeight;
 	int trendingCardWidth = VueApplication.getInstance().getScreenWidth()/2;

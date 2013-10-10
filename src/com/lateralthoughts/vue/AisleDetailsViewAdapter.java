@@ -409,7 +409,14 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					mViewHolder.descriptionlay.setVisibility(View.GONE);
 				}
 
-				mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName;
+				if(getItem(mCurrentAislePosition).getAisleContext().mFirstName != null && getItem(mCurrentAislePosition).getAisleContext().mLastName != null){
+					mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName+getItem(mCurrentAislePosition).getAisleContext().mLastName;
+				} else if(getItem(mCurrentAislePosition).getAisleContext().mFirstName != null){
+					mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName;
+				} else if(getItem(mCurrentAislePosition).getAisleContext().mLastName != null){
+					mVueusername = getItem(mCurrentAislePosition).getAisleContext().mLastName;
+				}  
+				
 				if (mVueusername != null && mVueusername.equals("Anonymous")) {
 					if (VueApplication.getInstance().getmUserInitials() != null) {
 						mVueusername = VueApplication.getInstance()
@@ -863,8 +870,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		if (imgDetails.mAvailableHeight > getItem(mCurrentAislePosition)
 				.getBestLargetHeightForWindow()) {
 			mBestHeight = imgDetails.mAvailableHeight;
-			getItem(mCurrentAislePosition).setBestLargestHeightForWindow(
-					imgDetails.mAvailableHeight, imgDetails.mAvailableWidth);
+		/*	getItem(mCurrentAislePosition).setBestLargestHeightForWindow(
+					imgDetails.mAvailableHeight, imgDetails.mAvailableWidth);*/
+			
 			Log.i("new image", "new image height: changed");
 		}
 		if (imgDetails.mAvailableHeight < getItem(mCurrentAislePosition)
@@ -887,6 +895,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		getItem(mCurrentAislePosition).addAisleContent(
 				getItem(mCurrentAislePosition).getAisleContext(),
 				getItem(mCurrentAislePosition).getImageList());
+		
+		int bestHeight = Utils.modifyHeightForDetailsView(getItem(mCurrentAislePosition).getImageList());
+		getItem(mCurrentAislePosition).setBestLargestHeightForWindow(bestHeight);
+		
+		
 		FileCache fileCache = new FileCache(mContext);
 		File f = fileCache.getFile(getItem(mCurrentAislePosition)
 				.getImageList().get(mCurrentDispImageIndex).mCustomImageUrl);
