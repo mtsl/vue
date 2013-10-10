@@ -50,9 +50,8 @@ public class OtherSourcesDialog {
 						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
 								.getSupportFragmentManager().findFragmentById(
 										R.id.create_aisles_view_fragment);
-						fragment.mFindAtText
-								.setText(OtherSourcesDialog.this.imagesList
-										.get(position).getOriginUrl());
+						fragment.mOtherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
+								.get(position).getOriginUrl();
 						fragment.mOtherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
 								.get(position).getHeight();
 						fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
@@ -74,9 +73,8 @@ public class OtherSourcesDialog {
 									.getSupportFragmentManager()
 									.findFragmentById(
 											R.id.create_aisles_view_fragment);
-							fragment.mFindAtText
-									.setText(OtherSourcesDialog.this.imagesList
-											.get(position).getOriginUrl());
+							fragment.mOtherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
+									.get(position).getOriginUrl();
 							fragment.mOtherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
 									.get(position).getHeight();
 							fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList

@@ -143,17 +143,25 @@ public class VueUserManager {
 			}
 		};
 
-		/*
-		 * Log.e("VueUserDebug", "vueuser: method called "); ObjectMapper mapper
-		 * = new ObjectMapper(); VueUserRequest vueUserRequest = new
-		 * VueUserRequest(); vueUserRequest.setDeviceId(deviceId);
-		 * vueUserRequest.setFirstName(userInitals); String userAsString =
-		 * mapper.writeValueAsString(vueUserRequest); Log.e("VueUserDebug",
-		 * "vueuser: request " + userAsString);
-		 */
-		UserCreateRequest request = new UserCreateRequest(null, null, listener,
-				errorListener);
-		VueApplication.getInstance().getRequestQueue().add(request);
+		try {
+			Log.e("VueUserDebug", "vueuser: method called ");
+			/*
+			 * ObjectMapper mapper = new ObjectMapper(); VueUser
+			 * vueuserRequestObject = new VueUser(deviceId,
+			 * "FACEBOOK_ID_UNKNOWN", "GOOGLE_PLUS_ID_UNKNOWN", "", userInitals,
+			 * ""); String userAsString = mapper
+			 * .writeValueAsString(vueuserRequestObject);
+			 */
+			// Log.e("VueUserDebug", "vueuser: request " + userAsString);
+			String s = "{\"email\":\"\",\"firstName\":"
+					+ userInitals + ",\"lastName\":\"\",\"deviceId\":"
+					+ deviceId + "}";
+			UserCreateRequest request = new UserCreateRequest(s, listener,
+					errorListener);
+			VueApplication.getInstance().getRequestQueue().add(request);
+		} catch (Exception e) {
+
+		}
 
 	}
 
@@ -192,7 +200,7 @@ public class VueUserManager {
 		};
 		String requestUrl = UrlConstants.SERVER_BASE_URL
 				+ FB_USER_CREATE_ENDPOINT + user.getFacebookId();
-		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+		UserCreateRequest request = new UserCreateRequest(null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
 
@@ -229,7 +237,7 @@ public class VueUserManager {
 		};
 		String requestUrl = UrlConstants.SERVER_BASE_URL
 				+ GPLUS_USER_CREATE_ENDPOINT + vueUser.getGooglePlusId();
-		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+		UserCreateRequest request = new UserCreateRequest(null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
 
@@ -266,7 +274,7 @@ public class VueUserManager {
 		};
 		String requestUrl = UrlConstants.SERVER_BASE_URL
 				+ INSTAGRAM_USER_CREATE_ENDPOINT + vueUser.getInstagramId();
-		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+		UserCreateRequest request = new UserCreateRequest(null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
 
@@ -303,7 +311,7 @@ public class VueUserManager {
 		};
 		String requestUrl = UrlConstants.SERVER_BASE_URL
 				+ FB_USER_CREATE_ENDPOINT + user.getFacebookId();
-		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+		UserCreateRequest request = new UserCreateRequest(null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
 
@@ -334,7 +342,7 @@ public class VueUserManager {
 		};
 		String requestUrl = UrlConstants.SERVER_BASE_URL
 				+ GPLUS_USER_CREATE_ENDPOINT + vueUser.getGooglePlusId();
-		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+		UserCreateRequest request = new UserCreateRequest(null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
 
@@ -365,7 +373,7 @@ public class VueUserManager {
 		};
 		String requestUrl = UrlConstants.SERVER_BASE_URL
 				+ INSTAGRAM_USER_CREATE_ENDPOINT + vueUser.getInstagramId();
-		UserCreateRequest request = new UserCreateRequest(null, null, listener,
+		UserCreateRequest request = new UserCreateRequest(null, listener,
 				errorListener);
 		VueApplication.getInstance().getRequestQueue().add(request);
 	}
@@ -379,21 +387,43 @@ public class VueUserManager {
 		// ... other methods go here
 		Response.Listener<String> mListener;
 		Response.ErrorListener mErrorListener;
+		private String muserAsString;
+		private StringEntity mEntity;
 
-		public UserCreateRequest(String param1, String param2,
+		public UserCreateRequest(String userAsString,
 				Response.Listener<String> listener,
 				Response.ErrorListener errorListener) {
 			super(Method.PUT, UrlConstants.SERVER_BASE_URL
 					+ USER_CREATE_ENDPOINT, errorListener);
 			mListener = listener;
 			mErrorListener = errorListener;
+			muserAsString = userAsString;
+			try {
+				mEntity = new StringEntity(muserAsString);
+			} catch (UnsupportedEncodingException ex) {
+			}
+		}
+
+		@Override
+		public String getBodyContentType() {
+			return mEntity.getContentType().getValue();
+		}
+
+		@Override
+		public byte[] getBody() throws AuthFailureError {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			try {
+				mEntity.writeTo(bos);
+			} catch (IOException e) {
+				VolleyLog.e("IOException writing to ByteArrayOutputStream");
+			}
+			return bos.toByteArray();
 		}
 
 		@Override
 		public Map<String, String> getHeaders() {
 			HashMap<String, String> headersMap = new HashMap<String, String>();
 			headersMap.put("Content-Type", "application/json");
-			headersMap.put("Content-length", "0");
 			return headersMap;
 		}
 
@@ -413,15 +443,12 @@ public class VueUserManager {
 		@Override
 		protected void deliverResponse(String s) {
 			mListener.onResponse(s);
-			Log.e("VueUser", "error = " + s);
+			Log.e("VueUser", "response = " + s);
 		}
 
 		@Override
 		public void deliverError(VolleyError error) {
 			mErrorListener.onErrorResponse(error);
-			/*
-			 * // TODO Auto-generated method stub super.deliverError(error);
-			 */
 		}
 
 	}

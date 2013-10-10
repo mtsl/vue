@@ -16,25 +16,34 @@ import android.util.Log;
 
 public class VueUser implements Serializable {
 
-	private String mVueId;
+	private String vueId;
 
 	public String getInstagramId() {
-		return mInstagramId;
+		return instagramId;
 	}
 
 	public void setInstagramId(String mInstagramId) {
-		this.mInstagramId = mInstagramId;
+		this.instagramId = mInstagramId;
 	}
 
-	private String mInstagramId;
+	private String instagramId;
 
 	public VueUser(String facebookId, String googlePlusId, String instagramId,
 			String deviceId, String emailId) {
-		mEmailId = emailId;
-		mFacebookId = facebookId;
-		mGooglePlusId = googlePlusId;
-		mInstagramId = instagramId;
-		mDeviceId = deviceId;
+		this.emailId = emailId;
+		this.facebookId = facebookId;
+		this.googlePlusId = googlePlusId;
+		this.instagramId = instagramId;
+		this.deviceId = deviceId;
+	}
+
+	public VueUser(String deviceId, String facebookId, String googlePlusId,
+			String instagramId, String firstName, String lastName) {
+		this.deviceId = deviceId;
+		this.facebookId = facebookId;
+		this.googlePlusId = googlePlusId;
+		this.firstName = firstName;
+		this.lastName = lastName;
 	}
 
 	public VueUser() {
@@ -42,85 +51,85 @@ public class VueUser implements Serializable {
 	}
 
 	public void setVueUserId(String vueId) {
-		mVueId = vueId;
+		this.vueId = vueId;
 	}
 
 	public String getVueId() {
-		Log.i("userid", "userid123456: " + mVueId);
-		return mVueId;
+		Log.i("userid", "userid123456: " + vueId);
+		return vueId;
 	}
 
 	public void setBirthday(String birthday) {
-		mBirthday = birthday;
+		this.birthday = birthday;
 	}
 
 	public void setUserIdentityMethod(
 			VueUserManager.PreferredIdentityLayer identity) {
-		mUserIdentifier = identity;
+		userIdentifier = identity;
 	}
 
 	public VueUserManager.PreferredIdentityLayer getUserIdentity() {
-		return mUserIdentifier;
+		return userIdentifier;
 	}
 
-	private String mBirthday;
+	private String birthday;
 
 	public String getFacebookId() {
-		return mFacebookId;
+		return facebookId;
 	}
 
 	public void setFacebookId(String mFacebookId) {
-		this.mFacebookId = mFacebookId;
+		this.facebookId = mFacebookId;
 	}
 
 	public String getGooglePlusId() {
-		return mGooglePlusId;
+		return googlePlusId;
 	}
 
 	public void setGooglePlusId(String mGooglePlusId) {
-		this.mGooglePlusId = mGooglePlusId;
+		this.googlePlusId = mGooglePlusId;
 	}
 
-	private String mFacebookId;
-	private String mGooglePlusId;
+	private String facebookId;
+	private String googlePlusId;
 
 	public String getmFirstName() {
-		return mFirstName;
+		return firstName;
 	}
 
 	public String getmLastName() {
-		return mLastName;
+		return lastName;
 	}
 
 	public void setFirstName(String firstName) {
-		mFirstName = firstName;
+		this.firstName = firstName;
 	}
 
 	public void setLastName(String lastName) {
-		mLastName = lastName;
+		this.lastName = lastName;
 	}
 
-	private String mFirstName;
-	private String mLastName;
-	private Locale mUserLocale;
-	private String mEmailId;
+	private String firstName;
+	private String lastName;
+	private Locale userLocale;
+	private String emailId;
 
 	public String getEmailId() {
-		return mEmailId;
+		return emailId;
 	}
 
 	public void setEmailId(String mEmailId) {
-		this.mEmailId = mEmailId;
+		this.emailId = mEmailId;
 	}
 
 	public String getDeviceId() {
-		return mDeviceId;
+		return deviceId;
 	}
 
 	public void setDeviceId(String mDeviceId) {
-		this.mDeviceId = mDeviceId;
+		this.deviceId = mDeviceId;
 	}
 
-	private String mDeviceId;
-	private VueUserManager.PreferredIdentityLayer mUserIdentifier;
+	private String deviceId;
+	private VueUserManager.PreferredIdentityLayer userIdentifier;
 }
