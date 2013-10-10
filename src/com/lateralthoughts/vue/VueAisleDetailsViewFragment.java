@@ -424,6 +424,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				mVueUserName.getViewTreeObserver()
 						.removeGlobalOnLayoutListener(this);
 				mVueUserName.setText(mAisleDetailsAdapter.mVueusername);
+				Log.i("userName", "userName: "+mAisleDetailsAdapter.mVueusername);
 			}
 		});
 	}

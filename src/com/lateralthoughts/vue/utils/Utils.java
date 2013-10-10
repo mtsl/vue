@@ -495,8 +495,7 @@ public class Utils {
 	   public static int modifyHeightForDetailsView(ArrayList<AisleImageDetails> imageList) {
            int mWindowLargestHeight = 0;
 	    float[] imageHeightList = new float[imageList.size()];
-	  //float availableScreenHeight =/* VueApplication.getInstance().getVueDetailsCardHeight()*/;
-	  float availableScreenHeight = 50000.0f;
+	  float availableScreenHeight = VueApplication.getInstance().getVueDetailsCardHeight() ;
 	  float adjustedImageHeight,adjustedImageWidth;
 	  float imageHeight,imageWidth;
 	  float cardWidth = VueApplication.getInstance().getVueDetailsCardWidth();
