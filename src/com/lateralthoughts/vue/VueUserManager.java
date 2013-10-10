@@ -155,16 +155,18 @@ public class VueUserManager {
 		 * "already available. Try the update APIs");
 		 */
 
-		final VueUser user = parseGraphUserIntoVueUser(graphUser);
 		Response.Listener listener = new Response.Listener<String>() {
 			GraphUser graphUser;
 
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					VueUserManager.this.setCurrentUser(user);
-					// user.userIdentifier = PreferredIdentityLayer.FB;
-					callback.onUserUpdated(user);
+					Log.e("Profiling", "Create User: Profiling : onResponse()"
+							+ jsonArray);
+					VueUser vueUser = new Parser().parseUserData(jsonArray);
+					VueUserManager.this.setCurrentUser(vueUser);
+					Log.i("imageurl", "imageurl is ok got user id: " + vueUser);
+					callback.onUserUpdated(vueUser);
 				}
 			}
 		};
@@ -178,11 +180,18 @@ public class VueUserManager {
 				}
 			}
 		};
-		String requestUrl = UrlConstants.SERVER_BASE_URL
-				+ FB_USER_CREATE_ENDPOINT + user.getFacebookId();
-		UserCreateRequest request = new UserCreateRequest(null, listener,
-				errorListener);
-		VueApplication.getInstance().getRequestQueue().add(request);
+		try {
+			Log.e("VueUserDebug", "vueuser: method called ");
+			VueUser user = parseGraphUserIntoVueUser(graphUser);
+			ObjectMapper mapper = new ObjectMapper();
+			String userAsString = mapper.writeValueAsString(user);
+			Log.e("VueUserDebug", "vueuser: request " + userAsString);
+			UserCreateRequest request = new UserCreateRequest(userAsString,
+					listener, errorListener);
+			VueApplication.getInstance().getRequestQueue().add(request);
+		} catch (Exception e) {
+
+		}
 
 	}
 
@@ -499,10 +508,9 @@ public class VueUserManager {
 			}
 			String username = graphUser.getName();
 			String facebookId = graphUser.getId();
-			vueUser = new VueUser(null, email, null, null, null, null,
-					facebookUserId, null);
-			vueUser.setFirstName(firstName);
-			vueUser.setLastName(lastName);
+			vueUser = new VueUser(null, email, firstName, lastName, null,
+					Utils.getDeviceId(), facebookUserId,
+					VueUser.DEFAULT_GOOGLEPLUS_ID);
 			// vueUser.birthday = birthday;
 		} catch (Exception ex) {
 			ex.printStackTrace();

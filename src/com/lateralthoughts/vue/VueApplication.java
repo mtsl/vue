@@ -44,6 +44,7 @@ public class VueApplication extends Application {
 	public long mLaunchTime;
 	public long mLastRecordedTime;
 
+
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
 	}
