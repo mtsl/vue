@@ -178,6 +178,9 @@ public class VueTrendingAislesDataModel {
 			Log.i("TrendingDataModel", "DataObserver for List Refresh:  ");
 			observer.onAisleDataUpdated(mAisleContentList.size());
 		}
+		for(AisleWindowContent content : mAisleContentList) {
+		  Log.e("TrendingDataModel", "bookmarkfeaturetest: count in TrendingDataModel: " + content.getAisleContext().mBookmarkCount);
+		}
 		loadOnRequest = true;
 		Log.i("TrendingDataModel", "loadOnRequest:  "+loadOnRequest);
   }
@@ -185,6 +188,8 @@ public class VueTrendingAislesDataModel {
 	   return mAisleContentList.size();
 	 
   }
+
+  
 	public Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			@SuppressWarnings("unchecked")

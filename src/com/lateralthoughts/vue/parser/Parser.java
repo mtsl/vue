@@ -258,9 +258,9 @@ public class Parser {
 			}
 			aisleContext.mBookmarkCount = josnObject
 					.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
-			Log.i("bookmarkfeaturetest", "bookmarkfeaturetest: count "
+			Log.i("bookmarkfeaturetest", "bookmarkfeaturetest: count parser"
 					+ aisleContext.mBookmarkCount);
-			Log.i("bookmarkfeaturetest", "bookmarkfeaturetest id: "
+			Log.i("bookmarkfeaturetest", "bookmarkfeaturetest parser id: "
 					+ aisleContext.mAisleId);
 
 		} catch (JSONException e) {
