@@ -126,10 +126,11 @@ public class AisleDetailsViewListLoader {
 			imageView.setContainerObject(holder);
 			Bitmap bitmap = null; 
 			bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
-			mBestHeight = getBestHeight(windowContent.getBestLargetHeightForWindow());
+			/*mBestHeight = getBestHeight(windowContent.getBestLargetHeightForWindow());*/
+			mBestHeight = modifyHeightForDetailsView(imageDetailsArr);
 			contentBrowser.addView(imageView);
 			Log.i("new image", "new image  windowbestHeight:  "+windowContent.getBestLargetHeightForWindow());
-			setParams(holder.aisleContentBrowser, imageView, windowContent.getBestLargetHeightForWindow());
+			setParams(holder.aisleContentBrowser, imageView,mBestHeight);
 			if (bitmap != null) {
 				// get the dimensions of the image.
 	/*			mImageDimension = Utils.getScalledImage(bitmap,
@@ -151,20 +152,6 @@ public class AisleDetailsViewListLoader {
 					Log.i("setparam", "setparam cache: "+bitmap.getHeight());
 					//setParams(holder.aisleContentBrowser, imageView, bitmap.getHeight());
 				}
-				Log.i("TrendingCrop", "TrendingCrop3:*********************");
-				Log.i("TrendingCrop", "TrendingCrop3: Screen Height "
-						+ VueApplication.getInstance().getScreenHeight());
-				Log.i("TrendingCrop", "TrendingCrop3: Screen Width "
-						+ VueApplication.getInstance().getScreenWidth());
-				Log.i("TrendingCrop", "TrendingCrop3: Item Height "
-						+ itemDetails.mAvailableHeight);
-				Log.i("TrendingCrop", "TrendingCrop3: Item Width "
-						+ itemDetails.mAvailableWidth);
-				Log.i("TrendingCrop", "TrendingCrop3:mBestHeight "
-						+ mBestHeight);
-				Log.i("TrendingCrop",
-						"TrendingCrop3:##########################");
-
 				imageView.setImageBitmap(bitmap);
 				//contentBrowser.addView(imageView);
 				if (scrollIndex != 0) {
@@ -205,6 +192,8 @@ public class AisleDetailsViewListLoader {
         private int mBestHeight;
         AisleContentBrowser aisleContentBrowser ;
         int mAvailabeWidth,mAvailableHeight;
+        AisleImageDetails mItemDetails;
+        
 
         public BitmapWorkerTask(AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
@@ -213,6 +202,7 @@ public class AisleDetailsViewListLoader {
             aisleContentBrowser = vFlipper;
             mAvailabeWidth = itemDetails.mAvailableWidth;
             mAvailableHeight = itemDetails.mAvailableHeight;
+            mItemDetails = itemDetails;
         }
 
         // Decode image in background.
@@ -222,18 +212,13 @@ public class AisleDetailsViewListLoader {
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getScreenWidth(),Utils.DETAILS_SCREEN);
-            Log.i("window", "TrendingCrop3 height original: "+bmp.getHeight());
-			 
-            if(bmp != null) {
- 
-            	 if(bmp.getHeight()> mBestHeight) {
-            		 bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getScreenWidth(),Utils.DETAILS_SCREEN);
-				 
-            	 }
-            }
-			Log.i("TrendingCrop", "TrendingCrop3: bitmapheight "
-					+ bmp.getHeight());
+            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
+			if(bmp != null){
+            mItemDetails.mTempResizeBitmapwidth = bmp.getWidth();
+			mItemDetails.mTempResizedBitmapHeight = bmp.getHeight();
+		     Log.i("imageHeitht", "imageHeitht resizeHeight: "+mItemDetails.mTempResizedBitmapHeight);
+		        Log.i("imageHeitht", "imageHeitht resizeWidth: "+ mItemDetails.mTempResizeBitmapwidth);
+			}
             return bmp;            
         }
         // Once complete, see if ImageView is still around and set bitmap.
@@ -324,8 +309,52 @@ public class AisleDetailsViewListLoader {
 		   
 	   }
    }
+   private int modifyHeightForDetailsView(ArrayList<AisleImageDetails> imageList) {
+           int mWindowLargestHeight = 0;
+	    float[] imageHeightList = new float[imageList.size()];
+	  float availableScreenHeight = VueApplication.getInstance().getVueDetailsCardHeight();
+	  float adjustedImageHeight,adjustedImageWidth;
+	  float imageHeight,imageWidth;
+	  float cardWidth = VueApplication.getInstance().getVueDetailsCardWidth();
+	 
+
+		  for(int i = 0;i<imageList.size();i++){
+			  imageHeight = imageList.get(i).mAvailableHeight;
+			  imageWidth = imageList.get(i).mAvailableWidth;
+		   if (imageHeight > availableScreenHeight){
+		      adjustedImageHeight = availableScreenHeight;
+		      adjustedImageWidth = (adjustedImageHeight/imageHeight) * imageWidth;
+		      imageHeight = adjustedImageHeight;
+		      imageWidth = adjustedImageWidth;
+		   }
+		   if(imageWidth > cardWidth){
+		      adjustedImageWidth = cardWidth;
+		      adjustedImageHeight = (adjustedImageWidth/imageWidth) * imageHeight;
+		      imageHeight = adjustedImageHeight;
+		      imageWidth = adjustedImageWidth;
+		   }
+		   imageList.get(i).mDetailsImageHeight = Math.round(imageHeight);
+		   imageList.get(i).mDetailsImageWidth = Math.round(imageWidth);
+		   imageHeightList[i]= imageHeight;
+		    
+		   
+		  }
+		  mWindowLargestHeight =  (int) imageHeightList[0];
+	 
+        for(int i = 0;i<imageHeightList.length;i++){
+     	   if(mWindowLargestHeight <  imageHeightList[i]){
+     		   mWindowLargestHeight = (int) imageHeightList[i];
+     		   
+     	   }
+        }
+      
+		return mWindowLargestHeight;
+
+
+
+ }
   private int getBestHeight(int largeHeight) {
-	   int screenHeight = VueApplication.getInstance().getScreenHeight();
+	   int screenHeight = VueApplication.getInstance().getVueDetailsCardHeight();
 	   int screenWidth = VueApplication.getInstance().getScreenWidth();
 	   if(largeHeight > screenHeight){
 		   largeHeight = screenHeight;

@@ -20,6 +20,8 @@ public class AisleImageDetails {
 	public ArrayList<String> mCommentsList;
 	public int mTrendingImageHeight;
 	public int mTrendingImageWidth;
+	public int mDetailsImageWidth;
+	public int mDetailsImageHeight;
 	
 	public int mTempResizeBitmapwidth;
 	public int mTempResizedBitmapHeight;

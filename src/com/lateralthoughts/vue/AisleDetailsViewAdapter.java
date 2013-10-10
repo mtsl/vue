@@ -662,10 +662,20 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		@Override
 		public void onImageDoubleTap() {
 			
-		ImageView image = 	(ImageView) mViewHolder.aisleContentBrowser.getChildAt(mCurrentDispImageIndex);
-		Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
-        Log.i("imageHeitht", "imageHeitht: "+bitmap.getWidth());
-
+	     int resizeWidth = getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mTempResizeBitmapwidth;
+	     int resizeHeight = getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mTempResizedBitmapHeight;
+	     int originalWidth = getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mAvailableWidth;
+	     int originalHeight = getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mAvailableHeight;
+	     String imageUrl = getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mImageUrl;
+	     int cardWidth = VueApplication.getInstance().getVueDetailsCardWidth();
+	     int cardHeight = VueApplication.getInstance().getVueDetailsCardHeight();
+	     
+	     Log.i("imageHeitht", "imageHeitht resizeHeight: "+resizeHeight);
+        Log.i("imageHeitht", "imageHeitht resizeWidth: "+resizeWidth);
+        Log.i("imageHeitht", "imageHeitht original Height: "+originalHeight);
+        Log.i("imageHeitht", "imageHeitht original width: "+originalWidth);
+        Log.i("imageHeitht", "imageHeitht imageUrl: "+imageUrl);
+        Log.i("imageHeitht", "imageHeitht position:"+mCurrentDispImageIndex);
 			Toast.makeText(
 					mContext,
 					"imgAreaHeight: " + (mTopBottomMargin + mBestHeight)

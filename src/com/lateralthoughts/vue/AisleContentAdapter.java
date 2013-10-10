@@ -375,12 +375,17 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 								Utils.DETAILS_SCREEN);
 					}
 				}
+				mItemDetails.mTempResizedBitmapHeight = bmp.getHeight();
+				mItemDetails.mTempResizeBitmapwidth = bmp.getWidth();
+				  Log.i("imageHeitht", "imageHeitht resizeHeight: "+mItemDetails.mTempResizedBitmapHeight);
+			        Log.i("imageHeitht", "imageHeitht resizeWidth: "+ mItemDetails.mTempResizeBitmapwidth);
 
 			} else {
 				boolean cacheval = false;
 				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheval,
 						mItemDetails.mTrendingImageHeight,mItemDetails.mTrendingImageWidth,
 						Utils.DETAILS_SCREEN);
+				 
 			}
  
 			return bmp;
