@@ -586,71 +586,60 @@ public class VueLoginActivity extends FragmentActivity implements
 					String location = "";
 					VueUserManager userManager = VueUserManager
 							.getUserManager();
-					VueUser storedVueUser = null;
-					try {
-						storedVueUser = Utils.readUserObjectFromFile(
-								VueLoginActivity.this,
-								VueConstants.VUE_APP_USEROBJECT__FILENAME);
-					} catch (Exception e2) {
-						e2.printStackTrace();
-					}
-					if (storedVueUser != null) {
-						/*
-						 * if (storedVueUser.userIdentifier
-						 * .equals(VueUserManager
-						 * .PreferredIdentityLayer.DEVICE_ID)) {
-						 * storedVueUser.userIdentifier =
-						 * VueUserManager.PreferredIdentityLayer.FB; } else if
-						 * (storedVueUser.userIdentifier
-						 * .equals(VueUserManager.PreferredIdentityLayer.GPLUS))
-						 * { storedVueUser.userIdentifier =
-						 * VueUserManager.PreferredIdentityLayer.GPLUS_FB; }
-						 * else if (storedVueUser.userIdentifier
-						 * .equals(VueUserManager
-						 * .PreferredIdentityLayer.INSTAGRAM)) {
-						 * storedVueUser.userIdentifier =
-						 * VueUserManager.PreferredIdentityLayer.FB_INSTAGRAM; }
-						 * else if (storedVueUser.userIdentifier
-						 * .equals(VueUserManager
-						 * .PreferredIdentityLayer.GPLUS_INSTAGRAM)) {
-						 * storedVueUser.userIdentifier =
-						 * VueUserManager.PreferredIdentityLayer
-						 * .ALL_IDS_AVAILABLE; } else {
-						 * storedVueUser.userIdentifier =
-						 * VueUserManager.PreferredIdentityLayer.FB; }
-						 */
-						userManager.updateFBIdentifiedUser(user, storedVueUser,
-								new UserUpdateCallback() {
-									@Override
-									public void onUserUpdated(VueUser user) {
-										try {
-											Utils.writeUserObjectToFile(
-													VueLoginActivity.this,
-													VueConstants.VUE_APP_USEROBJECT__FILENAME,
-													user);
-										} catch (Exception e) {
-											e.printStackTrace();
-										}
+					/*
+					 * VueUser storedVueUser = null; try { storedVueUser =
+					 * Utils.readUserObjectFromFile( VueLoginActivity.this,
+					 * VueConstants.VUE_APP_USEROBJECT__FILENAME); } catch
+					 * (Exception e2) { e2.printStackTrace(); } if
+					 * (storedVueUser != null) {
+					 */
+					/*
+					 * if (storedVueUser.userIdentifier .equals(VueUserManager
+					 * .PreferredIdentityLayer.DEVICE_ID)) {
+					 * storedVueUser.userIdentifier =
+					 * VueUserManager.PreferredIdentityLayer.FB; } else if
+					 * (storedVueUser.userIdentifier
+					 * .equals(VueUserManager.PreferredIdentityLayer.GPLUS)) {
+					 * storedVueUser.userIdentifier =
+					 * VueUserManager.PreferredIdentityLayer.GPLUS_FB; } else if
+					 * (storedVueUser.userIdentifier .equals(VueUserManager
+					 * .PreferredIdentityLayer.INSTAGRAM)) {
+					 * storedVueUser.userIdentifier =
+					 * VueUserManager.PreferredIdentityLayer.FB_INSTAGRAM; }
+					 * else if (storedVueUser.userIdentifier
+					 * .equals(VueUserManager
+					 * .PreferredIdentityLayer.GPLUS_INSTAGRAM)) {
+					 * storedVueUser.userIdentifier =
+					 * VueUserManager.PreferredIdentityLayer .ALL_IDS_AVAILABLE;
+					 * } else { storedVueUser.userIdentifier =
+					 * VueUserManager.PreferredIdentityLayer.FB; }
+					 */
+					/*
+					 * userManager.updateFBIdentifiedUser(user, storedVueUser,
+					 * new UserUpdateCallback() {
+					 * 
+					 * @Override public void onUserUpdated(VueUser user) { try {
+					 * Utils.writeUserObjectToFile( VueLoginActivity.this,
+					 * VueConstants.VUE_APP_USEROBJECT__FILENAME, user); } catch
+					 * (Exception e) { e.printStackTrace(); } } }); } else {
+					 */
+					userManager.createFBIdentifiedUser(user,
+							new VueUserManager.UserUpdateCallback() {
+								@Override
+								public void onUserUpdated(VueUser user) {
+									try {
+										Utils.writeUserObjectToFile(
+												VueLoginActivity.this,
+												VueConstants.VUE_APP_USEROBJECT__FILENAME,
+												user);
+									} catch (Exception e) {
+										e.printStackTrace();
 									}
-								});
-					} else {
-						userManager.createFBIdentifiedUser(user,
-								new VueUserManager.UserUpdateCallback() {
-									@Override
-									public void onUserUpdated(VueUser user) {
-										try {
-											Utils.writeUserObjectToFile(
-													VueLoginActivity.this,
-													VueConstants.VUE_APP_USEROBJECT__FILENAME,
-													user);
-										} catch (Exception e) {
-											e.printStackTrace();
-										}
-										Log.e("Vue User Creation",
-												"callback from successful user creation");
-									}
-								});
-					}
+									Log.e("Vue User Creation",
+											"callback from successful user creation");
+								}
+							});
+					// }
 					try {
 						if (user.getLocation() != null) {
 							JSONObject jsonObject = user.getLocation()

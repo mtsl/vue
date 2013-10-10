@@ -2,7 +2,9 @@ package com.lateralthoughts.vue;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -48,6 +50,9 @@ public class VueLandingPageActivity extends BaseActivity {
 	private ProgressDialog mProgressDialog;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
 	public static String mOtherSourceImagePath = null;
+	public static String mOtherSourceImageUrl = null;
+	public static int mOtherSourceImageWidth = 0;
+	public static int mOtherSourceImageHeight = 0;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
 
@@ -265,7 +270,10 @@ public class VueLandingPageActivity extends BaseActivity {
 		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
-			if (!fromOnCreateMethodFlag) {
+			if (!fromOnCreateMethodFlag
+					&& VueApplication.getInstance()
+							.ismLoadDataentryScreenFlag()) {
+				VueApplication.getInstance().setmLoadDataentryScreenFlag(false);
 				if (Utils
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 
@@ -380,12 +388,12 @@ public class VueLandingPageActivity extends BaseActivity {
 			Log.i("stackcount", "stackcount onbckpresed: "
 					+ StackViews.getInstance().getStackCount());
 			if (getSlidingMenu().isMenuShowing()) {
-				Log.i("stackcount", "stackcount onbckpresed: close window1 " );
+				Log.i("stackcount", "stackcount onbckpresed: close window1 ");
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
 			} else if (StackViews.getInstance().getStackCount() > 0) {
-				Log.i("stackcount", "stackcount onbckpresed: close window2 " );
+				Log.i("stackcount", "stackcount onbckpresed: close window2 ");
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
 				if (viewInfo != null) {
 					mVueLandingActionbarScreenName.setText(viewInfo.mVueName);
@@ -403,18 +411,20 @@ public class VueLandingPageActivity extends BaseActivity {
 					 * } else { mOtherSourceImagePath = null;
 					 * super.onBackPressed(); }
 					 */} else {
-					mOtherSourceImagePath = null;
 					super.onBackPressed();
 				}
 			} else {
-				Log.i("stackcount", "stackcount onbckpresed: close window0 " );
-						
+				Log.i("stackcount", "stackcount onbckpresed: close window0 ");
+				CancelNotification(this, 1);
 				FileCache fileCache = new FileCache(
 						VueApplication.getInstance());
 				fileCache.clearVueAppResizedPictures();
 				fileCache.clearVueAppCameraPictures();
 				fileCache.clearTwoDaysOldPictures();
 				mOtherSourceImagePath = null;
+				mOtherSourceImageUrl = null;
+				mOtherSourceImageWidth = 0;
+				mOtherSourceImageHeight = 0;
 				super.onBackPressed();
 			}
 		}
@@ -491,7 +501,6 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
- 
 	public void showCategory(final String catName) {
 		if (mFragment == null) {
 			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
@@ -608,7 +617,6 @@ public class VueLandingPageActivity extends BaseActivity {
 			Toast.makeText(this, "No Bookmarked aisles", Toast.LENGTH_LONG)
 					.show();
 		}
- 
 
 	}
 
@@ -701,6 +709,9 @@ public class VueLandingPageActivity extends BaseActivity {
 		yesButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				mOtherSourceImagePath = null;
+				mOtherSourceImageUrl = null;
+				mOtherSourceImageWidth = 0;
+				mOtherSourceImageHeight = 0;
 				dialog.dismiss();
 			}
 		});
@@ -712,8 +723,12 @@ public class VueLandingPageActivity extends BaseActivity {
 		dialog.show();
 	}
 
-	public void showScreenSelectionForOtherSource(final String imagePath) {
+	public void showScreenSelectionForOtherSource(final String imagePath,
+			final String imageUrl, final int imageWidth, final int imageHeight) {
 		mOtherSourceImagePath = imagePath;
+		mOtherSourceImageHeight = imageHeight;
+		mOtherSourceImageWidth = imageWidth;
+		mOtherSourceImageUrl = imageUrl;
 		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.other_source_landing_screen_selection);
@@ -737,7 +752,19 @@ public class VueLandingPageActivity extends BaseActivity {
 				b.putString(
 						VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 						imagePath);
+				b.putString(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL,
+						imageUrl);
+				b.putInt(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH,
+						imageWidth);
+				b.putInt(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT,
+						imageHeight);
 				mOtherSourceImagePath = null;
+				mOtherSourceImageUrl = null;
+				mOtherSourceImageWidth = 0;
+				mOtherSourceImageHeight = 0;
 				intent.putExtras(b);
 				startActivity(intent);
 			}
@@ -787,6 +814,13 @@ public class VueLandingPageActivity extends BaseActivity {
 			return mVueLandingActionbarScreenName.getText().toString();
 		}
 		return "";
+	}
+
+	public void CancelNotification(Context ctx, int notifyId) {
+		String ns = Context.NOTIFICATION_SERVICE;
+		NotificationManager nMgr = (NotificationManager) ctx
+				.getSystemService(ns);
+		nMgr.cancel(notifyId);
 	}
 
 	private void getRatedImagesList() {

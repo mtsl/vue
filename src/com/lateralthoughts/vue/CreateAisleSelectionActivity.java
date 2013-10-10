@@ -154,6 +154,7 @@ public class CreateAisleSelectionActivity extends Activity {
 		if (Utils.appInstalledOrNot(packageName, this)) {
 			Intent shoppingAppIntent = new Intent(
 					android.content.Intent.ACTION_VIEW);
+			VueApplication.getInstance().setmLoadDataentryScreenFlag(true);
 			shoppingAppIntent.setClassName(packageName, activityName);
 			finish();
 			startActivity(shoppingAppIntent);

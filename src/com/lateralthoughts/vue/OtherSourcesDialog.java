@@ -60,7 +60,14 @@ public class OtherSourcesDialog {
 					} else {
 						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
 						vueLandingPageActivity
-								.showScreenSelectionForOtherSource(picturePath);
+								.showScreenSelectionForOtherSource(
+										picturePath,
+										OtherSourcesDialog.this.imagesList.get(
+												position).getOriginUrl(),
+										OtherSourcesDialog.this.imagesList.get(
+												position).getWidth(),
+										OtherSourcesDialog.this.imagesList.get(
+												position).getHeight());
 					}
 				} else {
 					File f = mFileCache.getVueAppResizedPictureFile(String
@@ -84,7 +91,14 @@ public class OtherSourcesDialog {
 							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
 							vueLandingPageActivity
 									.showScreenSelectionForOtherSource(f
-											.getPath());
+											.getPath(),
+											OtherSourcesDialog.this.imagesList
+													.get(position)
+													.getOriginUrl(),
+											OtherSourcesDialog.this.imagesList
+													.get(position).getWidth(),
+											OtherSourcesDialog.this.imagesList
+													.get(position).getHeight());
 						}
 					} else {
 						Toast.makeText(mActivity,

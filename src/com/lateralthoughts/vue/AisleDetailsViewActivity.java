@@ -264,9 +264,14 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		if (VueLandingPageActivity.mOtherSourceImagePath != null) {
 			// TODO need to add imageUrl, imageWidth and ImageHeight for the
 			// below method
-			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath, null,
-					0, 0);
+			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath,
+					VueLandingPageActivity.mOtherSourceImageUrl,
+					VueLandingPageActivity.mOtherSourceImageWidth,
+					VueLandingPageActivity.mOtherSourceImageHeight);
 			VueLandingPageActivity.mOtherSourceImagePath = null;
+			VueLandingPageActivity.mOtherSourceImageUrl = null;
+			VueLandingPageActivity.mOtherSourceImageWidth = 0;
+			VueLandingPageActivity.mOtherSourceImageHeight = 0;
 		}
 	}
 
