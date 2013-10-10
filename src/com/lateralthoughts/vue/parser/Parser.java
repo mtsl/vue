@@ -26,7 +26,8 @@ public class Parser {
 	// imageItemsArray. Instead the called function clones and keeps a copy.
 	// This is pretty inconsistent.
 	// Let the allocation happen in one place for both items. Fix this!
-  public boolean logStatus =false;
+	public boolean logStatus = false;
+
 	public ArrayList<AisleWindowContent> parseTrendingAislesResultData(
 			String resultString, boolean loadMore) {
 
@@ -92,10 +93,11 @@ public class Parser {
 
 	public AisleImageDetails parseAisleImageData(JSONObject jsonObject)
 			throws JSONException {
-	  if(logStatus) {
-	  Log.e("Parser", "parserAisleImageData: Response " + jsonObject.toString());
-	  logStatus = false;
-	  }
+		if (logStatus) {
+			Log.e("Parser",
+					"parserAisleImageData: Response " + jsonObject.toString());
+			logStatus = false;
+		}
 		AisleImageDetails aisleImageDetails = new AisleImageDetails();
 		aisleImageDetails.mId = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_ID);
@@ -115,13 +117,13 @@ public class Parser {
 				+ aisleImageDetails.mImageUrl);
 
 		Log.i("urlserver", "urlserver: " + aisleImageDetails.mImageUrl);
-		if(jsonObject
-            .getString(VueConstants.AISLE_IMAGE_RATING) == null || jsonObject
-                .getString(VueConstants.AISLE_IMAGE_RATING).equalsIgnoreCase("null")) {
-		  aisleImageDetails.mLikesCount = 0;
+		if (jsonObject.getString(VueConstants.AISLE_IMAGE_RATING) == null
+				|| jsonObject.getString(VueConstants.AISLE_IMAGE_RATING)
+						.equalsIgnoreCase("null")) {
+			aisleImageDetails.mLikesCount = 0;
 		} else {
-		aisleImageDetails.mLikesCount = Integer.parseInt(jsonObject
-				.getString(VueConstants.AISLE_IMAGE_RATING));
+			aisleImageDetails.mLikesCount = Integer.parseInt(jsonObject
+					.getString(VueConstants.AISLE_IMAGE_RATING));
 		}
 		aisleImageDetails.mStore = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_STORE);
@@ -164,9 +166,11 @@ public class Parser {
 				JSONArray jsonArray = mainJsonObject.getJSONArray("images");
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject jsonObject = jsonArray.getJSONObject(i);
-					AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject); ///randomimage.jpg
+					AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject); // /randomimage.jpg
 
-					if (aisleImageDetails.mImageUrl != null && (!aisleImageDetails.mImageUrl.contains("randomurl.com"))
+					if (aisleImageDetails.mImageUrl != null
+							&& (!aisleImageDetails.mImageUrl
+									.contains("randomurl.com"))
 							&& aisleImageDetails.mImageUrl.trim().length() > 0
 							&& aisleImageDetails.mAvailableHeight != 0
 							&& aisleImageDetails.mAvailableWidth != 0) {
@@ -183,7 +187,7 @@ public class Parser {
 		ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject ailseItem = jsonArray.getJSONObject(i);
-			Log.i("aisleItemId", "aisleItemId: "+ailseItem);
+			Log.i("aisleItemId", "aisleItemId: " + ailseItem);
 			AisleContext aisleContext = parseAisleData(ailseItem);
 			ArrayList<AisleImageDetails> aisleImageDetailsList = null;
 			try {
@@ -200,7 +204,7 @@ public class Parser {
 						aisleImageDetailsList);
 				aisleWindowContent
 						.setmAisleBookmarksCount(aisleContext.mBookmarkCount);
-				//Log.i("aisleItemId", "aisleItemId: "+aisleContext.mAisleId);
+				// Log.i("aisleItemId", "aisleItemId: "+aisleContext.mAisleId);
 				aisleWindowContentList.add(aisleWindowContent);
 			}
 		}
@@ -208,15 +212,15 @@ public class Parser {
 	}
 
 	private AisleContext parseAisleData(JSONObject josnObject) {
-	    //TODO:
+		// TODO:
 
 		AisleContext aisleContext = new AisleContext();
 		try {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
-			if("5279021612924928".equalsIgnoreCase(aisleContext.mAisleId)){
-			  logStatus = true;
+			if ("5279021612924928".equalsIgnoreCase(aisleContext.mAisleId)) {
+				logStatus = true;
 			}
-			
+
 			aisleContext.mCategory = josnObject
 					.getString(VueConstants.AISLE_CATEGORY);
 			aisleContext.mLookingForItem = josnObject
@@ -286,5 +290,24 @@ public class Parser {
 
 		}
 		return aisleIdList;
+	}
+
+	public VueUser parseUserData(String response) {
+		try {
+			JSONObject jsonObject = new JSONObject(response);
+			VueUser vueUser = new VueUser(
+					jsonObject.getLong(VueConstants.USER_RESPONSE_ID),
+					jsonObject.getString(VueConstants.USER_EMAIL),
+					jsonObject.getString(VueConstants.USER_FIRST_NAME),
+					jsonObject.getString(VueConstants.USER_LAST_NAME),
+					jsonObject.getLong(VueConstants.USER_JOINTIME),
+					jsonObject.getString(VueConstants.USER_DEVICE_ID),
+					jsonObject.getString(VueConstants.USER_FACEBOOK_ID),
+					jsonObject.getString(VueConstants.USER_GOOGLEPLUS_ID));
+			return vueUser;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

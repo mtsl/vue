@@ -483,7 +483,7 @@ public class NetworkHandler {
     }
     String userId = null;
     if (storedVueUser != null) {
-      userId = Long.valueOf(storedVueUser.getVueId()).toString();
+      userId = Long.valueOf(storedVueUser.getId()).toString();
     }
     return userId;
 

@@ -189,6 +189,15 @@ public class VueConstants {
 	public static final String AISLE_IMAGE_RATING = "rating";
 	public static final String AISLE_IMAGE_STORE = "store";
 	public static final String AISLE_IMAGE_TITLE = "title";
+	// User response Keys
+	public static final String USER_RESPONSE_ID = "id";
+	public static final String USER_JOINTIME = "joinTime";
+	public static final String USER_DEVICE_ID = "deviceId";
+	public static final String USER_EMAIL = "email";
+	public static final String USER_FIRST_NAME = "firstName";
+	public static final String USER_LAST_NAME = "lastName";
+	public static final String USER_FACEBOOK_ID = "facebookId";
+	public static final String USER_GOOGLEPLUS_ID = "googlePlusId";
 	// Reciver constants
 	public static final int AISLE_TRENDING_LIST_DATA = 1;
 	public static final int AISLE_TRENDING_PARSED_DATA = 2;

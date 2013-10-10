@@ -388,7 +388,7 @@ public class AisleManager {
 			BookmarkPutRequest request = new BookmarkPutRequest(
 					bookmarkAisleAsString, listener, errorListener,
 					UrlConstants.CREATE_BOOKMARK_RESTURL + "/"
-							+ storedVueUser.getVueId());
+							+ storedVueUser.getId());
 			VueApplication.getInstance().getRequestQueue().add(request);
 		} else {
 		  Editor editor = mSharedPreferencesObj.edit();
@@ -434,7 +434,7 @@ public class AisleManager {
         storedVueUser = Utils.readUserObjectFromFile(
             VueApplication.getInstance(),
             VueConstants.VUE_APP_USEROBJECT__FILENAME);
-        Log.e("ImageRating Resopnse", "SURU ImageRating updateRating() called userId: " + storedVueUser.getVueId());
+        Log.e("ImageRating Resopnse", "SURU ImageRating updateRating() called userId: " + storedVueUser.getId());
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -477,7 +477,7 @@ public class AisleManager {
       };
       ImageRatingPutRequest request = new ImageRatingPutRequest(
           imageRatingString, listener, errorListener,
-          UrlConstants.CREATE_RATING_RESTURL + "/" + storedVueUser.getVueId());
+          UrlConstants.CREATE_RATING_RESTURL + "/" + storedVueUser.getId());
       Log.e("ImageRating Resopnse", "SURU ImageRating updateRating() called ImageRatingPutRequest prepared");
       VueApplication.getInstance().getRequestQueue().add(request);
       Log.e("ImageRating Resopnse", "SURU ImageRating updateRating() called added to Request Queue");
