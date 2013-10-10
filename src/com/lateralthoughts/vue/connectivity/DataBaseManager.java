@@ -109,6 +109,7 @@ public class DataBaseManager {
     
     int aislesCount = contentList.size();
     aisleIdCursor.close();
+    imageIdCursor.close();
     for (int i = 0; i < aislesCount; i++) {
       Cursor cursor = context.getContentResolver()
           .query(VueConstants.CONTENT_URI, new String[] {"COUNT(*)"}, null,

@@ -2,6 +2,7 @@ package com.lateralthoughts.vue.parser;
 
 import android.util.Log;
 import com.lateralthoughts.vue.*;
+import com.lateralthoughts.vue.utils.UrlConstants;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -152,7 +153,7 @@ public class Parser {
 	public ArrayList<AisleImageDetails> getImagesForAisleId(String aisleId)
 			throws Exception {
 		ArrayList<AisleImageDetails> imageList = new ArrayList<AisleImageDetails>();
-		String imageRequestUrl = VueConstants.GET_IMAGES_FOR_AISLE + aisleId;
+		String imageRequestUrl = UrlConstants.GET_IMAGES_FOR_AISLE + aisleId;
 		URL url = new URL(imageRequestUrl);
 		HttpGet httpGet = new HttpGet(url.toString());
 		DefaultHttpClient httpClient = new DefaultHttpClient();
