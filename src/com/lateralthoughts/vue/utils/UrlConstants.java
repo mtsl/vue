@@ -40,5 +40,7 @@ public class UrlConstants {
   
   public static final String GET_RATINGS_RESTURL = 
       SERVER_BASE_URL + "api/imageratingsgetall";
+  
+  public static final String GET_IMAGES_FOR_AISLE = SERVER_BASE_URL + "api/imagesget/aisle/";
 
 }

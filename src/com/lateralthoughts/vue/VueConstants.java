@@ -8,7 +8,6 @@ import android.net.Uri;
  */
 public class VueConstants {
 
-	public static final String GET_IMAGES_FOR_AISLE = "http://2-java.vueapi-canary-development1.appspot.com/api/imagesget/aisle/";
 	public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
 	public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
 	public static final String VUE_LOGIN = "VueLoginFlag";
