@@ -54,7 +54,7 @@ public class VueTrendingAislesDataModel {
 	private boolean mAisleDataRequested;
 	private long mRequestStartTime;
 	private final String TAG = "VueTrendingAislesModel";
-	public boolean loadOnRequest = false;
+	public boolean loadOnRequest = true;
 	private ThreadPoolExecutor threadPool;
 	private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
 	public DataBaseManager mDbManager;
@@ -174,6 +174,7 @@ public class VueTrendingAislesDataModel {
 			observer.onAisleDataUpdated(mAisleContentList.size());
 		}
 		loadOnRequest = true;
+		Log.i("TrendingDataModel", "loadOnRequest:  "+loadOnRequest);
   }
   public int listSize(){
 	   return mAisleContentList.size();

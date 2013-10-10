@@ -573,10 +573,13 @@ public class VueLandingPageActivity extends BaseActivity {
         .getInstance(VueLandingPageActivity.this).mNetworkHandler.bookmarkedAisles;
     String[] bookmarked = bookmarkedAisles
         .toArray(new String[bookmarkedAisles.size()]);
+    Log.i("bookmarks", "bookmarks size array ids: "+bookmarked.length);
       if (windowContent == null) {
         windowContent = new ArrayList<AisleWindowContent>();
-      }
+      } 
+      DataBaseManager.getInstance(VueLandingPageActivity.this).resetDbParams();
       ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager.getInstance(VueLandingPageActivity.this).getAislesFromDB(bookmarked);
+      Log.i("bookmarks", "bookmarks size: "+windowContentTemp.size());
       for (AisleWindowContent w : windowContentTemp) {
         windowContent.add(w);
         Log.i("duplicateImageUrl", "duplicateImageUrl:********");
@@ -770,7 +773,10 @@ public class VueLandingPageActivity extends BaseActivity {
 	}
 
 	public static String getScreenName() {
+		if(mVueLandingActionbarScreenName !=  null){
 		return mVueLandingActionbarScreenName.getText().toString();
+		} 
+		return "";
 	}
 	
 	private void getRatedImagesList() {
