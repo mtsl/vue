@@ -1,9 +1,6 @@
 package com.lateralthoughts.vue;
 
 import java.io.Serializable;
-import java.util.Locale;
-
-import android.util.Log;
 
 /**
  * UserCredentials in Vue involves creating a Vue User account on the backend to
@@ -16,120 +13,104 @@ import android.util.Log;
 
 public class VueUser implements Serializable {
 
-	private String vueId;
+	/*
+	 * public VueUserManager.PreferredIdentityLayer userIdentifier; public
+	 * String instagramId; public String birthday;
+	 */
 
-	public String getInstagramId() {
-		return instagramId;
-	}
+	public static final String DEFAULT_FACEBOOK_ID = "FACEBOOK_ID_UNKNOWN";
+	public static final String DEFAULT_GOOGLEPLUS_ID = "GOOGLE_PLUS_ID_UNKNOWN";
 
-	public void setInstagramId(String mInstagramId) {
-		this.instagramId = mInstagramId;
-	}
+	private Long id;
+	private String email;
+	private String firstName;
+	private String lastName;
+	private Long joinTime;
+	private String deviceId;
 
-	private String instagramId;
-
-	public VueUser(String facebookId, String googlePlusId, String instagramId,
-			String deviceId, String emailId) {
-		this.emailId = emailId;
-		this.facebookId = facebookId;
-		this.googlePlusId = googlePlusId;
-		this.instagramId = instagramId;
-		this.deviceId = deviceId;
-	}
-
-	public VueUser(String deviceId, String facebookId, String googlePlusId,
-			String instagramId, String firstName, String lastName) {
-		this.deviceId = deviceId;
-		this.facebookId = facebookId;
-		this.googlePlusId = googlePlusId;
-		this.firstName = firstName;
-		this.lastName = lastName;
-	}
-
-	public VueUser() {
-
-	}
-
-	public void setVueUserId(String vueId) {
-		this.vueId = vueId;
-	}
-
-	public String getVueId() {
-		Log.i("userid", "userid123456: " + vueId);
-		return vueId;
-	}
-
-	public void setBirthday(String birthday) {
-		this.birthday = birthday;
-	}
-
-	public void setUserIdentityMethod(
-			VueUserManager.PreferredIdentityLayer identity) {
-		userIdentifier = identity;
-	}
-
-	public VueUserManager.PreferredIdentityLayer getUserIdentity() {
-		return userIdentifier;
-	}
-
-	private String birthday;
-
-	public String getFacebookId() {
-		return facebookId;
-	}
-
-	public void setFacebookId(String mFacebookId) {
-		this.facebookId = mFacebookId;
-	}
-
-	public String getGooglePlusId() {
-		return googlePlusId;
-	}
-
-	public void setGooglePlusId(String mGooglePlusId) {
-		this.googlePlusId = mGooglePlusId;
-	}
-
+	/** Indexed as objectify can only query indexed fields */
 	private String facebookId;
 	private String googlePlusId;
 
-	public String getmFirstName() {
-		return firstName;
+	public VueUser() {
+		facebookId = DEFAULT_FACEBOOK_ID;
+		googlePlusId = DEFAULT_GOOGLEPLUS_ID;
 	}
 
-	public String getmLastName() {
-		return lastName;
+	public VueUser(Long id, String email, String firstName, String lastName,
+			Long joinTime, String deviceId, String facebookId,
+			String googlePlusId) {
+		this.id = id;
+		this.email = email;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.joinTime = joinTime;
+		this.deviceId = deviceId;
+		this.facebookId = facebookId;
+		this.googlePlusId = googlePlusId;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getFirstName() {
+		return firstName;
 	}
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 
+	public String getLastName() {
+		return lastName;
+	}
+
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
-	private String firstName;
-	private String lastName;
-	private Locale userLocale;
-	private String emailId;
-
-	public String getEmailId() {
-		return emailId;
+	public Long getJoinTime() {
+		return joinTime;
 	}
 
-	public void setEmailId(String mEmailId) {
-		this.emailId = mEmailId;
+	public void setJoinTime(Long joinTime) {
+		this.joinTime = joinTime;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getDeviceId() {
 		return deviceId;
 	}
 
-	public void setDeviceId(String mDeviceId) {
-		this.deviceId = mDeviceId;
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 
-	private String deviceId;
-	private VueUserManager.PreferredIdentityLayer userIdentifier;
+	public String getFacebookId() {
+		return facebookId;
+	}
+
+	public void setFacebookId(String facebookId) {
+		this.facebookId = facebookId;
+	}
+
+	public String getGooglePlusId() {
+		return googlePlusId;
+	}
+
+	public void setGooglePlusId(String googlePlusId) {
+		this.googlePlusId = googlePlusId;
+	}
 }

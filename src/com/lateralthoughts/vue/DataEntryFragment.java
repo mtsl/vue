@@ -868,7 +868,7 @@ public class DataEntryFragment extends Fragment {
 								e2.printStackTrace();
 							}
 							if (storedVueUser != null
-									&& storedVueUser.getVueId() != null) {
+									&& storedVueUser.getId() != null) {
 								if (VueConnectivityManager
 										.isNetworkConnected(getActivity())) {
 									Intent intent = new Intent();
@@ -914,7 +914,7 @@ public class DataEntryFragment extends Fragment {
 													intent);
 									getActivity().finish();
 									addImageToAisleToServer(
-											storedVueUser.getVueId(),
+											Long.valueOf(storedVueUser.getId()).toString(),
 											VueApplication.getInstance()
 													.getClickedWindowID(), true);
 								} else {
@@ -1411,11 +1411,11 @@ public class DataEntryFragment extends Fragment {
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
-				if (storedVueUser != null && storedVueUser.getVueId() != null) {
+				if (storedVueUser != null && storedVueUser.getId() != null) {
 					if (VueConnectivityManager
 							.isNetworkConnected(getActivity())) {
 						storeMetaAisleDataIntoLocalStorage();
-						addImageToAisleToServer(storedVueUser.getVueId(),
+						addImageToAisleToServer(Long.valueOf(storedVueUser.getId()).toString(),
 								Utils.getDataentryScreenAisleId(getActivity()),
 								false);
 					} else {
@@ -1480,7 +1480,7 @@ public class DataEntryFragment extends Fragment {
 						e2.printStackTrace();
 					}
 					if (storedVueUser != null
-							&& storedVueUser.getVueId() != null) {
+							&& storedVueUser.getId() != null) {
 						if (VueConnectivityManager
 								.isNetworkConnected(getActivity())) {
 							storeMetaAisleDataIntoLocalStorage();
@@ -1616,9 +1616,9 @@ public class DataEntryFragment extends Fragment {
 			aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
 			aisle.setName("Super Aisle"); // TODO By Krishna
 			aisle.setOccassion(mOccassionBigText.getText().toString().trim());
-			aisle.setOwnerUserId(Long.valueOf(vueUser.getVueId()));
-			aisle.setAisleOwnerFirstName(vueUser.getmFirstName());
-			aisle.setAisleOwnerLastName(vueUser.getmLastName());
+			aisle.setOwnerUserId(Long.valueOf(vueUser.getId()));
+			aisle.setAisleOwnerFirstName(vueUser.getFirstName());
+			aisle.setAisleOwnerLastName(vueUser.getLastName());
 			if (mSaySomethingAboutAisle.getText().toString().trim().length() > 0) {
 				aisle.setDescription(mSaySomethingAboutAisle.getText()
 						.toString());
@@ -1649,7 +1649,7 @@ public class DataEntryFragment extends Fragment {
 			image.setStore(store);
 			image.setTitle("Android Test"); // TODO By Krishna
 			FlurryAgent.logEvent("New_Aisle_Creation");
-			image.setOwnerUserId(Long.valueOf(vueUser.getVueId()));
+			image.setOwnerUserId(Long.valueOf(vueUser.getId()));
 			FlurryAgent.logEvent("Create_Aisle");
 			aisle.setAisleImage(image);
 			VueTrendingAislesDataModel

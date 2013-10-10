@@ -999,8 +999,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		articleParams.put("Occasion", getItem(mCurrentAislePosition)
 				.getAisleContext().mOccasion);
 		if (storedVueUser != null) {
-			articleParams
-					.put("Unique_User_Like", "" + storedVueUser.getVueId());
+			articleParams.put("Unique_User_Like", "" + storedVueUser.getId());
 		} else {
 			articleParams.put("Unique_User_Like", "anonymous");
 		}
@@ -1013,7 +1012,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					"" + getItem(mCurrentAislePosition).getAisleId());
 			if (storedVueUser != null) {
 				articleParams1.put("Unique_User_Like",
-						"" + storedVueUser.getVueId());
+						"" + storedVueUser.getId());
 			} else {
 				articleParams1.put("Unique_User_Like", "anonymous");
 			}
@@ -1068,7 +1067,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			storedVueUser = Utils.readUserObjectFromFile(mContext,
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 			AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
-					storedVueUser.getVueId());
+					Long.valueOf(storedVueUser.getId()).toString());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
