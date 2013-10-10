@@ -60,24 +60,26 @@ public class VueTrendingAislesDataModel {
 	public DataBaseManager mDbManager;
 	NetworkHandler mNetworkHandler;
 
-	private VueTrendingAislesDataModel(Context context) {
-		Log.e("Profiling", "Profining DATA CHECK VueTrendingAislesDataModel()");
-		mContext = context;
-		mAisleWindowContentFactory = AisleWindowContentFactory
-				.getInstance(mContext);
-		mAisleDataObserver = new ArrayList<IAisleDataObserver>();
-		mState = AISLE_TRENDING_LIST_DATA;
-		mAisleContentList = new ArrayList<AisleWindowContent>();
-		mDbManager = DataBaseManager.getInstance(mContext);
-		threadPool = new ThreadPoolExecutor(mPoolSize, mMaxPoolSize,
-				mKeepAliveTime, TimeUnit.SECONDS, threadsQueue);
-		mNetworkHandler = new NetworkHandler(mContext);
-		boolean loadMore = true;
-        long elapsedTime = System.currentTimeMillis() - VueApplication.getInstance().mLastRecordedTime;
-        Log.e("PERF_VUE","about to invoke loadInitialData. Time elapsed = " + elapsedTime);
-        VueApplication.getInstance().mLastRecordedTime = System.currentTimeMillis();
-		mNetworkHandler.loadInitialData(loadMore, mHandler);
-	}
+  private VueTrendingAislesDataModel(Context context) {
+    Log.e("Profiling", "Profining DATA CHECK VueTrendingAislesDataModel()");
+    mContext = context;
+    mAisleWindowContentFactory = AisleWindowContentFactory
+        .getInstance(mContext);
+    mAisleDataObserver = new ArrayList<IAisleDataObserver>();
+    mState = AISLE_TRENDING_LIST_DATA;
+    mAisleContentList = new ArrayList<AisleWindowContent>();
+    mDbManager = DataBaseManager.getInstance(mContext);
+    threadPool = new ThreadPoolExecutor(mPoolSize, mMaxPoolSize,
+        mKeepAliveTime, TimeUnit.SECONDS, threadsQueue);
+    mNetworkHandler = new NetworkHandler(mContext);
+    boolean loadMore = true;
+    long elapsedTime = System.currentTimeMillis()
+        - VueApplication.getInstance().mLastRecordedTime;
+    Log.e("PERF_VUE", "about to invoke loadInitialData. Time elapsed = "
+        + elapsedTime);
+    VueApplication.getInstance().mLastRecordedTime = System.currentTimeMillis();
+    mNetworkHandler.loadInitialData(loadMore, mHandler, "Treanding");
+  }
     public NetworkHandler getNetworkHandler(){
     	return mNetworkHandler;
     }

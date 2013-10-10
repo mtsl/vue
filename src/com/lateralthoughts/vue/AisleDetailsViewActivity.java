@@ -533,6 +533,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				}
 				if (findAt != null) {
 					mVueAiselFragment.mEditTextFindAt.setText(findAt);
+				} else {
+					mVueAiselFragment.mEditTextFindAt.setText("");
 				}
 
 				String imagePath = b
@@ -540,11 +542,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				if (imagePath != null) {
 					addImageToAisle(
 							imagePath,
-							findAt,
+							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL),
 							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH),
 							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT));
 				}
-
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT) {

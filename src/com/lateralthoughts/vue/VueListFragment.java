@@ -376,7 +376,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
            * .sendMessage(msg);
            */
         } else if (s.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-          Log.e(TAG, "Child Click: sidemenu_sub_option_Bookmarks: " + s);
           ((VueLandingPageActivity) getActivity()).showCategory(s);
         } else if (s.equals(R.string.sidemenu_sub_option_Recently_Viewed_Aisles)) {
           ((VueLandingPageActivity) getActivity()).showCategory(s);

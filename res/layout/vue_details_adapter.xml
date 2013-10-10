@@ -20,8 +20,10 @@
 
             <com.lateralthoughts.vue.ui.AisleContentBrowser
                 android:id="@+id/showpieceadapter"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center" >
             </com.lateralthoughts.vue.ui.AisleContentBrowser>
         </FrameLayout>
@@ -30,6 +32,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
+            android:id="@+id/descriptionlayout"
             android:background="@android:color/white" >
 
             <TextView

@@ -63,7 +63,7 @@ public class VueContentGateway {
 	 * is available
 	 */
 	public boolean getTrendingAisles(int limit, final int offset,
-			final ResultReceiver receiver, final boolean loadMore) {
+			final ResultReceiver receiver, final boolean loadMore, final String screenName) {
 		boolean status = true;
 		Log.i("datarequest", "datarequest parsing data offset: " + offset
 				+ "  limit: " + limit);
@@ -91,6 +91,7 @@ public class VueContentGateway {
 						responseBundle.putBoolean("loadMore", loadMore);
 						responseBundle.putInt("offset", offset);
 						receiver.send(1, responseBundle);
+				        VueLandingPageActivity.changeScreenName(screenName);
 					}
 				}
 			};

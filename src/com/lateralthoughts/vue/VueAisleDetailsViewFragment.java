@@ -85,7 +85,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private ListView mAisleDetailsList;
 	EditTextBackEvent mEditTextFindAt;
 	LinearLayout mDetailsFindAtPopup;
-	TextView  vueAisleHeading;
+	TextView vueAisleHeading;
 	String mOccasion;
 
 	// TODO: define a public interface that can be implemented by the parent
@@ -140,19 +140,26 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				.findViewById(R.id.details_add_image_to_aisle);
 		mEditTextFindAt = (EditTextBackEvent) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_text);
-		String imageUrl = null;
+		String detailsUrl = null;
 		try {
-			imageUrl = VueTrendingAislesDataModel
+			detailsUrl = VueTrendingAislesDataModel
 					.getInstance(getActivity())
 					.getAisleItem(
 							VueApplication.getInstance().getClickedWindowID())
 					.getImageList()
-					.get(VueApplication.getInstance().getmAisleImgCurrentPos()).mImageUrl;
+					.get(VueApplication.getInstance().getmAisleImgCurrentPos()).mDetalsUrl;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (imageUrl != null) {
-			mEditTextFindAt.setText(imageUrl);
+		if (detailsUrl != null) {
+			detailsUrl = Utils.getUrlFromString(detailsUrl);
+			if (detailsUrl != null) {
+				mEditTextFindAt.setText(detailsUrl);
+			} else {
+				mEditTextFindAt.setText("");
+			}
+		} else {
+			mEditTextFindAt.setText("");
 		}
 		mEditTextFindAt.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
@@ -220,7 +227,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		});
 		RelativeLayout bottomBar = (RelativeLayout) mDetailsContentView
 				.findViewById(R.id.vue_bottom_bar);
-		//bottomBar.getBackground().setAlpha(25);
+		// bottomBar.getBackground().setAlpha(25);
 		mAddVueAisle = (ImageView) mDetailsContentView
 				.findViewById(R.id.vue_aisle);
 		mAddVueAisle.setOnClickListener(new OnClickListener() {
@@ -247,11 +254,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mVueUserName.setTextSize(Utils.MEDIUM_TEXT_SIZE);
 		final LinearLayout dotIndicatorBg = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.dot_indicator_bg);
-		 vueAisleHeading = (TextView) mDetailsContentView
+		vueAisleHeading = (TextView) mDetailsContentView
 				.findViewById(R.id.vue_aisle_heading);
-		 if(mOccasion != null){
-			 vueAisleHeading.setText(mOccasion); 
-		 }
+		if (mOccasion != null) {
+			vueAisleHeading.setText(mOccasion);
+		}
 		vueAisleHeading.setTextSize(Utils.LARGE_TEXT_SIZE);
 		mDotOne = (ImageView) mDetailsContentView.findViewById(R.id.one);
 		mDotTwo = (ImageView) mDetailsContentView.findViewById(R.id.two);
@@ -386,7 +393,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			@Override
 			public void run() {
 				// TODO need to invisible this view in a smooth way
-				 
+
 				dotIndicatorBg.setVisibility(View.GONE);
 			}
 		}, AISLE_HEADER_SHOW_TIME);
@@ -428,10 +435,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	 * will be called to indicate the current position of the image.
 	 */
 	private class AisleDetailsSwipeListner implements AisleDetailSwipeListener {
-          @Override
-        public void setOccasion(String occasion) {
-        	  mOccasion = occasion;
-        }
+		@Override
+		public void setOccasion(String occasion) {
+			mOccasion = occasion;
+		}
+
 		@Override
 		public void onAisleSwipe(String direction, int position) {
 			upDatePageDots(position, direction);
@@ -628,11 +636,14 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public void setFindAtText(String findAt) {
-			// TODO Auto-generated method stub
-			mEditTextFindAt.setText(findAt);
-
+			findAt = Utils.getUrlFromString(findAt);
+			if (findAt != null) {
+				mEditTextFindAt.setText(findAt);
+			} else {
+				mEditTextFindAt.setText("");
+			}
 		}
-		
+
 	}
 
 	public void addComment(EditText editText, RelativeLayout view) {
@@ -648,9 +659,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		if (commentList != null) {
 			commentList.add(0, etText);
 		}
-		mAisleDetailsAdapter.sendDataToDb(
-				mAisleDetailsAdapter.mCurrentDispImageIndex,
-				mAisleDetailsAdapter.CHANGE_COMMENT);
+		/*
+		 * mAisleDetailsAdapter.sendDataToDb(
+		 * mAisleDetailsAdapter.mCurrentDispImageIndex,
+		 * mAisleDetailsAdapter.CHANGE_COMMENT);
+		 */
 		mAisleDetailsAdapter.mShowingList = commentList;
 		editText.setVisibility(View.GONE);
 		editText.setText("");

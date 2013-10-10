@@ -117,12 +117,12 @@ public class VueLandingPageActivity extends BaseActivity {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		if (storedVueUser != null) {
+		/*if (storedVueUser != null) {
 			VueApplication.getInstance().setmUserInitials(
 					storedVueUser.getmFirstName());
 			VueTrendingAislesDataModel.getInstance(this).getNetworkHandler()
 					.getBookmarkAisleByUser();
-		}
+		}*/
 		// Application opens first time.
 		if (isFirstTimeFlag) {
 			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
@@ -492,180 +492,156 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-	public void showCategory(final String catName) {
-		Log.e("VueLandingPageActivity", "Child Click: in showCategory");
-		Log.e("VueLandingPageActivity",
-				"Child Click: in showCategory catName: " + catName
-						+ ", sidemenu_sub_option: "
-						+ getString(R.string.sidemenu_sub_option_My_Aisles));
-		if (mFragment == null) {
-			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisles_view_fragment);
-			Log.e("VueLandingPageActivity",
-					"Child Click: in showCategory 11111111");
-		}
-		if (mVueLandingActionbarScreenName.getText().toString()
-				.equalsIgnoreCase(catName)) {
-			Log.e("VueLandingPageActivity",
-					"Child Click: in showCategory 222222222");
-			return;
-		}
-		ViewInfo viewInfo = new ViewInfo();
-		viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
-		viewInfo.mPosition = mFragment.getListPosition();
-		viewInfo.mOffset = VueTrendingAislesDataModel
-				.getInstance(VueLandingPageActivity.this).getNetworkHandler()
-				.getmOffset();
-		boolean isCategoryExistInDb = StackViews.getInstance().categoryCheck(
-				catName);
-		StackViews.getInstance().push(viewInfo);
-		Log.i("stackcount", "stackcount insert one: "
-				+ StackViews.getInstance().getStackCount());
-		mVueLandingActionbarScreenName.setText(catName);
-		boolean loadMore = false;
-		boolean fromServer = true;
-		if (catName
-				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-			if (isCategoryExistInDb) {
-				fromServer = true;
-			} else {
-				fromServer = true;
-			}
-			Log.i("myaisledbcheck",
-					"myaisledbcheck aisle are my aisles are fetching fromServer$$$$: "
-							+ fromServer);
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance())
-					.getNetworkHandler()
-					.requestAislesByUser(fromServer, new ProgresStatus());
-			Log.e("VueLandingPageActivity",
-					"Child Click: in showCategory 333333333");
-		} else if (catName
-				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).clearAisles();
-			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
-					.clearObjectsInUse();
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).dataObserver();
+	
+	
+  public void showCategory(final String catName) {
+    if (mFragment == null) {
+      mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+          .findFragmentById(R.id.aisles_view_fragment);
+    }
+    if (getScreenName().equalsIgnoreCase(catName)) {
+      return;
+    }
+    ViewInfo viewInfo = new ViewInfo();
+    viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
+    viewInfo.mPosition = mFragment.getListPosition();
+    viewInfo.mOffset = VueTrendingAislesDataModel
+        .getInstance(VueLandingPageActivity.this).getNetworkHandler()
+        .getmOffset();
+    boolean isCategoryExistInDb = StackViews.getInstance().categoryCheck(
+        catName);
+    StackViews.getInstance().push(viewInfo);
+    
+    boolean loadMore = false;
+    boolean fromServer = true;
+    if (catName
+        .equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
+      if (isCategoryExistInDb) {
+        fromServer = true;
+      } else {
+        fromServer = true;
+      }
+      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+          .getNetworkHandler()
+          .requestAislesByUser(fromServer, new ProgresStatus(), catName);
+    } else if (catName
+        .equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
+      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+          .clearAisles();
+      AisleWindowContentFactory.getInstance(VueApplication.getInstance())
+          .clearObjectsInUse();
+      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+          .dataObserver();
 
-			loadMore = true;
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance())
-					.getNetworkHandler()
-					.loadTrendingAisle(loadMore, fromServer,
-							new ProgresStatus());
-			Log.e("VueLandingPageActivity",
-					"Child Click: in showCategory 444444444");
-		} else if (catName
-				.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-			Log.e("VueLandingPageActivity",
-					"Child Click: in showCategory 555555555");
-			ArrayList<AisleWindowContent> windowContent = null;
-			Log.e("VueLandingPageActivity",
-					"Child Click: in showCategory bookmarks");
-			ArrayList<String> bookmarkedAisles = VueTrendingAislesDataModel
-					.getInstance(VueLandingPageActivity.this).mNetworkHandler.bookmarkedAisles;
-			Log.e("VueLandingPageActivity",
-					"Child Click: bookmarkedAisles Count: "
-							+ bookmarkedAisles.size());
-			String[] bookmarked = bookmarkedAisles
-					.toArray(new String[bookmarkedAisles.size()]);
-			Log.e("VueLandingPageActivity",
-					"Child Click: bookmarkedAisles Array Count: "
-							+ bookmarked.length);
-			for (String s : bookmarked) {
-				if (windowContent == null) {
-					windowContent = new ArrayList<AisleWindowContent>();
-				}
-				ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager
-						.getInstance(VueLandingPageActivity.this)
-						.getAisleByAisleId(s);
-				for (AisleWindowContent w : windowContentTemp) {
-					windowContent.add(w);
-					Log.e("VueLandingPageActivity",
-							"Child Click: bookmarked Aisle ID: "
-									+ w.getAisleId());
-				}
+      loadMore = true;
+      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+          .getNetworkHandler()
+          .loadTrendingAisle(loadMore, fromServer, new ProgresStatus(), catName);
+    } else if (catName
+        .equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
+      getBookmarkedAisles(catName);
+      
+    } else if (catName
+        .equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
+      ArrayList<AisleWindowContent> windowContent = DataBaseManager
+          .getInstance(this).getRecentlyViewedAisles();
+      if (windowContent.size() > 0) {
+        VueTrendingAislesDataModel.getInstance(this).clearAisles();
+        for (AisleWindowContent content : windowContent) {
+          VueTrendingAislesDataModel.getInstance(this).addItemToList(
+              content.getAisleId(), content);
+        }
 
-			}
+      } else {
+        Toast.makeText(this, "No Recently Viewed aisles", Toast.LENGTH_LONG)
+            .show();
+      }
+    } else {
+      VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+          .getNetworkHandler()
+          .reqestByCategory(catName, new ProgresStatus(), fromServer, loadMore, catName);
+    }
 
-			/*
-			 * ArrayList<AisleWindowContent> windowContent = DataBaseManager
-			 * .getInstance
-			 * (VueLandingPageActivity.this).getAislesFromDB(bookmarked);
-			 */
-			if (windowContent != null && windowContent.size() > 0) {
-				VueTrendingAislesDataModel.getInstance(this).clearAisles();
-				for (AisleWindowContent content : windowContent) {
-					VueTrendingAislesDataModel.getInstance(this).addItemToList(
-							content.getAisleId(), content);
-				}
-
-			} else {
-				Toast.makeText(this, "No Bookmarked aisles", Toast.LENGTH_LONG)
-						.show();
-			}
-
-		} else if (catName
-				.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-			ArrayList<AisleWindowContent> windowContent = DataBaseManager
-					.getInstance(this).getRecentlyViewedAisles();
-			if (windowContent.size() > 0) {
-				VueTrendingAislesDataModel.getInstance(this).clearAisles();
-				for (AisleWindowContent content : windowContent) {
-					VueTrendingAislesDataModel.getInstance(this).addItemToList(
-							content.getAisleId(), content);
-				}
-
-			} else {
-				Toast.makeText(this, "No Recently Viewed aisles",
-						Toast.LENGTH_LONG).show();
-			}
-		} else {
-			VueTrendingAislesDataModel
-					.getInstance(VueLandingPageActivity.this)
-					.getNetworkHandler()
-					.reqestByCategory(catName, new ProgresStatus(), fromServer,
-							loadMore);
-		}
-
-		FlurryAgent.logEvent(catName);
+    FlurryAgent.logEvent(catName);
 
 	}
 
+  private void getBookmarkedAisles(String screenName) {
+
+    ArrayList<AisleWindowContent> windowContent = null;
+    ArrayList<String> bookmarkedAisles = VueTrendingAislesDataModel
+        .getInstance(VueLandingPageActivity.this).mNetworkHandler.bookmarkedAisles;
+    String[] bookmarked = bookmarkedAisles
+        .toArray(new String[bookmarkedAisles.size()]);
+      if (windowContent == null) {
+        windowContent = new ArrayList<AisleWindowContent>();
+      }
+      ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager.getInstance(VueLandingPageActivity.this).getAislesFromDB(bookmarked);
+      for (AisleWindowContent w : windowContentTemp) {
+        windowContent.add(w);
+        Log.i("duplicateImageUrl", "duplicateImageUrl:********");
+        for(int i = 0;i<w.getImageList().size();i++){
+          Log.i("duplicateImageUrl", "duplicateImageUrl: "+w.getImageList().get(i).mImageUrl);
+        }
+        Log.i("duplicateImageUrl", "duplicateImageUrl:#########");
+      }
+    if (windowContent != null && windowContent.size() > 0) {
+      changeScreenName(screenName);
+      VueTrendingAislesDataModel.getInstance(this).clearAisles();
+      for (AisleWindowContent content : windowContent) {
+        VueTrendingAislesDataModel.getInstance(this).addItemToList(
+            content.getAisleId(), content);
+      }
+
+    } else {
+      Toast.makeText(this, "No Bookmarked aisles", Toast.LENGTH_LONG).show();
+    }
+
+
+  
+  }
+  
 	private void showPreviousScreen(String screenName) {
 		boolean fromServer = false;
 		boolean loadMore = false;
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
+		  VueTrendingAislesDataModel
+          .getInstance(VueLandingPageActivity.this).clearContent();
 			VueTrendingAislesDataModel
 					.getInstance(VueLandingPageActivity.this)
 					.getNetworkHandler()
 					.reqestByCategory(screenName, new ProgresStatus(),
-							fromServer, loadMore);
+							fromServer, loadMore, screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
 			Log.i("myaisledbcheck",
 					"myaisledbcheck  when back pressed aisle are fetching from db");
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 					.getNetworkHandler()
-					.requestAislesByUser(fromServer, new ProgresStatus());
+					.requestAislesByUser(fromServer, new ProgresStatus(), screenName);
 
 			/*
 			 * VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this
 			 * ) .getNetworkHandler().reqestByCategory(screenName, new
 			 * ProgresStatus(), fromServer, loadMore);
 			 */
+		} else if(screenName
+            .equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Bookmarks))) {
+		  getBookmarkedAisles(screenName);
 		} else {
 			VueTrendingAislesDataModel
 					.getInstance(VueLandingPageActivity.this)
 					.getNetworkHandler()
 					.reqestByCategory(screenName, new ProgresStatus(),
-							fromServer, loadMore);
+							fromServer, loadMore, screenName);
 		}
 	}
 
+	public static void changeScreenName(String screenName) {
+	  mVueLandingActionbarScreenName.setText(screenName);
+	}
+	
 	class ProgresStatus implements NotifyProgress {
 		@Override
 		public void showProgress() {
@@ -793,7 +769,11 @@ public class VueLandingPageActivity extends BaseActivity {
 		return otherSourcesImageDetailsList;
 	}
 
-	public String getScreenName() {
+	public static String getScreenName() {
 		return mVueLandingActionbarScreenName.getText().toString();
+	}
+	
+	private void getRatedImagesList() {
+	 // UrlConstants.GET_RATINGS_RESTURL
 	}
 }

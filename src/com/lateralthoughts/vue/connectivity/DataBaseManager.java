@@ -23,6 +23,7 @@ import android.util.Log;
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -86,13 +87,26 @@ public class DataBaseManager {
     Cursor aisleIdCursor = context.getContentResolver().query(
         VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id}, null,
         null, null);
+    Cursor imageIdCursor = context.getContentResolver().query(
+        VueConstants.IMAGES_CONTENT_URI, new String[] {VueConstants.IMAGE_ID},
+        null, null, null);
+    
     ArrayList<String> aisleIds = new ArrayList<String>();
+    ArrayList<String> imageIds = new ArrayList<String>();
     if (aisleIdCursor.moveToFirst()) {
       do {
         aisleIds.add(aisleIdCursor.getString(aisleIdCursor
             .getColumnIndex(VueConstants.AISLE_Id)));
       } while (aisleIdCursor.moveToNext());
     }
+    
+    if(imageIdCursor.moveToFirst()) {
+      do {
+        imageIds.add(imageIdCursor.getString(aisleIdCursor
+            .getColumnIndex(VueConstants.IMAGE_ID)));
+      } while (imageIdCursor.moveToNext());
+    }
+    
     int aislesCount = contentList.size();
     aisleIdCursor.close();
     for (int i = 0; i < aislesCount; i++) {
@@ -120,6 +134,7 @@ public class DataBaseManager {
       values.put(VueConstants.OCCASION, info.mOccasion);
       values.put(VueConstants.USER_ID, info.mUserId);
       values.put(VueConstants.AISLE_Id, info.mAisleId);
+      values.put(VueConstants.BOOKMARK_COUNT, info.mBookmarkCount);
       values.put(VueConstants.DELETE_FLAG, 0);
       if (aisleIds.contains(info.mAisleId)) {
         context.getContentResolver().update(VueConstants.CONTENT_URI, values,
@@ -130,6 +145,7 @@ public class DataBaseManager {
       }
       imgCount = 0;
       for (AisleImageDetails imageDetails : imageItemsArray) {
+        Log.e("DataBaseManager", "imageDetails.mImageUrl: " + imageDetails.mImageUrl);
         ContentValues imgValues = new ContentValues();
         imgValues.put(VueConstants.TITLE, imageDetails.mTitle);
         imgValues.put(VueConstants.IMAGE_URL, imageDetails.mImageUrl);
@@ -139,10 +155,10 @@ public class DataBaseManager {
         imgValues.put(VueConstants.STORE, imageDetails.mStore);
         imgValues.put(VueConstants.USER_ID, info.mUserId);
         imgValues.put(VueConstants.AISLE_Id, info.mAisleId);
-        if (aisleIds.contains(info.mAisleId)) {
+        if (imageIds.contains(imageDetails.mId)) {
           context.getContentResolver().update(VueConstants.IMAGES_CONTENT_URI,
-              imgValues, VueConstants.AISLE_Id + "=?",
-              new String[] {info.mAisleId});
+              imgValues, VueConstants.IMAGE_ID + "=?",
+              new String[] {imageDetails.mId});
         } else {
           imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
           imgValues.put(VueConstants.ID, String.format(FORMATE, ++imgCount));
@@ -241,6 +257,7 @@ public class DataBaseManager {
             imageItemDetails.mImageUrl = aisleImagesCursor
                 .getString(aisleImagesCursor
                     .getColumnIndex(VueConstants.IMAGE_URL));
+            Log.i("duplicateImageUrl", "duplicateImageUrl: DB********"+ imageItemDetails.mImageUrl);
             imageItemDetails.mDetalsUrl = aisleImagesCursor
                 .getString(aisleImagesCursor
                     .getColumnIndex(VueConstants.DETAILS_URL));
@@ -290,12 +307,12 @@ public class DataBaseManager {
   }
 
   public void addLikeOrDisLike(final int likeStatus, final int likeCount,
-      final String imageID, final String aisleID) {
+      final String imageID, final String aisleID, final boolean dirtyFlag) {
     runTask(new Runnable() {
 
       @Override
       public void run() {
-        addLikeOrDisLikeToDb(likeStatus, likeCount, imageID, aisleID);
+        addLikeOrDisLikeToDb(likeStatus, likeCount, imageID, aisleID, dirtyFlag);
       }
     });
   }
@@ -318,6 +335,16 @@ public class DataBaseManager {
       public void run() {
         updateOrAddRecentlyViewedAislesList(aisleId);
         
+      }
+    });
+  }
+  
+  public void insertRatedImages(final ArrayList<ImageRating> retrievedImageRating) {
+    runTask(new Runnable() {
+      
+      @Override
+      public void run() {
+        insertRatedImagesToDB(retrievedImageRating); 
       }
     });
   }
@@ -345,13 +372,15 @@ public class DataBaseManager {
   }
 
   private void addLikeOrDisLikeToDb(int likeStatus, int likeCount,
-      String imageID, String aisleID) {
+      String imageID, String aisleID, boolean dirtyFlag) {
     ContentValues aisleValues = new ContentValues();
     aisleValues.put(VueConstants.DIRTY_FLAG, true);
-    mContext.getContentResolver().update(VueConstants.CONTENT_URI, aisleValues,
+    mContext.getContentResolver().update(VueConstants.IMAGES_CONTENT_URI, aisleValues,
         VueConstants.AISLE_Id + "=?", new String[] {aisleID});
     aisleValues.put(VueConstants.LIKE_OR_DISLIKE, likeStatus);
+    if(likeCount != 0)
     aisleValues.put(VueConstants.LIKES_COUNT, likeCount);
+    aisleValues.put(VueConstants.DIRTY_FLAG, (dirtyFlag == true) ? 1 : 0);
     mContext.getContentResolver().update(VueConstants.IMAGES_CONTENT_URI,
         aisleValues,
         VueConstants.AISLE_Id + "=? AND " + VueConstants.IMAGE_ID + "=?",
@@ -373,7 +402,6 @@ public class DataBaseManager {
     values.put(VueConstants.DIRTY_FLAG, isDirty);
     mContext.getContentResolver().update(VueConstants.CONTENT_URI, values,
         VueConstants.AISLE_Id + "=?", new String[] {aisleID});
-    copydbToSdcard();
   }
 
 
@@ -608,6 +636,25 @@ public class DataBaseManager {
     return getAisles(getAislesCursor(dirtyFlag, VueConstants.DIRTY_FLAG));
   }
   
+  public ArrayList<ImageRating> getDirtyImages(String dirtyFlag) {
+    ArrayList<ImageRating> images = new ArrayList<ImageRating>();
+    Cursor cursor = mContext.getContentResolver().query(
+        VueConstants.IMAGES_CONTENT_URI, null, VueConstants.DIRTY_FLAG + "=?",
+        new String[] {dirtyFlag}, null);
+    if(cursor.moveToFirst()) {
+      do {
+        if(cursor.getInt(cursor.getColumnIndex(VueConstants.DIRTY_FLAG)) == 1) {
+        ImageRating imgRating = new ImageRating();
+        imgRating.setImageId((long)cursor.getInt(cursor.getColumnIndex(VueConstants.IMAGE_ID)));
+        imgRating.setAisleId((long)cursor.getInt(cursor.getColumnIndex(VueConstants.AISLE_Id)));
+        imgRating.setLiked((cursor.getInt(cursor.getColumnIndex(VueConstants.LIKE_OR_DISLIKE)) == 1) ? true : false);
+        images.add(imgRating);
+        }
+      } while(cursor.moveToNext());
+    }
+    return images;
+  }
+  
   private Cursor getAislesCursor(String searchString, String searchBy) {
     Cursor aislesCursor = mContext.getContentResolver().query(
         VueConstants.CONTENT_URI, null, searchBy + "=?",
@@ -688,6 +735,38 @@ public class DataBaseManager {
       mContext.getContentResolver().insert(VueConstants.RECENTLY_VIEW_AISLES_URI, values);
     }
   }
+  
+  private void insertRatedImagesToDB( ArrayList<ImageRating> retrievedImageRating) {
+    Cursor cursor = mContext.getContentResolver().query(
+        VueConstants.RATED_IMAGES_URI, null, null, null, null);
+    if(cursor.getCount() > 0) {
+      mContext.getContentResolver().delete(VueConstants.RATED_IMAGES_URI, null, null);
+    }
+    for(ImageRating imageRating : retrievedImageRating) {
+      ContentValues values = new ContentValues();
+      values.put(VueConstants.AISLE_ID, imageRating.getAisleId());
+      values.put(VueConstants.IMAGE_ID, imageRating.getImageId());
+      mContext.getContentResolver().insert(VueConstants.RATED_IMAGES_URI, values);
+    }
+  }
+  
+  public ArrayList<ImageRating> getRatedImagesList(String aisleId) {
+   ArrayList<ImageRating> imgRatingList = new ArrayList<ImageRating>();
+    Cursor cursor = mContext.getContentResolver().query(
+        VueConstants.RATED_IMAGES_URI, null, VueConstants.AISLE_ID + "=?",
+        new String[] {aisleId}, null);
+   if(cursor.moveToFirst()) {
+     do {
+       ImageRating imgRating = new ImageRating();
+       imgRating.setImageId(Long.parseLong(cursor.getString(cursor.getColumnIndex(VueConstants.IMAGE_ID))));
+       imgRating.setAisleId(Long.parseLong(cursor.getString(cursor.getColumnIndex(VueConstants.IMAGE_ID))));
+       imgRating.setLiked(true);
+       imgRatingList.add(imgRating);
+     } while(cursor.moveToNext());
+   }
+    return imgRatingList;
+  }
+  
   
   /**
    * FOR TESTING PERPOES ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS

@@ -100,6 +100,7 @@ public class VueConstants {
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT";
+	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE";
@@ -135,6 +136,7 @@ public class VueConstants {
 	public static final String CATEGORY_TABLE = "category";
 	public static final String COMMENTS_ON_IMAGES_TABLE = "commentsOnImages";
 	public static final String RECENTLY_VIEWED_AISLES = "recentlyViewAisles";
+	public static final String RATED_IMAGES = "ratedImages";
 
 	// Define MIME types
 	public static final String ARTICLES_MIME_TYPE = "vnd.android.cursor.dir/vnd.vue.articles";
@@ -155,6 +157,8 @@ public class VueConstants {
 			+ AUTHORITY + "/" + COMMENTS_ON_IMAGES_TABLE);
 	public static final Uri RECENTLY_VIEW_AISLES_URI = Uri.parse("content://"
 			+ AUTHORITY + "/" + RECENTLY_VIEWED_AISLES);
+	public static final Uri RATED_IMAGES_URI = Uri.parse("content://"
+			+ AUTHORITY + "/" + RATED_IMAGES);
 
 	public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
 	public static final String INVITATION_MESG = "Invitation from Vue application.";
@@ -191,4 +195,10 @@ public class VueConstants {
 
 	public static final String RECENTLY_VIEWED_AISLE_ID = "recentlyViewedAisleId";
 	public static final String VIEW_TIME = "viewTime";
+
+	// Keys for values stored in shared preference
+	public static final String IS_AISLE_DIRTY = "isAisleDirty";
+	public static final String IS_IMAGE_DIRTY = "isImageDirty";
+
+	public static final String LIKE_COUNT = "likeCount";
 }

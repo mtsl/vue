@@ -1,6 +1,10 @@
 package com.lateralthoughts.vue.connectivity;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import org.apache.http.client.ClientProtocolException;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.Response.ErrorListener;
@@ -8,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.BookmarkPutRequest;
+import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueUser;
@@ -17,22 +22,26 @@ import com.lateralthoughts.vue.utils.Utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 public class NetworkStateChangeReciver extends BroadcastReceiver {
 
+  private SharedPreferences mSharedPreferencesObj;
   AisleBookmark createdAisleBookmark = null;
   AisleBookmark aisleBookmark = null;
   boolean isDirty = true;
-  
+
   @Override
   public void onReceive(Context context, Intent inetent) {
     Log.e("NetworkStateChangeReciver", "SURU NEWWORK STATE CHANGED : ");
     if (VueConnectivityManager.isNetworkConnected(context)) {
       Log.e("NetworkStateChangeReciver",
           "SURU NEWWORK STATE CHANGED : network CONNECTED");
-      //TODO: if Database is dirty use shared preference here.
-      if (true) {
+      // TODO: if Database is dirty use shared preference here.
+      mSharedPreferencesObj = context.getSharedPreferences(
+          VueConstants.SHAREDPREFERENCE_NAME, 0);
+      if (mSharedPreferencesObj.getBoolean(VueConstants.IS_AISLE_DIRTY, false)) {
         VueUser storedVueUser = null;
         try {
           storedVueUser = Utils.readUserObjectFromFile(context,
@@ -40,8 +49,8 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
         } catch (Exception e) {
           e.printStackTrace();
         }
-        final ArrayList<AisleWindowContent> aisles = DataBaseManager.getInstance(
-            context).getDirtyAisles("1");
+        final ArrayList<AisleWindowContent> aisles = DataBaseManager
+            .getInstance(context).getDirtyAisles("1");
         for (AisleWindowContent content : aisles) {
           aisleBookmark = new AisleBookmark(null, true, Long.parseLong(content
               .getAisleId()));
@@ -62,7 +71,8 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                   try {
                     createdAisleBookmark = (new ObjectMapper()).readValue(
                         jsonArray, AisleBookmark.class);
-                    AisleManager.getAisleManager().updateBookmartToDb(aisles, aisleBookmark, false);
+                    AisleManager.getAisleManager().updateBookmartToDb(aisles,
+                        aisleBookmark, false);
                   } catch (Exception e) {
                     e.printStackTrace();
                   }
@@ -84,6 +94,18 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                 UrlConstants.CREATE_BOOKMARK_RESTURL + "/"
                     + storedVueUser.getVueId());
             VueApplication.getInstance().getRequestQueue().add(request);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }
+
+      if ((mSharedPreferencesObj.getBoolean(VueConstants.IS_IMAGE_DIRTY, false))) {
+        ArrayList<ImageRating> imagsRating = DataBaseManager.getInstance(
+            context).getDirtyImages("1");
+        for (ImageRating imgRating : imagsRating) {
+          try {
+            AisleManager.getAisleManager().updateRating(imgRating, 0);
           } catch (Exception e) {
             e.printStackTrace();
           }

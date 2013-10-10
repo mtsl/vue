@@ -145,16 +145,19 @@ public class VueUserManager {
 
 		try {
 			Log.e("VueUserDebug", "vueuser: method called ");
-			ObjectMapper mapper = new ObjectMapper();
-			VueUser vueuserRequestObject = new VueUser(deviceId,
-					"FACEBOOK_ID_UNKNOWN", "GOOGLE_PLUS_ID_UNKNOWN", "",
-					userInitals, "");
-			String userAsString = mapper
-					.writeValueAsString(vueuserRequestObject);
-			Log.e("VueUserDebug", "vueuser: request " + userAsString);
-			String s = "{\"email\":\"suru.indra@gmil.com\",\"firstName\":\"Surendra\",\"lastName\":\"Manukonda\",\"deviceId\":\"22110098933476895435\"}";
-			UserCreateRequest request = new UserCreateRequest(userAsString,
-					listener, errorListener);
+			/*
+			 * ObjectMapper mapper = new ObjectMapper(); VueUser
+			 * vueuserRequestObject = new VueUser(deviceId,
+			 * "FACEBOOK_ID_UNKNOWN", "GOOGLE_PLUS_ID_UNKNOWN", "", userInitals,
+			 * ""); String userAsString = mapper
+			 * .writeValueAsString(vueuserRequestObject);
+			 */
+			// Log.e("VueUserDebug", "vueuser: request " + userAsString);
+			String s = "{\"email\":\"\",\"firstName\":"
+					+ userInitals + ",\"lastName\":\"\",\"deviceId\":"
+					+ deviceId + "}";
+			UserCreateRequest request = new UserCreateRequest(s, listener,
+					errorListener);
 			VueApplication.getInstance().getRequestQueue().add(request);
 		} catch (Exception e) {
 

@@ -232,7 +232,7 @@ public class BitmapLoaderUtils {
 		if (bitmap != null) {
 			width = bitmap.getWidth();
 			height = bitmap.getHeight();
-			if (height > bestHeight) {
+			if (height >= bestHeight) {
 				float tempWidth = (width * bestHeight) / height;
 				width = (int) tempWidth;
 				bitmap = getModifiedBitmap(bitmap, width, bestHeight);
