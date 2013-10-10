@@ -142,7 +142,12 @@ public class VueTrendingAislesDataModel {
 	}
 
 	public AisleWindowContent getAisleAt(int position) {
-		return mAisleContentList.get(position);
+		try {
+			return mAisleContentList.get(position);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	public AisleWindowContent getAisleAt(String aisleId) {
 		return mAisleContentListMap.get(aisleId);
