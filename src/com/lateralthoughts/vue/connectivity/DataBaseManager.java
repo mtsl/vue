@@ -102,7 +102,7 @@ public class DataBaseManager {
     
     if(imageIdCursor.moveToFirst()) {
       do {
-        imageIds.add(imageIdCursor.getString(aisleIdCursor
+        imageIds.add(imageIdCursor.getString(imageIdCursor
             .getColumnIndex(VueConstants.IMAGE_ID)));
       } while (imageIdCursor.moveToNext());
     }
@@ -716,7 +716,7 @@ public class DataBaseManager {
         if(id.equals(aisleId)) {
           isAisleViewed = true;
           viewedId = cursor.getString(cursor
-              .getColumnIndex(VueConstants.RECENTLY_VIEWED_AISLE_ID));
+              .getColumnIndex(VueConstants.ID));
           break;
         }
       } while (cursor.moveToNext());
