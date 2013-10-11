@@ -891,6 +891,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	public void addAisleToContentWindow(Bitmap addedBitmap, String imagePath,
 			String imageUrl, int imageWidth, int imageHeight, String title) {
 		AisleImageDetails imgDetails = new AisleImageDetails();
+		Utils.isImageAdded = true;
+		Utils.mChangedAisleId = getItem(mCurrentAislePosition).getAisleId();
 		imgDetails.mAvailableHeight = imageHeight;
 		imgDetails.mAvailableWidth = imageWidth;
 		Log.i("new image", "new image height: " + imgDetails.mAvailableHeight);

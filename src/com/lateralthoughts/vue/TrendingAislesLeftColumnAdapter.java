@@ -47,6 +47,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class TrendingAislesLeftColumnAdapter extends
 		TrendingAislesGenericAdapter {
@@ -141,12 +142,14 @@ public class TrendingAislesLeftColumnAdapter extends
 		holder = (ViewHolder) convertView.getTag();
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
-		int scrollIndex = 0;
-		if (holder.mWindowContent.mIsDataChanged) {
-			holder.mWindowContent.mIsDataChanged = false;
-			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-
+		if(Utils.isImageAdded){
+			if(Utils.mChangedAisleId != null && Utils.mChangedAisleId.equalsIgnoreCase(holder.mWindowContent.getAisleId())){
+				holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+				Utils.isImageAdded = false;
+				Utils.mChangedAisleId  = null;
+			}
 		}
+		int scrollIndex = 0;
 		mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
 				false, listener);
 		AisleContext context = holder.mWindowContent.getAisleContext();

@@ -208,6 +208,9 @@ public class AisleWindowContent {
 	  
   }
   private ArrayList<AisleImageDetails> modifyHeights(ArrayList<AisleImageDetails> imageList){
+	  if(imageList.size() == 0){
+		  return null;
+	  }
 	    float[] imageHeightList = new float[imageList.size()];
 	  float availableScreenHeight = VueApplication.getInstance().getScreenHeight();
 	  float adjustedImageHeight,adjustedImageWidth;
@@ -240,6 +243,7 @@ public class AisleWindowContent {
 		    
 		   
 		  }
+		  
 		  aisleHeightOnCard =  imageHeightList[0];
 	  int smallestHeightPosition = 0;
            for(int i = 0;i<imageHeightList.length;i++){
