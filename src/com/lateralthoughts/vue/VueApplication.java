@@ -33,6 +33,16 @@ public class VueApplication extends Application {
 	private int mStatusBarHeight;
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
+	private boolean mLoadDataentryScreenFlag = false;
+
+	public boolean ismLoadDataentryScreenFlag() {
+		return mLoadDataentryScreenFlag;
+	}
+
+	public void setmLoadDataentryScreenFlag(boolean mLoadDataentryScreenFlag) {
+		this.mLoadDataentryScreenFlag = mLoadDataentryScreenFlag;
+	}
+
 	private boolean newVueTrendingAislesDataModel = false;
 	public ArrayList<String> mAisleImagePathList = new ArrayList<String>();
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;

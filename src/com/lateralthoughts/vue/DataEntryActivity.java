@@ -200,9 +200,17 @@ public class DataEntryActivity extends BaseActivity {
 				}
 			}
 			Log.e("cs", "32");
-			if (aisleImagePath != null)
+			mDataEntryFragment.mOtherSourceSelectedImageUrl = b
+					.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL);
+			mDataEntryFragment.mOtherSourceImageOriginalWidth = b
+					.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH);
+			mDataEntryFragment.mOtherSourceImageOriginalHeight = b
+					.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT);
+
+			if (aisleImagePath != null) {
 				mDataEntryFragment.setGalleryORCameraImage(aisleImagePath,
 						false);
+			}
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
 				mDataEntryFragment.mCreateAisleBg.setVisibility(View.GONE);
 				mDataEntryFragment.mAisleBgProgressbar.setVisibility(View.GONE);

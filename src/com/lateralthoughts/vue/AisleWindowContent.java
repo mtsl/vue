@@ -63,6 +63,7 @@ public class AisleWindowContent {
 		if (createPlaceHolders) {
 			mContext = new AisleContext();
 			mAisleImagesList = new ArrayList<AisleImageDetails>();
+			mAisleBookmarksCount = mContext.mBookmarkCount;
 		}
 	}
 
@@ -126,16 +127,10 @@ public class AisleWindowContent {
 			}
 			
 		}
-		Log.i("imageListSizes", "imageListSizes: **************************" );
 		for(int i=0;i<mAisleImagesList.size();i++){
 			Log.i("imageListSizes", "imageListSizes: "+mAisleImagesList.get(i).mTrendingImageHeight);
 		}
-		Log.i("imageListSizes", "imageListSizes: ###############################" );
-		mWindowLargestHeight = getBestHeightForDetailsScreen(mWindowLargestHeight,mWindowLargestWidth);
 		mWindowSmallestHeight = getBestHeightForTrendingScreen(mWindowSmallestHeight,mWindowSamllestWidth);
-/*		mWindowSmallestHeight = getBestHeight(
-				mAisleImagesList.get(smallestHeightPosition).mAvailableHeight,
-				mAisleImagesList.get(smallestHeightPosition).mAvailableWidth, mWindowSmallestHeight);*/
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			prepareCustomUrl(mAisleImagesList.get(i));
 		}
@@ -194,63 +189,11 @@ public class AisleWindowContent {
 	public int getBestLargetHeightForWindow() {
 		return mWindowLargestHeight;
 	}
-    public void setBestLargestHeightForWindow(int largestHeight,int width){
+    public void setBestLargestHeightForWindow(int largestHeight){
     	mWindowLargestHeight = largestHeight;
-    	mWindowLargestWidth = width;
-    	mWindowLargestHeight = getBestHeightForDetailsScreen(largestHeight,width);
     }
-	public int getBestHeight(int height, int width, int bestHeight) {
-		int trendingCardWidth = VueApplication.getInstance()
-				.getScreenWidth()/2;
-		try {
-			int newwidth = (width * trendingCardWidth) / width;
-			int newHeight = (height * trendingCardWidth) / width;
-
-			if (newHeight > bestHeight) {
-				newHeight = (newHeight * bestHeight) / newHeight;
-			}
-			if (newHeight <= bestHeight) {
-				bestHeight = newHeight;
-			}
-			Log.e("getBestHeight", "BestHeight ???" + bestHeight + "??width??"
-					+ width + "??height??" + height + "??trending card width??"
-					+ trendingCardWidth);
-			mTrendingTestBestHeight = bestHeight;
-			mTrendingTestBestWidth = trendingCardWidth;
-			Log.i("TrendingCrop", "TrendingCrop1:*********************");
-			Log.i("TrendingCrop", "TrendingCrop1: bestHeight "+mTrendingTestBestHeight);
-			Log.i("TrendingCrop", "TrendingCrop1: bestWidth "+mTrendingTestBestWidth);
-			Log.i("TrendingCrop", "TrendingCrop1: aisle "+mAisleId);
-			Log.i("TrendingCrop", "TrendingCrop1:##########################");
-			return bestHeight;
-		} catch (Exception e) {
-			Log.e("getBestHeight", "BestHeight ??? catch" + bestHeight
-					+ "??width??" + width + "??height??" + height + "??url??");
-			e.printStackTrace();
-		}
-
-		return bestHeight;
-	}
-  private int getBestHeightForDetailsScreen(int height,int width){
-	int bestLargestHeight;
-	int bestWidth = 0;
-	  int screenWidth = VueApplication.getInstance().getScreenWidth();
-	  int screenHeight = VueApplication.getInstance().getScreenHeight();
-	  if(height >= screenHeight){
-		  bestLargestHeight =( height*screenHeight)/height;
-		  bestWidth = (width * screenHeight)/height;
-	  } else {
-		  bestLargestHeight = height;
-		  bestWidth = width;
-	  }
-	  if(bestWidth > screenWidth){
-		  bestLargestHeight = (bestLargestHeight *screenWidth) /bestWidth;
-				  bestWidth = screenWidth ;
-		  
-	  }
-	  return bestLargestHeight;
-	  
-  }
+ 
+ 
   private int getBestHeightForTrendingScreen(int height,int width){
 	int bestHeight;
 	int trendingCardWidth = VueApplication.getInstance().getScreenWidth()/2;
@@ -313,6 +256,8 @@ public class AisleWindowContent {
 
  
   }
+  
+
 	private AisleContext mContext;
 	private ArrayList<AisleImageDetails> mAisleImagesList;
 }

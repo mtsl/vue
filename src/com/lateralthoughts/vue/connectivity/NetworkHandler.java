@@ -31,6 +31,7 @@ import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
+import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
@@ -248,7 +249,7 @@ public class NetworkHandler {
   }
 
   public void requestAislesByUser(boolean fromServer, NotifyProgress progress, final String screenName) {
-    clearList();
+   
     mOffset = 0;
     if (!fromServer) {
       // TODO get data from local db.
@@ -281,10 +282,10 @@ public class NetworkHandler {
       // TODO: CHANGE THIS REQUEST TO VOLLEY
       if (VueConnectivityManager.isNetworkConnected(VueApplication
           .getInstance())) {
-        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+  /*      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
             .clearAisles();
         AisleWindowContentFactory.getInstance(VueApplication.getInstance())
-            .clearObjectsInUse();
+            .clearObjectsInUse();*/
         VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
         new Thread(new Runnable() {
 
@@ -297,9 +298,9 @@ public class NetworkHandler {
               e.printStackTrace();
             }
             if (VueLandingPageActivity.landingPageActivity != null
-                && (VueLandingPageActivity.mVueLandingActionbarScreenName
+             /*   && (VueLandingPageActivity.mVueLandingActionbarScreenName
                     .getText().toString().equals(VueApplication.getInstance()
-                    .getString(R.string.sidemenu_sub_option_My_Aisles)))) {
+                    .getString(R.string.sidemenu_sub_option_My_Aisles)))*/) {
               VueLandingPageActivity.landingPageActivity
                   .runOnUiThread(new Runnable() {
                     @Override
@@ -309,6 +310,7 @@ public class NetworkHandler {
                       Log.i("myailsedebug",
                           "myailsedebug: recieved my runonuithread:  ");
                       if (aislesList != null && aislesList.size() > 0) {
+                    	  clearList();
                         Log.i("myailsedebug",
                             "myailsedebug: recieved my runonuithread: if ");
                         for (int i = 0; i < aislesList.size(); i++) {
@@ -334,8 +336,7 @@ public class NetworkHandler {
                                 VueApplication.getInstance(), aislesList);
 
 
-                        VueTrendingAislesDataModel.getInstance(
-                            VueApplication.getInstance()).dismissProgress();
+                    
                         // if this is the first set of data
                         // we
                         // are receiving
@@ -354,6 +355,7 @@ public class NetworkHandler {
                         // go
                         // ahead
                         // notify the data set changed
+                    	  StackViews.getInstance().pull();
                         VueTrendingAislesDataModel.getInstance(
                             VueApplication.getInstance()).dataObserver();
                         Toast.makeText(

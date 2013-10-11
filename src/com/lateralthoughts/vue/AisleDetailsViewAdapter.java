@@ -6,9 +6,13 @@
 
 package com.lateralthoughts.vue;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +23,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.util.Log;
@@ -136,8 +142,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				mswipeListner.setOccasion(occasion + " " + lookingFor);
 			}
 
-			mBookmarksCount = getItem(mCurrentAislePosition)
-					.getAisleContext().mBookmarkCount;
+			mBookmarksCount = getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount;
 			getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 					mBookmarksCount);
 			VueApplication.getInstance().setClickedWindowCount(
@@ -197,8 +202,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 						isBookmarked);
 			}
-			mBookmarksCount = getItem(mCurrentAislePosition)
-                .getAisleContext().mBookmarkCount;
+			mBookmarksCount = getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount;
 			Log.i("bookmarked aisle", "bookmarked count in window2: "
 					+ mBookmarksCount);
 			new Handler().postDelayed(new Runnable() {
@@ -408,13 +412,31 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					mViewHolder.descriptionlay.setVisibility(View.GONE);
 				}
 
-				mVueusername = getItem(mCurrentAislePosition).getAisleContext().mFirstName;
-				if (mVueusername != null && mVueusername.equals("Anonymous")) {
+				if (getItem(mCurrentAislePosition).getAisleContext().mFirstName != null
+						&& getItem(mCurrentAislePosition).getAisleContext().mLastName != null) {
+					mVueusername = getItem(mCurrentAislePosition)
+							.getAisleContext().mFirstName
+							+ getItem(mCurrentAislePosition).getAisleContext().mLastName;
+				} else if (getItem(mCurrentAislePosition).getAisleContext().mFirstName != null) {
+					if (getItem(mCurrentAislePosition).getAisleContext().mFirstName
+							.equals("Anonymous")) {
+						mVueusername = VueApplication.getInstance()
+								.getmUserInitials();
+					} else {
+						mVueusername = getItem(mCurrentAislePosition)
+								.getAisleContext().mFirstName;
+					}
+				} else if (getItem(mCurrentAislePosition).getAisleContext().mLastName != null) {
+					mVueusername = getItem(mCurrentAislePosition)
+							.getAisleContext().mLastName;
+				}
+			 
+				if (mVueusername != null && mVueusername.trim().equalsIgnoreCase("Anonymous")) { 
 					if (VueApplication.getInstance().getmUserInitials() != null) {
 						mVueusername = VueApplication.getInstance()
 								.getmUserInitials();
-					}
-				}
+					}  
+				}  
 				int scrollIndex = VueApplication.getInstance()
 						.getmAisleImgCurrentPos();
 				// mWindowContentTemp = mViewHolder.mWindowContent;
@@ -522,8 +544,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 								mBookmarksCount);
 					}
-					// getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount
-					// = mBookmarksCount;
+					 getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount
+					 = mBookmarksCount;
 
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							bookmarkStatus);
@@ -535,11 +557,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					mBookmarksCount++;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 							mBookmarksCount);
-					// getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount
-					// = mBookmarksCount;
+					 getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount
+					 = mBookmarksCount;
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							bookmarkStatus);
-					 Log.e("AisleManager", "bookmarkfeaturetest: count BOOKMARK RESPONSE: mViewHolder.bookmarklay else called ");
+					Log.e("AisleManager",
+							"bookmarkfeaturetest: count BOOKMARK RESPONSE: mViewHolder.bookmarklay else called ");
 					handleBookmark(bookmarkStatus,
 							getItem(mCurrentAislePosition).getAisleId());
 				}
@@ -661,6 +684,33 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		@Override
 		public void onImageDoubleTap() {
+           if(mCurrentDispImageIndex == 0){
+			int resizeWidth = getItem(mCurrentAislePosition).getImageList()
+					.get(mCurrentDispImageIndex).mTempResizeBitmapwidth;
+			int resizeHeight = getItem(mCurrentAislePosition).getImageList()
+					.get(mCurrentDispImageIndex).mTempResizedBitmapHeight;
+			int originalWidth = getItem(mCurrentAislePosition).getImageList()
+					.get(mCurrentDispImageIndex).mAvailableWidth;
+			int originalHeight = getItem(mCurrentAislePosition).getImageList()
+					.get(mCurrentDispImageIndex).mAvailableHeight;
+			String imageUrl = getItem(mCurrentAislePosition).getImageList()
+					.get(mCurrentDispImageIndex).mImageUrl;
+			int cardWidth = VueApplication.getInstance()
+					.getVueDetailsCardWidth();
+			int cardHeight = VueApplication.getInstance()
+					.getVueDetailsCardHeight();
+			String writeToSdCard =  null;
+			 writeToSdCard = "OriginalImageWidth: "+originalWidth+" OriginalImageHeight: "+resizeHeight+"\n";
+			 writeToSdCard = writeToSdCard+" ReSizeImageWidth: "+resizeWidth+" ReSizedImageHeight: "+resizeHeight+"\n";
+			 writeToSdCard = writeToSdCard+" CardWidth: "+cardWidth+" CardHeight: "+cardHeight+"\n";
+			 writeToSdCard = writeToSdCard+" ImageUrl: "+imageUrl;
+			writeToSdcard(writeToSdCard);
+           } else {
+        		Toast.makeText(mContext,"Works For Only Starting Image",1000).show();;
+    					 
+           }
+
+	 /*
 			Toast.makeText(
 					mContext,
 					"imgAreaHeight: " + (mTopBottomMargin + mBestHeight)
@@ -683,7 +733,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			Log.i("mCustomUrlthispos",
 					"mCustomUrlthispos3:"
 							+ getItem(mCurrentAislePosition).getImageList()
-									.get(mCurrentDispImageIndex).mImageUrl);
+									.get(mCurrentDispImageIndex).mImageUrl);*/
 		}
 
 		@Override
@@ -847,8 +897,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		if (imgDetails.mAvailableHeight > getItem(mCurrentAislePosition)
 				.getBestLargetHeightForWindow()) {
 			mBestHeight = imgDetails.mAvailableHeight;
-			getItem(mCurrentAislePosition).setBestLargestHeightForWindow(
-					imgDetails.mAvailableHeight, imgDetails.mAvailableWidth);
+			/*
+			 * getItem(mCurrentAislePosition).setBestLargestHeightForWindow(
+			 * imgDetails.mAvailableHeight, imgDetails.mAvailableWidth);
+			 */
+
 			Log.i("new image", "new image height: changed");
 		}
 		if (imgDetails.mAvailableHeight < getItem(mCurrentAislePosition)
@@ -871,6 +924,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		getItem(mCurrentAislePosition).addAisleContent(
 				getItem(mCurrentAislePosition).getAisleContext(),
 				getItem(mCurrentAislePosition).getImageList());
+
+		int bestHeight = Utils.modifyHeightForDetailsView(getItem(
+				mCurrentAislePosition).getImageList());
+		getItem(mCurrentAislePosition)
+				.setBestLargestHeightForWindow(bestHeight);
+
 		FileCache fileCache = new FileCache(mContext);
 		File f = fileCache.getFile(getItem(mCurrentAislePosition)
 				.getImageList().get(mCurrentDispImageIndex).mCustomImageUrl);
@@ -1103,6 +1162,34 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					imgDetail.mLikeDislikeStatus = IMG_LIKE_STATUS;
 				}
 			}
+		}
+	}
+	private void writeToSdcard(String message) {
+
+		String path = Environment.getExternalStorageDirectory().toString();
+		File dir = new File(path + "/vueImageDetails/");
+		if (!dir.isDirectory()) {
+			dir.mkdir();
+		}
+		File file = new File(dir, "/"
+				+ Calendar.getInstance().get(Calendar.DATE) + ".txt");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			Log.i("pathsaving", "pathsaving in sdcard2 error");
+			e.printStackTrace();
+		}
+
+		try {
+			PrintWriter out = new PrintWriter(new BufferedWriter(
+					new FileWriter(file, true)));
+			out.write("\n" + message + "\n");
+			out.flush();
+			out.close();
+			Log.i("pathsaving", "pathsaving in sdcard2 success");
+		} catch (IOException e) {
+			Log.i("pathsaving", "pathsaving in sdcard3 error");
+			e.printStackTrace();
 		}
 	}
 }

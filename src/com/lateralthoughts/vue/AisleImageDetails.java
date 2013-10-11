@@ -11,8 +11,8 @@ public class AisleImageDetails {
 	public String mCustomImageUrl;
 	public int mAvailableHeight;
 	public int mAvailableWidth;
-	//TODO: remove this assignment when real count available.
-	public int mLikesCount = 5;
+	 
+	public int mLikesCount = 0;
 	public String mOwnerUserId;
 	public String mOwnerAisleId;
 	public String mRating;
@@ -20,4 +20,9 @@ public class AisleImageDetails {
 	public ArrayList<String> mCommentsList;
 	public int mTrendingImageHeight;
 	public int mTrendingImageWidth;
+	public int mDetailsImageWidth;
+	public int mDetailsImageHeight;
+	
+	public int mTempResizeBitmapwidth;
+	public int mTempResizedBitmapHeight;
 }

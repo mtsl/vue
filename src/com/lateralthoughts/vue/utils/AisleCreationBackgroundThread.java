@@ -119,8 +119,6 @@ public class AisleCreationBackgroundThread implements Runnable,
 				.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						// ////////////////////////////////////////////////
-
 						if (null != mResponseMessage) {
 
 							Log.i("myailsedebug",
