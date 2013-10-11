@@ -164,6 +164,10 @@ public class VueUserManager {
 					Log.e("Profiling", "Create User: Profiling : onResponse()"
 							+ jsonArray);
 					VueUser vueUser = new Parser().parseUserData(jsonArray);
+					if (VueApplication.getInstance().getmUserInitials() == null) {
+						VueApplication.getInstance().setmUserInitials(
+								vueUser.getFirstName());
+					}
 					VueUserManager.this.setCurrentUser(vueUser);
 					Log.i("imageurl", "imageurl is ok got user id: " + vueUser);
 					callback.onUserUpdated(vueUser);

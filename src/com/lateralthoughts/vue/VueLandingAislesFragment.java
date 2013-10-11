@@ -273,10 +273,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					Log.i("offeset and limit", "offeset00000: load moredata");
 					VueTrendingAislesDataModel.getInstance(mContext)
 							.getNetworkHandler()
-							.requestMoreAisle(true, "Trending");
+							.requestMoreAisle(true, 
+									getResources().getString(R.string.trending));
 				}
 			} else {
-				Log.i("offeset and limit", "offeset00000: load moredata else ");
+				Log.i("offeset and limit", "offeset00000: load moredata else "+VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest);
 			}
 
 		}

@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -161,6 +162,24 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		} else {
 			mEditTextFindAt.setText("");
 		}
+		mEditTextFindAt.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				 String url = null;
+				if(mEditTextFindAt != null){
+				   url = mEditTextFindAt.getText().toString();
+				}
+				if(url != null && url.startsWith("http")){
+					Uri uriUrl = Uri.parse(url.trim()); 
+					Log.i("browserUrl", "browserUrl: "+url);
+				    Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);  
+				    startActivity(launchBrowser); 
+				}
+				
+			}
+		});
+		
 		mEditTextFindAt.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId,

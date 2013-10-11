@@ -288,7 +288,7 @@ public class AisleDetailsViewListLoader {
       if (vFlipper != null && imageView != null) {
          FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
         		 VueApplication.getInstance().getScreenWidth(), imgScreenHeight+VueApplication.getInstance().getPixel(12));
-         //params.gravity = Gravity.CENTER;
+         params.gravity = Gravity.CENTER;
          vFlipper.setLayoutParams(params);
          
        /*  FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(
