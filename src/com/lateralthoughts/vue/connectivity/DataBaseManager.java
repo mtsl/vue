@@ -150,8 +150,8 @@ public class DataBaseManager {
         String strImgCount = "";
         int imgCount = 0;
         
-        if (cursor.moveToFirst()) {
-          strImgCount = imgCountCursor.getString(cursor.getColumnIndex("COUNT(*)"));
+        if (imgCountCursor.moveToFirst()) {
+          strImgCount = imgCountCursor.getString(imgCountCursor.getColumnIndex("COUNT(*)"));
         }
         imgCount = Integer.valueOf(strImgCount).intValue();
         imgCountCursor.close();
