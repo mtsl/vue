@@ -40,6 +40,7 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import com.android.volley.toolbox.NetworkImageView;
 //internal imports
 import com.flurry.android.monolithic.sdk.impl.mw;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;

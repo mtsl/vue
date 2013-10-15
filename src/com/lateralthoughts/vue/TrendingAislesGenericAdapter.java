@@ -33,111 +33,127 @@ import android.widget.TextView;
 import android.content.Context;
 import android.util.Log;
 
-
 //java util imports
 import java.util.ArrayList;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 //internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
+import com.lateralthoughts.vue.utils.BitmapLruCache;
 
-public class TrendingAislesGenericAdapter extends BaseAdapter implements IAisleDataObserver {
-    private Context mContext;
-    
-    private final String TAG = "TrendingAislesGenericAdapter";
-    
-    protected AisleLoader mLoader;
-    private static final boolean DEBUG = false;
-    
-    public int firstX;
-    public int lastX;
-    public boolean mAnimationInProgress;
-    protected boolean mIsScrolling;
-    protected AisleContentClickListener mClickListener;
-    
-    protected String mPossibleOccasions[] = {"Pool Party", "Birthday", "Wedding", "Anniversary",
-                                           "Winter Ball", "Disney Land", "Cocktail"};
-    protected String mPossibleCategories[] = {"Dress", "Shoes", "Ear Rings", "Necklaces",
-            "Jewelry", "Sunglasses", "Trousers"};
-    
-    protected VueTrendingAislesDataModel mVueTrendingAislesDataModel;
-    
-    public TrendingAislesGenericAdapter(Context c, ArrayList<AisleWindowContent> content) {
-        mContext = c;
-        if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
-        mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
-        mVueTrendingAislesDataModel.registerAisleDataObserver(this);
-       /* if(mVueTrendingAislesDataModel.isDownloadFail) {
-          mVueTrendingAislesDataModel.loadData(true);
-        }*/
-        mLoader = AisleLoader.getInstance(mContext);  
-        mIsScrolling = false;
-    }
-    
-    public TrendingAislesGenericAdapter(Context c, AisleContentClickListener listener,
-        ArrayList<AisleWindowContent> content) {
-        mContext = c;
-        if(DEBUG) Log.e(TAG,"About to initiate request for trending aisles");
-        mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
-        mVueTrendingAislesDataModel.registerAisleDataObserver(this);
-      /*  if(mVueTrendingAislesDataModel.isDownloadFail) {
-          mVueTrendingAislesDataModel.loadData(true);
-        }*/
-        mLoader = AisleLoader.getInstance(mContext);  
-        mIsScrolling = false;
-        mClickListener = listener;
-    }
+public class TrendingAislesGenericAdapter extends BaseAdapter implements
+		IAisleDataObserver {
+	private Context mContext;
 
-    public int getCount(){
-        return mVueTrendingAislesDataModel.getAisleCount()/2;
-    }
+	private final String TAG = "TrendingAislesGenericAdapter";
 
-    public AisleWindowContent getItem(int position){     
-        return mVueTrendingAislesDataModel.getAisleAt(position);
-    }
+	protected AisleLoader mLoader;
+	private static final boolean DEBUG = false;
+	protected ImageLoader mImageLoader;
+	public int firstX;
+	public int lastX;
+	public boolean mAnimationInProgress;
+	protected boolean mIsScrolling;
+	protected AisleContentClickListener mClickListener;
 
-    public long getItemId(int position) {
-        return 0;
-    }
+	protected String mPossibleOccasions[] = { "Pool Party", "Birthday",
+			"Wedding", "Anniversary", "Winter Ball", "Disney Land", "Cocktail" };
+	protected String mPossibleCategories[] = { "Dress", "Shoes", "Ear Rings",
+			"Necklaces", "Jewelry", "Sunglasses", "Trousers" };
 
-    public boolean hasStableIds(){
-        return false;
-    }
-    
-    // create a new ImageView for each item referenced by the Adapter
-    public View getView(int position, View convertView, ViewGroup parent) { 
-    	Log.i("TrendingDataModel", "DataObserver for List Refresh:   Generic getview called");
-        return convertView;
-    }
-    
-    @Override
-    public void onAisleDataUpdated(int newCount){
-    	Log.i("TrendingDataModel", "DataObserver for List Refresh:  Generic Aisle Update Called ");
-        notifyDataSetChanged();
-        
-    }
-    
-    private int calculateActualPosition(int viewPosition){
-        int actualPosition = 0;
-        if(0 != viewPosition)
-            actualPosition = (viewPosition*2); 
-        
-        return actualPosition;
-    }
-    
-    public void setIsScrolling(boolean isScrolling){
-        //mIsScrolling = isScrolling;
-    }
-    
-    static class ViewHolder {
-        AisleContentBrowser aisleContentBrowser;
-        TextView aisleOwnersName;
-        TextView aisleContext;
-        ImageView profileThumbnail;
-        String uniqueContentId;
-        LinearLayout aisleDescriptor;
-        AisleWindowContent mWindowContent;
-    }
-    
-  
+	protected VueTrendingAislesDataModel mVueTrendingAislesDataModel;
+
+	public TrendingAislesGenericAdapter(Context c,
+			ArrayList<AisleWindowContent> content) {
+		mContext = c;
+		if (DEBUG)
+			Log.e(TAG, "About to initiate request for trending aisles");
+		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
+				.getInstance(mContext);
+		mVueTrendingAislesDataModel.registerAisleDataObserver(this);
+		/*
+		 * if(mVueTrendingAislesDataModel.isDownloadFail) {
+		 * mVueTrendingAislesDataModel.loadData(true); }
+		 */
+		mImageLoader = new ImageLoader(VueApplication.getInstance()
+				.getRequestQueue(), BitmapLruCache.getInstance(mContext));
+		mLoader = AisleLoader.getInstance(mContext);
+		mIsScrolling = false;
+	}
+
+	public TrendingAislesGenericAdapter(Context c,
+			AisleContentClickListener listener,
+			ArrayList<AisleWindowContent> content) {
+		mContext = c;
+		if (DEBUG)
+			Log.e(TAG, "About to initiate request for trending aisles");
+		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
+				.getInstance(mContext);
+		mVueTrendingAislesDataModel.registerAisleDataObserver(this);
+		/*
+		 * if(mVueTrendingAislesDataModel.isDownloadFail) {
+		 * mVueTrendingAislesDataModel.loadData(true); }
+		 */
+		mImageLoader = new ImageLoader(VueApplication.getInstance()
+				.getRequestQueue(), BitmapLruCache.getInstance(mContext));
+		mLoader = AisleLoader.getInstance(mContext);
+		mIsScrolling = false;
+		mClickListener = listener;
+	}
+
+	public int getCount() {
+		return mVueTrendingAislesDataModel.getAisleCount() / 2;
+	}
+
+	public AisleWindowContent getItem(int position) {
+		return mVueTrendingAislesDataModel.getAisleAt(position);
+	}
+
+	public long getItemId(int position) {
+		return 0;
+	}
+
+	public boolean hasStableIds() {
+		return false;
+	}
+
+	// create a new ImageView for each item referenced by the Adapter
+	public View getView(int position, View convertView, ViewGroup parent) {
+		Log.i("TrendingDataModel",
+				"DataObserver for List Refresh:   Generic getview called");
+		return convertView;
+	}
+
+	@Override
+	public void onAisleDataUpdated(int newCount) {
+		Log.i("TrendingDataModel",
+				"DataObserver for List Refresh:  Generic Aisle Update Called ");
+		notifyDataSetChanged();
+
+	}
+
+	private int calculateActualPosition(int viewPosition) {
+		int actualPosition = 0;
+		if (0 != viewPosition)
+			actualPosition = (viewPosition * 2);
+
+		return actualPosition;
+	}
+
+	public void setIsScrolling(boolean isScrolling) {
+		// mIsScrolling = isScrolling;
+	}
+
+	static class ViewHolder {
+		AisleContentBrowser aisleContentBrowser;
+		TextView aisleOwnersName;
+		TextView aisleContext;
+		ImageView profileThumbnail;
+		String uniqueContentId;
+		LinearLayout aisleDescriptor;
+		AisleWindowContent mWindowContent;
+	}
+
 }

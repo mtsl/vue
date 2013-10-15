@@ -122,13 +122,24 @@ public class VueLandingPageActivity extends BaseActivity {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		/*
-		 * if (storedVueUser != null) {
-		 * VueApplication.getInstance().setmUserInitials(
-		 * storedVueUser.getmFirstName());
-		 * VueTrendingAislesDataModel.getInstance(this).getNetworkHandler()
-		 * .getBookmarkAisleByUser(); }
-		 */
+
+		if (storedVueUser != null) {
+			VueApplication.getInstance().setmUserInitials(
+					storedVueUser.getFirstName());
+			VueApplication.getInstance().setmUserId(storedVueUser.getId());
+			try {
+				VueApplication
+						.getInstance()
+						.setmUserImageUrl(
+								Utils.readUserProfileObjectFromFile(
+										this,
+										VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME)
+										.getUserProfilePicture());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		// Application opens first time.
 		if (isFirstTimeFlag) {
 			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
@@ -186,32 +197,35 @@ public class VueLandingPageActivity extends BaseActivity {
 			vueUser = Utils.readUserObjectFromFile(this,
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (vueUser != null) {
 			Map<String, String> articleParams = new HashMap<String, String>();
-			/*
-			 * if (vueUser.userIdentifier
-			 * .equals(VueUserManager.PreferredIdentityLayer.DEVICE_ID)) {
-			 * articleParams.put("User_Status", "Un_Registered"); } else {
-			 * articleParams.put("User_Status", "Registered"); if
-			 * (vueUser.userIdentifier
-			 * .equals(VueUserManager.PreferredIdentityLayer.FB)) {
-			 * articleParams .put("Registered_Source", "Registered with FB"); }
-			 * else if (vueUser.userIdentifier
-			 * .equals(VueUserManager.PreferredIdentityLayer.GPLUS)) {
-			 * articleParams.put("Registered_Source", "Registered with GPLUS");
-			 * } else if (vueUser.userIdentifier
-			 * .equals(VueUserManager.PreferredIdentityLayer.GPLUS_FB)) {
-			 * articleParams.put("Registered_Source",
-			 * "Registered with FB and GPLUS"); }
-			 * 
-			 * }
-			 */
+			if (vueUser.getFacebookId().equals(VueUser.DEFAULT_FACEBOOK_ID)
+					&& vueUser.getGooglePlusId().equals(
+							VueUser.DEFAULT_GOOGLEPLUS_ID)) {
+				articleParams.put("User_Status", "Un_Registered");
+			} else {
+				articleParams.put("User_Status", "Registered");
+				if ((!vueUser.getFacebookId().equals(
+						VueUser.DEFAULT_FACEBOOK_ID))
+						&& (!vueUser.getGooglePlusId().equals(
+								VueUser.DEFAULT_GOOGLEPLUS_ID))) {
+					articleParams.put("Registered_Source",
+							"Registered with FB and GPLUS");
+
+				} else if ((!vueUser.getGooglePlusId().equals(
+						VueUser.DEFAULT_GOOGLEPLUS_ID))) {
+					articleParams.put("Registered_Source",
+							"Registered with GPLUS");
+				} else if ((!vueUser.getFacebookId().equals(
+						VueUser.DEFAULT_FACEBOOK_ID))) {
+					articleParams
+							.put("Registered_Source", "Registered with FB");
+				}
+			}
 			FlurryAgent.logEvent("Rigestered_Users", articleParams);
 			FlurryAgent.logEvent("Login_Time_Ends", articleParams, true);
-
 		}
 		/*
 		 * FlurryAgent.setAge(arg0); FlurryAgent.setGender(arg0);
@@ -226,29 +240,40 @@ public class VueLandingPageActivity extends BaseActivity {
 	protected void onStop() {
 		super.onStop();
 		FlurryAgent.onEndSession(this);
+		VueUser vueUser = null;
+		try {
+			vueUser = Utils.readUserObjectFromFile(this,
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (vueUser != null) {
+			Map<String, String> articleParams = new HashMap<String, String>();
+			if (vueUser.getFacebookId().equals(VueUser.DEFAULT_FACEBOOK_ID)
+					&& vueUser.getGooglePlusId().equals(
+							VueUser.DEFAULT_GOOGLEPLUS_ID)) {
+				articleParams.put("User_Status", "Un_Registered");
+			} else {
+				articleParams.put("User_Status", "Registered");
+				if ((!vueUser.getFacebookId().equals(
+						VueUser.DEFAULT_FACEBOOK_ID))
+						&& (!vueUser.getGooglePlusId().equals(
+								VueUser.DEFAULT_GOOGLEPLUS_ID))) {
+					articleParams.put("Registered_Source",
+							"Registered with FB and GPLUS");
 
-		/*
-		 * Log.i("vueUser", "vueUser val: "+vueUser); if(vueUser != null){
-		 * Map<String, String> articleParams = new HashMap<String, String>();
-		 * if(
-		 * vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer
-		 * .DEVICE_ID)){ articleParams.put("User_Status", "Un_Registered"); }
-		 * else { articleParams.put("User_Status", "Registered");
-		 * if(vueUser.getUserIdentity
-		 * ().equals(VueUserManager.PreferredIdentityLayer.FB)){
-		 * articleParams.put("Registered_Source", "Registered with FB"); }else
-		 * if
-		 * (vueUser.getUserIdentity().equals(VueUserManager.PreferredIdentityLayer
-		 * .GPLUS)){ articleParams.put("Registered_Source",
-		 * "Registered with GPLUS"); } else
-		 * if(vueUser.getUserIdentity().equals(VueUserManager
-		 * .PreferredIdentityLayer.GPLUS_FB)){
-		 * articleParams.put("Registered_Source",
-		 * "Registered with FB and GPLUS"); }
-		 * 
-		 * } FlurryAgent.logEvent("Rigestered_Users", articleParams);
-		 */
-
+				} else if ((!vueUser.getGooglePlusId().equals(
+						VueUser.DEFAULT_GOOGLEPLUS_ID))) {
+					articleParams.put("Registered_Source",
+							"Registered with GPLUS");
+				} else if ((!vueUser.getFacebookId().equals(
+						VueUser.DEFAULT_FACEBOOK_ID))) {
+					articleParams
+							.put("Registered_Source", "Registered with FB");
+				}
+			}
+			FlurryAgent.logEvent("Rigestered_Users", articleParams);
+		}
 	}
 
 	@Override

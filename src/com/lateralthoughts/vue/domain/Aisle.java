@@ -1,13 +1,20 @@
 package com.lateralthoughts.vue.domain;
 
 public class Aisle {
-	// Long id;
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	Long id;
 	Long mOwnerUserId;
 	String mCategory;
 	String mLookingFor;
 	String mName;
 	String mOccassion;
-	Long mRefImageId;
 	VueImage mAisleImage;
 	String mDescription;
 
@@ -19,9 +26,6 @@ public class Aisle {
 		this.mDescription = description;
 	}
 
-	String mAisleOwnerFirstName;
-	String mAisleOwnerLastName;
-
 	public VueImage getAisleImage() {
 		return mAisleImage;
 	}
@@ -30,58 +34,21 @@ public class Aisle {
 		this.mAisleImage = mAisleImage;
 	}
 
-	/** ImageList should never be uploaded with the aisle */
-	// @JsonIgnore
-	// ImageList imageList;
-
 	public Aisle() {
 	}
 
 	public Aisle(Long id, String category, String lookingFor, String name,
-			String occassion, Long refImageId, Long ownerUserId,
-			String aisleOwnerFirstName, String aisleOwnerLastName,
-			String descreption, VueImage aisleImage) {
+			String occassion, Long ownerUserId, String descreption,
+			VueImage aisleImage) {
 		super();
-		// this.id = id;
+		this.id = id;
 		this.mCategory = category;
 		this.mLookingFor = lookingFor;
 		this.mName = name;
 		this.mOccassion = occassion;
-		this.mRefImageId = refImageId;
 		this.mOwnerUserId = ownerUserId;
 		this.mAisleImage = aisleImage;
 		this.mDescription = descreption;
-		this.mAisleOwnerLastName = aisleOwnerLastName;
-		this.mAisleOwnerFirstName = aisleOwnerFirstName;
-	}
-
-	/*
-	 * public Long getId() { return id; }
-	 */
-
-	/*
-	 * public void setId(Long id) { this.id = id; }
-	 */
-
-	/*
-	 * public void setmDescription(String mDescription) { this.mDescription =
-	 * mDescription; }
-	 */
-
-	public String getAisleOwnerLastName() {
-		return mAisleOwnerLastName;
-	}
-
-	public void setAisleOwnerLastName(String mAisleOwnerLastName) {
-		this.mAisleOwnerLastName = mAisleOwnerLastName;
-	}
-
-	public String getAisleOwnerFirstName() {
-		return mAisleOwnerFirstName;
-	}
-
-	public void setAisleOwnerFirstName(String mAisleOwnerFirstName) {
-		this.mAisleOwnerFirstName = mAisleOwnerFirstName;
 	}
 
 	public String getCategory() {
@@ -116,14 +83,6 @@ public class Aisle {
 		this.mOccassion = occassion;
 	}
 
-	public Long getRefImageId() {
-		return mRefImageId;
-	}
-
-	public void setRefImageId(Long refImageId) {
-		this.mRefImageId = refImageId;
-	}
-
 	public Long getOwnerUserId() {
 		return mOwnerUserId;
 	}
@@ -131,14 +90,4 @@ public class Aisle {
 	public void setOwnerUserId(Long ownerUserId) {
 		this.mOwnerUserId = ownerUserId;
 	}
-
-	// @JsonIgnore
-	// public ImageList getImageList() {
-	// return imageList;
-	// }
-
-	// @JsonIgnore
-	// public void setImageList(ImageList imageList) {
-	// this.imageList = imageList;
-	// }
 }

@@ -914,8 +914,9 @@ public class DataEntryFragment extends Fragment {
 													intent);
 									getActivity().finish();
 									addImageToAisleToServer(
-											Long.valueOf(storedVueUser.getId()).toString(),
-											VueApplication.getInstance()
+											Long.valueOf(storedVueUser.getId())
+													.toString(), VueApplication
+													.getInstance()
 													.getClickedWindowID(), true);
 								} else {
 									Toast.makeText(
@@ -1415,7 +1416,8 @@ public class DataEntryFragment extends Fragment {
 					if (VueConnectivityManager
 							.isNetworkConnected(getActivity())) {
 						storeMetaAisleDataIntoLocalStorage();
-						addImageToAisleToServer(Long.valueOf(storedVueUser.getId()).toString(),
+						addImageToAisleToServer(
+								Long.valueOf(storedVueUser.getId()).toString(),
 								Utils.getDataentryScreenAisleId(getActivity()),
 								false);
 					} else {
@@ -1479,8 +1481,7 @@ public class DataEntryFragment extends Fragment {
 					} catch (Exception e2) {
 						e2.printStackTrace();
 					}
-					if (storedVueUser != null
-							&& storedVueUser.getId() != null) {
+					if (storedVueUser != null && storedVueUser.getId() != null) {
 						if (VueConnectivityManager
 								.isNetworkConnected(getActivity())) {
 							storeMetaAisleDataIntoLocalStorage();
@@ -1617,8 +1618,6 @@ public class DataEntryFragment extends Fragment {
 			aisle.setName("Super Aisle"); // TODO By Krishna
 			aisle.setOccassion(mOccassionBigText.getText().toString().trim());
 			aisle.setOwnerUserId(Long.valueOf(vueUser.getId()));
-			aisle.setAisleOwnerFirstName(vueUser.getFirstName());
-			aisle.setAisleOwnerLastName(vueUser.getLastName());
 			if (mSaySomethingAboutAisle.getText().toString().trim().length() > 0) {
 				aisle.setDescription(mSaySomethingAboutAisle.getText()
 						.toString());
@@ -1636,7 +1635,9 @@ public class DataEntryFragment extends Fragment {
 							.size() > 0) {
 				for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
 						.size(); i++) {
-					if (mOtherSourceSelectedImageUrl
+					if (mFindAtText
+							.getText()
+							.toString()
 							.toLowerCase()
 							.contains(
 									VueApplication.getInstance().mShoppingApplicationDetailsList
@@ -1688,7 +1689,9 @@ public class DataEntryFragment extends Fragment {
 							.size() > 0) {
 				for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
 						.size(); i++) {
-					if (mOtherSourceSelectedImageUrl
+					if (mFindAtText
+							.getText()
+							.toString()
 							.toLowerCase()
 							.contains(
 									VueApplication.getInstance().mShoppingApplicationDetailsList

@@ -69,6 +69,25 @@ public class VueApplication extends Application {
 	private int mAisleImgCurrentPos;
 	private String mUserInitials = null;
 
+	public Long getmUserId() {
+		return mUserId;
+	}
+
+	public void setmUserId(Long mUserId) {
+		this.mUserId = mUserId;
+	}
+
+	public String getmUserImageUrl() {
+		return mUserImageUrl;
+	}
+
+	public void setmUserImageUrl(String mUserImageUrl) {
+		this.mUserImageUrl = mUserImageUrl;
+	}
+
+	private Long mUserId = null;
+	private String mUserImageUrl = null;
+
 	public String getmUserInitials() {
 		return mUserInitials;
 	}
