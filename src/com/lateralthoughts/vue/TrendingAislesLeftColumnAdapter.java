@@ -142,13 +142,6 @@ public class TrendingAislesLeftColumnAdapter extends
 		holder = (ViewHolder) convertView.getTag();
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
-		if(Utils.isImageAdded){
-			if(Utils.mChangedAisleId != null && Utils.mChangedAisleId.equalsIgnoreCase(holder.mWindowContent.getAisleId())){
-				holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-				Utils.isImageAdded = false;
-				Utils.mChangedAisleId  = null;
-			}
-		}
 		int scrollIndex = 0;
 		mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
 				false, listener);

@@ -114,6 +114,7 @@ public class AisleDetailsViewListLoader {
 			 for(int i = 0;i<imageDetailsArr.size();i++) {
 				 Log.i("clickedwindow", "TrendingCrop3: width**" + imageDetailsArr.get(i).mAvailableWidth+" height: "+imageDetailsArr.get(i).mAvailableHeight);
 				 Log.i("clickedwindow", "TrendingCrop3: imageUrl**" +imageDetailsArr.get(i).mImageUrl);
+				 Log.i("clickedwindow", "CustomImageUrls**" +imageDetailsArr.get(i).mCustomImageUrl);
 				  if(mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
 					  mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
 				  }
@@ -125,10 +126,11 @@ public class AisleDetailsViewListLoader {
 			imageView = mViewFactory.getEmptyImageView();
 			imageView.setContainerObject(holder);
 			Bitmap bitmap = null; 
-			bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
+			//bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
 			/*mBestHeight = getBestHeight(windowContent.getBestLargetHeightForWindow());*/
 			mBestHeight =Utils.modifyHeightForDetailsView(imageDetailsArr);
-			 
+			
+			windowContent.setBestLargestHeightForWindow(mBestHeight);
 			contentBrowser.addView(imageView);
 			Log.i("new image", "new image  windowbestHeight:  "+windowContent.getBestLargetHeightForWindow());
 			setParams(holder.aisleContentBrowser, imageView,mBestHeight);
@@ -176,7 +178,7 @@ public class AisleDetailsViewListLoader {
  
       /*  ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
                 new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
-
+    	Log.i("imageHeitht", "imageHeitht resizeWidth:  calling bacground thread ");
 
           if (cancelPotentialDownload(loc, imageView)) {
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
@@ -219,6 +221,8 @@ public class AisleDetailsViewListLoader {
 			mItemDetails.mTempResizedBitmapHeight = bmp.getHeight();
 		     Log.i("imageHeitht", "imageHeitht resizeHeight: "+mItemDetails.mTempResizedBitmapHeight);
 		        Log.i("imageHeitht", "imageHeitht resizeWidth: "+ mItemDetails.mTempResizeBitmapwidth);
+			} else {
+				Log.i("imageHeitht", "imageHeitht resizeWidth: bitmap is null ");
 			}
             return bmp;            
         }

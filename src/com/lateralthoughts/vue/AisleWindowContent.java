@@ -107,7 +107,7 @@ public class AisleWindowContent {
 		AisleImageDetails imageDetails;
 		// TODO: when more images available set this variable to smallest height
 		// among all
-		int smallestHeightPosition = 0;
+		 
 		mWindowSmallestHeight = /* 34 */0;
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			imageDetails = mAisleImagesList.get(i);
@@ -115,22 +115,8 @@ public class AisleWindowContent {
 					|| mWindowSmallestHeight == 0) {
 				mWindowSmallestHeight = imageDetails.mAvailableHeight;
 				mWindowSamllestWidth =  imageDetails.mAvailableWidth;
-				smallestHeightPosition = i;
 			}
 		}
-		for(int i = 0;i<mAisleImagesList.size();i++){
-			imageDetails = mAisleImagesList.get(i);
-			if (imageDetails.mAvailableHeight > mWindowLargestHeight
-					|| mWindowLargestHeight == 0) {
-				mWindowLargestHeight = imageDetails.mAvailableHeight;
-				mWindowLargestWidth = imageDetails.mAvailableWidth;
-			}
-			
-		}
-		for(int i=0;i<mAisleImagesList.size();i++){
-			Log.i("imageListSizes", "imageListSizes: "+mAisleImagesList.get(i).mTrendingImageHeight);
-		}
-		mWindowSmallestHeight = getBestHeightForTrendingScreen(mWindowSmallestHeight,mWindowSamllestWidth);
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			prepareCustomUrl(mAisleImagesList.get(i));
 		}
@@ -194,19 +180,7 @@ public class AisleWindowContent {
     }
  
  
-  private int getBestHeightForTrendingScreen(int height,int width){
-	int bestHeight;
-	int trendingCardWidth = VueApplication.getInstance().getScreenWidth()/2;
-	if(width > trendingCardWidth){
-		bestHeight = (height * trendingCardWidth)/width;
-	} else {
-		bestHeight = height;
-	}
-	  
-	  
-	  return bestHeight;
-	  
-  }
+/* */
   private ArrayList<AisleImageDetails> modifyHeights(ArrayList<AisleImageDetails> imageList){
 	  if(imageList.size() == 0){
 		  return null;
@@ -245,6 +219,7 @@ public class AisleWindowContent {
 		  }
 		  
 		  aisleHeightOnCard =  imageHeightList[0];
+		  mWindowSmallestHeight = (int) imageHeightList[0];
 	  int smallestHeightPosition = 0;
            for(int i = 0;i<imageHeightList.length;i++){
         	   if(aisleHeightOnCard >  imageHeightList[i]){
