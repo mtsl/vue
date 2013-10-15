@@ -47,7 +47,7 @@ public class Utils {
 	public static final String DETAILS_SCREEN = "details_screen";
 	public static final String TRENDING_SCREEN = "trending_screen";
 	public static final String FLURRY_APP_KEY = "6938R8DC7R5HZWF976TJ";
-
+	public static int MAX_RETRIES = 3;
 	public static void CopyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
 		try {

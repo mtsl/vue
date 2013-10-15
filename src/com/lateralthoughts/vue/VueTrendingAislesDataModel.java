@@ -4,6 +4,7 @@ package com.lateralthoughts.vue;
 import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.DbHelper;
@@ -78,7 +79,8 @@ public class VueTrendingAislesDataModel {
     Log.e("PERF_VUE", "about to invoke loadInitialData. Time elapsed = "
         + elapsedTime);
     VueApplication.getInstance().mLastRecordedTime = System.currentTimeMillis();
-    mNetworkHandler.loadInitialData(loadMore, mHandler, "Treanding");
+    mNetworkHandler.loadInitialData(loadMore, mHandler,
+			mContext.getResources().getString(R.string.trending));  
   }
     public NetworkHandler getNetworkHandler(){
     	return mNetworkHandler;
@@ -213,9 +215,9 @@ public class VueTrendingAislesDataModel {
 
 						return;
 					}
-//					Message msg = new Message();
-//					msg.obj = aislesList;
-//					mHandler.sendMessage(msg);
+					Message msg = new Message();
+					msg.obj = aislesList;
+					mHandler.sendMessage(msg);
 				};
 			});
 

@@ -75,8 +75,8 @@ public class BitmapLoaderUtils {
 		Bitmap b = decodeFile(f, bestHeight, bestWidth, source);
 		if (b != null) {
 
-			if (cacheBitmap)
-				mAisleImagesCache.putBitmap(url, b);
+		/*	if (cacheBitmap)
+				mAisleImagesCache.putBitmap(url, b);*/
 			return b;
 		}
 
@@ -100,8 +100,8 @@ public class BitmapLoaderUtils {
 			Utils.CopyStream(is, os);
 			os.close();
 			bitmap = decodeFile(f, bestHeight, bestWidth, source);
-			if (cacheBitmap)
-				mAisleImagesCache.putBitmap(url, bitmap);
+		/*	if (cacheBitmap)
+				mAisleImagesCache.putBitmap(url, bitmap);*/
 			return bitmap;
 		} catch (Throwable ex) {
 			ex.printStackTrace();
