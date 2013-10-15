@@ -136,6 +136,7 @@ public class VueConstants {
 	public static final String COMMENTS_ON_IMAGES_TABLE = "commentsOnImages";
 	public static final String RECENTLY_VIEWED_AISLES = "recentlyViewAisles";
 	public static final String RATED_IMAGES = "ratedImages";
+	public static final String BOOKMARKER_AISLES = "bookmarkedAisles";
 
 	// Define MIME types
 	public static final String ARTICLES_MIME_TYPE = "vnd.android.cursor.dir/vnd.vue.articles";
@@ -158,6 +159,8 @@ public class VueConstants {
 			+ AUTHORITY + "/" + RECENTLY_VIEWED_AISLES);
 	public static final Uri RATED_IMAGES_URI = Uri.parse("content://"
 			+ AUTHORITY + "/" + RATED_IMAGES);
+	public static final Uri BOOKMARKER_AISLES_URI = Uri.parse("content://"
+	        + AUTHORITY + "/" + BOOKMARKER_AISLES);
 
 	public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
 	public static final String INVITATION_MESG = "Invitation from Vue application.";

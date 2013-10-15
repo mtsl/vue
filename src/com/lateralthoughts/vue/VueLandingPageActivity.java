@@ -579,46 +579,43 @@ public class VueLandingPageActivity extends BaseActivity {
 
 	}
 
-	private void getBookmarkedAisles(String screenName) {
+  private void getBookmarkedAisles(String screenName) {
 
-		ArrayList<AisleWindowContent> windowContent = null;
-		ArrayList<String> bookmarkedAisles = VueTrendingAislesDataModel
-				.getInstance(VueLandingPageActivity.this).mNetworkHandler.bookmarkedAisles;
-		String[] bookmarked = bookmarkedAisles
-				.toArray(new String[bookmarkedAisles.size()]);
-		Log.i("bookmarks", "bookmarks size array ids: " + bookmarked.length);
-		if (windowContent == null) {
-			windowContent = new ArrayList<AisleWindowContent>();
-		}
-		DataBaseManager.getInstance(VueLandingPageActivity.this)
-				.resetDbParams();
-		ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager
-				.getInstance(VueLandingPageActivity.this).getAislesFromDB(
-						bookmarked);
-		Log.i("bookmarks", "bookmarks size: " + windowContentTemp.size());
-		for (AisleWindowContent w : windowContentTemp) {
-			windowContent.add(w);
-			Log.i("duplicateImageUrl", "duplicateImageUrl:********");
-			for (int i = 0; i < w.getImageList().size(); i++) {
-				Log.i("duplicateImageUrl", "duplicateImageUrl: "
-						+ w.getImageList().get(i).mImageUrl);
-			}
-			Log.i("duplicateImageUrl", "duplicateImageUrl:#########");
-		}
-		if (windowContent != null && windowContent.size() > 0) {
-			changeScreenName(screenName);
-			VueTrendingAislesDataModel.getInstance(this).clearAisles();
-			for (AisleWindowContent content : windowContent) {
-				VueTrendingAislesDataModel.getInstance(this).addItemToList(
-						content.getAisleId(), content);
-			}
+    ArrayList<AisleWindowContent> windowContent = null;
+    ArrayList<String> bookmarkedAisles = DataBaseManager.getInstance(
+        VueLandingPageActivity.this).getBookmarkAisleIdsList();
+    String[] bookmarked = bookmarkedAisles.toArray(new String[bookmarkedAisles
+        .size()]);
+    Log.i("bookmarks", "bookmarks size array ids: " + bookmarked.length);
+    if (windowContent == null) {
+      windowContent = new ArrayList<AisleWindowContent>();
+    }
+    DataBaseManager.getInstance(VueLandingPageActivity.this).resetDbParams();
+    ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager
+        .getInstance(VueLandingPageActivity.this).getAislesFromDB(bookmarked);
+    Log.i("bookmarks", "bookmarks size: " + windowContentTemp.size());
+    for (AisleWindowContent w : windowContentTemp) {
+      windowContent.add(w);
+      Log.i("duplicateImageUrl", "duplicateImageUrl:********");
+      for (int i = 0; i < w.getImageList().size(); i++) {
+        Log.i("duplicateImageUrl", "duplicateImageUrl: "
+            + w.getImageList().get(i).mImageUrl);
+      }
+      Log.i("duplicateImageUrl", "duplicateImageUrl:#########");
+    }
+    if (windowContent != null && windowContent.size() > 0) {
+      changeScreenName(screenName);
+      VueTrendingAislesDataModel.getInstance(this).clearAisles();
+      for (AisleWindowContent content : windowContent) {
+        VueTrendingAislesDataModel.getInstance(this).addItemToList(
+            content.getAisleId(), content);
+      }
 
-		} else {
-			Toast.makeText(this, "No Bookmarked aisles", Toast.LENGTH_LONG)
-					.show();
-		}
+    } else {
+      Toast.makeText(this, "No Bookmarked aisles", Toast.LENGTH_LONG).show();
+    }
 
-	}
+  }
 
 	private void showPreviousScreen(String screenName) {
 		boolean fromServer = false;

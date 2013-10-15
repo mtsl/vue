@@ -1123,6 +1123,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				Long.parseLong(aisleId));
 		VueUser storedVueUser = null;
 		try {
+		  Log.i("bookmarkissue", "bookmarkissue handleBookmark");
 			storedVueUser = Utils.readUserObjectFromFile(mContext,
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 			AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,

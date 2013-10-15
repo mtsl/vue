@@ -18,6 +18,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	 public static final String DATABASE_TABLE_COMMENTS_ON_IMAGES = "commentsOnImages";
 	 public static final String DATABASE_TABLE_RECENTLY_VIEWED_AISLES = "recentlyViewAisles";
 	 public static final String DATABASE_TABLE_RATED_IMAGES = "ratedImages";
+	 public static final String DATABASE_TABLE_BOOKMARKS_AISLES = "bookmarkedAisles";
 	 public static final int DATABASE_VERSION = 1;
 
      private String createAislesTable = "create table if not exists " + DATABASE_TABLE_AISLES
@@ -92,12 +93,16 @@ public class DbHelper extends SQLiteOpenHelper {
         + " (" + VueConstants.ID + " integer primary key autoincrement, "
         + VueConstants.AISLE_ID + " text, "
         + VueConstants.IMAGE_ID + " text);";
+    
+    private String createBookmarkAislesTable = "create table if not exists " + DATABASE_TABLE_BOOKMARKS_AISLES
+        + " (" + VueConstants.ID + " integer primary key autoincrement, "
+        + VueConstants.AISLE_ID + " text);";
 
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
-	@Override
+  @Override
   public void onCreate(SQLiteDatabase db) {
     db.execSQL(createAislesTable);
     db.execSQL(createAisleImagesTable);
@@ -108,6 +113,7 @@ public class DbHelper extends SQLiteOpenHelper {
     db.execSQL(createCategoryTable);
     db.execSQL(createRecentViewTable);
     db.execSQL(createReatingImagesTable);
+    db.execSQL(createBookmarkAislesTable);
   }
 
 	@Override
