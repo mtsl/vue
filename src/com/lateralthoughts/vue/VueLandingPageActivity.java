@@ -590,7 +590,12 @@ public class VueLandingPageActivity extends BaseActivity {
 				}
 			} else {
 				Log.i("stackcount", "stackcount onbckpresed: close window0 ");
-				CancelNotification(this, 1);
+				CancelNotification(this,
+						VueConstants.CREATE_AISLE_NOTIFICATION_ID);
+				CancelNotification(this,
+						VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID);
+				CancelNotification(this,
+						VueConstants.CHANGE_USER_NOTIFICATION_ID);
 				FileCache fileCache = new FileCache(
 						VueApplication.getInstance());
 				fileCache.clearVueAppResizedPictures();

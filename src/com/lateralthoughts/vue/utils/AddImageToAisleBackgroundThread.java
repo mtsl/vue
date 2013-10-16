@@ -25,6 +25,7 @@ import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
@@ -57,7 +58,9 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 		if (percent > mLastPercent) {
 			mNotification.contentView.setProgressBar(R.id.progressBar1, 100,
 					percent, false);
-			mNotificationManager.notify(1, mNotification);
+			mNotificationManager.notify(
+					VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
+					mNotification);
 			mLastPercent = percent;
 		}
 	}
@@ -80,7 +83,9 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 			mNotification.contentIntent = contentIntent;
 			mNotification.contentView.setProgressBar(R.id.progressBar1, 100, 0,
 					false);
-			mNotificationManager.notify(1, mNotification);
+			mNotificationManager.notify(
+					VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
+					mNotification);
 			ObjectMapper mapper = new ObjectMapper();
 			URL url = new URL(UrlConstants.CREATE_IMAGE_RESTURL);
 			HttpPut httpPut = new HttpPut(url.toString());
@@ -102,7 +107,9 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 						"Image is Added.", "Image is Added to Aisle.",
 						contentIntent);
 				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-				mNotificationManager.notify(1, mNotification);
+				mNotificationManager.notify(
+						VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
+						mNotification);
 				mResponseMessage = EntityUtils.toString(response.getEntity());
 				System.out.println("AISLE CREATED Response: "
 						+ mResponseMessage);
@@ -114,7 +121,9 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 						"Uploading Failed.", "Image adding is failed.",
 						contentIntent);
 				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-				mNotificationManager.notify(1, mNotification);
+				mNotificationManager.notify(
+						VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
+						mNotification);
 				Log.i("myailsedebug",
 						"myailsedebug: recieved response******* response code :  "
 								+ response.getStatusLine().getStatusCode());
