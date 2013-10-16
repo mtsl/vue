@@ -417,8 +417,6 @@ public class NetworkHandler {
           if (response.getEntity() != null
               && response.getStatusLine().getStatusCode() == 200) {
             String responseMessage = EntityUtils.toString(response.getEntity());
-            Log.i("bookmarked aisle", "bookmarked aisle 3 response: "
-                + responseMessage);
             if (responseMessage != null) {
               ArrayList<String> bookmarkedAisles = new Parser()
                   .parseBookmarkedAisles(responseMessage);

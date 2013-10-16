@@ -330,7 +330,7 @@ public class DataBaseManager {
 
       @Override
       public void run() {
-        Log.i("bookmarkissue", "bookmarkissue Runnable");
+    	  Log.i("bookmark response", "bookmark  bookMarkOrUnBookmarkAisle isBookmarked: "+isBookmarked+"  bookmarkCount: "+bookmarkCount);
         bookMarkOrUnBookmarkAisleToDb(isBookmarked, bookmarkCount, aisleID, isDirty);
       }
     });
@@ -435,7 +435,9 @@ public class DataBaseManager {
             String id = cursor
                 .getString(cursor.getColumnIndex(VueConstants.ID));
             Uri uri = Uri.parse(VueConstants.BOOKMARKER_AISLES_URI + "/" + id);
-            mContext.getContentResolver().delete(uri, null, null);
+            int x = mContext.getContentResolver().delete(uri, null, null);
+            Log.i("bookmark response", "bookmark  bookMarkOrUnBookmarkAisle deleted rows: "+x+" AisleId: "+aisleId);
+            Log.i("bookmark response", "bookmark  bookMarkOrUnBookmarkAisle Uri: "+uri);
           }
           isMatched = true;
           break;
@@ -448,7 +450,8 @@ public class DataBaseManager {
         values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
         Uri uri = mContext.getContentResolver().insert(
             VueConstants.BOOKMARKER_AISLES_URI, values);
-        Log.e("bookmarkissue", "bookmarkissue new aisle inserted Uri: " + uri);
+        Log.i("bookmark response", "bookmark  bookMarkOrUnBookmarkAisle inserted Uri: "+uri);
+         
       }
   
   }
