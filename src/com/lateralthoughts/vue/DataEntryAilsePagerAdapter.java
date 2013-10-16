@@ -17,12 +17,12 @@ import android.widget.ImageView;
 
 public class DataEntryAilsePagerAdapter extends PagerAdapter {
 
-	private ArrayList<DatentryImage> mImagePathsList = null;
+	private ArrayList<DataentryImage> mImagePathsList = null;
 	private Context mContext = null;
 	private DataEntryFragment mDataEntryFragment = null;
 
 	public DataEntryAilsePagerAdapter(Context mContext,
-			ArrayList<DatentryImage> imagePathsList) {
+			ArrayList<DataentryImage> imagePathsList) {
 		this.mContext = mContext;
 		this.mImagePathsList = imagePathsList;
 	}

@@ -1549,7 +1549,7 @@ public class DataEntryFragment extends Fragment {
 		mTouchToChangeImage.setVisibility(View.GONE);
 		mDataEntryBottomBottomLayout.setVisibility(View.GONE);
 		mDataEntryBottomTopLayout.setVisibility(View.VISIBLE);
-		DatentryImage datentryImage = new DatentryImage(mResizedImagePath,
+		DataentryImage datentryImage = new DataentryImage(mResizedImagePath,
 				mFindAtText.getText().toString());
 		VueApplication.getInstance().mAisleImagePathList.add(0, datentryImage);
 		mDataEntryAislesViewpager.setVisibility(View.VISIBLE);
