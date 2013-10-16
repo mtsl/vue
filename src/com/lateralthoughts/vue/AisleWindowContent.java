@@ -27,8 +27,8 @@ public class AisleWindowContent {
 	public boolean mIsDataChanged = false;
 	public int mTrendingBestHeight = 0;
 	public int mAisleCardHeight;
-	
-	public int mTrendingTestBestHeight,mTrendingTestBestWidth;
+
+	public int mTrendingTestBestHeight, mTrendingTestBestWidth;
 
 	public boolean getWindowBookmarkIndicator() {
 		return mAisleBookmarkIndicator;
@@ -89,7 +89,7 @@ public class AisleWindowContent {
 		}
 		mAisleId = context.mAisleId;
 		mContext = context;
-		
+
 		// lets parse through the image urls and update the image resolution
 		// VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
 		udpateImageUrlsForDevice();
@@ -107,14 +107,14 @@ public class AisleWindowContent {
 		AisleImageDetails imageDetails;
 		// TODO: when more images available set this variable to smallest height
 		// among all
-		 
+
 		mWindowSmallestHeight = /* 34 */0;
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			imageDetails = mAisleImagesList.get(i);
 			if (imageDetails.mAvailableHeight < mWindowSmallestHeight
 					|| mWindowSmallestHeight == 0) {
 				mWindowSmallestHeight = imageDetails.mAvailableHeight;
-				mWindowSamllestWidth =  imageDetails.mAvailableWidth;
+				mWindowSamllestWidth = imageDetails.mAvailableWidth;
 			}
 		}
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
@@ -169,73 +169,87 @@ public class AisleWindowContent {
 
 	public void setBestHeightForWindow(int height) {
 		mWindowSmallestHeight = height;
-		
+
 	}
 
 	public int getBestLargetHeightForWindow() {
 		return mWindowLargestHeight;
 	}
-    public void setBestLargestHeightForWindow(int largestHeight){
-    	mWindowLargestHeight = largestHeight;
-    }
- 
- 
-/* */
-  private ArrayList<AisleImageDetails> modifyHeights(ArrayList<AisleImageDetails> imageList){
-	  if(imageList.size() == 0){
-		  return null;
-	  }
-	    float[] imageHeightList = new float[imageList.size()];
-	  float availableScreenHeight = VueApplication.getInstance().getScreenHeight();
-	  float adjustedImageHeight,adjustedImageWidth;
-	  float imageHeight,imageWidth;
-	  float cardWidth = VueApplication.getInstance().getVueDetailsCardWidth()/2;
-	  float aisleHeightOnCard = 0;
-	  
-	  Log.i("availableScreenHeight", "availableScreenHeight1: "+availableScreenHeight);
-	  Log.i("availableScreenHeight", "availableScreenHeight cardWidth: "+cardWidth);
-	  
- 
-		  for(int i = 0;i<imageList.size();i++){
-			  imageHeight = imageList.get(i).mAvailableHeight;
-			  imageWidth = imageList.get(i).mAvailableWidth;
-		   if (imageHeight > availableScreenHeight){
-		      adjustedImageHeight = availableScreenHeight;
-		      adjustedImageWidth = (adjustedImageHeight/imageHeight) * imageWidth;
-		      imageHeight = adjustedImageHeight;
-		      imageWidth = adjustedImageWidth;
-		   }
-		   if(imageWidth > cardWidth){
-		      adjustedImageWidth = cardWidth;
-		      adjustedImageHeight = (adjustedImageWidth/imageWidth) * imageHeight;
-		      imageHeight = adjustedImageHeight;
-		      imageWidth = adjustedImageWidth;
-		   }
-		   imageList.get(i).mTrendingImageHeight = Math.round(imageHeight);
-		   imageList.get(i).mTrendingImageWidth = Math.round(imageWidth);
-		   imageHeightList[i]= imageHeight;
-		    
-		   
-		  }
-		  
-		  aisleHeightOnCard =  imageHeightList[0];
-		  mWindowSmallestHeight = (int) imageHeightList[0];
-	  int smallestHeightPosition = 0;
-           for(int i = 0;i<imageHeightList.length;i++){
-        	   if(aisleHeightOnCard >  imageHeightList[i]){
-        		   aisleHeightOnCard = imageHeightList[i];
-        		   mWindowSmallestHeight = (int) imageHeightList[i];
-        		   smallestHeightPosition = i;
-        	   }
-           }
-           AisleImageDetails smallestItem = imageList.remove(smallestHeightPosition);
-           imageList.add(0, smallestItem);
-           mAisleCardHeight = Math.round(aisleHeightOnCard) ;
+
+	public void setBestLargestHeightForWindow(int largestHeight) {
+		mWindowLargestHeight = largestHeight;
+	}
+
+	/* */
+	private ArrayList<AisleImageDetails> modifyHeights(
+			ArrayList<AisleImageDetails> imageList) {
+		if (imageList.size() == 0) {
+			return null;
+		}
+		float[] imageHeightList = new float[imageList.size()];
+		float availableScreenHeight = VueApplication.getInstance()
+				.getScreenHeight();
+		float adjustedImageHeight, adjustedImageWidth;
+		float imageHeight, imageWidth;
+		float cardWidth = VueApplication.getInstance().getVueDetailsCardWidth() / 2;
+		float aisleHeightOnCard = 0;
+
+		Log.i("availableScreenHeight", "availableScreenHeight1: "
+				+ availableScreenHeight);
+		Log.i("availableScreenHeight", "availableScreenHeight cardWidth: "
+				+ cardWidth);
+
+		for (int i = 0; i < imageList.size(); i++) {
+			imageHeight = imageList.get(i).mAvailableHeight;
+			imageWidth = imageList.get(i).mAvailableWidth;
+			if (imageHeight > availableScreenHeight) {
+				adjustedImageHeight = availableScreenHeight;
+				adjustedImageWidth = (adjustedImageHeight / imageHeight)
+						* imageWidth;
+				imageHeight = adjustedImageHeight;
+				imageWidth = adjustedImageWidth;
+			}
+			if (imageWidth > cardWidth) {
+				adjustedImageWidth = cardWidth;
+				adjustedImageHeight = (adjustedImageWidth / imageWidth)
+						* imageHeight;
+				imageHeight = adjustedImageHeight;
+				imageWidth = adjustedImageWidth;
+			}
+			imageList.get(i).mTrendingImageHeight = Math.round(imageHeight);
+			imageList.get(i).mTrendingImageWidth = Math.round(imageWidth);
+			imageHeightList[i] = imageHeight;
+
+		}
+
+		aisleHeightOnCard = imageHeightList[0];
+		mWindowSmallestHeight = (int) imageHeightList[0];
+		int smallestHeightPosition = 0;
+		for (int i = 0; i < imageHeightList.length; i++) {
+			if (aisleHeightOnCard > imageHeightList[i]) {
+				aisleHeightOnCard = imageHeightList[i];
+				mWindowSmallestHeight = (int) imageHeightList[i];
+				smallestHeightPosition = i;
+			}
+		}
+		AisleImageDetails smallestItem = imageList
+				.remove(smallestHeightPosition);
+		imageList.add(0, smallestItem);
+		mAisleCardHeight = Math.round(aisleHeightOnCard);
 		return imageList;
 
- 
-  }
-  
+	}
+
+	public int getAisleImageForImageUrl(String imageUrl) {
+		if (mAisleImagesList != null && mAisleImagesList.size() > 0) {
+			for (int i = 0; i < mAisleImagesList.size(); i++) {
+				if (imageUrl.equals(mAisleImagesList.get(i).mImageUrl)) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
 
 	private AisleContext mContext;
 	private ArrayList<AisleImageDetails> mAisleImagesList;

@@ -753,7 +753,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	}
 
 	public void addAisleToWindow(Bitmap bitmap, String imgPath,
-			String imageUrl, int imageWidth, int imageHeight) {
+			String imageUrl, int imageWidth, int imageHeight,
+			String detailsUrl, String store) {
 		mTotalScreenCount = VueApplication.getInstance()
 				.getClickedWindowCount();
 		VueApplication.getInstance().setClickedWindowCount(
@@ -761,7 +762,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mTotalScreenCount = mTotalScreenCount + 1;
 		upDatePageDots(0, "right");
 		mAisleDetailsAdapter.addAisleToContentWindow(bitmap, imgPath, imageUrl,
-				imageWidth, imageHeight, "title");
+				imageWidth, imageHeight, "title", detailsUrl, store);
 
 	}
 

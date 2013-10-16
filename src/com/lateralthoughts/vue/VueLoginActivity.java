@@ -310,9 +310,8 @@ public class VueLoginActivity extends FragmentActivity implements
 								 * R.string.no_network),
 								 * Toast.LENGTH_LONG).show(); }
 								 */
-								Toast.makeText(VueLoginActivity.this,
-										"This work is pending in backend.",
-										Toast.LENGTH_LONG).show();
+								Utils.showAlertMessageForBackendNotIntegrated(
+										VueLoginActivity.this, false);
 							}
 						});
 				login_button.setReadPermissions(READ_PERMISSIONS);
@@ -1076,18 +1075,20 @@ public class VueLoginActivity extends FragmentActivity implements
 				// vueUser.instagramId = storedVueUser.instagramId;
 				vueUser.setId(storedVueUser.getId());
 				vueUser.setJoinTime(storedVueUser.getJoinTime());
-				userManager.updateGooglePlusIdentifiedUser(vueUser, new UserUpdateCallback() {
-					@Override
-					public void onUserUpdated(VueUser user) {
-						try {
-							Utils.writeUserObjectToFile(VueLoginActivity.this,
-									VueConstants.VUE_APP_USEROBJECT__FILENAME,
-									user);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
+				userManager.updateGooglePlusIdentifiedUser(vueUser,
+						new UserUpdateCallback() {
+							@Override
+							public void onUserUpdated(VueUser user) {
+								try {
+									Utils.writeUserObjectToFile(
+											VueLoginActivity.this,
+											VueConstants.VUE_APP_USEROBJECT__FILENAME,
+											user);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
 			} else {
 				userManager.createGooglePlusIdentifiedUser(vueUser,
 						new VueUserManager.UserUpdateCallback() {

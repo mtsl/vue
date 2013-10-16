@@ -267,11 +267,15 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath,
 					VueLandingPageActivity.mOtherSourceImageUrl,
 					VueLandingPageActivity.mOtherSourceImageWidth,
-					VueLandingPageActivity.mOtherSourceImageHeight);
+					VueLandingPageActivity.mOtherSourceImageHeight,
+					VueLandingPageActivity.mOtherSourceImageDetailsUrl,
+					VueLandingPageActivity.mOtherSourceImageStore);
 			VueLandingPageActivity.mOtherSourceImagePath = null;
 			VueLandingPageActivity.mOtherSourceImageUrl = null;
 			VueLandingPageActivity.mOtherSourceImageWidth = 0;
 			VueLandingPageActivity.mOtherSourceImageHeight = 0;
+			VueLandingPageActivity.mOtherSourceImageDetailsUrl = null;
+			VueLandingPageActivity.mOtherSourceImageStore = null;
 		}
 	}
 
@@ -549,7 +553,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 							imagePath,
 							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL),
 							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH),
-							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT));
+							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT),
+							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL),
+							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE));
 				}
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT
@@ -903,7 +909,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	}
 
 	private void addImageToAisle(String imagePath, String imageUrl,
-			int imageWidth, int imageHeight) {
+			int imageWidth, int imageHeight, String detailsUrl, String store) {
 		FileCache fileCache = new FileCache(this);
 		File f = fileCache.getFile(imageUrl);
 		File sourceFile = new File(imagePath);
@@ -917,6 +923,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					.findFragmentById(R.id.aisle_details_view_fragment);
 		}
 		mVueAiselFragment.addAisleToWindow(bmp, imagePath, imageUrl,
-				imageWidth, imageHeight);
+				imageWidth, imageHeight, detailsUrl, store);
 	}
 }

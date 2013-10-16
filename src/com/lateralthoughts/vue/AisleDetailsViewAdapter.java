@@ -382,9 +382,13 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		} else {
 			mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
 		}
-          Log.i("LikeStatus","Like status: "+getItem(mCurrentAislePosition).getImageList().get(
-              mCurrentDispImageIndex).mLikeDislikeStatus+" LikeCount: "+getItem(mCurrentAislePosition).getImageList().get(
-                  mCurrentDispImageIndex).mLikesCount);
+		Log.i("LikeStatus",
+				"Like status: "
+						+ getItem(mCurrentAislePosition).getImageList().get(
+								mCurrentDispImageIndex).mLikeDislikeStatus
+						+ " LikeCount: "
+						+ getItem(mCurrentAislePosition).getImageList().get(
+								mCurrentDispImageIndex).mLikesCount);
 		mViewHolder.commentCount.setText((mShowingList.size() + " Comments"));
 		mViewHolder.bookMarkCount.setText("" + mBookmarksCount);
 		mViewHolder.likeCount.setText("" + mLikes);
@@ -392,7 +396,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
 		mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
 		mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
-		//mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
+		// mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
 		if (position == 0) {
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);
@@ -432,13 +436,14 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					mVueusername = getItem(mCurrentAislePosition)
 							.getAisleContext().mLastName;
 				}
-			 
-				if (mVueusername != null && mVueusername.trim().equalsIgnoreCase("Anonymous")) { 
+
+				if (mVueusername != null
+						&& mVueusername.trim().equalsIgnoreCase("Anonymous")) {
 					if (VueApplication.getInstance().getmUserInitials() != null) {
 						mVueusername = VueApplication.getInstance()
 								.getmUserInitials();
-					}  
-				}  
+					}
+				}
 				int scrollIndex = VueApplication.getInstance()
 						.getmAisleImgCurrentPos();
 				// mWindowContentTemp = mViewHolder.mWindowContent;
@@ -546,8 +551,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 								mBookmarksCount);
 					}
-					 getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount
-					 = mBookmarksCount;
+					getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
 
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							bookmarkStatus);
@@ -559,8 +563,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					mBookmarksCount++;
 					getItem(mCurrentAislePosition).setmAisleBookmarksCount(
 							mBookmarksCount);
-					 getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount
-					 = mBookmarksCount;
+					getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							bookmarkStatus);
 					Log.e("AisleManager",
@@ -686,56 +689,54 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		@Override
 		public void onImageDoubleTap() {
-           if(mCurrentDispImageIndex == 0){
-			int resizeWidth = getItem(mCurrentAislePosition).getImageList()
-					.get(mCurrentDispImageIndex).mTempResizeBitmapwidth;
-			int resizeHeight = getItem(mCurrentAislePosition).getImageList()
-					.get(mCurrentDispImageIndex).mTempResizedBitmapHeight;
-			int originalWidth = getItem(mCurrentAislePosition).getImageList()
-					.get(mCurrentDispImageIndex).mAvailableWidth;
-			int originalHeight = getItem(mCurrentAislePosition).getImageList()
-					.get(mCurrentDispImageIndex).mAvailableHeight;
-			String imageUrl = getItem(mCurrentAislePosition).getImageList()
-					.get(mCurrentDispImageIndex).mImageUrl;
-			int cardWidth = VueApplication.getInstance()
-					.getVueDetailsCardWidth();
-			int cardHeight = VueApplication.getInstance()
-					.getVueDetailsCardHeight();
-			String writeToSdCard =  null;
-			 writeToSdCard = "OriginalImageWidth: "+originalWidth+" OriginalImageHeight: "+resizeHeight+"\n";
-			 writeToSdCard = writeToSdCard+" ReSizeImageWidth: "+resizeWidth+" ReSizedImageHeight: "+resizeHeight+"\n";
-			 writeToSdCard = writeToSdCard+" CardWidth: "+cardWidth+" CardHeight: "+cardHeight+"\n";
-			 writeToSdCard = writeToSdCard+" ImageUrl: "+imageUrl;
-			writeToSdcard(writeToSdCard);
-           } else {
-        		Toast.makeText(mContext,"Works For Only Starting Image",1000).show();;
-    					 
-           }
+			if (mCurrentDispImageIndex == 0) {
+				int resizeWidth = getItem(mCurrentAislePosition).getImageList()
+						.get(mCurrentDispImageIndex).mTempResizeBitmapwidth;
+				int resizeHeight = getItem(mCurrentAislePosition)
+						.getImageList().get(mCurrentDispImageIndex).mTempResizedBitmapHeight;
+				int originalWidth = getItem(mCurrentAislePosition)
+						.getImageList().get(mCurrentDispImageIndex).mAvailableWidth;
+				int originalHeight = getItem(mCurrentAislePosition)
+						.getImageList().get(mCurrentDispImageIndex).mAvailableHeight;
+				String imageUrl = getItem(mCurrentAislePosition).getImageList()
+						.get(mCurrentDispImageIndex).mImageUrl;
+				int cardWidth = VueApplication.getInstance()
+						.getVueDetailsCardWidth();
+				int cardHeight = VueApplication.getInstance()
+						.getVueDetailsCardHeight();
+				String writeToSdCard = null;
+				writeToSdCard = "OriginalImageWidth: " + originalWidth
+						+ " OriginalImageHeight: " + resizeHeight + "\n";
+				writeToSdCard = writeToSdCard + " ReSizeImageWidth: "
+						+ resizeWidth + " ReSizedImageHeight: " + resizeHeight
+						+ "\n";
+				writeToSdCard = writeToSdCard + " CardWidth: " + cardWidth
+						+ " CardHeight: " + cardHeight + "\n";
+				writeToSdCard = writeToSdCard + " ImageUrl: " + imageUrl;
+				writeToSdcard(writeToSdCard);
+			} else {
+				Toast.makeText(mContext, "Works For Only Starting Image", 1000)
+						.show();
+				;
 
-	 /*
-			Toast.makeText(
-					mContext,
-					"imgAreaHeight: " + (mTopBottomMargin + mBestHeight)
-							+ " AisleID:  "
-							+ getItem(mCurrentAislePosition).getAisleId(), 1500)
-					.show();
-			Toast.makeText(
-					mContext,
-					"original image height: "
-							+ getItem(mCurrentAislePosition).getImageList()
-									.get(mCurrentDispImageIndex).mAvailableHeight
-							+ " AisleID:  "
-							+ getItem(mCurrentAislePosition).getAisleId(), 1500)
-					.show();
+			}
 
-			Log.i("mCustomUrlthispos",
-					"mCustomUrlthispos2:"
-							+ getItem(mCurrentAislePosition).getImageList()
-									.get(mCurrentDispImageIndex).mCustomImageUrl);
-			Log.i("mCustomUrlthispos",
-					"mCustomUrlthispos3:"
-							+ getItem(mCurrentAislePosition).getImageList()
-									.get(mCurrentDispImageIndex).mImageUrl);*/
+			/*
+			 * Toast.makeText( mContext, "imgAreaHeight: " + (mTopBottomMargin +
+			 * mBestHeight) + " AisleID:  " +
+			 * getItem(mCurrentAislePosition).getAisleId(), 1500) .show();
+			 * Toast.makeText( mContext, "original image height: " +
+			 * getItem(mCurrentAislePosition).getImageList()
+			 * .get(mCurrentDispImageIndex).mAvailableHeight + " AisleID:  " +
+			 * getItem(mCurrentAislePosition).getAisleId(), 1500) .show();
+			 * 
+			 * Log.i("mCustomUrlthispos", "mCustomUrlthispos2:" +
+			 * getItem(mCurrentAislePosition).getImageList()
+			 * .get(mCurrentDispImageIndex).mCustomImageUrl);
+			 * Log.i("mCustomUrlthispos", "mCustomUrlthispos3:" +
+			 * getItem(mCurrentAislePosition).getImageList()
+			 * .get(mCurrentDispImageIndex).mImageUrl);
+			 */
 		}
 
 		@Override
@@ -768,12 +769,14 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
 					getItem(mCurrentAislePosition).getImageList().get(
 							mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
-					if(getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mLikesCount > 0) {
-					getItem(mCurrentAislePosition).getImageList().get(
-							mCurrentDispImageIndex).mLikesCount = getItem(
-							mCurrentAislePosition).getImageList().get(
-							mCurrentDispImageIndex).mLikesCount - 1;
-					sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, false);
+					if (getItem(mCurrentAislePosition).getImageList().get(
+							mCurrentDispImageIndex).mLikesCount > 0) {
+						getItem(mCurrentAislePosition).getImageList().get(
+								mCurrentDispImageIndex).mLikesCount = getItem(
+								mCurrentAislePosition).getImageList().get(
+								mCurrentDispImageIndex).mLikesCount - 1;
+						sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES,
+								false);
 					}
 
 				} else {
@@ -893,7 +896,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	}
 
 	public void addAisleToContentWindow(Bitmap addedBitmap, String imagePath,
-			String imageUrl, int imageWidth, int imageHeight, String title) {
+			String imageUrl, int imageWidth, int imageHeight, String title,
+			String detailsUrl, String store) {
 		AisleImageDetails imgDetails = new AisleImageDetails();
 		imgDetails.mAvailableHeight = imageHeight;
 		imgDetails.mAvailableWidth = imageWidth;
@@ -920,19 +924,24 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		}
 		imgDetails.mTitle = title;
 		imgDetails.mImageUrl = imageUrl;
-		imgDetails.mDetalsUrl = "";
-		imgDetails.mId = "";
-		imgDetails.mStore = ""; 
-		imgDetails.mTrendingImageHeight= imgDetails.mAvailableHeight;
+		imgDetails.mDetalsUrl = detailsUrl;
+		imgDetails.mId = "0";
+		imgDetails.mStore = store;
+		imgDetails.mTrendingImageHeight = imgDetails.mAvailableHeight;
 		imgDetails.mTrendingImageWidth = imgDetails.mAvailableWidth;
-		imgDetails = prepareCustomUrl(imgDetails, getItem(mCurrentAislePosition).getBestHeightForWindow());
- 		if(mCurrentDispImageIndex == 0){
-			getItem(mCurrentAislePosition).getImageList().add(
-					  imgDetails);
-		}   
-		/*getItem(mCurrentAislePosition).addAisleContent(
-				getItem(mCurrentAislePosition).getAisleContext(),
-				getItem(mCurrentAislePosition).getImageList());*/
+		imgDetails.mOwnerAisleId = getItem(mCurrentAislePosition).getAisleId();
+		imgDetails.mOwnerUserId = getItem(mCurrentAislePosition)
+				.getAisleContext().mUserId;
+		imgDetails = prepareCustomUrl(imgDetails,
+				getItem(mCurrentAislePosition).getBestHeightForWindow());
+		if (mCurrentDispImageIndex == 0) {
+			getItem(mCurrentAislePosition).getImageList().add(imgDetails);
+		}
+		/*
+		 * getItem(mCurrentAislePosition).addAisleContent(
+		 * getItem(mCurrentAislePosition).getAisleContext(),
+		 * getItem(mCurrentAislePosition).getImageList());
+		 */
 
 		int bestHeight = Utils.modifyHeightForDetailsView(getItem(
 				mCurrentAislePosition).getImageList());
@@ -949,7 +958,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				Utils.DETAILS_SCREEN);
 		Utils.saveBitmap(bmp, f);
 		getItem(mCurrentAislePosition).mIsDataChanged = true;
-		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dataObserver();
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+				.dataObserver();
 		mImageRefresh = true;
 		if (mViewHolder != null) {
 			mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
@@ -1005,7 +1015,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				// aisleId,imageId,likesCount,likeStatus
 				likeCount = itemDetails.mLikesCount;
 				likeStatus = itemDetails.mLikeDislikeStatus;
-				Log.i("likecountissue", "likecountissue: likeCount1: "+likeCount);
+				Log.i("likecountissue", "likecountissue: likeCount1: "
+						+ likeCount);
 				imgRating = new ImageRating();
 				imgRating.setAisleId(Long.parseLong(aisleId));
 				imgRating.setImageId(Long.parseLong(imageId));
@@ -1106,9 +1117,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
 			// false
 			getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
-			if(getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount > 0) {
-			getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
-					mCurrentAislePosition).getImageList().get(position).mLikesCount - 1;
+			if (getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount > 0) {
+				getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
+						mCurrentAislePosition).getImageList().get(position).mLikesCount - 1;
 			}
 			sendDataToDb(position, CHANGE_LIKES, false);
 		} else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
@@ -1136,7 +1147,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				Long.parseLong(aisleId));
 		VueUser storedVueUser = null;
 		try {
-		  Log.i("bookmarkissue", "bookmarkissue handleBookmark");
+			Log.i("bookmarkissue", "bookmarkissue handleBookmark");
 			storedVueUser = Utils.readUserObjectFromFile(mContext,
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 			AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
@@ -1170,17 +1181,20 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		ArrayList<ImageRating> imgRatingList = DataBaseManager.getInstance(
 				mContext).getRatedImagesList(
 				getItem(mCurrentAislePosition).getAisleId());
-		 Log.i("imageLikestatus", "imageLikestatus size: "+imgRatingList.size());
+		Log.i("imageLikestatus",
+				"imageLikestatus size: " + imgRatingList.size());
 		for (AisleImageDetails imgDetail : aisleImgDetais) {
-		  Log.i("imageLikestatus", "imageLikestatus#: "+imgDetail.mId);
+			Log.i("imageLikestatus", "imageLikestatus#: " + imgDetail.mId);
 			for (ImageRating imgRating : imgRatingList) {
-			  Log.i("imageLikestatus", "imageLikestatus*: "+imgRating.getImageId());
+				Log.i("imageLikestatus",
+						"imageLikestatus*: " + imgRating.getImageId());
 				if (imgRating.getImageId() == Long.parseLong(imgDetail.mId)) {
 					imgDetail.mLikeDislikeStatus = IMG_LIKE_STATUS;
 				}
 			}
 		}
 	}
+
 	private void writeToSdcard(String message) {
 
 		String path = Environment.getExternalStorageDirectory().toString();
@@ -1209,9 +1223,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			e.printStackTrace();
 		}
 	}
-	public AisleImageDetails prepareCustomUrl(AisleImageDetails imageDetails,int mWindowSmallestHeight) {
-		  String IMAGE_RES_SPEC_REGEX = ".jpg";
-		  String mImageFormatSpecifier = "._SY%d.jpg";
+
+	public AisleImageDetails prepareCustomUrl(AisleImageDetails imageDetails,
+			int mWindowSmallestHeight) {
+		String IMAGE_RES_SPEC_REGEX = ".jpg";
+		String mImageFormatSpecifier = "._SY%d.jpg";
 		StringBuilder sb = new StringBuilder();
 		String urlReusablePart;
 		String customFittedSizePart;
@@ -1232,8 +1248,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		imageDetails.mCustomImageUrl = Utils.addImageInfo(
 				imageDetails.mCustomImageUrl, imageDetails.mAvailableWidth,
 				imageDetails.mAvailableHeight);
-		
- return imageDetails;
+
+		return imageDetails;
 
 	}
 }

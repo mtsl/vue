@@ -129,12 +129,14 @@ public class DataEntryActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						if (mDataEntryFragment == null) {
-							mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-									.findFragmentById(
-											R.id.create_aisles_view_fragment);
-						}
-						mDataEntryFragment.editButtonClickFunctionality();
+						/*
+						 * if (mDataEntryFragment == null) { mDataEntryFragment
+						 * = (DataEntryFragment) getSupportFragmentManager()
+						 * .findFragmentById( R.id.create_aisles_view_fragment);
+						 * } mDataEntryFragment.editButtonClickFunctionality();
+						 */
+						Utils.showAlertMessageForBackendNotIntegrated(
+								DataEntryActivity.this, false);
 					}
 				});
 		Bundle b = getIntent().getExtras();
@@ -192,6 +194,8 @@ public class DataEntryActivity extends BaseActivity {
 					mDataEntryFragment.mFindAtText
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT));
+					mDataEntryFragment.mPreviousFindAtText = mDataEntryFragment.mFindAtText
+							.getText().toString();
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY) != null) {
 					mDataEntryFragment.mCategoryText
@@ -206,7 +210,10 @@ public class DataEntryActivity extends BaseActivity {
 					.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH);
 			mDataEntryFragment.mOtherSourceImageOriginalHeight = b
 					.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT);
-
+			mDataEntryFragment.mOtherSourceSelectedImageDetailsUrl = b
+					.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL);
+			mDataEntryFragment.mOtherSourceSelectedImageStore = b
+					.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE);
 			if (aisleImagePath != null) {
 				mDataEntryFragment.setGalleryORCameraImage(aisleImagePath,
 						false);
@@ -238,8 +245,8 @@ public class DataEntryActivity extends BaseActivity {
 						otherSourcesImageDetailsList
 								.add(otherSourceImageDetails);
 					}
-					mDataEntryFragment
-							.showOtherSourcesGridview(otherSourcesImageDetailsList);
+					mDataEntryFragment.showOtherSourcesGridview(
+							otherSourcesImageDetailsList, "");
 				}
 			}
 		}
