@@ -257,28 +257,35 @@ public class NetworkHandler {
   public void requestAislesByUser(boolean fromServer, NotifyProgress progress, final String screenName) {
    
     mOffset = 0;
-    if (!fromServer) {
-      // TODO get data from local db.
-      Log.i("myaisledbcheck",
-          "myaisledbcheck aisle are my aisles are fetching from db $$$$: ");
-      String userId = getUserId();
-      if (userId != null) {
+		if (!fromServer) {
+			// TODO get data from local db.
+			Log.i("myaisledbcheck",
+					"myaisledbcheck aisle are my aisles are fetching from db $$$$: ");
+			String userId = getUserId();
+			if (userId != null) {
+				ArrayList<AisleWindowContent> windowList = DataBaseManager
+						.getInstance(VueApplication.getInstance())
+						.getAislesByUserId(userId);
+				if (windowList != null && windowList.size() > 0) {
 
-        ArrayList<AisleWindowContent> windowList = DataBaseManager.getInstance(
-            VueApplication.getInstance()).getAislesByUserId(userId);
+					for (int i = 0; i < windowList.size(); i++) {
+						VueTrendingAislesDataModel.getInstance(
+								VueApplication.getInstance()).addItemToList(
+								windowList.get(i).getAisleContext().mAisleId,
+								windowList.get(i));
+					}
+				} else {
+					StackViews.getInstance().pull();
+				}
 
-        for (int i = 0; i < windowList.size(); i++) {
-          VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-              .addItemToList(windowList.get(i).getAisleContext().mAisleId,
-                  windowList.get(i));
-        }
-        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-            .dataObserver();
-      } else {
-        Toast.makeText(VueApplication.getInstance(), "Unable to get user id",
-            Toast.LENGTH_SHORT).show();
-      }
-    } else {
+				VueTrendingAislesDataModel.getInstance(
+						VueApplication.getInstance()).dataObserver();
+			} else {
+				Toast.makeText(VueApplication.getInstance(),
+						"Unable to get user id", Toast.LENGTH_SHORT).show();
+				StackViews.getInstance().pull();
+			}
+		} else {
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
           .setNotificationProgress(progress, fromServer);
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
@@ -288,10 +295,6 @@ public class NetworkHandler {
       // TODO: CHANGE THIS REQUEST TO VOLLEY
       if (VueConnectivityManager.isNetworkConnected(VueApplication
           .getInstance())) {
-  /*      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-            .clearAisles();
-        AisleWindowContentFactory.getInstance(VueApplication.getInstance())
-            .clearObjectsInUse();*/
         VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
         new Thread(new Runnable() {
 

@@ -15,12 +15,16 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.utils.UrlConstants;
+import com.lateralthoughts.vue.utils.Utils;
+
 import org.json.JSONArray;
 
 import java.util.ArrayList;
@@ -121,6 +125,11 @@ public class VueContentGateway {
           return headersMap;
         }*/
       };
+      
+      vueRequest.setRetryPolicy(new DefaultRetryPolicy(
+      		DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 
+              Utils.MAX_RETRIES, 
+              DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
        VueApplication.getInstance().getRequestQueue().add(vueRequest);
       }
 		return status;

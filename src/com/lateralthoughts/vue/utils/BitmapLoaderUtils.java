@@ -75,8 +75,8 @@ public class BitmapLoaderUtils {
 		Bitmap b = decodeFile(f, bestHeight, bestWidth, source);
 		if (b != null) {
 
-		/*	if (cacheBitmap)
-				mAisleImagesCache.putBitmap(url, b);*/
+			if (cacheBitmap)
+				mAisleImagesCache.putBitmap(url, b);
 			return b;
 		}
 
@@ -100,8 +100,8 @@ public class BitmapLoaderUtils {
 			Utils.CopyStream(is, os);
 			os.close();
 			bitmap = decodeFile(f, bestHeight, bestWidth, source);
-		/*	if (cacheBitmap)
-				mAisleImagesCache.putBitmap(url, bitmap);*/
+			if (cacheBitmap)
+				mAisleImagesCache.putBitmap(url, bitmap);
 			return bitmap;
 		} catch (Throwable ex) {
 			ex.printStackTrace();
@@ -148,14 +148,14 @@ public class BitmapLoaderUtils {
 						/ (float) bestHeight);
 				final int widthRatio = Math.round((float) width
 						/ (float) reqWidth);
-
+ 
 				// Choose the smallest ratio as inSampleSize value, this will
 				// guarantee
 				// a final image with both dimensions larger than or equal to
 				// the
 				// requested height and width.
 				scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
-				scale = 1;
+				 
 			}
 
 			// decode with inSampleSize
@@ -176,8 +176,6 @@ public class BitmapLoaderUtils {
 			if(source.equalsIgnoreCase(Utils.TRENDING_SCREEN)){
 				return getBitmap(bitmap,bestWidth,bestHeight);
 			}
-			
-			
 			if (source.equalsIgnoreCase(Utils.DETAILS_SCREEN)) {
 				// scaling factor considers only integers may be some times
 				// scaling factor becomes 1 even there is slight difference in
