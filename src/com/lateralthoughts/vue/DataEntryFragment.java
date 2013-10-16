@@ -73,7 +73,8 @@ public class DataEntryFragment extends Fragment {
 	private boolean mDontGoToNextLookingFor = false,
 			mDontGoToNextForOccasion = false;
 	private String mPreviousLookingfor = null, mPreviousOcasion = null,
-			mPreviousFindAtText = null, mPreviousSaySomething = null;
+			mPreviousSaySomething = null;
+	public String mPreviousFindAtText = null;
 	private String mImagePath = null, mResizedImagePath = null;
 	private LinearLayout mMainHeadingRow = null;
 	private RelativeLayout mDataEntryBottomTopLayout = null,
@@ -113,7 +114,9 @@ public class DataEntryFragment extends Fragment {
 	private ProgressDialog mProgressDialog;
 	private DataEntryActivity mDataEntryActivity;
 	public int mOtherSourceImageOriginalHeight, mOtherSourceImageOriginalWidth;
-	public String mOtherSourceSelectedImageUrl = null;
+	public String mOtherSourceSelectedImageUrl = null,
+			mOtherSourceSelectedImageDetailsUrl = null,
+			mOtherSourceSelectedImageStore = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -553,7 +556,8 @@ public class DataEntryFragment extends Fragment {
 									VueConstants.DATA_ENTRY_INVITE_FRIENDS_BUNDLE_FROM_FILE_PATH_ARRAY_KEY,
 									VueApplication.getInstance().mAisleImagePathList
 											.get(mDataEntryAislesViewpager
-													.getCurrentItem()));
+													.getCurrentItem())
+											.getImagePath());
 						} catch (Exception e) {
 						}
 						i.putExtras(b);
@@ -599,6 +603,7 @@ public class DataEntryFragment extends Fragment {
 				mInputMethodManager.hideSoftInputFromWindow(
 						mFindAtText.getWindowToken(), 0);
 				mPreviousFindAtText = mFindAtText.getText().toString();
+				mOtherSourceSelectedImageDetailsUrl = mPreviousFindAtText;
 				mFindAtPopup.setVisibility(View.GONE);
 				return true;
 			};
@@ -906,6 +911,12 @@ public class DataEntryFragment extends Fragment {
 									b.putInt(
 											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT,
 											mOtherSourceImageOriginalHeight);
+									b.putString(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL,
+											mOtherSourceSelectedImageDetailsUrl);
+									b.putString(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE,
+											mOtherSourceSelectedImageStore);
 									intent.putExtras(b);
 									Log.e("Land", "vueland 11");
 									getActivity()
@@ -958,12 +969,16 @@ public class DataEntryFragment extends Fragment {
 		Utils.putDataentryEditAisleFlag(getActivity(), true);
 		mCurrentPagePosition = mDataEntryAislesViewpager.getCurrentItem();
 		mResizedImagePath = VueApplication.getInstance().mAisleImagePathList
-				.get(mCurrentPagePosition);
-		mImagePath = VueApplication.getInstance().mAisleImagePathList
-				.get(mCurrentPagePosition);
+				.get(mCurrentPagePosition).getImagePath();
+		mImagePath = VueApplication.getInstance().mAisleImagePathList.get(
+				mCurrentPagePosition).getImagePath();
+		mFindAtText.setText(VueApplication.getInstance().mAisleImagePathList
+				.get(mCurrentPagePosition).getSourceUrl());
+		mOtherSourceSelectedImageDetailsUrl = VueApplication.getInstance().mAisleImagePathList
+				.get(mCurrentPagePosition).getSourceUrl();
 		File aisleFile = new File(
-				VueApplication.getInstance().mAisleImagePathList
-						.get(mCurrentPagePosition));
+				VueApplication.getInstance().mAisleImagePathList.get(
+						mCurrentPagePosition).getImagePath());
 		if (aisleFile.exists()) {
 			mAisleImageBitmap = BitmapFactory.decodeFile(aisleFile.getPath());
 			mCreateAisleBg.setImageBitmap(mAisleImageBitmap);
@@ -996,7 +1011,8 @@ public class DataEntryFragment extends Fragment {
 			for (int i = 0; i < VueApplication.getInstance().mAisleImagePathList
 					.size(); i++) {
 				clsShare shareObj = new clsShare(null,
-						VueApplication.getInstance().mAisleImagePathList.get(i));
+						VueApplication.getInstance().mAisleImagePathList.get(i)
+								.getImagePath());
 				imageUrlList.add(shareObj);
 			}
 			if (mDataEntryAislesViewpager != null) {
@@ -1533,8 +1549,9 @@ public class DataEntryFragment extends Fragment {
 		mTouchToChangeImage.setVisibility(View.GONE);
 		mDataEntryBottomBottomLayout.setVisibility(View.GONE);
 		mDataEntryBottomTopLayout.setVisibility(View.VISIBLE);
-		VueApplication.getInstance().mAisleImagePathList.add(0,
-				mResizedImagePath);
+		DatentryImage datentryImage = new DatentryImage(mResizedImagePath,
+				mFindAtText.getText().toString());
+		VueApplication.getInstance().mAisleImagePathList.add(0, datentryImage);
 		mDataEntryAislesViewpager.setVisibility(View.VISIBLE);
 		mCreateAisleBg.setVisibility(View.GONE);
 		try {
@@ -1629,25 +1646,7 @@ public class DataEntryFragment extends Fragment {
 			image.setHeight(mOtherSourceImageOriginalHeight);
 			image.setWidth(mOtherSourceImageOriginalWidth);
 			image.setImageUrl(mOtherSourceSelectedImageUrl);
-			String store = "UnKnown";
-			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
-					&& VueApplication.getInstance().mShoppingApplicationDetailsList
-							.size() > 0) {
-				for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
-						.size(); i++) {
-					if (mFindAtText
-							.getText()
-							.toString()
-							.toLowerCase()
-							.contains(
-									VueApplication.getInstance().mShoppingApplicationDetailsList
-											.get(i).getAppName().toLowerCase())) {
-						store = VueApplication.getInstance().mShoppingApplicationDetailsList
-								.get(i).getAppName();
-					}
-				}
-			}
-			image.setStore(store);
+			image.setStore(mOtherSourceSelectedImageStore);
 			image.setTitle("Android Test"); // TODO By Krishna
 			FlurryAgent.logEvent("New_Aisle_Creation");
 			image.setOwnerUserId(Long.valueOf(vueUser.getId()));
@@ -1683,25 +1682,7 @@ public class DataEntryFragment extends Fragment {
 			image.setHeight(mOtherSourceImageOriginalHeight);
 			image.setWidth(mOtherSourceImageOriginalWidth);
 			image.setImageUrl(mOtherSourceSelectedImageUrl);
-			String store = "UnKnown";
-			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
-					&& VueApplication.getInstance().mShoppingApplicationDetailsList
-							.size() > 0) {
-				for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
-						.size(); i++) {
-					if (mFindAtText
-							.getText()
-							.toString()
-							.toLowerCase()
-							.contains(
-									VueApplication.getInstance().mShoppingApplicationDetailsList
-											.get(i).getAppName().toLowerCase())) {
-						store = VueApplication.getInstance().mShoppingApplicationDetailsList
-								.get(i).getAppName();
-					}
-				}
-			}
-			image.setStore(store);
+			image.setStore(mOtherSourceSelectedImageStore);
 			image.setTitle("Android Test"); // TODO By Krishna
 			image.setOwnerUserId(Long.valueOf(ownerUserId));
 			image.setOwnerAisleId(Long.valueOf(ownerAisleId));
@@ -1813,7 +1794,7 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	public void showOtherSourcesGridview(
-			ArrayList<OtherSourceImageDetails> imagesList) {
+			ArrayList<OtherSourceImageDetails> imagesList, String sourceUrl) {
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
 			mProgressDialog = null;
@@ -1822,7 +1803,7 @@ public class DataEntryFragment extends Fragment {
 			if (mOtherSourcesDialog == null) {
 				mOtherSourcesDialog = new OtherSourcesDialog(getActivity());
 			}
-			mOtherSourcesDialog.showImageDailog(imagesList, false);
+			mOtherSourcesDialog.showImageDailog(imagesList, false, sourceUrl);
 		} else {
 			Toast.makeText(getActivity(), "Sorry, there are no images.",
 					Toast.LENGTH_LONG).show();
@@ -1835,6 +1816,9 @@ public class DataEntryFragment extends Fragment {
 					"Please wait...");
 		}
 		mFindAtText.setText(sourceUrl);
+		mPreviousFindAtText = mFindAtText.getText().toString();
+		mOtherSourceSelectedImageDetailsUrl = sourceUrl;
+		mOtherSourceSelectedImageStore = Utils.getStoreNameFromUrl(sourceUrl);
 		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
 				sourceUrl, getActivity(), false);
 		getImagesTask.execute();

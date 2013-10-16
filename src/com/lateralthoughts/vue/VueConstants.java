@@ -107,6 +107,8 @@ public class VueConstants {
 	public static final String FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG = "fromDetailsscreentoDataentryScreenflag";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT";
+	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL";
+	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE";
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
 	public static final int FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT = 64;
 	public static final int FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT = 65;
@@ -162,7 +164,7 @@ public class VueConstants {
 	public static final Uri RATED_IMAGES_URI = Uri.parse("content://"
 			+ AUTHORITY + "/" + RATED_IMAGES);
 	public static final Uri BOOKMARKER_AISLES_URI = Uri.parse("content://"
-	        + AUTHORITY + "/" + BOOKMARKER_AISLES);
+			+ AUTHORITY + "/" + BOOKMARKER_AISLES);
 
 	public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
 	public static final String INVITATION_MESG = "Invitation from Vue application.";

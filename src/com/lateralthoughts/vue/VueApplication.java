@@ -44,7 +44,7 @@ public class VueApplication extends Application {
 	}
 
 	private boolean newVueTrendingAislesDataModel = false;
-	public ArrayList<String> mAisleImagePathList = new ArrayList<String>();
+	public ArrayList<DatentryImage> mAisleImagePathList = new ArrayList<DatentryImage>();
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
 	public static final int[] POPUP_ITEM_DRAWABLES = {
 			R.drawable.composer_camera, R.drawable.composer_music,
