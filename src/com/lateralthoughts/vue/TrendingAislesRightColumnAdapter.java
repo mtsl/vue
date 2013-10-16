@@ -39,6 +39,7 @@ import android.widget.TextView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class TrendingAislesRightColumnAdapter extends
 		TrendingAislesGenericAdapter {

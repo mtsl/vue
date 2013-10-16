@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -173,8 +175,12 @@ public class NetworkHandler {
             "SURU Search Error Resopnse : " + error.getMessage());
       }
     });
-
-
+    //RETRY POLICY
+    vueRequest.setRetryPolicy(new DefaultRetryPolicy(
+    		DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 
+            Utils.MAX_RETRIES, 
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+    
     VueApplication.getInstance().getRequestQueue().add(vueRequest);
 
   }
@@ -269,10 +275,6 @@ public class NetworkHandler {
       // TODO: CHANGE THIS REQUEST TO VOLLEY
       if (VueConnectivityManager.isNetworkConnected(VueApplication
           .getInstance())) {
-  /*      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-            .clearAisles();
-        AisleWindowContentFactory.getInstance(VueApplication.getInstance())
-            .clearObjectsInUse();*/
         VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
         new Thread(new Runnable() {
 
@@ -284,10 +286,7 @@ public class NetworkHandler {
             } catch (Exception e) {
               e.printStackTrace();
             }
-            if (VueLandingPageActivity.landingPageActivity != null
-             /*   && (VueLandingPageActivity.mVueLandingActionbarScreenName
-                    .getText().toString().equals(VueApplication.getInstance()
-                    .getString(R.string.sidemenu_sub_option_My_Aisles)))*/) {
+            if (VueLandingPageActivity.landingPageActivity != null) {
               VueLandingPageActivity.landingPageActivity
                   .runOnUiThread(new Runnable() {
                     @Override
@@ -525,4 +524,7 @@ public class NetworkHandler {
     VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
         .dataObserver();
   }
+ public void makeOffseZero(){
+	 mOffset = 0;
+ }
 }

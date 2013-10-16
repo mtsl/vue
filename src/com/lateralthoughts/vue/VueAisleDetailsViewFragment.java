@@ -170,6 +170,14 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				if(mEditTextFindAt != null){
 				   url = mEditTextFindAt.getText().toString();
 				}
+				if (mEditTextFindAt.getVisibility() == View.VISIBLE) {
+					mDetailsFindAtPopup.setVisibility(View.GONE);
+					final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
+							.getSystemService(Context.INPUT_METHOD_SERVICE);
+					inputMethodManager.toggleSoftInputFromWindow(
+							mEditTextFindAt.getApplicationWindowToken(),
+							InputMethodManager.SHOW_FORCED, 0);
+				}
 				if(url != null && url.startsWith("http")){
 					Uri uriUrl = Uri.parse(url.trim()); 
 					Log.i("browserUrl", "browserUrl: "+url);

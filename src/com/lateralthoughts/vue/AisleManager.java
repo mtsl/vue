@@ -444,6 +444,7 @@ public class AisleManager {
 
 				@Override
 				public void onResponse(String jsonArray) {
+				  Log.i("likecountissue", "likecountissue: jsonArray: "+jsonArray);
 					if (jsonArray != null) {
 						try {
 							ImageRating imgRating = (new ObjectMapper())
@@ -486,6 +487,7 @@ public class AisleManager {
 
 	private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
 			boolean isDirty) {
+	  Log.i("likecountissue", "likecountissue: updateImageRatingToDb  likeCount: "+likeCount);
 		DataBaseManager.getInstance(VueApplication.getInstance())
 				.addLikeOrDisLike((imgRating.getLiked()) ? 1 : 0, likeCount,
 						Long.toString(imgRating.getImageId()),
