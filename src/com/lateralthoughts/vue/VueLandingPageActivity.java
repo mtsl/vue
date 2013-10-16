@@ -127,17 +127,6 @@ public class VueLandingPageActivity extends BaseActivity {
 			VueApplication.getInstance().setmUserInitials(
 					storedVueUser.getFirstName());
 			VueApplication.getInstance().setmUserId(storedVueUser.getId());
-			try {
-				VueApplication
-						.getInstance()
-						.setmUserImageUrl(
-								Utils.readUserProfileObjectFromFile(
-										this,
-										VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME)
-										.getUserProfilePicture());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 
 		// Application opens first time.

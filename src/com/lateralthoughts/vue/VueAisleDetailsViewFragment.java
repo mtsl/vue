@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -49,6 +50,7 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
+import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -81,7 +83,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
 	private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
-			mDotSeven, mDotEight, mDotNine, mDotTen;
+			mDotSeven, mDotEight, mDotNine, mDotTen, mVueUserPic;
 	TextView mLeftArrow, mRightArrow, mVueUserName;
 	private ListView mAisleDetailsList;
 	EditTextBackEvent mEditTextFindAt;
@@ -141,6 +143,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				.findViewById(R.id.details_add_image_to_aisle);
 		mEditTextFindAt = (EditTextBackEvent) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_text);
+		mVueUserPic = (ImageView) mDetailsContentView
+				.findViewById(R.id.vue_user_pic);
 		String detailsUrl = null;
 		try {
 			detailsUrl = VueTrendingAislesDataModel
@@ -162,13 +166,30 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		} else {
 			mEditTextFindAt.setText("");
 		}
+
+		if (VueApplication.getInstance().getmUserId() != null) {
+			if (String.valueOf(VueApplication.getInstance().getmUserId())
+					.equals(VueTrendingAislesDataModel
+							.getInstance(getActivity())
+							.getAisleItem(
+									VueApplication.getInstance()
+											.getClickedWindowID())
+							.getAisleContext().mUserId)) {
+				File f = new FileCache(mContext)
+						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
+				if (f.exists()) {
+					mVueUserPic.setImageURI(Uri.fromFile(f));
+				}
+			}
+		}
+
 		mEditTextFindAt.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				 String url = null;
-				if(mEditTextFindAt != null){
-				   url = mEditTextFindAt.getText().toString();
+				String url = null;
+				if (mEditTextFindAt != null) {
+					url = mEditTextFindAt.getText().toString();
 				}
 				if (mEditTextFindAt.getVisibility() == View.VISIBLE) {
 					mDetailsFindAtPopup.setVisibility(View.GONE);
@@ -178,16 +199,17 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 							mEditTextFindAt.getApplicationWindowToken(),
 							InputMethodManager.SHOW_FORCED, 0);
 				}
-				if(url != null && url.startsWith("http")){
-					Uri uriUrl = Uri.parse(url.trim()); 
-					Log.i("browserUrl", "browserUrl: "+url);
-				    Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);  
-				    startActivity(launchBrowser); 
+				if (url != null && url.startsWith("http")) {
+					Uri uriUrl = Uri.parse(url.trim());
+					Log.i("browserUrl", "browserUrl: " + url);
+					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
+							uriUrl);
+					startActivity(launchBrowser);
 				}
-				
+
 			}
 		});
-		
+
 		mEditTextFindAt.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId,
@@ -451,7 +473,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				mVueUserName.getViewTreeObserver()
 						.removeGlobalOnLayoutListener(this);
 				mVueUserName.setText(mAisleDetailsAdapter.mVueusername);
-				Log.i("userName", "userName: "+mAisleDetailsAdapter.mVueusername);
+				Log.i("userName", "userName: "
+						+ mAisleDetailsAdapter.mVueusername);
 			}
 		});
 	}
