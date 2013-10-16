@@ -399,7 +399,8 @@ public class DataBaseManager {
         aisleValues,
         VueConstants.AISLE_Id + "=? AND " + VueConstants.IMAGE_ID + "=?",
         new String[] {aisleID, imageID});
-    // updateRatedImages(aisleValues, imageID, aisleID);
+    
+    updateRatedImages(imageID, aisleID, likeStatus);
   }
 
   /**
@@ -784,11 +785,22 @@ public class DataBaseManager {
     }
   }
   
-  private void updateRatedImages(ContentValues aisleValues, String imageID, String aisleID) {
-    mContext.getContentResolver().update(VueConstants.RATED_IMAGES_URI,
-        aisleValues,
+  private void updateRatedImages(String imageID, String aisleID, int likeStatus) {
+    ContentValues values = new ContentValues();
+    values.put(VueConstants.IMAGE_ID, imageID);
+    values.put(VueConstants.AISLE_ID, aisleID);
+    if(likeStatus == 1) {
+      mContext.getContentResolver().insert(VueConstants.RATED_IMAGES_URI, values);  
+    } else {
+      mContext.getContentResolver().delete(VueConstants.RATED_IMAGES_URI,
+          VueConstants.AISLE_ID + "=? AND " + VueConstants.IMAGE_ID + "=?",
+          new String[] {aisleID, imageID});
+    }
+    
+    /*mContext.getContentResolver().update(VueConstants.RATED_IMAGES_URI,
+        values,
         VueConstants.AISLE_ID + "=? AND " + VueConstants.IMAGE_ID + "=?",
-        new String[] {aisleID, imageID});
+        new String[] {aisleID, imageID});*/
   }
   
   public ArrayList<ImageRating> getRatedImagesList(String aisleId) {
