@@ -382,7 +382,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		} else {
 			mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
 		}
-
+          Log.i("LikeStatus","Like status: "+getItem(mCurrentAislePosition).getImageList().get(
+              mCurrentDispImageIndex).mLikeDislikeStatus+" LikeCount: "+getItem(mCurrentAislePosition).getImageList().get(
+                  mCurrentDispImageIndex).mLikesCount);
 		mViewHolder.commentCount.setText((mShowingList.size() + " Comments"));
 		mViewHolder.bookMarkCount.setText("" + mBookmarksCount);
 		mViewHolder.likeCount.setText("" + mLikes);
@@ -1003,6 +1005,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				// aisleId,imageId,likesCount,likeStatus
 				likeCount = itemDetails.mLikesCount;
 				likeStatus = itemDetails.mLikeDislikeStatus;
+				Log.i("likecountissue", "likecountissue: likeCount1: "+likeCount);
 				imgRating = new ImageRating();
 				imgRating.setAisleId(Long.parseLong(aisleId));
 				imgRating.setImageId(Long.parseLong(imageId));
@@ -1133,6 +1136,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				Long.parseLong(aisleId));
 		VueUser storedVueUser = null;
 		try {
+		  Log.i("bookmarkissue", "bookmarkissue handleBookmark");
 			storedVueUser = Utils.readUserObjectFromFile(mContext,
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 			AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
@@ -1166,8 +1170,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		ArrayList<ImageRating> imgRatingList = DataBaseManager.getInstance(
 				mContext).getRatedImagesList(
 				getItem(mCurrentAislePosition).getAisleId());
+		 Log.i("imageLikestatus", "imageLikestatus size: "+imgRatingList.size());
 		for (AisleImageDetails imgDetail : aisleImgDetais) {
+		  Log.i("imageLikestatus", "imageLikestatus#: "+imgDetail.mId);
 			for (ImageRating imgRating : imgRatingList) {
+			  Log.i("imageLikestatus", "imageLikestatus*: "+imgRating.getImageId());
 				if (imgRating.getImageId() == Long.parseLong(imgDetail.mId)) {
 					imgDetail.mLikeDislikeStatus = IMG_LIKE_STATUS;
 				}
