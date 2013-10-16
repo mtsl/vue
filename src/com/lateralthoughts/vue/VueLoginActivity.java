@@ -265,24 +265,22 @@ public class VueLoginActivity extends FragmentActivity implements
 						.setOnClickListener(new OnClickListener() {
 							@Override
 							public void onClick(View arg0) {
-								/*
-								 * if (VueConnectivityManager
-								 * .isNetworkConnected(VueLoginActivity.this)) {
-								 * mSocialIntegrationMainLayout
-								 * .setVisibility(View.GONE);
-								 * mGoogleplusLoggedinDialogFlag = true; if
-								 * (mFromGoogleplusInvitefriends)
-								 * mGooglePlusProgressDialog.show();
-								 * mSignInFragment
-								 * .signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT); }
-								 * else { Toast.makeText( VueLoginActivity.this,
-								 * getResources().getString(
-								 * R.string.no_network),
-								 * Toast.LENGTH_LONG).show(); }
-								 */
-								Toast.makeText(VueLoginActivity.this,
-										"This work is pending in backend.",
-										Toast.LENGTH_LONG).show();
+								if (VueConnectivityManager
+										.isNetworkConnected(VueLoginActivity.this)) {
+									mSocialIntegrationMainLayout
+											.setVisibility(View.GONE);
+									mGoogleplusLoggedinDialogFlag = true;
+									if (mFromGoogleplusInvitefriends)
+										mGooglePlusProgressDialog.show();
+									mSignInFragment
+											.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
+								} else {
+									Toast.makeText(
+											VueLoginActivity.this,
+											getResources().getString(
+													R.string.no_network),
+											Toast.LENGTH_LONG).show();
+								}
 							}
 						});
 				instagramSignInButtonLayout
@@ -586,60 +584,50 @@ public class VueLoginActivity extends FragmentActivity implements
 					String location = "";
 					VueUserManager userManager = VueUserManager
 							.getUserManager();
-					/*
-					 * VueUser storedVueUser = null; try { storedVueUser =
-					 * Utils.readUserObjectFromFile( VueLoginActivity.this,
-					 * VueConstants.VUE_APP_USEROBJECT__FILENAME); } catch
-					 * (Exception e2) { e2.printStackTrace(); } if
-					 * (storedVueUser != null) {
-					 */
-					/*
-					 * if (storedVueUser.userIdentifier .equals(VueUserManager
-					 * .PreferredIdentityLayer.DEVICE_ID)) {
-					 * storedVueUser.userIdentifier =
-					 * VueUserManager.PreferredIdentityLayer.FB; } else if
-					 * (storedVueUser.userIdentifier
-					 * .equals(VueUserManager.PreferredIdentityLayer.GPLUS)) {
-					 * storedVueUser.userIdentifier =
-					 * VueUserManager.PreferredIdentityLayer.GPLUS_FB; } else if
-					 * (storedVueUser.userIdentifier .equals(VueUserManager
-					 * .PreferredIdentityLayer.INSTAGRAM)) {
-					 * storedVueUser.userIdentifier =
-					 * VueUserManager.PreferredIdentityLayer.FB_INSTAGRAM; }
-					 * else if (storedVueUser.userIdentifier
-					 * .equals(VueUserManager
-					 * .PreferredIdentityLayer.GPLUS_INSTAGRAM)) {
-					 * storedVueUser.userIdentifier =
-					 * VueUserManager.PreferredIdentityLayer .ALL_IDS_AVAILABLE;
-					 * } else { storedVueUser.userIdentifier =
-					 * VueUserManager.PreferredIdentityLayer.FB; }
-					 */
-					/*
-					 * userManager.updateFBIdentifiedUser(user, storedVueUser,
-					 * new UserUpdateCallback() {
-					 * 
-					 * @Override public void onUserUpdated(VueUser user) { try {
-					 * Utils.writeUserObjectToFile( VueLoginActivity.this,
-					 * VueConstants.VUE_APP_USEROBJECT__FILENAME, user); } catch
-					 * (Exception e) { e.printStackTrace(); } } }); } else {
-					 */
-					userManager.createFBIdentifiedUser(user,
-							new VueUserManager.UserUpdateCallback() {
-								@Override
-								public void onUserUpdated(VueUser user) {
-									try {
-										Utils.writeUserObjectToFile(
-												VueLoginActivity.this,
-												VueConstants.VUE_APP_USEROBJECT__FILENAME,
-												user);
-									} catch (Exception e) {
-										e.printStackTrace();
+
+					VueUser storedVueUser = null;
+					try {
+						storedVueUser = Utils.readUserObjectFromFile(
+								VueLoginActivity.this,
+								VueConstants.VUE_APP_USEROBJECT__FILENAME);
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+					if (storedVueUser != null) {
+						userManager.updateFBIdentifiedUser(user, storedVueUser,
+								new UserUpdateCallback() {
+
+									@Override
+									public void onUserUpdated(VueUser user) {
+										try {
+											Utils.writeUserObjectToFile(
+													VueLoginActivity.this,
+													VueConstants.VUE_APP_USEROBJECT__FILENAME,
+													user);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
 									}
-									Log.e("Vue User Creation",
-											"callback from successful user creation");
-								}
-							});
-					// }
+								});
+					} else {
+
+						userManager.createFBIdentifiedUser(user,
+								new VueUserManager.UserUpdateCallback() {
+									@Override
+									public void onUserUpdated(VueUser user) {
+										try {
+											Utils.writeUserObjectToFile(
+													VueLoginActivity.this,
+													VueConstants.VUE_APP_USEROBJECT__FILENAME,
+													user);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+										Log.e("Vue User Creation",
+												"callback from successful user creation");
+									}
+								});
+					}
 					try {
 						if (user.getLocation() != null) {
 							JSONObject jsonObject = user.getLocation()
@@ -1049,12 +1037,23 @@ public class VueLoginActivity extends FragmentActivity implements
 			mSharedPreferencesObj = this.getSharedPreferences(
 					VueConstants.SHAREDPREFERENCE_NAME, 0);
 			VueUserManager userManager = VueUserManager.getUserManager();
+			String googleplusId = null;
+			try {
+				if (mSharedPreferencesObj.getString(
+						VueConstants.GOOGLEPLUS_USER_EMAIL, null) != null) {
+					googleplusId = mSharedPreferencesObj.getString(
+							VueConstants.GOOGLEPLUS_USER_EMAIL, null);
+					googleplusId = googleplusId.replace(".", "");
+				}
+			} catch (Exception e) {
+				googleplusId = mSharedPreferencesObj.getString(
+						VueConstants.GOOGLEPLUS_USER_EMAIL, null);
+			}
 			VueUser vueUser = new VueUser(null,
 					mSharedPreferencesObj.getString(
 							VueConstants.GOOGLEPLUS_USER_EMAIL, null),
-					person.getDisplayName(), null, null, null, null, null);
-			vueUser.setFirstName(person.getDisplayName());
-			vueUser.setLastName("");
+					person.getDisplayName(), "", null, Utils.getDeviceId(),
+					VueUser.DEFAULT_FACEBOOK_ID, googleplusId);
 			VueUser storedVueUser = null;
 			try {
 				storedVueUser = Utils.readUserObjectFromFile(
@@ -1068,42 +1067,23 @@ public class VueLoginActivity extends FragmentActivity implements
 				vueUser.setFacebookId(storedVueUser.getFacebookId());
 				// vueUser.instagramId = storedVueUser.instagramId;
 				vueUser.setId(storedVueUser.getId());
-				/*
-				 * if (storedVueUser.userIdentifier
-				 * .equals(VueUserManager.PreferredIdentityLayer.DEVICE_ID)) {
-				 * vueUser.userIdentifier =
-				 * VueUserManager.PreferredIdentityLayer.GPLUS; } else if
-				 * (storedVueUser.userIdentifier
-				 * .equals(VueUserManager.PreferredIdentityLayer.FB)) {
-				 * vueUser.userIdentifier =
-				 * VueUserManager.PreferredIdentityLayer.GPLUS_FB; } else if
-				 * (storedVueUser.userIdentifier
-				 * .equals(VueUserManager.PreferredIdentityLayer.INSTAGRAM)) {
-				 * vueUser.userIdentifier =
-				 * VueUserManager.PreferredIdentityLayer.GPLUS_INSTAGRAM; } else
-				 * if (storedVueUser.userIdentifier
-				 * .equals(VueUserManager.PreferredIdentityLayer.FB_INSTAGRAM))
-				 * { vueUser.userIdentifier =
-				 * VueUserManager.PreferredIdentityLayer.ALL_IDS_AVAILABLE; }
-				 * else { vueUser.userIdentifier =
-				 * VueUserManager.PreferredIdentityLayer.GPLUS; }
-				 */
-				userManager.updateGooglePlusIdentifiedUser(vueUser,
-						new UserUpdateCallback() {
-							@Override
-							public void onUserUpdated(VueUser user) {
-								try {
-									Utils.writeUserObjectToFile(
-											VueLoginActivity.this,
-											VueConstants.VUE_APP_USEROBJECT__FILENAME,
-											user);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-						});
+				vueUser.setJoinTime(storedVueUser.getJoinTime());
+				userManager.updateGooglePlusIdentifiedUser(person.getImage()
+						.getUrl(), vueUser, new UserUpdateCallback() {
+					@Override
+					public void onUserUpdated(VueUser user) {
+						try {
+							Utils.writeUserObjectToFile(VueLoginActivity.this,
+									VueConstants.VUE_APP_USEROBJECT__FILENAME,
+									user);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
 			} else {
-				userManager.createGooglePlusIdentifiedUser(vueUser,
+				userManager.createGooglePlusIdentifiedUser(person.getImage()
+						.getUrl(), vueUser,
 						new VueUserManager.UserUpdateCallback() {
 							@Override
 							public void onUserUpdated(VueUser user) {
@@ -1189,26 +1169,6 @@ public class VueLoginActivity extends FragmentActivity implements
 				vueUser.setEmail(storedVueUser.getEmail());
 				vueUser.setGooglePlusId(storedVueUser.getGooglePlusId());
 				vueUser.setId(storedVueUser.getId());
-				/*
-				 * if (storedVueUser.userIdentifier
-				 * .equals(VueUserManager.PreferredIdentityLayer.DEVICE_ID)) {
-				 * vueUser.userIdentifier =
-				 * VueUserManager.PreferredIdentityLayer.INSTAGRAM; } else if
-				 * (storedVueUser.userIdentifier
-				 * .equals(VueUserManager.PreferredIdentityLayer.FB)) {
-				 * vueUser.userIdentifier =
-				 * VueUserManager.PreferredIdentityLayer.FB_INSTAGRAM; } else if
-				 * (storedVueUser.userIdentifier
-				 * .equals(VueUserManager.PreferredIdentityLayer.GPLUS)) {
-				 * vueUser.userIdentifier =
-				 * VueUserManager.PreferredIdentityLayer.GPLUS_INSTAGRAM; } else
-				 * if (storedVueUser.userIdentifier
-				 * .equals(VueUserManager.PreferredIdentityLayer.GPLUS_FB)) {
-				 * vueUser.userIdentifier =
-				 * VueUserManager.PreferredIdentityLayer.ALL_IDS_AVAILABLE; }
-				 * else { vueUser.userIdentifier =
-				 * VueUserManager.PreferredIdentityLayer.INSTAGRAM; }
-				 */
 				userManager.updateInstagramIdentifiedUser(vueUser,
 						new UserUpdateCallback() {
 							@Override

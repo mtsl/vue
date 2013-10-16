@@ -11,12 +11,8 @@ import java.io.Serializable;
  * 
  */
 
+@SuppressWarnings("serial")
 public class VueUser implements Serializable {
-
-	/*
-	 * public VueUserManager.PreferredIdentityLayer userIdentifier; public
-	 * String instagramId; public String birthday;
-	 */
 
 	public static final String DEFAULT_FACEBOOK_ID = "FACEBOOK_ID_UNKNOWN";
 	public static final String DEFAULT_GOOGLEPLUS_ID = "GOOGLE_PLUS_ID_UNKNOWN";
