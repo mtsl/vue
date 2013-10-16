@@ -145,12 +145,6 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance()
 								.setmUserId(vueUser.getId());
-						VueApplication
-								.getInstance()
-								.setmUserImageUrl(
-										VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
-												+ graphUser.getId()
-												+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL);
 						VueUserManager.this.setCurrentUser(vueUser);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser);
@@ -183,12 +177,6 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance()
 								.setmUserId(vueUser.getId());
-						VueApplication
-								.getInstance()
-								.setmUserImageUrl(
-										VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
-												+ graphUser.getId()
-												+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL);
 						VueUserManager.this.setCurrentUser(vueUser);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser);
@@ -248,8 +236,7 @@ public class VueUserManager {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void createGooglePlusIdentifiedUser(
-			final String userProfileImageUrl, final VueUser vueUser,
+	public void createGooglePlusIdentifiedUser(final VueUser vueUser,
 			final UserUpdateCallback callback) {
 		// lets throw an exception if the current user is not NULL.
 		if (null != mCurrentUser)
@@ -271,8 +258,6 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser2.getId());
-						VueApplication.getInstance().setmUserImageUrl(
-								userProfileImageUrl);
 						VueUserManager.this.setCurrentUser(vueUser2);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser2);
@@ -306,8 +291,6 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser1.getId());
-						VueApplication.getInstance().setmUserImageUrl(
-								userProfileImageUrl);
 						VueUserManager.this.setCurrentUser(vueUser1);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser1);
@@ -426,12 +409,6 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser1.getId());
-						VueApplication
-								.getInstance()
-								.setmUserImageUrl(
-										VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
-												+ graphUser.getId()
-												+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL);
 						VueUserManager.this.setCurrentUser(vueUser1);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser1);
@@ -465,12 +442,6 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser2.getId());
-						VueApplication
-								.getInstance()
-								.setmUserImageUrl(
-										VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
-												+ graphUser.getId()
-												+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL);
 						VueUserManager.this.setCurrentUser(vueUser2);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser2);
@@ -529,8 +500,7 @@ public class VueUserManager {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void updateGooglePlusIdentifiedUser(
-			final String userProfileImageUrl, final VueUser vueUser,
+	public void updateGooglePlusIdentifiedUser(final VueUser vueUser,
 			final UserUpdateCallback callback) {
 		final Response.Listener listener = new Response.Listener<String>() {
 			@Override
@@ -546,8 +516,6 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser1.getId());
-						VueApplication.getInstance().setmUserImageUrl(
-								userProfileImageUrl);
 						VueUserManager.this.setCurrentUser(vueUser1);
 						VueUserManager.this.setCurrentUser(vueUser1);
 						Log.i("imageurl", "imageurl is ok got user id: "
@@ -582,8 +550,6 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser2.getId());
-						VueApplication.getInstance().setmUserImageUrl(
-								userProfileImageUrl);
 						VueUserManager.this.setCurrentUser(vueUser2);
 						VueUserManager.this.setCurrentUser(vueUser2);
 						Log.i("imageurl", "imageurl is ok got user id: "

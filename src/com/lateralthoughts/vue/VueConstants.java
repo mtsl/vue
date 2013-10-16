@@ -65,6 +65,7 @@ public class VueConstants {
 	public static final String ETSY_ACTIVITY_NAME = "com.etsy.android.ui.HomeActivity";
 	public static final String FANCY_ACTIVITY_NAME = "com.thefancy.app.common.Main";
 	public static final String DATAENTRY_SCREEN_AISLE_ID = "DataentryScreenAisleId";
+	public static final String USER_PROFILE_IMAGE_FILE_NAME = "VueUserProfileImage";
 	// Column names for aisles table.
 	public static final String ID = "_id";
 	public static final String CATEGORY = "category";
@@ -114,6 +115,7 @@ public class VueConstants {
 	public static final String USER_lOCATION = "name";
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
 	public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
+	public static final String VUE_APP_USER_PROFILE_PICTURES_FOLDER = "VueAppProfilePicture";
 	public static final String VUE_APP_USEROBJECT__FILENAME = "vueuser.ser";
 	public static final String VUE_APP_USERPROFILEOBJECT__FILENAME = "vueuserprofile.ser";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
@@ -185,7 +187,7 @@ public class VueConstants {
 	public static final String AISLE_IMAGE_HEIGHT = "height";
 	public static final String AISLE_IMAGE_WIDTH = "width";
 	public static final String AISLE_IMAGE_IMAGE_URL = "imageUrl";
-	public static final String AISLE_IMAGE_RATING = "likeRatingCount"/*"rating"*/;
+	public static final String AISLE_IMAGE_RATING = "likeRatingCount"/* "rating" */;
 	public static final String AISLE_IMAGE_STORE = "store";
 	public static final String AISLE_IMAGE_TITLE = "title";
 	// User response Keys
