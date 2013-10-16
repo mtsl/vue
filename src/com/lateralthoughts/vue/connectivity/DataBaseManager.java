@@ -655,6 +655,7 @@ public class DataBaseManager {
   
   
   public ArrayList<AisleWindowContent> getAislesByUserId(String userId) {
+	  Log.e("DataBaseManager", "My USER ID: " + userId);
     return getAisles(getAislesCursor(userId, VueConstants.USER_ID));
   }
   

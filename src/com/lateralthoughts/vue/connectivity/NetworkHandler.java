@@ -258,20 +258,22 @@ public class NetworkHandler {
 				ArrayList<AisleWindowContent> windowList = DataBaseManager
 						.getInstance(VueApplication.getInstance())
 						.getAislesByUserId(userId);
+				Log.i("meoptions", "meoptions: MyAisle list size: "+windowList.size());
 				if (windowList != null && windowList.size() > 0) {
-
+					clearList();
 					for (int i = 0; i < windowList.size(); i++) {
 						VueTrendingAislesDataModel.getInstance(
 								VueApplication.getInstance()).addItemToList(
 								windowList.get(i).getAisleContext().mAisleId,
 								windowList.get(i));
 					}
+					VueLandingPageActivity.changeScreenName(screenName);
+					VueTrendingAislesDataModel.getInstance(
+							VueApplication.getInstance()).dataObserver();
 				} else {
 					StackViews.getInstance().pull();
 				}
 
-				VueTrendingAislesDataModel.getInstance(
-						VueApplication.getInstance()).dataObserver();
 			} else {
 				Toast.makeText(VueApplication.getInstance(),
 						"Unable to get user id", Toast.LENGTH_SHORT).show();
@@ -315,23 +317,13 @@ public class NetworkHandler {
                               aislesList.get(i).getAisleContext().mAisleId,
                               aislesList.get(i));
                         }
-                        if (aislesList != null) {
-                          Log.i(
-                              "myaisledbcheck",
-                              "myaisledbcheck aisle are fetching from server inserting to db  windowList size is: "
-                                  + aislesList.size());
-                        } else {
-                          Log.i(
-                              "myaisledbcheck",
-                              "myaisledbcheck aisle are fetching from server inserting to db  aislesList is null: ");
-                        }
+                        VueTrendingAislesDataModel.getInstance(
+                                VueApplication.getInstance()).dataObserver();
                         // adding my aisle to db.
                         DataBaseManager.getInstance(
                             VueApplication.getInstance())
                             .addTrentingAislesFromServerToDB(
                                 VueApplication.getInstance(), aislesList);
-
-
                     
                         // if this is the first set of data
                         // we
@@ -339,8 +331,6 @@ public class NetworkHandler {
                         // go
                         // ahead
                         // notify the data set changed
-                        VueTrendingAislesDataModel.getInstance(
-                            VueApplication.getInstance()).dataObserver();
                         VueLandingPageActivity.changeScreenName(screenName);
                         Log.i("myaisledbcheck",
                             "myaisledbcheck aisle are fetching from server inserting to db success: ");
@@ -352,8 +342,6 @@ public class NetworkHandler {
                         // ahead
                         // notify the data set changed
                     	  StackViews.getInstance().pull();
-                        VueTrendingAislesDataModel.getInstance(
-                            VueApplication.getInstance()).dataObserver();
                         Toast.makeText(
                             VueLandingPageActivity.landingPageActivity,
                             "There are no Aisles for this User.",

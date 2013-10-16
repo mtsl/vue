@@ -115,7 +115,7 @@
     <string name="sidemenu_sub_option_My_Aisles">My Aisles</string>
     <string name="sidemenu_sub_option_Interactions">Interactions</string>
     <string name="sidemenu_sub_option_Bookmarks">Bookmarks</string>
-    <string name="sidemenu_sub_option_Recently_Viewed_Aisles">Recently viewed aisles</string>
+    <string name="sidemenu_sub_option_Recently_Viewed_Aisles">Recently viewed</string>
     <string name="done">Done</string>
     <string name="about_Vue">About Vue</string>
     <string name="sharing_mesg">Sharing....</string>
