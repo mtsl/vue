@@ -13,6 +13,7 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
@@ -51,7 +52,8 @@ public class AisleCreationBackgroundThread implements Runnable,
 		if (percent > mLastPercent) {
 			mNotification.contentView.setProgressBar(R.id.progressBar1, 100,
 					percent, false);
-			mNotificationManager.notify(1, mNotification);
+			mNotificationManager.notify(
+					VueConstants.CREATE_AISLE_NOTIFICATION_ID, mNotification);
 			mLastPercent = percent;
 		}
 	}
@@ -73,7 +75,8 @@ public class AisleCreationBackgroundThread implements Runnable,
 			mNotification.contentIntent = contentIntent;
 			mNotification.contentView.setProgressBar(R.id.progressBar1, 100, 0,
 					false);
-			mNotificationManager.notify(1, mNotification);
+			mNotificationManager.notify(
+					VueConstants.CREATE_AISLE_NOTIFICATION_ID, mNotification);
 			ObjectMapper mapper = new ObjectMapper();
 			URL url = new URL(UrlConstants.CREATE_AISLE_RESTURL);
 			HttpPut httpPut = new HttpPut(url.toString());
@@ -95,7 +98,9 @@ public class AisleCreationBackgroundThread implements Runnable,
 						"Uploading Completed.", "Aisle is uploaded to server.",
 						contentIntent);
 				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-				mNotificationManager.notify(1, mNotification);
+				mNotificationManager.notify(
+						VueConstants.CREATE_AISLE_NOTIFICATION_ID,
+						mNotification);
 				mResponseMessage = EntityUtils.toString(response.getEntity());
 				System.out.println("AISLE CREATED Response: "
 						+ mResponseMessage);
@@ -107,7 +112,9 @@ public class AisleCreationBackgroundThread implements Runnable,
 						"Uploading Failed.",
 						"Aisle is not uploaded to server.", contentIntent);
 				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-				mNotificationManager.notify(1, mNotification);
+				mNotificationManager.notify(
+						VueConstants.CREATE_AISLE_NOTIFICATION_ID,
+						mNotification);
 				Log.i("myailsedebug",
 						"myailsedebug: recieved response******* response code :  "
 								+ response.getStatusLine().getStatusCode());

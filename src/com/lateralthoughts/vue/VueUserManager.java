@@ -1,11 +1,17 @@
 package com.lateralthoughts.vue;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import com.android.volley.*;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.facebook.model.GraphUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
@@ -14,6 +20,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -446,6 +453,8 @@ public class VueUserManager {
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser2);
 						callback.onUserUpdated(vueUser2);
+						showNotificationForSwitchingUser(String.valueOf(vueUser
+								.getId()));
 					} else {
 						try {
 							Log.e("VueUserDebug", "vueuser: method called ");
@@ -555,6 +564,8 @@ public class VueUserManager {
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser2);
 						callback.onUserUpdated(vueUser2);
+						showNotificationForSwitchingUser(String.valueOf(vueUser
+								.getId()));
 					} else {
 						try {
 							Log.e("VueUserDebug", "vueuser: method called ");
@@ -836,5 +847,64 @@ public class VueUserManager {
 			ex.printStackTrace();
 		}
 		return vueUser;
+	}
+
+	private void showNotificationForSwitchingUser(final String userId) {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					final ArrayList<AisleWindowContent> aislesList = new NetworkHandler(
+							VueApplication.getInstance())
+							.getAislesByUser(userId);
+					try {
+						VueLandingPageActivity.landingPageActivity
+								.runOnUiThread(new Runnable() {
+
+									@SuppressWarnings("deprecation")
+									@Override
+									public void run() {
+										if (aislesList != null
+												&& aislesList.size() > 0) {
+											NotificationManager notificationManager = (NotificationManager) VueLandingPageActivity.landingPageActivity
+													.getSystemService(Context.NOTIFICATION_SERVICE);
+											Notification mNotification = new Notification(
+													R.drawable.vue_notification_icon,
+													"You are Switched the account.",
+													System.currentTimeMillis());
+											Intent MyIntent = new Intent(
+													Intent.ACTION_VIEW);
+											PendingIntent StartIntent = PendingIntent
+													.getActivity(
+															VueApplication
+																	.getInstance()
+																	.getApplicationContext(),
+															0,
+															MyIntent,
+															PendingIntent.FLAG_CANCEL_CURRENT);
+											mNotification.flags = mNotification.flags
+													| Notification.FLAG_ONGOING_EVENT;
+											mNotification
+													.setLatestEventInfo(
+															VueApplication
+																	.getInstance()
+																	.getApplicationContext(),
+															"User Account is Switched.",
+															"You are Switched the account.",
+															StartIntent);
+											notificationManager
+													.notify(VueConstants.CHANGE_USER_NOTIFICATION_ID,
+															mNotification);
+										}
+									}
+								});
+					} catch (Exception e) {
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 }
