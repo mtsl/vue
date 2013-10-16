@@ -594,19 +594,21 @@ public class VueLandingPageActivity extends BaseActivity {
 			} else {
 				Toast.makeText(this, "No Recently Viewed aisles",
 						Toast.LENGTH_LONG).show();
+				StackViews.getInstance().pull();
 			}
 		} else {
-			VueTrendingAislesDataModel
+	/*		VueTrendingAislesDataModel
 					.getInstance(VueLandingPageActivity.this)
 					.getNetworkHandler()
 					.reqestByCategory(catName, new ProgresStatus(), fromServer,
-							loadMore, catName);
+							loadMore, catName);*/
 		}
 
 		FlurryAgent.logEvent(catName);
 
 	}
 
+ 
   private void getBookmarkedAisles(String screenName) {
 
     ArrayList<AisleWindowContent> windowContent = null;
@@ -633,9 +635,11 @@ public class VueLandingPageActivity extends BaseActivity {
 
     } else {
       Toast.makeText(this, "No Bookmarked aisles", Toast.LENGTH_LONG).show();
+      StackViews.getInstance().pull();
     }
 
   }
+ 
 
 	private void showPreviousScreen(String screenName) {
 		boolean fromServer = false;

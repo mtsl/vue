@@ -392,7 +392,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
 		mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
 		mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
-		// mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
+		//mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
 		if (position == 0) {
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);

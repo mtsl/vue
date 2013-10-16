@@ -126,45 +126,26 @@ public class AisleDetailsViewListLoader {
 			imageView = mViewFactory.getEmptyImageView();
 			imageView.setContainerObject(holder);
 			Bitmap bitmap = null; 
-			//bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
-			/*mBestHeight = getBestHeight(windowContent.getBestLargetHeightForWindow());*/
+			bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
 			mBestHeight =Utils.modifyHeightForDetailsView(imageDetailsArr);
-			
 			windowContent.setBestLargestHeightForWindow(mBestHeight);
 			contentBrowser.addView(imageView);
 			Log.i("new image", "new image  windowbestHeight:  "+windowContent.getBestLargetHeightForWindow());
 			setParams(holder.aisleContentBrowser, imageView,mBestHeight);
 			if (bitmap != null) {
-				// get the dimensions of the image.
-	/*			mImageDimension = Utils.getScalledImage(bitmap,
-						itemDetails.mAvailableWidth,
-						itemDetails.mAvailableHeight);
-				Log.i("window",
-						"clickedwindow ID bitmap Height1: "
-								+ bitmap.getHeight());
-				Log.i("window", "clickedwindow ID  required height1: "
-						+ mImageDimension.mImgHeight);
-				mBestHeight = mImageDimension.mImgHeight;*/
-				
-				
 				if (bitmap.getHeight() > mBestHeight) {
 					loadBitmap(itemDetails, contentBrowser, imageView,
 							mBestHeight);
-
 				} else {
 					Log.i("setparam", "setparam cache: "+bitmap.getHeight());
-					//setParams(holder.aisleContentBrowser, imageView, bitmap.getHeight());
 				}
 				imageView.setImageBitmap(bitmap);
-				//contentBrowser.addView(imageView);
 				if (scrollIndex != 0) {
 					contentBrowser.setCurrentImage();
 				}
 			} else {
-				
 				loadBitmap(itemDetails, contentBrowser, imageView,
 						mBestHeight);
-				//contentBrowser.addView(imageView);
 				if(scrollIndex != 0){
 					contentBrowser.setCurrentImage();
 					}
@@ -215,7 +196,8 @@ public class AisleDetailsViewListLoader {
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  true, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
+            boolean cacheBitmap = true;
+            bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  cacheBitmap, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
 			if(bmp != null){
             mItemDetails.mTempResizeBitmapwidth = bmp.getWidth();
 			mItemDetails.mTempResizedBitmapHeight = bmp.getHeight();
