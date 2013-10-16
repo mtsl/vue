@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue.connectivity;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -62,7 +63,7 @@ public class NetworkHandler {
   protected int mLimit;
   protected int mOffset;
   ArrayList<AisleWindowContent> aislesList = null;
-  public ArrayList<String> bookmarkedAisles = new ArrayList<String>();
+  /*public ArrayList<String> bookmarkedAisles = new ArrayList<String>();*/
   //public ArrayList<AisleWindowContent> bookmarkedAisleContent = new ArrayList<AisleWindowContent>();
 
   public NetworkHandler(Context context) {
@@ -78,7 +79,6 @@ public class NetworkHandler {
   // whle user scrolls down get next 10 aisles
   public void requestMoreAisle(boolean loadMore, String screenname) {
 
-    Log.i("offeset and limit", "offeset1: load moredata");
     if (VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
         .isMoreDataAvailable()) {
 
@@ -87,11 +87,6 @@ public class NetworkHandler {
         if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
         mOffset += mLimit; else { mOffset += mLimit; mLimit =
         TRENDING_AISLES_BATCH_SIZE; }
-       
-      Log.i("offeset and limit", "offeset1: " + mOffset + " and limit: "
-          + mLimit);
-/*      mOffset = VueTrendingAislesDataModel.getInstance(
-          VueApplication.getInstance()).listSize();*/
       mVueContentGateway.getTrendingAisles(mLimit, mOffset,
           mTrendingAislesParser, loadMore, screenname);
     } else {
@@ -126,7 +121,6 @@ public class NetworkHandler {
       ArrayList<AisleWindowContent> aisleContentArray = mDbManager
           .getAislesFromDB(null);
       for(int i=0;i<aisleContentArray.size();i++){
-    	 // Log.i("duplicateImages", "duplicateImages imageurl******: "+i);
     	  for(int j=0;j< aisleContentArray.get(i).getImageList().size();j++){
     		// Log.i("duplicateImages imageurl", "duplicateImages imageurl: "+ aisleContentArray.get(i).getImageList().get(j).mImageUrl);
     	  }
@@ -172,7 +166,6 @@ public class NetworkHandler {
           responseBundle.putBoolean("loadMore", false);
           mTrendingAislesParser.send(1, responseBundle);
         }
-        Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
       }
     }, new Response.ErrorListener() {
 
@@ -221,7 +214,6 @@ public class NetworkHandler {
   }
 
   public void loadInitialData(boolean loadMore, Handler mHandler, String screenName) {
-    Log.i("bookmarked aisle", "bookmarked aisle O");
     getBookmarkAisleByUser();
     getRatedImageList();
     
@@ -257,41 +249,42 @@ public class NetworkHandler {
   public void requestAislesByUser(boolean fromServer, NotifyProgress progress, final String screenName) {
    
     mOffset = 0;
-    if (!fromServer) {
-      // TODO get data from local db.
-      Log.i("myaisledbcheck",
-          "myaisledbcheck aisle are my aisles are fetching from db $$$$: ");
-      String userId = getUserId();
-      if (userId != null) {
+		if (!fromServer) {
+			// TODO get data from local db.
+			Log.i("myaisledbcheck",
+					"myaisledbcheck aisle are my aisles are fetching from db $$$$: ");
+			String userId = getUserId();
+			if (userId != null) {
+				ArrayList<AisleWindowContent> windowList = DataBaseManager
+						.getInstance(VueApplication.getInstance())
+						.getAislesByUserId(userId);
+				if (windowList != null && windowList.size() > 0) {
 
-        ArrayList<AisleWindowContent> windowList = DataBaseManager.getInstance(
-            VueApplication.getInstance()).getAislesByUserId(userId);
+					for (int i = 0; i < windowList.size(); i++) {
+						VueTrendingAislesDataModel.getInstance(
+								VueApplication.getInstance()).addItemToList(
+								windowList.get(i).getAisleContext().mAisleId,
+								windowList.get(i));
+					}
+				} else {
+					StackViews.getInstance().pull();
+				}
 
-        for (int i = 0; i < windowList.size(); i++) {
-          VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-              .addItemToList(windowList.get(i).getAisleContext().mAisleId,
-                  windowList.get(i));
-        }
-        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-            .dataObserver();
-      } else {
-        Toast.makeText(VueApplication.getInstance(), "Unable to get user id",
-            Toast.LENGTH_SHORT).show();
-      }
-    } else {
+				VueTrendingAislesDataModel.getInstance(
+						VueApplication.getInstance()).dataObserver();
+			} else {
+				Toast.makeText(VueApplication.getInstance(),
+						"Unable to get user id", Toast.LENGTH_SHORT).show();
+				StackViews.getInstance().pull();
+			}
+		} else {
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
           .setNotificationProgress(progress, fromServer);
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
           .showProgress();
-      Log.i("myaisledbcheck",
-          "myaisledbcheck aisle are my aisles are fetching from ser12 $$$$: ");
       // TODO: CHANGE THIS REQUEST TO VOLLEY
       if (VueConnectivityManager.isNetworkConnected(VueApplication
           .getInstance())) {
-  /*      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-            .clearAisles();
-        AisleWindowContentFactory.getInstance(VueApplication.getInstance())
-            .clearObjectsInUse();*/
         VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
         new Thread(new Runnable() {
 
@@ -303,10 +296,7 @@ public class NetworkHandler {
             } catch (Exception e) {
               e.printStackTrace();
             }
-            if (VueLandingPageActivity.landingPageActivity != null
-             /*   && (VueLandingPageActivity.mVueLandingActionbarScreenName
-                    .getText().toString().equals(VueApplication.getInstance()
-                    .getString(R.string.sidemenu_sub_option_My_Aisles)))*/) {
+            if (VueLandingPageActivity.landingPageActivity != null) {
               VueLandingPageActivity.landingPageActivity
                   .runOnUiThread(new Runnable() {
                     @Override
@@ -441,9 +431,15 @@ public class NetworkHandler {
             String responseMessage = EntityUtils.toString(response.getEntity());
             Log.i("bookmarked aisle", "bookmarked aisle 3 response: "
                 + responseMessage);
-            if(responseMessage != null)
-            bookmarkedAisles =  new Parser().parseBookmarkedAisles(responseMessage);
-            Log.e("bookmarked aisle", "bookmarked aisle bookmarkedAisles size(); " + bookmarkedAisles.size());
+            if (responseMessage != null) {
+              ArrayList<String> bookmarkedAisles = new Parser()
+                  .parseBookmarkedAisles(responseMessage);
+              for (String s : bookmarkedAisles) {
+                DataBaseManager.getInstance(mContext).updateBookmarkAisles(s,
+                    true);
+              }
+            }
+            // Log.e("bookmarked aisle", "bookmarked aisle bookmarkedAisles size(); " + bookmarkedAisles.size());
           }
         } catch (Exception e) {
           Log.i("bookmarked aisle", "bookmarked aisle 3 error: ");
@@ -454,30 +450,27 @@ public class NetworkHandler {
     }).start();
 
   }
-  public void addBookmarked(String aisleId){
+ /* public void addBookmarked(String aisleId){
     if(aisleId != null)
     bookmarkedAisles.add(aisleId);
-  }
+  }*/
   public boolean isAisleBookmarked(String aisleId) {
-    Log.i("bookmarked aisle", "bookmarked my bookmarks id enter in method: "+aisleId);
-    if(bookmarkedAisles.size() < 1){
-      Log.i("bookmarked aisle", "bookmarked my bookmarks size is zero: " );
-      return false;
+    Log.i("bookmarked aisle", "bookmarked my bookmarks id enter in method: "
+        + aisleId);
+    Cursor cursor = mContext.getContentResolver().query(
+        VueConstants.BOOKMARKER_AISLES_URI, null, VueConstants.AISLE_ID + "=?",
+        new String[] {aisleId}, null);
+    if (cursor.moveToFirst()) {
+      do {
+        if (aisleId.equals(cursor.getString(cursor
+            .getColumnIndex(VueConstants.AISLE_ID)))) {
+          cursor.close();
+          return true;
+        }
+      } while (cursor.moveToNext());
     }
-    for(String id: bookmarkedAisles){
-      Log.i("bookmarked aisle", "bookmarked my bookmarks id: "+id);
-      if(aisleId.equalsIgnoreCase(id)){
-        Log.i("bookmarked aisle", "bookmarked my bookmarks id matched: "+id);
-      }
-    }
-     boolean isAisleBookmared = false;
-    for(String id: bookmarkedAisles){
-      if(aisleId.equalsIgnoreCase(id)){
-        isAisleBookmared = true;
-        break;
-      }
-    }
-    return isAisleBookmared;
+    cursor.close();
+    return false;
   }
   
   private String getUserId() {

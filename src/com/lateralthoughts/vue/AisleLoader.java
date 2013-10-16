@@ -195,9 +195,10 @@ public class AisleLoader {
 			LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
 					VueApplication.getInstance().getVueDetailsCardWidth() / 2,
 					itemDetails.mTrendingImageHeight);
-			Log.i("cardHeight", "cardHeight bestHeight: " + bestHeight);
+
+			Log.i("cardHeight", "bestsamallest cardHeight bestHeight11: "+bestHeight);
 			contentBrowser.setLayoutParams(mShowpieceParams2);
-			Log.i("bestsamallest", "bestsamallest height: " + bestHeight);
+			Log.i("bestsamallest", "bestsamallest height22: "+itemDetails.mTrendingImageHeight);
 			if (bitmap != null) {
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
