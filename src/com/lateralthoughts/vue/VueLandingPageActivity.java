@@ -738,11 +738,15 @@ public class VueLandingPageActivity extends BaseActivity {
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
+				AisleWindowContentFactory.getInstance(
+						VueApplication.getInstance()).clearObjectsInUse();
 				for (AisleWindowContent content : windowContent) {
 					VueTrendingAislesDataModel.getInstance(this).addItemToList(
 							content.getAisleId(), content);
 				}
-
+				changeScreenName(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles));
+				VueTrendingAislesDataModel.getInstance(
+						VueApplication.getInstance()).dataObserver();
 			} else {
 				Toast.makeText(this, "No Recently Viewed aisles",
 						Toast.LENGTH_LONG).show();
@@ -782,11 +786,14 @@ public class VueLandingPageActivity extends BaseActivity {
 		if (windowContent != null && windowContent.size() > 0) {
 			changeScreenName(screenName);
 			VueTrendingAislesDataModel.getInstance(this).clearAisles();
+			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
+					.clearObjectsInUse();
 			for (AisleWindowContent content : windowContent) {
 				VueTrendingAislesDataModel.getInstance(this).addItemToList(
 						content.getAisleId(), content);
 			}
-
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).dataObserver();
 		} else {
 			Toast.makeText(this, "No Bookmarked aisles", Toast.LENGTH_LONG)
 					.show();
@@ -802,6 +809,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 					.clearContent();
+			Log.i("meoptions", "meoptions: Trending");
 			VueTrendingAislesDataModel
 					.getInstance(VueLandingPageActivity.this)
 					.getNetworkHandler()
@@ -809,28 +817,44 @@ public class VueLandingPageActivity extends BaseActivity {
 							fromServer, loadMore, screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-			Log.i("myaisledbcheck",
-					"myaisledbcheck  when back pressed aisle are fetching from db");
+			Log.i("meoptions", "meoptions: MyAisle");
 			VueTrendingAislesDataModel
 					.getInstance(VueLandingPageActivity.this)
 					.getNetworkHandler()
 					.requestAislesByUser(fromServer, new ProgresStatus(),
 							screenName);
-
-			/*
-			 * VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this
-			 * ) .getNetworkHandler().reqestByCategory(screenName, new
-			 * ProgresStatus(), fromServer, loadMore);
-			 */
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Bookmarks))) {
+			Log.i("meoptions", "meoptions: Bookmarks");
 			getBookmarkedAisles(screenName);
+		} else if (screenName
+				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
+			Log.i("meoptions", "meoptions: Recent");
+			ArrayList<AisleWindowContent> windowContent = DataBaseManager
+					.getInstance(this).getRecentlyViewedAisles();
+			Log.i("meoptions",
+					"meoptions: Recent: size " + windowContent.size());
+			if (windowContent.size() > 0) {
+				VueTrendingAislesDataModel.getInstance(this).clearAisles();
+				AisleWindowContentFactory.getInstance(
+						VueApplication.getInstance()).clearObjectsInUse();
+				for (AisleWindowContent content : windowContent) {
+					VueTrendingAislesDataModel.getInstance(this).addItemToList(
+							content.getAisleId(), content);
+				}
+
+				VueTrendingAislesDataModel.getInstance(
+						VueApplication.getInstance()).dataObserver();
+
+			}
 		} else {
-			VueTrendingAislesDataModel
-					.getInstance(VueLandingPageActivity.this)
-					.getNetworkHandler()
-					.reqestByCategory(screenName, new ProgresStatus(),
-							fromServer, loadMore, screenName);
+			/*
+			 * Log.i("meoptions", "meoptions: else option Screen name: " +
+			 * screenName); VueTrendingAislesDataModel
+			 * .getInstance(VueLandingPageActivity.this) .getNetworkHandler()
+			 * .reqestByCategory(screenName, new ProgresStatus(), fromServer,
+			 * loadMore, screenName);
+			 */
 		}
 	}
 

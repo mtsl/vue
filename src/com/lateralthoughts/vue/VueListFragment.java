@@ -306,12 +306,21 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
                   VueLandingPageActivity.class));
             }
           }
- 
+              return true;
         } else if (s.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
         	((VueLandingPageActivity) getActivity()).showCategory(s);
+        	  if (getActivity() instanceof SlidingFragmentActivity) {
+                  SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+                  activity.getSlidingMenu().toggle();
+        	  }
+        	return true;
         } else if (s.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
           Log.i("clicked on", "clicked on: "+s);
           ((VueLandingPageActivity) getActivity()).showCategory(s);
+          if (getActivity() instanceof SlidingFragmentActivity) {
+              SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+              activity.getSlidingMenu().toggle();
+    	  }
           return true;
         } else if(s.trim().equals(getString(R.string.sidemenu_sub_option_Interactions))) {
         	//TODO: need to implement interactions option
