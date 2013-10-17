@@ -16,7 +16,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
@@ -30,7 +34,12 @@ import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.Window;
+import android.view.View.OnClickListener;
+import android.widget.TextView;
 
+import com.flurry.android.monolithic.sdk.impl.aca;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
@@ -48,6 +57,7 @@ public class Utils {
 	public static final String TRENDING_SCREEN = "trending_screen";
 	public static final String FLURRY_APP_KEY = "6938R8DC7R5HZWF976TJ";
 	public static int MAX_RETRIES = 3;
+
 	public static void CopyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
 		try {
@@ -270,25 +280,22 @@ public class Utils {
 				+ VueApplication.getInstance().getScreenWidth());
 		Log.i("imageSize", "imageSize cardHeight: "
 				+ VueApplication.getInstance().getScreenHeight());
-	
-		if ((availableWidth < VueApplication.getInstance()
-				.getScreenWidth() && availableHeight < VueApplication
+
+		if ((availableWidth < VueApplication.getInstance().getScreenWidth() && availableHeight < VueApplication
 				.getInstance().getScreenHeight())) {
 			imgDimension.mImgWidth = availableWidth;
 			imgDimension.mImgHeight = availableHeight;
 			return imgDimension;
 		}
-		
-		if (availableWidth > VueApplication.getInstance()
-				.getScreenWidth()) {
-			requiredWidth = VueApplication.getInstance()
-					.getScreenWidth();
+
+		if (availableWidth > VueApplication.getInstance().getScreenWidth()) {
+			requiredWidth = VueApplication.getInstance().getScreenWidth();
 		} else {
 			requiredWidth = availableWidth;
 			// requiredWidth =
 			// VueApplication.getInstance().getVueDetailsCardWidth();
 		}
-		
+
 		float temp = requiredWidth / bitmapOriginalWidth;
 		if (temp <= 1) {
 			// reduce the image size to the smallest one of given dimensions
@@ -303,12 +310,11 @@ public class Utils {
 			requiredHeight = Math.round(bitmapOriginalHeight * scaleFactor);
 			requiredWidth = Math.round(bitmapOriginalWidth * scaleFactor);
 		}
-		if (requiredHeight > VueApplication.getInstance()
-				.getScreenHeight()) {
+		if (requiredHeight > VueApplication.getInstance().getScreenHeight()) {
 			// decrease the image to card height and decrease the imageWidht
 			// proportioned to height
-			scaleFactor = VueApplication.getInstance()
-					.getScreenHeight() / requiredHeight;
+			scaleFactor = VueApplication.getInstance().getScreenHeight()
+					/ requiredHeight;
 			requiredHeight = Math.round(requiredHeight * scaleFactor);
 			requiredWidth = Math.round(requiredWidth * scaleFactor);
 		}
@@ -492,45 +498,96 @@ public class Utils {
 		editor.putBoolean(VueConstants.DATAENTRY_EDIT_AISLE_FLAG, flag);
 		editor.commit();
 	}
-	   public static int modifyHeightForDetailsView(ArrayList<AisleImageDetails> imageList) {
-           int mWindowLargestHeight = 0;
-	    float[] imageHeightList = new float[imageList.size()];
-	  float availableScreenHeight = VueApplication.getInstance().getVueDetailsCardHeight() ;
-	  float adjustedImageHeight,adjustedImageWidth;
-	  float imageHeight,imageWidth;
-	  float cardWidth = VueApplication.getInstance().getVueDetailsCardWidth();
-	 
 
-		  for(int i = 0;i<imageList.size();i++){
-			  imageHeight = imageList.get(i).mAvailableHeight;
-			  imageWidth = imageList.get(i).mAvailableWidth;
-		   if (imageHeight > availableScreenHeight){
-		      adjustedImageHeight = availableScreenHeight;
-		      adjustedImageWidth = (adjustedImageHeight/imageHeight) * imageWidth;
-		      imageHeight = adjustedImageHeight;
-		      imageWidth = adjustedImageWidth;
-		   }
-		   if(imageWidth > cardWidth){
-		      adjustedImageWidth = cardWidth;
-		      adjustedImageHeight = (adjustedImageWidth/imageWidth) * imageHeight;
-		      imageHeight = adjustedImageHeight;
-		      imageWidth = adjustedImageWidth;
-		   }
-		   imageList.get(i).mDetailsImageHeight = Math.round(imageHeight);
-		   imageList.get(i).mDetailsImageWidth = Math.round(imageWidth);
-		   imageHeightList[i]= imageHeight;
-		    
-		   
-		  }
-		  mWindowLargestHeight =  (int) imageHeightList[0];
-	 
-        for(int i = 0;i<imageHeightList.length;i++){
-     	   if(mWindowLargestHeight <  imageHeightList[i]){
-     		   mWindowLargestHeight = (int) imageHeightList[i];
-     		   
-     	   }
-        }
-      
+	public static int modifyHeightForDetailsView(
+			ArrayList<AisleImageDetails> imageList) {
+		int mWindowLargestHeight = 0;
+		float[] imageHeightList = new float[imageList.size()];
+		float availableScreenHeight = VueApplication.getInstance()
+				.getVueDetailsCardHeight();
+		float adjustedImageHeight, adjustedImageWidth;
+		float imageHeight, imageWidth;
+		float cardWidth = VueApplication.getInstance().getVueDetailsCardWidth();
+
+		for (int i = 0; i < imageList.size(); i++) {
+			imageHeight = imageList.get(i).mAvailableHeight;
+			imageWidth = imageList.get(i).mAvailableWidth;
+			if (imageHeight > availableScreenHeight) {
+				adjustedImageHeight = availableScreenHeight;
+				adjustedImageWidth = (adjustedImageHeight / imageHeight)
+						* imageWidth;
+				imageHeight = adjustedImageHeight;
+				imageWidth = adjustedImageWidth;
+			}
+			if (imageWidth > cardWidth) {
+				adjustedImageWidth = cardWidth;
+				adjustedImageHeight = (adjustedImageWidth / imageWidth)
+						* imageHeight;
+				imageHeight = adjustedImageHeight;
+				imageWidth = adjustedImageWidth;
+			}
+			imageList.get(i).mDetailsImageHeight = Math.round(imageHeight);
+			imageList.get(i).mDetailsImageWidth = Math.round(imageWidth);
+			imageHeightList[i] = imageHeight;
+
+		}
+		mWindowLargestHeight = (int) imageHeightList[0];
+
+		for (int i = 0; i < imageHeightList.length; i++) {
+			if (mWindowLargestHeight < imageHeightList[i]) {
+				mWindowLargestHeight = (int) imageHeightList[i];
+
+			}
+		}
+
 		return mWindowLargestHeight;
- }
+	}
+
+	public static String getStoreNameFromUrl(String url) {
+		if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
+				&& VueApplication.getInstance().mShoppingApplicationDetailsList
+						.size() > 0) {
+			for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
+					.size(); i++) {
+				if (url.toLowerCase()
+						.contains(
+								VueApplication.getInstance().mShoppingApplicationDetailsList
+										.get(i).getAppName().toLowerCase())) {
+					return VueApplication.getInstance().mShoppingApplicationDetailsList
+							.get(i).getAppName();
+				}
+			}
+		}
+		return "UnKnown";
+	}
+
+	public static void showAlertMessageForBackendNotIntegrated(
+			final Activity activity, final boolean finishActivity) {
+		final Dialog dialog = new Dialog(activity,
+				R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.vue_popup);
+		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
+		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+		messagetext.setText("Sorry, Server side integration is pending.");
+		okButton.setText("OK");
+		noButton.setVisibility(View.GONE);
+		okButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.setOnDismissListener(new OnDismissListener() {
+
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				if (finishActivity) {
+					activity.finish();
+				}
+			}
+		});
+		dialog.show();
+	}
+
 }

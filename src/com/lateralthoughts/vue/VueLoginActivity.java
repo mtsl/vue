@@ -29,6 +29,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -81,6 +82,7 @@ import com.instagram.InstagramApp.OAuthAuthenticationListener;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
+import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
@@ -308,9 +310,8 @@ public class VueLoginActivity extends FragmentActivity implements
 								 * R.string.no_network),
 								 * Toast.LENGTH_LONG).show(); }
 								 */
-								Toast.makeText(VueLoginActivity.this,
-										"This work is pending in backend.",
-										Toast.LENGTH_LONG).show();
+								Utils.showAlertMessageForBackendNotIntegrated(
+										VueLoginActivity.this, false);
 							}
 						});
 				login_button.setReadPermissions(READ_PERMISSIONS);
@@ -666,6 +667,12 @@ public class VueLoginActivity extends FragmentActivity implements
 									VueLoginActivity.this,
 									VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
 									vueUserProfile);
+							downloadAndSaveUserProfileImage(
+									VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
+											+ user.getId()
+											+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
+									new FileCache(VueLoginActivity.this)
+											.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
 						}
 					} catch (Exception e1) {
 						e1.printStackTrace();
@@ -1068,22 +1075,22 @@ public class VueLoginActivity extends FragmentActivity implements
 				// vueUser.instagramId = storedVueUser.instagramId;
 				vueUser.setId(storedVueUser.getId());
 				vueUser.setJoinTime(storedVueUser.getJoinTime());
-				userManager.updateGooglePlusIdentifiedUser(person.getImage()
-						.getUrl(), vueUser, new UserUpdateCallback() {
-					@Override
-					public void onUserUpdated(VueUser user) {
-						try {
-							Utils.writeUserObjectToFile(VueLoginActivity.this,
-									VueConstants.VUE_APP_USEROBJECT__FILENAME,
-									user);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
+				userManager.updateGooglePlusIdentifiedUser(vueUser,
+						new UserUpdateCallback() {
+							@Override
+							public void onUserUpdated(VueUser user) {
+								try {
+									Utils.writeUserObjectToFile(
+											VueLoginActivity.this,
+											VueConstants.VUE_APP_USEROBJECT__FILENAME,
+											user);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
 			} else {
-				userManager.createGooglePlusIdentifiedUser(person.getImage()
-						.getUrl(), vueUser,
+				userManager.createGooglePlusIdentifiedUser(vueUser,
 						new VueUserManager.UserUpdateCallback() {
 							@Override
 							public void onUserUpdated(VueUser user) {
@@ -1116,6 +1123,10 @@ public class VueLoginActivity extends FragmentActivity implements
 					Utils.writeUserProfileObjectToFile(this,
 							VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
 							vueUserProfile);
+					downloadAndSaveUserProfileImage(
+							person.getImage().getUrl(),
+							new FileCache(VueLoginActivity.this)
+									.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1216,6 +1227,10 @@ public class VueLoginActivity extends FragmentActivity implements
 					Utils.writeUserProfileObjectToFile(this,
 							VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
 							vueUserProfile);
+					downloadAndSaveUserProfileImage(
+							mInstagramApp.getProfilePicture(),
+							new FileCache(VueLoginActivity.this)
+									.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -1295,6 +1310,28 @@ public class VueLoginActivity extends FragmentActivity implements
 					}
 				});
 		finish();
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void downloadAndSaveUserProfileImage(String imageUrl,
+			final File filePath) {
+		Response.Listener listener = new Response.Listener<Bitmap>() {
+			@Override
+			public void onResponse(Bitmap bmp) {
+				Utils.saveBitmap(bmp, filePath);
+			}
+		};
+		Response.ErrorListener errorListener = new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				Log.e(TAG, arg0.getMessage());
+			}
+		};
+
+		ImageRequest imagerequestObj = new ImageRequest(imageUrl, listener, 0,
+				0, null, errorListener);
+		VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
+
 	}
 
 	@Override

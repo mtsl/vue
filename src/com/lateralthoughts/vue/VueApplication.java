@@ -44,7 +44,7 @@ public class VueApplication extends Application {
 	}
 
 	private boolean newVueTrendingAislesDataModel = false;
-	public ArrayList<String> mAisleImagePathList = new ArrayList<String>();
+	public ArrayList<DataentryImage> mAisleImagePathList = new ArrayList<DataentryImage>();
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
 	public static final int[] POPUP_ITEM_DRAWABLES = {
 			R.drawable.composer_camera, R.drawable.composer_music,
@@ -77,16 +77,7 @@ public class VueApplication extends Application {
 		this.mUserId = mUserId;
 	}
 
-	public String getmUserImageUrl() {
-		return mUserImageUrl;
-	}
-
-	public void setmUserImageUrl(String mUserImageUrl) {
-		this.mUserImageUrl = mUserImageUrl;
-	}
-
 	private Long mUserId = null;
-	private String mUserImageUrl = null;
 
 	public String getmUserInitials() {
 		return mUserInitials;

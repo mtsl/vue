@@ -115,10 +115,10 @@ public class GetOtherSourceImagesTask extends
 			DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mContext)
 					.getSupportFragmentManager().findFragmentById(
 							R.id.create_aisles_view_fragment);
-			fragment.showOtherSourcesGridview(result);
+			fragment.showOtherSourcesGridview(result, mSourceUrl);
 		} else {
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mContext;
-			vueLandingPageActivity.showOtherSourcesGridview(result);
+			vueLandingPageActivity.showOtherSourcesGridview(result, mSourceUrl);
 		}
 	}
 

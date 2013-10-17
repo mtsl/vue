@@ -17,12 +17,12 @@ import android.widget.ImageView;
 
 public class DataEntryAilsePagerAdapter extends PagerAdapter {
 
-	private ArrayList<String> mImagePathsList = null;
+	private ArrayList<DataentryImage> mImagePathsList = null;
 	private Context mContext = null;
 	private DataEntryFragment mDataEntryFragment = null;
 
 	public DataEntryAilsePagerAdapter(Context mContext,
-			ArrayList<String> imagePathsList) {
+			ArrayList<DataentryImage> imagePathsList) {
 		this.mContext = mContext;
 		this.mImagePathsList = imagePathsList;
 	}
@@ -43,8 +43,9 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 		ImageView dataEntryRowAisleImage = (ImageView) view
 				.findViewById(R.id.dataentry_row_aisele_image);
 		try {
-			Log.e("Adapter", "file path :::: " + mImagePathsList.get(position));			
-			dataEntryRowAisleImage.setImageBitmap(BitmapFactory.decodeFile(mImagePathsList.get(position)));					
+			Log.e("Adapter", "file path :::: " + mImagePathsList.get(position));
+			dataEntryRowAisleImage.setImageBitmap(BitmapFactory
+					.decodeFile(mImagePathsList.get(position).getImagePath()));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

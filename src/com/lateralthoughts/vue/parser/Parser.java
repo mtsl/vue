@@ -285,7 +285,7 @@ public class Parser {
 			e.printStackTrace();
 		}
 		if (aisleIdList != null && aisleIdList.size() > 0) {
-			Log.i("bookmarked aisle", "bookmarked aisle: " + aisleIdList.size());
+			Log.i("bookmarked aisle", "bookmarked aisle aisleIdList.size(): " + aisleIdList.size());
 		} else {
 			Log.i("bookmarked aisle", "bookmarked aisle not found: ");
 

@@ -1,5 +1,6 @@
 package com.lateralthoughts.vue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.Editable;
@@ -63,6 +65,7 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
+import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -86,6 +89,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 	private LayoutInflater inflater;
 	private boolean isProfileEdited = false;
 	boolean isNewUser = false;
+
 	private String profilePicUrl = "";
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -171,6 +175,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		});
 
     expandListView.setOnGroupClickListener(new OnGroupClickListener() {
+
 
       @Override
       public boolean onGroupClick(ExpandableListView parent, View v,
@@ -270,6 +275,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
       }
     });
 
+
     expandListView.setOnChildClickListener(new OnChildClickListener() {
 
       @Override
@@ -300,12 +306,21 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
                   VueLandingPageActivity.class));
             }
           }
- 
+              return true;
         } else if (s.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
         	((VueLandingPageActivity) getActivity()).showCategory(s);
+        	  if (getActivity() instanceof SlidingFragmentActivity) {
+                  SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+                  activity.getSlidingMenu().toggle();
+        	  }
+        	return true;
         } else if (s.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
           Log.i("clicked on", "clicked on: "+s);
           ((VueLandingPageActivity) getActivity()).showCategory(s);
+          if (getActivity() instanceof SlidingFragmentActivity) {
+              SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+              activity.getSlidingMenu().toggle();
+    	  }
           return true;
         } else if(s.trim().equals(getString(R.string.sidemenu_sub_option_Interactions))) {
         	//TODO: need to implement interactions option
@@ -383,9 +398,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				getString(R.string.sidemenu_option_Trending_Aisles),
 				R.drawable.profile, null);
 		groups.add(item);
-		item = new ListOptionItem(
-            getString(R.string.sidemenu_option_Me),
-            R.drawable.profile, getMeChildren());
+		item = new ListOptionItem(getString(R.string.sidemenu_option_Me),
+				R.drawable.profile, getMeChildren());
 		groups.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Categories),
@@ -479,18 +493,26 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		settingsChildren.add(item);
 		return settingsChildren;
 	}
-	
+
 	private List<ListOptionItem> getMeChildren() {
-	  List<ListOptionItem> meChildren = new ArrayList<VueListFragment.ListOptionItem>();
-	  ListOptionItem item = new ListOptionItem(getString(R.string.sidemenu_sub_option_My_Aisles), R.drawable.profile, null);
-	  meChildren.add(item);
-	  item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Interactions), R.drawable.profile, null);
-	  meChildren.add(item);
-	  item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Bookmarks), R.drawable.profile, null);
-	  meChildren.add(item);
-	  item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles), R.drawable.profile, null);
-	  meChildren.add(item);
-	  return meChildren;
+		List<ListOptionItem> meChildren = new ArrayList<VueListFragment.ListOptionItem>();
+		ListOptionItem item = new ListOptionItem(
+				getString(R.string.sidemenu_sub_option_My_Aisles),
+				R.drawable.profile, null);
+		meChildren.add(item);
+		item = new ListOptionItem(
+				getString(R.string.sidemenu_sub_option_Interactions),
+				R.drawable.profile, null);
+		meChildren.add(item);
+		item = new ListOptionItem(
+				getString(R.string.sidemenu_sub_option_Bookmarks),
+				R.drawable.profile, null);
+		meChildren.add(item);
+		item = new ListOptionItem(
+				getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles),
+				R.drawable.profile, null);
+		meChildren.add(item);
+		return meChildren;
 	}
 
 	/***/
@@ -566,12 +588,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-      if (groups.get(groupPosition).tag.equals("Categories")
-          || (groups.get(groupPosition).tag
-              .equals(getString(R.string.sidemenu_option_Invite_Friends)))
-          || groups.get(groupPosition).tag.equals("Settings")
-          || groups.get(groupPosition).tag
-              .equals(getString(R.string.sidemenu_option_Me))) {
+			if (groups.get(groupPosition).tag.equals("Categories")
+					|| (groups.get(groupPosition).tag
+							.equals(getString(R.string.sidemenu_option_Invite_Friends)))
+					|| groups.get(groupPosition).tag.equals("Settings")
+					|| groups.get(groupPosition).tag
+							.equals(getString(R.string.sidemenu_option_Me))) {
 				return groups.get(groupPosition).children.size();
 			}
 			return 0;
@@ -837,21 +859,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		}
 
 		if (profilePicUrl != null) {
-			Response.Listener listener = new Response.Listener<Bitmap>() {
-				@Override
-				public void onResponse(Bitmap bmp) {
-					userProfilePic.setImageBitmap(bmp);
-				}
-			};
-			Response.ErrorListener errorListener = new Response.ErrorListener() {
-				@Override
-				public void onErrorResponse(VolleyError arg0) {
-					Log.e("VueListFragment", arg0.getMessage());
-				}
-			};
-			ImageRequest imagerequestObj = new ImageRequest(profilePicUrl,
-					listener, 0, 0, null, errorListener);
-			VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
+			File f = new FileCache(getActivity())
+					.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
+			if (f.exists()) {
+				userProfilePic.setImageURI(Uri.fromFile(f));
+			}
 		}
 	}
 

@@ -31,6 +31,16 @@ public class FileCache {
 
 	private File mVueAppResizedImagesDir;
 
+	private File mVueUserProfileImageDir;
+
+	public File getmVueUserProfileImageDir() {
+		return mVueUserProfileImageDir;
+	}
+
+	public void setmVueUserProfileImageDir(File mVueUserProfileImageDir) {
+		this.mVueUserProfileImageDir = mVueUserProfileImageDir;
+	}
+
 	public FileCache(Context context) {
 		// Find the dir to save cached images
 		if (android.os.Environment.getExternalStorageState().equals(
@@ -43,12 +53,17 @@ public class FileCache {
 			mVueAppResizedImagesDir = new File(
 					context.getExternalFilesDir(null),
 					VueConstants.VUE_APP_RESIZED_PICTURES_FOLDER);
+			mVueUserProfileImageDir = new File(
+					context.getExternalFilesDir(null),
+					VueConstants.VUE_APP_USER_PROFILE_PICTURES_FOLDER);
 		} else {
 			cacheDir = context.getCacheDir();
 			mVueAppCameraPicsDir = new File(context.getFilesDir(),
 					VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
 			mVueAppResizedImagesDir = new File(context.getFilesDir(),
 					VueConstants.VUE_APP_RESIZED_PICTURES_FOLDER);
+			mVueUserProfileImageDir = new File(context.getFilesDir(),
+					VueConstants.VUE_APP_USER_PROFILE_PICTURES_FOLDER);
 		}
 
 		if (!cacheDir.exists())
@@ -57,6 +72,8 @@ public class FileCache {
 			mVueAppCameraPicsDir.mkdirs();
 		if (!mVueAppResizedImagesDir.exists())
 			mVueAppResizedImagesDir.mkdirs();
+		if (!mVueUserProfileImageDir.exists())
+			mVueUserProfileImageDir.mkdirs();
 	}
 
 	public File getFile(String url) {
@@ -79,6 +96,11 @@ public class FileCache {
 
 	public File getVueAppResizedPictureFile(String resizedImageName) {
 		File f = new File(mVueAppResizedImagesDir, resizedImageName + ".jpg");
+		return f;
+	}
+
+	public File getVueAppUserProfilePictureFile(String imageName) {
+		File f = new File(mVueUserProfileImageDir, imageName + ".jpg");
 		return f;
 	}
 

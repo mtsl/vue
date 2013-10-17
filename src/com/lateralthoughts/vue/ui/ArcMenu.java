@@ -273,7 +273,8 @@ public class ArcMenu extends RelativeLayout {
 				createAisleSelectionActivity
 						.showAlertMessageForAppInstalation(VueConstants.FANCY_PACKAGE_NAME);
 			}
-			// Gallery
+			break;
+		// Gallery
 		case 4:
 			createAisleSelectionActivity.galleryFunctionality();
 			break;

@@ -23,6 +23,9 @@ public class VueConstants {
 	public static final int COMMENTS_LIMIT_FOR_LOGIN = 10;
 	public static final int SELECT_PICTURE = 1;
 	public static final int CAMERA_REQUEST = 2;
+	public static final int CREATE_AISLE_NOTIFICATION_ID = 1;
+	public static final int ADD_IMAGE_TO_AISLE_NOTIFICATION_ID = 2;
+	public static final int CHANGE_USER_NOTIFICATION_ID = 3;
 	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.sss";
 	public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
 	public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";
@@ -65,6 +68,7 @@ public class VueConstants {
 	public static final String ETSY_ACTIVITY_NAME = "com.etsy.android.ui.HomeActivity";
 	public static final String FANCY_ACTIVITY_NAME = "com.thefancy.app.common.Main";
 	public static final String DATAENTRY_SCREEN_AISLE_ID = "DataentryScreenAisleId";
+	public static final String USER_PROFILE_IMAGE_FILE_NAME = "VueUserProfileImage";
 	// Column names for aisles table.
 	public static final String ID = "_id";
 	public static final String CATEGORY = "category";
@@ -106,6 +110,8 @@ public class VueConstants {
 	public static final String FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG = "fromDetailsscreentoDataentryScreenflag";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT";
+	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL";
+	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE";
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
 	public static final int FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT = 64;
 	public static final int FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT = 65;
@@ -114,6 +120,7 @@ public class VueConstants {
 	public static final String USER_lOCATION = "name";
 	public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
 	public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
+	public static final String VUE_APP_USER_PROFILE_PICTURES_FOLDER = "VueAppProfilePicture";
 	public static final String VUE_APP_USEROBJECT__FILENAME = "vueuser.ser";
 	public static final String VUE_APP_USERPROFILEOBJECT__FILENAME = "vueuserprofile.ser";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
@@ -160,7 +167,7 @@ public class VueConstants {
 	public static final Uri RATED_IMAGES_URI = Uri.parse("content://"
 			+ AUTHORITY + "/" + RATED_IMAGES);
 	public static final Uri BOOKMARKER_AISLES_URI = Uri.parse("content://"
-	        + AUTHORITY + "/" + BOOKMARKER_AISLES);
+			+ AUTHORITY + "/" + BOOKMARKER_AISLES);
 
 	public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
 	public static final String INVITATION_MESG = "Invitation from Vue application.";
@@ -188,7 +195,7 @@ public class VueConstants {
 	public static final String AISLE_IMAGE_HEIGHT = "height";
 	public static final String AISLE_IMAGE_WIDTH = "width";
 	public static final String AISLE_IMAGE_IMAGE_URL = "imageUrl";
-	public static final String AISLE_IMAGE_RATING = "likeRatingCount"/*"rating"*/;
+	public static final String AISLE_IMAGE_RATING = "likeRatingCount"/* "rating" */;
 	public static final String AISLE_IMAGE_STORE = "store";
 	public static final String AISLE_IMAGE_TITLE = "title";
 	// User response Keys

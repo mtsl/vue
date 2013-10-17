@@ -51,7 +51,6 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 
 	protected AisleLoader mLoader;
 	private static final boolean DEBUG = false;
-	protected ImageLoader mImageLoader;
 	public int firstX;
 	public int lastX;
 	public boolean mAnimationInProgress;
@@ -77,8 +76,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 		 * if(mVueTrendingAislesDataModel.isDownloadFail) {
 		 * mVueTrendingAislesDataModel.loadData(true); }
 		 */
-		mImageLoader = new ImageLoader(VueApplication.getInstance()
-				.getRequestQueue(), BitmapLruCache.getInstance(mContext));
+
 		mLoader = AisleLoader.getInstance(mContext);
 		mIsScrolling = false;
 	}
@@ -96,8 +94,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 		 * if(mVueTrendingAislesDataModel.isDownloadFail) {
 		 * mVueTrendingAislesDataModel.loadData(true); }
 		 */
-		mImageLoader = new ImageLoader(VueApplication.getInstance()
-				.getRequestQueue(), BitmapLruCache.getInstance(mContext));
+
 		mLoader = AisleLoader.getInstance(mContext);
 		mIsScrolling = false;
 		mClickListener = listener;

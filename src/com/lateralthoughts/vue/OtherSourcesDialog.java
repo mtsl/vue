@@ -26,7 +26,7 @@ public class OtherSourcesDialog {
 	}
 
 	public void showImageDailog(ArrayList<OtherSourceImageDetails> imagesList,
-			final boolean fromLandingScreenFlag) {
+			final boolean fromLandingScreenFlag, final String sourceUrl) {
 		final Dialog dialog = new Dialog(mActivity,
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -54,6 +54,9 @@ public class OtherSourcesDialog {
 								.get(position).getOriginUrl();
 						fragment.mOtherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
 								.get(position).getHeight();
+						fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
+						fragment.mOtherSourceSelectedImageStore = Utils
+								.getStoreNameFromUrl(sourceUrl);
 						fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
 								.get(position).getWidth();
 						fragment.setGalleryORCameraImage(picturePath, false);
@@ -67,7 +70,9 @@ public class OtherSourcesDialog {
 										OtherSourcesDialog.this.imagesList.get(
 												position).getWidth(),
 										OtherSourcesDialog.this.imagesList.get(
-												position).getHeight());
+												position).getHeight(),
+										sourceUrl,
+										Utils.getStoreNameFromUrl(sourceUrl));
 					}
 				} else {
 					File f = mFileCache.getVueAppResizedPictureFile(String
@@ -86,19 +91,21 @@ public class OtherSourcesDialog {
 									.get(position).getHeight();
 							fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
 									.get(position).getWidth();
+							fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
+							fragment.mOtherSourceSelectedImageStore = Utils
+									.getStoreNameFromUrl(sourceUrl);
 							fragment.setGalleryORCameraImage(f.getPath(), true);
 						} else {
 							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
-							vueLandingPageActivity
-									.showScreenSelectionForOtherSource(f
-											.getPath(),
-											OtherSourcesDialog.this.imagesList
-													.get(position)
-													.getOriginUrl(),
-											OtherSourcesDialog.this.imagesList
-													.get(position).getWidth(),
-											OtherSourcesDialog.this.imagesList
-													.get(position).getHeight());
+							vueLandingPageActivity.showScreenSelectionForOtherSource(
+									f.getPath(),
+									OtherSourcesDialog.this.imagesList.get(
+											position).getOriginUrl(),
+									OtherSourcesDialog.this.imagesList.get(
+											position).getWidth(),
+									OtherSourcesDialog.this.imagesList.get(
+											position).getHeight(), sourceUrl,
+									Utils.getStoreNameFromUrl(sourceUrl));
 						}
 					} else {
 						Toast.makeText(mActivity,

@@ -25,6 +25,7 @@ import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
@@ -57,50 +58,58 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 		if (percent > mLastPercent) {
 			mNotification.contentView.setProgressBar(R.id.progressBar1, 100,
 					percent, false);
-			mNotificationManager.notify(1, mNotification);
+			mNotificationManager.notify(
+					VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
+					mNotification);
 			mLastPercent = percent;
 		}
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-  public void run() {
-    try {
-      Intent notificationIntent = new Intent();
-      PendingIntent contentIntent = PendingIntent.getActivity(
-          VueApplication.getInstance(), 0, notificationIntent, 0);
-      mNotification = new Notification(R.drawable.vue_notification_icon,
-          "Adding Image to Aisle to server", System.currentTimeMillis());
-      mNotification.flags = mNotification.flags
-          | Notification.FLAG_ONGOING_EVENT;
-      mNotification.contentView = new RemoteViews(VueApplication.getInstance()
-          .getPackageName(), R.layout.upload_progress_bar);
-      mNotification.contentIntent = contentIntent;
-      mNotification.contentView
-          .setProgressBar(R.id.progressBar1, 100, 0, false);
-      mNotificationManager.notify(1, mNotification);
-      ObjectMapper mapper = new ObjectMapper();
-      URL url = new URL(UrlConstants.CREATE_IMAGE_RESTURL);
-      HttpPut httpPut = new HttpPut(url.toString());
-      CountingStringEntity entity = new CountingStringEntity(
-          mapper.writeValueAsString(mVueImage));
-      entity.setUploadListener(this);
-      System.out.println("Aisle create request: "
-          + mapper.writeValueAsString(mVueImage));
-      entity.setContentType("application/json;charset=UTF-8");
-      entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
-          "application/json;charset=UTF-8"));
-      httpPut.setEntity(entity);
+	public void run() {
+		try {
+			Intent notificationIntent = new Intent();
+			PendingIntent contentIntent = PendingIntent.getActivity(
+					VueApplication.getInstance(), 0, notificationIntent, 0);
+			mNotification = new Notification(R.drawable.vue_notification_icon,
+					"Adding Image to Aisle to server",
+					System.currentTimeMillis());
+			mNotification.flags = mNotification.flags
+					| Notification.FLAG_ONGOING_EVENT;
+			mNotification.contentView = new RemoteViews(VueApplication
+					.getInstance().getPackageName(),
+					R.layout.upload_progress_bar);
+			mNotification.contentIntent = contentIntent;
+			mNotification.contentView.setProgressBar(R.id.progressBar1, 100, 0,
+					false);
+			mNotificationManager.notify(
+					VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
+					mNotification);
+			ObjectMapper mapper = new ObjectMapper();
+			URL url = new URL(UrlConstants.CREATE_IMAGE_RESTURL);
+			HttpPut httpPut = new HttpPut(url.toString());
+			CountingStringEntity entity = new CountingStringEntity(
+					mapper.writeValueAsString(mVueImage));
+			entity.setUploadListener(this);
+			System.out.println("Aisle create request: "
+					+ mapper.writeValueAsString(mVueImage));
+			entity.setContentType("application/json;charset=UTF-8");
+			entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+					"application/json;charset=UTF-8"));
+			httpPut.setEntity(entity);
 
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpResponse response = httpClient.execute(httpPut);
 			if (response.getEntity() != null
 					&& response.getStatusLine().getStatusCode() == 200) {
 				mNotification.setLatestEventInfo(VueApplication.getInstance(),
-						"Image is Added.",
-						"Image is Added to Aisle.", contentIntent);
+						"Image is Added.", "Image is Added to Aisle.",
+						contentIntent);
 				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-				mNotificationManager.notify(1, mNotification);
+				mNotificationManager.notify(
+						VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
+						mNotification);
 				mResponseMessage = EntityUtils.toString(response.getEntity());
 				System.out.println("AISLE CREATED Response: "
 						+ mResponseMessage);
@@ -109,10 +118,12 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 								+ mResponseMessage);
 			} else {
 				mNotification.setLatestEventInfo(VueApplication.getInstance(),
-						"Uploading Failed.",
-						"Image adding is failed.", contentIntent);
+						"Uploading Failed.", "Image adding is failed.",
+						contentIntent);
 				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-				mNotificationManager.notify(1, mNotification);
+				mNotificationManager.notify(
+						VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
+						mNotification);
 				Log.i("myailsedebug",
 						"myailsedebug: recieved response******* response code :  "
 								+ response.getStatusLine().getStatusCode());
