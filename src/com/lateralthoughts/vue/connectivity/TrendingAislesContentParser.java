@@ -57,9 +57,9 @@ public class TrendingAislesContentParser extends ResultReceiver {
 					boolean refreshListFlag = false;
 
             if (VueLandingPageActivity.landingPageActivity != null
-                && !(VueLandingPageActivity.mVueLandingActionbarScreenName
+                && (VueLandingPageActivity.mVueLandingActionbarScreenName
                     .getText().toString().equals(VueApplication.getInstance()
-                    .getString(R.string.sidemenu_sub_option_My_Aisles)))) {
+                    .getString(R.string.sidemenu_option_Trending_Aisles)))) {
               if (VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag) {
                 VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
                 if (resultData.getInt("offset") == 0) {

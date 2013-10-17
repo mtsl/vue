@@ -302,292 +302,248 @@ public class NetworkHandler {
 				StackViews.getInstance().pull();
 			}
 		} else {
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance())
-					.setNotificationProgress(progress, fromServer);
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).showProgress();
-			// TODO: CHANGE THIS REQUEST TO VOLLEY
-			if (VueConnectivityManager.isNetworkConnected(VueApplication
-					.getInstance())) {
-				VueTrendingAislesDataModel.getInstance(VueApplication
-						.getInstance()).loadOnRequest = false;
-				new Thread(new Runnable() {
+      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+          .setNotificationProgress(progress, fromServer);
+      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+          .showProgress();
+      // TODO: CHANGE THIS REQUEST TO VOLLEY
+      if (VueConnectivityManager.isNetworkConnected(VueApplication
+          .getInstance())) {
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
+        new Thread(new Runnable() {
 
-					@Override
-					public void run() {
-						try {
-							aislesList = null;
-							String userId = getUserId();
-							aislesList = getAislesByUser(userId);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						if (VueLandingPageActivity.landingPageActivity != null) {
-							VueLandingPageActivity.landingPageActivity
-									.runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											VueTrendingAislesDataModel
-													.getInstance(VueApplication
-															.getInstance()).loadOnRequest = false;
-											Log.i("myailsedebug",
-													"myailsedebug: recieved my runonuithread:  ");
-											if (aislesList != null
-													&& aislesList.size() > 0) {
-												clearList();
-												Log.i("myailsedebug",
-														"myailsedebug: recieved my runonuithread: if ");
-												for (int i = 0; i < aislesList
-														.size(); i++) {
-													VueTrendingAislesDataModel
-															.getInstance(
-																	VueApplication
-																			.getInstance())
-															.addItemToList(
-																	aislesList
-																			.get(i)
-																			.getAisleContext().mAisleId,
-																	aislesList
-																			.get(i));
-												}
-												VueTrendingAislesDataModel
-														.getInstance(
-																VueApplication
-																		.getInstance())
-														.dataObserver();
-												// adding my aisle to db.
-												DataBaseManager
-														.getInstance(
-																VueApplication
-																		.getInstance())
-														.addTrentingAislesFromServerToDB(
-																VueApplication
-																		.getInstance(),
-																aislesList);
+          @Override
+          public void run() {
+            try {
+              aislesList = null;
+              String userId = getUserId();
+              aislesList = getAislesByUser(userId);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+            if (VueLandingPageActivity.landingPageActivity != null) {
+              VueLandingPageActivity.landingPageActivity
+                  .runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                      VueTrendingAislesDataModel.getInstance(VueApplication
+                          .getInstance()).loadOnRequest = false;
+                      Log.i("myailsedebug",
+                          "myailsedebug: recieved my runonuithread:  ");
+                      if (aislesList != null && aislesList.size() > 0) {
+                    	  clearList();
+                        Log.i("myailsedebug",
+                            "myailsedebug: recieved my runonuithread: if ");
+                        for (int i = 0; i < aislesList.size(); i++) {
+                          VueTrendingAislesDataModel.getInstance(
+                              VueApplication.getInstance()).addItemToList(
+                              aislesList.get(i).getAisleContext().mAisleId,
+                              aislesList.get(i));
+                        }
+                        VueTrendingAislesDataModel.getInstance(
+                                VueApplication.getInstance()).dataObserver();
+                        // adding my aisle to db.
+                        DataBaseManager.getInstance(
+                            VueApplication.getInstance())
+                            .addTrentingAislesFromServerToDB(
+                                VueApplication.getInstance(), aislesList);
+                    
+                        // if this is the first set of data
+                        // we
+                        // are receiving
+                        // go
+                        // ahead
+                        // notify the data set changed
+                        VueLandingPageActivity.changeScreenName(screenName);
+                        Log.i("myaisledbcheck",
+                            "myaisledbcheck aisle are fetching from server inserting to db success: ");
+                      } else {
+                        // if this is the first set of data
+                        // we
+                        // are receiving
+                        // go
+                        // ahead
+                        // notify the data set changed
+                    	  StackViews.getInstance().pull();
+                        Toast.makeText(
+                            VueLandingPageActivity.landingPageActivity,
+                            "There are no Aisles for this User.",
+                            Toast.LENGTH_LONG).show();
+                      }
+                      VueTrendingAislesDataModel.getInstance(
+                          VueApplication.getInstance()).dismissProgress();
+                    }
 
-												// if this is the first set of
-												// data
-												// we
-												// are receiving
-												// go
-												// ahead
-												// notify the data set changed
-												VueLandingPageActivity
-														.changeScreenName(screenName);
-												Log.i("myaisledbcheck",
-														"myaisledbcheck aisle are fetching from server inserting to db success: ");
-											} else {
-												// if this is the first set of
-												// data
-												// we
-												// are receiving
-												// go
-												// ahead
-												// notify the data set changed
-												StackViews.getInstance().pull();
-												Toast.makeText(
-														VueLandingPageActivity.landingPageActivity,
-														"There are no Aisles for this User.",
-														Toast.LENGTH_LONG)
-														.show();
-											}
-											VueTrendingAislesDataModel
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.dismissProgress();
-										}
+                  });
+            }
+          }
+        }).start();
+      } else {
+        Toast.makeText(
+            VueApplication.getInstance(),
+            VueApplication.getInstance().getResources()
+                .getString(R.string.no_network), Toast.LENGTH_LONG).show();
+      }
+    }
+  }
 
-									});
-						}
-					}
-				}).start();
-			} else {
-				Toast.makeText(
-						VueApplication.getInstance(),
-						VueApplication.getInstance().getResources()
-								.getString(R.string.no_network),
-						Toast.LENGTH_LONG).show();
-			}
-		}
-	}
+  public int getmOffset() {
+    return mOffset;
+  }
 
-	public int getmOffset() {
-		return mOffset;
-	}
+  public void setmOffset(int mOffset) {
+    this.mOffset = mOffset;
+  }
 
-	public void setmOffset(int mOffset) {
-		this.mOffset = mOffset;
-	}
+  public ArrayList<AisleWindowContent> getAislesByUser(String userId) throws Exception {
+    // TODO: change to volley
 
-	public ArrayList<AisleWindowContent> getAislesByUser(String userId)
-			throws Exception {
-		// TODO: change to volley
+    if(userId == null) {
+      return null;
+    }
+    String requestUrl = UrlConstants.GET_AISLELIST_BYUSER_RESTURL + "/"
+        + userId;
+    URL url = new URL(requestUrl);
+    HttpGet httpGet = new HttpGet(url.toString());
+    DefaultHttpClient httpClient = new DefaultHttpClient();
+    HttpResponse response = httpClient.execute(httpGet);
+    if (response.getEntity() != null
+        && response.getStatusLine().getStatusCode() == 200) {
+      String responseMessage = EntityUtils.toString(response.getEntity());
+      Log.i("aisleWindowImageUrl", "aisleWindowImageUrl response Message: "
+          + responseMessage);
+      return new Parser().getUserAilseLIst(responseMessage);
+    }
+    return null;
 
-		if (userId == null) {
-			return null;
-		}
-		String requestUrl = UrlConstants.GET_AISLELIST_BYUSER_RESTURL + "/"
-				+ userId;
-		URL url = new URL(requestUrl);
-		HttpGet httpGet = new HttpGet(url.toString());
-		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpResponse response = httpClient.execute(httpGet);
-		if (response.getEntity() != null
-				&& response.getStatusLine().getStatusCode() == 200) {
-			String responseMessage = EntityUtils.toString(response.getEntity());
-			Log.i("aisleWindowImageUrl",
-					"aisleWindowImageUrl response Message: " + responseMessage);
-			return new Parser().getUserAilseLIst(responseMessage);
-		}
-		return null;
+  }
 
-	}
+  public void getBookmarkAisleByUser() {
+    new Thread(new Runnable() {
 
-	public void getBookmarkAisleByUser() {
-		new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          String userId = getUserId();
+          if (userId == null) {
+            Log.i("bookmarked aisle", "bookmarked aisle ID IS NULL RETURNING");
+            return;
+          }
+          Log.i("bookmarked aisle", "bookmarked aisle 2 User Id; " + userId);
+          URL url = new URL(UrlConstants.GET_BOOKMARK_Aisles + "/" + userId
+              + "/" + "0");
+          HttpGet httpGet = new HttpGet(url.toString());
+          DefaultHttpClient httpClient = new DefaultHttpClient();
+          HttpResponse response = httpClient.execute(httpGet);
+          Log.e("bookmarked aisle", "bookmarked aisle response.getStatusLine().getStatusCode(); " + response.getStatusLine().getStatusCode());
+          if (response.getEntity() != null
+              && response.getStatusLine().getStatusCode() == 200) {
+            String responseMessage = EntityUtils.toString(response.getEntity());
+            if (responseMessage != null) {
+              ArrayList<String> bookmarkedAisles = new Parser()
+                  .parseBookmarkedAisles(responseMessage);
+              for (String s : bookmarkedAisles) {
+                DataBaseManager.getInstance(mContext).updateBookmarkAisles(s,
+                    true);
+              }
+            }
+            // Log.e("bookmarked aisle", "bookmarked aisle bookmarkedAisles size(); " + bookmarkedAisles.size());
+          }
+        } catch (Exception e) {
+          Log.i("bookmarked aisle", "bookmarked aisle 3 error: ");
+          e.printStackTrace();
+        }
 
-			@Override
-			public void run() {
-				try {
-					String userId = getUserId();
-					if (userId == null) {
-						Log.i("bookmarked aisle",
-								"bookmarked aisle ID IS NULL RETURNING");
-						return;
-					}
-					Log.i("bookmarked aisle", "bookmarked aisle 2 User Id; "
-							+ userId);
-					URL url = new URL(UrlConstants.GET_BOOKMARK_Aisles + "/"
-							+ userId + "/" + "0");
-					HttpGet httpGet = new HttpGet(url.toString());
-					DefaultHttpClient httpClient = new DefaultHttpClient();
-					HttpResponse response = httpClient.execute(httpGet);
-					Log.e("bookmarked aisle",
-							"bookmarked aisle response.getStatusLine().getStatusCode(); "
-									+ response.getStatusLine().getStatusCode());
-					if (response.getEntity() != null
-							&& response.getStatusLine().getStatusCode() == 200) {
-						String responseMessage = EntityUtils.toString(response
-								.getEntity());
-						Log.i("bookmarked aisle",
-								"bookmarked aisle 3 response: "
-										+ responseMessage);
-						if (responseMessage != null) {
-							ArrayList<String> bookmarkedAisles = new Parser()
-									.parseBookmarkedAisles(responseMessage);
-							for (String s : bookmarkedAisles) {
-								DataBaseManager.getInstance(mContext)
-										.updateBookmarkAisles(s, true);
-							}
-						}
-						// Log.e("bookmarked aisle",
-						// "bookmarked aisle bookmarkedAisles size(); " +
-						// bookmarkedAisles.size());
-					}
-				} catch (Exception e) {
-					Log.i("bookmarked aisle", "bookmarked aisle 3 error: ");
-					e.printStackTrace();
-				}
+      }
+    }).start();
 
-			}
-		}).start();
+  }
+ /* public void addBookmarked(String aisleId){
+    if(aisleId != null)
+    bookmarkedAisles.add(aisleId);
+  }*/
+  public boolean isAisleBookmarked(String aisleId) {
+    Log.i("bookmarked aisle", "bookmarked my bookmarks id enter in method: "
+        + aisleId);
+    Cursor cursor = mContext.getContentResolver().query(
+        VueConstants.BOOKMARKER_AISLES_URI, null, VueConstants.AISLE_ID + "=?",
+        new String[] {aisleId}, null);
+    if (cursor.moveToFirst()) {
+      do {
+        if (aisleId.equals(cursor.getString(cursor
+            .getColumnIndex(VueConstants.AISLE_ID)))) {
+          cursor.close();
+          return true;
+        }
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    return false;
+  }
+  
+  private String getUserId() {
+    VueUser storedVueUser = null;
+    try {
+      storedVueUser = Utils.readUserObjectFromFile(
+          VueApplication.getInstance(),
+          VueConstants.VUE_APP_USEROBJECT__FILENAME);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    String userId = null;
+    if (storedVueUser != null) {
+      userId = Long.valueOf(storedVueUser.getId()).toString();
+    }
+    return userId;
 
-	}
+  }
 
-	/*
-	 * public void addBookmarked(String aisleId){ if(aisleId != null)
-	 * bookmarkedAisles.add(aisleId); }
-	 */
-	public boolean isAisleBookmarked(String aisleId) {
-		Log.i("bookmarked aisle",
-				"bookmarked my bookmarks id enter in method: " + aisleId);
-		Cursor cursor = mContext.getContentResolver().query(
-				VueConstants.BOOKMARKER_AISLES_URI, null,
-				VueConstants.AISLE_ID + "=?", new String[] { aisleId }, null);
-		if (cursor.moveToFirst()) {
-			do {
-				if (aisleId.equals(cursor.getString(cursor
-						.getColumnIndex(VueConstants.AISLE_ID)))) {
-					cursor.close();
-					return true;
-				}
-			} while (cursor.moveToNext());
-		}
-		cursor.close();
-		return false;
-	}
+  public void getRatedImageList() {
+    String userId = getUserId();
+    if(userId == null) {
+      return;
+    }
+    JsonArrayRequest vueRequest = new JsonArrayRequest(UrlConstants.GET_RATINGS_RESTURL
+        + "/" + userId + "/" + 0L, new Response.Listener<JSONArray>() {
 
-	private String getUserId() {
-		VueUser storedVueUser = null;
-		try {
-			storedVueUser = Utils.readUserObjectFromFile(
-					VueApplication.getInstance(),
-					VueConstants.VUE_APP_USEROBJECT__FILENAME);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		String userId = null;
-		if (storedVueUser != null) {
-			userId = Long.valueOf(storedVueUser.getId()).toString();
-		}
-		return userId;
+      @Override
+      public void onResponse(JSONArray response) {
+        if (null != response) {
+          ArrayList<ImageRating> retrievedImageRating = null;
+          if (response.length() > 0){
+                try {
+                  retrievedImageRating = (new ObjectMapper()).readValue(
+                      response.toString(),
+                      new TypeReference<List<ImageRating>>() {});
+                  DataBaseManager.getInstance(mContext).insertRatedImages(retrievedImageRating);
+                } catch (Exception e) {
+                e.printStackTrace();
+              }
+          }
+        }
+        Log.e("get reating image Resopnse", "SURU get reating image Resopnse : " + response);
+      }
+    }, new Response.ErrorListener() {
 
-	}
-
-	public void getRatedImageList() {
-		String userId = getUserId();
-		if (userId == null) {
-			return;
-		}
-		JsonArrayRequest vueRequest = new JsonArrayRequest(
-				UrlConstants.GET_RATINGS_RESTURL + "/" + userId + "/" + 0L,
-				new Response.Listener<JSONArray>() {
-
-					@Override
-					public void onResponse(JSONArray response) {
-						if (null != response) {
-							ArrayList<ImageRating> retrievedImageRating = null;
-							if (response.length() > 0) {
-								try {
-									retrievedImageRating = (new ObjectMapper()).readValue(
-											response.toString(),
-											new TypeReference<List<ImageRating>>() {
-											});
-									DataBaseManager.getInstance(mContext)
-											.insertRatedImages(
-													retrievedImageRating);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-						}
-						Log.e("get reating image Resopnse",
-								"SURU get reating image Resopnse : " + response);
-					}
-				}, new Response.ErrorListener() {
-
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						Log.e("get reating image",
-								"SURU get reating image Error Resopnse : "
-										+ error.getMessage());
-					}
-				});
-		VueApplication.getInstance().getRequestQueue().add(vueRequest);
-	}
-
-	private void clearList() {
-		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-				.clearAisles();
-		AisleWindowContentFactory.getInstance(VueApplication.getInstance())
-				.clearObjectsInUse();
-		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-				.dataObserver();
-	}
-
-	public void makeOffseZero() {
-		mOffset = 0;
-	}
+      @Override
+      public void onErrorResponse(VolleyError error) {
+        Log.e("get reating image",
+            "SURU get reating image Error Resopnse : " + error.getMessage());
+      }
+    });
+    VueApplication.getInstance().getRequestQueue().add(vueRequest);
+  }
+  
+  private void clearList() {
+    VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+        .clearAisles();
+    AisleWindowContentFactory.getInstance(VueApplication.getInstance())
+        .clearObjectsInUse();
+    VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+        .dataObserver();
+  }
+ public void makeOffseZero(){
+	 mOffset = 0;
+ }
+ 
 }

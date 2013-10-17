@@ -132,11 +132,11 @@ public class DataBaseManager {
       values.put(VueConstants.AISLE_Id, info.mAisleId);
       values.put(VueConstants.BOOKMARK_COUNT, info.mBookmarkCount);
       values.put(VueConstants.DELETE_FLAG, 0);
+      values.put(VueConstants.ID, String.format(FORMATE, maxId + 1));
       if (aisleIds.contains(info.mAisleId)) {
         context.getContentResolver().update(VueConstants.CONTENT_URI, values,
             VueConstants.AISLE_Id + "=?", new String[] {info.mAisleId});
       } else {
-        values.put(VueConstants.ID, String.format(FORMATE, maxId + 1));
         context.getContentResolver().insert(VueConstants.CONTENT_URI, values);
       }
       for (AisleImageDetails imageDetails : imageItemsArray) {
@@ -330,7 +330,7 @@ public class DataBaseManager {
 
       @Override
       public void run() {
-        Log.i("bookmarkissue", "bookmarkissue Runnable");
+    	  Log.i("bookmark response", "bookmark  bookMarkOrUnBookmarkAisle isBookmarked: "+isBookmarked+"  bookmarkCount: "+bookmarkCount);
         bookMarkOrUnBookmarkAisleToDb(isBookmarked, bookmarkCount, aisleID, isDirty);
       }
     });
@@ -435,7 +435,9 @@ public class DataBaseManager {
             String id = cursor
                 .getString(cursor.getColumnIndex(VueConstants.ID));
             Uri uri = Uri.parse(VueConstants.BOOKMARKER_AISLES_URI + "/" + id);
-            mContext.getContentResolver().delete(uri, null, null);
+            int x = mContext.getContentResolver().delete(uri, null, null);
+            Log.i("bookmark response", "bookmark  bookMarkOrUnBookmarkAisle deleted rows: "+x+" AisleId: "+aisleId);
+            Log.i("bookmark response", "bookmark  bookMarkOrUnBookmarkAisle Uri: "+uri);
           }
           isMatched = true;
           break;
@@ -448,7 +450,8 @@ public class DataBaseManager {
         values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
         Uri uri = mContext.getContentResolver().insert(
             VueConstants.BOOKMARKER_AISLES_URI, values);
-        Log.e("bookmarkissue", "bookmarkissue new aisle inserted Uri: " + uri);
+        Log.i("bookmark response", "bookmark  bookMarkOrUnBookmarkAisle inserted Uri: "+uri);
+         
       }
   
   }

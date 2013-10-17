@@ -355,10 +355,12 @@ public class AisleManager {
 
         @Override
         public void onResponse(String jsonArray) {
+        	Log.i("bookmark response", "bookmark response: "+jsonArray);
           if (jsonArray != null) {
             try {
               AisleBookmark createdAisleBookmark = (new ObjectMapper())
                   .readValue(jsonArray, AisleBookmark.class);
+              Log.i("bookmark response", "bookmark  value: "+createdAisleBookmark.getBookmarked());
               isDirty = false;
               Editor editor = mSharedPreferencesObj.edit();
               editor.putBoolean(VueConstants.IS_AISLE_DIRTY, false);
@@ -412,7 +414,7 @@ public class AisleManager {
 	 * */
 	public void updateBookmartToDb(ArrayList<AisleWindowContent> windowList,
 			AisleBookmark aisleBookmark, boolean isDirty) {
-	  
+		 Log.i("bookmark response", "bookmark  updateBookmartToDb value: "+aisleBookmark.getBookmarked());
 		for (AisleWindowContent aisleWindow : windowList) {
 			AisleContext context = aisleWindow.getAisleContext();
 			DataBaseManager
