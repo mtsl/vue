@@ -143,16 +143,17 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                 aisleWindowContent.getImageList().add(aisleImageDetails);
                 VueTrendingAislesDataModel.getInstance(
                     VueApplication.getInstance()).dataObserver();
-              /*  String s[] = {aisleImageDetails.mOwnerAisleId};
+                String s[] = {aisleImageDetails.mOwnerAisleId};
                 ArrayList<AisleWindowContent> list = DataBaseManager
                     .getInstance(VueApplication.getInstance()).getAislesFromDB(
                         s);
+                Log.i("Ailse Manager", "add Image to Aisle: ");
                 if (list != null) {
                   list.get(0).getImageList().add(aisleImageDetails);
                   DataBaseManager.getInstance(VueApplication.getInstance())
                       .addTrentingAislesFromServerToDB(
                           VueApplication.getInstance(), list);
-                }*/
+                }
               }
             } catch (JSONException e) {
               e.printStackTrace();
