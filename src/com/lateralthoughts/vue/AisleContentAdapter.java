@@ -11,6 +11,8 @@ import android.util.Log;
 import android.widget.*;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import com.android.volley.toolbox.ImageLoader;
@@ -65,6 +67,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private BitmapLoaderUtils mBitmapLoaderUtils;
    // public String mSourceName;
     private ImageDimension mImageDimension;
+    Animation myFadeInAnimation;
     
     public AisleContentAdapter(Context context){
         mContext = context;
@@ -76,6 +79,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         mExecutorService = Executors.newFixedThreadPool(5);
         mColorDrawable = new ColorDrawable(Color.WHITE);
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
+        myFadeInAnimation = AnimationUtils.loadAnimation(VueApplication.getInstance(), R.anim.fadein);
     }
     
     //========================= Methods from the inherited IAisleContentAdapter ========================//
@@ -415,6 +419,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 				if (this == bitmapWorkerTask) {
 					vFlipper.invalidate();
 					imageView.setImageBitmap(bitmap);
+					imageView.startAnimation(myFadeInAnimation);
 					VueTrendingAislesDataModel.getInstance(
 							VueApplication.getInstance()).dataObserver();
 				}
