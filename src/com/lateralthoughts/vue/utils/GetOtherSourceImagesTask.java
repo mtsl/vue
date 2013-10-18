@@ -163,26 +163,28 @@ public class GetOtherSourceImagesTask extends
 
 	private OtherSourceImageDetails getHeightWidth(String absUrl, int reqWidth,
 			int reqHeight) {
-		OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails();
-		Bitmap bmp = getImage(absUrl);
-		if (bmp == null) {
-			return null;
-		} else if (bmp.getWidth() >= reqWidth && bmp.getHeight() >= reqHeight) {
-			otherSourceImageDetails.setHeight(bmp.getHeight());
-			otherSourceImageDetails.setWidth(bmp.getWidth());
-			otherSourceImageDetails.setOriginUrl(absUrl);
-			otherSourceImageDetails.setWidthHeightMultipliedValue(bmp
-					.getHeight() * bmp.getWidth());
-			return otherSourceImageDetails;
-		} else {
-			return null;
+		try {
+			OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails();
+			InputStream is = getInputScream(absUrl);
+			BitmapFactory.Options o = new BitmapFactory.Options();
+			o.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(is, null, o);
+			is.close();
+			if (o.outWidth != 0) {
+				return null;
+			} else if (o.outWidth >= reqWidth && o.outHeight >= reqHeight) {
+				otherSourceImageDetails.setHeight(o.outHeight);
+				otherSourceImageDetails.setWidth(o.outWidth);
+				otherSourceImageDetails.setOriginUrl(absUrl);
+				otherSourceImageDetails
+						.setWidthHeightMultipliedValue(o.outHeight * o.outWidth);
+				return otherSourceImageDetails;
+			} else {
+				return null;
+			}
+		} catch (IOException e) {
 		}
-	}
-
-	private Bitmap getImage(String url) {
-		InputStream is = getInputScream(url);
-		Bitmap bmp = BitmapFactory.decodeStream(is);
-		return bmp;
+		return null;
 	}
 
 	private InputStream getInputScream(String imgUrl) {

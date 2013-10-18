@@ -20,29 +20,39 @@ import android.widget.ImageView;
 
 public class OtherSourceImageLoader {
 
-	Context mContext;
 	FileCache mFileCache;
+	PhotosQueue photosQueue;
+	PhotosLoader photoLoaderThread;
+	public static OtherSourceImageLoader mOtherSourceImageLoader;
 
-	public OtherSourceImageLoader(Context context) {
-		this.mContext = context;
-		mFileCache = new FileCache(mContext);
+	public OtherSourceImageLoader() {
+		mFileCache = new FileCache(VueApplication.getInstance());
+		photosQueue = new PhotosQueue();
+		photoLoaderThread = new PhotosLoader();
 		photoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
+	}
+
+	public static OtherSourceImageLoader getInstatnce() {
+		if (mOtherSourceImageLoader == null) {
+			mOtherSourceImageLoader = new OtherSourceImageLoader();
+		}
+		return mOtherSourceImageLoader;
 	}
 
 	final int stub_id = R.drawable.aisle_bg_progressbar_drawable;
 
-	public void DisplayImage(String url, Activity activity, ImageView imageView) {
+	public void DisplayImage(String url, ImageView imageView) {
 		String filename = String.valueOf(url.hashCode());
 		File f = mFileCache.getVueAppResizedPictureFile(filename);
 		if (f.exists())
 			imageView.setImageURI(Uri.fromFile(f));
 		else {
-			queuePhoto(url, activity, imageView);
+			queuePhoto(url, imageView);
 			imageView.setImageResource(stub_id);
 		}
 	}
 
-	private void queuePhoto(String url, Activity activity, ImageView imageView) {
+	private void queuePhoto(String url, ImageView imageView) {
 		photosQueue.Clean(imageView);
 		PhotoToLoad p = new PhotoToLoad(url, imageView);
 		synchronized (photosQueue.photosToLoad) {
@@ -134,8 +144,6 @@ public class OtherSourceImageLoader {
 		}
 	}
 
-	PhotosQueue photosQueue = new PhotosQueue();
-
 	public void stopThread() {
 		photoLoaderThread.interrupt();
 	}
@@ -185,8 +193,6 @@ public class OtherSourceImageLoader {
 			}
 		}
 	}
-
-	PhotosLoader photoLoaderThread = new PhotosLoader();
 
 	class BitmapDisplayer implements Runnable {
 		File f;

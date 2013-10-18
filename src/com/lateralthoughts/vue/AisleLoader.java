@@ -146,8 +146,9 @@ public class AisleLoader {
 		String desiredContentId = windowContent.getAisleId();
 		contentBrowser = holder.aisleContentBrowser;
 		if(Utils.isAisleChanged) {
-			if(desiredContentId.equalsIgnoreCase(Utils.mChangeAilseId)) {
-			Utils.isAisleChanged = false;
+			if(Utils.mChangeAilseId != null && desiredContentId.equalsIgnoreCase(Utils.mChangeAilseId)) {
+			//Utils.isAisleChanged = false;
+			Utils.mChangeAilseId = null;
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			
 			}
@@ -251,12 +252,21 @@ public class AisleLoader {
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
 			String asileId, AisleImageDetails itemDetails) {
+		if(Utils.isAisleChanged){
+			Utils.isAisleChanged = false;
+			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
+					bestHeight, asileId, itemDetails);
+			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
+			String[] urlsArray = { loc, serverImageUrl };
+			task.execute(urlsArray);
+		} else {
 		if (cancelPotentialDownload(loc, imageView)) {
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
 					bestHeight, asileId, itemDetails);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
 			String[] urlsArray = { loc, serverImageUrl };
 			task.execute(urlsArray);
+		}
 		}
 		/*
 		 * ((ScaleImageView) imageView).setImageUrl(serverImageUrl, new

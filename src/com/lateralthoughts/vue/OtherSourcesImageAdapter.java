@@ -24,8 +24,7 @@ public class OtherSourcesImageAdapter extends BaseAdapter {
 		this.mListImages = listImages;
 		mInflater = (LayoutInflater) mActivity
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mImageLoader = new OtherSourceImageLoader(
-				mActivity.getApplicationContext());
+		mImageLoader = OtherSourceImageLoader.getInstatnce();
 	}
 
 	public int getCount() {
@@ -63,7 +62,7 @@ public class OtherSourcesImageAdapter extends BaseAdapter {
 			holder.imgViewImage
 					.setTag(mListImages.get(position).getOriginUrl());
 			mImageLoader.DisplayImage(mListImages.get(position).getOriginUrl(),
-					mActivity, holder.imgViewImage);
+					holder.imgViewImage);
 		}
 		return vi;
 	}
