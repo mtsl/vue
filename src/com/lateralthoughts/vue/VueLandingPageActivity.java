@@ -286,8 +286,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
-			if (!fromOnCreateMethodFlag
-					&& VueApplication.getInstance()
+			if (VueApplication.getInstance()
 							.ismLoadDataentryScreenFlag()) {
 				VueApplication.getInstance().setmLoadDataentryScreenFlag(false);
 				if (Utils
