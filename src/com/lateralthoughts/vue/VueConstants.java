@@ -63,6 +63,7 @@ public class VueConstants {
 	public static final String FROM_DETAILS_SCREEN_TO_DATAENTRY_CREATE_AISLESCREEN_FLAG = "FromDetailsScreenToDataentryCreateAisleScreenFlag";
 	public static final String DATAENTRY_ADDIMAGE_AISLE_FLAG = "DataentryAddImageAisleFlag";
 	public static final String DATAENTRY_EDIT_AISLE_FLAG = "DataentryEditAisleFlag";
+	public static final String LOAD_DATAENTRY_SCREEN_FLAG = "LoadDataentryScreenFlag";
 	public static final String ETSY_PACKAGE_NAME = "com.etsy.android";
 	public static final String FANCY_PACKAGE_NAME = "com.thefancy.app";
 	public static final String ETSY_ACTIVITY_NAME = "com.etsy.android.ui.HomeActivity";

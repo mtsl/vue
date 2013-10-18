@@ -503,6 +503,23 @@ public class Utils {
 		editor.commit();
 	}
 
+	public static boolean isLoadDataentryScreenFlag(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getBoolean(
+				VueConstants.LOAD_DATAENTRY_SCREEN_FLAG, false);
+	}
+
+	public static void setLoadDataentryScreenFlag(Context context,
+			boolean loadDataentryScreenFlag) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean(VueConstants.LOAD_DATAENTRY_SCREEN_FLAG,
+				loadDataentryScreenFlag);
+		editor.commit();
+	}
+
 	public static int modifyHeightForDetailsView(
 			ArrayList<AisleImageDetails> imageList) {
 		int mWindowLargestHeight = 0;
