@@ -2,28 +2,24 @@ package com.lateralthoughts.vue.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Stack;
-
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 
 public class OtherSourceImageLoader {
 
-	BitmapLruCache mAisleImagesCache;
 	Context mContext;
 	FileCache mFileCache;
 
@@ -31,16 +27,15 @@ public class OtherSourceImageLoader {
 		this.mContext = context;
 		mFileCache = new FileCache(mContext);
 		photoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
-		mAisleImagesCache = BitmapLruCache.getInstance(VueApplication
-				.getInstance());
 	}
 
 	final int stub_id = R.drawable.aisle_bg_progressbar_drawable;
 
 	public void DisplayImage(String url, Activity activity, ImageView imageView) {
-		Bitmap bitmap = mAisleImagesCache.get(url);
-		if (bitmap != null)
-			imageView.setImageBitmap(bitmap);
+		String filename = String.valueOf(url.hashCode());
+		File f = mFileCache.getVueAppResizedPictureFile(filename);
+		if (f.exists())
+			imageView.setImageURI(Uri.fromFile(f));
 		else {
 			queuePhoto(url, activity, imageView);
 			imageView.setImageResource(stub_id);
@@ -59,32 +54,27 @@ public class OtherSourceImageLoader {
 			photoLoaderThread.start();
 	}
 
-	private Bitmap getBitmap(String url) {
+	private File getBitmap(String url) {
 		String filename = String.valueOf(url.hashCode());
 		File f = mFileCache.getVueAppResizedPictureFile(filename);
-		Bitmap b = decodeFile(f);
-		if (b != null)
-			return b;
-
+		if (f.exists())
+			return f;
 		try {
-			Bitmap bitmap = null;
 			InputStream is = new URL(url).openStream();
 			OutputStream os = new FileOutputStream(f);
 			Utils.CopyStream(is, os);
 			os.close();
-			bitmap = decodeFile(f);
-			return bitmap;
+			f = decodeFile(f);
+			return f;
 		} catch (MalformedURLException e) {
-			Bitmap bookDefaultIcon = BitmapFactory.decodeResource(
-					mContext.getResources(), R.drawable.no_image);
-			return bookDefaultIcon;
+			return null;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
 	}
 
-	private Bitmap decodeFile(File f) {
+	private File decodeFile(File f) {
 		try {
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
@@ -122,18 +112,16 @@ public class OtherSourceImageLoader {
 
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
-
-			Bitmap resizedBitmap = BitmapFactory.decodeStream(
-					new FileInputStream(f), null, o2);
-
-			return resizedBitmap;
+			FileInputStream stream2 = new FileInputStream(f);
+			Bitmap resizedBitmap = BitmapFactory
+					.decodeStream(stream2, null, o2);
+			stream2.close();
+			Utils.saveBitmap(resizedBitmap, f);
+			return f;
 		} catch (Throwable ex) {
 			ex.printStackTrace();
-			if (ex instanceof OutOfMemoryError) {
-				mAisleImagesCache.evictAll();
-			}
-			return null;
 		}
+		return null;
 	}
 
 	private class PhotoToLoad {
@@ -178,15 +166,16 @@ public class OtherSourceImageLoader {
 						synchronized (photosQueue.photosToLoad) {
 							photoToLoad = photosQueue.photosToLoad.pop();
 						}
-						Bitmap bmp = getBitmap(photoToLoad.url);
-						mAisleImagesCache.put(photoToLoad.url, bmp);
-						if (((String) photoToLoad.imageView.getTag())
-								.equals(photoToLoad.url)) {
-							BitmapDisplayer bd = new BitmapDisplayer(bmp,
-									photoToLoad.imageView);
-							Activity a = (Activity) photoToLoad.imageView
-									.getContext();
-							a.runOnUiThread(bd);
+						File f = getBitmap(photoToLoad.url);
+						if (f != null && f.exists()) {
+							if (((String) photoToLoad.imageView.getTag())
+									.equals(photoToLoad.url)) {
+								BitmapDisplayer bd = new BitmapDisplayer(f,
+										photoToLoad.imageView);
+								Activity a = (Activity) photoToLoad.imageView
+										.getContext();
+								a.runOnUiThread(bd);
+							}
 						}
 					}
 					if (Thread.interrupted())
@@ -200,17 +189,17 @@ public class OtherSourceImageLoader {
 	PhotosLoader photoLoaderThread = new PhotosLoader();
 
 	class BitmapDisplayer implements Runnable {
-		Bitmap bitmap;
+		File f;
 		ImageView imageView;
 
-		public BitmapDisplayer(Bitmap b, ImageView i) {
-			bitmap = b;
+		public BitmapDisplayer(File f, ImageView i) {
+			this.f = f;
 			imageView = i;
 		}
 
 		public void run() {
-			if (bitmap != null)
-				imageView.setImageBitmap(bitmap);
+			if (f != null && f.exists())
+				imageView.setImageURI(Uri.fromFile(f));
 			else
 				imageView.setImageResource(R.drawable.no_image);
 		}
