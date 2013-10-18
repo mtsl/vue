@@ -149,6 +149,7 @@ public class AisleLoader {
 			if(desiredContentId.equalsIgnoreCase(Utils.mChangeAilseId)) {
 			Utils.isAisleChanged = false;
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+			
 			}
 			
 		}

@@ -149,16 +149,31 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 											.parseAisleImageData(new JSONObject(
 													mResponseMessage));
 									if (aisleImageDetails != null) {
+										Log.i("addingmoreiamge", "addingmoreiamge: listsize before  "+VueTrendingAislesDataModel
+												.getInstance(
+														VueApplication
+																.getInstance()).listSize());
 										AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
 												.getInstance(
 														VueApplication
 																.getInstance())
+												.getAisleFromList(0);
+										
+										VueTrendingAislesDataModel.getInstance(
+												VueApplication.getInstance())
+												.dataObserver();
+										Log.i("addingmoreiamge", "addingmoreiamge: listsize after  "+VueTrendingAislesDataModel
+												.getInstance(
+														VueApplication
+																.getInstance()).listSize());
+										
+									/*	AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+												.getInstance(
+														VueApplication
+																.getInstance())
 												.getAisleAt(
-														aisleImageDetails.mOwnerAisleId);
-
-										Log.i("Ailse Manager",
-												"customimageurl add image to aisle: "
-														+ aisleImageDetails.mCustomImageUrl);
+														aisleImageDetails.mOwnerAisleId);*/
+ 
 										aisleWindowContent.getImageList().add(
 												aisleImageDetails);
 										aisleWindowContent.addAisleContent(
@@ -166,10 +181,24 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 														.getAisleContext(),
 												aisleWindowContent
 														.getImageList());
+										for(int i =0;i<aisleWindowContent.getImageList().size();i++){
+										Log.i("addingmoreiamge", "addingmoreiamge: imageUrls: "+aisleWindowContent.getImageList().get(i).mImageUrl);
+										}
+										Utils.isAisleChanged = true;
+										Utils.mChangeAilseId = aisleWindowContent.getAisleId();
+									
+										VueTrendingAislesDataModel
+										.getInstance(
+												VueApplication
+														.getInstance())
+										.addItemToListAt(aisleWindowContent.getAisleId(), aisleWindowContent, 0);
 										VueTrendingAislesDataModel.getInstance(
 												VueApplication.getInstance())
 												.dataObserver();
-
+										Log.i("addingmoreiamge", "addingmoreiamge: listsize final "+VueTrendingAislesDataModel
+												.getInstance(
+														VueApplication
+																.getInstance()).listSize()); 
 										String s[] = { aisleImageDetails.mOwnerAisleId };
 										ArrayList<AisleWindowContent> list = DataBaseManager
 												.getInstance(
