@@ -70,6 +70,8 @@ public class Utils {
 					break;
 				os.write(bytes, 0, count);
 			}
+			os.close();
+			is.close();
 		} catch (Exception ex) {
 			Log.i("added url", "added url  InputStream got error ");
 			ex.printStackTrace();
