@@ -223,8 +223,30 @@ public class DataEntryFragment extends Fragment {
 		mSaySomeThingEditParent = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.sayeditparentlay);
 		if (mLookingForAisleKeywordsList != null) {
-			mLookingForText.setText(mLookingForAisleKeywordsList.get(0));
-			mLookingForBigText.setText(mLookingForAisleKeywordsList.get(0));
+			if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
+				if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
+					mLookingForText
+							.setText(VueTrendingAislesDataModel
+									.getInstance(getActivity())
+									.getAisleAt(
+											Utils.getDataentryScreenAisleId(getActivity()))
+									.getAisleContext().mLookingForItem);
+					mLookingForBigText
+							.setText(VueTrendingAislesDataModel
+									.getInstance(getActivity())
+									.getAisleAt(
+											Utils.getDataentryScreenAisleId(getActivity()))
+									.getAisleContext().mLookingForItem);
+				} else {
+					mLookingForText
+							.setText(mLookingForAisleKeywordsList.get(0));
+					mLookingForBigText.setText(mLookingForAisleKeywordsList
+							.get(0));
+				}
+			} else {
+				mLookingForText.setText(mLookingForAisleKeywordsList.get(0));
+				mLookingForBigText.setText(mLookingForAisleKeywordsList.get(0));
+			}
 			mLookingForPopup.setVisibility(View.GONE);
 			mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 			mLookingForListviewLayout.setVisibility(View.GONE);
@@ -236,13 +258,47 @@ public class DataEntryFragment extends Fragment {
 		mOccassionAisleKeywordsList = mDbManager
 				.getAisleKeywords(VueConstants.OCCASION_TABLE);
 		if (mOccassionAisleKeywordsList != null) {
-			mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
-			mOccassionBigText.setText(mOccassionAisleKeywordsList.get(0));
+			if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
+				if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
+					mOccasionText
+							.setText(VueTrendingAislesDataModel
+									.getInstance(getActivity())
+									.getAisleAt(
+											Utils.getDataentryScreenAisleId(getActivity()))
+									.getAisleContext().mOccasion);
+					mOccassionBigText
+							.setText(VueTrendingAislesDataModel
+									.getInstance(getActivity())
+									.getAisleAt(
+											Utils.getDataentryScreenAisleId(getActivity()))
+									.getAisleContext().mOccasion);
+				} else {
+					mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
+					mOccassionBigText.setText(mOccassionAisleKeywordsList
+							.get(0));
+				}
+			} else {
+				mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
+				mOccassionBigText.setText(mOccassionAisleKeywordsList.get(0));
+			}
 		}
 		mCategoryAilseKeywordsList = mDbManager
 				.getAisleKeywords(VueConstants.CATEGORY_TABLE);
 		if (mCategoryAilseKeywordsList != null) {
-			mCategoryText.setText(mCategoryAilseKeywordsList.get(0));
+			if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
+				if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
+					mCategoryText
+							.setText(VueTrendingAislesDataModel
+									.getInstance(getActivity())
+									.getAisleAt(
+											Utils.getDataentryScreenAisleId(getActivity()))
+									.getAisleContext().mCategory);
+				} else {
+					mCategoryText.setText(mCategoryAilseKeywordsList.get(0));
+				}
+			} else {
+				mCategoryText.setText(mCategoryAilseKeywordsList.get(0));
+			}
 		}
 		mSaySomethingAboutAisle
 				.setOnEditorActionListener(new OnEditorActionListener() {

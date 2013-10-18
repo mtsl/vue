@@ -183,6 +183,7 @@ public class GetOtherSourceImagesTask extends
 				return null;
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
