@@ -140,7 +140,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 					public void run() {
 						if (null != mResponseMessage) {
 
-							if (!mFromDetailsScreenFlag) {
+ 							if (!mFromDetailsScreenFlag) {
 								Log.i("addimagefuncitonality",
 										"addimagefuncitonality jsonArray response: "
 												+ mFromDetailsScreenFlag);
@@ -216,6 +216,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 							Toast.makeText(VueApplication.getInstance(),
 									"Add Image To Aisle in server is failed.",
 									Toast.LENGTH_LONG).show();
+
 
 						}
 					}

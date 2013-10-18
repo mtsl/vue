@@ -45,7 +45,9 @@ import android.widget.SlidingDrawer;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.ui.ScaleImageView;
@@ -262,14 +264,42 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					}
 				});
 		if (VueLandingPageActivity.mOtherSourceImagePath != null) {
-			// TODO need to add imageUrl, imageWidth and ImageHeight for the
-			// below method
+			VueImage image = new VueImage();
+			image.setDetailsUrl(VueLandingPageActivity.mOtherSourceImageDetailsUrl);
+			image.setHeight(VueLandingPageActivity.mOtherSourceImageHeight);
+			image.setWidth(VueLandingPageActivity.mOtherSourceImageWidth);
+			image.setImageUrl(VueLandingPageActivity.mOtherSourceImageUrl);
+			image.setStore(VueLandingPageActivity.mOtherSourceImageStore);
+			image.setTitle("Android Test"); // TODO By Krishna
+			image.setOwnerUserId(Long.valueOf(VueTrendingAislesDataModel
+					.getInstance(this)
+					.getAisleItem(
+							VueApplication.getInstance().getClickedWindowID())
+					.getAisleContext().mUserId));
+			image.setOwnerAisleId(Long.valueOf(VueTrendingAislesDataModel
+					.getInstance(this)
+					.getAisleItem(
+							VueApplication.getInstance().getClickedWindowID())
+					.getAisleContext().mAisleId));
+			String offlineImageId = String.valueOf(System.currentTimeMillis());
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance())
+					.getNetworkHandler()
+					.requestForAddImage(true, offlineImageId, image,
+							new ImageAddedCallback() {
+								@Override
+								public void onImageAdded(
+										AisleImageDetails imageDetails) {
+									// //
+								}
+							});
 			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath,
 					VueLandingPageActivity.mOtherSourceImageUrl,
 					VueLandingPageActivity.mOtherSourceImageWidth,
 					VueLandingPageActivity.mOtherSourceImageHeight,
 					VueLandingPageActivity.mOtherSourceImageDetailsUrl,
-					VueLandingPageActivity.mOtherSourceImageStore, null);
+					VueLandingPageActivity.mOtherSourceImageStore,
+					offlineImageId);
 			VueLandingPageActivity.mOtherSourceImagePath = null;
 			VueLandingPageActivity.mOtherSourceImageUrl = null;
 			VueLandingPageActivity.mOtherSourceImageWidth = 0;

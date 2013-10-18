@@ -1363,7 +1363,10 @@ public class DataEntryFragment extends Fragment {
 
 	public void setGalleryORCameraImage(String picturePath,
 			boolean dontResizeImageFlag) {
-		mLookingForPopup.setVisibility(View.VISIBLE);
+		if (!Utils.getDataentryAddImageAisleFlag(getActivity())
+				&& !mFromDetailsScreenFlag) {
+			mLookingForPopup.setVisibility(View.VISIBLE);
+		}
 		try {
 			Log.e("frag1", "gallery called,,,," + picturePath);
 			Log.e("cs", "8");

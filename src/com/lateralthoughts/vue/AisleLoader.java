@@ -8,6 +8,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 
 //import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -118,6 +120,7 @@ public class AisleLoader {
 	// When the task completes check to make sure that the url for which the
 	// task was started is still
 	// valid. If so, add the downloaded image to the view object
+	@SuppressWarnings("deprecation")
 	public void getAisleContentIntoView(ViewHolder holder, int scrollIndex,
 			int position, boolean placeholderOnly,
 			AisleContentClickListener listener) {
@@ -204,9 +207,11 @@ public class AisleLoader {
 					VueApplication.getInstance().getVueDetailsCardWidth() / 2,
 					itemDetails.mTrendingImageHeight);
 
-			Log.i("cardHeight", "bestsamallest cardHeight bestHeight11: "+bestHeight);
+			Log.i("cardHeight", "bestsamallest cardHeight bestHeight11: "
+					+ bestHeight);
 			contentBrowser.setLayoutParams(mShowpieceParams2);
-			Log.i("bestsamallest", "bestsamallest height22: "+itemDetails.mTrendingImageHeight);
+			Log.i("bestsamallest", "bestsamallest height22: "
+					+ itemDetails.mTrendingImageHeight);
 			if (bitmap != null) {
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
@@ -225,20 +230,20 @@ public class AisleLoader {
 				File f = new FileCache(mContext)
 						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
 				if (f.exists()) {
-					holder.profileThumbnail.setImageURI(Uri.fromFile(f));
+					holder.profileThumbnail
+							.setBackgroundDrawable(new BitmapDrawable(
+									BitmapFactory.decodeFile(f.getPath())));
 				} else {
-					holder.profileThumbnail.setImageDrawable(mContext
-							.getResources().getDrawable(
-									R.drawable.profile_thumbnail));
+					holder.profileThumbnail
+							.setBackgroundResource(R.drawable.profile_thumbnail);
 				}
 			} else {
-				holder.profileThumbnail.setImageDrawable(mContext
-						.getResources().getDrawable(
-								R.drawable.profile_thumbnail));
+				holder.profileThumbnail
+						.setBackgroundResource(R.drawable.profile_thumbnail);
 			}
 		} else {
-			holder.profileThumbnail.setImageDrawable(mContext.getResources()
-					.getDrawable(R.drawable.profile_thumbnail));
+			holder.profileThumbnail
+					.setBackgroundResource(R.drawable.profile_thumbnail);
 		}
 	}
 
