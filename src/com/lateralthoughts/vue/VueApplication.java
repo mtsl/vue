@@ -228,7 +228,7 @@ public class VueApplication extends Application {
 
 	public int getVueDetailsCardWidth() {
 		if (mVueDetailsCardWidth == 0) {
-			int leftRightMargins = 20;
+			int leftRightMargins = 13;
 			mVueDetailsCardWidth = mScreenWidth - getPixel(leftRightMargins);
 		}
 		return mVueDetailsCardWidth;

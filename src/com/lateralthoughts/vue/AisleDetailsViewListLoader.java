@@ -8,6 +8,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,6 +41,7 @@ public class AisleDetailsViewListLoader {
     private int mBestHeight = 0;
     AisleContentBrowser contentBrowser = null;
     DetailClickListener mDetailListener;
+    Animation myFadeInAnimation;
     
    /* public static AisleDetailsViewListLoader getInstance(Context context){
         if(null == sAisleDetailsViewLoaderInstance){
@@ -52,6 +55,7 @@ public class AisleDetailsViewListLoader {
         //instead use a factory pattern and return an instance using a
         //static method
        // mContext = context;
+    	myFadeInAnimation = AnimationUtils.loadAnimation(VueApplication.getInstance(), R.anim.fadein);
         mViewFactory = ScaledImageViewFactory.getInstance(VueApplication.getInstance());
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
         mContentAdapterFactory = ContentAdapterFactory.getInstance(VueApplication.getInstance());
@@ -77,6 +81,7 @@ public class AisleDetailsViewListLoader {
         contentBrowser = holder.aisleContentBrowser;
    
         contentBrowser.setHolderName(VueAisleDetailsViewFragment.SCREEN_NAME);
+        Log.i("ScrollIndex", "ScrollIndex: "+scrollIndex);
         if(holder.uniqueContentId.equals(desiredContentId)){
             //we are looking at a visual object that has either not been used
             //before or has to be filled with same content. Either way, no need
@@ -126,7 +131,7 @@ public class AisleDetailsViewListLoader {
 			imageView = mViewFactory.getEmptyImageView();
 			imageView.setContainerObject(holder);
 			Bitmap bitmap = null; 
-			bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
+			//bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
 			mBestHeight =Utils.modifyHeightForDetailsView(imageDetailsArr);
 			windowContent.setBestLargestHeightForWindow(mBestHeight);
 			contentBrowser.addView(imageView);
@@ -196,7 +201,7 @@ public class AisleDetailsViewListLoader {
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
-            boolean cacheBitmap = true;
+            boolean cacheBitmap = false;
             bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  cacheBitmap, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
 			if(bmp != null){
             mItemDetails.mTempResizeBitmapwidth = bmp.getWidth();
@@ -220,6 +225,7 @@ public class AisleDetailsViewListLoader {
                 if (this == bitmapWorkerTask) {
                  //setParams( aisleContentBrowser, imageView,bitmap.getHeight());
                     imageView.setImageBitmap(bitmap);
+                    imageView.startAnimation(myFadeInAnimation);
                 }
             }
         }
