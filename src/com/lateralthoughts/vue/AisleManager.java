@@ -164,7 +164,7 @@ public class AisleManager {
 
 	// issues a request to add an image to the aisle.
 	public void addImageToAisle(final boolean fromDetailsScreenFlag,
-			VueImage image, final ImageAddedCallback callback) {
+			String imageId, VueImage image, final ImageAddedCallback callback) {
 		Log.i("addimagefuncitonality",
 				"addimagefuncitonality entered in method");
 		if (null == image) {
@@ -173,7 +173,7 @@ public class AisleManager {
 		}
 
 		Thread t = new Thread(new AddImageToAisleBackgroundThread(image,
-				callback, fromDetailsScreenFlag));
+				callback, fromDetailsScreenFlag, imageId));
 		t.start();
 		/*
 		 * String imageAsString = null; try { imageAsString =
@@ -331,13 +331,13 @@ public class AisleManager {
 	 *             , IOException
 	 * */
 	public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark,
-	   
+
 	String userId) throws ClientProtocolException, IOException {
 		isDirty = true;
 		final ArrayList<AisleWindowContent> windowList = DataBaseManager
 				.getInstance(VueApplication.getInstance()).getAisleByAisleId(
 						Long.toString(aisleBookmark.getAisleId()));
-		
+
 		if (VueConnectivityManager.isNetworkConnected(VueApplication
 				.getInstance())) {
 			VueUser storedVueUser = null;
@@ -351,41 +351,45 @@ public class AisleManager {
 			ObjectMapper mapper = new ObjectMapper();
 			String bookmarkAisleAsString = mapper
 					.writeValueAsString(aisleBookmark);
-      Response.Listener listener = new Response.Listener<String>() {
+			Response.Listener listener = new Response.Listener<String>() {
 
-        @Override
-        public void onResponse(String jsonArray) {
-        	Log.i("bookmark response", "bookmark response: "+jsonArray);
-          if (jsonArray != null) {
-            try {
-              AisleBookmark createdAisleBookmark = (new ObjectMapper())
-                  .readValue(jsonArray, AisleBookmark.class);
-              Log.i("bookmark response", "bookmark  value: "+createdAisleBookmark.getBookmarked());
-              isDirty = false;
-              Editor editor = mSharedPreferencesObj.edit();
-              editor.putBoolean(VueConstants.IS_AISLE_DIRTY, false);
-              editor.commit();
-              updateBookmartToDb(windowList, createdAisleBookmark, isDirty);
-            } catch (Exception e) {
-              e.printStackTrace();
-            }
-          }
-        }
+				@Override
+				public void onResponse(String jsonArray) {
+					Log.i("bookmark response", "bookmark response: "
+							+ jsonArray);
+					if (jsonArray != null) {
+						try {
+							AisleBookmark createdAisleBookmark = (new ObjectMapper())
+									.readValue(jsonArray, AisleBookmark.class);
+							Log.i("bookmark response", "bookmark  value: "
+									+ createdAisleBookmark.getBookmarked());
+							isDirty = false;
+							Editor editor = mSharedPreferencesObj.edit();
+							editor.putBoolean(VueConstants.IS_AISLE_DIRTY,
+									false);
+							editor.commit();
+							updateBookmartToDb(windowList,
+									createdAisleBookmark, isDirty);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
 
-      };
+			};
 
-      Response.ErrorListener errorListener = new ErrorListener() {
+			Response.ErrorListener errorListener = new ErrorListener() {
 
-        @Override
-        public void onErrorResponse(VolleyError error) {
-          isDirty = true;
-          Editor editor = mSharedPreferencesObj.edit();
-          editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
-          editor.commit();
-          updateBookmartToDb(windowList, aisleBookmark, isDirty);
-        }
+				@Override
+				public void onErrorResponse(VolleyError error) {
+					isDirty = true;
+					Editor editor = mSharedPreferencesObj.edit();
+					editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
+					editor.commit();
+					updateBookmartToDb(windowList, aisleBookmark, isDirty);
+				}
 
-      };
+			};
 			BookmarkPutRequest request = new BookmarkPutRequest(
 					bookmarkAisleAsString, listener, errorListener,
 					UrlConstants.CREATE_BOOKMARK_RESTURL + "/"
@@ -414,7 +418,8 @@ public class AisleManager {
 	 * */
 	public void updateBookmartToDb(ArrayList<AisleWindowContent> windowList,
 			AisleBookmark aisleBookmark, boolean isDirty) {
-		 Log.i("bookmark response", "bookmark  updateBookmartToDb value: "+aisleBookmark.getBookmarked());
+		Log.i("bookmark response", "bookmark  updateBookmartToDb value: "
+				+ aisleBookmark.getBookmarked());
 		for (AisleWindowContent aisleWindow : windowList) {
 			AisleContext context = aisleWindow.getAisleContext();
 			DataBaseManager
@@ -446,7 +451,8 @@ public class AisleManager {
 
 				@Override
 				public void onResponse(String jsonArray) {
-				  Log.i("likecountissue", "likecountissue: jsonArray: "+jsonArray);
+					Log.i("likecountissue", "likecountissue: jsonArray: "
+							+ jsonArray);
 					if (jsonArray != null) {
 						try {
 							ImageRating imgRating = (new ObjectMapper())
@@ -489,7 +495,9 @@ public class AisleManager {
 
 	private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
 			boolean isDirty) {
-	  Log.i("likecountissue", "likecountissue: updateImageRatingToDb  likeCount: "+likeCount);
+		Log.i("likecountissue",
+				"likecountissue: updateImageRatingToDb  likeCount: "
+						+ likeCount);
 		DataBaseManager.getInstance(VueApplication.getInstance())
 				.addLikeOrDisLike((imgRating.getLiked()) ? 1 : 0, likeCount,
 						Long.toString(imgRating.getImageId()),

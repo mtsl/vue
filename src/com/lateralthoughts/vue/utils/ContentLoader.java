@@ -144,7 +144,7 @@ public class ContentLoader {
         } catch (Throwable ex){
            ex.printStackTrace();
            if(ex instanceof OutOfMemoryError) {
-        	   //mAisleImagesCache.clear();
+        	   mAisleImagesCache.evictAll();
            }
            return null;
         }

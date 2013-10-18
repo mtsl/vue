@@ -23,7 +23,7 @@ import android.widget.ImageView;
 
 public class OtherSourceImageLoader {
 
-	private HashMap<String, Bitmap> mCache = new HashMap<String, Bitmap>();
+	BitmapLruCache mAisleImagesCache;
 	Context mContext;
 	FileCache mFileCache;
 
@@ -31,13 +31,16 @@ public class OtherSourceImageLoader {
 		this.mContext = context;
 		mFileCache = new FileCache(mContext);
 		photoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
+		mAisleImagesCache = BitmapLruCache.getInstance(VueApplication
+				.getInstance());
 	}
 
 	final int stub_id = R.drawable.aisle_bg_progressbar_drawable;
 
 	public void DisplayImage(String url, Activity activity, ImageView imageView) {
-		if (mCache.containsKey(url))
-			imageView.setImageBitmap(mCache.get(url));
+		Bitmap bitmap = mAisleImagesCache.get(url);
+		if (bitmap != null)
+			imageView.setImageBitmap(bitmap);
 		else {
 			queuePhoto(url, activity, imageView);
 			imageView.setImageResource(stub_id);
@@ -123,11 +126,14 @@ public class OtherSourceImageLoader {
 			Bitmap resizedBitmap = BitmapFactory.decodeStream(
 					new FileInputStream(f), null, o2);
 
-
 			return resizedBitmap;
-		} catch (FileNotFoundException e) {
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+			if (ex instanceof OutOfMemoryError) {
+				mAisleImagesCache.evictAll();
+			}
+			return null;
 		}
-		return null;
 	}
 
 	private class PhotoToLoad {
@@ -173,7 +179,7 @@ public class OtherSourceImageLoader {
 							photoToLoad = photosQueue.photosToLoad.pop();
 						}
 						Bitmap bmp = getBitmap(photoToLoad.url);
-						mCache.put(photoToLoad.url, bmp);
+						mAisleImagesCache.put(photoToLoad.url, bmp);
 						if (((String) photoToLoad.imageView.getTag())
 								.equals(photoToLoad.url)) {
 							BitmapDisplayer bd = new BitmapDisplayer(bmp,

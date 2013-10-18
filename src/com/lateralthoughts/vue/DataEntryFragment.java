@@ -917,6 +917,11 @@ public class DataEntryFragment extends Fragment {
 									b.putString(
 											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE,
 											mOtherSourceSelectedImageStore);
+									String offlineImageId = String
+											.valueOf(System.currentTimeMillis());
+									b.putString(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OFFLINE_IMAGE_ID,
+											offlineImageId);
 									intent.putExtras(b);
 									Log.e("Land", "vueland 11");
 									getActivity()
@@ -928,7 +933,8 @@ public class DataEntryFragment extends Fragment {
 											Long.valueOf(storedVueUser.getId())
 													.toString(), VueApplication
 													.getInstance()
-													.getClickedWindowID(), true);
+													.getClickedWindowID(),
+											true, offlineImageId);
 								} else {
 									Toast.makeText(
 											getActivity(),
@@ -1435,7 +1441,7 @@ public class DataEntryFragment extends Fragment {
 						addImageToAisleToServer(
 								Long.valueOf(storedVueUser.getId()).toString(),
 								Utils.getDataentryScreenAisleId(getActivity()),
-								false);
+								false, null);
 					} else {
 						Toast.makeText(getActivity(),
 								getResources().getString(R.string.no_network),
@@ -1674,7 +1680,7 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	public void addImageToAisleToServer(String ownerUserId,
-			String ownerAisleId, boolean fromDetailsScreenFlag) {
+			String ownerAisleId, boolean fromDetailsScreenFlag, String imageId) {
 		if (mOtherSourceSelectedImageUrl != null
 				&& mOtherSourceSelectedImageUrl.trim().length() > 0) {
 			VueImage image = new VueImage();
@@ -1689,7 +1695,7 @@ public class DataEntryFragment extends Fragment {
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
-					.requestForAddImage(fromDetailsScreenFlag, image,
+					.requestForAddImage(fromDetailsScreenFlag, imageId, image,
 							new ImageAddedCallback() {
 								@Override
 								public void onImageAdded(

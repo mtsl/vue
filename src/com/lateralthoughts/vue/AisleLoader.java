@@ -142,6 +142,14 @@ public class AisleLoader {
 
 		String desiredContentId = windowContent.getAisleId();
 		contentBrowser = holder.aisleContentBrowser;
+		if(Utils.isAisleChanged) {
+			if(desiredContentId.equalsIgnoreCase(Utils.mChangeAilseId)) {
+			Utils.isAisleChanged = false;
+			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+			}
+			
+		}
+		
 		if (holder.uniqueContentId.equals(desiredContentId)) {
 			// we are looking at a visual object that has either not been used
 			// before or has to be filled with same content. Either way, no need

@@ -78,6 +78,8 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="6dp"
             android:layout_toRightOf="@+id/vue_user_pic"
+            android:singleLine="true"
+            android:layout_toLeftOf="@+id/details_add_image_to_aisle"
             android:text="Mare Jane"
             android:textColor="@android:color/white" />
 

@@ -269,7 +269,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					VueLandingPageActivity.mOtherSourceImageWidth,
 					VueLandingPageActivity.mOtherSourceImageHeight,
 					VueLandingPageActivity.mOtherSourceImageDetailsUrl,
-					VueLandingPageActivity.mOtherSourceImageStore);
+					VueLandingPageActivity.mOtherSourceImageStore, null);
 			VueLandingPageActivity.mOtherSourceImagePath = null;
 			VueLandingPageActivity.mOtherSourceImageUrl = null;
 			VueLandingPageActivity.mOtherSourceImageWidth = 0;
@@ -555,7 +555,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH),
 							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT),
 							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL),
-							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE));
+							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE),
+							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OFFLINE_IMAGE_ID));
 				}
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT
@@ -780,7 +781,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
-				// mAisleImagesCache.clear();
+				mAisleImagesCache.evictAll();
 			}
 			return null;
 		}
@@ -872,7 +873,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			Log.i("added url", "added urldecodeFile  throwable exception ");
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
-				// mAisleImagesCache.clear();
+				mAisleImagesCache.evictAll();
 			}
 			return null;
 		}
@@ -909,7 +910,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	}
 
 	private void addImageToAisle(String imagePath, String imageUrl,
-			int imageWidth, int imageHeight, String detailsUrl, String store) {
+			int imageWidth, int imageHeight, String detailsUrl, String store,
+			String imageId) {
 		FileCache fileCache = new FileCache(this);
 		File f = fileCache.getFile(imageUrl);
 		File sourceFile = new File(imagePath);
@@ -923,6 +925,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					.findFragmentById(R.id.aisle_details_view_fragment);
 		}
 		mVueAiselFragment.addAisleToWindow(bmp, imagePath, imageUrl,
-				imageWidth, imageHeight, detailsUrl, store);
+				imageWidth, imageHeight, detailsUrl, store, imageId);
 	}
 }

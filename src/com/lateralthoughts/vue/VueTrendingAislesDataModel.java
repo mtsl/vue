@@ -135,6 +135,9 @@ public class VueTrendingAislesDataModel {
 		mAisleContentList.add(aisleItem);
     	  }
     }
+    public AisleWindowContent getAisleFromList(int position){
+    	return mAisleContentList.remove(position);
+    }
 	public int getAisleCount() {
 		if (null != mAisleContentList) {
 			Log.i("mAisleContentList", " mAisleContentList size is:  "

@@ -41,16 +41,19 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 	private String mResponseMessage = null;
 	private ImageAddedCallback mImageAddedCallback = null;
 	private boolean mFromDetailsScreenFlag;
+	private String mImageId;
 
 	@SuppressWarnings("static-access")
 	public AddImageToAisleBackgroundThread(VueImage vueImage,
-			ImageAddedCallback callback, boolean fromDetailsScreenFlag) {
+			ImageAddedCallback callback, boolean fromDetailsScreenFlag,
+			String imageId) {
 		mNotificationManager = (NotificationManager) VueApplication
 				.getInstance().getSystemService(
 						VueApplication.getInstance().NOTIFICATION_SERVICE);
 		mVueImage = vueImage;
 		mImageAddedCallback = callback;
 		mFromDetailsScreenFlag = fromDetailsScreenFlag;
+		mImageId = imageId;
 	}
 
 	@Override
@@ -152,44 +155,61 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 																.getInstance())
 												.getAisleAt(
 														aisleImageDetails.mOwnerAisleId);
-										aisleWindowContent
-												.prepareCustomUrl(aisleImageDetails);
+
 										Log.i("Ailse Manager",
 												"customimageurl add image to aisle: "
 														+ aisleImageDetails.mCustomImageUrl);
-
-										int returnValue = aisleWindowContent
-												.getAisleImageForImageUrl(aisleImageDetails.mImageUrl);
-										if (returnValue == -1) {
-											aisleWindowContent.getImageList()
-													.add(aisleImageDetails);
-										} else {
-											aisleWindowContent.getImageList()
-													.get(returnValue).mId = aisleImageDetails.mId;
-										}
+										aisleWindowContent.getImageList().add(
+												aisleImageDetails);
+										aisleWindowContent.addAisleContent(
+												aisleWindowContent
+														.getAisleContext(),
+												aisleWindowContent
+														.getImageList());
 										VueTrendingAislesDataModel.getInstance(
 												VueApplication.getInstance())
 												.dataObserver();
 
-										/*
-										 * String s[] = {
-										 * aisleImageDetails.mOwnerAisleId };
-										 * ArrayList<AisleWindowContent> list =
-										 * DataBaseManager .getInstance(
-										 * VueApplication .getInstance())
-										 * .getAislesFromDB(s); if (list !=
-										 * null) { list.get(0).getImageList()
-										 * .add(aisleImageDetails);
-										 * DataBaseManager .getInstance(
-										 * VueApplication .getInstance())
-										 * .addTrentingAislesFromServerToDB(
-										 * VueApplication .getInstance(), list);
-										 * }
-										 */
+										String s[] = { aisleImageDetails.mOwnerAisleId };
+										ArrayList<AisleWindowContent> list = DataBaseManager
+												.getInstance(
+														VueApplication
+																.getInstance())
+												.getAislesFromDB(s);
+										if (list != null) {
+											list.get(0).getImageList()
+													.add(aisleImageDetails);
+											DataBaseManager
+													.getInstance(
+															VueApplication
+																	.getInstance())
+													.addTrentingAislesFromServerToDB(
+															VueApplication
+																	.getInstance(),
+															list);
+										}
 
 									}
 								} catch (JSONException e) {
 									e.printStackTrace();
+								}
+							} else {
+								AisleImageDetails aisleImageDetails = null;
+								try {
+									aisleImageDetails = new Parser()
+											.parseAisleImageData(new JSONObject(
+													mResponseMessage));
+								} catch (JSONException e) {
+								}
+								if (aisleImageDetails != null) {
+									AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+											.getInstance(
+													VueApplication
+															.getInstance())
+											.getAisleAt(
+													aisleImageDetails.mOwnerAisleId);
+									aisleWindowContent
+											.getAisleImageForImageId(mImageId, aisleImageDetails.mId);
 								}
 							}
 						} else {

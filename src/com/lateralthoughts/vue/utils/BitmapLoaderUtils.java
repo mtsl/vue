@@ -68,18 +68,18 @@ public class BitmapLoaderUtils {
 	 */
 	public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap,
 			int bestHeight, int bestWidth, String source) {
-		Log.i("added url", "added url  getBitmap " + url);
+		 
 		File f = mFileCache.getFile(url);
-		Log.i("added url", "added url  getBitmap " + f);
+		 
 		// from SD cache
 		Bitmap b = decodeFile(f, bestHeight, bestWidth, source);
 		if (b != null) {
-
+			 
 			if (cacheBitmap)
 				mAisleImagesCache.putBitmap(url, b);
 			return b;
 		}
-
+		 
 		// from web
 		try {
 			if (serverUrl == null || serverUrl.length() < 1) {
@@ -106,7 +106,7 @@ public class BitmapLoaderUtils {
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
-				// mAisleImagesCache.clear();
+				 mAisleImagesCache.evictAll();
 			}
 			return null;
 		}
@@ -144,9 +144,9 @@ public class BitmapLoaderUtils {
 
 				// Calculate ratios of height and width to requested height and
 				// width
-				final int heightRatio = Math.round((float) height
+				final int heightRatio =  (int) ((float) height
 						/ (float) bestHeight);
-				final int widthRatio = Math.round((float) width
+				final int widthRatio =(int)((float) width
 						/ (float) reqWidth);
  
 				// Choose the smallest ratio as inSampleSize value, this will
@@ -167,11 +167,8 @@ public class BitmapLoaderUtils {
 			// mScreenWidth);
 			FileInputStream stream2 = new FileInputStream(f);
 			Bitmap bitmap = BitmapFactory.decodeStream(stream2, null, o2);
-			Log.i("window",
-					"clickedwindow ID  new bitmap height1 : "
-							+ bitmap.getHeight());
-			Log.i("window",
-					"clickedwindow ID new bitmap widht1: " + bitmap.getWidth());
+			Log.i("imagenotshowing", "imagenotshowing: Not   found locally bitmap "+bitmap);
+			Log.i("imagenotshowing", "imagenotshowing: Not   found locally bitmap "+bitmap.getHeight());
 			stream2.close();
 			if(source.equalsIgnoreCase(Utils.TRENDING_SCREEN)){
 				return getBitmap(bitmap,bestWidth,bestHeight);
@@ -212,13 +209,14 @@ public class BitmapLoaderUtils {
 		} catch (FileNotFoundException e) {
 			Log.i("added url", "added urldecodeFile  filenotfound exception ");
 		} catch (IOException e) {
-			Log.i("added url", "added urldecodeFile  io exception ");
+			 
 			e.printStackTrace();
 		} catch (Throwable ex) {
-			Log.i("added url", "added urldecodeFile  throwable exception ");
+			 
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
-				// mAisleImagesCache.clear();
+				mAisleImagesCache.evictAll();
+				 
 			}
 			return null;
 		}

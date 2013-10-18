@@ -193,7 +193,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         } catch (Throwable ex){
            ex.printStackTrace();
            if(ex instanceof OutOfMemoryError) {
-               //mContentImagesCache.clear();
+        	   mContentImagesCache.evictAll();
            }
            return;
         }
@@ -364,6 +364,11 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 								VueApplication.getInstance()
 										.getVueDetailsCardWidth(),
 								Utils.DETAILS_SCREEN);
+				Log.i("imagenotshowing", "imagenotshowing: "+bmp);
+				if(bmp != null){
+					Log.i("imagenotshowing", "imagenotshowing: height: "+bmp.getHeight());
+				}
+				
 		/*		if (bmp != null) {
 					mImageDimension = Utils.getScalledImage(bmp,
 							mAVailableWidth, mAvailabeHeight);
@@ -378,14 +383,19 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 				}*/
 				mItemDetails.mTempResizedBitmapHeight = bmp.getHeight();
 				mItemDetails.mTempResizeBitmapwidth = bmp.getWidth();
-				  Log.i("imageHeitht", "imageHeitht resizeHeight: "+mItemDetails.mTempResizedBitmapHeight);
-			        Log.i("imageHeitht", "imageHeitht resizeWidth: "+ mItemDetails.mTempResizeBitmapwidth);
+	 
 
 			} else {
 				boolean cacheval = false;
+				Log.i("imagenotshowing", "imagenotshowing: Custom url "+url);
+				Log.i("imagenotshowing", "imagenotshowing: Server url "+ params[1]);
 				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheval,
 						mItemDetails.mTrendingImageHeight,mItemDetails.mTrendingImageWidth,
 						Utils.DETAILS_SCREEN);
+				Log.i("imagenotshowing", "imagenotshowing: "+bmp);
+				if(bmp != null){
+					Log.i("imagenotshowing", "imagenotshowing: height: "+bmp.getHeight());
+				}
 				 
 			}
  
@@ -483,7 +493,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
-				// mContentImagesCache.clear();
+				mContentImagesCache.evictAll();
 			}
 			return null;
 		}
