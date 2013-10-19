@@ -109,7 +109,6 @@ public class TrendingAislesLeftColumnAdapter extends
 	// create a new ImageView for each item referenced by the Adapter
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
-		StringBuilder sb = new StringBuilder();
 
 		int actualPosition = calculateActualPosition(position);
 		Log.i("TrendingDataModel",
@@ -147,18 +146,30 @@ public class TrendingAislesLeftColumnAdapter extends
 		mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
 				false, listener);
 		AisleContext context = holder.mWindowContent.getAisleContext();
-
-		sb.append(context.mFirstName).append(" ").append(context.mLastName);
-		Log.i("Left adapter", "Context fn ln " + context.mFirstName + "??? "
-				+ context.mLastName + "??? " + sb);
-		if (sb.toString().replace(" ", "").equals("Anonymous")) {
-			if (VueApplication.getInstance().getmUserInitials() != null) {
-				holder.aisleOwnersName.setText(VueApplication.getInstance()
-						.getmUserInitials());
+		String mVueusername = null;
+		if (context.mFirstName != null && context.mLastName != null) {
+			mVueusername = context.mFirstName + " " + context.mLastName;
+		} else if (context.mFirstName != null) {
+			if (context.mFirstName.equals("Anonymous")) {
+				mVueusername = VueApplication.getInstance().getmUserInitials();
+			} else {
+				mVueusername = context.mFirstName;
 			}
-		} else {
-			holder.aisleOwnersName.setText(sb.toString());
+		} else if (context.mLastName != null) {
+			mVueusername = context.mLastName;
 		}
+		if (mVueusername != null
+				&& mVueusername.trim().equalsIgnoreCase("Anonymous")) {
+			if (VueApplication.getInstance().getmUserInitials() != null) {
+				mVueusername = VueApplication.getInstance().getmUserInitials();
+			}
+		}
+		if (mVueusername != null && mVueusername.trim().length() > 0) {
+			holder.aisleOwnersName.setText(mVueusername);
+		} else {
+			holder.aisleOwnersName.setText("Anonymous");
+		}
+
 		StringBuilder contextBuilder = new StringBuilder();
 		contextBuilder.append(context.mOccasion).append(" : ")
 				.append(context.mLookingForItem);

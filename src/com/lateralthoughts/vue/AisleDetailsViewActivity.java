@@ -563,7 +563,19 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT) {
-			VueApplication.getInstance().mAisleImagePathList.clear();
+			ArrayList<DataentryImage> mAisleImagePathList = null;
+			try {
+				mAisleImagePathList = Utils.readAisleImagePathListFromFile(
+						AisleDetailsViewActivity.this,
+						VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
+				mAisleImagePathList.clear();
+				Utils.writeAisleImagePathListToFile(
+						AisleDetailsViewActivity.this,
+						VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
+						mAisleImagePathList);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			Bundle b = data.getExtras();
 			if (b != null) {
 				String findAt = b

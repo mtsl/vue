@@ -97,7 +97,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
-	 
 
 	@SuppressWarnings("unchecked")
 	public AisleDetailsViewAdapter(Context c,
@@ -106,7 +105,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		/* super(c, content); */
 		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance());
-		 
 
 		mSetPosition = true;
 		mContext = c;
@@ -446,6 +444,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 								.getmUserInitials();
 					}
 				}
+				if (mVueusername != null && mVueusername.trim().length() > 0) {
+					// Nothing...
+				} else {
+					mVueusername = "Anonymous";
+				}
 				int scrollIndex = VueApplication.getInstance()
 						.getmAisleImgCurrentPos();
 				// mWindowContentTemp = mViewHolder.mWindowContent;
@@ -701,25 +704,36 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				int cardHeight = VueApplication.getInstance()
 						.getVueDetailsCardHeight();
 				String writeToSdCard = "***************DETAILS ADAPTER***********************\n";
-				writeToSdCard = writeToSdCard+" Aisle Id: "+getItem(mCurrentAislePosition).getAisleId()+"\n";
-				
-				
-				for (int i = 0; i < getItem(mCurrentAislePosition).getImageList().size(); i++) {
-					writeToSdCard = writeToSdCard + "\n ImageUrl: "
-							+ getItem(mCurrentAislePosition).getImageList().get(i).mImageUrl;
-					writeToSdCard = writeToSdCard + "\n" + "image Width: "
-							+ getItem(mCurrentAislePosition).getImageList().get(i).mAvailableWidth
+				writeToSdCard = writeToSdCard + " Aisle Id: "
+						+ getItem(mCurrentAislePosition).getAisleId() + "\n";
+
+				for (int i = 0; i < getItem(mCurrentAislePosition)
+						.getImageList().size(); i++) {
+					writeToSdCard = writeToSdCard
+							+ "\n ImageUrl: "
+							+ getItem(mCurrentAislePosition).getImageList()
+									.get(i).mImageUrl;
+					writeToSdCard = writeToSdCard
+							+ "\n"
+							+ "image Width: "
+							+ getItem(mCurrentAislePosition).getImageList()
+									.get(i).mAvailableWidth
 							+ "image Height: "
-							+ getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight;
+							+ getItem(mCurrentAislePosition).getImageList()
+									.get(i).mAvailableHeight;
 				}
-		 
+
 				writeToSdCard = writeToSdCard + " ReSizeImageWidth: "
 						+ resizeWidth + " ReSizedImageHeight: " + resizeHeight
 						+ "\n";
 				writeToSdCard = writeToSdCard + " CardWidth: " + cardWidth
 						+ " CardHeight: " + cardHeight + "\n";
-				writeToSdCard= writeToSdCard+ " Final card Height will be: "+getItem(mCurrentAislePosition).getBestLargetHeightForWindow()+"\n";
-				 writeToSdCard = writeToSdCard +"\n***************DETAILS ADAPTER***********************";
+				writeToSdCard = writeToSdCard
+						+ " Final card Height will be: "
+						+ getItem(mCurrentAislePosition)
+								.getBestLargetHeightForWindow() + "\n";
+				writeToSdCard = writeToSdCard
+						+ "\n***************DETAILS ADAPTER***********************";
 				writeToSdcard(writeToSdCard);
 			} else {
 				Toast.makeText(mContext, "Works For Only Starting Image", 1000)

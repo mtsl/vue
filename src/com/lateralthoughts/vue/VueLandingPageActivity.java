@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -29,7 +28,6 @@ import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,8 +112,6 @@ public class VueLandingPageActivity extends BaseActivity {
 		// Checking wheather app is opens for first time or not?
 		mSharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
-		boolean isFirstTimeFlag = mSharedPreferencesObj.getBoolean(
-				VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG, true);
 
 		VueUser storedVueUser = null;
 		try {
@@ -129,37 +125,9 @@ public class VueLandingPageActivity extends BaseActivity {
 			VueApplication.getInstance().setmUserInitials(
 					storedVueUser.getFirstName());
 			VueApplication.getInstance().setmUserId(storedVueUser.getId());
-		}
-
-		// Application opens first time.
-		if (isFirstTimeFlag) {
-			SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
-			editor.putBoolean(VueConstants.FIRSTTIME_LOGIN_PREFRENCE_FLAG,
-					false);
-			editor.commit();
-			showLogInDialog(false);
 		} else {
-			if (storedVueUser == null) {
-				VueUserManager userManager = VueUserManager.getUserManager();
-				userManager.createUnidentifiedUser(null, Utils.getDeviceId(),
-						new UserUpdateCallback() {
-							@Override
-							public void onUserUpdated(VueUser user) {
-								try {
-									Log.i("userid",
-											"userid123456 null check storedVueUser seting loging page: ");
-									Utils.writeUserObjectToFile(
-											VueLandingPageActivity.this,
-											VueConstants.VUE_APP_USEROBJECT__FILENAME,
-											user);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-						});
-			}
+			showLogInDialog(false);
 		}
-
 		mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.aisles_view_fragment);
 		Intent intent = getIntent();
@@ -217,7 +185,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			}
 			FlurryAgent.logEvent("Rigestered_Users", articleParams);
 			FlurryAgent.logEvent("Login_Time_Ends", articleParams, true);
-		}
+		} 
 		/*
 		 * FlurryAgent.setAge(arg0); FlurryAgent.setGender(arg0);
 		 * FlurryAgent.setUserId(arg0);
@@ -286,22 +254,26 @@ public class VueLandingPageActivity extends BaseActivity {
 		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
-			if (VueApplication.getInstance()
-							.ismLoadDataentryScreenFlag()) {
-				VueApplication.getInstance().setmLoadDataentryScreenFlag(false);
+			if (Utils.isLoadDataentryScreenFlag(this)) {
+				Utils.setLoadDataentryScreenFlag(this, false);
 				if (Utils
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
-
 					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
 							VueLandingPageActivity.this, false);
 					Log.e("Land", "vueland 1");
-					Intent i = new Intent(this, AisleDetailsViewActivity.class);
-					Bundle b = new Bundle();
-					b.putString(VueConstants.FROM_OTHER_SOURCES_URL, sourceUrl);
-					b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
-					i.putExtras(b);
-					startActivity(i);
-
+					if (VueTrendingAislesDataModel.getInstance(this)
+							.getAisleCount() > 0) {
+						Intent i = new Intent(this,
+								AisleDetailsViewActivity.class);
+						Bundle b = new Bundle();
+						b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+								sourceUrl);
+						b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+						i.putExtras(b);
+						startActivity(i);
+					} else {
+						getImagesFromUrl(sourceUrl);
+					}
 				} else {
 					Intent i = new Intent(this, DataEntryActivity.class);
 					Bundle b = new Bundle();
@@ -967,6 +939,9 @@ public class VueLandingPageActivity extends BaseActivity {
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL,
 						detailsUrl);
 				b.putString(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
+						detailsUrl);
+				b.putString(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE,
 						store);
 				b.putInt(
@@ -1014,17 +989,6 @@ public class VueLandingPageActivity extends BaseActivity {
 		getImagesTask.execute();
 	}
 
-	private ArrayList<OtherSourceImageDetails> convertImageUrisToOtherSourceImageDetails(
-			ArrayList<Uri> imageUriList) {
-		ArrayList<OtherSourceImageDetails> otherSourcesImageDetailsList = new ArrayList<OtherSourceImageDetails>();
-		for (int i = 0; i < imageUriList.size(); i++) {
-			OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails(
-					null, null, null, 0, 0, imageUriList.get(i), 0);
-			otherSourcesImageDetailsList.add(otherSourceImageDetails);
-		}
-		return otherSourcesImageDetailsList;
-	}
-
 	public static String getScreenName() {
 		if (mVueLandingActionbarScreenName != null) {
 			return mVueLandingActionbarScreenName.getText().toString();
@@ -1039,7 +1003,4 @@ public class VueLandingPageActivity extends BaseActivity {
 		nMgr.cancel(notifyId);
 	}
 
-	private void getRatedImagesList() {
-		// UrlConstants.GET_RATINGS_RESTURL
-	}
 }

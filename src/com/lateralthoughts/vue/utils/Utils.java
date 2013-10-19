@@ -20,7 +20,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
@@ -39,8 +38,8 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import com.flurry.android.monolithic.sdk.impl.aca;
 import com.lateralthoughts.vue.AisleImageDetails;
+import com.lateralthoughts.vue.DataentryImage;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
@@ -430,6 +429,26 @@ public class Utils {
 		return vueUserProfile;
 	}
 
+	public static void writeAisleImagePathListToFile(Context context,
+			String fileName, ArrayList<DataentryImage> imagePathList)
+			throws Exception {
+		FileOutputStream fos = context.openFileOutput(fileName,
+				Context.MODE_PRIVATE);
+		ObjectOutputStream os = new ObjectOutputStream(fos);
+		os.writeObject(imagePathList);
+		os.close();
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static ArrayList<DataentryImage> readAisleImagePathListFromFile(
+			Context context, String fileName) throws Exception {
+		FileInputStream fis = context.openFileInput(fileName);
+		ObjectInputStream is = new ObjectInputStream(fis);
+		ArrayList<DataentryImage> imagePathList = (ArrayList) is.readObject();
+		is.close();
+		return imagePathList;
+	}
+
 	public static String getDeviceId() {
 		String deviceId = Secure.getString(VueApplication.getInstance()
 				.getContentResolver(), Secure.ANDROID_ID);
@@ -501,6 +520,23 @@ public class Utils {
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putBoolean(VueConstants.DATAENTRY_EDIT_AISLE_FLAG, flag);
+		editor.commit();
+	}
+
+	public static boolean isLoadDataentryScreenFlag(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getBoolean(
+				VueConstants.LOAD_DATAENTRY_SCREEN_FLAG, false);
+	}
+
+	public static void setLoadDataentryScreenFlag(Context context,
+			boolean loadDataentryScreenFlag) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean(VueConstants.LOAD_DATAENTRY_SCREEN_FLAG,
+				loadDataentryScreenFlag);
 		editor.commit();
 	}
 

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 
 public class VueApplication extends Application {
 	private static VueApplication sInstance;
-
 	private static final String CRITTERCISM_APP_ID = "5153c41e558d6a2403000009";
 	private HttpClient mHttpClient;
 	private FileCache mFileCache;
@@ -33,18 +32,6 @@ public class VueApplication extends Application {
 	private int mStatusBarHeight;
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
-	private boolean mLoadDataentryScreenFlag = false;
-
-	public boolean ismLoadDataentryScreenFlag() {
-		return mLoadDataentryScreenFlag;
-	}
-
-	public void setmLoadDataentryScreenFlag(boolean mLoadDataentryScreenFlag) {
-		this.mLoadDataentryScreenFlag = mLoadDataentryScreenFlag;
-	}
-
-	private boolean newVueTrendingAislesDataModel = false;
-	public ArrayList<DataentryImage> mAisleImagePathList = new ArrayList<DataentryImage>();
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
 	public static final int[] POPUP_ITEM_DRAWABLES = {
 			R.drawable.composer_camera, R.drawable.composer_music,
@@ -95,7 +82,6 @@ public class VueApplication extends Application {
 		this.mAisleImgCurrentPos = mAisleImgCurrentPos;
 	}
 
-	// public int totalDataDownload = 0;
 	public boolean mFbsharingflag = false;
 	private RequestQueue mVolleyRequestQueue;
 	private static final String[] SHOPPINGAPP_NAMES_ARRAY = { "Amazon", "eBay",
