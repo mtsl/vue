@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -166,12 +167,12 @@ public class AisleDetailsViewListLoader {
                 new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
     	Log.i("imageHeitht", "imageHeitht resizeWidth:  calling bacground thread ");
 
-          if (cancelPotentialDownload(loc, imageView)) {
+         // if (cancelPotentialDownload(loc, imageView)) {
             BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
             String imagesArray[] = {loc, serverImageUrl};
             task.execute(imagesArray);
-        }
+       // }
  
     }
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
@@ -260,9 +261,21 @@ public class AisleDetailsViewListLoader {
     public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 	 if (contentBrowser != null) {
 			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
+			    
+                 try{
+				ImageView image = (ScaleImageView)contentBrowser
+				.getChildAt(i);
+				Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+				bitmap.recycle();
+                 }catch (Exception e) {
+					 
+				}
+
+				
 				mViewFactory
 				.returnUsedImageView((ScaleImageView)contentBrowser
 						.getChildAt(i));
+				Log.i("imageviewsremoved", "imageviewsremoved: "+i);
 			} 
 			 mContentAdapterFactory.returnUsedAdapter(contentBrowser.getCustomAdapter());
 			 contentBrowser.setCustomAdapter(null);
