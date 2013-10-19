@@ -1299,8 +1299,7 @@ public class VueLoginActivity extends FragmentActivity implements
 					};
 				});
 		dialog.show();
-		dialog.setCancelable(false);
-		dialog.setCanceledOnTouchOutside(false);
+
 	}
 
 	private void createUserInServer(String userInitials) {

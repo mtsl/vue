@@ -170,9 +170,7 @@ public class GetOtherSourceImagesTask extends
 			o.inJustDecodeBounds = true;
 			BitmapFactory.decodeStream(is, null, o);
 			is.close();
-			if (o.outWidth != 0) {
-				return null;
-			} else if (o.outWidth >= reqWidth && o.outHeight >= reqHeight) {
+			if (o.outWidth >= reqWidth && o.outHeight >= reqHeight) {
 				otherSourceImageDetails.setHeight(o.outHeight);
 				otherSourceImageDetails.setWidth(o.outWidth);
 				otherSourceImageDetails.setOriginUrl(absUrl);
