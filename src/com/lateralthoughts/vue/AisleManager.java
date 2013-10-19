@@ -355,7 +355,7 @@ public class AisleManager {
 
 				@Override
 				public void onResponse(String jsonArray) {
-					Log.i("bookmark response", "bookmark response: "
+					Log.i("bookmark response", "bookmark response test: "
 							+ jsonArray);
 					if (jsonArray != null) {
 						try {

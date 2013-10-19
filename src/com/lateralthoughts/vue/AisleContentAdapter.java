@@ -402,7 +402,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 				}
 				 
 			}
- 
 			return bmp;
 		}
 

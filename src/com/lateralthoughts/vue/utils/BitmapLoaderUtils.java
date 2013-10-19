@@ -268,6 +268,7 @@ public class BitmapLoaderUtils {
 		Paint paint = new Paint();
 		paint.setFilterBitmap(true);
 		canvas.drawBitmap(originalImage, transformation, paint);
+		originalImage.recycle();
 		Log.i("imagenotcoming",
 				"bitmap issue scalleddown: originalbitmap width "
 						+ newBitmap.getWidth());
