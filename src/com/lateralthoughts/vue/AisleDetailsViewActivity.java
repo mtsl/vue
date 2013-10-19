@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -381,10 +382,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-
+			Bitmap bitmap = null;
 			// mItemDetails = mImageDetailsArr.get(position);
-			Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(mImageDetailsArr
-					.get(position).mCustomImageUrl);
+			/*Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(mImageDetailsArr
+					.get(position).mCustomImageUrl);*/
 
 			if (convertView == null) {
 				viewHolder = new ViewHolder();
@@ -535,6 +536,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				for (int i = 0; i < mImageDetailsArr.size(); i++) {
 					// mBitmapLoaderUtils.removeBitmapFromCache(mImageDetailsArr.get(i));
 				}
+				clearBitmaps();
 				super.onBackPressed();
 			}
 		}
@@ -956,5 +958,42 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		}
 		mVueAiselFragment.addAisleToWindow(bmp, imagePath, imageUrl,
 				imageWidth, imageHeight, detailsUrl, store, imageId);
+	}
+ 
+	private void clearBitmaps(){
+		Log.i("clearbitamps", "clearbitamps 1");
+		for(int i = 0;i<mTopScroller.getChildCount();i++){
+			Log.i("clearbitamps", "clearbitamps 2");
+			RelativeLayout topLayout = (RelativeLayout) mTopScroller.getChildAt(i);
+			
+			ImageView imageViewImage = (ImageView) topLayout.findViewById(R.id.vue_compareimg);
+			ImageView imageViewLike = (ImageView) topLayout.findViewById(R.id.compare_like_dislike);
+			   try{
+					Bitmap bitmap = ((BitmapDrawable)imageViewImage.getDrawable()).getBitmap();
+					bitmap.recycle();
+					bitmap = null;
+					imageViewImage.setImageDrawable(null);
+					imageViewLike.setImageResource(0);
+	                 }catch (Exception e) {
+						 
+					}
+		}
+		for(int i = 0;i<mBottomScroller.getChildCount();i++){
+			Log.i("clearbitamps", "clearbitamps 3");
+			RelativeLayout topLayout = (RelativeLayout) mBottomScroller.getChildAt(i);
+			
+			ImageView imageViewImage = (ImageView) topLayout.findViewById(R.id.vue_compareimg);
+			ImageView imageViewLike = (ImageView) topLayout.findViewById(R.id.compare_like_dislike);
+			   try{
+					Bitmap bitmap = ((BitmapDrawable)imageViewImage.getDrawable()).getBitmap();
+					bitmap.recycle();
+					bitmap = null;
+					imageViewImage.setImageDrawable(null);
+					imageViewLike.setImageResource(0);
+	                 }catch (Exception e) {
+						 
+					}
+		}
+		
 	}
 }

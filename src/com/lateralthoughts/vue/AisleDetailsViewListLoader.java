@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.android.volley.toolbox.ImageLoader;
+import com.facebook.android.Util;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
@@ -141,7 +142,7 @@ public class AisleDetailsViewListLoader {
 			if (bitmap != null) {
 				if (bitmap.getHeight() > mBestHeight) {
 					loadBitmap(itemDetails, contentBrowser, imageView,
-							mBestHeight);
+							mBestHeight,scrollIndex);
 				} else {
 					Log.i("setparam", "setparam cache: "+bitmap.getHeight());
 				}
@@ -151,24 +152,26 @@ public class AisleDetailsViewListLoader {
 				}
 			} else {
 				loadBitmap(itemDetails, contentBrowser, imageView,
-						mBestHeight);
+						mBestHeight, scrollIndex);
 				if(scrollIndex != 0){
+					
 					contentBrowser.setCurrentImage();
 					}
 			}
 		}        
     }
     
-    public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
+    public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight,int scrollIndex) {
     	String loc = itemDetails.mImageUrl;
     	String serverImageUrl = itemDetails.mImageUrl;
+    	
  
       /*  ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
                 new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
     	Log.i("imageHeitht", "imageHeitht resizeWidth:  calling bacground thread ");
 
          // if (cancelPotentialDownload(loc, imageView)) {
-            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
+            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight,scrollIndex);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
             String imagesArray[] = {loc, serverImageUrl};
             task.execute(imagesArray);
@@ -183,9 +186,10 @@ public class AisleDetailsViewListLoader {
         AisleContentBrowser aisleContentBrowser ;
         int mAvailabeWidth,mAvailableHeight;
         AisleImageDetails mItemDetails;
+        int mScrollIndex;
         
 
-        public BitmapWorkerTask(AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
+        public BitmapWorkerTask(AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight,int scrollIndex) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             mBestHeight = bestHeight;
@@ -193,6 +197,7 @@ public class AisleDetailsViewListLoader {
             mAvailabeWidth = itemDetails.mAvailableWidth;
             mAvailableHeight = itemDetails.mAvailableHeight;
             mItemDetails = itemDetails;
+            mScrollIndex = scrollIndex;
         }
 
         // Decode image in background.
@@ -226,7 +231,9 @@ public class AisleDetailsViewListLoader {
                 if (this == bitmapWorkerTask) {
                  //setParams( aisleContentBrowser, imageView,bitmap.getHeight());
                     imageView.setImageBitmap(bitmap);
+                    if(mScrollIndex == 0){
                     imageView.startAnimation(myFadeInAnimation);
+                    }
                 }
             }
         }
@@ -267,6 +274,7 @@ public class AisleDetailsViewListLoader {
 				.getChildAt(i);
 				Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
 				bitmap.recycle();
+				bitmap = null;
                  }catch (Exception e) {
 					 
 				}

@@ -59,6 +59,7 @@ public class Utils {
 	public static int MAX_RETRIES = 3;
 	public static String mChangeAilseId;
 	public static boolean isAisleChanged = false;
+	public static boolean mAinmate = true;
 
 	public static void CopyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;

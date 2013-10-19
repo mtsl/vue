@@ -31,7 +31,7 @@ public class BitmapLoaderUtils {
 	private static BitmapLoaderUtils sBitmapLoaderUtils;
 	private FileCache mFileCache;
 	// private VueMemoryCache<Bitmap> mAisleImagesCache;
-	private BitmapLruCache mAisleImagesCache;
+	//private BitmapLruCache mAisleImagesCache;
 
 	// private int mScreenWidth;
 
@@ -40,10 +40,9 @@ public class BitmapLoaderUtils {
 	private BitmapLoaderUtils() {
 		// mContext = context;
 		mFileCache = VueApplication.getInstance().getFileCache();
-		// mAisleImagesCache =
-		// VueApplication.getInstance().getAisleImagesMemCache();
-		mAisleImagesCache = BitmapLruCache.getInstance(VueApplication
-				.getInstance());
+	 
+	/*	mAisleImagesCache = BitmapLruCache.getInstance(VueApplication
+				.getInstance());*/
 
 		// DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
 		// mScreenWidth = metrics.widthPixels;
@@ -75,8 +74,8 @@ public class BitmapLoaderUtils {
 		Bitmap b = decodeFile(f, bestHeight, bestWidth, source);
 		if (b != null) {
 			 
-			if (cacheBitmap)
-				mAisleImagesCache.putBitmap(url, b);
+	/*		if (cacheBitmap)
+				mAisleImagesCache.putBitmap(url, b);*/
 			return b;
 		}
 		 
@@ -100,13 +99,13 @@ public class BitmapLoaderUtils {
 			Utils.CopyStream(is, os);
 			os.close();
 			bitmap = decodeFile(f, bestHeight, bestWidth, source);
-			if (cacheBitmap)
-				mAisleImagesCache.putBitmap(url, bitmap);
+			/*if (cacheBitmap)
+				mAisleImagesCache.putBitmap(url, bitmap);*/
 			return bitmap;
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
-				 mAisleImagesCache.evictAll();
+				// mAisleImagesCache.evictAll();
 			}
 			return null;
 		}
@@ -215,7 +214,7 @@ public class BitmapLoaderUtils {
 			 
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
-				mAisleImagesCache.evictAll();
+				//mAisleImagesCache.evictAll();
 				 
 			}
 			return null;
@@ -278,10 +277,10 @@ public class BitmapLoaderUtils {
 		return newBitmap;
 	}
 
-	public Bitmap getCachedBitmap(String url) {
+	/*public Bitmap getCachedBitmap(String url) {
 		return mAisleImagesCache.get(url);
 	}
-
+*/
 	public void clearCache() {
 		// mAisleImagesCache.clear();
 		// mFileCache.clear();
