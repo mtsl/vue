@@ -315,6 +315,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
 		FlurryAgent.onPageView();
 		FlurryAgent.logEvent(DETAILS_SCREEN_VISITOR);
+
 		super.onStart();
 	}
 
@@ -322,6 +323,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	protected void onStop() {
 		super.onStop();
 		FlurryAgent.onEndSession(this);
+		Log.i("adaptersettings", "adaptersettings: onstop");
+		if (mVueAiselFragment == null) {
+			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisle_details_view_fragment);
+		}
+		mVueAiselFragment.setAisleContentListenerNull();
 
 	}
 

@@ -985,9 +985,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.dataObserver();
 		mImageRefresh = true;
 		if (mViewHolder != null) {
+			Log.i("adaptersettings", "adaptersettings: if");
 			mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			notifyAdapter();
 		} else {
+			Log.i("adaptersettings", "adaptersettings: else");
 			mswipeListner.onResetAdapter();
 		}
 

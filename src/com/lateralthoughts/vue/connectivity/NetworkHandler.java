@@ -31,6 +31,7 @@ import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.domain.AisleComment;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -40,7 +41,11 @@ import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
@@ -532,7 +537,40 @@ public class NetworkHandler {
 		return userId;
 
 	}
+//////////////////////////////////////////////////////
 
+    public  AisleComment testCreateAisleComment(
+                    AisleComment comment) throws Exception{
+            AisleComment createdAisleComment = null;
+            ObjectMapper mapper =
+                            new ObjectMapper();
+
+            URL url = new URL(UrlConstants.CREATE_AISLECOMMENT_RESTURL +
+                            "/" + getUserId());
+            HttpPut httpPut = new HttpPut(url.toString());
+            StringEntity entity = new StringEntity(mapper.writeValueAsString(comment));
+            System.out.println("AisleComment create request: "+mapper.writeValueAsString(comment));
+            entity.setContentType("application/json;charset=UTF-8");
+            entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
+            httpPut.setEntity(entity);
+
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpResponse response = httpClient.execute(httpPut);
+            if(response.getEntity()!=null &&
+                            response.getStatusLine().getStatusCode() == 200) {
+                    String responseMessage = EntityUtils.toString(response.getEntity());
+                    System.out.println("Response: "+responseMessage);
+                    if (responseMessage.length() > 0)
+                    {
+                            createdAisleComment = (new ObjectMapper()).readValue(responseMessage, AisleComment.class);
+                    }
+            }
+
+            return createdAisleComment;
+    }
+	
+	
+//////////////////////////////////////////////////////////
 	public void getRatedImageList() {
 		String userId = getUserId();
 		if (userId == null) {
