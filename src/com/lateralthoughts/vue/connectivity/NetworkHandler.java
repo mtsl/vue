@@ -521,7 +521,7 @@ public class NetworkHandler {
 		return false;
 	}
 
-	private String getUserId() {
+	public String getUserId() {
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(
@@ -556,14 +556,19 @@ public class NetworkHandler {
 
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpResponse response = httpClient.execute(httpPut);
+            
+           
             if(response.getEntity()!=null &&
                             response.getStatusLine().getStatusCode() == 200) {
                     String responseMessage = EntityUtils.toString(response.getEntity());
+                    Log.i("aisleComment", "aisleComment response: "+responseMessage);
                     System.out.println("Response: "+responseMessage);
                     if (responseMessage.length() > 0)
                     {
                             createdAisleComment = (new ObjectMapper()).readValue(responseMessage, AisleComment.class);
                     }
+            } else  {
+            	 Log.i("aisleComment", "aisleComment response code: "+response.getStatusLine().getStatusCode());
             }
 
             return createdAisleComment;

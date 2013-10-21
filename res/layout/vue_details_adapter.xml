@@ -93,7 +93,6 @@
                 android:layout_marginTop="6dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="Love love love the dress! Simple and fabulous. It was a randomevents. My friend had been working for Donna karan in NY managing her studion in west village"
                 android:textColor="@color/black" />
         </LinearLayout>
     </LinearLayout>

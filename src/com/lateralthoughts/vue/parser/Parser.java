@@ -96,7 +96,7 @@ public class Parser {
 			throws JSONException {
 		if (logStatus) {
 			Log.e("Parser",
-					"parserAisleImageData: Response " + jsonObject.toString());
+					"abcparserAisleImageData: Response " + jsonObject.toString());
 			logStatus = false;
 		}
 		AisleImageDetails aisleImageDetails = new AisleImageDetails();
@@ -218,10 +218,13 @@ public class Parser {
 		AisleContext aisleContext = new AisleContext();
 		try {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
-			if ("5279021612924928".equalsIgnoreCase(aisleContext.mAisleId)) {
+			if ("4823662737752064".equalsIgnoreCase(aisleContext.mAisleId)) {
 				logStatus = true;
+				Log.e("Parser",
+						"abcparserAisleAisleData: Response  "+josnObject.toString());
 			}
-
+            JSONArray jsonArray = josnObject.getJSONArray("comments");
+            aisleContext.mCommentList = parseComments(jsonArray);
 			aisleContext.mCategory = josnObject
 					.getString(VueConstants.AISLE_CATEGORY);
 			aisleContext.mLookingForItem = josnObject
@@ -292,7 +295,15 @@ public class Parser {
 		}
 		return aisleIdList;
 	}
-
+   public ArrayList<String> parseComments(JSONArray jsonArray) throws JSONException{
+	   ArrayList<String> commentList = new ArrayList<String>();
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+		     String userComment = jsonObject.getString("comment"); 
+				commentList.add(userComment);
+		}
+		return commentList;
+   }
 	public VueUser parseUserData(String response) {
 		try {
 			JSONObject jsonObject = new JSONObject(response);
