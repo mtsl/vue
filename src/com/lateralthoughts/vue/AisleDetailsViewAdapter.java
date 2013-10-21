@@ -1219,7 +1219,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			}
 		}
 	}
-
+   private void createComment(String comment){
+	   
+   }
 	private void writeToSdcard(String message) {
 
 		String path = Environment.getExternalStorageDirectory().toString();
