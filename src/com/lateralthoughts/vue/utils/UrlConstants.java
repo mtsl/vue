@@ -55,8 +55,11 @@ public class UrlConstants {
 
 	public static final String GET_IMAGES_FOR_AISLE = SERVER_BASE_URL
 			+ "api/imagesget/aisle/";
-	
-	   public static final String CREATE_AISLECOMMENT_RESTURL =
-			   SERVER_BASE_URL+"api/aislecommentcreate";
 
+	public static final String CREATE_AISLECOMMENT_RESTURL = SERVER_BASE_URL
+			+ "api/aislecommentcreate";
+	public static final String GET_UNIQUE_ONETIME_IMAGE_UPLOAD_RESTURL = SERVER_BASE_URL
+			+ "api/getUrlToUploadImage";
+	public static final String GET_IMAGE_FILE_RESTURL = SERVER_BASE_URL
+			+ "upload";
 }

@@ -188,9 +188,12 @@ public class Utils {
 		}
 	}
 
-	public static String getResizedImage(File f, float screenHeight,
+	// String[] ... [0] is resizedImagePath, [1] originalImageWidth, [2]
+	// orignalImageHeight
+	public static String[] getResizedImage(File f, float screenHeight,
 			float screenWidth, Context mContext) {
 		try {
+			String[] returnArray = new String[3];
 			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
@@ -200,6 +203,8 @@ public class Utils {
 			Log.e("cs", "10");
 			int height = o.outHeight;
 			int width = o.outWidth;
+			returnArray[1] = width + "";
+			returnArray[2] = height + "";
 			int scale = 1;
 			int heightRatio = 0;
 			int widthRatio = 0;
@@ -233,7 +238,8 @@ public class Utils {
 			File resizedFileName = new File(
 					vueAppResizedImageFileName(mContext));
 			saveBitmap(resizedBitmap, resizedFileName);
-			return resizedFileName.getPath();
+			returnArray[0] = resizedFileName.getPath();
+			return returnArray;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

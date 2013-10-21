@@ -110,26 +110,25 @@ public class CreateAisleSelectionActivity extends Activity {
 	}
 
 	public void cameraFunctionality() {
-		/*
-		 * FlurryAgent.logEvent("ADD_IMAGE_CAMERA"); mCameraImageName = Utils
-		 * .vueAppCameraImageFileName(CreateAisleSelectionActivity.this); File
-		 * cameraImageFile = new File(mCameraImageName); Intent intent = new
-		 * Intent(CAMERA_INTENT_NAME); intent.putExtra(MediaStore.EXTRA_OUTPUT,
-		 * Uri.fromFile(cameraImageFile)); startActivityForResult(intent,
-		 * VueConstants.CAMERA_REQUEST);
-		 */
-		Utils.showAlertMessageForBackendNotIntegrated(this, true);
+
+		FlurryAgent.logEvent("ADD_IMAGE_CAMERA");
+		mCameraImageName = Utils
+				.vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
+		File cameraImageFile = new File(mCameraImageName);
+		Intent intent = new Intent(CAMERA_INTENT_NAME);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraImageFile));
+		startActivityForResult(intent, VueConstants.CAMERA_REQUEST);
+
 	}
 
 	public void galleryFunctionality() {
-		/*
-		 * FlurryAgent.logEvent("ADD_IMAGE_GALLERY"); Intent i = new
-		 * Intent(Intent.ACTION_PICK,
-		 * android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-		 * startActivityForResult(Intent.createChooser(i,
-		 * GALLERY_ALERT_MESSAGE), VueConstants.SELECT_PICTURE);
-		 */
-		Utils.showAlertMessageForBackendNotIntegrated(this, true);
+
+		FlurryAgent.logEvent("ADD_IMAGE_GALLERY");
+		Intent i = new Intent(Intent.ACTION_PICK,
+				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(Intent.createChooser(i, GALLERY_ALERT_MESSAGE),
+				VueConstants.SELECT_PICTURE);
+
 	}
 
 	public void moreClickFunctionality() {

@@ -25,6 +25,7 @@ public class VueConstants {
 	public static final int CREATE_AISLE_NOTIFICATION_ID = 1;
 	public static final int ADD_IMAGE_TO_AISLE_NOTIFICATION_ID = 2;
 	public static final int CHANGE_USER_NOTIFICATION_ID = 3;
+	public static final int UPLOAD_IMAGE_TO_SERVER_NOTIFICATION_ID = 4;
 	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.sss";
 	public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
 	public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";

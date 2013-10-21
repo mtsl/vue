@@ -916,9 +916,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		}
 	}
 
-	public void addAisleToContentWindow(Bitmap addedBitmap, String imagePath,
-			String imageUrl, int imageWidth, int imageHeight, String title,
-			String detailsUrl, String store, String imageId) {
+	public void addAisleToContentWindow(String imagePath, String imageUrl,
+			int imageWidth, int imageHeight, String title, String detailsUrl,
+			String store, String imageId, boolean isImageFromLocalSystem) {
 		Utils.isAisleChanged = true;
 		Utils.mChangeAilseId = getItem(mCurrentAislePosition).getAisleId();
 		AisleImageDetails imgDetails = new AisleImageDetails();
@@ -949,6 +949,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		imgDetails.mImageUrl = imageUrl;
 		imgDetails.mDetalsUrl = detailsUrl;
 		imgDetails.mId = imageId; // offline imageid
+		imgDetails.mIsFromLocalSystem = isImageFromLocalSystem;
 		imgDetails.mStore = store;
 		imgDetails.mTrendingImageHeight = imgDetails.mAvailableHeight;
 		imgDetails.mTrendingImageWidth = imgDetails.mAvailableWidth;
@@ -1219,9 +1220,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			}
 		}
 	}
-   private void createComment(String comment){
-	   
-   }
+
+	private void createComment(String comment) {
+
+	}
+
 	private void writeToSdcard(String message) {
 
 		String path = Environment.getExternalStorageDirectory().toString();

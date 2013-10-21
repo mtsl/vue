@@ -11,7 +11,7 @@ public class AisleImageDetails {
 	public String mCustomImageUrl;
 	public int mAvailableHeight;
 	public int mAvailableWidth;
-	 
+
 	public int mLikesCount = 0;
 	public String mOwnerUserId;
 	public String mOwnerAisleId;
@@ -22,7 +22,7 @@ public class AisleImageDetails {
 	public int mTrendingImageWidth;
 	public int mDetailsImageWidth;
 	public int mDetailsImageHeight;
-	
+	public boolean mIsFromLocalSystem;
 	public int mTempResizeBitmapwidth;
 	public int mTempResizedBitmapHeight;
 }

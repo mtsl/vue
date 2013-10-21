@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
+import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.AisleWindowContentFactory;
 import com.lateralthoughts.vue.ImageRating;
@@ -49,6 +50,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -173,6 +175,11 @@ public class NetworkHandler {
 			String imageId, VueImage image, ImageAddedCallback callback) {
 		AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag,
 				imageId, image, callback);
+	}
+
+	public void requestForUploadImage(File imageFile,
+			ImageUploadCallback callback) {
+		AisleManager.getAisleManager().uploadImage(imageFile, callback);
 	}
 
 	// get aisles related to search keyword
@@ -537,40 +544,42 @@ public class NetworkHandler {
 		return userId;
 
 	}
-//////////////////////////////////////////////////////
 
-    public  AisleComment testCreateAisleComment(
-                    AisleComment comment) throws Exception{
-            AisleComment createdAisleComment = null;
-            ObjectMapper mapper =
-                            new ObjectMapper();
+	// ////////////////////////////////////////////////////
 
-            URL url = new URL(UrlConstants.CREATE_AISLECOMMENT_RESTURL +
-                            "/" + getUserId());
-            HttpPut httpPut = new HttpPut(url.toString());
-            StringEntity entity = new StringEntity(mapper.writeValueAsString(comment));
-            System.out.println("AisleComment create request: "+mapper.writeValueAsString(comment));
-            entity.setContentType("application/json;charset=UTF-8");
-            entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
-            httpPut.setEntity(entity);
+	public AisleComment testCreateAisleComment(AisleComment comment)
+			throws Exception {
+		AisleComment createdAisleComment = null;
+		ObjectMapper mapper = new ObjectMapper();
 
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpResponse response = httpClient.execute(httpPut);
-            if(response.getEntity()!=null &&
-                            response.getStatusLine().getStatusCode() == 200) {
-                    String responseMessage = EntityUtils.toString(response.getEntity());
-                    System.out.println("Response: "+responseMessage);
-                    if (responseMessage.length() > 0)
-                    {
-                            createdAisleComment = (new ObjectMapper()).readValue(responseMessage, AisleComment.class);
-                    }
-            }
+		URL url = new URL(UrlConstants.CREATE_AISLECOMMENT_RESTURL + "/"
+				+ getUserId());
+		HttpPut httpPut = new HttpPut(url.toString());
+		StringEntity entity = new StringEntity(
+				mapper.writeValueAsString(comment));
+		System.out.println("AisleComment create request: "
+				+ mapper.writeValueAsString(comment));
+		entity.setContentType("application/json;charset=UTF-8");
+		entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+				"application/json;charset=UTF-8"));
+		httpPut.setEntity(entity);
 
-            return createdAisleComment;
-    }
-	
-	
-//////////////////////////////////////////////////////////
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpResponse response = httpClient.execute(httpPut);
+		if (response.getEntity() != null
+				&& response.getStatusLine().getStatusCode() == 200) {
+			String responseMessage = EntityUtils.toString(response.getEntity());
+			System.out.println("Response: " + responseMessage);
+			if (responseMessage.length() > 0) {
+				createdAisleComment = (new ObjectMapper()).readValue(
+						responseMessage, AisleComment.class);
+			}
+		}
+
+		return createdAisleComment;
+	}
+
+	// ////////////////////////////////////////////////////////
 	public void getRatedImageList() {
 		String userId = getUserId();
 		if (userId == null) {

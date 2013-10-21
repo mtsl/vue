@@ -185,7 +185,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			}
 			FlurryAgent.logEvent("Rigestered_Users", articleParams);
 			FlurryAgent.logEvent("Login_Time_Ends", articleParams, true);
-		} 
+		}
 		/*
 		 * FlurryAgent.setAge(arg0); FlurryAgent.setGender(arg0);
 		 * FlurryAgent.setUserId(arg0);
@@ -316,8 +316,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		 * showOtherSourcesGridview(
 		 * convertImageUrisToOtherSourceImageDetails(imageUriList), ""); } }
 		 */
-		Utils.showAlertMessageForBackendNotIntegrated(
-				VueLandingPageActivity.this, false);
+		
 	}
 
 	void handleSendMultipleImages(Intent intent, boolean fromOnCreateMethodFlag) {/*
@@ -565,6 +564,8 @@ public class VueLandingPageActivity extends BaseActivity {
 						VueConstants.CREATE_AISLE_NOTIFICATION_ID);
 				CancelNotification(this,
 						VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID);
+				CancelNotification(this,
+						VueConstants.UPLOAD_IMAGE_TO_SERVER_NOTIFICATION_ID);
 				CancelNotification(this,
 						VueConstants.CHANGE_USER_NOTIFICATION_ID);
 				FileCache fileCache = new FileCache(

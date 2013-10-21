@@ -135,7 +135,7 @@ public class VueTrendingAislesDataModel {
 		mAisleContentList.add(aisleItem);
     	  }
     }
-    public AisleWindowContent getAisleFromList(int position){
+    public AisleWindowContent removeAisleFromList(int position){
     	return mAisleContentList.remove(position);
     }
 	public int getAisleCount() {
@@ -149,7 +149,14 @@ public class VueTrendingAislesDataModel {
 		}
 		return 0;
 	}
-
+    public AisleWindowContent getAisleFromList(AisleWindowContent ailseItem) {
+		int index = mAisleContentList.indexOf(ailseItem);
+		if(index != -1 && index < mAisleContentList.size()){
+		ailseItem = mAisleContentList.get(index);
+		return ailseItem;
+		}
+		return null;
+    }
 	public AisleWindowContent getAisleAt(int position) {
 		try {
 			return mAisleContentList.get(position);

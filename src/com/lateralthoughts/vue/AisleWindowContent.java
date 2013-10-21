@@ -240,13 +240,17 @@ public class AisleWindowContent {
 
 	}
 
-	public void getAisleImageForImageId(String imageId,
+	public void getAisleImageForImageId(String imageId, String imageUrl,
 			String newServerResponseImageId) {
 		if (imageId != null) {
 			if (mAisleImagesList != null && mAisleImagesList.size() > 0) {
 				for (int i = 0; i < mAisleImagesList.size(); i++) {
 					if (imageId.equals(mAisleImagesList.get(i).mId)) {
 						mAisleImagesList.get(i).mId = newServerResponseImageId;
+						if (mAisleImagesList.get(i).mIsFromLocalSystem) {
+							mAisleImagesList.get(i).mImageUrl = imageUrl;
+						}
+						break;
 					}
 				}
 			}

@@ -391,8 +391,11 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Bitmap bitmap = null;
 			// mItemDetails = mImageDetailsArr.get(position);
-			/*Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(mImageDetailsArr
-					.get(position).mCustomImageUrl);*/
+			/*
+			 * Bitmap bitmap =
+			 * mBitmapLoaderUtils.getCachedBitmap(mImageDetailsArr
+			 * .get(position).mCustomImageUrl);
+			 */
 
 			if (convertView == null) {
 				viewHolder = new ViewHolder();
@@ -963,56 +966,77 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	private void addImageToAisle(String imagePath, String imageUrl,
 			int imageWidth, int imageHeight, String detailsUrl, String store,
 			String imageId) {
+		boolean isImageFromLocalSystem = false;
+		if (imageUrl == null) {
+			isImageFromLocalSystem = true;
+		}
+
 		FileCache fileCache = new FileCache(this);
-		File f = fileCache.getFile(imageUrl);
+		File f = null;
+		if (imageUrl != null) {
+			f = fileCache.getFile(imageUrl);
+		} else {
+			f = fileCache.getFile(imagePath);
+			imageUrl = f.getPath();
+		}
 		File sourceFile = new File(imagePath);
 		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
 				VueApplication.getInstance().mScreenHeight,
 				VueApplication.getInstance().getVueDetailsCardWidth(),
 				Utils.DETAILS_SCREEN);
 		Utils.saveBitmap(bmp, f);
+
 		if (mVueAiselFragment == null) {
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.aisle_details_view_fragment);
 		}
-		mVueAiselFragment.addAisleToWindow(bmp, imagePath, imageUrl,
-				imageWidth, imageHeight, detailsUrl, store, imageId);
+		mVueAiselFragment
+				.addAisleToWindow(imagePath, imageUrl, imageWidth, imageHeight,
+						detailsUrl, store, imageId, isImageFromLocalSystem);
 	}
- 
-	private void clearBitmaps(){
+
+	private void clearBitmaps() {
 		Log.i("clearbitamps", "clearbitamps 1");
-		for(int i = 0;i<mTopScroller.getChildCount();i++){
+		for (int i = 0; i < mTopScroller.getChildCount(); i++) {
 			Log.i("clearbitamps", "clearbitamps 2");
-			RelativeLayout topLayout = (RelativeLayout) mTopScroller.getChildAt(i);
-			
-			ImageView imageViewImage = (ImageView) topLayout.findViewById(R.id.vue_compareimg);
-			ImageView imageViewLike = (ImageView) topLayout.findViewById(R.id.compare_like_dislike);
-			   try{
-					Bitmap bitmap = ((BitmapDrawable)imageViewImage.getDrawable()).getBitmap();
-					bitmap.recycle();
-					bitmap = null;
-					imageViewImage.setImageDrawable(null);
-					imageViewLike.setImageResource(0);
-	                 }catch (Exception e) {
-						 
-					}
+			RelativeLayout topLayout = (RelativeLayout) mTopScroller
+					.getChildAt(i);
+
+			ImageView imageViewImage = (ImageView) topLayout
+					.findViewById(R.id.vue_compareimg);
+			ImageView imageViewLike = (ImageView) topLayout
+					.findViewById(R.id.compare_like_dislike);
+			try {
+				Bitmap bitmap = ((BitmapDrawable) imageViewImage.getDrawable())
+						.getBitmap();
+				bitmap.recycle();
+				bitmap = null;
+				imageViewImage.setImageDrawable(null);
+				imageViewLike.setImageResource(0);
+			} catch (Exception e) {
+
+			}
 		}
-		for(int i = 0;i<mBottomScroller.getChildCount();i++){
+		for (int i = 0; i < mBottomScroller.getChildCount(); i++) {
 			Log.i("clearbitamps", "clearbitamps 3");
-			RelativeLayout topLayout = (RelativeLayout) mBottomScroller.getChildAt(i);
-			
-			ImageView imageViewImage = (ImageView) topLayout.findViewById(R.id.vue_compareimg);
-			ImageView imageViewLike = (ImageView) topLayout.findViewById(R.id.compare_like_dislike);
-			   try{
-					Bitmap bitmap = ((BitmapDrawable)imageViewImage.getDrawable()).getBitmap();
-					bitmap.recycle();
-					bitmap = null;
-					imageViewImage.setImageDrawable(null);
-					imageViewLike.setImageResource(0);
-	                 }catch (Exception e) {
-						 
-					}
+			RelativeLayout topLayout = (RelativeLayout) mBottomScroller
+					.getChildAt(i);
+
+			ImageView imageViewImage = (ImageView) topLayout
+					.findViewById(R.id.vue_compareimg);
+			ImageView imageViewLike = (ImageView) topLayout
+					.findViewById(R.id.compare_like_dislike);
+			try {
+				Bitmap bitmap = ((BitmapDrawable) imageViewImage.getDrawable())
+						.getBitmap();
+				bitmap.recycle();
+				bitmap = null;
+				imageViewImage.setImageDrawable(null);
+				imageViewLike.setImageResource(0);
+			} catch (Exception e) {
+
+			}
 		}
-		
+
 	}
 }

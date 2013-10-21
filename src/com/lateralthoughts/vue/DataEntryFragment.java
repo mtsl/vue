@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.test.MoreAsserts;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -32,6 +33,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
+import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
@@ -1746,42 +1748,81 @@ public class DataEntryFragment extends Fragment {
 
 	// create ailse and send to server.
 	public void addAisleToServer(VueUser vueUser) {
-		if (mOtherSourceSelectedImageUrl != null
-				&& mOtherSourceSelectedImageUrl.trim().length() > 0) {
-			Aisle aisle = new Aisle();
-			aisle.setCategory(mCategoryText.getText().toString().trim());
-			aisle.setLookingFor(mLookingForBigText.getText().toString().trim());
+		if ((mOtherSourceSelectedImageUrl != null && mOtherSourceSelectedImageUrl
+				.trim().length() > 0) || mImagePath != null) {
+			String categoery = mCategoryText.getText().toString().trim();
+			String lookingFor = mLookingForBigText.getText().toString().trim();
+			String occassion = mOccassionBigText.getText().toString().trim();
+			String description = mSaySomethingAboutAisle.getText().toString()
+					.trim();
+			String findAt = mFindAtText.getText().toString();
+			final Aisle aisle = new Aisle();
+			aisle.setCategory(categoery);
+			aisle.setLookingFor(lookingFor);
 			aisle.setName("Super Aisle"); // TODO By Krishna
-			aisle.setOccassion(mOccassionBigText.getText().toString().trim());
+			aisle.setOccassion(occassion);
 			aisle.setOwnerUserId(Long.valueOf(vueUser.getId()));
-			if (mSaySomethingAboutAisle.getText().toString().trim().length() > 0) {
-				aisle.setDescription(mSaySomethingAboutAisle.getText()
-						.toString());
+			if (description.length() > 0) {
+				aisle.setDescription(description);
 			} else {
 				aisle.setDescription("");
 			}
-			VueImage image = new VueImage();
-			image.setDetailsUrl(mFindAtText.getText().toString());
+			final VueImage image = new VueImage();
+			image.setDetailsUrl(findAt);
 			image.setHeight(mOtherSourceImageOriginalHeight);
 			image.setWidth(mOtherSourceImageOriginalWidth);
-			image.setImageUrl(mOtherSourceSelectedImageUrl);
 			image.setStore(mOtherSourceSelectedImageStore);
 			image.setTitle("Android Test"); // TODO By Krishna
 			FlurryAgent.logEvent("New_Aisle_Creation");
 			image.setOwnerUserId(Long.valueOf(vueUser.getId()));
 			FlurryAgent.logEvent("Create_Aisle");
-			aisle.setAisleImage(image);
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance())
-					.getNetworkHandler()
-					.requestCreateAisle(aisle,
-							new AisleManager.AisleUpdateCallback() {
-								@Override
-								public void onAisleUpdated(String aisleId) {
-									Utils.putDataentryScreenAisleId(
-											getActivity(), aisleId);
-								}
-							});
+			// Camera or Gallery...
+			if (mOtherSourceSelectedImageUrl == null) {
+				VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance())
+						.getNetworkHandler()
+						.requestForUploadImage(new File(mImagePath),
+								new ImageUploadCallback() {
+									@Override
+									public void onImageUploaded(String imageUrl) {
+										if (imageUrl != null) {
+											image.setImageUrl(imageUrl);
+											aisle.setAisleImage(image);
+											VueTrendingAislesDataModel
+													.getInstance(
+															VueApplication
+																	.getInstance())
+													.getNetworkHandler()
+													.requestCreateAisle(
+															aisle,
+															new AisleManager.AisleUpdateCallback() {
+																@Override
+																public void onAisleUpdated(
+																		String aisleId) {
+																	Utils.putDataentryScreenAisleId(
+																			getActivity(),
+																			aisleId);
+																}
+															});
+										}
+									}
+								});
+			} else {
+				image.setImageUrl(mOtherSourceSelectedImageUrl);
+				aisle.setAisleImage(image);
+				VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance())
+						.getNetworkHandler()
+						.requestCreateAisle(aisle,
+								new AisleManager.AisleUpdateCallback() {
+									@Override
+									public void onAisleUpdated(String aisleId) {
+										Utils.putDataentryScreenAisleId(
+												getActivity(), aisleId);
+									}
+								});
+			}
+
 		} else {
 			Toast.makeText(
 					getActivity(),
@@ -1793,29 +1834,63 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	public void addImageToAisleToServer(String ownerUserId,
-			String ownerAisleId, boolean fromDetailsScreenFlag, String imageId) {
-		if (mOtherSourceSelectedImageUrl != null
-				&& mOtherSourceSelectedImageUrl.trim().length() > 0) {
-			VueImage image = new VueImage();
+			String ownerAisleId, final boolean fromDetailsScreenFlag,
+			final String imageId) {
+		if ((mOtherSourceSelectedImageUrl != null && mOtherSourceSelectedImageUrl
+				.trim().length() > 0) || mImagePath != null) {
+			final VueImage image = new VueImage();
 			image.setDetailsUrl(mFindAtText.getText().toString());
 			image.setHeight(mOtherSourceImageOriginalHeight);
 			image.setWidth(mOtherSourceImageOriginalWidth);
-			image.setImageUrl(mOtherSourceSelectedImageUrl);
 			image.setStore(mOtherSourceSelectedImageStore);
 			image.setTitle("Android Test"); // TODO By Krishna
 			image.setOwnerUserId(Long.valueOf(ownerUserId));
 			image.setOwnerAisleId(Long.valueOf(ownerAisleId));
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance())
-					.getNetworkHandler()
-					.requestForAddImage(fromDetailsScreenFlag, imageId, image,
-							new ImageAddedCallback() {
-								@Override
-								public void onImageAdded(
-										AisleImageDetails imageDetails) {
-									// //
-								}
-							});
+			// Camera or Gallery...
+			if (mOtherSourceSelectedImageUrl == null) {
+				VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance())
+						.getNetworkHandler()
+						.requestForUploadImage(new File(mImagePath),
+								new ImageUploadCallback() {
+									@Override
+									public void onImageUploaded(String imageUrl) {
+										if (imageUrl != null) {
+											image.setImageUrl(imageUrl);
+											VueTrendingAislesDataModel
+													.getInstance(
+															VueApplication
+																	.getInstance())
+													.getNetworkHandler()
+													.requestForAddImage(
+															fromDetailsScreenFlag,
+															imageId,
+															image,
+															new ImageAddedCallback() {
+																@Override
+																public void onImageAdded(
+																		AisleImageDetails imageDetails) {
+																	// //
+																}
+															});
+										}
+									}
+								});
+			} else {
+				image.setImageUrl(mOtherSourceSelectedImageUrl);
+				VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance())
+						.getNetworkHandler()
+						.requestForAddImage(fromDetailsScreenFlag, imageId,
+								image, new ImageAddedCallback() {
+									@Override
+									public void onImageAdded(
+											AisleImageDetails imageDetails) {
+										// //
+									}
+								});
+			}
+
 		} else {
 			Toast.makeText(
 					getActivity(),
@@ -1857,8 +1932,19 @@ public class DataEntryFragment extends Fragment {
 
 		@Override
 		protected Activity doInBackground(Activity... params) {
-			mResizedImagePath = Utils.getResizedImage(new File(mImagePath),
+			String[] returnArray = Utils.getResizedImage(new File(mImagePath),
 					mScreenHeight, mScreenWidth, params[0]);
+			if (returnArray != null) {
+				mResizedImagePath = returnArray[0];
+				try {
+					mOtherSourceImageOriginalWidth = Integer
+							.parseInt(returnArray[1]);
+					mOtherSourceImageOriginalHeight = Integer
+							.parseInt(returnArray[2]);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			if (mResizedImagePath != null) {
 				mAisleImageBitmap = BitmapFactory.decodeFile(mResizedImagePath);
 			}

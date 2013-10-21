@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -41,6 +42,7 @@ import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.utils.AddImageToAisleBackgroundThread;
 import com.lateralthoughts.vue.utils.AisleCreationBackgroundThread;
+import com.lateralthoughts.vue.utils.UploadImageBackgroundThread;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -50,6 +52,10 @@ public class AisleManager {
 
 	public interface AisleUpdateCallback {
 		public void onAisleUpdated(String id);
+	}
+
+	public interface ImageUploadCallback {
+		public void onImageUploaded(String imageUrl);
 	}
 
 	public interface ImageAddedCallback {
@@ -160,6 +166,17 @@ public class AisleManager {
 
 		return aisle;
 
+	}
+
+	public void uploadImage(File imageName,
+			ImageUploadCallback imageUploadCallback) {
+		if (null == imageName) {
+			throw new RuntimeException(
+					"Can't create Aisle without a non null aisle object");
+		}
+
+		Thread t = new Thread(new UploadImageBackgroundThread(imageName, imageUploadCallback));
+		t.start();
 	}
 
 	// issues a request to add an image to the aisle.
