@@ -386,15 +386,17 @@ public class Utils {
 	}
 
 	public static String getUrlFromString(String stringWithUrl) {
-		String regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(stringWithUrl);
-		while (m.find()) {
-			String urlStr = m.group();
-			if (urlStr.startsWith("(") && urlStr.endsWith(")")) {
-				urlStr = urlStr.substring(1, urlStr.length() - 1);
+		if (stringWithUrl != null) {
+			String regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
+			Pattern p = Pattern.compile(regex);
+			Matcher m = p.matcher(stringWithUrl);
+			while (m.find()) {
+				String urlStr = m.group();
+				if (urlStr.startsWith("(") && urlStr.endsWith(")")) {
+					urlStr = urlStr.substring(1, urlStr.length() - 1);
+				}
+				return urlStr;
 			}
-			return urlStr;
 		}
 		return null;
 	}

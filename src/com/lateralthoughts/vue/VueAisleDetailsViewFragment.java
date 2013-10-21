@@ -72,7 +72,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private int mDotsCount = 0;
 	private int mHighlightPosition;
 	private int mTotalPageCount;
-	private int mListCount = 5;
+	private int mListCount = 3;
 	private int mTotalScreenCount;
 	// private VueContentGateway mVueContentGateway;
 	AisleDetailsViewAdapter mAisleDetailsAdapter;
@@ -709,13 +709,15 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				.get(mAisleDetailsAdapter.mCurrentDispImageIndex);
 		if (commentList != null) {
 			commentList.add(0, etText);
+			mAisleDetailsAdapter.updateListCount(etText);
+			mAisleDetailsAdapter.createComment(etText);
 		}
 		/*
 		 * mAisleDetailsAdapter.sendDataToDb(
 		 * mAisleDetailsAdapter.mCurrentDispImageIndex,
 		 * mAisleDetailsAdapter.CHANGE_COMMENT);
 		 */
-		mAisleDetailsAdapter.mShowingList = commentList;
+		//mAisleDetailsAdapter.mShowingList = commentList;
 		editText.setVisibility(View.GONE);
 		editText.setText("");
 		view.setVisibility(View.VISIBLE);

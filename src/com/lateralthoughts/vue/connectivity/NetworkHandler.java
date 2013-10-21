@@ -528,7 +528,7 @@ public class NetworkHandler {
 		return false;
 	}
 
-	private String getUserId() {
+	public String getUserId() {
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(
@@ -544,42 +544,46 @@ public class NetworkHandler {
 		return userId;
 
 	}
+ 
+ 
 
-	// ////////////////////////////////////////////////////
+    public  AisleComment testCreateAisleComment(
+                    AisleComment comment) throws Exception{
+            AisleComment createdAisleComment = null;
+            ObjectMapper mapper =
+                            new ObjectMapper();
 
-	public AisleComment testCreateAisleComment(AisleComment comment)
-			throws Exception {
-		AisleComment createdAisleComment = null;
-		ObjectMapper mapper = new ObjectMapper();
+            URL url = new URL(UrlConstants.CREATE_AISLECOMMENT_RESTURL +
+                            "/" + getUserId());
+            HttpPut httpPut = new HttpPut(url.toString());
+            StringEntity entity = new StringEntity(mapper.writeValueAsString(comment));
+            System.out.println("AisleComment create request: "+mapper.writeValueAsString(comment));
+            entity.setContentType("application/json;charset=UTF-8");
+            entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
+            httpPut.setEntity(entity);
 
-		URL url = new URL(UrlConstants.CREATE_AISLECOMMENT_RESTURL + "/"
-				+ getUserId());
-		HttpPut httpPut = new HttpPut(url.toString());
-		StringEntity entity = new StringEntity(
-				mapper.writeValueAsString(comment));
-		System.out.println("AisleComment create request: "
-				+ mapper.writeValueAsString(comment));
-		entity.setContentType("application/json;charset=UTF-8");
-		entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
-				"application/json;charset=UTF-8"));
-		httpPut.setEntity(entity);
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpResponse response = httpClient.execute(httpPut);
+            
+           
+            if(response.getEntity()!=null &&
+                            response.getStatusLine().getStatusCode() == 200) {
+                    String responseMessage = EntityUtils.toString(response.getEntity());
+                    Log.i("aisleComment", "aisleComment response: "+responseMessage);
+                    System.out.println("Response: "+responseMessage);
+                    if (responseMessage.length() > 0)
+                    {
+                            createdAisleComment = (new ObjectMapper()).readValue(responseMessage, AisleComment.class);
+                    }
+            } else  {
+            	 Log.i("aisleComment", "aisleComment response code: "+response.getStatusLine().getStatusCode());
+            }
 
-		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpResponse response = httpClient.execute(httpPut);
-		if (response.getEntity() != null
-				&& response.getStatusLine().getStatusCode() == 200) {
-			String responseMessage = EntityUtils.toString(response.getEntity());
-			System.out.println("Response: " + responseMessage);
-			if (responseMessage.length() > 0) {
-				createdAisleComment = (new ObjectMapper()).readValue(
-						responseMessage, AisleComment.class);
-			}
-		}
-
-		return createdAisleComment;
-	}
-
-	// ////////////////////////////////////////////////////////
+            return createdAisleComment;
+    }
+	
+ 
+ 
 	public void getRatedImageList() {
 		String userId = getUserId();
 		if (userId == null) {
