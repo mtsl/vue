@@ -7,7 +7,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -28,6 +30,11 @@ import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.*;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -289,241 +296,104 @@ public class VueLandingPageActivity extends BaseActivity {
 	}
 
 	void handleSendImage(Intent intent, boolean fromOnCreateMethodFlag) {
-		/*
-		 * Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-		 * if (imageUri != null) { if (!fromOnCreateMethodFlag) {
-		 * Log.e("CretaeAisleSelectionActivity send image", imageUri + ""); //
-		 * Update UI to reflect image being shared if (Utils
-		 * .getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag
-		 * (VueLandingPageActivity.this)) {
-		 * 
-		 * Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-		 * VueLandingPageActivity.this, false); Log.e("Land", "vueland 1");
-		 * Intent i = new Intent(this, AisleDetailsViewActivity.class); Bundle b
-		 * = new Bundle(); ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
-		 * imageUrisList.add(imageUri); b.putParcelableArrayList(
-		 * VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS, imageUrisList);
-		 * b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
-		 * i.putExtras(b); startActivity(i);
-		 * 
-		 * } else { Intent i = new Intent(this, DataEntryActivity.class); Bundle
-		 * b = new Bundle(); ArrayList<Uri> imageUrisList = new
-		 * ArrayList<Uri>(); imageUrisList.add(imageUri);
-		 * b.putParcelableArrayList( VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
-		 * imageUrisList); b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG,
-		 * true); i.putExtras(b); startActivity(i); } } else { ArrayList<Uri>
-		 * imageUriList = new ArrayList<Uri>(); imageUriList.add(imageUri);
-		 * showOtherSourcesGridview(
-		 * convertImageUrisToOtherSourceImageDetails(imageUriList), ""); } }
-		 */
-		
+		Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+		if (imageUri != null) {
+			if (Utils.isLoadDataentryScreenFlag(this)) {
+				Utils.setLoadDataentryScreenFlag(this, false);
+				if (Utils
+						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
+					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+							VueLandingPageActivity.this, false);
+					Log.e("Land", "vueland 1");
+					if (VueTrendingAislesDataModel.getInstance(this)
+							.getAisleCount() > 0) {
+						Log.e("Land", "vueland 1");
+						Intent i = new Intent(this,
+								AisleDetailsViewActivity.class);
+						Bundle b = new Bundle();
+						ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
+						imageUrisList.add(imageUri);
+						b.putParcelableArrayList(
+								VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+								imageUrisList);
+						b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+						i.putExtras(b);
+						startActivity(i);
+					} else {
+						ArrayList<Uri> imageUriList = new ArrayList<Uri>();
+						imageUriList.add(imageUri);
+						showOtherSourcesGridview(
+								convertImageUrisToOtherSourceImageDetails(imageUriList),
+								"");
+					}
+				} else {
+					Intent i = new Intent(this, DataEntryActivity.class);
+					Bundle b = new Bundle();
+					ArrayList<Uri> imageUrisList = new ArrayList<Uri>();
+					imageUrisList.add(imageUri);
+					b.putParcelableArrayList(
+							VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+							imageUrisList);
+					b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+					i.putExtras(b);
+					startActivity(i);
+				}
+			} else {
+				ArrayList<Uri> imageUriList = new ArrayList<Uri>();
+				imageUriList.add(imageUri);
+				showOtherSourcesGridview(
+						convertImageUrisToOtherSourceImageDetails(imageUriList),
+						"");
+			}
+		}
 	}
 
-	void handleSendMultipleImages(Intent intent, boolean fromOnCreateMethodFlag) {/*
-																				 * ArrayList
-																				 * <
-																				 * Uri
-																				 * >
-																				 * imageUris
-																				 * =
-																				 * intent
-																				 * .
-																				 * getParcelableArrayListExtra
-																				 * (
-																				 * Intent
-																				 * .
-																				 * EXTRA_STREAM
-																				 * )
-																				 * ;
-																				 * if
-																				 * (
-																				 * imageUris
-																				 * !=
-																				 * null
-																				 * )
-																				 * {
-																				 * if
-																				 * (
-																				 * !
-																				 * fromOnCreateMethodFlag
-																				 * )
-																				 * {
-																				 * if
-																				 * (
-																				 * Utils
-																				 * .
-																				 * getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag
-																				 * (
-																				 * VueLandingPageActivity
-																				 * .
-																				 * this
-																				 * )
-																				 * )
-																				 * {
-																				 * 
-																				 * Utils
-																				 * .
-																				 * putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag
-																				 * (
-																				 * VueLandingPageActivity
-																				 * .
-																				 * this
-																				 * ,
-																				 * false
-																				 * )
-																				 * ;
-																				 * Log
-																				 * .
-																				 * e
-																				 * (
-																				 * "Land"
-																				 * ,
-																				 * "vueland 1"
-																				 * )
-																				 * ;
-																				 * Intent
-																				 * i
-																				 * =
-																				 * new
-																				 * Intent
-																				 * (
-																				 * this
-																				 * ,
-																				 * AisleDetailsViewActivity
-																				 * .
-																				 * class
-																				 * )
-																				 * ;
-																				 * Bundle
-																				 * b
-																				 * =
-																				 * new
-																				 * Bundle
-																				 * (
-																				 * )
-																				 * ;
-																				 * b
-																				 * .
-																				 * putParcelableArrayList
-																				 * (
-																				 * VueConstants
-																				 * .
-																				 * FROM_OTHER_SOURCES_IMAGE_URIS
-																				 * ,
-																				 * imageUris
-																				 * )
-																				 * ;
-																				 * b
-																				 * .
-																				 * putBoolean
-																				 * (
-																				 * VueConstants
-																				 * .
-																				 * FROM_OTHER_SOURCES_FLAG
-																				 * ,
-																				 * true
-																				 * )
-																				 * ;
-																				 * i
-																				 * .
-																				 * putExtras
-																				 * (
-																				 * b
-																				 * )
-																				 * ;
-																				 * startActivity
-																				 * (
-																				 * i
-																				 * )
-																				 * ;
-																				 * 
-																				 * }
-																				 * else
-																				 * {
-																				 * Intent
-																				 * i
-																				 * =
-																				 * new
-																				 * Intent
-																				 * (
-																				 * this
-																				 * ,
-																				 * DataEntryActivity
-																				 * .
-																				 * class
-																				 * )
-																				 * ;
-																				 * Bundle
-																				 * b
-																				 * =
-																				 * new
-																				 * Bundle
-																				 * (
-																				 * )
-																				 * ;
-																				 * b
-																				 * .
-																				 * putParcelableArrayList
-																				 * (
-																				 * VueConstants
-																				 * .
-																				 * FROM_OTHER_SOURCES_IMAGE_URIS
-																				 * ,
-																				 * imageUris
-																				 * )
-																				 * ;
-																				 * b
-																				 * .
-																				 * putBoolean
-																				 * (
-																				 * VueConstants
-																				 * .
-																				 * FROM_OTHER_SOURCES_FLAG
-																				 * ,
-																				 * true
-																				 * )
-																				 * ;
-																				 * i
-																				 * .
-																				 * putExtras
-																				 * (
-																				 * b
-																				 * )
-																				 * ;
-																				 * startActivity
-																				 * (
-																				 * i
-																				 * )
-																				 * ;
-																				 * }
-																				 * /
-																				 * /
-																				 * Update
-																				 * UI
-																				 * to
-																				 * reflect
-																				 * multiple
-																				 * images
-																				 * being
-																				 * shared
-																				 * }
-																				 * else
-																				 * {
-																				 * showOtherSourcesGridview
-																				 * (
-																				 * convertImageUrisToOtherSourceImageDetails
-																				 * (
-																				 * imageUris
-																				 * )
-																				 * ,
-																				 * ""
-																				 * )
-																				 * ;
-																				 * }
-																				 * }
-																				 */
-		Utils.showAlertMessageForBackendNotIntegrated(
-				VueLandingPageActivity.this, false);
+	void handleSendMultipleImages(Intent intent, boolean fromOnCreateMethodFlag) {
+		ArrayList<Uri> imageUris = intent
+				.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+		if (imageUris != null) {
+			if (Utils.isLoadDataentryScreenFlag(this)) {
+				Utils.setLoadDataentryScreenFlag(this, false);
+				if (Utils
+						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
+					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+							VueLandingPageActivity.this, false);
+					Log.e("Land", "vueland 1");
+					if (VueTrendingAislesDataModel.getInstance(this)
+							.getAisleCount() > 0) {
+						Log.e("Land", "vueland 1");
+						Intent i = new Intent(this,
+								AisleDetailsViewActivity.class);
+						Bundle b = new Bundle();
+						b.putParcelableArrayList(
+								VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+								imageUris);
+						b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+						i.putExtras(b);
+						startActivity(i);
+					} else {
+						showOtherSourcesGridview(
+								convertImageUrisToOtherSourceImageDetails(imageUris),
+								"");
+					}
+				} else {
+					Intent i = new Intent(this, DataEntryActivity.class);
+					Bundle b = new Bundle();
+
+					b.putParcelableArrayList(
+							VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+							imageUris);
+					b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+					i.putExtras(b);
+					startActivity(i);
+				}
+			} else {
+				showOtherSourcesGridview(
+						convertImageUrisToOtherSourceImageDetails(imageUris),
+						"");
+			}
+		}
+
 	}
 
 	@Override
@@ -1004,4 +874,26 @@ public class VueLandingPageActivity extends BaseActivity {
 		nMgr.cancel(notifyId);
 	}
 
+	private ArrayList<OtherSourceImageDetails> convertImageUrisToOtherSourceImageDetails(
+			ArrayList<Uri> imageUriList) {
+		ArrayList<OtherSourceImageDetails> otherSourcesImageDetailsList = new ArrayList<OtherSourceImageDetails>();
+		for (int i = 0; i < imageUriList.size(); i++) {
+			int width = 0, height = 0;
+			try {
+				InputStream is = new FileInputStream(Utils.getPath(
+						imageUriList.get(i), VueLandingPageActivity.this));
+				BitmapFactory.Options o = new BitmapFactory.Options();
+				o.inJustDecodeBounds = true;
+				BitmapFactory.decodeStream(is, null, o);
+				is.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails(
+					null, null, null, width, height, imageUriList.get(i), width
+							* height);
+			otherSourcesImageDetailsList.add(otherSourceImageDetails);
+		}
+		return otherSourcesImageDetailsList;
+	}
 }
