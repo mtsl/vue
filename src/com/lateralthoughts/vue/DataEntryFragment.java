@@ -2020,9 +2020,6 @@ public class DataEntryFragment extends Fragment {
 			mProgressDialog = ProgressDialog.show(getActivity(), "",
 					"Please wait...");
 		}
-		mFindAtText.setText(sourceUrl);
-		mPreviousFindAtText = mFindAtText.getText().toString();
-		mOtherSourceSelectedImageDetailsUrl = sourceUrl;
 		mOtherSourceSelectedImageStore = Utils.getStoreNameFromUrl(sourceUrl);
 		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
 				sourceUrl, getActivity(), false);

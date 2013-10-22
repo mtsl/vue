@@ -32,7 +32,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	private String mCameraImageName = null;
 	private static final String GALLERY_ALERT_MESSAGE = "Select Picture";
 	private static final String CAMERA_INTENT_NAME = "android.media.action.IMAGE_CAPTURE";
-	private ArrayList<ShoppingApplicationDetails> mDataEntryShoppingApplicationsList;
+	private ArrayList<ShoppingApplicationDetails> mDataEntryShoppingApplicationsList = new ArrayList<ShoppingApplicationDetails>();
 	private static final String CREATE_AISLE_POPUP = "Selection_Popup";
 	public static boolean isActivityShowing = false;
 	private ArcMenu mDataentryArcMenu = null;
@@ -76,9 +76,6 @@ public class CreateAisleSelectionActivity extends Activity {
 		if (VueApplication.getInstance().mShoppingApplicationDetailsList != null) {
 			for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
 					.size(); i++) {
-				if (mDataEntryShoppingApplicationsList == null) {
-					mDataEntryShoppingApplicationsList = new ArrayList<ShoppingApplicationDetails>();
-				}
 				ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
 						VueApplication.getInstance().mShoppingApplicationDetailsList
 								.get(i).getAppName(), VueApplication
@@ -90,8 +87,19 @@ public class CreateAisleSelectionActivity extends Activity {
 								.get(i).getAppIcon());
 				mDataEntryShoppingApplicationsList
 						.add(shoppingApplicationDetails);
+
 			}
 		}
+		// More... to show the list of installed applications in the separate
+		// dialog.
+		ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
+				getResources().getString(R.string.more), null, null, null);
+		mDataEntryShoppingApplicationsList.add(shoppingApplicationDetails);
+		// Browser... To load the browser...
+		ShoppingApplicationDetails shoppingApplicationDetails1 = new ShoppingApplicationDetails(
+				getResources().getString(R.string.browser), null, null, null);
+		mDataEntryShoppingApplicationsList.add(shoppingApplicationDetails1);
+
 	}
 
 	@Override

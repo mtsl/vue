@@ -682,8 +682,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		protected void onPostExecute(Bitmap bitmap) {
 			if (imageViewReference != null && bitmap != null) {
 				final ImageView imageView = imageViewReference.get();
-				if(imageView != null)
-				imageView.setImageBitmap(bitmap);
+				if (imageView != null)
+					imageView.setImageBitmap(bitmap);
 
 			}
 		}
@@ -715,7 +715,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	private void sendDataToDataentryScreen(Bundle b) {
 		Log.e("Land", "vueland 4");
-		String lookingFor, occation, category/* , saySomething */;
+		String lookingFor, occation, category, userId, description;
 		if (mVueAiselFragment == null) {
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.aisle_details_view_fragment);
@@ -724,6 +724,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		lookingFor = aisleInfo.mLookingForItem;
 		occation = aisleInfo.mOccasion;
 		category = aisleInfo.mCategory;
+		userId = aisleInfo.mUserId;
+		description = aisleInfo.mDescription;
 		String imagePath = b
 				.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 		Intent intent = new Intent(this, DataEntryActivity.class);
@@ -738,11 +740,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(this,
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
-			if (VueTrendingAislesDataModel
-					.getInstance(this)
-					.getAisleAt(
-							VueApplication.getInstance().getClickedWindowID())
-					.getAisleContext().mUserId.equals(storedVueUser.getId())) {
+			if (userId.equals(String.valueOf(storedVueUser.getId()))) {
 				isUserAisleFlag = true;
 			}
 		} catch (Exception e2) {
@@ -762,7 +760,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				category);
 		b1.putString(
 				VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
-				null);
+				description);
 		b1.putString(VueConstants.FROM_OTHER_SOURCES_URL,
 				b.getString(VueConstants.FROM_OTHER_SOURCES_URL));
 		b1.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG,
@@ -770,11 +768,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		b1.putParcelableArrayList(
 				VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
 				b.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS));
-		String findAt = null;
-		findAt = mVueAiselFragment.mEditTextFindAt.getText().toString();
-		b1.putString(
-				VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
-				findAt);
+
 		intent.putExtras(b1);
 		Log.e("Land", "vueland 5");
 		this.startActivityForResult(
