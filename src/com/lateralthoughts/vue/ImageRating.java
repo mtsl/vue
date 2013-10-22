@@ -2,6 +2,9 @@ package com.lateralthoughts.vue;
 
 public class ImageRating {
 	
+    public static final int NEW_TIME_STAMP = 2;
+    public static final int OLD_TIME_STAMP = 1;
+    public static final int SAME_TIME_STAMP = 0;
 	Long id;
 	Boolean liked;
 	Long aisleId;
@@ -52,5 +55,27 @@ public class ImageRating {
 
 	public void setLastModifiedTimestamp(Long lastModifiedTimestamp) {
 		this.lastModifiedTimestamp = lastModifiedTimestamp;
+	}
+	
+	public boolean compareTo(ImageRating other) {
+	  boolean imgIdMatched = false;
+	  if(this.imageId.longValue() == other.imageId.longValue()) {
+	    imgIdMatched = true;
+	  }
+	  if(imgIdMatched) {
+	    return true;
+	  }
+	  
+	  return false;
+	}
+	
+	public int compareTime(long timeStamp) {
+	  if(this.lastModifiedTimestamp > timeStamp) {
+	    return NEW_TIME_STAMP;
+	  } else if(this.lastModifiedTimestamp < timeStamp) {
+	    return OLD_TIME_STAMP;
+	  } else {
+	    return SAME_TIME_STAMP;
+	  }
 	}
 }

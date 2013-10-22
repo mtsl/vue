@@ -2,7 +2,7 @@ package com.lateralthoughts.vue.utils;
 
 public class UrlConstants {
 
-	public static final String SERVER_BASE_URL = "http://2dot2-java.vueapi-canary-development1.appspot.com/";
+	public static final String SERVER_BASE_URL = "http://2dot3-java.vueapi-canary-development1.appspot.com/";
 
 	/**
 	 * (C)reate routine URL's
@@ -42,18 +42,18 @@ public class UrlConstants {
 	public static final String SEARCH_BY_USER = SERVER_BASE_URL
 			+ "api/getaisleswithmatchingfacebookORGPlus/";
 	public static final String CREATE_BOOKMARK_RESTURL = SERVER_BASE_URL
-			+ "api/aislebookmarksaveorupdate";
-
+			+ "api/aislebookmarksave";
 	public static final String GET_BOOKMARK_Aisles = SERVER_BASE_URL
 			+ "api/aislebookmarksgetall";
-
 	public static final String CREATE_RATING_RESTURL = SERVER_BASE_URL
-			+ "api/imageratingsaveorupdate";
-
+			+ "api/imageratingsave";
 	public static final String GET_RATINGS_RESTURL = SERVER_BASE_URL
 			+ "api/imageratingsgetall";
-
 	public static final String GET_IMAGES_FOR_AISLE = SERVER_BASE_URL
 			+ "api/imagesget/aisle/";
+	public static final String UPDATE_BOOKMARK_RESTURL = SERVER_BASE_URL
+ 	        + "api/aislebookmarkupdate";
+	public static final String UPDATE_RATING_RESTURL = SERVER_BASE_URL
+            + "api/imageratingupdate";
 
 }

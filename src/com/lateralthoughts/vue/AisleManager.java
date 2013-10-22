@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -334,10 +335,16 @@ public class AisleManager {
 	   
 	String userId) throws ClientProtocolException, IOException {
 		isDirty = true;
+		String url;
+		if(aisleBookmark.getId() == null) {
+		  url = UrlConstants.CREATE_BOOKMARK_RESTURL + "/";
+		} else {
+		  url = UrlConstants.UPDATE_BOOKMARK_RESTURL + "/";
+		}
 		final ArrayList<AisleWindowContent> windowList = DataBaseManager
 				.getInstance(VueApplication.getInstance()).getAisleByAisleId(
 						Long.toString(aisleBookmark.getAisleId()));
-		
+
 		if (VueConnectivityManager.isNetworkConnected(VueApplication
 				.getInstance())) {
 			VueUser storedVueUser = null;
@@ -355,7 +362,7 @@ public class AisleManager {
 
         @Override
         public void onResponse(String jsonArray) {
-        	Log.i("bookmark response", "bookmark response: "+jsonArray);
+        	Log.i("bookmark response", "bookmark response: SURUSURU "+jsonArray);
           if (jsonArray != null) {
             try {
               AisleBookmark createdAisleBookmark = (new ObjectMapper())
@@ -386,10 +393,10 @@ public class AisleManager {
         }
 
       };
+      
 			BookmarkPutRequest request = new BookmarkPutRequest(
 					bookmarkAisleAsString, listener, errorListener,
-					UrlConstants.CREATE_BOOKMARK_RESTURL + "/"
-							+ storedVueUser.getId());
+					url + storedVueUser.getId());
 			VueApplication.getInstance().getRequestQueue().add(request);
 		} else {
 			isDirty = true;
@@ -415,6 +422,12 @@ public class AisleManager {
 	public void updateBookmartToDb(ArrayList<AisleWindowContent> windowList,
 			AisleBookmark aisleBookmark, boolean isDirty) {
 		 Log.i("bookmark response", "bookmark  updateBookmartToDb value: "+aisleBookmark.getBookmarked());
+		 if(aisleBookmark.getId() == null) {
+		   for(int i = 0; i < 10; i++) {
+		     Log.e("AisleManager", "*****************Bookmark Id is null******************");
+		   }
+		   return;
+		 }
 		for (AisleWindowContent aisleWindow : windowList) {
 			AisleContext context = aisleWindow.getAisleContext();
 			DataBaseManager
@@ -423,12 +436,24 @@ public class AisleManager {
 							aisleBookmark.getBookmarked(),
 							(aisleBookmark.getBookmarked()) ? context.mBookmarkCount + 1
 									: context.mBookmarkCount - 1,
-							Long.toString(aisleBookmark.getAisleId()), isDirty);
+							aisleBookmark.getId(), Long.toString(aisleBookmark.getAisleId()), isDirty);
 		}
 	}
 
 	public void updateRating(final ImageRating imageRating, final int likeCount)
 			throws ClientProtocolException, IOException {
+	  String url;
+	  if(imageRating.getId() == null) {
+	    url = UrlConstants.CREATE_RATING_RESTURL + "/";
+	  } else {
+	    url = UrlConstants.UPDATE_RATING_RESTURL + "/";
+	  }
+	  Log.e("likecountissue", "likecountissue: jsonArray: imageRatingId: " + imageRating.getId());
+	  System.out.println("ratingToUpdate.getId() " + imageRating.getId());
+      System.out.println("ratingToUpdate.getAisleId() " + imageRating.getAisleId());
+      System.out.println("ratingToUpdate.getImageId() " + imageRating.getImageId());
+      System.out.println("ratingToUpdate.getLiked() " + imageRating.getLiked());
+	  Log.e("likecountissue", "likecountissue: jsonArray: URL TO HIT: " + url);
 		if (VueConnectivityManager.isNetworkConnected(VueApplication
 				.getInstance())) {
 			VueUser storedVueUser = null;
@@ -467,6 +492,7 @@ public class AisleManager {
 
 				@Override
 				public void onErrorResponse(VolleyError error) {
+				    imageRating.setId(0001L);
 					updateImageRatingToDb(imageRating, likeCount, true);
 					Editor editor = mSharedPreferencesObj.edit();
 					editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
@@ -476,10 +502,10 @@ public class AisleManager {
 			};
 			ImageRatingPutRequest request = new ImageRatingPutRequest(
 					imageRatingString, listener, errorListener,
-					UrlConstants.CREATE_RATING_RESTURL + "/"
-							+ storedVueUser.getId());
+					url + storedVueUser.getId());
 			VueApplication.getInstance().getRequestQueue().add(request);
 		} else {
+		    imageRating.setId(0001L);
 			updateImageRatingToDb(imageRating, likeCount, true);
 			Editor editor = mSharedPreferencesObj.edit();
 			editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
@@ -488,11 +514,11 @@ public class AisleManager {
 	}
 
 	private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
-			boolean isDirty) {
-	  Log.i("likecountissue", "likecountissue: updateImageRatingToDb  likeCount: "+likeCount);
-		DataBaseManager.getInstance(VueApplication.getInstance())
-				.addLikeOrDisLike((imgRating.getLiked()) ? 1 : 0, likeCount,
-						Long.toString(imgRating.getImageId()),
-						Long.toString(imgRating.getAisleId()), isDirty);
-	}
+      boolean isDirty) {
+	  Log.i("likecountissue", "likecountissue: imgRating.getId(): updateImageRatingToDb" + imgRating.getId());
+    DataBaseManager.getInstance(VueApplication.getInstance()).addLikeOrDisLike(
+        (imgRating.getLiked()) ? 1 : 0, likeCount, imgRating.getId(),
+        Long.toString(imgRating.getImageId()),
+        Long.toString(imgRating.getAisleId()), isDirty);
+  }
 }

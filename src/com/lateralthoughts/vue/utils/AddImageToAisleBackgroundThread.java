@@ -163,7 +163,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                   list.get(0).getImageList().add(aisleImageDetails);
                   DataBaseManager.getInstance(VueApplication.getInstance())
                       .addTrentingAislesFromServerToDB(
-                          VueApplication.getInstance(), list);
+                          VueApplication.getInstance(), list, 0, false);
                 }
               }
             } catch (JSONException e) {

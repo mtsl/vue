@@ -69,6 +69,7 @@ public class VueConstants {
 	public static final String FANCY_ACTIVITY_NAME = "com.thefancy.app.common.Main";
 	public static final String DATAENTRY_SCREEN_AISLE_ID = "DataentryScreenAisleId";
 	public static final String USER_PROFILE_IMAGE_FILE_NAME = "VueUserProfileImage";
+	public static final String AISLE_ORDER = "aisleOrder";
 	// Column names for aisles table.
 	public static final String ID = "_id";
 	public static final String CATEGORY = "category";
@@ -84,6 +85,7 @@ public class VueConstants {
 	public static final String LIKES_COUNT = "likesCount";
 	public static final String DIRTY_FLAG = "isDirtry";
 	public static final String AISLE_Id = "aisleId";
+	public static final String JSON_OBJ_ID = "id";
 	public static final String DELETE_FLAG = "deleteFlag";
 	// Column names for aisles images.
 	public static final String TITLE = "title";
@@ -213,10 +215,14 @@ public class VueConstants {
 
 	public static final String RECENTLY_VIEWED_AISLE_ID = "recentlyViewedAisleId";
 	public static final String VIEW_TIME = "viewTime";
+	public static final String IS_LIKED_OR_BOOKMARKED = "isLikedOrBookmarked";
 
 	// Keys for values stored in shared preference
 	public static final String IS_AISLE_DIRTY = "isAisleDirty";
 	public static final String IS_IMAGE_DIRTY = "isImageDirty";
 
 	public static final String LIKE_COUNT = "likeCount";
+	public static final String LAST_MODIFIED_TIME = "lastModifiedTimestamp";
+	public static final String LIKED = "liked";
+	public static final String BOOKMARKED = "bookmarked";
 }

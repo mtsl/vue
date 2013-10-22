@@ -31,30 +31,37 @@ public class TrendingAislesContentParser extends ResultReceiver {
 	}
 
 	@Override
-	protected void onReceiveResult(int resultCode, final Bundle resultData) {
-		switch (mState) {
-		case VueConstants.AISLE_TRENDING_LIST_DATA:
-            long elapsedTime = System.currentTimeMillis() - VueApplication.getInstance().mLastRecordedTime;
-            Log.e("PERF_VUE","AISLE_TRENDING_LIST_DATA is the state. Received content. Time elapsed = " + elapsedTime);
-            VueApplication.getInstance().mLastRecordedTime = System.currentTimeMillis();
+  protected void onReceiveResult(int resultCode, final Bundle resultData) {
+    switch (mState) {
+      case VueConstants.AISLE_TRENDING_LIST_DATA:
+        long elapsedTime = System.currentTimeMillis()
+            - VueApplication.getInstance().mLastRecordedTime;
+        Log.e("PERF_VUE",
+            "AISLE_TRENDING_LIST_DATA is the state. Received content. Time elapsed = "
+                + elapsedTime);
+        VueApplication.getInstance().mLastRecordedTime = System
+            .currentTimeMillis();
 
-			Thread t = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					final ArrayList<AisleWindowContent> aislesList = new Parser()
-							.parseTrendingAislesResultData(
-									resultData.getString("result"),
-									resultData.getBoolean("loadMore"));
-					Log.i("dbInsert",
-							"dbInsert1 aislesListSize: " + aislesList.size());
-					DataBaseManager.getInstance(VueApplication.getInstance())
-							.addTrentingAislesFromServerToDB(
-									VueApplication.getInstance(), aislesList);
+        Thread t = new Thread(new Runnable() {
+          @Override
+          public void run() {
+            final ArrayList<AisleWindowContent> aislesList = new Parser()
+                .parseTrendingAislesResultData(resultData.getString("result"),
+                    resultData.getBoolean("loadMore"));
+            Log.i("dbInsert", "dbInsert1 aislesListSize: " + aislesList.size());
+            DataBaseManager
+                .getInstance(VueApplication.getInstance())
+                .addTrentingAislesFromServerToDB(
+                    VueApplication.getInstance(),
+                    aislesList,
+                    VueTrendingAislesDataModel.getInstance(
+                        VueApplication.getInstance()).getNetworkHandler().mOffset,
+                    true);
 
-					Log.i("ailsesize", "ailseListSizemaintrending: "
-							+ aislesList.size());
+            Log.i("ailsesize",
+                "ailseListSizemaintrending: " + aislesList.size());
 
-					boolean refreshListFlag = false;
+            boolean refreshListFlag = false;
 
             if (VueLandingPageActivity.landingPageActivity != null
                 && (VueLandingPageActivity.mVueLandingActionbarScreenName
@@ -69,21 +76,26 @@ public class TrendingAislesContentParser extends ResultReceiver {
                 refreshListFlag = true;
               }
             }
-					VueLandingPageActivity.landingPageActivity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
-							
-						}
-					});
+            VueLandingPageActivity.landingPageActivity
+                .runOnUiThread(new Runnable() {
+                  @Override
+                  public void run() {
+                    VueTrendingAislesDataModel.getInstance(
+                        VueApplication.getInstance()).dismissProgress();
+
+                  }
+                });
             if (refreshListFlag) {
               VueLandingPageActivity.landingPageActivity
                   .runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                      Log.e("TrendingAislesContentParser", "Surendra check check Screen Name: " + VueLandingPageActivity.mVueLandingActionbarScreenName);
-                      if (VueLandingPageActivity.getScreenName()
-                          .equals(VueApplication.getInstance().getString(
+                      Log.e(
+                          "TrendingAislesContentParser",
+                          "Surendra check check Screen Name: "
+                              + VueLandingPageActivity.mVueLandingActionbarScreenName);
+                      if (VueLandingPageActivity.getScreenName().equals(
+                          VueApplication.getInstance().getString(
                               R.string.sidemenu_sub_option_Bookmarks))) {
                         VueTrendingAislesDataModel.getInstance(VueApplication
                             .getInstance()).loadOnRequest = false;
@@ -96,9 +108,15 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                 .getInstance(VueApplication.getInstance());
                             model.addItemToList(aislesList.get(i)
                                 .getAisleContext().mAisleId, aislesList.get(i));
-                            Log.e("TrendingAisleContentParser", "bookmarkfeaturetest: count in TrendingAisleContentParser:111111 " + aislesList.get(i).getAisleContext().mBookmarkCount);
-                            Log.e("TrendingAisleContentParser", "bookmarkfeaturetest: count in TrendingAisleContentParser:222222 " + model.getAisleAt(model.listSize() -1).getAisleContext().mBookmarkCount);
-                          
+                            Log.e(
+                                "TrendingAisleContentParser",
+                                "bookmarkfeaturetest: count in TrendingAisleContentParser:111111 "
+                                    + aislesList.get(i).getAisleContext().mBookmarkCount);
+                            Log.e("TrendingAisleContentParser",
+                                "bookmarkfeaturetest: count in TrendingAisleContentParser:222222 "
+                                    + model.getAisleAt(model.listSize() - 1)
+                                        .getAisleContext().mBookmarkCount);
+
                           }
 
                           VueTrendingAislesDataModel.getInstance(
@@ -113,26 +131,25 @@ public class TrendingAislesContentParser extends ResultReceiver {
                     }
                   });
             }
-				}
-			});
-			t.start();
-			break;
-		case VueConstants.AISLE_TRENDING_PARSED_DATA:
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance())
-					.dismissProgress();
-			// if this is the first set of data we are receiving
-			// go
-			// ahead
-			// notify the data set changed
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).dataObserver();
-			break;
-		default:
-			// we should never have to encounter this!
-			break;
-		}
-	}
+          }
+        });
+        t.start();
+        break;
+      case VueConstants.AISLE_TRENDING_PARSED_DATA:
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+            .dismissProgress();
+        // if this is the first set of data we are receiving
+        // go
+        // ahead
+        // notify the data set changed
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+            .dataObserver();
+        break;
+      default:
+        // we should never have to encounter this!
+        break;
+    }
+  }
 
 	/*
 	 * private class DbDataSetter extends AsyncTask<Void, Void, Void> {

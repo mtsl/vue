@@ -31,6 +31,7 @@ import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -346,7 +347,7 @@ public class NetworkHandler {
                         DataBaseManager.getInstance(
                             VueApplication.getInstance())
                             .addTrentingAislesFromServerToDB(
-                                VueApplication.getInstance(), aislesList);
+                                VueApplication.getInstance(), aislesList, 0, false);
                     
                         // if this is the first set of data
                         // we
@@ -440,11 +441,11 @@ public class NetworkHandler {
               && response.getStatusLine().getStatusCode() == 200) {
             String responseMessage = EntityUtils.toString(response.getEntity());
             if (responseMessage != null) {
-              ArrayList<String> bookmarkedAisles = new Parser()
+              ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                   .parseBookmarkedAisles(responseMessage);
-              for (String s : bookmarkedAisles) {
-                DataBaseManager.getInstance(mContext).updateBookmarkAisles(s,
-                    true);
+              for (AisleBookmark aB : bookmarkedAisles) {
+                Log.e("bookmarked aisle", "bookmarked aisle bookmarkedAisles ID: getBookmarkAisleByUser()" + aB.getId());
+                DataBaseManager.getInstance(mContext).updateBookmarkAisles(aB.getId(), Long.toString(aB.getAisleId()), true);
               }
             }
             // Log.e("bookmarked aisle", "bookmarked aisle bookmarkedAisles size(); " + bookmarkedAisles.size());
@@ -472,8 +473,14 @@ public class NetworkHandler {
       do {
         if (aisleId.equals(cursor.getString(cursor
             .getColumnIndex(VueConstants.AISLE_ID)))) {
-          cursor.close();
-          return true;
+          if(cursor.getInt(cursor
+              .getColumnIndex(VueConstants.IS_LIKED_OR_BOOKMARKED)) == 1) {
+            cursor.close();
+            return true;
+          } else {
+            cursor.close();
+            return false; 
+          }
         }
       } while (cursor.moveToNext());
     }
@@ -512,9 +519,10 @@ public class NetworkHandler {
           ArrayList<ImageRating> retrievedImageRating = null;
           if (response.length() > 0){
                 try {
-                  retrievedImageRating = (new ObjectMapper()).readValue(
+                  /*retrievedImageRating = (new ObjectMapper()).readValue(
                       response.toString(),
-                      new TypeReference<List<ImageRating>>() {});
+                      new TypeReference<List<ImageRating>>() {});*/
+                  retrievedImageRating = Parser.parseRatedImages(response.toString());
                   DataBaseManager.getInstance(mContext).insertRatedImages(retrievedImageRating);
                 } catch (Exception e) {
                 e.printStackTrace();

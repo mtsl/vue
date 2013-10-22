@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DbHelper extends SQLiteOpenHelper {
-	
+
 	 public static final String DATABASE_NAME = "Vue.db";
 	 public static final String DATABASE_TABLE_AISLES = "aisles";
 	 public static final String DATABASE_TABLE_AISLES_IMAGES = "aisleImages";
@@ -19,6 +19,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	 public static final String DATABASE_TABLE_RECENTLY_VIEWED_AISLES = "recentlyViewAisles";
 	 public static final String DATABASE_TABLE_RATED_IMAGES = "ratedImages";
 	 public static final String DATABASE_TABLE_BOOKMARKS_AISLES = "bookmarkedAisles";
+	 public static final String DATABASE_TABLE_FOR_ORDERING = "aislesDisplayOrderMap";
 	 public static final int DATABASE_VERSION = 1;
 
      private String createAislesTable = "create table if not exists " + DATABASE_TABLE_AISLES
@@ -34,7 +35,7 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.IS_BOOKMARKED + " integer, "
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.DELETE_FLAG + " integer, "
-     + VueConstants.ID + " text);";
+     + VueConstants.ID + " integer);";
 
      private String createAisleImagesTable = "create table if not exists " + DATABASE_TABLE_AISLES_IMAGES
      + " (" + VueConstants.IMAGE_ID + " integer primary key, "
@@ -90,13 +91,19 @@ public class DbHelper extends SQLiteOpenHelper {
         + VueConstants.VIEW_TIME + " text);";
 
     private String createReatingImagesTable = "create table if not exists " + DATABASE_TABLE_RATED_IMAGES
-        + " (" + VueConstants.ID + " integer primary key autoincrement, "
+        + " (" + VueConstants.ID + " long primary key, "
+        + VueConstants.IS_LIKED_OR_BOOKMARKED + " integer, "
         + VueConstants.AISLE_ID + " text, "
         + VueConstants.IMAGE_ID + " text);";
     
     private String createBookmarkAislesTable = "create table if not exists " + DATABASE_TABLE_BOOKMARKS_AISLES
-        + " (" + VueConstants.ID + " integer primary key autoincrement, "
-        + VueConstants.AISLE_ID + " text);";
+        + " (" + VueConstants.ID + " long primary key, "
+        + VueConstants.IS_LIKED_OR_BOOKMARKED + " integer, "
+        + VueConstants.AISLE_ID + " text not null);";
+    
+    private String createAislesDisplayOrderMap = "create table if not exists " + DATABASE_TABLE_FOR_ORDERING
+        + " (" + VueConstants.AISLE_ID + " long primary key, "
+        + VueConstants.AISLE_ORDER + " integer);";
 
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -114,6 +121,7 @@ public class DbHelper extends SQLiteOpenHelper {
     db.execSQL(createRecentViewTable);
     db.execSQL(createReatingImagesTable);
     db.execSQL(createBookmarkAislesTable);
+    db.execSQL(createAislesDisplayOrderMap);
   }
 
 	@Override
