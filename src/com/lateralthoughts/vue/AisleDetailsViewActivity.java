@@ -322,13 +322,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	@Override
 	protected void onStop() {
 		super.onStop();
+		Log.e("ondestory", "browsecheck onStop detailsview");
 		FlurryAgent.onEndSession(this);
-		Log.i("adaptersettings", "adaptersettings: onstop");
-		if (mVueAiselFragment == null) {
-			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisle_details_view_fragment);
-		}
-		mVueAiselFragment.setAisleContentListenerNull();
+		 
+	
 
 	}
 
@@ -556,7 +553,13 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	@Override
 	protected void onDestroy() {
-		Log.e("ondestory", "ondestory detailsview");
+		Log.e("ondestory", "browsecheck ondestory detailsview");
+		if (mVueAiselFragment == null) {
+			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisle_details_view_fragment);
+		}
+		if(mVueAiselFragment != null)
+		mVueAiselFragment.setAisleContentListenerNull();
 		super.onDestroy();
 	}
 

@@ -55,7 +55,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NetworkHandler {
 	Context mContext;
@@ -546,73 +548,55 @@ public class NetworkHandler {
 
 	}
 	   public  ImageComment  createImageComment(
-	           ImageComment comment) throws Exception{
-	   ImageComment createdImageComment = null;
-	   ObjectMapper mapper =
-	                   new ObjectMapper();
+ImageComment comment)
+			throws Exception {
+		ImageComment createdImageComment = null;
+		ObjectMapper mapper = new ObjectMapper();
 
-	   URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL +
-	                   "/" + getUserId());
-	   HttpPut httpPut = new HttpPut(url.toString());
-	   StringEntity entity = new StringEntity(mapper.writeValueAsString(comment));
-	   System.out.println("ImageComment create request: "+mapper.writeValueAsString(comment));
-	   entity.setContentType("application/json;charset=UTF-8");
-	   entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
-	   httpPut.setEntity(entity);
+		URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL + "/"
+				+ getUserId());
+		HttpPut httpPut = new HttpPut(url.toString());
+		StringEntity entity = new StringEntity(
+				mapper.writeValueAsString(comment));
+		System.out.println("ImageComment create request: "
+				+ mapper.writeValueAsString(comment));
+		entity.setContentType("application/json;charset=UTF-8");
+		entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+				"application/json;charset=UTF-8"));
+		httpPut.setEntity(entity);
 
-	   DefaultHttpClient httpClient = new DefaultHttpClient();
-	   HttpResponse response = httpClient.execute(httpPut);
-	   if(response.getEntity()!=null &&
-	                   response.getStatusLine().getStatusCode() == 200) {
-	           String responseMessage = EntityUtils.toString(response.getEntity());
-	           System.out.println("Response: "+responseMessage);
-	           if (responseMessage.length() > 0)
-	           {
-	                   createdImageComment = (new ObjectMapper()).readValue(responseMessage, ImageComment.class);
-	           }
-	   }
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpResponse response = httpClient.execute(httpPut);
+		if (response.getEntity() != null
+				&& response.getStatusLine().getStatusCode() == 200) {
+			String responseMessage = EntityUtils.toString(response.getEntity());
+			System.out.println("Comment Response: " + responseMessage);
+			if (responseMessage.length() > 0) {
+				createdImageComment = (new ObjectMapper()).readValue(
+						responseMessage, ImageComment.class);
+			}
+		}
 
-	   return createdImageComment;
+		return createdImageComment;
 	}
  
+	   
+	public void getCommentsFromDb(String aisleId) {
+		Map<Long, ArrayList<String>> commentsMap = new HashMap<Long, ArrayList<String>>();
+		String imageId = null;
+		Object temp;
+		ArrayList<String> tempComments;
+		tempComments = commentsMap.remove(Long.parseLong(imageId));
+		if (tempComments == null) {
+			tempComments = new ArrayList<String>();
+			tempComments.add("add value from cursor");
+		} else {
+			tempComments.add("add value from cursor");
+		}
+		commentsMap.put(Long.parseLong(imageId), tempComments);
 
-    public  AisleComment testCreateAisleComment(
-                    AisleComment comment) throws Exception{
-            AisleComment createdAisleComment = null;
-            ObjectMapper mapper =
-                            new ObjectMapper();
+	}
 
-            URL url = new URL(UrlConstants.CREATE_AISLECOMMENT_RESTURL +
-                            "/" + getUserId());
-            HttpPut httpPut = new HttpPut(url.toString());
-            StringEntity entity = new StringEntity(mapper.writeValueAsString(comment));
-            System.out.println("AisleComment create request: "+mapper.writeValueAsString(comment));
-            entity.setContentType("application/json;charset=UTF-8");
-            entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
-            httpPut.setEntity(entity);
-
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpResponse response = httpClient.execute(httpPut);
-            
-           
-            if(response.getEntity()!=null &&
-                            response.getStatusLine().getStatusCode() == 200) {
-                    String responseMessage = EntityUtils.toString(response.getEntity());
-                    Log.i("aisleComment", "aisleComment response: "+responseMessage);
-                    System.out.println("Response: "+responseMessage);
-                    if (responseMessage.length() > 0)
-                    {
-                            createdAisleComment = (new ObjectMapper()).readValue(responseMessage, AisleComment.class);
-                    }
-            } else  {
-            	 Log.i("aisleComment", "aisleComment response code: "+response.getStatusLine().getStatusCode());
-            }
-
-            return createdAisleComment;
-    }
-	
- 
- 
 	public void getRatedImageList() {
 		String userId = getUserId();
 		if (userId == null) {

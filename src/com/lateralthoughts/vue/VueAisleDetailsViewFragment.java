@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -369,45 +370,45 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				if (arg2 != 0 && arg2 != 1) {
-					if (mListCount - 1 == arg2) {
-						// will be called when press on the enter comment text
-						// edit text will be expand
-						TextView v = (TextView) arg1
-								.findViewById(R.id.vue_user_entercomment);
-						EditText vueEdt = (EditText) arg1
-								.findViewById(R.id.edtcomment);
-						vueEdt.setVisibility(View.VISIBLE);
-						vueEdt.setFocusable(true);
-						mAisleDetailsAdapter.notifyDataSetChanged();
-
+					/* if (mListCount - 1 == arg2) { */
+					/*
+					 * // will be called when press on the enter comment text //
+					 * edit text will be expand TextView v = (TextView) arg1
+					 * .findViewById(R.id.vue_user_entercomment); EditText
+					 * vueEdt = (EditText) arg1 .findViewById(R.id.edtcomment);
+					 * vueEdt.setVisibility(View.VISIBLE);
+					 * vueEdt.setFocusable(true);
+					 * mAisleDetailsAdapter.notifyDataSetChanged();
+					 * 
+					 * } else {
+					 */
+					mAisleDetailsAdapter.closeKeyboard();
+					// will be called when press on the user comment,
+					// comment text will be expand and collapse for
+					// alternative clicks
+					TextView v = (TextView) arg1
+							.findViewById(R.id.vue_user_comment);
+					int x = v.getLineCount();
+					if (x <= 2) {
+						LinearLayout.LayoutParams params;
+						params = new LinearLayout.LayoutParams(
+								LayoutParams.MATCH_PARENT,
+								LayoutParams.WRAP_CONTENT);
+						// get the pixel equivalent to given dp value
+						int leftMargin = VueApplication.getInstance().getPixel(
+								8);
+						int rightMargin = VueApplication.getInstance()
+								.getPixel(14);
+						int topBottomMargin = VueApplication.getInstance()
+								.getPixel(6);
+						params.setMargins(leftMargin, topBottomMargin,
+								rightMargin, topBottomMargin);
+						v.setLayoutParams(params);
+						v.setMaxLines(Integer.MAX_VALUE);
 					} else {
-						mAisleDetailsAdapter.closeKeyboard();
-						// will be called when press on the user comment,
-						// comment text will be expand and collapse for
-						// alternative clicks
-						TextView v = (TextView) arg1
-								.findViewById(R.id.vue_user_comment);
-						int x = v.getLineCount();
-						if (x == 2) {
-							LinearLayout.LayoutParams params;
-							params = new LinearLayout.LayoutParams(
-									LayoutParams.MATCH_PARENT,
-									LayoutParams.WRAP_CONTENT);
-							// get the pixel equivalent to given dp value
-							int leftMargin = VueApplication.getInstance()
-									.getPixel(8);
-							int rightMargin = VueApplication.getInstance()
-									.getPixel(14);
-							int topBottomMargin = VueApplication.getInstance()
-									.getPixel(6);
-							params.setMargins(leftMargin, topBottomMargin,
-									rightMargin, topBottomMargin);
-							v.setLayoutParams(params);
-							v.setMaxLines(Integer.MAX_VALUE);
-						} else {
-							v.setMaxLines(2);
-						}
+						v.setMaxLines(2);
 					}
+					/* } */
 				} else if (arg2 == 0) {
 					mAisleDetailsAdapter.closeKeyboard();
 					// will be called when press on the description, description

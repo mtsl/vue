@@ -164,6 +164,8 @@ public class Parser {
 			if (responseMessage != null) {
 				Log.i("Parser", responseMessage);
 				JSONObject mainJsonObject = new JSONObject(responseMessage);
+				if(aisleId.equals("5567688512372736"))
+				Log.i ("Comment Response: ","Comment Response: " + responseMessage);
 				JSONArray jsonArray = mainJsonObject.getJSONArray("images");
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject jsonObject = jsonArray.getJSONObject(i);
