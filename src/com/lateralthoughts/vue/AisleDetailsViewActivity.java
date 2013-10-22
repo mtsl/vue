@@ -682,6 +682,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		protected void onPostExecute(Bitmap bitmap) {
 			if (imageViewReference != null && bitmap != null) {
 				final ImageView imageView = imageViewReference.get();
+				if(imageView != null)
 				imageView.setImageBitmap(bitmap);
 
 			}

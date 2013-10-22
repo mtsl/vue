@@ -33,6 +33,7 @@ import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleComment;
+import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -544,7 +545,35 @@ public class NetworkHandler {
 		return userId;
 
 	}
- 
+	   public  ImageComment  createImageComment(
+	           ImageComment comment) throws Exception{
+	   ImageComment createdImageComment = null;
+	   ObjectMapper mapper =
+	                   new ObjectMapper();
+
+	   URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL +
+	                   "/" + getUserId());
+	   HttpPut httpPut = new HttpPut(url.toString());
+	   StringEntity entity = new StringEntity(mapper.writeValueAsString(comment));
+	   System.out.println("ImageComment create request: "+mapper.writeValueAsString(comment));
+	   entity.setContentType("application/json;charset=UTF-8");
+	   entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
+	   httpPut.setEntity(entity);
+
+	   DefaultHttpClient httpClient = new DefaultHttpClient();
+	   HttpResponse response = httpClient.execute(httpPut);
+	   if(response.getEntity()!=null &&
+	                   response.getStatusLine().getStatusCode() == 200) {
+	           String responseMessage = EntityUtils.toString(response.getEntity());
+	           System.out.println("Response: "+responseMessage);
+	           if (responseMessage.length() > 0)
+	           {
+	                   createdImageComment = (new ObjectMapper()).readValue(responseMessage, ImageComment.class);
+	           }
+	   }
+
+	   return createdImageComment;
+	}
  
 
     public  AisleComment testCreateAisleComment(

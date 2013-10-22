@@ -11,12 +11,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -47,11 +55,13 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.AisleComment;
+import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
@@ -127,6 +137,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				break;
 			}
 		}
+		if(getItem(mCurrentAislePosition).getAisleContext().mCommentList == null) {
+			getItem(mCurrentAislePosition).getAisleContext().mCommentList = new ArrayList<String>();
+		}  
 		mListCount = getItem(mCurrentAislePosition).getAisleContext().mCommentList.size()+3;
 		setImageRating();
 		Log.i("bestHeight",
@@ -166,7 +179,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 				mCommentsMapList.put(i, getItem(mCurrentAislePosition)
 						.getImageList().get(i).mCommentsList);
-				if (getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList == null) {
+				
+				
+				//TODO: get all the comments from the db and update the comment list
+				
+			/*	if (getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList == null) {
 					// TODO: for temp comments display need to replace this
 					getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList = new ArrayList<String>();
 					if (i % 2 == 0) {
@@ -184,7 +201,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					}
 					mCommentsMapList.put(i, getItem(mCurrentAislePosition)
 							.getImageList().get(i).mCommentsList);
-				}
+				}*/
 			}
 			mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
 			Log.i("clone", "clone: " + mImageDetailsArr);
@@ -193,9 +210,16 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					Log.i("clone", "clone1: " + mImageDetailsArr.get(i));
 				}
 			}
-			//mShowingList = getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList;
-			mShowingList = getItem(mCurrentAislePosition).getAisleContext().mCommentList;
-			mLikes = getItem(mCurrentAislePosition).getImageList().get(0).mLikesCount;
+			mShowingList = getItem(mCurrentAislePosition).getImageList().get(VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
+			//mShowingList = getItem(mCurrentAislePosition).getAisleContext().mCommentList;
+			if(mShowingList == null){
+				mShowingList = new ArrayList<String>();
+			}
+			 int imgPosition = 0;
+			 if(VueApplication.getInstance().getmAisleImgCurrentPos()<getItem(mCurrentAislePosition).getImageList().size()){
+				 imgPosition = VueApplication.getInstance().getmAisleImgCurrentPos();
+			 }
+			mLikes = getItem(mCurrentAislePosition).getImageList().get(imgPosition).mLikesCount;
 			boolean isBookmarked = VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
@@ -207,6 +231,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						isBookmarked);
 			}
 			mBookmarksCount = getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount;
+			mCurrentDispImageIndex = VueApplication.getInstance().getmAisleImgCurrentPos();
+			
 			Log.i("bookmarked aisle", "bookmarked count in window2: "
 					+ mBookmarksCount);
 			new Handler().postDelayed(new Runnable() {
@@ -687,8 +713,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				}*/
 				mLikes = getItem(mCurrentAislePosition).getImageList().get(
 						position).mLikesCount;
-				mShowingList = getItem(mCurrentAislePosition).getAisleContext().mCommentList;
-
+				mShowingList = getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mCommentsList;
+				
+				int showFixedRowCount = 3;
+				mListCount = showFixedRowCount +mShowingList.size();
 				notifyDataSetChanged();
 				mswipeListner.setFindAtText(getItem(mCurrentAislePosition)
 						.getImageList().get(position).mDetalsUrl);
@@ -746,23 +774,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				;
 
 			}
-
-			/*
-			 * Toast.makeText( mContext, "imgAreaHeight: " + (mTopBottomMargin +
-			 * mBestHeight) + " AisleID:  " +
-			 * getItem(mCurrentAislePosition).getAisleId(), 1500) .show();
-			 * Toast.makeText( mContext, "original image height: " +
-			 * getItem(mCurrentAislePosition).getImageList()
-			 * .get(mCurrentDispImageIndex).mAvailableHeight + " AisleID:  " +
-			 * getItem(mCurrentAislePosition).getAisleId(), 1500) .show();
-			 * 
-			 * Log.i("mCustomUrlthispos", "mCustomUrlthispos2:" +
-			 * getItem(mCurrentAislePosition).getImageList()
-			 * .get(mCurrentDispImageIndex).mCustomImageUrl);
-			 * Log.i("mCustomUrlthispos", "mCustomUrlthispos3:" +
-			 * getItem(mCurrentAislePosition).getImageList()
-			 * .get(mCurrentDispImageIndex).mImageUrl);
-			 */
 		}
 
 		@Override
@@ -1228,39 +1239,52 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
  
    public void  updateListCount(String newComment){
 	  mListCount = mListCount +1; 
-	  mShowingList.add(0,newComment);
+	 // mShowingList.add(0,newComment);
+	  Log.i("sizeoflist", "sizeoflist: "+mShowingList.size());
    }
-   public void createComment(String commentString){
-	      final AisleComment comment =
-                  new AisleComment();
-  comment.setComment(commentString);
-  comment.setCommenterFirstName(getItem(
-			mCurrentAislePosition).getAisleContext().mFirstName);
-  comment.setCommenterLastName(getItem(
-			mCurrentAislePosition).getAisleContext().mLastName);
-  comment.setCreatedTimestamp(System.currentTimeMillis());
-  comment.setOwnerUserId(Long.parseLong(VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().getUserId()));
-  comment.setOwnerAisleId(Long.parseLong(getItem(
-			mCurrentAislePosition).getAisleId()));
+   @SuppressWarnings("unchecked")
+public void createComment(String commentString){
+	   getItem(mCurrentAislePosition)
+		.getImageList().get(mCurrentDispImageIndex).mCommentsList.add(0,commentString);
+	   mCommentsMapList.put(mCurrentDispImageIndex, getItem(mCurrentAislePosition)
+				.getImageList().get(mCurrentDispImageIndex).mCommentsList);
+	   mShowingList =  (ArrayList<String>) mCommentsMapList.get(mCurrentDispImageIndex);
+  final ImageComment imgComment =
+          new ImageComment();
+  imgComment.setComment(commentString);
+  imgComment.setCommenterFirstName(getItem(
+		mCurrentAislePosition).getAisleContext().mFirstName);
+  imgComment.setCommenterLastName(getItem(
+		mCurrentAislePosition).getAisleContext().mLastName);
+  imgComment.setCreatedTimestamp(System.currentTimeMillis());
+  imgComment.setOwnerUserId(Long.parseLong(VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().getUserId()));
+  imgComment.setOwnerImageId(Long.parseLong(getItem(
+		mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mId));
+ 
   
-  /** Save the aisle and verify the save */
-  
-  
-	  new Thread(new Runnable() {
-		
-		@Override
-		public void run() {
-			try {
-				VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().testCreateAisleComment(comment);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+/*new Thread(new Runnable() {
+	
+	@Override
+	public void run() {
+		try {
+			ImageComment createdComment =
+					VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().createImageComment(imgComment);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-	}).start();
+	}
+}).start();*/
+  
+  
+ 
  
    }
  
+
+   
+   
+   
 	private void writeToSdcard(String message) {
 
 		String path = Environment.getExternalStorageDirectory().toString();

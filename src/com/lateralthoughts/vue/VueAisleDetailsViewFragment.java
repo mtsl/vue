@@ -704,11 +704,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		inputMethodManager.toggleSoftInputFromWindow(
 				editText.getApplicationWindowToken(),
 				InputMethodManager.SHOW_FORCED, 0);
-		@SuppressWarnings("unchecked")
+/*		@SuppressWarnings("unchecked")
 		ArrayList<String> commentList = (ArrayList<String>) mAisleDetailsAdapter.mCommentsMapList
-				.get(mAisleDetailsAdapter.mCurrentDispImageIndex);
-		if (commentList != null) {
-			commentList.add(0, etText);
+				.get(mAisleDetailsAdapter.mCurrentDispImageIndex);*/
+		if (etText != null) {
+			 
 			mAisleDetailsAdapter.updateListCount(etText);
 			mAisleDetailsAdapter.createComment(etText);
 		}
