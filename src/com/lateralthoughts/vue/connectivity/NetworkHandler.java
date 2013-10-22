@@ -445,7 +445,7 @@ public class NetworkHandler {
                   .parseBookmarkedAisles(responseMessage);
               for (AisleBookmark aB : bookmarkedAisles) {
                 Log.e("bookmarked aisle", "bookmarked aisle bookmarkedAisles ID: getBookmarkAisleByUser()" + aB.getId());
-                DataBaseManager.getInstance(mContext).updateBookmarkAisles(aB.getId(), Long.toString(aB.getAisleId()), true);
+                DataBaseManager.getInstance(mContext).updateBookmarkAisles(aB.getId(), Long.toString(aB.getAisleId()), aB.getBookmarked());
               }
             }
             // Log.e("bookmarked aisle", "bookmarked aisle bookmarkedAisles size(); " + bookmarkedAisles.size());
