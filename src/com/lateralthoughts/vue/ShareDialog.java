@@ -62,6 +62,7 @@ public class ShareDialog {
 	private ProgressDialog mShareDialog;
 	private static final String TAG = "ShareDialog";
 	private boolean mFromCreateAislePopupFlag = false;
+	private boolean mLoadAllApplications = false;
 
 	public void dismisDialog() {
 		mShareDialog.dismiss();
@@ -89,6 +90,12 @@ public class ShareDialog {
 		openScreenDialog();
 	}
 
+	public void showAllInstalledApplications() {
+		mLoadAllApplications = true;
+		prepareShareIntentData();
+		openScreenDialog();
+	}
+
 	public void loadShareApplications(
 			ArrayList<ShoppingApplicationDetails> dataEntryShoppingApplicationsList) {
 		mFromCreateAislePopupFlag = true;
@@ -111,7 +118,7 @@ public class ShareDialog {
 				.findViewById(R.id.dialogtitle);
 		ListView listview = (ListView) mDialog.findViewById(R.id.networklist);
 		TextView okbuton = (TextView) mDialog.findViewById(R.id.shownetworkok);
-		if (mFromCreateAislePopupFlag) {
+		if (mFromCreateAislePopupFlag || mLoadAllApplications) {
 			dialogtitle.setText("Open ...");
 		}
 		listview.setAdapter(new CustomAdapter());
@@ -124,10 +131,38 @@ public class ShareDialog {
 					CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
 					if (createAisleSelectionActivity != null) {
 						mDialog.dismiss();
-						createAisleSelectionActivity.loadShoppingApplication(
-								mActivityNames.get(position),
-								mPackageNames.get(position));
+						if (mPackageNames.get(position) == null) {
+							if (mAppNames.get(position).equals(
+									mContext.getResources().getString(
+											R.string.more))) {
+								// show another dialog for displaying installed
+								// apps...
+								ShareDialog shareDialog = new ShareDialog(
+										mContext, mActivity);
+								shareDialog.showAllInstalledApplications();
+							} else if (mAppNames.get(position).equals(
+									mContext.getResources().getString(
+											R.string.browser))) {
+								// Load Browser...
+								mContext.startActivity(new Intent(
+										Intent.ACTION_VIEW, Uri
+												.parse("http://www.google.com")));
+							}
+						} else {
+							createAisleSelectionActivity
+									.loadShoppingApplication(
+											mActivityNames.get(position),
+											mPackageNames.get(position));
+						}
 					}
+				} else if (mLoadAllApplications) {
+					String activityName = mActivityNames.get(position);
+					String packageName = mPackageNames.get(position);
+					Intent shoppingAppIntent = new Intent(
+							android.content.Intent.ACTION_VIEW);
+					shoppingAppIntent.setClassName(packageName, activityName);
+					mContext.startActivity(shoppingAppIntent);
+					mDialog.dismiss();
 				} else {
 					shareIntent(position);
 				}
@@ -211,7 +246,23 @@ public class ShareDialog {
 			} else {
 				holderView = (Holder) convertView.getTag();
 			}
-			holderView.launcheicon.setImageDrawable(mAppIcons.get(position));
+			if (mAppIcons.get(position) != null) {
+				holderView.launcheicon
+						.setImageDrawable(mAppIcons.get(position));
+			} else {
+				if (mAppNames.get(position).equals(
+						mContext.getResources().getString(R.string.more))) {
+					holderView.launcheicon
+							.setImageResource(R.drawable.more_icon);
+				} else if (mAppNames.get(position).equals(
+						mContext.getResources().getString(R.string.browser))) {
+					holderView.launcheicon
+							.setImageResource(R.drawable.browser_icon);
+				} else {
+					holderView.launcheicon
+							.setImageResource(R.drawable.vue_launcher_icon);
+				}
+			}
 			holderView.network.setText(mAppNames.get(position));
 			return convertView;
 		}
@@ -285,13 +336,16 @@ public class ShareDialog {
 
 	private void prepareShareIntentData() {
 		if (mShareIntentObj == null) {
+			mSendIntent = new Intent(android.content.Intent.ACTION_SEND);
+			mSendIntent.setType("text/plain");
 			mShareIntentObj = new InstalledPackageRetriever(mContext);
-			mShareIntentObj.getInstalledPackages();
+			mShareIntentObj.getInstalledPackages(mLoadAllApplications);
 			mAppNames = mShareIntentObj.getAppNames();
 			mPackageNames = mShareIntentObj.getpackageNames();
 			mAppIcons = mShareIntentObj.getDrawables();
-			mSendIntent = new Intent(android.content.Intent.ACTION_SEND);
-			mSendIntent.setType("text/plain");
+			if (mLoadAllApplications) {
+				mActivityNames = mShareIntentObj.getActivityNames();
+			}
 		}
 	}
 
@@ -340,7 +394,7 @@ public class ShareDialog {
 							Response.ErrorListener errorListener = new Response.ErrorListener() {
 								@Override
 								public void onErrorResponse(VolleyError arg0) {
-									Log.e(TAG, arg0.getMessage());
+
 								}
 							};
 							if (mImagePathArray.get(i).getImageUrl() != null) {
@@ -416,7 +470,6 @@ public class ShareDialog {
 						Response.ErrorListener errorListener = new Response.ErrorListener() {
 							@Override
 							public void onErrorResponse(VolleyError arg0) {
-								Log.e(TAG, arg0.getMessage());
 							}
 						};
 						if (mImagePathArray.get(currentAislePosition)

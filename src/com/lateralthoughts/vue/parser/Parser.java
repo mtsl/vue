@@ -225,8 +225,6 @@ public class Parser {
 				Log.e("Parser",
 						"abcparserAisleAisleData: Response  "+josnObject.toString());
 			}
-            JSONArray jsonArray = josnObject.getJSONArray("comments");
-            aisleContext.mCommentList = parseComments(jsonArray);
 			aisleContext.mCategory = josnObject
 					.getString(VueConstants.AISLE_CATEGORY);
 			aisleContext.mLookingForItem = josnObject

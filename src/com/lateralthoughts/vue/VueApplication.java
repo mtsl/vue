@@ -85,7 +85,7 @@ public class VueApplication extends Application {
 	public boolean mFbsharingflag = false;
 	private RequestQueue mVolleyRequestQueue;
 	private static final String[] SHOPPINGAPP_NAMES_ARRAY = { "Amazon", "eBay",
-			"iShop", "Jewellery", "OLX", "Pinterest", "ZOVI" };
+			"iShop", "Jewellery", "OLX", "Pinterest", "ZOVI"};
 	private static final String[] SHOPPINGAPP_ACTIVITIES_ARRAY = {
 			"com.amazon.mShop.home.HomeActivity",
 			"com.ebay.mobile.activities.eBay", "com.shopping.StartPage",

@@ -60,6 +60,10 @@ public class OtherSourcesDialog {
 								.getStoreNameFromUrl(sourceUrl);
 						fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
 								.get(position).getWidth();
+						fragment.mFindAtText.setText(sourceUrl);
+						fragment.mPreviousFindAtText = fragment.mFindAtText
+								.getText().toString();
+						fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
 						OtherSourcesDialog.this.imagesList.clear();
 						mOtherSourcesImageAdapter.notifyDataSetChanged();
 						dialog.cancel();
@@ -105,6 +109,10 @@ public class OtherSourcesDialog {
 							fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
 							fragment.mOtherSourceSelectedImageStore = Utils
 									.getStoreNameFromUrl(sourceUrl);
+							fragment.mFindAtText.setText(sourceUrl);
+							fragment.mPreviousFindAtText = fragment.mFindAtText
+									.getText().toString();
+							fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
 							OtherSourcesDialog.this.imagesList.clear();
 							mOtherSourcesImageAdapter.notifyDataSetChanged();
 							dialog.cancel();

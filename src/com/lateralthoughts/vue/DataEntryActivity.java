@@ -178,7 +178,7 @@ public class DataEntryActivity extends BaseActivity {
 						.getString(R.string.add_imae_to_aisle_screen_title));
 				mDataEntryFragment.mIsUserAisleFlag = b
 						.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG);
-				if (mDataEntryFragment.mIsUserAisleFlag) {
+				if (!mDataEntryFragment.mIsUserAisleFlag) {
 					mDataEntryFragment.mLookingForPopup
 							.setVisibility(View.GONE);
 					mDataEntryFragment.mLookingForBigText
@@ -209,6 +209,9 @@ public class DataEntryActivity extends BaseActivity {
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE) != null) {
 					mDataEntryFragment.mSaySomethingAboutAisle
+							.setText(b
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE));
+					mDataEntryFragment.mHintTextForSaySomeThing
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE));
 				}
