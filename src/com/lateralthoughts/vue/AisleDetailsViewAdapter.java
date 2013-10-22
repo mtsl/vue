@@ -412,6 +412,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		} else {
 			mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
 		}
+		if(mLikes <= 0){
+			mLikes = 0;
+			mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
+		}
 		Log.i("LikeStatus",
 				"Like status: "
 						+ getItem(mCurrentAislePosition).getImageList().get(
