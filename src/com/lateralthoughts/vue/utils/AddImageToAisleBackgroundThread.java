@@ -139,7 +139,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 					@Override
 					public void run() {
 						if (null != mResponseMessage) {
-
 							if (!mFromDetailsScreenFlag) {
 								Log.i("addimagefuncitonality",
 										"addimagefuncitonality jsonArray response: "

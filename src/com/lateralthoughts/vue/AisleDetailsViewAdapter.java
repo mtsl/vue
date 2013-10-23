@@ -599,6 +599,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							bookmarkStatus);
 					handleBookmark(bookmarkStatus,
 							getItem(mCurrentAislePosition).getAisleId());
+					Log.e("AisleManager",
+                        "bookmarkfeaturetest: count BOOKMARK RESPONSE: mViewHolder.bookmarklay if called ");
 				} else {
 					bookmarkStatus = true;
 					FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
@@ -1072,13 +1074,18 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				likeStatus = itemDetails.mLikeDislikeStatus;
 				Log.i("likecountissue", "likecountissue: likeCount1: "
 						+ likeCount);
+				ArrayList<ImageRating> imgRatingList = DataBaseManager.getInstance(mContext).getRatedImagesList(aisleId);
 				imgRating = new ImageRating();
 				imgRating.setAisleId(Long.parseLong(aisleId));
 				imgRating.setImageId(Long.parseLong(imageId));
 				imgRating.setLiked(likeOrDislike);
+				for(ImageRating imgRat : imgRatingList) {
+				  if(imgRating.getImageId().longValue() == imgRat.getImageId().longValue()) {
+				    imgRating.setId(/*l2*/imgRat.getId().longValue());
+				    break;
+				  }
+				}
 				try {
-					Log.e("ImageRating Resopnse",
-							"SURU ImageRating sendDataToDb in LIKES condution");
 					AisleManager.getAisleManager().updateRating(imgRating,
 							likeCount);
 				} catch (Exception e) {
@@ -1201,6 +1208,16 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
 				Long.parseLong(aisleId));
+	    ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager.getInstance(
+	        VueApplication.getInstance()).getBookmarkAisleIdsList();
+	    
+	    for(AisleBookmark b : aisleBookmarkList) {
+	      if(aisleId.equals(Long.toString(b.getAisleId().longValue()))) {
+	        aisleBookmark.setId(b.getId());
+	        Log.i("bookmarkissue", "bookmarkissue handleBookmark matched Id " + b.getId());
+	        break;
+	      }
+	    }
 		VueUser storedVueUser = null;
 		try {
 			Log.i("bookmarkissue", "bookmarkissue handleBookmark");
@@ -1209,14 +1226,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
 					Long.valueOf(storedVueUser.getId()).toString());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return position;
 	}
 

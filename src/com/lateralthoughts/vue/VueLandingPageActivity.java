@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
@@ -615,10 +616,12 @@ public class VueLandingPageActivity extends BaseActivity {
 	private void getBookmarkedAisles(String screenName) {
 
 		ArrayList<AisleWindowContent> windowContent = null;
-		ArrayList<String> bookmarkedAisles = DataBaseManager.getInstance(
+		ArrayList<AisleBookmark> bookmarkedAisles = DataBaseManager.getInstance(
 				VueLandingPageActivity.this).getBookmarkAisleIdsList();
-		String[] bookmarked = bookmarkedAisles
-				.toArray(new String[bookmarkedAisles.size()]);
+		String[] bookmarked = new String[bookmarkedAisles.size()];
+		for(int i = 0; i < bookmarkedAisles.size(); i++) {
+		  bookmarked[i] = Long.toString(bookmarkedAisles.get(i).getAisleId());
+		}
 		if (windowContent == null) {
 			windowContent = new ArrayList<AisleWindowContent>();
 		}
