@@ -85,6 +85,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	private static final boolean DEBUG = false;
 	private AisleDetailsViewListLoader mViewLoader;
 	private AisleDetailSwipeListener mswipeListner;
+	private boolean closeKeyboard = false;
 	VueUser storedVueUser = null;
 	// we need to customize the layout depending on screen height & width which
 	// we will get on the fly
@@ -140,6 +141,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				mCurrentAislePosition = i;
 				break;
 			}
+		}
+		if(VueApplication.getInstance().getmAisleImgCurrentPos() > getItem(mCurrentAislePosition).getImageList().size()-1){
+			VueApplication.getInstance().setmAisleImgCurrentPos(getItem(mCurrentAislePosition).getImageList().size()-1);
 		}
 		if(getItem(mCurrentAislePosition).getAisleContext().mCommentList == null) {
 			getItem(mCurrentAislePosition).getAisleContext().mCommentList = new ArrayList<String>();
@@ -215,6 +219,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					Log.i("clone", "clone1: " + mImageDetailsArr.get(i));
 				}
 			}
+
       ArrayList<ImageComments> imgComments = getItem(mCurrentAislePosition)
           .getImageList().get(
               VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
@@ -226,7 +231,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
       for(ImageComments comment : imgComments) {
         mShowingList.add(comment.comment);
       }
-			
+
 			//mShowingList = getItem(mCurrentAislePosition).getAisleContext().mCommentList;
 			
 			 int imgPosition = 0;
@@ -442,6 +447,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
 		mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
 		mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
+	
+		
 		// mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
 		if (position == 0) {
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
@@ -541,6 +548,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			if (mViewHolder.enterCommentrellay.getVisibility() == View.VISIBLE) {
 				mViewHolder.commentSend.setVisibility(View.GONE);
 			}
+			if(closeKeyboard){
+				closeKeyboard = false;
+				mViewHolder.edtCommentLay.setVisibility(View.GONE);
+				mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
+			}
 			mViewHolder.enterCommentrellay
 					.setOnClickListener(new OnClickListener() {
 
@@ -558,9 +570,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 						}
 					});
-		}
-
-		else {
+		} else {
 			// first two views are image and comment layout. so use position - 2
 			// to display all the comments from start
 			if (position - mInitialCommentsToShowSize < mShowingList.size()) {
@@ -583,7 +593,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				if (mListCount == (mShowFixedRowCount + mInitialCommentsToShowSize)) {
 					mListCount = mShowingList.size() + mShowFixedRowCount;
 				} else {
+					if(mShowingList.size() > 2) {
 					mListCount = mShowFixedRowCount + mInitialCommentsToShowSize;
+					} else {
+						mListCount = mShowingList.size() + mShowFixedRowCount;
+					}
 				}
 				mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
 				notifyDataSetChanged();
@@ -1216,8 +1230,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		mInputMethodManager.hideSoftInputFromWindow(
 				mViewHolder.edtComment.getWindowToken(), 0);
-		mViewHolder.edtCommentLay.setVisibility(View.GONE);
-		mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
+		mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
+		mViewHolder.enterCommentrellay.setVisibility(View.GONE);
+		closeKeyboard = true;
+		notifyAdapter();
 	}
 
 	private void handleBookmark(boolean isBookmarked, String aisleId) {
@@ -1291,6 +1307,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 public void createComment(String commentString){
      ImageComments comments = new ImageComments();
      comments.comment = commentString;
+
+	   if(commentString == null || commentString.length()<1){
+		   return;
+	   }
 	   getItem(mCurrentAislePosition)
 		.getImageList().get(mCurrentDispImageIndex).mCommentsList.add(0,comments);
 	   if(mCommentsMapList == null){

@@ -11,7 +11,9 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,10 +21,15 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -238,6 +245,19 @@ public class Utils {
 			File resizedFileName = new File(
 					vueAppResizedImageFileName(mContext));
 			saveBitmap(resizedBitmap, resizedFileName);
+			BitmapFactory.Options o3 = new BitmapFactory.Options();
+			o3.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(new FileInputStream(resizedFileName),
+					null, o3);
+			if (o3.outWidth > VueApplication.getInstance().mScreenWidth
+					|| o3.outHeight > VueApplication.getInstance().mScreenHeight) {
+				resizedBitmap = Utils.getBestDementions(resizedBitmap,
+						o3.outWidth, o3.outHeight,
+						VueApplication.getInstance().mScreenWidth,
+						VueApplication.getInstance().mScreenHeight);
+				Utils.saveBitmap(resizedBitmap, resizedFileName);
+			}
+			resizedBitmap.recycle();
 			returnArray[0] = resizedFileName.getPath();
 			return returnArray;
 		} catch (FileNotFoundException e) {
@@ -592,6 +612,30 @@ public class Utils {
 		return mWindowLargestHeight;
 	}
 
+	public static Bitmap getBestDementions(Bitmap bitmap, int originalWidth,
+			int originalHeight, int availableScreenWidth,
+			int availableScreenHeight) {
+		float adjustedImageHeight, adjustedImageWidth;
+		float imageHeight = originalHeight, imageWidth = originalWidth;
+		if (imageHeight > availableScreenHeight) {
+			adjustedImageHeight = availableScreenHeight;
+			adjustedImageWidth = (adjustedImageHeight / imageHeight)
+					* imageWidth;
+			imageHeight = adjustedImageHeight;
+			imageWidth = adjustedImageWidth;
+		}
+		if (imageWidth > availableScreenWidth) {
+			adjustedImageWidth = availableScreenWidth;
+			adjustedImageHeight = (adjustedImageWidth / imageWidth)
+					* imageHeight;
+			imageHeight = adjustedImageHeight;
+			imageWidth = adjustedImageWidth;
+		}
+
+		return BitmapLoaderUtils.getInstance().getBitmap(bitmap,
+				(int) imageWidth, (int) imageHeight);
+	}
+
 	public static String getStoreNameFromUrl(String url) {
 		if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
 				&& VueApplication.getInstance().mShoppingApplicationDetailsList
@@ -637,6 +681,51 @@ public class Utils {
 			}
 		});
 		dialog.show();
+	}
+
+	public static ArrayList<ShoppingApplicationDetails> getInstalledApplicationsList(
+			Context context) {
+		ArrayList<ShoppingApplicationDetails> installedApplicationdetailsList = new ArrayList<ShoppingApplicationDetails>();
+		Intent intent = new Intent("android.intent.action.MAIN", null);
+		intent.addCategory("android.intent.category.LAUNCHER");
+		List<ResolveInfo> activities = context.getPackageManager()
+				.queryIntentActivities(intent, 0);
+		PackageManager pm = context.getPackageManager();
+		final Object a[] = activities.toArray();
+		for (int i = 0; i < activities.size(); i++) {
+			boolean isSystemApp = false;
+			try {
+				isSystemApp = isSystemPackage(pm
+						.getPackageInfo(
+								((ResolveInfo) a[i]).activityInfo.applicationInfo.packageName,
+								PackageManager.GET_ACTIVITIES));
+			} catch (NameNotFoundException e) {
+				e.printStackTrace();
+			}
+			String packageName = ((ResolveInfo) a[i]).activityInfo.applicationInfo.packageName;
+			if (!isSystemApp
+					&& !(packageName.equals("com.lateralthoughts.vue"))
+					&& !(packageName.equals(VueConstants.ETSY_PACKAGE_NAME))
+					&& !(packageName.equals(VueConstants.FANCY_PACKAGE_NAME))
+					&& !(Arrays
+							.asList(VueApplication.SHOPPINGAPP_PACKAGES_ARRAY)
+							.contains(packageName))) {
+				ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
+						((ResolveInfo) a[i]).activityInfo.applicationInfo
+								.loadLabel(context.getPackageManager())
+								.toString(),
+						((ResolveInfo) a[i]).activityInfo.name, packageName,
+						((ResolveInfo) a[i]).activityInfo.applicationInfo
+								.loadIcon(context.getPackageManager()));
+				installedApplicationdetailsList.add(shoppingApplicationDetails);
+			}
+		}
+		return installedApplicationdetailsList;
+	}
+
+	public static boolean isSystemPackage(PackageInfo pkgInfo) {
+		return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) ? true
+				: false;
 	}
 
 }

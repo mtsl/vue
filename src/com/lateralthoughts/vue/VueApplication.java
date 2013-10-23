@@ -13,6 +13,8 @@ import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
+import com.lateralthoughts.vue.utils.SortBasedOnAppName;
+import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -20,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class VueApplication extends Application {
 	private static VueApplication sInstance;
@@ -33,6 +36,7 @@ public class VueApplication extends Application {
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
+	public ArrayList<ShoppingApplicationDetails> mMoreInstalledApplicationDetailsList;
 	public static final int[] POPUP_ITEM_DRAWABLES = {
 			R.drawable.composer_camera, R.drawable.composer_music,
 			R.drawable.composer_place, R.drawable.composer_sleep,
@@ -85,20 +89,21 @@ public class VueApplication extends Application {
 	public boolean mFbsharingflag = false;
 	private RequestQueue mVolleyRequestQueue;
 	private static final String[] SHOPPINGAPP_NAMES_ARRAY = { "Amazon", "eBay",
-			"iShop", "Jewellery", "OLX", "Pinterest", "ZOVI"};
+			"iShop", "Jewellery", "OLX", "Pinterest", "ZOVI" };
 	private static final String[] SHOPPINGAPP_ACTIVITIES_ARRAY = {
 			"com.amazon.mShop.home.HomeActivity",
 			"com.ebay.mobile.activities.eBay", "com.shopping.StartPage",
 			"com.greybit.jewellery.activity.Start", "com.olx.olx.activity.Olx",
 			"com.pinterest.activity.PinterestActivity",
 			"com.robemall.zovi.HomeActivity" };
-	private static final String[] SHOPPINGAPP_PACKAGES_ARRAY = {
+	public static final String[] SHOPPINGAPP_PACKAGES_ARRAY = {
 			"com.amazon.mShop.android", "com.ebay.mobile", "com.shopping",
 			"com.greybit.jewellery", "com.olx.olx", "com.pinterest",
 			"com.robemall.zovi" };
 
 	public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -161,9 +166,17 @@ public class VueApplication extends Application {
 			}
 		}
 
+		mMoreInstalledApplicationDetailsList = Utils
+				.getInstalledApplicationsList(getApplicationContext());
+		if (mMoreInstalledApplicationDetailsList != null) {
+			Collections.sort(mMoreInstalledApplicationDetailsList,
+					new SortBasedOnAppName());
+		}
 		// R.drawable.aisle_content_empty;
-		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
-				crittercismConfig);
+		/*
+		 * Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
+		 * crittercismConfig);
+		 */
 
 	}
 

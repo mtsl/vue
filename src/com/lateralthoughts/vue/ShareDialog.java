@@ -60,7 +60,6 @@ public class ShareDialog {
 	private int mCurrentAislePosition;
 	private ArrayList<clsShare> mImagePathArray;
 	private ProgressDialog mShareDialog;
-	private static final String TAG = "ShareDialog";
 	private boolean mFromCreateAislePopupFlag = false;
 	private boolean mLoadAllApplications = false;
 
@@ -92,7 +91,9 @@ public class ShareDialog {
 
 	public void showAllInstalledApplications() {
 		mLoadAllApplications = true;
-		prepareShareIntentData();
+		if (mAppNames.size() == 0) {
+			prepareDisplayData(VueApplication.getInstance().mMoreInstalledApplicationDetailsList);
+		}
 		openScreenDialog();
 	}
 
@@ -339,13 +340,10 @@ public class ShareDialog {
 			mSendIntent = new Intent(android.content.Intent.ACTION_SEND);
 			mSendIntent.setType("text/plain");
 			mShareIntentObj = new InstalledPackageRetriever(mContext);
-			mShareIntentObj.getInstalledPackages(mLoadAllApplications);
+			mShareIntentObj.getInstalledPackages();
 			mAppNames = mShareIntentObj.getAppNames();
 			mPackageNames = mShareIntentObj.getpackageNames();
 			mAppIcons = mShareIntentObj.getDrawables();
-			if (mLoadAllApplications) {
-				mActivityNames = mShareIntentObj.getActivityNames();
-			}
 		}
 	}
 
