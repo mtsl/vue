@@ -127,6 +127,18 @@ public class OtherSourceImageLoader {
 					.decodeStream(stream2, null, o2);
 			stream2.close();
 			Utils.saveBitmap(resizedBitmap, f);
+			BitmapFactory.Options o3 = new BitmapFactory.Options();
+			o3.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(new FileInputStream(f), null, o3);
+			if (o3.outWidth > VueApplication.getInstance().mScreenWidth
+					|| o3.outHeight > VueApplication.getInstance().mScreenHeight) {
+				resizedBitmap = Utils.getBestDementions(resizedBitmap,
+						o3.outWidth, o3.outHeight,
+						VueApplication.getInstance().mScreenWidth,
+						VueApplication.getInstance().mScreenHeight);
+				Utils.saveBitmap(resizedBitmap, f);
+			}
+			resizedBitmap.recycle();
 			return f;
 		} catch (Throwable ex) {
 			ex.printStackTrace();
