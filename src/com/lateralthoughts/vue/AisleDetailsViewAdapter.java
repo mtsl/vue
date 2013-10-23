@@ -213,6 +213,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					Log.i("clone", "clone1: " + mImageDetailsArr.get(i));
 				}
 			}
+			Log.i("exception", "exception: position: "+VueApplication.getInstance().getmAisleImgCurrentPos());
+			Log.i("exception", "exception: aisle position: "+mCurrentAislePosition);
 			mShowingList = getItem(mCurrentAislePosition).getImageList().get(VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
 			//mShowingList = getItem(mCurrentAislePosition).getAisleContext().mCommentList;
 			if(mShowingList == null){
@@ -1190,8 +1192,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		mInputMethodManager.hideSoftInputFromWindow(
 				mViewHolder.edtComment.getWindowToken(), 0);
-		mViewHolder.edtCommentLay.setVisibility(View.GONE);
-		mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
+		mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
+		mViewHolder.enterCommentrellay.setVisibility(View.GONE);
+		notifyAdapter();
 	}
 
 	private void handleBookmark(boolean isBookmarked, String aisleId) {

@@ -91,6 +91,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	LinearLayout mDetailsFindAtPopup;
 	TextView vueAisleHeading;
 	String mOccasion;
+	String mFindAtUrl;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -160,12 +161,16 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		if (detailsUrl != null) {
 			detailsUrl = Utils.getUrlFromString(detailsUrl);
 			if (detailsUrl != null) {
+			 
 				mEditTextFindAt.setText(detailsUrl);
+				mFindAtUrl = detailsUrl;
 			} else {
 				mEditTextFindAt.setText("");
+				mFindAtUrl = "";
 			}
 		} else {
 			mEditTextFindAt.setText("");
+			mFindAtUrl = "";
 		}
 
 		if (VueApplication.getInstance().getmUserId() != null) {
@@ -256,6 +261,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			@Override
 			public void onClick(View arg0) {
 				FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
+				mAisleDetailsAdapter.closeKeyboard();
 				Intent intent = new Intent(getActivity(),
 						CreateAisleSelectionActivity.class);
 				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
@@ -285,13 +291,24 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			@Override
 			public void onClick(View v) {
 				FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
-				final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
+				//TODO: FIND AT SHOULD GO DIRIECTLY TO THE BROWSER
+				String url = mFindAtUrl;
+				if (url != null && url.startsWith("http")) {
+					mAisleDetailsAdapter.closeKeyboard();
+					Uri uriUrl = Uri.parse(url.trim());
+					Log.i("browserUrl", "browserUrl: " + url);
+					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
+							uriUrl);
+					startActivity(launchBrowser);
+				}
+				
+		/*		final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
 						.getSystemService(Context.INPUT_METHOD_SERVICE);
 				inputMethodManager.toggleSoftInputFromWindow(
 						mEditTextFindAt.getApplicationWindowToken(),
 						InputMethodManager.SHOW_FORCED, 0);
 				mDetailsFindAtPopup.setVisibility(View.VISIBLE);
-				mEditTextFindAt.requestFocus();
+				mEditTextFindAt.requestFocus();*/
 
 			}
 		});
@@ -453,6 +470,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			@Override
 			public void onClick(View arg0) {
 				FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
+				mAisleDetailsAdapter.closeKeyboard();
 				mAisleDetailsAdapter.share(getActivity(), getActivity());
 			}
 		});
@@ -690,9 +708,12 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		public void setFindAtText(String findAt) {
 			findAt = Utils.getUrlFromString(findAt);
 			if (findAt != null) {
+			 
 				mEditTextFindAt.setText(findAt);
+				mFindAtUrl = findAt;
 			} else {
 				mEditTextFindAt.setText("");
+				mFindAtUrl = "";
 			}
 		}
 
@@ -868,7 +889,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		}
 
 	}
-
+   
 	private void hightLightCurrentPage(int position) {
 		if (position == 0) {
 			mDotOne.setImageResource(R.drawable.active_dot);

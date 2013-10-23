@@ -551,8 +551,8 @@ public class NetworkHandler {
 		return userId;
 
 	}
-	   public  ImageComment  createImageComment(
-ImageComment comment)
+
+	public ImageComment createImageComment(ImageComment comment)
 			throws Exception {
 		ImageComment createdImageComment = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -562,19 +562,15 @@ ImageComment comment)
 		HttpPut httpPut = new HttpPut(url.toString());
 		StringEntity entity = new StringEntity(
 				mapper.writeValueAsString(comment));
-		System.out.println("ImageComment create request: "
-				+ mapper.writeValueAsString(comment));
 		entity.setContentType("application/json;charset=UTF-8");
 		entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
 				"application/json;charset=UTF-8"));
 		httpPut.setEntity(entity);
-
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = httpClient.execute(httpPut);
 		if (response.getEntity() != null
 				&& response.getStatusLine().getStatusCode() == 200) {
 			String responseMessage = EntityUtils.toString(response.getEntity());
-			System.out.println("Comment Response: " + responseMessage);
 			if (responseMessage.length() > 0) {
 				createdImageComment = (new ObjectMapper()).readValue(
 						responseMessage, ImageComment.class);
