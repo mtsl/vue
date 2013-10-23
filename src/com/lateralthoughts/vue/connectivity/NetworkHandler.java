@@ -1,6 +1,9 @@
 package com.lateralthoughts.vue.connectivity;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -74,6 +77,7 @@ public class NetworkHandler {
   protected int mLimit;
   protected int mOffset;
   ArrayList<AisleWindowContent> aislesList = null;
+  private SharedPreferences mSharedPreferencesObj;
 
   /* public ArrayList<String> bookmarkedAisles = new ArrayList<String>(); */
   // public ArrayList<AisleWindowContent> bookmarkedAisleContent = new
@@ -82,6 +86,8 @@ public class NetworkHandler {
   public NetworkHandler(Context context) {
     mContext = context;
     mVueContentGateway = VueContentGateway.getInstance();
+    mSharedPreferencesObj = VueApplication.getInstance()
+        .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
     try {
       mTrendingAislesParser = new TrendingAislesContentParser(new Handler(),
           VueConstants.AISLE_TRENDING_LIST_DATA);
@@ -526,30 +532,47 @@ public class NetworkHandler {
   public ImageComment createImageComment(ImageComment comment) throws Exception {
     ImageComment createdImageComment = null;
     ObjectMapper mapper = new ObjectMapper();
+    Log.e("NetworkHandler", "Comments Issue: createImageComment()");
+    if (VueConnectivityManager.isNetworkConnected(mContext)) {
+      Log.e("NetworkHandler", "Comments Issue: Network is there");
+      URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL + "/"
+          + getUserId());
+      HttpPut httpPut = new HttpPut(url.toString());
+      StringEntity entity = new StringEntity(mapper.writeValueAsString(comment));
+      System.out.println("ImageComment create request: "
+          + mapper.writeValueAsString(comment));
+      entity.setContentType("application/json;charset=UTF-8");
+      entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+          "application/json;charset=UTF-8"));
+      httpPut.setEntity(entity);
 
-    URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL + "/"
-        + getUserId());
-    HttpPut httpPut = new HttpPut(url.toString());
-    StringEntity entity = new StringEntity(mapper.writeValueAsString(comment));
-    System.out.println("ImageComment create request: "
-        + mapper.writeValueAsString(comment));
-    entity.setContentType("application/json;charset=UTF-8");
-    entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
-        "application/json;charset=UTF-8"));
-    httpPut.setEntity(entity);
-
-    DefaultHttpClient httpClient = new DefaultHttpClient();
-    HttpResponse response = httpClient.execute(httpPut);
-    if (response.getEntity() != null
-        && response.getStatusLine().getStatusCode() == 200) {
-      String responseMessage = EntityUtils.toString(response.getEntity());
-      System.out.println("Comment Response: " + responseMessage);
-      if (responseMessage.length() > 0) {
-        createdImageComment = (new ObjectMapper()).readValue(responseMessage,
-            ImageComment.class);
+      DefaultHttpClient httpClient = new DefaultHttpClient();
+      HttpResponse response = httpClient.execute(httpPut);
+      if (response.getEntity() != null
+          && response.getStatusLine().getStatusCode() == 200) {
+        Log.e("NetworkHandler", "Comments Issue: got success responce");
+        String responseMessage = EntityUtils.toString(response.getEntity());
+        System.out.println("Comment Response: " + responseMessage);
+        if (responseMessage.length() > 0) {
+          Log.e("NetworkHandler", "Comments Issue: responseMessage size is > 0 responseMessage: " + responseMessage);
+          createdImageComment = (new ObjectMapper()).readValue(responseMessage,
+              ImageComment.class);
+          Editor editor = mSharedPreferencesObj.edit();
+          editor.putBoolean(VueConstants.IS_COMMENT_DIRTY, false);
+          editor.commit();
+          DataBaseManager.getInstance(mContext).addComments(
+              createdImageComment, false);
+        }
+      } else {
+        Log.e("NetworkHandler", "Comments Issue: responce fail: " + response.getStatusLine().getStatusCode());
       }
+    } else {
+      Editor editor = mSharedPreferencesObj.edit();
+      editor.putBoolean(VueConstants.IS_COMMENT_DIRTY, true);
+      editor.commit();
+      DataBaseManager.getInstance(mContext).addComments(
+          comment, true);
     }
-
     return createdImageComment;
   }
 

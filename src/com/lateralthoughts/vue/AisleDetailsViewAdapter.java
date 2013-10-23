@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
@@ -62,6 +63,7 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.AisleComment;
 import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
@@ -99,7 +101,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	public int mCurrentAislePosition;
 	public ArrayList<String> mImageDetailsArr = null;
 	@SuppressLint("UseSparseArrays")
-	Map<Integer, Object> mCommentsMapList = new HashMap<Integer, Object>();
+	Map<Integer, ArrayList<ImageComments>> mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
 	ArrayList<String> mShowingList;
 	private int mBestHeight;
 	private int mTopBottomMargin = 24;
@@ -213,11 +215,20 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					Log.i("clone", "clone1: " + mImageDetailsArr.get(i));
 				}
 			}
-			mShowingList = getItem(mCurrentAislePosition).getImageList().get(VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
+      ArrayList<ImageComments> imgComments = getItem(mCurrentAislePosition)
+          .getImageList().get(
+              VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
+      if (mShowingList == null) {
+        mShowingList = new ArrayList<String>();
+      } else if(mShowingList.size() > 0) {
+        mShowingList.clear();
+      }
+      for(ImageComments comment : imgComments) {
+        mShowingList.add(comment.comment);
+      }
+			
 			//mShowingList = getItem(mCurrentAislePosition).getAisleContext().mCommentList;
-			if(mShowingList == null){
-				mShowingList = new ArrayList<String>();
-			}
+			
 			 int imgPosition = 0;
 			 if(VueApplication.getInstance().getmAisleImgCurrentPos()<getItem(mCurrentAislePosition).getImageList().size()){
 				 imgPosition = VueApplication.getInstance().getmAisleImgCurrentPos();
@@ -720,8 +731,16 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				}*/
 				mLikes = getItem(mCurrentAislePosition).getImageList().get(
 						position).mLikesCount;
-				mShowingList = getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mCommentsList;
-				
+				ArrayList<ImageComments> imgComments = getItem(mCurrentAislePosition)
+			          .getImageList().get(mCurrentDispImageIndex).mCommentsList;
+			      if (mShowingList == null) {
+			        mShowingList = new ArrayList<String>();
+			      } else if(mShowingList.size() > 0) {
+			        mShowingList.clear();
+			      }
+			      for(ImageComments comment : imgComments) {
+			        mShowingList.add(comment.comment);
+			      }
 				 
 				if(mShowingList.size() <mShowFixedRowCount){
 				
@@ -1063,9 +1082,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			} else if (reqType.equals(CHANGE_COMMENT)) {
 				// aisleId,imageId,comment
 				if (itemDetails.mCommentsList == null) {
-					getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList = new ArrayList<String>();
+					getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList = new ArrayList<ImageComments>();
 				}
-				String commentAdded = itemDetails.mCommentsList.get(0);
+				String commentAdded = itemDetails.mCommentsList.get(0).comment;
 			} else if (reqType.equals(CHANGE_LIKES)) {
 				// aisleId,imageId,likesCount,likeStatus
 				likeCount = itemDetails.mLikesCount;
@@ -1270,14 +1289,25 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
    }
    @SuppressWarnings("unchecked")
 public void createComment(String commentString){
+     ImageComments comments = new ImageComments();
+     comments.comment = commentString;
 	   getItem(mCurrentAislePosition)
-		.getImageList().get(mCurrentDispImageIndex).mCommentsList.add(0,commentString);
+		.getImageList().get(mCurrentDispImageIndex).mCommentsList.add(0,comments);
 	   if(mCommentsMapList == null){
 		   getCommentList();
 	   }
 	   mCommentsMapList.put(mCurrentDispImageIndex, getItem(mCurrentAislePosition)
 				.getImageList().get(mCurrentDispImageIndex).mCommentsList);
-	   mShowingList =  (ArrayList<String>) mCommentsMapList.get(mCurrentDispImageIndex);
+	   
+	   ArrayList<ImageComments> imgComments =  mCommentsMapList.get(mCurrentDispImageIndex);
+	    if (mShowingList == null) {
+	      mShowingList = new ArrayList<String>();
+	    } else if (mShowingList.size() > 0) {
+	      mShowingList.clear();
+	    }
+	    for (ImageComments comment : imgComments) {
+	      mShowingList.add(comment.comment);
+	    }
 		if (mShowingList.size()< mShowFixedRowCount) {
 			mListCount = mShowingList.size() + mShowFixedRowCount;
 		} else {
@@ -1290,6 +1320,7 @@ public void createComment(String commentString){
 		mCurrentAislePosition).getAisleContext().mFirstName);
   imgComment.setCommenterLastName(getItem(
 		mCurrentAislePosition).getAisleContext().mLastName);
+  imgComment.setOwnerImageId(Long.parseLong(getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mId));
   imgComment.setCreatedTimestamp(System.currentTimeMillis());
   imgComment.setOwnerUserId(Long.parseLong(VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().getUserId()));
   imgComment.setOwnerImageId(Long.parseLong(getItem(
@@ -1302,8 +1333,9 @@ new Thread(new Runnable() {
 	@Override
 	public void run() {
 		try {
-			ImageComment createdComment =
-					VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().createImageComment(imgComment);
+          ImageComment createdComment = VueTrendingAislesDataModel
+              .getInstance(VueApplication.getInstance()).getNetworkHandler()
+              .createImageComment(imgComment);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1317,15 +1349,23 @@ new Thread(new Runnable() {
    }
  
 @SuppressWarnings("unchecked")
-private void getCommentList(){
-	mCommentsMapList = new HashMap<Integer, Object>();
-	for(int i = 0;i<getItem(mCurrentAislePosition)
-			.getImageList().size();i++){
-	mCommentsMapList.put(i, getItem(mCurrentAislePosition)
-			.getImageList().get(i).mCommentsList);
-	}
-	mShowingList = (ArrayList<String>) mCommentsMapList.get(mCurrentDispImageIndex);
-}
+  private void getCommentList() {
+    mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
+    for (int i = 0; i < getItem(mCurrentAislePosition).getImageList().size(); i++) {
+      mCommentsMapList.put(i, getItem(mCurrentAislePosition).getImageList()
+          .get(i).mCommentsList);
+    }
+    ArrayList<ImageComments> imgComments = (ArrayList<ImageComments>) mCommentsMapList
+        .get(mCurrentDispImageIndex);
+    if (mShowingList == null) {
+      mShowingList = new ArrayList<String>();
+    } else if (mShowingList.size() > 0) {
+      mShowingList.clear();
+    }
+    for (ImageComments comment : imgComments) {
+      mShowingList.add(comment.comment);
+    }
+  }
    
    
    
