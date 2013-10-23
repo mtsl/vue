@@ -245,7 +245,7 @@ public class Utils {
 			File resizedFileName = new File(
 					vueAppResizedImageFileName(mContext));
 			saveBitmap(resizedBitmap, resizedFileName);
-			BitmapFactory.Options o3 = new BitmapFactory.Options();
+			/*BitmapFactory.Options o3 = new BitmapFactory.Options();
 			o3.inJustDecodeBounds = true;
 			BitmapFactory.decodeStream(new FileInputStream(resizedFileName),
 					null, o3);
@@ -256,7 +256,7 @@ public class Utils {
 						VueApplication.getInstance().mScreenWidth,
 						VueApplication.getInstance().mScreenHeight);
 				Utils.saveBitmap(resizedBitmap, resizedFileName);
-			}
+			}*/
 			resizedBitmap.recycle();
 			returnArray[0] = resizedFileName.getPath();
 			return returnArray;

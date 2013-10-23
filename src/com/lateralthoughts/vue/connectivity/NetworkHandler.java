@@ -134,33 +134,22 @@ public class NetworkHandler {
       mVueContentGateway.getTrendingAisles(mLimit, mOffset,
           mTrendingAislesParser, loadMore, screenname);
 
-    } else {
-      Log.i("formdbtrending", "formdbtrending: reqestByCategory");
-      // Log.i("duplicateImages", "duplicateImages from db1");
-      DataBaseManager.getInstance(VueApplication.getInstance()).resetDbParams();
-      ArrayList<AisleWindowContent> aisleContentArray = mDbManager
-          .getAislesFromDB(null);
-      for (int i = 0; i < aisleContentArray.size(); i++) {
-        for (int j = 0; j < aisleContentArray.get(i).getImageList().size(); j++) {
-          // Log.i("duplicateImages imageurl",
-          // "duplicateImages imageurl: "+
-          // aisleContentArray.get(i).getImageList().get(j).mImageUrl);
-        }
-        // Log.i("duplicateImages",
-        // "duplicateImages imageurl########: "+i);
-      }
-      Log.i("formdbtrending",
-          "formdbtrending: reqestByCategory aisleContentArray.size() "
-              + aisleContentArray.size());
-      if (aisleContentArray.size() == 0) {
-        return;
-      }
-      Message msg = new Message();
-      msg.obj = aisleContentArray;
-      VueTrendingAislesDataModel.getInstance(mContext).mHandler
-          .sendMessage(msg);
+		} else {
+			DataBaseManager.getInstance(VueApplication.getInstance())
+					.resetDbParams();
+			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
+					.getAislesFromDB(null);
+			if (aisleContentArray.size() == 0) {
+				VueTrendingAislesDataModel.getInstance(VueApplication
+						.getInstance()).isFromDb = false;
+				return;
+			}
+			Message msg = new Message();
+			msg.obj = aisleContentArray;
+			VueTrendingAislesDataModel.getInstance(mContext).mHandler
+					.sendMessage(msg);
 
-    }
+		}
 
   }
 
@@ -626,6 +615,8 @@ public class NetworkHandler {
   public void makeOffseZero() {
     mOffset = 0;
   }
- 
+  public void setOffset(int offset){
+	  mOffset = offset;
+  }
 
 }

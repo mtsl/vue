@@ -132,9 +132,9 @@ public class Parser {
 		aisleImageDetails.mTitle = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_TITLE);
 		JSONArray jsonArray = jsonObject.getJSONArray(VueConstants.AISLE_IMAGE_COMMENTS);
+ 
 		ArrayList<String> commentList = new ArrayList<String>();
 		 if(jsonArray != null){
-			
 			 for(int i = 0;i < jsonArray.length();i++){
 				 JSONObject commnetObj = jsonArray.getJSONObject(i);
 				 commentList.add(commnetObj.getString(VueConstants.COMMENT));
