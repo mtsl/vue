@@ -133,43 +133,32 @@ public class Parser {
 		aisleImageDetails.mTitle = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_TITLE);
 		JSONArray jsonArray = jsonObject.getJSONArray(VueConstants.AISLE_IMAGE_COMMENTS);
-<<<<<<< HEAD
  
-		ArrayList<String> commentList = new ArrayList<String>();
-		 if(jsonArray != null){
-=======
 		Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray.length() " + jsonArray.toString());
 		ArrayList<ImageComments> commentList = new ArrayList<ImageComments>();
-		 if(jsonArray != null){
-		   Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray not null ");
-			 ImageComments imgComments;
->>>>>>> 71647f9ca23de84bd409ad6f61ae7f729b240231
-			 for(int i = 0;i < jsonArray.length();i++){
-			   Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 1 ");
-				 JSONObject commnetObj = jsonArray.getJSONObject(i);
-				 Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 2 ");
-				 imgComments = new ImageComments();
-				 Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 3 ");
-				 imgComments.Id = commnetObj.getLong(VueConstants.AISLE_IMAGE_COMMENTS_ID);
-				 Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 4 ");
-				 imgComments.imageId = commnetObj.getLong(VueConstants.AISLE_IMAGE_COMMENTS_IMAGEID);
-				 Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 5 ");
-				 imgComments.comment = commnetObj.getString(VueConstants.COMMENT);
-				 Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 6 ");
-				 if(commnetObj.getString(VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME).equals("null")) {
-				   Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 7 ");
-				   imgComments.lastModifiedTimestamp = commnetObj.getLong(VueConstants.AISLE_IMAGE_COMMENTS_CREATED_TIME);
-				   Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 8 ");
-				 } else {
-				   Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 9 ");
-				 imgComments.lastModifiedTimestamp = commnetObj.getLong(VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME);
-				 Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 10 ");
-				 }
-				 Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray 11 ");
-				 commentList.add(imgComments);
-				 Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: " + imgComments.comment);
-			 }
-		 }
+		if (jsonArray != null) {
+			ImageComments imgComments;
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject commnetObj = jsonArray.getJSONObject(i);
+				imgComments = new ImageComments();
+				imgComments.Id = commnetObj
+						.getLong(VueConstants.AISLE_IMAGE_COMMENTS_ID);
+				imgComments.imageId = commnetObj
+						.getLong(VueConstants.AISLE_IMAGE_COMMENTS_IMAGEID);
+				imgComments.comment = commnetObj
+						.getString(VueConstants.COMMENT);
+				if (commnetObj.getString(
+						VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME)
+						.equals("null")) {
+					imgComments.lastModifiedTimestamp = commnetObj
+							.getLong(VueConstants.AISLE_IMAGE_COMMENTS_CREATED_TIME);
+				} else {
+					imgComments.lastModifiedTimestamp = commnetObj
+							.getLong(VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME);
+				}
+				commentList.add(imgComments);
+			}
+		}
 		 aisleImageDetails.mCommentsList = commentList;
 		return aisleImageDetails;
 	}
