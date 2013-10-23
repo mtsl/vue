@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue;
 
-public class DataentryImage {
+import java.io.Serializable;
+
+public class DataentryImage implements Serializable {
 	public String getImagePath() {
 		return imagePath;
 	}

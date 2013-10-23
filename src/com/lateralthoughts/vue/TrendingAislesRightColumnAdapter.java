@@ -100,7 +100,6 @@ public class TrendingAislesRightColumnAdapter extends
 	public View getView(int position, View convertView, ViewGroup parent) {
 		Log.i("SCROLL_STATE_IDLE", "SCROLL_STATE_IDLE 3 getview");
 		ViewHolder holder;
-		StringBuilder sb = new StringBuilder();
 		Log.i("TrendingDataModel",
 				"DataObserver for List Refresh:  Right getview ");
 		if (null == convertView) {
@@ -139,16 +138,28 @@ public class TrendingAislesRightColumnAdapter extends
 		mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,
 				listener);
 		AisleContext context = holder.mWindowContent.getAisleContext();
-
-		sb.append(context.mFirstName).append(" ").append(context.mLastName);
-
-		if (sb.toString().replace(" ", "").equals("Anonymous")) {
-			if (VueApplication.getInstance().getmUserInitials() != null) {
-				holder.aisleOwnersName.setText(VueApplication.getInstance()
-						.getmUserInitials());
+		String mVueusername = null;
+		if (context.mFirstName != null && context.mLastName != null) {
+			mVueusername = context.mFirstName + " " + context.mLastName;
+		} else if (context.mFirstName != null) {
+			if (context.mFirstName.equals("Anonymous")) {
+				mVueusername = VueApplication.getInstance().getmUserInitials();
+			} else {
+				mVueusername = context.mFirstName;
 			}
+		} else if (context.mLastName != null) {
+			mVueusername = context.mLastName;
+		}
+		if (mVueusername != null
+				&& mVueusername.trim().equalsIgnoreCase("Anonymous")) {
+			if (VueApplication.getInstance().getmUserInitials() != null) {
+				mVueusername = VueApplication.getInstance().getmUserInitials();
+			}
+		}
+		if (mVueusername != null && mVueusername.trim().length() > 0) {
+			holder.aisleOwnersName.setText(mVueusername);
 		} else {
-			holder.aisleOwnersName.setText(sb.toString());
+			holder.aisleOwnersName.setText("Anonymous");
 		}
 
 		StringBuilder contextBuilder = new StringBuilder();

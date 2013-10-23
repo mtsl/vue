@@ -16,7 +16,6 @@ public class VueConstants {
 	public static final String FACEBOOK_LOGIN = "FacebookLoginFlag";
 	public static final String INSTAGRAM_LOGIN = "InstagramLoginFlag";
 	public static final String GOOGLEPLUS_LOGIN = "GoogleplusLoginFlag";
-	public static final String FIRSTTIME_LOGIN_PREFRENCE_FLAG = "firstTimeLoginPrefrenceFlag";
 	public static final String CREATED_AISLE_COUNT_IN_PREFERENCE = "createdAisleCountInPreference";
 	public static final String COMMENTS_COUNT_IN_PREFERENCES = "commentsCountInPreferences";
 	public static final int CREATE_AISLE_LIMIT_FOR_LOGIN = 5;
@@ -26,6 +25,7 @@ public class VueConstants {
 	public static final int CREATE_AISLE_NOTIFICATION_ID = 1;
 	public static final int ADD_IMAGE_TO_AISLE_NOTIFICATION_ID = 2;
 	public static final int CHANGE_USER_NOTIFICATION_ID = 3;
+	public static final int UPLOAD_IMAGE_TO_SERVER_NOTIFICATION_ID = 4;
 	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.sss";
 	public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
 	public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";
@@ -63,6 +63,8 @@ public class VueConstants {
 	public static final String FROM_DETAILS_SCREEN_TO_DATAENTRY_CREATE_AISLESCREEN_FLAG = "FromDetailsScreenToDataentryCreateAisleScreenFlag";
 	public static final String DATAENTRY_ADDIMAGE_AISLE_FLAG = "DataentryAddImageAisleFlag";
 	public static final String DATAENTRY_EDIT_AISLE_FLAG = "DataentryEditAisleFlag";
+	public static final String LOAD_DATAENTRY_SCREEN_FLAG = "LoadDataentryScreenFlag";
+	public static final String AISLE_IMAGE_PATH_LIST_FILE_NAME = "AisleImagePathListFileName";
 	public static final String ETSY_PACKAGE_NAME = "com.etsy.android";
 	public static final String FANCY_PACKAGE_NAME = "com.thefancy.app";
 	public static final String ETSY_ACTIVITY_NAME = "com.etsy.android.ui.HomeActivity";
@@ -114,6 +116,7 @@ public class VueConstants {
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE";
+	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OFFLINE_IMAGE_ID = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OFFLINE_IMAGE_ID";
 	public static final int CREATE_AILSE_ACTIVITY_RESULT = 63;
 	public static final int FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT = 64;
 	public static final int FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT = 65;

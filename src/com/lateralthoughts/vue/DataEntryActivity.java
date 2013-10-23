@@ -96,8 +96,20 @@ public class DataEntryActivity extends BaseActivity {
 								DataEntryActivity.this, false);
 						Utils.putDataentryEditAisleFlag(DataEntryActivity.this,
 								false);
-						VueApplication.getInstance().mAisleImagePathList
-								.clear();
+						ArrayList<DataentryImage> mAisleImagePathList = null;
+						try {
+							mAisleImagePathList = Utils
+									.readAisleImagePathListFromFile(
+											DataEntryActivity.this,
+											VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
+							mAisleImagePathList.clear();
+							Utils.writeAisleImagePathListToFile(
+									DataEntryActivity.this,
+									VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
+									mAisleImagePathList);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 						finish();
 					}
 				});
@@ -151,12 +163,22 @@ public class DataEntryActivity extends BaseActivity {
 			mDataEntryFragment.mFromDetailsScreenFlag = b.getBoolean(
 					VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG,
 					false);
+			try {
+				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT) != null) {
+					mDataEntryFragment.mFindAtText
+							.setText(b
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT));
+					mDataEntryFragment.mPreviousFindAtText = mDataEntryFragment.mFindAtText
+							.getText().toString();
+				}
+			} catch (Exception e1) {
+			}
 			if (mDataEntryFragment.mFromDetailsScreenFlag) {
 				mVueDataentryActionbarScreenName.setText(getResources()
 						.getString(R.string.add_imae_to_aisle_screen_title));
 				mDataEntryFragment.mIsUserAisleFlag = b
 						.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG);
-				if (mDataEntryFragment.mIsUserAisleFlag) {
+				if (!mDataEntryFragment.mIsUserAisleFlag) {
 					mDataEntryFragment.mLookingForPopup
 							.setVisibility(View.GONE);
 					mDataEntryFragment.mLookingForBigText
@@ -189,13 +211,9 @@ public class DataEntryActivity extends BaseActivity {
 					mDataEntryFragment.mSaySomethingAboutAisle
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE));
-				}
-				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT) != null) {
-					mDataEntryFragment.mFindAtText
+					mDataEntryFragment.mHintTextForSaySomeThing
 							.setText(b
-									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT));
-					mDataEntryFragment.mPreviousFindAtText = mDataEntryFragment.mFindAtText
-							.getText().toString();
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE));
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY) != null) {
 					mDataEntryFragment.mCategoryText
@@ -222,9 +240,17 @@ public class DataEntryActivity extends BaseActivity {
 				mDataEntryFragment.mCreateAisleBg.setVisibility(View.GONE);
 				mDataEntryFragment.mAisleBgProgressbar.setVisibility(View.GONE);
 				if (!mDataEntryFragment.mFromDetailsScreenFlag) {
-					if (VueApplication.getInstance().mAisleImagePathList != null
-							&& VueApplication.getInstance().mAisleImagePathList
-									.size() > 0) {
+					ArrayList<DataentryImage> mAisleImagePathList = null;
+					try {
+						mAisleImagePathList = Utils
+								.readAisleImagePathListFromFile(
+										DataEntryActivity.this,
+										VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (mAisleImagePathList != null
+							&& mAisleImagePathList.size() > 0) {
 						mVueDataentryActionbarScreenName
 								.setText(getResources()
 										.getString(
@@ -350,7 +376,18 @@ public class DataEntryActivity extends BaseActivity {
 						false);
 				Utils.putDataentryEditAisleFlag(DataEntryActivity.this, false);
 				Utils.putDataentryScreenAisleId(this, null);
-				VueApplication.getInstance().mAisleImagePathList.clear();
+				ArrayList<DataentryImage> mAisleImagePathList = null;
+				try {
+					mAisleImagePathList = Utils.readAisleImagePathListFromFile(
+							DataEntryActivity.this,
+							VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
+					mAisleImagePathList.clear();
+					Utils.writeAisleImagePathListToFile(DataEntryActivity.this,
+							VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
+							mAisleImagePathList);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				super.onBackPressed();
 			}
 		}

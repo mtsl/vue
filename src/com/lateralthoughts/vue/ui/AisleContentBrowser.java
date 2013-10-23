@@ -24,6 +24,7 @@ import com.lateralthoughts.vue.IAisleContentAdapter;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueAisleDetailsViewFragment;
 import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleContentBrowser extends ViewFlipper {
 	private String mAisleUniqueId;
@@ -320,11 +321,13 @@ public class AisleContentBrowser extends ViewFlipper {
 	    }
 	//}
 	public void setCurrentImage(){
+		Utils.mAinmate = false;
 		for(int i=0;i<VueApplication.getInstance().getmAisleImgCurrentPos();i++) {
 		 mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,i, i+1, true);
 		}
 		final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
 		  aisleContentBrowser.setDisplayedChild(VueApplication.getInstance().getmAisleImgCurrentPos());
+		  Utils.mAinmate = true;
  
 	}
 

@@ -68,22 +68,22 @@ public class DataBaseManager {
     threadPool.execute(task);
   }
 
- public void addTrentingAislesFromServerToDB(final Context context, final List<AisleWindowContent> contentList, final int offsetValue, final boolean isTrending) {
+ public void addTrentingAislesFromServerToDB(final Context context, final List<AisleWindowContent> contentList/*, final int offsetValue, final boolean isTrending*/) {
    runTask(new Runnable() {
     
     @Override
     public void run() {
-      addAislesToDB(context, contentList, offsetValue, isTrending);
+      addAislesToDB(context, contentList/*, offsetValue, isTrending*/);
     }
   });
  }
   
-  public void addOrUpdateAisles(final Context context, final List<AisleWindowContent> contentList, final int offsetValue, final boolean isTrending) {
+  public void addOrUpdateAisles(final Context context, final List<AisleWindowContent> contentList/*, final int offsetValue, final boolean isTrending*/) {
     runTask(new Runnable() {
       
       @Override
       public void run() {
-        addAislesToDB(context, contentList, offsetValue, isTrending);
+        addAislesToDB(context, contentList/*, offsetValue, isTrending*/);
       }
     });
   }
@@ -94,13 +94,13 @@ public class DataBaseManager {
    * 
    * @param Context context.
    * */
-  private void addAislesToDB(Context context, List<AisleWindowContent> contentList, int offsetValue, boolean isTrending) {
-if(offsetValue == 0 && isTrending) {
+  private void addAislesToDB(Context context, List<AisleWindowContent> contentList/*, int offsetValue, boolean isTrending*/) {
+/*if(offsetValue == 0 && isTrending) {
      int deletedRows = context.getContentResolver().delete(VueConstants.CONTENT_URI, null, null);
      Log.e("DataBaseManager", "offsetValue: " + offsetValue + ", deletedRows for Aisles Table: " + deletedRows);
      deletedRows = context.getContentResolver().delete(VueConstants.IMAGES_CONTENT_URI, null, null);
      Log.e("DataBaseManager", "offsetValue: " + offsetValue + ", deletedRows for Images Table: " + deletedRows);
-    }
+    }*/
 
     Cursor aisleIdCursor = context.getContentResolver().query(
         VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id}, null,
@@ -778,6 +778,7 @@ if(offsetValue == 0 && isTrending) {
         }
       } while (cursor.moveToNext());
     }
+    cursor.close();
     ContentValues values = new ContentValues();
     if(isAisleViewed) {
       Log.e("VueLandingAisleFragment", "Suru aisle clicked updateOrAddRecentlyViewedAislesList: Aisle Viewed Update Time: " + aisleId);

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
+import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.AisleWindowContentFactory;
 import com.lateralthoughts.vue.ImageRating;
@@ -45,264 +46,271 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NetworkHandler {
-	Context mContext;
-	private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
-	// http://2-java.vueapi-canary-development1.appspot.com/api/
-	DataBaseManager mDbManager;
-	protected VueContentGateway mVueContentGateway;
-	protected TrendingAislesContentParser mTrendingAislesParser;
-	private static final int NOTIFICATION_THRESHOLD = 4;
-	private static final int TRENDING_AISLES_BATCH_SIZE = 10;
-	public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
-	private static String MY_AISLES = "aislesget/user/";
-	protected int mLimit;
-	protected int mOffset;
-	ArrayList<AisleWindowContent> aislesList = null;
+    Context mContext;
+    private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
+    // http://2-java.vueapi-canary-development1.appspot.com/api/
+    DataBaseManager mDbManager;
+    protected VueContentGateway mVueContentGateway;
+    protected TrendingAislesContentParser mTrendingAislesParser;
+    private static final int NOTIFICATION_THRESHOLD = 4;
+    private static final int TRENDING_AISLES_BATCH_SIZE = 10;
+    public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
+    private static String MY_AISLES = "aislesget/user/";
+    protected int mLimit;
+    protected int mOffset;
+    ArrayList<AisleWindowContent> aislesList = null;
 
-	/* public ArrayList<String> bookmarkedAisles = new ArrayList<String>(); */
-	// public ArrayList<AisleWindowContent> bookmarkedAisleContent = new
-	// ArrayList<AisleWindowContent>();
+    /* public ArrayList<String> bookmarkedAisles = new ArrayList<String>(); */
+    // public ArrayList<AisleWindowContent> bookmarkedAisleContent = new
+    // ArrayList<AisleWindowContent>();
 
-	public NetworkHandler(Context context) {
-		mContext = context;
-		mVueContentGateway = VueContentGateway.getInstance();
-		try {
-			mTrendingAislesParser = new TrendingAislesContentParser(
-					new Handler(), VueConstants.AISLE_TRENDING_LIST_DATA);
-		} catch (Exception e) {
-		}
-		mDbManager = DataBaseManager.getInstance(mContext);
-		mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
-		mOffset = 0;
-	}
+    public NetworkHandler(Context context) {
+        mContext = context;
+        mVueContentGateway = VueContentGateway.getInstance();
+        try {
+            mTrendingAislesParser = new TrendingAislesContentParser(
+                    new Handler(), VueConstants.AISLE_TRENDING_LIST_DATA);
+        } catch (Exception e) {
+        }
+        mDbManager = DataBaseManager.getInstance(mContext);
+        mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
+        mOffset = 0;
+    }
 
-	// whle user scrolls down get next 10 aisles
-	public void requestMoreAisle(boolean loadMore, String screenname) {
+    // whle user scrolls down get next 10 aisles
+    public void requestMoreAisle(boolean loadMore, String screenname) {
 
-		if (VueTrendingAislesDataModel
-				.getInstance(VueApplication.getInstance())
-				.isMoreDataAvailable()) {
+        if (VueTrendingAislesDataModel
+                .getInstance(VueApplication.getInstance())
+                .isMoreDataAvailable()) {
 
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance()).loadOnRequest = false;
 
-			if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
-				mOffset += mLimit;
-			else {
-				mOffset += mLimit;
-				mLimit = TRENDING_AISLES_BATCH_SIZE;
-			}
-			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-					mTrendingAislesParser, loadMore, screenname);
-		} else {
-			Log.i("offeset and limit", "offeset1: else part");
-		}
+            if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
+                mOffset += mLimit;
+            else {
+                mOffset += mLimit;
+                mLimit = TRENDING_AISLES_BATCH_SIZE;
+            }
+            mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+                    mTrendingAislesParser, loadMore, screenname);
+        } else {
+            Log.i("offeset and limit", "offeset1: else part");
+        }
 
-	}
+    }
 
-	// get the aisle based on the category
-	public void reqestByCategory(String category, NotifyProgress progress,
-			boolean fromServer, boolean loadMore, String screenname) {
+    // get the aisle based on the category
+    public void reqestByCategory(String category, NotifyProgress progress,
+            boolean fromServer, boolean loadMore, String screenname) {
 
-		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-				.setNotificationProgress(progress, fromServer);
-		String downLoadFromServer = "fromDb";
-		if (fromServer) {
-			downLoadFromServer = "fromServer";
-			mOffset = 0;
-			mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).clearContent();
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).showProgress();
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance())
-					.setMoreDataAVailable(true);
-			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-					mTrendingAislesParser, loadMore, screenname);
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+                .setNotificationProgress(progress, fromServer);
+        String downLoadFromServer = "fromDb";
+        if (fromServer) {
+            downLoadFromServer = "fromServer";
+            mOffset = 0;
+            mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance()).clearContent();
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance()).showProgress();
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .setMoreDataAVailable(true);
+            mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+                    mTrendingAislesParser, loadMore, screenname);
 
-		} else {
-			// Log.i("duplicateImages", "duplicateImages from db1");
-			DataBaseManager.getInstance(VueApplication.getInstance())
-					.resetDbParams();
-			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
-					.getAislesFromDB(null);
-			for (int i = 0; i < aisleContentArray.size(); i++) {
-				for (int j = 0; j < aisleContentArray.get(i).getImageList()
-						.size(); j++) {
-					// Log.i("duplicateImages imageurl",
-					// "duplicateImages imageurl: "+
-					// aisleContentArray.get(i).getImageList().get(j).mImageUrl);
-				}
-				// Log.i("duplicateImages",
-				// "duplicateImages imageurl########: "+i);
-			}
-			if (aisleContentArray.size() == 0) {
-				return;
-			}
-			Message msg = new Message();
-			msg.obj = aisleContentArray;
-			VueTrendingAislesDataModel.getInstance(mContext).mHandler
-					.sendMessage(msg);
+        } else {
+            // Log.i("duplicateImages", "duplicateImages from db1");
+            DataBaseManager.getInstance(VueApplication.getInstance())
+                    .resetDbParams();
+            ArrayList<AisleWindowContent> aisleContentArray = mDbManager
+                    .getAislesFromDB(null);
+            for (int i = 0; i < aisleContentArray.size(); i++) {
+                for (int j = 0; j < aisleContentArray.get(i).getImageList()
+                        .size(); j++) {
+                    // Log.i("duplicateImages imageurl",
+                    // "duplicateImages imageurl: "+
+                    // aisleContentArray.get(i).getImageList().get(j).mImageUrl);
+                }
+                // Log.i("duplicateImages",
+                // "duplicateImages imageurl########: "+i);
+            }
+            if (aisleContentArray.size() == 0) {
+                return;
+            }
+            Message msg = new Message();
+            msg.obj = aisleContentArray;
+            VueTrendingAislesDataModel.getInstance(mContext).mHandler
+                    .sendMessage(msg);
 
-		}
+        }
 
-	}
+    }
 
-	public static void requestTrending() {
+    public static void requestTrending() {
 
-	}
+    }
 
-	// request the server to create an empty aisle.
-	public void requestCreateAisle(Aisle aisle,
-			final AisleUpdateCallback callback) {
-		AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
-	}
+    // request the server to create an empty aisle.
+    public void requestCreateAisle(Aisle aisle,
+            final AisleUpdateCallback callback) {
+        AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
+    }
 
-	public void requestForAddImage(boolean fromDetailsScreenFlag,
-			VueImage image, ImageAddedCallback callback) {
-		AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag,
-				image, callback);
-	}
+    public void requestForAddImage(boolean fromDetailsScreenFlag,
+            String imageId, VueImage image, ImageAddedCallback callback) {
+        AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag,
+            imageId, image, callback);
+    }
+    
+    
+  public void requestForUploadImage(File imageFile, ImageUploadCallback callback) {
+    AisleManager.getAisleManager().uploadImage(imageFile, callback);
+  }
+    
 
-	// get aisles related to search keyword
-	public void requestSearch(final String searchString) {
-		JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
-				+ searchString, new Response.Listener<JSONArray>() {
+    // get aisles related to search keyword
+    public void requestSearch(final String searchString) {
+        JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
+                + searchString, new Response.Listener<JSONArray>() {
 
-			@Override
-			public void onResponse(JSONArray response) {
-				if (null != response) {
-					Bundle responseBundle = new Bundle();
-					responseBundle.putString("Search result",
-							response.toString());
-					responseBundle.putBoolean("loadMore", false);
-					mTrendingAislesParser.send(1, responseBundle);
-				}
-			}
-		}, new Response.ErrorListener() {
+            @Override
+            public void onResponse(JSONArray response) {
+                if (null != response) {
+                    Bundle responseBundle = new Bundle();
+                    responseBundle.putString("Search result",
+                            response.toString());
+                    responseBundle.putBoolean("loadMore", false);
+                    mTrendingAislesParser.send(1, responseBundle);
+                }
+            }
+        }, new Response.ErrorListener() {
 
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				Log.e("Search Resopnse", "SURU Search Error Resopnse : "
-						+ error.getMessage());
-			}
-		});
-		// RETRY POLICY
-		vueRequest.setRetryPolicy(new DefaultRetryPolicy(
-				DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
-				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Search Resopnse", "SURU Search Error Resopnse : "
+                        + error.getMessage());
+            }
+        });
+        // RETRY POLICY
+        vueRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-		VueApplication.getInstance().getRequestQueue().add(vueRequest);
+        VueApplication.getInstance().getRequestQueue().add(vueRequest);
 
-	}
+    }
 
-	public void requestUserAisles(String userId) {
+    public void requestUserAisles(String userId) {
 
-		JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
-				+ MY_AISLES + userId, new Response.Listener<JSONArray>() {
+        JsonArrayRequest vueRequest = new JsonArrayRequest(SEARCH_REQUEST_URL
+                + MY_AISLES + userId, new Response.Listener<JSONArray>() {
 
-			@Override
-			public void onResponse(JSONArray response) {
-				if (null != response) {
-					Bundle responseBundle = new Bundle();
-					responseBundle.putString("Search result",
-							response.toString());
-					responseBundle.putBoolean("loadMore", false);
-					mTrendingAislesParser.send(1, responseBundle);
-				}
-				Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
-			}
-		}, new Response.ErrorListener() {
+            @Override
+            public void onResponse(JSONArray response) {
+                if (null != response) {
+                    Bundle responseBundle = new Bundle();
+                    responseBundle.putString("Search result",
+                            response.toString());
+                    responseBundle.putBoolean("loadMore", false);
+                    mTrendingAislesParser.send(1, responseBundle);
+                }
+                Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
+            }
+        }, new Response.ErrorListener() {
 
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				Log.e("Search Resopnse", "SURU Search Error Resopnse : "
-						+ error.getMessage());
-			}
-		});
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Search Resopnse", "SURU Search Error Resopnse : "
+                        + error.getMessage());
+            }
+        });
 
-		VueApplication.getInstance().getRequestQueue().add(vueRequest);
+        VueApplication.getInstance().getRequestQueue().add(vueRequest);
 
-	}
+    }
 
-	public void loadInitialData(boolean loadMore, Handler mHandler,
-			String screenName) {
-		getBookmarkAisleByUser();
-		getRatedImageList();
+    public void loadInitialData(boolean loadMore, Handler mHandler,
+            String screenName) {
+        getBookmarkAisleByUser();
+        getRatedImageList();
 
-		mOffset = 0;
-		if (!VueConnectivityManager.isNetworkConnected(mContext)) {
-			Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
-					.show();
-			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
-					.getAislesFromDB(null);
-			if (aisleContentArray.size() == 0) {
-				return;
-			}
-			Message msg = new Message();
-			msg.obj = aisleContentArray;
-			mHandler.sendMessage(msg);
+        mOffset = 0;
+        if (!VueConnectivityManager.isNetworkConnected(mContext)) {
+            Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
+                    .show();
+            ArrayList<AisleWindowContent> aisleContentArray = mDbManager
+                    .getAislesFromDB(null);
+            if (aisleContentArray.size() == 0) {
+                return;
+            }
+            Message msg = new Message();
+            msg.obj = aisleContentArray;
+            mHandler.sendMessage(msg);
 
-		} else {
-			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-					mTrendingAislesParser, loadMore, screenName);
-		}
+        } else {
+            mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+                    mTrendingAislesParser, loadMore, screenName);
+        }
 
-	}
+    }
 
-	public void loadTrendingAisle(boolean loadMore, boolean fromServer,
-			NotifyProgress progress, String screenName) {
-		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-				.setNotificationProgress(progress, fromServer);
-		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-				.showProgress();
-		mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-				mTrendingAislesParser, loadMore, screenName);
-	}
+    public void loadTrendingAisle(boolean loadMore, boolean fromServer,
+            NotifyProgress progress, String screenName) {
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+                .setNotificationProgress(progress, fromServer);
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+                .showProgress();
+        mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+                mTrendingAislesParser, loadMore, screenName);
+    }
 
-	public void requestAislesByUser(boolean fromServer,
-			NotifyProgress progress, final String screenName) {
+    public void requestAislesByUser(boolean fromServer,
+            NotifyProgress progress, final String screenName) {
 
-		mOffset = 0;
-		if (!fromServer) {
-			// TODO get data from local db.
-			Log.i("myaisledbcheck",
-					"myaisledbcheck aisle are my aisles are fetching from db $$$$: ");
-			String userId = getUserId();
-			if (userId != null) {
-				ArrayList<AisleWindowContent> windowList = DataBaseManager
-						.getInstance(VueApplication.getInstance())
-						.getAislesByUserId(userId);
-				Log.i("meoptions", "meoptions: MyAisle list size: "
-						+ windowList.size());
-				if (windowList != null && windowList.size() > 0) {
-					clearList();
-					for (int i = 0; i < windowList.size(); i++) {
-						VueTrendingAislesDataModel.getInstance(
-								VueApplication.getInstance()).addItemToList(
-								windowList.get(i).getAisleContext().mAisleId,
-								windowList.get(i));
-					}
-					VueLandingPageActivity.changeScreenName(screenName);
-					VueTrendingAislesDataModel.getInstance(
-							VueApplication.getInstance()).dataObserver();
-				} else {
-					StackViews.getInstance().pull();
-				}
+        mOffset = 0;
+        if (!fromServer) {
+            // TODO get data from local db.
+            Log.i("myaisledbcheck",
+                    "myaisledbcheck aisle are my aisles are fetching from db $$$$: ");
+            String userId = getUserId();
+            if (userId != null) {
+                ArrayList<AisleWindowContent> windowList = DataBaseManager
+                        .getInstance(VueApplication.getInstance())
+                        .getAislesByUserId(userId);
+                Log.i("meoptions", "meoptions: MyAisle list size: "
+                        + windowList.size());
+                if (windowList != null && windowList.size() > 0) {
+                    clearList();
+                    for (int i = 0; i < windowList.size(); i++) {
+                        VueTrendingAislesDataModel.getInstance(
+                                VueApplication.getInstance()).addItemToList(
+                                windowList.get(i).getAisleContext().mAisleId,
+                                windowList.get(i));
+                    }
+                    VueLandingPageActivity.changeScreenName(screenName);
+                    VueTrendingAislesDataModel.getInstance(
+                            VueApplication.getInstance()).dataObserver();
+                } else {
+                    StackViews.getInstance().pull();
+                }
 
-			} else {
-				Toast.makeText(VueApplication.getInstance(),
-						"Unable to get user id", Toast.LENGTH_SHORT).show();
-				StackViews.getInstance().pull();
-			}
-		} else {
+            } else {
+                Toast.makeText(VueApplication.getInstance(),
+                        "Unable to get user id", Toast.LENGTH_SHORT).show();
+                StackViews.getInstance().pull();
+            }
+        } else {
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
           .setNotificationProgress(progress, fromServer);
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
@@ -332,7 +340,7 @@ public class NetworkHandler {
                       Log.i("myailsedebug",
                           "myailsedebug: recieved my runonuithread:  ");
                       if (aislesList != null && aislesList.size() > 0) {
-                    	  clearList();
+                          clearList();
                         Log.i("myailsedebug",
                             "myailsedebug: recieved my runonuithread: if ");
                         for (int i = 0; i < aislesList.size(); i++) {
@@ -347,7 +355,7 @@ public class NetworkHandler {
                         DataBaseManager.getInstance(
                             VueApplication.getInstance())
                             .addTrentingAislesFromServerToDB(
-                                VueApplication.getInstance(), aislesList, 0, false);
+                                VueApplication.getInstance(), aislesList/*, 0, false*/);
                     
                         // if this is the first set of data
                         // we
@@ -365,7 +373,7 @@ public class NetworkHandler {
                         // go
                         // ahead
                         // notify the data set changed
-                    	  StackViews.getInstance().pull();
+                          StackViews.getInstance().pull();
                         Toast.makeText(
                             VueLandingPageActivity.landingPageActivity,
                             "There are no Aisles for this User.",
@@ -488,7 +496,7 @@ public class NetworkHandler {
     return false;
   }
   
-  private String getUserId() {
+  public String getUserId() {
     VueUser storedVueUser = null;
     try {
       storedVueUser = Utils.readUserObjectFromFile(
@@ -551,7 +559,7 @@ public class NetworkHandler {
         .dataObserver();
   }
  public void makeOffseZero(){
-	 mOffset = 0;
+     mOffset = 0;
  }
  
 }

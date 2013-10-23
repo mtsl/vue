@@ -821,7 +821,6 @@ public class VueLoginActivity extends FragmentActivity implements
 								Response.ErrorListener errorListener = new Response.ErrorListener() {
 									@Override
 									public void onErrorResponse(VolleyError arg0) {
-										Log.e(TAG, arg0.getMessage());
 									}
 								};
 								if (fileList.get(i).getImageUrl() != null) {
@@ -1299,8 +1298,7 @@ public class VueLoginActivity extends FragmentActivity implements
 					};
 				});
 		dialog.show();
-		dialog.setCancelable(false);
-		dialog.setCanceledOnTouchOutside(false);
+
 	}
 
 	private void createUserInServer(String userInitials) {
@@ -1335,7 +1333,6 @@ public class VueLoginActivity extends FragmentActivity implements
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError arg0) {
-				Log.e(TAG, arg0.getMessage());
 			}
 		};
 

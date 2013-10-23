@@ -11,6 +11,8 @@ import android.util.Log;
 import android.widget.*;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import com.android.volley.toolbox.ImageLoader;
@@ -65,6 +67,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private BitmapLoaderUtils mBitmapLoaderUtils;
    // public String mSourceName;
     private ImageDimension mImageDimension;
+    Animation myFadeInAnimation;
     
     public AisleContentAdapter(Context context){
         mContext = context;
@@ -76,6 +79,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         mExecutorService = Executors.newFixedThreadPool(5);
         mColorDrawable = new ColorDrawable(Color.WHITE);
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
+        myFadeInAnimation = AnimationUtils.loadAnimation(VueApplication.getInstance(), R.anim.fadein);
     }
     
     //========================= Methods from the inherited IAisleContentAdapter ========================//
@@ -193,7 +197,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         } catch (Throwable ex){
            ex.printStackTrace();
            if(ex instanceof OutOfMemoryError) {
-               //mContentImagesCache.clear();
+        	   mContentImagesCache.evictAll();
            }
            return;
         }
@@ -276,13 +280,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             if(bitmap != null){
             	 if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             			mImageDimension = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
-            		/*	FrameLayout.LayoutParams mShowpieceParams = new FrameLayout.LayoutParams(
-    							VueApplication.getInstance().getScreenWidth() ,
-    							bitmap.getHeight());
-                		contentBrowser .setLayoutParams(mShowpieceParams);*/
             			if(bitmap.getHeight() < mImageDimension.mImgHeight) {
             				 Log.i("detailscrop", "detailscrop resize agian");
-            				   loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView);
+            				   loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView,wantedIndex);
             			}
             	 }
             	
@@ -294,11 +294,11 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             else{
             	if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             		int bestHeight = mWindowContent.getBestLargetHeightForWindow();
-            		loadBitmap(itemDetails,bestHeight,contentBrowser, imageView);
+            		loadBitmap(itemDetails,bestHeight,contentBrowser, imageView,wantedIndex);
                 contentBrowser.addView(imageView);
             	} else {
             		int bestHeight = mWindowContent.getBestHeightForWindow();
-            		 loadBitmap(itemDetails,itemDetails.mTrendingImageHeight,contentBrowser, imageView);
+            		 loadBitmap(itemDetails,itemDetails.mTrendingImageHeight,contentBrowser, imageView,wantedIndex);
                            	contentBrowser.addView(imageView);
                             
             	}
@@ -311,7 +311,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         return mContentImagesCache.get(url);      
     }
     
-    public void loadBitmap( AisleImageDetails itemDetails, int bestHeight, AisleContentBrowser flipper, ImageView imageView) {
+    public void loadBitmap( AisleImageDetails itemDetails, int bestHeight, AisleContentBrowser flipper, ImageView imageView,int wantedIndex) {
     	String loc = itemDetails.mImageUrl;
     	String serverUrl = itemDetails.mImageUrl;
     	 if(flipper.getmSourceName() != null && flipper.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)){
@@ -323,7 +323,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
      /*   ((ScaleImageView) imageView).setImageUrl(loc,
                 new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
 
-            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
+            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight,wantedIndex);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
             task.execute(loc,serverUrl);
     }
@@ -336,8 +336,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         AisleContentBrowser aisleContentBrowser ;
         private int mAVailableWidth,mAvailabeHeight;
         AisleImageDetails mItemDetails;
+        int mwantedIndex;
 
-        public BitmapWorkerTask( AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
+        public BitmapWorkerTask( AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight,int wantedIndex) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             viewFlipperReference = new WeakReference<AisleContentBrowser>(vFlipper); 
@@ -346,6 +347,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             mAVailableWidth = itemDetails.mAvailableWidth;
             mAvailabeHeight = itemDetails.mAvailableHeight;
             mItemDetails = itemDetails;
+              mwantedIndex = wantedIndex;
         }
 
         // Decode image in background.
@@ -354,7 +356,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 			url = params[0];
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
-			// bmp = getBitmap(url, true, mBestHeightForImage);
 			if (aisleContentBrowser.getmSourceName() != null
 					&& aisleContentBrowser.getmSourceName().equalsIgnoreCase(
 							AisleDetailsViewAdapter.TAG)) {
@@ -364,31 +365,16 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 								VueApplication.getInstance()
 										.getVueDetailsCardWidth(),
 								Utils.DETAILS_SCREEN);
-		/*		if (bmp != null) {
-					mImageDimension = Utils.getScalledImage(bmp,
-							mAVailableWidth, mAvailabeHeight);
-					mAvailabeHeight = mImageDimension.mImgHeight;
-					if (bmp.getHeight() > mImageDimension.mImgHeight) {
-						bmp = mBitmapLoaderUtils.getBitmap(url, params[1],
-								cacheval, mImageDimension.mImgHeight,
-								VueApplication.getInstance()
-										.getVueDetailsCardWidth(),
-								Utils.DETAILS_SCREEN);
-					}
-				}*/
 				mItemDetails.mTempResizedBitmapHeight = bmp.getHeight();
 				mItemDetails.mTempResizeBitmapwidth = bmp.getWidth();
-				  Log.i("imageHeitht", "imageHeitht resizeHeight: "+mItemDetails.mTempResizedBitmapHeight);
-			        Log.i("imageHeitht", "imageHeitht resizeWidth: "+ mItemDetails.mTempResizeBitmapwidth);
+	 
 
 			} else {
 				boolean cacheval = false;
 				bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheval,
 						mItemDetails.mTrendingImageHeight,mItemDetails.mTrendingImageWidth,
 						Utils.DETAILS_SCREEN);
-				 
 			}
- 
 			return bmp;
 		}
 
@@ -405,6 +391,13 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 				if (this == bitmapWorkerTask) {
 					vFlipper.invalidate();
 					imageView.setImageBitmap(bitmap);
+					if(aisleContentBrowser.getmSourceName() != null && aisleContentBrowser.getmSourceName().equalsIgnoreCase(
+							AisleDetailsViewAdapter.TAG)){
+						if(VueApplication.getInstance().getmAisleImgCurrentPos()<= mwantedIndex)
+					imageView.startAnimation(myFadeInAnimation);
+					} else {
+						imageView.startAnimation(myFadeInAnimation);
+					}
 					VueTrendingAislesDataModel.getInstance(
 							VueApplication.getInstance()).dataObserver();
 				}
@@ -483,7 +476,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
-				// mContentImagesCache.clear();
+				mContentImagesCache.evictAll();
 			}
 			return null;
 		}

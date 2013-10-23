@@ -49,4 +49,5 @@ public class BitmapLruCache extends LruCache<String, Bitmap> implements ImageCac
     public void putBitmap(String key, Bitmap bitmap) {
         this.put(key, bitmap);
     }
+	 
 }

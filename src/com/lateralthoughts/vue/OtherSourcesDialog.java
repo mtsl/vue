@@ -19,6 +19,7 @@ public class OtherSourcesDialog {
 	private Activity mActivity = null;
 	private FileCache mFileCache = null;
 	private ArrayList<OtherSourceImageDetails> imagesList;
+	private OtherSourcesImageAdapter mOtherSourcesImageAdapter;
 
 	public OtherSourcesDialog(Activity activity) {
 		mActivity = activity;
@@ -34,15 +35,15 @@ public class OtherSourcesDialog {
 		ListView listview = (ListView) dialog
 				.findViewById(R.id.othersources_listview);
 		this.imagesList = imagesList;
-		listview.setAdapter(new OtherSourcesImageAdapter(mActivity,
-				this.imagesList));
+		mOtherSourcesImageAdapter = new OtherSourcesImageAdapter(mActivity,
+				this.imagesList);
+		listview.setAdapter(mOtherSourcesImageAdapter);
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				if (OtherSourcesDialog.this.imagesList.get(position)
 						.getImageUri() != null) {
-					dialog.dismiss();
 					String picturePath = Utils.getPath(
 							OtherSourcesDialog.this.imagesList.get(position)
 									.getImageUri(), mActivity);
@@ -59,27 +60,41 @@ public class OtherSourcesDialog {
 								.getStoreNameFromUrl(sourceUrl);
 						fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
 								.get(position).getWidth();
+						fragment.mFindAtText.setText(sourceUrl);
+						fragment.mPreviousFindAtText = fragment.mFindAtText
+								.getText().toString();
+						fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
+						OtherSourcesDialog.this.imagesList.clear();
+						mOtherSourcesImageAdapter.notifyDataSetChanged();
+						dialog.cancel();
 						fragment.setGalleryORCameraImage(picturePath, false);
 					} else {
 						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
+						String otherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
+								.get(position).getOriginUrl();
+						int otherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
+								.get(position).getHeight();
+						String otherSourceSelectedImageDetailsUrl = sourceUrl;
+						String otherSourceSelectedImageStore = Utils
+								.getStoreNameFromUrl(sourceUrl);
+						int otherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
+								.get(position).getWidth();
+						OtherSourcesDialog.this.imagesList.clear();
+						mOtherSourcesImageAdapter.notifyDataSetChanged();
+						dialog.cancel();
 						vueLandingPageActivity
-								.showScreenSelectionForOtherSource(
-										picturePath,
-										OtherSourcesDialog.this.imagesList.get(
-												position).getOriginUrl(),
-										OtherSourcesDialog.this.imagesList.get(
-												position).getWidth(),
-										OtherSourcesDialog.this.imagesList.get(
-												position).getHeight(),
-										sourceUrl,
-										Utils.getStoreNameFromUrl(sourceUrl));
+								.showScreenSelectionForOtherSource(picturePath,
+										otherSourceSelectedImageUrl,
+										otherSourceImageOriginalWidth,
+										otherSourceImageOriginalHeight,
+										otherSourceSelectedImageDetailsUrl,
+										otherSourceSelectedImageStore);
 					}
 				} else {
 					File f = mFileCache.getVueAppResizedPictureFile(String
 							.valueOf(OtherSourcesDialog.this.imagesList
 									.get(position).getOriginUrl().hashCode()));
 					if (f.exists()) {
-						dialog.dismiss();
 						if (!fromLandingScreenFlag) {
 							DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
 									.getSupportFragmentManager()
@@ -94,18 +109,36 @@ public class OtherSourcesDialog {
 							fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
 							fragment.mOtherSourceSelectedImageStore = Utils
 									.getStoreNameFromUrl(sourceUrl);
+							fragment.mFindAtText.setText(sourceUrl);
+							fragment.mPreviousFindAtText = fragment.mFindAtText
+									.getText().toString();
+							fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
+							OtherSourcesDialog.this.imagesList.clear();
+							mOtherSourcesImageAdapter.notifyDataSetChanged();
+							dialog.cancel();
 							fragment.setGalleryORCameraImage(f.getPath(), true);
 						} else {
 							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
-							vueLandingPageActivity.showScreenSelectionForOtherSource(
-									f.getPath(),
-									OtherSourcesDialog.this.imagesList.get(
-											position).getOriginUrl(),
-									OtherSourcesDialog.this.imagesList.get(
-											position).getWidth(),
-									OtherSourcesDialog.this.imagesList.get(
-											position).getHeight(), sourceUrl,
-									Utils.getStoreNameFromUrl(sourceUrl));
+							String otherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
+									.get(position).getOriginUrl();
+							int otherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
+									.get(position).getHeight();
+							String otherSourceSelectedImageDetailsUrl = sourceUrl;
+							String otherSourceSelectedImageStore = Utils
+									.getStoreNameFromUrl(sourceUrl);
+							int otherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
+									.get(position).getWidth();
+							OtherSourcesDialog.this.imagesList.clear();
+							mOtherSourcesImageAdapter.notifyDataSetChanged();
+							dialog.cancel();
+							vueLandingPageActivity
+									.showScreenSelectionForOtherSource(
+											f.getPath(),
+											otherSourceSelectedImageUrl,
+											otherSourceImageOriginalWidth,
+											otherSourceImageOriginalHeight,
+											otherSourceSelectedImageDetailsUrl,
+											otherSourceSelectedImageStore);
 						}
 					} else {
 						Toast.makeText(mActivity,

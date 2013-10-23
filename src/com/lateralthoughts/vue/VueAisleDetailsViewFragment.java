@@ -72,7 +72,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private int mDotsCount = 0;
 	private int mHighlightPosition;
 	private int mTotalPageCount;
-	private int mListCount = 5;
+	private int mListCount = 3;
 	private int mTotalScreenCount;
 	// private VueContentGateway mVueContentGateway;
 	AisleDetailsViewAdapter mAisleDetailsAdapter;
@@ -704,18 +704,20 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		inputMethodManager.toggleSoftInputFromWindow(
 				editText.getApplicationWindowToken(),
 				InputMethodManager.SHOW_FORCED, 0);
-		@SuppressWarnings("unchecked")
+/*		@SuppressWarnings("unchecked")
 		ArrayList<String> commentList = (ArrayList<String>) mAisleDetailsAdapter.mCommentsMapList
-				.get(mAisleDetailsAdapter.mCurrentDispImageIndex);
-		if (commentList != null) {
-			commentList.add(0, etText);
+				.get(mAisleDetailsAdapter.mCurrentDispImageIndex);*/
+		if (etText != null) {
+			 
+			mAisleDetailsAdapter.updateListCount(etText);
+			mAisleDetailsAdapter.createComment(etText);
 		}
 		/*
 		 * mAisleDetailsAdapter.sendDataToDb(
 		 * mAisleDetailsAdapter.mCurrentDispImageIndex,
 		 * mAisleDetailsAdapter.CHANGE_COMMENT);
 		 */
-		mAisleDetailsAdapter.mShowingList = commentList;
+		//mAisleDetailsAdapter.mShowingList = commentList;
 		editText.setVisibility(View.GONE);
 		editText.setText("");
 		view.setVisibility(View.VISIBLE);
@@ -752,17 +754,17 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		super.onDestroy();
 	}
 
-	public void addAisleToWindow(Bitmap bitmap, String imgPath,
-			String imageUrl, int imageWidth, int imageHeight,
-			String detailsUrl, String store) {
+	public void addAisleToWindow(String imgPath, String imageUrl,
+			int imageWidth, int imageHeight, String detailsUrl, String store,
+			String imageId, boolean isImageFromLocalSystem) {
 		mTotalScreenCount = VueApplication.getInstance()
 				.getClickedWindowCount();
 		VueApplication.getInstance().setClickedWindowCount(
 				mTotalScreenCount + 1);
 		mTotalScreenCount = mTotalScreenCount + 1;
 		upDatePageDots(0, "right");
-		mAisleDetailsAdapter.addAisleToContentWindow(bitmap, imgPath, imageUrl,
-				imageWidth, imageHeight, "title", detailsUrl, store);
+		mAisleDetailsAdapter.addAisleToContentWindow(imgPath, imageUrl,
+				imageWidth, imageHeight, "title", detailsUrl, store, imageId, isImageFromLocalSystem);
 
 	}
 

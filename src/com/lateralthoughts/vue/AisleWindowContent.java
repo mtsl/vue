@@ -24,7 +24,7 @@ public class AisleWindowContent {
 	private String mImageFormatSpecifier = "._SY%d.jpg";
 	private int mAisleBookmarksCount = 0;
 	private boolean mAisleBookmarkIndicator = false;
-	public boolean mIsDataChanged = false;
+	// public boolean mIsDataChanged = false;
 	public int mTrendingBestHeight = 0;
 	public int mAisleCardHeight;
 
@@ -240,15 +240,21 @@ public class AisleWindowContent {
 
 	}
 
-	public int getAisleImageForImageUrl(String imageUrl) {
-		if (mAisleImagesList != null && mAisleImagesList.size() > 0) {
-			for (int i = 0; i < mAisleImagesList.size(); i++) {
-				if (imageUrl.equals(mAisleImagesList.get(i).mImageUrl)) {
-					return i;
+	public void getAisleImageForImageId(String imageId, String imageUrl,
+			String newServerResponseImageId) {
+		if (imageId != null) {
+			if (mAisleImagesList != null && mAisleImagesList.size() > 0) {
+				for (int i = 0; i < mAisleImagesList.size(); i++) {
+					if (imageId.equals(mAisleImagesList.get(i).mId)) {
+						mAisleImagesList.get(i).mId = newServerResponseImageId;
+						if (mAisleImagesList.get(i).mIsFromLocalSystem) {
+							mAisleImagesList.get(i).mImageUrl = imageUrl;
+						}
+						break;
+					}
 				}
 			}
 		}
-		return -1;
 	}
 
 	private AisleContext mContext;

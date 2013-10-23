@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.graphics.Bitmap;
@@ -145,6 +146,16 @@ public class AisleLoader {
 
 		String desiredContentId = windowContent.getAisleId();
 		contentBrowser = holder.aisleContentBrowser;
+		if(Utils.isAisleChanged) {
+			if(Utils.mChangeAilseId != null && desiredContentId.equalsIgnoreCase(Utils.mChangeAilseId)) {
+			//Utils.isAisleChanged = false;
+			Utils.mChangeAilseId = null;
+			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+			
+			}
+			
+		}
+		
 		if (holder.uniqueContentId.equals(desiredContentId)) {
 			// we are looking at a visual object that has either not been used
 			// before or has to be filled with same content. Either way, no need
@@ -196,7 +207,7 @@ public class AisleLoader {
 			 */
 			int bestHeight = windowContent.getBestHeightForWindow();
 			LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
-					VueApplication.getInstance().getVueDetailsCardWidth() / 2,
+					LayoutParams.MATCH_PARENT,
 					itemDetails.mTrendingImageHeight);
 
 			Log.i("cardHeight", "bestsamallest cardHeight bestHeight11: "
@@ -242,12 +253,21 @@ public class AisleLoader {
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
 			String asileId, AisleImageDetails itemDetails) {
+		if(Utils.isAisleChanged){
+			Utils.isAisleChanged = false;
+			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
+					bestHeight, asileId, itemDetails);
+			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
+			String[] urlsArray = { loc, serverImageUrl };
+			task.execute(urlsArray);
+		} else {
 		if (cancelPotentialDownload(loc, imageView)) {
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
 					bestHeight, asileId, itemDetails);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
 			String[] urlsArray = { loc, serverImageUrl };
 			task.execute(urlsArray);
+		}
 		}
 		/*
 		 * ((ScaleImageView) imageView).setImageUrl(serverImageUrl, new

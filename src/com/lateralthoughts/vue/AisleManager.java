@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -42,6 +43,7 @@ import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.utils.AddImageToAisleBackgroundThread;
 import com.lateralthoughts.vue.utils.AisleCreationBackgroundThread;
+import com.lateralthoughts.vue.utils.UploadImageBackgroundThread;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -51,6 +53,10 @@ public class AisleManager {
 
 	public interface AisleUpdateCallback {
 		public void onAisleUpdated(String id);
+	}
+
+	public interface ImageUploadCallback {
+		public void onImageUploaded(String imageUrl);
 	}
 
 	public interface ImageAddedCallback {
@@ -163,9 +169,20 @@ public class AisleManager {
 
 	}
 
+	public void uploadImage(File imageName,
+			ImageUploadCallback imageUploadCallback) {
+		if (null == imageName) {
+			throw new RuntimeException(
+					"Can't create Aisle without a non null aisle object");
+		}
+
+		Thread t = new Thread(new UploadImageBackgroundThread(imageName, imageUploadCallback));
+		t.start();
+	}
+
 	// issues a request to add an image to the aisle.
 	public void addImageToAisle(final boolean fromDetailsScreenFlag,
-			VueImage image, final ImageAddedCallback callback) {
+			String imageId, VueImage image, final ImageAddedCallback callback) {
 		Log.i("addimagefuncitonality",
 				"addimagefuncitonality entered in method");
 		if (null == image) {
@@ -174,7 +191,7 @@ public class AisleManager {
 		}
 
 		Thread t = new Thread(new AddImageToAisleBackgroundThread(image,
-				callback, fromDetailsScreenFlag));
+				callback, fromDetailsScreenFlag, imageId));
 		t.start();
 		/*
 		 * String imageAsString = null; try { imageAsString =
@@ -332,7 +349,7 @@ public class AisleManager {
 	 *             , IOException
 	 * */
 	public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark,
-	   
+
 	String userId) throws ClientProtocolException, IOException {
 		isDirty = true;
 		String url;
@@ -358,6 +375,7 @@ public class AisleManager {
 			ObjectMapper mapper = new ObjectMapper();
 			String bookmarkAisleAsString = mapper
 					.writeValueAsString(aisleBookmark);
+
       Response.Listener listener = new Response.Listener<String>() {
 
         @Override
@@ -393,7 +411,6 @@ public class AisleManager {
         }
 
       };
-      
 			BookmarkPutRequest request = new BookmarkPutRequest(
 					bookmarkAisleAsString, listener, errorListener,
 					url + storedVueUser.getId());
@@ -421,13 +438,6 @@ public class AisleManager {
 	 * */
 	public void updateBookmartToDb(ArrayList<AisleWindowContent> windowList,
 			AisleBookmark aisleBookmark, boolean isDirty) {
-		 Log.i("bookmark response", "bookmark  updateBookmartToDb value: "+aisleBookmark.getBookmarked());
-		 if(aisleBookmark.getId() == null) {
-		   for(int i = 0; i < 10; i++) {
-		     Log.e("AisleManager", "*****************Bookmark Id is null******************");
-		   }
-		   return;
-		 }
 		for (AisleWindowContent aisleWindow : windowList) {
 			AisleContext context = aisleWindow.getAisleContext();
 			DataBaseManager
@@ -471,7 +481,8 @@ public class AisleManager {
 
 				@Override
 				public void onResponse(String jsonArray) {
-				  Log.i("likecountissue", "likecountissue: jsonArray: "+jsonArray);
+					Log.i("likecountissue", "likecountissue: jsonArray: "
+							+ jsonArray);
 					if (jsonArray != null) {
 						try {
 							ImageRating imgRating = (new ObjectMapper())

@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -281,21 +282,25 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					.getAisleItem(
 							VueApplication.getInstance().getClickedWindowID())
 					.getAisleContext().mAisleId));
+			String offlineImageId = String.valueOf(System.currentTimeMillis());
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
-					.requestForAddImage(true, image, new ImageAddedCallback() {
-						@Override
-						public void onImageAdded(AisleImageDetails imageDetails) {
-							// //
-						}
-					});
+					.requestForAddImage(true, offlineImageId, image,
+							new ImageAddedCallback() {
+								@Override
+								public void onImageAdded(
+										AisleImageDetails imageDetails) {
+									// //
+								}
+							});
 			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath,
 					VueLandingPageActivity.mOtherSourceImageUrl,
 					VueLandingPageActivity.mOtherSourceImageWidth,
 					VueLandingPageActivity.mOtherSourceImageHeight,
 					VueLandingPageActivity.mOtherSourceImageDetailsUrl,
-					VueLandingPageActivity.mOtherSourceImageStore);
+					VueLandingPageActivity.mOtherSourceImageStore,
+					offlineImageId);
 			VueLandingPageActivity.mOtherSourceImagePath = null;
 			VueLandingPageActivity.mOtherSourceImageUrl = null;
 			VueLandingPageActivity.mOtherSourceImageWidth = 0;
@@ -310,6 +315,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
 		FlurryAgent.onPageView();
 		FlurryAgent.logEvent(DETAILS_SCREEN_VISITOR);
+
 		super.onStart();
 	}
 
@@ -317,6 +323,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	protected void onStop() {
 		super.onStop();
 		FlurryAgent.onEndSession(this);
+		Log.i("adaptersettings", "adaptersettings: onstop");
+		if (mVueAiselFragment == null) {
+			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisle_details_view_fragment);
+		}
+		mVueAiselFragment.setAisleContentListenerNull();
 
 	}
 
@@ -377,10 +389,13 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-
+			Bitmap bitmap = null;
 			// mItemDetails = mImageDetailsArr.get(position);
-			Bitmap bitmap = mBitmapLoaderUtils.getCachedBitmap(mImageDetailsArr
-					.get(position).mCustomImageUrl);
+			/*
+			 * Bitmap bitmap =
+			 * mBitmapLoaderUtils.getCachedBitmap(mImageDetailsArr
+			 * .get(position).mCustomImageUrl);
+			 */
 
 			if (convertView == null) {
 				viewHolder = new ViewHolder();
@@ -531,6 +546,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				for (int i = 0; i < mImageDetailsArr.size(); i++) {
 					// mBitmapLoaderUtils.removeBitmapFromCache(mImageDetailsArr.get(i));
 				}
+				clearBitmaps();
 				super.onBackPressed();
 			}
 		}
@@ -557,7 +573,19 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT) {
-			VueApplication.getInstance().mAisleImagePathList.clear();
+			ArrayList<DataentryImage> mAisleImagePathList = null;
+			try {
+				mAisleImagePathList = Utils.readAisleImagePathListFromFile(
+						AisleDetailsViewActivity.this,
+						VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
+				mAisleImagePathList.clear();
+				Utils.writeAisleImagePathListToFile(
+						AisleDetailsViewActivity.this,
+						VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
+						mAisleImagePathList);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			Bundle b = data.getExtras();
 			if (b != null) {
 				String findAt = b
@@ -581,7 +609,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH),
 							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT),
 							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL),
-							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE));
+							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE),
+							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OFFLINE_IMAGE_ID));
 				}
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT
@@ -653,7 +682,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		protected void onPostExecute(Bitmap bitmap) {
 			if (imageViewReference != null && bitmap != null) {
 				final ImageView imageView = imageViewReference.get();
-				imageView.setImageBitmap(bitmap);
+				if (imageView != null)
+					imageView.setImageBitmap(bitmap);
 
 			}
 		}
@@ -685,7 +715,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	private void sendDataToDataentryScreen(Bundle b) {
 		Log.e("Land", "vueland 4");
-		String lookingFor, occation, category/* , saySomething */;
+		String lookingFor, occation, category, userId, description;
 		if (mVueAiselFragment == null) {
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.aisle_details_view_fragment);
@@ -694,6 +724,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		lookingFor = aisleInfo.mLookingForItem;
 		occation = aisleInfo.mOccasion;
 		category = aisleInfo.mCategory;
+		userId = aisleInfo.mUserId;
+		description = aisleInfo.mDescription;
 		String imagePath = b
 				.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 		Intent intent = new Intent(this, DataEntryActivity.class);
@@ -708,11 +740,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(this,
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
-			if (VueTrendingAislesDataModel
-					.getInstance(this)
-					.getAisleAt(
-							VueApplication.getInstance().getClickedWindowID())
-					.getAisleContext().mUserId.equals(storedVueUser.getId())) {
+			if (userId.equals(String.valueOf(storedVueUser.getId()))) {
 				isUserAisleFlag = true;
 			}
 		} catch (Exception e2) {
@@ -732,7 +760,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				category);
 		b1.putString(
 				VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
-				null);
+				description);
 		b1.putString(VueConstants.FROM_OTHER_SOURCES_URL,
 				b.getString(VueConstants.FROM_OTHER_SOURCES_URL));
 		b1.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG,
@@ -740,11 +768,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		b1.putParcelableArrayList(
 				VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
 				b.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS));
-		String findAt = null;
-		findAt = mVueAiselFragment.mEditTextFindAt.getText().toString();
-		b1.putString(
-				VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
-				findAt);
+
 		intent.putExtras(b1);
 		Log.e("Land", "vueland 5");
 		this.startActivityForResult(
@@ -806,7 +830,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
-				// mAisleImagesCache.clear();
+				mAisleImagesCache.evictAll();
 			}
 			return null;
 		}
@@ -898,7 +922,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			Log.i("added url", "added urldecodeFile  throwable exception ");
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
-				// mAisleImagesCache.clear();
+				mAisleImagesCache.evictAll();
 			}
 			return null;
 		}
@@ -935,20 +959,79 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	}
 
 	private void addImageToAisle(String imagePath, String imageUrl,
-			int imageWidth, int imageHeight, String detailsUrl, String store) {
+			int imageWidth, int imageHeight, String detailsUrl, String store,
+			String imageId) {
+		boolean isImageFromLocalSystem = false;
+		if (imageUrl == null) {
+			isImageFromLocalSystem = true;
+		}
+
 		FileCache fileCache = new FileCache(this);
-		File f = fileCache.getFile(imageUrl);
+		File f = null;
+		if (imageUrl != null) {
+			f = fileCache.getFile(imageUrl);
+		} else {
+			f = fileCache.getFile(imagePath);
+			imageUrl = f.getPath();
+		}
 		File sourceFile = new File(imagePath);
 		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
 				VueApplication.getInstance().mScreenHeight,
 				VueApplication.getInstance().getVueDetailsCardWidth(),
 				Utils.DETAILS_SCREEN);
 		Utils.saveBitmap(bmp, f);
+
 		if (mVueAiselFragment == null) {
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.aisle_details_view_fragment);
 		}
-		mVueAiselFragment.addAisleToWindow(bmp, imagePath, imageUrl,
-				imageWidth, imageHeight, detailsUrl, store);
+		mVueAiselFragment
+				.addAisleToWindow(imagePath, imageUrl, imageWidth, imageHeight,
+						detailsUrl, store, imageId, isImageFromLocalSystem);
+	}
+
+	private void clearBitmaps() {
+		Log.i("clearbitamps", "clearbitamps 1");
+		for (int i = 0; i < mTopScroller.getChildCount(); i++) {
+			Log.i("clearbitamps", "clearbitamps 2");
+			RelativeLayout topLayout = (RelativeLayout) mTopScroller
+					.getChildAt(i);
+
+			ImageView imageViewImage = (ImageView) topLayout
+					.findViewById(R.id.vue_compareimg);
+			ImageView imageViewLike = (ImageView) topLayout
+					.findViewById(R.id.compare_like_dislike);
+			try {
+				Bitmap bitmap = ((BitmapDrawable) imageViewImage.getDrawable())
+						.getBitmap();
+				bitmap.recycle();
+				bitmap = null;
+				imageViewImage.setImageDrawable(null);
+				imageViewLike.setImageResource(0);
+			} catch (Exception e) {
+
+			}
+		}
+		for (int i = 0; i < mBottomScroller.getChildCount(); i++) {
+			Log.i("clearbitamps", "clearbitamps 3");
+			RelativeLayout topLayout = (RelativeLayout) mBottomScroller
+					.getChildAt(i);
+
+			ImageView imageViewImage = (ImageView) topLayout
+					.findViewById(R.id.vue_compareimg);
+			ImageView imageViewLike = (ImageView) topLayout
+					.findViewById(R.id.compare_like_dislike);
+			try {
+				Bitmap bitmap = ((BitmapDrawable) imageViewImage.getDrawable())
+						.getBitmap();
+				bitmap.recycle();
+				bitmap = null;
+				imageViewImage.setImageDrawable(null);
+				imageViewLike.setImageResource(0);
+			} catch (Exception e) {
+
+			}
+		}
+
 	}
 }

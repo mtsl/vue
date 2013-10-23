@@ -20,7 +20,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
@@ -39,8 +38,8 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import com.flurry.android.monolithic.sdk.impl.aca;
 import com.lateralthoughts.vue.AisleImageDetails;
+import com.lateralthoughts.vue.DataentryImage;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
@@ -57,6 +56,9 @@ public class Utils {
 	public static final String TRENDING_SCREEN = "trending_screen";
 	public static final String FLURRY_APP_KEY = "6938R8DC7R5HZWF976TJ";
 	public static int MAX_RETRIES = 3;
+	public static String mChangeAilseId;
+	public static boolean isAisleChanged = false;
+	public static boolean mAinmate = true;
 
 	public static void CopyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
@@ -68,6 +70,8 @@ public class Utils {
 					break;
 				os.write(bytes, 0, count);
 			}
+			os.close();
+			is.close();
 		} catch (Exception ex) {
 			Log.i("added url", "added url  InputStream got error ");
 			ex.printStackTrace();
@@ -184,9 +188,12 @@ public class Utils {
 		}
 	}
 
-	public static String getResizedImage(File f, float screenHeight,
+	// String[] ... [0] is resizedImagePath, [1] originalImageWidth, [2]
+	// orignalImageHeight
+	public static String[] getResizedImage(File f, float screenHeight,
 			float screenWidth, Context mContext) {
 		try {
+			String[] returnArray = new String[3];
 			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
@@ -196,6 +203,8 @@ public class Utils {
 			Log.e("cs", "10");
 			int height = o.outHeight;
 			int width = o.outWidth;
+			returnArray[1] = width + "";
+			returnArray[2] = height + "";
 			int scale = 1;
 			int heightRatio = 0;
 			int widthRatio = 0;
@@ -229,7 +238,8 @@ public class Utils {
 			File resizedFileName = new File(
 					vueAppResizedImageFileName(mContext));
 			saveBitmap(resizedBitmap, resizedFileName);
-			return resizedFileName.getPath();
+			returnArray[0] = resizedFileName.getPath();
+			return returnArray;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -376,15 +386,17 @@ public class Utils {
 	}
 
 	public static String getUrlFromString(String stringWithUrl) {
-		String regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(stringWithUrl);
-		while (m.find()) {
-			String urlStr = m.group();
-			if (urlStr.startsWith("(") && urlStr.endsWith(")")) {
-				urlStr = urlStr.substring(1, urlStr.length() - 1);
+		if (stringWithUrl != null) {
+			String regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
+			Pattern p = Pattern.compile(regex);
+			Matcher m = p.matcher(stringWithUrl);
+			while (m.find()) {
+				String urlStr = m.group();
+				if (urlStr.startsWith("(") && urlStr.endsWith(")")) {
+					urlStr = urlStr.substring(1, urlStr.length() - 1);
+				}
+				return urlStr;
 			}
-			return urlStr;
 		}
 		return null;
 	}
@@ -423,6 +435,26 @@ public class Utils {
 		VueUserProfile vueUserProfile = (VueUserProfile) is.readObject();
 		is.close();
 		return vueUserProfile;
+	}
+
+	public static void writeAisleImagePathListToFile(Context context,
+			String fileName, ArrayList<DataentryImage> imagePathList)
+			throws Exception {
+		FileOutputStream fos = context.openFileOutput(fileName,
+				Context.MODE_PRIVATE);
+		ObjectOutputStream os = new ObjectOutputStream(fos);
+		os.writeObject(imagePathList);
+		os.close();
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static ArrayList<DataentryImage> readAisleImagePathListFromFile(
+			Context context, String fileName) throws Exception {
+		FileInputStream fis = context.openFileInput(fileName);
+		ObjectInputStream is = new ObjectInputStream(fis);
+		ArrayList<DataentryImage> imagePathList = (ArrayList) is.readObject();
+		is.close();
+		return imagePathList;
 	}
 
 	public static String getDeviceId() {
@@ -496,6 +528,23 @@ public class Utils {
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putBoolean(VueConstants.DATAENTRY_EDIT_AISLE_FLAG, flag);
+		editor.commit();
+	}
+
+	public static boolean isLoadDataentryScreenFlag(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getBoolean(
+				VueConstants.LOAD_DATAENTRY_SCREEN_FLAG, false);
+	}
+
+	public static void setLoadDataentryScreenFlag(Context context,
+			boolean loadDataentryScreenFlag) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean(VueConstants.LOAD_DATAENTRY_SCREEN_FLAG,
+				loadDataentryScreenFlag);
 		editor.commit();
 	}
 

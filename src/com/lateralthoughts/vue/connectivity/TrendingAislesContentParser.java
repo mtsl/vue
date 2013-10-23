@@ -53,10 +53,10 @@ public class TrendingAislesContentParser extends ResultReceiver {
                 .getInstance(VueApplication.getInstance())
                 .addTrentingAislesFromServerToDB(
                     VueApplication.getInstance(),
-                    aislesList,
-                    VueTrendingAislesDataModel.getInstance(
+                    aislesList
+                    /*VueTrendingAislesDataModel.getInstance(
                         VueApplication.getInstance()).getNetworkHandler().mOffset,
-                    true);
+                    true*/);
 
             Log.i("ailsesize",
                 "ailseListSizemaintrending: " + aislesList.size());

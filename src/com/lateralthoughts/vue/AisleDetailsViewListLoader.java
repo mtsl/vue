@@ -2,16 +2,20 @@ package com.lateralthoughts.vue;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.android.volley.toolbox.ImageLoader;
+import com.facebook.android.Util;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
@@ -39,6 +43,7 @@ public class AisleDetailsViewListLoader {
     private int mBestHeight = 0;
     AisleContentBrowser contentBrowser = null;
     DetailClickListener mDetailListener;
+    Animation myFadeInAnimation;
     
    /* public static AisleDetailsViewListLoader getInstance(Context context){
         if(null == sAisleDetailsViewLoaderInstance){
@@ -52,6 +57,7 @@ public class AisleDetailsViewListLoader {
         //instead use a factory pattern and return an instance using a
         //static method
        // mContext = context;
+    	myFadeInAnimation = AnimationUtils.loadAnimation(VueApplication.getInstance(), R.anim.fadein);
         mViewFactory = ScaledImageViewFactory.getInstance(VueApplication.getInstance());
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
         mContentAdapterFactory = ContentAdapterFactory.getInstance(VueApplication.getInstance());
@@ -77,6 +83,7 @@ public class AisleDetailsViewListLoader {
         contentBrowser = holder.aisleContentBrowser;
    
         contentBrowser.setHolderName(VueAisleDetailsViewFragment.SCREEN_NAME);
+        Log.i("ScrollIndex", "ScrollIndex: "+scrollIndex);
         if(holder.uniqueContentId.equals(desiredContentId)){
             //we are looking at a visual object that has either not been used
             //before or has to be filled with same content. Either way, no need
@@ -126,7 +133,7 @@ public class AisleDetailsViewListLoader {
 			imageView = mViewFactory.getEmptyImageView();
 			imageView.setContainerObject(holder);
 			Bitmap bitmap = null; 
-			bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
+			//bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
 			mBestHeight =Utils.modifyHeightForDetailsView(imageDetailsArr);
 			windowContent.setBestLargestHeightForWindow(mBestHeight);
 			contentBrowser.addView(imageView);
@@ -135,7 +142,7 @@ public class AisleDetailsViewListLoader {
 			if (bitmap != null) {
 				if (bitmap.getHeight() > mBestHeight) {
 					loadBitmap(itemDetails, contentBrowser, imageView,
-							mBestHeight);
+							mBestHeight,scrollIndex);
 				} else {
 					Log.i("setparam", "setparam cache: "+bitmap.getHeight());
 				}
@@ -145,28 +152,30 @@ public class AisleDetailsViewListLoader {
 				}
 			} else {
 				loadBitmap(itemDetails, contentBrowser, imageView,
-						mBestHeight);
+						mBestHeight, scrollIndex);
 				if(scrollIndex != 0){
+					
 					contentBrowser.setCurrentImage();
 					}
 			}
 		}        
     }
     
-    public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight) {
+    public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight,int scrollIndex) {
     	String loc = itemDetails.mImageUrl;
     	String serverImageUrl = itemDetails.mImageUrl;
+    	
  
       /*  ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
                 new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
     	Log.i("imageHeitht", "imageHeitht resizeWidth:  calling bacground thread ");
 
-          if (cancelPotentialDownload(loc, imageView)) {
-            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight);
+         // if (cancelPotentialDownload(loc, imageView)) {
+            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight,scrollIndex);
             ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
             String imagesArray[] = {loc, serverImageUrl};
             task.execute(imagesArray);
-        }
+       // }
  
     }
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
@@ -177,9 +186,10 @@ public class AisleDetailsViewListLoader {
         AisleContentBrowser aisleContentBrowser ;
         int mAvailabeWidth,mAvailableHeight;
         AisleImageDetails mItemDetails;
+        int mScrollIndex;
         
 
-        public BitmapWorkerTask(AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight) {
+        public BitmapWorkerTask(AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight,int scrollIndex) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             mBestHeight = bestHeight;
@@ -187,6 +197,7 @@ public class AisleDetailsViewListLoader {
             mAvailabeWidth = itemDetails.mAvailableWidth;
             mAvailableHeight = itemDetails.mAvailableHeight;
             mItemDetails = itemDetails;
+            mScrollIndex = scrollIndex;
         }
 
         // Decode image in background.
@@ -196,7 +207,7 @@ public class AisleDetailsViewListLoader {
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
-            boolean cacheBitmap = true;
+            boolean cacheBitmap = false;
             bmp = mBitmapLoaderUtils.getBitmap(url, params[1],  cacheBitmap, mBestHeight, VueApplication.getInstance().getVueDetailsCardWidth(),Utils.DETAILS_SCREEN);
 			if(bmp != null){
             mItemDetails.mTempResizeBitmapwidth = bmp.getWidth();
@@ -220,6 +231,9 @@ public class AisleDetailsViewListLoader {
                 if (this == bitmapWorkerTask) {
                  //setParams( aisleContentBrowser, imageView,bitmap.getHeight());
                     imageView.setImageBitmap(bitmap);
+                    if(mScrollIndex == 0){
+                    imageView.startAnimation(myFadeInAnimation);
+                    }
                 }
             }
         }
@@ -254,9 +268,22 @@ public class AisleDetailsViewListLoader {
     public void clearBrowser(ArrayList<AisleImageDetails> imageList){
 	 if (contentBrowser != null) {
 			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
+			    
+                 try{
+				ImageView image = (ScaleImageView)contentBrowser
+				.getChildAt(i);
+				Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+				bitmap.recycle();
+				bitmap = null;
+                 }catch (Exception e) {
+					 
+				}
+
+				
 				mViewFactory
 				.returnUsedImageView((ScaleImageView)contentBrowser
 						.getChildAt(i));
+				Log.i("imageviewsremoved", "imageviewsremoved: "+i);
 			} 
 			 mContentAdapterFactory.returnUsedAdapter(contentBrowser.getCustomAdapter());
 			 contentBrowser.setCustomAdapter(null);

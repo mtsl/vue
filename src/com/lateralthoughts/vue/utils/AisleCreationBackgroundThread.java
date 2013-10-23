@@ -137,6 +137,7 @@ public class AisleCreationBackgroundThread implements Runnable,
 
 								AisleWindowContent aileItem = new Parser()
 										.getAisleCotent(mResponseMessage);
+								 if(VueLandingPageActivity.getScreenName().equalsIgnoreCase("Trending")) {
 								VueTrendingAislesDataModel
 										.getInstance(
 												VueApplication.getInstance())
@@ -146,13 +147,14 @@ public class AisleCreationBackgroundThread implements Runnable,
 								VueTrendingAislesDataModel.getInstance(
 										VueApplication.getInstance())
 										.dataObserver();
+								 }
 								ArrayList<AisleWindowContent> list = new ArrayList<AisleWindowContent>();
 								list.add(aileItem);
 								DataBaseManager.getInstance(
 										VueApplication.getInstance())
 										.addTrentingAislesFromServerToDB(
 												VueApplication.getInstance(),
-												list, 0, false);
+												list/*, 0, false*/);
 								// JSONObject user =
 								// userInfo.getJSONObject("user");
 								// TODO: GET THE AISLE OBJECT FROM
