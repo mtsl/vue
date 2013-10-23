@@ -654,9 +654,15 @@ public class VueLandingPageActivity extends BaseActivity {
 		boolean loadMore = false;
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
+			VueTrendingAislesDataModel.getInstance(VueApplication
+					.getInstance()).loadOnRequest = false;
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 					.clearContent();
-			Log.i("meoptions", "meoptions: Trending");
+			Log.i("formdbtrending", "formdbtrending: showPreviousScreen");
+		 
+			DataBaseManager.getInstance(VueApplication.getInstance())
+			.resetDbParams();
+			
 			VueTrendingAislesDataModel
 					.getInstance(VueLandingPageActivity.this)
 					.getNetworkHandler()

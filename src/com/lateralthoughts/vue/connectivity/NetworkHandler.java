@@ -63,7 +63,7 @@ public class NetworkHandler {
 	Context mContext;
 	private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
 	// http://2-java.vueapi-canary-development1.appspot.com/api/
-	DataBaseManager mDbManager;
+	public DataBaseManager mDbManager;
 	protected VueContentGateway mVueContentGateway;
 	protected TrendingAislesContentParser mTrendingAislesParser;
 	private static final int NOTIFICATION_THRESHOLD = 4;
@@ -93,7 +93,7 @@ public class NetworkHandler {
 
 	// whle user scrolls down get next 10 aisles
 	public void requestMoreAisle(boolean loadMore, String screenname) {
-
+		Log.i("formdbtrending", "formdbtrending***: requestMoreAisle");
 		if (VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance())
 				.isMoreDataAvailable()) {
@@ -137,6 +137,7 @@ public class NetworkHandler {
 					mTrendingAislesParser, loadMore, screenname);
 
 		} else {
+			Log.i("formdbtrending", "formdbtrending: reqestByCategory");
 			// Log.i("duplicateImages", "duplicateImages from db1");
 			DataBaseManager.getInstance(VueApplication.getInstance())
 					.resetDbParams();
@@ -152,6 +153,7 @@ public class NetworkHandler {
 				// Log.i("duplicateImages",
 				// "duplicateImages imageurl########: "+i);
 			}
+			Log.i("formdbtrending", "formdbtrending: reqestByCategory aisleContentArray.size() "+aisleContentArray.size());
 			if (aisleContentArray.size() == 0) {
 				return;
 			}
@@ -248,6 +250,8 @@ public class NetworkHandler {
 
 	public void loadInitialData(boolean loadMore, Handler mHandler,
 			String screenName) {
+		
+		Log.i("formdbtrending", "formdbtrending***: loadInitialData");
 		getBookmarkAisleByUser();
 		getRatedImageList();
 
