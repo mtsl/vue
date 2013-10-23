@@ -60,6 +60,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	int[] mLeftViewsHeights;
 	int[] mRightViewsHeights;
 	public boolean mIsFlingCalled;
+	public boolean isFromDb;
 
 	public boolean mIsIdleState;
 
@@ -260,7 +261,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
 					&& lan.getScreenName().equalsIgnoreCase(
-							getResources().getString(R.string.trending))) {
+							getResources().getString(R.string.trending))&& !isFromDb) {
 				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
 				Log.i("more aisle request", "more aisle request calling");
 				int totalItems = 0;

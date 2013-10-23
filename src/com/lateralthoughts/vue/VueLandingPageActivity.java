@@ -659,6 +659,11 @@ public class VueLandingPageActivity extends BaseActivity {
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
 			VueTrendingAislesDataModel.getInstance(VueApplication
 					.getInstance()).loadOnRequest = false;
+			if (mFragment == null) {
+				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+			}
+			mFragment.isFromDb = true;
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 					.clearContent();
 			Log.i("formdbtrending", "formdbtrending: showPreviousScreen");

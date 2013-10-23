@@ -1000,13 +1000,13 @@ public class DataEntryFragment extends Fragment {
 											.setResult(
 													VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT,
 													intent);
-									getActivity().finish();
 									addImageToAisleToServer(
 											Long.valueOf(storedVueUser.getId())
 													.toString(), VueApplication
 													.getInstance()
 													.getClickedWindowID(),
 											true, offlineImageId);
+									getActivity().finish();
 								} else {
 									Toast.makeText(
 											getActivity(),
@@ -1838,8 +1838,10 @@ public class DataEntryFragment extends Fragment {
 			final String imageId) {
 		if ((mOtherSourceSelectedImageUrl != null && mOtherSourceSelectedImageUrl
 				.trim().length() > 0) || mImagePath != null) {
+			
 			final VueImage image = new VueImage();
-			image.setDetailsUrl(mFindAtText.getText().toString());
+			String detailsUrl = mFindAtText.getText().toString();
+			image.setDetailsUrl(detailsUrl);
 			image.setHeight(mOtherSourceImageOriginalHeight);
 			image.setWidth(mOtherSourceImageOriginalWidth);
 			image.setStore(mOtherSourceSelectedImageStore);
