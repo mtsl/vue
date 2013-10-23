@@ -54,18 +54,12 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.WIDTH + " text);";
 
      private String createImageCommentsTable = "create table if not exists " + DATABASE_TABLE_COMMENTS_ON_IMAGES
-     + " (" + VueConstants.ID + " integer primary key autoincrement, "
-     + VueConstants.AISLE_Id + " text, "
-     + VueConstants.IMAGE_ID + " text, "
+     + " (" + VueConstants.ID + " long primary key, "
+     + VueConstants.IMAGE_ID + " long, "
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.DELETE_FLAG + " integer, "
+     + VueConstants.LAST_MODIFIED_TIME + " long, "
      + VueConstants.COMMENTS + " text);";
-
-/*     private String createQueuedDataToSyncTable = "create table if not exists " + DATABASE_TABLE_DATA_TO_SYNC
-     + " ("+ VueConstants.ID + " integer primary key, "
-     + VueConstants.COMMENT + " text, "
-     + VueConstants.AISLE_ID + " text, "
-     + VueConstants.IMAGE_ID + " text);";*/
 
     private String createLookingForTable = "create table if not exists " + DATABASE_TABLE_LOOKINGFOR
         + " (" + VueConstants.ID + " integer primary key autoincrement, " 
@@ -114,7 +108,6 @@ public class DbHelper extends SQLiteOpenHelper {
     db.execSQL(createAislesTable);
     db.execSQL(createAisleImagesTable);
     db.execSQL(createImageCommentsTable);
-    // db.execSQL(createQueuedDataToSyncTable);
     db.execSQL(createLookingForTable);
     db.execSQL(createOccasionTable);
     db.execSQL(createCategoryTable);

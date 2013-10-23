@@ -17,6 +17,7 @@ import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 import android.content.BroadcastReceiver;
@@ -107,6 +108,20 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
           try {
             AisleManager.getAisleManager().updateRating(imgRating, 0);
           } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }
+      
+      if(mSharedPreferencesObj.getBoolean(VueConstants.IS_COMMENT_DIRTY, false)) {
+        ArrayList<ImageComment> comments = DataBaseManager.getInstance(
+            context).getDirtyComments("1");
+        NetworkHandler networkHandler = new NetworkHandler(context);
+        for(ImageComment comment : comments) {
+          try {
+            networkHandler.createImageComment(comment);
+          } catch (Exception e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
           }
         }

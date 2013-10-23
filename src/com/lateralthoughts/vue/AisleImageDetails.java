@@ -2,6 +2,8 @@ package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
 
+import com.lateralthoughts.vue.parser.ImageComments;
+
 public class AisleImageDetails {
 	public String mDetalsUrl;
 	public String mImageUrl;
@@ -17,7 +19,7 @@ public class AisleImageDetails {
 	public String mOwnerAisleId;
 	public String mRating;
 	public int mLikeDislikeStatus = AisleDetailsViewAdapter.IMG_NONE_STATUS;
-	public ArrayList<String> mCommentsList = new ArrayList<String>();
+	public ArrayList<ImageComments> mCommentsList = new ArrayList<ImageComments>();
 	public int mTrendingImageHeight;
 	public int mTrendingImageWidth;
 	public int mDetailsImageWidth;
