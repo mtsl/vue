@@ -245,6 +245,19 @@ public class Utils {
 			File resizedFileName = new File(
 					vueAppResizedImageFileName(mContext));
 			saveBitmap(resizedBitmap, resizedFileName);
+			BitmapFactory.Options o3 = new BitmapFactory.Options();
+			o3.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(new FileInputStream(resizedFileName),
+					null, o3);
+			if (o3.outWidth > VueApplication.getInstance().mScreenWidth
+					|| o3.outHeight > VueApplication.getInstance().mScreenHeight) {
+				resizedBitmap = Utils.getBestDementions(resizedBitmap,
+						o3.outWidth, o3.outHeight,
+						VueApplication.getInstance().mScreenWidth,
+						VueApplication.getInstance().mScreenHeight);
+				Utils.saveBitmap(resizedBitmap, resizedFileName);
+			}
+			resizedBitmap.recycle();
 			returnArray[0] = resizedFileName.getPath();
 			return returnArray;
 		} catch (FileNotFoundException e) {
@@ -597,6 +610,30 @@ public class Utils {
 		}
 
 		return mWindowLargestHeight;
+	}
+
+	public static Bitmap getBestDementions(Bitmap bitmap, int originalWidth,
+			int originalHeight, int availableScreenWidth,
+			int availableScreenHeight) {
+		float adjustedImageHeight, adjustedImageWidth;
+		float imageHeight = originalHeight, imageWidth = originalWidth;
+		if (imageHeight > availableScreenHeight) {
+			adjustedImageHeight = availableScreenHeight;
+			adjustedImageWidth = (adjustedImageHeight / imageHeight)
+					* imageWidth;
+			imageHeight = adjustedImageHeight;
+			imageWidth = adjustedImageWidth;
+		}
+		if (imageWidth > availableScreenWidth) {
+			adjustedImageWidth = availableScreenWidth;
+			adjustedImageHeight = (adjustedImageWidth / imageWidth)
+					* imageHeight;
+			imageHeight = adjustedImageHeight;
+			imageWidth = adjustedImageWidth;
+		}
+
+		return BitmapLoaderUtils.getInstance().getBitmap(bitmap,
+				(int) imageWidth, (int) imageHeight);
 	}
 
 	public static String getStoreNameFromUrl(String url) {
