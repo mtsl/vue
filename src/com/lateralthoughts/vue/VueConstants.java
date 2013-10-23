@@ -203,6 +203,16 @@ public class VueConstants {
 	public static final String AISLE_IMAGE_RATING = "likeRatingCount"/* "rating" */;
 	public static final String AISLE_IMAGE_STORE = "store";
 	public static final String AISLE_IMAGE_TITLE = "title";
+	public static final String AISLE_IMAGE_COMMENTS = "comments";
+	public static final String AISLE_IMAGE_COMMENTS_ID ="id";
+	public static final String AISLE_IMAGE_COMMENTS_IMAGEID ="ownerImageId";
+	public static final String AISLE_IMAGE_COMMENTS_USERID = "ownerUserId";
+	public static final String AISLE_IMAGE_COMMENTS_FIRST_NAME = "commenterFirstName";
+	public static final String AISLE_IMAGE_COMMENTS_LAST_NAME = "commenterLastName";
+    public static final String AISLE_IMAGE_COMMENTS_COMMENT = "comment";
+    public static final String AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME = "lastModifiedTimestamp";
+    public static final String AISLE_IMAGE_COMMENTS_CREATED_TIME = "createdTimestamp";
+	 
 	// User response Keys
 	public static final String USER_RESPONSE_ID = "id";
 	public static final String USER_JOINTIME = "joinTime";

@@ -92,6 +92,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	public int mCurrentDispImageIndex;
 	private boolean mIsLikeImageClicked = false;
 	private boolean mIsBookImageClciked = false;
+	int mShowFixedRowCount = 3;
+	int mInitialCommentsToShowSize = 2;
 	public String mVueusername;
 	ShareDialog mShare;
 	public int mCurrentAislePosition;
@@ -116,7 +118,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		/* super(c, content); */
 		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance());
-
+		mCurrentDispImageIndex = VueApplication.getInstance().getmAisleImgCurrentPos();
 		mSetPosition = true;
 		mContext = c;
 
@@ -140,7 +142,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		if(getItem(mCurrentAislePosition).getAisleContext().mCommentList == null) {
 			getItem(mCurrentAislePosition).getAisleContext().mCommentList = new ArrayList<String>();
 		}  
-		mListCount = getItem(mCurrentAislePosition).getAisleContext().mCommentList.size()+3;
+		
 		setImageRating();
 		Log.i("bestHeight",
 				"bestHeight in details adapter: "
@@ -203,6 +205,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							.getImageList().get(i).mCommentsList);
 				}*/
 			}
+			
 			mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
 			Log.i("clone", "clone: " + mImageDetailsArr);
 			if (mImageDetailsArr != null) {
@@ -231,7 +234,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						isBookmarked);
 			}
 			mBookmarksCount = getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount;
-			mCurrentDispImageIndex = VueApplication.getInstance().getmAisleImgCurrentPos();
+			if(getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mCommentsList.size() < mShowFixedRowCount){
+			mListCount = getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mCommentsList.size()+mShowFixedRowCount;
+			} else {
+				mListCount = mShowFixedRowCount+mInitialCommentsToShowSize;
+			}
 			
 			Log.i("bookmarked aisle", "bookmarked count in window2: "
 					+ mBookmarksCount);
@@ -416,13 +423,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mLikes = 0;
 			mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
 		}
-		Log.i("LikeStatus",
-				"Like status: "
-						+ getItem(mCurrentAislePosition).getImageList().get(
-								mCurrentDispImageIndex).mLikeDislikeStatus
-						+ " LikeCount: "
-						+ getItem(mCurrentAislePosition).getImageList().get(
-								mCurrentDispImageIndex).mLikesCount);
+ 
 		mViewHolder.commentCount.setText((mShowingList.size() + " Comments"));
 		mViewHolder.bookMarkCount.setText("" + mBookmarksCount);
 		mViewHolder.likeCount.setText("" + mLikes);
@@ -488,8 +489,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				// mWindowContentTemp = mViewHolder.mWindowContent;
 				mViewHolder.tag = TAG;
 				if (mImageRefresh) {
-					mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-					mImageRefresh = false;
+					/*mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+					mImageRefresh = false;*/
 					mViewLoader.getAisleContentIntoView(mViewHolder,
 							scrollIndex, position,
 							new DetailImageClickListener(),
@@ -551,8 +552,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		else {
 			// first two views are image and comment layout. so use position - 2
 			// to display all the comments from start
-			if (position - 2 < mShowingList.size()) {
-				mViewHolder.userComment.setText(mShowingList.get(position - 2));
+			if (position - mInitialCommentsToShowSize < mShowingList.size()) {
+				mViewHolder.userComment.setText(mShowingList.get(position - mInitialCommentsToShowSize));
 			}
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);
@@ -567,13 +568,13 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 			public void onClick(View v) {
 				// mswipeListner.onResetAdapter();
-				int showFixedRowCount = 3;
-				if (mListCount == (showFixedRowCount + 2)) {
-					mListCount = mShowingList.size() + showFixedRowCount;
+				
+				if (mListCount == (mShowFixedRowCount + mInitialCommentsToShowSize)) {
+					mListCount = mShowingList.size() + mShowFixedRowCount;
 				} else {
-					mListCount = showFixedRowCount + 2;
+					mListCount = mShowFixedRowCount + mInitialCommentsToShowSize;
 				}
-
+				mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
 				notifyDataSetChanged();
 			}
 		});
@@ -721,8 +722,13 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						position).mLikesCount;
 				mShowingList = getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mCommentsList;
 				
-				int showFixedRowCount = 3;
-				mListCount = showFixedRowCount +mShowingList.size();
+				 
+				if(mShowingList.size() <mShowFixedRowCount){
+				
+				mListCount = mShowFixedRowCount +mShowingList.size();
+				} else {
+					mListCount = mShowFixedRowCount+mInitialCommentsToShowSize;
+				}
 				notifyDataSetChanged();
 				mswipeListner.setFindAtText(getItem(mCurrentAislePosition)
 						.getImageList().get(position).mDetalsUrl);
@@ -908,6 +914,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	public void setAisleBrowserObjectsNull() {
 
 		if (mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
+			if(mCommentsMapList != null)
 			for (int i = 0; i < mCommentsMapList.size(); i++) {
 				mCommentsMapList.remove(i);
 			}
@@ -1265,9 +1272,17 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 public void createComment(String commentString){
 	   getItem(mCurrentAislePosition)
 		.getImageList().get(mCurrentDispImageIndex).mCommentsList.add(0,commentString);
+	   if(mCommentsMapList == null){
+		   getCommentList();
+	   }
 	   mCommentsMapList.put(mCurrentDispImageIndex, getItem(mCurrentAislePosition)
 				.getImageList().get(mCurrentDispImageIndex).mCommentsList);
 	   mShowingList =  (ArrayList<String>) mCommentsMapList.get(mCurrentDispImageIndex);
+		if (mShowingList.size()< mShowFixedRowCount) {
+			mListCount = mShowingList.size() + mShowFixedRowCount;
+		} else {
+			mListCount = mShowFixedRowCount+mInitialCommentsToShowSize;
+		}
   final ImageComment imgComment =
           new ImageComment();
   imgComment.setComment(commentString);
@@ -1280,8 +1295,9 @@ public void createComment(String commentString){
   imgComment.setOwnerImageId(Long.parseLong(getItem(
 		mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mId));
  
-  
-/*new Thread(new Runnable() {
+  System.out.println("Comment Response: aisleId " + getItem(
+			mCurrentAislePosition).getAisleId());
+new Thread(new Runnable() {
 	
 	@Override
 	public void run() {
@@ -1293,14 +1309,23 @@ public void createComment(String commentString){
 			e.printStackTrace();
 		}
 	}
-}).start();*/
+}).start();
   
   
  
  
    }
  
-
+@SuppressWarnings("unchecked")
+private void getCommentList(){
+	mCommentsMapList = new HashMap<Integer, Object>();
+	for(int i = 0;i<getItem(mCurrentAislePosition)
+			.getImageList().size();i++){
+	mCommentsMapList.put(i, getItem(mCurrentAislePosition)
+			.getImageList().get(i).mCommentsList);
+	}
+	mShowingList = (ArrayList<String>) mCommentsMapList.get(mCurrentDispImageIndex);
+}
    
    
    

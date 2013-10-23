@@ -206,6 +206,7 @@ public class VueTrendingAislesDataModel {
 		public void handleMessage(android.os.Message msg) {
 			@SuppressWarnings("unchecked")
 			ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
+			Log.i("formdbtrending", "formdbtrending: mHandler");
 			for (AisleWindowContent content : aisleContentArray) {
 				AisleWindowContent aisleItem = getAisleItem(content
 						.getAisleId());
@@ -218,11 +219,13 @@ public class VueTrendingAislesDataModel {
 			}
 			runTask(new Runnable() {
 				public void run() {
+					loadOnRequest = false;
+					Log.i("TrendingDataModel", "loadOnRequest from db:  "+loadOnRequest);
 					ArrayList<AisleWindowContent> aislesList = mDbManager
 							.getAislesFromDB(null);
 					Log.i("arrayList", "arrayList from db sized1: "+aislesList.size());
 					if (aislesList.size() == 0) {
-
+						loadOnRequest = true;
 						return;
 					}
 					Message msg = new Message();
