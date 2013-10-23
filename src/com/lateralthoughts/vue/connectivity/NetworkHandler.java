@@ -607,8 +607,8 @@ public class NetworkHandler {
 
           @Override
           public void onErrorResponse(VolleyError error) {
-            Log.e("get reating image",
-                "SURU get reating image Error Resopnse : " + error.getMessage());
+            Log.e("get rating image",
+                "SURU get rating image Error Resopnse : " + error.getMessage());
           }
         });
     VueApplication.getInstance().getRequestQueue().add(vueRequest);
