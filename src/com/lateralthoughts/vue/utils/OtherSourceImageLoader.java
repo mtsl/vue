@@ -45,7 +45,7 @@ public class OtherSourceImageLoader {
 		String filename = String.valueOf(url.hashCode());
 		File f = mFileCache.getVueAppResizedPictureFile(filename);
 		if (f.exists())
-			imageView.setImageURI(Uri.fromFile(f));
+			imageView.setImageBitmap(BitmapFactory.decodeFile(f.getPath()));
 		else {
 			queuePhoto(url, imageView);
 			imageView.setImageResource(stub_id);
@@ -127,7 +127,7 @@ public class OtherSourceImageLoader {
 					.decodeStream(stream2, null, o2);
 			stream2.close();
 			Utils.saveBitmap(resizedBitmap, f);
-			/*BitmapFactory.Options o3 = new BitmapFactory.Options();
+			BitmapFactory.Options o3 = new BitmapFactory.Options();
 			o3.inJustDecodeBounds = true;
 			BitmapFactory.decodeStream(new FileInputStream(f), null, o3);
 			if (o3.outWidth > VueApplication.getInstance().mScreenWidth
@@ -137,7 +137,7 @@ public class OtherSourceImageLoader {
 						VueApplication.getInstance().mScreenWidth,
 						VueApplication.getInstance().mScreenHeight);
 				Utils.saveBitmap(resizedBitmap, f);
-			}*/
+			}
 			resizedBitmap.recycle();
 			return f;
 		} catch (Throwable ex) {
@@ -217,7 +217,7 @@ public class OtherSourceImageLoader {
 
 		public void run() {
 			if (f != null && f.exists())
-				imageView.setImageURI(Uri.fromFile(f));
+				imageView.setImageBitmap(BitmapFactory.decodeFile(f.getPath()));
 			else
 				imageView.setImageResource(R.drawable.no_image);
 		}

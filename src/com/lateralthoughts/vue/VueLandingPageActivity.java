@@ -673,11 +673,6 @@ public class VueLandingPageActivity extends BaseActivity {
 					.getNetworkHandler()
 					.reqestByCategory(screenName, new ProgresStatus(),
 							fromServer, loadMore, screenName);
-			VueTrendingAislesDataModel
-			.getInstance(VueLandingPageActivity.this)
-			.getNetworkHandler().setmOffset(	VueTrendingAislesDataModel
-					.getInstance(VueLandingPageActivity.this)
-					.listSize());
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
 			Log.i("meoptions", "meoptions: MyAisle");
@@ -734,17 +729,15 @@ public class VueLandingPageActivity extends BaseActivity {
 		@Override
 		public void dismissProgress(boolean fromWhere) {
 			mLoadProgress.setVisibility(View.INVISIBLE);
+			Log.i("listmovingissue", "listmovingissue***:dismissProgress 1 ");
 			if (mFragment == null) {
 				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.aisles_view_fragment);
 			}
 			if (fromWhere) {
-				mFragment.moveListToPosition(0);
-				Log.i("positonmoved", "positonmoved from serverto cur pos 0");
+				//mFragment.moveListToPosition(0);
 			} else {
-				Log.i("positonmoved", "positonmoved moved to position "
-						+ mCurentScreenPosition);
-				mFragment.moveListToPosition(mCurentScreenPosition);
+				//mFragment.moveListToPosition(mCurentScreenPosition);
 			}
 		}
 

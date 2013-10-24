@@ -149,7 +149,7 @@ public class AisleCreationBackgroundThread implements Runnable,
             DataBaseManager.getInstance(VueApplication.getInstance())
                 .addTrentingAislesFromServerToDB(VueApplication.getInstance(),
                     list, VueTrendingAislesDataModel.getInstance(VueApplication
-                        .getInstance()).getNetworkHandler().mOffset, DataBaseManager.MY_AISLES);
+                        .getInstance()).getNetworkHandler().mOffset, DataBaseManager.AISLE_CREATED);
             // JSONObject user =
             // userInfo.getJSONObject("user");
             // TODO: GET THE AISLE OBJECT FROM

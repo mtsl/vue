@@ -52,7 +52,7 @@ public class DataBaseManager {
   private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
   private static DataBaseManager manager;
   private HashMap<String, Integer> aislesOrderMap = new HashMap<String, Integer>();
-  private HashMap<String, HashMap<String, Integer>> imagesOrderMap = new HashMap<String, HashMap<String,Integer>>();
+ // private HashMap<String, HashMap<String, Integer>> imagesOrderMap = new HashMap<String, HashMap<String,Integer>>();
 
 
   private DataBaseManager(Context context) {
@@ -111,7 +111,7 @@ public class DataBaseManager {
     if(offsetValue == 0 && whichScreen == TRENDING) {
       Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == TRENDING, offsetValue == " + offsetValue);
       aislesOrderMap.clear();
-      imagesOrderMap.clear();
+      //imagesOrderMap.clear();
     }
     
     Cursor aisleIdCursor = context.getContentResolver().query(
@@ -181,8 +181,9 @@ public class DataBaseManager {
         Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == MY_AISLES");
         aislesOrderMap.put(info.mAisleId, getMaxAisleValue(aislesOrderMap) + 1);
       } else if(whichScreen == AISLE_CREATED) {
-        Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == AISLE_CREATED");
-        aislesOrderMap.put(info.mAisleId, getMinAisleValue(aislesOrderMap) - 1);
+        int minValue = getMinAisleValue(aislesOrderMap);
+        Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == AISLE_CREATED: " + minValue);
+        aislesOrderMap.put(info.mAisleId, minValue - 1);
       }
       ArrayList<AisleImageDetails> imageItemsArray = content.getImageList();
       ContentValues values = new ContentValues();
@@ -276,12 +277,25 @@ public class DataBaseManager {
    * @return ArrayList<AisleWindowContent>
    * */
   public ArrayList<AisleWindowContent> getAislesFromDB(String[] aislesIds) {
+    Cursor cursor = mContext.getContentResolver().query(
+        VueConstants.CONTENT_URI, new String[] {VueConstants.ID}, null, null,
+        VueConstants.ID + " ASC");
     if(mStartPosition == 0) {
-      mStartPosition = 1000;
+      
+      if(cursor.moveToFirst()) {
+        mStartPosition = Integer.parseInt(cursor.getString(cursor.getColumnIndex(VueConstants.ID)));
+      } else {
+        mStartPosition = 1000;
+      }
     }
     if(mEndPosition == 0) {
-      mEndPosition = 1000;
+      if(cursor.moveToFirst()) {
+        mEndPosition = Integer.parseInt(cursor.getString(cursor.getColumnIndex(VueConstants.ID)));
+      } else {
+        mEndPosition = 1000;
+      }
     }
+    cursor.close();
     mEndPosition = mEndPosition + mLocalAislesLimit;
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
