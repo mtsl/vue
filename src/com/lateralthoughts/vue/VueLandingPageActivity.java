@@ -664,7 +664,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 					.clearContent();
 			Log.i("formdbtrending", "formdbtrending: showPreviousScreen");
-		 
+		  if(!fromServer)
 			DataBaseManager.getInstance(VueApplication.getInstance())
 			.resetDbParams();
 			
