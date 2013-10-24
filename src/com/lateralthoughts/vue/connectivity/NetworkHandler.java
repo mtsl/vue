@@ -100,7 +100,7 @@ public class NetworkHandler {
 
   // whle user scrolls down get next 10 aisles
   public void requestMoreAisle(boolean loadMore, String screenname) {
-    Log.i("formdbtrending", "formdbtrending***: requestMoreAisle");
+   
     if (VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
         .isMoreDataAvailable()) {
 
@@ -112,6 +112,7 @@ public class NetworkHandler {
         mOffset += mLimit;
         mLimit = TRENDING_AISLES_BATCH_SIZE;
       }
+      Log.i("listmovingissue", "listmovingissue***: "+mOffset);
       mVueContentGateway.getTrendingAisles(mLimit, mOffset,
           mTrendingAislesParser, loadMore, screenname);
     } else {
@@ -638,8 +639,9 @@ public class NetworkHandler {
   public void makeOffseZero() {
     mOffset = 0;
   }
-  public void setOffset(int offset){
+ /* public void setOffset(int offset){
 	  mOffset = offset;
-  }
+	  Log.i("listmovingissue", "listmovingissue  setting to: "+mOffset);
+  }*/
 
 }
