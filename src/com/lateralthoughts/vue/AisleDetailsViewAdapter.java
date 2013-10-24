@@ -567,7 +567,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 									mViewHolder.edtComment,
 									mViewHolder.commentSend,
 									mViewHolder.edtCommentLay);
-
 						}
 					});
 		} else {

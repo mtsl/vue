@@ -51,12 +51,10 @@ public class TrendingAislesContentParser extends ResultReceiver {
             Log.i("dbInsert", "Suru comment show: aislesListSize: " + aislesList.size());
             DataBaseManager
                 .getInstance(VueApplication.getInstance())
-                .addTrentingAislesFromServerToDB(
-                    VueApplication.getInstance(),
-                    aislesList
-                    /*VueTrendingAislesDataModel.getInstance(
+                .addTrentingAislesFromServerToDB(VueApplication.getInstance(),
+                    aislesList, VueTrendingAislesDataModel.getInstance(
                         VueApplication.getInstance()).getNetworkHandler().mOffset,
-                    true*/);
+                    DataBaseManager.TRENDING);
 
             Log.i("ailsesize",
                 "Suru comment show: " + aislesList.size());

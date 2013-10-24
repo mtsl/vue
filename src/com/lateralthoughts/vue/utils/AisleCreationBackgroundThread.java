@@ -123,62 +123,56 @@ public class AisleCreationBackgroundThread implements Runnable,
 			e.printStackTrace();
 		}
 		VueLandingPageActivity.landingPageActivity
-				.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						if (null != mResponseMessage) {
+.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if (null != mResponseMessage) {
 
-							Log.i("myailsedebug",
-									"myailsedebug: recieved response:  "
-											+ mResponseMessage);
-							try {
-								// JSONObject userInfo = new
-								// JSONObject(jsonArray);
+          Log.i("myailsedebug", "myailsedebug: recieved response:  "
+              + mResponseMessage);
+          try {
+            // JSONObject userInfo = new
+            // JSONObject(jsonArray);
 
-								AisleWindowContent aileItem = new Parser()
-										.getAisleCotent(mResponseMessage);
-								 if(VueLandingPageActivity.getScreenName().equalsIgnoreCase("Trending")) {
-								VueTrendingAislesDataModel
-										.getInstance(
-												VueApplication.getInstance())
-										.addItemToListAt(
-												aileItem.getAisleContext().mAisleId,
-												aileItem, 0);
-								VueTrendingAislesDataModel.getInstance(
-										VueApplication.getInstance())
-										.dataObserver();
-								 }
-								ArrayList<AisleWindowContent> list = new ArrayList<AisleWindowContent>();
-								list.add(aileItem);
-								DataBaseManager.getInstance(
-										VueApplication.getInstance())
-										.addTrentingAislesFromServerToDB(
-												VueApplication.getInstance(),
-												list/*, 0, false*/);
-								// JSONObject user =
-								// userInfo.getJSONObject("user");
-								// TODO: GET THE AISLE OBJECT FROM
-								// THE PARSER CLASE SEND
-								// THE AISLE AND AISLE ID BACK.
-								mAisleUpdateCallback.onAisleUpdated(aileItem
-										.getAisleContext().mAisleId);
-								FlurryAgent.logEvent("Create_Aisle_Success");
-								// VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
-							} catch (Exception ex) {
-								Log.e("Profiling",
-										"Profiling : onResponse() **************** error");
-								ex.printStackTrace();
-							}
-						} else {
-							Toast.makeText(VueApplication.getInstance(),
-									"New Aisle Creation in server is failed.",
-									Toast.LENGTH_LONG).show();
+            AisleWindowContent aileItem = new Parser()
+                .getAisleCotent(mResponseMessage);
+            if (VueLandingPageActivity.getScreenName().equalsIgnoreCase(
+                "Trending")) {
+              VueTrendingAislesDataModel.getInstance(
+                  VueApplication.getInstance()).addItemToListAt(
+                  aileItem.getAisleContext().mAisleId, aileItem, 0);
+              VueTrendingAislesDataModel.getInstance(
+                  VueApplication.getInstance()).dataObserver();
+            }
+            ArrayList<AisleWindowContent> list = new ArrayList<AisleWindowContent>();
+            list.add(aileItem);
+            DataBaseManager.getInstance(VueApplication.getInstance())
+                .addTrentingAislesFromServerToDB(VueApplication.getInstance(),
+                    list, VueTrendingAislesDataModel.getInstance(VueApplication
+                        .getInstance()).getNetworkHandler().mOffset, DataBaseManager.MY_AISLES);
+            // JSONObject user =
+            // userInfo.getJSONObject("user");
+            // TODO: GET THE AISLE OBJECT FROM
+            // THE PARSER CLASE SEND
+            // THE AISLE AND AISLE ID BACK.
+            mAisleUpdateCallback.onAisleUpdated(aileItem.getAisleContext().mAisleId);
+            FlurryAgent.logEvent("Create_Aisle_Success");
+            // VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
+          } catch (Exception ex) {
+            Log.e("Profiling",
+                "Profiling : onResponse() **************** error");
+            ex.printStackTrace();
+          }
+        } else {
+          Toast.makeText(VueApplication.getInstance(),
+              "New Aisle Creation in server is failed.", Toast.LENGTH_LONG)
+              .show();
 
-						}
+        }
 
-						// ///////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////
 
-					}
-				});
+      }
+    });
 	}
 }

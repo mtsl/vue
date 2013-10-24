@@ -33,266 +33,201 @@ import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 
 public class AddImageToAisleBackgroundThread implements Runnable,
-		CountingStringEntity.UploadListener {
-	private NotificationManager mNotificationManager;
-	private Notification mNotification;
-	private int mLastPercent = 0;
-	private VueImage mVueImage = null;
-	private String mResponseMessage = null;
-	private ImageAddedCallback mImageAddedCallback = null;
-	private boolean mFromDetailsScreenFlag;
-	private String mImageId;
+    CountingStringEntity.UploadListener {
+  private NotificationManager mNotificationManager;
+  private Notification mNotification;
+  private int mLastPercent = 0;
+  private VueImage mVueImage = null;
+  private String mResponseMessage = null;
+  private ImageAddedCallback mImageAddedCallback = null;
+  private boolean mFromDetailsScreenFlag;
+  private String mImageId;
 
-	@SuppressWarnings("static-access")
-	public AddImageToAisleBackgroundThread(VueImage vueImage,
-			ImageAddedCallback callback, boolean fromDetailsScreenFlag,
-			String imageId) {
-		mNotificationManager = (NotificationManager) VueApplication
-				.getInstance().getSystemService(
-						VueApplication.getInstance().NOTIFICATION_SERVICE);
-		mVueImage = vueImage;
-		mImageAddedCallback = callback;
-		mFromDetailsScreenFlag = fromDetailsScreenFlag;
-		mImageId = imageId;
-	}
+  @SuppressWarnings("static-access")
+  public AddImageToAisleBackgroundThread(VueImage vueImage,
+      ImageAddedCallback callback, boolean fromDetailsScreenFlag, String imageId) {
+    mNotificationManager = (NotificationManager) VueApplication.getInstance()
+        .getSystemService(VueApplication.getInstance().NOTIFICATION_SERVICE);
+    mVueImage = vueImage;
+    mImageAddedCallback = callback;
+    mFromDetailsScreenFlag = fromDetailsScreenFlag;
+    mImageId = imageId;
+  }
 
-	@Override
-	public void onChange(int percent) {
-		if (percent > mLastPercent) {
-			mNotification.contentView.setProgressBar(R.id.progressBar1, 100,
-					percent, false);
-			mNotificationManager.notify(
-					VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
-					mNotification);
-			mLastPercent = percent;
-		}
-	}
+  @Override
+  public void onChange(int percent) {
+    if (percent > mLastPercent) {
+      mNotification.contentView.setProgressBar(R.id.progressBar1, 100, percent,
+          false);
+      mNotificationManager.notify(
+          VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID, mNotification);
+      mLastPercent = percent;
+    }
+  }
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public void run() {
-		try {
-			Intent notificationIntent = new Intent();
-			PendingIntent contentIntent = PendingIntent.getActivity(
-					VueApplication.getInstance(), 0, notificationIntent, 0);
-			mNotification = new Notification(R.drawable.vue_notification_icon,
-					"Adding Image to Aisle to server",
-					System.currentTimeMillis());
-			mNotification.flags = mNotification.flags
-					| Notification.FLAG_ONGOING_EVENT;
-			mNotification.contentView = new RemoteViews(VueApplication
-					.getInstance().getPackageName(),
-					R.layout.upload_progress_bar);
-			mNotification.contentIntent = contentIntent;
-			mNotification.contentView.setProgressBar(R.id.progressBar1, 100, 0,
-					false);
-			mNotificationManager.notify(
-					VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
-					mNotification);
-			ObjectMapper mapper = new ObjectMapper();
-			URL url = new URL(UrlConstants.CREATE_IMAGE_RESTURL);
-			HttpPut httpPut = new HttpPut(url.toString());
-			CountingStringEntity entity = new CountingStringEntity(
-					mapper.writeValueAsString(mVueImage));
-			entity.setUploadListener(this);
-			System.out.println("Aisle create request: "
-					+ mapper.writeValueAsString(mVueImage));
-			entity.setContentType("application/json;charset=UTF-8");
-			entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
-					"application/json;charset=UTF-8"));
-			httpPut.setEntity(entity);
+  @SuppressWarnings("deprecation")
+  @Override
+  public void run() {
+    try {
+      Intent notificationIntent = new Intent();
+      PendingIntent contentIntent = PendingIntent.getActivity(
+          VueApplication.getInstance(), 0, notificationIntent, 0);
+      mNotification = new Notification(R.drawable.vue_notification_icon,
+          "Adding Image to Aisle to server", System.currentTimeMillis());
+      mNotification.flags = mNotification.flags
+          | Notification.FLAG_ONGOING_EVENT;
+      mNotification.contentView = new RemoteViews(VueApplication.getInstance()
+          .getPackageName(), R.layout.upload_progress_bar);
+      mNotification.contentIntent = contentIntent;
+      mNotification.contentView
+          .setProgressBar(R.id.progressBar1, 100, 0, false);
+      mNotificationManager.notify(
+          VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID, mNotification);
+      ObjectMapper mapper = new ObjectMapper();
+      URL url = new URL(UrlConstants.CREATE_IMAGE_RESTURL);
+      HttpPut httpPut = new HttpPut(url.toString());
+      CountingStringEntity entity = new CountingStringEntity(
+          mapper.writeValueAsString(mVueImage));
+      entity.setUploadListener(this);
+      System.out.println("Aisle create request: "
+          + mapper.writeValueAsString(mVueImage));
+      entity.setContentType("application/json;charset=UTF-8");
+      entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+          "application/json;charset=UTF-8"));
+      httpPut.setEntity(entity);
 
-			DefaultHttpClient httpClient = new DefaultHttpClient();
-			HttpResponse response = httpClient.execute(httpPut);
-			if (response.getEntity() != null
-					&& response.getStatusLine().getStatusCode() == 200) {
-				mNotification.setLatestEventInfo(VueApplication.getInstance(),
-						"Image is Added.", "Image is Added to Aisle.",
-						contentIntent);
-				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-				mNotificationManager.notify(
-						VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
-						mNotification);
-				mResponseMessage = EntityUtils.toString(response.getEntity());
-				System.out.println("AISLE CREATED Response: "
-						+ mResponseMessage);
-				Log.i("myailsedebug",
-						"myailsedebug: recieved response*******:  "
-								+ mResponseMessage);
-			} else {
-				mNotification.setLatestEventInfo(VueApplication.getInstance(),
-						"Uploading Failed.", "Image adding is failed.",
-						contentIntent);
-				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-				mNotificationManager.notify(
-						VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID,
-						mNotification);
-				Log.i("myailsedebug",
-						"myailsedebug: recieved response******* response code :  "
-								+ response.getStatusLine().getStatusCode());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		VueLandingPageActivity.landingPageActivity
-				.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						if (null != mResponseMessage) {
-							if (!mFromDetailsScreenFlag) {
-								Log.i("addimagefuncitonality",
-										"addimagefuncitonality jsonArray response: "
-												+ mFromDetailsScreenFlag);
-								try {
-									AisleImageDetails aisleImageDetails = new Parser()
-											.parseAisleImageData(new JSONObject(
-													mResponseMessage));
-									if (aisleImageDetails != null) {
-										if (VueLandingPageActivity
-												.getScreenName()
-												.equalsIgnoreCase("Trending")) {
-											AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.removeAisleFromList(0);
+      DefaultHttpClient httpClient = new DefaultHttpClient();
+      HttpResponse response = httpClient.execute(httpPut);
+      if (response.getEntity() != null
+          && response.getStatusLine().getStatusCode() == 200) {
+        mNotification.setLatestEventInfo(VueApplication.getInstance(),
+            "Image is Added.", "Image is Added to Aisle.", contentIntent);
+        mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+        mNotificationManager.notify(
+            VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID, mNotification);
+        mResponseMessage = EntityUtils.toString(response.getEntity());
+        System.out.println("AISLE CREATED Response: " + mResponseMessage);
+        Log.i("myailsedebug", "myailsedebug: recieved response*******:  "
+            + mResponseMessage);
+      } else {
+        mNotification.setLatestEventInfo(VueApplication.getInstance(),
+            "Uploading Failed.", "Image adding is failed.", contentIntent);
+        mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+        mNotificationManager.notify(
+            VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID, mNotification);
+        Log.i("myailsedebug",
+            "myailsedebug: recieved response******* response code :  "
+                + response.getStatusLine().getStatusCode());
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    VueLandingPageActivity.landingPageActivity.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if (null != mResponseMessage) {
+          if (!mFromDetailsScreenFlag) {
+            Log.i("addimagefuncitonality",
+                "addimagefuncitonality jsonArray response: "
+                    + mFromDetailsScreenFlag);
+            try {
+              AisleImageDetails aisleImageDetails = new Parser()
+                  .parseAisleImageData(new JSONObject(mResponseMessage));
+              if (aisleImageDetails != null) {
+                if (VueLandingPageActivity.getScreenName().equalsIgnoreCase(
+                    "Trending")) {
+                  AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                      .getInstance(VueApplication.getInstance())
+                      .removeAisleFromList(0);
 
-											VueTrendingAislesDataModel
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.dataObserver();
-											/*
-											 * AisleWindowContent
-											 * aisleWindowContent =
-											 * VueTrendingAislesDataModel
-											 * .getInstance( VueApplication
-											 * .getInstance()) .getAisleAt(
-											 * aisleImageDetails.mOwnerAisleId);
-											 */
+                  VueTrendingAislesDataModel.getInstance(
+                      VueApplication.getInstance()).dataObserver();
+                  /*
+                   * AisleWindowContent aisleWindowContent =
+                   * VueTrendingAislesDataModel .getInstance( VueApplication
+                   * .getInstance()) .getAisleAt(
+                   * aisleImageDetails.mOwnerAisleId);
+                   */
 
-											aisleWindowContent.getImageList()
-													.add(aisleImageDetails);
-											aisleWindowContent.addAisleContent(
-													aisleWindowContent
-															.getAisleContext(),
-													aisleWindowContent
-															.getImageList());
+                  aisleWindowContent.getImageList().add(aisleImageDetails);
+                  aisleWindowContent.addAisleContent(
+                      aisleWindowContent.getAisleContext(),
+                      aisleWindowContent.getImageList());
 
-											Utils.isAisleChanged = true;
-											Utils.mChangeAilseId = aisleWindowContent
-													.getAisleId();
+                  Utils.isAisleChanged = true;
+                  Utils.mChangeAilseId = aisleWindowContent.getAisleId();
 
-											VueTrendingAislesDataModel
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.addItemToListAt(
-															aisleWindowContent
-																	.getAisleId(),
-															aisleWindowContent,
-															0);
-											VueTrendingAislesDataModel
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.dataObserver();
-										}
-										String s[] = { aisleImageDetails.mOwnerAisleId };
-										ArrayList<AisleWindowContent> list = DataBaseManager
-												.getInstance(
-														VueApplication
-																.getInstance())
-												.getAislesFromDB(s);
-										if (list != null) {
-											list.get(0).getImageList()
-													.add(aisleImageDetails);
-											DataBaseManager
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.addTrentingAislesFromServerToDB(
-															VueApplication
-																	.getInstance(),
-															list);
-										}
+                  VueTrendingAislesDataModel.getInstance(
+                      VueApplication.getInstance()).addItemToListAt(
+                      aisleWindowContent.getAisleId(), aisleWindowContent, 0);
+                  VueTrendingAislesDataModel.getInstance(
+                      VueApplication.getInstance()).dataObserver();
+                }
+                String s[] = {aisleImageDetails.mOwnerAisleId};
+                ArrayList<AisleWindowContent> list = DataBaseManager
+                    .getInstance(VueApplication.getInstance()).getAislesFromDB(
+                        s);
+                if (list != null) {
+                  list.get(0).getImageList().add(aisleImageDetails);
+                  DataBaseManager.getInstance(VueApplication.getInstance())
+                      .addTrentingAislesFromServerToDB(
+                          VueApplication.getInstance(), list, VueTrendingAislesDataModel.getInstance(
+                              VueApplication.getInstance()).getNetworkHandler().mOffset, DataBaseManager.MY_AISLES);
+                }
 
-									}
-								} catch (JSONException e) {
-									e.printStackTrace();
-								}
-							} else {
-								AisleImageDetails aisleImageDetails = null;
-								try {
-									aisleImageDetails = new Parser()
-											.parseAisleImageData(new JSONObject(
-													mResponseMessage));
-								} catch (JSONException e) {
-								}
-								if (aisleImageDetails != null) {
-									AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
-											.getInstance(
-													VueApplication
-															.getInstance())
-											.getAisleAt(
-													aisleImageDetails.mOwnerAisleId);
-									if (aisleWindowContent != null) {
-										aisleWindowContent = VueTrendingAislesDataModel
-												.getInstance(
-														VueApplication
-																.getInstance())
-												.getAisleFromList(
-														aisleWindowContent);
-										if (aisleWindowContent != null) {
-											aisleWindowContent
-													.getAisleImageForImageId(
-															mImageId,
-															aisleImageDetails.mImageUrl,
-															aisleImageDetails.mId);
-											aisleWindowContent.addAisleContent(
-													aisleWindowContent
-															.getAisleContext(),
-													aisleWindowContent
-															.getImageList());
-											VueTrendingAislesDataModel
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.dataObserver();
-											try {
-												String s[] = { aisleImageDetails.mOwnerAisleId };
-												ArrayList<AisleWindowContent> list = DataBaseManager
-														.getInstance(
-																VueApplication
-																		.getInstance())
-														.getAislesFromDB(s);
-												if (list != null) {
-													list.get(0)
-															.getImageList()
-															.add(aisleImageDetails);
-													DataBaseManager
-															.getInstance(
-																	VueApplication
-																			.getInstance())
-															.addTrentingAislesFromServerToDB(
-																	VueApplication
-																			.getInstance(),
-																	list);
-												}
-											} catch (Exception e) {
+              }
+            } catch (JSONException e) {
+              e.printStackTrace();
+            }
+          } else {
+            AisleImageDetails aisleImageDetails = null;
+            try {
+              aisleImageDetails = new Parser()
+                  .parseAisleImageData(new JSONObject(mResponseMessage));
+            } catch (JSONException e) {
+            }
+            if (aisleImageDetails != null) {
+              AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                  .getInstance(VueApplication.getInstance()).getAisleAt(
+                      aisleImageDetails.mOwnerAisleId);
+              if (aisleWindowContent != null) {
+                aisleWindowContent = VueTrendingAislesDataModel.getInstance(
+                    VueApplication.getInstance()).getAisleFromList(
+                    aisleWindowContent);
+                if (aisleWindowContent != null) {
+                  aisleWindowContent.getAisleImageForImageId(mImageId,
+                      aisleImageDetails.mImageUrl, aisleImageDetails.mId);
+                  aisleWindowContent.addAisleContent(
+                      aisleWindowContent.getAisleContext(),
+                      aisleWindowContent.getImageList());
+                  VueTrendingAislesDataModel.getInstance(
+                      VueApplication.getInstance()).dataObserver();
+                  try {
+                    String s[] = {aisleImageDetails.mOwnerAisleId};
+                    ArrayList<AisleWindowContent> list = DataBaseManager
+                        .getInstance(VueApplication.getInstance())
+                        .getAislesFromDB(s);
+                    if (list != null) {
+                      list.get(0).getImageList().add(aisleImageDetails);
+                      DataBaseManager.getInstance(VueApplication.getInstance())
+                          .addTrentingAislesFromServerToDB(
+                              VueApplication.getInstance(), list, VueTrendingAislesDataModel.getInstance(
+                                  VueApplication.getInstance()).getNetworkHandler().mOffset, DataBaseManager.MY_AISLES);
+                    }
+                  } catch (Exception e) {
 
-											}
-										}
-									}
-								}
-							}
-						} else {
-							Toast.makeText(VueApplication.getInstance(),
-									"Add Image To Aisle in server is failed.",
-									Toast.LENGTH_LONG).show();
+                  }
+                }
+              }
+            }
+          }
+        } else {
+          Toast.makeText(VueApplication.getInstance(),
+              "Add Image To Aisle in server is failed.", Toast.LENGTH_LONG)
+              .show();
 
-						}
-					}
-				});
-	}
+        }
+      }
+    });
+  }
 }
