@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,8 +57,9 @@ public class OtherSourcesImageAdapter extends BaseAdapter {
 			holder = (ViewHolder) vi.getTag();
 
 		if (mListImages.get(position).getImageUri() != null) {
-			holder.imgViewImage.setImageURI(mListImages.get(position)
-					.getImageUri());
+			holder.imgViewImage.setImageBitmap(BitmapFactory
+					.decodeFile(mListImages.get(position).getImageUri()
+							.getPath()));
 		} else {
 			holder.imgViewImage
 					.setTag(mListImages.get(position).getOriginUrl());
