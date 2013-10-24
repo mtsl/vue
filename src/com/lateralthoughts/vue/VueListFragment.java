@@ -439,29 +439,29 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		List<ListOptionItem> categoriesChildren = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Apparel),
-				R.drawable.comment, null);
+				R.drawable.apparel, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Beauty),
-				R.drawable.comment, null);
+				R.drawable.beauty, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Electronics),
-				R.drawable.comment, null);
+				R.drawable.electronics, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Entertainment),
-				R.drawable.comment, null);
+				R.drawable.vue_launcher_icon, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Events),
-				R.drawable.comment, null);
+				R.drawable.events, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Food),
-				R.drawable.comment, null);
+				R.drawable.food, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Home),
-				R.drawable.comment, null);
+				R.drawable.home, null);
 		categoriesChildren.add(item);
 
 		return categoriesChildren;
@@ -577,10 +577,10 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 			} else {
 				holder = (Holder) convertView.getTag();
 			}
-			// groups.get(groupPosition).children.get(childPosition).iconRes
+			holder.icon.setImageResource(groups.get(groupPosition).children.get(childPosition).iconRes);
 			// (This line of code will be used to set the icons for children at
 			// below line when get all the icons).
-			holder.icon.setImageResource(R.drawable.vue_launcher_icon);
+			//holder.icon.setImageResource(R.drawable.vue_launcher_icon);
 			holder.itemName.setText(groups.get(groupPosition).children
 					.get(childPosition).tag);
 			return convertView;
