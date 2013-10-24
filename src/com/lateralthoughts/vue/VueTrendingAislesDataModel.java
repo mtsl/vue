@@ -42,6 +42,7 @@ public class VueTrendingAislesDataModel {
 	private long mKeepAliveTime = 10;
 	public boolean mMoreDataAvailable = true;
 	private boolean mMarkAislesToDelete = false;
+	public boolean isFromDb = false;
 
 	// ===== The following set of variables are used for state management
 	// ==================================
@@ -200,13 +201,11 @@ public class VueTrendingAislesDataModel {
 	   return mAisleContentList.size();
 	 
   }
-
-  
 	public Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			@SuppressWarnings("unchecked")
 			ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
-			Log.i("formdbtrending", "formdbtrending: mHandler");
+			isFromDb = true;
 			for (AisleWindowContent content : aisleContentArray) {
 				AisleWindowContent aisleItem = getAisleItem(content
 						.getAisleId());
@@ -226,6 +225,7 @@ public class VueTrendingAislesDataModel {
 					Log.i("arrayList", "arrayList from db sized1: "+aislesList.size());
 					if (aislesList.size() == 0) {
 						loadOnRequest = true;
+						//isFromDb = false;
 						return;
 					}
 					Message msg = new Message();

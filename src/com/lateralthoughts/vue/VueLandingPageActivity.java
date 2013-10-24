@@ -659,6 +659,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
 			VueTrendingAislesDataModel.getInstance(VueApplication
 					.getInstance()).loadOnRequest = false;
+		 
+			 VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).isFromDb = true;
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 					.clearContent();
 			Log.i("formdbtrending", "formdbtrending: showPreviousScreen");
@@ -671,6 +673,11 @@ public class VueLandingPageActivity extends BaseActivity {
 					.getNetworkHandler()
 					.reqestByCategory(screenName, new ProgresStatus(),
 							fromServer, loadMore, screenName);
+			VueTrendingAislesDataModel
+			.getInstance(VueLandingPageActivity.this)
+			.getNetworkHandler().setmOffset(	VueTrendingAislesDataModel
+					.getInstance(VueLandingPageActivity.this)
+					.listSize());
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
 			Log.i("meoptions", "meoptions: MyAisle");

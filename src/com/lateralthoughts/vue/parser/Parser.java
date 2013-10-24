@@ -3,6 +3,7 @@ package com.lateralthoughts.vue.parser;
 import android.util.Log;
 import com.lateralthoughts.vue.*;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.utils.UrlConstants;
 
 import org.apache.http.HttpResponse;
@@ -132,15 +133,32 @@ public class Parser {
 		aisleImageDetails.mTitle = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_TITLE);
 		JSONArray jsonArray = jsonObject.getJSONArray(VueConstants.AISLE_IMAGE_COMMENTS);
-		ArrayList<String> commentList = new ArrayList<String>();
-		 if(jsonArray != null){
-			
-			 for(int i = 0;i < jsonArray.length();i++){
-				 JSONObject commnetObj = jsonArray.getJSONObject(i);
-				 commentList.add(commnetObj.getString(VueConstants.COMMENT));
-				 
-			 }
-		 }
+ 
+		Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray.length() " + jsonArray.toString());
+		ArrayList<ImageComments> commentList = new ArrayList<ImageComments>();
+		if (jsonArray != null) {
+			ImageComments imgComments;
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject commnetObj = jsonArray.getJSONObject(i);
+				imgComments = new ImageComments();
+				imgComments.Id = commnetObj
+						.getLong(VueConstants.AISLE_IMAGE_COMMENTS_ID);
+				imgComments.imageId = commnetObj
+						.getLong(VueConstants.AISLE_IMAGE_COMMENTS_IMAGEID);
+				imgComments.comment = commnetObj
+						.getString(VueConstants.COMMENT);
+				if (commnetObj.getString(
+						VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME)
+						.equals("null")) {
+					imgComments.lastModifiedTimestamp = commnetObj
+							.getLong(VueConstants.AISLE_IMAGE_COMMENTS_CREATED_TIME);
+				} else {
+					imgComments.lastModifiedTimestamp = commnetObj
+							.getLong(VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME);
+				}
+				commentList.add(imgComments);
+			}
+		}
 		 aisleImageDetails.mCommentsList = commentList;
 		return aisleImageDetails;
 	}
@@ -328,7 +346,7 @@ public class Parser {
 		}
 		return aisleIdList;
 	}
-   public ArrayList<String> parseComments(JSONArray jsonArray) throws JSONException{
+/*   public ArrayList<String> parseComments(JSONArray jsonArray) throws JSONException{
 	   ArrayList<String> commentList = new ArrayList<String>();
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -336,7 +354,7 @@ public class Parser {
 				commentList.add(userComment);
 		}
 		return commentList;
-   }
+   }*/
    
 	public VueUser parseUserData(String response) {
 		try {

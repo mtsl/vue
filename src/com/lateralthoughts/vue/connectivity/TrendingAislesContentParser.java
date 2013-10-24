@@ -48,7 +48,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
             final ArrayList<AisleWindowContent> aislesList = new Parser()
                 .parseTrendingAislesResultData(resultData.getString("result"),
                     resultData.getBoolean("loadMore"));
-            Log.i("dbInsert", "dbInsert1 aislesListSize: " + aislesList.size());
+            Log.i("dbInsert", "Suru comment show: aislesListSize: " + aislesList.size());
             DataBaseManager
                 .getInstance(VueApplication.getInstance())
                 .addTrentingAislesFromServerToDB(
@@ -59,7 +59,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                     true*/);
 
             Log.i("ailsesize",
-                "ailseListSizemaintrending: " + aislesList.size());
+                "Suru comment show: " + aislesList.size());
 
             boolean refreshListFlag = false;
 

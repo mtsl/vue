@@ -527,6 +527,17 @@ public class VueContentProvider extends ContentProvider{
                 + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
                     : ""), selectionArgs);
         break;
+      case COMMENTS_TABLE_MATCH:
+        rowsUpdated = aislesDB.update(VueConstants.COMMENTS_ON_IMAGES_TABLE, values,
+            selection, selectionArgs);
+        break;
+      case COMMENTS_ROW_MATCH:
+        id = uri.getLastPathSegment();
+        rowsUpdated = aislesDB.update(VueConstants.COMMENTS_ON_IMAGES_TABLE, values,
+            VueConstants.ID + "=" + id
+                + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
+                    : ""), selectionArgs);
+        break;
     }
     return rowsUpdated;
   }
