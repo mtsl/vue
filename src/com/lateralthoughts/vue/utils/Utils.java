@@ -631,7 +631,12 @@ public class Utils {
 			imageHeight = adjustedImageHeight;
 			imageWidth = adjustedImageWidth;
 		}
-
+		Log.e("Utils", "getBestDementions orignal width ??? " + originalWidth
+				+ "?? original height ?? " + originalHeight
+				+ "??? availablewidth ?? " + availableScreenWidth
+				+ "??? avaialable height ???" + availableScreenHeight
+				+ "??? image width ???" + imageWidth + "?? image height ???"
+				+ imageHeight);
 		return BitmapLoaderUtils.getInstance().getBitmap(bitmap,
 				(int) imageWidth, (int) imageHeight);
 	}

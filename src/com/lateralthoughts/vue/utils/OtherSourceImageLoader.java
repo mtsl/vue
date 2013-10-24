@@ -45,7 +45,7 @@ public class OtherSourceImageLoader {
 		String filename = String.valueOf(url.hashCode());
 		File f = mFileCache.getVueAppResizedPictureFile(filename);
 		if (f.exists())
-			imageView.setImageURI(Uri.fromFile(f));
+			imageView.setImageBitmap(BitmapFactory.decodeFile(f.getPath()));
 		else {
 			queuePhoto(url, imageView);
 			imageView.setImageResource(stub_id);
@@ -217,7 +217,7 @@ public class OtherSourceImageLoader {
 
 		public void run() {
 			if (f != null && f.exists())
-				imageView.setImageURI(Uri.fromFile(f));
+				imageView.setImageBitmap(BitmapFactory.decodeFile(f.getPath()));
 			else
 				imageView.setImageResource(R.drawable.no_image);
 		}
