@@ -4,17 +4,18 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.LruCache;
 import android.util.TypedValue;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnAppName;
-import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -178,6 +179,16 @@ public class VueApplication extends Application {
 		 * crittercismConfig);
 		 */
 
+        mImageLoader = new ImageLoader(mVolleyRequestQueue, new ImageLoader.ImageCache() {
+            private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(100);
+            public void putBitmap(String url, Bitmap bitmap) {
+                mCache.put(url, bitmap);
+            }
+            public Bitmap getBitmap(String url) {
+                return mCache.get(url);
+            }
+        });
+
 	}
 
 	public static VueApplication getInstance() {
@@ -286,6 +297,11 @@ public class VueApplication extends Application {
 	 * 
 	 * return sBitmapCache; }
 	 */
+    public ImageLoader getImageCacheLoader(){
+        return mImageLoader;
+    }
+
 	private BitmapCache sBitmapCache;
+    private ImageLoader mImageLoader;
 
 }

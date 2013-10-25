@@ -8,14 +8,13 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.*;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.*;
@@ -89,10 +88,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         // TODO Auto-generated method stub
         mWindowContent = windowContent;
         mAisleImageDetails = mWindowContent.getImageList();
-        
-        
-        //lets file cache the first two items in the list
-       // queueImagePrefetch(mAisleImageDetails, mWindowContent.getBestHeightForWindow(), 1,2);
     }
     
     @Override
@@ -125,18 +120,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     public void unregisterAisleDataObserver(IAisleDataObserver observer){
     }
     //========================= Methods from the inherited IAisleContentAdapter ========================//
-    
-    
-    public void queueImagePrefetch(ArrayList<AisleImageDetails> imageList, int bestHeight, int startIndex, int count){
-        BitmapsToFetch p = new BitmapsToFetch(imageList, bestHeight, startIndex, count);
-        mExecutorService.submit(new ImagePrefetcher(p));
-    }
-/*    public void setSourceName(String name) {
-    	mSourceName = name;
-    }
-    public String getSourceName(){
-    	return mSourceName;
-    }*/
+
     //Task for the queue
     private class BitmapsToFetch
     {
@@ -271,7 +255,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             imageView = mImageViewFactory.getEmptyImageView();
             Bitmap bitmap = null;
             if(contentBrowser.getmSourceName()!= null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
-            	 bitmap = getCachedBitmap(itemDetails.mImageUrl);
+            	 //bitmap = getCachedBitmap(itemDetails.mImageUrl);
             } else {
              // bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
               Log.i("imageResize", "imageResize custom from cache 1");
@@ -285,21 +269,22 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             				   loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView,wantedIndex);
             			}
             	 }
-            	
             
                 imageView.setImageBitmap(bitmap);
-                	contentBrowser.addView(imageView);
+                contentBrowser.addView(imageView);
                  
             }
             else{
             	if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             		int bestHeight = mWindowContent.getBestLargetHeightForWindow();
-            		loadBitmap(itemDetails,bestHeight,contentBrowser, imageView,wantedIndex);
+            		//loadBitmap(itemDetails,bestHeight,contentBrowser, imageView,wantedIndex);
+                    ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader());
                 contentBrowser.addView(imageView);
             	} else {
             		int bestHeight = mWindowContent.getBestHeightForWindow();
-            		 loadBitmap(itemDetails,itemDetails.mTrendingImageHeight,contentBrowser, imageView,wantedIndex);
-                           	contentBrowser.addView(imageView);
+            		 //loadBitmap(itemDetails,itemDetails.mTrendingImageHeight,contentBrowser, imageView,wantedIndex);
+                     contentBrowser.addView(imageView);
+                    ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader());
                             
             	}
             }

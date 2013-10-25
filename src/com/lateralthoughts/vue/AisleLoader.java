@@ -1,33 +1,27 @@
 package com.lateralthoughts.vue;
 
-import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-
-//import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
+import com.android.volley.toolbox.NetworkImageView;
+import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
-import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
+import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
-import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
+
+import java.io.File;
+import java.util.ArrayList;
+
+//import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
 
 public class AisleLoader {
 	private static final boolean DEBUG = false;
@@ -173,17 +167,15 @@ public class AisleLoader {
 				// ((ScaleImageView)contentBrowser.getChildAt(i)).setContainerObject(null);
 				mViewFactory
 						.returnUsedImageView((ScaleImageView) contentBrowser
-								.getChildAt(i));
+                                .getChildAt(i));
 			}
 			Log.i("calling", "calling new view   ");
 			IAisleContentAdapter adapter = mContentAdapterFactory
 					.getAisleContentAdapter();
 			mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser
-					.getCustomAdapter());
+                    .getCustomAdapter());
 			holder.aisleContentBrowser.setCustomAdapter(null);
 			adapter.setContentSource(desiredContentId, holder.mWindowContent);
-			holder.aisleContentBrowser.setCustomAdapter(adapter);
-			holder.uniqueContentId = desiredContentId;
 			holder.aisleContentBrowser.removeAllViews();
 			holder.aisleContentBrowser.setUniqueId(desiredContentId);
 			holder.aisleContentBrowser.setScrollIndex(scrollIndex);
@@ -219,7 +211,6 @@ public class AisleLoader {
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
-
 				contentBrowser.addView(imageView);
 				if (!placeholderOnly)
 					loadBitmap(itemDetails.mCustomImageUrl,
@@ -253,7 +244,7 @@ public class AisleLoader {
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
 			String asileId, AisleImageDetails itemDetails) {
-		if(Utils.isAisleChanged){
+		/*if(Utils.isAisleChanged){
 			Utils.isAisleChanged = false;
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
 					bestHeight, asileId, itemDetails);
@@ -268,102 +259,7 @@ public class AisleLoader {
 			String[] urlsArray = { loc, serverImageUrl };
 			task.execute(urlsArray);
 		}
-		}
-		/*
-		 * ((ScaleImageView) imageView).setImageUrl(serverImageUrl, new
-		 * ImageLoader(VueApplication.getInstance().getRequestQueue(),
-		 * VueApplication.getInstance().getBitmapCache()),
-		 * VueApplication.getInstance().getVueDetailsCardWidth() / 2,
-		 * bestHeight);
-		 */
-	}
-
-	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
-		private final WeakReference<ImageView> imageViewReference;
-		private final WeakReference<AisleContentBrowser> viewFlipperReference;
-		private String url = null;
-		private int mBestHeight;
-
-		AisleImageDetails mItemDetails;
-
-		public BitmapWorkerTask(AisleContentBrowser vFlipper,
-				ImageView imageView, int bestHeight, String aisleId,
-				AisleImageDetails itemDetails) {
-			// Use a WeakReference to ensure the ImageView can be garbage
-			// collected
-			imageViewReference = new WeakReference<ImageView>(imageView);
-			viewFlipperReference = new WeakReference<AisleContentBrowser>(
-					vFlipper);
-
-			mItemDetails = itemDetails;
-		}
-
-		// Decode image in background.
-		@Override
-		protected Bitmap doInBackground(String... params) {
-			url = params[0];
-			Bitmap bmp = null;
-			// we want to get the bitmap and also add it into the memory cache
-			boolean cacheBitmap = false;
-			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheBitmap,
-					mItemDetails.mTrendingImageHeight,
-					mItemDetails.mTrendingImageWidth, Utils.TRENDING_SCREEN);
-			return bmp;
-		}
-
-		// Once complete, see if ImageView is still around and set bitmap.
-		@Override
-		protected void onPostExecute(Bitmap bitmap) {
-
-			if (viewFlipperReference != null && imageViewReference != null
-					&& bitmap != null) {
-				final ImageView imageView = imageViewReference.get();
-				BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
-				if (this == bitmapWorkerTask) {
-					ViewHolder holder = (ViewHolder) ((ScaleImageView) imageView)
-							.getContainerObject();
-					if (null != holder) {
-						holder.aisleContext.setVisibility(View.VISIBLE);
-						holder.aisleOwnersName.setVisibility(View.VISIBLE);
-						holder.profileThumbnail.setVisibility(View.VISIBLE);
-						holder.aisleDescriptor.setVisibility(View.VISIBLE);
-					}
-					imageView.setImageBitmap(bitmap);
-					if (mListener.isFlingCalled()) {
-						// mListener.refreshList();
-					}
-				}
-			}
-		}
-	}
-
-	// utility functions to keep track of all the async tasks that we
-	// instantiate
-	private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
-		if (imageView != null) {
-			Object task = ((ScaleImageView) imageView).getOpaqueWorkerObject();
-			if (task instanceof BitmapWorkerTask) {
-				BitmapWorkerTask workerTask = (BitmapWorkerTask) task;
-				return workerTask;
-			}
-		}
-		return null;
-	}
-
-	private static boolean cancelPotentialDownload(String url,
-			ImageView imageView) {
-		BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
-		if (bitmapWorkerTask != null) {
-			String bitmapUrl = bitmapWorkerTask.url;
-			if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
-				bitmapWorkerTask.cancel(true);
-			} else {
-				// The same URL is already being downloaded.
-				return false;
-			}
-		}
-		return true;
+		}*/
+        ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader() );
 	}
 }
