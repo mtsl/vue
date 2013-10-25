@@ -270,7 +270,11 @@ public class DataBaseManager {
     }
     if(mEndPosition == 0) {
       if(cursor.moveToFirst()) {
+    	  if(cursor.getString(cursor.getColumnIndex(VueConstants.ID)) != null) {
         mEndPosition = Integer.parseInt(cursor.getString(cursor.getColumnIndex(VueConstants.ID)));
+    	  } else {
+    		  mStartPosition = 1000;
+    	  }
       } else {
         mEndPosition = 1000;
       }

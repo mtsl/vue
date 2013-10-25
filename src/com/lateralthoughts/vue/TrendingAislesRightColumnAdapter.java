@@ -162,24 +162,9 @@ public class TrendingAislesRightColumnAdapter extends
 			holder.aisleOwnersName.setText("Anonymous");
 		}
 
-		StringBuilder contextBuilder = new StringBuilder();
-		contextBuilder.append(context.mOccasion).append(" : ")
-				.append(context.mLookingForItem);
-		// TODO: this is just temporary: currently the occasion and context info
-		// is
-		// coming out as occasion_clothing and lookingfor_clothing and stuff
-		// like that.
-		// just display something a little more realistic so we can see what the
-		// app
-		// actually look like
-		int index = position / mPossibleOccasions.length;
-		if (index >= mPossibleOccasions.length)
-			index = 0;
-		String occasion = mPossibleOccasions[index];
-		index = position / mPossibleCategories.length;
-		if (index >= mPossibleCategories.length)
-			index = 0;
-		String lookingFor = mPossibleCategories[index];
+		// Title (lookingfor and occasion)
+		String occasion = null;
+		String lookingFor = null;
 		if (context.mOccasion != null && context.mOccasion.length() > 1) {
 			occasion = context.mOccasion;
 		}
@@ -197,10 +182,14 @@ public class TrendingAislesRightColumnAdapter extends
 			lookingFor = Character.toString(lookingFor.charAt(0)).toUpperCase()
 					+ lookingFor.substring(1);
 		}
-
-		holder.aisleContext.setText(occasion + " : " + lookingFor);
-
-		// holder.aisleContext.setText(contextBuilder.toString());
+		String title = "";
+		if (occasion != null) {
+			title = occasion + " : ";
+		}
+		if (lookingFor != null) {
+			title = title + lookingFor;
+		}
+		holder.aisleContext.setText(title);
 		return convertView;
 	}
 

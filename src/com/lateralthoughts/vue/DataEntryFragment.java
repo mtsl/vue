@@ -194,7 +194,6 @@ public class DataEntryFragment extends Fragment {
 				.findViewById(R.id.categoerypopup);
 		mCategoryText = (TextView) mDataEntryFragmentView
 				.findViewById(R.id.categorytext);
-		mCategoryText.setText(mCategoryitemsArray[0]);
 		mCategoryListview = (ListView) mDataEntryFragmentView
 				.findViewById(R.id.categorylistview);
 		mCategoryListviewLayout = (LinearLayout) mDataEntryFragmentView
@@ -304,14 +303,16 @@ public class DataEntryFragment extends Fragment {
 												Utils.getDataentryScreenAisleId(getActivity()))
 										.getAisleContext().mCategory);
 					} catch (Exception e) {
-						mCategoryText
-								.setText(mCategoryAilseKeywordsList.get(0));
+						/*
+						 * mCategoryText
+						 * .setText(mCategoryAilseKeywordsList.get(0));
+						 */
 					}
 				} else {
-					mCategoryText.setText(mCategoryAilseKeywordsList.get(0));
+					// mCategoryText.setText(mCategoryAilseKeywordsList.get(0));
 				}
 			} else {
-				mCategoryText.setText(mCategoryAilseKeywordsList.get(0));
+				// mCategoryText.setText(mCategoryAilseKeywordsList.get(0));
 			}
 		}
 		mSaySomethingAboutAisle
@@ -917,8 +918,7 @@ public class DataEntryFragment extends Fragment {
 		hideAllEditableTextboxes();
 		if (!(mLookingForBigText.getText().toString().trim()
 				.equals(LOOKING_FOR))
-				&& !(mOccassionBigText.getText().toString().trim()
-						.equals(OCCASION))) {
+				&& (mCategoryText.getText().toString().trim().length() > 0)) {
 			if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
 				addImageToAisle();
 			} else {
@@ -1034,8 +1034,13 @@ public class DataEntryFragment extends Fragment {
 				}
 			}
 		} else {
-			showAlertForMandotoryFields(getResources().getString(
-					R.string.dataentry_mandtory_field_mesg));
+			if (mCategoryText.getText().toString().trim().length() == 0) {
+				categoryIconClickFunctionality();
+				showAlertForMandotoryFields("choose a category");
+			} else {
+				showAlertForMandotoryFields(getResources().getString(
+						R.string.dataentry_mandtory_field_mesg));
+			}
 		}
 	}
 
@@ -1707,22 +1712,26 @@ public class DataEntryFragment extends Fragment {
 				lookingForAisleDataObj.time = currentTime;
 				mDbManager.addAisleMetaDataToDB(VueConstants.LOOKING_FOR_TABLE,
 						lookingForAisleDataObj);
-				AisleData occassionAisleDataObj = mDbManager
-						.getAisleMetaDataForKeyword(mOccassionBigText.getText()
-								.toString().trim(), VueConstants.OCCASION_TABLE);
-				if (occassionAisleDataObj != null) {
-					occassionAisleDataObj.count += 1;
-					occassionAisleDataObj.isNew = false;
-				} else {
-					occassionAisleDataObj = new AisleData();
-					occassionAisleDataObj.keyword = mOccassionBigText.getText()
-							.toString().trim();
-					occassionAisleDataObj.count = 1;
-					occassionAisleDataObj.isNew = true;
+				if (!(mOccassionBigText.getText().toString().trim()
+						.equals(OCCASION.trim()))) {
+					AisleData occassionAisleDataObj = mDbManager
+							.getAisleMetaDataForKeyword(mOccassionBigText
+									.getText().toString().trim(),
+									VueConstants.OCCASION_TABLE);
+					if (occassionAisleDataObj != null) {
+						occassionAisleDataObj.count += 1;
+						occassionAisleDataObj.isNew = false;
+					} else {
+						occassionAisleDataObj = new AisleData();
+						occassionAisleDataObj.keyword = mOccassionBigText
+								.getText().toString().trim();
+						occassionAisleDataObj.count = 1;
+						occassionAisleDataObj.isNew = true;
+					}
+					occassionAisleDataObj.time = currentTime;
+					mDbManager.addAisleMetaDataToDB(
+							VueConstants.OCCASION_TABLE, occassionAisleDataObj);
 				}
-				occassionAisleDataObj.time = currentTime;
-				mDbManager.addAisleMetaDataToDB(VueConstants.OCCASION_TABLE,
-						occassionAisleDataObj);
 				AisleData categoryAisleDataObj = mDbManager
 						.getAisleMetaDataForKeyword(mCategoryText.getText()
 								.toString().trim(), VueConstants.CATEGORY_TABLE);
@@ -1752,7 +1761,11 @@ public class DataEntryFragment extends Fragment {
 				.trim().length() > 0) || mImagePath != null) {
 			String categoery = mCategoryText.getText().toString().trim();
 			String lookingFor = mLookingForBigText.getText().toString().trim();
-			String occassion = mOccassionBigText.getText().toString().trim();
+			String occassion = null;
+			if (!(mOccassionBigText.getText().toString().trim().equals(OCCASION
+					.trim()))) {
+				occassion = mOccassionBigText.getText().toString().trim();
+			}
 			String description = mSaySomethingAboutAisle.getText().toString()
 					.trim();
 			String findAt = mFindAtText.getText().toString();
@@ -1838,7 +1851,7 @@ public class DataEntryFragment extends Fragment {
 			final String imageId) {
 		if ((mOtherSourceSelectedImageUrl != null && mOtherSourceSelectedImageUrl
 				.trim().length() > 0) || mImagePath != null) {
-			
+
 			final VueImage image = new VueImage();
 			String detailsUrl = mFindAtText.getText().toString();
 			image.setDetailsUrl(detailsUrl);
