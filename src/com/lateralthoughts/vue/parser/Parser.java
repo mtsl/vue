@@ -98,7 +98,8 @@ public class Parser {
 			throws JSONException {
 		if (logStatus) {
 			Log.e("Parser",
-					"abcparserAisleImageData: Response " + jsonObject.toString());
+					"abcparserAisleImageData: Response "
+							+ jsonObject.toString());
 			logStatus = false;
 		}
 		AisleImageDetails aisleImageDetails = new AisleImageDetails();
@@ -132,9 +133,12 @@ public class Parser {
 				.getString(VueConstants.AISLE_IMAGE_STORE);
 		aisleImageDetails.mTitle = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_TITLE);
-		JSONArray jsonArray = jsonObject.getJSONArray(VueConstants.AISLE_IMAGE_COMMENTS);
- 
-		Log.e("DataBaseManager", "Suru comment show: PARSER COMMENT: jsonArray.length() " + jsonArray.toString());
+		JSONArray jsonArray = jsonObject
+				.getJSONArray(VueConstants.AISLE_IMAGE_COMMENTS);
+
+		Log.e("DataBaseManager",
+				"Suru comment show: PARSER COMMENT: jsonArray.length() "
+						+ jsonArray.toString());
 		ArrayList<ImageComments> commentList = new ArrayList<ImageComments>();
 		if (jsonArray != null) {
 			ImageComments imgComments;
@@ -159,7 +163,7 @@ public class Parser {
 				commentList.add(imgComments);
 			}
 		}
-		 aisleImageDetails.mCommentsList = commentList;
+		aisleImageDetails.mCommentsList = commentList;
 		return aisleImageDetails;
 	}
 
@@ -194,8 +198,9 @@ public class Parser {
 			if (responseMessage != null) {
 				Log.i("Parser", responseMessage);
 				JSONObject mainJsonObject = new JSONObject(responseMessage);
-				if(aisleId.equals("5567688512372736"))
-				Log.i ("Comment Response: ","Comment Response: " + responseMessage);
+				if (aisleId.equals("5567688512372736"))
+					Log.i("Comment Response: ", "Comment Response: "
+							+ responseMessage);
 				JSONArray jsonArray = mainJsonObject.getJSONArray("images");
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -252,16 +257,21 @@ public class Parser {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
 			if ("4823662737752064".equalsIgnoreCase(aisleContext.mAisleId)) {
 				logStatus = true;
-				Log.e("Parser",
-						"abcparserAisleAisleData: Response  "+josnObject.toString());
+				Log.e("Parser", "abcparserAisleAisleData: Response  "
+						+ josnObject.toString());
 			}
 			aisleContext.mCategory = josnObject
 					.getString(VueConstants.AISLE_CATEGORY);
 			aisleContext.mLookingForItem = josnObject
 					.getString(VueConstants.AISLE_LOOKINGFOR);
 			aisleContext.mName = josnObject.getString(VueConstants.AISLE_NAME);
-			aisleContext.mOccasion = josnObject
+			String occasion = josnObject
 					.getString(VueConstants.AISLE_OCCASSION);
+			if (occasion == null || occasion.equals("null")) {
+				aisleContext.mOccasion = "";
+			} else {
+				aisleContext.mOccasion = occasion;
+			}
 			aisleContext.mUserId = josnObject
 					.getString(VueConstants.AISLE_OWNER_USER_ID);
 			String firstName = josnObject
@@ -303,59 +313,74 @@ public class Parser {
 		return aisleContext;
 	}
 
-  public ArrayList<AisleBookmark> parseBookmarkedAisles(String response) {
-    Log.i("bookmarked aisle", "bookmarked aisle: " + response);
-    ArrayList<AisleBookmark> aisleIdList = new ArrayList<AisleBookmark>();
-    AisleBookmark bookmarkAisle = null;
-    try {
-      JSONArray jsonArray = new JSONArray(response);
-      if (jsonArray != null && jsonArray.length() > 0) {
-        for (int i = 0; i < jsonArray.length(); i++) {
-          bookmarkAisle = new AisleBookmark();
-          bookmarkAisle.setAisleId(Long.parseLong(jsonArray.getJSONObject(i)
-              .getString(VueConstants.AISLE_Id)));
-          bookmarkAisle.setId(jsonArray.getJSONObject(i).getLong(
-              VueConstants.JSON_OBJ_ID));
-          bookmarkAisle.setId(jsonArray.getJSONObject(i).getLong(
-              VueConstants.JSON_OBJ_ID));
-              bookmarkAisle.setBookmarked((jsonArray.getJSONObject(i).getString(
-                  VueConstants.BOOKMARKED).equals("true")) ? true : false);
-          aisleIdList.add(bookmarkAisle);
-        }
-        for(AisleBookmark m : aisleIdList) {
-          Log.i("bookmarked aisle", "bookmarked aisle: with duplicates: ID; " + m.getId());
-          Log.i("bookmarked aisle", "bookmarked aisle: with duplicates: AisleID; " + m.getAisleId());
-          Log.i("bookmarked aisle", "bookmarked aisle: with duplicates: Bookmarked; " + m.getBookmarked());
-        }
-        aisleIdList = removeDuplicateBookmarkedAisles(aisleIdList);
-        for(AisleBookmark m : aisleIdList) {
-          Log.i("bookmarked aisle", "bookmarked aisle: after duplicates: ID; " + m.getId());
-          Log.i("bookmarked aisle", "bookmarked aisle: after duplicates: AisleID; " + m.getAisleId());
-          Log.i("bookmarked aisle", "bookmarked aisle: after duplicates: Bookmarked; " + m.getBookmarked());
-        }
-      }
-    } catch (JSONException e) {
-      e.printStackTrace();
-    }
-    if (aisleIdList != null && aisleIdList.size() > 0) {
-      Log.i("bookmarked aisle", "bookmarked aisle aisleIdList.size(): "
-          + aisleIdList.size());
-    } else {
-      Log.i("bookmarked aisle", "bookmarked aisle not found: ");
+	public ArrayList<AisleBookmark> parseBookmarkedAisles(String response) {
+		Log.i("bookmarked aisle", "bookmarked aisle: " + response);
+		ArrayList<AisleBookmark> aisleIdList = new ArrayList<AisleBookmark>();
+		AisleBookmark bookmarkAisle = null;
+		try {
+			JSONArray jsonArray = new JSONArray(response);
+			if (jsonArray != null && jsonArray.length() > 0) {
+				for (int i = 0; i < jsonArray.length(); i++) {
+					bookmarkAisle = new AisleBookmark();
+					bookmarkAisle
+							.setAisleId(Long.parseLong(jsonArray.getJSONObject(
+									i).getString(VueConstants.AISLE_Id)));
+					bookmarkAisle.setId(jsonArray.getJSONObject(i).getLong(
+							VueConstants.JSON_OBJ_ID));
+					bookmarkAisle.setId(jsonArray.getJSONObject(i).getLong(
+							VueConstants.JSON_OBJ_ID));
+					bookmarkAisle
+							.setBookmarked((jsonArray.getJSONObject(i)
+									.getString(VueConstants.BOOKMARKED)
+									.equals("true")) ? true : false);
+					aisleIdList.add(bookmarkAisle);
+				}
+				for (AisleBookmark m : aisleIdList) {
+					Log.i("bookmarked aisle",
+							"bookmarked aisle: with duplicates: ID; "
+									+ m.getId());
+					Log.i("bookmarked aisle",
+							"bookmarked aisle: with duplicates: AisleID; "
+									+ m.getAisleId());
+					Log.i("bookmarked aisle",
+							"bookmarked aisle: with duplicates: Bookmarked; "
+									+ m.getBookmarked());
+				}
+				aisleIdList = removeDuplicateBookmarkedAisles(aisleIdList);
+				for (AisleBookmark m : aisleIdList) {
+					Log.i("bookmarked aisle",
+							"bookmarked aisle: after duplicates: ID; "
+									+ m.getId());
+					Log.i("bookmarked aisle",
+							"bookmarked aisle: after duplicates: AisleID; "
+									+ m.getAisleId());
+					Log.i("bookmarked aisle",
+							"bookmarked aisle: after duplicates: Bookmarked; "
+									+ m.getBookmarked());
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		if (aisleIdList != null && aisleIdList.size() > 0) {
+			Log.i("bookmarked aisle", "bookmarked aisle aisleIdList.size(): "
+					+ aisleIdList.size());
+		} else {
+			Log.i("bookmarked aisle", "bookmarked aisle not found: ");
 
 		}
 		return aisleIdList;
 	}
-/*   public ArrayList<String> parseComments(JSONArray jsonArray) throws JSONException{
-	   ArrayList<String> commentList = new ArrayList<String>();
-		for (int i = 0; i < jsonArray.length(); i++) {
-			JSONObject jsonObject = jsonArray.getJSONObject(i);
-		     String userComment = jsonObject.getString("comment"); 
-				commentList.add(userComment);
-		}
-		return commentList;
-   }*/
-   
+
+	/*
+	 * public ArrayList<String> parseComments(JSONArray jsonArray) throws
+	 * JSONException{ ArrayList<String> commentList = new ArrayList<String>();
+	 * for (int i = 0; i < jsonArray.length(); i++) { JSONObject jsonObject =
+	 * jsonArray.getJSONObject(i); String userComment =
+	 * jsonObject.getString("comment"); commentList.add(userComment); } return
+	 * commentList; }
+	 */
+
 	public VueUser parseUserData(String response) {
 		try {
 			JSONObject jsonObject = new JSONObject(response);
@@ -374,86 +399,104 @@ public class Parser {
 		}
 		return null;
 	}
-	
+
 	public static ArrayList<ImageRating> parseRatedImages(String response) {
-	  Log.e("Parser", "parserRatedImages response " + response);
-	  ArrayList<ImageRating> imgRatingList = new ArrayList<ImageRating>();
-	  ImageRating imgRating = null;
-	  try {
-	    JSONArray jsonArray = new JSONArray(response);
-	    if (jsonArray != null && jsonArray.length() > 0) {
-	      for (int i = 0; i < jsonArray.length(); i++) {
-	        imgRating = new ImageRating();
-	        imgRating.setId(Long.parseLong(jsonArray.getJSONObject(i)
-	              .getString(VueConstants.JSON_OBJ_ID)));
-	        imgRating.setImageId(Long.parseLong(jsonArray.getJSONObject(i)
-                .getString(VueConstants.IMAGE_ID)));
-	        imgRating.setAisleId(Long.parseLong(jsonArray.getJSONObject(i)
-                .getString(VueConstants.AISLE_Id)));
-            imgRating.setLastModifiedTimestamp(Long.parseLong(jsonArray.getJSONObject(i)
-                .getString(VueConstants.LAST_MODIFIED_TIME)));
-            imgRating.setLiked((jsonArray.getJSONObject(i)
-                .getString(VueConstants.LIKED).equals("true")) ? true : false);
-            imgRatingList.add(imgRating);
-	      }
-	      for(ImageRating r : imgRatingList) {
-	        Log.e("Parser", "parserRatedImages imgRatingList with duplicate: Id: " + r.getId());
-	        Log.e("Parser", "parserRatedImages imgRatingList with duplicate: ImageId: " + r.getImageId());
-	        Log.e("Parser", "parserRatedImages imgRatingList with duplicate: trueOrfalse: " + r.getLiked());
-	      }
-	      
-	      imgRatingList = removeDuplicateImageRating(imgRatingList);
-	      for(ImageRating r : imgRatingList) {
-            Log.e("Parser", "parserRatedImages imgRatingList after duplicate: Id: " + r.getId());
-            Log.e("Parser", "parserRatedImages imgRatingList after duplicate: ImageId: " + r.getImageId());
-            Log.e("Parser", "parserRatedImages imgRatingList after duplicate: trueOrfalse: " + r.getLiked());
-          }
-	    }
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-	  
-	  return imgRatingList;
+		Log.e("Parser", "parserRatedImages response " + response);
+		ArrayList<ImageRating> imgRatingList = new ArrayList<ImageRating>();
+		ImageRating imgRating = null;
+		try {
+			JSONArray jsonArray = new JSONArray(response);
+			if (jsonArray != null && jsonArray.length() > 0) {
+				for (int i = 0; i < jsonArray.length(); i++) {
+					imgRating = new ImageRating();
+					imgRating.setId(Long.parseLong(jsonArray.getJSONObject(i)
+							.getString(VueConstants.JSON_OBJ_ID)));
+					imgRating
+							.setImageId(Long.parseLong(jsonArray.getJSONObject(
+									i).getString(VueConstants.IMAGE_ID)));
+					imgRating
+							.setAisleId(Long.parseLong(jsonArray.getJSONObject(
+									i).getString(VueConstants.AISLE_Id)));
+					imgRating.setLastModifiedTimestamp(Long.parseLong(jsonArray
+							.getJSONObject(i).getString(
+									VueConstants.LAST_MODIFIED_TIME)));
+					imgRating.setLiked((jsonArray.getJSONObject(i).getString(
+							VueConstants.LIKED).equals("true")) ? true : false);
+					imgRatingList.add(imgRating);
+				}
+				for (ImageRating r : imgRatingList) {
+					Log.e("Parser",
+							"parserRatedImages imgRatingList with duplicate: Id: "
+									+ r.getId());
+					Log.e("Parser",
+							"parserRatedImages imgRatingList with duplicate: ImageId: "
+									+ r.getImageId());
+					Log.e("Parser",
+							"parserRatedImages imgRatingList with duplicate: trueOrfalse: "
+									+ r.getLiked());
+				}
+
+				imgRatingList = removeDuplicateImageRating(imgRatingList);
+				for (ImageRating r : imgRatingList) {
+					Log.e("Parser",
+							"parserRatedImages imgRatingList after duplicate: Id: "
+									+ r.getId());
+					Log.e("Parser",
+							"parserRatedImages imgRatingList after duplicate: ImageId: "
+									+ r.getImageId());
+					Log.e("Parser",
+							"parserRatedImages imgRatingList after duplicate: trueOrfalse: "
+									+ r.getLiked());
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return imgRatingList;
 	}
-	
-	
-	private static ArrayList<ImageRating> removeDuplicateImageRating(ArrayList<ImageRating> imgRatingList) {
-	  int size = imgRatingList.size();
-	  for (int i = 0; i < size; ++i) {
-	    final ImageRating current = imgRatingList.get(i);
-	    for (int j = 0; j < i; ++j) {
-	      final ImageRating previous = imgRatingList.get(j);
-	      final boolean relation = previous.compareTo(current);
-	      if (relation) {
-	        int isGrater = previous.compareTime(current.getLastModifiedTimestamp().longValue());
-	        if(isGrater == ImageRating.NEW_TIME_STAMP) {
-	          imgRatingList.remove(i);
-	        } else {
-	          imgRatingList.remove(j);
-	        }
-	      }
-	    }
-	  }
-	  return imgRatingList;
+
+	private static ArrayList<ImageRating> removeDuplicateImageRating(
+			ArrayList<ImageRating> imgRatingList) {
+		int size = imgRatingList.size();
+		for (int i = 0; i < size; ++i) {
+			final ImageRating current = imgRatingList.get(i);
+			for (int j = 0; j < i; ++j) {
+				final ImageRating previous = imgRatingList.get(j);
+				final boolean relation = previous.compareTo(current);
+				if (relation) {
+					int isGrater = previous.compareTime(current
+							.getLastModifiedTimestamp().longValue());
+					if (isGrater == ImageRating.NEW_TIME_STAMP) {
+						imgRatingList.remove(i);
+					} else {
+						imgRatingList.remove(j);
+					}
+				}
+			}
+		}
+		return imgRatingList;
 	}
-	
-	private static ArrayList<AisleBookmark> removeDuplicateBookmarkedAisles(ArrayList<AisleBookmark> bookmarkedAisles) {
-      int size = bookmarkedAisles.size();
-      for (int i = 0; i < size; ++i) {
-        final AisleBookmark current = bookmarkedAisles.get(i);
-        for (int j = 0; j < i; ++j) {
-          final AisleBookmark previous = bookmarkedAisles.get(j);
-          final boolean relation = previous.compareTo(current);
-          if (relation) {
-            int isGrater = previous.compareTime(current.getLastModifiedTimestamp().longValue());
-            if(isGrater == AisleBookmark.NEW_TIME_STAMP) {
-              bookmarkedAisles.remove(i);
-            } else {
-              bookmarkedAisles.remove(j);
-            }
-          }
-        }
-      }
-      return bookmarkedAisles;
-    }
+
+	private static ArrayList<AisleBookmark> removeDuplicateBookmarkedAisles(
+			ArrayList<AisleBookmark> bookmarkedAisles) {
+		int size = bookmarkedAisles.size();
+		for (int i = 0; i < size; ++i) {
+			final AisleBookmark current = bookmarkedAisles.get(i);
+			for (int j = 0; j < i; ++j) {
+				final AisleBookmark previous = bookmarkedAisles.get(j);
+				final boolean relation = previous.compareTo(current);
+				if (relation) {
+					int isGrater = previous.compareTime(current
+							.getLastModifiedTimestamp().longValue());
+					if (isGrater == AisleBookmark.NEW_TIME_STAMP) {
+						bookmarkedAisles.remove(i);
+					} else {
+						bookmarkedAisles.remove(j);
+					}
+				}
+			}
+		}
+		return bookmarkedAisles;
+	}
 }
