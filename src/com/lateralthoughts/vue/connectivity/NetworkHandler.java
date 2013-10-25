@@ -75,7 +75,7 @@ public class NetworkHandler {
   public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
   private static String MY_AISLES = "aislesget/user/";
   protected int mLimit;
-  protected int mOffset;
+  public int mOffset;
   ArrayList<AisleWindowContent> aislesList = null;
   private SharedPreferences mSharedPreferencesObj;
 
@@ -100,7 +100,7 @@ public class NetworkHandler {
 
   // whle user scrolls down get next 10 aisles
   public void requestMoreAisle(boolean loadMore, String screenname) {
-    Log.i("formdbtrending", "formdbtrending***: requestMoreAisle");
+   
     if (VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
         .isMoreDataAvailable()) {
 
@@ -112,6 +112,7 @@ public class NetworkHandler {
         mOffset += mLimit;
         mLimit = TRENDING_AISLES_BATCH_SIZE;
       }
+      Log.i("listmovingissue", "listmovingissue***: "+mOffset);
       mVueContentGateway.getTrendingAisles(mLimit, mOffset,
           mTrendingAislesParser, loadMore, screenname);
     } else {
@@ -129,6 +130,7 @@ public class NetworkHandler {
     String downLoadFromServer = "fromDb";
     if (fromServer) {
       downLoadFromServer = "fromServer";
+      Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING FROM SERVER 1");
       mOffset = 0;
       mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
@@ -141,10 +143,12 @@ public class NetworkHandler {
           mTrendingAislesParser, loadMore, screenname);
 
 		} else {
+		  Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING 1");
 			DataBaseManager.getInstance(VueApplication.getInstance())
 					.resetDbParams();
 			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
 					.getAislesFromDB(null);
+			Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING 2: " + aisleContentArray.size());
 			if (aisleContentArray.size() == 0) {
 				VueTrendingAislesDataModel.getInstance(VueApplication
 						.getInstance()).isFromDb = false;
@@ -351,7 +355,7 @@ public class NetworkHandler {
                         DataBaseManager.getInstance(
                             VueApplication.getInstance())
                             .addTrentingAislesFromServerToDB(
-                                VueApplication.getInstance(), aislesList);
+                                VueApplication.getInstance(), aislesList, mOffset, DataBaseManager.MY_AISLES);
 
                         // if this is the first set of
                         // data
@@ -638,8 +642,9 @@ public class NetworkHandler {
   public void makeOffseZero() {
     mOffset = 0;
   }
-  public void setOffset(int offset){
+ /* public void setOffset(int offset){
 	  mOffset = offset;
-  }
+	  Log.i("listmovingissue", "listmovingissue  setting to: "+mOffset);
+  }*/
 
 }

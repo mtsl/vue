@@ -252,6 +252,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					}
 
 					int top = h - hi + view.getChildAt(0).getTop();
+					 
 					mLeftColumnView.setSelectionFromTop(
 							mLeftColumnView.getFirstVisiblePosition(), top);
 				}
@@ -261,7 +262,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
 					&& lan.getScreenName().equalsIgnoreCase(
-							getResources().getString(R.string.trending))/*&& !VueTrendingAislesDataModel.getInstance(mContext).isFromDb*/) {
+							getResources().getString(R.string.trending))&& !VueTrendingAislesDataModel.getInstance(mContext).isFromDb) {
 				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
 				Log.i("more aisle request", "more aisle request calling");
 				int totalItems = 0;
@@ -270,7 +271,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				} else if (view.equals(mRightColumnView)) {
 					totalItems = mRightColumnAdapter.getCount();
 				}
-				if ((totalItems - lastVisiblePosition) < 20) {
+				if ((totalItems - lastVisiblePosition) < 5) {
 					Log.i("offeset and limit", "offeset00000: load moredata");
 					VueTrendingAislesDataModel.getInstance(mContext)
 							.getNetworkHandler()
@@ -410,15 +411,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			mRightColumnAdapter.notifyDataSetChanged();
 		}
 	}
-
-	public void resetAdaptersContent() {
-
-	}
-
-	public void moveListToPosition(int position) {
+	/*public void moveListToPosition(int position) {
 		mLeftColumnView.setSelection(position);
 		mLeftColumnView.smoothScrollToPosition(position);
-	}
+	}*/
 
 	public int getListPosition() {
 		return mLeftColumnView.getFirstVisiblePosition();

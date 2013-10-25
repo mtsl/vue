@@ -169,6 +169,9 @@ public class VueTrendingAislesDataModel {
 	public AisleWindowContent getAisleAt(String aisleId) {
 		return mAisleContentListMap.get(aisleId);
 	}
+	public int getAilsePosition(AisleWindowContent aisleItem){
+		return mAisleContentList.indexOf(aisleItem);
+	}
 	public static VueTrendingAislesDataModel getInstance(Context context) {
 		if (null == sVueTrendingAislesDataModel) {
 			Log.e("Profiling", "Profiling getInstance()111 : new instance");
@@ -225,7 +228,8 @@ public class VueTrendingAislesDataModel {
 					Log.i("arrayList", "arrayList from db sized1: "+aislesList.size());
 					if (aislesList.size() == 0) {
 						loadOnRequest = true;
-						//isFromDb = false;
+					  isFromDb = false;
+					  VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).setmOffset(listSize());
 						return;
 					}
 					Message msg = new Message();
@@ -246,7 +250,11 @@ public class VueTrendingAislesDataModel {
 	public void runTask(Runnable task) {
 		threadPool.execute(task);
 	}
- public void setNotificationProgress( NotifyProgress progress,boolean fromServer){
+ protected void setmOffset(int listSize) {
+		// TODO Auto-generated method stub
+		
+	}
+public void setNotificationProgress( NotifyProgress progress,boolean fromServer){
 	 mNotifyProgress = progress;
 	 mRequestToServer = fromServer;
  }
