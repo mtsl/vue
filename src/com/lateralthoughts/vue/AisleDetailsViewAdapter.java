@@ -238,6 +238,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			 if(VueApplication.getInstance().getmAisleImgCurrentPos()<getItem(mCurrentAislePosition).getImageList().size()){
 				 imgPosition = VueApplication.getInstance().getmAisleImgCurrentPos();
 			 }
+			 mCurrentDispImageIndex = VueApplication.getInstance().getmAisleImgCurrentPos();
 			mLikes = getItem(mCurrentAislePosition).getImageList().get(imgPosition).mLikesCount;
 			boolean isBookmarked = VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())

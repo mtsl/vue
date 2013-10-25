@@ -283,7 +283,11 @@ public class DataBaseManager {
     if(mStartPosition == 0) {
       
       if(cursor.moveToFirst()) {
+    	  if(cursor.getString(cursor.getColumnIndex(VueConstants.ID)) != null) {
         mStartPosition = Integer.parseInt(cursor.getString(cursor.getColumnIndex(VueConstants.ID)));
+    	  } else {
+    		  mStartPosition = 1000;
+    	  }
       } else {
         mStartPosition = 1000;
       }
@@ -321,8 +325,6 @@ public class DataBaseManager {
       selection = VueConstants.AISLE_Id + " IN (" + questionSymbols + ") ";
       args = aislesIds;
     }
-    Log.e("DataBaseManager", "SURU updated aisle Order: Retriving TIME selection: " + selection + ", args[0] = " + args[0] + ", args[1] = " + args[1]);
-    
     Cursor aislesCursor = mContext.getContentResolver().query(
         VueConstants.CONTENT_URI, null, selection, args,
         VueConstants.ID + " ASC");
