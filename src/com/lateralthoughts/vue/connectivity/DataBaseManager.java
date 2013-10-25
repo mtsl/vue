@@ -284,9 +284,12 @@ public class DataBaseManager {
       
       if(cursor.moveToFirst()) {
     	  if(cursor.getString(cursor.getColumnIndex(VueConstants.ID)) != null) {
-        mStartPosition = Integer.parseInt(cursor.getString(cursor.getColumnIndex(VueConstants.ID)));
+    	    String s = cursor.getString(cursor.getColumnIndex(VueConstants.ID));
+        mStartPosition = Integer.parseInt(s);
+        Log.e("DataBaseManager", "Crash Check NOT NULL mStartPosition: " + mStartPosition);
     	  } else {
     		  mStartPosition = 1000;
+    		  Log.e("DataBaseManager", "Crash Check IS NULL mStartPosition: " + mStartPosition);
     	  }
       } else {
         mStartPosition = 1000;
@@ -294,11 +297,11 @@ public class DataBaseManager {
     }
     if(mEndPosition == 0) {
       if(cursor.moveToFirst()) {
-    	  if(cursor.getString(cursor.getColumnIndex(VueConstants.ID)) != null) {
+        if(cursor.getString(cursor.getColumnIndex(VueConstants.ID)) != null) {
         mEndPosition = Integer.parseInt(cursor.getString(cursor.getColumnIndex(VueConstants.ID)));
-    	  } else {
-    		  mStartPosition = 1000;
-    	  }
+        } else {
+          mEndPosition = 1000;
+        }
       } else {
         mEndPosition = 1000;
       }
@@ -1197,7 +1200,7 @@ public class DataBaseManager {
      Log.e("DataBaseManager", "SURU updated aisle Order: values.getAsString(VueConstants.ID) " + values.getAsString(VueConstants.ID));
      Log.e("DataBaseManager", "SURU updated aisle Order: " + value + ", aisleID: " + key);
    }
-   
+   aisleIdCursor.close();
  }
  
   /**
