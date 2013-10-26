@@ -98,7 +98,6 @@ public class ScaleImageView extends /*Network*/ImageView {
 		int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int height = MeasureSpec.getSize(heightMeasureSpec);
-
 		if (widthMode == MeasureSpec.EXACTLY
 				|| widthMode == MeasureSpec.AT_MOST) {
 			scaleToWidth = true;
