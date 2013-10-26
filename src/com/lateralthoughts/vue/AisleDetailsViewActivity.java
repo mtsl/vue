@@ -1,28 +1,11 @@
 package com.lateralthoughts.vue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.*;
 import android.graphics.Bitmap.Config;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,31 +16,25 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.SlidingDrawer;
-
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
-import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
-import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.ActionBarHandler;
-import com.lateralthoughts.vue.utils.BitmapCacheDetailsScreen;
-import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.*;
 import com.slidingmenu.lib.SlidingMenu;
+
+import java.io.*;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 
 public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */{
 	Fragment mFragRight;
@@ -543,7 +520,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				for (int i = 0; i < mImageDetailsArr.size(); i++) {
 					// mBitmapLoaderUtils.removeBitmapFromCache(mImageDetailsArr.get(i));
 				}
-				clearBitmaps();
+				//clearBitmaps();
 				super.onBackPressed();
 			}
 		}
@@ -1016,7 +993,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		}
 		for (int i = 0; i < mBottomScroller.getChildCount(); i++) {
-			Log.i("clearbitamps", "clearbitamps 3");
+			Log.i("clearbitmaps", "clearbitamps 3");
 			RelativeLayout topLayout = (RelativeLayout) mBottomScroller
 					.getChildAt(i);
 

@@ -2,26 +2,20 @@ package com.lateralthoughts.vue;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import com.android.volley.toolbox.ImageLoader;
-import com.facebook.android.Util;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.ImageDimension;
 import com.lateralthoughts.vue.utils.Utils;
 
 import java.lang.ref.WeakReference;
@@ -44,12 +38,12 @@ public class AisleDetailsViewListLoader {
     AisleContentBrowser contentBrowser = null;
     DetailClickListener mDetailListener;
     Animation myFadeInAnimation;
-    
+
    /* public static AisleDetailsViewListLoader getInstance(Context context){
         if(null == sAisleDetailsViewLoaderInstance){
             sAisleDetailsViewLoaderInstance = new AisleDetailsViewListLoader(context);
         }
-        return sAisleDetailsViewLoaderInstance;        
+        return sAisleDetailsViewLoaderInstance;
     }*/
     
     AisleDetailsViewListLoader(Context context){
@@ -166,18 +160,12 @@ public class AisleDetailsViewListLoader {
     	String serverImageUrl = itemDetails.mImageUrl;
     	
  
-      /*  ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
-                new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
-    	Log.i("imageHeitht", "imageHeitht resizeWidth:  calling bacground thread ");
-
-         // if (cancelPotentialDownload(loc, imageView)) {
-            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight,scrollIndex);
-            ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
-            String imagesArray[] = {loc, serverImageUrl};
-            task.execute(imagesArray);
-       // }
+      ((ScaleImageView) imageView).setImageUrl(serverImageUrl, VueApplication.getInstance().getImageCacheLoader());
+    	Log.i("imageHeight", "imageHeight resizeWidth:  calling bacground thread ");
  
     }
+
+
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
         //private final WeakReference<AisleContentBrowser>viewFlipperReference;
@@ -187,7 +175,7 @@ public class AisleDetailsViewListLoader {
         int mAvailabeWidth,mAvailableHeight;
         AisleImageDetails mItemDetails;
         int mScrollIndex;
-        
+
 
         public BitmapWorkerTask(AisleImageDetails itemDetails,AisleContentBrowser vFlipper, ImageView imageView, int bestHeight,int scrollIndex) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
@@ -204,7 +192,7 @@ public class AisleDetailsViewListLoader {
         @Override
         protected Bitmap doInBackground(String... params) {
             url = params[0];
-            Bitmap bmp = null; 
+            Bitmap bmp = null;
             Log.i("added url", "added url  listloader "+url);
             //we want to get the bitmap and also add it into the memory cache
             boolean cacheBitmap = false;
@@ -217,7 +205,7 @@ public class AisleDetailsViewListLoader {
 			} else {
 				Log.i("imageHeitht", "imageHeitht resizeWidth: bitmap is null ");
 			}
-            return bmp;            
+            return bmp;
         }
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
@@ -225,7 +213,7 @@ public class AisleDetailsViewListLoader {
         	 final ImageView imageView = imageViewReference.get();
         	 // setParams( aisleContentBrowser, imageView,bitmap.getHeight());
             if (imageViewReference != null && bitmap != null) {
-               
+
                 //final AisleContentBrowser vFlipper = viewFlipperReference.get();
                 BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
                 if (this == bitmapWorkerTask) {
@@ -238,7 +226,7 @@ public class AisleDetailsViewListLoader {
             }
         }
     }
-    
+
     //utility functions to keep track of all the async tasks that we instantiate
     private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
         if (imageView != null) {
@@ -250,10 +238,10 @@ public class AisleDetailsViewListLoader {
         }
         return null;
     }
-    
+
     private static boolean cancelPotentialDownload(String url, ImageView imageView) {
         BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-        
+
         if (bitmapWorkerTask != null) {
             String bitmapUrl = bitmapWorkerTask.url;
             if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
@@ -264,37 +252,8 @@ public class AisleDetailsViewListLoader {
             }
         }
         return true;
-    } 
-    public void clearBrowser(ArrayList<AisleImageDetails> imageList){
-	 if (contentBrowser != null) {
-			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
-			    
-                 try{
-				ImageView image = (ScaleImageView)contentBrowser
-				.getChildAt(i);
-				Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
-				bitmap.recycle();
-				bitmap = null;
-                 }catch (Exception e) {
-					 
-				}
+    }
 
-				
-				mViewFactory
-				.returnUsedImageView((ScaleImageView)contentBrowser
-						.getChildAt(i));
-				Log.i("imageviewsremoved", "imageviewsremoved: "+i);
-			} 
-			 mContentAdapterFactory.returnUsedAdapter(contentBrowser.getCustomAdapter());
-			 contentBrowser.setCustomAdapter(null);
-			contentBrowser.removeAllViews();
-			contentBrowser = null;
-
-		} else {
-			Log.i("bitmap reclying", "bitmap reclying  contentBrowser is null ");
-		}
-	
-}
    private void setParams(AisleContentBrowser vFlipper, ImageView imageView,int imgScreenHeight
           ) {
 	   Log.i("imageSize", "imageSize params Height: "+imgScreenHeight);
@@ -303,7 +262,7 @@ public class AisleDetailsViewListLoader {
         		 VueApplication.getInstance().getScreenWidth(), imgScreenHeight+VueApplication.getInstance().getPixel(12));
          params.gravity = Gravity.CENTER;
          vFlipper.setLayoutParams(params);
-         
+
        /*  FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(
                  LayoutParams.MATCH_PARENT, imgScreenHeight);
          params2.gravity = Gravity.CENTER;

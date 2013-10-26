@@ -43,6 +43,8 @@ public class VueApplication extends Application {
 			R.drawable.composer_place, R.drawable.composer_sleep,
 			R.drawable.composer_thought };
 
+    private final int MAX_BITMAP_COUNT = 512;
+
 	public long mLaunchTime;
 	public long mLastRecordedTime;
 
@@ -180,7 +182,7 @@ public class VueApplication extends Application {
 		 */
 
         mImageLoader = new ImageLoader(mVolleyRequestQueue, new ImageLoader.ImageCache() {
-            private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(100);
+            private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(MAX_BITMAP_COUNT);
             public void putBitmap(String url, Bitmap bitmap) {
                 mCache.put(url, bitmap);
             }
