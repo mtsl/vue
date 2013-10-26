@@ -203,6 +203,7 @@ public class AisleDetailsViewListLoader {
         // Decode image in background.
         @Override
         protected Bitmap doInBackground(String... params) {
+        	Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
             url = params[0];
             Bitmap bmp = null; 
             Log.i("added url", "added url  listloader "+url);

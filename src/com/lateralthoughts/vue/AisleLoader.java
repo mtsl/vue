@@ -224,7 +224,7 @@ public class AisleLoader {
 				if (!placeholderOnly)
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
-							bestHeight, windowContent.getAisleId(), itemDetails);
+							bestHeight, windowContent.getAisleId(), itemDetails,listener);
 			}
 		}
 		if (VueApplication.getInstance().getmUserId() != null) {
@@ -248,22 +248,23 @@ public class AisleLoader {
 			holder.profileThumbnail
 					.setBackgroundResource(R.drawable.profile_thumbnail);
 		}
+		 
 	}
 
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
-			String asileId, AisleImageDetails itemDetails) {
+			String asileId, AisleImageDetails itemDetails,AisleContentClickListener listener) {
 		if(Utils.isAisleChanged){
 			Utils.isAisleChanged = false;
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight, asileId, itemDetails);
+					bestHeight, asileId, itemDetails,listener);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
 			String[] urlsArray = { loc, serverImageUrl };
 			task.execute(urlsArray);
 		} else {
 		if (cancelPotentialDownload(loc, imageView)) {
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight, asileId, itemDetails);
+					bestHeight, asileId, itemDetails,listener);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
 			String[] urlsArray = { loc, serverImageUrl };
 			task.execute(urlsArray);
@@ -285,22 +286,29 @@ public class AisleLoader {
 		private int mBestHeight;
 
 		AisleImageDetails mItemDetails;
+		AisleContentClickListener mListener;
 
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
 				ImageView imageView, int bestHeight, String aisleId,
-				AisleImageDetails itemDetails) {
+				AisleImageDetails itemDetails,AisleContentClickListener listener) {
 			// Use a WeakReference to ensure the ImageView can be garbage
 			// collected
 			imageViewReference = new WeakReference<ImageView>(imageView);
 			viewFlipperReference = new WeakReference<AisleContentBrowser>(
 					vFlipper);
-
+			mListener = listener;
 			mItemDetails = itemDetails;
 		}
 
 		// Decode image in background.
 		@Override
 		protected Bitmap doInBackground(String... params) {
+			if(!mListener.isFlingCalled()){
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+			Log.i("downloading speed", "fling calls stop");
+			} else {
+				Log.i("downloading speed", "fling calls");
+			}
 			url = params[0];
 			Bitmap bmp = null;
 			// we want to get the bitmap and also add it into the memory cache
