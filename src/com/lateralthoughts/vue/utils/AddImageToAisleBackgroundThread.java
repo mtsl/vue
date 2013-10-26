@@ -135,7 +135,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                   .parseAisleImageData(new JSONObject(mResponseMessage));
               if (aisleImageDetails != null) {
                 if (VueLandingPageActivity.getScreenName().equalsIgnoreCase(
-                    "Trending")) {
+                    "Trending") ||  VueLandingPageActivity.getScreenName().equalsIgnoreCase(
+                            "My Aisles")) {
                   AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
                       .getInstance(VueApplication.getInstance())
                       .removeAisleFromList(0);

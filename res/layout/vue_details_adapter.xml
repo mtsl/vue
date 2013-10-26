@@ -15,7 +15,7 @@
             android:id="@+id/showpiece_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="16dp"
             android:background="@color/white" >
 
             <com.lateralthoughts.vue.ui.AisleContentBrowser

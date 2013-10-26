@@ -1,5 +1,9 @@
 package com.lateralthoughts.vue;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -11,16 +15,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.graphics.drawable.BitmapDrawable;
+
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.Utils;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AisleDetailsViewListLoader {
     private static final boolean DEBUG = false;
@@ -87,70 +89,83 @@ public class AisleDetailsViewListLoader {
             	 holder.aisleContentBrowser.setCurrentImage();
             }
             return;
-        }else{
-            //we are going to re-use an existing object to show some new content
-            //lets release the scaleimageviews first
-            for(int i=0;i<contentBrowser.getChildCount();i++){
-                //((ScaleImageView)contentBrowser.getChildAt(i)).setContainerObject(null);
-                mViewFactory.returnUsedImageView((ScaleImageView)contentBrowser.getChildAt(i));
-            }
-            IAisleContentAdapter adapter = mContentAdapterFactory.getAisleContentAdapter();
-            mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser.getCustomAdapter());
-            holder.aisleContentBrowser.setCustomAdapter(null);
-            adapter.setContentSource(desiredContentId,  windowContent);
-           // adapter.setSourceName(holder.tag);
-            holder.aisleContentBrowser.setmSourceName(holder.tag);
-            holder.aisleContentBrowser.removeAllViews();
-            holder.aisleContentBrowser.setUniqueId(desiredContentId);
-            holder.aisleContentBrowser.setScrollIndex(scrollIndex);
-            holder.aisleContentBrowser.setCustomAdapter(adapter);
-            holder.aisleContentBrowser.setDetailImageClickListener(detailListener);
-            holder.uniqueContentId = desiredContentId;
-        } 
+		} else {
+			// we are going to re-use an existing object to show some new
+			// content
+			// lets release the scaleimageviews first
+			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
+				// ((ScaleImageView)contentBrowser.getChildAt(i)).setContainerObject(null);
+				mViewFactory
+						.returnUsedImageView((ScaleImageView) contentBrowser
+								.getChildAt(i));
+			}
+			IAisleContentAdapter adapter = mContentAdapterFactory
+					.getAisleContentAdapter();
+			mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser
+					.getCustomAdapter());
+			holder.aisleContentBrowser.setCustomAdapter(null);
+			adapter.setContentSource(desiredContentId, windowContent);
+			// adapter.setSourceName(holder.tag);
+			holder.aisleContentBrowser.setmSourceName(holder.tag);
+			holder.aisleContentBrowser.removeAllViews();
+			holder.aisleContentBrowser.setUniqueId(desiredContentId);
+			holder.aisleContentBrowser.setScrollIndex(scrollIndex);
+			holder.aisleContentBrowser.setCustomAdapter(adapter);
+			holder.aisleContentBrowser
+					.setDetailImageClickListener(detailListener);
+			holder.uniqueContentId = desiredContentId;
+		} 
         Log.i("cardHeight", "cardHeight bestHeight1: "+windowContent.getBestHeightForWindow());
         imageDetailsArr = windowContent.getImageList();
         Log.e("AisleDetailsViewListLoader", "Aisle Id : " + windowContent.getAisleId());
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
-			 
-			 for(int i = 0;i<imageDetailsArr.size();i++) {
-				 Log.i("clickedwindow", "TrendingCrop3: width**" + imageDetailsArr.get(i).mAvailableWidth+" height: "+imageDetailsArr.get(i).mAvailableHeight);
-				 Log.i("clickedwindow", "TrendingCrop3: imageUrl**" +imageDetailsArr.get(i).mImageUrl);
-				 Log.i("clickedwindow", "CustomImageUrls**" +imageDetailsArr.get(i).mCustomImageUrl);
-				  if(mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
-					  mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
-				  }
-				 
-			 }
+			for (int i = 0; i < imageDetailsArr.size(); i++) {
+				Log.i("clickedwindow", "TrendingCrop3: width**"
+						+ imageDetailsArr.get(i).mAvailableWidth + " height: "
+						+ imageDetailsArr.get(i).mAvailableHeight);
+				Log.i("clickedwindow", "TrendingCrop3: imageUrl**"
+						+ imageDetailsArr.get(i).mImageUrl);
+				Log.i("clickedwindow",
+						"CustomImageUrls**"
+								+ imageDetailsArr.get(i).mCustomImageUrl);
+				if (mBestHeight < imageDetailsArr.get(i).mAvailableHeight) {
+					mBestHeight = imageDetailsArr.get(i).mAvailableHeight;
+				}
+			}
 			holder.aisleContentBrowser.mSwipeListener
 					.onReceiveImageCount(imageDetailsArr.size());
 			itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getEmptyImageView();
 			imageView.setContainerObject(holder);
-			Bitmap bitmap = null; 
-			//bitmap = mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
-			mBestHeight =Utils.modifyHeightForDetailsView(imageDetailsArr);
+			Bitmap bitmap = null;
+			// bitmap =
+			// mBitmapLoaderUtils.getCachedBitmap(itemDetails.mImageUrl);
+			mBestHeight = Utils.modifyHeightForDetailsView(imageDetailsArr);
 			windowContent.setBestLargestHeightForWindow(mBestHeight);
 			contentBrowser.addView(imageView);
-			Log.i("new image", "new image  windowbestHeight:  "+windowContent.getBestLargetHeightForWindow());
-			setParams(holder.aisleContentBrowser, imageView,mBestHeight);
-			if (bitmap != null) {
+			Log.i("new image",
+					"new image  windowbestHeight:  "
+							+ windowContent.getBestLargetHeightForWindow());
+			this.setParams(holder.aisleContentBrowser, imageView, mBestHeight);
+
+            if (bitmap != null) {
 				if (bitmap.getHeight() > mBestHeight) {
 					loadBitmap(itemDetails, contentBrowser, imageView,
-							mBestHeight,scrollIndex);
+							mBestHeight, scrollIndex);
 				} else {
-					Log.i("setparam", "setparam cache: "+bitmap.getHeight());
+					Log.i("setparam", "setparam cache: " + bitmap.getHeight());
 				}
 				imageView.setImageBitmap(bitmap);
 				if (scrollIndex != 0) {
 					contentBrowser.setCurrentImage();
 				}
 			} else {
-				loadBitmap(itemDetails, contentBrowser, imageView,
-						mBestHeight, scrollIndex);
-				if(scrollIndex != 0){
-					
+				loadBitmap(itemDetails, contentBrowser, imageView, mBestHeight,
+						scrollIndex);
+				if (scrollIndex != 0) {
+
 					contentBrowser.setCurrentImage();
-					}
+				}
 			}
 		}        
     }
@@ -158,11 +173,18 @@ public class AisleDetailsViewListLoader {
     public void loadBitmap(AisleImageDetails itemDetails, AisleContentBrowser flipper, ImageView imageView, int bestHeight,int scrollIndex) {
     	String loc = itemDetails.mImageUrl;
     	String serverImageUrl = itemDetails.mImageUrl;
-    	
  
       ((ScaleImageView) imageView).setImageUrl(serverImageUrl, VueApplication.getInstance().getImageCacheLoader());
     	Log.i("imageHeight", "imageHeight resizeWidth:  calling bacground thread ");
- 
+
+      /*  ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
+                new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
+         /* if (cancelPotentialDownload(loc, imageView)) {
+            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,flipper, imageView, bestHeight,scrollIndex);
+            ((ScaleImageView)imageView).setOpaqueWorkerObject(task);
+            String imagesArray[] = {loc, serverImageUrl};
+            task.execute(imagesArray);
+        }*/
     }
 
 
@@ -191,6 +213,7 @@ public class AisleDetailsViewListLoader {
         // Decode image in background.
         @Override
         protected Bitmap doInBackground(String... params) {
+        	Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
             url = params[0];
             Bitmap bmp = null;
             Log.i("added url", "added url  listloader "+url);
@@ -239,38 +262,6 @@ public class AisleDetailsViewListLoader {
         return null;
     }
 
-    private static boolean cancelPotentialDownload(String url, ImageView imageView) {
-        BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
-        if (bitmapWorkerTask != null) {
-            String bitmapUrl = bitmapWorkerTask.url;
-            if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
-                bitmapWorkerTask.cancel(true);
-            } else {
-                // The same URL is already being downloaded.
-                return false;
-            }
-        }
-        return true;
-    }
-
-   private void setParams(AisleContentBrowser vFlipper, ImageView imageView,int imgScreenHeight
-          ) {
-	   Log.i("imageSize", "imageSize params Height: "+imgScreenHeight);
-      if (vFlipper != null && imageView != null) {
-         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-        		 VueApplication.getInstance().getScreenWidth(), imgScreenHeight+VueApplication.getInstance().getPixel(12));
-         params.gravity = Gravity.CENTER;
-         vFlipper.setLayoutParams(params);
-
-       /*  FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(
-                 LayoutParams.MATCH_PARENT, imgScreenHeight);
-         params2.gravity = Gravity.CENTER;
-         imageView.setLayoutParams(params2);*/
-         mDetailListener.onRefreshAdaptaers();
-      } 
-       
-   }
    private void setMaxHeight(int imageHeight,int imageWidth){
 	   int screenHeight = VueApplication.getInstance().getScreenHeight();
 	   int screenWidth = VueApplication.getInstance().getScreenWidth();
@@ -293,4 +284,63 @@ public class AisleDetailsViewListLoader {
 	  return largeHeight;
 	  
   }
+    
+	private static boolean cancelPotentialDownload(String url,
+			ImageView imageView) {
+		BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+
+		if (bitmapWorkerTask != null) {
+			String bitmapUrl = bitmapWorkerTask.url;
+			if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+				bitmapWorkerTask.cancel(true);
+			} else {
+				// The same URL is already being downloaded.
+				return false;
+			}
+		}
+		return true;
+	} 
+
+	public void clearBrowser(ArrayList<AisleImageDetails> imageList) {
+		if (contentBrowser != null) {
+			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
+
+				try {
+					ImageView image = (ScaleImageView) contentBrowser
+							.getChildAt(i);
+					Bitmap bitmap = ((BitmapDrawable) image.getDrawable())
+							.getBitmap();
+					bitmap.recycle();
+					bitmap = null;
+				} catch (Exception e) {
+				}
+				mViewFactory
+						.returnUsedImageView((ScaleImageView) contentBrowser
+								.getChildAt(i));
+				Log.i("imageviewsremoved", "imageviewsremoved: " + i);
+			}
+			mContentAdapterFactory.returnUsedAdapter(contentBrowser
+					.getCustomAdapter());
+			contentBrowser.setCustomAdapter(null);
+			contentBrowser.removeAllViews();
+			contentBrowser = null;
+		}  
+	}
+	private void setParams(AisleContentBrowser vFlipper, ImageView imageView,
+			int imgScreenHeight) {
+		Log.i("imageSize", "imageSize params Height: " + imgScreenHeight);
+		if (vFlipper != null && imageView != null) {
+			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+					VueApplication.getInstance().getScreenWidth(),
+					imgScreenHeight + VueApplication.getInstance().getPixel(12));
+			params.gravity = Gravity.CENTER;
+			vFlipper.setLayoutParams(params);
+			/*
+			 * FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(
+			 * LayoutParams.MATCH_PARENT, imgScreenHeight); params2.gravity =
+			 * Gravity.CENTER; imageView.setLayoutParams(params2);
+			 */
+			mDetailListener.onRefreshAdaptaers();
+		}
+    }
 }

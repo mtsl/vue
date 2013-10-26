@@ -92,7 +92,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		/* super(c, content); */
 		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance());
-		mCurrentDispImageIndex = VueApplication.getInstance().getmAisleImgCurrentPos();
+		mCurrentDispImageIndex = VueApplication.getInstance()
+				.getmAisleImgCurrentPos();
 		mSetPosition = true;
 		mContext = c;
 
@@ -101,7 +102,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mViewLoader = new AisleDetailsViewListLoader(mContext);
 		mswipeListner = swipeListner;
 		mListCount = listCount;
-		
+
 		mShowingList = new ArrayList<String>();
 		if (DEBUG)
 			Log.e(TAG, "About to initiate request for trending aisles");
@@ -113,13 +114,15 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				break;
 			}
 		}
-		if(VueApplication.getInstance().getmAisleImgCurrentPos() > getItem(mCurrentAislePosition).getImageList().size()-1){
-			VueApplication.getInstance().setmAisleImgCurrentPos(getItem(mCurrentAislePosition).getImageList().size()-1);
+		if (VueApplication.getInstance().getmAisleImgCurrentPos() > getItem(
+				mCurrentAislePosition).getImageList().size() - 1) {
+			VueApplication.getInstance().setmAisleImgCurrentPos(
+					getItem(mCurrentAislePosition).getImageList().size() - 1);
 		}
-		if(getItem(mCurrentAislePosition).getAisleContext().mCommentList == null) {
+		if (getItem(mCurrentAislePosition).getAisleContext().mCommentList == null) {
 			getItem(mCurrentAislePosition).getAisleContext().mCommentList = new ArrayList<String>();
-		}  
-		
+		}
+
 		setImageRating();
 		Log.i("bestHeight",
 				"bestHeight in details adapter: "
@@ -128,8 +131,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		if (getItem(mCurrentAislePosition) != null) {
 			String occasion = getItem(mCurrentAislePosition).getAisleContext().mOccasion;
 			if (occasion != null) {
-				occasion = occasion.substring(0, 1).toUpperCase()
-						+ occasion.substring(1).toLowerCase();
+				if (occasion.length() > 0) {
+					occasion = occasion.substring(0, 1).toUpperCase()
+							+ occasion.substring(1).toLowerCase();
+				}
 				String lookingFor = getItem(mCurrentAislePosition)
 						.getAisleContext().mLookingForItem;
 				lookingFor = lookingFor.substring(0, 1).toUpperCase()
@@ -158,31 +163,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 				mCommentsMapList.put(i, getItem(mCurrentAislePosition)
 						.getImageList().get(i).mCommentsList);
-				
-				
-				//TODO: get all the comments from the db and update the comment list
-				
-			/*	if (getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList == null) {
-					// TODO: for temp comments display need to replace this
-					getItem(mCurrentAislePosition).getImageList().get(i).mCommentsList = new ArrayList<String>();
-					if (i % 2 == 0) {
-						for (int k = 0; k < 6; k++) {
-							getItem(mCurrentAislePosition).getImageList()
-									.get(i).mCommentsList
-									.add("Love Love vue the dress! Simple and fabulous.");
-						}
-					} else {
-						for (int k = 0; k < 10; k++) {
-							getItem(mCurrentAislePosition).getImageList()
-									.get(i).mCommentsList
-									.add("vue vue vue  sample test comments");
-						}
-					}
-					mCommentsMapList.put(i, getItem(mCurrentAislePosition)
-							.getImageList().get(i).mCommentsList);
-				}*/
 			}
-			
+
 			mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
 			Log.i("clone", "clone: " + mImageDetailsArr);
 			if (mImageDetailsArr != null) {
@@ -191,25 +173,31 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				}
 			}
 
-      ArrayList<ImageComments> imgComments = getItem(mCurrentAislePosition)
-          .getImageList().get(
-              VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
-      if (mShowingList == null) {
-        mShowingList = new ArrayList<String>();
-      } else if(mShowingList.size() > 0) {
-        mShowingList.clear();
-      }
-      for(ImageComments comment : imgComments) {
-        mShowingList.add(comment.comment);
-      }
+			ArrayList<ImageComments> imgComments = getItem(
+					mCurrentAislePosition).getImageList().get(
+					VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
+			if (mShowingList == null) {
+				mShowingList = new ArrayList<String>();
+			} else if (mShowingList.size() > 0) {
+				mShowingList.clear();
+			}
+			for (ImageComments comment : imgComments) {
+				mShowingList.add(comment.comment);
+			}
 
-			//mShowingList = getItem(mCurrentAislePosition).getAisleContext().mCommentList;
-			
-			 int imgPosition = 0;
-			 if(VueApplication.getInstance().getmAisleImgCurrentPos()<getItem(mCurrentAislePosition).getImageList().size()){
-				 imgPosition = VueApplication.getInstance().getmAisleImgCurrentPos();
-			 }
-			mLikes = getItem(mCurrentAislePosition).getImageList().get(imgPosition).mLikesCount;
+			// mShowingList =
+			// getItem(mCurrentAislePosition).getAisleContext().mCommentList;
+
+			int imgPosition = 0;
+			if (VueApplication.getInstance().getmAisleImgCurrentPos() < getItem(
+					mCurrentAislePosition).getImageList().size()) {
+				imgPosition = VueApplication.getInstance()
+						.getmAisleImgCurrentPos();
+			}
+			mCurrentDispImageIndex = VueApplication.getInstance()
+					.getmAisleImgCurrentPos();
+			mLikes = getItem(mCurrentAislePosition).getImageList().get(
+					imgPosition).mLikesCount;
 			boolean isBookmarked = VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
@@ -221,12 +209,15 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						isBookmarked);
 			}
 			mBookmarksCount = getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount;
-			if(getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mCommentsList.size() < mShowFixedRowCount){
-			mListCount = getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mCommentsList.size()+mShowFixedRowCount;
+			if (getItem(mCurrentAislePosition).getImageList().get(
+					mCurrentDispImageIndex).mCommentsList.size() < mShowFixedRowCount) {
+				mListCount = getItem(mCurrentAislePosition).getImageList().get(
+						mCurrentDispImageIndex).mCommentsList.size()
+						+ mShowFixedRowCount;
 			} else {
-				mListCount = mShowFixedRowCount+mInitialCommentsToShowSize;
+				mListCount = mShowFixedRowCount + mInitialCommentsToShowSize;
 			}
-			
+
 			Log.i("bookmarked aisle", "bookmarked count in window2: "
 					+ mBookmarksCount);
 			new Handler().postDelayed(new Runnable() {
@@ -406,11 +397,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		} else {
 			mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
 		}
-		if(mLikes <= 0){
+		if (mLikes <= 0) {
 			mLikes = 0;
 			mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
 		}
- 
+
 		mViewHolder.commentCount.setText((mShowingList.size() + " Comments"));
 		mViewHolder.bookMarkCount.setText("" + mBookmarksCount);
 		mViewHolder.likeCount.setText("" + mLikes);
@@ -418,8 +409,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
 		mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
 		mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
-	
-		
+
 		// mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
 		if (position == 0) {
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
@@ -478,8 +468,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				// mWindowContentTemp = mViewHolder.mWindowContent;
 				mViewHolder.tag = TAG;
 				if (mImageRefresh) {
-					/*mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-					mImageRefresh = false;*/
+					/*
+					 * mViewHolder.uniqueContentId =
+					 * AisleWindowContent.EMPTY_AISLE_CONTENT_ID; mImageRefresh
+					 * = false;
+					 */
 					mViewLoader.getAisleContentIntoView(mViewHolder,
 							scrollIndex, position,
 							new DetailImageClickListener(),
@@ -519,7 +512,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			if (mViewHolder.enterCommentrellay.getVisibility() == View.VISIBLE) {
 				mViewHolder.commentSend.setVisibility(View.GONE);
 			}
-			if(closeKeyboard){
+			if (closeKeyboard) {
 				closeKeyboard = false;
 				mViewHolder.edtCommentLay.setVisibility(View.GONE);
 				mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
@@ -544,7 +537,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			// first two views are image and comment layout. so use position - 2
 			// to display all the comments from start
 			if (position - mInitialCommentsToShowSize < mShowingList.size()) {
-				mViewHolder.userComment.setText(mShowingList.get(position - mInitialCommentsToShowSize));
+				mViewHolder.userComment.setText(mShowingList.get(position
+						- mInitialCommentsToShowSize));
 			}
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);
@@ -559,12 +553,13 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 			public void onClick(View v) {
 				// mswipeListner.onResetAdapter();
-				
+
 				if (mListCount == (mShowFixedRowCount + mInitialCommentsToShowSize)) {
 					mListCount = mShowingList.size() + mShowFixedRowCount;
 				} else {
-					if(mShowingList.size() > 2) {
-					mListCount = mShowFixedRowCount + mInitialCommentsToShowSize;
+					if (mShowingList.size() > 2) {
+						mListCount = mShowFixedRowCount
+								+ mInitialCommentsToShowSize;
 					} else {
 						mListCount = mShowingList.size() + mShowFixedRowCount;
 					}
@@ -592,8 +587,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							bookmarkStatus);
 					handleBookmark(bookmarkStatus,
 							getItem(mCurrentAislePosition).getAisleId());
-					Log.e("AisleManager",
-                        "bookmarkfeaturetest: count BOOKMARK RESPONSE: mViewHolder.bookmarklay if called ");
 				} else {
 					bookmarkStatus = true;
 					FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
@@ -603,8 +596,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							bookmarkStatus);
-					Log.e("AisleManager",
-							"bookmarkfeaturetest: count BOOKMARK RESPONSE: mViewHolder.bookmarklay else called ");
 					handleBookmark(bookmarkStatus,
 							getItem(mCurrentAislePosition).getAisleId());
 				}
@@ -707,30 +698,26 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					&& position < VueApplication.getInstance()
 							.getClickedWindowCount()) {
 				mCurrentDispImageIndex = position;
-			/*	@SuppressWarnings("unchecked")
-				ArrayList<String> tempCommentList = (ArrayList<String>) mCommentsMapList
-						.get(position);
-				if (tempCommentList != null) {
-					//mShowingList = tempCommentList;
-				}*/
 				mLikes = getItem(mCurrentAislePosition).getImageList().get(
 						position).mLikesCount;
-				ArrayList<ImageComments> imgComments = getItem(mCurrentAislePosition)
-			          .getImageList().get(mCurrentDispImageIndex).mCommentsList;
-			      if (mShowingList == null) {
-			        mShowingList = new ArrayList<String>();
-			      } else if(mShowingList.size() > 0) {
-			        mShowingList.clear();
-			      }
-			      for(ImageComments comment : imgComments) {
-			        mShowingList.add(comment.comment);
-			      }
-				 
-				if(mShowingList.size() <mShowFixedRowCount){
-				
-				mListCount = mShowFixedRowCount +mShowingList.size();
+				ArrayList<ImageComments> imgComments = getItem(
+						mCurrentAislePosition).getImageList().get(
+						mCurrentDispImageIndex).mCommentsList;
+				if (mShowingList == null) {
+					mShowingList = new ArrayList<String>();
+				} else if (mShowingList.size() > 0) {
+					mShowingList.clear();
+				}
+				for (ImageComments comment : imgComments) {
+					mShowingList.add(comment.comment);
+				}
+
+				if (mShowingList.size() < mShowFixedRowCount) {
+
+					mListCount = mShowFixedRowCount + mShowingList.size();
 				} else {
-					mListCount = mShowFixedRowCount+mInitialCommentsToShowSize;
+					mListCount = mShowFixedRowCount
+							+ mInitialCommentsToShowSize;
 				}
 				notifyDataSetChanged();
 				mswipeListner.setFindAtText(getItem(mCurrentAislePosition)
@@ -917,10 +904,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	public void setAisleBrowserObjectsNull() {
 
 		if (mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
-			if(mCommentsMapList != null)
-			for (int i = 0; i < mCommentsMapList.size(); i++) {
-				mCommentsMapList.remove(i);
-			}
+			if (mCommentsMapList != null)
+				for (int i = 0; i < mCommentsMapList.size(); i++) {
+					mCommentsMapList.remove(i);
+				}
 			mCommentsMapList = null;
 			mViewHolder.aisleContentBrowser.setReferedObjectsNull();
 			//mViewLoader.clearBrowser(getItem(mCurrentAislePosition)
@@ -960,12 +947,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		if (imgDetails.mAvailableHeight > getItem(mCurrentAislePosition)
 				.getBestLargetHeightForWindow()) {
 			mBestHeight = imgDetails.mAvailableHeight;
-			/*
-			 * getItem(mCurrentAislePosition).setBestLargestHeightForWindow(
-			 * imgDetails.mAvailableHeight, imgDetails.mAvailableWidth);
-			 */
-
-			Log.i("new image", "new image height: changed");
 		}
 		if (imgDetails.mAvailableHeight < getItem(mCurrentAislePosition)
 				.getBestHeightForWindow()) {
@@ -988,14 +969,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		imgDetails.mOwnerAisleId = getItem(mCurrentAislePosition).getAisleId();
 		imgDetails.mOwnerUserId = getItem(mCurrentAislePosition)
 				.getAisleContext().mUserId;
-		/*
-		 * imgDetails = prepareCustomUrl(imgDetails,
-		 * getItem(mCurrentAislePosition).getBestHeightForWindow());
-		 */
-		if (mCurrentDispImageIndex == 0) {
-			getItem(mCurrentAislePosition).getImageList().add(imgDetails);
-		}
-
+	    getItem(mCurrentAislePosition).getImageList().add(imgDetails);
 		getItem(mCurrentAislePosition).addAisleContent(
 				getItem(mCurrentAislePosition).getAisleContext(),
 				getItem(mCurrentAislePosition).getImageList());
@@ -1003,17 +977,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				mCurrentAislePosition).getImageList());
 		getItem(mCurrentAislePosition)
 				.setBestLargestHeightForWindow(bestHeight);
-		/*
-		 * FileCache fileCache = new FileCache(mContext); File f =
-		 * fileCache.getFile(getItem(mCurrentAislePosition)
-		 * .getImageList().get(mCurrentDispImageIndex).mCustomImageUrl); File
-		 * sourceFile = new File(imagePath); Bitmap bmp =
-		 * BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-		 * getItem(mCurrentAislePosition).getBestHeightForWindow(),
-		 * VueApplication.getInstance().getVueDetailsCardWidth() / 2,
-		 * Utils.DETAILS_SCREEN); Utils.saveBitmap(bmp, f);
-		 */
-
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.dataObserver();
 		mImageRefresh = true;
@@ -1025,17 +988,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			Log.i("adaptersettings", "adaptersettings: else");
 			mswipeListner.onResetAdapter();
 		}
-
 	}
-
 	public ArrayList<AisleImageDetails> getImageList() {
-		// ArrayList<String> imageList = new ArrayList<String>();
-		/*
-		 * for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
-		 * .size(); i++) { imageList
-		 * .add(getItem(mCurrentAislePosition).getImageList
-		 * ().get(i).mCustomImageUrl); }
-		 */
 		return getItem(mCurrentAislePosition).getImageList();
 	}
 
@@ -1075,16 +1029,18 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				likeStatus = itemDetails.mLikeDislikeStatus;
 				Log.i("likecountissue", "likecountissue: likeCount1: "
 						+ likeCount);
-				ArrayList<ImageRating> imgRatingList = DataBaseManager.getInstance(mContext).getRatedImagesList(aisleId);
+				ArrayList<ImageRating> imgRatingList = DataBaseManager
+						.getInstance(mContext).getRatedImagesList(aisleId);
 				imgRating = new ImageRating();
 				imgRating.setAisleId(Long.parseLong(aisleId));
 				imgRating.setImageId(Long.parseLong(imageId));
 				imgRating.setLiked(likeOrDislike);
-				for(ImageRating imgRat : imgRatingList) {
-				  if(imgRating.getImageId().longValue() == imgRat.getImageId().longValue()) {
-				    imgRating.setId(/*l2*/imgRat.getId().longValue());
-				    break;
-				  }
+				for (ImageRating imgRat : imgRatingList) {
+					if (imgRating.getImageId().longValue() == imgRat
+							.getImageId().longValue()) {
+						imgRating.setId(/* l2 */imgRat.getId().longValue());
+						break;
+					}
 				}
 				try {
 					AisleManager.getAisleManager().updateRating(imgRating,
@@ -1210,16 +1166,18 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
 				Long.parseLong(aisleId));
-	    ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager.getInstance(
-	        VueApplication.getInstance()).getBookmarkAisleIdsList();
-	    
-	    for(AisleBookmark b : aisleBookmarkList) {
-	      if(aisleId.equals(Long.toString(b.getAisleId().longValue()))) {
-	        aisleBookmark.setId(b.getId());
-	        Log.i("bookmarkissue", "bookmarkissue handleBookmark matched Id " + b.getId());
-	        break;
-	      }
-	    }
+		ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager
+				.getInstance(VueApplication.getInstance())
+				.getBookmarkAisleIdsList();
+
+		for (AisleBookmark b : aisleBookmarkList) {
+			if (aisleId.equals(Long.toString(b.getAisleId().longValue()))) {
+				aisleBookmark.setId(b.getId());
+				Log.i("bookmarkissue",
+						"bookmarkissue handleBookmark matched Id " + b.getId());
+				break;
+			}
+		}
 		VueUser storedVueUser = null;
 		try {
 			Log.i("bookmarkissue", "bookmarkissue handleBookmark");
@@ -1267,98 +1225,102 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			}
 		}
 	}
- 
-   public void  updateListCount(String newComment){
-	  mListCount = mListCount +1; 
-	 // mShowingList.add(0,newComment);
-	  Log.i("sizeoflist", "sizeoflist: "+mShowingList.size());
-   }
-   @SuppressWarnings("unchecked")
-public void createComment(String commentString){
-     ImageComments comments = new ImageComments();
-     comments.comment = commentString;
 
-	   if(commentString == null || commentString.length()<1){
-		   return;
-	   }
-	   getItem(mCurrentAislePosition)
-		.getImageList().get(mCurrentDispImageIndex).mCommentsList.add(0,comments);
-	   if(mCommentsMapList == null){
-		   getCommentList();
-	   }
-	   mCommentsMapList.put(mCurrentDispImageIndex, getItem(mCurrentAislePosition)
-				.getImageList().get(mCurrentDispImageIndex).mCommentsList);
-	   
-	   ArrayList<ImageComments> imgComments =  mCommentsMapList.get(mCurrentDispImageIndex);
-	    if (mShowingList == null) {
-	      mShowingList = new ArrayList<String>();
-	    } else if (mShowingList.size() > 0) {
-	      mShowingList.clear();
-	    }
-	    for (ImageComments comment : imgComments) {
-	      mShowingList.add(comment.comment);
-	    }
-		if (mShowingList.size()< mShowFixedRowCount) {
+	public void updateListCount(String newComment) {
+		mListCount = mListCount + 1;
+		// mShowingList.add(0,newComment);
+		Log.i("sizeoflist", "sizeoflist: " + mShowingList.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	public void createComment(String commentString) {
+		ImageComments comments = new ImageComments();
+		comments.comment = commentString;
+
+		if (commentString == null || commentString.length() < 1) {
+			return;
+		}
+		getItem(mCurrentAislePosition).getImageList().get(
+				mCurrentDispImageIndex).mCommentsList.add(0, comments);
+		if (mCommentsMapList == null) {
+			getCommentList();
+		}
+		mCommentsMapList.put(
+				mCurrentDispImageIndex,
+				getItem(mCurrentAislePosition).getImageList().get(
+						mCurrentDispImageIndex).mCommentsList);
+
+		ArrayList<ImageComments> imgComments = mCommentsMapList
+				.get(mCurrentDispImageIndex);
+		if (mShowingList == null) {
+			mShowingList = new ArrayList<String>();
+		} else if (mShowingList.size() > 0) {
+			mShowingList.clear();
+		}
+		for (ImageComments comment : imgComments) {
+			mShowingList.add(comment.comment);
+		}
+		if (mShowingList.size() < mShowFixedRowCount) {
 			mListCount = mShowingList.size() + mShowFixedRowCount;
 		} else {
-			mListCount = mShowFixedRowCount+mInitialCommentsToShowSize;
+			mListCount = mShowFixedRowCount + mInitialCommentsToShowSize;
 		}
-  final ImageComment imgComment =
-          new ImageComment();
-  imgComment.setComment(commentString);
-  imgComment.setCommenterFirstName(getItem(
-		mCurrentAislePosition).getAisleContext().mFirstName);
-  imgComment.setCommenterLastName(getItem(
-		mCurrentAislePosition).getAisleContext().mLastName);
-  imgComment.setOwnerImageId(Long.parseLong(getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mId));
-  imgComment.setCreatedTimestamp(System.currentTimeMillis());
-  imgComment.setOwnerUserId(Long.parseLong(VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().getUserId()));
-  imgComment.setOwnerImageId(Long.parseLong(getItem(
-		mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mId));
- 
-  System.out.println("Comment Response: aisleId " + getItem(
-			mCurrentAislePosition).getAisleId());
-new Thread(new Runnable() {
-	
-	@Override
-	public void run() {
-		try {
-          ImageComment createdComment = VueTrendingAislesDataModel
-              .getInstance(VueApplication.getInstance()).getNetworkHandler()
-              .createImageComment(imgComment);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		final ImageComment imgComment = new ImageComment();
+		imgComment.setComment(commentString);
+		imgComment.setCommenterFirstName(getItem(mCurrentAislePosition)
+				.getAisleContext().mFirstName);
+		imgComment.setCommenterLastName(getItem(mCurrentAislePosition)
+				.getAisleContext().mLastName);
+		imgComment.setOwnerImageId(Long
+				.parseLong(getItem(mCurrentAislePosition).getImageList().get(
+						mCurrentDispImageIndex).mId));
+		imgComment.setCreatedTimestamp(System.currentTimeMillis());
+		imgComment.setOwnerUserId(Long.parseLong(VueTrendingAislesDataModel
+				.getInstance(VueApplication.getInstance()).getNetworkHandler()
+				.getUserId()));
+		imgComment.setOwnerImageId(Long
+				.parseLong(getItem(mCurrentAislePosition).getImageList().get(
+						mCurrentDispImageIndex).mId));
+
+		System.out.println("Comment Response: aisleId "
+				+ getItem(mCurrentAislePosition).getAisleId());
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					ImageComment createdComment = VueTrendingAislesDataModel
+							.getInstance(VueApplication.getInstance())
+							.getNetworkHandler().createImageComment(imgComment);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private void getCommentList() {
+		mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
+		for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
+				.size(); i++) {
+			mCommentsMapList.put(i, getItem(mCurrentAislePosition)
+					.getImageList().get(i).mCommentsList);
+		}
+		ArrayList<ImageComments> imgComments = (ArrayList<ImageComments>) mCommentsMapList
+				.get(mCurrentDispImageIndex);
+		if (mShowingList == null) {
+			mShowingList = new ArrayList<String>();
+		} else if (mShowingList.size() > 0) {
+			mShowingList.clear();
+		}
+		for (ImageComments comment : imgComments) {
+			mShowingList.add(comment.comment);
 		}
 	}
-}).start();
-  
-  
- 
- 
-   }
- 
-@SuppressWarnings("unchecked")
-  private void getCommentList() {
-    mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
-    for (int i = 0; i < getItem(mCurrentAislePosition).getImageList().size(); i++) {
-      mCommentsMapList.put(i, getItem(mCurrentAislePosition).getImageList()
-          .get(i).mCommentsList);
-    }
-    ArrayList<ImageComments> imgComments = (ArrayList<ImageComments>) mCommentsMapList
-        .get(mCurrentDispImageIndex);
-    if (mShowingList == null) {
-      mShowingList = new ArrayList<String>();
-    } else if (mShowingList.size() > 0) {
-      mShowingList.clear();
-    }
-    for (ImageComments comment : imgComments) {
-      mShowingList.add(comment.comment);
-    }
-  }
-   
-   
-   
+
 	private void writeToSdcard(String message) {
 
 		String path = Environment.getExternalStorageDirectory().toString();
@@ -1387,25 +1349,4 @@ new Thread(new Runnable() {
 			e.printStackTrace();
 		}
 	}
-
-	/*
-	 * public AisleImageDetails prepareCustomUrl(AisleImageDetails imageDetails,
-	 * int mWindowSmallestHeight) { String IMAGE_RES_SPEC_REGEX = ".jpg"; String
-	 * mImageFormatSpecifier = "._SY%d.jpg"; StringBuilder sb = new
-	 * StringBuilder(); String urlReusablePart; String customFittedSizePart;
-	 * String regularUrl = imageDetails.mImageUrl; int index = -1; index =
-	 * regularUrl.indexOf(IMAGE_RES_SPEC_REGEX); if (-1 != index) { // we have a
-	 * match urlReusablePart = regularUrl.split(IMAGE_RES_SPEC_REGEX)[0];
-	 * sb.append(urlReusablePart); customFittedSizePart =
-	 * String.format(mImageFormatSpecifier, mWindowSmallestHeight);
-	 * sb.append(customFittedSizePart); imageDetails.mCustomImageUrl =
-	 * sb.toString(); } else { imageDetails.mCustomImageUrl = regularUrl; }
-	 * imageDetails.mCustomImageUrl = Utils.addImageInfo(
-	 * imageDetails.mCustomImageUrl, imageDetails.mAvailableWidth,
-	 * imageDetails.mAvailableHeight);
-	 * 
-	 * return imageDetails;
-	 * 
-	 * }
-	 */
 }

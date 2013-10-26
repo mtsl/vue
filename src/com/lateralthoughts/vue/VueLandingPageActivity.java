@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
@@ -55,6 +57,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	private ProgressBar mLoadProgress;
 	private ProgressDialog mProgressDialog;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
+	private boolean mAddImageToAisleLayoutClickedAFlag = false;
 	public static String mOtherSourceImagePath = null;
 	public static String mOtherSourceImageUrl = null;
 	public static int mOtherSourceImageWidth = 0;
@@ -616,11 +619,12 @@ public class VueLandingPageActivity extends BaseActivity {
 	private void getBookmarkedAisles(String screenName) {
 
 		ArrayList<AisleWindowContent> windowContent = null;
-		ArrayList<AisleBookmark> bookmarkedAisles = DataBaseManager.getInstance(
-				VueLandingPageActivity.this).getBookmarkAisleIdsList();
+		ArrayList<AisleBookmark> bookmarkedAisles = DataBaseManager
+				.getInstance(VueLandingPageActivity.this)
+				.getBookmarkAisleIdsList();
 		String[] bookmarked = new String[bookmarkedAisles.size()];
-		for(int i = 0; i < bookmarkedAisles.size(); i++) {
-		  bookmarked[i] = Long.toString(bookmarkedAisles.get(i).getAisleId());
+		for (int i = 0; i < bookmarkedAisles.size(); i++) {
+			bookmarked[i] = Long.toString(bookmarkedAisles.get(i).getAisleId());
 		}
 		if (windowContent == null) {
 			windowContent = new ArrayList<AisleWindowContent>();
@@ -657,17 +661,18 @@ public class VueLandingPageActivity extends BaseActivity {
 		boolean loadMore = false;
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
-			VueTrendingAislesDataModel.getInstance(VueApplication
-					.getInstance()).loadOnRequest = false;
-		 
-			 VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).isFromDb = true;
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
+
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).isFromDb = true;
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 					.clearContent();
 			Log.i("formdbtrending", "formdbtrending: showPreviousScreen");
-		  if(!fromServer)
-			DataBaseManager.getInstance(VueApplication.getInstance())
-			.resetDbParams();
-			
+			if (!fromServer)
+				DataBaseManager.getInstance(VueApplication.getInstance())
+						.resetDbParams();
+
 			VueTrendingAislesDataModel
 					.getInstance(VueLandingPageActivity.this)
 					.getNetworkHandler()
@@ -735,9 +740,9 @@ public class VueLandingPageActivity extends BaseActivity {
 						.findFragmentById(R.id.aisles_view_fragment);
 			}
 			if (fromWhere) {
-				//mFragment.moveListToPosition(0);
+				// mFragment.moveListToPosition(0);
 			} else {
-				//mFragment.moveListToPosition(mCurentScreenPosition);
+				// mFragment.moveListToPosition(mCurentScreenPosition);
 			}
 		}
 
@@ -789,6 +794,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		mOtherSourceImageUrl = imageUrl;
 		mOtherSourceImageDetailsUrl = detailsUrl;
 		mOtherSourceImageStore = store;
+		mAddImageToAisleLayoutClickedAFlag = false;
 		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.other_source_landing_screen_selection);
@@ -799,6 +805,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		addImageToAisleLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				mAddImageToAisleLayoutClickedAFlag = true;
 				dialog.dismiss();
 			}
 		});
@@ -830,14 +837,22 @@ public class VueLandingPageActivity extends BaseActivity {
 				b.putInt(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT,
 						imageHeight);
-				mOtherSourceImagePath = null;
-				mOtherSourceImageUrl = null;
-				mOtherSourceImageWidth = 0;
-				mOtherSourceImageHeight = 0;
-				mOtherSourceImageDetailsUrl = null;
-				mOtherSourceImageStore = null;
 				intent.putExtras(b);
 				startActivity(intent);
+			}
+		});
+		dialog.setOnDismissListener(new OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface arg0) {
+				if (!mAddImageToAisleLayoutClickedAFlag) {
+					mOtherSourceImagePath = null;
+					mOtherSourceImageUrl = null;
+					mOtherSourceImageWidth = 0;
+					mOtherSourceImageHeight = 0;
+					mOtherSourceImageDetailsUrl = null;
+					mOtherSourceImageStore = null;
+				}
+				mAddImageToAisleLayoutClickedAFlag = false;
 			}
 		});
 		dialog.show();

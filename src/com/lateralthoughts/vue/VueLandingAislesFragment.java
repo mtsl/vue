@@ -191,11 +191,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				mIsIdleState = true;
 				mIsFlingCalled = false;
 				// notify the adapters.
-				if (mIsFlingCalled == true) {
-					mIsFlingCalled = false;
 					mLeftColumnAdapter.notifyDataSetChanged();
 					mRightColumnAdapter.notifyDataSetChanged();
-				}
 
 			} else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
 				mIsIdleState = false;
@@ -214,7 +211,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
-			mIsIdleState = false;
+			 
 			if (view.getChildAt(0) != null) {
 				if (view.equals(mLeftColumnView)) {
 					mLeftViewsHeights[view.getFirstVisiblePosition()] = view

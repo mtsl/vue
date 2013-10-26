@@ -196,12 +196,12 @@ public class DataBaseManager {
       values.put(VueConstants.AISLE_Id, info.mAisleId);
       values.put(VueConstants.BOOKMARK_COUNT, info.mBookmarkCount);
       values.put(VueConstants.DELETE_FLAG, 0);
+      values.put(VueConstants.ID,
+          String.format(FORMATE, aislesOrderMap.get(info.mAisleId)));
       if (aisleIds.contains(info.mAisleId)) {
         context.getContentResolver().update(VueConstants.CONTENT_URI, values,
             VueConstants.AISLE_Id + "=?", new String[] {info.mAisleId});
       } else {
-        /*values.put(VueConstants.ID,
-            String.format(FORMATE, maxId maxValue + 1));*/
         context.getContentResolver().insert(VueConstants.CONTENT_URI, values);
       }
       for (AisleImageDetails imageDetails : imageItemsArray) {
@@ -265,7 +265,7 @@ public class DataBaseManager {
 
       }
     }
-    updateAisleOrder();
+    //updateAisleOrder();
     copydbToSdcard();
   }
 
@@ -283,14 +283,25 @@ public class DataBaseManager {
     if(mStartPosition == 0) {
       
       if(cursor.moveToFirst()) {
-        mStartPosition = Integer.parseInt(cursor.getString(cursor.getColumnIndex(VueConstants.ID)));
+    	  if(cursor.getString(cursor.getColumnIndex(VueConstants.ID)) != null) {
+    	    String s = cursor.getString(cursor.getColumnIndex(VueConstants.ID));
+        mStartPosition = Integer.parseInt(s);
+        Log.e("DataBaseManager", "Crash Check NOT NULL mStartPosition: " + mStartPosition);
+    	  } else {
+    		  mStartPosition = 1000;
+    		  Log.e("DataBaseManager", "Crash Check IS NULL mStartPosition: " + mStartPosition);
+    	  }
       } else {
         mStartPosition = 1000;
       }
     }
     if(mEndPosition == 0) {
       if(cursor.moveToFirst()) {
+        if(cursor.getString(cursor.getColumnIndex(VueConstants.ID)) != null) {
         mEndPosition = Integer.parseInt(cursor.getString(cursor.getColumnIndex(VueConstants.ID)));
+        } else {
+          mEndPosition = 1000;
+        }
       } else {
         mEndPosition = 1000;
       }
@@ -321,8 +332,6 @@ public class DataBaseManager {
       selection = VueConstants.AISLE_Id + " IN (" + questionSymbols + ") ";
       args = aislesIds;
     }
-    Log.e("DataBaseManager", "SURU updated aisle Order: Retriving TIME selection: " + selection + ", args[0] = " + args[0] + ", args[1] = " + args[1]);
-    
     Cursor aislesCursor = mContext.getContentResolver().query(
         VueConstants.CONTENT_URI, null, selection, args,
         VueConstants.ID + " ASC");
@@ -1175,6 +1184,7 @@ public class DataBaseManager {
    return minEntry.getValue();
  }
  
+ @Deprecated // not is use by surendra
  private void updateAisleOrder() {
    ContentValues values = new ContentValues();
    Cursor aisleIdCursor = mContext.getContentResolver().query(
@@ -1191,7 +1201,7 @@ public class DataBaseManager {
      Log.e("DataBaseManager", "SURU updated aisle Order: values.getAsString(VueConstants.ID) " + values.getAsString(VueConstants.ID));
      Log.e("DataBaseManager", "SURU updated aisle Order: " + value + ", aisleID: " + key);
    }
-   
+   aisleIdCursor.close();
  }
  
   /**

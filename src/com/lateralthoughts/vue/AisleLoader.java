@@ -215,7 +215,7 @@ public class AisleLoader {
 				if (!placeholderOnly)
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
-							bestHeight, windowContent.getAisleId(), itemDetails);
+							bestHeight, windowContent.getAisleId(), itemDetails); //,listener);
 			}
 		}
 		if (VueApplication.getInstance().getmUserId() != null) {
@@ -239,27 +239,134 @@ public class AisleLoader {
 			holder.profileThumbnail
 					.setBackgroundResource(R.drawable.profile_thumbnail);
 		}
+		 
 	}
 
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
 			String asileId, AisleImageDetails itemDetails) {
 		/*if(Utils.isAisleChanged){
+			String asileId, AisleImageDetails itemDetails,AisleContentClickListener listener) {
+		if(Utils.isAisleChanged){
 			Utils.isAisleChanged = false;
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight, asileId, itemDetails);
+					bestHeight, asileId, itemDetails,listener);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
 			String[] urlsArray = { loc, serverImageUrl };
 			task.execute(urlsArray);
 		} else {
 		if (cancelPotentialDownload(loc, imageView)) {
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight, asileId, itemDetails);
+					bestHeight, asileId, itemDetails,listener);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
 			String[] urlsArray = { loc, serverImageUrl };
 			task.execute(urlsArray);
 		}
 		}*/
         ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader() );
+		/*
+		 * ((ScaleImageView) imageView).setImageUrl(serverImageUrl, new
+		 * ImageLoader(VueApplication.getInstance().getRequestQueue(),
+		 * VueApplication.getInstance().getBitmapCache()),
+		 * VueApplication.getInstance().getVueDetailsCardWidth() / 2,
+		 * bestHeight);
+		 */
 	}
+
+
+    /*class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+		private final WeakReference<ImageView> imageViewReference;
+		private final WeakReference<AisleContentBrowser> viewFlipperReference;
+		private String url = null;
+		private int mBestHeight;
+
+		AisleImageDetails mItemDetails;
+		AisleContentClickListener mListener;
+
+		public BitmapWorkerTask(AisleContentBrowser vFlipper,
+				ImageView imageView, int bestHeight, String aisleId,
+				AisleImageDetails itemDetails,AisleContentClickListener listener) {
+			// Use a WeakReference to ensure the ImageView can be garbage
+			// collected
+			imageViewReference = new WeakReference<ImageView>(imageView);
+			viewFlipperReference = new WeakReference<AisleContentBrowser>(
+					vFlipper);
+			mListener = listener;
+			mItemDetails = itemDetails;
+		}
+
+		// Decode image in background.
+		@Override
+		protected Bitmap doInBackground(String... params) {
+			if(!mListener.isFlingCalled()){
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+			Log.i("downloading speed", "fling calls stop");
+			} else {
+				Log.i("downloading speed", "fling calls");
+			}
+			url = params[0];
+			Bitmap bmp = null;
+			// we want to get the bitmap and also add it into the memory cache
+			boolean cacheBitmap = false;
+			bmp = mBitmapLoaderUtils.getBitmap(url, params[1], cacheBitmap,
+					mItemDetails.mTrendingImageHeight,
+					mItemDetails.mTrendingImageWidth, Utils.TRENDING_SCREEN);
+			return bmp;
+		}
+
+		// Once complete, see if ImageView is still around and set bitmap.
+		@Override
+		protected void onPostExecute(Bitmap bitmap) {
+
+			if (viewFlipperReference != null && imageViewReference != null
+					&& bitmap != null) {
+				final ImageView imageView = imageViewReference.get();
+				BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+
+				if (this == bitmapWorkerTask) {
+					ViewHolder holder = (ViewHolder) ((ScaleImageView) imageView)
+							.getContainerObject();
+					if (null != holder) {
+						holder.aisleContext.setVisibility(View.VISIBLE);
+						holder.aisleOwnersName.setVisibility(View.VISIBLE);
+						holder.profileThumbnail.setVisibility(View.VISIBLE);
+						holder.aisleDescriptor.setVisibility(View.VISIBLE);
+					}
+					imageView.setImageBitmap(bitmap);
+					if (mListener.isFlingCalled()) {
+						// mListener.refreshList();
+					}
+				}
+			}
+		}
+	}
+
+	// utility functions to keep track of all the async tasks that we
+	// instantiate
+	private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+		if (imageView != null) {
+			Object task = ((ScaleImageView) imageView).getOpaqueWorkerObject();
+			if (task instanceof BitmapWorkerTask) {
+				BitmapWorkerTask workerTask = (BitmapWorkerTask) task;
+				return workerTask;
+			}
+		}
+		return null;
+	}
+
+	private static boolean cancelPotentialDownload(String url,
+			ImageView imageView) {
+		BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+
+		if (bitmapWorkerTask != null) {
+			String bitmapUrl = bitmapWorkerTask.url;
+			if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+				bitmapWorkerTask.cancel(true);
+			} else {
+				// The same URL is already being downloaded.
+				return false;
+			}
+		}
+		return true;
+	}*/
 }
