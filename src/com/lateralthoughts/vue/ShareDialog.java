@@ -144,6 +144,7 @@ public class ShareDialog {
 							} else if (mAppNames.get(position).equals(
 									mContext.getResources().getString(
 											R.string.browser))) {
+								Utils.setLoadDataentryScreenFlag(mContext, true);
 								// Load Browser...
 								mContext.startActivity(new Intent(
 										Intent.ACTION_VIEW, Uri
@@ -157,13 +158,11 @@ public class ShareDialog {
 						}
 					}
 				} else if (mLoadAllApplications) {
-					String activityName = mActivityNames.get(position);
-					String packageName = mPackageNames.get(position);
-					Intent shoppingAppIntent = new Intent(
-							android.content.Intent.ACTION_VIEW);
-					shoppingAppIntent.setClassName(packageName, activityName);
-					mContext.startActivity(shoppingAppIntent);
 					mDialog.dismiss();
+					CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
+					createAisleSelectionActivity.loadShoppingApplication(
+							mActivityNames.get(position),
+							mPackageNames.get(position));
 				} else {
 					shareIntent(position);
 				}
