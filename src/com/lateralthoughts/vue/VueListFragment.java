@@ -89,11 +89,15 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 	private LayoutInflater inflater;
 	private boolean isProfileEdited = false;
 	boolean isNewUser = false;
+	
 
 	private String profilePicUrl = "";
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+	  if (getActivity() instanceof VueLandingPageActivity) {
+	    VueApplication.getInstance().landingPage = (VueLandingPageActivity) getActivity();
+	  }
 		this.inflater = inflater;
 		sharedPreferencesObj = getActivity().getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -293,10 +297,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           if (getActivity() instanceof SlidingFragmentActivity) {
             SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
             activity.getSlidingMenu().toggle();
-            if (getActivity() instanceof VueLandingPageActivity) {
-            	VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
-                vueLandingPageActivity1.showCategory(s);
-            }
+           // if (getActivity() instanceof VueLandingPageActivity) {
+            	//VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
+            activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
+            VueApplication.getInstance().landingPage.showCategory(s);
+           // }
             if (getActivity() instanceof AisleDetailsViewActivity) {
               startActivity(new Intent(
                   (AisleDetailsViewActivity) getActivity(),
@@ -308,17 +313,28 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           }
               return true;
         } else if (s.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-        	((VueLandingPageActivity) getActivity()).showCategory(s);
         	  if (getActivity() instanceof SlidingFragmentActivity) {
-                  SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+        	   // if (getActivity() instanceof VueLandingPageActivity) {
+        	    SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+        	    activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
+        	    /*((VueLandingPageActivity) getActivity())*/VueApplication.getInstance().landingPage.showCategory(s);
+        	   // } else {
+        	      //TODO: Need to implement in all the screens.
+        	   // }
                   activity.getSlidingMenu().toggle();
         	  }
         	return true;
         } else if (s.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
           Log.i("clicked on", "clicked on: "+s);
-          ((VueLandingPageActivity) getActivity()).showCategory(s);
           if (getActivity() instanceof SlidingFragmentActivity) {
-              SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+          //  if (getActivity() instanceof VueLandingPageActivity) {
+            SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+            activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
+              /*((VueLandingPageActivity) getActivity())*/VueApplication.getInstance().landingPage.showCategory(s);              
+            //} else {
+              //TODO: Need to implement in all the screens.
+           // }
+             // SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
               activity.getSlidingMenu().toggle();
     	  }
           return true;

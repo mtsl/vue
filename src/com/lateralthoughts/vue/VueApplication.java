@@ -35,6 +35,7 @@ public class VueApplication extends Application {
 	private int mStatusBarHeight;
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
+	public VueLandingPageActivity landingPage;
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
 	public ArrayList<ShoppingApplicationDetails> mMoreInstalledApplicationDetailsList;
 	public static final int[] POPUP_ITEM_DRAWABLES = {
