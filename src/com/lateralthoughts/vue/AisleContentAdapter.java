@@ -359,6 +359,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 			if (aisleContentBrowser.getmSourceName() != null
 					&& aisleContentBrowser.getmSourceName().equalsIgnoreCase(
 							AisleDetailsViewAdapter.TAG)) {
+				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 				boolean cacheval = false;
 				bmp = mBitmapLoaderUtils
 						.getBitmap(url, params[1], cacheval, mBestHeightForImage,
