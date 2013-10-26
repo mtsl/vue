@@ -192,27 +192,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 				mCommentsMapList.put(i, getItem(mCurrentAislePosition)
 						.getImageList().get(i).mCommentsList);
-
-				// TODO: get all the comments from the db and update the comment
-				// list
-
-				/*
-				 * if (getItem(mCurrentAislePosition).getImageList().get(i).
-				 * mCommentsList == null) { // TODO: for temp comments display
-				 * need to replace this
-				 * getItem(mCurrentAislePosition).getImageList
-				 * ().get(i).mCommentsList = new ArrayList<String>(); if (i % 2
-				 * == 0) { for (int k = 0; k < 6; k++) {
-				 * getItem(mCurrentAislePosition).getImageList()
-				 * .get(i).mCommentsList
-				 * .add("Love Love vue the dress! Simple and fabulous."); } }
-				 * else { for (int k = 0; k < 10; k++) {
-				 * getItem(mCurrentAislePosition).getImageList()
-				 * .get(i).mCommentsList
-				 * .add("vue vue vue  sample test comments"); } }
-				 * mCommentsMapList.put(i, getItem(mCurrentAislePosition)
-				 * .getImageList().get(i).mCommentsList); }
-				 */
 			}
 
 			mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
@@ -637,8 +616,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							bookmarkStatus);
 					handleBookmark(bookmarkStatus,
 							getItem(mCurrentAislePosition).getAisleId());
-					Log.e("AisleManager",
-							"bookmarkfeaturetest: count BOOKMARK RESPONSE: mViewHolder.bookmarklay if called ");
 				} else {
 					bookmarkStatus = true;
 					FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
@@ -648,8 +625,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
 					getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
 							bookmarkStatus);
-					Log.e("AisleManager",
-							"bookmarkfeaturetest: count BOOKMARK RESPONSE: mViewHolder.bookmarklay else called ");
 					handleBookmark(bookmarkStatus,
 							getItem(mCurrentAislePosition).getAisleId());
 				}
@@ -752,12 +727,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					&& position < VueApplication.getInstance()
 							.getClickedWindowCount()) {
 				mCurrentDispImageIndex = position;
-				/*
-				 * @SuppressWarnings("unchecked") ArrayList<String>
-				 * tempCommentList = (ArrayList<String>) mCommentsMapList
-				 * .get(position); if (tempCommentList != null) { //mShowingList
-				 * = tempCommentList; }
-				 */
 				mLikes = getItem(mCurrentAislePosition).getImageList().get(
 						position).mLikesCount;
 				ArrayList<ImageComments> imgComments = getItem(
@@ -1007,12 +976,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		if (imgDetails.mAvailableHeight > getItem(mCurrentAislePosition)
 				.getBestLargetHeightForWindow()) {
 			mBestHeight = imgDetails.mAvailableHeight;
-			/*
-			 * getItem(mCurrentAislePosition).setBestLargestHeightForWindow(
-			 * imgDetails.mAvailableHeight, imgDetails.mAvailableWidth);
-			 */
-
-			Log.i("new image", "new image height: changed");
 		}
 		if (imgDetails.mAvailableHeight < getItem(mCurrentAislePosition)
 				.getBestHeightForWindow()) {

@@ -44,6 +44,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.fasterxml.jackson.databind.deser.impl.SetterlessProperty;
@@ -211,6 +212,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
 							uriUrl);
 					startActivity(launchBrowser);
+				} else {
+					Toast.makeText(mContext, "There is no url", Toast.LENGTH_SHORT).show();
 				}
 
 			}
