@@ -196,12 +196,12 @@ public class DataBaseManager {
       values.put(VueConstants.AISLE_Id, info.mAisleId);
       values.put(VueConstants.BOOKMARK_COUNT, info.mBookmarkCount);
       values.put(VueConstants.DELETE_FLAG, 0);
+      values.put(VueConstants.ID,
+          String.format(FORMATE, aislesOrderMap.get(info.mAisleId)));
       if (aisleIds.contains(info.mAisleId)) {
         context.getContentResolver().update(VueConstants.CONTENT_URI, values,
             VueConstants.AISLE_Id + "=?", new String[] {info.mAisleId});
       } else {
-        values.put(VueConstants.ID,
-            String.format(FORMATE, aislesOrderMap.get(info.mAisleId)));
         context.getContentResolver().insert(VueConstants.CONTENT_URI, values);
       }
       for (AisleImageDetails imageDetails : imageItemsArray) {
@@ -1184,6 +1184,7 @@ public class DataBaseManager {
    return minEntry.getValue();
  }
  
+ @Deprecated // not is use by surendra
  private void updateAisleOrder() {
    ContentValues values = new ContentValues();
    Cursor aisleIdCursor = mContext.getContentResolver().query(
