@@ -527,27 +527,4 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 		}
 		return null;
 	}
-
-	private void createLayout(ScaleImageView image,
-			AisleContentBrowser contentBrowser, int id) {
-		RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		params2.addRule(RelativeLayout.CENTER_IN_PARENT);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-				VueApplication.getInstance().getPixel(32), VueApplication
-						.getInstance().getPixel(32));
-		params.addRule(RelativeLayout.CENTER_IN_PARENT);
-		RelativeLayout imageParent = new RelativeLayout(mContext);
-		RelativeLayout.LayoutParams paramsRel = new RelativeLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		imageParent.setLayoutParams(paramsRel);
-		image.setLayoutParams(params2);
-		imageParent.addView(image);
-		ImageView thumbImage = new ImageView(mContext);
-		thumbImage.setLayoutParams(params);
-		thumbImage.setImageResource(R.drawable.thumb_up);
-		thumbImage.setVisibility(View.INVISIBLE);
-		imageParent.addView(thumbImage);
-		contentBrowser.addView(imageParent);
-	}
 }

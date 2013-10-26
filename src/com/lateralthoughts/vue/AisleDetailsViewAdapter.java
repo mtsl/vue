@@ -1035,14 +1035,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		imgDetails.mOwnerAisleId = getItem(mCurrentAislePosition).getAisleId();
 		imgDetails.mOwnerUserId = getItem(mCurrentAislePosition)
 				.getAisleContext().mUserId;
-		/*
-		 * imgDetails = prepareCustomUrl(imgDetails,
-		 * getItem(mCurrentAislePosition).getBestHeightForWindow());
-		 */
-		if (mCurrentDispImageIndex == 0) {
-			getItem(mCurrentAislePosition).getImageList().add(imgDetails);
-		}
-
+	    getItem(mCurrentAislePosition).getImageList().add(imgDetails);
 		getItem(mCurrentAislePosition).addAisleContent(
 				getItem(mCurrentAislePosition).getAisleContext(),
 				getItem(mCurrentAislePosition).getImageList());
@@ -1050,17 +1043,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				mCurrentAislePosition).getImageList());
 		getItem(mCurrentAislePosition)
 				.setBestLargestHeightForWindow(bestHeight);
-		/*
-		 * FileCache fileCache = new FileCache(mContext); File f =
-		 * fileCache.getFile(getItem(mCurrentAislePosition)
-		 * .getImageList().get(mCurrentDispImageIndex).mCustomImageUrl); File
-		 * sourceFile = new File(imagePath); Bitmap bmp =
-		 * BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-		 * getItem(mCurrentAislePosition).getBestHeightForWindow(),
-		 * VueApplication.getInstance().getVueDetailsCardWidth() / 2,
-		 * Utils.DETAILS_SCREEN); Utils.saveBitmap(bmp, f);
-		 */
-
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.dataObserver();
 		mImageRefresh = true;
@@ -1072,17 +1054,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			Log.i("adaptersettings", "adaptersettings: else");
 			mswipeListner.onResetAdapter();
 		}
-
 	}
-
 	public ArrayList<AisleImageDetails> getImageList() {
-		// ArrayList<String> imageList = new ArrayList<String>();
-		/*
-		 * for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
-		 * .size(); i++) { imageList
-		 * .add(getItem(mCurrentAislePosition).getImageList
-		 * ().get(i).mCustomImageUrl); }
-		 */
 		return getItem(mCurrentAislePosition).getImageList();
 	}
 
@@ -1442,25 +1415,4 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			e.printStackTrace();
 		}
 	}
-
-	/*
-	 * public AisleImageDetails prepareCustomUrl(AisleImageDetails imageDetails,
-	 * int mWindowSmallestHeight) { String IMAGE_RES_SPEC_REGEX = ".jpg"; String
-	 * mImageFormatSpecifier = "._SY%d.jpg"; StringBuilder sb = new
-	 * StringBuilder(); String urlReusablePart; String customFittedSizePart;
-	 * String regularUrl = imageDetails.mImageUrl; int index = -1; index =
-	 * regularUrl.indexOf(IMAGE_RES_SPEC_REGEX); if (-1 != index) { // we have a
-	 * match urlReusablePart = regularUrl.split(IMAGE_RES_SPEC_REGEX)[0];
-	 * sb.append(urlReusablePart); customFittedSizePart =
-	 * String.format(mImageFormatSpecifier, mWindowSmallestHeight);
-	 * sb.append(customFittedSizePart); imageDetails.mCustomImageUrl =
-	 * sb.toString(); } else { imageDetails.mCustomImageUrl = regularUrl; }
-	 * imageDetails.mCustomImageUrl = Utils.addImageInfo(
-	 * imageDetails.mCustomImageUrl, imageDetails.mAvailableWidth,
-	 * imageDetails.mAvailableHeight);
-	 * 
-	 * return imageDetails;
-	 * 
-	 * }
-	 */
 }
