@@ -57,8 +57,8 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 	protected boolean mIsScrolling;
 	protected AisleContentClickListener mClickListener;
 
-	protected String mPossibleOccasions[] = { "Pool Party", "Birthday",
-			"Wedding", "Anniversary", "Winter Ball", "Disney Land", "Cocktail" };
+	/*protected String mPossibleOccasions[] = { "Pool Party", "Birthday",
+			"Wedding", "Anniversary", "Winter Ball", "Disney Land", "Cocktail" };*/
 	protected String mPossibleCategories[] = { "Dress", "Shoes", "Ear Rings",
 			"Necklaces", "Jewelry", "Sunglasses", "Trousers" };
 

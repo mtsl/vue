@@ -363,7 +363,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="4dip"
                         android:singleLine="true"
-                        android:text="Home"
+                        android:text=""
                         android:textColor="@color/dataentrytextcolor"
                         android:textSize="15sp" />
                 </LinearLayout>
