@@ -44,7 +44,7 @@
         <ImageView
             android:id="@+id/vuewndow_bookmark_img"
             android:layout_width="16dp"
-           android:layout_height="24dp"
+           android:layout_height="16dp"
            android:layout_centerVertical="true"
             android:layout_marginBottom="6dp"
             android:layout_marginRight="8dp"
@@ -74,7 +74,7 @@
         <ImageView
             android:id="@+id/vuewndow_lik_img"
            android:layout_width="16dp"
-           android:layout_height="24dp"
+           android:layout_height="16dp"
            android:layout_centerVertical="true"
             android:layout_marginBottom="6dp"
             android:layout_marginRight="8dp"
