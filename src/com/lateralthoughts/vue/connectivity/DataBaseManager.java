@@ -200,8 +200,8 @@ public class DataBaseManager {
         context.getContentResolver().update(VueConstants.CONTENT_URI, values,
             VueConstants.AISLE_Id + "=?", new String[] {info.mAisleId});
       } else {
-        /*values.put(VueConstants.ID,
-            String.format(FORMATE, maxId maxValue + 1));*/
+        values.put(VueConstants.ID,
+            String.format(FORMATE, aislesOrderMap.get(info.mAisleId)));
         context.getContentResolver().insert(VueConstants.CONTENT_URI, values);
       }
       for (AisleImageDetails imageDetails : imageItemsArray) {
@@ -265,7 +265,7 @@ public class DataBaseManager {
 
       }
     }
-    updateAisleOrder();
+    //updateAisleOrder();
     copydbToSdcard();
   }
 
