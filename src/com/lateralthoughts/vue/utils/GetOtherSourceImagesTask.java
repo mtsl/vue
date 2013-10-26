@@ -65,8 +65,20 @@ public class GetOtherSourceImagesTask extends
 		OtherSourceImageDetails OtherSourceImageDetails = null;
 		Document doc = null;
 		doc = Jsoup.parse(getData(url), url);
+		System.out.println("Img elements  doc size : " + doc.childNodeSize());
 		Elements elements = doc.select("img");
 		System.out.println("Img elements size : " + elements.size());
+		if (elements.size() == 0) {
+			for (int i = 0; i < 3; i++) {
+				System.out.println("Img elements retry count : "
+						+ i);
+				doc = Jsoup.parse(getData(url), url);
+				elements = doc.select("img");
+				if (elements.size() > 0) {
+					break;
+				}
+			}
+		}
 		for (Element elmnt : elements) {
 			Elements elements2 = elmnt.getAllElements();
 			for (int j = 0; j < elements2.size(); j++) {
@@ -179,7 +191,7 @@ public class GetOtherSourceImagesTask extends
 			} else {
 				return null;
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
