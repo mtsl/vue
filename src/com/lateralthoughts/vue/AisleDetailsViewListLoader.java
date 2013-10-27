@@ -1,11 +1,8 @@
 package com.lateralthoughts.vue;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -15,14 +12,17 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.graphics.drawable.BitmapDrawable;
-
+import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.Utils;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AisleDetailsViewListLoader {
     private static final boolean DEBUG = false;
@@ -174,7 +174,8 @@ public class AisleDetailsViewListLoader {
     	String loc = itemDetails.mImageUrl;
     	String serverImageUrl = itemDetails.mImageUrl;
  
-      ((ScaleImageView) imageView).setImageUrl(serverImageUrl, VueApplication.getInstance().getImageCacheLoader());
+      ((ScaleImageView) imageView).setImageUrl(serverImageUrl, VueApplication.getInstance().getImageCacheLoader(),
+              itemDetails.mAvailableWidth,itemDetails.mAvailableHeight, NetworkImageView.BitmapProfile.ProfileDetailsView);
     	Log.i("imageHeight", "imageHeight resizeWidth:  calling bacground thread ");
 
       /*  ((ScaleImageView) imageView).setImageUrl(serverImageUrl,

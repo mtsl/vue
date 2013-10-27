@@ -182,8 +182,9 @@ public class VueApplication extends Application {
 		 * crittercismConfig);
 		 */
 
-        mImageLoader = new ImageLoader(mVolleyRequestQueue, new ImageLoader.ImageCache() {
+        mImageLoader = new NetworkImageLoader(mVolleyRequestQueue, new ImageLoader.ImageCache() {
             private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(MAX_BITMAP_COUNT);
+
             public void putBitmap(String url, Bitmap bitmap) {
                 mCache.put(url, bitmap);
             }
@@ -191,8 +192,7 @@ public class VueApplication extends Application {
                 return mCache.get(url);
             }
         });
-
-	}
+    }
 
 	public static VueApplication getInstance() {
 		return sInstance;

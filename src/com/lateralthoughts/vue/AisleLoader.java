@@ -10,6 +10,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.NetworkImageView.BitmapProfile;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
@@ -263,7 +264,8 @@ public class AisleLoader {
 			task.execute(urlsArray);
 		}
 		}*/
-        ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader() );
+        ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader(),
+                itemDetails.mTrendingImageWidth, itemDetails.mTrendingImageHeight, BitmapProfile.ProfileLandingView);
 		/*
 		 * ((ScaleImageView) imageView).setImageUrl(serverImageUrl, new
 		 * ImageLoader(VueApplication.getInstance().getRequestQueue(),

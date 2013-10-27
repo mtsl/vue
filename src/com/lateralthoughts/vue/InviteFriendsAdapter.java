@@ -1,8 +1,5 @@
 package com.lateralthoughts.vue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,11 +10,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InviteFriendsAdapter extends BaseAdapter {
 
@@ -59,7 +58,7 @@ public class InviteFriendsAdapter extends BaseAdapter {
 		}
 		holder.friendName.setText(mItems.get(position).getName());
 		holder.friendPrifilePicture.setImageUrl(mItems.get(position)
-				.getProfile_image_url(), mImageLoader);
+				.getProfile_image_url(), mImageLoader, 0, 0, NetworkImageView.BitmapProfile.ProfileLandingView);
 		final int index = position;
 		holder.inviteFriendInviteButton
 				.setOnClickListener(new OnClickListener() {

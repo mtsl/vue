@@ -8,12 +8,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
@@ -278,13 +275,15 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             	if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             		int bestHeight = mWindowContent.getBestLargetHeightForWindow();
             		//loadBitmap(itemDetails,bestHeight,contentBrowser, imageView,wantedIndex);
-                    ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader());
+                    ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader(),
+                            itemDetails.mTrendingImageWidth, bestHeight, NetworkImageView.BitmapProfile.ProfileLandingView);
                 contentBrowser.addView(imageView);
             	} else {
             		int bestHeight = mWindowContent.getBestHeightForWindow();
             		 //loadBitmap(itemDetails,itemDetails.mTrendingImageHeight,contentBrowser, imageView,wantedIndex);
                      contentBrowser.addView(imageView);
-                    ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader());
+                    ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader(),
+                            itemDetails.mTrendingImageWidth, itemDetails.mTrendingImageHeight, NetworkImageView.BitmapProfile.ProfileLandingView);
                             
             	}
             }
