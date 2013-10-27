@@ -13,7 +13,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,6 +36,7 @@ import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
+import com.lateralthoughts.vue.utils.Logging;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -105,7 +105,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		mShowingList = new ArrayList<String>();
 		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+			Logging.d(TAG, "About to initiate request for trending aisles");
 
 		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
 			if (getItem(i).getAisleId().equalsIgnoreCase(
@@ -124,7 +124,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		}
 
 		setImageRating();
-		Log.i("bestHeight",
+		Logging.i("bestHeight",
 				"bestHeight in details adapter: "
 						+ getItem(mCurrentAislePosition)
 								.getBestHeightForWindow());
@@ -152,7 +152,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					.size(); i++) {
 				mCustomUrls.add(getItem(mCurrentAislePosition).getImageList()
 						.get(i).mCustomImageUrl);
-				Log.i("clone",
+				Logging.i("clone",
 						"mCustomImageUrl url: "
 								+ getItem(mCurrentAislePosition).getImageList()
 										.get(i).mCustomImageUrl);
@@ -166,10 +166,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			}
 
 			mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
-			Log.i("clone", "clone: " + mImageDetailsArr);
+			Logging.i("clone", "clone: " + mImageDetailsArr);
 			if (mImageDetailsArr != null) {
 				for (int i = 0; i < mImageDetailsArr.size(); i++) {
-					Log.i("clone", "clone1: " + mImageDetailsArr.get(i));
+					Logging.i("clone", "clone1: " + mImageDetailsArr.get(i));
 				}
 			}
 
@@ -218,7 +218,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				mListCount = mShowFixedRowCount + mInitialCommentsToShowSize;
 			}
 
-			Log.i("bookmarked aisle", "bookmarked count in window2: "
+			Logging.i("bookmarked aisle", "bookmarked count in window2: "
 					+ mBookmarksCount);
 			new Handler().postDelayed(new Runnable() {
 
@@ -294,7 +294,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					null);
 			mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.showpieceadapter);
-			Log.i("nullbug", "nullbug  mViewHolder.aisleContentBrowser "
+			Logging.i("nullbug", "nullbug  mViewHolder.aisleContentBrowser "
 					+ mViewHolder.aisleContentBrowser);
 			mViewHolder.imgContentlay = (LinearLayout) convertView
 					.findViewById(R.id.vueimagcontent);
@@ -918,7 +918,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				mViewFactory
 						.returnUsedImageView((ScaleImageView) mViewHolder.aisleContentBrowser
 								.getChildAt(i));
-				Log.i("bitmap reclying", "bitmap reclying  in adapter");
+				Logging.i("bitmap reclying", "bitmap reclying  in adapter");
 			}
 			if (mViewHolder.aisleContentBrowser != null) {
 				ContentAdapterFactory mContentAdapterFactory = ContentAdapterFactory
@@ -943,7 +943,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		AisleImageDetails imgDetails = new AisleImageDetails();
 		imgDetails.mAvailableHeight = imageHeight;
 		imgDetails.mAvailableWidth = imageWidth;
-		Log.i("new image", "new image height: " + imgDetails.mAvailableHeight);
+		Logging.i("new image", "new image height: " + imgDetails.mAvailableHeight);
 		if (imgDetails.mAvailableHeight > getItem(mCurrentAislePosition)
 				.getBestLargetHeightForWindow()) {
 			mBestHeight = imgDetails.mAvailableHeight;
@@ -952,10 +952,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.getBestHeightForWindow()) {
 			getItem(mCurrentAislePosition).setBestHeightForWindow(
 					imgDetails.mAvailableHeight);
-			Log.i("bestsamallest", "bestsamallest height1: "
+			Logging.i("bestsamallest", "bestsamallest height1: "
 					+ imgDetails.mAvailableHeight);
 		} else {
-			Log.i("bestsamallest",
+			Logging.i("bestsamallest",
 					"bestsamallest height1 else: window samallest height has not changed ");
 		}
 		imgDetails.mTitle = title;
@@ -981,11 +981,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.dataObserver();
 		mImageRefresh = true;
 		if (mViewHolder != null) {
-			Log.i("adaptersettings", "adaptersettings: if");
+			Logging.i("adaptersettings", "adaptersettings: if");
 			mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			notifyAdapter();
 		} else {
-			Log.i("adaptersettings", "adaptersettings: else");
+			Logging.i("adaptersettings", "adaptersettings: else");
 			mswipeListner.onResetAdapter();
 		}
 	}
@@ -1004,7 +1004,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		int likeStatus = 0;
 
-		Log.e("ImageRating Resopnse", "SURU ImageRating sendDataToDb() called");
+		Logging.e("ImageRating Resopnse", "SURU ImageRating sendDataToDb() called");
 		if (getItem(mCurrentAislePosition).getImageList() != null
 				&& getItem(mCurrentAislePosition).getImageList().size() != 0) {
 			aisleId = getItem(mCurrentAislePosition).getAisleId();
@@ -1027,7 +1027,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				// aisleId,imageId,likesCount,likeStatus
 				likeCount = itemDetails.mLikesCount;
 				likeStatus = itemDetails.mLikeDislikeStatus;
-				Log.i("likecountissue", "likecountissue: likeCount1: "
+				Logging.i("likecountissue", "likecountissue: likeCount1: "
 						+ likeCount);
 				ArrayList<ImageRating> imgRatingList = DataBaseManager
 						.getInstance(mContext).getRatedImagesList(aisleId);
@@ -1173,14 +1173,14 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		for (AisleBookmark b : aisleBookmarkList) {
 			if (aisleId.equals(Long.toString(b.getAisleId().longValue()))) {
 				aisleBookmark.setId(b.getId());
-				Log.i("bookmarkissue",
+				Logging.i("bookmarkissue",
 						"bookmarkissue handleBookmark matched Id " + b.getId());
 				break;
 			}
 		}
 		VueUser storedVueUser = null;
 		try {
-			Log.i("bookmarkissue", "bookmarkissue handleBookmark");
+			Logging.i("bookmarkissue", "bookmarkissue handleBookmark");
 			storedVueUser = Utils.readUserObjectFromFile(mContext,
 					VueConstants.VUE_APP_USEROBJECT__FILENAME);
 			AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
@@ -1212,12 +1212,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		ArrayList<ImageRating> imgRatingList = DataBaseManager.getInstance(
 				mContext).getRatedImagesList(
 				getItem(mCurrentAislePosition).getAisleId());
-		Log.i("imageLikestatus",
+		Logging.i("imageLikestatus",
 				"imageLikestatus size: " + imgRatingList.size());
 		for (AisleImageDetails imgDetail : aisleImgDetais) {
-			Log.i("imageLikestatus", "imageLikestatus#: " + imgDetail.mId);
+			Logging.i("imageLikestatus", "imageLikestatus#: " + imgDetail.mId);
 			for (ImageRating imgRating : imgRatingList) {
-				Log.i("imageLikestatus",
+				Logging.i("imageLikestatus",
 						"imageLikestatus*: " + imgRating.getImageId());
 				if (imgRating.getImageId() == Long.parseLong(imgDetail.mId)) {
 					imgDetail.mLikeDislikeStatus = IMG_LIKE_STATUS;
@@ -1229,7 +1229,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	public void updateListCount(String newComment) {
 		mListCount = mListCount + 1;
 		// mShowingList.add(0,newComment);
-		Log.i("sizeoflist", "sizeoflist: " + mShowingList.size());
+		Logging.i("sizeoflist", "sizeoflist: " + mShowingList.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1333,7 +1333,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
-			Log.i("pathsaving", "pathsaving in sdcard2 error");
+			Logging.i("pathsaving", "pathsaving in sdcard2 error");
 			e.printStackTrace();
 		}
 
@@ -1343,9 +1343,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			out.write("\n" + message + "\n");
 			out.flush();
 			out.close();
-			Log.i("pathsaving", "pathsaving in sdcard2 success");
+			Logging.i("pathsaving", "pathsaving in sdcard2 success");
 		} catch (IOException e) {
-			Log.i("pathsaving", "pathsaving in sdcard3 error");
+			Logging.i("pathsaving", "pathsaving in sdcard3 error");
 			e.printStackTrace();
 		}
 	}

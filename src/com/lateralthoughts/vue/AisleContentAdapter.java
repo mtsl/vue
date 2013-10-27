@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -255,14 +254,14 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             	 //bitmap = getCachedBitmap(itemDetails.mImageUrl);
             } else {
              // bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
-              Log.i("imageResize", "imageResize custom from cache 1");
+              Logging.i("imageResize", "imageResize custom from cache 1");
                
             }
             if(bitmap != null){
             	 if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
             			mImageDimension = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
             			if(bitmap.getHeight() < mImageDimension.mImgHeight) {
-            				 Log.i("detailscrop", "detailscrop resize agian");
+            				 Logging.i("detailscrop", "detailscrop resize agian");
             				   loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView,wantedIndex);
             			}
             	 }
@@ -434,7 +433,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 		// from SD cache
 		Bitmap b = decodeFile(f, bestHeight);
 		if (b != null) {
-			// Log.e("AisleContentAdapter","found file in file cache");
 			mContentImagesCache.put(url, b);
 			return b;
 		}

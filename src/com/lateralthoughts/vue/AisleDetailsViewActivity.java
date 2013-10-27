@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -299,7 +298,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	@Override
 	protected void onStop() {
 		super.onStop();
-		Log.e("ondestory", "browsecheck onStop detailsview");
+		Logging.i("ondestory", "browsecheck onStop detailsview");
 		FlurryAgent.onEndSession(this);
 		 
 	
@@ -399,10 +398,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 			viewHolder.likeImage.setImageResource(R.drawable.thumb_up);
 			if (bitmap != null) {
-				Log.i("cachecheck", "cachecheck if :" + position);
+				Logging.i("cachecheck", "cachecheck if :" + position);
 				viewHolder.img.setImageBitmap(bitmap);
 			} else {
-				Log.i("cachecheck", "cachecheck else " + position);
+				Logging.i("cachecheck", "cachecheck else " + position);
 				viewHolder.img.setImageResource(R.drawable.ic_launcher);
 				BitmapWorkerTask task = new BitmapWorkerTask(null,
 						viewHolder.img, mComparisionScreenHeight / 2);
@@ -432,12 +431,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		mVueAiselFragment.setActionBarHander(mHandleActionbar);
 
 		super.onResume();
-		Log.e("Land", "vueland 2");
+		Logging.d("Land", "vueland 2");
 		Bundle b = getIntent().getExtras();
 		if (b != null && mTempflag) {
 			mTempflag = false;
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
-				Log.e("Land", "vueland 3");
+				Logging.d("Land", "vueland 3");
 				sendDataToDataentryScreen(b);
 			}
 		}
@@ -530,7 +529,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	@Override
 	protected void onDestroy() {
-		Log.e("ondestory", "browsecheck ondestory detailsview");
+		Logging.d("ondestory", "browsecheck ondestory detailsview");
 		if (mVueAiselFragment == null) {
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.aisle_details_view_fragment);
@@ -694,7 +693,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	}
 
 	private void sendDataToDataentryScreen(Bundle b) {
-		Log.e("Land", "vueland 4");
+		Logging.d("Land", "vueland 4");
 		String lookingFor, occation, category, userId, description;
 		if (mVueAiselFragment == null) {
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
@@ -750,7 +749,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				b.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS));
 
 		intent.putExtras(b1);
-		Log.e("Land", "vueland 5");
+		Logging.d("Land", "vueland 5");
 		this.startActivityForResult(
 				intent,
 				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT);
@@ -766,12 +765,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	 */
 	private Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap,
 			int bestHeight) {
-		Log.i("added url", "added url  getBitmap " + url);
+		Logging.i("added url", "added url  getBitmap " + url);
 		File f = mFileCache.getFile(url);
-		Log.i("added url", "added url  getBitmap " + f);
+		Logging.i("added url", "added url  getBitmap " + f);
 		// from SD cache
 		Bitmap b = decodeFile(f, bestHeight);
-		Log.i("added url", "added url  getBitmap " + b);
+		Logging.i("added url", "added url  getBitmap " + b);
 		if (b != null) {
 
 			if (cacheBitmap)
@@ -793,12 +792,12 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			conn.setReadTimeout(30000);
 			conn.setInstanceFollowRedirects(true);
 			InputStream is = conn.getInputStream();
-			Log.i("added url", "added url  InputStream " + is);
-			Log.i("added url", "added url  InputStream url " + url);
+			Logging.i("added url", "added url  InputStream " + is);
+			Logging.i("added url", "added url  InputStream url " + url);
 
 			int hashCode = url.hashCode();
 			String filename = String.valueOf(hashCode);
-			Log.i("added url", "added url  InputStream imgname " + filename);
+			Logging.i("added url", "added url  InputStream imgname " + filename);
 			OutputStream os = new FileOutputStream(f);
 			Utils.CopyStream(is, os);
 			os.close();
@@ -818,7 +817,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	// decodes image and scales it to reduce memory consumption
 	public Bitmap decodeFile(File f, int bestHeight) {
-		Log.i("added url", "added url in  decodeFile: bestheight is "
+		Logging.i("added url", "added url in  decodeFile: bestheight is "
 				+ bestHeight);
 
 		try {
@@ -832,9 +831,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			// final int REQUIRED_SIZE = mScreenWidth/2;
 			int height = o.outHeight;
 			int width = o.outWidth;
-			Log.i("added url", "added urldecodeFile  bitmap o.height : "
+			Logging.i("added url", "added urldecodeFile  bitmap o.height : "
 					+ height);
-			Log.i("added url", "added urldecodeFile  bitmap o.width : " + width);
+			Logging.i("added url", "added urldecodeFile  bitmap o.width : " + width);
 			int reqWidth = VueApplication.getInstance()
 					.getVueDetailsCardWidth();
 
@@ -886,20 +885,20 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				}
 			}
 			if (bitmap != null) {
-				Log.i("added url",
+				Logging.i("added url",
 						"added url  urldecodeFile width " + bitmap.getWidth());
 
 			} else {
-				Log.i("added url", "added urldecodeFile  bitmap null ");
+				Logging.i("added url", "added urldecodeFile  bitmap null ");
 			}
 			return bitmap;
 		} catch (FileNotFoundException e) {
-			Log.i("added url", "added urldecodeFile  filenotfound exception ");
+			Logging.i("added url", "added urldecodeFile  filenotfound exception ");
 		} catch (IOException e) {
-			Log.i("added url", "added urldecodeFile  io exception ");
+			Logging.i("added url", "added urldecodeFile  io exception ");
 			e.printStackTrace();
 		} catch (Throwable ex) {
-			Log.i("added url", "added urldecodeFile  throwable exception ");
+			Logging.i("added url", "added urldecodeFile  throwable exception ");
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
 				mAisleImagesCache.evictAll();
@@ -929,10 +928,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		Paint paint = new Paint();
 		paint.setFilterBitmap(true);
 		canvas.drawBitmap(originalImage, transformation, paint);
-		Log.i("imagenotcoming",
+		Logging.i("imagenotcoming",
 				"bitmap issue scalleddown: originalbitmap width "
 						+ newBitmap.getWidth());
-		Log.i("imagenotcoming",
+		Logging.i("imagenotcoming",
 				"bitmap issue:scalleddown originalbitmap height:  "
 						+ newBitmap.getHeight());
 		return newBitmap;
@@ -971,9 +970,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	}
 
 	private void clearBitmaps() {
-		Log.i("clearbitamps", "clearbitamps 1");
+		Logging.i("clearbitamps", "clearbitamps 1");
 		for (int i = 0; i < mTopScroller.getChildCount(); i++) {
-			Log.i("clearbitamps", "clearbitamps 2");
+			Logging.i("clearbitamps", "clearbitamps 2");
 			RelativeLayout topLayout = (RelativeLayout) mTopScroller
 					.getChildAt(i);
 
@@ -993,7 +992,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		}
 		for (int i = 0; i < mBottomScroller.getChildCount(); i++) {
-			Log.i("clearbitmaps", "clearbitamps 3");
+			Logging.i("clearbitmaps", "clearbitamps 3");
 			RelativeLayout topLayout = (RelativeLayout) mBottomScroller
 					.getChildAt(i);
 

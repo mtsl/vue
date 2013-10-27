@@ -246,33 +246,8 @@ public class AisleLoader {
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
 			String asileId, AisleImageDetails itemDetails) {
-		/*if(Utils.isAisleChanged){
-			String asileId, AisleImageDetails itemDetails,AisleContentClickListener listener) {
-		if(Utils.isAisleChanged){
-			Utils.isAisleChanged = false;
-			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight, asileId, itemDetails,listener);
-			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
-			String[] urlsArray = { loc, serverImageUrl };
-			task.execute(urlsArray);
-		} else {
-		if (cancelPotentialDownload(loc, imageView)) {
-			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight, asileId, itemDetails,listener);
-			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
-			String[] urlsArray = { loc, serverImageUrl };
-			task.execute(urlsArray);
-		}
-		}*/
         ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader(),
                 itemDetails.mTrendingImageWidth, itemDetails.mTrendingImageHeight, BitmapProfile.ProfileLandingView);
-		/*
-		 * ((ScaleImageView) imageView).setImageUrl(serverImageUrl, new
-		 * ImageLoader(VueApplication.getInstance().getRequestQueue(),
-		 * VueApplication.getInstance().getBitmapCache()),
-		 * VueApplication.getInstance().getVueDetailsCardWidth() / 2,
-		 * bestHeight);
-		 */
 	}
 
 
