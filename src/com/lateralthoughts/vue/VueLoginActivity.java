@@ -1,25 +1,5 @@
 package com.lateralthoughts.vue;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.X509TrustManager;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -34,33 +14,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.facebook.FacebookAuthorizationException;
-import com.facebook.FacebookException;
-import com.facebook.FacebookOperationCanceledException;
-import com.facebook.FacebookRequestError;
-import com.facebook.HttpMethod;
-import com.facebook.Request;
+import com.facebook.*;
 import com.facebook.Request.Callback;
 import com.facebook.Request.GraphUserCallback;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
@@ -81,11 +46,20 @@ import com.instagram.InstagramApp;
 import com.instagram.InstagramApp.OAuthAuthenticationListener;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
-import com.lateralthoughts.vue.utils.FbGPlusDetails;
-import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.SortBasedOnName;
-import com.lateralthoughts.vue.utils.Utils;
-import com.lateralthoughts.vue.utils.clsShare;
+import com.lateralthoughts.vue.utils.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.net.ssl.*;
+import java.io.*;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class VueLoginActivity extends FragmentActivity implements
 		OnSignedInListener, OnPeopleLoadedListener, OnPersonLoadedListener {
@@ -319,7 +293,7 @@ public class VueLoginActivity extends FragmentActivity implements
 						.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 							public void onUserInfoFetched(GraphUser user) {
 								if (!mDontCallUserInfoChangesMethod) {
-									Log.e("VueLoginActivity",
+									Logging.d("VueLoginActivity",
 											"update UI called from user info changed method");
 									updateUI();
 								}
@@ -377,7 +351,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	private class NullHostNameVerifier implements HostnameVerifier {
 
 		public boolean verify(String hostname, SSLSession session) {
-			Log.i("RestUtilImpl", "Approving certificate for " + hostname);
+			Logging.i("RestUtilImpl", "Approving certificate for " + hostname);
 			return true;
 		}
 	}
@@ -438,7 +412,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		try {
 			mUiHelper.onActivityResult(requestCode, resultCode, data);
 			if (!mDontCallUserInfoChangesMethod) {
-				Log.e("VueLoginActivity",
+				Logging.e("VueLoginActivity",
 						"update UI called from onActivityResult method");
 				updateUI();
 			}
@@ -624,7 +598,7 @@ public class VueLoginActivity extends FragmentActivity implements
 										} catch (Exception e) {
 											e.printStackTrace();
 										}
-										Log.e("Vue User Creation",
+										Logging.d("Vue User Creation",
 												"callback from successful user creation");
 									}
 								});
@@ -1112,7 +1086,7 @@ public class VueLoginActivity extends FragmentActivity implements
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
-								Log.e("Vue User Creation",
+								Logging.d("Vue User Creation",
 										"callback from successful user creation");
 							}
 						});
@@ -1217,7 +1191,7 @@ public class VueLoginActivity extends FragmentActivity implements
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
-								Log.e("Vue User Creation",
+								Logging.d("Vue User Creation",
 										"callback from successful user creation");
 							}
 						});
@@ -1308,7 +1282,7 @@ public class VueLoginActivity extends FragmentActivity implements
 					@Override
 					public void onUserUpdated(VueUser user) {
 						try {
-							Log.i("userid",
+							Logging.i("userid",
 									"userid123456 null check storedVueUser seting loging page: ");
 							Utils.writeUserObjectToFile(VueLoginActivity.this,
 									VueConstants.VUE_APP_USEROBJECT__FILENAME,

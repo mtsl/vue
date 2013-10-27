@@ -14,19 +14,13 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.flurry.android.FlurryAgent;
-import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -35,8 +29,6 @@ import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.*;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,7 +67,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
 		VueApplication.getInstance().mLastRecordedTime = System
 				.currentTimeMillis();
-		Log.e("VueLandingPageActivity", "Oncreate called to test sssssssss");
+		Logging.d("VueLandingPageActivity", "Oncreate called to test sssssssss");
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
 		mLoadProgress = (ProgressBar) findViewById(R.id.adprogress_progressBar);
@@ -262,7 +254,7 @@ public class VueLandingPageActivity extends BaseActivity {
 
 	void handleSendText(Intent intent, boolean fromOnCreateMethodFlag) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText);
+		Logging.d("VueLandingPageActivity", "Recived Text ::: " + sharedText);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
 			if (Utils.isLoadDataentryScreenFlag(this)) {
@@ -271,7 +263,7 @@ public class VueLandingPageActivity extends BaseActivity {
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
 							VueLandingPageActivity.this, false);
-					Log.e("Land", "vueland 1");
+					Logging.d("Land", "vueland 1");
 					if (VueTrendingAislesDataModel.getInstance(this)
 							.getAisleCount() > 0) {
 						Intent i = new Intent(this,
@@ -308,10 +300,10 @@ public class VueLandingPageActivity extends BaseActivity {
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
 							VueLandingPageActivity.this, false);
-					Log.e("Land", "vueland 1");
+					Logging.d("Land", "vueland 1");
 					if (VueTrendingAislesDataModel.getInstance(this)
 							.getAisleCount() > 0) {
-						Log.e("Land", "vueland 1");
+						Logging.d("Land", "vueland 1");
 						Intent i = new Intent(this,
 								AisleDetailsViewActivity.class);
 						Bundle b = new Bundle();
@@ -362,10 +354,10 @@ public class VueLandingPageActivity extends BaseActivity {
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
 							VueLandingPageActivity.this, false);
-					Log.e("Land", "vueland 1");
+					Logging.d("Land", "vueland 1");
 					if (VueTrendingAislesDataModel.getInstance(this)
 							.getAisleCount() > 0) {
-						Log.e("Land", "vueland 1");
+						Logging.d("Land", "vueland 1");
 						Intent i = new Intent(this,
 								AisleDetailsViewActivity.class);
 						Bundle b = new Bundle();
@@ -404,15 +396,15 @@ public class VueLandingPageActivity extends BaseActivity {
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-			Log.i("stackcount", "stackcount onbckpresed: "
+			Logging.i("stackcount", "stackcount onbckpresed: "
 					+ StackViews.getInstance().getStackCount());
 			if (getSlidingMenu().isMenuShowing()) {
-				Log.i("stackcount", "stackcount onbckpresed: close window1 ");
+				Logging.i("stackcount", "stackcount onbckpresed: close window1 ");
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
 			} else if (StackViews.getInstance().getStackCount() > 0) {
-				Log.i("stackcount", "stackcount onbckpresed: close window2 ");
+				Logging.i("stackcount", "stackcount onbckpresed: close window2 ");
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
 				if (viewInfo != null) {
 					mVueLandingActionbarScreenName.setText(viewInfo.mVueName);
@@ -433,7 +425,7 @@ public class VueLandingPageActivity extends BaseActivity {
 					super.onBackPressed();
 				}
 			} else {
-				Log.i("stackcount", "stackcount onbckpresed: close window0 ");
+				Logging.i("stackcount", "stackcount onbckpresed: close window0 ");
 				CancelNotification(this,
 						VueConstants.CREATE_AISLE_NOTIFICATION_ID);
 				CancelNotification(this,
@@ -506,22 +498,22 @@ public class VueLandingPageActivity extends BaseActivity {
 		String type = intent.getType();
 
 		if (Intent.ACTION_SEND.equals(action) && type != null) {
-			Log.e("CretaeAisleSelectionActivity send text", type);
+			Logging.e("CretaeAisleSelectionActivity send text", type);
 			if ("text/plain".equals(type)) {
 				handleSendText(intent, false); // Handle text being sent
-				Log.e("CretaeAisleSelectionActivity send text",
+				Logging.d("CretaeAisleSelectionActivity send text",
 						"textplain match");
 			} else if (type.startsWith("image/")) {
 				handleSendImage(intent, false); // Handle single image being
 												// sent
-				Log.e("CretaeAisleSelectionActivity send text", "image match");
+				Logging.d("CretaeAisleSelectionActivity send text", "image match");
 			}
 		} else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
 			if (type.startsWith("image/")) {
 				handleSendMultipleImages(intent, false); // Handle multiple
 															// images
 				// being sent
-				Log.e("CretaeAisleSelectionActivity send text",
+				Logging.d("CretaeAisleSelectionActivity send text",
 						"multiple image match");
 			}
 		} else {
@@ -668,7 +660,7 @@ public class VueLandingPageActivity extends BaseActivity {
 					.getInstance(VueApplication.getInstance()).isFromDb = true;
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 					.clearContent();
-			Log.i("formdbtrending", "formdbtrending: showPreviousScreen");
+			Logging.i("formdbtrending", "formdbtrending: showPreviousScreen");
 			if (!fromServer)
 				DataBaseManager.getInstance(VueApplication.getInstance())
 						.resetDbParams();
@@ -680,7 +672,7 @@ public class VueLandingPageActivity extends BaseActivity {
 							fromServer, loadMore, screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-			Log.i("meoptions", "meoptions: MyAisle");
+			Logging.i("meoptions", "meoptions: MyAisle");
 			VueTrendingAislesDataModel
 					.getInstance(VueLandingPageActivity.this)
 					.getNetworkHandler()
@@ -688,14 +680,14 @@ public class VueLandingPageActivity extends BaseActivity {
 							screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-			Log.i("meoptions", "meoptions: Bookmarks");
+			Logging.i("meoptions", "meoptions: Bookmarks");
 			getBookmarkedAisles(screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-			Log.i("meoptions", "meoptions: Recent");
+			Logging.i("meoptions", "meoptions: Recent");
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
-			Log.i("meoptions",
+			Logging.i("meoptions",
 					"meoptions: Recent: size " + windowContent.size());
 			if (windowContent.size() > 0) {
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
@@ -734,7 +726,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		@Override
 		public void dismissProgress(boolean fromWhere) {
 			mLoadProgress.setVisibility(View.INVISIBLE);
-			Log.i("listmovingissue", "listmovingissue***:dismissProgress 1 ");
+			Logging.i("listmovingissue", "listmovingissue***:dismissProgress 1 ");
 			if (mFragment == null) {
 				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.aisles_view_fragment);
@@ -750,7 +742,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		public boolean isAlreadyDownloaed(String category) {
 			boolean isDowoaded = StackViews.getInstance().categoryCheck(
 					category);
-			Log.i("isAlredeDownloaded", "isAlredeDownloaded: " + isDowoaded);
+			Logging.i("isAlredeDownloaded", "isAlredeDownloaded: " + isDowoaded);
 			return isDowoaded;
 		}
 	}

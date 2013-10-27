@@ -18,7 +18,6 @@ import android.text.Editable;
 import android.text.Layout;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -55,6 +54,7 @@ import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.Logging;
 
 //java utils
 
@@ -208,7 +208,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				}
 				if (url != null && url.startsWith("http")) {
 					Uri uriUrl = Uri.parse(url.trim());
-					Log.i("browserUrl", "browserUrl: " + url);
+					Logging.i("browserUrl", "browserUrl: " + url);
 					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
 							uriUrl);
 					startActivity(launchBrowser);
@@ -299,7 +299,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				if (url != null && url.startsWith("http")) {
 					mAisleDetailsAdapter.closeKeyboard();
 					Uri uriUrl = Uri.parse(url.trim());
-					Log.i("browserUrl", "browserUrl: " + url);
+					Logging.i("browserUrl", "browserUrl: " + url);
 					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
 							uriUrl);
 					startActivity(launchBrowser);
@@ -356,7 +356,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 					switch (scrollState) {
 					case OnScrollListener.SCROLL_STATE_IDLE:
 						if (mAisleDetailsList.getChildAt(0).getTop() == 0) {
-							Log.i("scrolling",
+							Logging.i("scrolling",
 									"scrolling here scrolling is SCROLL_STATE_IDLE");
 							if (mHandleActionBar != null) {
 								mHandleActionBar.showActionBar();
@@ -495,7 +495,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				mVueUserName.getViewTreeObserver()
 						.removeGlobalOnLayoutListener(this);
 				mVueUserName.setText(mAisleDetailsAdapter.mVueusername);
-				Log.i("userName", "userName: "
+				Logging.i("userName", "userName: "
 						+ mAisleDetailsAdapter.mVueusername);
 			}
 		});

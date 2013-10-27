@@ -16,15 +16,8 @@
 package com.lateralthoughts.vue;
 
 import android.content.res.Resources;
-import android.graphics.*;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.ImageView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,10 +25,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
-import com.lateralthoughts.vue.utils.Logging;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -43,24 +32,7 @@ import java.util.LinkedList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.ImageView;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
-import com.android.volley.VolleyError;
 import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.Utils;
-
-import java.util.HashMap;
-import java.util.LinkedList;
 
 /**
  * Helper that handles loading and caching images from remote URLs.

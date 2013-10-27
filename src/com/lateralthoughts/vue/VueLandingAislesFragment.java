@@ -1,42 +1,32 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Toast;
-
 import com.actionbarsherlock.app.SherlockFragment;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.Utils;
+
+import java.io.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 //java utils
 
@@ -102,11 +92,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		if (mLeftColumnAdapter != null) {
 
 			mLeftColumnAdapter.notifyDataSetChanged();
-			Log.i("listadapter", "adapter leftadapter notified");
+			Logging.i("listadapter", "adapter leftadapter notified");
 		}
 		if (mRightColumnAdapter != null) {
 			mRightColumnAdapter.notifyDataSetChanged();
-			Log.i("listadapter", "adapter adapter notified");
+			Logging.i("listadapter", "adapter adapter notified");
 		}
 	}
 
@@ -139,7 +129,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						Log.e("Vinodh Clicks",
+						Logging.d("Vinodh Clicks",
 								"ok...we are getting item clicks!!");
 
 					}
@@ -147,7 +137,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		mLeftViewsHeights = new int[1000];
 		mRightViewsHeights = new int[1000];
-		Log.d("VueLandingAislesFragment",
+		Logging.d("VueLandingAislesFragment",
 				"Get ready to displayed staggered view");
 
 		return v;
@@ -261,7 +251,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					&& lan.getScreenName().equalsIgnoreCase(
 							getResources().getString(R.string.trending))&& !VueTrendingAislesDataModel.getInstance(mContext).isFromDb) {
 				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
-				Log.i("more aisle request", "more aisle request calling");
+				Logging.i("more aisle request", "more aisle request calling");
 				int totalItems = 0;
 				if (view.equals(mLeftColumnView)) {
 					totalItems = mLeftColumnAdapter.getCount();
@@ -269,14 +259,14 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					totalItems = mRightColumnAdapter.getCount();
 				}
 				if ((totalItems - lastVisiblePosition) < 5) {
-					Log.i("offeset and limit", "offeset00000: load moredata");
+					Logging.i("offeset and limit", "offeset00000: load moredata");
 					VueTrendingAislesDataModel.getInstance(mContext)
 							.getNetworkHandler()
 							.requestMoreAisle(true, 
 									getResources().getString(R.string.trending));
 				}
 			} else {
-				Log.i("offeset and limit", "offeset00000: load moredata else "+VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest);
+				Logging.i("offeset and limit", "offeset00000: load moredata else "+VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest);
 			}
 
 		}
@@ -299,14 +289,14 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			} else {
 				articleParams.put("User_Id", "anonymous");
 			}
-			Log.e("VueLandingAisleFragment", "Suru aisle clicked aisle Id: "
+			Logging.d("VueLandingAisleFragment", "Suru aisle clicked aisle Id: "
 					+ id);
 			DataBaseManager.getInstance(mContext)
 					.updateOrAddRecentlyViewedAisles(id);
 			FlurryAgent.logEvent("User_Select_Aisle", articleParams);
 
 			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-			Log.i("clickedwindow", "clickedwindow ID: " + id);
+			Logging.d("clickedwindow", "clickedwindow ID: " + id);
 			Intent intent = new Intent();
 			intent.setClass(VueApplication.getInstance(),
 					AisleDetailsViewActivity.class);
@@ -319,7 +309,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public boolean isFlingCalled() {
-			Log.i("flingcheck", "flingcheck  isFlingCalled val: "
+			Logging.d("flingcheck", "flingcheck  isFlingCalled val: "
 					+ mIsFlingCalled);
 			return mIsFlingCalled;
 		}
@@ -335,17 +325,17 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			AisleWindowContent windowItem = VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance()).getAisleAt(id);
 
-			Log.i("aisleItem", "aisleItem: id " + windowItem.getAisleId());
-			Log.i("aisleItem",
+			Logging.i("aisleItem", "aisleItem: id " + windowItem.getAisleId());
+			Logging.i("aisleItem",
 					"aisleItem:best smallest Height : "
 							+ windowItem.getBestHeightForWindow());
-			Log.i("aisleItem", "aisleItem:best cardwidth : "
+			Logging.i("aisleItem", "aisleItem:best cardwidth : "
 					+ VueApplication.getInstance().getScreenWidth() / 2);
 			String imageUrls = "";
 			for (int i = 0; i < windowItem.getImageList().size(); i++) {
-				Log.i("aisleItem", "aisleItem: imageUrl "
+				Logging.i("aisleItem", "aisleItem: imageUrl "
 						+ windowItem.getImageList().get(i).mImageUrl);
-				Log.i("aisleItem", "aisleItem: imageUrl height"
+				Logging.i("aisleItem", "aisleItem: imageUrl height"
 						+ windowItem.getImageList().get(i).mAvailableHeight
 						+ " width: "
 						+ windowItem.getImageList().get(i).mAvailableWidth);
@@ -366,7 +356,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 						/ finalWidth;
 				finalWidth = VueApplication.getInstance().getScreenWidth() / 2;
 			}
-			Log.i("aisleItem", "aisleItem: after resize aisle width "
+			Logging.i("aisleItem", "aisleItem: after resize aisle width "
 					+ finalWidth + " height: " + finaHeight);
 
 			String writeSdCard = null;
@@ -450,7 +440,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
-			Log.i("pathsaving", "pathsaving in sdcard2 error");
+			Logging.i("pathsaving", "pathsaving in sdcard2 error");
 			e.printStackTrace();
 		}
 
@@ -460,9 +450,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			out.write("\n" + message + "\n");
 			out.flush();
 			out.close();
-			Log.i("pathsaving", "pathsaving in sdcard2 success");
+			Logging.i("pathsaving", "pathsaving in sdcard2 success");
 		} catch (IOException e) {
-			Log.i("pathsaving", "pathsaving in sdcard3 error");
+			Logging.i("pathsaving", "pathsaving in sdcard3 error");
 			e.printStackTrace();
 		}
 	}

@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import com.android.volley.*;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
@@ -17,6 +16,7 @@ import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -75,17 +75,12 @@ public class VueUserManager {
 
 			@Override
 			public void onResponse(String jsonArray) {
-				Log.e("VueUserDebug", "vueuser: response listener ");
 				if (null != jsonArray) {
-					Log.e("Profiling", "Create User: Profiling : onResponse()"
-							+ jsonArray);
 					VueUser vueUser = new Parser().parseUserData(jsonArray);
 					if (vueUser != null) {
 						VueApplication.getInstance().setmUserInitials(
 								userInitals);
 						VueUserManager.this.setCurrentUser(vueUser);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser);
 						callback.onUserUpdated(vueUser);
 						try {
 							VueTrendingAislesDataModel.getInstance(
@@ -101,24 +96,20 @@ public class VueUserManager {
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				Log.e("VueUserDebug", "vueuser: error listener ");
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
 				}
 			}
 		};
 
 		try {
-			Log.e("VueUserDebug", "vueuser: method called ");
 			ObjectMapper mapper = new ObjectMapper();
 			VueUser newUser = new VueUser();
 			newUser.setFirstName(userInitals);
 			newUser.setLastName("");
 			newUser.setDeviceId(deviceId);
 			String userAsString = mapper.writeValueAsString(newUser);
-			Log.e("VueUserDebug", "vueuser: request " + userAsString);
 			UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 					userAsString, UrlConstants.CREATE_USER_RESTURL, listener,
 					errorListener);
@@ -142,8 +133,6 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					Log.e("Profiling", "Create User: Profiling : onResponse()"
-							+ jsonArray);
 					VueUser vueUser = new Parser().parseUserData(jsonArray);
 					if (vueUser != null) {
 						if (VueApplication.getInstance().getmUserInitials() == null) {
@@ -153,8 +142,6 @@ public class VueUserManager {
 						VueApplication.getInstance()
 								.setmUserId(vueUser.getId());
 						VueUserManager.this.setCurrentUser(vueUser);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser);
 						callback.onUserUpdated(vueUser);
 					}
 				}
@@ -166,7 +153,6 @@ public class VueUserManager {
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
 				}
 			}
 		};
@@ -174,8 +160,6 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					Log.e("Profiling", "Create User: Profiling : onResponse()"
-							+ jsonArray);
 					VueUser vueUser = new Parser().parseUserData(jsonArray);
 					if (vueUser != null) {
 						if (VueApplication.getInstance().getmUserInitials() == null) {
@@ -185,17 +169,12 @@ public class VueUserManager {
 						VueApplication.getInstance()
 								.setmUserId(vueUser.getId());
 						VueUserManager.this.setCurrentUser(vueUser);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser);
 						callback.onUserUpdated(vueUser);
 					} else {
 						try {
-							Log.e("VueUserDebug", "vueuser: method called ");
 							ObjectMapper mapper = new ObjectMapper();
 							String userAsString = mapper
 									.writeValueAsString(user);
-							Log.e("VueUserDebug", "vueuser: request "
-									+ userAsString);
 							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 									userAsString,
 									UrlConstants.CREATE_USER_RESTURL, listener,
@@ -209,11 +188,8 @@ public class VueUserManager {
 					}
 				} else {
 					try {
-						Log.e("VueUserDebug", "vueuser: method called ");
 						ObjectMapper mapper = new ObjectMapper();
 						String userAsString = mapper.writeValueAsString(user);
-						Log.e("VueUserDebug", "vueuser: request "
-								+ userAsString);
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.CREATE_USER_RESTURL,
 								listener, errorListener);
@@ -232,7 +208,6 @@ public class VueUserManager {
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
 				}
 			}
 		};
@@ -255,8 +230,6 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					Log.e("Profiling", "Create User: Profiling : onResponse()"
-							+ jsonArray);
 					VueUser vueUser2 = new Parser().parseUserData(jsonArray);
 					if (vueUser2 != null) {
 						if (VueApplication.getInstance().getmUserInitials() == null) {
@@ -266,8 +239,6 @@ public class VueUserManager {
 						VueApplication.getInstance().setmUserId(
 								vueUser2.getId());
 						VueUserManager.this.setCurrentUser(vueUser2);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser2);
 						callback.onUserUpdated(vueUser2);
 					}
 				}
@@ -279,7 +250,6 @@ public class VueUserManager {
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
 				}
 			}
 		};
@@ -288,8 +258,6 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					Log.e("Profiling", "Create User: Profiling : onResponse()"
-							+ jsonArray);
 					VueUser vueUser1 = new Parser().parseUserData(jsonArray);
 					if (vueUser1 != null) {
 						if (VueApplication.getInstance().getmUserInitials() == null) {
@@ -299,17 +267,12 @@ public class VueUserManager {
 						VueApplication.getInstance().setmUserId(
 								vueUser1.getId());
 						VueUserManager.this.setCurrentUser(vueUser1);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser1);
 						callback.onUserUpdated(vueUser1);
 					} else {
 						try {
-							Log.e("VueUserDebug", "vueuser: method called ");
 							ObjectMapper mapper = new ObjectMapper();
 							String userAsString = mapper
 									.writeValueAsString(vueUser);
-							Log.e("VueUserDebug", "vueuser: request "
-									+ userAsString);
 							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 									userAsString,
 									UrlConstants.CREATE_USER_RESTURL, listener,
@@ -322,12 +285,9 @@ public class VueUserManager {
 					}
 				} else {
 					try {
-						Log.e("VueUserDebug", "vueuser: method called ");
 						ObjectMapper mapper = new ObjectMapper();
 						String userAsString = mapper
 								.writeValueAsString(vueUser);
-						Log.e("VueUserDebug", "vueuser: request "
-								+ userAsString);
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.CREATE_USER_RESTURL,
 								listener, errorListener);
@@ -346,7 +306,6 @@ public class VueUserManager {
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
 				}
 			}
 		};
@@ -406,8 +365,6 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					Log.e("Profiling", "Create User: Profiling : onResponse()"
-							+ jsonArray);
 					VueUser vueUser1 = new Parser().parseUserData(jsonArray);
 					if (vueUser1 != null) {
 						if (VueApplication.getInstance().getmUserInitials() == null) {
@@ -417,8 +374,6 @@ public class VueUserManager {
 						VueApplication.getInstance().setmUserId(
 								vueUser1.getId());
 						VueUserManager.this.setCurrentUser(vueUser1);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser1);
 						callback.onUserUpdated(vueUser1);
 					}
 				}
@@ -430,7 +385,6 @@ public class VueUserManager {
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
 				}
 			}
 		};
@@ -439,8 +393,6 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					Log.e("Profiling", "Create User: Profiling : onResponse()"
-							+ jsonArray);
 					VueUser vueUser2 = new Parser().parseUserData(jsonArray);
 					if (vueUser2 != null) {
 						if (VueApplication.getInstance().getmUserInitials() == null) {
@@ -450,19 +402,14 @@ public class VueUserManager {
 						VueApplication.getInstance().setmUserId(
 								vueUser2.getId());
 						VueUserManager.this.setCurrentUser(vueUser2);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser2);
 						callback.onUserUpdated(vueUser2);
 						showNotificationForSwitchingUser(String.valueOf(vueUser
 								.getId()));
 					} else {
 						try {
-							Log.e("VueUserDebug", "vueuser: method called ");
 							ObjectMapper mapper = new ObjectMapper();
 							String userAsString = mapper
 									.writeValueAsString(user);
-							Log.e("VueUserDebug", "vueuser: request "
-									+ userAsString);
 							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 									userAsString,
 									UrlConstants.UPDATE_USER_RESTURL, listener,
@@ -478,8 +425,6 @@ public class VueUserManager {
 					try {
 						ObjectMapper mapper = new ObjectMapper();
 						String userAsString = mapper.writeValueAsString(user);
-						Log.e("VueUserDebug", "vueuser: request "
-								+ userAsString);
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.UPDATE_USER_RESTURL,
 								listener, errorListener);
@@ -498,7 +443,6 @@ public class VueUserManager {
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
 				}
 			}
 		};
@@ -515,8 +459,6 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					Log.e("Profiling", "Create User: Profiling : onResponse()"
-							+ jsonArray);
 					VueUser vueUser1 = new Parser().parseUserData(jsonArray);
 					if (vueUser1 != null) {
 						if (VueApplication.getInstance().getmUserInitials() == null) {
@@ -527,8 +469,6 @@ public class VueUserManager {
 								vueUser1.getId());
 						VueUserManager.this.setCurrentUser(vueUser1);
 						VueUserManager.this.setCurrentUser(vueUser1);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser1);
 						callback.onUserUpdated(vueUser1);
 					}
 				}
@@ -540,7 +480,6 @@ public class VueUserManager {
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
 				}
 			}
 		};
@@ -549,8 +488,6 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-					Log.e("Profiling", "Create User: Profiling : onResponse()"
-							+ jsonArray);
 					VueUser vueUser2 = new Parser().parseUserData(jsonArray);
 					if (vueUser2 != null) {
 						if (VueApplication.getInstance().getmUserInitials() == null) {
@@ -561,19 +498,14 @@ public class VueUserManager {
 								vueUser2.getId());
 						VueUserManager.this.setCurrentUser(vueUser2);
 						VueUserManager.this.setCurrentUser(vueUser2);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser2);
 						callback.onUserUpdated(vueUser2);
 						showNotificationForSwitchingUser(String.valueOf(vueUser
 								.getId()));
 					} else {
 						try {
-							Log.e("VueUserDebug", "vueuser: method called ");
 							ObjectMapper mapper = new ObjectMapper();
 							String userAsString = mapper
 									.writeValueAsString(vueUser);
-							Log.e("VueUserDebug", "vueuser: request "
-									+ userAsString);
 							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 									userAsString,
 									UrlConstants.UPDATE_USER_RESTURL, listener,
@@ -586,12 +518,9 @@ public class VueUserManager {
 					}
 				} else {
 					try {
-						Log.e("VueUserDebug", "vueuser: method called ");
 						ObjectMapper mapper = new ObjectMapper();
 						String userAsString = mapper
 								.writeValueAsString(vueUser);
-						Log.e("VueUserDebug", "vueuser: request "
-								+ userAsString);
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.UPDATE_USER_RESTURL,
 								listener, errorListener);
@@ -609,7 +538,6 @@ public class VueUserManager {
 				if (null != error.networkResponse
 						&& null != error.networkResponse.data) {
 					String errorData = error.networkResponse.data.toString();
-					Log.e("VueUserDebug", "error date = " + errorData);
 				}
 			}
 		};
@@ -714,7 +642,6 @@ public class VueUserManager {
 		@Override
 		protected void deliverResponse(String s) {
 			mListener.onResponse(s);
-			Log.e("VueUser", "response = " + s);
 		}
 
 		@Override
@@ -760,7 +687,6 @@ public class VueUserManager {
 		@Override
 		protected void deliverResponse(String s) {
 			mListener.onResponse(s);
-			Log.e("VueUser", "response = " + s);
 		}
 
 		@Override
@@ -778,7 +704,6 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonString) {
 				if (null != jsonString) {
-					Log.e("Vue App", "jsonString = " + jsonString);
 					VueUser user = new Parser().parseUserData(jsonString);
 					callback.onUserUpdated(user);
 				}
@@ -787,9 +712,6 @@ public class VueUserManager {
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				Log.e("VueNetworkError",
-						"Vue encountered network operations error. Error = "
-								+ error.networkResponse);
 			}
 		};
 		StringRequest vueRequest = new StringRequest(requestUrl, listener,

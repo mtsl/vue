@@ -13,7 +13,6 @@ package com.lateralthoughts.vue;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.ResultReceiver;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -24,6 +23,7 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.Logging;
 
 import org.json.JSONArray;
 
@@ -69,7 +69,7 @@ public class VueContentGateway {
 	public boolean getTrendingAisles(int limit, final int offset,
 			final ResultReceiver receiver, final boolean loadMore, final String screenName) {
 		boolean status = true;
-		Log.i("datarequest", "datarequest parsing data offset: " + offset
+		Logging.i("datarequest", "datarequest parsing data offset: " + offset
 				+ "  limit: " + limit);
 		mParams.clear();
 		boolean isConnection = VueConnectivityManager
@@ -78,17 +78,17 @@ public class VueContentGateway {
 			Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_LONG)
 					.show();
 			VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
-			Log.e(TAG, "network connection No");
+			Logging.d(TAG, "network connection No");
 			return status;
 		} else if (isConnection) {
 			final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL + "/" + limit
 					+ "/" + offset;  
-			Log.i("Gateway", "jsonresponse trendig requestUrl:  " + requestUrl);
+			Logging.i("Gateway", "jsonresponse trendig requestUrl:  " + requestUrl);
 			Response.Listener listener = new Response.Listener<JSONArray>() {
 				@Override
 				public void onResponse(JSONArray jsonArray) {
 					if (null != jsonArray) {
-						Log.i("Gateway", "jsonresponse trendig:  " + jsonArray);
+						Logging.i("Gateway", "jsonresponse trendig:  " + jsonArray);
 						Bundle responseBundle = new Bundle();
 						responseBundle
 								.putString("result", jsonArray.toString());
@@ -105,8 +105,8 @@ public class VueContentGateway {
 					Bundle responseBundle = new Bundle();
 					responseBundle.putString("result", "error");
 					receiver.send(1, responseBundle);
-					Log.i("Gateway", "jsonresponse trendig error response:  "   );
-					Log.e("VueNetworkError",
+					Logging.i("Gateway", "jsonresponse trendig error response:  "   );
+					Logging.d("VueNetworkError",
 							"Vue encountered network operations error. Error = "
 									+ error.networkResponse);
  

@@ -1,20 +1,15 @@
 package com.lateralthoughts.vue;
 
 //java utils
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.lateralthoughts.vue.utils.Logging;
+
 import java.util.ArrayList;
 
 //android imports
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-
 //vue internal imports
-import com.lateralthoughts.vue.ui.ScaleImageView;
 
 //Factory class for ScaledImageView to manage memory more efficiently.
 //the idea is to create a pool of pre-allocated ScaledImageView objects
@@ -82,12 +77,12 @@ public class ScaledImageViewFactory {
 			if(!mAvailableObjects.isEmpty()){
 				imageView = mAvailableObjects.remove(mAvailableObjects.size()-1);
 				mObjectsInUse.add(imageView);
-				if(DEBUG) Log.e("ImageViewFactory","get an empty image view. mAvailableObjects.size() = " + mAvailableObjects.size());
+				if(DEBUG) Logging.d("ImageViewFactory","get an empty image view. mAvailableObjects.size() = " + mAvailableObjects.size());
 				
 			}
 		}
-		Log.e("ImageViewFactory","imageCount mAvailableObjects: " + mAvailableObjects.size());
-		Log.e("ImageViewFactory","imageCount mObjectsInUse: " + mObjectsInUse.size());
+		Logging.d("ImageViewFactory","imageCount mAvailableObjects: " + mAvailableObjects.size());
+		Logging.d("ImageViewFactory","imageCount mObjectsInUse: " + mObjectsInUse.size());
 	 
 		return imageView;
 	}

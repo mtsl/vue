@@ -23,7 +23,6 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -66,6 +65,7 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -260,8 +260,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
             } else {
               Toast.makeText(
                   getActivity(),
-                  getActivity().getResources().getString(
-                      R.string.already_logged_in_msg), Toast.LENGTH_LONG)
+                  getActivity().getResources().getString(R.string.already_logged_in_msg), Toast.LENGTH_LONG)
                   .show();
             }
           }
@@ -289,9 +288,9 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
         // Added sidemenu_sub_option_My_Aisles functionality
         TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
         String s = textView.getText().toString();
-        Log.e(TAG, "Child Click: Name of item: " + s);
+        Logging.i(TAG, "Child Click: Name of item: " + s);
         if (s.equals(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-        	Log.i("clicked on", "clicked on: "+s);
+        	Logging.i("clicked on", "clicked on: "+s);
           VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
 
           if (getActivity() instanceof SlidingFragmentActivity) {
@@ -325,7 +324,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
         	  }
         	return true;
         } else if (s.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-          Log.i("clicked on", "clicked on: "+s);
+          Logging.i("clicked on", "clicked on: "+s);
           if (getActivity() instanceof SlidingFragmentActivity) {
           //  if (getActivity() instanceof VueLandingPageActivity) {
             SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
@@ -340,10 +339,10 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           return true;
         } else if(s.trim().equals(getString(R.string.sidemenu_sub_option_Interactions))) {
         	//TODO: need to implement interactions option
-        	Log.i("clicked on", "clicked on: "+s);
+        	Logging.i("clicked on", "clicked on: "+s);
         	return true;
         }
-        Log.i("clicked on", "clicked on:2222 "+s);
+        Logging.i("clicked on", "clicked on:2222 "+s);
 
         if (VueLandingPageActivity.mOtherSourceImagePath == null) {
           if (s.equals(getString(R.string.sidemenu_option_Profile))) {
@@ -717,14 +716,14 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		} else if (s.equals(getResources().getString(
 				R.string.sidemenu_sub_option_Googleplus))) {
 			if (googleplusloginflag) {
-				Log.e(getTag(), "GOOGLEPLUS : Value of s : 1");
+				Logging.d(getTag(), "GOOGLEPLUS : Value of s : 1");
 				getGPlusFriendsList();
 			} else {
 				if (progress.isShowing()) {
 					progress.dismiss();
 				}
-				Log.e(getTag(), "GOOGLEPLUS : Value of s : 2");
-				Log.e(getTag(), "GOOGLEPLUS : Value of s : 3");
+				Logging.d(getTag(), "GOOGLEPLUS : Value of s : 2");
+				Logging.d(getTag(), "GOOGLEPLUS : Value of s : 3");
 				Intent i = new Intent(getActivity(), VueLoginActivity.class);
 				Bundle b = new Bundle();
 				b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
@@ -790,7 +789,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 			Response.ErrorListener errorListener = new Response.ErrorListener() {
 				@Override
 				public void onErrorResponse(VolleyError error) {
-					Log.e("VueNetworkError",
+					Logging.d("VueNetworkError",
 							"Vue encountered network operations error. Error = "
 									+ error.networkResponse);
 					if (progress.isShowing()) {
@@ -979,7 +978,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				public void onClick(View v) {
 					// Utils.saveNetworkSettings(getActivity(),
 					// wifich.isChecked());
-					Log.e("Profiling", "Profiling User Profile onClick");
+					Logging.i("Profiling", "Profiling User Profile onClick");
 					if (userNameEdit.getText().toString().isEmpty()) {
 						Toast.makeText(getActivity(),
 								"User name cannot be blank", Toast.LENGTH_LONG)
@@ -990,7 +989,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 					customlayout.startAnimation(animDown);
 					expandListView.setVisibility(View.VISIBLE);
 					if (isProfileEdited || isNewUser) {
-						Log.e("Profiling",
+						Logging.i("Profiling",
 								"Profiling User Profile onClick isProfileEdited : "
 										+ isProfileEdited);
 						userDOBEdit.getText().toString();
@@ -1062,12 +1061,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 
 	@Override
 	public void afterTextChanged(Editable s) {
-		Log.e("Profiling",
+		Logging.i("Profiling",
 				"Profiling User Profile onClick afterTextChanged 1 : "
 						+ isProfileEdited);
 		if (!isProfileEdited)
 			isProfileEdited = true;
-		Log.e("Profiling",
+		Logging.i("Profiling",
 				"Profiling User Profile onClick afterTextChanged 2 : "
 						+ isProfileEdited);
 	}

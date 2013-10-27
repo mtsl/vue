@@ -24,23 +24,19 @@
 
 package com.lateralthoughts.vue;
 
-import java.util.ArrayList;
-
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
-
-import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.Logging;
+
+import java.util.ArrayList;
 
 public class TrendingAislesRightColumnAdapter extends
 		TrendingAislesGenericAdapter {
@@ -63,7 +59,7 @@ public class TrendingAislesRightColumnAdapter extends
 		super(c, content);
 		mContext = c;
 		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+			Logging.d(TAG, "About to initiate request for trending aisles");
 		mLoader = AisleLoader.getInstance(mContext);
 	}
 
@@ -77,7 +73,7 @@ public class TrendingAislesRightColumnAdapter extends
 		this.listener = listener;
 
 		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+			Logging.d(TAG, "About to initiate request for trending aisles");
 		// mVueTrendingAislesDataModel.registerAisleDataObserver(this);
 	}
 
@@ -98,12 +94,12 @@ public class TrendingAislesRightColumnAdapter extends
 
 	// create a new ImageView for each item referenced by the Adapter
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Log.i("SCROLL_STATE_IDLE", "SCROLL_STATE_IDLE 3 getview");
+		Logging.i("SCROLL_STATE_IDLE", "SCROLL_STATE_IDLE 3 getview");
 		ViewHolder holder;
-		Log.i("TrendingDataModel",
+		Logging.i("TrendingDataModel",
 				"DataObserver for List Refresh:  Right getview ");
 		if (null == convertView) {
-			Log.i("TrendingDataModel",
+			Logging.i("TrendingDataModel",
 					"DataObserver for List Refresh: Right getview if ");
 			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
 			convertView = layoutInflator.inflate(R.layout.staggered_row_item,
@@ -126,7 +122,7 @@ public class TrendingAislesRightColumnAdapter extends
 			convertView.setTag(holder);
 
 			if (DEBUG)
-				Log.e("Jaws2", "getView invoked for a new view at position2 = "
+				Logging.d("Jaws2", "getView invoked for a new view at position2 = "
 						+ position);
 		}
 		// AisleWindowContent windowContent =
@@ -195,7 +191,7 @@ public class TrendingAislesRightColumnAdapter extends
 
 	@Override
 	public void onAisleDataUpdated(int newCount) {
-		Log.i("TrendingDataModel",
+		Logging.d("TrendingDataModel",
 				"DataObserver for List Refresh: Right List AisleUpdate Called ");
 		notifyDataSetChanged();
 	}

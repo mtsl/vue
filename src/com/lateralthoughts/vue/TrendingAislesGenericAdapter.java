@@ -24,24 +24,21 @@
 
 package com.lateralthoughts.vue;
 
-import android.widget.BaseAdapter;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.content.Context;
-import android.util.Log;
-
-//java util imports
-import java.util.ArrayList;
-
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-//internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
+import com.lateralthoughts.vue.utils.Logging;
+
+import java.util.ArrayList;
+
+//java util imports
+//internal imports
 
 public class TrendingAislesGenericAdapter extends BaseAdapter implements
 		IAisleDataObserver {
@@ -68,7 +65,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 			ArrayList<AisleWindowContent> content) {
 		mContext = c;
 		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+			Logging.d(TAG, "About to initiate request for trending aisles");
 		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
 				.getInstance(mContext);
 		mVueTrendingAislesDataModel.registerAisleDataObserver(this);
@@ -86,7 +83,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 			ArrayList<AisleWindowContent> content) {
 		mContext = c;
 		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+			Logging.d(TAG, "About to initiate request for trending aisles");
 		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
 				.getInstance(mContext);
 		mVueTrendingAislesDataModel.registerAisleDataObserver(this);
@@ -118,14 +115,14 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 
 	// create a new ImageView for each item referenced by the Adapter
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Log.i("TrendingDataModel",
+		Logging.d("TrendingDataModel",
 				"DataObserver for List Refresh:   Generic getview called");
 		return convertView;
 	}
 
 	@Override
 	public void onAisleDataUpdated(int newCount) {
-		Log.i("TrendingDataModel",
+		Logging.d("TrendingDataModel",
 				"DataObserver for List Refresh:  Generic Aisle Update Called ");
 		notifyDataSetChanged();
 
