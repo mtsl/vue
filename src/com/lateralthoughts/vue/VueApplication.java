@@ -22,6 +22,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -44,7 +45,7 @@ public class VueApplication extends Application {
 			R.drawable.composer_place, R.drawable.composer_sleep,
 			R.drawable.composer_thought };
 
-    private final int MAX_BITMAP_COUNT = 512;
+    private final int MAX_BITMAP_COUNT = 256;
 
 	public long mLaunchTime;
 	public long mLastRecordedTime;
@@ -181,6 +182,10 @@ public class VueApplication extends Application {
 		 * Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 		 * crittercismConfig);
 		 */
+        File cacheDir;
+        cacheDir = getCacheDir();
+        //File in cache directory
+        File f = new File(cacheDir.getPath());
 
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue, new ImageLoader.ImageCache() {
             private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(MAX_BITMAP_COUNT);
@@ -191,7 +196,7 @@ public class VueApplication extends Application {
             public Bitmap getBitmap(String url) {
                 return mCache.get(url);
             }
-        });
+        }, f, null);
     }
 
 	public static VueApplication getInstance() {

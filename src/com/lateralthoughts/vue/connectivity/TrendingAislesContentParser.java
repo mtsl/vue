@@ -1,22 +1,11 @@
 package com.lateralthoughts.vue.connectivity;
 
-import java.util.ArrayList;
-
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.util.Log;
-
 import com.lateralthoughts.vue.*;
-
-import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueLandingPageActivity;
-import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.utils.Logging;
 
 import java.util.ArrayList;
 
@@ -36,7 +25,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
       case VueConstants.AISLE_TRENDING_LIST_DATA:
         long elapsedTime = System.currentTimeMillis()
             - VueApplication.getInstance().mLastRecordedTime;
-        Log.e("PERF_VUE",
+        Logging.d("PERF_VUE",
             "AISLE_TRENDING_LIST_DATA is the state. Received content. Time elapsed = "
                 + elapsedTime);
         VueApplication.getInstance().mLastRecordedTime = System
@@ -58,7 +47,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                         VueApplication.getInstance()).getNetworkHandler().mOffset,
                     DataBaseManager.TRENDING);
 
-            Log.i("ailsesize",
+            Logging.i("ailsesize",
                 "Suru comment show: " + aislesList.size());
              
 
@@ -86,17 +75,13 @@ public class TrendingAislesContentParser extends ResultReceiver {
 
                   }
                 });
-         /* } else {
-         	  VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = true;
-         	  Log.i("listmovingissue", "listmovingissue***: dbcase");
-           }*/
             
             if (refreshListFlag) {
               VueLandingPageActivity.landingPageActivity
                   .runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                      Log.e(
+                      Logging.d(
                           "TrendingAislesContentParser",
                           "Surendra check check Screen Name: "
                               + VueLandingPageActivity.mVueLandingActionbarScreenName);
@@ -132,6 +117,10 @@ public class TrendingAislesContentParser extends ResultReceiver {
         }
         });
         t.start();
+          if(30 > VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().mOffset){
+                VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler()
+                  .requestMoreAisle(true, VueApplication.getInstance().getResources().getString(R.string.trending));
+      }
         break;
       case VueConstants.AISLE_TRENDING_PARSED_DATA:
         VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())

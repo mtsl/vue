@@ -1,6 +1,5 @@
 package com.lateralthoughts.vue.connectivity;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -10,30 +9,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.lateralthoughts.vue.AisleManager;
+import com.lateralthoughts.vue.*;
+import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
-import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.AisleWindowContentFactory;
-import com.lateralthoughts.vue.ImageRating;
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueContentGateway;
-import com.lateralthoughts.vue.VueLandingPageActivity;
-import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.VueUser;
-import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
@@ -41,7 +25,6 @@ import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
-import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 import org.apache.http.HttpResponse;
@@ -55,11 +38,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class NetworkHandler {
@@ -73,6 +54,7 @@ public class NetworkHandler {
   private static final int NOTIFICATION_THRESHOLD = 4;
   private static final int TRENDING_AISLES_BATCH_SIZE = 10;
   public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
+    private static final int TRENDING_AISLES_BATCH_STEP_SIZE =  TRENDING_AISLES_BATCH_INITIAL_SIZE/2;
   private static String MY_AISLES = "aislesget/user/";
   protected int mLimit;
   public int mOffset;
@@ -110,7 +92,7 @@ public class NetworkHandler {
         mOffset += mLimit;
       else {
         mOffset += mLimit;
-        mLimit = TRENDING_AISLES_BATCH_SIZE;
+        mLimit = TRENDING_AISLES_BATCH_STEP_SIZE;
       }
       Log.i("listmovingissue", "listmovingissue***: "+mOffset);
       mVueContentGateway.getTrendingAisles(mLimit, mOffset,
@@ -132,7 +114,7 @@ public class NetworkHandler {
       downLoadFromServer = "fromServer";
       Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING FROM SERVER 1");
       mOffset = 0;
-      mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
+      mLimit = TRENDING_AISLES_BATCH_STEP_SIZE;
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
           .clearContent();
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())

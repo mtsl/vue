@@ -19,20 +19,21 @@ import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.android.volley.*;
+import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import java.io.File;
+import java.nio.ByteBuffer;
 
-import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.Logging;
 
 /**
  * Helper that handles loading and caching images from remote URLs.
@@ -73,17 +74,19 @@ public class NetworkImageLoader extends ImageLoader {
     private Runnable mRunnable;
 
     private FileCache mFileCache;
+    private DiskBitmapCache mDiskCache;
 
     /**
      * Constructs a new ImageLoader.
      * @param queue The RequestQueue to use for making image requests.
      * @param imageCache The cache to use as an L1 cache.
      */
-    public NetworkImageLoader(RequestQueue queue, ImageCache imageCache) {
+    public NetworkImageLoader(RequestQueue queue, ImageCache imageCache, File rootDirectory, File cacheDir) {
         super(queue, imageCache);
         mRequestQueue = queue;
         mCache = imageCache;
         mFileCache = VueApplication.getInstance().getFileCache();
+        mDiskCache = new DiskBitmapCache(rootDirectory,1024*1024*50);
     }
 
     /**
@@ -126,7 +129,7 @@ public class NetworkImageLoader extends ImageLoader {
      * @return A container object that contains all of the properties of the request, as well as
      *     the currently available image (default if remote is not loaded).
      */
-    public ImageContainer get(String requestUrl, ImageListener imageListener,
+    public ImageContainer get(final String requestUrl, ImageListener imageListener,
                               int maxWidth, int maxHeight) {
         // only fulfill requests that were initiated from the main thread.
         throwIfNotOnMainThread();
@@ -140,6 +143,14 @@ public class NetworkImageLoader extends ImageLoader {
             ImageContainer container = new NetworkImageContainer(cachedBitmap, requestUrl, null, null);
             imageListener.onResponse(container, true, true);
             return container;
+        }else{
+            cachedBitmap = mDiskCache.getBitmap(cacheKey);
+            if (cachedBitmap != null) {
+                // Return the cached bitmap.
+                ImageContainer container = new NetworkImageContainer(cachedBitmap, requestUrl, null, null);
+                imageListener.onResponse(container, true, true);
+                return container;
+            }
         }
 
         // The bitmap did not exist in the cache, fetch it!
@@ -158,19 +169,31 @@ public class NetworkImageLoader extends ImageLoader {
         }
         // The request is not already in flight. Send the new request to the network and
         // track it.
+        final long reqStartTime = System.currentTimeMillis();
         Request<?> newRequest =
                 new ImageRequest(requestUrl, new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
+                        long reqSuccessFinish = System.currentTimeMillis();
+                        int diff = (int) (reqSuccessFinish - reqStartTime);
                         onGetImageSuccess(cacheKey, response);
+                        Logging.e("VueImageLoader","Time to success  = " + diff + " image url = " + requestUrl);
                     }
                 }, maxWidth, maxHeight,
                         Config.RGB_565, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        long reqErrorFinish = System.currentTimeMillis();
+                        int diff = (int) (reqErrorFinish - reqStartTime);
+                        if(error instanceof TimeoutError){
+                            Logging.e("VueImageLoader","Time to error = " + diff + " TimeOut Image loading error occured for url = " + requestUrl);
+                        }else{
+                            Logging.e("VueImageLoader","Time to error = " + diff + " Unknown image loading error occurred for url = " + requestUrl + " error message = " + error.getMessage());
+                        }
                         onGetImageError(cacheKey, error);
                     }
                 });
+        newRequest.setRetryPolicy(new DefaultRetryPolicy(750, 2, 1.0f));
 
         mRequestQueue.add(newRequest);
         mInFlightRequests.put(cacheKey,
@@ -409,5 +432,40 @@ public class NetworkImageLoader extends ImageLoader {
     @Override
     public void putBitmap(String cacheKey, Bitmap bitmap){
         mCache.putBitmap(cacheKey, bitmap);
+
+        mDiskCache.putBitmap(cacheKey, bitmap);
+    }
+
+    private  class DiskBitmapCache extends DiskBasedCache implements ImageCache {
+
+        public DiskBitmapCache(File rootDirectory, int maxCacheSizeInBytes) {
+            super(rootDirectory, maxCacheSizeInBytes);
+        }
+
+        public DiskBitmapCache(File cacheDir) {
+            super(cacheDir);
+        }
+
+        public Bitmap getBitmap(String url) {
+
+            final Entry requestedItem = get(url);
+
+            if (requestedItem == null){
+                return null;
+            }else{
+                Logging.e("VueFileLoader","Got the bitmap from file cache. url = " + url);
+            }
+
+            return BitmapFactory.decodeByteArray(requestedItem.data, 0, requestedItem.data.length);
+        }
+
+        public void putBitmap(String url, Bitmap bitmap) {
+            final Entry entry = new Entry();
+
+            ByteBuffer buffer = ByteBuffer.allocate(bitmap.getByteCount());
+            bitmap.copyPixelsToBuffer(buffer);
+            entry.data = buffer.array();
+            put(url, entry);
+        }
     }
 }

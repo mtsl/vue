@@ -12,9 +12,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.*;
-import android.widget.AbsListView.OnScrollListener;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
@@ -22,6 +23,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.Utils;
+import com.origamilabs.library.views.StaggeredGridView;
 
 import java.io.*;
 import java.util.Calendar;
@@ -50,6 +52,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	int[] mLeftViewsHeights;
 	int[] mRightViewsHeights;
 	public boolean mIsFlingCalled;
+    private LandingStaggeredAdapter mLandingAdapter;
+    private StaggeredGridView mStaggeredView;
 	 
 
 	public boolean mIsIdleState;
@@ -75,10 +79,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		}
 
 		mAisleClickListener = new AisleClickListener();
-		mLeftColumnAdapter = new TrendingAislesLeftColumnAdapter(mContext,
+		/*mLeftColumnAdapter = new TrendingAislesLeftColumnAdapter(mContext,
 				mAisleClickListener, null);
 		mRightColumnAdapter = new TrendingAislesRightColumnAdapter(mContext,
-				mAisleClickListener, null);
+				mAisleClickListener, null);*/
+        mLandingAdapter = new LandingStaggeredAdapter(mContext, mAisleClickListener, null);
 	}
 
 	@Override
@@ -89,7 +94,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	}
 
 	public void notifyAdapters() {
-		if (mLeftColumnAdapter != null) {
+		/*if (mLeftColumnAdapter != null) {
 
 			mLeftColumnAdapter.notifyDataSetChanged();
 			Logging.i("listadapter", "adapter leftadapter notified");
@@ -97,7 +102,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		if (mRightColumnAdapter != null) {
 			mRightColumnAdapter.notifyDataSetChanged();
 			Logging.i("listadapter", "adapter adapter notified");
-		}
+		}*/
+        mLandingAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -105,9 +111,20 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			Bundle savedInstanceState) {
 
 		// synchronized list view approach
-		View v = inflater.inflate(R.layout.aisles_view_fragment2, container,
+		View v = inflater.inflate(R.layout.aisles_view_fragment, container,
 				false);
-		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
+
+        mStaggeredView = (StaggeredGridView) v.findViewById(R.id.aisles_grid);
+
+        int margin = getResources().getDimensionPixelSize(R.dimen.margin);
+
+        mStaggeredView.setItemMargin(margin); // set the GridView margin
+
+        mStaggeredView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well
+        mStaggeredView.setAdapter(mLandingAdapter);
+        mStaggeredView.setOnLoadMoreListener(loadMoreListener);
+
+        /*mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 
 		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -138,10 +155,24 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		mLeftViewsHeights = new int[1000];
 		mRightViewsHeights = new int[1000];
 		Logging.d("VueLandingAislesFragment",
-				"Get ready to displayed staggered view");
+				"Get ready to displayed staggered view");*/
 
 		return v;
 	}
+
+    private StaggeredGridView.OnLoadMoreListener loadMoreListener = new StaggeredGridView.OnLoadMoreListener() {
+        @Override
+        public boolean onLoadMore() {
+            //loading.setVisibility(View.VISIBLE);
+            // load more data from internet (not in the UI thread)
+            VueTrendingAislesDataModel.getInstance(VueLandingAislesFragment.this.mContext)
+                    .getNetworkHandler().requestMoreAisle(true, mContext.getResources().
+                                                                         getString(R.string.trending));
+
+            return true; // true if you have more data to load, false you dont have more data to load
+        }
+    };
+
 
 	// Passing the touch event to the opposite list
 	OnTouchListener touchListener = new OnTouchListener() {
@@ -159,116 +190,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 			dispatched = false;
 			return false;
-		}
-	};
-
-	/**
-	 * Synchronizing scrolling Distance from the top of the first visible
-	 * element opposite list: sum_heights(opposite invisible screens) -
-	 * sum_heights(invisible screens) + distance from top of the first visible
-	 * child
-	 */
-	OnScrollListener scrollListener = new OnScrollListener() {
-		@Override
-		public void onScrollStateChanged(AbsListView view, int scrollState) {
-			mLeftColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
-			mRightColumnAdapter
-					.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
-			if (scrollState == SCROLL_STATE_FLING) {
-				mIsFlingCalled = true;
-				mIsIdleState = false;
-			} else if (scrollState == SCROLL_STATE_IDLE) {
-				mIsIdleState = true;
-				mIsFlingCalled = false;
-				// notify the adapters.
-					mLeftColumnAdapter.notifyDataSetChanged();
-					mRightColumnAdapter.notifyDataSetChanged();
-
-			} else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
-				mIsIdleState = false;
-				mIsFlingCalled = false;
-			}
-			int first = view.getFirstVisiblePosition();
-			int count = view.getChildCount();
-			if (scrollState == SCROLL_STATE_IDLE
-					|| (first + count > mLeftColumnAdapter.getCount())
-					|| (first + count > mRightColumnAdapter.getCount())) {
-				mLeftColumnView.invalidateViews();
-				mRightColumnView.invalidateViews();
-			}
-		}
-
-		@Override
-		public void onScroll(AbsListView view, int firstVisibleItem,
-				int visibleItemCount, int totalItemCount) {
-			 
-			if (view.getChildAt(0) != null) {
-				if (view.equals(mLeftColumnView)) {
-					mLeftViewsHeights[view.getFirstVisiblePosition()] = view
-							.getChildAt(0).getHeight();
-
-					int h = 0;
-					for (int i = 0; i < mRightColumnView
-							.getFirstVisiblePosition(); i++) {
-						h += mRightViewsHeights[i];
-					}
-
-					int hi = 0;
-					for (int i = 0; i < mLeftColumnView
-							.getFirstVisiblePosition(); i++) {
-						hi += mLeftViewsHeights[i];
-					}
-
-					int top = h - hi + view.getChildAt(0).getTop();
-					mRightColumnView.setSelectionFromTop(
-							mRightColumnView.getFirstVisiblePosition(), top);
-				} else if (view.equals(mRightColumnView)) {
-					mRightViewsHeights[view.getFirstVisiblePosition()] = view
-							.getChildAt(0).getHeight();
-
-					int h = 0;
-					for (int i = 0; i < mLeftColumnView
-							.getFirstVisiblePosition(); i++) {
-						h += mLeftViewsHeights[i];
-					}
-
-					int hi = 0;
-					for (int i = 0; i < mRightColumnView
-							.getFirstVisiblePosition(); i++) {
-						hi += mRightViewsHeights[i];
-					}
-
-					int top = h - hi + view.getChildAt(0).getTop();
-					 
-					mLeftColumnView.setSelectionFromTop(
-							mLeftColumnView.getFirstVisiblePosition(), top);
-				}
-			}
-
-			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
-
-			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
-					&& lan.getScreenName().equalsIgnoreCase(
-							getResources().getString(R.string.trending))&& !VueTrendingAislesDataModel.getInstance(mContext).isFromDb) {
-				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
-				Logging.i("more aisle request", "more aisle request calling");
-				int totalItems = 0;
-				if (view.equals(mLeftColumnView)) {
-					totalItems = mLeftColumnAdapter.getCount();
-				} else if (view.equals(mRightColumnView)) {
-					totalItems = mRightColumnAdapter.getCount();
-				}
-				if ((totalItems - lastVisiblePosition) < 5) {
-					Logging.i("offeset and limit", "offeset00000: load moredata");
-					VueTrendingAislesDataModel.getInstance(mContext)
-							.getNetworkHandler()
-							.requestMoreAisle(true, 
-									getResources().getString(R.string.trending));
-				}
-			} else {
-				Logging.i("offeset and limit", "offeset00000: load moredata else "+VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest);
-			}
-
 		}
 	};
 
@@ -394,14 +315,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public void refreshList() {
-			mLeftColumnAdapter.notifyDataSetChanged();
-			mRightColumnAdapter.notifyDataSetChanged();
+            mLandingAdapter.notifyDataSetChanged();
 		}
 	}
-	/*public void moveListToPosition(int position) {
-		mLeftColumnView.setSelection(position);
-		mLeftColumnView.smoothScrollToPosition(position);
-	}*/
 
 	public int getListPosition() {
 		return mLeftColumnView.getFirstVisiblePosition();
