@@ -155,34 +155,18 @@ public class DataBaseManager {
     for(int i = 0; i < aislesCount; i++) {
       AisleWindowContent content = contentList.get(i);
       AisleContext info = content.getAisleContext();
-      Log.e("DataBaseManager", "SURU updated aisle Order: FIRST TIME aisleId: " + info.mAisleId);
     }
     for (int i = 0; i < aislesCount; i++) {
-      /*Cursor cursor = context.getContentResolver()
-          .query(VueConstants.CONTENT_URI, new String[] {"COUNT(*)"}, null,
-              null, null);*/
-      //String strCount = "";
-      //int maxId = 0;
-
-      /*if (cursor.moveToFirst()) {
-        strCount = cursor.getString(cursor.getColumnIndex("COUNT(*)"));
-      }
-      maxId = Integer.valueOf(strCount).intValue();
-      cursor.close();*/
       AisleWindowContent content = contentList.get(i);
       AisleContext info = content.getAisleContext();
       if(whichScreen == TRENDING && aislesOrderMap.isEmpty()) {
-        Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == TRENDING, aislesOrderMap.isEmpty()");
        aislesOrderMap.put(info.mAisleId, 1000); 
       } else if(whichScreen == TRENDING && !aislesOrderMap.isEmpty()) {
-        Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == TRENDING, aislesOrderMap.isNotEmpty()");
         aislesOrderMap.put(info.mAisleId, getMaxAisleValue(aislesOrderMap) + 1);
       } else if(whichScreen == MY_AISLES && !aisleIds.contains(info.mAisleId)) {
-        Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == MY_AISLES");
         aislesOrderMap.put(info.mAisleId, getMaxAisleValue(aislesOrderMap) + 1);
       } else if(whichScreen == AISLE_CREATED) {
         int minValue = getMinAisleValue(aislesOrderMap);
-        Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == AISLE_CREATED: " + minValue);
         aislesOrderMap.put(info.mAisleId, minValue - 1);
       }
       ArrayList<AisleImageDetails> imageItemsArray = content.getImageList();
