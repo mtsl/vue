@@ -137,7 +137,7 @@ public class AisleCreationBackgroundThread implements Runnable,
             AisleWindowContent aileItem = new Parser()
                 .getAisleCotent(mResponseMessage);
             if (VueLandingPageActivity.getScreenName().equalsIgnoreCase(
-                "Trending")) {
+                "Trending")|| VueLandingPageActivity.getScreenName().equalsIgnoreCase("My Aisles")) {
               VueTrendingAislesDataModel.getInstance(
                   VueApplication.getInstance()).addItemToListAt(
                   aileItem.getAisleContext().mAisleId, aileItem, 0);
