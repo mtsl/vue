@@ -174,9 +174,9 @@ public class VueApplication extends Application {
 					new SortBasedOnAppName());
 		}
 		// R.drawable.aisle_content_empty;
-		/*
-		 * Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
-		 * crittercismConfig);
+		
+	/*	  Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
+		  crittercismConfig);
 		 */
 
 	}
