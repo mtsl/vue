@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
@@ -555,6 +556,11 @@ public class VueLandingPageActivity extends BaseActivity {
 				fromServer = true;
 			} else {
 				fromServer = true;
+			}
+			if(VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())){
+				fromServer = true;
+			} else {
+				fromServer = false;
 			}
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())

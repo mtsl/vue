@@ -144,6 +144,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		}
 		if(VueApplication.getInstance().getmAisleImgCurrentPos() > getItem(mCurrentAislePosition).getImageList().size()-1){
 			VueApplication.getInstance().setmAisleImgCurrentPos(getItem(mCurrentAislePosition).getImageList().size()-1);
+			mCurrentDispImageIndex = VueApplication.getInstance().getmAisleImgCurrentPos();
 		}
 		if(getItem(mCurrentAislePosition).getAisleContext().mCommentList == null) {
 			getItem(mCurrentAislePosition).getAisleContext().mCommentList = new ArrayList<String>();
