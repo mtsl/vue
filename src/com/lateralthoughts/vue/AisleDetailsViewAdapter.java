@@ -450,7 +450,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mLikes = 0;
 			mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
 		}
-
+		Log.i("imagedispissue", "imagedispissue0_2");
 		mViewHolder.commentCount.setText((mShowingList.size() + " Comments"));
 		mViewHolder.bookMarkCount.setText("" + mBookmarksCount);
 		mViewHolder.likeCount.setText("" + mLikes);
@@ -461,6 +461,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		// mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
 		if (position == 0) {
+			Log.i("imagedispissue", "imagedispissue-1");
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);
 			mViewHolder.addCommentlay.setVisibility(View.GONE);
@@ -468,11 +469,18 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.edtCommentLay.setVisibility(View.GONE);
 			// mViewHolder.mWindowContent = mWindowContentTemp;
 			try {
-                if(Long.parseLong(getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId){
-                	mViewHolder.editImage.setVisibility(View.VISIBLE);
-                }else {
-                	mViewHolder.editImage.setVisibility(View.GONE);
-                }
+				mViewHolder.editImage.setVisibility(View.GONE);
+				if (getItem(mCurrentAislePosition).getImageList().get(
+						mCurrentDispImageIndex).mOwnerUserId != null) {
+					if (Long.parseLong(getItem(mCurrentAislePosition)
+							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId) {
+						mViewHolder.editImage.setVisibility(View.VISIBLE);
+					} else {
+						mViewHolder.editImage.setVisibility(View.GONE);
+					}
+					}else {
+						Log.i("ownerUserId", "ownerUserid is null");
+					}
 				if (getItem(mCurrentAislePosition).getAisleContext().mDescription != null
 						&& getItem(mCurrentAislePosition).getAisleContext().mDescription
 								.length() > 1) {
@@ -520,12 +528,14 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						.getmAisleImgCurrentPos();
 				// mWindowContentTemp = mViewHolder.mWindowContent;
 				mViewHolder.tag = TAG;
+				Log.i("imagedispissue", "imagedispissue0");
 				if (mImageRefresh) {
 					/*
 					 * mViewHolder.uniqueContentId =
 					 * AisleWindowContent.EMPTY_AISLE_CONTENT_ID; mImageRefresh
 					 * = false;
 					 */
+					Log.i("imagedispissue", "imagedispissue1");
 					mViewLoader.getAisleContentIntoView(mViewHolder,
 							scrollIndex, position,
 							new DetailImageClickListener(),
@@ -755,6 +765,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					&& position < VueApplication.getInstance()
 							.getClickedWindowCount()) {
 				mCurrentDispImageIndex = position;
+				Log.i("userId", "userId not matched imageobj onswipe: "+Long.parseLong(getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mOwnerUserId));
 				/*
 				 * @SuppressWarnings("unchecked") ArrayList<String>
 				 * tempCommentList = (ArrayList<String>) mCommentsMapList
@@ -1030,8 +1041,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		imgDetails.mTrendingImageHeight = imgDetails.mAvailableHeight;
 		imgDetails.mTrendingImageWidth = imgDetails.mAvailableWidth;
 		imgDetails.mOwnerAisleId = getItem(mCurrentAislePosition).getAisleId();
-		imgDetails.mOwnerUserId = getItem(mCurrentAislePosition)
-				.getAisleContext().mUserId;
+		imgDetails.mOwnerUserId =Long.toString(mUserId);
 	    getItem(mCurrentAislePosition).getImageList().add(imgDetails);
 		getItem(mCurrentAislePosition).addAisleContent(
 				getItem(mCurrentAislePosition).getAisleContext(),
