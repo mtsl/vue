@@ -6,6 +6,7 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.LinearLayout;
@@ -90,27 +92,7 @@ public class DataEntryActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						Utils.putDataentryScreenAisleId(DataEntryActivity.this,
-								null);
-						Utils.putDataentryAddImageAisleFlag(
-								DataEntryActivity.this, false);
-						Utils.putDataentryEditAisleFlag(DataEntryActivity.this,
-								false);
-						ArrayList<DataentryImage> mAisleImagePathList = null;
-						try {
-							mAisleImagePathList = Utils
-									.readAisleImagePathListFromFile(
-											DataEntryActivity.this,
-											VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
-							mAisleImagePathList.clear();
-							Utils.writeAisleImagePathListToFile(
-									DataEntryActivity.this,
-									VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
-									mAisleImagePathList);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						finish();
+						showDiscardOtherAppImageDialog();
 					}
 				});
 		mVueDataentryActionbarCreateAisleIconLayout
@@ -200,12 +182,17 @@ public class DataEntryActivity extends BaseActivity {
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR));
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION) != null) {
-					mDataEntryFragment.mOccassionBigText
-							.setText(b
-									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION));
-					mDataEntryFragment.mOccasionText
-							.setText(b
-									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION));
+					String occasion = b
+							.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION);
+					if (occasion != null && occasion.length() > 0) {
+						mDataEntryFragment.mOccassionBigText.setText(occasion);
+						mDataEntryFragment.mOccasionText
+								.setText(b
+										.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION));
+					} else {
+						mDataEntryFragment.mOccassionBigText
+								.setText(DataEntryFragment.OCCASION);
+					}
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE) != null) {
 					mDataEntryFragment.mSaySomethingAboutAisle
@@ -372,10 +359,54 @@ public class DataEntryActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else {
+				if (mVueDataentryActionbarTopLayout.getVisibility() == View.GONE) {
+					Utils.putDataentryAddImageAisleFlag(DataEntryActivity.this,
+							false);
+					Utils.putDataentryEditAisleFlag(DataEntryActivity.this,
+							false);
+					Utils.putDataentryScreenAisleId(this, null);
+					ArrayList<DataentryImage> mAisleImagePathList = null;
+					try {
+						mAisleImagePathList = Utils
+								.readAisleImagePathListFromFile(
+										DataEntryActivity.this,
+										VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
+						mAisleImagePathList.clear();
+						Utils.writeAisleImagePathListToFile(
+								DataEntryActivity.this,
+								VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
+								mAisleImagePathList);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					super.onBackPressed();
+				} else {
+					showDiscardOtherAppImageDialog();
+				}
+			}
+		}
+		return false;
+
+	}
+
+	private void showDiscardOtherAppImageDialog() {
+		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.vue_popup);
+		final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+		TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
+		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+		messagetext.setText(getResources().getString(
+				R.string.discard_dataentry_screen_changes));
+		yesButton.setText("Yes");
+		noButton.setText("No");
+		yesButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				dialog.dismiss();
 				Utils.putDataentryAddImageAisleFlag(DataEntryActivity.this,
 						false);
 				Utils.putDataentryEditAisleFlag(DataEntryActivity.this, false);
-				Utils.putDataentryScreenAisleId(this, null);
+				Utils.putDataentryScreenAisleId(DataEntryActivity.this, null);
 				ArrayList<DataentryImage> mAisleImagePathList = null;
 				try {
 					mAisleImagePathList = Utils.readAisleImagePathListFromFile(
@@ -388,11 +419,14 @@ public class DataEntryActivity extends BaseActivity {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				super.onBackPressed();
+				finish();
 			}
-		}
-		return false;
-
+		});
+		noButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show();
 	}
-
 }

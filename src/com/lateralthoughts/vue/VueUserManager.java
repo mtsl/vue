@@ -884,7 +884,8 @@ public class VueUserManager {
 															MyIntent,
 															PendingIntent.FLAG_CANCEL_CURRENT);
 											mNotification.flags = mNotification.flags
-													| Notification.FLAG_ONGOING_EVENT;
+													| Notification.FLAG_ONGOING_EVENT
+													| Notification.FLAG_AUTO_CANCEL;
 											mNotification
 													.setLatestEventInfo(
 															VueApplication

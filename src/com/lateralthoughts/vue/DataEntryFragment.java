@@ -16,6 +16,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -58,10 +59,15 @@ public class DataEntryFragment extends Fragment {
 	public LinearLayout mLookingForPopup = null;
 	public TextView mTouchToChangeImage = null, mLookingForBigText = null,
 			mOccassionBigText = null, mCategoryText = null,
-			mHintTextForSaySomeThing;
+			mHintTextForSaySomeThing, mForTextView;
 	public EditTextBackEvent mLookingForText = null, mOccasionText = null,
 			mSaySomethingAboutAisle = null, mFindAtText = null;
-	private static String mCategoryitemsArray[] = null;
+	private String mCategoryitemsArray[] = null;
+	private int mCategoryitemsDrawablesArray[] = {
+			R.drawable.vue_launcher_icon, R.drawable.vue_launcher_icon,
+			R.drawable.vue_launcher_icon, R.drawable.vue_launcher_icon,
+			R.drawable.vue_launcher_icon, R.drawable.vue_launcher_icon,
+			R.drawable.vue_launcher_icon };
 	private Drawable mListDivider = null;
 	public ImageView mCreateAisleBg = null, mCategoryIcon = null;
 	private InputMethodManager mInputMethodManager;
@@ -102,6 +108,7 @@ public class DataEntryFragment extends Fragment {
 	private Bitmap mAisleImageBitmap = null;
 	public ProgressBar mAisleBgProgressbar;
 	private GestureDetector mDetector;
+	private ImageView mOccasionClose, mFindatClose, mLookingforClose;
 	public boolean mFromDetailsScreenFlag = false;
 	public boolean mIsUserAisleFlag = false;
 	private LoginWarningMessage mLoginWarningMessage = null;
@@ -112,6 +119,7 @@ public class DataEntryFragment extends Fragment {
 	public String mOtherSourceSelectedImageUrl = null,
 			mOtherSourceSelectedImageDetailsUrl = null,
 			mOtherSourceSelectedImageStore = null;
+	private static final int CATEGORY_POPUP_DELAY = 2000;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -128,6 +136,7 @@ public class DataEntryFragment extends Fragment {
 			Bundle savedInstanceState) {
 		mCategoryitemsArray = getResources().getStringArray(
 				R.array.category_items_array);
+
 		mDbManager = DataBaseManager.getInstance(getActivity());
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		mScreenHeight = dm.heightPixels;
@@ -140,6 +149,12 @@ public class DataEntryFragment extends Fragment {
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		mLookingForText = (EditTextBackEvent) mDataEntryFragmentView
 				.findViewById(R.id.lookingfortext);
+		mOccasionClose = (ImageView) mDataEntryFragmentView
+				.findViewById(R.id.occasionclose);
+		mLookingforClose = (ImageView) mDataEntryFragmentView
+				.findViewById(R.id.lookingforclose);
+		mFindatClose = (ImageView) mDataEntryFragmentView
+				.findViewById(R.id.findatclose);
 		mDataEntryAislesViewpager = (ViewPager) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_aisles_viewpager);
 		mOccasionListviewLayout = (LinearLayout) mDataEntryFragmentView
@@ -154,6 +169,8 @@ public class DataEntryFragment extends Fragment {
 				.findViewById(R.id.find_at_icon);
 		mLookingForListview = (ListView) mDataEntryFragmentView
 				.findViewById(R.id.lookingforlistview);
+		mForTextView = (TextView) mDataEntryFragmentView
+				.findViewById(R.id.for_text);
 		mFindAtText = (EditTextBackEvent) mDataEntryFragmentView
 				.findViewById(R.id.find_at_text);
 		mFindAtPopup = (LinearLayout) mDataEntryFragmentView
@@ -268,12 +285,26 @@ public class DataEntryFragment extends Fragment {
 										.getAisleAt(
 												Utils.getDataentryScreenAisleId(getActivity()))
 										.getAisleContext().mOccasion);
-						mOccassionBigText
-								.setText(VueTrendingAislesDataModel
+						if (VueTrendingAislesDataModel
+								.getInstance(getActivity())
+								.getAisleAt(
+										Utils.getDataentryScreenAisleId(getActivity()))
+								.getAisleContext().mOccasion != null
+								&& VueTrendingAislesDataModel
 										.getInstance(getActivity())
 										.getAisleAt(
 												Utils.getDataentryScreenAisleId(getActivity()))
-										.getAisleContext().mOccasion);
+										.getAisleContext().mOccasion.length() > 0) {
+							mOccassionBigText
+									.setText(VueTrendingAislesDataModel
+											.getInstance(getActivity())
+											.getAisleAt(
+													Utils.getDataentryScreenAisleId(getActivity()))
+											.getAisleContext().mOccasion);
+						} else {
+							mOccassionBigText.setText(OCCASION);
+						}
+
 					} catch (Exception e) {
 						mOccasionText.setText(mOccassionAisleKeywordsList
 								.get(0));
@@ -426,6 +457,8 @@ public class DataEntryFragment extends Fragment {
 								.length() > 0) {
 							mLookingForBigText.setText(mLookingForText
 									.getText().toString());
+						} else {
+							mLookingForBigText.setText(LOOKING_FOR);
 						}
 						mPreviousLookingfor = mLookingForText.getText()
 								.toString();
@@ -474,8 +507,10 @@ public class DataEntryFragment extends Fragment {
 						mOccasionText.getWindowToken(), 0);
 				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				if (mOccasionText.getText().toString().trim().length() > 0) {
-					mOccassionBigText.setText(" "
-							+ mOccasionText.getText().toString());
+					mOccassionBigText.setText(mOccasionText.getText()
+							.toString());
+				} else {
+					mOccassionBigText.setText(OCCASION);
 				}
 				mPreviousOcasion = mOccasionText.getText().toString();
 				mOccasionPopup.setVisibility(View.GONE);
@@ -532,6 +567,31 @@ public class DataEntryFragment extends Fragment {
 			}
 		});
 		mOccassionBigText.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				hideAllEditableTextboxes();
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mFindAtText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mFindAtPopup.setVisibility(View.GONE);
+				mCategoryListview.setVisibility(View.GONE);
+				mCategoryListviewLayout.setVisibility(View.GONE);
+				mCategoryPopup.setVisibility(View.GONE);
+				if (Utils.getDataentryAddImageAisleFlag(getActivity())
+						|| Utils.getDataentryEditAisleFlag(getActivity())) {
+					showAlertForEditPermission(OCCASION);
+				} else {
+					occassionTextClickFunctionality();
+				}
+			}
+		});
+		mForTextView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				hideAllEditableTextboxes();
@@ -797,15 +857,37 @@ public class DataEntryFragment extends Fragment {
 					public void onPageScrollStateChanged(int arg0) {
 					}
 				});
+		mLookingforClose.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mLookingForText.setText("");
+			}
+		});
+		mFindatClose.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mFindAtText.setText("");
+			}
+		});
+		mOccasionClose.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mOccasionText.setText("");
+			}
+		});
 		return mDataEntryFragmentView;
 	}
 
 	private void hideAllEditableTextboxes() {
 		if (mOccasionText.getText().toString().trim().length() > 0) {
-			mOccassionBigText.setText(" " + mOccasionText.getText().toString());
+			mOccassionBigText.setText(mOccasionText.getText().toString());
+		} else {
+			mOccassionBigText.setText(OCCASION);
 		}
 		if (mLookingForText.getText().toString().trim().length() > 0) {
 			mLookingForBigText.setText(mLookingForText.getText().toString());
+		} else {
+			mLookingForBigText.setText(LOOKING_FOR);
 		}
 		mSaySomethingAboutAisle.setCursorVisible(false);
 		mPreviousSaySomething = mSaySomethingAboutAisle.getText().toString();
@@ -1226,7 +1308,11 @@ public class DataEntryFragment extends Fragment {
 		mCategoryListview.setVisibility(View.VISIBLE);
 		mCategoryListview.setAdapter(new CategoryAdapter(getActivity()));
 		mCategoryListviewLayout.setVisibility(View.VISIBLE);
-		mCategoryPopup.setVisibility(View.VISIBLE);
+		if (mCategoryText.getText().toString().trim().length() > 0) {
+			mCategoryPopup.setVisibility(View.VISIBLE);
+		} else {
+			mCategoryPopup.setVisibility(View.GONE);
+		}
 	}
 
 	// LookingFor....
@@ -1396,6 +1482,7 @@ public class DataEntryFragment extends Fragment {
 
 		class ViewHolder {
 			TextView dataentryitemname;
+			ImageView categoryImage;
 		}
 
 		public View getView(final int position, View convertView,
@@ -1404,13 +1491,22 @@ public class DataEntryFragment extends Fragment {
 			View rowView = convertView;
 			if (rowView == null) {
 				LayoutInflater inflater = context.getLayoutInflater();
-				rowView = inflater.inflate(R.layout.dataentry_row, null, true);
+				rowView = inflater.inflate(R.layout.dataentry_category_row,
+						null, true);
 				holder = new ViewHolder();
 				holder.dataentryitemname = (TextView) rowView
 						.findViewById(R.id.dataentryitemname);
+				holder.categoryImage = (ImageView) rowView
+						.findViewById(R.id.categoryimage);
 				rowView.setTag(holder);
 			} else {
 				holder = (ViewHolder) rowView.getTag();
+			}
+			try {
+				holder.categoryImage
+						.setImageResource(mCategoryitemsDrawablesArray[position]);
+			} catch (Exception e) {
+				holder.categoryImage.setImageResource(R.drawable.category);
 			}
 			if (mCategoryitemsArray[position].equals(mCategoryText.getText()
 					.toString())) {
@@ -1428,8 +1524,14 @@ public class DataEntryFragment extends Fragment {
 				public void onClick(View arg0) {
 					mCategoryText.setText(mCategoryitemsArray[position]);
 					mCategoryListview.setVisibility(View.GONE);
-					mCategoryPopup.setVisibility(View.GONE);
+					mCategoryPopup.setVisibility(View.VISIBLE);
 					mCategoryListviewLayout.setVisibility(View.GONE);
+					new Handler().postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							mCategoryPopup.setVisibility(View.GONE);
+						}
+					}, CATEGORY_POPUP_DELAY);
 				}
 			});
 			return rowView;

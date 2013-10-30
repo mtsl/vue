@@ -97,7 +97,7 @@ public class AisleCreationBackgroundThread implements Runnable,
 				mNotification.setLatestEventInfo(VueApplication.getInstance(),
 						"Uploading Completed.", "Aisle is uploaded to server.",
 						contentIntent);
-				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+				mNotification.flags = Notification.FLAG_AUTO_CANCEL;
 				mNotificationManager.notify(
 						VueConstants.CREATE_AISLE_NOTIFICATION_ID,
 						mNotification);
@@ -111,7 +111,7 @@ public class AisleCreationBackgroundThread implements Runnable,
 				mNotification.setLatestEventInfo(VueApplication.getInstance(),
 						"Uploading Failed.",
 						"Aisle is not uploaded to server.", contentIntent);
-				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+				mNotification.flags = Notification.FLAG_AUTO_CANCEL;
 				mNotificationManager.notify(
 						VueConstants.CREATE_AISLE_NOTIFICATION_ID,
 						mNotification);

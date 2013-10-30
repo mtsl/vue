@@ -102,7 +102,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
           && response.getStatusLine().getStatusCode() == 200) {
         mNotification.setLatestEventInfo(VueApplication.getInstance(),
             "Image is Added.", "Image is Added to Aisle.", contentIntent);
-        mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+        mNotification.flags = Notification.FLAG_AUTO_CANCEL;
         mNotificationManager.notify(
             VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID, mNotification);
         mResponseMessage = EntityUtils.toString(response.getEntity());
@@ -112,7 +112,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
       } else {
         mNotification.setLatestEventInfo(VueApplication.getInstance(),
             "Uploading Failed.", "Image adding is failed.", contentIntent);
-        mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+        mNotification.flags = Notification.FLAG_AUTO_CANCEL;
         mNotificationManager.notify(
             VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID, mNotification);
         Log.i("myailsedebug",
