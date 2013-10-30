@@ -26,6 +26,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" >
             </com.lateralthoughts.vue.ui.AisleContentBrowser>
+            <ImageView android:layout_width="32dp"
+                       android:layout_height="32dp"
+                       android:layout_gravity="top|right"
+                           android:layout_marginTop="8dp"
+                           android:layout_marginRight="8dp"
+                           android:id="@+id/editImage"
+                       android:src="@drawable/vue_launcher_icon"/>
         </FrameLayout>
 
         <LinearLayout

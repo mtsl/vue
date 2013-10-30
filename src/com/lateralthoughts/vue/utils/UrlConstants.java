@@ -25,7 +25,6 @@ public class UrlConstants {
 			+ "api/aislecreate";
 	public static final String CREATE_IMAGE_RESTURL = SERVER_BASE_URL
 			+ "api/imagecreate";
-
 	public static final String GET_AISLE_RESTURL = SERVER_BASE_URL
 			+ "api/aisleget/id";
 	public static final String GET_AISLELIST_BYUSER_RESTURL = SERVER_BASE_URL

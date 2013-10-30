@@ -552,11 +552,6 @@ public class VueLandingPageActivity extends BaseActivity {
 		boolean fromServer = true;
 		if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-			if (isCategoryExistInDb) {
-				fromServer = true;
-			} else {
-				fromServer = true;
-			}
 			if(VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())){
 				fromServer = true;
 			} else {

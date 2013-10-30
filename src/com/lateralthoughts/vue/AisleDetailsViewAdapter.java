@@ -113,6 +113,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
+	private long mUserId;
 
 	@SuppressWarnings("unchecked")
 	public AisleDetailsViewAdapter(Context c,
@@ -131,7 +132,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mViewLoader = new AisleDetailsViewListLoader(mContext);
 		mswipeListner = swipeListner;
 		mListCount = listCount;
-
+		mUserId =Long.parseLong(VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().getUserId());
 		mShowingList = new ArrayList<String>();
 		if (DEBUG)
 			Log.e(TAG, "About to initiate request for trending aisles");
@@ -324,7 +325,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		RelativeLayout enterCommentrellay;
 		RelativeLayout likelay, bookmarklay;
 		FrameLayout edtCommentLay;
-		ImageView commentSend;
+		ImageView commentSend,editImage;
 		String tag;
 	}
 
@@ -343,8 +344,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					null);
 			mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.showpieceadapter);
-			Log.i("nullbug", "nullbug  mViewHolder.aisleContentBrowser "
-					+ mViewHolder.aisleContentBrowser);
+			mViewHolder.editImage = (ImageView) convertView.findViewById(R.id.editImage);
 			mViewHolder.imgContentlay = (LinearLayout) convertView
 					.findViewById(R.id.vueimagcontent);
 			mViewHolder.commentContentlay = (LinearLayout) convertView
@@ -468,7 +468,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.edtCommentLay.setVisibility(View.GONE);
 			// mViewHolder.mWindowContent = mWindowContentTemp;
 			try {
-
+                if(Long.parseLong(getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId){
+                	mViewHolder.editImage.setVisibility(View.VISIBLE);
+                }else {
+                	mViewHolder.editImage.setVisibility(View.GONE);
+                }
 				if (getItem(mCurrentAislePosition).getAisleContext().mDescription != null
 						&& getItem(mCurrentAislePosition).getAisleContext().mDescription
 								.length() > 1) {
@@ -546,7 +550,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						R.anim.bounce);
 				mViewHolder.vueWindowBookmarkImg.startAnimation(rotate);
 			}
-
+			 
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
 			mViewHolder.addCommentlay.setVisibility(View.GONE);
@@ -554,6 +558,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			// image content gone
 		} else if (position == mListCount - 1) {
 			mViewHolder.separator.setVisibility(View.GONE);
+			 
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
@@ -589,6 +594,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				mViewHolder.userComment.setText(mShowingList.get(position
 						- mInitialCommentsToShowSize));
 			}
+		 
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);
 			mViewHolder.addCommentlay.setVisibility(View.GONE);
@@ -1026,14 +1032,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		imgDetails.mOwnerAisleId = getItem(mCurrentAislePosition).getAisleId();
 		imgDetails.mOwnerUserId = getItem(mCurrentAislePosition)
 				.getAisleContext().mUserId;
-		/*
-		 * imgDetails = prepareCustomUrl(imgDetails,
-		 * getItem(mCurrentAislePosition).getBestHeightForWindow());
-		 */
-		if (mCurrentDispImageIndex == 0) {
-			getItem(mCurrentAislePosition).getImageList().add(imgDetails);
-		}
-
+	    getItem(mCurrentAislePosition).getImageList().add(imgDetails);
 		getItem(mCurrentAislePosition).addAisleContent(
 				getItem(mCurrentAislePosition).getAisleContext(),
 				getItem(mCurrentAislePosition).getImageList());
@@ -1041,17 +1040,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				mCurrentAislePosition).getImageList());
 		getItem(mCurrentAislePosition)
 				.setBestLargestHeightForWindow(bestHeight);
-		/*
-		 * FileCache fileCache = new FileCache(mContext); File f =
-		 * fileCache.getFile(getItem(mCurrentAislePosition)
-		 * .getImageList().get(mCurrentDispImageIndex).mCustomImageUrl); File
-		 * sourceFile = new File(imagePath); Bitmap bmp =
-		 * BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-		 * getItem(mCurrentAislePosition).getBestHeightForWindow(),
-		 * VueApplication.getInstance().getVueDetailsCardWidth() / 2,
-		 * Utils.DETAILS_SCREEN); Utils.saveBitmap(bmp, f);
-		 */
-
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.dataObserver();
 		mImageRefresh = true;
