@@ -76,10 +76,16 @@ public class Parser {
 			try {
 				JSONObject jsonObject = new JSONObject(response);
 				aisleContext = parseAisleData(jsonObject);
-				AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject
-						.getJSONObject("aisleImage"));
+				AisleImageDetails aisleImageDetails = null;
+				try {
+					aisleImageDetails = parseAisleImageData(jsonObject
+							.getJSONObject("aisleImage"));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
-				if (aisleImageDetails.mImageUrl != null
+				if (aisleImageDetails != null
+						&& aisleImageDetails.mImageUrl != null
 						&& aisleImageDetails.mImageUrl.trim().length() > 0) {
 					arrayList.add(aisleImageDetails);
 					aisleWindowContent = VueTrendingAislesDataModel
@@ -249,17 +255,12 @@ public class Parser {
 		return aisleWindowContentList;
 	}
 
-	private AisleContext parseAisleData(JSONObject josnObject) {
+	public AisleContext parseAisleData(JSONObject josnObject) {
 		// TODO:
 
 		AisleContext aisleContext = new AisleContext();
 		try {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
-			if ("4823662737752064".equalsIgnoreCase(aisleContext.mAisleId)) {
-				logStatus = true;
-				Log.e("Parser", "abcparserAisleAisleData: Response  "
-						+ josnObject.toString());
-			}
 			aisleContext.mCategory = josnObject
 					.getString(VueConstants.AISLE_CATEGORY);
 			aisleContext.mLookingForItem = josnObject

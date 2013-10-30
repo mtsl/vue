@@ -23,6 +23,8 @@ public class UrlConstants {
 
 	public static final String CREATE_AISLE_RESTURL = SERVER_BASE_URL
 			+ "api/aislecreate";
+	public static final String UPDATE_AISLE_RESTURL = SERVER_BASE_URL
+			+ "api/aisleupdate";
 	public static final String CREATE_IMAGE_RESTURL = SERVER_BASE_URL
 			+ "api/imagecreate";
 
@@ -51,9 +53,9 @@ public class UrlConstants {
 	public static final String GET_IMAGES_FOR_AISLE = SERVER_BASE_URL
 			+ "api/imagesget/aisle/";
 	public static final String UPDATE_BOOKMARK_RESTURL = SERVER_BASE_URL
- 	        + "api/aislebookmarkupdate";
+			+ "api/aislebookmarkupdate";
 	public static final String UPDATE_RATING_RESTURL = SERVER_BASE_URL
-            + "api/imageratingupdate";
+			+ "api/imageratingupdate";
 
 	public static final String CREATE_AISLECOMMENT_RESTURL = SERVER_BASE_URL
 			+ "api/aislecommentcreate";
@@ -61,6 +63,6 @@ public class UrlConstants {
 			+ "api/getUrlToUploadImage";
 	public static final String GET_IMAGE_FILE_RESTURL = SERVER_BASE_URL
 			+ "upload";
-	 public static final String CREATE_IMAGECOMMENT_RESTURL =
-			 SERVER_BASE_URL+"api/imagecommentcreate";
+	public static final String CREATE_IMAGECOMMENT_RESTURL = SERVER_BASE_URL
+			+ "api/imagecommentcreate";
 }

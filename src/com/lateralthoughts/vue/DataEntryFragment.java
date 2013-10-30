@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.test.MoreAsserts;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -31,7 +30,6 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
-
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -43,7 +41,7 @@ import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.utils.*;
 
 /**
- * Fragment for creating Aisle
+ * Fragment for creating Aisle, Updating Ailse and AddingImageToAisle
  * 
  */
 public class DataEntryFragment extends Fragment {
@@ -1107,7 +1105,7 @@ public class DataEntryFragment extends Fragment {
 					}
 				} else {
 					if (mAisleImageBitmap != null) {
-						addAisle();
+						addORUpdateAisle();
 					} else {
 						showAlertForMandotoryFields(getResources()
 								.getString(
@@ -1653,8 +1651,8 @@ public class DataEntryFragment extends Fragment {
 		}
 	}
 
-	private void addAisle() {
-		// Updating Aisles Count in Preference to show LoginDialog.
+	private void addORUpdateAisle() {
+		// Creating New Aisle...
 		if (!Utils.getDataentryEditAisleFlag(getActivity())) {
 			if (checkLimitForLoginDialog()) {
 				if (mLoginWarningMessage == null) {
@@ -1713,8 +1711,28 @@ public class DataEntryFragment extends Fragment {
 					}
 				}
 			}
-		} else {
-			storeMetaAisleDataIntoLocalStorage();
+		}
+		// Updating Aisle...
+		else {
+			VueUser storedVueUser = null;
+			try {
+				storedVueUser = Utils.readUserObjectFromFile(getActivity(),
+						VueConstants.VUE_APP_USEROBJECT__FILENAME);
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+			if (storedVueUser != null && storedVueUser.getId() != null) {
+				if (VueConnectivityManager.isNetworkConnected(getActivity())) {
+					storeMetaAisleDataIntoLocalStorage();
+					upDateAisleToServer(storedVueUser);
+				} else {
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.no_network),
+							Toast.LENGTH_LONG).show();
+				}
+			} else {
+				showLogInDialog(false);
+			}
 		}
 	}
 
@@ -1857,7 +1875,47 @@ public class DataEntryFragment extends Fragment {
 		}).start();
 	}
 
-	// create ailse and send to server.
+	// update ailse and send to server.
+	public void upDateAisleToServer(VueUser vueUser) {
+		if ((mOtherSourceSelectedImageUrl != null && mOtherSourceSelectedImageUrl
+				.trim().length() > 0) || mImagePath != null) {
+			String categoery = mCategoryText.getText().toString().trim();
+			String lookingFor = mLookingForBigText.getText().toString().trim();
+			String occassion = null;
+			if (!(mOccassionBigText.getText().toString().trim().equals(OCCASION
+					.trim()))) {
+				occassion = mOccassionBigText.getText().toString().trim();
+			}
+			String description = mSaySomethingAboutAisle.getText().toString()
+					.trim();
+			final Aisle aisle = new Aisle();
+			aisle.setId(Long.parseLong(Utils
+					.getDataentryScreenAisleId(getActivity())));
+			aisle.setCategory(categoery);
+			aisle.setLookingFor(lookingFor);
+			aisle.setName("Super Aisle"); // TODO By Krishna
+			aisle.setOccassion(occassion);
+			aisle.setOwnerUserId(Long.valueOf(vueUser.getId()));
+			if (description.length() > 0) {
+				aisle.setDescription(description);
+			} else {
+				aisle.setDescription("");
+			}
+			FlurryAgent.logEvent("Update_Aisle");
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance())
+					.getNetworkHandler().requestUpdateAisle(aisle);
+		} else {
+			Toast.makeText(
+					getActivity(),
+					getResources()
+							.getString(
+									R.string.dataentry_mandtory_field_add_aisleimage_mesg),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+
+	// Create ailse and send to server.
 	public void addAisleToServer(VueUser vueUser) {
 		if ((mOtherSourceSelectedImageUrl != null && mOtherSourceSelectedImageUrl
 				.trim().length() > 0) || mImagePath != null) {

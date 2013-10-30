@@ -123,14 +123,12 @@ public class DataEntryActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						/*
-						 * if (mDataEntryFragment == null) { mDataEntryFragment
-						 * = (DataEntryFragment) getSupportFragmentManager()
-						 * .findFragmentById( R.id.create_aisles_view_fragment);
-						 * } mDataEntryFragment.editButtonClickFunctionality();
-						 */
-						Utils.showAlertMessageForBackendNotIntegrated(
-								DataEntryActivity.this, false);
+						if (mDataEntryFragment == null) {
+							mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+									.findFragmentById(
+											R.id.create_aisles_view_fragment);
+						}
+						mDataEntryFragment.editButtonClickFunctionality();
 					}
 				});
 		Bundle b = getIntent().getExtras();
