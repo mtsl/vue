@@ -269,8 +269,8 @@ public class DataBaseManager {
    * @param AisleContext context.
    * */
   private void aisleUpdate(AisleContext context) {
+    boolean isAisle = false;
     if(aislesOrderMap.isEmpty()) {
-      boolean isAisle = false;
       Cursor aisleIdCursor = VueApplication.getInstance().getContentResolver().query(
           VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id, VueConstants.ID}, VueConstants.AISLE_Id + "=?",
           new String[]{context.mAisleId}, null);
@@ -304,6 +304,12 @@ public class DataBaseManager {
     values.put(VueConstants.DELETE_FLAG, 0);
     int order = aislesOrderMap.get(context.mAisleId);
     values.put(VueConstants.ID, String.format(FORMATE, order));
+    if (isAisle) {
+      VueApplication.getInstance().getContentResolver().update(VueConstants.CONTENT_URI, values,
+          VueConstants.AISLE_Id + "=?", new String[] {context.mAisleId});
+    } else {
+      VueApplication.getInstance().getContentResolver().insert(VueConstants.CONTENT_URI, values);
+    }
   }
   
   /**
