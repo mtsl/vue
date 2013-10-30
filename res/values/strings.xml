@@ -6,6 +6,7 @@
     <string name="instagram_client_secret">fd6ec75e44054da1a5088ad2d72f2253</string>
     <string name="instagram_callbackurl">instagram://connect</string>
     <!-- the following string are tags used in API endpoints -->
+    <string name="discard_dataentry_screen_changes">Would you like to discard the changes?</string>
     <string name="trending">Trending</string>
     <string name="trending_aisles_tag">aisle/trending</string>
     <string name="dataentry_edit_permission">Do you want to change the existing data?</string>
