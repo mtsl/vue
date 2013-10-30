@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -41,6 +40,7 @@ public class DataBaseManager {
   public static final int AISLE_CREATED = 3;
   private static final String FORMATE = "%05d";
   private static final String DELETE_ROW = "1";
+  private static final int THOUSAND = 1000;
   private int mStartPosition = 0;
   public int mEndPosition = 0;
   private int mLocalAislesLimit = 10;
@@ -95,6 +95,20 @@ public class DataBaseManager {
       @Override
       public void run() {
         addAislesToDB(context, contentList, offsetValue, whichScreen );
+      }
+    });
+  }
+  
+  /**
+   * update the aisle information in local DB, sends this task to thread pool.
+   * @param AisleContext context.
+   * */
+  public void aisleUpdateToDB(final AisleContext context) {
+    runTask(new Runnable() {
+      
+      @Override
+      public void run() {
+        aisleUpdate(context);
       }
     });
   }
@@ -157,7 +171,7 @@ public class DataBaseManager {
       AisleWindowContent content = contentList.get(i);
       AisleContext info = content.getAisleContext();
       if(whichScreen == TRENDING && aislesOrderMap.isEmpty()) {
-       aislesOrderMap.put(info.mAisleId, 1000); 
+       aislesOrderMap.put(info.mAisleId, THOUSAND); 
       } else if(whichScreen == TRENDING && !aislesOrderMap.isEmpty()) {
         aislesOrderMap.put(info.mAisleId, getMaxAisleValue(aislesOrderMap) + 1);
       } else if(whichScreen == MY_AISLES && !aisleIds.contains(info.mAisleId)) {
@@ -250,6 +264,54 @@ public class DataBaseManager {
     copydbToSdcard();
   }
 
+  /**
+   * update the aisle information in local DB.
+   * @param AisleContext context.
+   * */
+  private void aisleUpdate(AisleContext context) {
+    boolean isAisle = false;
+    if(aislesOrderMap.isEmpty()) {
+      Cursor aisleIdCursor = VueApplication.getInstance().getContentResolver().query(
+          VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id, VueConstants.ID}, VueConstants.AISLE_Id + "=?",
+          new String[]{context.mAisleId}, null);
+      if(aisleIdCursor.moveToFirst()) {
+        do {
+          String aisleId = aisleIdCursor.getString(aisleIdCursor.getColumnIndex(VueConstants.AISLE_Id));
+          if(aisleId.equals(context.mAisleId)) {
+            aislesOrderMap.put(context.mAisleId, Integer.parseInt(aisleIdCursor
+                .getString(aisleIdCursor.getColumnIndex(VueConstants.ID))));
+            isAisle = true;
+            break;
+          }
+        } while(aisleIdCursor.moveToNext());
+        if(!isAisle) {
+          aislesOrderMap.put(context.mAisleId, THOUSAND + (aisleIdCursor.getCount() + 1));
+        }
+      }
+      aisleIdCursor.close();
+    } else {
+      aislesOrderMap.put(context.mAisleId, getMaxAisleValue(aislesOrderMap) + 1);
+    }
+    ContentValues values = new ContentValues();
+    values.put(VueConstants.FIRST_NAME, context.mFirstName);
+    values.put(VueConstants.LAST_NAME, context.mLastName);
+    values.put(VueConstants.JOIN_TIME, context.mJoinTime);
+    values.put(VueConstants.LOOKING_FOR, context.mLookingForItem);
+    values.put(VueConstants.OCCASION, context.mOccasion);
+    values.put(VueConstants.USER_ID, context.mUserId);
+    values.put(VueConstants.AISLE_Id, context.mAisleId);
+    values.put(VueConstants.BOOKMARK_COUNT, context.mBookmarkCount);
+    values.put(VueConstants.DELETE_FLAG, 0);
+    int order = aislesOrderMap.get(context.mAisleId);
+    values.put(VueConstants.ID, String.format(FORMATE, order));
+    if (isAisle) {
+      VueApplication.getInstance().getContentResolver().update(VueConstants.CONTENT_URI, values,
+          VueConstants.AISLE_Id + "=?", new String[] {context.mAisleId});
+    } else {
+      VueApplication.getInstance().getContentResolver().insert(VueConstants.CONTENT_URI, values);
+    }
+  }
+  
   /**
    * This method will return the aisles with aislesIds we give in parameter, if
    * the parameter is null then it will return aisles in installment of 10.

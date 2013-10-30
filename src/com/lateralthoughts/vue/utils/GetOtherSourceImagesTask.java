@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -26,8 +27,8 @@ public class GetOtherSourceImagesTask extends
 		AsyncTask<String, String, ArrayList<OtherSourceImageDetails>> {
 
 	private String mSourceUrl = null;
-	private static final int WIDTH_LIMIT = 150;
-	private static final int HEIGHT_LIMIT = 150;
+	private static final int WIDTH_LIMIT = 145;
+	private static final int HEIGHT_LIMIT = 145;
 	private Context mContext = null;
 	private boolean mFromLandingScreenFlag;
 
@@ -97,14 +98,27 @@ public class GetOtherSourceImagesTask extends
 						OtherSourceImageDetails = new OtherSourceImageDetails();
 						OtherSourceImageDetails.setWidth(width);
 						OtherSourceImageDetails.setHeight(height);
-						OtherSourceImageDetails.setOriginUrl(elements2.get(j)
-								.absUrl("src"));
+						String tempImgUrl = elements2.get(j).absUrl("rel");
+						if(tempImgUrl != null && tempImgUrl.length() > 1) {
+						  OtherSourceImageDetails.setOriginUrl(elements2.get(j)
+                              .absUrl("rel"));
+						} else {
+						  OtherSourceImageDetails.setOriginUrl(elements2.get(j)
+							  .absUrl("src"));
+						}
 						OtherSourceImageDetails
 								.setWidthHeightMultipliedValue(width * height);
 					} else {
+					  String tempImgUrl = elements2.get(j).absUrl("rel");
+                      if(tempImgUrl != null && tempImgUrl.length() > 1) {
+                        OtherSourceImageDetails = getHeightWidth(
+                            elements2.get(j).absUrl("rel"), reqWidth,
+                            reqHeight); 
+                      } else {
 						OtherSourceImageDetails = getHeightWidth(
 								elements2.get(j).absUrl("src"), reqWidth,
 								reqHeight);
+                      }
 					}
 					if (OtherSourceImageDetails != null) {
 						imageDetails.add(OtherSourceImageDetails);
@@ -134,8 +148,9 @@ public class GetOtherSourceImagesTask extends
 	}
 
 	private String getData(String url) {
-		InputStream is = null;
-		StringBuilder sb = null;
+		//InputStream is = null;
+		// StringBuilder sb = null;
+	    StringBuffer html = null;
 
 		if (url == null) {
 			return null;
@@ -143,7 +158,55 @@ public class GetOtherSourceImagesTask extends
 
 		try {
 			URL rssURL = new URL(url);
-			URLConnection connection = rssURL.openConnection();
+			
+			HttpURLConnection conn = (HttpURLConnection) rssURL.openConnection();
+			conn.setInstanceFollowRedirects(true);  //you still need to handle redirect manully.
+			HttpURLConnection.setFollowRedirects(true);
+			conn.setReadTimeout(5000);
+		    conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+		    conn.addRequestProperty("User-Agent", "Mozilla");
+		    conn.addRequestProperty("Referer", "google.com");
+		    boolean redirect = false;
+		    // normally, 3xx is redirect
+		    int status = conn.getResponseCode();
+		    if (status != HttpURLConnection.HTTP_OK) {
+		        if (status == HttpURLConnection.HTTP_MOVED_TEMP
+		            || status == HttpURLConnection.HTTP_MOVED_PERM
+		                || status == HttpURLConnection.HTTP_SEE_OTHER)
+		        redirect = true;
+		    }
+			
+		    Log.e("GetOtherSourceImagesTask","Response Code ... " + status);
+		    
+		    if (redirect) {
+		 
+		        // get redirect url from "location" header field
+		        String newUrl = conn.getHeaderField("Location");
+		 
+		        // get the cookie if need, for login
+		        String cookies = conn.getHeaderField("Set-Cookie");
+		 
+		        // open the new connnection again
+		        conn = (HttpURLConnection) new URL(newUrl).openConnection();
+		        conn.setRequestProperty("Cookie", cookies);
+		        conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+		        conn.addRequestProperty("User-Agent", "Mozilla");
+		        conn.addRequestProperty("Referer", "google.com");
+		 
+		        System.out.println("Redirect to URL : " + newUrl);
+		 
+		    }
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                conn.getInputStream()));
+            String inputLine;
+            html = new StringBuffer();
+			
+            while ((inputLine = in.readLine()) != null) {
+              html.append(inputLine);
+            }
+            in.close();
+			
+           /* URLConnection connection = rssURL.openConnection();
 			connection
 					.setRequestProperty(
 							"User-Agent",
@@ -158,7 +221,7 @@ public class GetOtherSourceImagesTask extends
 			while ((line = br.readLine()) != null) {
 				sb.append(line);
 			}
-
+*/
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			return null;
@@ -169,7 +232,9 @@ public class GetOtherSourceImagesTask extends
 			e.printStackTrace();
 			return null;
 		}
-		return sb.toString();
+		String st = html.toString();
+		Log.e("GetOtherSourceImagesTask", "PARSED HTML PAGE: " + st);
+		return st;/*sb.toString();*/
 	}
 
 	private OtherSourceImageDetails getHeightWidth(String absUrl, int reqWidth,
