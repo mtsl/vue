@@ -199,6 +199,8 @@ public class DataBaseManager {
       values.put(VueConstants.USER_ID, info.mUserId);
       values.put(VueConstants.AISLE_Id, info.mAisleId);
       values.put(VueConstants.BOOKMARK_COUNT, info.mBookmarkCount);
+      values.put(VueConstants.CATEGORY, info.mCategory);
+      values.put(VueConstants.AISLE_DESCRIPTION, info.mDescription);
       values.put(VueConstants.DELETE_FLAG, 0);
       int order = aislesOrderMap.get(info.mAisleId);
       values.put(VueConstants.ID, String.format(FORMATE, order));
