@@ -24,31 +24,20 @@
 
 package com.lateralthoughts.vue;
 
+import java.util.ArrayList;
+
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.util.Log;
 
-//java util imports
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-
-import com.android.volley.toolbox.NetworkImageView;
-//internal imports
-import com.flurry.android.monolithic.sdk.impl.mw;
-import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
-import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.Utils;
 
 public class TrendingAislesLeftColumnAdapter extends
 		TrendingAislesGenericAdapter {
@@ -88,13 +77,11 @@ public class TrendingAislesLeftColumnAdapter extends
 
 	@Override
 	public int getCount() {
-
 		if (mVueTrendingAislesDataModel.getAisleCount() % 2 == 0) {
 			return mVueTrendingAislesDataModel.getAisleCount() / 2;
 		} else {
 			return mVueTrendingAislesDataModel.getAisleCount() / 2 + 1;
 		}
-
 	}
 
 	@Override

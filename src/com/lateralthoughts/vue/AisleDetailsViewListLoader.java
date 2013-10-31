@@ -72,10 +72,11 @@ public class AisleDetailsViewListLoader {
         ScaleImageView imageView = null;
         ArrayList<AisleImageDetails> imageDetailsArr = null;
         AisleImageDetails itemDetails = null;
-        
+        Log.i("imagedispissue", "imagedispissue2");
         if(null == holder)
             return;
      //   AisleWindowContent windowContent = holder.mWindowContent;
+        Log.i("imagedispissue", "imagedispissue3");
         if(null == windowContent)
             return;
         String desiredContentId = windowContent.getAisleId();
@@ -113,6 +114,7 @@ public class AisleDetailsViewListLoader {
             holder.aisleContentBrowser.setDetailImageClickListener(detailListener);
             holder.uniqueContentId = desiredContentId;
         } 
+        Log.i("imagedispissue", "imagedispissue4");
         Log.i("cardHeight", "cardHeight bestHeight1: "+windowContent.getBestHeightForWindow());
         imageDetailsArr = windowContent.getImageList();
         Log.e("AisleDetailsViewListLoader", "Aisle Id : " + windowContent.getAisleId());

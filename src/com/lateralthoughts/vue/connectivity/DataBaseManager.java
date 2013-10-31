@@ -443,6 +443,9 @@ public class DataBaseManager {
             imageItemDetails.mLikesCount = aisleImagesCursor
                 .getInt(aisleImagesCursor
                     .getColumnIndex(VueConstants.LIKES_COUNT));
+            imageItemDetails.mOwnerUserId = aisleImagesCursor
+                    .getString(aisleImagesCursor
+                        .getColumnIndex(VueConstants.USER_ID));
 
             if (imgCommentCursor.moveToFirst()) {
               ImageComments comments;
@@ -837,7 +840,9 @@ public class DataBaseManager {
             imageItemDetails.mLikesCount = aisleImagesCursor
                 .getInt(aisleImagesCursor
                     .getColumnIndex(VueConstants.LIKES_COUNT));
-           
+            imageItemDetails.mOwnerUserId = aisleImagesCursor
+                    .getString(aisleImagesCursor
+                        .getColumnIndex(VueConstants.USER_ID));
             if (imgCommentCursor.moveToFirst()) {
               ImageComments comments;
               do {

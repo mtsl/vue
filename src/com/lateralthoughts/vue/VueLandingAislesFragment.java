@@ -149,9 +149,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		mRightViewsHeights = new int[1000];
 		Log.d("VueLandingAislesFragment",
 				"Get ready to displayed staggered view");
-
 		return v;
 	}
+	
 
 	// Passing the touch event to the opposite list
 	OnTouchListener touchListener = new OnTouchListener() {
@@ -166,12 +166,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				dispatched = true;
 				mLeftColumnView.dispatchTouchEvent(event);
 			}
-
+			
 			dispatched = false;
 			return false;
 		}
 	};
-
 	/**
 	 * Synchronizing scrolling Distance from the top of the first visible
 	 * element opposite list: sum_heights(opposite invisible screens) -
