@@ -49,13 +49,13 @@ public class TrendingAislesContentParser extends ResultReceiver {
             final ArrayList<AisleWindowContent> aislesList = new Parser()
                 .parseTrendingAislesResultData(resultData.getString("result"),
                     resultData.getBoolean("loadMore"));
+                int offset = resultData.getInt("offset");
             
          
             DataBaseManager
                 .getInstance(VueApplication.getInstance())
                 .addTrentingAislesFromServerToDB(VueApplication.getInstance(),
-                    aislesList, VueTrendingAislesDataModel.getInstance(
-                        VueApplication.getInstance()).getNetworkHandler().mOffset,
+                    aislesList, offset,
                     DataBaseManager.TRENDING);
 
             Log.i("ailsesize",
