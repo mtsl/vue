@@ -361,7 +361,7 @@ public class Parser {
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}
+		}  
 		if (aisleIdList != null && aisleIdList.size() > 0) {
 			Log.i("bookmarked aisle", "bookmarked aisle aisleIdList.size(): "
 					+ aisleIdList.size());
@@ -459,7 +459,7 @@ public class Parser {
 	private static ArrayList<ImageRating> removeDuplicateImageRating(
 			ArrayList<ImageRating> imgRatingList) {
 		int size = imgRatingList.size();
-		for (int i = 0; i < size; ++i) {
+		for (int i = 0; i < size; i++) {
 			final ImageRating current = imgRatingList.get(i);
 			for (int j = 0; j < i; ++j) {
 				final ImageRating previous = imgRatingList.get(j);

@@ -441,6 +441,7 @@ public class NetworkHandler {
       public void run() {
         try {
           String userId = getUserId();
+          Log.i("bookmarked aisle", "bookmarked persist issue  userid: "+userId);
           if (userId == null) {
             Log.i("bookmarked aisle", "bookmarked aisle ID IS NULL RETURNING");
             return;
@@ -461,9 +462,7 @@ public class NetworkHandler {
               ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                   .parseBookmarkedAisles(responseMessage);
               for (AisleBookmark aB : bookmarkedAisles) {
-                Log.e("bookmarked aisle",
-                    "bookmarked aisle bookmarkedAisles ID: getBookmarkAisleByUser()"
-                        + aB.getId());
+            	  Log.i("bookmarked aisle", "bookmarked persist issue  aisleId: "+aB.getAisleId());
                 DataBaseManager.getInstance(mContext).updateBookmarkAisles(
                     aB.getId(), Long.toString(aB.getAisleId()),
                     aB.getBookmarked());

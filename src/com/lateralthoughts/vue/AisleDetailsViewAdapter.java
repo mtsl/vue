@@ -126,7 +126,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.getmAisleImgCurrentPos();
 		mSetPosition = true;
 		mContext = c;
-
 		mTopBottomMargin = VueApplication.getInstance().getPixel(
 				mTopBottomMargin);
 		mViewLoader = new AisleDetailsViewListLoader(mContext);
@@ -136,7 +135,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mShowingList = new ArrayList<String>();
 		if (DEBUG)
 			Log.e(TAG, "About to initiate request for trending aisles");
-
+		 Log.i("bookmarked aisle", "bookmarked persist issue  aisleid: "+VueApplication.getInstance().getClickedWindowID());
 		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
 			if (getItem(i).getAisleId().equalsIgnoreCase(
 					VueApplication.getInstance().getClickedWindowID())) {
