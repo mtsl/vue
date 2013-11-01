@@ -70,6 +70,15 @@ public class VueApplication extends Application {
 	}
 
 	private Long mUserId = null;
+	private String mUserName = null;
+
+	public String getmUserName() {
+		return mUserName;
+	}
+
+	public void setmUserName(String mUserName) {
+		this.mUserName = mUserName;
+	}
 
 	public String getmUserInitials() {
 		return mUserInitials;
@@ -174,6 +183,7 @@ public class VueApplication extends Application {
 					new SortBasedOnAppName());
 		}
 		// R.drawable.aisle_content_empty;
+
 		
 		  Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 		  crittercismConfig);

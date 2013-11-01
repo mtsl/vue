@@ -500,7 +500,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			}
 		});
 	}
-
+  public void notifyAdapter(){
+	  mAisleDetailsAdapter.notifyAdapter();
+  }
 	/**
 	 * 
 	 * 

@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue.utils;
 
 import java.util.ArrayList;
+
+import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -48,6 +50,11 @@ public class InstalledPackageRetriever {
 				e.printStackTrace();
 			}
 		}
+		mPackageNames.add(mContext.getApplicationContext().getPackageName());
+		mAppNames.add(mContext.getApplicationContext().getApplicationInfo()
+				.loadLabel(mContext.getPackageManager()).toString());
+		mAppIcons.add(mContext.getApplicationContext().getApplicationInfo()
+				.loadIcon(mContext.getPackageManager()));
 	}
 
 	/**

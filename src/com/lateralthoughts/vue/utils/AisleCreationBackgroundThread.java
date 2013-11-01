@@ -53,7 +53,8 @@ public class AisleCreationBackgroundThread implements Runnable,
 			mNotification.contentView.setProgressBar(R.id.progressBar1, 100,
 					percent, false);
 			mNotificationManager.notify(
-					VueConstants.CREATE_AISLE_NOTIFICATION_ID, mNotification);
+					VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
+					mNotification);
 			mLastPercent = percent;
 		}
 	}
@@ -66,7 +67,9 @@ public class AisleCreationBackgroundThread implements Runnable,
 			PendingIntent contentIntent = PendingIntent.getActivity(
 					VueApplication.getInstance(), 0, notificationIntent, 0);
 			mNotification = new Notification(R.drawable.vue_notification_icon,
-					"Uploading Aisle to server", System.currentTimeMillis());
+					VueApplication.getInstance().getResources()
+							.getString(R.string.uploading_mesg),
+					System.currentTimeMillis());
 			mNotification.flags = mNotification.flags
 					| Notification.FLAG_ONGOING_EVENT;
 			mNotification.contentView = new RemoteViews(VueApplication
@@ -76,7 +79,8 @@ public class AisleCreationBackgroundThread implements Runnable,
 			mNotification.contentView.setProgressBar(R.id.progressBar1, 100, 0,
 					false);
 			mNotificationManager.notify(
-					VueConstants.CREATE_AISLE_NOTIFICATION_ID, mNotification);
+					VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
+					mNotification);
 			ObjectMapper mapper = new ObjectMapper();
 			URL url = new URL(UrlConstants.CREATE_AISLE_RESTURL);
 			HttpPut httpPut = new HttpPut(url.toString());
@@ -94,12 +98,14 @@ public class AisleCreationBackgroundThread implements Runnable,
 			HttpResponse response = httpClient.execute(httpPut);
 			if (response.getEntity() != null
 					&& response.getStatusLine().getStatusCode() == 200) {
-				mNotification.setLatestEventInfo(VueApplication.getInstance(),
-						"Uploading Completed.", "Aisle is uploaded to server.",
-						contentIntent);
+				mNotification.setLatestEventInfo(
+						VueApplication.getInstance(),
+						VueApplication.getInstance().getResources()
+								.getString(R.string.upload_successful_mesg),
+						"", contentIntent);
 				mNotification.flags = Notification.FLAG_AUTO_CANCEL;
 				mNotificationManager.notify(
-						VueConstants.CREATE_AISLE_NOTIFICATION_ID,
+						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 						mNotification);
 				mResponseMessage = EntityUtils.toString(response.getEntity());
 				System.out.println("AISLE CREATED Response: "
@@ -108,12 +114,14 @@ public class AisleCreationBackgroundThread implements Runnable,
 						"myailsedebug: recieved response*******:  "
 								+ mResponseMessage);
 			} else {
-				mNotification.setLatestEventInfo(VueApplication.getInstance(),
-						"Uploading Failed.",
-						"Aisle is not uploaded to server.", contentIntent);
+				mNotification.setLatestEventInfo(
+						VueApplication.getInstance(),
+						VueApplication.getInstance().getResources()
+								.getString(R.string.upload_failed_mesg), "",
+						contentIntent);
 				mNotification.flags = Notification.FLAG_AUTO_CANCEL;
 				mNotificationManager.notify(
-						VueConstants.CREATE_AISLE_NOTIFICATION_ID,
+						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 						mNotification);
 				Log.i("myailsedebug",
 						"myailsedebug: recieved response******* response code :  "
@@ -123,56 +131,76 @@ public class AisleCreationBackgroundThread implements Runnable,
 			e.printStackTrace();
 		}
 		VueLandingPageActivity.landingPageActivity
-.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        if (null != mResponseMessage) {
+				.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						if (null != mResponseMessage) {
 
-          Log.i("myailsedebug", "myailsedebug: recieved response:  "
-              + mResponseMessage);
-          try {
-            // JSONObject userInfo = new
-            // JSONObject(jsonArray);
+							Log.i("myailsedebug",
+									"myailsedebug: recieved response:  "
+											+ mResponseMessage);
+							try {
+								AisleWindowContent aileItem = new Parser()
+										.getAisleCotent(mResponseMessage);
+								if (VueLandingPageActivity.getScreenName()
+										.equalsIgnoreCase("Trending")
+										|| VueLandingPageActivity
+												.getScreenName()
+												.equalsIgnoreCase("My Aisles")) {
+									VueTrendingAislesDataModel
+											.getInstance(
+													VueApplication
+															.getInstance())
+											.addItemToListAt(
+													aileItem.getAisleContext().mAisleId,
+													aileItem, 0);
+									VueTrendingAislesDataModel.getInstance(
+											VueApplication.getInstance())
+											.dataObserver();
+								}
+								ArrayList<AisleWindowContent> list = new ArrayList<AisleWindowContent>();
+								list.add(aileItem);
+								DataBaseManager
+										.getInstance(
+												VueApplication.getInstance())
+										.addTrentingAislesFromServerToDB(
+												VueApplication.getInstance(),
+												list,
+												VueTrendingAislesDataModel
+														.getInstance(
+																VueApplication
+																		.getInstance())
+														.getNetworkHandler().mOffset,
+												DataBaseManager.AISLE_CREATED);
+								// JSONObject user =
+								// userInfo.getJSONObject("user");
+								// TODO: GET THE AISLE OBJECT FROM
+								// THE PARSER CLASE SEND
+								// THE AISLE AND AISLE ID BACK.
+								mAisleUpdateCallback.onAisleUpdated(aileItem
+										.getAisleContext().mAisleId);
+								FlurryAgent.logEvent("Create_Aisle_Success");
+								// VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
+							} catch (Exception ex) {
+								Log.e("Profiling",
+										"Profiling : onResponse() **************** error");
+								ex.printStackTrace();
+							}
+						} else {
+							Toast.makeText(
+									VueApplication.getInstance(),
+									VueApplication
+											.getInstance()
+											.getResources()
+											.getString(
+													R.string.upload_failed_mesg),
+									Toast.LENGTH_LONG).show();
 
-            AisleWindowContent aileItem = new Parser()
-                .getAisleCotent(mResponseMessage);
-            if (VueLandingPageActivity.getScreenName().equalsIgnoreCase(
-                "Trending")|| VueLandingPageActivity.getScreenName().equalsIgnoreCase("My Aisles")) {
-              VueTrendingAislesDataModel.getInstance(
-                  VueApplication.getInstance()).addItemToListAt(
-                  aileItem.getAisleContext().mAisleId, aileItem, 0);
-              VueTrendingAislesDataModel.getInstance(
-                  VueApplication.getInstance()).dataObserver();
-            }
-            ArrayList<AisleWindowContent> list = new ArrayList<AisleWindowContent>();
-            list.add(aileItem);
-            DataBaseManager.getInstance(VueApplication.getInstance())
-                .addTrentingAislesFromServerToDB(VueApplication.getInstance(),
-                    list, VueTrendingAislesDataModel.getInstance(VueApplication
-                        .getInstance()).getNetworkHandler().mOffset, DataBaseManager.AISLE_CREATED);
-            // JSONObject user =
-            // userInfo.getJSONObject("user");
-            // TODO: GET THE AISLE OBJECT FROM
-            // THE PARSER CLASE SEND
-            // THE AISLE AND AISLE ID BACK.
-            mAisleUpdateCallback.onAisleUpdated(aileItem.getAisleContext().mAisleId);
-            FlurryAgent.logEvent("Create_Aisle_Success");
-            // VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
-          } catch (Exception ex) {
-            Log.e("Profiling",
-                "Profiling : onResponse() **************** error");
-            ex.printStackTrace();
-          }
-        } else {
-          Toast.makeText(VueApplication.getInstance(),
-              "New Aisle Creation in server is failed.", Toast.LENGTH_LONG)
-              .show();
+						}
 
-        }
+						// ///////////////////////////////////////////////////////////
 
-        // ///////////////////////////////////////////////////////////
-
-      }
-    });
+					}
+				});
 	}
 }

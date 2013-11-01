@@ -1028,7 +1028,7 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	private void share(PlusClient plusClient, Activity activity, String post,
 			ArrayList<Integer> personIndexList) {
-		if (Utils.appInstalledOrNot(VueConstants.INSTAGRAM_PACKAGE_NAME, this)) {
+		if (Utils.appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME, this)) {
 			try {
 				startActivityForResult(
 						getInteractivePostIntent(plusClient, activity, post,

@@ -73,10 +73,16 @@ public class Parser {
 			try {
 				JSONObject jsonObject = new JSONObject(response);
 				aisleContext = parseAisleData(jsonObject);
-				AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject
-						.getJSONObject("aisleImage"));
+				AisleImageDetails aisleImageDetails = null;
+				try {
+					aisleImageDetails = parseAisleImageData(jsonObject
+							.getJSONObject("aisleImage"));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
-				if (aisleImageDetails.mImageUrl != null
+				if (aisleImageDetails != null
+						&& aisleImageDetails.mImageUrl != null
 						&& aisleImageDetails.mImageUrl.trim().length() > 0) {
 					arrayList.add(aisleImageDetails);
 					aisleWindowContent = VueTrendingAislesDataModel
@@ -229,7 +235,7 @@ public class Parser {
 		return aisleWindowContentList;
 	}
 
-	private AisleContext parseAisleData(JSONObject josnObject) {
+	public AisleContext parseAisleData(JSONObject josnObject) {
 		// TODO:
 
 		AisleContext aisleContext = new AisleContext();
@@ -327,12 +333,25 @@ public class Parser {
 	public VueUser parseUserData(String response) {
 		try {
 			JSONObject jsonObject = new JSONObject(response);
+			String firstName = null, lastName = null;
+			if (jsonObject.getString(VueConstants.USER_FIRST_NAME) == null
+					|| jsonObject.getString(VueConstants.USER_FIRST_NAME)
+							.equals("null")) {
+				firstName = "";
+			} else {
+				firstName = jsonObject.getString(VueConstants.USER_FIRST_NAME);
+			}
+			if (jsonObject.getString(VueConstants.USER_LAST_NAME) == null
+					|| jsonObject.getString(VueConstants.USER_LAST_NAME)
+							.equals("null")) {
+				lastName = "";
+			} else {
+				lastName = jsonObject.getString(VueConstants.USER_LAST_NAME);
+			}
 			VueUser vueUser = new VueUser(
 					jsonObject.getLong(VueConstants.USER_RESPONSE_ID),
-					jsonObject.getString(VueConstants.USER_EMAIL),
-					jsonObject.getString(VueConstants.USER_FIRST_NAME),
-					jsonObject.getString(VueConstants.USER_LAST_NAME),
-					jsonObject.getLong(VueConstants.USER_JOINTIME),
+					jsonObject.getString(VueConstants.USER_EMAIL), firstName,
+					lastName, jsonObject.getLong(VueConstants.USER_JOINTIME),
 					jsonObject.getString(VueConstants.USER_DEVICE_ID),
 					jsonObject.getString(VueConstants.USER_FACEBOOK_ID),
 					jsonObject.getString(VueConstants.USER_GOOGLEPLUS_ID));

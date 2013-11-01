@@ -137,7 +137,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mViewLoader = new AisleDetailsViewListLoader(mContext);
 		mswipeListner = swipeListner;
 		mListCount = listCount;
-		mUserId =Long.parseLong(VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().getUserId());
+		mUserId = Long.parseLong(VueTrendingAislesDataModel
+				.getInstance(VueApplication.getInstance()).getNetworkHandler()
+				.getUserId());
 		mShowingList = new ArrayList<String>();
 		if (DEBUG)
 			Log.e(TAG, "About to initiate request for trending aisles");
@@ -312,6 +314,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		RelativeLayout enterCommentrellay;
 		RelativeLayout likelay, bookmarklay;
 		FrameLayout edtCommentLay;
+
 		ImageView commentSend ;
 		LinearLayout editImage;
 		String tag;
@@ -332,6 +335,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					null);
 			mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.showpieceadapter);
+
 			mViewHolder.editImage = (LinearLayout) convertView.findViewById(R.id.editImage);
 			mViewHolder.imgContentlay = (LinearLayout) convertView
 					.findViewById(R.id.vueimagcontent);
@@ -462,9 +466,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					} else {
 						mViewHolder.editImage.setVisibility(View.GONE);
 					}
-					}else {
-						Log.i("ownerUserId", "ownerUserid is null");
-					}
+				} else {
+					Log.i("ownerUserId", "ownerUserid is null");
+				}
 				if (getItem(mCurrentAislePosition).getAisleContext().mDescription != null
 						&& getItem(mCurrentAislePosition).getAisleContext().mDescription
 								.length() > 1) {
@@ -472,8 +476,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					mViewHolder.aisleDescription
 							.setText(getItem(mCurrentAislePosition)
 									.getAisleContext().mDescription);
+					Log.i("descrption issue", "descrption issue visible");
+					Log.i("descrption issue", "descrption issue desc value: "+getItem(mCurrentAislePosition)
+							.getAisleContext().mDescription);
 				} else {
-
+					Log.i("descrption issue", "descrption issue  gone");
+					Log.i("descrption issue", "descrption issue  value: "+getItem(mCurrentAislePosition).getAisleContext().mDescription);
 					mViewHolder.descriptionlay.setVisibility(View.GONE);
 				}
 
@@ -544,7 +552,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						R.anim.bounce);
 				mViewHolder.vueWindowBookmarkImg.startAnimation(rotate);
 			}
-			 
+
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
 			mViewHolder.addCommentlay.setVisibility(View.GONE);
@@ -552,7 +560,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			// image content gone
 		} else if (position == mListCount - 1) {
 			mViewHolder.separator.setVisibility(View.GONE);
-			 
+
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
@@ -589,7 +597,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						- mInitialCommentsToShowSize));
 				mViewHolder.userPic.setImageUrl("https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50", mImageLoader) ;
 			}
-		 
+
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);
 			mViewHolder.addCommentlay.setVisibility(View.GONE);
@@ -664,7 +672,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		return convertView;
 	}
 
-	private void notifyAdapter() {
+	public void notifyAdapter() {
 		this.notifyDataSetChanged();
 	}
 
@@ -674,13 +682,26 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
 		if (getItem(mCurrentAislePosition).getImageList() != null
 				&& getItem(mCurrentAislePosition).getImageList().size() > 0) {
+			String isUserAisle = "0";
+			if (String.valueOf(VueApplication
+					.getInstance()
+					.getmUserId())
+					.equals(getItem(mCurrentAislePosition).getAisleContext().mUserId)) {
+				isUserAisle = "1";
+			}
 			for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
 					.size(); i++) {
-				clsShare obj = new clsShare(getItem(mCurrentAislePosition)
-						.getImageList().get(i).mCustomImageUrl, ObjFileCache
-						.getFile(
+				clsShare obj = new clsShare(
+						getItem(mCurrentAislePosition).getImageList().get(i).mCustomImageUrl,
+						ObjFileCache.getFile(
 								getItem(mCurrentAislePosition).getImageList()
-										.get(i).mCustomImageUrl).getPath());
+										.get(i).mCustomImageUrl).getPath(),
+						getItem(mCurrentAislePosition).getAisleContext().mLookingForItem,
+						getItem(mCurrentAislePosition).getAisleContext().mFirstName
+								+ " "
+								+ getItem(mCurrentAislePosition)
+										.getAisleContext().mLastName,
+						isUserAisle);
 				imageUrlList.add(obj);
 			}
 			mShare.share(
@@ -750,7 +771,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					&& position < VueApplication.getInstance()
 							.getClickedWindowCount()) {
 				mCurrentDispImageIndex = position;
-				Log.i("userId", "userId not matched imageobj onswipe: "+Long.parseLong(getItem(mCurrentAislePosition).getImageList().get(mCurrentDispImageIndex).mOwnerUserId));
+				Log.i("userId",
+						"userId not matched imageobj onswipe: "
+								+ Long.parseLong(getItem(mCurrentAislePosition)
+										.getImageList().get(
+												mCurrentDispImageIndex).mOwnerUserId));
 				/*
 				 * @SuppressWarnings("unchecked") ArrayList<String>
 				 * tempCommentList = (ArrayList<String>) mCommentsMapList
@@ -1026,8 +1051,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		imgDetails.mTrendingImageHeight = imgDetails.mAvailableHeight;
 		imgDetails.mTrendingImageWidth = imgDetails.mAvailableWidth;
 		imgDetails.mOwnerAisleId = getItem(mCurrentAislePosition).getAisleId();
-		imgDetails.mOwnerUserId =Long.toString(mUserId);
-	    getItem(mCurrentAislePosition).getImageList().add(imgDetails);
+		imgDetails.mOwnerUserId = Long.toString(mUserId);
+		getItem(mCurrentAislePosition).getImageList().add(imgDetails);
 		getItem(mCurrentAislePosition).addAisleContent(
 				getItem(mCurrentAislePosition).getAisleContext(),
 				getItem(mCurrentAislePosition).getImageList());

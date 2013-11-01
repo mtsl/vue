@@ -46,7 +46,7 @@ public class UploadImageBackgroundThread implements Runnable,
 			mNotification.contentView.setProgressBar(R.id.progressBar1, 100,
 					percent, false);
 			mNotificationManager.notify(
-					VueConstants.UPLOAD_IMAGE_TO_SERVER_NOTIFICATION_ID,
+					VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 					mNotification);
 			mLastPercent = percent;
 		}
@@ -60,7 +60,9 @@ public class UploadImageBackgroundThread implements Runnable,
 			PendingIntent contentIntent = PendingIntent.getActivity(
 					VueApplication.getInstance(), 0, notificationIntent, 0);
 			mNotification = new Notification(R.drawable.vue_notification_icon,
-					"Uploading Image to server", System.currentTimeMillis());
+					VueApplication.getInstance().getResources()
+							.getString(R.string.uploading_mesg),
+					System.currentTimeMillis());
 			mNotification.flags = mNotification.flags
 					| Notification.FLAG_ONGOING_EVENT;
 			mNotification.contentView = new RemoteViews(VueApplication
@@ -70,7 +72,7 @@ public class UploadImageBackgroundThread implements Runnable,
 			mNotification.contentView.setProgressBar(R.id.progressBar1, 100, 0,
 					false);
 			mNotificationManager.notify(
-					VueConstants.UPLOAD_IMAGE_TO_SERVER_NOTIFICATION_ID,
+					VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 					mNotification);
 			mImageUrl = uploadImage(mImageFile, getImageUploadURL());
 			if (mImageUrl != null) {
@@ -78,22 +80,26 @@ public class UploadImageBackgroundThread implements Runnable,
 						+ mImageUrl;
 			}
 			if (mImageUrl != null) {
-				mNotification.setLatestEventInfo(VueApplication.getInstance(),
-						"Image is Uploaded.", "Image is Uploaded to server.",
-						contentIntent);
+				mNotification.setLatestEventInfo(
+						VueApplication.getInstance(),
+						VueApplication.getInstance().getResources()
+								.getString(R.string.upload_successful_mesg),
+						"", contentIntent);
 				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
 				mNotificationManager.notify(
-						VueConstants.UPLOAD_IMAGE_TO_SERVER_NOTIFICATION_ID,
+						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 						mNotification);
 				System.out.println("Upload Image Url" + mImageUrl);
 
 			} else {
-				mNotification.setLatestEventInfo(VueApplication.getInstance(),
-						"Uploading Failed.", "Image uploading is failed.",
+				mNotification.setLatestEventInfo(
+						VueApplication.getInstance(),
+						VueApplication.getInstance().getResources()
+								.getString(R.string.upload_failed_mesg), "",
 						contentIntent);
 				mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
 				mNotificationManager.notify(
-						VueConstants.UPLOAD_IMAGE_TO_SERVER_NOTIFICATION_ID,
+						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 						mNotification);
 			}
 		} catch (Exception e) {
