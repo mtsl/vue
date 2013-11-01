@@ -181,14 +181,17 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     	 if(flipper.getmSourceName() != null && flipper.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)){
     		 loc = itemDetails.mImageUrl;
     	 } else {
-    		 loc = itemDetails.mCustomImageUrl;
+    		 loc = itemDetails.mImageUrl;
     	 }
-        if(flipper.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)){
+        if(flipper.getmSourceName() != null && flipper.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)){
             ((ScaleImageView) imageView).setImageUrl(loc, VueApplication.getInstance().getImageCacheLoader(),
                     VueApplication.getInstance().getVueDetailsCardWidth(),bestHeight, NetworkImageView.BitmapProfile.ProfileDetailsView);
+            VueApplication.getInstance().getRequestQueue().cancelAll(VueApplication.MORE_AISLES_REQUEST_TAG);
         }else{
             ((ScaleImageView) imageView).setImageUrl(loc, VueApplication.getInstance().getImageCacheLoader(),
-                    VueApplication.getInstance().getVueDetailsCardWidth(),bestHeight, NetworkImageView.BitmapProfile.ProfileLandingView);
+                    itemDetails.mTrendingImageWidth, itemDetails.mTrendingImageHeight, NetworkImageView.BitmapProfile.ProfileLandingView);
+            VueApplication.getInstance().getRequestQueue().cancelAll(VueApplication.MORE_AISLES_REQUEST_TAG);
         }
+
     }
 }
