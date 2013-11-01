@@ -1324,6 +1324,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void downloadAndSaveUserProfileImage(String imageUrl,
 			final File filePath) {
+		Log.i("userImageUrl", "userImageUrl: "+imageUrl);
 		Response.Listener listener = new Response.Listener<Bitmap>() {
 			@Override
 			public void onResponse(Bitmap bmp) {

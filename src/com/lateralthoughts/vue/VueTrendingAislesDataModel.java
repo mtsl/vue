@@ -141,8 +141,6 @@ public class VueTrendingAislesDataModel {
     }
 	public int getAisleCount() {
 		if (null != mAisleContentList) {
-			Log.i("mAisleContentList", " mAisleContentList size is:  "
-					+ mAisleContentList.size());
 			return mAisleContentList.size();
 		} else {
 			Log.i("mAisleContentList",
