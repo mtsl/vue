@@ -61,7 +61,7 @@ mLayoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_D
         } else {
             if(mType == EXPAND) {
             	Resources r =context.getResources();
-                mLayoutParams.height =( int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, r.getDisplayMetrics());;
+                mLayoutParams.height =( int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 140, r.getDisplayMetrics());;
                 mView.requestLayout();
             }else{
                 mView.setVisibility(View.GONE);

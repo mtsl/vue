@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,12 +24,17 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -36,6 +42,7 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
+import com.lateralthoughts.vue.ui.MyCustomAnimation;
 import com.lateralthoughts.vue.utils.Utils;
 
 //java utils
@@ -61,8 +68,16 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	int[] mRightViewsHeights;
 	public boolean mIsFlingCalled;
 	 
-
+    private int animdelay = 4000;
+    private int height;
 	public boolean mIsIdleState;
+	private LinearLayout pulltorefresh;
+	private boolean mIsHeaderAnimRunning = false;
+	private boolean mIsHeaderVisible = false;
+	private boolean mIsListRefreshRecently = false;
+	
+	ProgressBar mRightLay;
+	TextView mLeftLay;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -119,6 +134,17 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				false);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
+		pulltorefresh = (LinearLayout)v.findViewById(R.id.pulltorefresh);
+		
+		LayoutInflater inflater2 = getActivity().getLayoutInflater();
+		ViewGroup header = (ViewGroup)inflater2.inflate(R.layout.headerright, mLeftColumnView, false);
+		mRightColumnView.addHeaderView(header, null, false);
+ 
+		ViewGroup header2 = (ViewGroup)inflater2.inflate(R.layout.header, mRightColumnView, false);
+		mLeftColumnView.addHeaderView(header2, null, false);
+		
+		mLeftLay = (TextView)header.findViewById(R.id.rightlay);
+	     mRightLay  = (ProgressBar)header2.findViewById(R.id.leftlay);
 
 		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -196,6 +222,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			} else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
 				mIsIdleState = false;
 				mIsFlingCalled = false;
+				mIsListRefreshRecently = false;
 			}
 			int first = view.getFirstVisiblePosition();
 			int count = view.getChildCount();
@@ -210,7 +237,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
-			 
+			 Log.i("pullrefresh", "pullrefresh: "+firstVisibleItem);
+			 if(firstVisibleItem > 5){
+				 mIsListRefreshRecently = false;
+			 }
 			if (view.getChildAt(0) != null) {
 				if (view.equals(mLeftColumnView)) {
 					mLeftViewsHeights[view.getFirstVisiblePosition()] = view
@@ -248,9 +278,24 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					}
 
 					int top = h - hi + view.getChildAt(0).getTop();
-					 
+					
 					mLeftColumnView.setSelectionFromTop(
 							mLeftColumnView.getFirstVisiblePosition(), top);
+					if(top == 0 && !mIsListRefreshRecently){
+						mLeftLay.setVisibility(View.VISIBLE);
+						mRightLay.setVisibility(View.VISIBLE);
+						mIsListRefreshRecently = true;
+						 new Handler().postDelayed(new Runnable() {
+
+						        @Override
+						        public void run() {
+						        	mLeftLay.setVisibility(View.GONE);
+									mRightLay.setVisibility(View.GONE);
+									
+						        }
+						      }, animdelay);
+						 
+					}
 				}
 			}
 
@@ -465,5 +510,78 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			e.printStackTrace();
 		}
 	}
+	
+	  private void headerAnimationGoneTask() {
+		    
+		      MyCustomAnimation a = new MyCustomAnimation(getActivity(),
+		    		  pulltorefresh, animdelay, MyCustomAnimation.COLLAPSE);
+		      a.setAnimationListener(new AnimationListener() {
+
+		        @Override
+		        public void onAnimationStart(Animation animation) {
+		        	mIsHeaderAnimRunning = true;
+		        }
+
+		        @Override
+		        public void onAnimationRepeat(Animation animation) {
+
+		        }
+
+		        @Override
+		        public void onAnimationEnd(Animation animation) {
+		        	pulltorefresh.setVisibility(View.GONE);
+		        	mIsHeaderAnimRunning = false;
+		        	mIsHeaderVisible = false;
+		        }
+		      });
+		      new Handler().postDelayed(new Runnable() {
+
+		        @Override
+		        public void run() {
+
+		          
+		        }
+		      }, animdelay);
+		      height = a.getHeight();
+		      if(!mIsHeaderAnimRunning)
+		      pulltorefresh.startAnimation(a);
+		    
+		  }
+	  
+	  private void headerAnimationVisibleTask() {
+  
+		      MyCustomAnimation a = new MyCustomAnimation(getActivity(),
+		    		  pulltorefresh, animdelay, MyCustomAnimation.EXPAND);
+		      a.setHeight(height);
+		      a.setAnimationListener(new AnimationListener() {
+
+		        @Override
+		        public void onAnimationStart(Animation animation) {
+		        	mIsHeaderVisible = true;
+		        	mIsHeaderAnimRunning = true;
+		        }
+
+		        @Override
+		        public void onAnimationRepeat(Animation animation) {
+
+		        }
+
+		        @Override
+		        public void onAnimationEnd(Animation animation) {
+		        	mIsHeaderAnimRunning = false;
+		        }
+		      });
+		      new Handler().postDelayed(new Runnable() {
+
+		        @Override
+		        public void run() {
+    
+		        }
+		      }, animdelay);
+		      if(!mIsHeaderAnimRunning)
+		    	  mIsListRefreshRecently = true;
+		      pulltorefresh.startAnimation(a);
+		    
+		  }
 
 }
