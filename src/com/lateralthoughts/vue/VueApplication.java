@@ -175,9 +175,9 @@ public class VueApplication extends Application {
 		}
 		// R.drawable.aisle_content_empty;
 		
-	/*	  Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
+		  Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 		  crittercismConfig);
-		 */
+		 
 
 	}
 
@@ -281,12 +281,14 @@ public class VueApplication extends Application {
 	 * newVueTrendingAislesDataModel = createNewObject; }
 	 */
 
-	/*
-	 * public BitmapCache getBitmapCache(){ if(sBitmapCache == null)
-	 * sBitmapCache = new BitmapCache(512);
-	 * 
-	 * return sBitmapCache; }
-	 */
+	
+/*	public BitmapCache getBitmapCache() {
+		if (sBitmapCache == null)
+			sBitmapCache = new BitmapCache(512);
+
+		return sBitmapCache;
+	}*/
+	 
 	private BitmapCache sBitmapCache;
 
 }

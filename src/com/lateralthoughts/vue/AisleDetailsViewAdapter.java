@@ -55,7 +55,9 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.NetworkImageView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
@@ -69,6 +71,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
@@ -114,6 +117,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private long mUserId;
+	private ImageLoader mImageLoader;
 
 	@SuppressWarnings("unchecked")
 	public AisleDetailsViewAdapter(Context c,
@@ -126,6 +130,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.getmAisleImgCurrentPos();
 		mSetPosition = true;
 		mContext = c;
+		mImageLoader = new ImageLoader(VueApplication.getInstance()
+				.getRequestQueue(),  BitmapLruCache.getInstance(mContext));
 		mTopBottomMargin = VueApplication.getInstance().getPixel(
 				mTopBottomMargin);
 		mViewLoader = new AisleDetailsViewListLoader(mContext);
@@ -193,25 +199,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				mCommentsMapList.put(i, getItem(mCurrentAislePosition)
 						.getImageList().get(i).mCommentsList);
 				// TODO: get all the comments from the db and update the comment
-				// list
-
-				/*
-				 * if (getItem(mCurrentAislePosition).getImageList().get(i).
-				 * mCommentsList == null) { // TODO: for temp comments display
-				 * need to replace this
-				 * getItem(mCurrentAislePosition).getImageList
-				 * ().get(i).mCommentsList = new ArrayList<String>(); if (i % 2
-				 * == 0) { for (int k = 0; k < 6; k++) {
-				 * getItem(mCurrentAislePosition).getImageList()
-				 * .get(i).mCommentsList
-				 * .add("Love Love vue the dress! Simple and fabulous."); } }
-				 * else { for (int k = 0; k < 10; k++) {
-				 * getItem(mCurrentAislePosition).getImageList()
-				 * .get(i).mCommentsList
-				 * .add("vue vue vue  sample test comments"); } }
-				 * mCommentsMapList.put(i, getItem(mCurrentAislePosition)
-				 * .getImageList().get(i).mCommentsList); }
-				 */
 			}
 
 			mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
@@ -317,14 +304,16 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		LinearLayout imgContentlay, commentContentlay;
 		LinearLayout vueCommentheader, addCommentlay, descriptionlay;
 		TextView userComment, enterComment;
-		ImageView userPic, commentImg, likeImg;
+		ImageView commentImg, likeImg;
+		NetworkImageView userPic;
 		RelativeLayout exapandHolder;
 		EditText edtComment;
 		View separator;
 		RelativeLayout enterCommentrellay;
 		RelativeLayout likelay, bookmarklay;
 		FrameLayout edtCommentLay;
-		ImageView commentSend,editImage;
+		ImageView commentSend ;
+		LinearLayout editImage;
 		String tag;
 	}
 
@@ -343,7 +332,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					null);
 			mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.showpieceadapter);
-			mViewHolder.editImage = (ImageView) convertView.findViewById(R.id.editImage);
+			mViewHolder.editImage = (LinearLayout) convertView.findViewById(R.id.editImage);
 			mViewHolder.imgContentlay = (LinearLayout) convertView
 					.findViewById(R.id.vueimagcontent);
 			mViewHolder.commentContentlay = (LinearLayout) convertView
@@ -378,7 +367,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.exapandHolder = (RelativeLayout) convertView
 					.findViewById(R.id.exapandholder);
 			mViewHolder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
-			mViewHolder.userPic = (ImageView) convertView
+			mViewHolder.userPic = (NetworkImageView) convertView
 					.findViewById(R.id.vue_user_img);
 			mViewHolder.userComment = (TextView) convertView
 					.findViewById(R.id.vue_user_comment);
@@ -400,12 +389,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.userComment.setTextSize(VueApplication.getInstance()
 					.getmTextSize());
 			mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
-			/*
-			 * FrameLayout.LayoutParams showpieceParams = new
-			 * FrameLayout.LayoutParams( LayoutParams.MATCH_PARENT,
-			 * LayoutParams.MATCH_PARENT );
-			 * mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
-			 */
 			int bestHeightTempHeight = VueApplication.getInstance().getPixel(
 					100);
 
@@ -421,12 +404,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		} else {
 			mViewHolder = (ViewHolder) convertView.getTag();
 		}
-
-		/*
-		 * if (mViewHolder.aisleContentBrowser != null)
-		 * mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
-		 */
-
 		if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
 			mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
 		} else {
@@ -470,10 +447,18 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			try {
 				mViewHolder.editImage.setVisibility(View.GONE);
 				if (getItem(mCurrentAislePosition).getImageList().get(
-						mCurrentDispImageIndex).mOwnerUserId != null) {
+						mCurrentDispImageIndex).mOwnerUserId != null &&  getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
 					if (Long.parseLong(getItem(mCurrentAislePosition)
-							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId) {
+							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId || Long.parseLong(getItem(mCurrentAislePosition).getAisleContext().mUserId)== mUserId) {
 						mViewHolder.editImage.setVisibility(View.VISIBLE);
+						mViewHolder.editImage.setOnClickListener(new OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+							Toast.makeText(mContext, "Edit Aisle Function", Toast.LENGTH_SHORT).show();
+								
+							}
+						});
 					} else {
 						mViewHolder.editImage.setVisibility(View.GONE);
 					}
@@ -602,6 +587,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			if (position - mInitialCommentsToShowSize < mShowingList.size()) {
 				mViewHolder.userComment.setText(mShowingList.get(position
 						- mInitialCommentsToShowSize));
+				mViewHolder.userPic.setImageUrl("https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50", mImageLoader) ;
 			}
 		 
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
