@@ -152,6 +152,9 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance()
 								.setmUserId(vueUser.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser.getFirstName() + " "
+										+ vueUser.getLastName());
 						VueUserManager.this.setCurrentUser(vueUser);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser);
@@ -184,6 +187,9 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance()
 								.setmUserId(vueUser.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser.getFirstName() + " "
+										+ vueUser.getLastName());
 						VueUserManager.this.setCurrentUser(vueUser);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser);
@@ -265,6 +271,9 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser2.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser2.getFirstName() + " "
+										+ vueUser2.getLastName());
 						VueUserManager.this.setCurrentUser(vueUser2);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser2);
@@ -298,6 +307,9 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser1.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser1.getFirstName() + " "
+										+ vueUser1.getLastName());
 						VueUserManager.this.setCurrentUser(vueUser1);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser1);
@@ -416,6 +428,9 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser1.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser1.getFirstName() + " "
+										+ vueUser1.getLastName());
 						VueUserManager.this.setCurrentUser(vueUser1);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser1);
@@ -449,6 +464,9 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser2.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser2.getFirstName() + " "
+										+ vueUser2.getLastName());
 						VueUserManager.this.setCurrentUser(vueUser2);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser2);
@@ -525,6 +543,9 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser1.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser1.getFirstName() + " "
+										+ vueUser1.getLastName());
 						VueUserManager.this.setCurrentUser(vueUser1);
 						VueUserManager.this.setCurrentUser(vueUser1);
 						Log.i("imageurl", "imageurl is ok got user id: "
@@ -559,6 +580,9 @@ public class VueUserManager {
 						}
 						VueApplication.getInstance().setmUserId(
 								vueUser2.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser2.getFirstName() + " "
+										+ vueUser2.getLastName());
 						VueUserManager.this.setCurrentUser(vueUser2);
 						VueUserManager.this.setCurrentUser(vueUser2);
 						Log.i("imageurl", "imageurl is ok got user id: "
@@ -883,9 +907,7 @@ public class VueUserManager {
 															0,
 															MyIntent,
 															PendingIntent.FLAG_CANCEL_CURRENT);
-											mNotification.flags = mNotification.flags
-													| Notification.FLAG_ONGOING_EVENT
-													| Notification.FLAG_AUTO_CANCEL;
+											mNotification.flags = Notification.FLAG_AUTO_CANCEL;
 											mNotification
 													.setLatestEventInfo(
 															VueApplication

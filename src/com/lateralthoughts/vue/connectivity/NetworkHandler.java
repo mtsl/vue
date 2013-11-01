@@ -185,9 +185,9 @@ public class NetworkHandler {
 	}
 
 	public void requestForAddImage(boolean fromDetailsScreenFlag,
-			String imageId, VueImage image, ImageAddedCallback callback) {
+			String imageId, VueImage image) {
 		AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag,
-				imageId, image, callback);
+				imageId, image);
 	}
 
 	public void requestForUploadImage(File imageFile,

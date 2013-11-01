@@ -22,10 +22,8 @@ public class VueConstants {
 	public static final int COMMENTS_LIMIT_FOR_LOGIN = 10;
 	public static final int SELECT_PICTURE = 1;
 	public static final int CAMERA_REQUEST = 2;
-	public static final int CREATE_AISLE_NOTIFICATION_ID = 1;
-	public static final int ADD_IMAGE_TO_AISLE_NOTIFICATION_ID = 2;
+	public static final int AISLE_INFO_UPLOAD_NOTIFICATION_ID = 1;
 	public static final int CHANGE_USER_NOTIFICATION_ID = 3;
-	public static final int UPLOAD_IMAGE_TO_SERVER_NOTIFICATION_ID = 4;
 	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.sss";
 	public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
 	public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";
@@ -44,6 +42,7 @@ public class VueConstants {
 	public static final String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
 	public static final String TWITTER_ACTIVITY_NAME = "com.twitter.android.PostActivity";
 	public static final String INSTAGRAM_ACTIVITY_NAME = "com.instagram.android.activity.MainTabActivity";
+	public static final String VUE_ACTIVITY_NAME = "com.lateralthoughts.vue.VueLandingPageActivity";
 	public static final String GMAIL_ACTIVITY_NAME = "com.google.android.gm.ComposeActivityGmail";
 	public static final String GOOGLEPLUS_ACTIVITY_NAME = "com.google.android.apps.plus.phone.SignOnActivity";
 	public static final String CANCEL_BTN_DISABLE_FLAG = "cancelbuttondisableflag";
@@ -204,15 +203,15 @@ public class VueConstants {
 	public static final String AISLE_IMAGE_STORE = "store";
 	public static final String AISLE_IMAGE_TITLE = "title";
 	public static final String AISLE_IMAGE_COMMENTS = "comments";
-	public static final String AISLE_IMAGE_COMMENTS_ID ="id";
-	public static final String AISLE_IMAGE_COMMENTS_IMAGEID ="ownerImageId";
+	public static final String AISLE_IMAGE_COMMENTS_ID = "id";
+	public static final String AISLE_IMAGE_COMMENTS_IMAGEID = "ownerImageId";
 	public static final String AISLE_IMAGE_COMMENTS_USERID = "ownerUserId";
 	public static final String AISLE_IMAGE_COMMENTS_FIRST_NAME = "commenterFirstName";
 	public static final String AISLE_IMAGE_COMMENTS_LAST_NAME = "commenterLastName";
-    public static final String AISLE_IMAGE_COMMENTS_COMMENT = "comment";
-    public static final String AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME = "lastModifiedTimestamp";
-    public static final String AISLE_IMAGE_COMMENTS_CREATED_TIME = "createdTimestamp";
-	 
+	public static final String AISLE_IMAGE_COMMENTS_COMMENT = "comment";
+	public static final String AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME = "lastModifiedTimestamp";
+	public static final String AISLE_IMAGE_COMMENTS_CREATED_TIME = "createdTimestamp";
+
 	// User response Keys
 	public static final String USER_RESPONSE_ID = "id";
 	public static final String USER_JOINTIME = "joinTime";

@@ -189,7 +189,7 @@ public class AisleManager {
 
 	// issues a request to add an image to the aisle.
 	public void addImageToAisle(final boolean fromDetailsScreenFlag,
-			String imageId, VueImage image, final ImageAddedCallback callback) {
+			String imageId, VueImage image) {
 		Log.i("addimagefuncitonality",
 				"addimagefuncitonality entered in method");
 		if (null == image) {
@@ -198,7 +198,7 @@ public class AisleManager {
 		}
 
 		Thread t = new Thread(new AddImageToAisleBackgroundThread(image,
-				callback, fromDetailsScreenFlag, imageId));
+				fromDetailsScreenFlag, imageId));
 		t.start();
 		/*
 		 * String imageAsString = null; try { imageAsString =
