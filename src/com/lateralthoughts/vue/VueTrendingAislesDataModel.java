@@ -194,12 +194,11 @@ public class VueTrendingAislesDataModel {
             Logging.i("TrendingDataModel", "DataObserver for List Refresh:  ");
 			observer.onAisleDataUpdated(mAisleContentList.size());
 		}
-		for(AisleWindowContent content : mAisleContentList) {
-            Logging.d("TrendingDataModel", "bookmarkfeaturetest: count in TrendingDataModel: " + content.getAisleContext().mBookmarkCount);
-		}
+
 		loadOnRequest = true;
         Logging.i("TrendingDataModel", "loadOnRequest:  "+loadOnRequest);
   }
+
   public int listSize(){
 	   return mAisleContentList.size();
 	 

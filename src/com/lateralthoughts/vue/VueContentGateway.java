@@ -16,9 +16,11 @@ import android.os.ResultReceiver;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.Request.Priority;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.utils.UrlConstants;
@@ -27,6 +29,7 @@ import com.lateralthoughts.vue.utils.Logging;
 
 import org.json.JSONArray;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class VueContentGateway {
@@ -84,21 +87,7 @@ public class VueContentGateway {
 			final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL + "/" + limit
 					+ "/" + offset;  
 			Logging.i("Gateway", "jsonresponse trendig requestUrl:  " + requestUrl);
-			Response.Listener listener = new Response.Listener<JSONArray>() {
-				@Override
-				public void onResponse(JSONArray jsonArray) {
-					if (null != jsonArray) {
-						Logging.i("Gateway", "jsonresponse trendig:  " + jsonArray);
-						Bundle responseBundle = new Bundle();
-						responseBundle
-								.putString("result", jsonArray.toString());
-						responseBundle.putBoolean("loadMore", loadMore);
-						responseBundle.putInt("offset", offset);
-						receiver.send(1, responseBundle);
-				        VueLandingPageActivity.changeScreenName(screenName);
-					}
-				}
-			};
+			Response.Listener listener = new SuccessListener(offset, limit, receiver, screenName, loadMore);
 			Response.ErrorListener errorListener = new Response.ErrorListener() {
 				@Override
 				public void onErrorResponse(VolleyError error) {
@@ -116,23 +105,13 @@ public class VueContentGateway {
 			};
 			JsonArrayRequest vueRequest = new JsonArrayRequest(requestUrl,
 					listener, errorListener) {
-
-        /*@Override
-        public Map<String, String> getHeaders() throws AuthFailureError {
-          HashMap<String, String> headersMap = new HashMap<String, String>();
-          headersMap.put("Accept-Encoding", "gzip");
-          headersMap.put("Content-Type", "application/json");
-          return headersMap;
-        }*/
       };
       
-      vueRequest.setRetryPolicy(new DefaultRetryPolicy(
-      		DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 
-              Utils.MAX_RETRIES, 
-              DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-       VueApplication.getInstance().getRequestQueue().add(vueRequest);
+      vueRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+      vueRequest.setTag(new String("MoreAislesTag"));
+      VueApplication.getInstance().getRequestQueue().add(vueRequest);
       }
-		return status;
+        return status;
 	}
 	private void initializeHttpFields() {
 		mHeaders = new ArrayList<ParcelableNameValuePair>();
@@ -148,4 +127,39 @@ public class VueContentGateway {
 	private void addParams(String name, String value) {
 		mParams.add(new ParcelableNameValuePair(name, value));
 	}
+
+    private class SuccessListener implements Response.Listener<JSONArray> {
+        private boolean _loadMore;
+        private int _offset;
+        private int _limit;
+        WeakReference<ResultReceiver> _receiver;
+        String _screenName;
+
+        private long _requestStartTime;
+        public SuccessListener(int offset, int limit, ResultReceiver receiver, String screenName, boolean loadMore){
+            _loadMore = loadMore;
+            _offset = offset;
+            _limit = limit;
+            _receiver = new WeakReference<ResultReceiver>(receiver);
+            _screenName = screenName;
+            _requestStartTime = System.currentTimeMillis();
+
+        }
+        @Override
+        public void onResponse(JSONArray jsonArray) {
+            if (null != jsonArray) {
+                Logging.i("Gateway", "jsonresponse trendig:  " + jsonArray);
+                Bundle responseBundle = new Bundle();
+                responseBundle
+                        .putString("result", jsonArray.toString());
+                responseBundle.putBoolean("loadMore", _loadMore);
+                responseBundle.putInt("offset", _offset);
+                _receiver.get().send(1, responseBundle);
+                VueLandingPageActivity.changeScreenName(_screenName);
+                int elapsed = (int) (System.currentTimeMillis()-_requestStartTime);
+                //Logging.e("**** LoadAisleData ****","elapsed time to load aisle meta data = "  + elapsed + " offset = " + _offset
+                //                        + " limit = " + _limit);
+            }
+        }
+    };
 }

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#CCCCCC">
-    <android.support.v4.widget.StaggeredGridView
+    <com.origamilabs.library.views.StaggeredGridView
         android:id="@+id/aisles_grid"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>

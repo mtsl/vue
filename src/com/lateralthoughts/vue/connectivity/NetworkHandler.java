@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -44,6 +43,7 @@ import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.Logging;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -70,8 +70,8 @@ public class NetworkHandler {
   public DataBaseManager mDbManager;
   protected VueContentGateway mVueContentGateway;
   protected TrendingAislesContentParser mTrendingAislesParser;
-  private static final int NOTIFICATION_THRESHOLD = 4;
-  private static final int TRENDING_AISLES_BATCH_SIZE = 10;
+  public static final int NOTIFICATION_THRESHOLD = 4;
+  public static final int TRENDING_AISLES_BATCH_SIZE = 10;
   public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
   private static String MY_AISLES = "aislesget/user/";
   protected int mLimit;
@@ -106,19 +106,16 @@ public class NetworkHandler {
 
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 
-      if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
+      if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_INITIAL_SIZE)
         mOffset += mLimit;
       else {
         mOffset += mLimit;
         mLimit = TRENDING_AISLES_BATCH_SIZE;
       }
-      Log.i("listmovingissue", "listmovingissue***: "+mOffset);
+      Logging.i("listmovingissue", "listmovingissue***: "+mOffset);
       mVueContentGateway.getTrendingAisles(mLimit, mOffset,
           mTrendingAislesParser, loadMore, screenname);
-    } else {
-      Log.i("offeset and limit", "offeset1: else part");
     }
-
   }
 
   // get the aisle based on the category
@@ -130,7 +127,6 @@ public class NetworkHandler {
     String downLoadFromServer = "fromDb";
     if (fromServer) {
       downLoadFromServer = "fromServer";
-      Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING FROM SERVER 1");
       mOffset = 0;
       mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
@@ -143,12 +139,10 @@ public class NetworkHandler {
           mTrendingAislesParser, loadMore, screenname);
 
 		} else {
-		  Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING 1");
 			DataBaseManager.getInstance(VueApplication.getInstance())
 					.resetDbParams();
 			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
 					.getAislesFromDB(null);
-			Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING 2: " + aisleContentArray.size());
 			if (aisleContentArray.size() == 0) {
 				VueTrendingAislesDataModel.getInstance(VueApplication
 						.getInstance()).isFromDb = false;
@@ -200,8 +194,6 @@ public class NetworkHandler {
 
       @Override
       public void onErrorResponse(VolleyError error) {
-        Log.e("Search Resopnse",
-            "SURU Search Error Resopnse : " + error.getMessage());
       }
     });
     // RETRY POLICY
@@ -226,14 +218,12 @@ public class NetworkHandler {
           responseBundle.putBoolean("loadMore", false);
           mTrendingAislesParser.send(1, responseBundle);
         }
-        Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
       }
     }, new Response.ErrorListener() {
 
       @Override
       public void onErrorResponse(VolleyError error) {
-        Log.e("Search Resopnse",
-            "SURU Search Error Resopnse : " + error.getMessage());
+
       }
     });
 
@@ -244,7 +234,6 @@ public class NetworkHandler {
   public void loadInitialData(boolean loadMore, Handler mHandler,
       String screenName) {
 
-    Log.i("formdbtrending", "formdbtrending***: loadInitialData");
     getBookmarkAisleByUser();
     getRatedImageList();
 
@@ -283,13 +272,10 @@ public class NetworkHandler {
     mOffset = 0;
     if (!fromServer) {
       // TODO get data from local db.
-      Log.i("myaisledbcheck",
-          "myaisledbcheck aisle are my aisles are fetching from db $$$$: ");
       String userId = getUserId();
       if (userId != null) {
         ArrayList<AisleWindowContent> windowList = DataBaseManager.getInstance(
             VueApplication.getInstance()).getAislesByUserId(userId);
-        Log.i("meoptions", "meoptions: MyAisle list size: " + windowList.size());
         if (windowList != null && windowList.size() > 0) {
           clearList();
           for (int i = 0; i < windowList.size(); i++) {
@@ -337,12 +323,8 @@ public class NetworkHandler {
                     public void run() {
                       VueTrendingAislesDataModel.getInstance(VueApplication
                           .getInstance()).loadOnRequest = false;
-                      Log.i("myailsedebug",
-                          "myailsedebug: recieved my runonuithread:  ");
                       if (aislesList != null && aislesList.size() > 0) {
                         clearList();
-                        Log.i("myailsedebug",
-                            "myailsedebug: recieved my runonuithread: if ");
                         for (int i = 0; i < aislesList.size(); i++) {
                           VueTrendingAislesDataModel.getInstance(
                               VueApplication.getInstance()).addItemToList(
@@ -365,8 +347,6 @@ public class NetworkHandler {
                         // ahead
                         // notify the data set changed
                         VueLandingPageActivity.changeScreenName(screenName);
-                        Log.i("myaisledbcheck",
-                            "myaisledbcheck aisle are fetching from server inserting to db success: ");
                       } else {
                         // if this is the first set of
                         // data
@@ -422,8 +402,7 @@ public class NetworkHandler {
     if (response.getEntity() != null
         && response.getStatusLine().getStatusCode() == 200) {
       String responseMessage = EntityUtils.toString(response.getEntity());
-      Log.i("aisleWindowImageUrl", "aisleWindowImageUrl response Message: "
-          + responseMessage);
+
       return new Parser().getUserAilseLIst(responseMessage);
     }
     return null;
@@ -438,18 +417,13 @@ public class NetworkHandler {
         try {
           String userId = getUserId();
           if (userId == null) {
-            Log.i("bookmarked aisle", "bookmarked aisle ID IS NULL RETURNING");
             return;
           }
-          Log.i("bookmarked aisle", "bookmarked aisle 2 User Id; " + userId);
           URL url = new URL(UrlConstants.GET_BOOKMARK_Aisles + "/" + userId
               + "/" + "0");
           HttpGet httpGet = new HttpGet(url.toString());
           DefaultHttpClient httpClient = new DefaultHttpClient();
           HttpResponse response = httpClient.execute(httpGet);
-          Log.e("bookmarked aisle",
-              "bookmarked aisle response.getStatusLine().getStatusCode(); "
-                  + response.getStatusLine().getStatusCode());
           if (response.getEntity() != null
               && response.getStatusLine().getStatusCode() == 200) {
             String responseMessage = EntityUtils.toString(response.getEntity());
@@ -457,9 +431,6 @@ public class NetworkHandler {
               ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                   .parseBookmarkedAisles(responseMessage);
               for (AisleBookmark aB : bookmarkedAisles) {
-                Log.e("bookmarked aisle",
-                    "bookmarked aisle bookmarkedAisles ID: getBookmarkAisleByUser()"
-                        + aB.getId());
                 DataBaseManager.getInstance(mContext).updateBookmarkAisles(
                     aB.getId(), Long.toString(aB.getAisleId()),
                     aB.getBookmarked());
@@ -470,7 +441,7 @@ public class NetworkHandler {
             // bookmarkedAisles.size());
           }
         } catch (Exception e) {
-          Log.i("bookmarked aisle", "bookmarked aisle 3 error: ");
+          Logging.i("bookmarked aisle", "bookmarked aisle 3 error: ");
           e.printStackTrace();
         }
 
@@ -481,7 +452,7 @@ public class NetworkHandler {
 
 
   public boolean isAisleBookmarked(String aisleId) {
-    Log.i("bookmarked aisle", "bookmarked my bookmarks id enter in method: "
+    Logging.i("bookmarked aisle", "bookmarked my bookmarks id enter in method: "
         + aisleId);
     Cursor cursor = mContext.getContentResolver().query(
         VueConstants.BOOKMARKER_AISLES_URI, null, VueConstants.AISLE_ID + "=?",
@@ -525,15 +496,11 @@ public class NetworkHandler {
   public ImageComment createImageComment(ImageComment comment) throws Exception {
     ImageComment createdImageComment = null;
     ObjectMapper mapper = new ObjectMapper();
-    Log.e("NetworkHandler", "Comments Issue: createImageComment()");
     if (VueConnectivityManager.isNetworkConnected(mContext)) {
-      Log.e("NetworkHandler", "Comments Issue: Network is there");
       URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL + "/"
           + getUserId());
       HttpPut httpPut = new HttpPut(url.toString());
       StringEntity entity = new StringEntity(mapper.writeValueAsString(comment));
-      System.out.println("ImageComment create request: "
-          + mapper.writeValueAsString(comment));
       entity.setContentType("application/json;charset=UTF-8");
       entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
           "application/json;charset=UTF-8"));
@@ -543,11 +510,9 @@ public class NetworkHandler {
       HttpResponse response = httpClient.execute(httpPut);
       if (response.getEntity() != null
           && response.getStatusLine().getStatusCode() == 200) {
-        Log.e("NetworkHandler", "Comments Issue: got success responce");
         String responseMessage = EntityUtils.toString(response.getEntity());
         System.out.println("Comment Response: " + responseMessage);
         if (responseMessage.length() > 0) {
-          Log.e("NetworkHandler", "Comments Issue: responseMessage size is > 0 responseMessage: " + responseMessage);
           createdImageComment = (new ObjectMapper()).readValue(responseMessage,
               ImageComment.class);
           Editor editor = mSharedPreferencesObj.edit();
@@ -556,8 +521,6 @@ public class NetworkHandler {
           DataBaseManager.getInstance(mContext).addComments(
               createdImageComment, false);
         }
-      } else {
-        Log.e("NetworkHandler", "Comments Issue: responce fail: " + response.getStatusLine().getStatusCode());
       }
     } else {
       Editor editor = mSharedPreferencesObj.edit();
@@ -616,15 +579,12 @@ public class NetworkHandler {
                 }
               }
             }
-            Log.e("get reating image Resopnse",
-                "SURU get reating image Resopnse : " + response);
           }
         }, new Response.ErrorListener() {
 
           @Override
           public void onErrorResponse(VolleyError error) {
-            Log.e("get rating image",
-                "SURU get rating image Error Resopnse : " + error.getMessage());
+
           }
         });
     VueApplication.getInstance().getRequestQueue().add(vueRequest);

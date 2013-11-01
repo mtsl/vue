@@ -31,6 +31,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.Logging;
@@ -122,10 +123,11 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 
 	@Override
 	public void onAisleDataUpdated(int newCount) {
-		Logging.d("TrendingDataModel",
-				"DataObserver for List Refresh:  Generic Aisle Update Called ");
 		notifyDataSetChanged();
 
+        //if(mVueTrendingAislesDataModel.getAisleCount() < NetworkHandler.NOTIFICATION_THRESHOLD*NetworkHandler.TRENDING_AISLES_BATCH_INITIAL_SIZE){
+        //    mVueTrendingAislesDataModel.getNetworkHandler().requestMoreAisle(true, mContext.getResources().getString(R.string.trending));
+        //}
 	}
 
 	private int calculateActualPosition(int viewPosition) {

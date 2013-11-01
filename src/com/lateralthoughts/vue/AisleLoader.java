@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
-import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,6 +17,7 @@ import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.Logging;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -91,8 +91,6 @@ public class AisleLoader {
 		mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
 		// mTopBottomMargin = (int)
 		// Utils.dipToPixels(VueApplication.getInstance(), mTopBottomMargin);
-		if (DEBUG)
-			Log.e(TAG, "Log something to remove warning");
 	}
 
 	// This method adds the intelligence to fetch the contents of this aisle
@@ -121,7 +119,7 @@ public class AisleLoader {
 			int position, boolean placeholderOnly,
 			AisleContentClickListener listener) {
 
-		Log.i("TrendingDataModel",
+		Logging.i("TrendingDataModel",
 				"DataObserver for List Refresh: getAisleContentView called "
 						+ holder.mWindowContent.getAisleId() + "???" + position
 						+ "????" + placeholderOnly);
@@ -156,7 +154,6 @@ public class AisleLoader {
 			// before or has to be filled with same content. Either way, no need
 			// to worry about cleaning up anything!
 			holder.aisleContentBrowser.setScrollIndex(scrollIndex);
-			Log.i("calling", "calling return   ");
 
 			return;
 		} else {
@@ -170,7 +167,6 @@ public class AisleLoader {
 						.returnUsedImageView((ScaleImageView) contentBrowser
                                 .getChildAt(i));
 			}
-			Log.i("calling", "calling new view   ");
 			IAisleContentAdapter adapter = mContentAdapterFactory
 					.getAisleContentAdapter();
 			mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser
@@ -186,14 +182,13 @@ public class AisleLoader {
 		}
 		mListener = listener;
 		imageDetailsArr = windowContent.getImageList();
+
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			itemDetails = imageDetailsArr.get(0);
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
-
-			Log.i("AisleLoader", "CustomImageUrl:? "
-					+ itemDetails.mCustomImageUrl);
 			Bitmap bitmap = null;
+            Logging.e("Vinodh+BlackImage","position = " + position + " customImageUrl = " + itemDetails.mCustomImageUrl + " height = " + itemDetails.mAvailableHeight);
 			/*
 			 * Bitmap bitmap = mBitmapLoaderUtils
 			 * .getCachedBitmap(itemDetails.mCustomImageUrl);
@@ -203,11 +198,7 @@ public class AisleLoader {
 					LayoutParams.MATCH_PARENT,
 					itemDetails.mTrendingImageHeight);
 
-			Log.i("cardHeight", "bestsamallest cardHeight bestHeight11: "
-					+ bestHeight);
 			contentBrowser.setLayoutParams(mShowpieceParams2);
-			Log.i("bestsamallest", "bestsamallest height22: "
-					+ itemDetails.mTrendingImageHeight);
 			if (bitmap != null) {
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);

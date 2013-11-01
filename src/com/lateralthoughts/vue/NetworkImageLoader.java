@@ -33,13 +33,14 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.Logging;
 
 /**
  * Helper that handles loading and caching images from remote URLs.
  *
  * The simple way to use this class is to call {@link ImageLoader#get(String, ImageListener)}
  * and to pass in the default image listener provided by
- * {@link ImageLoader#getImageListener(android.widget.ImageView, int, int)}. Note that all function calls to
+ * {@link ImageLoader (android.widget.ImageView, int, int)}. Note that all function calls to
  * this class must be made from the main thead, and all responses will be delivered to the main
  * thread as well.
  */
@@ -126,7 +127,7 @@ public class NetworkImageLoader extends ImageLoader {
      * @return A container object that contains all of the properties of the request, as well as
      *     the currently available image (default if remote is not loaded).
      */
-    public ImageContainer get(String requestUrl, ImageListener imageListener,
+    public ImageContainer get(final String requestUrl, ImageListener imageListener,
                               int maxWidth, int maxHeight) {
         // only fulfill requests that were initiated from the main thread.
         throwIfNotOnMainThread();
@@ -168,11 +169,13 @@ public class NetworkImageLoader extends ImageLoader {
                         Config.RGB_565, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Logging.e("TrendingImageLoad"," Image loading failed for url = " + requestUrl + " error = " + error.getMessage());
                         onGetImageError(cacheKey, error);
                     }
                 });
 
         mRequestQueue.add(newRequest);
+        newRequest.setTag(new String("FetchImageRequest"));
         mInFlightRequests.put(cacheKey,
                 new BatchedImageRequest(newRequest, imageContainer));
         return imageContainer;

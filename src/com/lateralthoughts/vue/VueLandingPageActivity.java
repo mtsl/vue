@@ -513,7 +513,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				handleSendMultipleImages(intent, false); // Handle multiple
 															// images
 				// being sent
-				Logging.d("CretaeAisleSelectionActivity send text",
+				Logging.d("CreateAisleSelectionActivity send text",
 						"multiple image match");
 			}
 		} else {

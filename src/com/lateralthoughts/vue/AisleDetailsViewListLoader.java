@@ -175,7 +175,7 @@ public class AisleDetailsViewListLoader {
     	String serverImageUrl = itemDetails.mImageUrl;
  
       ((ScaleImageView) imageView).setImageUrl(serverImageUrl, VueApplication.getInstance().getImageCacheLoader(),
-              itemDetails.mAvailableWidth,itemDetails.mAvailableHeight, NetworkImageView.BitmapProfile.ProfileDetailsView);
+              VueApplication.getInstance().getVueDetailsCardWidth(),bestHeight, NetworkImageView.BitmapProfile.ProfileDetailsView);
     	Log.i("imageHeight", "imageHeight resizeWidth:  calling bacground thread ");
 
       /*  ((ScaleImageView) imageView).setImageUrl(serverImageUrl,

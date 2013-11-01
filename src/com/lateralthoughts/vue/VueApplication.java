@@ -48,7 +48,8 @@ public class VueApplication extends Application {
 
 	public long mLaunchTime;
 	public long mLastRecordedTime;
-
+    public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
+    public static final String LOAD_IMAGES_REQUEST_TAG="LoadImagesTag";
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
 	}

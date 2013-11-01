@@ -36,9 +36,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
       case VueConstants.AISLE_TRENDING_LIST_DATA:
         long elapsedTime = System.currentTimeMillis()
             - VueApplication.getInstance().mLastRecordedTime;
-        Log.e("PERF_VUE",
-            "AISLE_TRENDING_LIST_DATA is the state. Received content. Time elapsed = "
-                + elapsedTime);
         VueApplication.getInstance().mLastRecordedTime = System
             .currentTimeMillis();
 
@@ -57,10 +54,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
                     aislesList, VueTrendingAislesDataModel.getInstance(
                         VueApplication.getInstance()).getNetworkHandler().mOffset,
                     DataBaseManager.TRENDING);
-
-            Log.i("ailsesize",
-                "Suru comment show: " + aislesList.size());
-             
 
             boolean refreshListFlag = true;
           /*  if(!VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).isFromDb) {*/
@@ -86,20 +79,13 @@ public class TrendingAislesContentParser extends ResultReceiver {
 
                   }
                 });
-         /* } else {
-         	  VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = true;
-         	  Log.i("listmovingissue", "listmovingissue***: dbcase");
-           }*/
             
             if (refreshListFlag) {
               VueLandingPageActivity.landingPageActivity
                   .runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                      Log.e(
-                          "TrendingAislesContentParser",
-                          "Surendra check check Screen Name: "
-                              + VueLandingPageActivity.mVueLandingActionbarScreenName);
+
                       if (VueLandingPageActivity.getScreenName().equals(
                           VueApplication.getInstance().getString(
                               R.string.sidemenu_sub_option_Bookmarks))) {
