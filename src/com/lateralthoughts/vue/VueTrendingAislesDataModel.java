@@ -222,7 +222,7 @@ public class VueTrendingAislesDataModel {
 					loadOnRequest = false;
 					Log.i("TrendingDataModel", "loadOnRequest from db:  "+loadOnRequest);
 					ArrayList<AisleWindowContent> aislesList = mDbManager
-							.getAislesFromDB(null);
+							.getAislesFromDB(null, false);
 					Log.i("arrayList", "arrayList from db sized1: "+aislesList.size());
 					if (aislesList.size() == 0) {
 						loadOnRequest = true;

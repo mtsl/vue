@@ -34,6 +34,8 @@ public class VueContentProvider extends ContentProvider{
   private static final int RATED_SINGLE_AISLE_MATCH = 16;
   private static final int BOOKMARKED_AISLES_MATCH = 17;
   private static final int BOOKMARKED_AISLE_MATCH = 18;
+  private static final int MY_BOOKMARKED_AISLES_MATCH = 19;
+  private static final int MY_BOOKMARKED_AISLE_MATCH = 20;
   private DbHelper dbHelper;
   private static final UriMatcher URIMATCHER;
 
@@ -76,6 +78,10 @@ public class VueContentProvider extends ContentProvider{
         BOOKMARKED_AISLES_MATCH);
     URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.BOOKMARKER_AISLES
         + "/#", BOOKMARKED_AISLE_MATCH);
+    URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.MY_BOOKMARKED_AISLES, 
+        + MY_BOOKMARKED_AISLES_MATCH);
+    URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.MY_BOOKMARKED_AISLES
+        + "/#", MY_BOOKMARKED_AISLE_MATCH);
     
   }
 
@@ -84,6 +90,7 @@ public class VueContentProvider extends ContentProvider{
     int rowsDeleted = 0;
     String id;
     SQLiteDatabase aislesDB = dbHelper.getWritableDatabase();
+    Log.v("test", "vazeer test uri matcher1: "+uri);
     switch (URIMATCHER.match(uri)) {
       case AISLES_MATCH:
         rowsDeleted = aislesDB.delete(VueConstants.AISLES, selection,
@@ -166,10 +173,22 @@ public class VueContentProvider extends ContentProvider{
       case BOOKMARKED_AISLES_MATCH:
         rowsDeleted = aislesDB.delete(VueConstants.BOOKMARKER_AISLES,
             selection, selectionArgs);
+        break;
       case BOOKMARKED_AISLE_MATCH:
+        Log.v("test", "vazeer test uri matcher2: "+uri);
         id = uri.getLastPathSegment();
         rowsDeleted = aislesDB.delete(VueConstants.BOOKMARKER_AISLES,
             VueConstants.ID + "=" + id + (!TextUtils.isEmpty(selection) ?
+                " AND (" + selection + ')' : ""),selectionArgs);
+        break;
+      case MY_BOOKMARKED_AISLES_MATCH:
+        rowsDeleted = aislesDB.delete(VueConstants.MY_BOOKMARKED_AISLES,
+            selection, selectionArgs);
+        break;
+      case MY_BOOKMARKED_AISLE_MATCH:
+        id = uri.getLastPathSegment();
+        rowsDeleted = aislesDB.delete(VueConstants.MY_BOOKMARKED_AISLES,
+            VueConstants.AISLE_Id + "=" + id + (!TextUtils.isEmpty(selection) ?
                 " AND (" + selection + ')' : ""),selectionArgs);
         break;
       default:
@@ -259,6 +278,14 @@ public class VueContentProvider extends ContentProvider{
         rowId = aislesDB.insert(VueConstants.BOOKMARKER_AISLES, null, values);
         if (rowId > 0) {
           rowUri = ContentUris.appendId(VueConstants.BOOKMARKER_AISLES_URI.buildUpon(),
+              rowId).build();
+          return rowUri;
+        }
+        break;
+      case MY_BOOKMARKED_AISLES_MATCH:
+        rowId = aislesDB.insert(VueConstants.MY_BOOKMARKED_AISLES, null, values);
+        if (rowId > 0) {
+          rowUri = ContentUris.appendId(VueConstants.MY_BOOKMARKED_AISLES_URI.buildUpon(),
               rowId).build();
           return rowUri;
         }
@@ -418,6 +445,20 @@ public class VueContentProvider extends ContentProvider{
                + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
                    : ""), selectionArgs, null, null, null);
        break;
+     case MY_BOOKMARKED_AISLES_MATCH:
+       qb.setTables(VueConstants.MY_BOOKMARKED_AISLES);
+       cursor = qb.query(aislesDB, projection, selection, selectionArgs,
+           null, null, sortOrder);
+       break;
+     case MY_BOOKMARKED_AISLE_MATCH:
+       qb.setTables(VueConstants.MY_BOOKMARKED_AISLES);
+       id = uri.getLastPathSegment();
+       cursor = qb.query(aislesDB, projection,
+           VueConstants.AISLE_Id+ "=" + id
+               + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
+                   : ""), selectionArgs, null, null, null);
+       break;
+       
     }
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
     return cursor;
@@ -535,6 +576,17 @@ public class VueContentProvider extends ContentProvider{
         id = uri.getLastPathSegment();
         rowsUpdated = aislesDB.update(VueConstants.COMMENTS_ON_IMAGES_TABLE, values,
             VueConstants.ID + "=" + id
+                + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
+                    : ""), selectionArgs);
+        break;
+      case MY_BOOKMARKED_AISLES_MATCH:
+        rowsUpdated = aislesDB.update(VueConstants.MY_BOOKMARKED_AISLES, values,
+            selection, selectionArgs);
+        break;
+      case MY_BOOKMARKED_AISLE_MATCH:
+        id = uri.getLastPathSegment();
+        rowsUpdated = aislesDB.update(VueConstants.MY_BOOKMARKED_AISLES, values,
+            VueConstants.AISLE_Id + "=" + id
                 + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'
                     : ""), selectionArgs);
         break;

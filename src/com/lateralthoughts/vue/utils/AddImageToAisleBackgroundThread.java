@@ -206,7 +206,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 												.getInstance(
 														VueApplication
 																.getInstance())
-												.getAislesFromDB(s);
+												.getAislesFromDB(s, false);
 										if (list != null) {
 											list.get(0).getImageList()
 													.add(aisleImageDetails);
@@ -274,7 +274,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 														.getInstance(
 																VueApplication
 																		.getInstance())
-														.getAislesFromDB(s);
+														.getAislesFromDB(s, false);
 												if (list != null) {
 													list.get(0)
 															.getImageList()
