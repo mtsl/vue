@@ -88,8 +88,8 @@
 
             <com.android.volley.toolbox.NetworkImageView
                 android:id="@+id/vue_user_img"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="14dp"
                 android:src="@drawable/addperson02" />

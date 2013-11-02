@@ -137,9 +137,13 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mViewLoader = new AisleDetailsViewListLoader(mContext);
 		mswipeListner = swipeListner;
 		mListCount = listCount;
+		if(VueTrendingAislesDataModel
+				.getInstance(VueApplication.getInstance()).getNetworkHandler()
+				.getUserId() != null){
 		mUserId = Long.parseLong(VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance()).getNetworkHandler()
 				.getUserId());
+	}
 		mShowingList = new ArrayList<String>();
 		if (DEBUG)
 			Log.e(TAG, "About to initiate request for trending aisles");
@@ -1079,11 +1083,16 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.dataObserver();
 		mImageRefresh = true;
 		if (mViewHolder != null) {
-			Log.i("adaptersettings", "adaptersettings: if");
+			//mswipeListner.onResetAdapter();
+			setAisleBrowserObjectsNull();
+			mswipeListner.onResetAdapter();
+			Log.i("adaptersettings", "adaptersettings:adapter not null");
+		/*	Log.i("adaptersettings", "adaptersettings: if");
 			mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-			notifyAdapter();
+			notifyAdapter();*/
 		} else {
-			Log.i("adaptersettings", "adaptersettings: else");
+			Log.i("adaptersettings", "adaptersettings:adapter   null");
+			setAisleBrowserObjectsNull();
 			mswipeListner.onResetAdapter();
 		}
 
