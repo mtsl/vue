@@ -152,15 +152,7 @@ public class NetworkHandler {
 			DataBaseManager.getInstance(VueApplication.getInstance())
 					.resetDbParams();
 			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
-<<<<<<< HEAD
 					.getAislesFromDB(null, false);
-			Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING 2: " + aisleContentArray.size());
-=======
-					.getAislesFromDB(null);
-			Log.e("DataBaseManager",
-					"SURU updated aisle Order: DATABASE LODING 2: "
-							+ aisleContentArray.size());
->>>>>>> 594507ba9d87521d96d369d113ca33b78fc7c006
 			if (aisleContentArray.size() == 0) {
 				VueTrendingAislesDataModel.getInstance(VueApplication
 						.getInstance()).isFromDb = false;
