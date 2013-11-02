@@ -30,6 +30,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -72,12 +73,11 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
     private int height;
 	public boolean mIsIdleState;
 	private LinearLayout pulltorefresh;
-	private boolean mIsHeaderAnimRunning = false;
-	private boolean mIsHeaderVisible = false;
-	private boolean mIsListRefreshRecently = false;
+	 
+	private boolean mIsListRefreshRecently = true;
 	
-	ProgressBar mRightLay;
-	TextView mLeftLay;
+	RelativeLayout mRightLay;
+	RelativeLayout mLeftLay;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -135,17 +135,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 		pulltorefresh = (LinearLayout)v.findViewById(R.id.pulltorefresh);
-		
-		LayoutInflater inflater2 = getActivity().getLayoutInflater();
-		ViewGroup header = (ViewGroup)inflater2.inflate(R.layout.headerright, mLeftColumnView, false);
-		mRightColumnView.addHeaderView(header, null, false);
- 
-		ViewGroup header2 = (ViewGroup)inflater2.inflate(R.layout.header, mRightColumnView, false);
-		mLeftColumnView.addHeaderView(header2, null, false);
-		
-		mLeftLay = (TextView)header.findViewById(R.id.rightlay);
-	     mRightLay  = (ProgressBar)header2.findViewById(R.id.leftlay);
-
 		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
@@ -281,21 +270,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					
 					mLeftColumnView.setSelectionFromTop(
 							mLeftColumnView.getFirstVisiblePosition(), top);
-					if(top == 0 && !mIsListRefreshRecently){
-						mLeftLay.setVisibility(View.VISIBLE);
-						mRightLay.setVisibility(View.VISIBLE);
-						mIsListRefreshRecently = true;
-						 new Handler().postDelayed(new Runnable() {
-
-						        @Override
-						        public void run() {
-						        	mLeftLay.setVisibility(View.GONE);
-									mRightLay.setVisibility(View.GONE);
-									
-						        }
-						      }, animdelay);
-						 
-					}
 				}
 			}
 
@@ -511,7 +485,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		}
 	}
 	
-	  private void headerAnimationGoneTask() {
+	  private void headerAnimationGoneTask(final RelativeLayout pulltorefresh) {
 		    
 		      MyCustomAnimation a = new MyCustomAnimation(getActivity(),
 		    		  pulltorefresh, animdelay, MyCustomAnimation.COLLAPSE);
@@ -519,7 +493,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		        @Override
 		        public void onAnimationStart(Animation animation) {
-		        	mIsHeaderAnimRunning = true;
+		         
 		        }
 
 		        @Override
@@ -529,36 +503,31 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		        @Override
 		        public void onAnimationEnd(Animation animation) {
-		        	pulltorefresh.setVisibility(View.GONE);
-		        	mIsHeaderAnimRunning = false;
-		        	mIsHeaderVisible = false;
+		        ProgressBar pb = (ProgressBar) pulltorefresh.findViewById(R.id.leftlayprogress);
+		        if(pb != null)
+		        pb.setVisibility(View.GONE);
+		        TextView tv = (TextView) pulltorefresh.findViewById(R.id.rightlaytextvew);
+		           if(tv != null){
+		        	   tv.setVisibility(View.GONE);
+		           }
 		        }
+		       
 		      });
-		      new Handler().postDelayed(new Runnable() {
-
-		        @Override
-		        public void run() {
-
-		          
-		        }
-		      }, animdelay);
 		      height = a.getHeight();
-		      if(!mIsHeaderAnimRunning)
+		      
 		      pulltorefresh.startAnimation(a);
 		    
 		  }
 	  
-	  private void headerAnimationVisibleTask() {
+	  private void headerAnimationVisibleTask(final RelativeLayout pulltorefresh) {
   
 		      MyCustomAnimation a = new MyCustomAnimation(getActivity(),
 		    		  pulltorefresh, animdelay, MyCustomAnimation.EXPAND);
-		      a.setHeight(height);
 		      a.setAnimationListener(new AnimationListener() {
 
 		        @Override
 		        public void onAnimationStart(Animation animation) {
-		        	mIsHeaderVisible = true;
-		        	mIsHeaderAnimRunning = true;
+		        
 		        }
 
 		        @Override
@@ -568,18 +537,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		        @Override
 		        public void onAnimationEnd(Animation animation) {
-		        	mIsHeaderAnimRunning = false;
+		        	
 		        }
 		      });
-		      new Handler().postDelayed(new Runnable() {
-
-		        @Override
-		        public void run() {
-    
-		        }
-		      }, animdelay);
-		      if(!mIsHeaderAnimRunning)
-		    	  mIsListRefreshRecently = true;
 		      pulltorefresh.startAnimation(a);
 		    
 		  }

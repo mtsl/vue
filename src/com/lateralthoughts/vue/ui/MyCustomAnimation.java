@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class MyCustomAnimation extends Animation {
 
@@ -17,7 +19,7 @@ public class MyCustomAnimation extends Animation {
     private View mView;
     private int mEndHeight;
     private int mType;
-    private LinearLayout.LayoutParams mLayoutParams;
+    private AbsListView.LayoutParams mLayoutParams;
     Context context;
 
     public MyCustomAnimation(Context context,View view, int duration, int type) {
@@ -26,7 +28,7 @@ public class MyCustomAnimation extends Animation {
         this.context = context;
         mView = view;
         mEndHeight = mView.getHeight();
-        mLayoutParams = ((LinearLayout.LayoutParams) view.getLayoutParams());
+        mLayoutParams = ((AbsListView.LayoutParams) view.getLayoutParams());
         mType = type;
         if(mType == EXPAND) {
             mLayoutParams.height = 0;
@@ -34,7 +36,7 @@ public class MyCustomAnimation extends Animation {
             mLayoutParams.height = LayoutParams.WRAP_CONTENT;
             Resources r =context.getResources();
 
-mLayoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 140, r.getDisplayMetrics());
+mLayoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, r.getDisplayMetrics());
         }
         view.setVisibility(View.VISIBLE);
     }
@@ -61,7 +63,7 @@ mLayoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_D
         } else {
             if(mType == EXPAND) {
             	Resources r =context.getResources();
-                mLayoutParams.height =( int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 140, r.getDisplayMetrics());;
+                mLayoutParams.height =( int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, r.getDisplayMetrics());;
                 mView.requestLayout();
             }else{
                 mView.setVisibility(View.GONE);
