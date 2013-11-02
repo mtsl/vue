@@ -1,5 +1,12 @@
 package com.lateralthoughts.vue;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -25,24 +32,20 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.flurry.android.FlurryAgent;
-import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
-import com.lateralthoughts.vue.utils.*;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.lateralthoughts.vue.utils.ExceptionHandler;
+import com.lateralthoughts.vue.utils.FbGPlusDetails;
+import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
+import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class VueLandingPageActivity extends BaseActivity {
 
@@ -137,6 +140,9 @@ public class VueLandingPageActivity extends BaseActivity {
 			VueApplication.getInstance().setmUserInitials(
 					storedVueUser.getFirstName());
 			VueApplication.getInstance().setmUserId(storedVueUser.getId());
+			VueApplication.getInstance().setmUserName(
+					storedVueUser.getFirstName() + " "
+							+ storedVueUser.getLastName());
 		} else {
 			showLogInDialog(false);
 		}
@@ -329,7 +335,7 @@ public class VueLandingPageActivity extends BaseActivity {
 						imageUriList.add(imageUri);
 						showOtherSourcesGridview(
 								convertImageUrisToOtherSourceImageDetails(imageUriList),
-								"");
+								null);
 					}
 				} else {
 					Intent i = new Intent(this, DataEntryActivity.class);
@@ -348,7 +354,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				imageUriList.add(imageUri);
 				showOtherSourcesGridview(
 						convertImageUrisToOtherSourceImageDetails(imageUriList),
-						"");
+						null);
 			}
 		}
 	}
@@ -379,7 +385,7 @@ public class VueLandingPageActivity extends BaseActivity {
 					} else {
 						showOtherSourcesGridview(
 								convertImageUrisToOtherSourceImageDetails(imageUris),
-								"");
+								null);
 					}
 				} else {
 					Intent i = new Intent(this, DataEntryActivity.class);
@@ -395,7 +401,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			} else {
 				showOtherSourcesGridview(
 						convertImageUrisToOtherSourceImageDetails(imageUris),
-						"");
+						null);
 			}
 		}
 
@@ -436,11 +442,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			} else {
 				Log.i("stackcount", "stackcount onbckpresed: close window0 ");
 				CancelNotification(this,
-						VueConstants.CREATE_AISLE_NOTIFICATION_ID);
-				CancelNotification(this,
-						VueConstants.ADD_IMAGE_TO_AISLE_NOTIFICATION_ID);
-				CancelNotification(this,
-						VueConstants.UPLOAD_IMAGE_TO_SERVER_NOTIFICATION_ID);
+						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID);
 				CancelNotification(this,
 						VueConstants.CHANGE_USER_NOTIFICATION_ID);
 				FileCache fileCache = new FileCache(
@@ -552,7 +554,8 @@ public class VueLandingPageActivity extends BaseActivity {
 		boolean fromServer = true;
 		if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-			if(VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())){
+			if (VueConnectivityManager.isNetworkConnected(VueApplication
+					.getInstance())) {
 				fromServer = true;
 			} else {
 				fromServer = false;
@@ -911,6 +914,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				o.inJustDecodeBounds = true;
 				BitmapFactory.decodeStream(is, null, o);
 				is.close();
+				width = o.outWidth;
+				height = o.outHeight;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

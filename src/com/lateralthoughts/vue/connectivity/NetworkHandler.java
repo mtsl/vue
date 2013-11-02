@@ -64,91 +64,103 @@ import java.util.Map;
 
 public class NetworkHandler {
 
-  Context mContext;
-  private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
-  // http://2-java.vueapi-canary-development1.appspot.com/api/
-  public DataBaseManager mDbManager;
-  protected VueContentGateway mVueContentGateway;
-  protected TrendingAislesContentParser mTrendingAislesParser;
-  private static final int NOTIFICATION_THRESHOLD = 4;
-  private static final int TRENDING_AISLES_BATCH_SIZE = 10;
-  public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
-  private static String MY_AISLES = "aislesget/user/";
-  protected int mLimit;
-  public int mOffset;
-  ArrayList<AisleWindowContent> aislesList = null;
-  private SharedPreferences mSharedPreferencesObj;
+	Context mContext;
+	private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
+	// http://2-java.vueapi-canary-development1.appspot.com/api/
+	public DataBaseManager mDbManager;
+	protected VueContentGateway mVueContentGateway;
+	protected TrendingAislesContentParser mTrendingAislesParser;
+	private static final int NOTIFICATION_THRESHOLD = 4;
+	private static final int TRENDING_AISLES_BATCH_SIZE = 10;
+	public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
+	private static String MY_AISLES = "aislesget/user/";
+	protected int mLimit;
+	public int mOffset;
+	ArrayList<AisleWindowContent> aislesList = null;
+	private SharedPreferences mSharedPreferencesObj;
 
-  /* public ArrayList<String> bookmarkedAisles = new ArrayList<String>(); */
-  // public ArrayList<AisleWindowContent> bookmarkedAisleContent = new
-  // ArrayList<AisleWindowContent>();
+	/* public ArrayList<String> bookmarkedAisles = new ArrayList<String>(); */
+	// public ArrayList<AisleWindowContent> bookmarkedAisleContent = new
+	// ArrayList<AisleWindowContent>();
 
-  public NetworkHandler(Context context) {
-    mContext = context;
-    mVueContentGateway = VueContentGateway.getInstance();
-    mSharedPreferencesObj = VueApplication.getInstance()
-        .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-    try {
-      mTrendingAislesParser = new TrendingAislesContentParser(new Handler(),
-          VueConstants.AISLE_TRENDING_LIST_DATA);
-    } catch (Exception e) {
-    }
-    mDbManager = DataBaseManager.getInstance(mContext);
-    mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
-    mOffset = 0;
-  }
+	public NetworkHandler(Context context) {
+		mContext = context;
+		mVueContentGateway = VueContentGateway.getInstance();
+		mSharedPreferencesObj = VueApplication.getInstance()
+				.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+		try {
+			mTrendingAislesParser = new TrendingAislesContentParser(
+					new Handler(), VueConstants.AISLE_TRENDING_LIST_DATA);
+		} catch (Exception e) {
+		}
+		mDbManager = DataBaseManager.getInstance(mContext);
+		mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
+		mOffset = 0;
+	}
 
-  // whle user scrolls down get next 10 aisles
-  public void requestMoreAisle(boolean loadMore, String screenname) {
-   
-    if (VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-        .isMoreDataAvailable()) {
+	// whle user scrolls down get next 10 aisles
+	public void requestMoreAisle(boolean loadMore, String screenname) {
 
-      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
+		if (VueTrendingAislesDataModel
+				.getInstance(VueApplication.getInstance())
+				.isMoreDataAvailable()) {
 
-      if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
-        mOffset += mLimit;
-      else {
-        mOffset += mLimit;
-        mLimit = TRENDING_AISLES_BATCH_SIZE;
-      }
-      Log.i("listmovingissue", "listmovingissue***: "+mOffset);
-      mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-          mTrendingAislesParser, loadMore, screenname);
-    } else {
-      Log.i("offeset and limit", "offeset1: else part");
-    }
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 
-  }
+			if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
+				mOffset += mLimit;
+			else {
+				mOffset += mLimit;
+				mLimit = TRENDING_AISLES_BATCH_SIZE;
+			}
+			Log.i("listmovingissue", "listmovingissue***: " + mOffset);
+			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+					mTrendingAislesParser, loadMore, screenname);
+		} else {
+			Log.i("offeset and limit", "offeset1: else part");
+		}
 
-  // get the aisle based on the category
-  public void reqestByCategory(String category, NotifyProgress progress,
-      boolean fromServer, boolean loadMore, String screenname) {
+	}
 
-    VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-        .setNotificationProgress(progress, fromServer);
-    String downLoadFromServer = "fromDb";
-    if (fromServer) {
-      downLoadFromServer = "fromServer";
-      Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING FROM SERVER 1");
-      mOffset = 0;
-      mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
-      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-          .clearContent();
-      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-          .showProgress();
-      VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-          .setMoreDataAVailable(true);
-      mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-          mTrendingAislesParser, loadMore, screenname);
+	// get the aisle based on the category
+	public void reqestByCategory(String category, NotifyProgress progress,
+			boolean fromServer, boolean loadMore, String screenname) {
+
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+				.setNotificationProgress(progress, fromServer);
+		String downLoadFromServer = "fromDb";
+		if (fromServer) {
+			downLoadFromServer = "fromServer";
+			Log.e("DataBaseManager",
+					"SURU updated aisle Order: DATABASE LODING FROM SERVER 1");
+			mOffset = 0;
+			mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).clearContent();
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).showProgress();
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance())
+					.setMoreDataAVailable(true);
+			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+					mTrendingAislesParser, loadMore, screenname);
 
 		} else {
-		  Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING 1");
+			Log.e("DataBaseManager",
+					"SURU updated aisle Order: DATABASE LODING 1");
 			DataBaseManager.getInstance(VueApplication.getInstance())
 					.resetDbParams();
 			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
+<<<<<<< HEAD
 					.getAislesFromDB(null, false);
 			Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING 2: " + aisleContentArray.size());
+=======
+					.getAislesFromDB(null);
+			Log.e("DataBaseManager",
+					"SURU updated aisle Order: DATABASE LODING 2: "
+							+ aisleContentArray.size());
+>>>>>>> 594507ba9d87521d96d369d113ca33b78fc7c006
 			if (aisleContentArray.size() == 0) {
 				VueTrendingAislesDataModel.getInstance(VueApplication
 						.getInstance()).isFromDb = false;
@@ -161,21 +173,24 @@ public class NetworkHandler {
 
 		}
 
+
   }
 
   public static void requestTrending() {
 
   }
-
+	public void requestUpdateAisle(Aisle aisle) {
+		AisleManager.getAisleManager().updateAisle(aisle);
+	}
   // request the server to create an empty aisle.
   public void requestCreateAisle(Aisle aisle, final AisleUpdateCallback callback) {
     AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
   }
 
   public void requestForAddImage(boolean fromDetailsScreenFlag, String imageId,
-      VueImage image, ImageAddedCallback callback) {
+      VueImage image) {
     AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag,
-        imageId, image, callback);
+        imageId, image);
   }
 
   public void requestForUploadImage(File imageFile, ImageUploadCallback callback) {
@@ -441,6 +456,7 @@ public class NetworkHandler {
       public void run() {
         try {
           String userId = getUserId();
+          Log.i("bookmarked aisle", "bookmarked persist issue  userid: "+userId);
           if (userId == null) {
             Log.i("bookmarked aisle", "bookmarked aisle ID IS NULL RETURNING");
             return;
@@ -465,9 +481,7 @@ public class NetworkHandler {
               ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                   .parseBookmarkedAisles(responseMessage);
               for (AisleBookmark aB : bookmarkedAisles) {
-                Log.e("bookmarked aisle",
-                    "bookmarked aisle bookmarkedAisles ID: getBookmarkAisleByUser()"
-                        + aB.getId());
+            	  Log.i("bookmarked aisle", "bookmarked persist issue  aisleId: "+aB.getAisleId());
                 DataBaseManager.getInstance(mContext).updateBookmarkAisles(
                     aB.getId(), Long.toString(aB.getAisleId()),
                     aB.getBookmarked());
@@ -512,22 +526,22 @@ public class NetworkHandler {
 		return false;
 	}
 
-  public String getUserId() {
-    VueUser storedVueUser = null;
-    try {
-      storedVueUser = Utils.readUserObjectFromFile(
-          VueApplication.getInstance(),
-          VueConstants.VUE_APP_USEROBJECT__FILENAME);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    String userId = null;
-    if (storedVueUser != null) {
-      userId = Long.valueOf(storedVueUser.getId()).toString();
-    }
-    return userId;
+	public String getUserId() {
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(
+					VueApplication.getInstance(),
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String userId = null;
+		if (storedVueUser != null) {
+			userId = Long.valueOf(storedVueUser.getId()).toString();
+		}
+		return userId;
 
-  }
+	}
 
 	public ImageComment createImageComment(ImageComment comment)
 			throws Exception {
@@ -581,82 +595,84 @@ public class NetworkHandler {
 		return createdImageComment;
 	}
 
+	public void getCommentsFromDb(String aisleId) {
+		Map<Long, ArrayList<String>> commentsMap = new HashMap<Long, ArrayList<String>>();
+		String imageId = null;
+		Object temp;
+		ArrayList<String> tempComments;
+		tempComments = commentsMap.remove(Long.parseLong(imageId));
+		if (tempComments == null) {
+			tempComments = new ArrayList<String>();
+			tempComments.add("add value from cursor");
+		} else {
+			tempComments.add("add value from cursor");
+		}
+		commentsMap.put(Long.parseLong(imageId), tempComments);
 
-  public void getCommentsFromDb(String aisleId) {
-    Map<Long, ArrayList<String>> commentsMap = new HashMap<Long, ArrayList<String>>();
-    String imageId = null;
-    Object temp;
-    ArrayList<String> tempComments;
-    tempComments = commentsMap.remove(Long.parseLong(imageId));
-    if (tempComments == null) {
-      tempComments = new ArrayList<String>();
-      tempComments.add("add value from cursor");
-    } else {
-      tempComments.add("add value from cursor");
-    }
-    commentsMap.put(Long.parseLong(imageId), tempComments);
+	}
 
-  }
+	public void getRatedImageList() {
+		String userId = getUserId();
+		if (userId == null) {
+			return;
+		}
+		JsonArrayRequest vueRequest = new JsonArrayRequest(
+				UrlConstants.GET_RATINGS_RESTURL + "/" + userId + "/" + 0L,
+				new Response.Listener<JSONArray>() {
 
+					@Override
+					public void onResponse(JSONArray response) {
+						if (null != response) {
+							ArrayList<ImageRating> retrievedImageRating = null;
+							if (response.length() > 0) {
+								try {
+									/*
+									 * retrievedImageRating = (new
+									 * ObjectMapper()).readValue(
+									 * response.toString(), new
+									 * TypeReference<List<ImageRating>>() {});
+									 */
+									retrievedImageRating = Parser
+											.parseRatedImages(response
+													.toString());
+									DataBaseManager.getInstance(mContext)
+											.insertRatedImages(
+													retrievedImageRating);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						}
+						Log.e("get reating image Resopnse",
+								"SURU get reating image Resopnse : " + response);
+					}
+				}, new Response.ErrorListener() {
 
-  public void getRatedImageList() {
-    String userId = getUserId();
-    if (userId == null) {
-      return;
-    }
-    JsonArrayRequest vueRequest = new JsonArrayRequest(
-        UrlConstants.GET_RATINGS_RESTURL + "/" + userId + "/" + 0L,
-        new Response.Listener<JSONArray>() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						Log.e("get rating image",
+								"SURU get rating image Error Resopnse : "
+										+ error.getMessage());
+					}
+				});
+		VueApplication.getInstance().getRequestQueue().add(vueRequest);
+	}
 
-          @Override
-          public void onResponse(JSONArray response) {
-            if (null != response) {
-              ArrayList<ImageRating> retrievedImageRating = null;
-              if (response.length() > 0) {
-                try {
-                  /*
-                   * retrievedImageRating = (new ObjectMapper()).readValue(
-                   * response.toString(), new TypeReference<List<ImageRating>>()
-                   * {});
-                   */
-                  retrievedImageRating = Parser.parseRatedImages(response
-                      .toString());
-                  DataBaseManager.getInstance(mContext).insertRatedImages(
-                      retrievedImageRating);
-                } catch (Exception e) {
-                  e.printStackTrace();
-                }
-              }
-            }
-            Log.e("get reating image Resopnse",
-                "SURU get reating image Resopnse : " + response);
-          }
-        }, new Response.ErrorListener() {
+	private void clearList() {
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+				.clearAisles();
+		AisleWindowContentFactory.getInstance(VueApplication.getInstance())
+				.clearObjectsInUse();
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+				.dataObserver();
+	}
 
-          @Override
-          public void onErrorResponse(VolleyError error) {
-            Log.e("get rating image",
-                "SURU get rating image Error Resopnse : " + error.getMessage());
-          }
-        });
-    VueApplication.getInstance().getRequestQueue().add(vueRequest);
-  }
-
-  private void clearList() {
-    VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-        .clearAisles();
-    AisleWindowContentFactory.getInstance(VueApplication.getInstance())
-        .clearObjectsInUse();
-    VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-        .dataObserver();
-  }
-
-  public void makeOffseZero() {
-    mOffset = 0;
-  }
- /* public void setOffset(int offset){
-	  mOffset = offset;
-	  Log.i("listmovingissue", "listmovingissue  setting to: "+mOffset);
-  }*/
+	public void makeOffseZero() {
+		mOffset = 0;
+	}
+	/*
+	 * public void setOffset(int offset){ mOffset = offset;
+	 * Log.i("listmovingissue", "listmovingissue  setting to: "+mOffset); }
+	 */
 
 }

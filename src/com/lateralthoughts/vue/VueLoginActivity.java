@@ -1028,7 +1028,7 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	private void share(PlusClient plusClient, Activity activity, String post,
 			ArrayList<Integer> personIndexList) {
-		if (Utils.appInstalledOrNot(VueConstants.INSTAGRAM_PACKAGE_NAME, this)) {
+		if (Utils.appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME, this)) {
 			try {
 				startActivityForResult(
 						getInteractivePostIntent(plusClient, activity, post,
@@ -1324,6 +1324,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void downloadAndSaveUserProfileImage(String imageUrl,
 			final File filePath) {
+		Log.i("userImageUrl", "userImageUrl: "+imageUrl);
 		Response.Listener listener = new Response.Listener<Bitmap>() {
 			@Override
 			public void onResponse(Bitmap bmp) {

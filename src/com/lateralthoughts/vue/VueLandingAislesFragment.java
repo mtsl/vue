@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,12 +24,18 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -36,6 +43,7 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
+import com.lateralthoughts.vue.ui.MyCustomAnimation;
 import com.lateralthoughts.vue.utils.Utils;
 
 //java utils
@@ -61,8 +69,15 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	int[] mRightViewsHeights;
 	public boolean mIsFlingCalled;
 	 
-
+    private int animdelay = 4000;
+    private int height;
 	public boolean mIsIdleState;
+	private LinearLayout pulltorefresh;
+	 
+	private boolean mIsListRefreshRecently = true;
+	
+	RelativeLayout mRightLay;
+	RelativeLayout mLeftLay;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -119,7 +134,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				false);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
-
+		pulltorefresh = (LinearLayout)v.findViewById(R.id.pulltorefresh);
 		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
@@ -196,6 +211,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			} else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
 				mIsIdleState = false;
 				mIsFlingCalled = false;
+				mIsListRefreshRecently = false;
 			}
 			int first = view.getFirstVisiblePosition();
 			int count = view.getChildCount();
@@ -210,7 +226,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
-			 
+			 Log.i("pullrefresh", "pullrefresh: "+firstVisibleItem);
+			 if(firstVisibleItem > 5){
+				 mIsListRefreshRecently = false;
+			 }
 			if (view.getChildAt(0) != null) {
 				if (view.equals(mLeftColumnView)) {
 					mLeftViewsHeights[view.getFirstVisiblePosition()] = view
@@ -248,7 +267,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					}
 
 					int top = h - hi + view.getChildAt(0).getTop();
-					 
+					
 					mLeftColumnView.setSelectionFromTop(
 							mLeftColumnView.getFirstVisiblePosition(), top);
 				}
@@ -465,5 +484,64 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			e.printStackTrace();
 		}
 	}
+	
+	  private void headerAnimationGoneTask(final RelativeLayout pulltorefresh) {
+		    
+		      MyCustomAnimation a = new MyCustomAnimation(getActivity(),
+		    		  pulltorefresh, animdelay, MyCustomAnimation.COLLAPSE);
+		      a.setAnimationListener(new AnimationListener() {
+
+		        @Override
+		        public void onAnimationStart(Animation animation) {
+		         
+		        }
+
+		        @Override
+		        public void onAnimationRepeat(Animation animation) {
+
+		        }
+
+		        @Override
+		        public void onAnimationEnd(Animation animation) {
+		        ProgressBar pb = (ProgressBar) pulltorefresh.findViewById(R.id.leftlayprogress);
+		        if(pb != null)
+		        pb.setVisibility(View.GONE);
+		        TextView tv = (TextView) pulltorefresh.findViewById(R.id.rightlaytextvew);
+		           if(tv != null){
+		        	   tv.setVisibility(View.GONE);
+		           }
+		        }
+		       
+		      });
+		      height = a.getHeight();
+		      
+		      pulltorefresh.startAnimation(a);
+		    
+		  }
+	  
+	  private void headerAnimationVisibleTask(final RelativeLayout pulltorefresh) {
+  
+		      MyCustomAnimation a = new MyCustomAnimation(getActivity(),
+		    		  pulltorefresh, animdelay, MyCustomAnimation.EXPAND);
+		      a.setAnimationListener(new AnimationListener() {
+
+		        @Override
+		        public void onAnimationStart(Animation animation) {
+		        
+		        }
+
+		        @Override
+		        public void onAnimationRepeat(Animation animation) {
+
+		        }
+
+		        @Override
+		        public void onAnimationEnd(Animation animation) {
+		        	
+		        }
+		      });
+		      pulltorefresh.startAnimation(a);
+		    
+		  }
 
 }

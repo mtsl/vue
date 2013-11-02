@@ -140,6 +140,7 @@ public class VueUserManager {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void createFBIdentifiedUser(final GraphUser graphUser,
+<<<<<<< HEAD
       final UserUpdateCallback callback) {
     // lets throw an exception if the current user is not NULL.
     if (null != mCurrentUser)
@@ -227,6 +228,117 @@ public class VueUserManager {
                   errorListener);
               VueApplication.getInstance().getRequestQueue().add(request);
             } catch (Exception e) {
+=======
+			final UserUpdateCallback callback) {
+		// lets throw an exception if the current user is not NULL.
+		if (null != mCurrentUser)
+			throw new RuntimeException(
+					"Cannot call createFBIdentifiedUser when User is "
+							+ "already available. Try the update APIs");
+		final VueUser user = parseGraphUserIntoVueUser(graphUser, null);
+		final Response.Listener listener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					Log.e("Profiling", "Create User: Profiling : onResponse()"
+							+ jsonArray);
+					VueUser vueUser = new Parser().parseUserData(jsonArray);
+					if (vueUser != null) {
+						if (VueApplication.getInstance().getmUserInitials() == null) {
+							VueApplication.getInstance().setmUserInitials(
+									vueUser.getFirstName());
+						}
+						VueApplication.getInstance()
+								.setmUserId(vueUser.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser.getFirstName() + " "
+										+ vueUser.getLastName());
+						VueUserManager.this.setCurrentUser(vueUser);
+						Log.i("imageurl", "imageurl is ok got user id: "
+								+ vueUser);
+						callback.onUserUpdated(vueUser);
+						VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getBookmarkAisleByUser();
+		            VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getRatedImageList();
+					}
+				}
+			}
+		};
+		final Response.ErrorListener errorListener = new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				if (null != error.networkResponse
+						&& null != error.networkResponse.data) {
+					String errorData = error.networkResponse.data.toString();
+					Log.e("VueUserDebug", "error date = " + errorData);
+				}
+			}
+		};
+		Response.Listener getListener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					Log.e("Profiling", "Create User: Profiling : onResponse()"
+							+ jsonArray);
+					VueUser vueUser = new Parser().parseUserData(jsonArray);
+					if (vueUser != null) {
+						if (VueApplication.getInstance().getmUserInitials() == null) {
+							VueApplication.getInstance().setmUserInitials(
+									vueUser.getFirstName());
+						}
+						VueApplication.getInstance()
+								.setmUserId(vueUser.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser.getFirstName() + " "
+										+ vueUser.getLastName());
+						VueUserManager.this.setCurrentUser(vueUser);
+						Log.i("imageurl", "imageurl is ok got user id: "
+								+ vueUser);
+						callback.onUserUpdated(vueUser);
+						VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getBookmarkAisleByUser();
+		                VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getRatedImageList();
+					} else {
+						try {
+							Log.e("VueUserDebug", "vueuser: method called ");
+							ObjectMapper mapper = new ObjectMapper();
+							String userAsString = mapper
+									.writeValueAsString(user);
+							Log.e("VueUserDebug", "vueuser: request "
+									+ userAsString);
+							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+									userAsString,
+									UrlConstants.CREATE_USER_RESTURL, listener,
+									errorListener);
+							VueApplication.getInstance().getRequestQueue()
+									.add(request);
+						} catch (Exception e) {
+
+						}
+
+					}
+				} else {
+					try {
+						Log.e("VueUserDebug", "vueuser: method called ");
+						ObjectMapper mapper = new ObjectMapper();
+						String userAsString = mapper.writeValueAsString(user);
+						Log.e("VueUserDebug", "vueuser: request "
+								+ userAsString);
+						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+								userAsString, UrlConstants.CREATE_USER_RESTURL,
+								listener, errorListener);
+						VueApplication.getInstance().getRequestQueue()
+								.add(request);
+					} catch (Exception e) {
+
+					}
+>>>>>>> 594507ba9d87521d96d369d113ca33b78fc7c006
 
             }
 
@@ -272,6 +384,7 @@ public class VueUserManager {
 					"Cannot call createFBIdentifiedUser when User is "
 							+ "already available. Try the update APIs");
 
+<<<<<<< HEAD
     final Response.Listener listener = new Response.Listener<String>() {
       @Override
       public void onResponse(String jsonArray) {
@@ -304,6 +417,39 @@ public class VueUserManager {
         }
       }
     };
+=======
+		final Response.Listener listener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					Log.e("Profiling", "Create User: Profiling : onResponse()"
+							+ jsonArray);
+					VueUser vueUser2 = new Parser().parseUserData(jsonArray);
+					if (vueUser2 != null) {
+						if (VueApplication.getInstance().getmUserInitials() == null) {
+							VueApplication.getInstance().setmUserInitials(
+									vueUser2.getFirstName());
+						}
+						VueApplication.getInstance().setmUserId(
+								vueUser2.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser2.getFirstName() + " "
+										+ vueUser2.getLastName());
+						VueUserManager.this.setCurrentUser(vueUser2);
+						Log.i("imageurl", "imageurl is ok got user id: "
+								+ vueUser2);
+						callback.onUserUpdated(vueUser2);
+						VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getBookmarkAisleByUser();
+		                VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getRatedImageList();
+					}
+				}
+			}
+		};
+>>>>>>> 594507ba9d87521d96d369d113ca33b78fc7c006
 		final Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
@@ -315,6 +461,7 @@ public class VueUserManager {
 			}
 		};
 
+<<<<<<< HEAD
     Response.Listener getListener = new Response.Listener<String>() {
       @Override
       public void onResponse(String jsonArray) {
@@ -354,6 +501,70 @@ public class VueUserManager {
                   errorListener);
               VueApplication.getInstance().getRequestQueue().add(request);
             } catch (Exception e) {
+=======
+		Response.Listener getListener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					Log.e("Profiling", "Create User: Profiling : onResponse()"
+							+ jsonArray);
+					VueUser vueUser1 = new Parser().parseUserData(jsonArray);
+					if (vueUser1 != null) {
+						if (VueApplication.getInstance().getmUserInitials() == null) {
+							VueApplication.getInstance().setmUserInitials(
+									vueUser1.getFirstName());
+						}
+						VueApplication.getInstance().setmUserId(
+								vueUser1.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser1.getFirstName() + " "
+										+ vueUser1.getLastName());
+						VueUserManager.this.setCurrentUser(vueUser1);
+						Log.i("imageurl", "imageurl is ok got user id: "
+								+ vueUser1);
+						callback.onUserUpdated(vueUser1);
+						VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getBookmarkAisleByUser();
+		            VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getRatedImageList();
+					} else {
+						try {
+							Log.e("VueUserDebug", "vueuser: method called ");
+							ObjectMapper mapper = new ObjectMapper();
+							String userAsString = mapper
+									.writeValueAsString(vueUser);
+							Log.e("VueUserDebug", "vueuser: request "
+									+ userAsString);
+							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+									userAsString,
+									UrlConstants.CREATE_USER_RESTURL, listener,
+									errorListener);
+							VueApplication.getInstance().getRequestQueue()
+									.add(request);
+						} catch (Exception e) {
+
+						}
+					}
+				} else {
+					try {
+						Log.e("VueUserDebug", "vueuser: method called ");
+						ObjectMapper mapper = new ObjectMapper();
+						String userAsString = mapper
+								.writeValueAsString(vueUser);
+						Log.e("VueUserDebug", "vueuser: request "
+								+ userAsString);
+						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+								userAsString, UrlConstants.CREATE_USER_RESTURL,
+								listener, errorListener);
+						VueApplication.getInstance().getRequestQueue()
+								.add(request);
+					} catch (Exception e) {
+
+					}
+				}
+>>>>>>> 594507ba9d87521d96d369d113ca33b78fc7c006
 
             }
           }
@@ -436,6 +647,7 @@ public class VueUserManager {
 	public void updateFBIdentifiedUser(final GraphUser graphUser,
 			final VueUser vueUser, final UserUpdateCallback callback) {
 		final VueUser user = parseGraphUserIntoVueUser(graphUser, vueUser);
+<<<<<<< HEAD
     final Response.Listener listener = new Response.Listener<String>() {
       @Override
       public void onResponse(String jsonArray) {
@@ -468,6 +680,39 @@ public class VueUserManager {
         }
       }
     };
+=======
+		final Response.Listener listener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					Log.e("Profiling", "Create User: Profiling : onResponse()"
+							+ jsonArray);
+					VueUser vueUser1 = new Parser().parseUserData(jsonArray);
+					if (vueUser1 != null) {
+						if (VueApplication.getInstance().getmUserInitials() == null) {
+							VueApplication.getInstance().setmUserInitials(
+									vueUser1.getFirstName());
+						}
+						VueApplication.getInstance().setmUserId(
+								vueUser1.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser1.getFirstName() + " "
+										+ vueUser1.getLastName());
+						VueUserManager.this.setCurrentUser(vueUser1);
+						Log.i("imageurl", "imageurl is ok got user id: "
+								+ vueUser1);
+						callback.onUserUpdated(vueUser1);
+						VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getBookmarkAisleByUser();
+		            VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getRatedImageList();
+					}
+				}
+			}
+		};
+>>>>>>> 594507ba9d87521d96d369d113ca33b78fc7c006
 		final Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
@@ -479,6 +724,7 @@ public class VueUserManager {
 			}
 		};
 
+<<<<<<< HEAD
     Response.Listener getListener = new Response.Listener<String>() {
       @Override
       public void onResponse(String jsonArray) {
@@ -519,6 +765,70 @@ public class VueUserManager {
                   errorListener);
               VueApplication.getInstance().getRequestQueue().add(request);
             } catch (Exception e) {
+=======
+		Response.Listener getListener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					Log.e("Profiling", "Create User: Profiling : onResponse()"
+							+ jsonArray);
+					VueUser vueUser2 = new Parser().parseUserData(jsonArray);
+					if (vueUser2 != null) {
+						if (VueApplication.getInstance().getmUserInitials() == null) {
+							VueApplication.getInstance().setmUserInitials(
+									vueUser2.getFirstName());
+						}
+						VueApplication.getInstance().setmUserId(
+								vueUser2.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser2.getFirstName() + " "
+										+ vueUser2.getLastName());
+						VueUserManager.this.setCurrentUser(vueUser2);
+						Log.i("imageurl", "imageurl is ok got user id: "
+								+ vueUser2);
+						callback.onUserUpdated(vueUser2);
+						showNotificationForSwitchingUser(String.valueOf(vueUser
+								.getId()));
+						VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getBookmarkAisleByUser();
+		            VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getRatedImageList();
+					} else {
+						try {
+							Log.e("VueUserDebug", "vueuser: method called ");
+							ObjectMapper mapper = new ObjectMapper();
+							String userAsString = mapper
+									.writeValueAsString(user);
+							Log.e("VueUserDebug", "vueuser: request "
+									+ userAsString);
+							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+									userAsString,
+									UrlConstants.UPDATE_USER_RESTURL, listener,
+									errorListener);
+							VueApplication.getInstance().getRequestQueue()
+									.add(request);
+						} catch (Exception e) {
+
+						}
+
+					}
+				} else {
+					try {
+						ObjectMapper mapper = new ObjectMapper();
+						String userAsString = mapper.writeValueAsString(user);
+						Log.e("VueUserDebug", "vueuser: request "
+								+ userAsString);
+						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+								userAsString, UrlConstants.UPDATE_USER_RESTURL,
+								listener, errorListener);
+						VueApplication.getInstance().getRequestQueue()
+								.add(request);
+					} catch (Exception e) {
+
+					}
+>>>>>>> 594507ba9d87521d96d369d113ca33b78fc7c006
 
             }
 
@@ -558,6 +868,7 @@ public class VueUserManager {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void updateGooglePlusIdentifiedUser(final VueUser vueUser,
 			final UserUpdateCallback callback) {
+<<<<<<< HEAD
     final Response.Listener listener = new Response.Listener<String>() {
       @Override
       public void onResponse(String jsonArray) {
@@ -591,6 +902,40 @@ public class VueUserManager {
         }
       }
     };
+=======
+		final Response.Listener listener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					Log.e("Profiling", "Create User: Profiling : onResponse()"
+							+ jsonArray);
+					VueUser vueUser1 = new Parser().parseUserData(jsonArray);
+					if (vueUser1 != null) {
+						if (VueApplication.getInstance().getmUserInitials() == null) {
+							VueApplication.getInstance().setmUserInitials(
+									vueUser1.getFirstName());
+						}
+						VueApplication.getInstance().setmUserId(
+								vueUser1.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser1.getFirstName() + " "
+										+ vueUser1.getLastName());
+						VueUserManager.this.setCurrentUser(vueUser1);
+						VueUserManager.this.setCurrentUser(vueUser1);
+						Log.i("imageurl", "imageurl is ok got user id: "
+								+ vueUser1);
+						callback.onUserUpdated(vueUser1);
+						VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getBookmarkAisleByUser();
+		            VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getRatedImageList();
+					}
+				}
+			}
+		};
+>>>>>>> 594507ba9d87521d96d369d113ca33b78fc7c006
 		final Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
@@ -602,6 +947,7 @@ public class VueUserManager {
 			}
 		};
 
+<<<<<<< HEAD
     Response.Listener getListener = new Response.Listener<String>() {
       @Override
       public void onResponse(String jsonArray) {
@@ -662,6 +1008,75 @@ public class VueUserManager {
         }
       }
     };
+=======
+		Response.Listener getListener = new Response.Listener<String>() {
+			@Override
+			public void onResponse(String jsonArray) {
+				if (null != jsonArray) {
+					Log.e("Profiling", "Create User: Profiling : onResponse()"
+							+ jsonArray);
+					VueUser vueUser2 = new Parser().parseUserData(jsonArray);
+					if (vueUser2 != null) {
+						if (VueApplication.getInstance().getmUserInitials() == null) {
+							VueApplication.getInstance().setmUserInitials(
+									vueUser2.getFirstName());
+						}
+						VueApplication.getInstance().setmUserId(
+								vueUser2.getId());
+						VueApplication.getInstance().setmUserName(
+								vueUser2.getFirstName() + " "
+										+ vueUser2.getLastName());
+						VueUserManager.this.setCurrentUser(vueUser2);
+						VueUserManager.this.setCurrentUser(vueUser2);
+						Log.i("imageurl", "imageurl is ok got user id: "
+								+ vueUser2);
+						callback.onUserUpdated(vueUser2);
+						showNotificationForSwitchingUser(String.valueOf(vueUser
+								.getId()));
+						VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getBookmarkAisleByUser();
+		            VueTrendingAislesDataModel
+		                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+		                .getRatedImageList();
+					} else {
+						try {
+							Log.e("VueUserDebug", "vueuser: method called ");
+							ObjectMapper mapper = new ObjectMapper();
+							String userAsString = mapper
+									.writeValueAsString(vueUser);
+							Log.e("VueUserDebug", "vueuser: request "
+									+ userAsString);
+							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+									userAsString,
+									UrlConstants.UPDATE_USER_RESTURL, listener,
+									errorListener);
+							VueApplication.getInstance().getRequestQueue()
+									.add(request);
+						} catch (Exception e) {
+
+						}
+					}
+				} else {
+					try {
+						Log.e("VueUserDebug", "vueuser: method called ");
+						ObjectMapper mapper = new ObjectMapper();
+						String userAsString = mapper
+								.writeValueAsString(vueUser);
+						Log.e("VueUserDebug", "vueuser: request "
+								+ userAsString);
+						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+								userAsString, UrlConstants.UPDATE_USER_RESTURL,
+								listener, errorListener);
+						VueApplication.getInstance().getRequestQueue()
+								.add(request);
+					} catch (Exception e) {
+
+					}
+				}
+			}
+		};
+>>>>>>> 594507ba9d87521d96d369d113ca33b78fc7c006
 		Response.ErrorListener getErrorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
@@ -911,6 +1326,7 @@ public class VueUserManager {
   private void showNotificationForSwitchingUser(final String userId) {
     new Thread(new Runnable() {
 
+<<<<<<< HEAD
       @Override
       public void run() {
         try {
@@ -955,4 +1371,60 @@ public class VueUserManager {
       }
     }).start();
   }
+=======
+			@Override
+			public void run() {
+				try {
+					final ArrayList<AisleWindowContent> aislesList = new NetworkHandler(
+							VueApplication.getInstance())
+							.getAislesByUser(userId);
+					try {
+						VueLandingPageActivity.landingPageActivity
+								.runOnUiThread(new Runnable() {
+
+									@SuppressWarnings("deprecation")
+									@Override
+									public void run() {
+										if (aislesList != null
+												&& aislesList.size() > 0) {
+											NotificationManager notificationManager = (NotificationManager) VueLandingPageActivity.landingPageActivity
+													.getSystemService(Context.NOTIFICATION_SERVICE);
+											Notification mNotification = new Notification(
+													R.drawable.vue_notification_icon,
+													"You are Switched the account.",
+													System.currentTimeMillis());
+											Intent MyIntent = new Intent(
+													Intent.ACTION_VIEW);
+											PendingIntent StartIntent = PendingIntent
+													.getActivity(
+															VueApplication
+																	.getInstance()
+																	.getApplicationContext(),
+															0,
+															MyIntent,
+															PendingIntent.FLAG_CANCEL_CURRENT);
+											mNotification.flags = Notification.FLAG_AUTO_CANCEL;
+											mNotification
+													.setLatestEventInfo(
+															VueApplication
+																	.getInstance()
+																	.getApplicationContext(),
+															"User Account is Switched.",
+															"You are Switched the account.",
+															StartIntent);
+											notificationManager
+													.notify(VueConstants.CHANGE_USER_NOTIFICATION_ID,
+															mNotification);
+										}
+									}
+								});
+					} catch (Exception e) {
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+>>>>>>> 594507ba9d87521d96d369d113ca33b78fc7c006
 }

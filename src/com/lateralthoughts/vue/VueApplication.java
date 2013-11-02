@@ -70,6 +70,15 @@ public class VueApplication extends Application {
 	}
 
 	private Long mUserId = null;
+	private String mUserName = null;
+
+	public String getmUserName() {
+		return mUserName;
+	}
+
+	public void setmUserName(String mUserName) {
+		this.mUserName = mUserName;
+	}
 
 	public String getmUserInitials() {
 		return mUserInitials;
@@ -174,10 +183,11 @@ public class VueApplication extends Application {
 					new SortBasedOnAppName());
 		}
 		// R.drawable.aisle_content_empty;
+
 		
-	/*	  Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
+		  Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 		  crittercismConfig);
-		 */
+		 
 
 	}
 
@@ -281,12 +291,14 @@ public class VueApplication extends Application {
 	 * newVueTrendingAislesDataModel = createNewObject; }
 	 */
 
-	/*
-	 * public BitmapCache getBitmapCache(){ if(sBitmapCache == null)
-	 * sBitmapCache = new BitmapCache(512);
-	 * 
-	 * return sBitmapCache; }
-	 */
+	
+/*	public BitmapCache getBitmapCache() {
+		if (sBitmapCache == null)
+			sBitmapCache = new BitmapCache(512);
+
+		return sBitmapCache;
+	}*/
+	 
 	private BitmapCache sBitmapCache;
 
 }

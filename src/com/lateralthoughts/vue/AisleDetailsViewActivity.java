@@ -47,6 +47,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
+import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -265,7 +266,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					}
 				});
 		if (VueLandingPageActivity.mOtherSourceImagePath != null) {
-			VueImage image = new VueImage();
+			final VueImage image = new VueImage();
 			image.setDetailsUrl(VueLandingPageActivity.mOtherSourceImageDetailsUrl);
 			image.setHeight(VueLandingPageActivity.mOtherSourceImageHeight);
 			image.setWidth(VueLandingPageActivity.mOtherSourceImageWidth);
@@ -282,18 +283,39 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					.getAisleItem(
 							VueApplication.getInstance().getClickedWindowID())
 					.getAisleContext().mAisleId));
-			String offlineImageId = String.valueOf(System.currentTimeMillis());
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance())
-					.getNetworkHandler()
-					.requestForAddImage(true, offlineImageId, image,
-							new ImageAddedCallback() {
-								@Override
-								public void onImageAdded(
-										AisleImageDetails imageDetails) {
-									// //
-								}
-							});
+			final String offlineImageId = String.valueOf(System
+					.currentTimeMillis());
+			// Camera or Gallery...
+			if (VueLandingPageActivity.mOtherSourceImageUrl == null) {
+				VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance())
+						.getNetworkHandler()
+						.requestForUploadImage(
+								new File(
+										VueLandingPageActivity.mOtherSourceImagePath),
+								new ImageUploadCallback() {
+									@Override
+									public void onImageUploaded(String imageUrl) {
+										if (imageUrl != null) {
+											image.setImageUrl(imageUrl);
+											VueTrendingAislesDataModel
+													.getInstance(
+															VueApplication
+																	.getInstance())
+													.getNetworkHandler()
+													.requestForAddImage(true,
+															offlineImageId,
+															image);
+										}
+									}
+								});
+			} else {
+				image.setImageUrl(VueLandingPageActivity.mOtherSourceImageUrl);
+				VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance())
+						.getNetworkHandler()
+						.requestForAddImage(true, offlineImageId, image);
+			}
 			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath,
 					VueLandingPageActivity.mOtherSourceImageUrl,
 					VueLandingPageActivity.mOtherSourceImageWidth,
@@ -324,8 +346,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		super.onStop();
 		Log.e("ondestory", "browsecheck onStop detailsview");
 		FlurryAgent.onEndSession(this);
-		 
-	
 
 	}
 
@@ -558,8 +578,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.aisle_details_view_fragment);
 		}
-		if(mVueAiselFragment != null)
-		mVueAiselFragment.setAisleContentListenerNull();
+		if (mVueAiselFragment != null)
+			mVueAiselFragment.setAisleContentListenerNull();
 		super.onDestroy();
 	}
 
@@ -593,10 +613,63 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			if (b != null) {
 				String findAt = b
 						.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT);
+				String lookingfor = b
+						.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR);
+				String occasion = b
+						.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION);
+				String description = b
+						.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE);
+				String category = b
+						.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY);
+				if (lookingfor != null && lookingfor.trim().length() > 0
+						&& !lookingfor.equals("Looking")) {
+					VueTrendingAislesDataModel
+							.getInstance(AisleDetailsViewActivity.this)
+							.getAisleAt(
+									VueApplication.getInstance()
+											.getClickedWindowID())
+							.getAisleContext().mLookingForItem = lookingfor;
+				}
+				if (occasion != null && occasion.trim().length() > 0
+						&& !occasion.trim().equals("Occasion")) {
+					VueTrendingAislesDataModel
+							.getInstance(AisleDetailsViewActivity.this)
+							.getAisleAt(
+									VueApplication.getInstance()
+											.getClickedWindowID())
+							.getAisleContext().mOccasion = occasion;
+				}
+				if (category != null && category.trim().length() > 0) {
+					VueTrendingAislesDataModel
+							.getInstance(AisleDetailsViewActivity.this)
+							.getAisleAt(
+									VueApplication.getInstance()
+											.getClickedWindowID())
+							.getAisleContext().mCategory = category;
+				}
+				if (description != null && description.trim().length() > 0) {
+					VueTrendingAislesDataModel
+							.getInstance(AisleDetailsViewActivity.this)
+							.getAisleAt(
+									VueApplication.getInstance()
+											.getClickedWindowID())
+							.getAisleContext().mDescription = description;
+					Log.i("descrption issue",
+							"descrption issue  onactivity result: "
+									+ VueTrendingAislesDataModel
+											.getInstance(
+													AisleDetailsViewActivity.this)
+											.getAisleAt(
+													VueApplication
+															.getInstance()
+															.getClickedWindowID())
+											.getAisleContext().mDescription);
+				}
 				if (mVueAiselFragment == null) {
 					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 							.findFragmentById(R.id.aisle_details_view_fragment);
 				}
+				mVueAiselFragment.notifyAdapter();
 				if (findAt != null) {
 					mVueAiselFragment.mEditTextFindAt.setText(findAt);
 				} else {
@@ -974,8 +1047,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		if (imageUrl != null) {
 			f = fileCache.getFile(imageUrl);
 		} else {
+			imageUrl = imagePath;
 			f = fileCache.getFile(imagePath);
-			imageUrl = f.getPath();
 		}
 		File sourceFile = new File(imagePath);
 		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,

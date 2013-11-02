@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -56,7 +55,6 @@ public class ShareDialog {
 	private InstalledPackageRetriever mShareIntentObj;
 	public boolean mShareIntentCalled = false;
 	private Dialog mDialog;
-	private String mName;
 	private int mCurrentAislePosition;
 	private ArrayList<clsShare> mImagePathArray;
 	private ProgressDialog mShareDialog;
@@ -83,7 +81,6 @@ public class ShareDialog {
 			String name, int currentAislePosition) {
 		mShareIntentCalled = false;
 		this.mImagePathArray = imagePathArray;
-		this.mName = name;
 		mCurrentAislePosition = currentAislePosition;
 		prepareShareIntentData();
 		openScreenDialog();
@@ -275,10 +272,20 @@ public class ShareDialog {
 					VueConstants.FACEBOOK_APP_NAME)) {
 				mDialog.dismiss();
 				mShareDialog.dismiss();
-				String shareText = "Your friend "
-						+ mName
-						+ " wants your opinion - get Vue to see the full details and help "
-						+ mName + " out.";
+				String shareText = "";
+				// User Aisle...
+				if (mImagePathArray.get(0).isUserAisle().equals("1")) {
+					shareText = mImagePathArray.get(0).getAisleOwnerName()
+							+ " would like your opinion in finding "
+							+ mImagePathArray.get(0).getLookingFor()
+							+ ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more.";
+				} else {
+					shareText = VueApplication.getInstance().getmUserName()
+							+ " would like you to check this aisle out on Vue - "
+							+ mImagePathArray.get(0).getLookingFor() + " by "
+							+ mImagePathArray.get(0).getAisleOwnerName()
+							+ ". Get Vue to create your own aisles!";
+				}
 				Intent i = new Intent(mContext, VueLoginActivity.class);
 				Bundle b = new Bundle();
 				b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
@@ -302,6 +309,13 @@ public class ShareDialog {
 			} else if (mAppNames.get(position).equalsIgnoreCase(
 					VueConstants.TWITTER_APP_NAME)) {
 				shareText(position);
+			} else if (mAppNames.get(position)
+					.equalsIgnoreCase(
+							mContext.getApplicationContext()
+									.getApplicationInfo()
+									.loadLabel(mContext.getPackageManager())
+									.toString())) {
+				shareSingleImage(position, mCurrentAislePosition);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -406,10 +420,20 @@ public class ShareDialog {
 						imageUris.add(screenshotUri);
 					}
 				}
-				String shareText = "Your friend "
-						+ mName
-						+ " wants your opinion - get Vue to see the full details and help "
-						+ mName + " out.";
+				String shareText = "";
+				// User Aisle...
+				if (mImagePathArray.get(0).isUserAisle().equals("1")) {
+					shareText = mImagePathArray.get(0).getAisleOwnerName()
+							+ " would like your opinion in finding "
+							+ mImagePathArray.get(0).getLookingFor()
+							+ ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more.";
+				} else {
+					shareText = VueApplication.getInstance().getmUserName()
+							+ " would like you to check this aisle out on Vue - "
+							+ mImagePathArray.get(0).getLookingFor() + " by "
+							+ mImagePathArray.get(0).getAisleOwnerName()
+							+ ". Get Vue to create your own aisles!";
+				}
 				mSendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
 				mSendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("mailto:"));
 				mSendIntent.putExtra(android.content.Intent.EXTRA_TEXT,
@@ -495,6 +519,11 @@ public class ShareDialog {
 				} else if (mAppNames.get(position).equals(
 						VueConstants.INSTAGRAM_APP_NAME)) {
 					activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
+				} else if (mAppNames.get(position).equalsIgnoreCase(
+						mContext.getApplicationContext().getApplicationInfo()
+								.loadLabel(mContext.getPackageManager())
+								.toString())) {
+					activityname = VueConstants.VUE_ACTIVITY_NAME;
 				}
 				mSendIntent.setClassName(mPackageNames.get(position),
 						activityname);
@@ -515,10 +544,20 @@ public class ShareDialog {
 		mDialog.dismiss();
 		mShareIntentCalled = true;
 		mShareDialog.show();
-		String shareText = "Your friend "
-				+ mName
-				+ " wants your opinion - get Vue to see the full details and help "
-				+ mName + " out.";
+		String shareText = "";
+		// User Aisle...
+		if (mImagePathArray.get(0).isUserAisle().equals("1")) {
+			shareText = mImagePathArray.get(0).getAisleOwnerName()
+					+ " would like your opinion in finding "
+					+ mImagePathArray.get(0).getLookingFor()
+					+ ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more.";
+		} else {
+			shareText = VueApplication.getInstance().getmUserName()
+					+ " would like you to check this aisle out on Vue - "
+					+ mImagePathArray.get(0).getLookingFor() + " by "
+					+ mImagePathArray.get(0).getAisleOwnerName()
+					+ ". Get Vue to create your own aisles!";
+		}
 		mSendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
 		String activityname = null;
 		if (mAppNames.get(position).equals(VueConstants.TWITTER_APP_NAME)) {

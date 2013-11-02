@@ -40,7 +40,7 @@
                 android:padding="8dip"
                 android:text="Touch To Change Image"
                 android:textColor="@color/white"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <android.support.v4.view.ViewPager
@@ -68,21 +68,21 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="8dip"
-                android:background="#90797979"
+                android:background="@drawable/dataentry_title_bg"
                 android:orientation="horizontal" >
 
                 <TextView
                     android:id="@+id/lookingforbigtext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dip"
+                    android:layout_marginRight="8dip"
                     android:background="@color/yellowbgcolor"
                     android:clickable="true"
                     android:ellipsize="end"
                     android:maxWidth="140dip"
                     android:singleLine="true"
                     android:text="Looking"
-                    android:textColor="@color/white"
+                    android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -90,11 +90,9 @@
                     android:id="@+id/for_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dip"
-                    android:layout_marginTop="8dip"
                     android:clickable="true"
                     android:text="For"
-                    android:textColor="@color/white"
+                    android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -102,13 +100,13 @@
                     android:id="@+id/occassionbigtext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dip"
+                    android:layout_marginLeft="8dip"
                     android:clickable="true"
                     android:ellipsize="end"
                     android:maxWidth="140dip"
                     android:singleLine="true"
                     android:text="Occasion"
-                    android:textColor="@color/white"
+                    android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -120,16 +118,13 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/mainheadingrow"
                 android:layout_marginLeft="8dip"
-                android:background="@drawable/popup_bg"
+                android:background="@drawable/dataentry_title_bg"
                 android:orientation="vertical"
                 android:visibility="gone" >
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="12dip"
-                    android:layout_marginRight="8dip"
-                    android:layout_marginTop="8dip"
                     android:orientation="horizontal" >
 
                     <ImageView
@@ -145,16 +140,13 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="4dip"
                         android:text="Looking For?"
-                        android:textColor="@color/white"
-                        android:textSize="17sp" />
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="18sp" />
                 </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dip"
-                    android:layout_marginLeft="12dip"
-                    android:layout_marginRight="8dip"
                     android:layout_marginTop="8dip"
                     android:background="@color/white" >
 
@@ -186,20 +178,17 @@
                 android:id="@+id/find_at_popup"
                 android:layout_width="200dip"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
+                    android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="48dip"
                 android:layout_marginRight="8dip"
-                android:background="@drawable/pop_up_bg_ocasion"
+                android:background="@drawable/dataentry_title_bg"
                 android:orientation="vertical"
                 android:visibility="gone" >
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dip"
-                    android:layout_marginRight="12dip"
-                    android:layout_marginTop="8dip"
                     android:orientation="horizontal" >
 
                     <ImageView
@@ -215,16 +204,13 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="4dip"
                         android:text="Find at"
-                        android:textColor="@color/white"
-                        android:textSize="17sp" />
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="18sp" />
                 </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dip"
-                    android:layout_marginLeft="8dip"
-                    android:layout_marginRight="12dip"
                     android:layout_marginTop="8dip"
                     android:background="@color/white" >
 
@@ -276,16 +262,13 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/mainheadingrow"
                 android:layout_marginRight="8dip"
-                android:background="@drawable/pop_up_bg_ocasion"
+                android:background="@drawable/dataentry_title_bg"
                 android:orientation="vertical"
                 android:visibility="gone" >
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dip"
-                    android:layout_marginRight="12dip"
-                    android:layout_marginTop="8dip"
                     android:orientation="horizontal" >
 
                     <ImageView
@@ -301,16 +284,13 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="4dip"
                         android:text="Occasion"
-                        android:textColor="@color/white"
-                        android:textSize="17sp" />
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="18sp" />
                 </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dip"
-                    android:layout_marginLeft="8dip"
-                    android:layout_marginRight="12dip"
                     android:layout_marginTop="8dip"
                     android:background="@color/white" >
 
@@ -370,14 +350,13 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="64dip"
                     android:layout_toLeftOf="@+id/categoerypopup"
-                    android:background="@drawable/dataentry_list_border"
                     android:visibility="gone" >
 
                     <ListView
                         android:id="@+id/categorylistview"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="2dip"
+                        android:background="#cecece"
                         android:scrollbars="none" >
                     </ListView>
                 </LinearLayout>
@@ -389,16 +368,13 @@
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
                     android:layout_marginBottom="64dip"
-                    android:background="@drawable/pop_up_bg_ocasion"
+                    android:background="@drawable/dataentry_title_bg"
                     android:orientation="vertical"
                     android:visibility="gone" >
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dip"
-                        android:layout_marginRight="12dip"
-                        android:layout_marginTop="8dip"
                         android:orientation="horizontal" >
 
                         <ImageView
@@ -414,17 +390,14 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="4dip"
                             android:text="Category"
-                            android:textColor="@color/white"
-                            android:textSize="17sp" />
+                            android:textColor="@android:color/darker_gray"
+                            android:textSize="18sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/bootmbar"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dip"
-                        android:layout_marginLeft="8dip"
-                        android:layout_marginRight="12dip"
                         android:layout_marginTop="8dip"
                         android:background="@color/white" >
 
@@ -448,7 +421,7 @@
                 android:layout_height="48dip"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:background="@color/popupbgcolor"
+                android:background="@drawable/bottom_bar_bg"
                 android:orientation="horizontal" >
 
                 <RelativeLayout

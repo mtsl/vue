@@ -642,17 +642,19 @@ public class Utils {
 	}
 
 	public static String getStoreNameFromUrl(String url) {
-		if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
-				&& VueApplication.getInstance().mShoppingApplicationDetailsList
-						.size() > 0) {
-			for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
-					.size(); i++) {
-				if (url.toLowerCase()
-						.contains(
-								VueApplication.getInstance().mShoppingApplicationDetailsList
-										.get(i).getAppName().toLowerCase())) {
-					return VueApplication.getInstance().mShoppingApplicationDetailsList
-							.get(i).getAppName();
+		if (url != null) {
+			if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
+					&& VueApplication.getInstance().mShoppingApplicationDetailsList
+							.size() > 0) {
+				for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
+						.size(); i++) {
+					if (url.toLowerCase()
+							.contains(
+									VueApplication.getInstance().mShoppingApplicationDetailsList
+											.get(i).getAppName().toLowerCase())) {
+						return VueApplication.getInstance().mShoppingApplicationDetailsList
+								.get(i).getAppName();
+					}
 				}
 			}
 		}
