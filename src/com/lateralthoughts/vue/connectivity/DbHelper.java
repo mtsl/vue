@@ -35,7 +35,7 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.IS_BOOKMARKED + " integer, "
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.DELETE_FLAG + " integer, "
-     + VueConstants.AISLE_DESCRIPTION + " text"
+     + VueConstants.AISLE_DESCRIPTION + " text, "
      + VueConstants.ID + " text);";
 
      private String createAisleImagesTable = "create table if not exists " + DATABASE_TABLE_AISLES_IMAGES

@@ -1049,22 +1049,21 @@ public class DataEntryFragment extends Fragment {
 									b.putString(
 											VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 											mImagePath);
-										b.putString(
-												VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
-												mLookingForBigText.getText()
-														.toString());
-										b.putString(
-												VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
-												mOccassionBigText.getText()
-														.toString());
-										b.putString(
-												VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
-												mCategoryText.getText()
-														.toString());
-										b.putString(
-												VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
-												mSaySomethingAboutAisle
-														.getText().toString());
+									b.putString(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
+											mLookingForBigText.getText()
+													.toString());
+									b.putString(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
+											mOccassionBigText.getText()
+													.toString());
+									b.putString(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
+											mCategoryText.getText().toString());
+									b.putString(
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
+											mSaySomethingAboutAisle.getText()
+													.toString());
 									b.putString(
 											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT,
 											mFindAtText.getText().toString());
@@ -2271,7 +2270,9 @@ public class DataEntryFragment extends Fragment {
 					return true;
 				}
 				if (!mOccassionBigText.getText().toString().trim()
-						.equals(aisle.get(0).getAisleContext().mOccasion)) {
+						.equals(aisle.get(0).getAisleContext().mOccasion)
+						&& !mOccassionBigText.getText().toString().trim()
+								.equals(OCCASION)) {
 					return true;
 				}
 				if (!mCategoryText.getText().toString().trim()

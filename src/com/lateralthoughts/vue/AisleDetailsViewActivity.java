@@ -631,7 +631,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 							.getAisleContext().mLookingForItem = lookingfor;
 				}
 				if (occasion != null && occasion.trim().length() > 0
-						&& !occasion.equals("Occasion")) {
+						&& !occasion.trim().equals("Occasion")) {
 					VueTrendingAislesDataModel
 							.getInstance(AisleDetailsViewActivity.this)
 							.getAisleAt(
