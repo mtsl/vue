@@ -147,7 +147,7 @@ public class NetworkHandler {
 			DataBaseManager.getInstance(VueApplication.getInstance())
 					.resetDbParams();
 			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
-					.getAislesFromDB(null);
+					.getAislesFromDB(null, false);
 			Log.e("DataBaseManager", "SURU updated aisle Order: DATABASE LODING 2: " + aisleContentArray.size());
 			if (aisleContentArray.size() == 0) {
 				VueTrendingAislesDataModel.getInstance(VueApplication
@@ -252,7 +252,7 @@ public class NetworkHandler {
     if (!VueConnectivityManager.isNetworkConnected(mContext)) {
       Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT).show();
       ArrayList<AisleWindowContent> aisleContentArray = mDbManager
-          .getAislesFromDB(null);
+          .getAislesFromDB(null, false);
       if (aisleContentArray.size() == 0) {
         return;
       }
@@ -456,6 +456,10 @@ public class NetworkHandler {
                   + response.getStatusLine().getStatusCode());
           if (response.getEntity() != null
               && response.getStatusLine().getStatusCode() == 200) {
+            /*Cursor aisleIdCursor = mContext.getContentResolver().query(
+                VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id}, null,
+                null, null);*/
+            
             String responseMessage = EntityUtils.toString(response.getEntity());
             if (responseMessage != null) {
               ArrayList<AisleBookmark> bookmarkedAisles = new Parser()

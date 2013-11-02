@@ -19,6 +19,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	 public static final String DATABASE_TABLE_RECENTLY_VIEWED_AISLES = "recentlyViewAisles";
 	 public static final String DATABASE_TABLE_RATED_IMAGES = "ratedImages";
 	 public static final String DATABASE_TABLE_BOOKMARKS_AISLES = "bookmarkedAisles";
+	 public static final String DATABASE_TABLE_MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
 	 //public static final String DATABASE_TABLE_FOR_ORDERING = "aislesDisplayOrderMap";
 	 public static final int DATABASE_VERSION = 1;
 
@@ -35,7 +36,7 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.IS_BOOKMARKED + " integer, "
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.DELETE_FLAG + " integer, "
-     + VueConstants.AISLE_DESCRIPTION + " text"
+     + VueConstants.AISLE_DESCRIPTION + " text, "
      + VueConstants.ID + " text);";
 
      private String createAisleImagesTable = "create table if not exists " + DATABASE_TABLE_AISLES_IMAGES
@@ -57,6 +58,7 @@ public class DbHelper extends SQLiteOpenHelper {
      private String createImageCommentsTable = "create table if not exists " + DATABASE_TABLE_COMMENTS_ON_IMAGES
      + " (" + VueConstants.ID + " long primary key, "
      + VueConstants.IMAGE_ID + " long, "
+     + VueConstants.AISLE_Id + " long,"
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.DELETE_FLAG + " integer, "
      + VueConstants.LAST_MODIFIED_TIME + " long, "
@@ -96,6 +98,22 @@ public class DbHelper extends SQLiteOpenHelper {
         + VueConstants.IS_LIKED_OR_BOOKMARKED + " integer, "
         + VueConstants.AISLE_ID + " text not null);";
     
+    private String createMyBookmarkedAislesTable = "create table if not exists " + DATABASE_TABLE_MY_BOOKMARKED_AISLES
+        + " (" + VueConstants.AISLE_Id + " integer primary key, "
+        + VueConstants.CATEGORY + " text, "
+        + VueConstants.FIRST_NAME + " text, "
+        + VueConstants.LAST_NAME + " text, "
+        + VueConstants.JOIN_TIME + " text, "
+        + VueConstants.LOOKING_FOR + " text, "
+        + VueConstants.OCCASION + " text, "
+        + VueConstants.USER_ID + " text, "
+        + VueConstants.BOOKMARK_COUNT + " text, "
+        + VueConstants.IS_BOOKMARKED + " integer, "
+        + VueConstants.DIRTY_FLAG + " integer, "
+        + VueConstants.DELETE_FLAG + " integer, "
+        + VueConstants.AISLE_DESCRIPTION + " text, "
+        + VueConstants.ID + " text);";
+    
  /*   private String createAislesDisplayOrderMap = "create table if not exists " + DATABASE_TABLE_FOR_ORDERING
         + " (" + VueConstants.AISLE_ID + " long primary key, "
         + VueConstants.AISLE_ORDER + " integer);";*/
@@ -115,6 +133,7 @@ public class DbHelper extends SQLiteOpenHelper {
     db.execSQL(createRecentViewTable);
     db.execSQL(createReatingImagesTable);
     db.execSQL(createBookmarkAislesTable);
+    db.execSQL(createMyBookmarkedAislesTable);
     //db.execSQL(createAislesDisplayOrderMap);
   }
 

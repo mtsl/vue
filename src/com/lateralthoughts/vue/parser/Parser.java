@@ -229,7 +229,7 @@ public class Parser {
 		return aisleWindowContentList;
 	}
 
-	private AisleContext parseAisleData(JSONObject josnObject) {
+	public AisleContext parseAisleData(JSONObject josnObject) {
 		// TODO:
 
 		AisleContext aisleContext = new AisleContext();

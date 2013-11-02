@@ -167,7 +167,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                 String s[] = {aisleImageDetails.mOwnerAisleId};
                 ArrayList<AisleWindowContent> list = DataBaseManager
                     .getInstance(VueApplication.getInstance()).getAislesFromDB(
-                        s);
+                        s, false);
                 if (list != null) {
                   list.get(0).getImageList().add(aisleImageDetails);
                   DataBaseManager.getInstance(VueApplication.getInstance())
@@ -207,7 +207,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                     String s[] = {aisleImageDetails.mOwnerAisleId};
                     ArrayList<AisleWindowContent> list = DataBaseManager
                         .getInstance(VueApplication.getInstance())
-                        .getAislesFromDB(s);
+                        .getAislesFromDB(s, false);
                     if (list != null) {
                       list.get(0).getImageList().add(aisleImageDetails);
                       DataBaseManager.getInstance(VueApplication.getInstance())

@@ -634,7 +634,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				.resetDbParams();
 		ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager
 				.getInstance(VueLandingPageActivity.this).getAislesFromDB(
-						bookmarked);
+						bookmarked, true);
 		for (AisleWindowContent w : windowContentTemp) {
 			windowContent.add(w);
 		}

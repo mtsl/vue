@@ -358,10 +358,6 @@ public class AisleManager {
 		} else {
 		  url = UrlConstants.UPDATE_BOOKMARK_RESTURL + "/";
 		}
-		final ArrayList<AisleWindowContent> windowList = DataBaseManager
-				.getInstance(VueApplication.getInstance()).getAisleByAisleId(
-						Long.toString(aisleBookmark.getAisleId()));
-
 		if (VueConnectivityManager.isNetworkConnected(VueApplication
 				.getInstance())) {
 			VueUser storedVueUser = null;
@@ -390,6 +386,16 @@ public class AisleManager {
               Editor editor = mSharedPreferencesObj.edit();
               editor.putBoolean(VueConstants.IS_AISLE_DIRTY, false);
               editor.commit();
+              ArrayList<AisleWindowContent> windowList;
+              if(aisleBookmark.getBookmarked()) {
+                windowList = DataBaseManager
+                    .getInstance(VueApplication.getInstance()).getAisleByAisleId(
+                            Long.toString(aisleBookmark.getAisleId()));
+              } else {
+                windowList = DataBaseManager
+                    .getInstance(VueApplication.getInstance()).getAisleByAisleIdFromBookmarks(
+                            Long.toString(aisleBookmark.getAisleId()));
+              }
               updateBookmartToDb(windowList, createdAisleBookmark, isDirty);
             } catch (Exception e) {
               e.printStackTrace();
@@ -407,6 +413,16 @@ public class AisleManager {
           Editor editor = mSharedPreferencesObj.edit();
           editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
           editor.commit();
+          ArrayList<AisleWindowContent> windowList;
+          if(aisleBookmark.getBookmarked()) {
+            windowList = DataBaseManager
+                .getInstance(VueApplication.getInstance()).getAisleByAisleId(
+                        Long.toString(aisleBookmark.getAisleId()));
+          } else {
+            windowList = DataBaseManager
+                .getInstance(VueApplication.getInstance()).getAisleByAisleIdFromBookmarks(
+                        Long.toString(aisleBookmark.getAisleId()));
+          }
           updateBookmartToDb(windowList, aisleBookmark, isDirty);
         }
 
@@ -420,6 +436,16 @@ public class AisleManager {
 			Editor editor = mSharedPreferencesObj.edit();
 			editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
 			editor.commit();
+			ArrayList<AisleWindowContent> windowList;
+	        if(aisleBookmark.getBookmarked()) {
+	          windowList = DataBaseManager
+	              .getInstance(VueApplication.getInstance()).getAisleByAisleId(
+	                      Long.toString(aisleBookmark.getAisleId()));
+	        } else {
+	          windowList = DataBaseManager
+	              .getInstance(VueApplication.getInstance()).getAisleByAisleIdFromBookmarks(
+	                      Long.toString(aisleBookmark.getAisleId()));
+	        }
 			updateBookmartToDb(windowList, aisleBookmark, isDirty);
 		}
 
@@ -438,7 +464,9 @@ public class AisleManager {
 	 * */
 	public void updateBookmartToDb(ArrayList<AisleWindowContent> windowList,
 			AisleBookmark aisleBookmark, boolean isDirty) {
+	  Log.i("bookmark response", "bookmark response: SURUSURU windowList.size(): " + windowList.size());
 		for (AisleWindowContent aisleWindow : windowList) {
+		  Log.i("bookmark response", "bookmark response: SURUSURU windowList.size()sdsdsd: " + windowList.size());
 			AisleContext context = aisleWindow.getAisleContext();
 			DataBaseManager
 					.getInstance(VueApplication.getInstance())
