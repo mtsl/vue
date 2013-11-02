@@ -219,7 +219,7 @@ public class DataEntryFragment extends Fragment {
 		mLookingForListviewLayout.setVisibility(View.GONE);
 		mCreateAisleBg = (ImageView) mDataEntryFragmentView
 				.findViewById(R.id.createaisel_bg);
-		mCategoryListview.setDivider(mListDivider);
+		//mCategoryListview.setDivider(mListDivider);
 		mDataEntryInviteFriendsLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_invite_friends_layout);
 		mHintTextForSaySomeThing = (TextView) mDataEntryFragmentView
