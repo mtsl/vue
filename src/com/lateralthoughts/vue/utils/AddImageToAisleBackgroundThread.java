@@ -295,7 +295,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 																	DataBaseManager.MY_AISLES);
 												}
 											} catch (Exception e) {
-
+												e.printStackTrace();
 											}
 										}
 									}

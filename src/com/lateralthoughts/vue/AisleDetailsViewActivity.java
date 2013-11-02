@@ -654,12 +654,16 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 									VueApplication.getInstance()
 											.getClickedWindowID())
 							.getAisleContext().mDescription = description;
-					Log.i("descrption issue", "descrption issue  onactivity result: "+VueTrendingAislesDataModel
-							.getInstance(AisleDetailsViewActivity.this)
-							.getAisleAt(
-									VueApplication.getInstance()
-											.getClickedWindowID())
-							.getAisleContext().mDescription);
+					Log.i("descrption issue",
+							"descrption issue  onactivity result: "
+									+ VueTrendingAislesDataModel
+											.getInstance(
+													AisleDetailsViewActivity.this)
+											.getAisleAt(
+													VueApplication
+															.getInstance()
+															.getClickedWindowID())
+											.getAisleContext().mDescription);
 				}
 				if (mVueAiselFragment == null) {
 					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
@@ -1043,8 +1047,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		if (imageUrl != null) {
 			f = fileCache.getFile(imageUrl);
 		} else {
+			imageUrl = imagePath;
 			f = fileCache.getFile(imagePath);
-			imageUrl = f.getPath();
 		}
 		File sourceFile = new File(imagePath);
 		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,

@@ -131,7 +131,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mSetPosition = true;
 		mContext = c;
 		mImageLoader = new ImageLoader(VueApplication.getInstance()
-				.getRequestQueue(),  BitmapLruCache.getInstance(mContext));
+				.getRequestQueue(), BitmapLruCache.getInstance(mContext));
 		mTopBottomMargin = VueApplication.getInstance().getPixel(
 				mTopBottomMargin);
 		mViewLoader = new AisleDetailsViewListLoader(mContext);
@@ -143,7 +143,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mShowingList = new ArrayList<String>();
 		if (DEBUG)
 			Log.e(TAG, "About to initiate request for trending aisles");
-		 Log.i("bookmarked aisle", "bookmarked persist issue  aisleid: "+VueApplication.getInstance().getClickedWindowID());
+		Log.i("bookmarked aisle", "bookmarked persist issue  aisleid: "
+				+ VueApplication.getInstance().getClickedWindowID());
 		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
 			if (getItem(i).getAisleId().equalsIgnoreCase(
 					VueApplication.getInstance().getClickedWindowID())) {
@@ -315,7 +316,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		RelativeLayout likelay, bookmarklay;
 		FrameLayout edtCommentLay;
 
-		ImageView commentSend ;
+		ImageView commentSend;
 		LinearLayout editImage;
 		String tag;
 	}
@@ -336,7 +337,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.showpieceadapter);
 
-			mViewHolder.editImage = (LinearLayout) convertView.findViewById(R.id.editImage);
+			mViewHolder.editImage = (LinearLayout) convertView
+					.findViewById(R.id.editImage);
 			mViewHolder.imgContentlay = (LinearLayout) convertView
 					.findViewById(R.id.vueimagcontent);
 			mViewHolder.commentContentlay = (LinearLayout) convertView
@@ -451,18 +453,24 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			try {
 				mViewHolder.editImage.setVisibility(View.GONE);
 				if (getItem(mCurrentAislePosition).getImageList().get(
-						mCurrentDispImageIndex).mOwnerUserId != null &&  getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
+						mCurrentDispImageIndex).mOwnerUserId != null
+						&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
 					if (Long.parseLong(getItem(mCurrentAislePosition)
-							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId || Long.parseLong(getItem(mCurrentAislePosition).getAisleContext().mUserId)== mUserId) {
+							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId
+							|| Long.parseLong(getItem(mCurrentAislePosition)
+									.getAisleContext().mUserId) == mUserId) {
 						mViewHolder.editImage.setVisibility(View.VISIBLE);
-						mViewHolder.editImage.setOnClickListener(new OnClickListener() {
-							
-							@Override
-							public void onClick(View v) {
-							Toast.makeText(mContext, "Edit Aisle Function", Toast.LENGTH_SHORT).show();
-								
-							}
-						});
+						mViewHolder.editImage
+								.setOnClickListener(new OnClickListener() {
+
+									@Override
+									public void onClick(View v) {
+										Toast.makeText(mContext,
+												"Edit Aisle Function",
+												Toast.LENGTH_SHORT).show();
+
+									}
+								});
 					} else {
 						mViewHolder.editImage.setVisibility(View.GONE);
 					}
@@ -477,11 +485,16 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							.setText(getItem(mCurrentAislePosition)
 									.getAisleContext().mDescription);
 					Log.i("descrption issue", "descrption issue visible");
-					Log.i("descrption issue", "descrption issue desc value: "+getItem(mCurrentAislePosition)
-							.getAisleContext().mDescription);
+					Log.i("descrption issue",
+							"descrption issue desc value: "
+									+ getItem(mCurrentAislePosition)
+											.getAisleContext().mDescription);
 				} else {
 					Log.i("descrption issue", "descrption issue  gone");
-					Log.i("descrption issue", "descrption issue  value: "+getItem(mCurrentAislePosition).getAisleContext().mDescription);
+					Log.i("descrption issue",
+							"descrption issue  value: "
+									+ getItem(mCurrentAislePosition)
+											.getAisleContext().mDescription);
 					mViewHolder.descriptionlay.setVisibility(View.GONE);
 				}
 
@@ -595,7 +608,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			if (position - mInitialCommentsToShowSize < mShowingList.size()) {
 				mViewHolder.userComment.setText(mShowingList.get(position
 						- mInitialCommentsToShowSize));
-				mViewHolder.userPic.setImageUrl("https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50", mImageLoader) ;
+				mViewHolder.userPic
+						.setImageUrl(
+								"https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50",
+								mImageLoader);
 			}
 
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
@@ -683,9 +699,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		if (getItem(mCurrentAislePosition).getImageList() != null
 				&& getItem(mCurrentAislePosition).getImageList().size() > 0) {
 			String isUserAisle = "0";
-			if (String.valueOf(VueApplication
-					.getInstance()
-					.getmUserId())
+			if (String
+					.valueOf(VueApplication.getInstance().getmUserId())
 					.equals(getItem(mCurrentAislePosition).getAisleContext().mUserId)) {
 				isUserAisle = "1";
 			}

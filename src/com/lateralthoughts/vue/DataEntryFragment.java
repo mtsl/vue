@@ -117,6 +117,7 @@ public class DataEntryFragment extends Fragment {
 			mOtherSourceSelectedImageDetailsUrl = null,
 			mOtherSourceSelectedImageStore = null;
 	private static final int CATEGORY_POPUP_DELAY = 2000;
+	private boolean mIsEmptyAisle;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -1099,13 +1100,25 @@ public class DataEntryFragment extends Fragment {
 													.getInstance()
 													.getClickedWindowID(),
 											true, offlineImageId);
-									boolean isUpdateAisleNeeded = checkForAisleUpdate(VueApplication
-											.getInstance().getClickedWindowID());
-									if (isUpdateAisleNeeded) {
-										upDateAisleToServer(storedVueUser,
-												VueApplication.getInstance()
-														.getClickedWindowID());
+									String categoery = mCategoryText.getText()
+											.toString().trim();
+									String lookingFor = mLookingForBigText
+											.getText().toString().trim();
+									String occassion = "";
+									if (!(mOccassionBigText.getText()
+											.toString().trim().equals(OCCASION
+											.trim()))) {
+										occassion = mOccassionBigText.getText()
+												.toString().trim();
 									}
+									String description = mSaySomethingAboutAisle
+											.getText().toString().trim();
+
+									checkForAisleUpdate(storedVueUser,
+											VueApplication.getInstance()
+													.getClickedWindowID(),
+											categoery, lookingFor, occassion,
+											description);
 									getActivity().finish();
 								} else {
 									Toast.makeText(
@@ -1683,10 +1696,20 @@ public class DataEntryFragment extends Fragment {
 								Long.valueOf(storedVueUser.getId()).toString(),
 								Utils.getDataentryScreenAisleId(getActivity()),
 								false, null);
-						boolean isUpdateAisleNeeded = checkForAisleUpdate(null);
-						if (isUpdateAisleNeeded) {
-							upDateAisleToServer(storedVueUser, null);
+						String categoery = mCategoryText.getText().toString()
+								.trim();
+						String lookingFor = mLookingForBigText.getText()
+								.toString().trim();
+						String occassion = null;
+						if (!(mOccassionBigText.getText().toString().trim()
+								.equals(OCCASION.trim()))) {
+							occassion = mOccassionBigText.getText().toString()
+									.trim();
 						}
+						String description = mSaySomethingAboutAisle.getText()
+								.toString().trim();
+						checkForAisleUpdate(storedVueUser, null, categoery,
+								lookingFor, occassion, description);
 					} else {
 						Toast.makeText(getActivity(),
 								getResources().getString(R.string.no_network),
@@ -1776,7 +1799,20 @@ public class DataEntryFragment extends Fragment {
 			if (storedVueUser != null && storedVueUser.getId() != null) {
 				if (VueConnectivityManager.isNetworkConnected(getActivity())) {
 					storeMetaAisleDataIntoLocalStorage();
-					upDateAisleToServer(storedVueUser, null);
+					String categoery = mCategoryText.getText().toString()
+							.trim();
+					String lookingFor = mLookingForBigText.getText().toString()
+							.trim();
+					String occassion = null;
+					if (!(mOccassionBigText.getText().toString().trim()
+							.equals(OCCASION.trim()))) {
+						occassion = mOccassionBigText.getText().toString()
+								.trim();
+					}
+					String description = mSaySomethingAboutAisle.getText()
+							.toString().trim();
+					upDateAisleToServer(storedVueUser, null, categoery,
+							lookingFor, occassion, description);
 				} else {
 					Toast.makeText(getActivity(),
 							getResources().getString(R.string.no_network),
@@ -1928,18 +1964,11 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	// update ailse and send to server.
-	public void upDateAisleToServer(VueUser vueUser, String aisleId) {
+	public void upDateAisleToServer(VueUser vueUser, String aisleId,
+			String categoery, String lookingfor, String occasion,
+			String description) {
 		if ((mOtherSourceSelectedImageUrl != null && mOtherSourceSelectedImageUrl
 				.trim().length() > 0) || mImagePath != null) {
-			String categoery = mCategoryText.getText().toString().trim();
-			String lookingFor = mLookingForBigText.getText().toString().trim();
-			String occassion = null;
-			if (!(mOccassionBigText.getText().toString().trim().equals(OCCASION
-					.trim()))) {
-				occassion = mOccassionBigText.getText().toString().trim();
-			}
-			String description = mSaySomethingAboutAisle.getText().toString()
-					.trim();
 			final Aisle aisle = new Aisle();
 			if (aisleId != null) {
 				aisle.setId(Long.parseLong(aisleId));
@@ -1948,9 +1977,9 @@ public class DataEntryFragment extends Fragment {
 						.getDataentryScreenAisleId(getActivity())));
 			}
 			aisle.setCategory(categoery);
-			aisle.setLookingFor(lookingFor);
+			aisle.setLookingFor(lookingfor);
 			aisle.setName("Super Aisle"); // TODO By Krishna
-			aisle.setOccassion(occassion);
+			aisle.setOccassion(occasion);
 			aisle.setOwnerUserId(Long.valueOf(vueUser.getId()));
 			if (description.length() > 0) {
 				aisle.setDescription(description);
@@ -2256,35 +2285,53 @@ public class DataEntryFragment extends Fragment {
 		startActivity(i);
 	}
 
-	private boolean checkForAisleUpdate(String aisleId) {
+	private void checkForAisleUpdate(final VueUser storedVueUser,
+			String aisleId, final String categoery, final String lookingfor,
+			final String occasion, final String description) {
+		mIsEmptyAisle = false;
 		if (aisleId == null) {
+			mIsEmptyAisle = true;
 			aisleId = Utils.getDataentryScreenAisleId(getActivity());
 		}
-		if (aisleId != null) {
-			ArrayList<AisleWindowContent> aisle = DataBaseManager.getInstance(
-					getActivity()).getAisleByAisleId(aisleId);
-			if (aisle != null && aisle.size() > 0 && aisle.get(0) != null
-					&& aisle.get(0).getAisleContext() != null) {
-				if (!mLookingForBigText.getText().toString().trim()
-						.equals(aisle.get(0).getAisleContext().mLookingForItem)) {
-					return true;
+		final String id = aisleId;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				boolean updateAisleFlag = false;
+				if (id != null) {
+					ArrayList<AisleWindowContent> aisle = DataBaseManager
+							.getInstance(getActivity()).getAisleByAisleId(id);
+					if (aisle != null && aisle.size() > 0
+							&& aisle.get(0) != null
+							&& aisle.get(0).getAisleContext() != null) {
+						if (!lookingfor.trim().equals(
+								aisle.get(0).getAisleContext().mLookingForItem)) {
+							updateAisleFlag = true;
+						}
+						if (!occasion.trim().equals(
+								aisle.get(0).getAisleContext().mOccasion)
+								&& !occasion.trim().equals(OCCASION)) {
+							updateAisleFlag = true;
+						}
+						if (!categoery.trim().equals(
+								aisle.get(0).getAisleContext().mCategory)) {
+							updateAisleFlag = true;
+						}
+						if (!description.trim().equals(
+								aisle.get(0).getAisleContext().mDescription)) {
+							updateAisleFlag = true;
+						}
+					}
 				}
-				if (!mOccassionBigText.getText().toString().trim()
-						.equals(aisle.get(0).getAisleContext().mOccasion)
-						&& !mOccassionBigText.getText().toString().trim()
-								.equals(OCCASION)) {
-					return true;
-				}
-				if (!mCategoryText.getText().toString().trim()
-						.equals(aisle.get(0).getAisleContext().mCategory)) {
-					return true;
-				}
-				if (!mSaySomethingAboutAisle.getText().toString().trim()
-						.equals(aisle.get(0).getAisleContext().mDescription)) {
-					return true;
+				if (updateAisleFlag) {
+					String sourceAisleId = null;
+					if (!mIsEmptyAisle) {
+						sourceAisleId = id;
+					}
+					upDateAisleToServer(storedVueUser, sourceAisleId,
+							categoery, lookingfor, occasion, description);
 				}
 			}
-		}
-		return false;
+		}).start();
 	}
 }
