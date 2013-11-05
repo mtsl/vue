@@ -154,11 +154,14 @@ public class NetworkHandler {
 					.resetDbParams();
 			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
 					.getAislesFromDB(null, false);
+			Log.e("DataBaseManager",
+					"SURU updated aisle Order: DATABASE LODING 1 size: "+aisleContentArray.size());
 			if (aisleContentArray.size() == 0) {
 				VueTrendingAislesDataModel.getInstance(VueApplication
 						.getInstance()).isFromDb = false;
 				return;
 			}
+			 
 			Message msg = new Message();
 			msg.obj = aisleContentArray;
 			VueTrendingAislesDataModel.getInstance(mContext).mHandler

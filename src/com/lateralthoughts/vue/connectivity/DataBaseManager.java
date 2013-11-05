@@ -409,8 +409,11 @@ public class DataBaseManager {
         mEndPosition = 1000;
       }
     }
+	
     cursor.close();
     mEndPosition = mEndPosition + mLocalAislesLimit;
+    Log.e("DataBaseManager",
+			"SURU updated aisle Order: DATABASE LODING 1 mEndPosition: "+mEndPosition+" mStartPosition: "+mStartPosition);
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
     AisleWindowContent aisleItem = null;

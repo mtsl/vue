@@ -207,6 +207,7 @@ public class VueTrendingAislesDataModel {
 			@SuppressWarnings("unchecked")
 			ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
 			isFromDb = true;
+			Log.i("arrayList", "arrayList from db sized1 uirefresh: "+aisleContentArray.size());
 			for (AisleWindowContent content : aisleContentArray) {
 				AisleWindowContent aisleItem = getAisleItem(content
 						.getAisleId());

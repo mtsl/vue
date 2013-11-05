@@ -583,6 +583,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 							.getChildAt(i);
 					Bitmap bitmap = ((BitmapDrawable) image.getDrawable())
 							.getBitmap();
+					Log.i("clearlist", "clearlist bitmap recycling");
 					bitmap.recycle();
 					bitmap = null;
 				} catch (Exception e) {
@@ -592,7 +593,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				mViewFactory
 						.returnUsedImageView((ScaleImageView) aisleContentBrowser
 								.getChildAt(i));
-				Log.i("bitmap reclying", "bitmap reclying  in adapter");
+				Log.i("clearlist", "clearlist clear the browser");
 			}
 		}
 		if (aisleContentBrowser != null) {

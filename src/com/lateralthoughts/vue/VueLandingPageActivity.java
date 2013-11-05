@@ -570,6 +570,11 @@ public class VueLandingPageActivity extends BaseActivity {
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler().makeOffseZero();
+			if (mFragment == null) {
+				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+			}
+			mFragment.clearBitmaps();
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance()).clearAisles();
 			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
@@ -592,6 +597,11 @@ public class VueLandingPageActivity extends BaseActivity {
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
+				if (mFragment == null) {
+					mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisles_view_fragment);
+				}
+				mFragment.clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
 						VueApplication.getInstance()).clearObjectsInUse();
@@ -643,6 +653,12 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		if (windowContent != null && windowContent.size() > 0) {
 			changeScreenName(screenName);
+			if (mFragment == null) {
+				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+			}
+			mFragment.clearBitmaps();
+			
 			VueTrendingAislesDataModel.getInstance(this).clearAisles();
 			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
 					.clearObjectsInUse();
@@ -663,6 +679,11 @@ public class VueLandingPageActivity extends BaseActivity {
 	private void showPreviousScreen(String screenName) {
 		boolean fromServer = false;
 		boolean loadMore = false;
+		if (mFragment == null) {
+			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisles_view_fragment);
+		}
+		mFragment.clearBitmaps();
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
 			VueTrendingAislesDataModel
