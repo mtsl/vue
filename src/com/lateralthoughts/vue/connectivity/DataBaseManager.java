@@ -704,7 +704,6 @@ public class DataBaseManager {
       String bookmarkedAisleId, boolean isBookmarked) {
     boolean isMatched = false;
     ContentValues values = new ContentValues();
-    values.put(VueConstants.ID, bookmarkId);
     values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, isBookmarked);
     values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
     Log.i("bookmark response", "bookmark response: SURUSURU windowList.size()sdsdsd 15:");
@@ -776,7 +775,7 @@ public class DataBaseManager {
     }
     cursor.close();
     if (!isMatched) {
-
+      values.put(VueConstants.ID, bookmarkId);
       Uri uri = mContext.getContentResolver().insert(
           VueConstants.BOOKMARKER_AISLES_URI, values);
       Log.e("bookmarkissue", "bookmarkissue new aisle inserted Uri: " + uri);
@@ -1192,7 +1191,6 @@ public class DataBaseManager {
     for (ImageRating imageRating : retrievedImageRating) {
       isMatched = false;
       ContentValues values = new ContentValues();
-      values.put(VueConstants.ID, imageRating.getId());
       values.put(VueConstants.AISLE_ID, imageRating.getAisleId());
       values.put(VueConstants.IMAGE_ID, imageRating.getImageId());
       values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, imageRating.getLiked());
@@ -1217,6 +1215,7 @@ public class DataBaseManager {
         } while (cursor.moveToNext());
       }
       if (!isMatched) {
+        values.put(VueConstants.ID, imageRating.getId());
         mContext.getContentResolver().insert(VueConstants.RATED_IMAGES_URI,
             values);
       }

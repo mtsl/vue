@@ -551,9 +551,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		  }
 
 	public void clearBitmaps() {
-		Log.i("clearbitamps", "clearbitamps 1");
+		 
 		for (int i = 0; i < mLeftColumnView.getChildCount(); i++) {
-			Log.i("clearbitamps", "clearbitamps 2");
+			Log.i("clearlist", "clearlist leftcolumn");
 			LinearLayout leftLayout = (LinearLayout) mLeftColumnView
 					.getChildAt(i);
 			com.lateralthoughts.vue.ui.AisleContentBrowser aisleBrowser = (AisleContentBrowser) leftLayout
@@ -562,7 +562,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 		}
 		for (int i = 0; i < mRightColumnView.getChildCount(); i++) {
-			Log.i("clearbitamps", "clearbitamps 3");
+			Log.i("clearlist", "clearlist rightcolumn");
 			LinearLayout rightLayout = (LinearLayout) mRightColumnView
 					.getChildAt(i);
 			com.lateralthoughts.vue.ui.AisleContentBrowser aisleBrowser = (AisleContentBrowser) rightLayout

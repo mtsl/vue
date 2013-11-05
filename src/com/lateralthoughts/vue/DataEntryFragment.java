@@ -65,7 +65,6 @@ public class DataEntryFragment extends Fragment {
 			R.drawable.vue_launcher_icon, R.drawable.vue_launcher_icon,
 			R.drawable.vue_launcher_icon, R.drawable.vue_launcher_icon,
 			R.drawable.vue_launcher_icon };
-	private Drawable mListDivider = null;
 	public ImageView mCreateAisleBg = null, mCategoryIcon = null;
 	private InputMethodManager mInputMethodManager;
 	private boolean mDontGoToNextLookingFor = false,
@@ -105,7 +104,8 @@ public class DataEntryFragment extends Fragment {
 	private Bitmap mAisleImageBitmap = null;
 	public ProgressBar mAisleBgProgressbar;
 	private GestureDetector mDetector;
-	private ImageView mOccasionClose, mFindatClose, mLookingforClose;
+	private ImageView mOccasionClose, mFindatClose, mLookingforClose,
+			mSaysomethingClose;
 	public boolean mFromDetailsScreenFlag = false;
 	public boolean mIsUserAisleFlag = false;
 	private LoginWarningMessage mLoginWarningMessage = null;
@@ -159,6 +159,8 @@ public class DataEntryFragment extends Fragment {
 				.findViewById(R.id.ocassionlistviewlayout);
 		mAisleBgProgressbar = (ProgressBar) mDataEntryFragmentView
 				.findViewById(R.id.aisle_bg_progressbar);
+		mSaysomethingClose = (ImageView) mDataEntryFragmentView
+				.findViewById(R.id.saysomethingclose);
 		mDataEntryRootLayout = (LinearLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_root_layout);
 		mOccasionListview = (ListView) mDataEntryFragmentView
@@ -215,11 +217,9 @@ public class DataEntryFragment extends Fragment {
 				.findViewById(R.id.categorylistviewlayout);
 		mMainHeadingRow = (LinearLayout) mDataEntryFragmentView
 				.findViewById(R.id.mainheadingrow);
-		mListDivider = getResources().getDrawable(R.drawable.list_divider_line);
 		mLookingForListviewLayout.setVisibility(View.GONE);
 		mCreateAisleBg = (ImageView) mDataEntryFragmentView
 				.findViewById(R.id.createaisel_bg);
-		//mCategoryListview.setDivider(mListDivider);
 		mDataEntryInviteFriendsLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_invite_friends_layout);
 		mHintTextForSaySomeThing = (TextView) mDataEntryFragmentView
@@ -383,6 +383,7 @@ public class DataEntryFragment extends Fragment {
 						}
 						mSaySomeThingEditParent.setVisibility(View.VISIBLE);
 						mSaySomethingAboutAisle.setVisibility(View.GONE);
+						mSaysomethingClose.setVisibility(View.GONE);
 						return true;
 					}
 				});
@@ -392,6 +393,7 @@ public class DataEntryFragment extends Fragment {
 			public void onClick(View v) {
 				mSaySomeThingEditParent.setVisibility(View.GONE);
 				mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+				mSaysomethingClose.setVisibility(View.VISIBLE);
 				mSaySomeThingEditParent.post(new Runnable() {
 
 					@Override
@@ -890,6 +892,13 @@ public class DataEntryFragment extends Fragment {
 				mOccasionText.setText("");
 			}
 		});
+		mSaysomethingClose.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mSaySomethingAboutAisle.setText("");
+				mHintTextForSaySomeThing.setText("");
+			}
+		});
 		return mDataEntryFragmentView;
 	}
 
@@ -930,6 +939,7 @@ public class DataEntryFragment extends Fragment {
 		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 		mSaySomeThingEditParent.setVisibility(View.VISIBLE);
 		mSaySomethingAboutAisle.setVisibility(View.GONE);
+		mSaysomethingClose.setVisibility(View.GONE);
 		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
 	}
 
@@ -986,6 +996,7 @@ public class DataEntryFragment extends Fragment {
 		mSaySomethingAboutAisle.setText(mPreviousSaySomething);
 		mSaySomeThingEditParent.setVisibility(View.VISIBLE);
 		mSaySomethingAboutAisle.setVisibility(View.GONE);
+		mSaysomethingClose.setVisibility(View.GONE);
 
 	}
 
@@ -2153,7 +2164,6 @@ public class DataEntryFragment extends Fragment {
 		@Override
 		protected void onPostExecute(Activity result) {
 			Log.e("cs", "9");
-			Log.e("Frag", mResizedImagePath);
 			mAisleBgProgressbar.setVisibility(View.GONE);
 			mCreateAisleBg.setVisibility(View.VISIBLE);
 			if (mAisleImageBitmap != null) {

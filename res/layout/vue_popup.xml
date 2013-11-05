@@ -30,7 +30,7 @@
 
     <View
         android:layout_width="fill_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
         android:background="@color/grey" />
 
     <LinearLayout
@@ -50,7 +50,7 @@
 
         <View
             android:id="@+id/networkdialogline"
-            android:layout_width="1dp"
+            android:layout_width="0.5dp"
             android:layout_height="fill_parent"
             android:background="@color/grey" />
 
