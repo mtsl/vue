@@ -173,7 +173,13 @@
                         android:src="@drawable/closebtn" />
                 </RelativeLayout>
             </LinearLayout>
-                 
+
+<ScrollView android:layout_width="wrap_content"
+         android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="100dp"
+                android:paddingBottom="70dp"
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:id="@+id/find_at_popup"
                 android:layout_width="200dip"
@@ -237,7 +243,7 @@
                         android:src="@drawable/closebtn" />
                 </RelativeLayout>
             </LinearLayout>
-
+</ScrollView>
             <LinearLayout
                 android:id="@+id/lookingforlistviewlayout"
                 android:layout_width="150dip"

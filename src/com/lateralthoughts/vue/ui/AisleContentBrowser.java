@@ -117,7 +117,7 @@ public class AisleContentBrowser extends ViewFlipper {
 
 	public void setScrollIndex(int scrollIndex) {
 		mScrollIndex = scrollIndex;
-
+		mCurrentIndex = scrollIndex;
 	}
 
 	public int getScrollIndex() {
@@ -134,11 +134,13 @@ public class AisleContentBrowser extends ViewFlipper {
  
 	public boolean onTouchEvent(MotionEvent event){
 	        final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
+	      
 	      /*  if(aisleContentBrowser.getCurrentView() == null) {
     		    return false;
 	        }*/
 	        boolean result = mDetector.onTouchEvent(event);
 	        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	        	  mCurrentIndex =aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
 	            mAnimationInProgress= false;
 	            mFirstX = (int) event.getX();
 	            mFirstY = (int)event.getY();
@@ -365,6 +367,8 @@ public class AisleContentBrowser extends ViewFlipper {
 				mClickListener.onAisleClicked(mAisleUniqueId,
 						mSpecialNeedsAdapter.getAisleItemsCount(),
 						mCurrentIndex);
+				 
+				Log.i("imageCurrenPosition", "imageCurrenPosition browser : "+mCurrentIndex);
 
 			}
 			if (detailImgClickListenr != null && null != mSpecialNeedsAdapter) {

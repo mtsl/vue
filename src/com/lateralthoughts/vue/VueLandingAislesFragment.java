@@ -332,6 +332,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			VueApplication.getInstance().setClickedWindowCount(count);
 			VueApplication.getInstance().setmAisleImgCurrentPos(
 					aisleImgCurrentPos);
+			Log.i("imageCurrenPosition", "imageCurrenPosition landing click: "+aisleImgCurrentPos);
 			startActivity(intent);
 		}
 
