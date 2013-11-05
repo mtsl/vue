@@ -88,7 +88,7 @@ public class DataEntryFragment extends Fragment {
 	private ViewPager mDataEntryAislesViewpager = null;
 	public static final int AISLE_IMAGE_MARGIN = 96;
 	public static final String LOOKING_FOR = "Looking";
-	public static final String OCCASION = " Occasion";
+	public static final String OCCASION = "Occasion";
 	public static final String CATEGORY = "Category";
 	public static final String FINDAT = "findat";
 	public static final String SAY_SOMETHING_ABOUT_AISLE = "SaysomethingAboutAisle";
