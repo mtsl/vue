@@ -84,7 +84,7 @@ public class DataEntryFragment extends Fragment {
 	private ImageView mFindAtIcon = null;
 	public ShareDialog mShare = null;
 	private float mScreenHeight = 0, mScreenWidth = 0;
-	private LinearLayout mFindAtPopup = null;
+	private LinearLayout mFindAtIconLayout = null;
 	private ViewPager mDataEntryAislesViewpager = null;
 	public static final int AISLE_IMAGE_MARGIN = 96;
 	public static final String LOOKING_FOR = "Looking";
@@ -118,6 +118,7 @@ public class DataEntryFragment extends Fragment {
 			mOtherSourceSelectedImageStore = null;
 	private static final int CATEGORY_POPUP_DELAY = 2000;
 	private boolean mIsEmptyAisle;
+	
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -173,8 +174,8 @@ public class DataEntryFragment extends Fragment {
 				.findViewById(R.id.for_text);
 		mFindAtText = (EditTextBackEvent) mDataEntryFragmentView
 				.findViewById(R.id.find_at_text);
-		mFindAtPopup = (LinearLayout) mDataEntryFragmentView
-				.findViewById(R.id.find_at_popup);
+		mFindAtIconLayout = (LinearLayout) mDataEntryFragmentView
+				.findViewById(R.id.findaticonlayout);
 		mDataEntryInviteFriendsCancelLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_invitefriends_cancellayout);
 		mDataEntryBottomBottomLayout = (RelativeLayout) mDataEntryFragmentView
@@ -418,7 +419,9 @@ public class DataEntryFragment extends Fragment {
 				mOccasionPopup.setVisibility(View.GONE);
 				mOccasionListviewLayout.setVisibility(View.GONE);
 				mCategoryPopup.setVisibility(View.GONE);
-				mFindAtPopup.setVisibility(View.GONE);
+				mFindatClose.setVisibility(View.GONE);
+				mFindAtIconLayout.setVisibility(View.GONE);
+				mFindAtText.setVisibility(View.GONE);
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
@@ -571,7 +574,9 @@ public class DataEntryFragment extends Fragment {
 						mSaySomethingAboutAisle.getWindowToken(), 0);
 				mInputMethodManager.hideSoftInputFromWindow(
 						mFindAtText.getWindowToken(), 0);
-				mFindAtPopup.setVisibility(View.GONE);
+				mFindatClose.setVisibility(View.GONE);
+				mFindAtIconLayout.setVisibility(View.GONE);
+				mFindAtText.setVisibility(View.GONE);				
 				mCategoryListview.setVisibility(View.GONE);
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mCategoryPopup.setVisibility(View.GONE);
@@ -596,7 +601,9 @@ public class DataEntryFragment extends Fragment {
 						mFindAtText.getWindowToken(), 0);
 				mInputMethodManager.hideSoftInputFromWindow(
 						mSaySomethingAboutAisle.getWindowToken(), 0);
-				mFindAtPopup.setVisibility(View.GONE);
+				mFindatClose.setVisibility(View.GONE);
+				mFindAtIconLayout.setVisibility(View.GONE);
+				mFindAtText.setVisibility(View.GONE);
 				mCategoryListview.setVisibility(View.GONE);
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mCategoryPopup.setVisibility(View.GONE);
@@ -621,7 +628,9 @@ public class DataEntryFragment extends Fragment {
 						mFindAtText.getWindowToken(), 0);
 				mInputMethodManager.hideSoftInputFromWindow(
 						mSaySomethingAboutAisle.getWindowToken(), 0);
-				mFindAtPopup.setVisibility(View.GONE);
+				mFindatClose.setVisibility(View.GONE);
+				mFindAtIconLayout.setVisibility(View.GONE);
+				mFindAtText.setVisibility(View.GONE);
 				mCategoryListview.setVisibility(View.GONE);
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mCategoryPopup.setVisibility(View.GONE);
@@ -650,7 +659,9 @@ public class DataEntryFragment extends Fragment {
 						mFindAtText.getWindowToken(), 0);
 				mInputMethodManager.hideSoftInputFromWindow(
 						mSaySomethingAboutAisle.getWindowToken(), 0);
-				mFindAtPopup.setVisibility(View.GONE);
+				mFindatClose.setVisibility(View.GONE);
+				mFindAtIconLayout.setVisibility(View.GONE);
+				mFindAtText.setVisibility(View.GONE);
 				if (Utils.getDataentryAddImageAisleFlag(getActivity())
 						|| Utils.getDataentryEditAisleFlag(getActivity())) {
 					showAlertForEditPermission(CATEGORY);
@@ -725,7 +736,9 @@ public class DataEntryFragment extends Fragment {
 		mFindAtIcon.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mFindAtPopup.setVisibility(View.VISIBLE);
+				mFindatClose.setVisibility(View.VISIBLE);
+				mFindAtIconLayout.setVisibility(View.VISIBLE);
+				mFindAtText.setVisibility(View.VISIBLE);
 				mLookingForPopup.setVisibility(View.GONE);
 				mLookingForListviewLayout.setVisibility(View.GONE);
 				mOccasionPopup.setVisibility(View.GONE);
@@ -754,7 +767,9 @@ public class DataEntryFragment extends Fragment {
 						mFindAtText.getWindowToken(), 0);
 				mPreviousFindAtText = mFindAtText.getText().toString();
 				mOtherSourceSelectedImageDetailsUrl = mPreviousFindAtText;
-				mFindAtPopup.setVisibility(View.GONE);
+				mFindatClose.setVisibility(View.GONE);
+				mFindAtIconLayout.setVisibility(View.GONE);
+				mFindAtText.setVisibility(View.GONE);
 				return true;
 			};
 		});
@@ -933,7 +948,9 @@ public class DataEntryFragment extends Fragment {
 		mOccasionPopup.setVisibility(View.GONE);
 		mOccasionListviewLayout.setVisibility(View.GONE);
 		mCategoryPopup.setVisibility(View.GONE);
-		mFindAtPopup.setVisibility(View.GONE);
+		mFindatClose.setVisibility(View.GONE);
+		mFindAtIconLayout.setVisibility(View.GONE);
+		mFindAtText.setVisibility(View.GONE);
 		mCategoryListviewLayout.setVisibility(View.GONE);
 		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
 		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
@@ -977,7 +994,9 @@ public class DataEntryFragment extends Fragment {
 
 	public void findAtInterceptListnerFunctionality() {
 		mFindAtText.setText(mPreviousFindAtText);
-		mFindAtPopup.setVisibility(View.GONE);
+		mFindatClose.setVisibility(View.GONE);
+		mFindAtIconLayout.setVisibility(View.GONE);
+		mFindAtText.setVisibility(View.GONE);
 		mInputMethodManager.hideSoftInputFromWindow(
 				mSaySomethingAboutAisle.getWindowToken(), 0);
 		mInputMethodManager.hideSoftInputFromWindow(

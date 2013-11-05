@@ -26,6 +26,7 @@
                 android:id="@+id/createaisel_bg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/image_bg"
                 android:layout_centerInParent="true"
                 android:adjustViewBounds="true" />
 
@@ -173,28 +174,35 @@
                         android:src="@drawable/closebtn" />
                 </RelativeLayout>
             </LinearLayout>
-
-<ScrollView android:layout_width="wrap_content"
-         android:layout_alignParentBottom="true"
+            
+               <com.lateralthoughts.vue.utils.EditTextBackEvent
+                        android:id="@+id/find_at_text"
+                            android:layout_width="200dip"
+                android:layout_height="92dip"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginBottom="100dp"
-                android:paddingBottom="70dp"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:id="@+id/find_at_popup"
-                android:layout_width="200dip"
-                android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+                
                 android:layout_marginBottom="48dip"
                 android:layout_marginRight="8dip"
-                android:background="@drawable/dataentry_title_bg"
-                android:orientation="vertical"
-                android:visibility="gone" >
-
+                android:background="@drawable/findat_box_bg"
+                        android:paddingTop="48dip"
+                        android:paddingRight="36dp"
+                        android:paddingLeft="16dp"
+                        android:paddingBottom="16dip"
+                        android:visibility="gone"
+                        android:hint="Find at"
+                        android:singleLine="true"
+                        android:textColor="@color/dataentrytextcolor"
+                        android:textSize="15sp" />
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                          android:layout_alignParentBottom="true"
+              android:layout_marginLeft="8dip"
+                android:layout_marginBottom="102dip"
+                android:id="@+id/findaticonlayout"
+                android:layout_alignLeft="@+id/find_at_text"
+                    android:visibility="gone"
                     android:orientation="horizontal" >
 
                     <ImageView
@@ -213,37 +221,18 @@
                         android:textColor="@android:color/darker_gray"
                         android:textSize="18sp" />
                 </LinearLayout>
-
-                <RelativeLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dip"
-                    android:background="@color/white" >
-
-                    <com.lateralthoughts.vue.utils.EditTextBackEvent
-                        android:id="@+id/find_at_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="4dip"
-                        
-                        android:layout_marginRight="32dip"
-                        android:hint="Find at"
-                        android:singleLine="true"
-                        android:textColor="@color/dataentrytextcolor"
-                        android:textSize="15sp" />
-
-                    <ImageView
+                <ImageView
                         android:id="@+id/findatclose"
                         android:layout_width="24dip"
+                          android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="66dip"
+                android:layout_marginRight="20dip"
+                android:visibility="gone"
                         android:layout_height="24dip"
-                        android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="4dip"
                         android:src="@drawable/closebtn" />
-                </RelativeLayout>
-            </LinearLayout>
-</ScrollView>
+
             <LinearLayout
                 android:id="@+id/lookingforlistviewlayout"
                 android:layout_width="150dip"
@@ -494,15 +483,16 @@
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:visibility="gone" />
-                 <ImageView
-                        android:id="@+id/saysomethingclose"
-                        android:layout_width="24dip"
-                        android:layout_height="24dip"
-                        android:layout_alignParentRight="true"
-                      android:layout_marginRight="88dip"
-                      android:visibility="gone"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/closebtn" />
+
+                <ImageView
+                    android:id="@+id/saysomethingclose"
+                    android:layout_width="24dip"
+                    android:layout_height="24dip"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="88dip"
+                    android:src="@drawable/closebtn"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/dataentry_bottom_right_layout"
