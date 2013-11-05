@@ -109,6 +109,9 @@ public class AisleWindowContent {
 		// among all
 
 		mWindowSmallestHeight = /* 34 */0;
+		if(mAisleImagesList == null) {
+		  return true;
+		}
 		for (int i = 0; i < mAisleImagesList.size(); i++) {
 			imageDetails = mAisleImagesList.get(i);
 			if (imageDetails.mAvailableHeight < mWindowSmallestHeight

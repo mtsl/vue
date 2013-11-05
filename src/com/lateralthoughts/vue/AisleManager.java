@@ -365,10 +365,6 @@ public class AisleManager {
 		} else {
 			url = UrlConstants.UPDATE_BOOKMARK_RESTURL + "/";
 		}
-		final ArrayList<AisleWindowContent> windowList = DataBaseManager
-				.getInstance(VueApplication.getInstance()).getAisleByAisleId(
-						Long.toString(aisleBookmark.getAisleId()));
-
 		if (VueConnectivityManager.isNetworkConnected(VueApplication
 				.getInstance())) {
 			VueUser storedVueUser = null;
@@ -383,45 +379,59 @@ public class AisleManager {
 			String bookmarkAisleAsString = mapper
 					.writeValueAsString(aisleBookmark);
 
-			Response.Listener listener = new Response.Listener<String>() {
+      Response.Listener listener = new Response.Listener<String>() {
 
-				@Override
-				public void onResponse(String jsonArray) {
-					Log.i("bookmark response", "bookmark response: SURUSURU "
-							+ jsonArray);
-					if (jsonArray != null) {
-						try {
-							AisleBookmark createdAisleBookmark = (new ObjectMapper())
-									.readValue(jsonArray, AisleBookmark.class);
-							Log.i("bookmark response", "bookmark  value: "
-									+ createdAisleBookmark.getBookmarked());
-							isDirty = false;
-							Editor editor = mSharedPreferencesObj.edit();
-							editor.putBoolean(VueConstants.IS_AISLE_DIRTY,
-									false);
-							editor.commit();
-							updateBookmartToDb(windowList,
-									createdAisleBookmark, isDirty);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
+        @Override
+        public void onResponse(String jsonArray) {
+          if (jsonArray != null) {
+            try {
+              AisleBookmark createdAisleBookmark = (new ObjectMapper())
+                  .readValue(jsonArray, AisleBookmark.class);
+              isDirty = false;
+              Editor editor = mSharedPreferencesObj.edit();
+              editor.putBoolean(VueConstants.IS_AISLE_DIRTY, false);
+              editor.commit();
+              ArrayList<AisleWindowContent> windowList;
+              if(aisleBookmark.getBookmarked()) {
+                windowList = DataBaseManager
+                    .getInstance(VueApplication.getInstance()).getAisleByAisleId(
+                            Long.toString(aisleBookmark.getAisleId()));
+              } else {
+                windowList = DataBaseManager
+                    .getInstance(VueApplication.getInstance()).getAisleByAisleIdFromBookmarks(
+                            Long.toString(aisleBookmark.getAisleId()));
+              }
+              updateBookmartToDb(windowList, createdAisleBookmark, isDirty);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+        }
 
-			};
+      };
 
-			Response.ErrorListener errorListener = new ErrorListener() {
+      Response.ErrorListener errorListener = new ErrorListener() {
 
-				@Override
-				public void onErrorResponse(VolleyError error) {
-					isDirty = true;
-					Editor editor = mSharedPreferencesObj.edit();
-					editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
-					editor.commit();
-					updateBookmartToDb(windowList, aisleBookmark, isDirty);
-				}
+        @Override
+        public void onErrorResponse(VolleyError error) {
+          isDirty = true;
+          Editor editor = mSharedPreferencesObj.edit();
+          editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
+          editor.commit();
+          ArrayList<AisleWindowContent> windowList;
+          if(aisleBookmark.getBookmarked()) {
+            windowList = DataBaseManager
+                .getInstance(VueApplication.getInstance()).getAisleByAisleId(
+                        Long.toString(aisleBookmark.getAisleId()));
+          } else {
+            windowList = DataBaseManager
+                .getInstance(VueApplication.getInstance()).getAisleByAisleIdFromBookmarks(
+                        Long.toString(aisleBookmark.getAisleId()));
+          }
+          updateBookmartToDb(windowList, aisleBookmark, isDirty);
+        }
 
-			};
+      };
 			BookmarkPutRequest request = new BookmarkPutRequest(
 					bookmarkAisleAsString, listener, errorListener, url
 							+ storedVueUser.getId());
@@ -431,6 +441,16 @@ public class AisleManager {
 			Editor editor = mSharedPreferencesObj.edit();
 			editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
 			editor.commit();
+			ArrayList<AisleWindowContent> windowList;
+	        if(aisleBookmark.getBookmarked()) {
+	          windowList = DataBaseManager
+	              .getInstance(VueApplication.getInstance()).getAisleByAisleId(
+	                      Long.toString(aisleBookmark.getAisleId()));
+	        } else {
+	          windowList = DataBaseManager
+	              .getInstance(VueApplication.getInstance()).getAisleByAisleIdFromBookmarks(
+	                      Long.toString(aisleBookmark.getAisleId()));
+	        }
 			updateBookmartToDb(windowList, aisleBookmark, isDirty);
 		}
 
@@ -470,16 +490,7 @@ public class AisleManager {
 		} else {
 			url = UrlConstants.UPDATE_RATING_RESTURL + "/";
 		}
-		Log.e("likecountissue", "likecountissue: jsonArray: imageRatingId: "
-				+ imageRating.getId());
-		System.out.println("ratingToUpdate.getId() " + imageRating.getId());
-		System.out.println("ratingToUpdate.getAisleId() "
-				+ imageRating.getAisleId());
-		System.out.println("ratingToUpdate.getImageId() "
-				+ imageRating.getImageId());
-		System.out.println("ratingToUpdate.getLiked() "
-				+ imageRating.getLiked());
-		Log.e("likecountissue", "likecountissue: jsonArray: URL TO HIT: " + url);
+	
 		if (VueConnectivityManager.isNetworkConnected(VueApplication
 				.getInstance())) {
 			VueUser storedVueUser = null;
@@ -497,8 +508,6 @@ public class AisleManager {
 
 				@Override
 				public void onResponse(String jsonArray) {
-					Log.i("likecountissue", "likecountissue: jsonArray: "
-							+ jsonArray);
 					if (jsonArray != null) {
 						try {
 							ImageRating imgRating = (new ObjectMapper())
@@ -542,9 +551,6 @@ public class AisleManager {
 
 	private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
 			boolean isDirty) {
-		Log.i("likecountissue",
-				"likecountissue: imgRating.getId(): updateImageRatingToDb"
-						+ imgRating.getId());
 		DataBaseManager.getInstance(VueApplication.getInstance())
 				.addLikeOrDisLike((imgRating.getLiked()) ? 1 : 0, likeCount,
 						imgRating.getId(),

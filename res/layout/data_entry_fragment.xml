@@ -173,7 +173,7 @@
                         android:src="@drawable/closebtn" />
                 </RelativeLayout>
             </LinearLayout>
-
+                 
             <LinearLayout
                 android:id="@+id/find_at_popup"
                 android:layout_width="200dip"
@@ -220,6 +220,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="4dip"
+                        
                         android:layout_marginRight="32dip"
                         android:hint="Find at"
                         android:singleLine="true"
@@ -479,14 +480,23 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="4dip"
-                    android:layout_marginRight="88dip"
+                    android:layout_marginRight="112dip"
                     android:cursorVisible="false"
                     android:focusable="true"
                     android:hint="Say something about the aisle"
                     android:singleLine="true"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="15sp"
                     android:visibility="gone" />
+                 <ImageView
+                        android:id="@+id/saysomethingclose"
+                        android:layout_width="24dip"
+                        android:layout_height="24dip"
+                        android:layout_alignParentRight="true"
+                      android:layout_marginRight="88dip"
+                      android:visibility="gone"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/closebtn" />
 
                 <LinearLayout
                     android:id="@+id/dataentry_bottom_right_layout"
