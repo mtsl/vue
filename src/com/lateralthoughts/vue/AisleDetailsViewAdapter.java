@@ -284,6 +284,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			}, mWaitTime);
 
 		}
+		Log.i("imageCurrenPosition", "imageCurrenPosition adapter: "+mCurrentDispImageIndex);
 		// mswipeListner.setFindAtText(getItem(mCurrentAislePosition).getImageList().get(0).mImageUrl);
 	}
 
