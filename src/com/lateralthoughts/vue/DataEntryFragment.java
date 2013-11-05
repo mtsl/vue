@@ -1667,6 +1667,7 @@ public class DataEntryFragment extends Fragment {
 							(int) mAisleImageBitmap.getHeight());
 					lp.addRule(RelativeLayout.CENTER_IN_PARENT,
 							RelativeLayout.TRUE);
+					lp.setMargins(8, 8, 8, 8);
 					mTouchToChangeImage.setLayoutParams(lp);
 					mCreateAisleBg.setImageBitmap(mAisleImageBitmap);
 				} else {
@@ -2190,6 +2191,7 @@ public class DataEntryFragment extends Fragment {
 						(int) mAisleImageBitmap.getWidth(),
 						(int) mAisleImageBitmap.getHeight());
 				lp.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+				lp.setMargins(8, 8, 8, 8);
 				mTouchToChangeImage.setLayoutParams(lp);
 				mCreateAisleBg.setImageBitmap(mAisleImageBitmap);
 			} else {
