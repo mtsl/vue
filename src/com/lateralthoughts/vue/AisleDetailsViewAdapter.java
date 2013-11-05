@@ -11,31 +11,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.v4.view.ViewPager.LayoutParams;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,19 +45,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
-import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
-import com.lateralthoughts.vue.domain.AisleComment;
 import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
@@ -110,7 +93,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	private int mBestHeight;
 	private int mTopBottomMargin = 24;
 	ViewHolder mViewHolder;
-	boolean mImageRefresh = true;
 	private boolean mSetPosition;
 	private static final int mWaitTime = 1000;
 	VueTrendingAislesDataModel mVueTrendingAislesDataModel;
@@ -205,7 +187,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 				mCommentsMapList.put(i, getItem(mCurrentAislePosition)
 						.getImageList().get(i).mCommentsList);
-				// TODO: get all the comments from the db and update the comment
 			}
 
 			mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
@@ -489,17 +470,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					mViewHolder.aisleDescription
 							.setText(getItem(mCurrentAislePosition)
 									.getAisleContext().mDescription);
-					Log.i("descrption issue", "descrption issue visible");
-					Log.i("descrption issue",
-							"descrption issue desc value: "
-									+ getItem(mCurrentAislePosition)
-											.getAisleContext().mDescription);
 				} else {
-					Log.i("descrption issue", "descrption issue  gone");
-					Log.i("descrption issue",
-							"descrption issue  value: "
-									+ getItem(mCurrentAislePosition)
-											.getAisleContext().mDescription);
 					mViewHolder.descriptionlay.setVisibility(View.GONE);
 				}
 
@@ -538,20 +509,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						.getmAisleImgCurrentPos();
 				// mWindowContentTemp = mViewHolder.mWindowContent;
 				mViewHolder.tag = TAG;
-				Log.i("imagedispissue", "imagedispissue0");
-				if (mImageRefresh) {
-					/*
-					 * mViewHolder.uniqueContentId =
-					 * AisleWindowContent.EMPTY_AISLE_CONTENT_ID; mImageRefresh
-					 * = false;
-					 */
-					Log.i("imagedispissue", "imagedispissue1");
 					mViewLoader.getAisleContentIntoView(mViewHolder,
 							scrollIndex, position,
 							new DetailImageClickListener(),
 							getItem(mCurrentAislePosition), mSetPosition);
 					mSetPosition = false;
-				}
+				 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -724,7 +687,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						isUserAisle);
 				imageUrlList.add(obj);
 			}
-			mShare.share(
+			mShare.share( 
 					imageUrlList,
 					getItem(mCurrentAislePosition).getAisleContext().mOccasion,
 					(getItem(mCurrentAislePosition).getAisleContext().mFirstName
@@ -796,12 +759,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 								+ Long.parseLong(getItem(mCurrentAislePosition)
 										.getImageList().get(
 												mCurrentDispImageIndex).mOwnerUserId));
-				/*
-				 * @SuppressWarnings("unchecked") ArrayList<String>
-				 * tempCommentList = (ArrayList<String>) mCommentsMapList
-				 * .get(position); if (tempCommentList != null) { //mShowingList
-				 * = tempCommentList; }
-				 */
 				mLikes = getItem(mCurrentAislePosition).getImageList().get(
 						position).mLikesCount;
 				ArrayList<ImageComments> imgComments = getItem(
@@ -1082,7 +1039,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.setBestLargestHeightForWindow(bestHeight);
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.dataObserver();
-		mImageRefresh = true;
+		 
 		if (mViewHolder != null) {
 			//mswipeListner.onResetAdapter();
 			setAisleBrowserObjectsNull();
@@ -1100,13 +1057,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	}
 
 	public ArrayList<AisleImageDetails> getImageList() {
-		// ArrayList<String> imageList = new ArrayList<String>();
-		/*
-		 * for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
-		 * .size(); i++) { imageList
-		 * .add(getItem(mCurrentAislePosition).getImageList
-		 * ().get(i).mCustomImageUrl); }
-		 */
 		return getItem(mCurrentAislePosition).getImageList();
 	}
 
@@ -1466,25 +1416,4 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			e.printStackTrace();
 		}
 	}
-
-	/*
-	 * public AisleImageDetails prepareCustomUrl(AisleImageDetails imageDetails,
-	 * int mWindowSmallestHeight) { String IMAGE_RES_SPEC_REGEX = ".jpg"; String
-	 * mImageFormatSpecifier = "._SY%d.jpg"; StringBuilder sb = new
-	 * StringBuilder(); String urlReusablePart; String customFittedSizePart;
-	 * String regularUrl = imageDetails.mImageUrl; int index = -1; index =
-	 * regularUrl.indexOf(IMAGE_RES_SPEC_REGEX); if (-1 != index) { // we have a
-	 * match urlReusablePart = regularUrl.split(IMAGE_RES_SPEC_REGEX)[0];
-	 * sb.append(urlReusablePart); customFittedSizePart =
-	 * String.format(mImageFormatSpecifier, mWindowSmallestHeight);
-	 * sb.append(customFittedSizePart); imageDetails.mCustomImageUrl =
-	 * sb.toString(); } else { imageDetails.mCustomImageUrl = regularUrl; }
-	 * imageDetails.mCustomImageUrl = Utils.addImageInfo(
-	 * imageDetails.mCustomImageUrl, imageDetails.mAvailableWidth,
-	 * imageDetails.mAvailableHeight);
-	 * 
-	 * return imageDetails;
-	 * 
-	 * }
-	 */
 }

@@ -757,6 +757,16 @@ public class VueLandingPageActivity extends BaseActivity {
 			Log.i("isAlredeDownloaded", "isAlredeDownloaded: " + isDowoaded);
 			return isDowoaded;
 		}
+
+		@Override
+		public void clearBrowsers() {
+			if (mFragment == null) {
+				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+			}
+			mFragment.clearBitmaps();
+		}
+	 
 	}
 
 	public void showDiscardOtherAppImageDialog() {
@@ -926,4 +936,6 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		return otherSourcesImageDetailsList;
 	}
+
+	 
 }

@@ -1,5 +1,6 @@
 package com.lateralthoughts.vue.connectivity;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -284,7 +285,7 @@ public class NetworkHandler {
         mTrendingAislesParser, loadMore, screenName);
   }
 
-  public void requestAislesByUser(boolean fromServer, NotifyProgress progress,
+  public void requestAislesByUser(boolean fromServer,final NotifyProgress progress,
       final String screenName) {
 
     mOffset = 0;
@@ -298,7 +299,7 @@ public class NetworkHandler {
             VueApplication.getInstance()).getAislesByUserId(userId);
         Log.i("meoptions", "meoptions: MyAisle list size: " + windowList.size());
         if (windowList != null && windowList.size() > 0) {
-          clearList();
+          clearList(progress);
           for (int i = 0; i < windowList.size(); i++) {
             VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance()).addItemToList(
@@ -351,7 +352,7 @@ public class NetworkHandler {
                       Log.i("myailsedebug",
                           "myailsedebug: recieved my runonuithread:  ");
                       if (aislesList != null && aislesList.size() > 0) {
-                        clearList();
+                        clearList(progress);
                         Log.i("myailsedebug",
                             "myailsedebug: recieved my runonuithread: if ");
                         for (int i = 0; i < aislesList.size(); i++) {
@@ -650,7 +651,10 @@ public class NetworkHandler {
 		VueApplication.getInstance().getRequestQueue().add(vueRequest);
 	}
 
-	private void clearList() {
+	private void clearList(NotifyProgress progress) {
+		if (progress != null) {
+			progress.clearBrowsers();
+		}
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.clearAisles();
 		AisleWindowContentFactory.getInstance(VueApplication.getInstance())
