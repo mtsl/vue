@@ -206,6 +206,8 @@ public class VueTrendingAislesDataModel {
 		public void handleMessage(android.os.Message msg) {
 			@SuppressWarnings("unchecked")
 			ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
+			Log.e("DataBaseManager",
+                "SURU updated aisle Order: DATABASE LODING 2 aisleContentArray.size(): " + aisleContentArray.size());
 			isFromDb = true;
 			Log.i("arrayList", "arrayList from db sized1 uirefresh: "+aisleContentArray.size());
 			for (AisleWindowContent content : aisleContentArray) {
@@ -218,13 +220,18 @@ public class VueTrendingAislesDataModel {
 			for (IAisleDataObserver observer : mAisleDataObserver) {
 				observer.onAisleDataUpdated(mAisleContentList.size());
 			}
+			Log.e("DataBaseManager",
+                "SURU updated aisle Order: DATABASE LODING 3 aisleContentArray.size(): " + aisleContentArray.size());
 			runTask(new Runnable() {
 				public void run() {
+				  Log.e("DataBaseManager",
+		                "SURU updated aisle Order: DATABASE LODING 4 aisleContentArray.size(): ");
 					loadOnRequest = false;
 					Log.i("TrendingDataModel", "loadOnRequest from db:  "+loadOnRequest);
 					ArrayList<AisleWindowContent> aislesList = mDbManager
 							.getAislesFromDB(null, false);
-					Log.i("arrayList", "arrayList from db sized1: "+aislesList.size());
+					 Log.e("DataBaseManager",
+	                        "SURU updated aisle Order: DATABASE LODING 5 aisleContentArray.size(): " + aislesList.size());
 					if (aislesList.size() == 0) {
 						loadOnRequest = true;
 					  isFromDb = false;

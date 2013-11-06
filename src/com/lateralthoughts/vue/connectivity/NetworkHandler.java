@@ -148,14 +148,10 @@ public class NetworkHandler {
 					mTrendingAislesParser, loadMore, screenname);
 
 		} else {
-			Log.e("DataBaseManager",
-					"SURU updated aisle Order: DATABASE LODING 1");
 			DataBaseManager.getInstance(VueApplication.getInstance())
 					.resetDbParams();
 			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
 					.getAislesFromDB(null, false);
-			Log.e("DataBaseManager",
-					"SURU updated aisle Order: DATABASE LODING 1 size: "+aisleContentArray.size());
 			if (aisleContentArray.size() == 0) {
 				VueTrendingAislesDataModel.getInstance(VueApplication
 						.getInstance()).isFromDb = false;
@@ -166,7 +162,6 @@ public class NetworkHandler {
 			msg.obj = aisleContentArray;
 			VueTrendingAislesDataModel.getInstance(mContext).mHandler
 					.sendMessage(msg);
-
 		}
 
 

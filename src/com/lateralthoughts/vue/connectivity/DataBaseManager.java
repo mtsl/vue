@@ -66,6 +66,7 @@ public class DataBaseManager {
   private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
   private static DataBaseManager manager;
   private HashMap<String, Integer> aislesOrderMap = new HashMap<String, Integer>();
+  private HashMap<String, Integer> bookmarkedAislesOrderMap = new HashMap<String, Integer>();
  // private HashMap<String, HashMap<String, Integer>> imagesOrderMap = new HashMap<String, HashMap<String,Integer>>();
 
 
@@ -151,7 +152,7 @@ public class DataBaseManager {
     if(contentList.size() == 0) {
       return;
     }
-    
+   
     if(offsetValue == 0 && whichScreen == TRENDING && !isBookmarkedAisle) {
       Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == TRENDING, offsetValue == " + offsetValue);
       aislesOrderMap.clear();
@@ -164,10 +165,14 @@ public class DataBaseManager {
           + aislesDeleted + ", imagesDeleted: " + imagesDeleted
           + ", commentsDeleted: " + commentsDeleted);
       //imagesOrderMap.clear();
+    } else if(isBookmarkedAisle) {
+      bookmarkedAislesOrderMap.clear();
+    } else if (whichScreen == MY_AISLES || whichScreen == AISLE_CREATED) {
+      aislesOrderMap.clear();
     }
     
     Cursor aisleIdCursor = context.getContentResolver().query(
-        VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id}, null,
+        VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id, VueConstants.ID}, null,
         null, null);
     Cursor imageIdCursor = context.getContentResolver().query(
         VueConstants.IMAGES_CONTENT_URI, new String[] {VueConstants.IMAGE_ID},
@@ -181,8 +186,14 @@ public class DataBaseManager {
     ArrayList<Long> commentsImgId = new ArrayList<Long>();
     if (aisleIdCursor.moveToFirst()) {
       do {
-        aisleIds.add(aisleIdCursor.getString(aisleIdCursor
-            .getColumnIndex(VueConstants.AISLE_Id)));
+        String aisleId = aisleIdCursor.getString(aisleIdCursor
+            .getColumnIndex(VueConstants.AISLE_Id));
+        aisleIds.add(aisleId);
+        if (whichScreen == MY_AISLES || whichScreen == AISLE_CREATED) {
+          String order = aisleIdCursor.getString(aisleIdCursor
+              .getColumnIndex(VueConstants.ID));
+          aislesOrderMap.put(aisleId, Integer.parseInt(order));
+        }
       } while (aisleIdCursor.moveToNext());
     }
     aisleIdCursor.close();
@@ -210,8 +221,9 @@ public class DataBaseManager {
        aislesOrderMap.put(info.mAisleId, THOUSAND); 
       } else if(whichScreen == TRENDING && !aislesOrderMap.isEmpty()) {
         aislesOrderMap.put(info.mAisleId, getMaxAisleValue(aislesOrderMap) + 1);
-      } else if(whichScreen == MY_AISLES && !aisleIds.contains(info.mAisleId)) {
-        aislesOrderMap.put(info.mAisleId, getMaxAisleValue(aislesOrderMap) + 1);
+      } else if(whichScreen == MY_AISLES && !aislesOrderMap.containsKey(info.mAisleId)) {
+        int newOrder = getMaxAisleValue(aislesOrderMap) + 1;
+        aislesOrderMap.put(info.mAisleId, newOrder);
       } else if(whichScreen == AISLE_CREATED) {
         aislesOrderMap.put(info.mAisleId, getMinAisleValue(aislesOrderMap) - 1);
       } else if(isBookmarkedAisle) {
@@ -219,7 +231,7 @@ public class DataBaseManager {
         Cursor cur = mContext.getContentResolver().query(VueConstants.MY_BOOKMARKED_AISLES_URI, null, null, null, null);
         int count = cur.getCount() + 1;
         cur.close();
-        aislesOrderMap.put(info.mAisleId, count);
+        bookmarkedAislesOrderMap.put(info.mAisleId, count);
       }
       ArrayList<AisleImageDetails> imageItemsArray = content.getImageList();
       ContentValues values = new ContentValues();
@@ -229,36 +241,51 @@ public class DataBaseManager {
       values.put(VueConstants.LOOKING_FOR, info.mLookingForItem);
       values.put(VueConstants.OCCASION, info.mOccasion);
       values.put(VueConstants.USER_ID, info.mUserId);
-      values.put(VueConstants.AISLE_Id, info.mAisleId);
       values.put(VueConstants.BOOKMARK_COUNT, info.mBookmarkCount);
       values.put(VueConstants.CATEGORY, info.mCategory);
       values.put(VueConstants.AISLE_DESCRIPTION, info.mDescription);
       values.put(VueConstants.DELETE_FLAG, 0);
-      int order = aislesOrderMap.get(info.mAisleId);
-      values.put(VueConstants.ID, String.format(FORMATE, order));
+     
       if (aisleIds.contains(info.mAisleId)) {
         if(!isBookmarkedAisle) {
+          int order = aislesOrderMap.get(info.mAisleId);
+          values.put(VueConstants.ID, String.format(FORMATE, order));
           context.getContentResolver().update(VueConstants.CONTENT_URI, values,
               VueConstants.AISLE_Id + "=?", new String[] {info.mAisleId});
         } else {
-          Log.i("bookmark response", "bookmark response: SURUSURU windowList.size()sdsdsd 19:");
+          int order = bookmarkedAislesOrderMap.get(info.mAisleId);
+          values.put(VueConstants.ID, String.format(FORMATE, order));
         int rows = context.getContentResolver().update(VueConstants.MY_BOOKMARKED_AISLES_URI, values,
             VueConstants.AISLE_Id + "=?", new String[] {info.mAisleId});
-        if(rows == 0) {
-          Uri uri = context.getContentResolver().insert(VueConstants.MY_BOOKMARKED_AISLES_URI, values);
-        }
         Log.e("DataBaseManage", "bookmark response: SURUSURU rows updated:" + rows);
+        if(rows == 0) {
+          order = bookmarkedAislesOrderMap.get(info.mAisleId);
+          values.put(VueConstants.ID, String.format(FORMATE, order));
+          values.put(VueConstants.AISLE_Id, info.mAisleId);
+          Uri uri = context.getContentResolver().insert(VueConstants.MY_BOOKMARKED_AISLES_URI, values);
+          Log.e("DataBaseManage", "bookmark response: SURUSURU new ROW: !isBookmarkedAisle" + uri);
+        }
+       
         }
       } else {
         if(!isBookmarkedAisle) {
+          int order = aislesOrderMap.get(info.mAisleId);
+          values.put(VueConstants.ID, String.format(FORMATE, order));
+          values.put(VueConstants.AISLE_Id, info.mAisleId);
           context.getContentResolver().insert(VueConstants.CONTENT_URI, values);
         } else {
-          Log.i("bookmark response", "bookmark response: SURUSURU windowList.size()sdsdsd 20:");
-          Log.e("DataBaseManage", "isBookmarkedAisle: inn 3");
-          Uri uri = context.getContentResolver().insert(VueConstants.MY_BOOKMARKED_AISLES_URI, values);
-          Log.e("DataBaseManage", "bookmark response: SURUSURU 3 new ROW: " + uri);
+          int order = bookmarkedAislesOrderMap.get(info.mAisleId);
+          values.put(VueConstants.ID, String.format(FORMATE, order));
+          int rows = context.getContentResolver().update(VueConstants.MY_BOOKMARKED_AISLES_URI, values,
+              VueConstants.AISLE_Id + "=?", new String[] {info.mAisleId});
+          if(rows == 0) {
+            order = bookmarkedAislesOrderMap.get(info.mAisleId);
+            values.put(VueConstants.ID, String.format(FORMATE, order));
+            values.put(VueConstants.AISLE_Id, info.mAisleId);
+            Uri uri = context.getContentResolver().insert(VueConstants.MY_BOOKMARKED_AISLES_URI, values);
+            Log.e("DataBaseManage", "bookmark response: SURUSURU 3 new ROW: " + uri);
+          }
         }
-        
       }
       if (imageItemsArray != null) {
         for (AisleImageDetails imageDetails : imageItemsArray) {
@@ -1343,7 +1370,6 @@ public class DataBaseManager {
      Uri uri = Uri.parse( VueConstants.CONTENT_URI + "/" + key);
      int rowsUpdated = mContext.getContentResolver().update(uri, values, null, null);
    }
-   
  }
  
   /**
