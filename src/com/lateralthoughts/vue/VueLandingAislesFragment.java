@@ -570,7 +570,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			clearBrowser(aisleBrowser);
 
 		}
-
 	}
 
 	private void clearBrowser(AisleContentBrowser aisleContentBrowser) {
@@ -578,7 +577,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			ScaledImageViewFactory mViewFactory = ScaledImageViewFactory
 					.getInstance(mContext);
 			for (int i = 0; i < aisleContentBrowser.getChildCount(); i++) {
-				try {
+		/*		try {
 					ImageView image = (ScaleImageView) aisleContentBrowser
 							.getChildAt(i);
 					Bitmap bitmap = ((BitmapDrawable) image.getDrawable())
@@ -588,12 +587,12 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					bitmap = null;
 				} catch (Exception e) {
 
-				}
+				}*/
 
 				mViewFactory
 						.returnUsedImageView((ScaleImageView) aisleContentBrowser
 								.getChildAt(i));
-				Log.i("clearlist", "clearlist clear the browser");
+				 
 			}
 		}
 		if (aisleContentBrowser != null) {

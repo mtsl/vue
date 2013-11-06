@@ -445,7 +445,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId
 							|| Long.parseLong(getItem(mCurrentAislePosition)
 									.getAisleContext().mUserId) == mUserId) {
-						mViewHolder.editImage.setVisibility(View.VISIBLE);
+						//TODO: make it visible when update ailse function is ready
+						mViewHolder.editImage.setVisibility(View.GONE);
 						mViewHolder.editImage
 								.setOnClickListener(new OnClickListener() {
 

@@ -686,6 +686,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		mFragment.clearBitmaps();
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
+			Log.i("dbloading issue", "dbloading issue: showPreviousScreen back press");
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 
@@ -693,7 +694,7 @@ public class VueLandingPageActivity extends BaseActivity {
 					.getInstance(VueApplication.getInstance()).isFromDb = true;
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 					.clearContent();
-			Log.i("formdbtrending", "formdbtrending: showPreviousScreen");
+			
 			if (!fromServer)
 				DataBaseManager.getInstance(VueApplication.getInstance())
 						.resetDbParams();

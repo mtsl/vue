@@ -342,6 +342,7 @@ public class NetworkHandler {
               aislesList = null;
               String userId = getUserId();
               aislesList = getAislesByUser(userId);
+              Log.i("aislesList myaisles", "aislesList myaisles: "+aislesList.size());
             } catch (Exception e) {
               e.printStackTrace();
             }
@@ -352,12 +353,8 @@ public class NetworkHandler {
                     public void run() {
                       VueTrendingAislesDataModel.getInstance(VueApplication
                           .getInstance()).loadOnRequest = false;
-                      Log.i("myailsedebug",
-                          "myailsedebug: recieved my runonuithread:  ");
                       if (aislesList != null && aislesList.size() > 0) {
                         clearList(progress);
-                        Log.i("myailsedebug",
-                            "myailsedebug: recieved my runonuithread: if ");
                         for (int i = 0; i < aislesList.size(); i++) {
                           VueTrendingAislesDataModel.getInstance(
                               VueApplication.getInstance()).addItemToList(
@@ -371,7 +368,6 @@ public class NetworkHandler {
                             VueApplication.getInstance())
                             .addTrentingAislesFromServerToDB(
                                 VueApplication.getInstance(), aislesList, mOffset, DataBaseManager.MY_AISLES);
-
                         // if this is the first set of
                         // data
                         // we
@@ -380,8 +376,6 @@ public class NetworkHandler {
                         // ahead
                         // notify the data set changed
                         VueLandingPageActivity.changeScreenName(screenName);
-                        Log.i("myaisledbcheck",
-                            "myaisledbcheck aisle are fetching from server inserting to db success: ");
                       } else {
                         // if this is the first set of
                         // data

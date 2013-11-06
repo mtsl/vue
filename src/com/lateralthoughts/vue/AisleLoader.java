@@ -165,7 +165,9 @@ public class AisleLoader {
 
 			return;
 		} else {
-
+			Log.i("memory issue", "memory issue aisle missing   ");
+			Log.i("memory issue", "memory issue aisle  list size   "+VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).listSize());
+			 
 			// we are going to re-use an existing object to show some new
 			// content
 			// lets release the scaleimageviews first
@@ -207,8 +209,7 @@ public class AisleLoader {
 			 */
 			int bestHeight = windowContent.getBestHeightForWindow();
 			LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
-					LayoutParams.MATCH_PARENT,
-					itemDetails.mTrendingImageHeight);
+					LayoutParams.MATCH_PARENT, itemDetails.mTrendingImageHeight);
 
 			Log.i("cardHeight", "bestsamallest cardHeight bestHeight11: "
 					+ bestHeight);
@@ -219,12 +220,12 @@ public class AisleLoader {
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
-
 				contentBrowser.addView(imageView);
 				if (!placeholderOnly)
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
-							bestHeight, windowContent.getAisleId(), itemDetails,listener);
+							bestHeight, windowContent.getAisleId(),
+							itemDetails, listener);
 			}
 		}
 		if (VueApplication.getInstance().getmUserId() != null) {
@@ -254,6 +255,7 @@ public class AisleLoader {
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
 			String asileId, AisleImageDetails itemDetails,AisleContentClickListener listener) {
+		 
 		if(Utils.isAisleChanged){
 			Utils.isAisleChanged = false;
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
@@ -325,6 +327,7 @@ public class AisleLoader {
 
 			if (viewFlipperReference != null && imageViewReference != null
 					&& bitmap != null) {
+				 
 				final ImageView imageView = imageViewReference.get();
 				BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
@@ -342,6 +345,8 @@ public class AisleLoader {
 						// mListener.refreshList();
 					}
 				}
+			} else {
+				Log.i("memory issue", "memory issue aisle  bitmap is not null  ");
 			}
 		}
 	}
