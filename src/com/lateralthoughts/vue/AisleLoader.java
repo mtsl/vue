@@ -125,7 +125,7 @@ public class AisleLoader {
 	@SuppressWarnings("deprecation")
 	public void getAisleContentIntoView(ViewHolder holder, int scrollIndex,
 			int position, boolean placeholderOnly,
-			AisleContentClickListener listener) {
+			AisleContentClickListener listener,String whichAdapter) {
 
 		Log.i("TrendingDataModel",
 				"DataObserver for List Refresh: getAisleContentView called "
@@ -192,6 +192,11 @@ public class AisleLoader {
 			holder.aisleContentBrowser.setScrollIndex(scrollIndex);
 			holder.aisleContentBrowser.setCustomAdapter(adapter);
 			holder.uniqueContentId = desiredContentId;
+			if(whichAdapter.equalsIgnoreCase("LeftAdapter")){
+				holder.aisleContentBrowser.isLeft = true;
+			}else {
+				holder.aisleContentBrowser.isRight = true;
+			}
 			// mContentViewMap.put(holder.uniqueContentId, holder);
 		}
 		mListener = listener;

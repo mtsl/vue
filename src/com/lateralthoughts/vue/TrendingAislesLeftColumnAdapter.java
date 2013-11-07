@@ -35,7 +35,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+ 
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseLeftListLisner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
@@ -48,7 +50,7 @@ public class TrendingAislesLeftColumnAdapter extends
 
 	public int firstX;
 	public int lastX;
-	public boolean mHasToShow = true;
+	public boolean mHasToShow = false;
 	// public static boolean mIsLeftDataChanged = false;
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
@@ -121,6 +123,7 @@ public class TrendingAislesLeftColumnAdapter extends
 			holder.aisleContext = (TextView) holder.aisleDescriptor
 					.findViewById(R.id.descriptor_aisle_context);
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+			holder.aisleContentBrowser.setAilseLeftListLisner(new LeftList());
 			convertView.setTag(holder);
 
 			if (DEBUG)
@@ -132,7 +135,7 @@ public class TrendingAislesLeftColumnAdapter extends
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
 		int scrollIndex = 0;
 		mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
-				false, listener);
+				false, listener,"LeftAdapter");
 		AisleContext context = holder.mWindowContent.getAisleContext();
 		String mVueusername = null;
 		if(mHasToShow){
@@ -208,5 +211,16 @@ public class TrendingAislesLeftColumnAdapter extends
 				"DataObserver for List Refresh: Right List AisleUpdate Called ");
 		notifyDataSetChanged();
 	}
+  private class LeftList implements AilseLeftListLisner {
 
+	@Override
+	public void onSwipe(boolean hasToShwo) {
+		//mHasToShow = hasToShwo;
+		mHasToShow = false;
+		Log.i("settingAdaptersrest", "settingAdaptersrestRight");
+		notifyDataSetChanged();
+		
+	}
+	  
+  }
 }
