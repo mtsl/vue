@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
@@ -239,6 +240,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
                     // TODO:
                   }
                 });
+            
+
           } else if (s.equals(getString(R.string.sidemenu_option_Login))) {
             FlurryAgent.logEvent("Login_Without_Prompt");
             sharedPreferencesObj = getActivity().getSharedPreferences(
@@ -297,11 +300,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           if (getActivity() instanceof SlidingFragmentActivity) {
             SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
             activity.getSlidingMenu().toggle();
-           // if (getActivity() instanceof VueLandingPageActivity) {
-            	//VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
             activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
             VueApplication.getInstance().landingPage.showCategory(s);
-           // }
             if (getActivity() instanceof AisleDetailsViewActivity) {
               startActivity(new Intent(
                   (AisleDetailsViewActivity) getActivity(),
@@ -414,8 +414,23 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				getString(R.string.sidemenu_option_Trending_Aisles),
 				R.drawable.profile, null);
 		groups.add(item);
-		item = new ListOptionItem(getString(R.string.sidemenu_option_Me),
+		String userName = VueApplication.getInstance().getmUserName();
+		if(userName.isEmpty()) {
+		  userName = getString(R.string.sidemenu_option_Me);
+		}
+		  File f = new FileCache(getActivity())
+          .getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
+		item = new ListOptionItem(userName,
 				R.drawable.profile, getMeChildren());
+		Log.e("VueListFragment", "USER PROFILE PIC TEST IS FILE EXIST: " + f.exists());
+		if(f.exists()) {
+          Bitmap bmp = BitmapFactory.decodeFile(f.getPath());
+          Log.e("VueListFragment", "USER PROFILE PIC TEST IS Bitmap null: " + bmp);
+          if(bmp != null) {
+            item.userPic = bmp;
+          }
+          }
+		
 		groups.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Categories),
@@ -536,6 +551,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		public String tag;
 		public int iconRes;
 		List<ListOptionItem> children;
+		public Bitmap userPic;
 
 		public ListOptionItem(String tag, int iconRes,
 				List<ListOptionItem> children) {
@@ -608,8 +624,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 					|| (groups.get(groupPosition).tag
 							.equals(getString(R.string.sidemenu_option_Invite_Friends)))
 					|| groups.get(groupPosition).tag.equals("Settings")
-					|| groups.get(groupPosition).tag
-							.equals(getString(R.string.sidemenu_option_Me))) {
+					|| groupPosition == 1/*groups.get(groupPosition).tag
+							.equals(getString(R.string.sidemenu_option_Me))*/) {
 				return groups.get(groupPosition).children.size();
 			}
 			return 0;
@@ -653,7 +669,18 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 			 * if(groups.get(groupPosition).tag.equals("Categories")) {
 			 * expandListView.expandGroup(groupPosition); }
 			 */
-			holder.icon.setImageResource(groups.get(groupPosition).iconRes);
+			Log.e("VueListFragment", "USER PROFILE PIC TEST IS NAME: " + groups.get(groupPosition).tag + ", groupPosition: " + groupPosition);
+			if(groupPosition == 1) {
+			  Log.e("VueListFragment", "USER PROFILE PIC TEST IS GROUP POSITION: 1");
+			  Log.e("VueListFragment", "USER PROFILE PIC TEST IS GROUP POSITION: groups.get(groupPosition).userPic " + groups.get(groupPosition).userPic);
+			  if(groups.get(groupPosition).userPic != null) {
+			  holder.icon.setImageBitmap(groups.get(groupPosition).userPic);
+			  } else {
+			    holder.icon.setImageResource(groups.get(groupPosition).iconRes);
+			  }
+			} else {
+			  holder.icon.setImageResource(groups.get(groupPosition).iconRes);
+			}
 			holder.itemName.setText(groups.get(groupPosition).tag);
 			return convertView;
 		}

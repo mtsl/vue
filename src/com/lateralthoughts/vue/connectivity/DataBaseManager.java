@@ -1352,7 +1352,7 @@ public class DataBaseManager {
    return (minEntry == null) ? 0 : minEntry.getValue();
  }
  
- @Deprecated // not is use by surendra
+ @Deprecated // not in use by Surendra
  private void updateAisleOrder() {
    ContentValues values = new ContentValues();
    Cursor aisleIdCursor = mContext.getContentResolver().query(
