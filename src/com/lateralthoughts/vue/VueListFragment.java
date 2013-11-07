@@ -399,6 +399,8 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
         }
       }
     });
+    
+    VueLoginActivity.getProfileImageChangeListenor(imageChangeListenor);
 	}
 
 	/**
@@ -414,14 +416,16 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				getString(R.string.sidemenu_option_Trending_Aisles),
 				R.drawable.profile, null);
 		groups.add(item);
-		String userName = VueApplication.getInstance().getmUserName();
-		if(userName.isEmpty()) {
+		
+		String userName = getUserId();
+		if(userName == null || userName.isEmpty()) {
 		  userName = getString(R.string.sidemenu_option_Me);
 		}
+		  Log.e("VueListFragment", "USER PROFILE PIC TEST IS NAME: " + userName);
+		item = new ListOptionItem(userName,
+            R.drawable.profile, getMeChildren());
 		  File f = new FileCache(getActivity())
           .getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
-		item = new ListOptionItem(userName,
-				R.drawable.profile, getMeChildren());
 		Log.e("VueListFragment", "USER PROFILE PIC TEST IS FILE EXIST: " + f.exists());
 		if(f.exists()) {
           Bitmap bmp = BitmapFactory.decodeFile(f.getPath());
@@ -569,7 +573,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 	}
 
 	// vue_list_fragment_list
-	private class VueListFragmentAdapter extends BaseExpandableListAdapter {
+	protected class VueListFragmentAdapter extends BaseExpandableListAdapter {
 
 		public List<ListOptionItem> groups;
 
@@ -1135,5 +1139,36 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		// isDataPickerOpen = true;
 		// }
 	}
+	
+	 ProfileImageChangeListenor imageChangeListenor = new ProfileImageChangeListenor() {
+	   public VueListFragmentAdapter adapter = null;
+       @Override
+       public void onImageChange() {
+          adapter = new VueListFragment.VueListFragmentAdapter(
+             VueListFragment.this.getActivity(), VueListFragment.this.getBezelMenuOptionItems());
+         VueListFragment.this.expandListView.setAdapter(adapter);
+       }
+     };
+	
+	
+	public interface ProfileImageChangeListenor {
+	  public void onImageChange();
+	}
 
+  public String getUserId() {
+    VueUser storedVueUser = null;
+    try {
+      storedVueUser = Utils.readUserObjectFromFile(
+          VueApplication.getInstance(),
+          VueConstants.VUE_APP_USEROBJECT__FILENAME);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    String userName = null;
+    if (storedVueUser != null) {
+      userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
+    }
+    return userName;
+
+  }
 }

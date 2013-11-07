@@ -79,6 +79,7 @@ import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
 import com.instagram.InstagramApp;
 import com.instagram.InstagramApp.OAuthAuthenticationListener;
+import com.lateralthoughts.vue.VueListFragment.ProfileImageChangeListenor;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
@@ -120,7 +121,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
 			.getInstance().getString(R.string.pendingActionBundleKey);
 	private PendingAction mPendingAction = PendingAction.NONE;
-
+    
 	private enum PendingAction {
 		NONE, POST_PHOTO, POST_STATUS_UPDATE
 	}
@@ -1320,7 +1321,7 @@ public class VueLoginActivity extends FragmentActivity implements
 				});
 		finish();
 	}
-
+	static ProfileImageChangeListenor profileImagechangeListor;
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void downloadAndSaveUserProfileImage(String imageUrl,
 			final File filePath) {
@@ -1329,6 +1330,7 @@ public class VueLoginActivity extends FragmentActivity implements
 			@Override
 			public void onResponse(Bitmap bmp) {
 				Utils.saveBitmap(bmp, filePath);
+				profileImagechangeListor.onImageChange();
 			}
 		};
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
@@ -1340,12 +1342,16 @@ public class VueLoginActivity extends FragmentActivity implements
 		ImageRequest imagerequestObj = new ImageRequest(imageUrl, listener, 0,
 				0, null, errorListener);
 		VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
-
+        
 	}
 
 	@Override
 	public void onBackPressed() {
 
+	}
+	
+	public static void getProfileImageChangeListenor(ProfileImageChangeListenor profileImagechangeListor) {
+	  VueLoginActivity.profileImagechangeListor = profileImagechangeListor;
 	}
 
 }

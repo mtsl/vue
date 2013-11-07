@@ -106,6 +106,7 @@ public class VueUserManager {
           }
         }
       }
+      
     };
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
