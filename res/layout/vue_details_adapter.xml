@@ -38,6 +38,19 @@
                        android:layout_gravity="center_horizontal"
                        android:src="@drawable/editwhite"/>
             </LinearLayout>
+              <LinearLayout android:layout_width="32dp"
+                          android:layout_height="32dp"
+                          android:layout_marginTop="8dp"
+                          android:layout_marginLeft="8dp"
+                          android:id="@+id/starImage"
+                          android:layout_gravity="top|left"
+                          android:background="@drawable/rectangle">
+            <ImageView android:layout_width="fill_parent"
+                       android:layout_height="fill_parent"
+                       android:layout_gravity="center_horizontal"
+                       android:id="@+id/staricon"
+                       android:src="@drawable/share"/>
+            </LinearLayout>
         </FrameLayout>
 
         <LinearLayout

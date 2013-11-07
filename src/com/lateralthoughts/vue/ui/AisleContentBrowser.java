@@ -330,6 +330,7 @@ public class AisleContentBrowser extends ViewFlipper {
 		final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
 		  aisleContentBrowser.setDisplayedChild(VueApplication.getInstance().getmAisleImgCurrentPos());
 		  Utils.mAinmate = true;
+		 
  
 	}
 

@@ -5,13 +5,31 @@
     android:focusable="true"
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical" >
-
+   <FrameLayout
+            android:id="@+id/trendingbrowser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             >
     <com.lateralthoughts.vue.ui.AisleContentBrowser
         android:id="@+id/aisle_content_flipper"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:focusable="true" >
     </com.lateralthoughts.vue.ui.AisleContentBrowser>
+     <LinearLayout android:layout_width="24dp"
+                          android:layout_height="24dp"
+                          android:layout_marginTop="4dp"
+                          android:layout_marginLeft="4dp"
+                          android:id="@+id/starImagelay"
+                          android:layout_gravity="top|left"
+                          android:background="@drawable/rectangle">
+            <ImageView android:layout_width="fill_parent"
+                       android:layout_height="fill_parent"
+                       android:layout_gravity="center_horizontal"
+                       android:id="@+id/staricon"
+                       android:src="@drawable/share"/>
+            </LinearLayout>
+        </FrameLayout>
 
     <LinearLayout
         android:id="@id/aisle_descriptor"

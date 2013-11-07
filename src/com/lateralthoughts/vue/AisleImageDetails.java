@@ -27,4 +27,5 @@ public class AisleImageDetails {
 	public boolean mIsFromLocalSystem;
 	public int mTempResizeBitmapwidth;
 	public int mTempResizedBitmapHeight;
+	public boolean mHasMostLikes,mSameMostLikes;
 }

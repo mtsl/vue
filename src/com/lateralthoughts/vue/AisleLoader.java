@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.graphics.Bitmap;
@@ -161,11 +162,11 @@ public class AisleLoader {
 			// before or has to be filled with same content. Either way, no need
 			// to worry about cleaning up anything!
 			holder.aisleContentBrowser.setScrollIndex(scrollIndex);
-			Log.i("calling", "calling return   ");
+			Log.i("memory issue", "memory issue aisle missing return  "+windowContent.getAisleId());
 
 			return;
 		} else {
-			Log.i("memory issue", "memory issue aisle missing   ");
+			Log.i("memory issue", "memory issue aisle missing 1  "+windowContent.getAisleId());
 			Log.i("memory issue", "memory issue aisle  list size   "+VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).listSize());
 			 
 			// we are going to re-use an existing object to show some new
@@ -208,7 +209,7 @@ public class AisleLoader {
 			 * .getCachedBitmap(itemDetails.mCustomImageUrl);
 			 */
 			int bestHeight = windowContent.getBestHeightForWindow();
-			LinearLayout.LayoutParams mShowpieceParams2 = new LinearLayout.LayoutParams(
+			FrameLayout.LayoutParams mShowpieceParams2 = new FrameLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT, itemDetails.mTrendingImageHeight);
 
 			Log.i("cardHeight", "bestsamallest cardHeight bestHeight11: "
@@ -327,7 +328,7 @@ public class AisleLoader {
 
 			if (viewFlipperReference != null && imageViewReference != null
 					&& bitmap != null) {
-				 
+				Log.i("memory issue", "memory issue aisle missing  bitmap not null  ");
 				final ImageView imageView = imageViewReference.get();
 				BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
@@ -346,7 +347,7 @@ public class AisleLoader {
 					}
 				}
 			} else {
-				Log.i("memory issue", "memory issue aisle  bitmap is not null  ");
+				Log.i("memory issue", "memory issue aisle  bitmap is   null  ");
 			}
 		}
 	}

@@ -48,6 +48,7 @@ public class TrendingAislesLeftColumnAdapter extends
 
 	public int firstX;
 	public int lastX;
+	public boolean mHasToShow = true;
 	// public static boolean mIsLeftDataChanged = false;
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
@@ -109,6 +110,8 @@ public class TrendingAislesLeftColumnAdapter extends
 			holder = new ViewHolder();
 			holder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.aisle_content_flipper);
+			holder.startImageLay = (LinearLayout) convertView
+					.findViewById(R.id.starImagelay); 
 			holder.aisleDescriptor = (LinearLayout) convertView
 					.findViewById(R.id.aisle_descriptor);
 			holder.profileThumbnail = (ImageView) holder.aisleDescriptor
@@ -132,6 +135,11 @@ public class TrendingAislesLeftColumnAdapter extends
 				false, listener);
 		AisleContext context = holder.mWindowContent.getAisleContext();
 		String mVueusername = null;
+		if(mHasToShow){
+			holder.startImageLay.setVisibility(View.VISIBLE);
+		}else {
+			holder.startImageLay.setVisibility(View.GONE);
+		}
 		if (context.mFirstName != null && context.mLastName != null) {
 			mVueusername = context.mFirstName + " " + context.mLastName;
 		} else if (context.mFirstName != null) {

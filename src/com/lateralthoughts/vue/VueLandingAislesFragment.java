@@ -552,7 +552,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	public void clearBitmaps() {
 		 
-		for (int i = 0; i < mLeftColumnView.getChildCount(); i++) {
+/*		for (int i = 0; i < mLeftColumnView.getChildCount(); i++) {
 			Log.i("clearlist", "clearlist leftcolumn");
 			LinearLayout leftLayout = (LinearLayout) mLeftColumnView
 					.getChildAt(i);
@@ -569,7 +569,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					.findViewById(R.id.aisle_content_flipper);
 			clearBrowser(aisleBrowser);
 
-		}
+		}*/
 	}
 
 	private void clearBrowser(AisleContentBrowser aisleContentBrowser) {
