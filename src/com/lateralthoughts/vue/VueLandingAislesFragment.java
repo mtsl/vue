@@ -552,12 +552,13 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	public void clearBitmaps() {
 		 
-/*		for (int i = 0; i < mLeftColumnView.getChildCount(); i++) {
+		for (int i = 0; i < mLeftColumnView.getChildCount(); i++) {
 			Log.i("clearlist", "clearlist leftcolumn");
 			LinearLayout leftLayout = (LinearLayout) mLeftColumnView
 					.getChildAt(i);
 			com.lateralthoughts.vue.ui.AisleContentBrowser aisleBrowser = (AisleContentBrowser) leftLayout
 					.findViewById(R.id.aisle_content_flipper);
+			//aisleBrowser.removeAllViews();
 			clearBrowser(aisleBrowser);
 
 		}
@@ -567,9 +568,13 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					.getChildAt(i);
 			com.lateralthoughts.vue.ui.AisleContentBrowser aisleBrowser = (AisleContentBrowser) rightLayout
 					.findViewById(R.id.aisle_content_flipper);
+			//aisleBrowser.removeAllViews();
 			clearBrowser(aisleBrowser);
-
-		}*/
+		}
+		mLeftColumnView.setAdapter(mLeftColumnAdapter);
+		mRightColumnView.setAdapter(mRightColumnAdapter);
+		mLeftColumnAdapter.notifyDataSetChanged();
+		mRightColumnAdapter.notifyDataSetChanged();
 	}
 
 	private void clearBrowser(AisleContentBrowser aisleContentBrowser) {
@@ -604,5 +609,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			aisleContentBrowser.removeAllViews();
 			aisleContentBrowser = null;
 		}
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+		.dataObserver();
 	}
 }
