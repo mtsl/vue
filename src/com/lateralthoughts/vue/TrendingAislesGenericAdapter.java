@@ -147,7 +147,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 		AisleContentBrowser aisleContentBrowser;
 		TextView aisleOwnersName;
 		TextView aisleContext;
-		ImageView profileThumbnail;
+		ImageView profileThumbnail,starIcon;
 		String uniqueContentId;
 		LinearLayout aisleDescriptor,startImageLay;
 		AisleWindowContent mWindowContent;

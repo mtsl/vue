@@ -125,7 +125,7 @@ public class AisleLoader {
 	@SuppressWarnings("deprecation")
 	public void getAisleContentIntoView(ViewHolder holder, int scrollIndex,
 			int position, boolean placeholderOnly,
-			AisleContentClickListener listener,String whichAdapter) {
+			AisleContentClickListener listener,String whichAdapter,LinearLayout startImageLay) {
 
 		Log.i("TrendingDataModel",
 				"DataObserver for List Refresh: getAisleContentView called "
@@ -199,10 +199,22 @@ public class AisleLoader {
 			}
 			// mContentViewMap.put(holder.uniqueContentId, holder);
 		}
+		 
 		mListener = listener;
 		imageDetailsArr = windowContent.getImageList();
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			itemDetails = imageDetailsArr.get(0);
+			if(itemDetails.mHasMostLikes){
+				ImageView image = (ImageView)startImageLay.findViewById(R.id.staricon);
+				if(itemDetails.mSameMostLikes) {
+					image.setImageResource(R.drawable.share_light) ;
+				} else {
+					image.setImageResource(R.drawable.share) ;
+				}
+				startImageLay.setVisibility(View.VISIBLE);
+			} else {
+				startImageLay.setVisibility(View.GONE);
+			}
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
 

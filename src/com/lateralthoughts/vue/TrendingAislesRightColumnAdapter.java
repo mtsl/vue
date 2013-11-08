@@ -59,7 +59,9 @@ public class TrendingAislesRightColumnAdapter extends
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
 	BitmapLoaderUtils mBitmapLoaderUtils;
-	public boolean mHasToShow = false;
+	private boolean mHasToShow = true;
+	private String mShowStarAisle = " ";
+	private boolean mHasSameLikes = false;
 
 	public TrendingAislesRightColumnAdapter(Context c,
 			ArrayList<AisleWindowContent> content) {
@@ -114,6 +116,8 @@ public class TrendingAislesRightColumnAdapter extends
 			holder = new ViewHolder();
 			holder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.aisle_content_flipper);
+			holder.starIcon = (ImageView) convertView
+					.findViewById(R.id.staricon );
 			holder.startImageLay = (LinearLayout) convertView
 					.findViewById(R.id.starImagelay); 
 			LinearLayout.LayoutParams showpieceParams = new LinearLayout.LayoutParams(
@@ -141,15 +145,31 @@ public class TrendingAislesRightColumnAdapter extends
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
 		int scrollIndex = 0; // getContentBrowserIndexForId(windowContent.getAisleId());
-		mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,
-				listener,"RightAdapter");
-		AisleContext context = holder.mWindowContent.getAisleContext();
-		String mVueusername = null;
+	/*	if( holder.mWindowContent.getImageList().get(0).mHasMostLikes){
+			if(holder.mWindowContent.getImageList().get(0).mSameMostLikes){
+				holder.starIcon.setImageResource(R.drawable.share_light);
+			} else {
+				holder.starIcon.setImageResource(R.drawable.share);
+			}
+			holder.startImageLay.setVisibility(View.VISIBLE);
+		}*/
 		if(mHasToShow){
+			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId()))
+				if(mHasSameLikes){
+					holder.starIcon.setImageResource(R.drawable.share_light);
+				} else {
+					holder.starIcon.setImageResource(R.drawable.share);
+				}
 			holder.startImageLay.setVisibility(View.VISIBLE);
 		}else {
+			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId()))
 			holder.startImageLay.setVisibility(View.GONE);
 		}
+		
+		mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,
+				listener,"RightAdapter",holder.startImageLay);
+		AisleContext context = holder.mWindowContent.getAisleContext();
+		String mVueusername = null;
 		if (context.mFirstName != null && context.mLastName != null) {
 			mVueusername = context.mFirstName + " " + context.mLastName;
 		} else if (context.mFirstName != null) {
@@ -221,9 +241,10 @@ public class TrendingAislesRightColumnAdapter extends
 	  private class RightList implements AilseRighttRightLisner {
 
 		@Override
-		public void onSwipe(boolean hasToShwo) {
+		public void onSwipe(boolean hasToShwo,String aisleId,boolean sameLikes) {
 			mHasToShow = hasToShwo;
-			mHasToShow = false;
+			mShowStarAisle = aisleId;
+			mHasSameLikes = sameLikes;
 			Log.i("settingAdaptersrest", "settingAdaptersrestRight");
 			notifyDataSetChanged();
 			
