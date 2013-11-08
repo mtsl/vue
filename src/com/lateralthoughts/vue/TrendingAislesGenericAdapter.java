@@ -149,7 +149,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 		TextView aisleContext;
 		ImageView profileThumbnail,starIcon;
 		String uniqueContentId;
-		LinearLayout aisleDescriptor,startImageLay;
+		LinearLayout aisleDescriptor/*,startImageLay*/;
 		AisleWindowContent mWindowContent;
 	}
 

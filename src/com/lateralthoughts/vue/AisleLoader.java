@@ -125,7 +125,7 @@ public class AisleLoader {
 	@SuppressWarnings("deprecation")
 	public void getAisleContentIntoView(ViewHolder holder, int scrollIndex,
 			int position, boolean placeholderOnly,
-			AisleContentClickListener listener,String whichAdapter,LinearLayout startImageLay) {
+			AisleContentClickListener listener,String whichAdapter,ImageView startImageLay) {
 
 		Log.i("TrendingDataModel",
 				"DataObserver for List Refresh: getAisleContentView called "
@@ -207,9 +207,9 @@ public class AisleLoader {
 			if(itemDetails.mHasMostLikes){
 				ImageView image = (ImageView)startImageLay.findViewById(R.id.staricon);
 				if(itemDetails.mSameMostLikes) {
-					image.setImageResource(R.drawable.share_light) ;
+					image.setImageResource(R.drawable.vue_star_light) ;
 				} else {
-					image.setImageResource(R.drawable.share) ;
+					image.setImageResource(R.drawable.vue_star_theme) ;
 				}
 				startImageLay.setVisibility(View.VISIBLE);
 			} else {

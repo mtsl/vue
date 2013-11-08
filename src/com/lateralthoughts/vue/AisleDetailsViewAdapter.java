@@ -516,9 +516,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					mViewHolder.starImage.setLayoutParams(editIconParams);
 					if(getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mSameMostLikes){
-						mViewHolder.starIcon.setImageResource(R.drawable.share_light);
+						mViewHolder.starIcon.setImageResource(R.drawable.vue_star_light);
 					} else {
-						mViewHolder.starIcon.setImageResource(R.drawable.share);
+						mViewHolder.starIcon.setImageResource(R.drawable.vue_star_theme);
 					}
 					mViewHolder.starImage.setVisibility(View.VISIBLE);
 				} else {

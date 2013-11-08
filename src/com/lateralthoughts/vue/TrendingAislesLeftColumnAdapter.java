@@ -116,8 +116,8 @@ public class TrendingAislesLeftColumnAdapter extends
 					.findViewById(R.id.aisle_content_flipper);
 			holder.starIcon = (ImageView) convertView
 					.findViewById(R.id.staricon );
-			holder.startImageLay = (LinearLayout) convertView
-					.findViewById(R.id.starImagelay); 
+	/*		holder.startImageLay = (LinearLayout) convertView
+					.findViewById(R.id.starImagelay); */
 			holder.aisleDescriptor = (LinearLayout) convertView
 					.findViewById(R.id.aisle_descriptor);
 			holder.profileThumbnail = (ImageView) holder.aisleDescriptor
@@ -149,19 +149,21 @@ public class TrendingAislesLeftColumnAdapter extends
 		if(mHasToShow){
 			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId())){
 				if(mHasSameLikes){
-					holder.starIcon.setImageResource(R.drawable.share_light);
+					holder.starIcon.setImageResource(R.drawable.vue_star_light);
 				} else {
-					holder.starIcon.setImageResource(R.drawable.share);
+					holder.starIcon.setImageResource(R.drawable.vue_star_theme);
 				}
-			holder.startImageLay.setVisibility(View.VISIBLE);
+			//holder.startImageLay.setVisibility(View.VISIBLE);
+				holder.starIcon.setVisibility(View.VISIBLE);
 			}
 		}else {
 			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId()))
-			holder.startImageLay.setVisibility(View.GONE);
+			//holder.startImageLay.setVisibility(View.GONE);
+			holder.starIcon.setVisibility(View.GONE);
 		}
 		
 		mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
-				false, listener,"LeftAdapter",holder.startImageLay);
+				false, listener,"LeftAdapter",holder.starIcon);
 		AisleContext context = holder.mWindowContent.getAisleContext();
 		String mVueusername = null;
 		if (context.mFirstName != null && context.mLastName != null) {
