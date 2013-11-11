@@ -32,6 +32,7 @@ import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
+import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.connectivity.AisleData;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
@@ -118,7 +119,6 @@ public class DataEntryFragment extends Fragment {
 			mOtherSourceSelectedImageStore = null;
 	private static final int CATEGORY_POPUP_DELAY = 2000;
 	private boolean mIsEmptyAisle;
-	
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -576,7 +576,7 @@ public class DataEntryFragment extends Fragment {
 						mFindAtText.getWindowToken(), 0);
 				mFindatClose.setVisibility(View.GONE);
 				mFindAtIconLayout.setVisibility(View.GONE);
-				mFindAtText.setVisibility(View.GONE);				
+				mFindAtText.setVisibility(View.GONE);
 				mCategoryListview.setVisibility(View.GONE);
 				mCategoryListviewLayout.setVisibility(View.GONE);
 				mCategoryPopup.setVisibility(View.GONE);
@@ -1249,13 +1249,15 @@ public class DataEntryFragment extends Fragment {
 		}
 		if (mAisleImagePathList != null) {
 			ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
-			String lookingFor = "", aisleOwnerName = "", isUserAisleFlag = "0";
+			String lookingFor = "", aisleOwnerName = "", isUserAisleFlag = "0", aisleId = null;
+			AisleWindowContent aisleWindowContent = null;
 			try {
 				if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
+					aisleId = Utils.getDataentryScreenAisleId(getActivity());
 					Log.e("DataentryFragment",
 							"share aisleid : "
 									+ Utils.getDataentryScreenAisleId(getActivity()));
-					AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+					aisleWindowContent = VueTrendingAislesDataModel
 							.getInstance(getActivity())
 							.getAisleAt(
 									Utils.getDataentryScreenAisleId(getActivity()));
@@ -1276,17 +1278,29 @@ public class DataEntryFragment extends Fragment {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			for (int i = 0; i < mAisleImagePathList.size(); i++) {
+			for (int i = mAisleImagePathList.size() - 1; i >= 0; i--) {
+				String imageId = null;
+				if (aisleWindowContent != null
+						&& aisleWindowContent.getImageList() != null
+						&& aisleWindowContent.getImageList().size() > 0) {
+					try {
+						imageId = aisleWindowContent.getImageList().get(i).mId;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 				clsShare shareObj = new clsShare(null, mAisleImagePathList.get(
 						i).getImagePath(), lookingFor, aisleOwnerName,
-						isUserAisleFlag);
+						isUserAisleFlag, aisleId, imageId);
 				imageUrlList.add(shareObj);
 			}
 			if (mDataEntryAislesViewpager != null) {
 				mShare.share(imageUrlList, "", "",
-						mDataEntryAislesViewpager.getCurrentItem());
+						mDataEntryAislesViewpager.getCurrentItem(), null,
+						new ShareViaVueListner());
 			} else {
-				mShare.share(imageUrlList, "", "", 0);
+				mShare.share(imageUrlList, "", "", 0, null,
+						new ShareViaVueListner());
 			}
 		}
 	}
@@ -2297,8 +2311,11 @@ public class DataEntryFragment extends Fragment {
 			mProgressDialog = ProgressDialog.show(getActivity(), "",
 					"Please wait...");
 		}
-		// sourceUrl =
-		// /*"http://pages.ebay.com/link/?nav=item.view&id=251351111265";*/"http://www.amazon.com/dp/B00BI2BA7G/ref=cm_sw_r_an_am_ap_am_us?ie=UTF8";
+		/*
+		 * sourceUrl =
+		 * "http://pages.ebay.com/link/?nav=item.view&id=251351111265";
+		 */
+		// "http://pages.ebay.com/link/?nav=item.view&id=251351111265";*/"http://www.amazon.com/dp/B00BI2BA7G/ref=cm_sw_r_an_am_ap_am_us?ie=UTF8";
 		mOtherSourceSelectedImageStore = Utils.getStoreNameFromUrl(sourceUrl);
 		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
 				sourceUrl, getActivity(), false);
@@ -2364,5 +2381,12 @@ public class DataEntryFragment extends Fragment {
 				}
 			}
 		}).start();
+	}
+
+	public class ShareViaVueListner implements ShareViaVueClickedListner {
+		@Override
+		public void onAisleShareToVue() {
+			((DataEntryActivity) getActivity()).shareViaVueClicked();
+		}
 	}
 }

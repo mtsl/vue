@@ -28,17 +28,22 @@ public class clsShare implements Parcelable {
 		lookingFor = in.readString();
 		aisleOwnerName = in.readString();
 		isUserAisle = in.readString();
+		aisleId = in.readString();
+		imageId = in.readString();
 	}
 
 	private String imageUrl;
 
 	public clsShare(String imageUrl, String filepath, String lookingFor,
-			String aisleOwnerName, String isUserAisle) {
+			String aisleOwnerName, String isUserAisle, String aisleId,
+			String imageId) {
 		this.imageUrl = imageUrl;
 		this.filepath = filepath;
 		this.lookingFor = lookingFor;
 		this.aisleOwnerName = aisleOwnerName;
 		this.isUserAisle = isUserAisle;
+		this.aisleId = aisleId;
+		this.imageId = imageId;
 	}
 
 	public String getImageUrl() {
@@ -74,6 +79,26 @@ public class clsShare implements Parcelable {
 	}
 
 	private String filepath;
+	private String aisleId;
+
+	public String getImageId() {
+		return imageId;
+	}
+
+	public void setImageId(String imageId) {
+		this.imageId = imageId;
+	}
+
+	private String imageId;
+
+	public String getAisleId() {
+		return aisleId;
+	}
+
+	public void setAisleId(String aisleId) {
+		this.aisleId = aisleId;
+	}
+
 	private String lookingFor;
 	private String aisleOwnerName;
 	private String isUserAisle; // 1 userAisle and 0 otherAisle
@@ -98,5 +123,7 @@ public class clsShare implements Parcelable {
 		dest.writeString(lookingFor);
 		dest.writeString(aisleOwnerName);
 		dest.writeString(isUserAisle);
+		dest.writeString(aisleId);
+		dest.writeString(imageId);
 	}
 }

@@ -61,6 +61,8 @@ public class ShareDialog {
 	private ProgressDialog mShareDialog;
 	private boolean mFromCreateAislePopupFlag = false;
 	private boolean mLoadAllApplications = false;
+	private VueAisleDetailsViewFragment.ShareViaVueListner mDetailsScreenShareViaVueListner;
+	private DataEntryFragment.ShareViaVueListner mDataentryScreenShareViaVueListner;
 
 	public void dismisDialog() {
 		mShareDialog.dismiss();
@@ -78,9 +80,16 @@ public class ShareDialog {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
-	public void share(ArrayList<clsShare> imagePathArray, String aisleTitle,
-			String name, int currentAislePosition) {
+	public void share(
+			ArrayList<clsShare> imagePathArray,
+			String aisleTitle,
+			String name,
+			int currentAislePosition,
+			VueAisleDetailsViewFragment.ShareViaVueListner detailsScreenShareViaVueListner,
+			DataEntryFragment.ShareViaVueListner dataentryScreenShareViaVueListner) {
 		mShareIntentCalled = false;
+		mDetailsScreenShareViaVueListner = detailsScreenShareViaVueListner;
+		mDataentryScreenShareViaVueListner = dataentryScreenShareViaVueListner;
 		this.mImagePathArray = imagePathArray;
 		mCurrentAislePosition = currentAislePosition;
 		prepareShareIntentData();
@@ -317,7 +326,16 @@ public class ShareDialog {
 									.getApplicationInfo()
 									.loadLabel(mContext.getPackageManager())
 									.toString())) {
-				shareSingleImage(position, mCurrentAislePosition);
+				if (mImagePathArray.get(mCurrentAislePosition).getAisleId() != null
+						&& mImagePathArray.get(mCurrentAislePosition)
+								.getImageId() != null) {
+					shareToVue(mImagePathArray.get(mCurrentAislePosition)
+							.getAisleId(),
+							mImagePathArray.get(mCurrentAislePosition)
+									.getImageId());
+				} else {
+					shareSingleImage(position, mCurrentAislePosition);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -382,6 +400,18 @@ public class ShareDialog {
 	private class Holder {
 		TextView network;
 		ImageView launcheicon;
+	}
+
+	private void shareToVue(String aisleId, String imageId) {
+		VueApplication.getInstance().mShareViaVueClickedFlag = true;
+		VueApplication.getInstance().mShareViaVueClickedAisleId = aisleId;
+		VueApplication.getInstance().mShareViaVueClickedImageId = imageId;
+		mDialog.dismiss();
+		if (mDataentryScreenShareViaVueListner != null) {
+			mDataentryScreenShareViaVueListner.onAisleShareToVue();
+		} else if (mDetailsScreenShareViaVueListner != null) {
+			mDetailsScreenShareViaVueListner.onAisleShareToVue();
+		}
 	}
 
 	private void shareImageAndText(final int position) {
@@ -579,4 +609,7 @@ public class ShareDialog {
 				VueConstants.SHARE_INTENT_REQUEST_CODE);
 	}
 
+	public interface ShareViaVueClickedListner {
+		public void onAisleShareToVue();
+	}
 }

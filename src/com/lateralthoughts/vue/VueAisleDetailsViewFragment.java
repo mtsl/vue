@@ -49,6 +49,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.fasterxml.jackson.databind.deser.impl.SetterlessProperty;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
@@ -116,7 +117,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		 */
 		mSwipeListener = new AisleDetailsSwipeListner();
 		mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
-				mSwipeListener, mListCount, null);
+				mSwipeListener, mListCount, null, new ShareViaVueListner());
 
 	}
 
@@ -176,7 +177,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		if (detailsUrl != null) {
 			detailsUrl = Utils.getUrlFromString(detailsUrl);
 			if (detailsUrl != null) {
-			 
+
 				mEditTextFindAt.setText(detailsUrl);
 				mFindAtUrl = detailsUrl;
 			} else {
@@ -227,7 +228,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 							uriUrl);
 					startActivity(launchBrowser);
 				} else {
-					Toast.makeText(mContext, "There is no url", Toast.LENGTH_SHORT).show();
+					Toast.makeText(mContext, "There is no url",
+							Toast.LENGTH_SHORT).show();
 				}
 
 			}
@@ -308,7 +310,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			@Override
 			public void onClick(View v) {
 				FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
-				//TODO: FIND AT SHOULD GO DIRIECTLY TO THE BROWSER
+				// TODO: FIND AT SHOULD GO DIRIECTLY TO THE BROWSER
 				String url = mFindAtUrl;
 				if (url != null && url.startsWith("http")) {
 					mAisleDetailsAdapter.closeKeyboard();
@@ -318,14 +320,17 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 							uriUrl);
 					startActivity(launchBrowser);
 				}
-				
-		/*		final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
-						.getSystemService(Context.INPUT_METHOD_SERVICE);
-				inputMethodManager.toggleSoftInputFromWindow(
-						mEditTextFindAt.getApplicationWindowToken(),
-						InputMethodManager.SHOW_FORCED, 0);
-				mDetailsFindAtPopup.setVisibility(View.VISIBLE);
-				mEditTextFindAt.requestFocus();*/
+
+				/*
+				 * final InputMethodManager inputMethodManager =
+				 * (InputMethodManager) getActivity()
+				 * .getSystemService(Context.INPUT_METHOD_SERVICE);
+				 * inputMethodManager.toggleSoftInputFromWindow(
+				 * mEditTextFindAt.getApplicationWindowToken(),
+				 * InputMethodManager.SHOW_FORCED, 0);
+				 * mDetailsFindAtPopup.setVisibility(View.VISIBLE);
+				 * mEditTextFindAt.requestFocus();
+				 */
 
 			}
 		});
@@ -514,9 +519,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			}
 		});
 	}
-  public void notifyAdapter(){
-	  mAisleDetailsAdapter.notifyAdapter();
-  }
+
+	public void notifyAdapter() {
+		mAisleDetailsAdapter.notifyAdapter();
+	}
+
 	/**
 	 * 
 	 * 
@@ -541,7 +548,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		@Override
 		public void onResetAdapter() {
 			mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
-					mSwipeListener, mListCount, null);
+					mSwipeListener, mListCount, null, new ShareViaVueListner());
 			mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
 		}
 
@@ -727,7 +734,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		public void setFindAtText(String findAt) {
 			findAt = Utils.getUrlFromString(findAt);
 			if (findAt != null) {
-			 
+
 				mEditTextFindAt.setText(findAt);
 				mFindAtUrl = findAt;
 			} else {
@@ -756,11 +763,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		inputMethodManager.toggleSoftInputFromWindow(
 				editText.getApplicationWindowToken(),
 				InputMethodManager.SHOW_FORCED, 0);
-/*		@SuppressWarnings("unchecked")
-		ArrayList<String> commentList = (ArrayList<String>) mAisleDetailsAdapter.mCommentsMapList
-				.get(mAisleDetailsAdapter.mCurrentDispImageIndex);*/
+		/*
+		 * @SuppressWarnings("unchecked") ArrayList<String> commentList =
+		 * (ArrayList<String>) mAisleDetailsAdapter.mCommentsMapList
+		 * .get(mAisleDetailsAdapter.mCurrentDispImageIndex);
+		 */
 		if (etText != null) {
-			 
+
 			mAisleDetailsAdapter.updateListCount(etText);
 			mAisleDetailsAdapter.createComment(etText);
 		}
@@ -769,7 +778,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		 * mAisleDetailsAdapter.mCurrentDispImageIndex,
 		 * mAisleDetailsAdapter.CHANGE_COMMENT);
 		 */
-		//mAisleDetailsAdapter.mShowingList = commentList;
+		// mAisleDetailsAdapter.mShowingList = commentList;
 		editText.setVisibility(View.GONE);
 		editText.setText("");
 		view.setVisibility(View.VISIBLE);
@@ -816,7 +825,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mTotalScreenCount = mTotalScreenCount + 1;
 		upDatePageDots(0, "right");
 		mAisleDetailsAdapter.addAisleToContentWindow(imgPath, imageUrl,
-				imageWidth, imageHeight, "title", detailsUrl, store, imageId, isImageFromLocalSystem);
+				imageWidth, imageHeight, "title", detailsUrl, store, imageId,
+				isImageFromLocalSystem);
 
 	}
 
@@ -919,7 +929,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		}
 
 	}
-   
+
 	private void hightLightCurrentPage(int position) {
 		if (position == 0) {
 			mDotOne.setImageResource(R.drawable.active_dot);
@@ -1024,4 +1034,10 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 	}
 
+	public class ShareViaVueListner implements ShareViaVueClickedListner {
+		@Override
+		public void onAisleShareToVue() {
+			((AisleDetailsViewActivity) getActivity()).shareViaVueClicked();
+		}
+	}
 }

@@ -47,6 +47,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.VueAisleDetailsViewFragment.ShareViaVueListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
@@ -101,12 +102,15 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private long mUserId;
 	private ImageLoader mImageLoader;
+	private ShareViaVueListner mShareViaVueListner;
 
 	@SuppressWarnings("unchecked")
 	public AisleDetailsViewAdapter(Context c,
 			AisleDetailSwipeListener swipeListner, int listCount,
-			ArrayList<AisleWindowContent> content) {
+			ArrayList<AisleWindowContent> content,
+			ShareViaVueListner shareViaVueListner) {
 		/* super(c, content); */
+		mShareViaVueListner = shareViaVueListner;
 		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance());
 		mCurrentDispImageIndex = VueApplication.getInstance()
@@ -120,13 +124,13 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		mViewLoader = new AisleDetailsViewListLoader(mContext);
 		mswipeListner = swipeListner;
 		mListCount = listCount;
-		if(VueTrendingAislesDataModel
+		if (VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance()).getNetworkHandler()
-				.getUserId() != null){
-		mUserId = Long.parseLong(VueTrendingAislesDataModel
-				.getInstance(VueApplication.getInstance()).getNetworkHandler()
-				.getUserId());
-	}
+				.getUserId() != null) {
+			mUserId = Long.parseLong(VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance())
+					.getNetworkHandler().getUserId());
+		}
 		mShowingList = new ArrayList<String>();
 		if (DEBUG)
 			Log.e(TAG, "About to initiate request for trending aisles");
@@ -266,7 +270,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			}, mWaitTime);
 
 		}
-		Log.i("imageCurrenPosition", "imageCurrenPosition adapter: "+mCurrentDispImageIndex);
+		Log.i("imageCurrenPosition", "imageCurrenPosition adapter: "
+				+ mCurrentDispImageIndex);
 		// mswipeListner.setFindAtText(getItem(mCurrentAislePosition).getImageList().get(0).mImageUrl);
 	}
 
@@ -302,9 +307,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		RelativeLayout enterCommentrellay;
 		RelativeLayout likelay, bookmarklay;
 		FrameLayout edtCommentLay;
-
 		ImageView commentSend,starIcon;
 		LinearLayout /*editImage,*/starImage;
+ 
 		String tag;
 	}
 
@@ -494,11 +499,14 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						mswipeListner.hasToShowEditIcon(hasToShow);
 						//mViewHolder.editImage.setVisibility(View.GONE);
 					}
-				}  
+				}
 				if (getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mHasMostLikes) {
-					Log.i("hasMostLikes", "hasMostLikes: "+getItem(mCurrentAislePosition).getImageList().get(
-						mCurrentDispImageIndex).mHasMostLikes);
+					Log.i("hasMostLikes",
+							"hasMostLikes: "
+									+ getItem(mCurrentAislePosition)
+											.getImageList().get(
+													mCurrentDispImageIndex).mHasMostLikes);
 					int browserHeight = getItem(mCurrentAislePosition)
 							.getBestLargetHeightForWindow();
 					int browserWidth = VueApplication.getInstance()
@@ -513,23 +521,24 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					FrameLayout.LayoutParams editIconParams = new FrameLayout.LayoutParams(
 							VueApplication.getInstance().getPixel(32),
 							VueApplication.getInstance().getPixel(32));
-					editIconParams
-							.setMargins(VueApplication.getInstance().getPixel(4)
-									+ imageRightSpace / 2, VueApplication.getInstance()
-									.getPixel(10) + imageTopAreaHeight,
-									0, 0);
+					editIconParams.setMargins(VueApplication.getInstance()
+							.getPixel(4) + imageRightSpace / 2, VueApplication
+							.getInstance().getPixel(10) + imageTopAreaHeight,
+							0, 0);
 					mViewHolder.starImage.setLayoutParams(editIconParams);
+
 					if(getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mSameMostLikes){
 						mViewHolder.starIcon.setImageResource(R.drawable.vue_star_light);
+
 					} else {
 						mViewHolder.starIcon.setImageResource(R.drawable.vue_star_theme);
 					}
 					mViewHolder.starImage.setVisibility(View.VISIBLE);
 				} else {
-					  mViewHolder.starImage.setVisibility(View.GONE);
-				  }
-				
+					mViewHolder.starImage.setVisibility(View.GONE);
+				}
+
 				if (getItem(mCurrentAislePosition).getAisleContext().mDescription != null
 						&& getItem(mCurrentAislePosition).getAisleContext().mDescription
 								.length() > 1) {
@@ -581,7 +590,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							new DetailImageClickListener(),
 							getItem(mCurrentAislePosition), mSetPosition,/*mViewHolder.editImage,*/mViewHolder.starImage);
 					mSetPosition = false;
-				 
+ 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -724,7 +733,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	}
 
 	public void notifyAdapter() {
-		Log.i("editiconshowing", "editiconshowing in adapter  notify adapters: ");
+		Log.i("editiconshowing",
+				"editiconshowing in adapter  notify adapters: ");
 		this.notifyDataSetChanged();
 	}
 
@@ -752,16 +762,18 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 								+ " "
 								+ getItem(mCurrentAislePosition)
 										.getAisleContext().mLastName,
-						isUserAisle);
+						isUserAisle,
+						getItem(mCurrentAislePosition).getAisleContext().mAisleId,
+						getItem(mCurrentAislePosition).getImageList().get(i).mId);
 				imageUrlList.add(obj);
 			}
-			mShare.share( 
+			mShare.share(
 					imageUrlList,
 					getItem(mCurrentAislePosition).getAisleContext().mOccasion,
 					(getItem(mCurrentAislePosition).getAisleContext().mFirstName
 							+ " " + getItem(mCurrentAislePosition)
 							.getAisleContext().mLastName),
-					mCurrentDispImageIndex);
+					mCurrentDispImageIndex, mShareViaVueListner, null);
 		}
 		if (getItem(mCurrentAislePosition).getImageList() != null
 				&& getItem(mCurrentAislePosition).getImageList().size() > 0) {
@@ -858,53 +870,49 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		@Override
 		public void onImageDoubleTap() {
-			/*if (mCurrentDispImageIndex == 0) {*/
-				int resizeWidth = getItem(mCurrentAislePosition).getImageList()
-						.get(mCurrentDispImageIndex).mTempResizeBitmapwidth;
-				int resizeHeight = getItem(mCurrentAislePosition)
-						.getImageList().get(mCurrentDispImageIndex).mTempResizedBitmapHeight;
-				int cardWidth = VueApplication.getInstance()
-						.getVueDetailsCardWidth();
-				int cardHeight = VueApplication.getInstance()
-						.getVueDetailsCardHeight();
-				String writeToSdCard = "***************DETAILS ADAPTER***********************\n";
-				writeToSdCard = writeToSdCard + " Aisle Id: "
-						+ getItem(mCurrentAislePosition).getAisleId() + "\n";
+			/* if (mCurrentDispImageIndex == 0) { */
+			int resizeWidth = getItem(mCurrentAislePosition).getImageList()
+					.get(mCurrentDispImageIndex).mTempResizeBitmapwidth;
+			int resizeHeight = getItem(mCurrentAislePosition).getImageList()
+					.get(mCurrentDispImageIndex).mTempResizedBitmapHeight;
+			int cardWidth = VueApplication.getInstance()
+					.getVueDetailsCardWidth();
+			int cardHeight = VueApplication.getInstance()
+					.getVueDetailsCardHeight();
+			String writeToSdCard = "***************DETAILS ADAPTER***********************\n";
+			writeToSdCard = writeToSdCard + " Aisle Id: "
+					+ getItem(mCurrentAislePosition).getAisleId() + "\n";
 
-				for (int i = 0; i < getItem(mCurrentAislePosition)
-						.getImageList().size(); i++) {
-					writeToSdCard = writeToSdCard
-							+ "\n ImageUrl: "
-							+ getItem(mCurrentAislePosition).getImageList()
-									.get(i).mImageUrl;
-					writeToSdCard = writeToSdCard
-							+ "\n"
-							+ "image Width: "
-							+ getItem(mCurrentAislePosition).getImageList()
-									.get(i).mAvailableWidth
-							+ "image Height: "
-							+ getItem(mCurrentAislePosition).getImageList()
-									.get(i).mAvailableHeight;
-				}
-
-				writeToSdCard = writeToSdCard + " ReSizeImageWidth: "
-						+ resizeWidth + " ReSizedImageHeight: " + resizeHeight
-						+ "\n";
-				writeToSdCard = writeToSdCard + " CardWidth: " + cardWidth
-						+ " CardHeight: " + cardHeight + "\n";
+			for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
+					.size(); i++) {
 				writeToSdCard = writeToSdCard
-						+ " Final card Height will be: "
-						+ getItem(mCurrentAislePosition)
-								.getBestLargetHeightForWindow() + "\n";
+						+ "\n ImageUrl: "
+						+ getItem(mCurrentAislePosition).getImageList().get(i).mImageUrl;
 				writeToSdCard = writeToSdCard
-						+ "\n***************DETAILS ADAPTER***********************";
-				writeToSdcard(writeToSdCard);
-		/*	} else {
-				Toast.makeText(mContext, "Works For Only Starting Image", 1000)
-						.show();
-				;
+						+ "\n"
+						+ "image Width: "
+						+ getItem(mCurrentAislePosition).getImageList().get(i).mAvailableWidth
+						+ "image Height: "
+						+ getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight;
+			}
 
-			}*/
+			writeToSdCard = writeToSdCard + " ReSizeImageWidth: " + resizeWidth
+					+ " ReSizedImageHeight: " + resizeHeight + "\n";
+			writeToSdCard = writeToSdCard + " CardWidth: " + cardWidth
+					+ " CardHeight: " + cardHeight + "\n";
+			writeToSdCard = writeToSdCard
+					+ " Final card Height will be: "
+					+ getItem(mCurrentAislePosition)
+							.getBestLargetHeightForWindow() + "\n";
+			writeToSdCard = writeToSdCard
+					+ "\n***************DETAILS ADAPTER***********************";
+			writeToSdcard(writeToSdCard);
+			/*
+			 * } else { Toast.makeText(mContext,
+			 * "Works For Only Starting Image", 1000) .show(); ;
+			 * 
+			 * }
+			 */
 		}
 
 		@Override
@@ -1108,15 +1116,17 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.setBestLargestHeightForWindow(bestHeight);
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.dataObserver();
-		 
+
 		if (mViewHolder != null) {
-			//mswipeListner.onResetAdapter();
+			// mswipeListner.onResetAdapter();
 			setAisleBrowserObjectsNull();
 			mswipeListner.onResetAdapter();
 			Log.i("adaptersettings", "adaptersettings:adapter not null");
-		/*	Log.i("adaptersettings", "adaptersettings: if");
-			mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-			notifyAdapter();*/
+			/*
+			 * Log.i("adaptersettings", "adaptersettings: if");
+			 * mViewHolder.uniqueContentId =
+			 * AisleWindowContent.EMPTY_AISLE_CONTENT_ID; notifyAdapter();
+			 */
 		} else {
 			Log.i("adaptersettings", "adaptersettings:adapter   null");
 			setAisleBrowserObjectsNull();
@@ -1487,9 +1497,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			e.printStackTrace();
 		}
 	}
-/**
- * show star to most likes on the image.
- */
+
+	/**
+	 * show star to most likes on the image.
+	 */
 	private void findMostLikesImage() {
 		int mostLikePosition = 0, mLikes = 0;
 		boolean hasLikes = false, mSameMostLikes;
