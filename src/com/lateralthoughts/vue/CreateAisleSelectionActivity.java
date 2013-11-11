@@ -166,6 +166,7 @@ public class CreateAisleSelectionActivity extends Activity {
 		if (Utils.appInstalledOrNot(packageName, this)) {
 			Intent shoppingAppIntent = new Intent(
 					android.content.Intent.ACTION_VIEW);
+			shoppingAppIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			Utils.setLoadDataentryScreenFlag(this, true);
 			shoppingAppIntent.setClassName(packageName, activityName);
 			finish();
