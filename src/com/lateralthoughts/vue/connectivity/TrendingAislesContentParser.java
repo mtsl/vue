@@ -86,6 +86,12 @@ public class TrendingAislesContentParser extends ResultReceiver {
 
                   }
                 });
+            if(VueLandingPageActivity.landingPageActivity != null
+                && (VueLandingPageActivity.mVueLandingActionbarScreenName
+                    .getText().toString().equals(VueApplication.getInstance()
+                    .getString(R.string.sidemenu_sub_option_My_Aisles)))){
+            	refreshListFlag = false;
+            }
          /* } else {
          	  VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = true;
          	  Log.i("listmovingissue", "listmovingissue***: dbcase");

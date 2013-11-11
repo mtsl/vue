@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,8 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -41,9 +44,11 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.ui.MyCustomAnimation;
+import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.Utils;
 
 //java utils
@@ -545,4 +550,59 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		    
 		  }
 
+	public void clearBitmaps() {
+		 
+/*		for (int i = 0; i < mLeftColumnView.getChildCount(); i++) {
+			Log.i("clearlist", "clearlist leftcolumn");
+			LinearLayout leftLayout = (LinearLayout) mLeftColumnView
+					.getChildAt(i);
+			com.lateralthoughts.vue.ui.AisleContentBrowser aisleBrowser = (AisleContentBrowser) leftLayout
+					.findViewById(R.id.aisle_content_flipper);
+			clearBrowser(aisleBrowser);
+
+		}
+		for (int i = 0; i < mRightColumnView.getChildCount(); i++) {
+			Log.i("clearlist", "clearlist rightcolumn");
+			LinearLayout rightLayout = (LinearLayout) mRightColumnView
+					.getChildAt(i);
+			com.lateralthoughts.vue.ui.AisleContentBrowser aisleBrowser = (AisleContentBrowser) rightLayout
+					.findViewById(R.id.aisle_content_flipper);
+			clearBrowser(aisleBrowser);
+
+		}*/
+	}
+
+	private void clearBrowser(AisleContentBrowser aisleContentBrowser) {
+		if (aisleContentBrowser != null) {
+			ScaledImageViewFactory mViewFactory = ScaledImageViewFactory
+					.getInstance(mContext);
+			for (int i = 0; i < aisleContentBrowser.getChildCount(); i++) {
+		/*		try {
+					ImageView image = (ScaleImageView) aisleContentBrowser
+							.getChildAt(i);
+					Bitmap bitmap = ((BitmapDrawable) image.getDrawable())
+							.getBitmap();
+					Log.i("clearlist", "clearlist bitmap recycling");
+					bitmap.recycle();
+					bitmap = null;
+				} catch (Exception e) {
+
+				}*/
+
+				mViewFactory
+						.returnUsedImageView((ScaleImageView) aisleContentBrowser
+								.getChildAt(i));
+				 
+			}
+		}
+		if (aisleContentBrowser != null) {
+			ContentAdapterFactory mContentAdapterFactory = ContentAdapterFactory
+					.getInstance(mContext);
+			mContentAdapterFactory.returnUsedAdapter(aisleContentBrowser
+					.getCustomAdapter());
+			aisleContentBrowser.setCustomAdapter(null);
+			aisleContentBrowser.removeAllViews();
+			aisleContentBrowser = null;
+		}
+	}
 }

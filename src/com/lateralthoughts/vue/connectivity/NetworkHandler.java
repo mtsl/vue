@@ -1,5 +1,6 @@
 package com.lateralthoughts.vue.connectivity;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -151,13 +152,12 @@ public class NetworkHandler {
 					.resetDbParams();
 			ArrayList<AisleWindowContent> aisleContentArray = mDbManager
 					.getAislesFromDB(null, false);
-			Log.e("DataBaseManager",
-                "SURU updated aisle Order: DATABASE LODING 1 aisleContentArray.size(): " + aisleContentArray.size());
 			if (aisleContentArray.size() == 0) {
 				VueTrendingAislesDataModel.getInstance(VueApplication
 						.getInstance()).isFromDb = false;
 				return;
 			}
+			 
 			Message msg = new Message();
 			msg.obj = aisleContentArray;
 			VueTrendingAislesDataModel.getInstance(mContext).mHandler
@@ -283,7 +283,7 @@ public class NetworkHandler {
         mTrendingAislesParser, loadMore, screenName);
   }
 
-  public void requestAislesByUser(boolean fromServer, NotifyProgress progress,
+  public void requestAislesByUser(boolean fromServer,final NotifyProgress progress,
       final String screenName) {
 
     mOffset = 0;
@@ -297,7 +297,7 @@ public class NetworkHandler {
             VueApplication.getInstance()).getAislesByUserId(userId);
         Log.i("meoptions", "meoptions: MyAisle list size: " + windowList.size());
         if (windowList != null && windowList.size() > 0) {
-          clearList();
+          clearList(progress);
           for (int i = 0; i < windowList.size(); i++) {
             VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance()).addItemToList(
@@ -337,6 +337,7 @@ public class NetworkHandler {
               aislesList = null;
               String userId = getUserId();
               aislesList = getAislesByUser(userId);
+              Log.i("aislesList myaisles", "aislesList myaisles: "+aislesList.size());
             } catch (Exception e) {
               e.printStackTrace();
             }
@@ -347,12 +348,8 @@ public class NetworkHandler {
                     public void run() {
                       VueTrendingAislesDataModel.getInstance(VueApplication
                           .getInstance()).loadOnRequest = false;
-                      Log.i("myailsedebug",
-                          "myailsedebug: recieved my runonuithread:  ");
                       if (aislesList != null && aislesList.size() > 0) {
-                        clearList();
-                        Log.i("myailsedebug",
-                            "myailsedebug: recieved my runonuithread: if ");
+                        clearList(progress);
                         for (int i = 0; i < aislesList.size(); i++) {
                           VueTrendingAislesDataModel.getInstance(
                               VueApplication.getInstance()).addItemToList(
@@ -366,7 +363,6 @@ public class NetworkHandler {
                             VueApplication.getInstance())
                             .addTrentingAislesFromServerToDB(
                                 VueApplication.getInstance(), aislesList, mOffset, DataBaseManager.MY_AISLES);
-
                         // if this is the first set of
                         // data
                         // we
@@ -375,8 +371,6 @@ public class NetworkHandler {
                         // ahead
                         // notify the data set changed
                         VueLandingPageActivity.changeScreenName(screenName);
-                        Log.i("myaisledbcheck",
-                            "myaisledbcheck aisle are fetching from server inserting to db success: ");
                       } else {
                         // if this is the first set of
                         // data
@@ -649,7 +643,10 @@ public class NetworkHandler {
 		VueApplication.getInstance().getRequestQueue().add(vueRequest);
 	}
 
-	private void clearList() {
+	private void clearList(NotifyProgress progress) {
+		if (progress != null) {
+			progress.clearBrowsers();
+		}
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.clearAisles();
 		AisleWindowContentFactory.getInstance(VueApplication.getInstance())

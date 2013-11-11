@@ -153,6 +153,27 @@ public class DataEntryActivity extends BaseActivity {
 				}
 			} catch (Exception e1) {
 			}
+			if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR) != null) {
+				mDataEntryFragment.mLookingForBigText
+						.setText(b
+								.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR));
+				mDataEntryFragment.mLookingForText
+						.setText(b
+								.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR));
+			}
+			if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION) != null) {
+				String occasion = b
+						.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION);
+				if (occasion != null && occasion.length() > 0) {
+					mDataEntryFragment.mOccassionBigText.setText(occasion);
+					mDataEntryFragment.mOccasionText
+							.setText(b
+									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION));
+				} else {
+					mDataEntryFragment.mOccassionBigText
+							.setText(DataEntryFragment.OCCASION);
+				}
+			}
 			if (mDataEntryFragment.mFromDetailsScreenFlag) {
 				mVueDataentryActionbarScreenName.setText(getResources()
 						.getString(R.string.add_imae_to_aisle_screen_title));
@@ -170,27 +191,6 @@ public class DataEntryActivity extends BaseActivity {
 					mDataEntryFragment.mCategoryIcon.setClickable(false);
 					mDataEntryFragment.mSaySomeThingEditParent
 							.setClickable(false);
-				}
-				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR) != null) {
-					mDataEntryFragment.mLookingForBigText
-							.setText(b
-									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR));
-					mDataEntryFragment.mLookingForText
-							.setText(b
-									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR));
-				}
-				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION) != null) {
-					String occasion = b
-							.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION);
-					if (occasion != null && occasion.length() > 0) {
-						mDataEntryFragment.mOccassionBigText.setText(occasion);
-						mDataEntryFragment.mOccasionText
-								.setText(b
-										.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION));
-					} else {
-						mDataEntryFragment.mOccassionBigText
-								.setText(DataEntryFragment.OCCASION);
-					}
 				}
 				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE) != null) {
 					mDataEntryFragment.mSaySomethingAboutAisle
@@ -426,5 +426,24 @@ public class DataEntryActivity extends BaseActivity {
 			}
 		});
 		dialog.show();
+	}
+
+	public void shareViaVueClicked() {
+		Utils.putDataentryAddImageAisleFlag(DataEntryActivity.this, false);
+		Utils.putDataentryEditAisleFlag(DataEntryActivity.this, false);
+		Utils.putDataentryScreenAisleId(DataEntryActivity.this, null);
+		ArrayList<DataentryImage> mAisleImagePathList = null;
+		try {
+			mAisleImagePathList = Utils.readAisleImagePathListFromFile(
+					DataEntryActivity.this,
+					VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
+			mAisleImagePathList.clear();
+			Utils.writeAisleImagePathListToFile(DataEntryActivity.this,
+					VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
+					mAisleImagePathList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finish();
 	}
 }

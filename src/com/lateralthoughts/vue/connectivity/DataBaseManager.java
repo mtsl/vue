@@ -436,8 +436,11 @@ public class DataBaseManager {
         mEndPosition = 1000;
       }
     }
+	
     cursor.close();
     mEndPosition = mEndPosition + mLocalAislesLimit;
+    Log.e("DataBaseManager",
+			"SURU updated aisle Order: DATABASE LODING 1 mEndPosition: "+mEndPosition+" mStartPosition: "+mStartPosition);
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
     AisleWindowContent aisleItem = null;
@@ -1352,7 +1355,7 @@ public class DataBaseManager {
    return (minEntry == null) ? 0 : minEntry.getValue();
  }
  
- @Deprecated // not is use by surendra
+ @Deprecated // not in use by Surendra
  private void updateAisleOrder() {
    ContentValues values = new ContentValues();
    Cursor aisleIdCursor = mContext.getContentResolver().query(

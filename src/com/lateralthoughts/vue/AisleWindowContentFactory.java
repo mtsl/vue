@@ -110,5 +110,6 @@ public class AisleWindowContentFactory {
 	    mAvailableObjects.add(windowContent);
 	  }
 	}
+	
 }
 

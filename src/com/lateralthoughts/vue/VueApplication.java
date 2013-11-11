@@ -36,6 +36,9 @@ public class VueApplication extends Application {
 	private int mVueDetailsCardWidth = 0;
 	private int mVueDetailsCardHeight = 0;
 	public VueLandingPageActivity landingPage;
+	public boolean mShareViaVueClickedFlag = false;
+	public String mShareViaVueClickedAisleId = null;
+	public String mShareViaVueClickedImageId = null;
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
 	public ArrayList<ShoppingApplicationDetails> mMoreInstalledApplicationDetailsList;
 	public static final int[] POPUP_ITEM_DRAWABLES = {
@@ -184,10 +187,8 @@ public class VueApplication extends Application {
 		}
 		// R.drawable.aisle_content_empty;
 
-		
-		  Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
-		  crittercismConfig);
-		 
+		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
+				crittercismConfig);
 
 	}
 
@@ -291,14 +292,13 @@ public class VueApplication extends Application {
 	 * newVueTrendingAislesDataModel = createNewObject; }
 	 */
 
-	
-/*	public BitmapCache getBitmapCache() {
-		if (sBitmapCache == null)
-			sBitmapCache = new BitmapCache(512);
+	/*
+	 * public BitmapCache getBitmapCache() { if (sBitmapCache == null)
+	 * sBitmapCache = new BitmapCache(512);
+	 * 
+	 * return sBitmapCache; }
+	 */
 
-		return sBitmapCache;
-	}*/
-	 
 	private BitmapCache sBitmapCache;
 
 }

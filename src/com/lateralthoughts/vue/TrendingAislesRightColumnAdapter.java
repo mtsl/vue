@@ -38,6 +38,8 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseLeftListLisner;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseRighttRightLisner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.Utils;
@@ -57,6 +59,7 @@ public class TrendingAislesRightColumnAdapter extends
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
 	BitmapLoaderUtils mBitmapLoaderUtils;
+	public boolean mHasToShow = false;
 
 	public TrendingAislesRightColumnAdapter(Context c,
 			ArrayList<AisleWindowContent> content) {
@@ -111,6 +114,8 @@ public class TrendingAislesRightColumnAdapter extends
 			holder = new ViewHolder();
 			holder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.aisle_content_flipper);
+			holder.startImageLay = (LinearLayout) convertView
+					.findViewById(R.id.starImagelay); 
 			LinearLayout.LayoutParams showpieceParams = new LinearLayout.LayoutParams(
 					VueApplication.getInstance().getScreenWidth() / 2, 200);
 			// holder.aisleContentBrowser.setLayoutParams(showpieceParams);
@@ -123,6 +128,7 @@ public class TrendingAislesRightColumnAdapter extends
 			holder.aisleContext = (TextView) holder.aisleDescriptor
 					.findViewById(R.id.descriptor_aisle_context);
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+			holder.aisleContentBrowser.setAilseRighttListLisner(new RightList());
 			convertView.setTag(holder);
 
 			if (DEBUG)
@@ -136,9 +142,14 @@ public class TrendingAislesRightColumnAdapter extends
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
 		int scrollIndex = 0; // getContentBrowserIndexForId(windowContent.getAisleId());
 		mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,
-				listener);
+				listener,"RightAdapter");
 		AisleContext context = holder.mWindowContent.getAisleContext();
 		String mVueusername = null;
+		if(mHasToShow){
+			holder.startImageLay.setVisibility(View.VISIBLE);
+		}else {
+			holder.startImageLay.setVisibility(View.GONE);
+		}
 		if (context.mFirstName != null && context.mLastName != null) {
 			mVueusername = context.mFirstName + " " + context.mLastName;
 		} else if (context.mFirstName != null) {
@@ -207,4 +218,16 @@ public class TrendingAislesRightColumnAdapter extends
 			actualPosition = (positionFactor * position) + actualPosition;
 		return actualPosition;
 	}
+	  private class RightList implements AilseRighttRightLisner {
+
+		@Override
+		public void onSwipe(boolean hasToShwo) {
+			mHasToShow = hasToShwo;
+			mHasToShow = false;
+			Log.i("settingAdaptersrest", "settingAdaptersrestRight");
+			notifyDataSetChanged();
+			
+		}
+			  
+		  }
 }
