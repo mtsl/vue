@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -49,7 +48,6 @@ import com.lateralthoughts.vue.utils.Utils;
 
 public class VueLandingPageActivity extends BaseActivity {
 
-	private SharedPreferences mSharedPreferencesObj;
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 	private VueLandingAislesFragment mFragment;
@@ -57,7 +55,6 @@ public class VueLandingPageActivity extends BaseActivity {
 	private LinearLayout mVueLandingActionbarRightLayout;
 	private View mVueLandingActionbarView;
 	private RelativeLayout mVueLandingActionbarAppIconLayout;
-	private int mCurentScreenPosition;
 	private ProgressBar mLoadProgress;
 	private ProgressDialog mProgressDialog;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
@@ -68,8 +65,11 @@ public class VueLandingPageActivity extends BaseActivity {
 	public static String mOtherSourceImageDetailsUrl = null;
 	public static String mOtherSourceImageStore = null;
 	public static int mOtherSourceImageHeight = 0;
+	public static String mOtherSourceImageOccasion = null;
+	public static String mOtherSourceImageLookingFor = null;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
+ 
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -124,9 +124,6 @@ public class VueLandingPageActivity extends BaseActivity {
 						getSlidingMenu().toggle();
 					}
 				});
-		// Checking wheather app is opens for first time or not?
-		mSharedPreferencesObj = this.getSharedPreferences(
-				VueConstants.SHAREDPREFERENCE_NAME, 0);
 
 		VueUser storedVueUser = null;
 		try {
@@ -451,6 +448,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				fileCache.clearVueAppCameraPictures();
 				fileCache.clearTwoDaysOldPictures();
 				mOtherSourceImagePath = null;
+				mOtherSourceImageLookingFor = null;
+				mOtherSourceImageOccasion = null;
 				mOtherSourceImageUrl = null;
 				mOtherSourceImageWidth = 0;
 				mOtherSourceImageHeight = 0;
@@ -476,6 +475,35 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		// ShareViaVue...
+		if (VueApplication.getInstance().mShareViaVueClickedFlag) {
+			VueApplication.getInstance().mShareViaVueClickedFlag = false;
+			if (VueApplication.getInstance().mShareViaVueClickedImageId != null) {
+				String imageId = VueApplication.getInstance().mShareViaVueClickedImageId;
+				String aisleId = VueApplication.getInstance().mShareViaVueClickedAisleId;
+				VueApplication.getInstance().mShareViaVueClickedAisleId = null;
+				VueApplication.getInstance().mShareViaVueClickedImageId = null;
+				AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
+						.getInstance(this).getAisleImageForImageId(imageId,
+								aisleId, true);
+				if (aisleImageDetails != null) {
+					String originalUrl = aisleImageDetails.mImageUrl;
+					String sourceUrl = aisleImageDetails.mDetalsUrl;
+					int width = aisleImageDetails.mAvailableWidth;
+					int height = aisleImageDetails.mAvailableHeight;
+					int widthandHeightMultipliedValue = width * height;
+					OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails();
+					otherSourceImageDetails.setHeight(height);
+					otherSourceImageDetails.setWidth(width);
+					otherSourceImageDetails
+							.setWidthHeightMultipliedValue(widthandHeightMultipliedValue);
+					otherSourceImageDetails.setOriginUrl(originalUrl);
+					ArrayList<OtherSourceImageDetails> imagesList = new ArrayList<OtherSourceImageDetails>();
+					imagesList.add(otherSourceImageDetails);
+					showOtherSourcesGridview(imagesList, sourceUrl);
+				}
+			}
+		}
 		if (mFragment != null) {
 			mFragment.notifyAdapters();
 		}
@@ -546,8 +574,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		viewInfo.mOffset = VueTrendingAislesDataModel
 				.getInstance(VueLandingPageActivity.this).getNetworkHandler()
 				.getmOffset();
-		boolean isCategoryExistInDb = StackViews.getInstance().categoryCheck(
-				catName);
+
 		StackViews.getInstance().push(viewInfo);
 
 		boolean loadMore = false;
@@ -570,6 +597,11 @@ public class VueLandingPageActivity extends BaseActivity {
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler().makeOffseZero();
+			if (mFragment == null) {
+				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+			}
+			mFragment.clearBitmaps();
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance()).clearAisles();
 			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
@@ -592,6 +624,11 @@ public class VueLandingPageActivity extends BaseActivity {
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
+				if (mFragment == null) {
+					mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisles_view_fragment);
+				}
+				mFragment.clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
 						VueApplication.getInstance()).clearObjectsInUse();
@@ -643,6 +680,12 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		if (windowContent != null && windowContent.size() > 0) {
 			changeScreenName(screenName);
+			if (mFragment == null) {
+				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+			}
+			mFragment.clearBitmaps();
+
 			VueTrendingAislesDataModel.getInstance(this).clearAisles();
 			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
 					.clearObjectsInUse();
@@ -663,8 +706,15 @@ public class VueLandingPageActivity extends BaseActivity {
 	private void showPreviousScreen(String screenName) {
 		boolean fromServer = false;
 		boolean loadMore = false;
+		if (mFragment == null) {
+			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.aisles_view_fragment);
+		}
+		mFragment.clearBitmaps();
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
+			Log.i("dbloading issue",
+					"dbloading issue: showPreviousScreen back press");
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 
@@ -672,7 +722,7 @@ public class VueLandingPageActivity extends BaseActivity {
 					.getInstance(VueApplication.getInstance()).isFromDb = true;
 			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 					.clearContent();
-			Log.i("formdbtrending", "formdbtrending: showPreviousScreen");
+
 			if (!fromServer)
 				DataBaseManager.getInstance(VueApplication.getInstance())
 						.resetDbParams();
@@ -757,6 +807,16 @@ public class VueLandingPageActivity extends BaseActivity {
 			Log.i("isAlredeDownloaded", "isAlredeDownloaded: " + isDowoaded);
 			return isDowoaded;
 		}
+
+		@Override
+		public void clearBrowsers() {
+			if (mFragment == null) {
+				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisles_view_fragment);
+			}
+			mFragment.clearBitmaps();
+		}
+
 	}
 
 	public void showDiscardOtherAppImageDialog() {
@@ -773,6 +833,8 @@ public class VueLandingPageActivity extends BaseActivity {
 		yesButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				mOtherSourceImagePath = null;
+				mOtherSourceImageLookingFor = null;
+				mOtherSourceImageOccasion = null;
 				mOtherSourceImageUrl = null;
 				mOtherSourceImageWidth = 0;
 				mOtherSourceImageHeight = 0;
@@ -816,6 +878,8 @@ public class VueLandingPageActivity extends BaseActivity {
 		createAisleLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				String lookingfor = VueLandingPageActivity.mOtherSourceImageLookingFor;
+				String occasion = VueLandingPageActivity.mOtherSourceImageOccasion;
 				dialog.dismiss();
 				Intent intent = new Intent(VueLandingPageActivity.this,
 						DataEntryActivity.class);
@@ -841,6 +905,12 @@ public class VueLandingPageActivity extends BaseActivity {
 				b.putInt(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT,
 						imageHeight);
+				b.putString(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
+						lookingfor);
+				b.putString(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
+						occasion);
 				intent.putExtras(b);
 				startActivity(intent);
 			}
@@ -850,6 +920,8 @@ public class VueLandingPageActivity extends BaseActivity {
 			public void onDismiss(DialogInterface arg0) {
 				if (!mAddImageToAisleLayoutClickedAFlag) {
 					mOtherSourceImagePath = null;
+					mOtherSourceImageLookingFor = null;
+					mOtherSourceImageOccasion = null;
 					mOtherSourceImageUrl = null;
 					mOtherSourceImageWidth = 0;
 					mOtherSourceImageHeight = 0;
@@ -926,4 +998,5 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		return otherSourcesImageDetailsList;
 	}
+
 }

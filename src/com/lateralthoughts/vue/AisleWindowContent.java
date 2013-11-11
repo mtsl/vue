@@ -92,6 +92,7 @@ public class AisleWindowContent {
 
 		// lets parse through the image urls and update the image resolution
 		// VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
+		findMostLikesImage(mAisleImagesList);
 		udpateImageUrlsForDevice();
 	}
 
@@ -259,7 +260,38 @@ public class AisleWindowContent {
 			}
 		}
 	}
-
+	/**
+	 * show star to most likes on the image.
+	 */
+	private void findMostLikesImage(ArrayList<AisleImageDetails> itemsList) {
+		int mostLikePosition = 0, mLikes = 0;
+		boolean hasLikes = false;
+		for (int i = 0; i < itemsList.size(); i++) {
+			itemsList.get(i).mHasMostLikes = false;
+			itemsList.get(i).mSameMostLikes = false;
+			if (mLikes < itemsList.get(i).mLikesCount) {
+				mLikes = itemsList.get(i).mLikesCount;
+				hasLikes = true;
+				mostLikePosition = i;
+			}
+		}
+		if (hasLikes) {
+			itemsList.get(mostLikePosition).mHasMostLikes = true;
+		}
+		if (mLikes == 0) {
+			return;
+		}
+		for (int i = 0; i < itemsList.size(); i++) {
+			if (mostLikePosition == i) {
+				continue;
+			}
+			if (mLikes == itemsList.get(i).mLikesCount) {
+				itemsList.get(i).mSameMostLikes = true;
+				itemsList.get(i).mHasMostLikes = true;
+				itemsList.get(mostLikePosition).mSameMostLikes = true;
+			}
+		}
+	}
 	private AisleContext mContext;
 	private ArrayList<AisleImageDetails> mAisleImagesList;
 }

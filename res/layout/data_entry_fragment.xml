@@ -30,7 +30,8 @@
                 android:layout_marginLeft="8dip"
                 android:layout_marginRight="8dip"
                 android:layout_centerInParent="true"
-                android:adjustViewBounds="true" />
+                android:adjustViewBounds="true"
+                  />
 
             <TextView
                 android:id="@+id/touchtochangeimage"
@@ -177,64 +178,65 @@
                         android:src="@drawable/closebtn" />
                 </RelativeLayout>
             </LinearLayout>
-            
-               <com.lateralthoughts.vue.utils.EditTextBackEvent
-                        android:id="@+id/find_at_text"
-                            android:layout_width="200dip"
+
+            <com.lateralthoughts.vue.utils.EditTextBackEvent
+                android:id="@+id/find_at_text"
+                android:layout_width="200dip"
                 android:layout_height="92dip"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                
                 android:layout_marginBottom="48dip"
                 android:layout_marginRight="8dip"
                 android:background="@drawable/findat_box_bg"
-                        android:paddingTop="48dip"
-                        android:paddingRight="36dp"
-                        android:paddingLeft="16dp"
-                        android:paddingBottom="16dip"
-                        android:visibility="gone"
-                        android:hint="Find at"
-                        android:singleLine="true"
-                        android:textColor="@color/dataentrytextcolor"
-                        android:textSize="15sp" />
-                <LinearLayout
+                android:hint="Find at"
+                android:paddingBottom="16dip"
+                android:paddingLeft="16dp"
+                android:paddingRight="36dp"
+                android:paddingTop="48dip"
+                android:singleLine="true"
+                android:textColor="@color/dataentrytextcolor"
+                android:textSize="15sp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/findaticonlayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/find_at_text"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="102dip"
+                android:layout_marginLeft="8dip"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="32dip"
+                    android:layout_height="32dip"
+                    android:src="@drawable/finditat" />
+
+                <TextView
+                    android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                          android:layout_alignParentBottom="true"
-              android:layout_marginLeft="8dip"
-                android:layout_marginBottom="102dip"
-                android:id="@+id/findaticonlayout"
-                android:layout_alignLeft="@+id/find_at_text"
-                    android:visibility="gone"
-                    android:orientation="horizontal" >
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="4dip"
+                    android:text="Find at"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="18sp" />
+            </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/imageView1"
-                        android:layout_width="32dip"
-                        android:layout_height="32dip"
-                        android:src="@drawable/finditat" />
-
-                    <TextView
-                        android:id="@+id/textView1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="4dip"
-                        android:text="Find at"
-                        android:textColor="@android:color/darker_gray"
-                        android:textSize="18sp" />
-                </LinearLayout>
-                <ImageView
-                        android:id="@+id/findatclose"
-                        android:layout_width="24dip"
-                          android:layout_alignParentBottom="true"
+            <ImageView
+                android:id="@+id/findatclose"
+                android:layout_width="24dip"
+                android:layout_height="24dip"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:layout_marginBottom="66dip"
                 android:layout_marginRight="20dip"
-                android:visibility="gone"
-                        android:layout_height="24dip"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/closebtn" />
+                android:src="@drawable/closebtn"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/lookingforlistviewlayout"
@@ -478,12 +480,12 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="4dip"
-                    android:layout_marginRight="112dip"
+                    android:layout_marginRight="88dip"
                     android:cursorVisible="false"
                     android:focusable="true"
                     android:hint="Say something about the aisle"
                     android:singleLine="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="15sp"
                     android:visibility="gone" />
 

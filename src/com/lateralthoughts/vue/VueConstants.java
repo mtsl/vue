@@ -37,6 +37,7 @@ public class VueConstants {
 	public static final String GOOGLEPLUS_APP_NAME = "Google+";
 	public static final String FACEBOOK_PACKAGE_NAME = "com.facebook.katana";
 	public static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
+	public static final String GOOGLE_PLAY_SERVICES_PACKAGE_NAME = "com.google.android.gms";
 	public static final String GMAIL_PACKAGE_NAME = "com.google.android.gm";
 	public static final String GOOGLEPLUS_PACKAGE_NAME = "com.google.android.apps.plus";
 	public static final String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
@@ -174,7 +175,7 @@ public class VueConstants {
 	public static final Uri BOOKMARKER_AISLES_URI = Uri.parse("content://"
 			+ AUTHORITY + "/" + BOOKMARKER_AISLES);
 	public static final Uri MY_BOOKMARKED_AISLES_URI = Uri.parse("content://"
-	        + AUTHORITY + "/" + MY_BOOKMARKED_AISLES);
+			+ AUTHORITY + "/" + MY_BOOKMARKED_AISLES);
 
 	public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
 	public static final String INVITATION_MESG = "Invitation from Vue application.";

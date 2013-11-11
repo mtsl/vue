@@ -11,6 +11,8 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -48,11 +50,14 @@ import com.actionbarsherlock.view.MenuItem;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
+import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapCacheDetailsScreen;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
@@ -329,6 +334,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			VueLandingPageActivity.mOtherSourceImageHeight = 0;
 			VueLandingPageActivity.mOtherSourceImageDetailsUrl = null;
 			VueLandingPageActivity.mOtherSourceImageStore = null;
+			VueLandingPageActivity.mOtherSourceImageLookingFor = null;
+			VueLandingPageActivity.mOtherSourceImageOccasion = null;
 		}
 	}
 
@@ -1109,5 +1116,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		}
 
+	}
+
+	public void shareViaVueClicked() {
+		finish();
 	}
 }

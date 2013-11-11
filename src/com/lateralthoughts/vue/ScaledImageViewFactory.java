@@ -157,20 +157,10 @@ public class ScaledImageViewFactory {
 			}
 		}		
 	}
-/*	public void clearAllViews(){
-		ScaleImageView view;
-		for(int i=0;i<mObjectsInUse.size();i++){
-			view = mObjectsInUse.remove(i);
-			if(view != null) {
-				view.setImageBitmap(null);
-			   mAvailableObjects.add(view);
-			}
-		}
-	}*/
-	
 	public void clearAllImageViews(){
 		ScaleImageView view;
 		for(int i=0;i<mObjectsInUse.size();i++){
+			Log.i("removeiamgeviews", "removeiamgeviews: "+i);
 			view = mObjectsInUse.remove(i);
 			if(view != null) {
 				view.setImageBitmap(null);

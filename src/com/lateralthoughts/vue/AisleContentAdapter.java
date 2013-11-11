@@ -94,7 +94,16 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         //lets file cache the first two items in the list
        // queueImagePrefetch(mAisleImageDetails, mWindowContent.getBestHeightForWindow(), 1,2);
     }
-    
+    public boolean hasMostLikes(int position){
+    	
+    	return mWindowContent.getImageList().get(position).mHasMostLikes;
+    }
+    public boolean hasSameLikes(int position){
+    	return mWindowContent.getImageList().get(position).mSameMostLikes;
+    }
+    public String getAisleId(){
+		return mWindowContent.getAisleId();
+    }
     @Override
     public void releaseContentSource() {
         // TODO Auto-generated method stub
@@ -551,4 +560,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 		imageParent.addView(thumbImage);
 		contentBrowser.addView(imageParent);
 	}
+
+	
 }

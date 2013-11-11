@@ -59,6 +59,8 @@ public class AisleContentBrowser extends ViewFlipper {
 	private String holderName;
 	private String mBrowserArea;
 	private boolean mSetPosition;
+	public boolean isLeft;
+	public boolean isRight;
 
 	public String getmBrowserArea() {
 		return mBrowserArea;
@@ -123,7 +125,9 @@ public class AisleContentBrowser extends ViewFlipper {
 	public int getScrollIndex() {
 		return mScrollIndex;
 	}
-
+    public int getCurrentIndex(){
+    	return mCurrentIndex;
+    }
 	@Override
 	public void onAnimationEnd() {
 		super.onAnimationEnd();
@@ -231,6 +235,27 @@ public class AisleContentBrowser extends ViewFlipper {
         	                    if(detailImgClickListenr != null) {
         		                    detailImgClickListenr.onImageSwipe(currentIndex+1);
         		                    }
+        	                    if(aisleContentBrowser.isLeft){
+    	                        	if(null != mSpecialNeedsAdapter){
+    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex+1)){
+    	                        			if(mLeftListListener != null)
+    	                        			mLeftListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
+    	                        		} else {
+    	                        			if(mLeftListListener != null)
+    	                        			mLeftListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
+    	                        		}
+    	                        	}
+    	                        } else if(aisleContentBrowser.isRight){
+    	                        	if(null != mSpecialNeedsAdapter){
+    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex+1)){
+    	                        			if(mRightListListener != null)
+    	                        			mRightListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
+    	                        		} else {
+    	                        			if(mRightListListener != null)
+    	                        			mRightListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
+    	                        		}
+    	                        	}
+    	                        }
         	                   // aisleContentBrowser.setDisplayedChild(currentIndex+1);
                             }
                             public void onAnimationStart(Animation animation) {
@@ -304,7 +329,25 @@ public class AisleContentBrowser extends ViewFlipper {
     	                        if(detailImgClickListenr != null) {
     	 	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
     	 	                       }
+    	                        if(aisleContentBrowser.isLeft){
+    	                        	if(null != mSpecialNeedsAdapter){
+    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex-1)){
+    	                        			mLeftListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
+    	                        		} else {
+    	                        			mLeftListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
+    	                        		}
+    	                        	}
+    	                        } else if(aisleContentBrowser.isRight){
+    	                        	if(null != mSpecialNeedsAdapter){
+    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex-1)){
+    	                        			mRightListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
+    	                        		} else {
+    	                        			mRightListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
+    	                        		}
+    	                        	}
+    	                        }
     	                       // aisleContentBrowser.setDisplayedChild(currentIndex-1);
+    	                      
                             }
                             public void onAnimationStart(Animation animation) {
 
@@ -314,7 +357,6 @@ public class AisleContentBrowser extends ViewFlipper {
                             }
                         });
 	                    aisleContentBrowser.setDisplayedChild(currentIndex-1);
-	                   
 	                    return super.onTouchEvent(event);
 	                }
 	            }
@@ -330,6 +372,7 @@ public class AisleContentBrowser extends ViewFlipper {
 		final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser)this;
 		  aisleContentBrowser.setDisplayedChild(VueApplication.getInstance().getmAisleImgCurrentPos());
 		  Utils.mAinmate = true;
+		 
  
 	}
 
@@ -438,8 +481,22 @@ public class AisleContentBrowser extends ViewFlipper {
 		public void setFindAtText(String findAt);
 
 		public void setOccasion(String occasion);
+		public void hasToShowEditIcon(boolean hasToShow);
 	}
-
+	private AilseLeftListLisner mLeftListListener;
+	private AilseRighttRightLisner mRightListListener;
+	public void setAilseLeftListLisner(AilseLeftListLisner leftListener){
+		mLeftListListener = leftListener;
+	}
+	public void setAilseRighttListLisner(AilseRighttRightLisner rightListener){
+		mRightListListener = (AilseRighttRightLisner) rightListener;
+	}
+   public interface AilseLeftListLisner {
+	   public void onSwipe(boolean hasToShwo,String aisleId,boolean hasSameLikes);
+   }
+   public interface AilseRighttRightLisner {
+	   public void onSwipe(boolean hasToShwo,String aisleId,boolean hasSameLikes);
+   }
 	public void setAisleDetailSwipeListener(
 			AisleDetailSwipeListener swipListener) {
 		mSwipeListener = swipListener;

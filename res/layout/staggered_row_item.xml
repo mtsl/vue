@@ -6,12 +6,41 @@
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical" >
 
-    <com.lateralthoughts.vue.ui.AisleContentBrowser
-        android:id="@+id/aisle_content_flipper"
+    <FrameLayout
+        android:id="@+id/trendingbrowser"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:focusable="true" >
-    </com.lateralthoughts.vue.ui.AisleContentBrowser>
+        android:layout_height="fill_parent" >
+
+        <com.lateralthoughts.vue.ui.AisleContentBrowser
+            android:id="@+id/aisle_content_flipper"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:focusable="true" >
+        </com.lateralthoughts.vue.ui.AisleContentBrowser>
+
+<!--         <LinearLayout
+            android:id="@+id/starImagelay"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="top|left"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="2dp"
+            android:visibility="gone"
+            android:background="@drawable/rectangle" > -->
+
+            <ImageView
+                android:id="@+id/staricon"
+           
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="top|left"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="2dp"
+             android:visibility="gone"
+                
+                  />
+      <!--   </LinearLayout> -->
+    </FrameLayout>
 
     <LinearLayout
         android:id="@id/aisle_descriptor"
@@ -26,10 +55,9 @@
             android:layout_width="36dip"
             android:layout_height="36dip"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/profile_thumbnail"
-            android:contentDescription="@string/aisle_owner_profile_desc"
             android:layout_marginLeft="8dp"
-              />
+            android:background="@drawable/profile_thumbnail"
+            android:contentDescription="@string/aisle_owner_profile_desc" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -44,18 +72,18 @@
                 android:id="@id/descriptor_aisle_owner_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                 android:singleLine="true"
-                 android:ellipsize="end"
                 android:layout_gravity="left"
-                android:gravity="left" />
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="true" />
 
             <TextView
                 android:id="@id/descriptor_aisle_context"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:singleLine="true"
-                 android:ellipsize="end"
                 android:text="@string/middle_earth"
                 android:textSize="12sp" />
         </LinearLayout>

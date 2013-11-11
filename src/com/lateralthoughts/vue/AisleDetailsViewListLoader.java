@@ -1,32 +1,26 @@
 package com.lateralthoughts.vue;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import com.android.volley.toolbox.ImageLoader;
-import com.facebook.android.Util;
-import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
+
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.ImageDimension;
 import com.lateralthoughts.vue.utils.Utils;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AisleDetailsViewListLoader {
     private static final boolean DEBUG = false;
@@ -35,10 +29,10 @@ public class AisleDetailsViewListLoader {
    // private Context mContext;
     private ContentAdapterFactory mContentAdapterFactory;
     
-    private static AisleDetailsViewListLoader sAisleDetailsViewLoaderInstance = null;
+    //private static AisleDetailsViewListLoader sAisleDetailsViewLoaderInstance = null;
     private ScaledImageViewFactory mViewFactory = null;
     private BitmapLoaderUtils mBitmapLoaderUtils;
-    private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
+  //  private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String, ViewHolder>();
    // private ImageDimension mImageDimension;
     private int mBestHeight = 0;
     AisleContentBrowser contentBrowser = null;
@@ -61,12 +55,12 @@ public class AisleDetailsViewListLoader {
         mViewFactory = ScaledImageViewFactory.getInstance(VueApplication.getInstance());
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
         mContentAdapterFactory = ContentAdapterFactory.getInstance(VueApplication.getInstance());
-        DisplayMetrics dm = VueApplication.getInstance().getResources().getDisplayMetrics();
+        //DisplayMetrics dm = VueApplication.getInstance().getResources().getDisplayMetrics();
        //mBitmapLoaderUtils.clearCache();
         if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
     public void getAisleContentIntoView(AisleDetailsViewAdapter.ViewHolder holder,
-            int scrollIndex, int position,DetailClickListener detailListener,AisleWindowContent windowContent,boolean setPosistion){
+            int scrollIndex, int position,DetailClickListener detailListener,AisleWindowContent windowContent,boolean setPosistion,/*LinearLayout editImageLay,*/LinearLayout starImageLay){
     	 mBestHeight = 0;
     	 mDetailListener = detailListener;
         ScaleImageView imageView = null;
@@ -114,10 +108,8 @@ public class AisleDetailsViewListLoader {
             holder.aisleContentBrowser.setDetailImageClickListener(detailListener);
             holder.uniqueContentId = desiredContentId;
         } 
-        Log.i("imagedispissue", "imagedispissue4");
-        Log.i("cardHeight", "cardHeight bestHeight1: "+windowContent.getBestHeightForWindow());
         imageDetailsArr = windowContent.getImageList();
-        Log.e("AisleDetailsViewListLoader", "Aisle Id : " + windowContent.getAisleId());
+        Log.e("clickedwindow", "clickedwindow Aisle Id : " + windowContent.getAisleId());
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			 
 			 for(int i = 0;i<imageDetailsArr.size();i++) {
@@ -139,8 +131,9 @@ public class AisleDetailsViewListLoader {
 			mBestHeight =Utils.modifyHeightForDetailsView(imageDetailsArr);
 			windowContent.setBestLargestHeightForWindow(mBestHeight);
 			contentBrowser.addView(imageView);
-			Log.i("new image", "new image  windowbestHeight:  "+windowContent.getBestLargetHeightForWindow());
 			setParams(holder.aisleContentBrowser, imageView,mBestHeight);
+			setStarIconParams(windowContent,starImageLay);
+			//setEditIconParams(windowContent,editImageLay);
 			if (bitmap != null) {
 				if (bitmap.getHeight() > mBestHeight) {
 					loadBitmap(itemDetails, contentBrowser, imageView,
@@ -236,6 +229,7 @@ public class AisleDetailsViewListLoader {
                     imageView.setImageBitmap(bitmap);
                     if(mScrollIndex == 0){
                     imageView.startAnimation(myFadeInAnimation);
+                    mDetailListener.onRefreshAdaptaers();
                     }
                 }
             }
@@ -315,26 +309,64 @@ public class AisleDetailsViewListLoader {
       } 
        
    }
-   private void setMaxHeight(int imageHeight,int imageWidth){
-	   int screenHeight = VueApplication.getInstance().getScreenHeight();
-	   int screenWidth = VueApplication.getInstance().getScreenWidth();
-	    int bestWidht;
-	    int bestHeight;
-	   if(screenHeight < imageHeight){
-		   bestHeight = screenHeight;  
-		   bestWidht =  (imageWidth * screenHeight)/imageHeight;
-		   
-	   }
-   }
-
-  private int getBestHeight(int largeHeight) {
-	   int screenHeight = VueApplication.getInstance().getVueDetailsCardHeight();
-	   int screenWidth = VueApplication.getInstance().getScreenWidth();
-	   if(largeHeight > screenHeight){
-		   largeHeight = screenHeight;
-	   }
-	  
-	  return largeHeight;
-	  
+  /**
+   * 
+   * @param windowContent AisleWindowContent
+   * @param editImageLay LinearLayout
+   * set the params for the editImage layout on the image displayed in the detailsview.
+   */
+  private void setEditIconParams(AisleWindowContent windowContent,LinearLayout editImageLay){
+	  if( null == windowContent || null == windowContent){
+		  return;
+	  }
+		int browserHeight = mBestHeight;
+		int browserWidth = VueApplication.getInstance()
+				.getVueDetailsCardWidth();
+		int imageHeight =windowContent
+				.getImageList().get(VueApplication.getInstance().getmAisleImgCurrentPos()).mDetailsImageHeight;
+		int imageWidth = windowContent
+				.getImageList().get(VueApplication.getInstance().getmAisleImgCurrentPos()).mDetailsImageWidth;
+		int imageRightSpace = browserWidth - imageWidth;
+		int imageTopAreaHeight = (browserHeight / 2)
+				- (imageHeight / 2);
+		FrameLayout.LayoutParams editIconParams = new FrameLayout.LayoutParams(
+				VueApplication.getInstance().getPixel(32),
+				VueApplication.getInstance().getPixel(32));
+		editIconParams.setMargins(0, VueApplication
+				.getInstance().getPixel(10)
+				+ imageTopAreaHeight, VueApplication
+				.getInstance().getPixel(4)
+				+ imageRightSpace / 2, 0);
+		Log.i("editiconshowing", "editiconshowing in adapter imageWidth: "+imageWidth);
+		Log.i("editiconshowing", "editiconshowing in adapter imageHeight: "+imageHeight);
+		editIconParams.gravity = Gravity.RIGHT;
+		editImageLay
+				.setLayoutParams(editIconParams);
+  }
+  private void setStarIconParams(AisleWindowContent windowContent,LinearLayout starImageLay){
+	  if( null == windowContent || null == windowContent){
+		  return;
+	  }
+		int browserHeight = mBestHeight;
+		int browserWidth = VueApplication.getInstance()
+				.getVueDetailsCardWidth();
+		int imageHeight =windowContent
+				.getImageList().get(VueApplication.getInstance().getmAisleImgCurrentPos()).mDetailsImageHeight;
+		int imageWidth = windowContent
+				.getImageList().get(VueApplication.getInstance().getmAisleImgCurrentPos()).mDetailsImageWidth;
+		int imageRightSpace = browserWidth - imageWidth;
+		int imageTopAreaHeight = (browserHeight / 2)
+				- (imageHeight / 2);
+		FrameLayout.LayoutParams starIconParams = new FrameLayout.LayoutParams(
+				VueApplication.getInstance().getPixel(32),
+				VueApplication.getInstance().getPixel(32));
+		starIconParams.setMargins(VueApplication
+				.getInstance().getPixel(4)
+				+ imageRightSpace / 2, VueApplication
+				.getInstance().getPixel(10)
+				+ imageTopAreaHeight,0,0);
+	 
+		starImageLay
+				.setLayoutParams(starIconParams);
   }
 }

@@ -21,6 +21,12 @@ public interface IAisleContentAdapter {
     
     public boolean setAisleContent(AisleContentBrowser contentBrowser, int currentIndex, int wantedIndex, boolean shiftPivot);
 
+	public boolean hasMostLikes(int i);
+	
+	public String getAisleId();
+
+	public boolean hasSameLikes(int position);
+
 /*	public void setSourceName(String sourceName);
 	public String getSourceName();*/
 }

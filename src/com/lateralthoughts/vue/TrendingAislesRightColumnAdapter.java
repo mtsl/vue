@@ -38,6 +38,8 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseLeftListLisner;
+import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseRighttRightLisner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.Utils;
@@ -57,6 +59,9 @@ public class TrendingAislesRightColumnAdapter extends
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
 	BitmapLoaderUtils mBitmapLoaderUtils;
+	private boolean mHasToShow = true;
+	private String mShowStarAisle = " ";
+	private boolean mHasSameLikes = false;
 
 	public TrendingAislesRightColumnAdapter(Context c,
 			ArrayList<AisleWindowContent> content) {
@@ -111,6 +116,10 @@ public class TrendingAislesRightColumnAdapter extends
 			holder = new ViewHolder();
 			holder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.aisle_content_flipper);
+			holder.starIcon = (ImageView) convertView
+					.findViewById(R.id.staricon );
+			/*holder.startImageLay = (LinearLayout) convertView
+					.findViewById(R.id.starImagelay); */
 			LinearLayout.LayoutParams showpieceParams = new LinearLayout.LayoutParams(
 					VueApplication.getInstance().getScreenWidth() / 2, 200);
 			// holder.aisleContentBrowser.setLayoutParams(showpieceParams);
@@ -123,6 +132,7 @@ public class TrendingAislesRightColumnAdapter extends
 			holder.aisleContext = (TextView) holder.aisleDescriptor
 					.findViewById(R.id.descriptor_aisle_context);
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+			holder.aisleContentBrowser.setAilseRighttListLisner(new RightList());
 			convertView.setTag(holder);
 
 			if (DEBUG)
@@ -135,8 +145,33 @@ public class TrendingAislesRightColumnAdapter extends
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
 		int scrollIndex = 0; // getContentBrowserIndexForId(windowContent.getAisleId());
+	/*	if( holder.mWindowContent.getImageList().get(0).mHasMostLikes){
+			if(holder.mWindowContent.getImageList().get(0).mSameMostLikes){
+				holder.starIcon.setImageResource(R.drawable.share_light);
+			} else {
+				holder.starIcon.setImageResource(R.drawable.share);
+			}
+			holder.startImageLay.setVisibility(View.VISIBLE);
+		}*/
+		if(mHasToShow){
+			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId())) {
+				if(mHasSameLikes){
+					holder.starIcon.setImageResource(R.drawable.vue_star_light);
+				} else {
+					holder.starIcon.setImageResource(R.drawable.vue_star_theme);
+				}
+			//holder.startImageLay.setVisibility(View.VISIBLE);
+			holder.starIcon.setVisibility(View.VISIBLE);
+			 
+			}
+		}else {
+			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId()))
+			//holder.startImageLay.setVisibility(View.GONE);
+				holder.starIcon.setVisibility(View.GONE);
+		}
+		
 		mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,
-				listener);
+				listener,"RightAdapter",holder.starIcon);
 		AisleContext context = holder.mWindowContent.getAisleContext();
 		String mVueusername = null;
 		if (context.mFirstName != null && context.mLastName != null) {
@@ -207,4 +242,17 @@ public class TrendingAislesRightColumnAdapter extends
 			actualPosition = (positionFactor * position) + actualPosition;
 		return actualPosition;
 	}
+	  private class RightList implements AilseRighttRightLisner {
+
+		@Override
+		public void onSwipe(boolean hasToShwo,String aisleId,boolean sameLikes) {
+			mHasToShow = hasToShwo;
+			mShowStarAisle = aisleId;
+			mHasSameLikes = sameLikes;
+			Log.i("settingAdaptersrest", "settingAdaptersrestRight");
+			notifyDataSetChanged();
+			
+		}
+			  
+		  }
 }

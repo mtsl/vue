@@ -65,7 +65,7 @@ public class DataBaseManager {
   private ThreadPoolExecutor threadPool;
   private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
   private static DataBaseManager manager;
-  private HashMap<String, Integer> aislesOrderMap = new HashMap<String, Integer>();
+  private HashMap<String, Integer> aislesOrderMap;
   private HashMap<String, Integer> bookmarkedAislesOrderMap = new HashMap<String, Integer>();
  // private HashMap<String, HashMap<String, Integer>> imagesOrderMap = new HashMap<String, HashMap<String,Integer>>();
 
@@ -149,13 +149,14 @@ public class DataBaseManager {
    * */
   private void addAislesToDB(Context context,
       List<AisleWindowContent> contentList, int offsetValue, int whichScreen, boolean isBookmarkedAisle) {
+	  
     if(contentList.size() == 0) {
       return;
     }
    
     if(offsetValue == 0 && whichScreen == TRENDING && !isBookmarkedAisle) {
       Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == TRENDING, offsetValue == " + offsetValue);
-      aislesOrderMap.clear();
+      aislesOrderMap = new HashMap<String, Integer>();
       ArrayList<String> bookmarkaisleIds = new ArrayList<String>();
       String[] iDs = bookmarkaisleIds.toArray(new String[bookmarkaisleIds.size()]);
       int aislesDeleted = context.getContentResolver().delete(VueConstants.CONTENT_URI, null, null);
@@ -168,7 +169,7 @@ public class DataBaseManager {
     } else if(isBookmarkedAisle) {
       bookmarkedAislesOrderMap.clear();
     } else if (whichScreen == MY_AISLES || whichScreen == AISLE_CREATED) {
-      aislesOrderMap.clear();
+    	aislesOrderMap = new HashMap<String, Integer>();
     }
     
     Cursor aisleIdCursor = context.getContentResolver().query(
@@ -436,8 +437,11 @@ public class DataBaseManager {
         mEndPosition = 1000;
       }
     }
+	
     cursor.close();
     mEndPosition = mEndPosition + mLocalAislesLimit;
+    Log.e("DataBaseManager",
+			"SURU updated aisle Order: DATABASE LODING 1 mEndPosition: "+mEndPosition+" mStartPosition: "+mStartPosition);
     AisleContext userInfo;
     AisleImageDetails imageItemDetails;
     AisleWindowContent aisleItem = null;
@@ -659,6 +663,16 @@ public class DataBaseManager {
       @Override
       public void run() {
         updateBookmarkAislesToBDb(bookmarkId, bookmarkedAisleId, isBookarked);
+      }
+    });
+  }
+  
+  public void deleteImage(final String imgId) {
+    runTask(new Runnable() {
+      
+      @Override
+      public void run() {
+          deleteImagesfromDB(imgId);
       }
     });
   }
@@ -1367,6 +1381,12 @@ public class DataBaseManager {
      Uri uri = Uri.parse( VueConstants.CONTENT_URI + "/" + key);
      int rowsUpdated = mContext.getContentResolver().update(uri, values, null, null);
    }
+ }
+ 
+ private boolean deleteImagesfromDB(String imgId) {
+    int rowDeleted = mContext.getContentResolver().delete(VueConstants.IMAGES_CONTENT_URI,
+        VueConstants.IMAGE_ID + "=?", new String[] {imgId});
+    return (rowDeleted == 1) ? true : false;
  }
  
   /**
