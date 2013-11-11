@@ -111,7 +111,7 @@ CountingStringEntity.UploadListener{
 
 		} else {
 			Log.e("imageDelete",
-					"imageDeletion  now this ailse is not showing in UI");
+					"imageDeletion  now this aisle is not showing in UI");
 		}
 	}
 private void deleteImageFromDb(String imageId,String aisleId){ }
