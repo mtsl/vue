@@ -125,7 +125,9 @@ public class AisleContentBrowser extends ViewFlipper {
 	public int getScrollIndex() {
 		return mScrollIndex;
 	}
-
+    public int getCurrentIndex(){
+    	return mCurrentIndex;
+    }
 	@Override
 	public void onAnimationEnd() {
 		super.onAnimationEnd();
@@ -237,20 +239,20 @@ public class AisleContentBrowser extends ViewFlipper {
     	                        	if(null != mSpecialNeedsAdapter){
     	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex+1)){
     	                        			if(mLeftListListener != null)
-    	                        			mLeftListListener.onSwipe(true);
+    	                        			mLeftListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
     	                        		} else {
     	                        			if(mLeftListListener != null)
-    	                        			mLeftListListener.onSwipe(false);
+    	                        			mLeftListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
     	                        		}
     	                        	}
     	                        } else if(aisleContentBrowser.isRight){
     	                        	if(null != mSpecialNeedsAdapter){
     	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex+1)){
     	                        			if(mRightListListener != null)
-    	                        			mRightListListener.onSwipe(true);
+    	                        			mRightListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
     	                        		} else {
     	                        			if(mRightListListener != null)
-    	                        			mRightListListener.onSwipe(false);
+    	                        			mRightListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
     	                        		}
     	                        	}
     	                        }
@@ -330,17 +332,17 @@ public class AisleContentBrowser extends ViewFlipper {
     	                        if(aisleContentBrowser.isLeft){
     	                        	if(null != mSpecialNeedsAdapter){
     	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex-1)){
-    	                        			mLeftListListener.onSwipe(true);
+    	                        			mLeftListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
     	                        		} else {
-    	                        			mLeftListListener.onSwipe(false);
+    	                        			mLeftListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
     	                        		}
     	                        	}
     	                        } else if(aisleContentBrowser.isRight){
     	                        	if(null != mSpecialNeedsAdapter){
     	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex-1)){
-    	                        			mRightListListener.onSwipe(true);
+    	                        			mRightListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
     	                        		} else {
-    	                        			mRightListListener.onSwipe(false);
+    	                        			mRightListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
     	                        		}
     	                        	}
     	                        }
@@ -489,10 +491,10 @@ public class AisleContentBrowser extends ViewFlipper {
 		mRightListListener = (AilseRighttRightLisner) rightListener;
 	}
    public interface AilseLeftListLisner {
-	   public void onSwipe(boolean hasToShwo);
+	   public void onSwipe(boolean hasToShwo,String aisleId,boolean hasSameLikes);
    }
    public interface AilseRighttRightLisner {
-	   public void onSwipe(boolean hasToShwo);
+	   public void onSwipe(boolean hasToShwo,String aisleId,boolean hasSameLikes);
    }
 	public void setAisleDetailSwipeListener(
 			AisleDetailSwipeListener swipListener) {

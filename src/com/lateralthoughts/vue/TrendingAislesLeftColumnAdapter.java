@@ -50,7 +50,9 @@ public class TrendingAislesLeftColumnAdapter extends
 
 	public int firstX;
 	public int lastX;
-	public boolean mHasToShow = false;
+	private boolean mHasToShow = true;
+	private boolean mHasSameLikes = false;
+	private String mShowStarAisle = " " ;
 	// public static boolean mIsLeftDataChanged = false;
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
@@ -112,8 +114,10 @@ public class TrendingAislesLeftColumnAdapter extends
 			holder = new ViewHolder();
 			holder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.aisle_content_flipper);
-			holder.startImageLay = (LinearLayout) convertView
-					.findViewById(R.id.starImagelay); 
+			holder.starIcon = (ImageView) convertView
+					.findViewById(R.id.staricon );
+	/*		holder.startImageLay = (LinearLayout) convertView
+					.findViewById(R.id.starImagelay); */
 			holder.aisleDescriptor = (LinearLayout) convertView
 					.findViewById(R.id.aisle_descriptor);
 			holder.profileThumbnail = (ImageView) holder.aisleDescriptor
@@ -134,15 +138,34 @@ public class TrendingAislesLeftColumnAdapter extends
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
 		int scrollIndex = 0;
+	/*	if( holder.mWindowContent.getImageList().get(0).mHasMostLikes && holder.aisleContentBrowser.getCurrentIndex() == 0){
+			if(holder.mWindowContent.getImageList().get(0).mSameMostLikes){
+				holder.starIcon.setImageResource(R.drawable.share_light);
+			} else {
+				holder.starIcon.setImageResource(R.drawable.share );
+			}
+			holder.startImageLay.setVisibility(View.VISIBLE);
+		}*/
+		if(mHasToShow){
+			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId())){
+				if(mHasSameLikes){
+					holder.starIcon.setImageResource(R.drawable.vue_star_light);
+				} else {
+					holder.starIcon.setImageResource(R.drawable.vue_star_theme);
+				}
+			//holder.startImageLay.setVisibility(View.VISIBLE);
+				holder.starIcon.setVisibility(View.VISIBLE);
+			}
+		}else {
+			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId()))
+			//holder.startImageLay.setVisibility(View.GONE);
+			holder.starIcon.setVisibility(View.GONE);
+		}
+		
 		mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
-				false, listener,"LeftAdapter");
+				false, listener,"LeftAdapter",holder.starIcon);
 		AisleContext context = holder.mWindowContent.getAisleContext();
 		String mVueusername = null;
-		if(mHasToShow){
-			holder.startImageLay.setVisibility(View.VISIBLE);
-		}else {
-			holder.startImageLay.setVisibility(View.GONE);
-		}
 		if (context.mFirstName != null && context.mLastName != null) {
 			mVueusername = context.mFirstName + " " + context.mLastName;
 		} else if (context.mFirstName != null) {
@@ -214,9 +237,10 @@ public class TrendingAislesLeftColumnAdapter extends
   private class LeftList implements AilseLeftListLisner {
 
 	@Override
-	public void onSwipe(boolean hasToShwo) {
-		//mHasToShow = hasToShwo;
-		mHasToShow = false;
+	public void onSwipe(boolean hasToShwo,String aisleId,boolean  sameLikes) {
+		mHasToShow = hasToShwo;
+		mShowStarAisle = aisleId;
+		mHasSameLikes = sameLikes;
 		Log.i("settingAdaptersrest", "settingAdaptersrestRight");
 		notifyDataSetChanged();
 		
