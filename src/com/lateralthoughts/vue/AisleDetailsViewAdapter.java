@@ -328,7 +328,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					null);
 			mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.showpieceadapter);
-
 		/*	mViewHolder.editImage = (LinearLayout) convertView
 					.findViewById(R.id.editImage);*/
 			mViewHolder.starIcon = (ImageView) convertView
