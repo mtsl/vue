@@ -31,7 +31,7 @@
             <ImageView
                 android:id="@+id/staricon"
            
-                     android:layout_width="16dp"
+            android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_gravity="top|left"
             android:layout_marginLeft="2dp"

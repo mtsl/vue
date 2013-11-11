@@ -304,7 +304,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		FrameLayout edtCommentLay;
 
 		ImageView commentSend,starIcon;
-		LinearLayout editImage,starImage;
+		LinearLayout /*editImage,*/starImage;
 		String tag;
 	}
 
@@ -324,8 +324,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.showpieceadapter);
 
-			mViewHolder.editImage = (LinearLayout) convertView
-					.findViewById(R.id.editImage);
+		/*	mViewHolder.editImage = (LinearLayout) convertView
+					.findViewById(R.id.editImage);*/
 			mViewHolder.starIcon = (ImageView) convertView
 					.findViewById(R.id.staricon);
 
@@ -435,6 +435,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		// mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
 		if (position == 0) {
+			boolean hasToShow = false;
 			Log.i("imagedispissue", "imagedispissue-1");
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);
@@ -443,7 +444,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.edtCommentLay.setVisibility(View.GONE);
 			// mViewHolder.mWindowContent = mWindowContentTemp;
 			try {
-				mViewHolder.editImage.setVisibility(View.GONE);
+				//mViewHolder.editImage.setVisibility(View.GONE);
 				if (getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mOwnerUserId != null
 						&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
@@ -451,7 +452,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId
 							|| Long.parseLong(getItem(mCurrentAislePosition)
 									.getAisleContext().mUserId) == mUserId) {
-						int browserHeight = getItem(mCurrentAislePosition)
+		/*				int browserHeight = getItem(mCurrentAislePosition)
 								.getBestLargetHeightForWindow();
 						int browserWidth = VueApplication.getInstance()
 								.getVueDetailsCardWidth();
@@ -484,10 +485,14 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 												"Edit Aisle Function",
 												Toast.LENGTH_SHORT).show();
 									}
-								});
+								});*/
+					    hasToShow = true;
+						mswipeListner.hasToShowEditIcon(hasToShow);
 
 					} else {
-						mViewHolder.editImage.setVisibility(View.GONE);
+						  hasToShow = false;
+						mswipeListner.hasToShowEditIcon(hasToShow);
+						//mViewHolder.editImage.setVisibility(View.GONE);
 					}
 				}  
 				if (getItem(mCurrentAislePosition).getImageList().get(
@@ -574,7 +579,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					mViewLoader.getAisleContentIntoView(mViewHolder,
 							scrollIndex, position,
 							new DetailImageClickListener(),
-							getItem(mCurrentAislePosition), mSetPosition,mViewHolder.editImage,mViewHolder.starImage);
+							getItem(mCurrentAislePosition), mSetPosition,/*mViewHolder.editImage,*/mViewHolder.starImage);
 					mSetPosition = false;
 				 
 			} catch (Exception e) {

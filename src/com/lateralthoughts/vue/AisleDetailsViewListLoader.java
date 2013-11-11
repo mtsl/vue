@@ -60,7 +60,7 @@ public class AisleDetailsViewListLoader {
         if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
     public void getAisleContentIntoView(AisleDetailsViewAdapter.ViewHolder holder,
-            int scrollIndex, int position,DetailClickListener detailListener,AisleWindowContent windowContent,boolean setPosistion,LinearLayout editImageLay,LinearLayout starImageLay){
+            int scrollIndex, int position,DetailClickListener detailListener,AisleWindowContent windowContent,boolean setPosistion,/*LinearLayout editImageLay,*/LinearLayout starImageLay){
     	 mBestHeight = 0;
     	 mDetailListener = detailListener;
         ScaleImageView imageView = null;
@@ -133,7 +133,7 @@ public class AisleDetailsViewListLoader {
 			contentBrowser.addView(imageView);
 			setParams(holder.aisleContentBrowser, imageView,mBestHeight);
 			setStarIconParams(windowContent,starImageLay);
-			setEditIconParams(windowContent,editImageLay);
+			//setEditIconParams(windowContent,editImageLay);
 			if (bitmap != null) {
 				if (bitmap.getHeight() > mBestHeight) {
 					loadBitmap(itemDetails, contentBrowser, imageView,

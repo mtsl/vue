@@ -93,6 +93,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	TextView vueAisleHeading;
 	String mOccasion;
 	String mFindAtUrl;
+	LinearLayout mEditIconLay;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -148,6 +149,19 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				.findViewById(R.id.detaisl_find_at_text);
 		mVueUserPic = (ImageView) mDetailsContentView
 				.findViewById(R.id.vue_user_pic);
+		mEditIconLay = (LinearLayout)  mDetailsContentView
+				.findViewById(R.id.editImage);
+		mEditIconLay
+		.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(mContext,
+						"Edit Aisle Function",
+						Toast.LENGTH_SHORT).show();
+			}
+		});
+		
 		String detailsUrl = null;
 		try {
 			detailsUrl = VueTrendingAislesDataModel
@@ -720,6 +734,17 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				mEditTextFindAt.setText("");
 				mFindAtUrl = "";
 			}
+		}
+
+		@Override
+		public void hasToShowEditIcon(boolean hasToShow) {
+		 
+			 if(hasToShow){
+				 mEditIconLay.setVisibility(View.VISIBLE); 
+			 } else {
+				 mEditIconLay.setVisibility(View.GONE); 
+			 }
+			
 		}
 
 	}

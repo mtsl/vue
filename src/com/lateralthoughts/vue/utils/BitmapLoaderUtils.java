@@ -32,21 +32,15 @@ public class BitmapLoaderUtils {
 	private FileCache mFileCache;
 	// private VueMemoryCache<Bitmap> mAisleImagesCache;
 	//private BitmapLruCache mAisleImagesCache;
-
 	// private int mScreenWidth;
-
 	// private final boolean DEBUG = false;
-
 	private BitmapLoaderUtils() {
 		// mContext = context;
 		mFileCache = VueApplication.getInstance().getFileCache();
-	 
 	/*	mAisleImagesCache = BitmapLruCache.getInstance(VueApplication
 				.getInstance());*/
-
 		// DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
 		// mScreenWidth = metrics.widthPixels;
-
 		// mExecutorService = Executors.newFixedThreadPool(5);
 	}
 
@@ -143,18 +137,16 @@ public class BitmapLoaderUtils {
 
 				// Calculate ratios of height and width to requested height and
 				// width
-				final int heightRatio =  (int) ((float) height
-						/ (float) bestHeight);
-				final int widthRatio =(int)((float) width
-						/ (float) reqWidth);
- 
+				final int heightRatio = (int) ((float) height / (float) bestHeight);
+				final int widthRatio = (int) ((float) width / (float) reqWidth);
+
 				// Choose the smallest ratio as inSampleSize value, this will
 				// guarantee
 				// a final image with both dimensions larger than or equal to
 				// the
 				// requested height and width.
 				scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
-				 
+
 			}
 
 			// decode with inSampleSize
@@ -166,11 +158,14 @@ public class BitmapLoaderUtils {
 			// mScreenWidth);
 			FileInputStream stream2 = new FileInputStream(f);
 			Bitmap bitmap = BitmapFactory.decodeStream(stream2, null, o2);
-			Log.i("imagenotshowing", "imagenotshowing: Not   found locally bitmap "+bitmap);
-			Log.i("imagenotshowing", "imagenotshowing: Not   found locally bitmap "+bitmap.getHeight());
+			Log.i("imagenotshowing",
+					"imagenotshowing: Not   found locally bitmap " + bitmap);
+			Log.i("imagenotshowing",
+					"imagenotshowing: Not   found locally bitmap "
+							+ bitmap.getHeight());
 			stream2.close();
-			if(source.equalsIgnoreCase(Utils.TRENDING_SCREEN)){
-				return getBitmap(bitmap,bestWidth,bestHeight);
+			if (source.equalsIgnoreCase(Utils.TRENDING_SCREEN)) {
+				return getBitmap(bitmap, bestWidth, bestHeight);
 			}
 			if (source.equalsIgnoreCase(Utils.DETAILS_SCREEN)) {
 				// scaling factor considers only integers may be some times
@@ -246,10 +241,8 @@ public class BitmapLoaderUtils {
 		}*/
 		return getModifiedBitmap(bitmap,bestWidth,bestHeight);
 	}
-
 	private Bitmap getModifiedBitmap(Bitmap originalImage, int width, int height) {
 		// here width & height are the desired width & height values)
-
 		// first lets create a new bitmap and a canvas to draw into it.
 		Bitmap newBitmap = Bitmap.createBitmap((int) width, (int) height,
 				Config.ARGB_8888);
@@ -285,7 +278,6 @@ public class BitmapLoaderUtils {
 		// mAisleImagesCache.clear();
 		// mFileCache.clear();
 	}
-
 	public void removeBitmapFromCache(String id) {
 		// mAisleImagesCache.removeBitmap(id);
 	}

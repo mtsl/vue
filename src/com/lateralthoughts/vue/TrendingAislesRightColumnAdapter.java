@@ -154,7 +154,7 @@ public class TrendingAislesRightColumnAdapter extends
 			holder.startImageLay.setVisibility(View.VISIBLE);
 		}*/
 		if(mHasToShow){
-			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId()))
+			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId())) {
 				if(mHasSameLikes){
 					holder.starIcon.setImageResource(R.drawable.vue_star_light);
 				} else {
@@ -162,6 +162,8 @@ public class TrendingAislesRightColumnAdapter extends
 				}
 			//holder.startImageLay.setVisibility(View.VISIBLE);
 			holder.starIcon.setVisibility(View.VISIBLE);
+			 
+			}
 		}else {
 			if( holder.mWindowContent != null && mShowStarAisle.equals( holder.mWindowContent.getAisleId()))
 			//holder.startImageLay.setVisibility(View.GONE);
