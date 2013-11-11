@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,6 +23,7 @@ import android.util.Log;
 import com.lateralthoughts.vue.DataEntryFragment;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.logging.Logger;
 
 public class GetOtherSourceImagesTask extends
 		AsyncTask<String, String, ArrayList<OtherSourceImageDetails>> {
@@ -230,6 +232,7 @@ public class GetOtherSourceImagesTask extends
 			return null;
 		}
 		String st = html.toString();
+		Logger.log("error", "GetOtherSourceImages", st);
 		Log.e("GetOtherSourceImagesTask", "PARSED HTML PAGE: " + st);
 		return st;/* sb.toString(); */
 	}

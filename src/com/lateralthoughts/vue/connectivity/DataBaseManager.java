@@ -666,6 +666,16 @@ public class DataBaseManager {
       }
     });
   }
+  
+  public void deleteImage(final String imgId) {
+    runTask(new Runnable() {
+      
+      @Override
+      public void run() {
+          deleteImagesfromDB(imgId);
+      }
+    });
+  }
 
   /**
    * add new Comment on images and sets the DIRTY_FLAG true to indicate that
@@ -1371,6 +1381,12 @@ public class DataBaseManager {
      Uri uri = Uri.parse( VueConstants.CONTENT_URI + "/" + key);
      int rowsUpdated = mContext.getContentResolver().update(uri, values, null, null);
    }
+ }
+ 
+ private boolean deleteImagesfromDB(String imgId) {
+    int rowDeleted = mContext.getContentResolver().delete(VueConstants.IMAGES_CONTENT_URI,
+        VueConstants.IMAGE_ID + "=?", new String[] {imgId});
+    return (rowDeleted == 1) ? true : false;
  }
  
   /**

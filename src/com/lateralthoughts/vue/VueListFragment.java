@@ -400,7 +400,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
       }
     });
     
-    VueLoginActivity.getProfileImageChangeListenor(imageChangeListenor);
 	}
 
 	/**
@@ -411,6 +410,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 	 *         display on screen, image to display and list of sub options.
 	 * */
 	private List<ListOptionItem> getBezelMenuOptionItems() {
+	  VueLoginActivity.getProfileImageChangeListenor(imageChangeListenor);
 		List<ListOptionItem> groups = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Trending_Aisles),

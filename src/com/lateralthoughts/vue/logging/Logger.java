@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Calendar;
+import java.util.Date;
 
 import android.os.Environment;
 import android.util.Log;
@@ -36,7 +37,7 @@ public class Logger {
     if(!dir.isDirectory()) {
       dir.mkdir();
     }
-    File file = new File(dir, "/" + Calendar.getInstance().get(Calendar.DATE) + ".txt");
+    File file = new File(dir, "/" + new Date() + ".txt");
       try {
         file.createNewFile();
       } catch (IOException e) {
