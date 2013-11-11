@@ -20,6 +20,7 @@ import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Image;
  
 
@@ -70,6 +71,7 @@ CountingStringEntity.UploadListener{
 				public void run() { 
 					deleteImageFromAisleList(String.valueOf(image.getId()),String.valueOf(image.getOwnerAisleId())); 
 					VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dataObserver();
+					deleteImageFromDb(String.valueOf(image.getId()));
 					
 				}
 			});
@@ -114,5 +116,7 @@ CountingStringEntity.UploadListener{
 					"imageDeletion  now this aisle is not showing in UI");
 		}
 	}
-private void deleteImageFromDb(String imageId,String aisleId){ }
+private void deleteImageFromDb(String imageId){
+	DataBaseManager.getInstance(VueApplication.getInstance()).deleteImage(imageId);
+}
 }
