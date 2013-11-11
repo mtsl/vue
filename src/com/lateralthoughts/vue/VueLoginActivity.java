@@ -121,7 +121,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
 			.getInstance().getString(R.string.pendingActionBundleKey);
 	private PendingAction mPendingAction = PendingAction.NONE;
-    
+
 	private enum PendingAction {
 		NONE, POST_PHOTO, POST_STATUS_UPDATE
 	}
@@ -270,13 +270,22 @@ public class VueLoginActivity extends FragmentActivity implements
 							public void onClick(View arg0) {
 								if (VueConnectivityManager
 										.isNetworkConnected(VueLoginActivity.this)) {
-									mSocialIntegrationMainLayout
-											.setVisibility(View.GONE);
-									mGoogleplusLoggedinDialogFlag = true;
-									if (mFromGoogleplusInvitefriends)
-										mGooglePlusProgressDialog.show();
-									mSignInFragment
-											.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
+									if (Utils
+											.appInstalledOrNot(
+													VueConstants.GOOGLE_PLAY_SERVICES_PACKAGE_NAME,
+													VueLoginActivity.this)) {
+										mSocialIntegrationMainLayout
+												.setVisibility(View.GONE);
+										mGoogleplusLoggedinDialogFlag = true;
+										if (mFromGoogleplusInvitefriends)
+											mGooglePlusProgressDialog.show();
+										mSignInFragment
+												.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
+									} else {
+										showAlertMessageForAppInstalation(
+												"Google Play services",
+												VueConstants.GOOGLE_PLAY_SERVICES_PACKAGE_NAME);
+									}
 								} else {
 									Toast.makeText(
 											VueLoginActivity.this,
@@ -802,7 +811,7 @@ public class VueLoginActivity extends FragmentActivity implements
 				Thread t = new Thread(new Runnable() {
 					@Override
 					public void run() {
-						
+
 						for (int i = 0; i < fileList.size(); i++) {
 							final File f = new File(fileList.get(i)
 									.getFilepath());
@@ -1082,25 +1091,29 @@ public class VueLoginActivity extends FragmentActivity implements
 				e2.printStackTrace();
 			}
 			if (storedVueUser != null) {
-				vueUser.setDeviceId(storedVueUser.getDeviceId());
-				vueUser.setFacebookId(storedVueUser.getFacebookId());
-				// vueUser.instagramId = storedVueUser.instagramId;
-				vueUser.setId(storedVueUser.getId());
-				vueUser.setJoinTime(storedVueUser.getJoinTime());
-				userManager.updateGooglePlusIdentifiedUser(vueUser,
-						new UserUpdateCallback() {
-							@Override
-							public void onUserUpdated(VueUser user) {
-								try {
-									Utils.writeUserObjectToFile(
-											VueLoginActivity.this,
-											VueConstants.VUE_APP_USEROBJECT__FILENAME,
-											user);
-								} catch (Exception e) {
-									e.printStackTrace();
+				if (storedVueUser.getGooglePlusId() != null
+						&& storedVueUser.getGooglePlusId().equals(
+								VueUser.DEFAULT_GOOGLEPLUS_ID)) {
+					vueUser.setDeviceId(storedVueUser.getDeviceId());
+					vueUser.setFacebookId(storedVueUser.getFacebookId());
+					// vueUser.instagramId = storedVueUser.instagramId;
+					vueUser.setId(storedVueUser.getId());
+					vueUser.setJoinTime(storedVueUser.getJoinTime());
+					userManager.updateGooglePlusIdentifiedUser(vueUser,
+							new UserUpdateCallback() {
+								@Override
+								public void onUserUpdated(VueUser user) {
+									try {
+										Utils.writeUserObjectToFile(
+												VueLoginActivity.this,
+												VueConstants.VUE_APP_USEROBJECT__FILENAME,
+												user);
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
 								}
-							}
-						});
+							});
+				}
 			} else {
 				userManager.createGooglePlusIdentifiedUser(vueUser,
 						new VueUserManager.UserUpdateCallback() {
@@ -1322,11 +1335,13 @@ public class VueLoginActivity extends FragmentActivity implements
 				});
 		finish();
 	}
+
 	static ProfileImageChangeListenor profileImagechangeListor;
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void downloadAndSaveUserProfileImage(String imageUrl,
 			final File filePath) {
-		Log.i("userImageUrl", "userImageUrl: "+imageUrl);
+		Log.i("userImageUrl", "userImageUrl: " + imageUrl);
 		Response.Listener listener = new Response.Listener<Bitmap>() {
 			@Override
 			public void onResponse(Bitmap bmp) {
@@ -1343,16 +1358,17 @@ public class VueLoginActivity extends FragmentActivity implements
 		ImageRequest imagerequestObj = new ImageRequest(imageUrl, listener, 0,
 				0, null, errorListener);
 		VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
-        
+
 	}
 
 	@Override
 	public void onBackPressed() {
 
 	}
-	
-	public static void getProfileImageChangeListenor(ProfileImageChangeListenor profileImagechangeListor) {
-	  VueLoginActivity.profileImagechangeListor = profileImagechangeListor;
+
+	public static void getProfileImageChangeListenor(
+			ProfileImageChangeListenor profileImagechangeListor) {
+		VueLoginActivity.profileImagechangeListor = profileImagechangeListor;
 	}
 
 }
