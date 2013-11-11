@@ -69,6 +69,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	public static String mOtherSourceImageLookingFor = null;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
+ 
 
 	@Override
 	public void onCreate(Bundle icicle) {

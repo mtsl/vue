@@ -351,6 +351,7 @@ public class NetworkHandler {
                       if (aislesList != null && aislesList.size() > 0) {
                         clearList(progress);
                         for (int i = 0; i < aislesList.size(); i++) {
+                        	 Log.i("aislesList myaisles", "aislesList myaisles: "+aislesList.get(i).getAisleId());
                           VueTrendingAislesDataModel.getInstance(
                               VueApplication.getInstance()).addItemToList(
                               aislesList.get(i).getAisleContext().mAisleId,
