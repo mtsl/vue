@@ -153,10 +153,9 @@ public class DataBaseManager {
     if(contentList.size() == 0) {
       return;
     }
-   
+    aislesOrderMap = new HashMap<String, Integer>();
     if(offsetValue == 0 && whichScreen == TRENDING && !isBookmarkedAisle) {
       Log.e("DataBaseManager", "SURU updated aisle Order: whichScreen == TRENDING, offsetValue == " + offsetValue);
-      aislesOrderMap = new HashMap<String, Integer>();
       ArrayList<String> bookmarkaisleIds = new ArrayList<String>();
       String[] iDs = bookmarkaisleIds.toArray(new String[bookmarkaisleIds.size()]);
       int aislesDeleted = context.getContentResolver().delete(VueConstants.CONTENT_URI, null, null);
@@ -168,8 +167,6 @@ public class DataBaseManager {
       //imagesOrderMap.clear();
     } else if(isBookmarkedAisle) {
       bookmarkedAislesOrderMap.clear();
-    } else if (whichScreen == MY_AISLES || whichScreen == AISLE_CREATED) {
-    	aislesOrderMap = new HashMap<String, Integer>();
     }
     
     Cursor aisleIdCursor = context.getContentResolver().query(
@@ -364,7 +361,7 @@ public class DataBaseManager {
    * */
   private void aisleUpdate(AisleContext context) {
     boolean isAisle = false;
-    if(aislesOrderMap.isEmpty()) {
+    if(aislesOrderMap != null && aislesOrderMap.isEmpty()) {
       Cursor aisleIdCursor = VueApplication.getInstance().getContentResolver().query(
           VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id, VueConstants.ID}, VueConstants.AISLE_Id + "=?",
           new String[]{context.mAisleId}, null);
@@ -384,6 +381,9 @@ public class DataBaseManager {
       }
       aisleIdCursor.close();
     } else {
+      if(aislesOrderMap == null) {
+      aislesOrderMap = new HashMap<String, Integer>();
+      }
       aislesOrderMap.put(context.mAisleId, getMaxAisleValue(aislesOrderMap) + 1);
     }
     ContentValues values = new ContentValues();
