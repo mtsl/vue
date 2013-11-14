@@ -1,10 +1,9 @@
 package com.lateralthoughts.vue;
 
-import java.io.File;
 import java.util.ArrayList;
+
+import com.lateralthoughts.vue.utils.DataentryPageLoader;
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
@@ -14,17 +13,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class DataEntryAilsePagerAdapter extends PagerAdapter {
 
 	private ArrayList<DataentryImage> mImagePathsList = null;
 	private Context mContext = null;
 	private DataEntryFragment mDataEntryFragment = null;
+	private DataentryPageLoader mImageLoader;
 
 	public DataEntryAilsePagerAdapter(Context mContext,
 			ArrayList<DataentryImage> imagePathsList) {
 		this.mContext = mContext;
 		this.mImagePathsList = imagePathsList;
+		mImageLoader = DataentryPageLoader.getInstatnce();
 	}
 
 	@Override
@@ -36,16 +39,40 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 	}
 
 	@Override
-	public Object instantiateItem(View collection, int position) {
+	public Object instantiateItem(View collection, final int position) {
 		LayoutInflater inflater = (LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.dataentry_aisle_pager_row, null);
 		ImageView dataEntryRowAisleImage = (ImageView) view
 				.findViewById(R.id.dataentry_row_aisele_image);
+		TextView touchToChangeImage = (TextView) view
+				.findViewById(R.id.touchtochangeimage);
+		ProgressBar aisleBgProgressBar = (ProgressBar) view
+				.findViewById(R.id.aisle_bg_progressbar);
+		aisleBgProgressBar.setVisibility(View.VISIBLE);
+		dataEntryRowAisleImage.setVisibility(View.GONE);
+		touchToChangeImage.setVisibility(View.GONE);
 		try {
-			Log.e("Adapter", "file path :::: " + mImagePathsList.get(position));
-			dataEntryRowAisleImage.setImageBitmap(BitmapFactory
-					.decodeFile(mImagePathsList.get(position).getImagePath()));
+			if (mDataEntryFragment == null) {
+				mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
+						.getSupportFragmentManager().findFragmentById(
+								R.id.create_aisles_view_fragment);
+			}
+			Log.e("Adapter", "file path :::: "
+					+ mImagePathsList.get(position).getResizedImagePath());
+			dataEntryRowAisleImage.setTag(mImagePathsList.get(position)
+					.getResizedImagePath());
+			if (mDataEntryFragment.isAisleAddedScreenVisible()) {
+				touchToChangeImage.setClickable(false);
+				dataEntryRowAisleImage.setClickable(false);
+			} else {
+				touchToChangeImage.setClickable(true);
+				dataEntryRowAisleImage.setClickable(true);
+			}
+			mImageLoader.DisplayImage(mImagePathsList.get(position)
+					.getResizedImagePath(), dataEntryRowAisleImage,
+					aisleBgProgressBar, touchToChangeImage, mDataEntryFragment
+							.isAisleAddedScreenVisible());
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -60,6 +87,53 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 				}
 				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
 						.setVisibility(View.GONE);
+				mDataEntryFragment.hideAllEditableTextboxes();
+			}
+		});
+		touchToChangeImage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if (mDataEntryFragment == null) {
+					mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
+							.getSupportFragmentManager().findFragmentById(
+									R.id.create_aisles_view_fragment);
+				}
+				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
+						.setVisibility(View.GONE);
+				if (!(mDataEntryFragment.isAisleAddedScreenVisible())) {
+					if (mImagePathsList.get(position).isAddedToServerFlag()) {
+						mDataEntryFragment.hideAllEditableTextboxes();
+						mDataEntryFragment
+								.showAlertMessageForBackendNotIntegrated("Image Update service at server side is pending.");
+					} else {
+						mDataEntryFragment
+								.touchToChangeImageClickFunctionality(position);
+					}
+				}
+			}
+		});
+		dataEntryRowAisleImage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (mDataEntryFragment == null) {
+					mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
+							.getSupportFragmentManager().findFragmentById(
+									R.id.create_aisles_view_fragment);
+				}
+				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
+						.setVisibility(View.GONE);
+				if (!(mDataEntryFragment.isAisleAddedScreenVisible())) {
+					if (mImagePathsList.get(position).isAddedToServerFlag()) {
+						mDataEntryFragment.hideAllEditableTextboxes();
+						mDataEntryFragment
+								.showAlertMessageForBackendNotIntegrated("Image Update service at server side is pending.");
+					} else {
+						mDataEntryFragment
+								.touchToChangeImageClickFunctionality(position);
+					}
+				}
 			}
 		});
 		return view;

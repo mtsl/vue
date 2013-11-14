@@ -73,14 +73,14 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	int[] mLeftViewsHeights;
 	int[] mRightViewsHeights;
 	public boolean mIsFlingCalled;
-	 
-    private int animdelay = 4000;
-    private int height;
+
+	private int animdelay = 4000;
+	private int height;
 	public boolean mIsIdleState;
 	private LinearLayout pulltorefresh;
-	 
+
 	private boolean mIsListRefreshRecently = true;
-	
+
 	RelativeLayout mRightLay;
 	RelativeLayout mLeftLay;
 
@@ -139,9 +139,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				false);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
-		pulltorefresh = (LinearLayout)v.findViewById(R.id.pulltorefresh);
-		mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-		mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+		pulltorefresh = (LinearLayout) v.findViewById(R.id.pulltorefresh);
+		// mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+		// mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
 		mRightColumnView.setAdapter(mRightColumnAdapter);
@@ -171,7 +171,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				"Get ready to displayed staggered view");
 		return v;
 	}
-	
 
 	// Passing the touch event to the opposite list
 	OnTouchListener touchListener = new OnTouchListener() {
@@ -186,7 +185,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				dispatched = true;
 				mLeftColumnView.dispatchTouchEvent(event);
 			}
-			
+
 			dispatched = false;
 			return false;
 		}
@@ -210,8 +209,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				mIsIdleState = true;
 				mIsFlingCalled = false;
 				// notify the adapters.
-					mLeftColumnAdapter.notifyDataSetChanged();
-					mRightColumnAdapter.notifyDataSetChanged();
+				mLeftColumnAdapter.notifyDataSetChanged();
+				mRightColumnAdapter.notifyDataSetChanged();
 
 			} else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
 				mIsIdleState = false;
@@ -231,10 +230,10 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
-			 Log.i("pullrefresh", "pullrefresh: "+firstVisibleItem);
-			 if(firstVisibleItem > 5){
-				 mIsListRefreshRecently = false;
-			 }
+			Log.i("pullrefresh", "pullrefresh: " + firstVisibleItem);
+			if (firstVisibleItem > 5) {
+				mIsListRefreshRecently = false;
+			}
 			if (view.getChildAt(0) != null) {
 				if (view.equals(mLeftColumnView)) {
 					mLeftViewsHeights[view.getFirstVisiblePosition()] = view
@@ -272,7 +271,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					}
 
 					int top = h - hi + view.getChildAt(0).getTop();
-					
+
 					mLeftColumnView.setSelectionFromTop(
 							mLeftColumnView.getFirstVisiblePosition(), top);
 				}
@@ -282,7 +281,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
 					&& lan.getScreenName().equalsIgnoreCase(
-							getResources().getString(R.string.trending))&& !VueTrendingAislesDataModel.getInstance(mContext).isFromDb) {
+							getResources().getString(R.string.trending))
+					&& !VueTrendingAislesDataModel.getInstance(mContext).isFromDb) {
 				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
 				Log.i("more aisle request", "more aisle request calling");
 				int totalItems = 0;
@@ -293,13 +293,17 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 				}
 				if ((totalItems - lastVisiblePosition) < 5) {
 					Log.i("offeset and limit", "offeset00000: load moredata");
-					VueTrendingAislesDataModel.getInstance(mContext)
+					VueTrendingAislesDataModel
+							.getInstance(mContext)
 							.getNetworkHandler()
-							.requestMoreAisle(true, 
+							.requestMoreAisle(true,
 									getResources().getString(R.string.trending));
 				}
 			} else {
-				Log.i("offeset and limit", "offeset00000: load moredata else "+VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest);
+				Log.i("offeset and limit",
+						"offeset00000: load moredata else "
+								+ VueTrendingAislesDataModel
+										.getInstance(mContext).loadOnRequest);
 			}
 
 		}
@@ -337,7 +341,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			VueApplication.getInstance().setClickedWindowCount(count);
 			VueApplication.getInstance().setmAisleImgCurrentPos(
 					aisleImgCurrentPos);
-			Log.i("imageCurrenPosition", "imageCurrenPosition landing click: "+aisleImgCurrentPos);
+			Log.i("imageCurrenPosition", "imageCurrenPosition landing click: "
+					+ aisleImgCurrentPos);
 			startActivity(intent);
 		}
 
@@ -414,12 +419,12 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					+ windowItem.getImageList().get(0).mTrendingImageHeight
 					+ " After Resized Aisle width: "
 					+ VueApplication.getInstance().getVueDetailsCardWidth() / 2;
-			
+
 			for (int i = 0; i < windowItem.getImageList().size(); i++) {
 				writeSdCard = writeSdCard + "\n CustomImageUrl: "
 						+ windowItem.getImageList().get(i).mCustomImageUrl;
 			}
-			
+
 			writeSdCard = writeSdCard
 					+ "\n###################### info end ################################";
 			writeToSdcard(writeSdCard);
@@ -432,10 +437,12 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			mRightColumnAdapter.notifyDataSetChanged();
 		}
 	}
-	/*public void moveListToPosition(int position) {
-		mLeftColumnView.setSelection(position);
-		mLeftColumnView.smoothScrollToPosition(position);
-	}*/
+
+	/*
+	 * public void moveListToPosition(int position) {
+	 * mLeftColumnView.setSelection(position);
+	 * mLeftColumnView.smoothScrollToPosition(position); }
+	 */
 
 	public int getListPosition() {
 		return mLeftColumnView.getFirstVisiblePosition();
@@ -490,75 +497,77 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			e.printStackTrace();
 		}
 	}
-	
-	  private void headerAnimationGoneTask(final RelativeLayout pulltorefresh) {
-		    
-		      MyCustomAnimation a = new MyCustomAnimation(getActivity(),
-		    		  pulltorefresh, animdelay, MyCustomAnimation.COLLAPSE);
-		      a.setAnimationListener(new AnimationListener() {
 
-		        @Override
-		        public void onAnimationStart(Animation animation) {
-		         
-		        }
+	private void headerAnimationGoneTask(final RelativeLayout pulltorefresh) {
 
-		        @Override
-		        public void onAnimationRepeat(Animation animation) {
+		MyCustomAnimation a = new MyCustomAnimation(getActivity(),
+				pulltorefresh, animdelay, MyCustomAnimation.COLLAPSE);
+		a.setAnimationListener(new AnimationListener() {
 
-		        }
+			@Override
+			public void onAnimationStart(Animation animation) {
 
-		        @Override
-		        public void onAnimationEnd(Animation animation) {
-		        ProgressBar pb = (ProgressBar) pulltorefresh.findViewById(R.id.leftlayprogress);
-		        if(pb != null)
-		        pb.setVisibility(View.GONE);
-		        TextView tv = (TextView) pulltorefresh.findViewById(R.id.rightlaytextvew);
-		           if(tv != null){
-		        	   tv.setVisibility(View.GONE);
-		           }
-		        }
-		       
-		      });
-		      height = a.getHeight();
-		      
-		      pulltorefresh.startAnimation(a);
-		    
-		  }
-	  
-	  private void headerAnimationVisibleTask(final RelativeLayout pulltorefresh) {
-  
-		      MyCustomAnimation a = new MyCustomAnimation(getActivity(),
-		    		  pulltorefresh, animdelay, MyCustomAnimation.EXPAND);
-		      a.setAnimationListener(new AnimationListener() {
+			}
 
-		        @Override
-		        public void onAnimationStart(Animation animation) {
-		        
-		        }
+			@Override
+			public void onAnimationRepeat(Animation animation) {
 
-		        @Override
-		        public void onAnimationRepeat(Animation animation) {
+			}
 
-		        }
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				ProgressBar pb = (ProgressBar) pulltorefresh
+						.findViewById(R.id.leftlayprogress);
+				if (pb != null)
+					pb.setVisibility(View.GONE);
+				TextView tv = (TextView) pulltorefresh
+						.findViewById(R.id.rightlaytextvew);
+				if (tv != null) {
+					tv.setVisibility(View.GONE);
+				}
+			}
 
-		        @Override
-		        public void onAnimationEnd(Animation animation) {
-		        	
-		        }
-		      });
-		      pulltorefresh.startAnimation(a);
-		    
-		  }
+		});
+		height = a.getHeight();
+
+		pulltorefresh.startAnimation(a);
+
+	}
+
+	private void headerAnimationVisibleTask(final RelativeLayout pulltorefresh) {
+
+		MyCustomAnimation a = new MyCustomAnimation(getActivity(),
+				pulltorefresh, animdelay, MyCustomAnimation.EXPAND);
+		a.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+
+			}
+		});
+		pulltorefresh.startAnimation(a);
+
+	}
 
 	public void clearBitmaps() {
-		 
+
 		for (int i = 0; i < mLeftColumnView.getChildCount(); i++) {
 			Log.i("clearlist", "clearlist leftcolumn");
 			LinearLayout leftLayout = (LinearLayout) mLeftColumnView
 					.getChildAt(i);
 			com.lateralthoughts.vue.ui.AisleContentBrowser aisleBrowser = (AisleContentBrowser) leftLayout
 					.findViewById(R.id.aisle_content_flipper);
-			//aisleBrowser.removeAllViews();
+			// aisleBrowser.removeAllViews();
 			clearBrowser(aisleBrowser);
 
 		}
@@ -568,7 +577,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					.getChildAt(i);
 			com.lateralthoughts.vue.ui.AisleContentBrowser aisleBrowser = (AisleContentBrowser) rightLayout
 					.findViewById(R.id.aisle_content_flipper);
-			//aisleBrowser.removeAllViews();
+			// aisleBrowser.removeAllViews();
 			clearBrowser(aisleBrowser);
 		}
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
@@ -582,22 +591,20 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			ScaledImageViewFactory mViewFactory = ScaledImageViewFactory
 					.getInstance(mContext);
 			for (int i = 0; i < aisleContentBrowser.getChildCount(); i++) {
-		/*		try {
-					ImageView image = (ScaleImageView) aisleContentBrowser
-							.getChildAt(i);
-					Bitmap bitmap = ((BitmapDrawable) image.getDrawable())
-							.getBitmap();
-					Log.i("clearlist", "clearlist bitmap recycling");
-					bitmap.recycle();
-					bitmap = null;
-				} catch (Exception e) {
-
-				}*/
+				/*
+				 * try { ImageView image = (ScaleImageView) aisleContentBrowser
+				 * .getChildAt(i); Bitmap bitmap = ((BitmapDrawable)
+				 * image.getDrawable()) .getBitmap(); Log.i("clearlist",
+				 * "clearlist bitmap recycling"); bitmap.recycle(); bitmap =
+				 * null; } catch (Exception e) {
+				 * 
+				 * }
+				 */
 
 				mViewFactory
 						.returnUsedImageView((ScaleImageView) aisleContentBrowser
 								.getChildAt(i));
-				 
+
 			}
 		}
 		if (aisleContentBrowser != null) {
@@ -610,6 +617,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			aisleContentBrowser = null;
 		}
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-		.dataObserver();
+				.dataObserver();
 	}
 }

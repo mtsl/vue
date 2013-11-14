@@ -66,7 +66,7 @@
     <string name="gmail">Gmail</string>
     <string name="create_ailse_screen_title">Create Aisle</string>
     <string name="edit_aisle_screen_title">Edit Aisle</string>
-    <string name="add_imae_to_aisle_screen_title">Add image to Aisle</string>
+    <string name="add_imae_to_aisle_screen_title">Add image</string>
     <string name="success">Success</string>
     <string name="successfully_posted_post">Successfully posted.</string>
     <string name="error">Error</string>

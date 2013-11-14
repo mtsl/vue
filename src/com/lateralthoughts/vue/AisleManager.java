@@ -61,7 +61,7 @@ public class AisleManager {
 	}
 
 	public interface ImageAddedCallback {
-		public void onImageAdded(AisleImageDetails imageDetails);
+		public void onImageAdded(String imageId);
 	}
 
 	// private static String VUE_API_BASE_URI =
@@ -379,59 +379,69 @@ public class AisleManager {
 			String bookmarkAisleAsString = mapper
 					.writeValueAsString(aisleBookmark);
 
-      Response.Listener listener = new Response.Listener<String>() {
+			Response.Listener listener = new Response.Listener<String>() {
 
-        @Override
-        public void onResponse(String jsonArray) {
-          if (jsonArray != null) {
-            try {
-              AisleBookmark createdAisleBookmark = (new ObjectMapper())
-                  .readValue(jsonArray, AisleBookmark.class);
-              isDirty = false;
-              Editor editor = mSharedPreferencesObj.edit();
-              editor.putBoolean(VueConstants.IS_AISLE_DIRTY, false);
-              editor.commit();
-              ArrayList<AisleWindowContent> windowList;
-              if(aisleBookmark.getBookmarked()) {
-                windowList = DataBaseManager
-                    .getInstance(VueApplication.getInstance()).getAisleByAisleId(
-                            Long.toString(aisleBookmark.getAisleId()));
-              } else {
-                windowList = DataBaseManager
-                    .getInstance(VueApplication.getInstance()).getAisleByAisleIdFromBookmarks(
-                            Long.toString(aisleBookmark.getAisleId()));
-              }
-              updateBookmartToDb(windowList, createdAisleBookmark, isDirty);
-            } catch (Exception e) {
-              e.printStackTrace();
-            }
-          }
-        }
+				@Override
+				public void onResponse(String jsonArray) {
+					if (jsonArray != null) {
+						try {
+							AisleBookmark createdAisleBookmark = (new ObjectMapper())
+									.readValue(jsonArray, AisleBookmark.class);
+							isDirty = false;
+							Editor editor = mSharedPreferencesObj.edit();
+							editor.putBoolean(VueConstants.IS_AISLE_DIRTY,
+									false);
+							editor.commit();
+							ArrayList<AisleWindowContent> windowList;
+							if (aisleBookmark.getBookmarked()) {
+								windowList = DataBaseManager.getInstance(
+										VueApplication.getInstance())
+										.getAisleByAisleId(
+												Long.toString(aisleBookmark
+														.getAisleId()));
+							} else {
+								windowList = DataBaseManager.getInstance(
+										VueApplication.getInstance())
+										.getAisleByAisleIdFromBookmarks(
+												Long.toString(aisleBookmark
+														.getAisleId()));
+							}
+							updateBookmartToDb(windowList,
+									createdAisleBookmark, isDirty);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
 
-      };
+			};
 
-      Response.ErrorListener errorListener = new ErrorListener() {
+			Response.ErrorListener errorListener = new ErrorListener() {
 
-        @Override
-        public void onErrorResponse(VolleyError error) {
-          isDirty = true;
-          Editor editor = mSharedPreferencesObj.edit();
-          editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
-          editor.commit();
-          ArrayList<AisleWindowContent> windowList;
-          if(aisleBookmark.getBookmarked()) {
-            windowList = DataBaseManager
-                .getInstance(VueApplication.getInstance()).getAisleByAisleId(
-                        Long.toString(aisleBookmark.getAisleId()));
-          } else {
-            windowList = DataBaseManager
-                .getInstance(VueApplication.getInstance()).getAisleByAisleIdFromBookmarks(
-                        Long.toString(aisleBookmark.getAisleId()));
-          }
-          updateBookmartToDb(windowList, aisleBookmark, isDirty);
-        }
+				@Override
+				public void onErrorResponse(VolleyError error) {
+					isDirty = true;
+					Editor editor = mSharedPreferencesObj.edit();
+					editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
+					editor.commit();
+					ArrayList<AisleWindowContent> windowList;
+					if (aisleBookmark.getBookmarked()) {
+						windowList = DataBaseManager.getInstance(
+								VueApplication.getInstance())
+								.getAisleByAisleId(
+										Long.toString(aisleBookmark
+												.getAisleId()));
+					} else {
+						windowList = DataBaseManager.getInstance(
+								VueApplication.getInstance())
+								.getAisleByAisleIdFromBookmarks(
+										Long.toString(aisleBookmark
+												.getAisleId()));
+					}
+					updateBookmartToDb(windowList, aisleBookmark, isDirty);
+				}
 
-      };
+			};
 			BookmarkPutRequest request = new BookmarkPutRequest(
 					bookmarkAisleAsString, listener, errorListener, url
 							+ storedVueUser.getId());
@@ -442,15 +452,16 @@ public class AisleManager {
 			editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
 			editor.commit();
 			ArrayList<AisleWindowContent> windowList;
-	        if(aisleBookmark.getBookmarked()) {
-	          windowList = DataBaseManager
-	              .getInstance(VueApplication.getInstance()).getAisleByAisleId(
-	                      Long.toString(aisleBookmark.getAisleId()));
-	        } else {
-	          windowList = DataBaseManager
-	              .getInstance(VueApplication.getInstance()).getAisleByAisleIdFromBookmarks(
-	                      Long.toString(aisleBookmark.getAisleId()));
-	        }
+			if (aisleBookmark.getBookmarked()) {
+				windowList = DataBaseManager.getInstance(
+						VueApplication.getInstance()).getAisleByAisleId(
+						Long.toString(aisleBookmark.getAisleId()));
+			} else {
+				windowList = DataBaseManager.getInstance(
+						VueApplication.getInstance())
+						.getAisleByAisleIdFromBookmarks(
+								Long.toString(aisleBookmark.getAisleId()));
+			}
 			updateBookmartToDb(windowList, aisleBookmark, isDirty);
 		}
 
@@ -490,7 +501,7 @@ public class AisleManager {
 		} else {
 			url = UrlConstants.UPDATE_RATING_RESTURL + "/";
 		}
-	
+
 		if (VueConnectivityManager.isNetworkConnected(VueApplication
 				.getInstance())) {
 			VueUser storedVueUser = null;

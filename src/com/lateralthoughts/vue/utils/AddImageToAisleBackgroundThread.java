@@ -19,6 +19,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleImageDetails;
+import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
@@ -274,7 +275,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 														.getInstance(
 																VueApplication
 																		.getInstance())
-														.getAislesFromDB(s, false);
+														.getAislesFromDB(s,
+																false);
 												if (list != null) {
 													list.get(0)
 															.getImageList()

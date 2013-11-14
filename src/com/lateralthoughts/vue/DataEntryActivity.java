@@ -31,7 +31,8 @@ public class DataEntryActivity extends BaseActivity {
 			mVueDataentryActionbarShareIconLayout,
 			mVueDataentryActionbarEditIconLayout,
 			mVueDataentryActionbarAddImageIconLayout,
-			mVueDataentryActionbarAppIconLayout;
+			mVueDataentryActionbarAppIconLayout,
+			mVueDataentryActionbarTopAddImageIconLayout;
 	public LinearLayout mVueDataentryActionbarTopLayout,
 			mVueDataentryActionbarBottomLayout;
 	private View mVueDataentryActionbarView;
@@ -65,6 +66,9 @@ public class DataEntryActivity extends BaseActivity {
 				.findViewById(R.id.vue_dataentry_actionbar_app_icon_layout);
 		mVueDataentryActionbarScreenName.setText(getResources().getString(
 				R.string.create_aisle_screen_title));
+		mVueDataentryActionbarTopAddImageIconLayout = (RelativeLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_actionbar_top_addimage_icon_layout);
+
 		getSupportActionBar().setCustomView(mVueDataentryActionbarView);
 		getSupportActionBar().setDisplayShowCustomEnabled(true);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
@@ -84,8 +88,33 @@ public class DataEntryActivity extends BaseActivity {
 									.findFragmentById(
 											R.id.create_aisles_view_fragment);
 						}
+						Utils.putTouchToChnageImagePosition(
+								DataEntryActivity.this, -1);
+						Utils.putTouchToChnageImageTempPosition(
+								DataEntryActivity.this, -1);
+						Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
+								false);
 						mDataEntryFragment
-								.addImageToAisleButtonClickFunctionality();
+								.addImageToAisleButtonClickFunctionality(false);
+					}
+				});
+		mVueDataentryActionbarTopAddImageIconLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						if (mDataEntryFragment == null) {
+							mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+									.findFragmentById(
+											R.id.create_aisles_view_fragment);
+						}
+						Utils.putTouchToChnageImagePosition(
+								DataEntryActivity.this, -1);
+						Utils.putTouchToChnageImageTempPosition(
+								DataEntryActivity.this, -1);
+						Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
+								false);
+						mDataEntryFragment
+								.addImageToAisleButtonClickFunctionality(true);
 					}
 				});
 		mVueDataentryActionbarCloseIconLayout
@@ -104,6 +133,12 @@ public class DataEntryActivity extends BaseActivity {
 									.findFragmentById(
 											R.id.create_aisles_view_fragment);
 						}
+						Utils.putTouchToChnageImagePosition(
+								DataEntryActivity.this, -1);
+						Utils.putTouchToChnageImageTempPosition(
+								DataEntryActivity.this, -1);
+						Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
+								false);
 						mDataEntryFragment.createAisleClickFunctionality();
 					}
 				});
@@ -128,6 +163,12 @@ public class DataEntryActivity extends BaseActivity {
 									.findFragmentById(
 											R.id.create_aisles_view_fragment);
 						}
+						Utils.putTouchToChnageImagePosition(
+								DataEntryActivity.this, -1);
+						Utils.putTouchToChnageImageTempPosition(
+								DataEntryActivity.this, -1);
+						Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
+								false);
 						mDataEntryFragment.editButtonClickFunctionality();
 					}
 				});
@@ -174,6 +215,11 @@ public class DataEntryActivity extends BaseActivity {
 							.setText(DataEntryFragment.OCCASION);
 				}
 			}
+			if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY) != null) {
+				mDataEntryFragment.mCategoryText
+						.setText(b
+								.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY));
+			}
 			if (mDataEntryFragment.mFromDetailsScreenFlag) {
 				mVueDataentryActionbarScreenName.setText(getResources()
 						.getString(R.string.add_imae_to_aisle_screen_title));
@@ -200,11 +246,6 @@ public class DataEntryActivity extends BaseActivity {
 							.setText(b
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE));
 				}
-				if (b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY) != null) {
-					mDataEntryFragment.mCategoryText
-							.setText(b
-									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY));
-				}
 			}
 			Log.e("cs", "32");
 			mDataEntryFragment.mOtherSourceSelectedImageUrl = b
@@ -217,14 +258,19 @@ public class DataEntryActivity extends BaseActivity {
 					.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL);
 			mDataEntryFragment.mOtherSourceSelectedImageStore = b
 					.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE);
+			if (Utils.getTouchToChangeFlag(DataEntryActivity.this)) {
+				Utils.putTouchToChnageImagePosition(
+						DataEntryActivity.this,
+						Utils.getTouchToChangeTempPosition(DataEntryActivity.this));
+			}
 			if (aisleImagePath != null) {
 				mDataEntryFragment.setGalleryORCameraImage(aisleImagePath,
 						false);
 			}
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
-				mDataEntryFragment.mCreateAisleBg.setVisibility(View.GONE);
-				mDataEntryFragment.mAisleBgProgressbar.setVisibility(View.GONE);
-				if (!mDataEntryFragment.mFromDetailsScreenFlag) {
+				if (!mDataEntryFragment.mFromDetailsScreenFlag
+						&& !(Utils
+								.getDataentryTopAddImageAisleFlag(DataEntryActivity.this))) {
 					ArrayList<DataentryImage> mAisleImagePathList = null;
 					try {
 						mAisleImagePathList = Utils
@@ -241,6 +287,27 @@ public class DataEntryActivity extends BaseActivity {
 										.getString(
 												R.string.add_imae_to_aisle_screen_title));
 					}
+				}
+				if (Utils.getDataentryAddImageAisleFlag(DataEntryActivity.this)) {
+					mVueDataentryActionbarScreenName
+							.setText(getResources().getString(
+									R.string.add_imae_to_aisle_screen_title));
+					mVueDataentryActionbarBottomLayout.setVisibility(View.GONE);
+					mVueDataentryActionbarTopLayout.setVisibility(View.VISIBLE);
+					mDataEntryFragment.mDataEntryBottomBottomLayout
+							.setVisibility(View.VISIBLE);
+					mDataEntryFragment.mDataEntryBottomTopLayout
+							.setVisibility(View.GONE);
+					mDataEntryFragment.mMainHeadingRow
+							.setVisibility(View.VISIBLE);
+					mDataEntryFragment.mOccassionBigText
+							.setBackgroundColor(Color.TRANSPARENT);
+					mDataEntryFragment.mLookingForBigText
+							.setBackgroundColor(Color.TRANSPARENT);
+				}
+				if (Utils.getDataentryEditAisleFlag(DataEntryActivity.this)) {
+					mVueDataentryActionbarScreenName.setText(getResources()
+							.getString(R.string.edit_aisle_screen_title));
 				}
 				if (b.getString(VueConstants.FROM_OTHER_SOURCES_URL) != null) {
 					mDataEntryFragment.getImagesFromUrl(b
@@ -292,6 +359,14 @@ public class DataEntryActivity extends BaseActivity {
 								.findFragmentById(
 										R.id.create_aisles_view_fragment);
 					}
+					if (Utils.getTouchToChangeFlag(DataEntryActivity.this)) {
+						Utils.putTouchToChnageImagePosition(
+								DataEntryActivity.this,
+								Utils.getTouchToChangeTempPosition(DataEntryActivity.this));
+					}
+					mDataEntryFragment.mFindAtText.setText("");
+					mDataEntryFragment.mOtherSourceSelectedImageStore = "UnKnown";
+					mDataEntryFragment.mOtherSourceSelectedImageUrl = null;
 					mDataEntryFragment
 							.setGalleryORCameraImage(imagePath, false);
 				}
@@ -360,9 +435,25 @@ public class DataEntryActivity extends BaseActivity {
 				if (mVueDataentryActionbarTopLayout.getVisibility() == View.GONE) {
 					Utils.putDataentryAddImageAisleFlag(DataEntryActivity.this,
 							false);
+					Utils.putDataentryTopAddImageAisleFlag(
+							DataEntryActivity.this, false);
 					Utils.putDataentryEditAisleFlag(DataEntryActivity.this,
 							false);
+					Utils.putDataentryTopAddImageAisleLookingFor(
+							DataEntryActivity.this, null);
+					Utils.putDataentryTopAddImageAisleCategory(
+							DataEntryActivity.this, null);
+					Utils.putDataentryTopAddImageAisleOccasion(
+							DataEntryActivity.this, null);
+					Utils.putDataentryTopAddImageAisleDescription(
+							DataEntryActivity.this, null);
 					Utils.putDataentryScreenAisleId(this, null);
+					Utils.putTouchToChnageImagePosition(DataEntryActivity.this,
+							-1);
+					Utils.putTouchToChnageImageTempPosition(
+							DataEntryActivity.this, -1);
+					Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
+							false);
 					ArrayList<DataentryImage> mAisleImagePathList = null;
 					try {
 						mAisleImagePathList = Utils
@@ -401,8 +492,22 @@ public class DataEntryActivity extends BaseActivity {
 		yesButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				dialog.dismiss();
+				Utils.putTouchToChnageImagePosition(DataEntryActivity.this, -1);
+				Utils.putTouchToChnageImageTempPosition(DataEntryActivity.this,
+						-1);
+				Utils.putTouchToChnageImageFlag(DataEntryActivity.this, false);
 				Utils.putDataentryAddImageAisleFlag(DataEntryActivity.this,
 						false);
+				Utils.putDataentryTopAddImageAisleFlag(DataEntryActivity.this,
+						false);
+				Utils.putDataentryTopAddImageAisleLookingFor(
+						DataEntryActivity.this, null);
+				Utils.putDataentryTopAddImageAisleCategory(
+						DataEntryActivity.this, null);
+				Utils.putDataentryTopAddImageAisleOccasion(
+						DataEntryActivity.this, null);
+				Utils.putDataentryTopAddImageAisleDescription(
+						DataEntryActivity.this, null);
 				Utils.putDataentryEditAisleFlag(DataEntryActivity.this, false);
 				Utils.putDataentryScreenAisleId(DataEntryActivity.this, null);
 				ArrayList<DataentryImage> mAisleImagePathList = null;
@@ -430,6 +535,16 @@ public class DataEntryActivity extends BaseActivity {
 
 	public void shareViaVueClicked() {
 		Utils.putDataentryAddImageAisleFlag(DataEntryActivity.this, false);
+		Utils.putDataentryTopAddImageAisleFlag(DataEntryActivity.this, false);
+		Utils.putDataentryTopAddImageAisleLookingFor(DataEntryActivity.this,
+				null);
+		Utils.putTouchToChnageImagePosition(DataEntryActivity.this, -1);
+		Utils.putTouchToChnageImageTempPosition(DataEntryActivity.this, -1);
+		Utils.putTouchToChnageImageFlag(DataEntryActivity.this, false);
+		Utils.putDataentryTopAddImageAisleCategory(DataEntryActivity.this, null);
+		Utils.putDataentryTopAddImageAisleOccasion(DataEntryActivity.this, null);
+		Utils.putDataentryTopAddImageAisleDescription(DataEntryActivity.this,
+				null);
 		Utils.putDataentryEditAisleFlag(DataEntryActivity.this, false);
 		Utils.putDataentryScreenAisleId(DataEntryActivity.this, null);
 		ArrayList<DataentryImage> mAisleImagePathList = null;

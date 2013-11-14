@@ -194,6 +194,8 @@ public class VueTrendingAislesDataModel {
 									.getAisleContext().mLookingForItem;
 							VueLandingPageActivity.mOtherSourceImageOccasion = aisleWindowContent
 									.getAisleContext().mOccasion;
+							VueLandingPageActivity.mOtherSourceImageCategory = aisleWindowContent
+									.getAisleContext().mCategory;
 						}
 						return aisleWindowContent.getImageList().get(i);
 					}

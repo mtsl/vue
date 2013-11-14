@@ -62,6 +62,7 @@ public class VueApplication extends Application {
 	private int mTextSize = 18;
 	public Context mVueApplicationContext;
 	private int mAisleImgCurrentPos;
+
 	private String mUserInitials = null;
 
 	public Long getmUserId() {

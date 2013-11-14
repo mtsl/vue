@@ -11,12 +11,12 @@ import java.util.Stack;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 public class OtherSourceImageLoader {
 
@@ -41,20 +41,24 @@ public class OtherSourceImageLoader {
 
 	final int stub_id = R.drawable.aisle_bg_progressbar_drawable;
 
-	public void DisplayImage(String url, ImageView imageView) {
+	public void DisplayImage(String url, ImageView imageView,
+			ProgressBar otherSourceAisleImage) {
 		String filename = String.valueOf(url.hashCode());
 		File f = mFileCache.getVueAppResizedPictureFile(filename);
-		if (f.exists())
+		if (f.exists()) {
+			otherSourceAisleImage.setVisibility(View.GONE);
+			imageView.setVisibility(View.VISIBLE);
 			imageView.setImageBitmap(BitmapFactory.decodeFile(f.getPath()));
-		else {
-			queuePhoto(url, imageView);
+		} else {
+			queuePhoto(url, imageView, otherSourceAisleImage);
 			imageView.setImageResource(stub_id);
 		}
 	}
 
-	private void queuePhoto(String url, ImageView imageView) {
+	private void queuePhoto(String url, ImageView imageView,
+			ProgressBar otherSourceAisleImage) {
 		photosQueue.Clean(imageView);
-		PhotoToLoad p = new PhotoToLoad(url, imageView);
+		PhotoToLoad p = new PhotoToLoad(url, imageView, otherSourceAisleImage);
 		synchronized (photosQueue.photosToLoad) {
 			photosQueue.photosToLoad.push(p);
 			photosQueue.photosToLoad.notifyAll();
@@ -149,10 +153,13 @@ public class OtherSourceImageLoader {
 	private class PhotoToLoad {
 		public String url;
 		public ImageView imageView;
+		public ProgressBar otherSourceAisleImage;
 
-		public PhotoToLoad(String u, ImageView i) {
+		public PhotoToLoad(String u, ImageView i,
+				ProgressBar otherSourceAisleImage) {
 			url = u;
 			imageView = i;
+			this.otherSourceAisleImage = otherSourceAisleImage;
 		}
 	}
 
@@ -190,8 +197,11 @@ public class OtherSourceImageLoader {
 						if (f != null && f.exists()) {
 							if (((String) photoToLoad.imageView.getTag())
 									.equals(photoToLoad.url)) {
-								BitmapDisplayer bd = new BitmapDisplayer(f,
-										photoToLoad.imageView);
+								Bitmap bmp = BitmapFactory.decodeFile(f
+										.getPath());
+								BitmapDisplayer bd = new BitmapDisplayer(bmp,
+										photoToLoad.imageView,
+										photoToLoad.otherSourceAisleImage);
 								Activity a = (Activity) photoToLoad.imageView
 										.getContext();
 								a.runOnUiThread(bd);
@@ -207,17 +217,22 @@ public class OtherSourceImageLoader {
 	}
 
 	class BitmapDisplayer implements Runnable {
-		File f;
+		Bitmap bmp;
 		ImageView imageView;
+		ProgressBar otherSourceAisleImage;
 
-		public BitmapDisplayer(File f, ImageView i) {
-			this.f = f;
+		public BitmapDisplayer(Bitmap bmp, ImageView i,
+				ProgressBar otherSourceAisleImage) {
+			this.bmp = bmp;
 			imageView = i;
+			this.otherSourceAisleImage = otherSourceAisleImage;
 		}
 
 		public void run() {
-			if (f != null && f.exists())
-				imageView.setImageBitmap(BitmapFactory.decodeFile(f.getPath()));
+			otherSourceAisleImage.setVisibility(View.GONE);
+			imageView.setVisibility(View.VISIBLE);
+			if (bmp != null)
+				imageView.setImageBitmap(bmp);
 			else
 				imageView.setImageResource(R.drawable.no_image);
 		}

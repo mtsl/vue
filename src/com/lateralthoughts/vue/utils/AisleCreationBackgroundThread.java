@@ -179,6 +179,7 @@ public class AisleCreationBackgroundThread implements Runnable,
 								// THE AISLE AND AISLE ID BACK.
 								mAisleUpdateCallback.onAisleUpdated(aileItem
 										.getAisleContext().mAisleId);
+
 								FlurryAgent.logEvent("Create_Aisle_Success");
 								// VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
 							} catch (Exception ex) {

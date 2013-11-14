@@ -67,15 +67,15 @@ public class VueLandingPageActivity extends BaseActivity {
 	public static int mOtherSourceImageHeight = 0;
 	public static String mOtherSourceImageOccasion = null;
 	public static String mOtherSourceImageLookingFor = null;
+	public static String mOtherSourceImageCategory = null;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
- 
 
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		landingPageActivity = this;
-
+		clearDataEntryData();
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
 		VueApplication.getInstance().mLastRecordedTime = System
 				.currentTimeMillis();
@@ -449,6 +449,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				fileCache.clearTwoDaysOldPictures();
 				mOtherSourceImagePath = null;
 				mOtherSourceImageLookingFor = null;
+				mOtherSourceImageCategory = null;
 				mOtherSourceImageOccasion = null;
 				mOtherSourceImageUrl = null;
 				mOtherSourceImageWidth = 0;
@@ -834,6 +835,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			public void onClick(View v) {
 				mOtherSourceImagePath = null;
 				mOtherSourceImageLookingFor = null;
+				mOtherSourceImageCategory = null;
 				mOtherSourceImageOccasion = null;
 				mOtherSourceImageUrl = null;
 				mOtherSourceImageWidth = 0;
@@ -879,6 +881,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				String lookingfor = VueLandingPageActivity.mOtherSourceImageLookingFor;
+				String category = VueLandingPageActivity.mOtherSourceImageCategory;
 				String occasion = VueLandingPageActivity.mOtherSourceImageOccasion;
 				dialog.dismiss();
 				Intent intent = new Intent(VueLandingPageActivity.this,
@@ -911,6 +914,9 @@ public class VueLandingPageActivity extends BaseActivity {
 				b.putString(
 						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
 						occasion);
+				b.putString(
+						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
+						category);
 				intent.putExtras(b);
 				startActivity(intent);
 			}
@@ -921,6 +927,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				if (!mAddImageToAisleLayoutClickedAFlag) {
 					mOtherSourceImagePath = null;
 					mOtherSourceImageLookingFor = null;
+					mOtherSourceImageCategory = null;
 					mOtherSourceImageOccasion = null;
 					mOtherSourceImageUrl = null;
 					mOtherSourceImageWidth = 0;
@@ -997,6 +1004,37 @@ public class VueLandingPageActivity extends BaseActivity {
 			otherSourcesImageDetailsList.add(otherSourceImageDetails);
 		}
 		return otherSourcesImageDetailsList;
+	}
+
+	private void clearDataEntryData() {
+		Utils.putDataentryAddImageAisleFlag(VueLandingPageActivity.this, false);
+		Utils.putDataentryTopAddImageAisleFlag(VueLandingPageActivity.this,
+				false);
+		Utils.putDataentryTopAddImageAisleLookingFor(
+				VueLandingPageActivity.this, null);
+		Utils.putDataentryTopAddImageAisleCategory(VueLandingPageActivity.this,
+				null);
+		Utils.putDataentryTopAddImageAisleOccasion(VueLandingPageActivity.this,
+				null);
+		Utils.putDataentryTopAddImageAisleDescription(
+				VueLandingPageActivity.this, null);
+		Utils.putTouchToChnageImagePosition(VueLandingPageActivity.this, -1);
+		Utils.putTouchToChnageImageTempPosition(VueLandingPageActivity.this, -1);
+		Utils.putTouchToChnageImageFlag(VueLandingPageActivity.this, false);
+		Utils.putDataentryEditAisleFlag(VueLandingPageActivity.this, false);
+		Utils.putDataentryScreenAisleId(VueLandingPageActivity.this, null);
+		ArrayList<DataentryImage> mAisleImagePathList = null;
+		try {
+			mAisleImagePathList = Utils.readAisleImagePathListFromFile(
+					VueLandingPageActivity.this,
+					VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
+			mAisleImagePathList.clear();
+			Utils.writeAisleImagePathListToFile(VueLandingPageActivity.this,
+					VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
+					mAisleImagePathList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

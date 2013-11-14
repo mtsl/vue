@@ -335,6 +335,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			VueLandingPageActivity.mOtherSourceImageDetailsUrl = null;
 			VueLandingPageActivity.mOtherSourceImageStore = null;
 			VueLandingPageActivity.mOtherSourceImageLookingFor = null;
+			VueLandingPageActivity.mOtherSourceImageCategory = null;
 			VueLandingPageActivity.mOtherSourceImageOccasion = null;
 		}
 	}

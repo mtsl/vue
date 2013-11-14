@@ -307,9 +307,9 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		RelativeLayout enterCommentrellay;
 		RelativeLayout likelay, bookmarklay;
 		FrameLayout edtCommentLay;
-		ImageView commentSend,starIcon;
-		LinearLayout /*editImage,*/starImage;
- 
+		ImageView commentSend, starIcon;
+		LinearLayout /* editImage, */starImage;
+
 		String tag;
 	}
 
@@ -328,8 +328,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					null);
 			mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
 					.findViewById(R.id.showpieceadapter);
-		/*	mViewHolder.editImage = (LinearLayout) convertView
-					.findViewById(R.id.editImage);*/
+			/*
+			 * mViewHolder.editImage = (LinearLayout) convertView
+			 * .findViewById(R.id.editImage);
+			 */
 			mViewHolder.starIcon = (ImageView) convertView
 					.findViewById(R.id.staricon);
 
@@ -448,7 +450,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			mViewHolder.edtCommentLay.setVisibility(View.GONE);
 			// mViewHolder.mWindowContent = mWindowContentTemp;
 			try {
-				//mViewHolder.editImage.setVisibility(View.GONE);
+				// mViewHolder.editImage.setVisibility(View.GONE);
 				if (getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mOwnerUserId != null
 						&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
@@ -456,47 +458,46 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId
 							|| Long.parseLong(getItem(mCurrentAislePosition)
 									.getAisleContext().mUserId) == mUserId) {
-		/*				int browserHeight = getItem(mCurrentAislePosition)
-								.getBestLargetHeightForWindow();
-						int browserWidth = VueApplication.getInstance()
-								.getVueDetailsCardWidth();
-						int imageHeight = getItem(mCurrentAislePosition)
-								.getImageList().get(mCurrentDispImageIndex).mDetailsImageHeight;
-						int imageWidth = getItem(mCurrentAislePosition)
-								.getImageList().get(mCurrentDispImageIndex).mDetailsImageWidth;
-						int imageRightSpace = browserWidth - imageWidth;
-						int imageTopAreaHeight = (browserHeight / 2)
-								- (imageHeight / 2);
-						FrameLayout.LayoutParams editIconParams = new FrameLayout.LayoutParams(
-								VueApplication.getInstance().getPixel(32),
-								VueApplication.getInstance().getPixel(32));
-						editIconParams.setMargins(0, VueApplication
-								.getInstance().getPixel(10)
-								+ imageTopAreaHeight, VueApplication
-								.getInstance().getPixel(4)
-								+ imageRightSpace
-								/ 2, 0);
-
-						editIconParams.gravity = Gravity.RIGHT;
-						mViewHolder.editImage.setLayoutParams(editIconParams);
-						mViewHolder.editImage.setVisibility(View.VISIBLE);
-						mViewHolder.editImage
-								.setOnClickListener(new OnClickListener() {
-
-									@Override
-									public void onClick(View v) {
-										Toast.makeText(mContext,
-												"Edit Aisle Function",
-												Toast.LENGTH_SHORT).show();
-									}
-								});*/
-					    hasToShow = true;
+						/*
+						 * int browserHeight = getItem(mCurrentAislePosition)
+						 * .getBestLargetHeightForWindow(); int browserWidth =
+						 * VueApplication.getInstance()
+						 * .getVueDetailsCardWidth(); int imageHeight =
+						 * getItem(mCurrentAislePosition)
+						 * .getImageList().get(mCurrentDispImageIndex
+						 * ).mDetailsImageHeight; int imageWidth =
+						 * getItem(mCurrentAislePosition)
+						 * .getImageList().get(mCurrentDispImageIndex
+						 * ).mDetailsImageWidth; int imageRightSpace =
+						 * browserWidth - imageWidth; int imageTopAreaHeight =
+						 * (browserHeight / 2) - (imageHeight / 2);
+						 * FrameLayout.LayoutParams editIconParams = new
+						 * FrameLayout.LayoutParams(
+						 * VueApplication.getInstance().getPixel(32),
+						 * VueApplication.getInstance().getPixel(32));
+						 * editIconParams.setMargins(0, VueApplication
+						 * .getInstance().getPixel(10) + imageTopAreaHeight,
+						 * VueApplication .getInstance().getPixel(4) +
+						 * imageRightSpace / 2, 0);
+						 * 
+						 * editIconParams.gravity = Gravity.RIGHT;
+						 * mViewHolder.editImage
+						 * .setLayoutParams(editIconParams);
+						 * mViewHolder.editImage.setVisibility(View.VISIBLE);
+						 * mViewHolder.editImage .setOnClickListener(new
+						 * OnClickListener() {
+						 * 
+						 * @Override public void onClick(View v) {
+						 * Toast.makeText(mContext, "Edit Aisle Function",
+						 * Toast.LENGTH_SHORT).show(); } });
+						 */
+						hasToShow = true;
 						mswipeListner.hasToShowEditIcon(hasToShow);
 
 					} else {
-						  hasToShow = false;
+						hasToShow = false;
 						mswipeListner.hasToShowEditIcon(hasToShow);
-						//mViewHolder.editImage.setVisibility(View.GONE);
+						// mViewHolder.editImage.setVisibility(View.GONE);
 					}
 				}
 				if (getItem(mCurrentAislePosition).getImageList().get(
@@ -526,12 +527,14 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							0, 0);
 					mViewHolder.starImage.setLayoutParams(editIconParams);
 
-					if(getItem(mCurrentAislePosition).getImageList().get(
-						mCurrentDispImageIndex).mSameMostLikes){
-						mViewHolder.starIcon.setImageResource(R.drawable.vue_star_light);
+					if (getItem(mCurrentAislePosition).getImageList().get(
+							mCurrentDispImageIndex).mSameMostLikes) {
+						mViewHolder.starIcon
+								.setImageResource(R.drawable.vue_star_light);
 
 					} else {
-						mViewHolder.starIcon.setImageResource(R.drawable.vue_star_theme);
+						mViewHolder.starIcon
+								.setImageResource(R.drawable.vue_star_theme);
 					}
 					mViewHolder.starImage.setVisibility(View.VISIBLE);
 				} else {
@@ -584,12 +587,16 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 						.getmAisleImgCurrentPos();
 				// mWindowContentTemp = mViewHolder.mWindowContent;
 				mViewHolder.tag = TAG;
-					mViewLoader.getAisleContentIntoView(mViewHolder,
-							scrollIndex, position,
-							new DetailImageClickListener(),
-							getItem(mCurrentAislePosition), mSetPosition,/*mViewHolder.editImage,*/mViewHolder.starImage);
-					mSetPosition = false;
- 
+				mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
+						position, new DetailImageClickListener(),
+						getItem(mCurrentAislePosition), mSetPosition,/*
+																	 * mViewHolder.
+																	 * editImage
+																	 * ,
+																	 */
+						mViewHolder.starImage);
+				mSetPosition = false;
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
