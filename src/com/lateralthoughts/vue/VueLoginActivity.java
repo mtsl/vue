@@ -802,95 +802,83 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	private void postPhoto(final ArrayList<clsShare> fileList,
-			final String articledesc) {
-		if (hasPublishPermission()) {
-			mFacebookProgressDialog.show();
-			// Post photo....
-			if (fileList != null) {
-				Thread t = new Thread(new Runnable() {
-					@Override
-					public void run() {
+      final String articledesc) {
+    if (hasPublishPermission()) {
+      mFacebookProgressDialog.show();
+      // Post photo....
+      if (fileList != null) {
+        Thread t = new Thread(new Runnable() {
+          @Override
+          public void run() {
 
-						for (int i = 0; i < fileList.size(); i++) {
-							final File f = new File(fileList.get(i)
-									.getFilepath());
-							if (!f.exists()) {
-								@SuppressWarnings("rawtypes")
-								Response.Listener listener = new Response.Listener<InputStream>() {
-									@Override
-									public void onResponse(InputStream is) {
-										OutputStream os = null;
-										try {
-											os = new FileOutputStream(f);
-										} catch (FileNotFoundException e) {
-											e.printStackTrace();
-										}
-										Utils.CopyStream(is, os);
-									}
-								};
-								Response.ErrorListener errorListener = new Response.ErrorListener() {
-									@Override
-									public void onErrorResponse(VolleyError arg0) {
-									}
-								};
-								if (fileList.get(i).getImageUrl() != null) {
-									@SuppressWarnings("unchecked")
-									ImageRequest imagerequestObj = new ImageRequest(
-											fileList.get(i).getImageUrl(),
-											listener, 0, 0, null, errorListener);
-									VueApplication.getInstance()
-											.getRequestQueue()
-											.add(imagerequestObj);
-								}
-							}
-							final int index = i;
-							VueLoginActivity.this.runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									Bundle parameters = new Bundle(1);
-									parameters.putString("message", articledesc
-											+ "");
-									ParcelFileDescriptor descriptor = null;
-									try {
-										descriptor = ParcelFileDescriptor
-												.open(new File(fileList.get(
-														index).getFilepath()),
-														ParcelFileDescriptor.MODE_READ_ONLY);
-									} catch (FileNotFoundException e) {
-										e.printStackTrace();
-									}
-									parameters.putParcelable("picture",
-											descriptor);
-									Callback callback = new Request.Callback() {
-										public void onCompleted(
-												com.facebook.Response response) {
-											if (index == fileList.size() - 1) {
-												mFacebookProgressDialog
-														.dismiss();
-												showPublishResult(
-														VueLoginActivity.this
-																.getString(R.string.photo_post),
-														response.getGraphObject(),
-														response.getError());
-											}
-										}
-									};
-									Request request = new Request(Session
-											.getActiveSession(), "me/photos",
-											parameters, HttpMethod.POST,
-											callback);
-									request.executeAsync();
-								}
-							});
-						}
-					}
-				});
-				t.start();
-			} else {
-				mFacebookProgressDialog.dismiss();
-			}
-		}
-	}
+            for (int i = 0; i < fileList.size(); i++) {
+              final File f = new File(fileList.get(i).getFilepath());
+              if (!f.exists()) {
+                @SuppressWarnings("rawtypes")
+                Response.Listener listener = new Response.Listener<InputStream>() {
+                  @Override
+                  public void onResponse(InputStream is) {
+                    OutputStream os = null;
+                    try {
+                      os = new FileOutputStream(f);
+                    } catch (FileNotFoundException e) {
+                      e.printStackTrace();
+                    }
+                    Utils.CopyStream(is, os);
+                  }
+                };
+                Response.ErrorListener errorListener = new Response.ErrorListener() {
+                  @Override
+                  public void onErrorResponse(VolleyError arg0) {
+                  }
+                };
+                if (fileList.get(i).getImageUrl() != null) {
+                  @SuppressWarnings("unchecked")
+                  ImageRequest imagerequestObj = new ImageRequest(fileList.get(
+                      i).getImageUrl(), listener, 0, 0, null, errorListener);
+                  VueApplication.getInstance().getRequestQueue()
+                      .add(imagerequestObj);
+                }
+              }
+              final int index = i;
+              VueLoginActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                  Bundle parameters = new Bundle(1);
+                  parameters.putString("message", articledesc + "");
+                  ParcelFileDescriptor descriptor = null;
+                  try {
+                    descriptor = ParcelFileDescriptor.open(new File(fileList
+                        .get(index).getFilepath()),
+                        ParcelFileDescriptor.MODE_READ_ONLY);
+                  } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                  }
+                  parameters.putParcelable("picture", descriptor);
+                  Callback callback = new Request.Callback() {
+                    public void onCompleted(com.facebook.Response response) {
+                      if (index == fileList.size() - 1) {
+                        mFacebookProgressDialog.dismiss();
+                        showPublishResult(VueLoginActivity.this
+                            .getString(R.string.photo_post), response
+                            .getGraphObject(), response.getError());
+                      }
+                    }
+                  };
+                  Request request = new Request(Session.getActiveSession(),
+                      "me/photos", parameters, HttpMethod.POST, callback);
+                  request.executeAsync();
+                }
+              });
+            }
+          }
+        });
+        t.start();
+      } else {
+        mFacebookProgressDialog.dismiss();
+      }
+    }
+  }
 
 	private void showPublishResult(String message, GraphObject result,
 			FacebookRequestError error) {

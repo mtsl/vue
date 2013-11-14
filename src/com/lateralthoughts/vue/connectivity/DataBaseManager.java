@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -55,6 +56,9 @@ public class DataBaseManager {
   private static final String FORMATE = "%05d";
   private static final String DELETE_ROW = "1";
   private static final int THOUSAND = 1000;
+  private static final int MORE_TIMES_USED = 1;
+  private static final int EQUAL_TIMES_USED = 0;
+  private static final int LESS_TIMES_USED = -1;
   private int mStartPosition = 0;
   public int mEndPosition = 0;
   private int mLocalAislesLimit = 10;
@@ -837,7 +841,7 @@ public class DataBaseManager {
     }
     ContentValues values = new ContentValues();
     values.put(VueConstants.KEYWORD, aisleData.keyword);
-    values.put(VueConstants.LAST_USED_TIME, Utils.date());
+    values.put(VueConstants.LAST_USED_TIME, System.currentTimeMillis());
     values.put(VueConstants.NUMBER_OF_TIMES_USED, aisleData.count);
     if (aisleData.isNew) {
       mContext.getContentResolver().insert(uri, values);
@@ -849,7 +853,7 @@ public class DataBaseManager {
 
 
   public ArrayList<String> getAisleKeywords(String tableName) {
-    ArrayList<String> aisleKeywordsList = null;
+    ArrayList<UsedKeywords> aisleKeywordsList = null;
     Uri uri = null;
     if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
       uri = VueConstants.LOOKING_FOR_CONTENT_URI;
@@ -862,30 +866,41 @@ public class DataBaseManager {
     }
     String twoWeeksBeforeTime = Utils.twoWeeksBeforeTime();
     Cursor c = mContext.getContentResolver().query(uri, null,
-        VueConstants.LAST_USED_TIME + " >?", new String[] {twoWeeksBeforeTime},
+        VueConstants.LAST_USED_TIME + ">?", new String[] {twoWeeksBeforeTime},
         VueConstants.NUMBER_OF_TIMES_USED + " DESC");
     if (c.moveToFirst()) {
-      aisleKeywordsList = new ArrayList<String>();
+      aisleKeywordsList = new ArrayList<UsedKeywords>();
+      UsedKeywords keywords;
       do {
-        aisleKeywordsList.add(c.getString(c
-            .getColumnIndex(VueConstants.KEYWORD)));
+        keywords = new UsedKeywords(c.getString(c
+            .getColumnIndex(VueConstants.KEYWORD)), c.getString(c
+                .getColumnIndex(VueConstants.LAST_USED_TIME)), c.getString(c
+                    .getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED)));
+        aisleKeywordsList.add(keywords);
       } while (c.moveToNext());
     }
     c.close();
-    Cursor c1 = mContext.getContentResolver().query(uri, null,
-        VueConstants.LAST_USED_TIME + " <=?",
-        new String[] {twoWeeksBeforeTime},
-        VueConstants.NUMBER_OF_TIMES_USED + " DESC");
-    if (c1.moveToFirst()) {
-      if (aisleKeywordsList == null)
-        aisleKeywordsList = new ArrayList<String>();
-      do {
-        aisleKeywordsList.add(c1.getString(c1
-            .getColumnIndex(VueConstants.KEYWORD)));
-      } while (c1.moveToNext());
+    if(aisleKeywordsList == null) {
+      return null;
     }
-    c1.close();
-    return aisleKeywordsList;
+    for(int i = 0; i < aisleKeywordsList.size(); i++) {
+      UsedKeywords current = aisleKeywordsList.get(i);
+      for (int j = 0; j < i; ++j) {
+        UsedKeywords previous = aisleKeywordsList.get(j);
+        if(current.compareNumberOfTimesUsed(previous) == EQUAL_TIMES_USED) {
+          if(current.compareTime(previous)) {
+            Collections.swap(aisleKeywordsList, i, j);
+          }
+        } else if(current.compareNumberOfTimesUsed(previous) == LESS_TIMES_USED) {
+          Collections.swap(aisleKeywordsList, i, j);
+        }
+      }
+    }
+   ArrayList<String> finalList = new ArrayList<String>();
+    for(UsedKeywords key : aisleKeywordsList) {
+      finalList.add(key.keyWord);
+    }
+    return finalList;
   }
 
   public AisleData getAisleMetaDataForKeyword(String keyWord, String tableName) {
@@ -1388,6 +1403,42 @@ public class DataBaseManager {
         VueConstants.IMAGE_ID + "=?", new String[] {imgId});
     return (rowDeleted == 1) ? true : false;
  }
+ 
+ private class UsedKeywords {
+   String lastUsedTime;
+   String numberOfTimesUsed;
+   String keyWord;
+   public UsedKeywords(String keyWord, String lastUsedTime, String numberOfTimesUsed) {
+     this.keyWord = keyWord;
+     this.lastUsedTime = lastUsedTime;
+     this.numberOfTimesUsed = numberOfTimesUsed;
+   }
+   
+   public boolean compareKeyword(UsedKeywords other) {
+     if(this.keyWord.equals(other.keyWord)) {
+       return true;
+     }
+     return false;
+   }
+   
+   public boolean compareTime(UsedKeywords other) {
+     if(this.lastUsedTime.compareTo(other.lastUsedTime) > 0) {
+       return true;
+     }
+     return false;
+   }
+   
+    public int compareNumberOfTimesUsed(UsedKeywords other) {
+      int result = this.numberOfTimesUsed.compareTo(other.numberOfTimesUsed);
+      if (result > 0) {
+        return MORE_TIMES_USED;
+      } else if (result == 0) {
+        return EQUAL_TIMES_USED;
+      }
+      return LESS_TIMES_USED;
+    }
+ }
+ 
  
   /**
    * FOR TESTING PERPOES ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS

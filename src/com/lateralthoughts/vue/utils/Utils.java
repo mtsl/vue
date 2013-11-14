@@ -368,11 +368,11 @@ public class Utils {
 	 * 
 	 * @return
 	 */
-	public static String date() {
+	/*public static String date() {
 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
 				VueConstants.DATE_FORMAT);
 		return dateFormatGmt.format(new Date());
-	}
+	}*/
 
 	/**
 	 * 7 * 24 * 60 * 60 * 1000
@@ -383,7 +383,7 @@ public class Utils {
 		long twoWeeksDifferenceTime = (System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000));
 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
 				VueConstants.DATE_FORMAT);
-		return dateFormatGmt.format(new Date(twoWeeksDifferenceTime));
+		return twoWeeksDifferenceTime + "";//dateFormatGmt.format(new Date(twoWeeksDifferenceTime));
 	}
 
 	public static Bitmap getBitmap() {
