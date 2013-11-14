@@ -1976,7 +1976,7 @@ public class DataEntryFragment extends Fragment {
 					lookingForAisleDataObj.count = 1;
 					lookingForAisleDataObj.isNew = true;
 				}
-				String currentTime = Utils.date();
+				String currentTime = System.currentTimeMillis() + "";
 				lookingForAisleDataObj.time = currentTime;
 				mDbManager.addAisleMetaDataToDB(VueConstants.LOOKING_FOR_TABLE,
 						lookingForAisleDataObj);
