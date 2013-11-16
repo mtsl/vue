@@ -7,26 +7,49 @@
             android:shape="rectangle" >
             <corners android:radius="2dp" />
 
-            <solid android:color="#d6d6d6" />
+            <solid android:color="#EAEAEA" />
         </shape>
     </item>
-    <item
-        android:bottom="2dp"
-        android:left="2dp"
-        android:right="2dp"
-        android:top="2dp">
+    <item android:top="1dp">
         <shape
             android:dither="true"
             android:shape="rectangle" >
             <corners android:radius="2dp" />
 
-            <solid android:color="#eaeaea" />
+            <solid android:color="#E2E2E2" />
+        </shape>
+    </item>
+    <item android:top="2dp">
+        <shape
+            android:dither="true"
+            android:shape="rectangle" >
+            <corners android:radius="2dp" />
+
+            <solid android:color="#DBDBDB" />
+        </shape>
+    </item>
+    <item android:top="3dp">
+        <shape
+            android:dither="true"
+            android:shape="rectangle" >
+            <corners android:radius="2dp" />
+
+            <solid android:color="#E0E0E0" />
+        </shape>
+    </item>
+    <item android:top="4dp">
+        <shape
+            android:dither="true"
+            android:shape="rectangle" >
+            <corners android:radius="2dp" />
+
+            <solid android:color="#ffffff" />
 
             <padding
                 android:bottom="8dp"
                 android:left="8dp"
                 android:right="8dp"
-                android:top="8dp" />
+                android:top="12dp" />
         </shape>
     </item>
 
