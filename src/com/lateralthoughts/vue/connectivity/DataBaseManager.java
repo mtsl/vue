@@ -32,6 +32,7 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flurry.android.monolithic.sdk.impl.mc;
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -940,16 +941,16 @@ public class DataBaseManager {
     return true;
   }
 
-  private static void deleteOutDatedAisles(Context context) {
+  private static void deleteOutDatedAisles(Context context, String aisleID) {
     int deletedAisles = context.getContentResolver().delete(
-        VueConstants.CONTENT_URI, VueConstants.DELETE_FLAG + "=?",
-        new String[] {DELETE_ROW});
+        VueConstants.CONTENT_URI, VueConstants.AISLE_Id + "=?",
+        new String[] {aisleID});
     int deletedImages = context.getContentResolver().delete(
-        VueConstants.IMAGES_CONTENT_URI, VueConstants.DELETE_FLAG + "=?",
-        new String[] {DELETE_ROW});
+        VueConstants.IMAGES_CONTENT_URI, VueConstants.AISLE_Id + "=?",
+        new String[] {aisleID});
     int deletedComments = context.getContentResolver().delete(
-        VueConstants.COMMENTS_ON_IMAGE_URI, VueConstants.DELETE_FLAG + "=?",
-        new String[] {DELETE_ROW});
+        VueConstants.COMMENTS_ON_IMAGE_URI, VueConstants.AISLE_Id + "=?",
+        new String[] {aisleID});
   }
 
   private ArrayList<AisleWindowContent> getAisles(Cursor aislesCursor) {

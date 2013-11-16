@@ -34,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.CreateAlbum;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Session;
@@ -81,36 +82,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		
-		
-		/*new Thread(new Runnable() {
-          
-          @Override
-          public void run() {
-            Callback callback = new Request.Callback() {
-              public void onCompleted(com.facebook.Response response) {
-                GraphObject obj = response.getGraphObject();
-                JSONObject jsonObj = obj.getInnerJSONObject();
-                Log.e("VueLandingPageActivity", "facebook Albums: 4 " + jsonObj.toString());
-              }
-            };
-            Log.e("VueLandingPageActivity", "facebook Albums: 1");
-            Request request = new Request(Session.getActiveSession(),
-                "me/albums", null, HttpMethod.POST, callback);
-            Log.e("VueLandingPageActivity", "facebook Albums: 2");
-            request.executeAsync();
-            Log.e("VueLandingPageActivity", "facebook Albums: 3");
-          }
-        }).start();*/
-		 
-		
-		
-		
-		
-		
-		
-		
-		
+		//CreateAlbum.createUserAlbum();
 		landingPageActivity = this;
 
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
