@@ -40,10 +40,12 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.utils.AddImageToAisleBackgroundThread;
 import com.lateralthoughts.vue.utils.AisleCreationBackgroundThread;
 import com.lateralthoughts.vue.utils.AisleUpdateBackgroundThread;
+import com.lateralthoughts.vue.utils.DeleteImageFromAisle;
 import com.lateralthoughts.vue.utils.UploadImageBackgroundThread;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
@@ -53,7 +55,7 @@ public class AisleManager {
 	private ObjectMapper mObjectMapper;
 
 	public interface AisleUpdateCallback {
-		public void onAisleUpdated(String id);
+		public void onAisleUpdated(String id, String imageId);
 	}
 
 	public interface ImageUploadCallback {
@@ -168,6 +170,11 @@ public class AisleManager {
 		t.start();
 	}
 
+	public void deleteImage(final Image image) {
+		Thread t = new Thread(new DeleteImageFromAisle(image));
+		t.start();
+	}
+
 	private AisleContext parseAisleContent(JSONObject user) {
 		AisleContext aisle = null;
 
@@ -189,7 +196,8 @@ public class AisleManager {
 
 	// issues a request to add an image to the aisle.
 	public void addImageToAisle(final boolean fromDetailsScreenFlag,
-			String imageId, VueImage image) {
+			String imageId, VueImage image,
+			ImageAddedCallback imageAddedCallback) {
 		Log.i("addimagefuncitonality",
 				"addimagefuncitonality entered in method");
 		if (null == image) {
@@ -198,7 +206,7 @@ public class AisleManager {
 		}
 
 		Thread t = new Thread(new AddImageToAisleBackgroundThread(image,
-				fromDetailsScreenFlag, imageId));
+				fromDetailsScreenFlag, imageId, imageAddedCallback));
 		t.start();
 		/*
 		 * String imageAsString = null; try { imageAsString =

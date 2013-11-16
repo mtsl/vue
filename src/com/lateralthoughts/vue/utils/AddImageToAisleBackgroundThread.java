@@ -39,16 +39,19 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 	private String mResponseMessage = null;
 	private boolean mFromDetailsScreenFlag;
 	private String mImageId;
+	private ImageAddedCallback mImageAddedCallback;
 
 	@SuppressWarnings("static-access")
 	public AddImageToAisleBackgroundThread(VueImage vueImage,
-			boolean fromDetailsScreenFlag, String imageId) {
+			boolean fromDetailsScreenFlag, String imageId,
+			ImageAddedCallback imageAddedCallback) {
 		mNotificationManager = (NotificationManager) VueApplication
 				.getInstance().getSystemService(
 						VueApplication.getInstance().NOTIFICATION_SERVICE);
 		mVueImage = vueImage;
 		mFromDetailsScreenFlag = fromDetailsScreenFlag;
 		mImageId = imageId;
+		mImageAddedCallback = imageAddedCallback;
 	}
 
 	@Override
@@ -148,6 +151,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 											.parseAisleImageData(new JSONObject(
 													mResponseMessage));
 									if (aisleImageDetails != null) {
+										mImageAddedCallback
+												.onImageAdded(aisleImageDetails.mId);
 										if (VueLandingPageActivity
 												.getScreenName()
 												.equalsIgnoreCase("Trending")

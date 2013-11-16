@@ -73,6 +73,16 @@ public class VueApplication extends Application {
 		this.mUserId = mUserId;
 	}
 
+	public boolean ismFinishDetailsScreenFlag() {
+		return mFinishDetailsScreenFlag;
+	}
+
+	public void setmFinishDetailsScreenFlag(boolean mFinishDetailsScreenFlag) {
+		this.mFinishDetailsScreenFlag = mFinishDetailsScreenFlag;
+	}
+
+	private boolean mFinishDetailsScreenFlag;
+
 	private Long mUserId = null;
 	private String mUserName = null;
 

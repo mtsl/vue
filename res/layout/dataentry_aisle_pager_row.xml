@@ -15,6 +15,44 @@
         android:adjustViewBounds="true"
         android:background="@drawable/image_bg" />
 
+    <LinearLayout
+        android:id="@+id/image_delete_btn"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignBottom="@+id/dataentry_row_aisele_image"
+        android:layout_alignRight="@+id/dataentry_row_aisele_image"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/rectangle"
+        android:clickable="true" >
+
+        <ImageView
+            android:id="@+id/staricon"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/cancel" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/image_edit_btn"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignBottom="@+id/dataentry_row_aisele_image"
+        android:layout_alignLeft="@+id/dataentry_row_aisele_image"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/rectangle"
+        android:clickable="true" >
+
+        <ImageView
+            android:id="@+id/staricon"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/share" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/touchtochangeimage"
         android:layout_width="match_parent"

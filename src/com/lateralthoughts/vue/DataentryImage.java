@@ -43,6 +43,25 @@ public class DataentryImage implements Serializable {
 	private int imageHeight;
 	private String imageStore;
 
+	public String getAisleId() {
+		return aisleId;
+	}
+
+	public void setAisleId(String aisleId) {
+		this.aisleId = aisleId;
+	}
+
+	public String getImageId() {
+		return imageId;
+	}
+
+	public void setImageId(String imageId) {
+		this.imageId = imageId;
+	}
+
+	private String aisleId;
+	private String imageId;
+
 	public boolean isAddedToServerFlag() {
 		return isAddedToServerFlag;
 	}
@@ -79,9 +98,12 @@ public class DataentryImage implements Serializable {
 		this.detailsUrl = detailsUrl;
 	}
 
-	public DataentryImage(String resizedImagePath, String originalImagePath,
-			String imageUrl, String detailsUrl, int imageWidth,
-			int imageHeight, String imageStore, boolean isAddedToServerFlag) {
+	public DataentryImage(String aisleId, String imageId,
+			String resizedImagePath, String originalImagePath, String imageUrl,
+			String detailsUrl, int imageWidth, int imageHeight,
+			String imageStore, boolean isAddedToServerFlag) {
+		this.aisleId = aisleId;
+		this.imageId = imageId;
 		this.originalImagePath = originalImagePath;
 		this.resizedImagePath = resizedImagePath;
 		this.imageUrl = imageUrl;

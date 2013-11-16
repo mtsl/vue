@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -221,8 +222,32 @@ public class DataEntryActivity extends BaseActivity {
 								.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY));
 			}
 			if (mDataEntryFragment.mFromDetailsScreenFlag) {
+				boolean firstTimeFlag = false;
+				try {
+					mDataEntryFragment.mAisleImagePathList = Utils
+							.readAisleImagePathListFromFile(
+									DataEntryActivity.this,
+									VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if (mDataEntryFragment.mAisleImagePathList == null) {
+					firstTimeFlag = true;
+					mDataEntryFragment.mAisleImagePathList = new ArrayList<DataentryImage>();
+				}
+				if (mDataEntryFragment.mAisleImagePathList.size() == 0) {
+					firstTimeFlag = true;
+				}
+				if (firstTimeFlag) {
+					mDataEntryFragment
+							.showDetailsScreenImagesInDataentryScreen();
+				}
 				mVueDataentryActionbarScreenName.setText(getResources()
 						.getString(R.string.add_imae_to_aisle_screen_title));
+				if (b.getBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG)) {
+					mVueDataentryActionbarScreenName.setText(getResources()
+							.getString(R.string.edit_aisle_screen_title));
+				}
 				mDataEntryFragment.mIsUserAisleFlag = b
 						.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG);
 				if (!mDataEntryFragment.mIsUserAisleFlag) {
@@ -454,6 +479,10 @@ public class DataEntryActivity extends BaseActivity {
 							DataEntryActivity.this, -1);
 					Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
 							false);
+					FileCache fileCache = new FileCache(
+							VueApplication.getInstance());
+					fileCache.clearVueAppResizedPictures();
+					fileCache.clearVueAppCameraPictures();
 					ArrayList<DataentryImage> mAisleImagePathList = null;
 					try {
 						mAisleImagePathList = Utils
@@ -522,6 +551,10 @@ public class DataEntryActivity extends BaseActivity {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				FileCache fileCache = new FileCache(VueApplication
+						.getInstance());
+				fileCache.clearVueAppResizedPictures();
+				fileCache.clearVueAppCameraPictures();
 				finish();
 			}
 		});
@@ -559,6 +592,9 @@ public class DataEntryActivity extends BaseActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		FileCache fileCache = new FileCache(VueApplication.getInstance());
+		fileCache.clearVueAppResizedPictures();
+		fileCache.clearVueAppCameraPictures();
 		finish();
 	}
 }

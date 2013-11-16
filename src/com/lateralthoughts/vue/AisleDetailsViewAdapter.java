@@ -148,7 +148,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			VueApplication.getInstance().setmAisleImgCurrentPos(
 					getItem(mCurrentAislePosition).getImageList().size() - 1);
 		}
-		if (getItem(mCurrentAislePosition).getAisleContext().mCommentList == null) {
+		if (getItem(mCurrentAislePosition).getAisleContext().mCommentList == null) { 
 			getItem(mCurrentAislePosition).getAisleContext().mCommentList = new ArrayList<String>();
 		}
 
@@ -225,6 +225,11 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			}
 			mCurrentDispImageIndex = VueApplication.getInstance()
 					.getmAisleImgCurrentPos();
+			if(mCurrentDispImageIndex >=  getItem(
+					mCurrentAislePosition).getImageList().size()){
+				mCurrentDispImageIndex = getItem(
+						mCurrentAislePosition).getImageList().size()-1;
+			}
 			mLikes = getItem(mCurrentAislePosition).getImageList().get(
 					imgPosition).mLikesCount;
 			boolean isBookmarked = VueTrendingAislesDataModel
@@ -1122,7 +1127,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				.setBestLargestHeightForWindow(bestHeight);
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.dataObserver();
-
+		 
 		if (mViewHolder != null) {
 			// mswipeListner.onResetAdapter();
 			setAisleBrowserObjectsNull();
@@ -1140,7 +1145,13 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		}
 
 	}
-
+  public void updateAisleListAdapter(){
+		int imageListSize = getItem(mCurrentAislePosition).getImageList().size();
+		  VueApplication.getInstance().setClickedWindowCount(imageListSize);
+		  VueApplication.getInstance().setmAisleImgCurrentPos(0);
+			setAisleBrowserObjectsNull();
+			mswipeListner.onResetAdapter();
+  }
 	public ArrayList<AisleImageDetails> getImageList() {
 		return getItem(mCurrentAislePosition).getImageList();
 	}

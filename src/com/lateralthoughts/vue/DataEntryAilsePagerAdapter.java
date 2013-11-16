@@ -1,7 +1,6 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
-
 import com.lateralthoughts.vue.utils.DataentryPageLoader;
 import android.content.Context;
 import android.os.Parcelable;
@@ -13,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -43,6 +43,10 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 		LayoutInflater inflater = (LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.dataentry_aisle_pager_row, null);
+		LinearLayout imageDeleteBtn = (LinearLayout) view
+				.findViewById(R.id.image_delete_btn);
+		LinearLayout imageEditBtn = (LinearLayout) view
+				.findViewById(R.id.image_edit_btn);
 		ImageView dataEntryRowAisleImage = (ImageView) view
 				.findViewById(R.id.dataentry_row_aisele_image);
 		TextView touchToChangeImage = (TextView) view
@@ -52,6 +56,8 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 		aisleBgProgressBar.setVisibility(View.VISIBLE);
 		dataEntryRowAisleImage.setVisibility(View.GONE);
 		touchToChangeImage.setVisibility(View.GONE);
+		imageDeleteBtn.setVisibility(View.GONE);
+		imageEditBtn.setVisibility(View.GONE);
 		try {
 			if (mDataEntryFragment == null) {
 				mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
@@ -65,14 +71,29 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 			if (mDataEntryFragment.isAisleAddedScreenVisible()) {
 				touchToChangeImage.setClickable(false);
 				dataEntryRowAisleImage.setClickable(false);
+				imageDeleteBtn.setClickable(false);
+				imageEditBtn.setClickable(false);
 			} else {
-				touchToChangeImage.setClickable(true);
-				dataEntryRowAisleImage.setClickable(true);
+				if (mImagePathsList.get(position).isAddedToServerFlag()) {
+					touchToChangeImage.setClickable(false);
+					dataEntryRowAisleImage.setClickable(false);
+					imageDeleteBtn.setClickable(true);
+					imageEditBtn.setClickable(true);
+				} else {
+					touchToChangeImage.setClickable(true);
+					dataEntryRowAisleImage.setClickable(true);
+					imageDeleteBtn.setClickable(false);
+					imageEditBtn.setClickable(false);
+				}
 			}
 			mImageLoader.DisplayImage(mImagePathsList.get(position)
+					.getOriginalImagePath(), mImagePathsList.get(position)
+					.getImageUrl(), mImagePathsList.get(position)
 					.getResizedImagePath(), dataEntryRowAisleImage,
 					aisleBgProgressBar, touchToChangeImage, mDataEntryFragment
-							.isAisleAddedScreenVisible());
+							.isAisleAddedScreenVisible(), imageDeleteBtn,
+					imageEditBtn, mImagePathsList.get(position)
+							.isAddedToServerFlag());
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -101,12 +122,9 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 				}
 				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
 						.setVisibility(View.GONE);
+				mDataEntryFragment.hideAllEditableTextboxes();
 				if (!(mDataEntryFragment.isAisleAddedScreenVisible())) {
-					if (mImagePathsList.get(position).isAddedToServerFlag()) {
-						mDataEntryFragment.hideAllEditableTextboxes();
-						mDataEntryFragment
-								.showAlertMessageForBackendNotIntegrated("Image Update service at server side is pending.");
-					} else {
+					if (!mImagePathsList.get(position).isAddedToServerFlag()) {
 						mDataEntryFragment
 								.touchToChangeImageClickFunctionality(position);
 					}
@@ -124,16 +142,43 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 				}
 				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
 						.setVisibility(View.GONE);
+				mDataEntryFragment.hideAllEditableTextboxes();
 				if (!(mDataEntryFragment.isAisleAddedScreenVisible())) {
-					if (mImagePathsList.get(position).isAddedToServerFlag()) {
-						mDataEntryFragment.hideAllEditableTextboxes();
-						mDataEntryFragment
-								.showAlertMessageForBackendNotIntegrated("Image Update service at server side is pending.");
-					} else {
+					if (!mImagePathsList.get(position).isAddedToServerFlag()) {
 						mDataEntryFragment
 								.touchToChangeImageClickFunctionality(position);
 					}
 				}
+			}
+		});
+		imageDeleteBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if (mDataEntryFragment == null) {
+					mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
+							.getSupportFragmentManager().findFragmentById(
+									R.id.create_aisles_view_fragment);
+				}
+				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
+						.setVisibility(View.GONE);
+				mDataEntryFragment.hideAllEditableTextboxes();
+				mDataEntryFragment.deleteImage(position);
+			}
+		});
+		imageEditBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (mDataEntryFragment == null) {
+					mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
+							.getSupportFragmentManager().findFragmentById(
+									R.id.create_aisles_view_fragment);
+				}
+				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
+						.setVisibility(View.GONE);
+				mDataEntryFragment.hideAllEditableTextboxes();
+				mDataEntryFragment
+						.showAlertMessageForBackendNotIntegrated("Image Update service at server side is pending.");
 			}
 		});
 		return view;

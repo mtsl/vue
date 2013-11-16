@@ -81,36 +81,22 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		
-		
-		/*new Thread(new Runnable() {
-          
-          @Override
-          public void run() {
-            Callback callback = new Request.Callback() {
-              public void onCompleted(com.facebook.Response response) {
-                GraphObject obj = response.getGraphObject();
-                JSONObject jsonObj = obj.getInnerJSONObject();
-                Log.e("VueLandingPageActivity", "facebook Albums: 4 " + jsonObj.toString());
-              }
-            };
-            Log.e("VueLandingPageActivity", "facebook Albums: 1");
-            Request request = new Request(Session.getActiveSession(),
-                "me/albums", null, HttpMethod.POST, callback);
-            Log.e("VueLandingPageActivity", "facebook Albums: 2");
-            request.executeAsync();
-            Log.e("VueLandingPageActivity", "facebook Albums: 3");
-          }
-        }).start();*/
-		 
-		
-		
-		
-		
-		
-		
-		
-		
+
+		/*
+		 * new Thread(new Runnable() {
+		 * 
+		 * @Override public void run() { Callback callback = new
+		 * Request.Callback() { public void onCompleted(com.facebook.Response
+		 * response) { GraphObject obj = response.getGraphObject(); JSONObject
+		 * jsonObj = obj.getInnerJSONObject(); Log.e("VueLandingPageActivity",
+		 * "facebook Albums: 4 " + jsonObj.toString()); } };
+		 * Log.e("VueLandingPageActivity", "facebook Albums: 1"); Request
+		 * request = new Request(Session.getActiveSession(), "me/albums", null,
+		 * HttpMethod.POST, callback); Log.e("VueLandingPageActivity",
+		 * "facebook Albums: 2"); request.executeAsync();
+		 * Log.e("VueLandingPageActivity", "facebook Albums: 3"); } }).start();
+		 */
+
 		landingPageActivity = this;
 		clearDataEntryData();
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
@@ -1072,6 +1058,9 @@ public class VueLandingPageActivity extends BaseActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		FileCache fileCache = new FileCache(VueApplication.getInstance());
+		fileCache.clearVueAppResizedPictures();
+		fileCache.clearVueAppCameraPictures();
 	}
 
 }
