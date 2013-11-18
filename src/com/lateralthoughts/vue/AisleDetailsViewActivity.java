@@ -308,9 +308,18 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 															VueApplication
 																	.getInstance())
 													.getNetworkHandler()
-													.requestForAddImage(true,
+													.requestForAddImage(
+															true,
 															offlineImageId,
-															image);
+															image,
+															new ImageAddedCallback() {
+
+																@Override
+																public void onImageAdded(
+																		String imageId) {
+
+																}
+															});
 										}
 									}
 								});
@@ -319,7 +328,14 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				VueTrendingAislesDataModel
 						.getInstance(VueApplication.getInstance())
 						.getNetworkHandler()
-						.requestForAddImage(true, offlineImageId, image);
+						.requestForAddImage(true, offlineImageId, image,
+								new ImageAddedCallback() {
+
+									@Override
+									public void onImageAdded(String imageId) {
+
+									}
+								});
 			}
 			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath,
 					VueLandingPageActivity.mOtherSourceImageUrl,
@@ -335,6 +351,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			VueLandingPageActivity.mOtherSourceImageDetailsUrl = null;
 			VueLandingPageActivity.mOtherSourceImageStore = null;
 			VueLandingPageActivity.mOtherSourceImageLookingFor = null;
+			VueLandingPageActivity.mOtherSourceImageCategory = null;
 			VueLandingPageActivity.mOtherSourceImageOccasion = null;
 		}
 	}
@@ -603,23 +620,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT) {
-			ArrayList<DataentryImage> mAisleImagePathList = null;
-			try {
-				mAisleImagePathList = Utils.readAisleImagePathListFromFile(
-						AisleDetailsViewActivity.this,
-						VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
-				mAisleImagePathList.clear();
-				Utils.writeAisleImagePathListToFile(
-						AisleDetailsViewActivity.this,
-						VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
-						mAisleImagePathList);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			updateAisleScreen();
 			Bundle b = data.getExtras();
 			if (b != null) {
-				String findAt = b
-						.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT);
 				String lookingfor = b
 						.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR);
 				String occasion = b
@@ -677,23 +680,38 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 							.findFragmentById(R.id.aisle_details_view_fragment);
 				}
 				mVueAiselFragment.notifyAdapter();
-				if (findAt != null) {
-					mVueAiselFragment.mEditTextFindAt.setText(findAt);
+				ArrayList<String> findAtArrayList = b
+						.getStringArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT);
+				if (findAtArrayList != null && findAtArrayList.size() > 0) {
+					mVueAiselFragment.mEditTextFindAt.setText(findAtArrayList
+							.get(0));
 				} else {
 					mVueAiselFragment.mEditTextFindAt.setText("");
 				}
 
-				String imagePath = b
-						.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-				if (imagePath != null) {
-					addImageToAisle(
-							imagePath,
-							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL),
-							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH),
-							b.getInt(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT),
-							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL),
-							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE),
-							b.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OFFLINE_IMAGE_ID));
+				ArrayList<String> imagePathList = b
+						.getStringArrayList(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+				ArrayList<String> imageUrlList = b
+						.getStringArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL);
+				ArrayList<Integer> imageWidthList = b
+						.getIntegerArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH);
+				ArrayList<Integer> imageHeightList = b
+						.getIntegerArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT);
+				ArrayList<String> imageDetailsUrlList = b
+						.getStringArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL);
+				ArrayList<String> imageStoreList = b
+						.getStringArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE);
+				ArrayList<String> offlineImageIdList = b
+						.getStringArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OFFLINE_IMAGE_ID);
+				if (imagePathList != null && imagePathList.size() > 0) {
+					for (int i = 0; i < imagePathList.size(); i++) {
+						addImageToAisle(imagePathList.get(i),
+								imageUrlList.get(i), imageWidthList.get(i),
+								imageHeightList.get(i),
+								imageDetailsUrlList.get(i),
+								imageStoreList.get(i),
+								offlineImageIdList.get(i));
+					}
 				}
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT
@@ -707,8 +725,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			try {
 				if (mVueAiselFragment == null) {
 					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.aisle_details_view_fragment);
+
+					.findFragmentById(R.id.aisle_details_view_fragment);
 				}
+				updateAisleScreen();
 				if (mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled) {
 					mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled = false;
 					mVueAiselFragment.mAisleDetailsAdapter.mShare
@@ -796,7 +816,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	}
 
-	private void sendDataToDataentryScreen(Bundle b) {
+	public void sendDataToDataentryScreen(Bundle b) {
 		Log.e("Land", "vueland 4");
 		String lookingFor, occation, category, userId, description;
 		if (mVueAiselFragment == null) {
@@ -809,13 +829,8 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		category = aisleInfo.mCategory;
 		userId = aisleInfo.mUserId;
 		description = aisleInfo.mDescription;
-		String imagePath = b
-				.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
 		Intent intent = new Intent(this, DataEntryActivity.class);
 		Bundle b1 = new Bundle();
-		b1.putString(
-				VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
-				imagePath);
 		b1.putBoolean(
 				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG, true);
 		VueUser storedVueUser = null;
@@ -844,14 +859,25 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		b1.putString(
 				VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
 				description);
-		b1.putString(VueConstants.FROM_OTHER_SOURCES_URL,
-				b.getString(VueConstants.FROM_OTHER_SOURCES_URL));
-		b1.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG,
-				b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG));
-		b1.putParcelableArrayList(
-				VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
-				b.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS));
-
+		if (b != null) {
+			String imagePath = b
+					.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
+			b1.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+					b.getString(VueConstants.FROM_OTHER_SOURCES_URL));
+			b1.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG,
+					b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG));
+			b1.putParcelableArrayList(
+					VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
+					b.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS));
+			b1.putString(
+					VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
+					imagePath);
+			b1.putBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG,
+					false);
+		} else {
+			b1.putBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG,
+					true);
+		}
 		intent.putExtras(b1);
 		Log.e("Land", "vueland 5");
 		this.startActivityForResult(
@@ -1121,4 +1147,19 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	public void shareViaVueClicked() {
 		finish();
 	}
+
+	public void updateAisleScreen() {
+		if (VueApplication.getInstance().ismFinishDetailsScreenFlag()) {
+			VueApplication.getInstance().setmFinishDetailsScreenFlag(false);
+			finish();
+		} else {
+			Log.e("DetailsScreen", "UpdateAislescreen");
+			if (mVueAiselFragment == null) {
+				mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.aisle_details_view_fragment);
+			}
+			mVueAiselFragment.updateAisleScreen();
+		}
+	}
+
 }

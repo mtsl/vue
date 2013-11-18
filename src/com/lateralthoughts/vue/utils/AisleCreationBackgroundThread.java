@@ -177,8 +177,10 @@ public class AisleCreationBackgroundThread implements Runnable,
 								// TODO: GET THE AISLE OBJECT FROM
 								// THE PARSER CLASE SEND
 								// THE AISLE AND AISLE ID BACK.
-								mAisleUpdateCallback.onAisleUpdated(aileItem
-										.getAisleContext().mAisleId);
+								mAisleUpdateCallback.onAisleUpdated(
+										aileItem.getAisleContext().mAisleId,
+										aileItem.getImageList().get(0).mId);
+
 								FlurryAgent.logEvent("Create_Aisle_Success");
 								// VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
 							} catch (Exception ex) {

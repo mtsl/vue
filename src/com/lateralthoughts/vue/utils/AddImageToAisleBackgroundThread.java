@@ -19,6 +19,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleImageDetails;
+import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
@@ -38,16 +39,19 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 	private String mResponseMessage = null;
 	private boolean mFromDetailsScreenFlag;
 	private String mImageId;
+	private ImageAddedCallback mImageAddedCallback;
 
 	@SuppressWarnings("static-access")
 	public AddImageToAisleBackgroundThread(VueImage vueImage,
-			boolean fromDetailsScreenFlag, String imageId) {
+			boolean fromDetailsScreenFlag, String imageId,
+			ImageAddedCallback imageAddedCallback) {
 		mNotificationManager = (NotificationManager) VueApplication
 				.getInstance().getSystemService(
 						VueApplication.getInstance().NOTIFICATION_SERVICE);
 		mVueImage = vueImage;
 		mFromDetailsScreenFlag = fromDetailsScreenFlag;
 		mImageId = imageId;
+		mImageAddedCallback = imageAddedCallback;
 	}
 
 	@Override
@@ -147,6 +151,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 											.parseAisleImageData(new JSONObject(
 													mResponseMessage));
 									if (aisleImageDetails != null) {
+										mImageAddedCallback
+												.onImageAdded(aisleImageDetails.mId);
 										if (VueLandingPageActivity
 												.getScreenName()
 												.equalsIgnoreCase("Trending")
@@ -274,7 +280,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 														.getInstance(
 																VueApplication
 																		.getInstance())
-														.getAislesFromDB(s, false);
+														.getAislesFromDB(s,
+																false);
 												if (list != null) {
 													list.get(0)
 															.getImageList()

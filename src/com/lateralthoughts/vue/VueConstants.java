@@ -61,7 +61,15 @@ public class VueConstants {
 	public static final String GOOGLEPLUS_FRIEND_INDEX = "GOOGLEPLUS_FRIEND_INDEX";
 	public static final String GOOGLEPLUS_FRIEND_IMAGE_PATH_LIST_KEY = "GOOGLEPLUS_FRIEND_INDEX_PATH_LIST_KEY";
 	public static final String FROM_DETAILS_SCREEN_TO_DATAENTRY_CREATE_AISLESCREEN_FLAG = "FromDetailsScreenToDataentryCreateAisleScreenFlag";
-	public static final String DATAENTRY_ADDIMAGE_AISLE_FLAG = "DataentryAddImageAisleFlag";
+	public static final String TOUCH_TO_CHANGE_IMAGE_FLAG = "TouchToChangeImageFlag";
+	public static final String TOUCH_TO_CHANGE_IMAGE_POSITION = "TouchToChangeImagePosition";
+	public static final String TOUCH_TO_CHANGE_IMAGE_TEMP_POSITION = "TouchToChangeImageTempPosition";
+	public static final String DATAENTRY_ADDIMAGE_AISLE_FLAG = "DataentrdyAddImageAisleFlag";
+	public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_FLAG = "DataentryTopAddImageAisleFlag";
+	public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_LOOKINGFOR = "DataentryTopAddImageAisleLookingFor";
+	public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_OCCASION = "DataentryTopAddImageAisleOccasion";
+	public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_CATEGORY = "DataentryTopAddImageAisleCategory";
+	public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_DESCRIPTION = "DataentryTopAddImageAisleDescription";
 	public static final String DATAENTRY_EDIT_AISLE_FLAG = "DataentryEditAisleFlag";
 	public static final String LOAD_DATAENTRY_SCREEN_FLAG = "LoadDataentryScreenFlag";
 	public static final String AISLE_IMAGE_PATH_LIST_FILE_NAME = "AisleImagePathListFileName";
@@ -102,6 +110,7 @@ public class VueConstants {
 	public static final int INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE = 24;
 	public static final String INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY = "invitefriendsloginactivitybundlestringkey";
 	public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
+	public static final String EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG = "EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG";
 	public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG = "fromDetailsscreentoCreateAilseScreenflag";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG";
@@ -110,6 +119,7 @@ public class VueConstants {
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY";
+	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_POSITION = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_POSITION";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE";
 	public static final String FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG = "fromDetailsscreentoDataentryScreenflag";
 	public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH = "FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH";

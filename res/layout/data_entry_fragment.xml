@@ -10,43 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <ProgressBar
-            android:id="@+id/aisle_bg_progressbar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminateDrawable="@drawable/aisle_bg_progressbar_drawable" />
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/dummylayoutforaisleimage" >
-
-            <ImageView
-                android:id="@+id/createaisel_bg"
-                android:layout_width="wrap_content"
-                android:background="@drawable/image_bg"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip"
-                android:layout_centerInParent="true"
-                android:adjustViewBounds="true"
-                  />
-
-            <TextView
-                android:id="@+id/touchtochangeimage"
-                android:layout_width="match_parent"
-                android:layout_height="48dip"
-                android:layout_centerInParent="true"
-              
-                android:clickable="true"
-                android:visibility="visible"
-                android:gravity="center"
-                android:padding="8dip"
-                android:text="Touch To Change Image"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold" />
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/dataentry_aisles_viewpager"
@@ -485,7 +452,7 @@
                     android:focusable="true"
                     android:hint="Say something about the aisle"
                     android:singleLine="true"
-                    android:textColor="@color/white"
+                    android:textColor="@color/grey"
                     android:textSize="15sp"
                     android:visibility="gone" />
 

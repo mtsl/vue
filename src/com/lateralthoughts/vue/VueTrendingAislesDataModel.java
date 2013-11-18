@@ -166,7 +166,7 @@ public class VueTrendingAislesDataModel {
 		}
 		return null;
 	}
-
+   
 	public AisleWindowContent getAisleAt(int position) {
 		try {
 			return mAisleContentList.get(position);
@@ -194,6 +194,8 @@ public class VueTrendingAislesDataModel {
 									.getAisleContext().mLookingForItem;
 							VueLandingPageActivity.mOtherSourceImageOccasion = aisleWindowContent
 									.getAisleContext().mOccasion;
+							VueLandingPageActivity.mOtherSourceImageCategory = aisleWindowContent
+									.getAisleContext().mCategory;
 						}
 						return aisleWindowContent.getImageList().get(i);
 					}
@@ -360,6 +362,20 @@ public class VueTrendingAislesDataModel {
 
 	public void showProgress() {
 		mNotifyProgress.showProgress();
+	}
+
+	public ArrayList<AisleImageDetails> getOwnerImages(String aisleId,
+			String userId) {
+		AisleWindowContent aisle = getAisleAt(aisleId);
+		ArrayList<AisleImageDetails> userImageList = new ArrayList<AisleImageDetails>();
+		if (aisle != null) {
+			for (int i = 0; i < aisle.getImageList().size(); i++) {
+				if (userId.equals(aisle.getImageList().get(i).mOwnerUserId)) {
+					userImageList.add(aisle.getImageList().get(i));
+				}
+			}
+		}
+		return userImageList;
 	}
 
 	public void dismissProgress() {

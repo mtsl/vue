@@ -62,6 +62,7 @@ public class VueApplication extends Application {
 	private int mTextSize = 18;
 	public Context mVueApplicationContext;
 	private int mAisleImgCurrentPos;
+
 	private String mUserInitials = null;
 
 	public Long getmUserId() {
@@ -71,6 +72,16 @@ public class VueApplication extends Application {
 	public void setmUserId(Long mUserId) {
 		this.mUserId = mUserId;
 	}
+
+	public boolean ismFinishDetailsScreenFlag() {
+		return mFinishDetailsScreenFlag;
+	}
+
+	public void setmFinishDetailsScreenFlag(boolean mFinishDetailsScreenFlag) {
+		this.mFinishDetailsScreenFlag = mFinishDetailsScreenFlag;
+	}
+
+	private boolean mFinishDetailsScreenFlag;
 
 	private Long mUserId = null;
 	private String mUserName = null;

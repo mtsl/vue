@@ -512,6 +512,54 @@ public class Utils {
 				VueConstants.DATAENTRY_SCREEN_AISLE_ID, null);
 	}
 
+	public static void putTouchToChnageImageFlag(Context context, boolean flag) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean(VueConstants.TOUCH_TO_CHANGE_IMAGE_FLAG, flag);
+		editor.commit();
+	}
+
+	public static boolean getTouchToChangeFlag(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getBoolean(
+				VueConstants.TOUCH_TO_CHANGE_IMAGE_FLAG, false);
+	}
+
+	public static void putTouchToChnageImagePosition(Context context,
+			int position) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putInt(VueConstants.TOUCH_TO_CHANGE_IMAGE_POSITION, position);
+		editor.commit();
+	}
+
+	public static int getTouchToChangePosition(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getInt(
+				VueConstants.TOUCH_TO_CHANGE_IMAGE_POSITION, -1);
+	}
+
+	public static void putTouchToChnageImageTempPosition(Context context,
+			int position) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putInt(VueConstants.TOUCH_TO_CHANGE_IMAGE_TEMP_POSITION,
+				position);
+		editor.commit();
+	}
+
+	public static int getTouchToChangeTempPosition(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getInt(
+				VueConstants.TOUCH_TO_CHANGE_IMAGE_TEMP_POSITION, -1);
+	}
+
 	public static void putDataentryScreenAisleId(Context context, String aisleId) {
 		SharedPreferences sharedPreferences = context.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -533,6 +581,90 @@ public class Utils {
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putBoolean(VueConstants.DATAENTRY_ADDIMAGE_AISLE_FLAG, flag);
+		editor.commit();
+	}
+
+	public static boolean getDataentryTopAddImageAisleFlag(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getBoolean(
+				VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_FLAG, false);
+	}
+
+	public static void putDataentryTopAddImageAisleFlag(Context context,
+			boolean flag) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean(VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_FLAG, flag);
+		editor.commit();
+	}
+
+	public static String getDataentryTopAddImageAisleLookingFor(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getString(
+				VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_LOOKINGFOR, null);
+	}
+
+	public static String getDataentryTopAddImageAisleOccasion(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getString(
+				VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_OCCASION, null);
+	}
+
+	public static String getDataentryTopAddImageAisleCategory(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getString(
+				VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_CATEGORY, null);
+	}
+
+	public static String getDataentryTopAddImageAisleDescription(Context context) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		return sharedPreferences.getString(
+				VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_DESCRIPTION, null);
+	}
+
+	public static void putDataentryTopAddImageAisleLookingFor(Context context,
+			String lookingfor) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_LOOKINGFOR,
+				lookingfor);
+		editor.commit();
+	}
+
+	public static void putDataentryTopAddImageAisleOccasion(Context context,
+			String occasion) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_OCCASION,
+				occasion);
+		editor.commit();
+	}
+
+	public static void putDataentryTopAddImageAisleCategory(Context context,
+			String category) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_CATEGORY,
+				category);
+		editor.commit();
+	}
+
+	public static void putDataentryTopAddImageAisleDescription(Context context,
+			String description) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(
+				VueConstants.SHAREDPREFERENCE_NAME, 0);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_DESCRIPTION,
+				description);
 		editor.commit();
 	}
 

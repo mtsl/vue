@@ -95,6 +95,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	String mOccasion;
 	String mFindAtUrl;
 	LinearLayout mEditIconLay;
+	AisleDetailsViewActivity mAisleDetailsActivity = null;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -150,19 +151,19 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				.findViewById(R.id.detaisl_find_at_text);
 		mVueUserPic = (ImageView) mDetailsContentView
 				.findViewById(R.id.vue_user_pic);
-		mEditIconLay = (LinearLayout)  mDetailsContentView
+		mEditIconLay = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.editImage);
-		mEditIconLay
-		.setOnClickListener(new OnClickListener() {
+		mEditIconLay.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(mContext,
-						"Edit Aisle Function",
-						Toast.LENGTH_SHORT).show();
+				if (mAisleDetailsActivity == null) {
+					mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
+				}
+				mAisleDetailsActivity.sendDataToDataentryScreen(null);
 			}
 		});
-		
+
 		String detailsUrl = null;
 		try {
 			detailsUrl = VueTrendingAislesDataModel
@@ -547,9 +548,18 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public void onResetAdapter() {
-			mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
-					mSwipeListener, mListCount, null, new ShareViaVueListner());
-			mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+			if (VueApplication.getInstance().getClickedWindowCount() != 0) {
+				upDatePageDots(0, "right");
+				mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
+						mSwipeListener, mListCount, null,
+						new ShareViaVueListner());
+				mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+			} else {
+				getActivity().finish();
+				Toast.makeText(mContext, "No images left in aisle",
+						Toast.LENGTH_SHORT).show();
+			}
+
 		}
 
 		/**
@@ -745,13 +755,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public void hasToShowEditIcon(boolean hasToShow) {
-		 
-			 if(hasToShow){
-				 mEditIconLay.setVisibility(View.VISIBLE); 
-			 } else {
-				 mEditIconLay.setVisibility(View.GONE); 
-			 }
-			
+
+			if (hasToShow) {
+				mEditIconLay.setVisibility(View.VISIBLE);
+			} else {
+				mEditIconLay.setVisibility(View.GONE);
+			}
+
 		}
 
 	}
@@ -1039,5 +1049,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		public void onAisleShareToVue() {
 			((AisleDetailsViewActivity) getActivity()).shareViaVueClicked();
 		}
+	}
+
+	public void updateAisleScreen() {
+		mAisleDetailsAdapter.updateAisleListAdapter();
 	}
 }
