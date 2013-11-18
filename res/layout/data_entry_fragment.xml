@@ -3,7 +3,7 @@
     android:id="@+id/dataentry_root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dddddd"
+    android:background="@drawable/dataentry_bg"
     android:orientation="vertical" >
 
     <RelativeLayout
@@ -40,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="8dip"
+                android:visibility="gone"
                 android:background="@drawable/dataentry_title_bg"
                 android:orientation="horizontal" >
 
@@ -48,15 +49,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="8dip"
-                    android:background="@color/yellowbgcolor"
                     android:clickable="true"
                     android:ellipsize="end"
                     android:maxWidth="140dip"
                     android:singleLine="true"
                     android:text="Looking"
-                    android:textColor="@android:color/darker_gray"
+                    android:textColor="@android:color/black"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/for_text"
@@ -64,9 +64,8 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:text="For"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/occassionbigtext"
@@ -78,9 +77,8 @@
                     android:maxWidth="140dip"
                     android:singleLine="true"
                     android:text="Occasion"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -112,7 +110,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="4dip"
                         android:text="Looking For?"
-                        android:textColor="@android:color/darker_gray"
+                        android:textColor="@android:color/black"
                         android:textSize="18sp" />
                 </LinearLayout>
 

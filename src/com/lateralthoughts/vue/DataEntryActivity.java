@@ -222,6 +222,8 @@ public class DataEntryActivity extends BaseActivity {
 								.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY));
 			}
 			if (mDataEntryFragment.mFromDetailsScreenFlag) {
+				mDataEntryFragment.mIsUserAisleFlag = b
+						.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG);
 				boolean firstTimeFlag = false;
 				try {
 					mDataEntryFragment.mAisleImagePathList = Utils
@@ -238,7 +240,10 @@ public class DataEntryActivity extends BaseActivity {
 				if (mDataEntryFragment.mAisleImagePathList.size() == 0) {
 					firstTimeFlag = true;
 				}
+				Log.e("DataentryActivity", "firsttimeflag called : "
+						+ firstTimeFlag);
 				if (firstTimeFlag) {
+					Log.e("DataentryActivity", "if firsttimeflag called : ");
 					mDataEntryFragment
 							.showDetailsScreenImagesInDataentryScreen();
 				}
@@ -248,8 +253,7 @@ public class DataEntryActivity extends BaseActivity {
 					mVueDataentryActionbarScreenName.setText(getResources()
 							.getString(R.string.edit_aisle_screen_title));
 				}
-				mDataEntryFragment.mIsUserAisleFlag = b
-						.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG);
+
 				if (!mDataEntryFragment.mIsUserAisleFlag) {
 					mDataEntryFragment.mLookingForPopup
 							.setVisibility(View.GONE);

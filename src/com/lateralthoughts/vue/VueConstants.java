@@ -23,6 +23,7 @@ public class VueConstants {
 	public static final int SELECT_PICTURE = 1;
 	public static final int CAMERA_REQUEST = 2;
 	public static final int AISLE_INFO_UPLOAD_NOTIFICATION_ID = 1;
+	public static final int IMAGE_DELETE_NOTIFICATION_ID = 2;
 	public static final int CHANGE_USER_NOTIFICATION_ID = 3;
 	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.sss";
 	public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";

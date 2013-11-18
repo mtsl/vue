@@ -16,8 +16,11 @@
     <string name="limit_tag">limit</string>
     <string name="offset_tag">offset</string>
     <string name="uploading_mesg">Uploading...</string>
+    <string name="deleting_mesg">Deleting...</string>
     <string name="upload_successful_mesg">Upload successful</string>
+    <string name="delete_successful_mesg">Delete successful</string>
     <string name="upload_failed_mesg">Upload failed</string>
+    <string name="delete_failed_mesg">Delete failed</string>
     <string name="discard_othersource_image_mesg">Would you like to discard the other application image?</string>
     <string name="middle_earth">Visiting Middle Earth</string>
     <string name="profile_owner">Profile Owner</string>

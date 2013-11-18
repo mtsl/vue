@@ -181,8 +181,8 @@ public class NetworkHandler {
 		AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
 	}
 
-	public void requestForDeleteImage(Image image) {
-		AisleManager.getAisleManager().deleteImage(image);
+	public void requestForDeleteImage(Image image,String aisleId) {
+		AisleManager.getAisleManager().deleteImage(image,aisleId);
 	}
 
 	public void requestForAddImage(boolean fromDetailsScreenFlag,

@@ -1,10 +1,7 @@
 package com.lateralthoughts.vue;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-
-import android.R.integer;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -2659,6 +2656,9 @@ public class DataEntryFragment extends Fragment {
 
 	void showDetailsScreenImagesInDataentryScreen() {
 		ArrayList<AisleImageDetails> aisleImageDetailsList = null;
+		Log.e("DataentryFragment",
+				"showDetailsScreenImagesInDataentryScreen : "
+						+ mIsUserAisleFlag);
 		// User Ailse from Details screen...
 		if (mIsUserAisleFlag) {
 			Log.e("DataentryFragment", "iif from details screen : "
@@ -2772,7 +2772,7 @@ public class DataEntryFragment extends Fragment {
 							.getImageId()));
 					VueTrendingAislesDataModel
 							.getInstance(VueApplication.getInstance())
-							.getNetworkHandler().requestForDeleteImage(image);
+							.getNetworkHandler().requestForDeleteImage(image,aisleId);
 					mAisleImagePathList.remove(position);
 					try {
 						Utils.writeAisleImagePathListToFile(getActivity(),
@@ -2795,8 +2795,10 @@ public class DataEntryFragment extends Fragment {
 							e.printStackTrace();
 						}
 					} else {
-						VueApplication.getInstance()
-								.setmFinishDetailsScreenFlag(true);
+						if (mIsUserAisleFlag) {
+							VueApplication.getInstance()
+									.setmFinishDetailsScreenFlag(true);
+						}
 						if (mDataEntryActivity == null) {
 							mDataEntryActivity = (DataEntryActivity) getActivity();
 						}

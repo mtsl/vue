@@ -170,8 +170,8 @@ public class AisleManager {
 		t.start();
 	}
 
-	public void deleteImage(final Image image) {
-		Thread t = new Thread(new DeleteImageFromAisle(image));
+	public void deleteImage(final Image image, String aisleId) {
+		Thread t = new Thread(new DeleteImageFromAisle(image,aisleId));
 		t.start();
 	}
 

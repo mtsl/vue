@@ -466,6 +466,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				CancelNotification(this,
 						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID);
 				CancelNotification(this,
+						VueConstants.IMAGE_DELETE_NOTIFICATION_ID);
+				CancelNotification(this,
 						VueConstants.CHANGE_USER_NOTIFICATION_ID);
 				FileCache fileCache = new FileCache(
 						VueApplication.getInstance());
