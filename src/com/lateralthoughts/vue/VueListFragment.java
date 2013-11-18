@@ -414,7 +414,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		List<ListOptionItem> groups = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Trending_Aisles),
-				R.drawable.profile, null);
+				R.drawable.trending, null);
 		groups.add(item);
 		
 		String userName = getUserId();
