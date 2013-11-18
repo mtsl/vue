@@ -1,0 +1,156 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vue_details_container"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/whitbgshade"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/vueimagcontent"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <FrameLayout
+            android:id="@+id/showpiece_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white" >
+
+       <!--      <com.lateralthoughts.vue.ui.AisleContentBrowser
+                android:id="@+id/showpieceadapter"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" >
+            </com.lateralthoughts.vue.ui.AisleContentBrowser> -->
+            
+            <LinearLayout 
+    android:id="@+id/showpieceadapter"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+     >
+<com.lateralthoughts.vue.ui.UninterceptableViewPager
+    android:id="@+id/myfivepanelpager"
+       android:layout_width="fill_parent"
+    android:layout_height="fill_parent" />
+    
+    </LinearLayout>
+         <!--    <LinearLayout android:layout_width="32dp"
+                          android:layout_height="32dp"
+                          android:layout_marginTop="8dp"
+                          android:layout_marginRight="8dp"
+                          android:id="@+id/editImage"
+                          android:layout_gravity="top|right"
+                          android:background="@drawable/rectangle">
+            <ImageView android:layout_width="fill_parent"
+                       android:layout_height="fill_parent"
+                       android:layout_gravity="center_horizontal"
+                       android:src="@drawable/editwhite"/>
+            </LinearLayout> -->
+              <LinearLayout android:layout_width="32dp"
+                          android:layout_height="32dp"
+                          android:layout_marginTop="8dp"
+                          android:layout_marginLeft="8dp"
+                          android:id="@+id/starImage"
+                          android:layout_gravity="top|left"
+                          android:visibility="gone"
+                          android:background="@drawable/rectangle">
+            <ImageView android:layout_width="fill_parent"
+                       android:layout_height="fill_parent"
+                       android:layout_gravity="center_horizontal"
+                       android:id="@+id/staricon"
+                       android:src="@drawable/share"/>
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:id="@+id/descriptionlayout"
+            android:background="@android:color/white" >
+
+            <TextView
+                android:id="@+id/vue_details_descreption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/vue_comment_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_weight="3"
+        android:background="@android:color/white" >
+
+        <include
+            android:id="@+id/commentlay"
+            layout="@layout/vuedetails_comment_window" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/vue_user_coment_lay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/vue_user_img"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="14dp"
+                android:src="@drawable/addperson02" />
+
+            <TextView
+                android:id="@+id/vue_user_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="6dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <include
+        android:id="@+id/addcommentlay"
+        layout="@layout/addcomment" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="horizontal" >
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:background="@color/actionbarclor"/>
+    </LinearLayout>
+
+</LinearLayout>
