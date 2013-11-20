@@ -811,12 +811,14 @@ public class VueLandingPageActivity extends BaseActivity {
 		@Override
 		public void showProgress() {
 			mLoadProgress.setVisibility(View.VISIBLE);
-		/*	LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		    View layout = inflater.inflate(R.layout.loadingPopup, (ViewGroup) findViewById(R.id.yourLayoutRoot));
-		    AlertDialog.Builder builder = new AlertDialog.Builder(this)
-		    .setView(layout);
-		    AlertDialog alertDialog = builder.create();
-		    alertDialog.show();*/
+			/*
+			 * LayoutInflater inflater = (LayoutInflater)
+			 * getSystemService(Context.LAYOUT_INFLATER_SERVICE); View layout =
+			 * inflater.inflate(R.layout.loadingPopup, (ViewGroup)
+			 * findViewById(R.id.yourLayoutRoot)); AlertDialog.Builder builder =
+			 * new AlertDialog.Builder(this) .setView(layout); AlertDialog
+			 * alertDialog = builder.create(); alertDialog.show();
+			 */
 		}
 
 		@Override
@@ -899,11 +901,29 @@ public class VueLandingPageActivity extends BaseActivity {
 		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.other_source_landing_screen_selection);
-		RelativeLayout addImageToAisleLayout = (RelativeLayout) dialog
-				.findViewById(R.id.landingothersourcedialogaddimagetoaisle_buttonlayout);
+		RelativeLayout addImageToTrendingLayout = (RelativeLayout) dialog
+				.findViewById(R.id.landingothersourcedialogaddimageto_trending_buttonlayout);
+		RelativeLayout addImageToBookmarksLayout = (RelativeLayout) dialog
+				.findViewById(R.id.landingothersourcedialogaddimageto_bookmarks_buttonlayout);
+		RelativeLayout addImageToMyAisleLayout = (RelativeLayout) dialog
+				.findViewById(R.id.landingothersourcedialogaddimageto_myaisles_buttonlayout);
 		RelativeLayout createAisleLayout = (RelativeLayout) dialog
 				.findViewById(R.id.landingothersourcedialogcreateaisle_buttonlayout);
-		addImageToAisleLayout.setOnClickListener(new OnClickListener() {
+		addImageToTrendingLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mAddImageToAisleLayoutClickedAFlag = true;
+				dialog.dismiss();
+			}
+		});
+		addImageToBookmarksLayout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mAddImageToAisleLayoutClickedAFlag = true;
+				dialog.dismiss();
+			}
+		});
+		addImageToMyAisleLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				mAddImageToAisleLayoutClickedAFlag = true;
