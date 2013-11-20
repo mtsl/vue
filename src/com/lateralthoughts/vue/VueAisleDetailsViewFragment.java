@@ -78,7 +78,9 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private int mListCount = 3;
 	private int mTotalScreenCount;
 	// private VueContentGateway mVueContentGateway;
-	AisleDetailsViewAdapter mAisleDetailsAdapter;
+	//change for viewpager.
+	//AisleDetailsViewAdapter mAisleDetailsAdapter;
+	AisleDetailsViewAdapterPager mAisleDetailsAdapter;
 	AisleDetailsSwipeListner mSwipeListener;
 	private ActionBarHandler mHandleActionBar;
 	// private ScaledImageViewFactory mImageViewFactory;
@@ -112,12 +114,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		// adding test comment
 		// without much ado lets get started with retrieving the trending aisles
 		// list
-		/*
-		 * mVueContentGateway = VueContentGateway.getInstance(); if (null ==
-		 * mVueContentGateway) { // assert here: this is a no go! }
-		 */
+	 
 		mSwipeListener = new AisleDetailsSwipeListner();
-		mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
+		//this code is for viewflipper use of detailsscreen viewflipper
+		/*mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
+				mSwipeListener, mListCount, null, new ShareViaVueListner());*/
+		//this code is for viewflipper use of detailsscreen viewpager
+		mAisleDetailsAdapter =  new AisleDetailsViewAdapterPager(mContext,
 				mSwipeListener, mListCount, null, new ShareViaVueListner());
 
 	}
@@ -154,13 +157,10 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mEditIconLay = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.editImage);
 		mEditIconLay.setOnClickListener(new OnClickListener() {
-
+ 
 			@Override
 			public void onClick(View v) {
-				if (mAisleDetailsActivity == null) {
-					mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
-				}
-				mAisleDetailsActivity.sendDataToDataentryScreen(null);
+				 editAisle();
 			}
 		});
 
@@ -550,9 +550,14 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		public void onResetAdapter() {
 			if (VueApplication.getInstance().getClickedWindowCount() != 0) {
 				upDatePageDots(0, "right");
-				mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
+				//this code is for viewflipper use of detailsscreen viewflipper
+		/*		mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
 						mSwipeListener, mListCount, null,
-						new ShareViaVueListner());
+						new ShareViaVueListner());*/
+ 
+				//this code is for viewflipper use of detailsscreen viewpager
+				mAisleDetailsAdapter =  new AisleDetailsViewAdapterPager(mContext,
+						mSwipeListener, mListCount, null, new ShareViaVueListner());
 				mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
 			} else {
 				getActivity().finish();
@@ -732,11 +737,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public void onDissAllowListResponse() {
+			//mAisleDetailsList.setScrollContainer(false);
 			mAisleDetailsList.requestDisallowInterceptTouchEvent(true);
 		}
 
 		@Override
 		public void onAllowListResponse() {
+			//mAisleDetailsList.setScrollContainer(true);
 			mAisleDetailsList.requestDisallowInterceptTouchEvent(false);
 		}
 
@@ -762,6 +769,12 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 				mEditIconLay.setVisibility(View.GONE);
 			}
 
+		}
+
+		@Override
+		public void onEditAisle() {
+		 editAisle();
+			
 		}
 
 	}
@@ -1053,5 +1066,11 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 	public void updateAisleScreen() {
 		mAisleDetailsAdapter.updateAisleListAdapter();
+	}
+	public void editAisle(){
+		if (mAisleDetailsActivity == null) {
+			mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
+		}
+		mAisleDetailsActivity.sendDataToDataentryScreen(null);
 	}
 }

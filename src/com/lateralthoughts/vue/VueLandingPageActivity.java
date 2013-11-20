@@ -10,6 +10,7 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
@@ -27,6 +28,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -809,6 +811,12 @@ public class VueLandingPageActivity extends BaseActivity {
 		@Override
 		public void showProgress() {
 			mLoadProgress.setVisibility(View.VISIBLE);
+		/*	LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		    View layout = inflater.inflate(R.layout.loadingPopup, (ViewGroup) findViewById(R.id.yourLayoutRoot));
+		    AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		    .setView(layout);
+		    AlertDialog alertDialog = builder.create();
+		    alertDialog.show();*/
 		}
 
 		@Override

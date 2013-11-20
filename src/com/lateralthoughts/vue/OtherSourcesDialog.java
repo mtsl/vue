@@ -8,6 +8,7 @@ import com.lateralthoughts.vue.utils.Utils;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.Window;
@@ -48,7 +49,7 @@ public class OtherSourcesDialog {
 							OtherSourcesDialog.this.imagesList.get(position)
 									.getImageUri(), mActivity);
 					if (!fromLandingScreenFlag) {
-						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
+						final DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
 								.getSupportFragmentManager().findFragmentById(
 										R.id.create_aisles_view_fragment);
 						fragment.mOtherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
@@ -67,6 +68,14 @@ public class OtherSourcesDialog {
 						OtherSourcesDialog.this.imagesList.clear();
 						mOtherSourcesImageAdapter.notifyDataSetChanged();
 						dialog.cancel();
+						new Handler().postDelayed(new Runnable() {
+							
+							@Override
+							public void run() {
+								fragment.lookingForTextClickFunctionality();
+								
+							}
+						}, 200);
 						fragment.setGalleryORCameraImage(picturePath, false);
 					} else {
 						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
@@ -96,7 +105,7 @@ public class OtherSourcesDialog {
 									.get(position).getOriginUrl().hashCode()));
 					if (f.exists()) {
 						if (!fromLandingScreenFlag) {
-							DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
+							final DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mActivity)
 									.getSupportFragmentManager()
 									.findFragmentById(
 											R.id.create_aisles_view_fragment);
@@ -116,6 +125,14 @@ public class OtherSourcesDialog {
 							OtherSourcesDialog.this.imagesList.clear();
 							mOtherSourcesImageAdapter.notifyDataSetChanged();
 							dialog.cancel();
+							new Handler().postDelayed(new Runnable() {
+								
+								@Override
+								public void run() {
+									fragment.lookingForTextClickFunctionality();
+									
+								}
+							}, 200);
 							fragment.setGalleryORCameraImage(f.getPath(), true);
 						} else {
 							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;

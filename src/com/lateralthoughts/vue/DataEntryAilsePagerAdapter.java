@@ -145,8 +145,8 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 				mDataEntryFragment.hideAllEditableTextboxes();
 				if (!(mDataEntryFragment.isAisleAddedScreenVisible())) {
 					if (!mImagePathsList.get(position).isAddedToServerFlag()) {
-						mDataEntryFragment
-								.touchToChangeImageClickFunctionality(position);
+						/*mDataEntryFragment
+								.touchToChangeImageClickFunctionality(position);*/
 					}
 				}
 			}

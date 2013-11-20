@@ -2,23 +2,32 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
@@ -118,7 +127,25 @@ public class CreateAisleSelectionActivity extends Activity {
 	}
 
 	public void cameraFunctionality() {
+		SharedPreferences sharedPreferences = CreateAisleSelectionActivity.this
+				.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+		boolean flag = sharedPreferences.getBoolean("dontshowpopup", false);
+		if (flag) {
+			cameraIntent();
+		} else {
+			openHintDialog("Camera", null, null, null);
+		}
+	}
 
+	private void galleryIntent() {
+		FlurryAgent.logEvent("ADD_IMAGE_GALLERY");
+		Intent i = new Intent(Intent.ACTION_PICK,
+				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(Intent.createChooser(i, GALLERY_ALERT_MESSAGE),
+				VueConstants.SELECT_PICTURE);
+	}
+
+	private void cameraIntent() {
 		FlurryAgent.logEvent("ADD_IMAGE_CAMERA");
 		mCameraImageName = Utils
 				.vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
@@ -126,17 +153,17 @@ public class CreateAisleSelectionActivity extends Activity {
 		Intent intent = new Intent(CAMERA_INTENT_NAME);
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraImageFile));
 		startActivityForResult(intent, VueConstants.CAMERA_REQUEST);
-
 	}
 
 	public void galleryFunctionality() {
-
-		FlurryAgent.logEvent("ADD_IMAGE_GALLERY");
-		Intent i = new Intent(Intent.ACTION_PICK,
-				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-		startActivityForResult(Intent.createChooser(i, GALLERY_ALERT_MESSAGE),
-				VueConstants.SELECT_PICTURE);
-
+		SharedPreferences sharedPreferences = CreateAisleSelectionActivity.this
+				.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+		boolean flag = sharedPreferences.getBoolean("dontshowpopup", false);
+		if (flag) {
+			galleryIntent();
+		} else {
+			openHintDialog("Gallery", null, null, null);
+		}
 	}
 
 	public void moreClickFunctionality() {
@@ -162,7 +189,19 @@ public class CreateAisleSelectionActivity extends Activity {
 		isActivityShowing = false;
 	}
 
-	public void loadShoppingApplication(String activityName, String packageName) {
+	public void loadShoppingApplication(String activityName,
+			String packageName, String appName) {
+		SharedPreferences sharedPreferences = CreateAisleSelectionActivity.this
+				.getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+		boolean flag = sharedPreferences.getBoolean("dontshowpopup", false);
+		if (flag) {
+			otherSourceIntent(activityName, packageName);
+		} else {
+			openHintDialog("OtherSource", appName, activityName, packageName);
+		}
+	}
+
+	private void otherSourceIntent(String activityName, String packageName) {
 		if (Utils.appInstalledOrNot(packageName, this)) {
 			Intent shoppingAppIntent = new Intent(
 					android.content.Intent.ACTION_VIEW);
@@ -320,6 +359,168 @@ public class CreateAisleSelectionActivity extends Activity {
 			}
 		});
 		dialog.show();
+	}
+
+	private void openHintDialog(final String source, String app,
+			final String activityName, final String packageName) {
+		final Dialog mDialog;
+		mDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+		mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		mDialog.setContentView(R.layout.hintdialog);
+		mDialog.setCanceledOnTouchOutside(false);
+		mDialog.setCancelable(false);
+		TextView dialogtitle = (TextView) mDialog
+				.findViewById(R.id.dialogtitle);
+		ListView listview = (ListView) mDialog.findViewById(R.id.networklist);
+		listview.setDivider(getResources().getDrawable(
+				R.drawable.share_dialog_divider));
+		TextView dontshow = (TextView) mDialog.findViewById(R.id.dontshow);
+		TextView proceed = (TextView) mDialog.findViewById(R.id.proceed);
+		ArrayList<String> your_array_list = new ArrayList<String>();
+		if (source.equalsIgnoreCase("Gallery")) {
+			dialogtitle.setText("Gallery");
+			your_array_list.add("Go to gallery");
+			your_array_list.add("Find the right image");
+			your_array_list.add("Share(share icon) with vue(vue icon)");
+			your_array_list.add("Comeback to vue");
+		} else if (source.equalsIgnoreCase("Camera")) {
+			dialogtitle.setText("Camera");
+			your_array_list.add("Go to camera");
+			your_array_list.add("Take a picture");
+			your_array_list.add("Come back to vue");
+		} else if (source.equalsIgnoreCase("OtherSource")) {
+			dialogtitle.setText(app);
+			String temp = "Proceed to " + app;
+			your_array_list.add(temp);
+			your_array_list.add("Select an image");
+			your_array_list.add("Share(share icon) with vue(vue icon)");
+			your_array_list.add("Come back to vue");
+		}
+		mDialog.show();
+		dontshow.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				SharedPreferences sharedPreferences = CreateAisleSelectionActivity.this
+						.getSharedPreferences(
+								VueConstants.SHAREDPREFERENCE_NAME, 0);
+				SharedPreferences.Editor editor = sharedPreferences.edit();
+				editor.putBoolean("dontshowpopup", true);
+				editor.commit();
+				if (source.equalsIgnoreCase("Gallery")) {
+					galleryIntent();
+				} else if (source.equalsIgnoreCase("Camera")) {
+					cameraIntent();
+				} else {
+					otherSourceIntent(activityName, packageName);
+				}
+			}
+		});
+		proceed.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (source.equalsIgnoreCase("Gallery")) {
+					galleryIntent();
+				} else if (source.equalsIgnoreCase("Camera")) {
+					cameraIntent();
+				} else {
+					otherSourceIntent(activityName, packageName);
+				}
+			}
+		});
+
+		listview.setAdapter(new HintAdapter(your_array_list, source,
+				activityName, packageName));
+
+	}
+
+	private class HintAdapter extends BaseAdapter {
+		ArrayList<String> mHintList;
+		String mSource, mActivityName, mPackageName;
+
+		public HintAdapter(ArrayList<String> hintList, String source,
+				String activityName, String packageName) {
+			mHintList = hintList;
+			mSource = source;
+			mActivityName = activityName;
+			mPackageName = packageName;
+		}
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return mHintList.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			Holder holder = null;
+			if (convertView == null) {
+
+				holder = new Holder();
+				LayoutInflater mLayoutInflater = (LayoutInflater) CreateAisleSelectionActivity.this
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				convertView = mLayoutInflater.inflate(R.layout.hintpopup, null);
+				holder.textone = (TextView) convertView
+						.findViewById(R.id.gmail);
+				holder.texttwo = (TextView) convertView.findViewById(R.id.vue);
+				holder.imageone = (ImageView) convertView
+						.findViewById(R.id.shareicon);
+				holder.imagetwo = (ImageView) convertView
+						.findViewById(R.id.shareicon2);
+				convertView.setTag(holder);
+			} else {
+				holder = (Holder) convertView.getTag();
+			}
+			String text = mHintList.get(position);
+			if (position == 0) {
+				holder.textone.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						if (mSource.equals("Camera")) {
+							cameraIntent();
+						} else if (mSource.equals("Gallery")) {
+							galleryIntent();
+						} else {
+							otherSourceIntent(mActivityName, mPackageName);
+						}
+					}
+				});
+			}
+
+			if (text.contains("share") && text.contains("with vue")) {
+				holder.textone.setText("Share");
+				holder.texttwo.setText("with vue");
+				holder.imageone.setVisibility(View.VISIBLE);
+				holder.imagetwo.setVisibility(View.VISIBLE);
+				holder.texttwo.setVisibility(View.VISIBLE);
+			} else {
+				holder.imageone.setVisibility(View.GONE);
+				holder.imagetwo.setVisibility(View.GONE);
+				holder.texttwo.setVisibility(View.GONE);
+				holder.textone.setText(text);
+			}
+			return convertView;
+		}
+	}
+
+	private class Holder {
+		TextView textone, texttwo;
+		ImageView imageone, imagetwo;
 	}
 
 }

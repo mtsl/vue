@@ -31,14 +31,14 @@ public class BitmapLoaderUtils {
 	private static BitmapLoaderUtils sBitmapLoaderUtils;
 	private FileCache mFileCache;
 	// private VueMemoryCache<Bitmap> mAisleImagesCache;
-	//private BitmapLruCache mAisleImagesCache;
+	private BitmapLruCache mAisleImagesCache;
 	// private int mScreenWidth;
 	// private final boolean DEBUG = false;
 	private BitmapLoaderUtils() {
 		// mContext = context;
 		mFileCache = VueApplication.getInstance().getFileCache();
-	/*	mAisleImagesCache = BitmapLruCache.getInstance(VueApplication
-				.getInstance());*/
+		mAisleImagesCache = BitmapLruCache.getInstance(VueApplication
+				.getInstance());
 		// DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
 		// mScreenWidth = metrics.widthPixels;
 		// mExecutorService = Executors.newFixedThreadPool(5);
@@ -68,8 +68,8 @@ public class BitmapLoaderUtils {
 		Bitmap b = decodeFile(f, bestHeight, bestWidth, source);
 		if (b != null) {
 			 
-	/*		if (cacheBitmap)
-				mAisleImagesCache.putBitmap(url, b);*/
+			if (cacheBitmap)
+				mAisleImagesCache.putBitmap(url, b);
 			return b;
 		}
 		 
@@ -270,10 +270,10 @@ public class BitmapLoaderUtils {
 		return newBitmap;
 	}
 
-	/*public Bitmap getCachedBitmap(String url) {
+	public Bitmap getCachedBitmap(String url) {
 		return mAisleImagesCache.get(url);
 	}
-*/
+
 	public void clearCache() {
 		// mAisleImagesCache.clear();
 		// mFileCache.clear();

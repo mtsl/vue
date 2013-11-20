@@ -541,7 +541,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		meChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Bookmarks),
-				R.drawable.profile, null);
+				R.drawable.bookmark, null);
 		meChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles),

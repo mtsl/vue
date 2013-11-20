@@ -256,7 +256,7 @@ public class ArcMenu extends RelativeLayout {
 					mContext)) {
 				createAisleSelectionActivity.loadShoppingApplication(
 						VueConstants.ETSY_ACTIVITY_NAME,
-						VueConstants.ETSY_PACKAGE_NAME);
+						VueConstants.ETSY_PACKAGE_NAME, "Etsy");
 			} else {
 				createAisleSelectionActivity
 						.showAlertMessageForAppInstalation(VueConstants.ETSY_PACKAGE_NAME);
@@ -268,7 +268,7 @@ public class ArcMenu extends RelativeLayout {
 					mContext)) {
 				createAisleSelectionActivity.loadShoppingApplication(
 						VueConstants.FANCY_ACTIVITY_NAME,
-						VueConstants.FANCY_PACKAGE_NAME);
+						VueConstants.FANCY_PACKAGE_NAME, "Fancy");
 			} else {
 				createAisleSelectionActivity
 						.showAlertMessageForAppInstalation(VueConstants.FANCY_PACKAGE_NAME);
