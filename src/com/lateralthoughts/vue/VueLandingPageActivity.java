@@ -90,6 +90,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	public static String mOtherSourceAddImageAisleId = null;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
+    private 	 Dialog dialog;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -486,6 +487,8 @@ public class VueLandingPageActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else if (StackViews.getInstance().getStackCount() > 0) {
+				
+				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				Log.i("stackcount", "stackcount onbckpresed: close window2 ");
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
 				if (viewInfo != null) {
@@ -847,7 +850,9 @@ public class VueLandingPageActivity extends BaseActivity {
 	class ProgresStatus implements NotifyProgress {
 		@Override
 		public void showProgress() {
-			mLoadProgress.setVisibility(View.VISIBLE);
+		 
+			 mLoadProgress.setVisibility(View.VISIBLE);
+			 
 			/*
 			 * LayoutInflater inflater = (LayoutInflater)
 			 * getSystemService(Context.LAYOUT_INFLATER_SERVICE); View layout =
@@ -861,7 +866,9 @@ public class VueLandingPageActivity extends BaseActivity {
 		@Override
 		public void dismissProgress(boolean fromWhere) {
 			mLoadProgress.setVisibility(View.INVISIBLE);
-			Log.i("listmovingissue", "listmovingissue***:dismissProgress 1 ");
+			if(dialog != null)
+			dialog.dismiss();
+	 
 			if (mFragment == null) {
 				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.aisles_view_fragment);
@@ -968,13 +975,13 @@ public class VueLandingPageActivity extends BaseActivity {
 		addImageToMyAisleLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				/*
-				 * dialog.dismiss();
-				 * showCategory(getString(R.string.sidemenu_sub_option_My_Aisles
-				 * )); mAddImageToAisleLayoutClickedAFlag = true;
-				 */
-				Toast.makeText(VueLandingPageActivity.this, "In Progress.",
-						Toast.LENGTH_LONG).show();
+
+				dialog.dismiss();
+				showCategory(getString(R.string.sidemenu_sub_option_My_Aisles),true);
+				mAddImageToAisleLayoutClickedAFlag = true;
+
+				/*Toast.makeText(VueLandingPageActivity.this, "In Progress.",
+						Toast.LENGTH_LONG).show();*/
 			}
 		});
 		createAisleLayout.setOnClickListener(new OnClickListener() {
@@ -1315,6 +1322,15 @@ public class VueLandingPageActivity extends BaseActivity {
 					.getInstance(VueApplication.getInstance()).dataObserver();
 		}
 
+	}
+	
+	private void showDialog(){
+		/*if(dialog != null){*/
+	    dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.progressdialog);
+		/*}*/
+		dialog.show();
 	}
 
 }

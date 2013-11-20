@@ -29,10 +29,10 @@
 
             <ImageView
                 android:id="@+id/aisleselect"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_action_done"
+                android:src="@drawable/ic_action_selection"
                  />
         </LinearLayout>
 
