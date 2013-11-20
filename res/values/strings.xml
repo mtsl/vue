@@ -65,6 +65,7 @@
     <string name="alert_Dialog_Network">No Network Connection: Check Network Settings</string>
     <string name="com_facebook_requesterror_permissions">An app connection with Facebook failed due to insufficient permissions, please grant the app permissions to perform the operation.</string>
     <string name="cancel">Cancel</string>
+    <string name="proceed">Proceed</string>
     <string name="Image">Image</string>
     <string name="gmail">Gmail</string>
     <string name="create_ailse_screen_title">Create Aisle</string>

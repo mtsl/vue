@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="48dip"
-    android:background="@drawable/actionbar_custom_bg" >
+    android:layout_height="50dip"
+    android:background="@drawable/dataentry_bg" >
 
     <RelativeLayout
         android:id="@+id/vue_landing_actionbar_app_icon_layout"
         android:layout_width="48dip"
-        android:layout_height="fill_parent" >
+        android:layout_height="48dip" >
 
         <ImageView
             android:id="@+id/vue_landing_actionbar_app_icon"
@@ -20,7 +20,7 @@
     <TextView
         android:id="@+id/vue_landing_actionbar_screen_name"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="48dip"
         android:layout_toRightOf="@+id/vue_landing_actionbar_app_icon_layout"
         android:gravity="center_vertical"
         android:paddingRight="6dip"
@@ -31,7 +31,7 @@
     <LinearLayout
         android:id="@+id/vue_landing_actionbar_right_layout"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="48dip"
         android:layout_alignParentRight="true"
         android:orientation="horizontal" >
 
@@ -53,5 +53,32 @@
             android:textColor="@color/black"
             android:textSize="18dip" />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/vue_landin_keyboard_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dip"
+        android:background="@drawable/dataentry_bg"
+        android:divider="?android:attr/dividerVertical"
+        android:dividerPadding="12dp"
+        android:orientation="horizontal"
+        android:showDividers="middle"
+        android:visibility="gone" >
+
+        <include
+            android:id="@+id/vue_landing_keyboard_cancel"
+            layout="@layout/include_cancel_button" />
+
+        <include
+            android:id="@+id/vue_landing_keyboard_done"
+            layout="@layout/include_done_button" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/data_entry_third_line_divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:layout_below="@+id/vue_landing_actionbar_app_icon_layout"
+        android:background="#ADADAD" />
 
 </RelativeLayout>

@@ -151,6 +151,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 		String uniqueContentId;
 		LinearLayout aisleDescriptor/*,startImageLay*/;
 		AisleWindowContent mWindowContent;
+		LinearLayout aisleselectlay;
 	}
 
 }

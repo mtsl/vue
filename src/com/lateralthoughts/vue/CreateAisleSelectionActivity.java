@@ -208,6 +208,8 @@ public class CreateAisleSelectionActivity extends Activity {
 			shoppingAppIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			Utils.setLoadDataentryScreenFlag(this, true);
 			shoppingAppIntent.setClassName(packageName, activityName);
+			Log.i("apname", "apname1: " + packageName);
+			Log.i("apname", "apname2: " + activityName);
 			finish();
 			startActivity(shoppingAppIntent);
 		} else {
@@ -361,6 +363,7 @@ public class CreateAisleSelectionActivity extends Activity {
 		dialog.show();
 	}
 
+ 
 	private void openHintDialog(final String source, String app,
 			final String activityName, final String packageName) {
 		final Dialog mDialog;
@@ -385,6 +388,7 @@ public class CreateAisleSelectionActivity extends Activity {
 			your_array_list.add("Comeback to vue");
 		} else if (source.equalsIgnoreCase("Camera")) {
 			dialogtitle.setText("Camera");
+ 
 			your_array_list.add("Go to camera");
 			your_array_list.add("Take a picture");
 			your_array_list.add("Come back to vue");
@@ -396,6 +400,7 @@ public class CreateAisleSelectionActivity extends Activity {
 			your_array_list.add("Share(share icon) with vue(vue icon)");
 			your_array_list.add("Come back to vue");
 		}
+ 
 		mDialog.show();
 		dontshow.setOnClickListener(new OnClickListener() {
 			@Override
@@ -406,6 +411,7 @@ public class CreateAisleSelectionActivity extends Activity {
 				SharedPreferences.Editor editor = sharedPreferences.edit();
 				editor.putBoolean("dontshowpopup", true);
 				editor.commit();
+ 
 				if (source.equalsIgnoreCase("Gallery")) {
 					galleryIntent();
 				} else if (source.equalsIgnoreCase("Camera")) {
@@ -522,5 +528,4 @@ public class CreateAisleSelectionActivity extends Activity {
 		TextView textone, texttwo;
 		ImageView imageone, imagetwo;
 	}
-
 }

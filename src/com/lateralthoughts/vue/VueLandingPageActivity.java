@@ -1,5 +1,6 @@
 package com.lateralthoughts.vue;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -30,6 +32,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -42,12 +45,16 @@ import com.facebook.Session;
 import com.facebook.Request.Callback;
 import com.facebook.model.GraphObject;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
+import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
+import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -62,10 +69,13 @@ public class VueLandingPageActivity extends BaseActivity {
 	private VueLandingAislesFragment mFragment;
 	public static TextView mVueLandingActionbarScreenName;
 	private LinearLayout mVueLandingActionbarRightLayout;
+	LinearLayout mVueLandingKeyboardLayout;
+	private FrameLayout mVueLandingKeyboardCancel, mVueLandingKeyboardDone;
 	private View mVueLandingActionbarView;
 	private RelativeLayout mVueLandingActionbarAppIconLayout;
 	private ProgressBar mLoadProgress;
 	private ProgressDialog mProgressDialog;
+	private TextView mActionbarCancleBtnTextview;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
 	private boolean mAddImageToAisleLayoutClickedAFlag = false;
 	public static String mOtherSourceImagePath = null;
@@ -77,6 +87,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	public static String mOtherSourceImageOccasion = null;
 	public static String mOtherSourceImageLookingFor = null;
 	public static String mOtherSourceImageCategory = null;
+	public static String mOtherSourceAddImageAisleId = null;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
 
@@ -116,11 +127,45 @@ public class VueLandingPageActivity extends BaseActivity {
 				.findViewById(R.id.vue_landing_actionbar_right_layout);
 		mVueLandingActionbarAppIconLayout = (RelativeLayout) mVueLandingActionbarView
 				.findViewById(R.id.vue_landing_actionbar_app_icon_layout);
+		mVueLandingKeyboardLayout = (LinearLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landin_keyboard_layout);
+		mVueLandingKeyboardCancel = (FrameLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_keyboard_cancel);
+		mVueLandingKeyboardDone = (FrameLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_keyboard_done);
+		mActionbarCancleBtnTextview = (TextView) mVueLandingActionbarView
+				.findViewById(R.id.actionbar_cancle_btn_textview);
+		mActionbarCancleBtnTextview.setText("Cancel");
 		mVueLandingActionbarScreenName.setText(getResources().getString(
 				R.string.trending));
 		getSupportActionBar().setCustomView(mVueLandingActionbarView);
 		getSupportActionBar().setDisplayShowCustomEnabled(true);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mVueLandingKeyboardLayout.setVisibility(View.GONE);
+				addImageToExistingAisle(mOtherSourceAddImageAisleId);
+				mOtherSourceAddImageAisleId = null;
+				if (mFragment == null) {
+					mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisles_view_fragment);
+				}
+				mFragment.notifyAdapters();
+			}
+		});
+		mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mVueLandingKeyboardLayout.setVisibility(View.GONE);
+				mOtherSourceAddImageAisleId = null;
+				if (mFragment == null) {
+					mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisles_view_fragment);
+				}
+				mFragment.notifyAdapters();
+			}
+		});
 		mVueLandingActionbarRightLayout
 				.setOnClickListener(new OnClickListener() {
 					@Override
@@ -588,7 +633,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-	public void showCategory(final String catName) {
+	public void showCategory(final String catName, boolean fromDialog) {
 		if (mFragment == null) {
 			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.aisles_view_fragment);
@@ -622,27 +667,36 @@ public class VueLandingPageActivity extends BaseActivity {
 							catName);
 		} else if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance())
-					.getNetworkHandler().makeOffseZero();
-			if (mFragment == null) {
-				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.aisles_view_fragment);
-			}
-			mFragment.clearBitmaps();
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).clearAisles();
-			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
-					.clearObjectsInUse();
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).dataObserver();
+			if (fromDialog) {
+				fromServer = false;
+				loadMore = false;
 
-			loadMore = true;
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance())
-					.getNetworkHandler()
-					.loadTrendingAisle(loadMore, fromServer,
-							new ProgresStatus(), catName);
+				getTrendingAislesFromDb(
+						getString(R.string.sidemenu_option_Trending_Aisles),
+						fromServer, loadMore);
+			} else {
+				VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance())
+						.getNetworkHandler().makeOffseZero();
+				if (mFragment == null) {
+					mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.aisles_view_fragment);
+				}
+				mFragment.clearBitmaps();
+				VueTrendingAislesDataModel.getInstance(
+						VueApplication.getInstance()).clearAisles();
+				AisleWindowContentFactory.getInstance(
+						VueApplication.getInstance()).clearObjectsInUse();
+				VueTrendingAislesDataModel.getInstance(
+						VueApplication.getInstance()).dataObserver();
+
+				loadMore = true;
+				VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance())
+						.getNetworkHandler()
+						.loadTrendingAisle(loadMore, fromServer,
+								new ProgresStatus(), catName);
+			}
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
 			getBookmarkedAisles(catName);
@@ -741,25 +795,8 @@ public class VueLandingPageActivity extends BaseActivity {
 		mFragment.clearBitmaps();
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
-			Log.i("dbloading issue",
-					"dbloading issue: showPreviousScreen back press");
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).loadOnRequest = false;
+			getTrendingAislesFromDb(screenName, fromServer, loadMore);
 
-			VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).isFromDb = true;
-			VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
-					.clearContent();
-
-			if (!fromServer)
-				DataBaseManager.getInstance(VueApplication.getInstance())
-						.resetDbParams();
-
-			VueTrendingAislesDataModel
-					.getInstance(VueLandingPageActivity.this)
-					.getNetworkHandler()
-					.reqestByCategory(screenName, new ProgresStatus(),
-							fromServer, loadMore, screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
 			Log.i("meoptions", "meoptions: MyAisle");
@@ -912,22 +949,32 @@ public class VueLandingPageActivity extends BaseActivity {
 		addImageToTrendingLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				mAddImageToAisleLayoutClickedAFlag = true;
 				dialog.dismiss();
+				showCategory(
+						getString(R.string.sidemenu_option_Trending_Aisles),
+						true);
+				mAddImageToAisleLayoutClickedAFlag = true;
 			}
 		});
 		addImageToBookmarksLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				mAddImageToAisleLayoutClickedAFlag = true;
 				dialog.dismiss();
+				showCategory(getString(R.string.sidemenu_sub_option_Bookmarks),
+						true);
+				mAddImageToAisleLayoutClickedAFlag = true;
 			}
 		});
 		addImageToMyAisleLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				mAddImageToAisleLayoutClickedAFlag = true;
-				dialog.dismiss();
+				/*
+				 * dialog.dismiss();
+				 * showCategory(getString(R.string.sidemenu_sub_option_My_Aisles
+				 * )); mAddImageToAisleLayoutClickedAFlag = true;
+				 */
+				Toast.makeText(VueLandingPageActivity.this, "In Progress.",
+						Toast.LENGTH_LONG).show();
 			}
 		});
 		createAisleLayout.setOnClickListener(new OnClickListener() {
@@ -1091,6 +1138,183 @@ public class VueLandingPageActivity extends BaseActivity {
 		FileCache fileCache = new FileCache(VueApplication.getInstance());
 		fileCache.clearVueAppResizedPictures();
 		fileCache.clearVueAppCameraPictures();
+	}
+
+	private void getTrendingAislesFromDb(String screenName, boolean fromServer,
+			boolean loadMore) {
+		Log.i("dbloading issue",
+				"dbloading issue: showPreviousScreen back press");
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
+
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).isFromDb = true;
+		VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
+				.clearContent();
+
+		if (!fromServer)
+			DataBaseManager.getInstance(VueApplication.getInstance())
+					.resetDbParams();
+
+		VueTrendingAislesDataModel
+				.getInstance(VueLandingPageActivity.this)
+				.getNetworkHandler()
+				.reqestByCategory(screenName, new ProgresStatus(), fromServer,
+						loadMore, screenName);
+	}
+
+	private void addImageToExistingAisle(String aisleId) {
+		if (mOtherSourceImagePath != null) {
+			final VueImage image = new VueImage();
+			image.setDetailsUrl(mOtherSourceImageDetailsUrl);
+			image.setHeight(mOtherSourceImageHeight);
+			image.setWidth(mOtherSourceImageWidth);
+			image.setImageUrl(mOtherSourceImageUrl);
+			image.setStore(mOtherSourceImageStore);
+			image.setTitle("Android Test"); // TODO By Krishna
+			image.setOwnerUserId(VueApplication.getInstance().getmUserId());
+			image.setOwnerAisleId(Long.valueOf(aisleId));
+			final String offlineImageId = String.valueOf(System
+					.currentTimeMillis());
+			// Camera or Gallery...
+			if (mOtherSourceImageUrl == null) {
+				VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance())
+						.getNetworkHandler()
+						.requestForUploadImage(new File(mOtherSourceImagePath),
+								new ImageUploadCallback() {
+									@Override
+									public void onImageUploaded(String imageUrl) {
+										if (imageUrl != null) {
+											image.setImageUrl(imageUrl);
+											VueTrendingAislesDataModel
+													.getInstance(
+															VueApplication
+																	.getInstance())
+													.getNetworkHandler()
+													.requestForAddImage(
+															true,
+															offlineImageId,
+															image,
+															new ImageAddedCallback() {
+
+																@Override
+																public void onImageAdded(
+																		String imageId) {
+
+																}
+															});
+										}
+									}
+								});
+			} else {
+				image.setImageUrl(mOtherSourceImageUrl);
+				VueTrendingAislesDataModel
+						.getInstance(VueApplication.getInstance())
+						.getNetworkHandler()
+						.requestForAddImage(true, offlineImageId, image,
+								new ImageAddedCallback() {
+
+									@Override
+									public void onImageAdded(String imageId) {
+
+									}
+								});
+			}
+			addImageToAisle(aisleId, mOtherSourceImagePath,
+					mOtherSourceImageUrl, mOtherSourceImageWidth,
+					mOtherSourceImageHeight, mOtherSourceImageDetailsUrl,
+					mOtherSourceImageStore, offlineImageId);
+			mOtherSourceImagePath = null;
+			mOtherSourceImageUrl = null;
+			mOtherSourceImageWidth = 0;
+			mOtherSourceImageHeight = 0;
+			mOtherSourceImageDetailsUrl = null;
+			mOtherSourceImageStore = null;
+			mOtherSourceImageLookingFor = null;
+			mOtherSourceImageCategory = null;
+			mOtherSourceImageOccasion = null;
+		}
+	}
+
+	private void addImageToAisle(String aisleId, String imagePath,
+			String imageUrl, int imageWidth, int imageHeight,
+			String detailsUrl, String store, String imageId) {
+		boolean isImageFromLocalSystem = false;
+		if (imageUrl == null) {
+			isImageFromLocalSystem = true;
+		}
+
+		FileCache fileCache = new FileCache(this);
+		File f = null;
+		if (imageUrl != null) {
+			f = fileCache.getFile(imageUrl);
+		} else {
+			imageUrl = imagePath;
+			f = fileCache.getFile(imagePath);
+		}
+		File sourceFile = new File(imagePath);
+		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
+				VueApplication.getInstance().mScreenHeight,
+				VueApplication.getInstance().getVueDetailsCardWidth(),
+				Utils.DETAILS_SCREEN);
+		Utils.saveBitmap(bmp, f);
+		addAisleToWindow(aisleId, imagePath, imageUrl, imageWidth, imageHeight,
+				detailsUrl, store, imageId, isImageFromLocalSystem);
+	}
+
+	private void addAisleToWindow(String aisleId, String imgPath,
+			String imageUrl, int imageWidth, int imageHeight,
+			String detailsUrl, String store, String imageId,
+			boolean isImageFromLocalSystem) {
+		addAisleToContentWindow(aisleId, imgPath, imageUrl, imageWidth,
+				imageHeight, "title", detailsUrl, store, imageId,
+				isImageFromLocalSystem);
+
+	}
+
+	private void addAisleToContentWindow(String aisleId, String imagePath,
+			String imageUrl, int imageWidth, int imageHeight, String title,
+			String detailsUrl, String store, String imageId,
+			boolean isImageFromLocalSystem) {
+		Utils.isAisleChanged = true;
+		Utils.mChangeAilseId = aisleId;
+
+		AisleWindowContent aisleItem = VueTrendingAislesDataModel.getInstance(
+				VueApplication.getInstance()).getAisleFromList(
+				VueTrendingAislesDataModel.getInstance(
+						VueApplication.getInstance()).getAisleAt(aisleId));
+		if (aisleItem != null) {
+
+			AisleImageDetails imgDetails = new AisleImageDetails();
+			imgDetails.mAvailableHeight = imageHeight;
+			imgDetails.mAvailableWidth = imageWidth;
+			Log.i("new image", "new image height: "
+					+ imgDetails.mAvailableHeight);
+			if (imgDetails.mAvailableHeight < aisleItem
+					.getBestHeightForWindow()) {
+				aisleItem.setBestHeightForWindow(imgDetails.mAvailableHeight);
+
+			}
+			imgDetails.mTitle = title;
+			imgDetails.mImageUrl = imageUrl;
+			imgDetails.mDetalsUrl = detailsUrl;
+			imgDetails.mId = imageId; // offline imageid
+			imgDetails.mIsFromLocalSystem = isImageFromLocalSystem;
+			imgDetails.mStore = store;
+			imgDetails.mTrendingImageHeight = imgDetails.mAvailableHeight;
+			imgDetails.mTrendingImageWidth = imgDetails.mAvailableWidth;
+			imgDetails.mOwnerAisleId = aisleItem.getAisleId();
+			imgDetails.mOwnerUserId = Long.toString(VueApplication
+					.getInstance().getmUserId());
+			aisleItem.getImageList().add(imgDetails);
+			aisleItem.addAisleContent(aisleItem.getAisleContext(),
+					aisleItem.getImageList());
+			int bestHeight = Utils.modifyHeightForDetailsView(aisleItem
+					.getImageList());
+			aisleItem.setBestLargestHeightForWindow(bestHeight);
+			VueTrendingAislesDataModel
+					.getInstance(VueApplication.getInstance()).dataObserver();
+		}
+
 	}
 
 }

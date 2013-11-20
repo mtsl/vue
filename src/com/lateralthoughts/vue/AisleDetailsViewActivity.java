@@ -42,6 +42,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
 
@@ -169,6 +170,29 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		mStatusbarHeight = VueApplication.getInstance().getmStatusBarHeight();
 		mScreenTotalHeight = VueApplication.getInstance().getScreenHeight();
 		mComparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight;
+		/*
+		 * View mVueLandingActionbarView; TextView
+		 * mVueLandingActionbarScreenName; LinearLayout
+		 * mVueLandingActionbarRightLayout; RelativeLayout
+		 * mVueLandingActionbarAppIconLayout; mVueLandingActionbarView =
+		 * LayoutInflater.from(this).inflate( R.layout.vue_landing_actionbar,
+		 * null); mVueLandingActionbarScreenName = (TextView)
+		 * mVueLandingActionbarView
+		 * .findViewById(R.id.vue_landing_actionbar_screen_name);
+		 * mVueLandingActionbarRightLayout = (LinearLayout)
+		 * mVueLandingActionbarView
+		 * .findViewById(R.id.vue_landing_actionbar_right_layout);
+		 * mVueLandingActionbarAppIconLayout = (RelativeLayout)
+		 * mVueLandingActionbarView
+		 * .findViewById(R.id.vue_landing_actionbar_app_icon_layout);
+		 * mVueLandingActionbarScreenName.setText(getResources().getString(
+		 * R.string.trending));
+		 * getSupportActionBar().setCustomView(mVueLandingActionbarView);
+		 * getSupportActionBar().setDisplayShowCustomEnabled(true);
+		 * getSupportActionBar().setDisplayShowHomeEnabled(false);
+		 */
+		getSupportActionBar().hide();
+
 		mTopScroller.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -270,90 +294,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 						return false;
 					}
 				});
-		if (VueLandingPageActivity.mOtherSourceImagePath != null) {
-			final VueImage image = new VueImage();
-			image.setDetailsUrl(VueLandingPageActivity.mOtherSourceImageDetailsUrl);
-			image.setHeight(VueLandingPageActivity.mOtherSourceImageHeight);
-			image.setWidth(VueLandingPageActivity.mOtherSourceImageWidth);
-			image.setImageUrl(VueLandingPageActivity.mOtherSourceImageUrl);
-			image.setStore(VueLandingPageActivity.mOtherSourceImageStore);
-			image.setTitle("Android Test"); // TODO By Krishna
-			image.setOwnerUserId(Long.valueOf(VueTrendingAislesDataModel
-					.getInstance(this)
-					.getAisleItem(
-							VueApplication.getInstance().getClickedWindowID())
-					.getAisleContext().mUserId));
-			image.setOwnerAisleId(Long.valueOf(VueTrendingAislesDataModel
-					.getInstance(this)
-					.getAisleItem(
-							VueApplication.getInstance().getClickedWindowID())
-					.getAisleContext().mAisleId));
-			final String offlineImageId = String.valueOf(System
-					.currentTimeMillis());
-			// Camera or Gallery...
-			if (VueLandingPageActivity.mOtherSourceImageUrl == null) {
-				VueTrendingAislesDataModel
-						.getInstance(VueApplication.getInstance())
-						.getNetworkHandler()
-						.requestForUploadImage(
-								new File(
-										VueLandingPageActivity.mOtherSourceImagePath),
-								new ImageUploadCallback() {
-									@Override
-									public void onImageUploaded(String imageUrl) {
-										if (imageUrl != null) {
-											image.setImageUrl(imageUrl);
-											VueTrendingAislesDataModel
-													.getInstance(
-															VueApplication
-																	.getInstance())
-													.getNetworkHandler()
-													.requestForAddImage(
-															true,
-															offlineImageId,
-															image,
-															new ImageAddedCallback() {
-
-																@Override
-																public void onImageAdded(
-																		String imageId) {
-
-																}
-															});
-										}
-									}
-								});
-			} else {
-				image.setImageUrl(VueLandingPageActivity.mOtherSourceImageUrl);
-				VueTrendingAislesDataModel
-						.getInstance(VueApplication.getInstance())
-						.getNetworkHandler()
-						.requestForAddImage(true, offlineImageId, image,
-								new ImageAddedCallback() {
-
-									@Override
-									public void onImageAdded(String imageId) {
-
-									}
-								});
-			}
-			addImageToAisle(VueLandingPageActivity.mOtherSourceImagePath,
-					VueLandingPageActivity.mOtherSourceImageUrl,
-					VueLandingPageActivity.mOtherSourceImageWidth,
-					VueLandingPageActivity.mOtherSourceImageHeight,
-					VueLandingPageActivity.mOtherSourceImageDetailsUrl,
-					VueLandingPageActivity.mOtherSourceImageStore,
-					offlineImageId);
-			VueLandingPageActivity.mOtherSourceImagePath = null;
-			VueLandingPageActivity.mOtherSourceImageUrl = null;
-			VueLandingPageActivity.mOtherSourceImageWidth = 0;
-			VueLandingPageActivity.mOtherSourceImageHeight = 0;
-			VueLandingPageActivity.mOtherSourceImageDetailsUrl = null;
-			VueLandingPageActivity.mOtherSourceImageStore = null;
-			VueLandingPageActivity.mOtherSourceImageLookingFor = null;
-			VueLandingPageActivity.mOtherSourceImageCategory = null;
-			VueLandingPageActivity.mOtherSourceImageOccasion = null;
-		}
 	}
 
 	@Override
