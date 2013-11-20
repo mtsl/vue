@@ -5,22 +5,31 @@
     android:orientation="vertical" >
 
     <RelativeLayout
+        android:id="@+id/dataentry_actionbar_main_layout"
         android:layout_width="fill_parent"
         android:layout_height="48dip"
         android:background="@drawable/dataentry_bg" >
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/vue_dataentry_actionbar_app_icon_layout"
-            android:layout_width="48dip"
-            android:layout_height="fill_parent" >
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/vue_dataentry_actionbar_close_icon"
+                android:layout_width="15dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_action_back" />
 
             <ImageView
                 android:id="@+id/vue_dataentry_actionbar_app_icon"
                 android:layout_width="36dip"
                 android:layout_height="36dip"
-                android:layout_centerInParent="true"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/vue_launcher_icon" />
-        </RelativeLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/vue_dataentry_actionbar_screenname"
@@ -28,10 +37,38 @@
             android:layout_height="fill_parent"
             android:layout_toRightOf="@+id/vue_dataentry_actionbar_app_icon_layout"
             android:gravity="center_vertical"
+            android:paddingLeft="6dip"
             android:paddingRight="6dip"
             android:text="@string/app_name"
             android:textColor="@color/black"
             android:textSize="18dip" />
+
+        <LinearLayout
+            android:id="@+id/vue_dataentry_actionbar_app_save_layout"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dip"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/vue_dataentry_actionbar_save_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/createaisle" />
+
+            <TextView
+            android:id="@+id/vue_dataentry_actionbar_save"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="2dip"
+            android:text="Save"
+            
+            android:textColor="@color/black"
+            android:textSize="18dip" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/vue_dataentry_actionbar_top_layout"
@@ -41,6 +78,7 @@
             android:orientation="horizontal"
             android:visibility="visible" >
 
+            <!--
             <RelativeLayout
                 android:id="@+id/vue_dataentry_actionbar_close_icon_layout"
                 android:layout_width="48dip"
@@ -53,12 +91,13 @@
                     android:layout_centerInParent="true"
                     android:src="@drawable/cancel_gray" />
             </RelativeLayout>
+            -->
 
             <RelativeLayout
                 android:id="@+id/vue_dataentry_actionbar_top_addimage_icon_layout"
                 android:layout_width="48dip"
-                android:visibility="gone"
-                android:layout_height="fill_parent" >
+                android:layout_height="fill_parent"
+                android:visibility="gone" >
 
                 <ImageView
                     android:id="@+id/vue_dataentry_actionbar_top_addimage_icon"
@@ -71,8 +110,8 @@
             <RelativeLayout
                 android:id="@+id/vue_dataentry_actionbar_createaisle_icon_layout"
                 android:layout_width="48dip"
-                android:visibility="gone"
-                android:layout_height="fill_parent" >
+                android:layout_height="fill_parent"
+                android:visibility="gone" >
 
                 <ImageView
                     android:id="@+id/vue_dataentry_actionbar_createaisle_icon"
@@ -131,6 +170,26 @@
             </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/vue_dataentry_keyboard_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dip"
+        android:background="@drawable/dataentry_bg"
+        android:divider="?android:attr/dividerVertical"
+        android:dividerPadding="12dp"
+        android:orientation="horizontal"
+        android:showDividers="middle"
+        android:visibility="gone" >
+
+        <include
+            android:id="@+id/vue_dataentry_keyboard_cancel"
+            layout="@layout/include_cancel_button" />
+
+        <include
+            android:id="@+id/vue_dataentry_keyboard_done"
+            layout="@layout/include_done_button" />
+    </LinearLayout>
 
     <View
         android:id="@+id/data_entry_third_line_divider"
