@@ -126,6 +126,7 @@ public class TrendingAislesLeftColumnAdapter extends
 					.findViewById(R.id.descriptor_aisle_owner_name);
 			holder.aisleContext = (TextView) holder.aisleDescriptor
 					.findViewById(R.id.descriptor_aisle_context);
+			holder.aisleselectlay = (LinearLayout) convertView.findViewById(R.id.aisleselectlay);
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			holder.aisleContentBrowser.setAilseLeftListLisner(new LeftList());
 			convertView.setTag(holder);
@@ -161,7 +162,13 @@ public class TrendingAislesLeftColumnAdapter extends
 			//holder.startImageLay.setVisibility(View.GONE);
 			holder.starIcon.setVisibility(View.GONE);
 		}
-		
+		if(VueLandingPageActivity.mOtherSourceImageAddFlag){
+			if(VueLandingPageActivity.mOtherSourceAddImageAisleId.equals( holder.mWindowContent.getAisleId())){
+				holder.aisleselectlay.setVisibility(View.VISIBLE);
+			}
+		} else {
+			holder.aisleselectlay.setVisibility(View.GONE);
+		}
 		mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
 				false, listener,"LeftAdapter",holder.starIcon);
 		AisleContext context = holder.mWindowContent.getAisleContext();

@@ -77,6 +77,8 @@ public class VueLandingPageActivity extends BaseActivity {
 	public static String mOtherSourceImageOccasion = null;
 	public static String mOtherSourceImageLookingFor = null;
 	public static String mOtherSourceImageCategory = null;
+	public static String mOtherSourceAddImageAisleId ="";
+	public static boolean mOtherSourceImageAddFlag = false;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
 

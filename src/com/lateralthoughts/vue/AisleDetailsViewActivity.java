@@ -42,6 +42,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
 
@@ -169,6 +170,25 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		mStatusbarHeight = VueApplication.getInstance().getmStatusBarHeight();
 		mScreenTotalHeight = VueApplication.getInstance().getScreenHeight();
 		mComparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight;
+		  View mVueLandingActionbarView;
+		  TextView mVueLandingActionbarScreenName;
+		  LinearLayout mVueLandingActionbarRightLayout;
+		  RelativeLayout mVueLandingActionbarAppIconLayout;
+		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
+				R.layout.vue_landing_actionbar, null);
+		mVueLandingActionbarScreenName = (TextView) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_actionbar_screen_name);
+		mVueLandingActionbarRightLayout = (LinearLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_actionbar_right_layout);
+		mVueLandingActionbarAppIconLayout = (RelativeLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_actionbar_app_icon_layout);
+		mVueLandingActionbarScreenName.setText(getResources().getString(
+				R.string.trending));
+		getSupportActionBar().setCustomView(mVueLandingActionbarView);
+		getSupportActionBar().setDisplayShowCustomEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		getSupportActionBar().show();
+		
 		mTopScroller.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
