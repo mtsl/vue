@@ -15,39 +15,77 @@
         android:orientation="vertical" >
 
         <RelativeLayout
-            android:id="@+id/landingothersourcedialogaddimagetoaisle_buttonlayout"
-            android:layout_width="match_parent"
-            android:layout_height="48dip"
-            android:layout_marginBottom="8dip"
-            android:layout_marginLeft="24dip"
-            android:layout_marginRight="24dip"
-            android:background="@drawable/googleplus_background" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Add image to aisle"
-                android:textColor="@android:color/white"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
-        <RelativeLayout
             android:id="@+id/landingothersourcedialogcreateaisle_buttonlayout"
             android:layout_width="match_parent"
             android:layout_height="48dip"
             android:layout_marginBottom="8dip"
             android:layout_marginLeft="24dip"
             android:layout_marginRight="24dip"
-            android:background="@drawable/googleplus_background" >
+            android:background="@drawable/dataentry_title_bg" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Create Aisle"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/landingothersourcedialogaddimageto_trending_buttonlayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dip"
+            android:layout_marginBottom="8dip"
+            android:layout_marginLeft="24dip"
+            android:layout_marginRight="24dip"
+            android:background="@drawable/dataentry_title_bg" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Add image to Trending"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/landingothersourcedialogaddimageto_myaisles_buttonlayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dip"
+            android:layout_marginBottom="8dip"
+            android:layout_marginLeft="24dip"
+            android:layout_marginRight="24dip"
+            android:background="@drawable/dataentry_title_bg" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Add image to My Aisles"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/landingothersourcedialogaddimageto_bookmarks_buttonlayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dip"
+            android:layout_marginBottom="8dip"
+            android:layout_marginLeft="24dip"
+            android:layout_marginRight="24dip"
+            android:background="@drawable/dataentry_title_bg" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Add image to Bookmarks"
+                android:textColor="@android:color/black"
                 android:textSize="15sp"
                 android:textStyle="bold" />
         </RelativeLayout>

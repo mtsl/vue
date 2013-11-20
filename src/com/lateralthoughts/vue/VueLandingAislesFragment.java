@@ -312,42 +312,47 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	private class AisleClickListener implements AisleContentClickListener {
 		@Override
 		public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
-			
-			if(!VueLandingPageActivity.mOtherSourceImageAddFlag){
-			Map<String, String> articleParams = new HashMap<String, String>();
-			VueUser storedVueUser = null;
-			try {
-				storedVueUser = Utils.readUserObjectFromFile(getActivity(),
-						VueConstants.VUE_APP_USEROBJECT__FILENAME);
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-			if (storedVueUser != null) {
-				articleParams.put("User_Id", Long
-						.valueOf(storedVueUser.getId()).toString());
-			} else {
-				articleParams.put("User_Id", "anonymous");
-			}
-			Log.e("VueLandingAisleFragment", "Suru aisle clicked aisle Id: "
-					+ id);
-			DataBaseManager.getInstance(mContext)
-					.updateOrAddRecentlyViewedAisles(id);
-			FlurryAgent.logEvent("User_Select_Aisle", articleParams);
 
-			VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-			Log.i("clickedwindow", "clickedwindow ID: " + id);
-			Intent intent = new Intent();
-			intent.setClass(VueApplication.getInstance(),
-					AisleDetailsViewActivity.class);
-			VueApplication.getInstance().setClickedWindowID(id);
-			VueApplication.getInstance().setClickedWindowCount(count);
-			VueApplication.getInstance().setmAisleImgCurrentPos(
-					aisleImgCurrentPos);
-			Log.i("imageCurrenPosition", "imageCurrenPosition landing click: "
-					+ aisleImgCurrentPos);
-			startActivity(intent);
+			if (VueLandingPageActivity.mOtherSourceImagePath == null) {
+				Map<String, String> articleParams = new HashMap<String, String>();
+				VueUser storedVueUser = null;
+				try {
+					storedVueUser = Utils.readUserObjectFromFile(getActivity(),
+							VueConstants.VUE_APP_USEROBJECT__FILENAME);
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+				if (storedVueUser != null) {
+					articleParams.put("User_Id",
+							Long.valueOf(storedVueUser.getId()).toString());
+				} else {
+					articleParams.put("User_Id", "anonymous");
+				}
+				Log.e("VueLandingAisleFragment",
+						"Suru aisle clicked aisle Id: " + id);
+				DataBaseManager.getInstance(mContext)
+						.updateOrAddRecentlyViewedAisles(id);
+				FlurryAgent.logEvent("User_Select_Aisle", articleParams);
+
+				VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+				Log.i("clickedwindow", "clickedwindow ID: " + id);
+				Intent intent = new Intent();
+				intent.setClass(VueApplication.getInstance(),
+						AisleDetailsViewActivity.class);
+				VueApplication.getInstance().setClickedWindowID(id);
+				VueApplication.getInstance().setClickedWindowCount(count);
+				VueApplication.getInstance().setmAisleImgCurrentPos(
+						aisleImgCurrentPos);
+				Log.i("imageCurrenPosition",
+						"imageCurrenPosition landing click: "
+								+ aisleImgCurrentPos);
+				startActivity(intent);
 			} else {
+				VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+				vueLandingPageActivity.mVueLandingKeyboardLayout
+						.setVisibility(View.VISIBLE);
 				VueLandingPageActivity.mOtherSourceAddImageAisleId = id;
+				notifyAdapters();
 			}
 		}
 
