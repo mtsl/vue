@@ -312,6 +312,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	private class AisleClickListener implements AisleContentClickListener {
 		@Override
 		public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
+			
+			if(!VueLandingPageActivity.mOtherSourceImageAddFlag){
 			Map<String, String> articleParams = new HashMap<String, String>();
 			VueUser storedVueUser = null;
 			try {
@@ -344,6 +346,9 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			Log.i("imageCurrenPosition", "imageCurrenPosition landing click: "
 					+ aisleImgCurrentPos);
 			startActivity(intent);
+			} else {
+				VueLandingPageActivity.mOtherSourceAddImageAisleId = id;
+			}
 		}
 
 		@Override
