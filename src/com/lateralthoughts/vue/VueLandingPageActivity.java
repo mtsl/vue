@@ -1324,13 +1324,6 @@ public class VueLandingPageActivity extends BaseActivity {
 
 	}
 	
-	private void showDialog(){
-		/*if(dialog != null){*/
-	    dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.progressdialog);
-		/*}*/
-		dialog.show();
-	}
+
 
 }
