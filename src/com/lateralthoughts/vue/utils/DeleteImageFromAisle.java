@@ -66,9 +66,9 @@ public class DeleteImageFromAisle implements Runnable,
 							System.out.println("success response");
 							Utils.isAisleChanged = true;
 							Utils.mChangeAilseId = mAisleId;
-									 deleteImageFromAisleList(String
-											.valueOf(image.getId()), String
-											.valueOf(image.getOwnerAisleId()));
+							deleteImageFromAisleList(
+									String.valueOf(image.getId()),
+									String.valueOf(image.getOwnerAisleId()));
 							VueTrendingAislesDataModel.getInstance(
 									VueApplication.getInstance())
 									.dataObserver();
@@ -187,7 +187,8 @@ public class DeleteImageFromAisle implements Runnable,
 			Log.e("imageDelete",
 					"imageDeletion  now this aisle is not showing in UI");
 		}
-		if (aisleItem.getImageList().size() == 0) {
+		if (aisleItem != null && aisleItem.getImageList() != null
+				&& aisleItem.getImageList().size() == 0) {
 			int position = VueTrendingAislesDataModel.getInstance(
 					VueApplication.getInstance()).getAilsePosition(aisleItem);
 			VueTrendingAislesDataModel

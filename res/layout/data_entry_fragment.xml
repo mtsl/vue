@@ -1,34 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/dataentry_root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/dataentry_bg"
-    android:orientation="vertical" >
+     >
 
-    <RelativeLayout
+   <!--  <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent" > -->
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/dummylayoutforaisleimage" >
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/dataentry_aisles_viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone" />
-        </RelativeLayout>
-
-        <LinearLayout
+      <!--   <LinearLayout
             android:id="@+id/dummylayoutforaisleimage"
             android:layout_width="match_parent"
             android:layout_height="48dip"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal" >
-        </LinearLayout>
+        </LinearLayout> -->
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -39,11 +27,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="8dip"
-                android:visibility="gone"
+                android:layout_marginTop="2dip"
                 android:background="@drawable/dataentry_title_bg"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:visibility="visible" >
 
+                <!--
                 <TextView
                     android:id="@+id/lookingforbigtext"
                     android:layout_width="wrap_content"
@@ -53,7 +42,6 @@
                     android:ellipsize="end"
                     android:maxWidth="140dip"
                     android:singleLine="true"
-                    android:text="Looking"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
                     android:textStyle="normal" />
@@ -66,20 +54,97 @@
                     android:text="For"
                     android:textColor="@android:color/black"
                     android:textSize="18sp" />
+                -->
 
                 <TextView
-                    android:id="@+id/occassionbigtext"
+                    android:id="@+id/looking_for_occasion_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dip"
                     android:clickable="true"
                     android:ellipsize="end"
-                    android:maxWidth="140dip"
+                    android:maxWidth="300dip"
                     android:singleLine="true"
-                    android:text="Occasion"
+                    android:text="Looking For"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/categoryheading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/mainheadingrow"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/dataentry_title_bg"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/category_heading_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="Cateogy"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/dataentry_aisles_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/categoryheading"
+              android:layout_centerInParent="true"
+                android:visibility="visible" />
+
+            <!-- <LinearLayout
+                android:id="@+id/findatheading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/descriptionheading"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="44dip"
+                android:background="@drawable/dataentry_title_bg"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/findat_heading_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="findat"
                     android:textColor="@android:color/black"
                     android:textSize="18sp" />
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/descriptionheading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="2dip"
+                android:background="@drawable/dataentry_title_bg"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/description_heading_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="Description"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+            </LinearLayout> -->
 
             <LinearLayout
                 android:id="@+id/lookingforpopup"
@@ -90,7 +155,7 @@
                 android:layout_marginLeft="8dip"
                 android:background="@drawable/dataentry_title_bg"
                 android:orientation="vertical"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -143,16 +208,76 @@
                         android:src="@drawable/closebtn" />
                 </RelativeLayout>
             </LinearLayout>
+   <LinearLayout
+                android:id="@+id/find_at_popup"
+                android:layout_width="200dip"
+                android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dip"
+                android:layout_marginBottom="8dip"
+                android:background="@drawable/dataentry_title_bg"
+                android:orientation="vertical"
+                android:visibility="gone" >
 
-            <com.lateralthoughts.vue.utils.EditTextBackEvent
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:id="@+id/imageView1"
+                        android:layout_width="32dip"
+                        android:layout_height="32dip"
+                        android:src="@drawable/finditat" />
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="4dip"
+                        android:text="Find at"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dip"
+                    android:background="@color/white" >
+
+                    <com.lateralthoughts.vue.utils.EditTextBackEvent
+                        android:id="@+id/find_at_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="4dip"
+                        android:layout_marginRight="32dip"
+                        android:hint="Find at"
+                        android:singleLine="true"
+                        android:textColor="@color/dataentrytextcolor"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:id="@+id/findatclose"
+                        android:layout_width="24dip"
+                        android:layout_height="24dip"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="4dip"
+                        android:src="@drawable/closebtn" />
+                </RelativeLayout>
+            </LinearLayout>
+         <!--    <com.lateralthoughts.vue.utils.EditTextBackEvent
                 android:id="@+id/find_at_text"
                 android:layout_width="200dip"
                 android:layout_height="92dip"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginBottom="48dip"
                 android:layout_marginRight="8dip"
-                android:background="@drawable/findat_box_bg"
+                android:background="@drawable/dataentry_title_bg"
                 android:hint="Find at"
                 android:paddingBottom="16dip"
                 android:paddingLeft="16dp"
@@ -169,7 +294,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/find_at_text"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="102dip"
+                android:layout_marginBottom="54dip"
                 android:layout_marginLeft="8dip"
                 android:orientation="horizontal"
                 android:visibility="gone" >
@@ -198,18 +323,93 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginBottom="66dip"
+                android:layout_marginBottom="18dip"
                 android:layout_marginRight="20dip"
                 android:src="@drawable/closebtn"
                 android:visibility="gone" />
+ -->
+            
+         <!--    <LinearLayout
+                android:id="@+id/submitlayout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/dataentry_title_bg"
+                android:orientation="horizontal"
+                android:visibility="gone" >
 
+                <TextView
+                    android:id="@+id/addimagebtn"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:text="Add more images"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+
+                <View
+                    android:id="@+id/networkdialogline"
+                    android:layout_width="0.5dp"
+                    android:layout_height="fill_parent"
+                    android:background="@color/grey" />
+
+                <TextView
+                    android:id="@+id/savebtn"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:text="Submit"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+            </LinearLayout> -->
+
+        
+
+           <!--  <View
+                android:id="@+id/findleftline"
+                android:layout_width="1dp"
+                android:layout_height="4dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="18dip"
+                android:layout_marginLeft="14dip"
+                android:background="@color/grey"
+                android:visibility="gone" />
+
+            <View
+                android:id="@+id/findbottomine"
+                android:layout_width="1dp"
+                android:layout_height="4dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="18dip"
+                android:layout_marginRight="48dip"
+                android:background="@color/grey"
+                android:visibility="gone" />
+
+            <View
+                android:id="@+id/findrightline"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="18dip"
+                android:layout_marginLeft="14dip"
+                android:layout_marginRight="48dip"
+                android:background="@color/grey"
+                android:visibility="gone" />
+ -->
             <LinearLayout
                 android:id="@+id/lookingforlistviewlayout"
                 android:layout_width="150dip"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/mainheadingrow"
                 android:layout_toRightOf="@+id/lookingforpopup"
-                android:background="@drawable/dataentry_list_border"
+                android:background="@drawable/lookingfor_list_bg"
                 android:maxHeight="256dip"
                 android:visibility="gone" >
 
@@ -228,7 +428,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/mainheadingrow"
                 android:layout_marginRight="8dip"
-                android:background="@drawable/dataentry_title_bg"
+                android:background="@drawable/lookingfor_list_bg"
                 android:orientation="vertical"
                 android:visibility="gone" >
 
@@ -250,7 +450,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="4dip"
                         android:text="Occasion"
-                        android:textColor="@android:color/darker_gray"
+                        android:textColor="@android:color/black"
                         android:textSize="18sp" />
                 </LinearLayout>
 
@@ -290,7 +490,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/mainheadingrow"
                 android:layout_toLeftOf="@+id/ocassionpopup"
-                android:background="@drawable/dataentry_list_border"
+                android:background="@drawable/dataentry_title_bg"
                 android:maxHeight="256dip"
                 android:visibility="gone" >
 
@@ -302,19 +502,39 @@
                 </ListView>
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginRight="8dip"
-                android:gravity="right|bottom"
                 android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:id="@+id/selectcategorylayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/categorylistviewlayout"
+                    android:layout_toLeftOf="@+id/categorylistviewlayout"
+                    android:background="@drawable/dataentry_title_bg"
+                    android:orientation="horizontal"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/dd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="Select Category"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/categorylistviewlayout"
                     android:layout_width="150dip"
                     android:layout_height="256dip"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="64dip"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="8dip"
                     android:layout_toLeftOf="@+id/categoerypopup"
                     android:visibility="gone" >
 
@@ -322,7 +542,7 @@
                         android:id="@+id/categorylistview"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#cecece"
+                        android:background="@drawable/dataentry_title_bg"
                         android:scrollbars="none" >
                     </ListView>
                 </LinearLayout>
@@ -379,32 +599,31 @@
                             android:textSize="15sp" />
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </RelativeLayout>
 
+            <!--
             <RelativeLayout
                 android:id="@+id/dataentry_bottom_bottom_layout"
                 android:layout_width="match_parent"
                 android:layout_height="48dip"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/dataentry_title_bg"
-                android:orientation="horizontal" >
+              
+                 >
 
                 <RelativeLayout
                     android:id="@+id/sayeditparentlay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
+
                     android:layout_marginLeft="8dip"
-                    android:layout_marginRight="88dip" >
+                    android:layout_marginRight="8dip" >
 
                     <TextView
                         android:id="@+id/hinttext"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
                         android:layout_marginLeft="4dip"
                         android:singleLine="true"
                         android:text="Say something about the aisle"
@@ -414,6 +633,7 @@
                     <View
                         android:id="@+id/leftline"
                         android:layout_width="1dp"
+                        android:visibility="gone"
                         android:layout_height="4dp"
                         android:layout_alignParentLeft="true"
                         android:layout_below="@+id/hinttext"
@@ -424,6 +644,7 @@
                         android:id="@+id/leftline"
                         android:layout_width="1dp"
                         android:layout_height="4dp"
+                        android:visibility="gone"
                         android:layout_alignParentRight="true"
                         android:layout_below="@+id/hinttext"
                         android:layout_marginTop="4dp"
@@ -433,36 +654,13 @@
                         android:id="@+id/bottomline"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
+                        android:visibility="gone"
                         android:layout_below="@+id/hinttext"
                         android:layout_marginTop="8dp"
                         android:background="@color/grey" />
                 </RelativeLayout>
 
-                <com.lateralthoughts.vue.utils.EditTextBackEvent
-                    android:id="@+id/saysomethingaboutaisle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="4dip"
-                    android:layout_marginRight="88dip"
-                    android:cursorVisible="false"
-                    android:focusable="true"
-                    android:hint="Say something about the aisle"
-                    android:singleLine="true"
-                    android:textColor="@color/grey"
-                    android:textSize="15sp"
-                    android:visibility="gone" />
-
-                <ImageView
-                    android:id="@+id/saysomethingclose"
-                    android:layout_width="24dip"
-                    android:layout_height="24dip"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="88dip"
-                    android:src="@drawable/closebtn"
-                    android:visibility="gone" />
+              
 
                 <LinearLayout
                     android:id="@+id/dataentry_bottom_right_layout"
@@ -472,7 +670,8 @@
                     android:layout_marginRight="8dip"
                     android:orientation="horizontal" >
 
-                    <ImageView
+                    
+                         <ImageView
                         android:id="@+id/categoeryicon"
                         android:layout_width="36dip"
                         android:layout_height="36dip"
@@ -480,6 +679,7 @@
                         android:layout_marginLeft="8dip"
                         android:background="@drawable/category"
                         android:clickable="true" />
+                   
 
                     <ImageView
                         android:id="@+id/find_at_icon"
@@ -487,9 +687,11 @@
                         android:layout_height="36dip"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="8dip"
-                        android:background="@drawable/finditat" />
+                        android:background="@drawable/finditat"
+                        android:visibility="gone" />
                 </LinearLayout>
             </RelativeLayout>
+            -->
 
             <RelativeLayout
                 android:id="@+id/dataentry_bottom_top_layout"
@@ -497,20 +699,18 @@
                 android:layout_height="48dip"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:background="@color/black"
+                android:background="@drawable/dataentry_title_bg"
                 android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/aisle_posted_mesg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:layout_marginLeft="2dip"
                     android:layout_marginRight="48dip"
                     android:text="Your aisle is posted! Invite experts and friends to see it!"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
 
                 <RelativeLayout
                     android:id="@+id/dataentry_invite_friends_layout"
@@ -614,12 +814,52 @@
             </RelativeLayout>
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+              android:layout_height="100dp"
+              android:layout_marginBottom="8dp"
+        android:layout_alignParentBottom="true"
+           >
+ 
+            <com.lateralthoughts.vue.utils.EditTextBackEvent
+                android:id="@+id/saysomethingaboutaisle"
+                android:layout_width="match_parent"
+                android:layout_height="48dip"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip"
+                android:background="@drawable/dataentry_title_bg"
+                android:cursorVisible="false"
+                android:focusable="true"
+                android:hint="Say more about what you are looking for"
+                android:paddingRight="32dip"
+                android:singleLine="true"
+                android:textColor="@color/grey"
+                android:textSize="15sp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/saysomethingclose"
+                android:layout_width="24dip"
+                android:layout_height="24dip"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="10dip"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="16dip"
+                android:src="@drawable/closebtn"
+                android:visibility="gone" />
+
+           
+        </RelativeLayout>
+
         <ListView
             android:id="@+id/data_entry_Invitefriends_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
             android:visibility="gone" />
-    </RelativeLayout>
+    <!-- </RelativeLayout> -->
 
-</LinearLayout>
+</RelativeLayout>

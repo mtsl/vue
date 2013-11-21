@@ -10,7 +10,7 @@
             <solid android:color="#EAEAEA" />
         </shape>
     </item>
-    <item android:bottom="1dp">
+    <item android:top="1dp">
         <shape
             android:dither="true"
             android:shape="rectangle" >
@@ -19,7 +19,7 @@
             <solid android:color="#E2E2E2" />
         </shape>
     </item>
-    <item android:bottom="2dp">
+    <item android:top="2dp">
         <shape
             android:dither="true"
             android:shape="rectangle" >
@@ -28,7 +28,7 @@
             <solid android:color="#DBDBDB" />
         </shape>
     </item>
-    <item android:bottom="3dp">
+    <item android:top="3dp">
         <shape
             android:dither="true"
             android:shape="rectangle" >
@@ -38,10 +38,10 @@
         </shape>
     </item>
     <item
-        android:bottom="4dp"
+        android:top="4dp"
         android:left="1dp"
         android:right="1dp"
-        android:top="1dp">
+        android:bottom="1dp">
         <shape
             android:dither="true"
             android:shape="rectangle" >
@@ -50,10 +50,10 @@
             <solid android:color="#ffffff" />
 
             <padding
-                android:bottom="12dp"
+                android:bottom="9dp"
                 android:left="9dp"
                 android:right="9dp"
-                android:top="9dp" />
+                android:top="12dp" />
         </shape>
     </item>
 

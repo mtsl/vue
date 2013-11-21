@@ -295,7 +295,7 @@ public class DataentryPageLoader {
 					imageDeleteBtn.setVisibility(View.VISIBLE);
 					imageEditBtn.setVisibility(View.VISIBLE);
 				} else {
-					touchToChangeImage.setVisibility(View.VISIBLE);
+					touchToChangeImage.setVisibility(View.GONE);
 					imageDeleteBtn.setVisibility(View.GONE);
 					imageEditBtn.setVisibility(View.GONE);
 				}

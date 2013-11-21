@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources.NotFoundException;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -45,13 +44,18 @@ import com.lateralthoughts.vue.utils.*;
 public class DataEntryFragment extends Fragment {
 	private ListView mCategoryListview = null, mLookingForListview = null,
 			mOccasionListview = null;
+	public TextView mCategoryheading /* mFindAtheading *//* mDescriptionheading */;
+	// public LinearLayout mSubmitlayout;
 	public LinearLayout mLookingForListviewLayout = null,
-			mOccasionPopup = null, mCategoryPopup = null,
-			mCategoryListviewLayout = null, mOccasionListviewLayout = null,
-			mDataEntryRootLayout = null;
-	public LinearLayout mLookingForPopup = null;
-	public TextView mLookingForBigText = null, mOccassionBigText = null,
-			mCategoryText = null, mHintTextForSaySomeThing, mForTextView;
+			mOccasionPopup = null, mCategoryPopup = null, mFindAtPopUp,
+			mCategoryListviewLayout = null, mOccasionListviewLayout = null;
+	RelativeLayout mDataEntryRootLayout = null;
+
+	public LinearLayout mLookingForPopup = null, mCategoryheadingLayout
+	/* mFindatheadinglayout, *//* mDescriptionheadingLayout */;
+	public TextView /* mLookingForBigText = null, mOccassionBigText = null */
+	mCategoryText = null,/* mHintTextForSaySomeThing, *//* , mForTextView */
+	mLookingForOccasionTextview;
 	public EditTextBackEvent mLookingForText = null, mOccasionText = null,
 			mSaySomethingAboutAisle = null, mFindAtText = null;
 	private String mCategoryitemsArray[] = null;
@@ -60,26 +64,29 @@ public class DataEntryFragment extends Fragment {
 			R.drawable.vue_launcher_icon, R.drawable.vue_launcher_icon,
 			R.drawable.vue_launcher_icon, R.drawable.vue_launcher_icon,
 			R.drawable.vue_launcher_icon };
-	public ImageView mCategoryIcon = null;
-	private InputMethodManager mInputMethodManager;
-	private boolean mDontGoToNextLookingFor = false,
-			mDontGoToNextForOccasion = false;
-	private String mPreviousLookingfor = null, mPreviousOcasion = null,
-			mPreviousSaySomething = null;
+	// public ImageView mCategoryIcon = null;
+	InputMethodManager mInputMethodManager;
+	// private TextView mAddimagebtn, mSavebtn;
+	/*
+	 * private boolean mDontGoToNextLookingFor = false, mDontGoToNextForOccasion
+	 * = false;
+	 */
+	// private String mPreviousLookingfor = null, mPreviousOcasion = null,
+	// mPreviousSaySomething = null;
 	public String mPreviousFindAtText = null;
 	private String mImagePath = null, mResizedImagePath = null;
 	LinearLayout mMainHeadingRow = null;
 	RelativeLayout mDataEntryBottomTopLayout = null;
 	private RelativeLayout mDataEntryInviteFriendsLayout = null;
 	private RelativeLayout mDataEntryInviteFriendsFacebookLayout = null;
-	RelativeLayout mDataEntryBottomBottomLayout = null;
+	// RelativeLayout mDataEntryBottomBottomLayout = null;
 	private RelativeLayout mDataEntryInviteFriendsCancelLayout = null;
 	private RelativeLayout mDataEntryInviteFriendsGoogleplusLayout = null;
 	public RelativeLayout mDataEntryInviteFriendsPopupLayout = null;
-	private ImageView mFindAtIcon = null;
+	// private ImageView mFindAtIcon = null;
 	public ShareDialog mShare = null;
 	private float mScreenHeight = 0, mScreenWidth = 0;
-	private LinearLayout mFindAtIconLayout = null;
+	// LinearLayout mFindAtIconLayout = null;
 	private ViewPager mDataEntryAislesViewpager = null;
 	public static final int AISLE_IMAGE_MARGIN = 96;
 	public static final String LOOKING_FOR = "Looking";
@@ -92,11 +99,13 @@ public class DataEntryFragment extends Fragment {
 			mOccassionAisleKeywordsList = null,
 			mCategoryAilseKeywordsList = null;
 	private DataBaseManager mDbManager;
-	public RelativeLayout mSaySomeThingEditParent;
+	// public RelativeLayout mSaySomeThingEditParent;
 	private View mDataEntryFragmentView;
 	private ImageResizeAsynTask mImageResizeAsynTask = null;
-	private ImageView mOccasionClose, mFindatClose, mLookingforClose,
-			mSaysomethingClose;
+	private ImageView mOccasionClose;
+	ImageView mFindatClose;
+	private ImageView mLookingforClose;
+	ImageView mSaysomethingClose;
 	public boolean mFromDetailsScreenFlag = false;
 	public boolean mIsUserAisleFlag = false;
 	private LoginWarningMessage mLoginWarningMessage = null;
@@ -110,6 +119,11 @@ public class DataEntryFragment extends Fragment {
 	private static final int CATEGORY_POPUP_DELAY = 2000;
 	private boolean mIsEmptyAisle;
 	ArrayList<DataentryImage> mAisleImagePathList = null;
+	String mLookingFor = null;
+	String mOccasion = null;
+	LinearLayout mSelectCategoryLayout;
+
+	// View mFindAtLeftLine, mFindAtRightLine, mFindAtBottomLine;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -139,6 +153,44 @@ public class DataEntryFragment extends Fragment {
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		mLookingForText = (EditTextBackEvent) mDataEntryFragmentView
 				.findViewById(R.id.lookingfortext);
+		mFindAtPopUp = (LinearLayout) mDataEntryFragmentView
+				.findViewById(R.id.find_at_popup);
+		/*
+		 * mSavebtn = (TextView)
+		 * mDataEntryFragmentView.findViewById(R.id.savebtn); mAddimagebtn =
+		 * (TextView) mDataEntryFragmentView .findViewById(R.id.addimagebtn);
+		 */
+		/*
+		 * mFindAtLeftLine = mDataEntryFragmentView
+		 * .findViewById(R.id.findleftline); mFindAtRightLine =
+		 * mDataEntryFragmentView .findViewById(R.id.findrightline);
+		 */
+		/*
+		 * mSubmitlayout = (LinearLayout) mDataEntryFragmentView
+		 * .findViewById(R.id.submitlayout);
+		 */
+		/*
+		 * mFindAtBottomLine = mDataEntryFragmentView
+		 * .findViewById(R.id.findbottomine);
+		 */
+		mCategoryheadingLayout = (LinearLayout) mDataEntryFragmentView
+				.findViewById(R.id.categoryheading);
+		/*
+		 * mFindatheadinglayout = (LinearLayout) mDataEntryFragmentView
+		 * .findViewById(R.id.findatheading);
+		 */
+		/*
+		 * mDescriptionheadingLayout = (LinearLayout) mDataEntryFragmentView
+		 * .findViewById(R.id.descriptionheading);
+		 */
+		mCategoryheading = (TextView) mDataEntryFragmentView
+				.findViewById(R.id.category_heading_textview);
+		/*
+		 * mFindAtheading = (TextView) mDataEntryFragmentView
+		 * .findViewById(R.id.findat_heading_textview); mDescriptionheading =
+		 * (TextView) mDataEntryFragmentView
+		 * .findViewById(R.id.description_heading_textview);
+		 */
 		mOccasionClose = (ImageView) mDataEntryFragmentView
 				.findViewById(R.id.occasionclose);
 		mLookingforClose = (ImageView) mDataEntryFragmentView
@@ -151,38 +203,55 @@ public class DataEntryFragment extends Fragment {
 				.findViewById(R.id.ocassionlistviewlayout);
 		mSaysomethingClose = (ImageView) mDataEntryFragmentView
 				.findViewById(R.id.saysomethingclose);
-		mDataEntryRootLayout = (LinearLayout) mDataEntryFragmentView
+		mSelectCategoryLayout = (LinearLayout) mDataEntryFragmentView
+				.findViewById(R.id.selectcategorylayout);
+		mDataEntryRootLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_root_layout);
 		mOccasionListview = (ListView) mDataEntryFragmentView
 				.findViewById(R.id.ocassionlistview);
-		mFindAtIcon = (ImageView) mDataEntryFragmentView
-				.findViewById(R.id.find_at_icon);
+		/*
+		 * mFindAtIcon = (ImageView) mDataEntryFragmentView
+		 * .findViewById(R.id.find_at_icon);
+		 */
+		mLookingForOccasionTextview = (TextView) mDataEntryFragmentView
+				.findViewById(R.id.looking_for_occasion_textview);
 		mLookingForListview = (ListView) mDataEntryFragmentView
 				.findViewById(R.id.lookingforlistview);
-		mForTextView = (TextView) mDataEntryFragmentView
-				.findViewById(R.id.for_text);
+		/*
+		 * mForTextView = (TextView) mDataEntryFragmentView
+		 * .findViewById(R.id.for_text);
+		 */
 		mFindAtText = (EditTextBackEvent) mDataEntryFragmentView
 				.findViewById(R.id.find_at_text);
-		mFindAtIconLayout = (LinearLayout) mDataEntryFragmentView
-				.findViewById(R.id.findaticonlayout);
+		/*
+		 * mFindAtIconLayout = (LinearLayout) mDataEntryFragmentView
+		 * .findViewById(R.id.findaticonlayout);
+		 */
 		mDataEntryInviteFriendsCancelLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_invitefriends_cancellayout);
-		mDataEntryBottomBottomLayout = (RelativeLayout) mDataEntryFragmentView
-				.findViewById(R.id.dataentry_bottom_bottom_layout);
+		/*
+		 * mDataEntryBottomBottomLayout = (RelativeLayout)
+		 * mDataEntryFragmentView
+		 * .findViewById(R.id.dataentry_bottom_bottom_layout);
+		 */
 		mDataEntryInviteFriendsGoogleplusLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_invitefriends_googlepluslayout);
-		mLookingForBigText = (TextView) mDataEntryFragmentView
-				.findViewById(R.id.lookingforbigtext);
-		mLookingForBigText.setBackgroundColor(getResources().getColor(
-				R.color.yellowbgcolor));
+		/*
+		 * mLookingForBigText = (TextView) mDataEntryFragmentView
+		 * .findViewById(R.id.lookingforbigtext);
+		 * mLookingForBigText.setBackgroundColor(getResources().getColor(
+		 * R.color.yellowbgcolor));
+		 */
 		mDataEntryBottomTopLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_bottom_top_layout);
 		mDataEntryInviteFriendsFacebookLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_invitefriends_facebooklayout);
 		mDataEntryInviteFriendsPopupLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_invite_friends_popup_layout);
-		mOccassionBigText = (TextView) mDataEntryFragmentView
-				.findViewById(R.id.occassionbigtext);
+		/*
+		 * mOccassionBigText = (TextView) mDataEntryFragmentView
+		 * .findViewById(R.id.occassionbigtext);
+		 */
 		mOccasionPopup = (LinearLayout) mDataEntryFragmentView
 				.findViewById(R.id.ocassionpopup);
 		mOccasionText = (EditTextBackEvent) mDataEntryFragmentView
@@ -193,8 +262,10 @@ public class DataEntryFragment extends Fragment {
 				.findViewById(R.id.lookingforpopup);
 		mSaySomethingAboutAisle = (EditTextBackEvent) mDataEntryFragmentView
 				.findViewById(R.id.saysomethingaboutaisle);
-		mCategoryIcon = (ImageView) mDataEntryFragmentView
-				.findViewById(R.id.categoeryicon);
+		/*
+		 * mCategoryIcon = (ImageView) mDataEntryFragmentView
+		 * .findViewById(R.id.categoeryicon);
+		 */
 		mCategoryPopup = (LinearLayout) mDataEntryFragmentView
 				.findViewById(R.id.categoerypopup);
 		mCategoryText = (TextView) mDataEntryFragmentView
@@ -208,15 +279,19 @@ public class DataEntryFragment extends Fragment {
 		mLookingForListviewLayout.setVisibility(View.GONE);
 		mDataEntryInviteFriendsLayout = (RelativeLayout) mDataEntryFragmentView
 				.findViewById(R.id.dataentry_invite_friends_layout);
-		mHintTextForSaySomeThing = (TextView) mDataEntryFragmentView
-				.findViewById(R.id.hinttext);
-		mPreviousLookingfor = mLookingForText.getText().toString();
-		mPreviousOcasion = mOccasionText.getText().toString();
-		mPreviousSaySomething = mSaySomethingAboutAisle.getText().toString();
+		/*
+		 * mHintTextForSaySomeThing = (TextView) mDataEntryFragmentView
+		 * .findViewById(R.id.hinttext);
+		 */
+		// mPreviousLookingfor = mLookingForText.getText().toString();
+		// mPreviousOcasion = mOccasionText.getText().toString();
+		// mPreviousSaySomething = mSaySomethingAboutAisle.getText().toString();
 		mLookingForAisleKeywordsList = mDbManager
 				.getAisleKeywords(VueConstants.LOOKING_FOR_TABLE);
-		mSaySomeThingEditParent = (RelativeLayout) mDataEntryFragmentView
-				.findViewById(R.id.sayeditparentlay);
+		/*
+		 * mSaySomeThingEditParent = (RelativeLayout) mDataEntryFragmentView
+		 * .findViewById(R.id.sayeditparentlay);
+		 */
 		String savedLookingFor = Utils
 				.getDataentryTopAddImageAisleLookingFor(getActivity());
 		String savedCategory = Utils
@@ -225,14 +300,28 @@ public class DataEntryFragment extends Fragment {
 				.getDataentryTopAddImageAisleOccasion(getActivity());
 		String savedDescription = Utils
 				.getDataentryTopAddImageAisleDescription(getActivity());
+		mLookingForText.requestFocus();
+		mInputMethodManager.showSoftInput(mLookingForText, 0);
+		if (mDataEntryActivity == null) {
+			mDataEntryActivity = (DataEntryActivity) getActivity();
+		}
+		mDataEntryActivity.mDataentryActionbarMainLayout
+				.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryKeyboardLayout
+				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryKeyboardDone
+				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
+
 		if (Utils.getDataentryTopAddImageAisleFlag(getActivity())
 				&& savedLookingFor != null
 				&& savedLookingFor.trim().length() > 0) {
 			mLookingForText.setText(savedLookingFor);
-			mLookingForBigText.setText(savedLookingFor);
-			mLookingForPopup.setVisibility(View.GONE);
-			mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-			mLookingForListviewLayout.setVisibility(View.GONE);
+			mLookingFor = savedLookingFor;
+			// mLookingForBigText.setText(savedLookingFor);
+			mLookingForPopup.setVisibility(View.VISIBLE);
+			// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+			// mLookingForListviewLayout.setVisibility(View.VISIBLE);
 		} else if (mLookingForAisleKeywordsList != null) {
 			if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
 				if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
@@ -243,42 +332,55 @@ public class DataEntryFragment extends Fragment {
 										.getAisleAt(
 												Utils.getDataentryScreenAisleId(getActivity()))
 										.getAisleContext().mLookingForItem);
-						mLookingForBigText
-								.setText(VueTrendingAislesDataModel
-										.getInstance(getActivity())
-										.getAisleAt(
-												Utils.getDataentryScreenAisleId(getActivity()))
-										.getAisleContext().mLookingForItem);
+						/*
+						 * mLookingForBigText
+						 * .setText(VueTrendingAislesDataModel
+						 * .getInstance(getActivity()) .getAisleAt(
+						 * Utils.getDataentryScreenAisleId(getActivity()))
+						 * .getAisleContext().mLookingForItem);
+						 */
+						mLookingFor = VueTrendingAislesDataModel
+								.getInstance(getActivity())
+								.getAisleAt(
+										Utils.getDataentryScreenAisleId(getActivity()))
+								.getAisleContext().mLookingForItem;
 					} catch (Exception e) {
 						mLookingForText.setText(mLookingForAisleKeywordsList
 								.get(0));
-						mLookingForBigText.setText(mLookingForAisleKeywordsList
-								.get(0));
+						/*
+						 * mLookingForBigText.setText(mLookingForAisleKeywordsList
+						 * .get(0));
+						 */
+						mLookingFor = mLookingForAisleKeywordsList.get(0);
 					}
 				} else {
 					mLookingForText
 							.setText(mLookingForAisleKeywordsList.get(0));
-					mLookingForBigText.setText(mLookingForAisleKeywordsList
-							.get(0));
+					/*
+					 * mLookingForBigText.setText(mLookingForAisleKeywordsList
+					 * .get(0));
+					 */
+					mLookingFor = mLookingForAisleKeywordsList.get(0);
 				}
 			} else {
 				mLookingForText.setText(mLookingForAisleKeywordsList.get(0));
-				mLookingForBigText.setText(mLookingForAisleKeywordsList.get(0));
+				// mLookingForBigText.setText(mLookingForAisleKeywordsList.get(0));
+				mLookingFor = mLookingForAisleKeywordsList.get(0);
 			}
-			mLookingForPopup.setVisibility(View.GONE);
-			mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-			mLookingForListviewLayout.setVisibility(View.GONE);
+			mLookingForPopup.setVisibility(View.VISIBLE);
+			// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+			// mLookingForListviewLayout.setVisibility(View.VISIBLE);
 		} else {
 			mLookingForListviewLayout.setVisibility(View.GONE);
 			mLookingForText.requestFocus();
-			mInputMethodManager.showSoftInput(mLookingForText, 0);
 		}
 		mOccassionAisleKeywordsList = mDbManager
 				.getAisleKeywords(VueConstants.OCCASION_TABLE);
 		if (Utils.getDataentryTopAddImageAisleFlag(getActivity())
 				&& savedOccasion != null && savedOccasion.trim().length() > 0) {
 			mOccasionText.setText(savedOccasion);
-			mOccassionBigText.setText(savedOccasion);
+			mOccasion = savedOccasion;
+			// mOccassionBigText.setText(savedOccasion);
 		} else if (mOccassionAisleKeywordsList != null) {
 			if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
 				if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
@@ -299,39 +401,64 @@ public class DataEntryFragment extends Fragment {
 										.getAisleAt(
 												Utils.getDataentryScreenAisleId(getActivity()))
 										.getAisleContext().mOccasion.length() > 0) {
-							mOccassionBigText
-									.setText(VueTrendingAislesDataModel
-											.getInstance(getActivity())
-											.getAisleAt(
-													Utils.getDataentryScreenAisleId(getActivity()))
-											.getAisleContext().mOccasion);
+							mOccasion = VueTrendingAislesDataModel
+									.getInstance(getActivity())
+									.getAisleAt(
+											Utils.getDataentryScreenAisleId(getActivity()))
+									.getAisleContext().mOccasion;
+							/*
+							 * mOccassionBigText
+							 * .setText(VueTrendingAislesDataModel
+							 * .getInstance(getActivity()) .getAisleAt(
+							 * Utils.getDataentryScreenAisleId(getActivity()))
+							 * .getAisleContext().mOccasion);
+							 */
 						} else {
-							mOccassionBigText.setText(OCCASION);
+							// mOccassionBigText.setText(OCCASION);
 						}
 
 					} catch (Exception e) {
 						mOccasionText.setText(mOccassionAisleKeywordsList
 								.get(0));
-						mOccassionBigText.setText(mOccassionAisleKeywordsList
-								.get(0));
+						mOccasion = mOccassionAisleKeywordsList.get(0);
+						/*
+						 * mOccassionBigText.setText(mOccassionAisleKeywordsList
+						 * .get(0));
+						 */
 					}
 				} else {
 					mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
-					mOccassionBigText.setText(mOccassionAisleKeywordsList
-							.get(0));
+					mOccasion = mOccassionAisleKeywordsList.get(0);
+					/*
+					 * mOccassionBigText.setText(mOccassionAisleKeywordsList
+					 * .get(0));
+					 */
 				}
 			} else {
 				mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
-				mOccassionBigText.setText(mOccassionAisleKeywordsList.get(0));
+				mOccasion = mOccassionAisleKeywordsList.get(0);
+				// mOccassionBigText.setText(mOccassionAisleKeywordsList.get(0));
 			}
 		} else {
-			mOccassionBigText.setText(OCCASION);
+			// mOccassionBigText.setText(OCCASION);
+		}
+		if (mLookingFor != null) {
+			mMainHeadingRow.setVisibility(View.VISIBLE);
+			if (mOccasion != null) {
+				mLookingForOccasionTextview.setText(mLookingFor + " for "
+						+ mOccasion);
+			} else {
+				mLookingForOccasionTextview.setText("Looking for "
+						+ mLookingFor);
+			}
 		}
 		mCategoryAilseKeywordsList = mDbManager
 				.getAisleKeywords(VueConstants.CATEGORY_TABLE);
 		if (Utils.getDataentryTopAddImageAisleFlag(getActivity())
 				&& savedCategory != null && savedCategory.trim().length() > 0) {
 			mCategoryText.setText(savedCategory);
+			mCategoryheading.setText(savedCategory);
+			mCategoryheadingLayout.setVisibility(View.VISIBLE);
 		} else if (mCategoryAilseKeywordsList != null) {
 			if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
 				if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
@@ -342,6 +469,13 @@ public class DataEntryFragment extends Fragment {
 										.getAisleAt(
 												Utils.getDataentryScreenAisleId(getActivity()))
 										.getAisleContext().mCategory);
+						mCategoryheading
+								.setText(VueTrendingAislesDataModel
+										.getInstance(getActivity())
+										.getAisleAt(
+												Utils.getDataentryScreenAisleId(getActivity()))
+										.getAisleContext().mCategory);
+						mCategoryheadingLayout.setVisibility(View.VISIBLE);
 					} catch (Exception e) {
 						/*
 						 * mCategoryText
@@ -359,7 +493,9 @@ public class DataEntryFragment extends Fragment {
 				&& savedDescription != null
 				&& savedDescription.trim().length() > 0) {
 			mSaySomethingAboutAisle.setText(savedDescription);
-			mHintTextForSaySomeThing.setText(savedDescription);
+			// mDescriptionheading.setText(savedDescription);
+			// mDescriptionheadingLayout.setVisibility(View.GONE);
+			// mHintTextForSaySomeThing.setText(savedDescription);
 		} else if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
 			if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
 				try {
@@ -370,7 +506,9 @@ public class DataEntryFragment extends Fragment {
 							.getAisleContext().mDescription;
 					if (description != null && description.trim().length() > 0) {
 						mSaySomethingAboutAisle.setText(description);
-						mHintTextForSaySomeThing.setText(description);
+						// mDescriptionheading.setText(description);
+						// mDescriptionheadingLayout.setVisibility(View.GONE);
+						// mHintTextForSaySomeThing.setText(description);
 					}
 
 				} catch (Exception e) {
@@ -383,71 +521,86 @@ public class DataEntryFragment extends Fragment {
 					public boolean onEditorAction(TextView arg0, int arg1,
 							KeyEvent arg2) {
 						mSaySomethingAboutAisle.setCursorVisible(false);
-						mPreviousSaySomething = mSaySomethingAboutAisle
-								.getText().toString();
+						/*
+						 * mPreviousSaySomething = mSaySomethingAboutAisle
+						 * .getText().toString();
+						 */
 						mInputMethodManager.hideSoftInputFromWindow(
 								mSaySomethingAboutAisle.getWindowToken(), 0);
 						mInputMethodManager.hideSoftInputFromWindow(
 								mOccasionText.getWindowToken(), 0);
 						mInputMethodManager.hideSoftInputFromWindow(
 								mLookingForText.getWindowToken(), 0);
+						if (mDataEntryActivity == null) {
+							mDataEntryActivity = (DataEntryActivity) getActivity();
+						}
+						mDataEntryActivity.mDataentryActionbarMainLayout
+								.setVisibility(View.VISIBLE);
+						mDataEntryActivity.mVueDataentryKeyboardLayout
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryKeyboardDone
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryKeyboardCancel
+								.setVisibility(View.GONE);
 						String tempString = mSaySomethingAboutAisle.getText()
 								.toString();
 						if (tempString != null
 								&& !tempString.equalsIgnoreCase("")) {
-							mHintTextForSaySomeThing.setText(tempString);
+							// mDescriptionheading.setText(tempString);
+							// mDescriptionheadingLayout.setVisibility(View.GONE);
+							// mHintTextForSaySomeThing.setText(tempString);
 						}
-						mSaySomeThingEditParent.setVisibility(View.VISIBLE);
+						// mSaySomeThingEditParent.setVisibility(View.VISIBLE);
 						mSaySomethingAboutAisle.setVisibility(View.GONE);
 						mSaysomethingClose.setVisibility(View.GONE);
+						// mSubmitlayout.setVisibility(View.VISIBLE);
 						return true;
 					}
 				});
-		mSaySomeThingEditParent.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				mSaySomeThingEditParent.setVisibility(View.GONE);
-				mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
-				mSaysomethingClose.setVisibility(View.VISIBLE);
-				mSaySomeThingEditParent.post(new Runnable() {
-
-					@Override
-					public void run() {
-						mSaySomethingAboutAisle.requestFocus();
-						mSaySomethingAboutAisle.setFocusable(true);
-						mSaySomethingAboutAisle.setCursorVisible(true);
-						mSaySomethingAboutAisle
-								.setSelection(mSaySomethingAboutAisle.getText()
-										.toString().length());
-					}
-				});
-				mSaySomethingAboutAisleClicked = true;
-				mInputMethodManager.hideSoftInputFromWindow(
-						mOccasionText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mLookingForText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mFindAtText.getWindowToken(), 0);
-				mLookingForPopup.setVisibility(View.GONE);
-				mLookingForListviewLayout.setVisibility(View.GONE);
-				mOccasionPopup.setVisibility(View.GONE);
-				mOccasionListviewLayout.setVisibility(View.GONE);
-				mCategoryPopup.setVisibility(View.GONE);
-				mFindatClose.setVisibility(View.GONE);
-				mFindAtIconLayout.setVisibility(View.GONE);
-				mFindAtText.setVisibility(View.GONE);
-				mCategoryListviewLayout.setVisibility(View.GONE);
-				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
-						.getSystemService(Context.INPUT_METHOD_SERVICE);
-				inputMethodManager.toggleSoftInputFromWindow(
-						mSaySomethingAboutAisle.getApplicationWindowToken(),
-						InputMethodManager.SHOW_FORCED, 0);
-
-			}
-		});
+		/*
+		 * mSaySomeThingEditParent.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) {
+		 * mSaySomeThingEditParent.setVisibility(View.GONE);
+		 * mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+		 * mSaysomethingClose.setVisibility(View.VISIBLE);
+		 * mSaySomeThingEditParent.post(new Runnable() {
+		 * 
+		 * @Override public void run() { mSaySomethingAboutAisle.requestFocus();
+		 * mSaySomethingAboutAisle.setFocusable(true);
+		 * mSaySomethingAboutAisle.setCursorVisible(true);
+		 * mSaySomethingAboutAisle
+		 * .setSelection(mSaySomethingAboutAisle.getText()
+		 * .toString().length()); } }); mSaySomethingAboutAisleClicked = true;
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mOccasionText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mLookingForText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mFindAtText.getWindowToken(), 0);
+		 * mLookingForPopup.setVisibility(View.GONE);
+		 * mLookingForListviewLayout.setVisibility(View.GONE);
+		 * mOccasionPopup.setVisibility(View.GONE);
+		 * mOccasionListviewLayout.setVisibility(View.GONE);
+		 * mCategoryPopup.setVisibility(View.GONE);
+		 * mFindatClose.setVisibility(View.GONE);
+		 * mFindAtIconLayout.setVisibility(View.GONE);
+		 * mFindAtText.setVisibility(View.GONE);
+		 * mFindAtLeftLine.setVisibility(View.GONE);
+		 * mFindAtRightLine.setVisibility(View.GONE);
+		 * mFindAtBottomLine.setVisibility(View.GONE);
+		 * mCategoryListviewLayout.setVisibility(View.GONE);
+		 * mSelectCategoryLayout.setVisibility(View.GONE); //
+		 * mOccassionBigText.setBackgroundColor(Color.TRANSPARENT); //
+		 * mLookingForBigText.setBackgroundColor(Color.TRANSPARENT); final
+		 * InputMethodManager inputMethodManager = (InputMethodManager)
+		 * getActivity() .getSystemService(Context.INPUT_METHOD_SERVICE);
+		 * inputMethodManager.toggleSoftInputFromWindow(
+		 * mSaySomethingAboutAisle.getApplicationWindowToken(),
+		 * InputMethodManager.SHOW_FORCED, 0);
+		 * 
+		 * } });
+		 */
 		final OnInterceptListener mSayBoutListner = new OnInterceptListener() {
 
 			@Override
@@ -486,24 +639,29 @@ public class DataEntryFragment extends Fragment {
 					@Override
 					public boolean onEditorAction(TextView v, int actionId,
 							KeyEvent event) {
-						mLookingForBigText
-								.setBackgroundColor(Color.TRANSPARENT);
+						/*
+						 * mLookingForBigText
+						 * .setBackgroundColor(Color.TRANSPARENT); if
+						 * (mLookingForText.getText().toString().trim()
+						 * .length() > 0) {
+						 * mLookingForBigText.setText(mLookingForText
+						 * .getText().toString()); } else {
+						 * mLookingForBigText.setText(LOOKING_FOR); }
+						 * mPreviousLookingfor = mLookingForText.getText()
+						 * .toString();
+						 */
 						if (mLookingForText.getText().toString().trim()
 								.length() > 0) {
-							mLookingForBigText.setText(mLookingForText
-									.getText().toString());
-						} else {
-							mLookingForBigText.setText(LOOKING_FOR);
-						}
-						mPreviousLookingfor = mLookingForText.getText()
-								.toString();
-						mLookingForPopup.setVisibility(View.GONE);
-						mLookingForListviewLayout.setVisibility(View.GONE);
-						mInputMethodManager.hideSoftInputFromWindow(
-								mLookingForText.getWindowToken(), 0);
-						if (!mDontGoToNextLookingFor) {
-							mOccassionBigText.setBackgroundColor(getResources()
-									.getColor(R.color.yellowbgcolor));
+							mLookingFor = mLookingForText.getText().toString();
+							mLookingForPopup.setVisibility(View.GONE);
+							mLookingForListviewLayout.setVisibility(View.GONE);
+							mInputMethodManager.hideSoftInputFromWindow(
+									mLookingForText.getWindowToken(), 0);
+							// if (!mDontGoToNextLookingFor) {
+							/*
+							 * mOccassionBigText.setBackgroundColor(getResources(
+							 * ) .getColor(R.color.yellowbgcolor));
+							 */
 							mOccasionPopup.setVisibility(View.VISIBLE);
 							if (mOccassionAisleKeywordsList != null
 									&& mOccassionAisleKeywordsList.size() > 0) {
@@ -516,7 +674,32 @@ public class DataEntryFragment extends Fragment {
 							}
 							mOccasionText.requestFocus();
 							mInputMethodManager.showSoftInput(mOccasionText, 0);
+							if (mDataEntryActivity == null) {
+								mDataEntryActivity = (DataEntryActivity) getActivity();
+							}
+							mDataEntryActivity.mDataentryActionbarMainLayout
+									.setVisibility(View.GONE);
+							mDataEntryActivity.mVueDataentryKeyboardLayout
+									.setVisibility(View.VISIBLE);
+							mDataEntryActivity.mVueDataentryKeyboardDone
+									.setVisibility(View.VISIBLE);
+							mDataEntryActivity.mVueDataentryKeyboardCancel
+									.setVisibility(View.VISIBLE);
+							// }
+							mMainHeadingRow.setVisibility(View.VISIBLE);
+							if (mOccasion != null) {
+								mLookingForOccasionTextview.setText(mLookingFor
+										+ " for " + mOccasion);
+							} else {
+								mLookingForOccasionTextview
+										.setText("Looking for " + mLookingFor);
+							}
+						} else {
+							Toast.makeText(getActivity(),
+									"LookingFor is mandotory.",
+									Toast.LENGTH_LONG).show();
 						}
+
 						return true;
 					}
 				});
@@ -540,23 +723,37 @@ public class DataEntryFragment extends Fragment {
 					KeyEvent arg2) {
 				mInputMethodManager.hideSoftInputFromWindow(
 						mOccasionText.getWindowToken(), 0);
-				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				if (mOccasionText.getText().toString().trim().length() > 0) {
-					mOccassionBigText.setText(mOccasionText.getText()
-							.toString());
-				} else {
-					mOccassionBigText.setText(OCCASION);
+				if (mDataEntryActivity == null) {
+					mDataEntryActivity = (DataEntryActivity) getActivity();
 				}
-				mPreviousOcasion = mOccasionText.getText().toString();
+				mDataEntryActivity.mDataentryActionbarMainLayout
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardLayout
+						.setVisibility(View.GONE);
+				mDataEntryActivity.mVueDataentryKeyboardDone
+						.setVisibility(View.GONE);
+				mDataEntryActivity.mVueDataentryKeyboardCancel
+						.setVisibility(View.GONE);
+				// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+
+				if (mOccasionText.getText().toString().trim().length() > 0) {
+					/*
+					 * mOccassionBigText.setText(mOccasionText.getText()
+					 * .toString());
+					 */
+					mOccasion = mOccasionText.getText().toString();
+					mLookingForOccasionTextview.setText(mLookingFor + " for "
+							+ mOccasion);
+				} else {
+					// mOccassionBigText.setText(OCCASION);
+				}
+				// mPreviousOcasion = mOccasionText.getText().toString();
 				mOccasionPopup.setVisibility(View.GONE);
 				mOccasionListviewLayout.setVisibility(View.GONE);
-				if (!mDontGoToNextForOccasion) {
-					mCategoryListview.setVisibility(View.VISIBLE);
-					mCategoryListview.setAdapter(new CategoryAdapter(
-							getActivity()));
-					mCategoryListviewLayout.setVisibility(View.VISIBLE);
-					mCategoryPopup.setVisibility(View.VISIBLE);
-				}
+				// if (!mDontGoToNextForOccasion) {
+				categoryIconClickFunctionality();
+				// }
+
 				return true;
 			};
 		});
@@ -576,115 +773,103 @@ public class DataEntryFragment extends Fragment {
 				return false;
 			}
 		});
-		mLookingForBigText.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				hideAllEditableTextboxes();
-				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				mOccasionPopup.setVisibility(View.GONE);
-				mOccasionListviewLayout.setVisibility(View.GONE);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mOccasionText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mSaySomethingAboutAisle.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mFindAtText.getWindowToken(), 0);
-				mFindatClose.setVisibility(View.GONE);
-				mFindAtIconLayout.setVisibility(View.GONE);
-				mFindAtText.setVisibility(View.GONE);
-				mCategoryListview.setVisibility(View.GONE);
-				mCategoryListviewLayout.setVisibility(View.GONE);
-				mCategoryPopup.setVisibility(View.GONE);
-				if (Utils.getDataentryAddImageAisleFlag(getActivity())
-						|| Utils.getDataentryEditAisleFlag(getActivity())) {
-					showAlertForEditPermission(LOOKING_FOR);
-				} else {
-					lookingForTextClickFunctionality();
-				}
-			}
-		});
-		mOccassionBigText.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				hideAllEditableTextboxes();
-				mLookingForPopup.setVisibility(View.GONE);
-				mLookingForListviewLayout.setVisibility(View.GONE);
-				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mLookingForText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mFindAtText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mSaySomethingAboutAisle.getWindowToken(), 0);
-				mFindatClose.setVisibility(View.GONE);
-				mFindAtIconLayout.setVisibility(View.GONE);
-				mFindAtText.setVisibility(View.GONE);
-				mCategoryListview.setVisibility(View.GONE);
-				mCategoryListviewLayout.setVisibility(View.GONE);
-				mCategoryPopup.setVisibility(View.GONE);
-				if (Utils.getDataentryAddImageAisleFlag(getActivity())
-						|| Utils.getDataentryEditAisleFlag(getActivity())) {
-					showAlertForEditPermission(OCCASION);
-				} else {
-					occassionTextClickFunctionality();
-				}
-			}
-		});
-		mForTextView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				hideAllEditableTextboxes();
-				mLookingForPopup.setVisibility(View.GONE);
-				mLookingForListviewLayout.setVisibility(View.GONE);
-				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mLookingForText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mFindAtText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mSaySomethingAboutAisle.getWindowToken(), 0);
-				mFindatClose.setVisibility(View.GONE);
-				mFindAtIconLayout.setVisibility(View.GONE);
-				mFindAtText.setVisibility(View.GONE);
-				mCategoryListview.setVisibility(View.GONE);
-				mCategoryListviewLayout.setVisibility(View.GONE);
-				mCategoryPopup.setVisibility(View.GONE);
-				if (Utils.getDataentryAddImageAisleFlag(getActivity())
-						|| Utils.getDataentryEditAisleFlag(getActivity())) {
-					showAlertForEditPermission(OCCASION);
-				} else {
-					occassionTextClickFunctionality();
-				}
-			}
-		});
-		mCategoryIcon.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mLookingForPopup.setVisibility(View.GONE);
-				mLookingForListviewLayout.setVisibility(View.GONE);
-				mOccasionPopup.setVisibility(View.GONE);
-				mOccasionListviewLayout.setVisibility(View.GONE);
-				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mOccasionText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mLookingForText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mFindAtText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mSaySomethingAboutAisle.getWindowToken(), 0);
-				mFindatClose.setVisibility(View.GONE);
-				mFindAtIconLayout.setVisibility(View.GONE);
-				mFindAtText.setVisibility(View.GONE);
-				if (Utils.getDataentryAddImageAisleFlag(getActivity())
-						|| Utils.getDataentryEditAisleFlag(getActivity())) {
-					showAlertForEditPermission(CATEGORY);
-				} else {
-					categoryIconClickFunctionality();
-				}
-			}
-		});
+		/*
+		 * mLookingForBigText.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View arg0) {
+		 * hideAllEditableTextboxes();
+		 * mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		 * mOccasionPopup.setVisibility(View.GONE);
+		 * mOccasionListviewLayout.setVisibility(View.GONE);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mOccasionText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mSaySomethingAboutAisle.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mFindAtText.getWindowToken(), 0);
+		 * mFindatClose.setVisibility(View.GONE);
+		 * mFindAtIconLayout.setVisibility(View.GONE);
+		 * mFindAtText.setVisibility(View.GONE);
+		 * mCategoryListview.setVisibility(View.GONE);
+		 * mCategoryListviewLayout.setVisibility(View.GONE);
+		 * mCategoryPopup.setVisibility(View.GONE); if
+		 * (Utils.getDataentryAddImageAisleFlag(getActivity()) ||
+		 * Utils.getDataentryEditAisleFlag(getActivity())) {
+		 * showAlertForEditPermission(LOOKING_FOR); } else {
+		 * lookingForTextClickFunctionality(); } } });
+		 * mOccassionBigText.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View arg0) {
+		 * hideAllEditableTextboxes();
+		 * mLookingForPopup.setVisibility(View.GONE);
+		 * mLookingForListviewLayout.setVisibility(View.GONE);
+		 * mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mLookingForText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mFindAtText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mSaySomethingAboutAisle.getWindowToken(), 0);
+		 * mFindatClose.setVisibility(View.GONE);
+		 * mFindAtIconLayout.setVisibility(View.GONE);
+		 * mFindAtText.setVisibility(View.GONE);
+		 * mCategoryListview.setVisibility(View.GONE);
+		 * mCategoryListviewLayout.setVisibility(View.GONE);
+		 * mCategoryPopup.setVisibility(View.GONE); if
+		 * (Utils.getDataentryAddImageAisleFlag(getActivity()) ||
+		 * Utils.getDataentryEditAisleFlag(getActivity())) {
+		 * showAlertForEditPermission(OCCASION); } else {
+		 * occassionTextClickFunctionality(); } } });
+		 * mForTextView.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View arg0) {
+		 * hideAllEditableTextboxes();
+		 * mLookingForPopup.setVisibility(View.GONE);
+		 * mLookingForListviewLayout.setVisibility(View.GONE);
+		 * mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mLookingForText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mFindAtText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mSaySomethingAboutAisle.getWindowToken(), 0);
+		 * mFindatClose.setVisibility(View.GONE);
+		 * mFindAtIconLayout.setVisibility(View.GONE);
+		 * mFindAtText.setVisibility(View.GONE);
+		 * mCategoryListview.setVisibility(View.GONE);
+		 * mCategoryListviewLayout.setVisibility(View.GONE);
+		 * mCategoryPopup.setVisibility(View.GONE); if
+		 * (Utils.getDataentryAddImageAisleFlag(getActivity()) ||
+		 * Utils.getDataentryEditAisleFlag(getActivity())) {
+		 * showAlertForEditPermission(OCCASION); } else {
+		 * occassionTextClickFunctionality(); } } });
+		 */
+		/*
+		 * mCategoryIcon.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) {
+		 * mLookingForPopup.setVisibility(View.GONE);
+		 * mLookingForListviewLayout.setVisibility(View.GONE);
+		 * mOccasionPopup.setVisibility(View.GONE);
+		 * mOccasionListviewLayout.setVisibility(View.GONE);
+		 * mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		 * mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mOccasionText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mLookingForText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mFindAtText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mSaySomethingAboutAisle.getWindowToken(), 0);
+		 * mFindatClose.setVisibility(View.GONE);
+		 * mFindAtIconLayout.setVisibility(View.GONE);
+		 * mFindAtText.setVisibility(View.GONE); if
+		 * (Utils.getDataentryAddImageAisleFlag(getActivity()) ||
+		 * Utils.getDataentryEditAisleFlag(getActivity())) {
+		 * showAlertForEditPermission(CATEGORY); } else {
+		 * categoryIconClickFunctionality(); } } });
+		 */
 		mDataEntryInviteFriendsLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -742,32 +927,35 @@ public class DataEntryFragment extends Fragment {
 								.setVisibility(View.GONE);
 					}
 				});
-		mFindAtIcon.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mFindatClose.setVisibility(View.VISIBLE);
-				mFindAtIconLayout.setVisibility(View.VISIBLE);
-				mFindAtText.setVisibility(View.VISIBLE);
-				mLookingForPopup.setVisibility(View.GONE);
-				mLookingForListviewLayout.setVisibility(View.GONE);
-				mOccasionPopup.setVisibility(View.GONE);
-				mOccasionListviewLayout.setVisibility(View.GONE);
-				mCategoryPopup.setVisibility(View.GONE);
-				mCategoryListviewLayout.setVisibility(View.GONE);
-				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mOccasionText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mLookingForText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mSaySomethingAboutAisle.getWindowToken(), 0);
-				mFindAtText.requestFocus();
-				mFindAtText.setSelection(mFindAtText.getText().toString()
-						.length());
-				mInputMethodManager.showSoftInput(mFindAtText, 0);
-			}
-		});
+		/*
+		 * mFindAtIcon.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) {
+		 * mFindatClose.setVisibility(View.VISIBLE);
+		 * mFindAtIconLayout.setVisibility(View.VISIBLE);
+		 * mFindAtText.setVisibility(View.VISIBLE);
+		 * mFindAtLeftLine.setVisibility(View.VISIBLE);
+		 * mFindAtRightLine.setVisibility(View.VISIBLE);
+		 * mFindAtBottomLine.setVisibility(View.VISIBLE);
+		 * mLookingForPopup.setVisibility(View.GONE);
+		 * mLookingForListviewLayout.setVisibility(View.GONE);
+		 * mOccasionPopup.setVisibility(View.GONE);
+		 * mOccasionListviewLayout.setVisibility(View.GONE);
+		 * mCategoryPopup.setVisibility(View.GONE);
+		 * mCategoryListviewLayout.setVisibility(View.GONE);
+		 * mSelectCategoryLayout.setVisibility(View.GONE); //
+		 * mOccassionBigText.setBackgroundColor(Color.TRANSPARENT); //
+		 * mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mOccasionText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mLookingForText.getWindowToken(), 0);
+		 * mInputMethodManager.hideSoftInputFromWindow(
+		 * mSaySomethingAboutAisle.getWindowToken(), 0);
+		 * mFindAtText.requestFocus();
+		 * mFindAtText.setSelection(mFindAtText.getText().toString() .length());
+		 * mInputMethodManager.showSoftInput(mFindAtText, 0); } });
+		 */
 		mFindAtText.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView arg0, int actionId,
@@ -777,8 +965,65 @@ public class DataEntryFragment extends Fragment {
 				mPreviousFindAtText = mFindAtText.getText().toString();
 				mOtherSourceSelectedImageDetailsUrl = mPreviousFindAtText;
 				mFindatClose.setVisibility(View.GONE);
-				mFindAtIconLayout.setVisibility(View.GONE);
-				mFindAtText.setVisibility(View.GONE);
+				// mFindAtIconLayout.setVisibility(View.GONE);
+				mFindAtPopUp.setVisibility(View.GONE);
+				// mFindAtLeftLine.setVisibility(View.GONE);
+				// mFindAtRightLine.setVisibility(View.GONE);
+				// mFindAtBottomLine.setVisibility(View.GONE);
+				// mSaySomeThingEditParent.setVisibility(View.GONE);
+				mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+				mSaysomethingClose.setVisibility(View.VISIBLE);
+				/*
+				 * mSaySomeThingEditParent.post(new Runnable() {
+				 * 
+				 * @Override public void run() {
+				 * mSaySomethingAboutAisle.requestFocus();
+				 * mSaySomethingAboutAisle.setFocusable(true);
+				 * mSaySomethingAboutAisle.setCursorVisible(true);
+				 * mSaySomethingAboutAisle
+				 * .setSelection(mSaySomethingAboutAisle.getText()
+				 * .toString().length()); } });
+				 */
+				mSaySomethingAboutAisleClicked = true;
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mFindAtText.getWindowToken(), 0);
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				mCategoryPopup.setVisibility(View.GONE);
+				mFindatClose.setVisibility(View.GONE);
+				// mFindAtIconLayout.setVisibility(View.GONE);
+				mFindAtPopUp.setVisibility(View.GONE);
+				// mFindAtLeftLine.setVisibility(View.GONE);
+				// mFindAtRightLine.setVisibility(View.GONE);
+				// mFindAtBottomLine.setVisibility(View.GONE);
+				mCategoryListviewLayout.setVisibility(View.GONE);
+				mSelectCategoryLayout.setVisibility(View.GONE);
+				// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+				inputMethodManager.toggleSoftInputFromWindow(
+						mSaySomethingAboutAisle.getApplicationWindowToken(),
+						InputMethodManager.SHOW_FORCED, 0);
+				mSaySomethingAboutAisle.requestFocus();
+				mInputMethodManager.showSoftInput(mSaySomethingAboutAisle, 0);
+				if (mDataEntryActivity == null) {
+					mDataEntryActivity = (DataEntryActivity) getActivity();
+				}
+				mDataEntryActivity.mDataentryActionbarMainLayout
+						.setVisibility(View.GONE);
+				mDataEntryActivity.mVueDataentryKeyboardLayout
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardDone
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardCancel
+						.setVisibility(View.VISIBLE);
 				return true;
 			};
 		});
@@ -828,6 +1073,11 @@ public class DataEntryFragment extends Fragment {
 					}
 					mLookingForListview.setAdapter(new LookingForAdapter(
 							getActivity(), tempLookingForKeywordsList));
+					if (tempLookingForKeywordsList.size() > 0) {
+						mLookingForListviewLayout.setVisibility(View.VISIBLE);
+					} else {
+						mLookingForListviewLayout.setVisibility(View.GONE);
+					}
 				}
 			}
 
@@ -859,6 +1109,11 @@ public class DataEntryFragment extends Fragment {
 							}
 						}
 					}
+					if (tempOccassionKeywordsList.size() > 0) {
+						mOccasionListviewLayout.setVisibility(View.VISIBLE);
+					} else {
+						mOccasionListviewLayout.setVisibility(View.GONE);
+					}
 					mOccasionListview.setAdapter(new OccassionAdapter(
 							getActivity(), tempOccassionKeywordsList));
 				}
@@ -884,6 +1139,11 @@ public class DataEntryFragment extends Fragment {
 								&& mAisleImagePathList.size() > 0) {
 							mFindAtText.setText(mAisleImagePathList.get(
 									position).getDetailsUrl());
+							/*
+							 * mFindAtheading.setText(mAisleImagePathList.get(
+							 * position).getDetailsUrl());
+							 * mFindatheadinglayout.setVisibility(View.GONE);
+							 */
 						}
 					}
 
@@ -917,33 +1177,408 @@ public class DataEntryFragment extends Fragment {
 			@Override
 			public void onClick(View arg0) {
 				mSaySomethingAboutAisle.setText("");
-				mHintTextForSaySomeThing.setText("");
+				// mHintTextForSaySomeThing.setText("");
 			}
 		});
+		/*
+		 * mAddimagebtn.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View arg0) {
+		 * addImageToAisleButtonClickFunctionality(true); } });
+		 * mSavebtn.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View arg0) {
+		 * createAisleClickFunctionality(); } });
+		 */
 		addImageToViewPager(true);
 		return mDataEntryFragmentView;
 	}
 
 	public void hideAllEditableTextboxes() {
-		if (mOccasionText.getText().toString().trim().length() > 0) {
-			mOccassionBigText.setText(mOccasionText.getText().toString());
-		} else {
-			mOccassionBigText.setText(OCCASION);
-		}
-		if (mLookingForText.getText().toString().trim().length() > 0) {
-			mLookingForBigText.setText(mLookingForText.getText().toString());
-		} else {
-			mLookingForBigText.setText(LOOKING_FOR);
-		}
+		/*
+		 * if (mOccasionText.getText().toString().trim().length() > 0) {
+		 * mOccassionBigText.setText(mOccasionText.getText().toString()); } else
+		 * { mOccassionBigText.setText(OCCASION); } if
+		 * (mLookingForText.getText().toString().trim().length() > 0) {
+		 * mLookingForBigText.setText(mLookingForText.getText().toString()); }
+		 * else { mLookingForBigText.setText(LOOKING_FOR); }
+		 */
 		mSaySomethingAboutAisle.setCursorVisible(false);
-		mPreviousSaySomething = mSaySomethingAboutAisle.getText().toString();
+		// mPreviousSaySomething = mSaySomethingAboutAisle.getText().toString();
 		String tempString = mSaySomethingAboutAisle.getText().toString();
 		if (tempString != null && !tempString.equalsIgnoreCase("")) {
-			mHintTextForSaySomeThing.setText(tempString);
+			// mDescriptionheading.setText(tempString);
+			// mDescriptionheadingLayout.setVisibility(View.GONE);
+			// mHintTextForSaySomeThing.setText(tempString);
 		}
 		// hiding keyboard
 		mInputMethodManager.hideSoftInputFromWindow(
 				mSaySomethingAboutAisle.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mOccasionText.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mLookingForText.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mFindAtText.getWindowToken(), 0);
+		if (mDataEntryActivity == null) {
+			mDataEntryActivity = (DataEntryActivity) getActivity();
+		}
+		mDataEntryActivity.mDataentryActionbarMainLayout
+				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryKeyboardLayout.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryKeyboardDone.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
+		// mLookingForPopup.setVisibility(View.GONE);
+		// mLookingForListviewLayout.setVisibility(View.GONE);
+		// mOccasionPopup.setVisibility(View.GONE);
+		// mOccasionListviewLayout.setVisibility(View.GONE);
+		// mCategoryPopup.setVisibility(View.GONE);
+		// mFindatClose.setVisibility(View.GONE);
+		// mFindAtIconLayout.setVisibility(View.GONE);
+		// mFindAtText.setVisibility(View.GONE);
+		// mCategoryListviewLayout.setVisibility(View.GONE);
+		// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		// mSaySomeThingEditParent.setVisibility(View.VISIBLE);
+
+		mSaysomethingClose.setVisibility(View.GONE);
+		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
+		if (mLookingForPopup.getVisibility() == View.VISIBLE) {
+			if (mLookingForText.getText().toString().trim().length() > 0) {
+				mLookingFor = mLookingForText.getText().toString();
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				// if (!mDontGoToNextLookingFor) {
+				/*
+				 * mOccassionBigText.setBackgroundColor(getResources( )
+				 * .getColor(R.color.yellowbgcolor));
+				 */
+				mOccasionPopup.setVisibility(View.VISIBLE);
+				if (mOccassionAisleKeywordsList != null
+						&& mOccassionAisleKeywordsList.size() > 0) {
+					mOccasionListviewLayout.setVisibility(View.VISIBLE);
+					mOccasionListview.setAdapter(new OccassionAdapter(
+							getActivity(), mOccassionAisleKeywordsList));
+				}
+				mOccasionText.requestFocus();
+				mInputMethodManager.showSoftInput(mOccasionText, 0);
+				if (mDataEntryActivity == null) {
+					mDataEntryActivity = (DataEntryActivity) getActivity();
+				}
+				mDataEntryActivity.mDataentryActionbarMainLayout
+						.setVisibility(View.GONE);
+				mDataEntryActivity.mVueDataentryKeyboardLayout
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardDone
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardCancel
+						.setVisibility(View.VISIBLE);
+				// }
+				mMainHeadingRow.setVisibility(View.VISIBLE);
+				if (mOccasion != null) {
+					mLookingForOccasionTextview.setText(mLookingFor + " for "
+							+ mOccasion);
+				} else {
+					mLookingForOccasionTextview.setText("Looking for "
+							+ mLookingFor);
+				}
+			} else {
+				mLookingForText.requestFocus();
+				mLookingForText.setSelection(mLookingForText.getText()
+						.toString().length());
+				mInputMethodManager.showSoftInput(mLookingForText, 0);
+				if (mDataEntryActivity == null) {
+					mDataEntryActivity = (DataEntryActivity) getActivity();
+				}
+				mDataEntryActivity.mDataentryActionbarMainLayout
+						.setVisibility(View.GONE);
+				mDataEntryActivity.mVueDataentryKeyboardLayout
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardDone
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardCancel
+						.setVisibility(View.GONE);
+				Toast.makeText(getActivity(), "LookingFor is mandotory.",
+						Toast.LENGTH_LONG).show();
+			}
+		} else if (mOccasionPopup.getVisibility() == View.VISIBLE) {
+			mInputMethodManager.hideSoftInputFromWindow(
+					mOccasionText.getWindowToken(), 0);
+			if (mDataEntryActivity == null) {
+				mDataEntryActivity = (DataEntryActivity) getActivity();
+			}
+			mDataEntryActivity.mDataentryActionbarMainLayout
+					.setVisibility(View.VISIBLE);
+			mDataEntryActivity.mVueDataentryKeyboardLayout
+					.setVisibility(View.GONE);
+			mDataEntryActivity.mVueDataentryKeyboardDone
+					.setVisibility(View.GONE);
+			mDataEntryActivity.mVueDataentryKeyboardCancel
+					.setVisibility(View.GONE);
+			// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+
+			if (mOccasionText.getText().toString().trim().length() > 0) {
+				/*
+				 * mOccassionBigText.setText(mOccasionText.getText()
+				 * .toString());
+				 */
+				mOccasion = mOccasionText.getText().toString();
+				mLookingForOccasionTextview.setText(mLookingFor + " for "
+						+ mOccasion);
+			} else {
+				// mOccassionBigText.setText(OCCASION);
+			}
+			// mPreviousOcasion = mOccasionText.getText().toString();
+			mOccasionPopup.setVisibility(View.GONE);
+			mOccasionListviewLayout.setVisibility(View.GONE);
+			// if (!mDontGoToNextForOccasion) {
+			categoryIconClickFunctionality();
+		} else if (mCategoryListviewLayout.getVisibility() == View.VISIBLE) {
+			if (mFindAtText.getText().toString().trim().length() == 0) {
+				mFindatClose.setVisibility(View.VISIBLE);
+				// mFindAtIconLayout.setVisibility(View.VISIBLE);
+				mFindAtPopUp.setVisibility(View.VISIBLE);
+				// mFindAtLeftLine.setVisibility(View.VISIBLE);
+				// mFindAtRightLine.setVisibility(View.VISIBLE);
+				// mFindAtBottomLine.setVisibility(View.VISIBLE);
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				mCategoryPopup.setVisibility(View.GONE);
+				mCategoryListviewLayout.setVisibility(View.GONE);
+				mSelectCategoryLayout.setVisibility(View.GONE);
+				// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSaySomethingAboutAisle.getWindowToken(), 0);
+				mFindAtText.requestFocus();
+				mFindAtText.setSelection(mFindAtText.getText().toString()
+						.length());
+				mInputMethodManager.showSoftInput(mFindAtText, 0);
+				if (mDataEntryActivity == null) {
+					mDataEntryActivity = (DataEntryActivity) getActivity();
+				}
+				mDataEntryActivity.mDataentryActionbarMainLayout
+						.setVisibility(View.GONE);
+				mDataEntryActivity.mVueDataentryKeyboardLayout
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardDone
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardCancel
+						.setVisibility(View.VISIBLE);
+			} else {
+				// mSaySomeThingEditParent.setVisibility(View.GONE);
+				mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+				mSaysomethingClose.setVisibility(View.VISIBLE);
+				/*
+				 * mSaySomeThingEditParent.post(new Runnable() {
+				 * 
+				 * @Override public void run() {
+				 * mSaySomethingAboutAisle.requestFocus();
+				 * mSaySomethingAboutAisle.setFocusable(true);
+				 * mSaySomethingAboutAisle.setCursorVisible(true);
+				 * mSaySomethingAboutAisle
+				 * .setSelection(mSaySomethingAboutAisle.getText()
+				 * .toString().length()); } });
+				 */
+				mSaySomethingAboutAisleClicked = true;
+				mInputMethodManager.hideSoftInputFromWindow(
+						mOccasionText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mLookingForText.getWindowToken(), 0);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mFindAtText.getWindowToken(), 0);
+				mLookingForPopup.setVisibility(View.GONE);
+				mLookingForListviewLayout.setVisibility(View.GONE);
+				mOccasionPopup.setVisibility(View.GONE);
+				mOccasionListviewLayout.setVisibility(View.GONE);
+				mCategoryPopup.setVisibility(View.GONE);
+				mFindatClose.setVisibility(View.GONE);
+				// mFindAtIconLayout.setVisibility(View.GONE);
+				mFindAtPopUp.setVisibility(View.GONE);
+				mCategoryListviewLayout.setVisibility(View.GONE);
+				mSelectCategoryLayout.setVisibility(View.GONE);
+				// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+				inputMethodManager.toggleSoftInputFromWindow(
+						mSaySomethingAboutAisle.getApplicationWindowToken(),
+						InputMethodManager.SHOW_FORCED, 0);
+				if (mDataEntryActivity == null) {
+					mDataEntryActivity = (DataEntryActivity) getActivity();
+				}
+				mDataEntryActivity.mDataentryActionbarMainLayout
+						.setVisibility(View.GONE);
+				mDataEntryActivity.mVueDataentryKeyboardLayout
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardDone
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardCancel
+						.setVisibility(View.VISIBLE);
+			}
+		} else if (mFindAtPopUp.getVisibility() == View.VISIBLE) {
+			// mSaySomeThingEditParent.setVisibility(View.GONE);
+			mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+			mSaysomethingClose.setVisibility(View.VISIBLE);
+			/*
+			 * mSaySomeThingEditParent.post(new Runnable() {
+			 * 
+			 * @Override public void run() {
+			 * mSaySomethingAboutAisle.requestFocus();
+			 * mSaySomethingAboutAisle.setFocusable(true);
+			 * mSaySomethingAboutAisle.setCursorVisible(true);
+			 * mSaySomethingAboutAisle
+			 * .setSelection(mSaySomethingAboutAisle.getText()
+			 * .toString().length()); } });
+			 */
+			mSaySomethingAboutAisleClicked = true;
+			mInputMethodManager.hideSoftInputFromWindow(
+					mOccasionText.getWindowToken(), 0);
+			mInputMethodManager.hideSoftInputFromWindow(
+					mLookingForText.getWindowToken(), 0);
+			mInputMethodManager.hideSoftInputFromWindow(
+					mFindAtText.getWindowToken(), 0);
+			mLookingForPopup.setVisibility(View.GONE);
+			mLookingForListviewLayout.setVisibility(View.GONE);
+			mOccasionPopup.setVisibility(View.GONE);
+			mOccasionListviewLayout.setVisibility(View.GONE);
+			mCategoryPopup.setVisibility(View.GONE);
+			mFindatClose.setVisibility(View.GONE);
+			// mFindAtIconLayout.setVisibility(View.GONE);
+			mFindAtPopUp.setVisibility(View.GONE);
+			// mFindAtLeftLine.setVisibility(View.GONE);
+			// mFindAtRightLine.setVisibility(View.GONE);
+			// mFindAtBottomLine.setVisibility(View.GONE);
+			mCategoryListviewLayout.setVisibility(View.GONE);
+			mSelectCategoryLayout.setVisibility(View.GONE);
+			// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+			// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+			final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
+					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputMethodManager.toggleSoftInputFromWindow(
+					mSaySomethingAboutAisle.getApplicationWindowToken(),
+					InputMethodManager.SHOW_FORCED, 0);
+			if (mDataEntryActivity == null) {
+				mDataEntryActivity = (DataEntryActivity) getActivity();
+			}
+			mDataEntryActivity.mDataentryActionbarMainLayout
+					.setVisibility(View.GONE);
+			mDataEntryActivity.mVueDataentryKeyboardLayout
+					.setVisibility(View.VISIBLE);
+			mDataEntryActivity.mVueDataentryKeyboardDone
+					.setVisibility(View.VISIBLE);
+			mDataEntryActivity.mVueDataentryKeyboardCancel
+					.setVisibility(View.VISIBLE);
+		} else if (mSaySomethingAboutAisle.getVisibility() == View.VISIBLE) {
+			mSaySomethingAboutAisle.setVisibility(View.GONE);
+			// mSubmitlayout.setVisibility(View.VISIBLE);
+		}
+	}
+
+	public void lookingForInterceptListnerFunctionality() {
+		if (mLookingFor != null && mLookingFor.trim().length() > 0) {
+			mLookingForPopup.setVisibility(View.GONE);
+			mLookingForListviewLayout.setVisibility(View.GONE);
+			// mOccasionPopup.setVisibility(View.GONE);
+			// mOccasionListviewLayout.setVisibility(View.GONE);
+			// mLookingForText.setText(mPreviousLookingfor);
+			// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+			// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+			mInputMethodManager.hideSoftInputFromWindow(
+					mSaySomethingAboutAisle.getWindowToken(), 0);
+			mInputMethodManager.hideSoftInputFromWindow(
+					mOccasionText.getWindowToken(), 0);
+			mInputMethodManager.hideSoftInputFromWindow(
+					mLookingForText.getWindowToken(), 0);
+			mOccasionPopup.setVisibility(View.VISIBLE);
+			if (mOccassionAisleKeywordsList != null
+					&& mOccassionAisleKeywordsList.size() > 0) {
+				mOccasionListviewLayout.setVisibility(View.VISIBLE);
+				mOccasionListview.setAdapter(new OccassionAdapter(
+						getActivity(), mOccassionAisleKeywordsList));
+			}
+			mOccasionText.requestFocus();
+			mInputMethodManager.showSoftInput(mOccasionText, 0);
+			if (mDataEntryActivity == null) {
+				mDataEntryActivity = (DataEntryActivity) getActivity();
+			}
+			mDataEntryActivity.mDataentryActionbarMainLayout
+					.setVisibility(View.GONE);
+			mDataEntryActivity.mVueDataentryKeyboardLayout
+					.setVisibility(View.VISIBLE);
+			mDataEntryActivity.mVueDataentryKeyboardDone
+					.setVisibility(View.VISIBLE);
+			mDataEntryActivity.mVueDataentryKeyboardCancel
+					.setVisibility(View.VISIBLE);
+		} else {
+			Toast.makeText(getActivity(), "Lookingfor is mandotory.",
+					Toast.LENGTH_LONG).show();
+			lookingForTextClickFunctionality();
+		}
+	}
+
+	public void occasionInterceptListnerFunctionality() {
+		mLookingForPopup.setVisibility(View.GONE);
+		mLookingForListviewLayout.setVisibility(View.GONE);
+		mOccasionPopup.setVisibility(View.GONE);
+		mOccasionListviewLayout.setVisibility(View.GONE);
+		// mOccasionText.setText(mPreviousOcasion);
+		// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mSaySomethingAboutAisle.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mOccasionText.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mLookingForText.getWindowToken(), 0);
+		if (mDataEntryActivity == null) {
+			mDataEntryActivity = (DataEntryActivity) getActivity();
+		}
+		mDataEntryActivity.mDataentryActionbarMainLayout
+				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryKeyboardLayout.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryKeyboardDone.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
+		categoryIconClickFunctionality();
+	}
+
+	public void findAtInterceptListnerFunctionality() {
+		mFindAtText.setText(mPreviousFindAtText);
+		mFindatClose.setVisibility(View.GONE);
+		// mFindAtIconLayout.setVisibility(View.GONE);
+		mFindAtPopUp.setVisibility(View.GONE);
+		// mFindAtLeftLine.setVisibility(View.GONE);
+		// mFindAtRightLine.setVisibility(View.GONE);
+		// mFindAtBottomLine.setVisibility(View.GONE);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mSaySomethingAboutAisle.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mOccasionText.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mLookingForText.getWindowToken(), 0);
+		mInputMethodManager.hideSoftInputFromWindow(
+				mFindAtText.getWindowToken(), 0);
+		// mSaySomeThingEditParent.setVisibility(View.GONE);
+		mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+		mSaysomethingClose.setVisibility(View.VISIBLE);
+		/*
+		 * mSaySomeThingEditParent.post(new Runnable() {
+		 * 
+		 * @Override public void run() { mSaySomethingAboutAisle.requestFocus();
+		 * mSaySomethingAboutAisle.setFocusable(true);
+		 * mSaySomethingAboutAisle.setCursorVisible(true);
+		 * mSaySomethingAboutAisle.setSelection(mSaySomethingAboutAisle
+		 * .getText().toString().length()); } });
+		 */
+		mSaySomethingAboutAisleClicked = true;
 		mInputMethodManager.hideSoftInputFromWindow(
 				mOccasionText.getWindowToken(), 0);
 		mInputMethodManager.hideSoftInputFromWindow(
@@ -956,62 +1591,33 @@ public class DataEntryFragment extends Fragment {
 		mOccasionListviewLayout.setVisibility(View.GONE);
 		mCategoryPopup.setVisibility(View.GONE);
 		mFindatClose.setVisibility(View.GONE);
-		mFindAtIconLayout.setVisibility(View.GONE);
-		mFindAtText.setVisibility(View.GONE);
+		// mFindAtIconLayout.setVisibility(View.GONE);
+		mFindAtPopUp.setVisibility(View.GONE);
+		// mFindAtLeftLine.setVisibility(View.GONE);
+		// /mFindAtRightLine.setVisibility(View.GONE);
+		// mFindAtBottomLine.setVisibility(View.GONE);
 		mCategoryListviewLayout.setVisibility(View.GONE);
-		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
-		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-		mSaySomeThingEditParent.setVisibility(View.VISIBLE);
-		mSaySomethingAboutAisle.setVisibility(View.GONE);
-		mSaysomethingClose.setVisibility(View.GONE);
-		mDataEntryInviteFriendsPopupLayout.setVisibility(View.GONE);
-	}
-
-	public void lookingForInterceptListnerFunctionality() {
-		mLookingForPopup.setVisibility(View.GONE);
-		mLookingForListviewLayout.setVisibility(View.GONE);
-		mOccasionPopup.setVisibility(View.GONE);
-		mOccasionListviewLayout.setVisibility(View.GONE);
-		mLookingForText.setText(mPreviousLookingfor);
-		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
-		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mSaySomethingAboutAisle.getWindowToken(), 0);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mOccasionText.getWindowToken(), 0);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mLookingForText.getWindowToken(), 0);
-	}
-
-	public void occasionInterceptListnerFunctionality() {
-		mLookingForPopup.setVisibility(View.GONE);
-		mLookingForListviewLayout.setVisibility(View.GONE);
-		mOccasionPopup.setVisibility(View.GONE);
-		mOccasionListviewLayout.setVisibility(View.GONE);
-		mOccasionText.setText(mPreviousOcasion);
-		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
-		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mSaySomethingAboutAisle.getWindowToken(), 0);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mOccasionText.getWindowToken(), 0);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mLookingForText.getWindowToken(), 0);
-	}
-
-	public void findAtInterceptListnerFunctionality() {
-		mFindAtText.setText(mPreviousFindAtText);
-		mFindatClose.setVisibility(View.GONE);
-		mFindAtIconLayout.setVisibility(View.GONE);
-		mFindAtText.setVisibility(View.GONE);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mSaySomethingAboutAisle.getWindowToken(), 0);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mOccasionText.getWindowToken(), 0);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mLookingForText.getWindowToken(), 0);
-		mInputMethodManager.hideSoftInputFromWindow(
-				mFindAtText.getWindowToken(), 0);
+		mSelectCategoryLayout.setVisibility(View.GONE);
+		// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMethodManager.toggleSoftInputFromWindow(
+				mSaySomethingAboutAisle.getApplicationWindowToken(),
+				InputMethodManager.SHOW_FORCED, 0);
+		mSaySomethingAboutAisle.requestFocus();
+		mInputMethodManager.showSoftInput(mSaySomethingAboutAisle, 0);
+		if (mDataEntryActivity == null) {
+			mDataEntryActivity = (DataEntryActivity) getActivity();
+		}
+		mDataEntryActivity.mDataentryActionbarMainLayout
+				.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryKeyboardLayout
+				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryKeyboardDone
+				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryKeyboardCancel
+				.setVisibility(View.VISIBLE);
 	}
 
 	public void saySomethingABoutAisleInterceptListnerFunctionality() {
@@ -1019,17 +1625,28 @@ public class DataEntryFragment extends Fragment {
 		mSaySomethingAboutAisle.setCursorVisible(false);
 		mInputMethodManager.hideSoftInputFromWindow(
 				mSaySomethingAboutAisle.getWindowToken(), 0);
-		mSaySomethingAboutAisle.setText(mPreviousSaySomething);
-		mSaySomeThingEditParent.setVisibility(View.VISIBLE);
+		// mSaySomethingAboutAisle.setText(mPreviousSaySomething);
+		// mSaySomeThingEditParent.setVisibility(View.VISIBLE);
 		mSaySomethingAboutAisle.setVisibility(View.GONE);
 		mSaysomethingClose.setVisibility(View.GONE);
+		// mSubmitlayout.setVisibility(View.VISIBLE);
+		if (mDataEntryActivity == null) {
+			mDataEntryActivity = (DataEntryActivity) getActivity();
+		}
+		mDataEntryActivity.mDataentryActionbarMainLayout
+				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryKeyboardLayout.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryKeyboardDone.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
 
 	}
 
 	public void createAisleClickFunctionality() {
 		hideAllEditableTextboxes();
-		if (!(mLookingForBigText.getText().toString().trim()
-				.equals(LOOKING_FOR))
+		if (mLookingFor != null/*
+								 * !(mLookingForBigText.getText().toString().trim
+								 * () .equals(LOOKING_FOR))
+								 */
 				&& (mCategoryText.getText().toString().trim().length() > 0)) {
 			if (Utils.getDataentryEditAisleFlag(getActivity())
 					|| Utils.getDataentryAddImageAisleFlag(getActivity())) {
@@ -1108,11 +1725,14 @@ public class DataEntryFragment extends Fragment {
 				.setVisibility(View.GONE);
 		mDataEntryActivity.mVueDataentryActionbarTopLayout
 				.setVisibility(View.VISIBLE);
-		mDataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryActionbarSaveLayout
+				.setVisibility(View.VISIBLE);
+		// mDataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
 		mDataEntryBottomTopLayout.setVisibility(View.GONE);
 		mMainHeadingRow.setVisibility(View.VISIBLE);
-		mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
-		mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+		mCategoryheadingLayout.setVisibility(View.VISIBLE);
+		// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+		// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 		try {
 			mDataEntryAislesViewpager
 					.setAdapter(new DataEntryAilsePagerAdapter(getActivity(),
@@ -1120,6 +1740,7 @@ public class DataEntryFragment extends Fragment {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		lookingForTextClickFunctionality();
 	}
 
 	public void shareClickFunctionality() {
@@ -1197,9 +1818,8 @@ public class DataEntryFragment extends Fragment {
 		if (topAddImageToAisleFlag) {
 			Utils.putDataentryTopAddImageAisleFlag(getActivity(), true);
 			Utils.putDataentryTopAddImageAisleLookingFor(getActivity(),
-					mLookingForBigText.getText().toString());
-			Utils.putDataentryTopAddImageAisleOccasion(getActivity(),
-					mOccassionBigText.getText().toString());
+					mLookingFor);
+			Utils.putDataentryTopAddImageAisleOccasion(getActivity(), mOccasion);
 			Utils.putDataentryTopAddImageAisleCategory(getActivity(),
 					mCategoryText.getText().toString());
 			Utils.putDataentryTopAddImageAisleDescription(getActivity(),
@@ -1280,8 +1900,9 @@ public class DataEntryFragment extends Fragment {
 		dialog.show();
 	}
 
-	private void lookingForTextClickFunctionality() {
-		mDontGoToNextLookingFor = true;
+	public void lookingForTextClickFunctionality() {
+		// mDontGoToNextLookingFor = true;
+		System.out.println("looking for text click functionality is called.");
 		mLookingForPopup.setVisibility(View.VISIBLE);
 		if (mLookingForAisleKeywordsList != null
 				&& mLookingForAisleKeywordsList.size() > 0) {
@@ -1289,16 +1910,38 @@ public class DataEntryFragment extends Fragment {
 			mLookingForListview.setAdapter(new LookingForAdapter(getActivity(),
 					mLookingForAisleKeywordsList));
 		}
-		mLookingForBigText.setBackgroundColor(getResources().getColor(
-				R.color.yellowbgcolor));
-		mLookingForText.requestFocus();
-		mLookingForText.setSelection(mLookingForText.getText().toString()
-				.length());
-		mInputMethodManager.showSoftInput(mLookingForText, 0);
+		/*
+		 * mLookingForBigText.setBackgroundColor(getResources().getColor(
+		 * R.color.yellowbgcolor));
+		 */
+		mLookingForText.post(new Runnable() {
+			public void run() {
+				System.out
+						.println("looking for text click functionality is called.11");
+				mLookingForText.setSelection(mLookingForText.getText()
+						.toString().length());
+				mLookingForText.setFocusable(true);
+				mLookingForText.requestFocus();
+				mInputMethodManager.showSoftInput(mLookingForText, 0);
+				if (mDataEntryActivity == null) {
+					mDataEntryActivity = (DataEntryActivity) getActivity();
+				}
+				mDataEntryActivity.mDataentryActionbarMainLayout
+						.setVisibility(View.GONE);
+				mDataEntryActivity.mVueDataentryKeyboardLayout
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardDone
+						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryKeyboardCancel
+						.setVisibility(View.GONE);
+			}
+
+		});
+
 	}
 
 	private void occassionTextClickFunctionality() {
-		mDontGoToNextForOccasion = true;
+		// mDontGoToNextForOccasion = true;
 		mOccasionPopup.setVisibility(View.VISIBLE);
 		if (mOccassionAisleKeywordsList != null
 				&& mOccassionAisleKeywordsList.size() > 0) {
@@ -1306,19 +1949,33 @@ public class DataEntryFragment extends Fragment {
 			mOccasionListview.setAdapter(new OccassionAdapter(getActivity(),
 					mOccassionAisleKeywordsList));
 		}
-		mOccassionBigText.setBackgroundColor(getResources().getColor(
-				R.color.yellowbgcolor));
+		/*
+		 * mOccassionBigText.setBackgroundColor(getResources().getColor(
+		 * R.color.yellowbgcolor));
+		 */
 		mOccasionText.requestFocus();
 		mOccasionText.setSelection(mOccasionText.getText().toString().length());
 		mInputMethodManager.showSoftInput(mOccasionText, 0);
+		if (mDataEntryActivity == null) {
+			mDataEntryActivity = (DataEntryActivity) getActivity();
+		}
+		mDataEntryActivity.mDataentryActionbarMainLayout
+				.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryKeyboardLayout
+				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryKeyboardDone
+				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.mVueDataentryKeyboardCancel
+				.setVisibility(View.VISIBLE);
 	}
 
 	private void categoryIconClickFunctionality() {
 		mCategoryListview.setVisibility(View.VISIBLE);
 		mCategoryListview.setAdapter(new CategoryAdapter(getActivity()));
 		mCategoryListviewLayout.setVisibility(View.VISIBLE);
+		mSelectCategoryLayout.setVisibility(View.VISIBLE);
 		if (mCategoryText.getText().toString().trim().length() > 0) {
-			mCategoryPopup.setVisibility(View.VISIBLE);
+			mCategoryPopup.setVisibility(View.GONE);
 		} else {
 			mCategoryPopup.setVisibility(View.GONE);
 		}
@@ -1370,8 +2027,19 @@ public class DataEntryFragment extends Fragment {
 				rowView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						mLookingForBigText.setText(lookingForKeywordsList
-								.get(position));
+						/*
+						 * mLookingForBigText.setText(lookingForKeywordsList
+						 * .get(position));
+						 */
+						mLookingFor = lookingForKeywordsList.get(position);
+						mMainHeadingRow.setVisibility(View.VISIBLE);
+						if (mOccasion != null) {
+							mLookingForOccasionTextview.setText(mLookingFor
+									+ " for " + mOccasion);
+						} else {
+							mLookingForOccasionTextview.setText("Looking for "
+									+ mLookingFor);
+						}
 						mLookingForText.setText(lookingForKeywordsList
 								.get(position));
 					}
@@ -1450,8 +2118,19 @@ public class DataEntryFragment extends Fragment {
 					public void onClick(View arg0) {
 						mOccasionText.setText(occassionKeywordsList
 								.get(position));
-						mOccassionBigText.setText(occassionKeywordsList
-								.get(position));
+						if (mOccasionText.getText().toString().trim().length() > 0) {
+							/*
+							 * mOccassionBigText.setText(mOccasionText.getText()
+							 * .toString());
+							 */
+							mOccasion = mOccasionText.getText().toString();
+							mLookingForOccasionTextview.setText(mLookingFor
+									+ " for " + mOccasion);
+						}
+						/*
+						 * mOccassionBigText.setText(occassionKeywordsList
+						 * .get(position));
+						 */
 					}
 				});
 			} catch (NotFoundException e) {
@@ -1532,15 +2211,113 @@ public class DataEntryFragment extends Fragment {
 				@Override
 				public void onClick(View arg0) {
 					mCategoryText.setText(mCategoryitemsArray[position]);
+					mCategoryheading.setText(mCategoryitemsArray[position]);
+					mCategoryheadingLayout.setVisibility(View.VISIBLE);
 					mCategoryListview.setVisibility(View.GONE);
-					mCategoryPopup.setVisibility(View.VISIBLE);
+					mCategoryPopup.setVisibility(View.GONE);
 					mCategoryListviewLayout.setVisibility(View.GONE);
+					mSelectCategoryLayout.setVisibility(View.GONE);
 					new Handler().postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							mCategoryPopup.setVisibility(View.GONE);
 						}
 					}, CATEGORY_POPUP_DELAY);
+					if (mFindAtText.getText().toString().trim().length() == 0) {
+						mFindatClose.setVisibility(View.VISIBLE);
+						// mFindAtIconLayout.setVisibility(View.VISIBLE);
+						mFindAtPopUp.setVisibility(View.VISIBLE);
+						// mFindAtLeftLine.setVisibility(View.VISIBLE);
+						// mFindAtRightLine.setVisibility(View.VISIBLE);
+						// mFindAtBottomLine.setVisibility(View.VISIBLE);
+						mLookingForPopup.setVisibility(View.GONE);
+						mLookingForListviewLayout.setVisibility(View.GONE);
+						mOccasionPopup.setVisibility(View.GONE);
+						mOccasionListviewLayout.setVisibility(View.GONE);
+						mCategoryPopup.setVisibility(View.GONE);
+						mCategoryListviewLayout.setVisibility(View.GONE);
+						mSelectCategoryLayout.setVisibility(View.GONE);
+						// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+						// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+						mInputMethodManager.hideSoftInputFromWindow(
+								mOccasionText.getWindowToken(), 0);
+						mInputMethodManager.hideSoftInputFromWindow(
+								mLookingForText.getWindowToken(), 0);
+						mInputMethodManager.hideSoftInputFromWindow(
+								mSaySomethingAboutAisle.getWindowToken(), 0);
+						mFindAtText.requestFocus();
+						mFindAtText.setSelection(mFindAtText.getText()
+								.toString().length());
+						mInputMethodManager.showSoftInput(mFindAtText, 0);
+						if (mDataEntryActivity == null) {
+							mDataEntryActivity = (DataEntryActivity) getActivity();
+						}
+						mDataEntryActivity.mDataentryActionbarMainLayout
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryKeyboardLayout
+								.setVisibility(View.VISIBLE);
+						mDataEntryActivity.mVueDataentryKeyboardDone
+								.setVisibility(View.VISIBLE);
+						mDataEntryActivity.mVueDataentryKeyboardCancel
+								.setVisibility(View.VISIBLE);
+					} else {
+						// mSaySomeThingEditParent.setVisibility(View.GONE);
+						mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+						mSaysomethingClose.setVisibility(View.VISIBLE);
+						/*
+						 * mSaySomeThingEditParent.post(new Runnable() {
+						 * 
+						 * @Override public void run() {
+						 * mSaySomethingAboutAisle.requestFocus();
+						 * mSaySomethingAboutAisle.setFocusable(true);
+						 * mSaySomethingAboutAisle.setCursorVisible(true);
+						 * mSaySomethingAboutAisle
+						 * .setSelection(mSaySomethingAboutAisle
+						 * .getText().toString().length()); } });
+						 */
+						mSaySomethingAboutAisleClicked = true;
+						mInputMethodManager.hideSoftInputFromWindow(
+								mOccasionText.getWindowToken(), 0);
+						mInputMethodManager.hideSoftInputFromWindow(
+								mLookingForText.getWindowToken(), 0);
+						mInputMethodManager.hideSoftInputFromWindow(
+								mFindAtText.getWindowToken(), 0);
+						mLookingForPopup.setVisibility(View.GONE);
+						mLookingForListviewLayout.setVisibility(View.GONE);
+						mOccasionPopup.setVisibility(View.GONE);
+						mOccasionListviewLayout.setVisibility(View.GONE);
+						mCategoryPopup.setVisibility(View.GONE);
+						mFindatClose.setVisibility(View.GONE);
+						// mFindAtIconLayout.setVisibility(View.GONE);
+						mFindAtPopUp.setVisibility(View.GONE);
+						// mFindAtLeftLine.setVisibility(View.GONE);
+						// mFindAtRightLine.setVisibility(View.GONE);
+						// mFindAtBottomLine.setVisibility(View.GONE);
+						mCategoryListviewLayout.setVisibility(View.GONE);
+						mSelectCategoryLayout.setVisibility(View.GONE);
+						// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+						// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+						final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
+								.getSystemService(Context.INPUT_METHOD_SERVICE);
+						inputMethodManager.toggleSoftInputFromWindow(
+								mSaySomethingAboutAisle
+										.getApplicationWindowToken(),
+								InputMethodManager.SHOW_FORCED, 0);
+						mSaySomethingAboutAisle.requestFocus();
+						mInputMethodManager.showSoftInput(
+								mSaySomethingAboutAisle, 0);
+						if (mDataEntryActivity == null) {
+							mDataEntryActivity = (DataEntryActivity) getActivity();
+						}
+						mDataEntryActivity.mDataentryActionbarMainLayout
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryKeyboardLayout
+								.setVisibility(View.VISIBLE);
+						mDataEntryActivity.mVueDataentryKeyboardDone
+								.setVisibility(View.VISIBLE);
+						mDataEntryActivity.mVueDataentryKeyboardCancel
+								.setVisibility(View.VISIBLE);
+					}
 				}
 			});
 			return rowView;
@@ -1596,11 +2373,14 @@ public class DataEntryFragment extends Fragment {
 						.setVisibility(View.GONE);
 				mDataEntryActivity.mVueDataentryActionbarTopLayout
 						.setVisibility(View.VISIBLE);
-				mDataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
+				mDataEntryActivity.mVueDataentryActionbarSaveLayout
+						.setVisibility(View.VISIBLE);
+				// mDataEntryBottomBottomLayout.setVisibility(View.VISIBLE);
 				mDataEntryBottomTopLayout.setVisibility(View.GONE);
 				mMainHeadingRow.setVisibility(View.VISIBLE);
-				mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
-				mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
+				mCategoryheadingLayout.setVisibility(View.VISIBLE);
+				// mOccassionBigText.setBackgroundColor(Color.TRANSPARENT);
+				// mLookingForBigText.setBackgroundColor(Color.TRANSPARENT);
 			}
 			if (Utils.getDataentryEditAisleFlag(getActivity())) {
 				if (mDataEntryActivity == null) {
@@ -1613,6 +2393,8 @@ public class DataEntryFragment extends Fragment {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		// lookingForTextClickFunctionality();
+
 	}
 
 	private void addImageToAisle() {
@@ -1641,14 +2423,18 @@ public class DataEntryFragment extends Fragment {
 						storeMetaAisleDataIntoLocalStorage();
 						String categoery = mCategoryText.getText().toString()
 								.trim();
-						String lookingFor = mLookingForBigText.getText()
-								.toString().trim();
-						String occassion = null;
-						if (!(mOccassionBigText.getText().toString().trim()
-								.equals(OCCASION.trim()))) {
-							occassion = mOccassionBigText.getText().toString()
-									.trim();
-						}
+						String lookingFor = mLookingFor;/*
+														 * mLookingForBigText.
+														 * getText()
+														 * .toString().trim()
+														 */
+						;
+						String occassion = mOccasion;
+						/*
+						 * if (!(mOccassionBigText.getText().toString().trim()
+						 * .equals(OCCASION.trim()))) { occassion =
+						 * mOccassionBigText.getText().toString() .trim(); }
+						 */
 						String description = mSaySomethingAboutAisle.getText()
 								.toString().trim();
 						checkForAisleUpdate(storedVueUser, null, categoery,
@@ -1744,14 +2530,16 @@ public class DataEntryFragment extends Fragment {
 					storeMetaAisleDataIntoLocalStorage();
 					String categoery = mCategoryText.getText().toString()
 							.trim();
-					String lookingFor = mLookingForBigText.getText().toString()
-							.trim();
-					String occassion = null;
-					if (!(mOccassionBigText.getText().toString().trim()
-							.equals(OCCASION.trim()))) {
-						occassion = mOccassionBigText.getText().toString()
-								.trim();
-					}
+					String lookingFor = /*
+										 * mLookingForBigText.getText().toString(
+										 * ) .trim()
+										 */mLookingFor;
+					String occassion = mOccasion;
+					/*
+					 * if (!(mOccassionBigText.getText().toString().trim()
+					 * .equals(OCCASION.trim()))) { occassion =
+					 * mOccassionBigText.getText().toString() .trim(); }
+					 */
 					String description = mSaySomethingAboutAisle.getText()
 							.toString().trim();
 					upDateAisleToServer(storedVueUser, null, categoery,
@@ -1782,6 +2570,8 @@ public class DataEntryFragment extends Fragment {
 				.setVisibility(View.VISIBLE);
 		mDataEntryActivity.mVueDataentryActionbarTopLayout
 				.setVisibility(View.GONE);
+		mDataEntryActivity.mVueDataentryActionbarSaveLayout
+				.setVisibility(View.GONE);
 		try {
 			mDataEntryAislesViewpager
 					.setAdapter(new DataEntryAilsePagerAdapter(getActivity(),
@@ -1791,7 +2581,8 @@ public class DataEntryFragment extends Fragment {
 		}
 		Utils.putDataentryEditAisleFlag(getActivity(), false);
 		mMainHeadingRow.setVisibility(View.GONE);
-		mDataEntryBottomBottomLayout.setVisibility(View.GONE);
+		mCategoryheadingLayout.setVisibility(View.GONE);
+		// mDataEntryBottomBottomLayout.setVisibility(View.GONE);
 		mDataEntryBottomTopLayout.setVisibility(View.VISIBLE);
 	}
 
@@ -1893,16 +2684,14 @@ public class DataEntryFragment extends Fragment {
 			public void run() {
 
 				AisleData lookingForAisleDataObj = mDbManager
-						.getAisleMetaDataForKeyword(mLookingForBigText
-								.getText().toString().trim(),
+						.getAisleMetaDataForKeyword(mLookingFor.trim(),
 								VueConstants.LOOKING_FOR_TABLE);
 				if (lookingForAisleDataObj != null) {
 					lookingForAisleDataObj.count += 1;
 					lookingForAisleDataObj.isNew = false;
 				} else {
 					lookingForAisleDataObj = new AisleData();
-					lookingForAisleDataObj.keyword = mLookingForBigText
-							.getText().toString().trim();
+					lookingForAisleDataObj.keyword = mLookingFor.trim();
 					lookingForAisleDataObj.count = 1;
 					lookingForAisleDataObj.isNew = true;
 				}
@@ -1910,19 +2699,16 @@ public class DataEntryFragment extends Fragment {
 				lookingForAisleDataObj.time = currentTime;
 				mDbManager.addAisleMetaDataToDB(VueConstants.LOOKING_FOR_TABLE,
 						lookingForAisleDataObj);
-				if (!(mOccassionBigText.getText().toString().trim()
-						.equals(OCCASION.trim()))) {
+				if (mOccasion != null) {
 					AisleData occassionAisleDataObj = mDbManager
-							.getAisleMetaDataForKeyword(mOccassionBigText
-									.getText().toString().trim(),
+							.getAisleMetaDataForKeyword(mOccasion.trim(),
 									VueConstants.OCCASION_TABLE);
 					if (occassionAisleDataObj != null) {
 						occassionAisleDataObj.count += 1;
 						occassionAisleDataObj.isNew = false;
 					} else {
 						occassionAisleDataObj = new AisleData();
-						occassionAisleDataObj.keyword = mOccassionBigText
-								.getText().toString().trim();
+						occassionAisleDataObj.keyword = mOccasion.trim();
 						occassionAisleDataObj.count = 1;
 						occassionAisleDataObj.isNew = true;
 					}
@@ -1994,12 +2780,14 @@ public class DataEntryFragment extends Fragment {
 	public void addAisleToServer(VueUser vueUser) {
 		if (mAisleImagePathList != null && mAisleImagePathList.size() > 0) {
 			String categoery = mCategoryText.getText().toString().trim();
-			String lookingFor = mLookingForBigText.getText().toString().trim();
-			String occassion = null;
-			if (!(mOccassionBigText.getText().toString().trim().equals(OCCASION
-					.trim()))) {
-				occassion = mOccassionBigText.getText().toString().trim();
-			}
+			String lookingFor = mLookingFor.trim();
+			String occassion = mOccasion;
+			/*
+			 * if
+			 * (!(mOccassionBigText.getText().toString().trim().equals(OCCASION
+			 * .trim()))) { occassion =
+			 * mOccassionBigText.getText().toString().trim(); }
+			 */
 			String description = mSaySomethingAboutAisle.getText().toString()
 					.trim();
 			final Aisle aisle = new Aisle();
@@ -2347,10 +3135,10 @@ public class DataEntryFragment extends Fragment {
 					Bundle b = new Bundle();
 					b.putString(
 							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
-							mLookingForBigText.getText().toString());
+							mLookingFor);
 					b.putString(
 							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
-							mOccassionBigText.getText().toString());
+							mOccasion);
 					b.putString(
 							VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
 							mCategoryText.getText().toString());
@@ -2389,14 +3177,13 @@ public class DataEntryFragment extends Fragment {
 									intent);
 					String categoery = mCategoryText.getText().toString()
 							.trim();
-					String lookingFor = mLookingForBigText.getText().toString()
-							.trim();
-					String occassion = "";
-					if (!(mOccassionBigText.getText().toString().trim()
-							.equals(OCCASION.trim()))) {
-						occassion = mOccassionBigText.getText().toString()
-								.trim();
-					}
+					String lookingFor = mLookingFor.trim();
+					String occassion = mOccasion;
+					/*
+					 * if (!(mOccassionBigText.getText().toString().trim()
+					 * .equals(OCCASION.trim()))) { occassion = mOccasion
+					 * .trim(); }
+					 */
 					String description = mSaySomethingAboutAisle.getText()
 							.toString().trim();
 
@@ -2772,7 +3559,8 @@ public class DataEntryFragment extends Fragment {
 							.getImageId()));
 					VueTrendingAislesDataModel
 							.getInstance(VueApplication.getInstance())
-							.getNetworkHandler().requestForDeleteImage(image,aisleId);
+							.getNetworkHandler()
+							.requestForDeleteImage(image, aisleId);
 					mAisleImagePathList.remove(position);
 					try {
 						Utils.writeAisleImagePathListToFile(getActivity(),

@@ -47,6 +47,10 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">60dp</item>
     </style>
+     <style name="popupbottom_proceed">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">60dp</item>
+    </style>
    <style name="dotimg" >
         <item name="android:layout_width">8dp</item>
         <item name="android:layout_height">8dp</item>

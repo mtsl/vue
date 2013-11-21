@@ -193,7 +193,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
             VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;
             VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
-            vueLandingPageActivity1.showCategory(s);
+            vueLandingPageActivity1.showCategory(s,false);
             if (getActivity() instanceof SlidingFragmentActivity) {
               SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
               activity.getSlidingMenu().toggle();
@@ -301,7 +301,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
             SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
             activity.getSlidingMenu().toggle();
             activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
-            VueApplication.getInstance().landingPage.showCategory(s);
+            VueApplication.getInstance().landingPage.showCategory(s,false);
             if (getActivity() instanceof AisleDetailsViewActivity) {
               startActivity(new Intent(
                   (AisleDetailsViewActivity) getActivity(),
@@ -317,7 +317,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
         	   // if (getActivity() instanceof VueLandingPageActivity) {
         	    SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
         	    activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
-        	    /*((VueLandingPageActivity) getActivity())*/VueApplication.getInstance().landingPage.showCategory(s);
+        	    /*((VueLandingPageActivity) getActivity())*/VueApplication.getInstance().landingPage.showCategory(s,false);
         	   // } else {
         	      //TODO: Need to implement in all the screens.
         	   // }
@@ -330,7 +330,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           //  if (getActivity() instanceof VueLandingPageActivity) {
             SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
             activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
-              /*((VueLandingPageActivity) getActivity())*/VueApplication.getInstance().landingPage.showCategory(s);              
+              /*((VueLandingPageActivity) getActivity())*/VueApplication.getInstance().landingPage.showCategory(s,false);              
             //} else {
               //TODO: Need to implement in all the screens.
            // }
@@ -368,7 +368,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
                 AisleWindowContentFactory.getInstance(getActivity())
                     .clearObjectsInUse();
                 VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-                vueLandingPageActivity.showCategory(cat);
+                vueLandingPageActivity.showCategory(cat,false);
               }
 
               /*

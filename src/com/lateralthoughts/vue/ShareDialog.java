@@ -162,7 +162,8 @@ public class ShareDialog {
 							createAisleSelectionActivity
 									.loadShoppingApplication(
 											mActivityNames.get(position),
-											mPackageNames.get(position));
+											mPackageNames.get(position),
+											mAppNames.get(position));
 						}
 					}
 				} else if (mLoadAllApplications) {
@@ -170,7 +171,8 @@ public class ShareDialog {
 					CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
 					createAisleSelectionActivity.loadShoppingApplication(
 							mActivityNames.get(position),
-							mPackageNames.get(position));
+							mPackageNames.get(position),
+							mAppNames.get(position));
 				} else {
 					shareIntent(position);
 				}
