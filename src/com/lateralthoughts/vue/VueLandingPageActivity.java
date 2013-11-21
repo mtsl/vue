@@ -90,7 +90,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	public static String mOtherSourceAddImageAisleId = null;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
-    private 	 Dialog dialog;
+     
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -866,9 +866,6 @@ public class VueLandingPageActivity extends BaseActivity {
 		@Override
 		public void dismissProgress(boolean fromWhere) {
 			mLoadProgress.setVisibility(View.INVISIBLE);
-			if(dialog != null)
-			dialog.dismiss();
-	 
 			if (mFragment == null) {
 				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.aisles_view_fragment);
