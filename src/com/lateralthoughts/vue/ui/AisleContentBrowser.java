@@ -482,6 +482,7 @@ public class AisleContentBrowser extends ViewFlipper {
 
 		public void setOccasion(String occasion);
 		public void hasToShowEditIcon(boolean hasToShow);
+		public void onEditAisle();
 	}
 	private AilseLeftListLisner mLeftListListener;
 	private AilseRighttRightLisner mRightListListener;

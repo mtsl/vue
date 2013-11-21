@@ -50,7 +50,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/share" />
+            android:src="@drawable/edit" />
     </LinearLayout>
 
     <TextView

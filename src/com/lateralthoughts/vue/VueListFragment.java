@@ -451,13 +451,13 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				R.drawable.help, null);
 		groups.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_option_About),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.about, null);
 		groups.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_option_FeedBack),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.feedback, null);
 		groups.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_option_Login),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.login, null);
 		groups.add(item);
 		return groups;
 	}
@@ -541,7 +541,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		meChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Bookmarks),
-				R.drawable.profile, null);
+				R.drawable.bookmark, null);
 		meChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles),
