@@ -231,6 +231,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			if (firstVisibleItem > 5) {
 				mIsListRefreshRecently = false;
 			}
+			int localTop = 0;
 			if (view.getChildAt(0) != null) {
 				if (view.equals(mLeftColumnView)) {
 					mLeftViewsHeights[view.getFirstVisiblePosition()] = view
@@ -251,6 +252,17 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					int top = h - hi + view.getChildAt(0).getTop();
 					mRightColumnView.setSelectionFromTop(
 							mRightColumnView.getFirstVisiblePosition(), top);
+				/*	localTop = top;
+					
+					if(mLeftColumnView.getLastVisiblePosition() == totalItemCount) {
+						if(mRightColumnView.getLastVisiblePosition() < totalItemCount) {
+							AisleWindowContent content = (AisleWindowContent) mRightColumnView
+									.getAdapter().getItem(mRightColumnView.getLastVisiblePosition() + 1);
+							mRightColumnView.setSelectionFromTop(
+									mRightColumnView.getFirstVisiblePosition(), localTop + content.mWindowSmallestHeight+VueApplication.getInstance().getPixel(100));
+							
+						}
+					}*/
 				} else if (view.equals(mRightColumnView)) {
 					mRightViewsHeights[view.getFirstVisiblePosition()] = view
 							.getChildAt(0).getHeight();
@@ -271,7 +283,22 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 					mLeftColumnView.setSelectionFromTop(
 							mLeftColumnView.getFirstVisiblePosition(), top);
+				/*	localTop = top;
+					if(mRightColumnView.getLastVisiblePosition() == totalItemCount) {
+						if(mLeftColumnView.getLastVisiblePosition() < totalItemCount) {
+							AisleWindowContent content = (AisleWindowContent) mLeftColumnView
+									.getAdapter().getItem(mLeftColumnView.getLastVisiblePosition() + 1);
+							if(mLeftColumnView.canScrollVertically(-1)){
+								mLeftColumnView.setScrollY(mLeftColumnView.getBottom());
+							}
+							mLeftColumnView.setSelectionFromTop(
+									mLeftColumnView.getFirstVisiblePosition(), localTop + content.mWindowSmallestHeight+VueApplication.getInstance().getPixel(100));
+							
+						}
+					}*/
 				}
+				
+				 
 			}
 
 			VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();

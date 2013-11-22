@@ -46,9 +46,6 @@ public class TrendingAislesLeftColumnAdapter extends
 
 	private final String TAG = "TrendingAislesLeftColumnAdapter";
 	private static final boolean DEBUG = true;
-
-	public int firstX;
-	public int lastX;
 	private boolean mHasToShow = true;
 	private boolean mHasSameLikes = false;
 	private String mShowStarAisle = " ";
