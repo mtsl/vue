@@ -104,6 +104,7 @@ public class FileCache {
 		return f;
 	}
 
+	@Deprecated
 	public void clear() {
 		File[] files = cacheDir.listFiles();
 		if (files == null)

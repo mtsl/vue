@@ -38,7 +38,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Session;
@@ -95,6 +94,9 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+		//CreateAlbum.createUserAlbum();
+		landingPageActivity = this;
+
 
 		/*
 		 * new Thread(new Runnable() {

@@ -32,6 +32,7 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flurry.android.monolithic.sdk.impl.mc;
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -48,7 +49,6 @@ import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class DataBaseManager {
-
 	public static final int TRENDING = 1;
 	public static final int MY_AISLES = 2;
 	public static final int AISLE_CREATED = 3;
