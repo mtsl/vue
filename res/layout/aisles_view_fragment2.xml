@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:orientation="vertical"
     android:layout_height="fill_parent" >
@@ -7,6 +7,7 @@
               android:layout_height="48dp"
               android:visibility="gone"
               android:id="@+id/pulltorefresh"
+              android:layout_alignParentTop="true"
               android:background="#ffffff">
 
     <ProgressBar
@@ -17,6 +18,12 @@
         android:layout_height="wrap_content" />
     
 </LinearLayout>
+    <ProgressBar 
+        android:id="@+id/progressbar"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        />
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -24,7 +31,9 @@
         android:background="#CCCCCC"
         android:orientation="horizontal"
         android:paddingLeft="5dp"
-        android:paddingRight="5dp" >
+        android:paddingRight="5dp"
+        android:layout_above="@id/progressbar"
+         >
 
         <ListView
             android:id="@+id/list_view_left"
@@ -48,5 +57,4 @@
             android:scrollbars="none" >
         </ListView>
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
