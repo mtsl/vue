@@ -414,7 +414,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		List<ListOptionItem> groups = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Trending_Aisles),
-				R.drawable.profile, null);
+				R.drawable.trending, null);
 		groups.add(item);
 		
 		String userName = getUserId();
@@ -451,13 +451,13 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 				R.drawable.help, null);
 		groups.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_option_About),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.about, null);
 		groups.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_option_FeedBack),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.feedback, null);
 		groups.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_option_Login),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.login, null);
 		groups.add(item);
 		return groups;
 	}

@@ -115,7 +115,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	private static final String TAG = "VueLoginActivity";
 	private final List<String> PUBLISH_PERMISSIONS = Arrays
 			.asList("publish_actions");
-	private final List<String> READ_PERMISSIONS = Arrays.asList("email",
+	private final List<String> READ_PERMISSIONS = Arrays.asList("manage_pages", "email",
 			"user_birthday");
 	private ProgressDialog mFacebookProgressDialog, mGooglePlusProgressDialog;
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
