@@ -38,8 +38,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.facebook.CreateAlbum;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Session;
