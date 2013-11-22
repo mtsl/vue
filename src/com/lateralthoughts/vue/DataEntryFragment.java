@@ -66,7 +66,7 @@ public class DataEntryFragment extends Fragment {
 	LinearLayout mMainHeadingRow = null;
 	public ShareDialog mShare = null;
 	private float mScreenHeight = 0, mScreenWidth = 0;
-	private ViewPager mDataEntryAislesViewpager = null;
+	ViewPager mDataEntryAislesViewpager = null;
 	public static final int AISLE_IMAGE_MARGIN = 96;
 	public static final String LOOKING_FOR = "Looking";
 	public static final String OCCASION = "Occasion";
@@ -470,6 +470,10 @@ public class DataEntryFragment extends Fragment {
 					mOccasion = mOccasionText.getText().toString();
 					mLookingForOccasionTextview.setText(mLookingFor + " for "
 							+ mOccasion);
+				} else {
+					mOccasion = null;
+					mLookingForOccasionTextview.setText("Looking for "
+							+ mLookingFor);
 				}
 				mOccasionPopup.setVisibility(View.GONE);
 				mOccasionListviewLayout.setVisibility(View.GONE);
@@ -778,75 +782,17 @@ public class DataEntryFragment extends Fragment {
 				mOccasion = mOccasionText.getText().toString();
 				mLookingForOccasionTextview.setText(mLookingFor + " for "
 						+ mOccasion);
+			} else {
+				mOccasion = null;
+				mLookingForOccasionTextview.setText("Looking for "
+						+ mLookingFor);
 			}
 			mOccasionPopup.setVisibility(View.GONE);
 			mOccasionListviewLayout.setVisibility(View.GONE);
 			categoryIconClickFunctionality();
 		} else if (mCategoryListviewLayout.getVisibility() == View.VISIBLE) {
-			if (mFindAtText.getText().toString().trim().length() == 0) {
-				mFindatClose.setVisibility(View.VISIBLE);
-				mFindAtPopUp.setVisibility(View.VISIBLE);
-				mLookingForPopup.setVisibility(View.GONE);
-				mLookingForListviewLayout.setVisibility(View.GONE);
-				mOccasionPopup.setVisibility(View.GONE);
-				mOccasionListviewLayout.setVisibility(View.GONE);
-				mCategoryListviewLayout.setVisibility(View.GONE);
-				mSelectCategoryLayout.setVisibility(View.GONE);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mOccasionText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mLookingForText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mSaySomethingAboutAisle.getWindowToken(), 0);
-				mFindAtText.requestFocus();
-				mFindAtText.setSelection(mFindAtText.getText().toString()
-						.length());
-				mInputMethodManager.showSoftInput(mFindAtText, 0);
-				if (mDataEntryActivity == null) {
-					mDataEntryActivity = (DataEntryActivity) getActivity();
-				}
-				mDataEntryActivity.mDataentryActionbarMainLayout
-						.setVisibility(View.GONE);
-				mDataEntryActivity.mVueDataentryKeyboardLayout
-						.setVisibility(View.VISIBLE);
-				mDataEntryActivity.mVueDataentryKeyboardDone
-						.setVisibility(View.VISIBLE);
-				mDataEntryActivity.mVueDataentryKeyboardCancel
-						.setVisibility(View.VISIBLE);
-			} else {
-				mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
-				mSaysomethingClose.setVisibility(View.VISIBLE);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mOccasionText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mLookingForText.getWindowToken(), 0);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mFindAtText.getWindowToken(), 0);
-				mLookingForPopup.setVisibility(View.GONE);
-				mLookingForListviewLayout.setVisibility(View.GONE);
-				mOccasionPopup.setVisibility(View.GONE);
-				mOccasionListviewLayout.setVisibility(View.GONE);
-				mFindatClose.setVisibility(View.GONE);
-				mFindAtPopUp.setVisibility(View.GONE);
-				mCategoryListviewLayout.setVisibility(View.GONE);
-				mSelectCategoryLayout.setVisibility(View.GONE);
-				final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
-						.getSystemService(Context.INPUT_METHOD_SERVICE);
-				inputMethodManager.toggleSoftInputFromWindow(
-						mSaySomethingAboutAisle.getApplicationWindowToken(),
-						InputMethodManager.SHOW_FORCED, 0);
-				if (mDataEntryActivity == null) {
-					mDataEntryActivity = (DataEntryActivity) getActivity();
-				}
-				mDataEntryActivity.mDataentryActionbarMainLayout
-						.setVisibility(View.GONE);
-				mDataEntryActivity.mVueDataentryKeyboardLayout
-						.setVisibility(View.VISIBLE);
-				mDataEntryActivity.mVueDataentryKeyboardDone
-						.setVisibility(View.VISIBLE);
-				mDataEntryActivity.mVueDataentryKeyboardCancel
-						.setVisibility(View.VISIBLE);
-			}
+			Toast.makeText(getActivity(), "Category is mandotory.",
+					Toast.LENGTH_LONG).show();
 		} else if (mFindAtPopUp.getVisibility() == View.VISIBLE) {
 			mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
 			mSaysomethingClose.setVisibility(View.VISIBLE);
@@ -1640,7 +1586,7 @@ public class DataEntryFragment extends Fragment {
 				try {
 					mDataEntryAislesViewpager
 							.setAdapter(new DataEntryAilsePagerAdapter(
-									getActivity(), mAisleImagePathList));
+									getActivity(), mAisleImagePathList, true));
 				} catch (Throwable e) {
 					e.printStackTrace();
 				}
@@ -1677,7 +1623,8 @@ public class DataEntryFragment extends Fragment {
 						try {
 							mDataEntryAislesViewpager
 									.setAdapter(new DataEntryAilsePagerAdapter(
-											getActivity(), mAisleImagePathList));
+											getActivity(), mAisleImagePathList,
+											true));
 							mDataEntryAislesViewpager
 									.setCurrentItem(modifiedPosition);
 						} catch (Throwable e) {
@@ -1698,7 +1645,7 @@ public class DataEntryFragment extends Fragment {
 				try {
 					mDataEntryAislesViewpager
 							.setAdapter(new DataEntryAilsePagerAdapter(
-									getActivity(), mAisleImagePathList));
+									getActivity(), mAisleImagePathList, true));
 				} catch (Throwable e) {
 					e.printStackTrace();
 				}
@@ -2144,7 +2091,8 @@ public class DataEntryFragment extends Fragment {
 					try {
 						mDataEntryAislesViewpager
 								.setAdapter(new DataEntryAilsePagerAdapter(
-										getActivity(), mAisleImagePathList));
+										getActivity(), mAisleImagePathList,
+										true));
 					} catch (Throwable e) {
 						e.printStackTrace();
 					}
@@ -2413,16 +2361,15 @@ public class DataEntryFragment extends Fragment {
 			try {
 				mDataEntryAislesViewpager
 						.setAdapter(new DataEntryAilsePagerAdapter(
-								getActivity(), mAisleImagePathList));
+								getActivity(), mAisleImagePathList, true));
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public void deleteImage(int position) {
+	public void deleteImage(ArrayList<Integer> deletedImagesPositions) {
 		try {
-			Log.e("deleteimage", "deleteimage : " + position);
 			VueUser storedVueUser = null;
 			try {
 				storedVueUser = Utils.readUserObjectFromFile(getActivity(),
@@ -2431,76 +2378,54 @@ public class DataEntryFragment extends Fragment {
 				e2.printStackTrace();
 			}
 			if (storedVueUser != null && storedVueUser.getId() != null) {
-				Log.e("deleteimage", "deleteimage 1 : " + position);
 				if (VueConnectivityManager.isNetworkConnected(getActivity())) {
-					Log.e("deleteimage", "deleteimage 2 : " + position);
-					Image image = new Image();
-					image.setDetailsUrl(mAisleImagePathList.get(position)
-							.getDetailsUrl());
-					image.setHeight(mAisleImagePathList.get(position)
-							.getImageHeight());
-					image.setWidth(mAisleImagePathList.get(position)
-							.getImageWidth());
-					image.setStore(mAisleImagePathList.get(position)
-							.getImageStore());
-					image.setImageUrl(mAisleImagePathList.get(position)
-							.getImageUrl());
-					image.setTitle("Android Test"); // TODO By Krishna
-					image.setOwnerUserId(Long.valueOf(Long.valueOf(
-							storedVueUser.getId()).toString()));
-					Log.e("deleteimage", "deleteimage 2 : "
-							+ mAisleImagePathList.get(position).getAisleId());
-					String aisleId = mAisleImagePathList.get(position)
-							.getAisleId();
-					if (aisleId == null || aisleId.equals("null")) {
-						Log.e("deleteimage", "deleteimage 3 : ");
-						if (mFromDetailsScreenFlag) {
-							Log.e("deleteimage", "deleteimage 4 : ");
-							aisleId = VueApplication.getInstance()
-									.getClickedWindowID();
-						} else {
-							Log.e("deleteimage", "deleteimage 5 : ");
-							Utils.getDataentryScreenAisleId(getActivity());
+					int imagesCountBeforeDeletions = mAisleImagePathList.size();
+					for (int position = 0; position < mAisleImagePathList
+							.size(); position++) {
+						if (deletedImagesPositions.contains(position)) {
+							Log.e("deleteimage", "deleteimage 2 : " + position);
+							Image image = new Image();
+							image.setDetailsUrl(mAisleImagePathList.get(
+									position).getDetailsUrl());
+							image.setHeight(mAisleImagePathList.get(position)
+									.getImageHeight());
+							image.setWidth(mAisleImagePathList.get(position)
+									.getImageWidth());
+							image.setStore(mAisleImagePathList.get(position)
+									.getImageStore());
+							image.setImageUrl(mAisleImagePathList.get(position)
+									.getImageUrl());
+							image.setTitle("Android Test"); // TODO By Krishna
+							image.setOwnerUserId(Long.valueOf(Long.valueOf(
+									storedVueUser.getId()).toString()));
+							Log.e("deleteimage", "deleteimage 2 : "
+									+ mAisleImagePathList.get(position)
+											.getAisleId());
+							String aisleId = mAisleImagePathList.get(position)
+									.getAisleId();
+							if (aisleId == null || aisleId.equals("null")) {
+								Log.e("deleteimage", "deleteimage 3 : ");
+								aisleId = VueApplication.getInstance()
+										.getClickedWindowID();
+							}
+							image.setOwnerAisleId(Long.valueOf(aisleId));
+							image.setId(Long.valueOf(mAisleImagePathList.get(
+									position).getImageId()));
+							VueTrendingAislesDataModel
+									.getInstance(VueApplication.getInstance())
+									.getNetworkHandler()
+									.requestForDeleteImage(image, aisleId);
+							imagesCountBeforeDeletions--;
 						}
 					}
-					image.setOwnerAisleId(Long.valueOf(aisleId));
-					image.setId(Long.valueOf(mAisleImagePathList.get(position)
-							.getImageId()));
-					VueTrendingAislesDataModel
-							.getInstance(VueApplication.getInstance())
-							.getNetworkHandler()
-							.requestForDeleteImage(image, aisleId);
-					mAisleImagePathList.remove(position);
-					try {
-						Utils.writeAisleImagePathListToFile(getActivity(),
-								VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
-								mAisleImagePathList);
-					} catch (Exception e) {
-						e.printStackTrace();
+					if (imagesCountBeforeDeletions <= 0 && mIsUserAisleFlag) {
+						VueApplication.getInstance()
+								.setmFinishDetailsScreenFlag(true);
 					}
-					if (mAisleImagePathList != null
-							&& mAisleImagePathList.size() > 0) {
-						Log.e("deleteimage", "deleteimage 3 : "
-								+ mAisleImagePathList.size());
-						mDataEntryAislesViewpager.setVisibility(View.VISIBLE);
-						try {
-							mDataEntryAislesViewpager
-									.setAdapter(new DataEntryAilsePagerAdapter(
-											getActivity(), mAisleImagePathList));
-							mDataEntryAislesViewpager.setCurrentItem(position);
-						} catch (Throwable e) {
-							e.printStackTrace();
-						}
-					} else {
-						if (mIsUserAisleFlag) {
-							VueApplication.getInstance()
-									.setmFinishDetailsScreenFlag(true);
-						}
-						if (mDataEntryActivity == null) {
-							mDataEntryActivity = (DataEntryActivity) getActivity();
-						}
-						mDataEntryActivity.shareViaVueClicked();
+					if (mDataEntryActivity == null) {
+						mDataEntryActivity = (DataEntryActivity) getActivity();
 					}
+					mDataEntryActivity.shareViaVueClicked();
 				}
 			}
 		} catch (Exception e) {

@@ -75,6 +75,26 @@
             layout="@layout/include_post_layout" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/vue_dataentry_delete_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dip"
+        android:background="@drawable/dataentry_bg"
+        android:divider="?android:attr/dividerVertical"
+        android:dividerPadding="12dp"
+        android:orientation="horizontal"
+        android:showDividers="middle"
+        android:visibility="gone" >
+
+        <include
+            android:id="@+id/vue_dataentry_delete_cancel"
+            layout="@layout/include_delete_cancle_btn" />
+
+        <include
+            android:id="@+id/vue_dataentry_delete_done"
+            layout="@layout/include_delete_btn" />
+    </LinearLayout>
+
     <View
         android:id="@+id/data_entry_third_line_divider"
         android:layout_width="match_parent"
