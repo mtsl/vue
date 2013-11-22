@@ -147,7 +147,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		// mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
 		mRightColumnView.setAdapter(mRightColumnAdapter);
- 
 		mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		mRightColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		mLeftColumnView.setOnTouchListener(touchListener);
