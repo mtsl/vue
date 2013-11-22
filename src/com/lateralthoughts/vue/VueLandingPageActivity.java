@@ -1129,7 +1129,6 @@ public class VueLandingPageActivity extends BaseActivity {
 		Utils.putTouchToChnageImagePosition(VueLandingPageActivity.this, -1);
 		Utils.putTouchToChnageImageTempPosition(VueLandingPageActivity.this, -1);
 		Utils.putTouchToChnageImageFlag(VueLandingPageActivity.this, false);
-		Utils.putDataentryEditAisleFlag(VueLandingPageActivity.this, false);
 		Utils.putDataentryScreenAisleId(VueLandingPageActivity.this, null);
 		ArrayList<DataentryImage> mAisleImagePathList = null;
 		try {
@@ -1325,6 +1324,6 @@ public class VueLandingPageActivity extends BaseActivity {
 
 	}
 	
- 
+
 
 }

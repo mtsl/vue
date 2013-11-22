@@ -68,14 +68,6 @@ public class OtherSourcesDialog {
 						OtherSourcesDialog.this.imagesList.clear();
 						mOtherSourcesImageAdapter.notifyDataSetChanged();
 						dialog.cancel();
-						new Handler().postDelayed(new Runnable() {
-							
-							@Override
-							public void run() {
-								fragment.lookingForTextClickFunctionality();
-								
-							}
-						}, 200);
 						fragment.setGalleryORCameraImage(picturePath, false);
 					} else {
 						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
@@ -125,14 +117,6 @@ public class OtherSourcesDialog {
 							OtherSourcesDialog.this.imagesList.clear();
 							mOtherSourcesImageAdapter.notifyDataSetChanged();
 							dialog.cancel();
-							new Handler().postDelayed(new Runnable() {
-								
-								@Override
-								public void run() {
-									fragment.lookingForTextClickFunctionality();
-									
-								}
-							}, 200);
 							fragment.setGalleryORCameraImage(f.getPath(), true);
 						} else {
 							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;

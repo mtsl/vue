@@ -53,20 +53,6 @@
             android:src="@drawable/edit" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/touchtochangeimage"
-        android:layout_width="match_parent"
-        android:layout_height="48dip"
-        android:layout_centerInParent="true"
-        android:clickable="true"
-        android:gravity="center"
-        android:padding="8dip"
-        android:text="Touch To Change Image"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
     <ProgressBar
         android:id="@+id/aisle_bg_progressbar"
         android:layout_width="wrap_content"
