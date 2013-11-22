@@ -1025,7 +1025,8 @@ public class DataEntryFragment extends Fragment {
 		if (mLookingFor != null
 				&& (mCategoryheading.getText().toString().trim().length() > 0)) {
 			if (Utils.getDataentryAddImageAisleFlag(getActivity())
-					|| Utils.getDataentryTopAddImageAisleFlag(getActivity())) {
+					|| Utils.getDataentryTopAddImageAisleFlag(getActivity())
+					|| mFromDetailsScreenFlag) {
 				addImageToAisle();
 			} else {
 				showAddMoreImagesDialog();
