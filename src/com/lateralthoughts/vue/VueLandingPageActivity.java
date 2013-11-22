@@ -1321,6 +1321,6 @@ public class VueLandingPageActivity extends BaseActivity {
 
 	}
 	
- 
+
 
 }
