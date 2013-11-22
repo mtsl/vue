@@ -236,7 +236,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			for (ImageComments comment : imgComments) {
 				mShowingList.add(comment.comment);
 			}
-
+		 
 			// mShowingList =
 			// getItem(mCurrentAislePosition).getAisleContext().mCommentList;
 
@@ -1653,16 +1653,18 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			if(bitmap != null){
 				browserImage.setImageBitmap(bitmap);
 		   		if (getItem(mCurrentAislePosition).getImageList().get(
-						mCurrentDispImageIndex).mOwnerUserId != null
+		   				position).mOwnerUserId != null
 						&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
 					if (Long.parseLong(getItem(mCurrentAislePosition)
-							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId
+							.getImageList().get(position).mOwnerUserId) == mUserId
 							|| Long.parseLong(getItem(mCurrentAislePosition)
 									.getAisleContext().mUserId) == mUserId) {
 						editLay.setVisibility(View.VISIBLE);
+						Log.i("editlay", "editlay visible1");
 
 					} else {
 						editLay.setVisibility(View.GONE);
+						Log.i("editlay", "editlay gone1");
 					}
 				}
 	   		
@@ -1678,7 +1680,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			}
 				
 			} else {
-			
+				Log.i("editlay", "editlay from bg");
 				loadBitmap(getItem(mCurrentAislePosition).getImageList().get(position),browserImage , mBestHeight,0,progressBar,position,editLay,starLay,starImage);	
 			}
 			((ViewPager) view).addView(myView);
@@ -1828,15 +1830,17 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			}
 			
 	   		if (getItem(mCurrentAislePosition).getImageList().get(
-						mCurrentDispImageIndex).mOwnerUserId != null
+	   				mImageListCurrentPosition).mOwnerUserId != null
 						&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
 					if (Long.parseLong(getItem(mCurrentAislePosition)
-							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId
+							.getImageList().get(mImageListCurrentPosition).mOwnerUserId) == mUserId
 							|| Long.parseLong(getItem(mCurrentAislePosition)
 									.getAisleContext().mUserId) == mUserId) {
 						mEditLay.setVisibility(View.VISIBLE);
+						Log.i("editlay", "editlay visible2");
 
 					} else {
+						Log.i("editlay", "editlay gone2");
 						mEditLay.setVisibility(View.GONE);
 					}
 				}

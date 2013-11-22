@@ -142,10 +142,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		pulltorefresh = (LinearLayout) v.findViewById(R.id.pulltorefresh);
 		// mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		// mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
 		mRightColumnView.setAdapter(mRightColumnAdapter);
-
 		mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		mRightColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		mLeftColumnView.setOnTouchListener(touchListener);
@@ -230,7 +228,6 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
-			Log.i("pullrefresh", "pullrefresh: " + firstVisibleItem);
 			if (firstVisibleItem > 5) {
 				mIsListRefreshRecently = false;
 			}
