@@ -71,7 +71,6 @@ public class VueConstants {
 	public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_OCCASION = "DataentryTopAddImageAisleOccasion";
 	public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_CATEGORY = "DataentryTopAddImageAisleCategory";
 	public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_DESCRIPTION = "DataentryTopAddImageAisleDescription";
-	public static final String DATAENTRY_EDIT_AISLE_FLAG = "DataentryEditAisleFlag";
 	public static final String LOAD_DATAENTRY_SCREEN_FLAG = "LoadDataentryScreenFlag";
 	public static final String AISLE_IMAGE_PATH_LIST_FILE_NAME = "AisleImagePathListFileName";
 	public static final String ETSY_PACKAGE_NAME = "com.etsy.android";

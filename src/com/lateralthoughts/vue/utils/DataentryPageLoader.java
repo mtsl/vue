@@ -46,26 +46,22 @@ public class DataentryPageLoader {
 
 	public void DisplayImage(String originalImagePath, String imageUrl,
 			String imagePath, ImageView imageView,
-			ProgressBar dataEntryRowAisleImage, TextView touchToChangeImage,
-			boolean hideTouchToChangeImageFlag, LinearLayout imageDeleteBtn,
+			ProgressBar dataEntryRowAisleImage, LinearLayout imageDeleteBtn,
 			LinearLayout imageEditBtn, boolean isAddedToServer) {
 		Log.e("DataentryPageLoader", "Display image called :: " + imagePath);
 		queuePhoto(originalImagePath, imageUrl, imagePath, imageView,
-				dataEntryRowAisleImage, touchToChangeImage,
-				hideTouchToChangeImageFlag, imageDeleteBtn, imageEditBtn,
+				dataEntryRowAisleImage, imageDeleteBtn, imageEditBtn,
 				isAddedToServer);
 	}
 
 	private void queuePhoto(String originalImagePath, String imageUrl,
 			String imagePath, ImageView imageView,
-			ProgressBar dataEntryRowAisleImage, TextView touchToChangeImage,
-			boolean hideTouchToChangeImageFlag, LinearLayout imageDeleteBtn,
+			ProgressBar dataEntryRowAisleImage, LinearLayout imageDeleteBtn,
 			LinearLayout imageEditBtn, boolean isAddedToServer) {
 		photosQueue.Clean(imageView);
 		PhotoToLoad p = new PhotoToLoad(originalImagePath, imageUrl, imagePath,
-				imageView, dataEntryRowAisleImage, touchToChangeImage,
-				hideTouchToChangeImageFlag, imageDeleteBtn, imageEditBtn,
-				isAddedToServer);
+				imageView, dataEntryRowAisleImage, imageDeleteBtn,
+				imageEditBtn, isAddedToServer);
 		synchronized (photosQueue.photosToLoad) {
 			photosQueue.photosToLoad.push(p);
 			photosQueue.photosToLoad.notifyAll();
@@ -79,8 +75,6 @@ public class DataentryPageLoader {
 		public String imagePath;
 		public ImageView imageView;
 		public ProgressBar dataEntryRowAisleImage;
-		public TextView touchToChangeImage;
-		public boolean hideTouchToChangeImageFlag;
 		String originalImagePath;
 		String imageUrl;
 		LinearLayout imageDeleteBtn;
@@ -89,15 +83,11 @@ public class DataentryPageLoader {
 
 		public PhotoToLoad(String originalImagePath, String imageUrl, String u,
 				ImageView i, ProgressBar dataEntryRowAisleImage,
-				TextView touchToChangeImage,
-				boolean hideTouchToChangeImageFlag,
 				LinearLayout imageDeleteBtn, LinearLayout imageEditBtn,
 				boolean isAddedToServer) {
 			imagePath = u;
 			imageView = i;
 			this.dataEntryRowAisleImage = dataEntryRowAisleImage;
-			this.touchToChangeImage = touchToChangeImage;
-			this.hideTouchToChangeImageFlag = hideTouchToChangeImageFlag;
 			this.imageUrl = imageUrl;
 			this.originalImagePath = originalImagePath;
 			this.imageDeleteBtn = imageDeleteBtn;
@@ -150,8 +140,6 @@ public class DataentryPageLoader {
 								BitmapDisplayer bd = new BitmapDisplayer(bmp,
 										photoToLoad.imageView,
 										photoToLoad.dataEntryRowAisleImage,
-										photoToLoad.touchToChangeImage,
-										photoToLoad.hideTouchToChangeImageFlag,
 										photoToLoad.imageDeleteBtn,
 										photoToLoad.imageEditBtn,
 										photoToLoad.isAddedToServer);
@@ -183,11 +171,8 @@ public class DataentryPageLoader {
 									Bitmap bmp = BitmapFactory.decodeFile(f
 											.getPath());
 									BitmapDisplayer bd = new BitmapDisplayer(
-											bmp,
-											photoToLoad.imageView,
+											bmp, photoToLoad.imageView,
 											photoToLoad.dataEntryRowAisleImage,
-											photoToLoad.touchToChangeImage,
-											photoToLoad.hideTouchToChangeImageFlag,
 											photoToLoad.imageDeleteBtn,
 											photoToLoad.imageEditBtn,
 											photoToLoad.isAddedToServer);
@@ -234,8 +219,6 @@ public class DataentryPageLoader {
 												bmp,
 												photoToLoad.imageView,
 												photoToLoad.dataEntryRowAisleImage,
-												photoToLoad.touchToChangeImage,
-												photoToLoad.hideTouchToChangeImageFlag,
 												photoToLoad.imageDeleteBtn,
 												photoToLoad.imageEditBtn,
 												photoToLoad.isAddedToServer);
@@ -263,23 +246,17 @@ public class DataentryPageLoader {
 		Bitmap bmp;
 		ImageView imageView;
 		ProgressBar dataEntryRowAisleImage;
-		TextView touchToChangeImage;
-		boolean hideTouchToChangeImageFlag;
 		LinearLayout imageDeleteBtn;
 		LinearLayout imageEditBtn;
 		boolean isAddedToServer;
 
 		public BitmapDisplayer(Bitmap bmp, ImageView i,
 				ProgressBar dataEntryRowAisleImage,
-				TextView touchToChangeImage,
-				boolean hideTouchToChangeImageFlag,
 				LinearLayout imageDeleteBtn, LinearLayout imageEditBtn,
 				boolean isAddedToServer) {
 			this.bmp = bmp;
 			imageView = i;
 			this.dataEntryRowAisleImage = dataEntryRowAisleImage;
-			this.touchToChangeImage = touchToChangeImage;
-			this.hideTouchToChangeImageFlag = hideTouchToChangeImageFlag;
 			this.imageDeleteBtn = imageDeleteBtn;
 			this.imageEditBtn = imageEditBtn;
 			this.isAddedToServer = isAddedToServer;
@@ -289,18 +266,10 @@ public class DataentryPageLoader {
 			Log.e("DataentryPageLoader", "Display image called 111 :: ");
 			dataEntryRowAisleImage.setVisibility(View.GONE);
 			imageView.setVisibility(View.VISIBLE);
-			if (!hideTouchToChangeImageFlag) {
-				if (isAddedToServer) {
-					touchToChangeImage.setVisibility(View.GONE);
-					imageDeleteBtn.setVisibility(View.VISIBLE);
-					imageEditBtn.setVisibility(View.VISIBLE);
-				} else {
-					touchToChangeImage.setVisibility(View.GONE);
-					imageDeleteBtn.setVisibility(View.GONE);
-					imageEditBtn.setVisibility(View.GONE);
-				}
+			if (isAddedToServer) {
+				imageDeleteBtn.setVisibility(View.VISIBLE);
+				imageEditBtn.setVisibility(View.VISIBLE);
 			} else {
-				touchToChangeImage.setVisibility(View.GONE);
 				imageDeleteBtn.setVisibility(View.GONE);
 				imageEditBtn.setVisibility(View.GONE);
 			}

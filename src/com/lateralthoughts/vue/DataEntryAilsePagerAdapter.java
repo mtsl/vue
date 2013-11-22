@@ -14,7 +14,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 public class DataEntryAilsePagerAdapter extends PagerAdapter {
 
@@ -49,13 +48,10 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 				.findViewById(R.id.image_edit_btn);
 		ImageView dataEntryRowAisleImage = (ImageView) view
 				.findViewById(R.id.dataentry_row_aisele_image);
-		TextView touchToChangeImage = (TextView) view
-				.findViewById(R.id.touchtochangeimage);
 		ProgressBar aisleBgProgressBar = (ProgressBar) view
 				.findViewById(R.id.aisle_bg_progressbar);
 		aisleBgProgressBar.setVisibility(View.VISIBLE);
 		dataEntryRowAisleImage.setVisibility(View.GONE);
-		touchToChangeImage.setVisibility(View.GONE);
 		imageDeleteBtn.setVisibility(View.GONE);
 		imageEditBtn.setVisibility(View.GONE);
 		try {
@@ -68,32 +64,19 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 					+ mImagePathsList.get(position).getResizedImagePath());
 			dataEntryRowAisleImage.setTag(mImagePathsList.get(position)
 					.getResizedImagePath());
-			if (mDataEntryFragment.isAisleAddedScreenVisible()) {
-				touchToChangeImage.setClickable(false);
-				dataEntryRowAisleImage.setClickable(false);
+			if (mImagePathsList.get(position).isAddedToServerFlag()) {
+				imageDeleteBtn.setClickable(true);
+				imageEditBtn.setClickable(true);
+			} else {
 				imageDeleteBtn.setClickable(false);
 				imageEditBtn.setClickable(false);
-			} else {
-				if (mImagePathsList.get(position).isAddedToServerFlag()) {
-					touchToChangeImage.setClickable(false);
-					dataEntryRowAisleImage.setClickable(false);
-					imageDeleteBtn.setClickable(true);
-					imageEditBtn.setClickable(true);
-				} else {
-					touchToChangeImage.setClickable(true);
-					dataEntryRowAisleImage.setClickable(true);
-					imageDeleteBtn.setClickable(false);
-					imageEditBtn.setClickable(false);
-				}
 			}
 			mImageLoader.DisplayImage(mImagePathsList.get(position)
 					.getOriginalImagePath(), mImagePathsList.get(position)
 					.getImageUrl(), mImagePathsList.get(position)
 					.getResizedImagePath(), dataEntryRowAisleImage,
-					aisleBgProgressBar, touchToChangeImage, mDataEntryFragment
-							.isAisleAddedScreenVisible(), imageDeleteBtn,
-					imageEditBtn, mImagePathsList.get(position)
-							.isAddedToServerFlag());
+					aisleBgProgressBar, imageDeleteBtn, imageEditBtn,
+					mImagePathsList.get(position).isAddedToServerFlag());
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -106,49 +89,7 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 							.getSupportFragmentManager().findFragmentById(
 									R.id.create_aisles_view_fragment);
 				}
-				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
-						.setVisibility(View.GONE);
-				mDataEntryFragment.hideAllEditableTextboxes();
-			}
-		});
-		touchToChangeImage.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				if (mDataEntryFragment == null) {
-					mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
-							.getSupportFragmentManager().findFragmentById(
-									R.id.create_aisles_view_fragment);
-				}
-				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
-						.setVisibility(View.GONE);
-				mDataEntryFragment.hideAllEditableTextboxes();
-				if (!(mDataEntryFragment.isAisleAddedScreenVisible())) {
-					if (!mImagePathsList.get(position).isAddedToServerFlag()) {
-						mDataEntryFragment
-								.touchToChangeImageClickFunctionality(position);
-					}
-				}
-			}
-		});
-		dataEntryRowAisleImage.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (mDataEntryFragment == null) {
-					mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
-							.getSupportFragmentManager().findFragmentById(
-									R.id.create_aisles_view_fragment);
-				}
-				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
-						.setVisibility(View.GONE);
-				mDataEntryFragment.hideAllEditableTextboxes();
-				if (!(mDataEntryFragment.isAisleAddedScreenVisible())) {
-					if (!mImagePathsList.get(position).isAddedToServerFlag()) {
-						/*mDataEntryFragment
-								.touchToChangeImageClickFunctionality(position);*/
-					}
-				}
+			mDataEntryFragment.hideAllEditableTextboxes();
 			}
 		});
 		imageDeleteBtn.setOnClickListener(new OnClickListener() {
@@ -160,8 +101,6 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 							.getSupportFragmentManager().findFragmentById(
 									R.id.create_aisles_view_fragment);
 				}
-				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
-						.setVisibility(View.GONE);
 				mDataEntryFragment.hideAllEditableTextboxes();
 				mDataEntryFragment.deleteImage(position);
 			}
@@ -174,8 +113,6 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 							.getSupportFragmentManager().findFragmentById(
 									R.id.create_aisles_view_fragment);
 				}
-				mDataEntryFragment.mDataEntryInviteFriendsPopupLayout
-						.setVisibility(View.GONE);
 				mDataEntryFragment.hideAllEditableTextboxes();
 				mDataEntryFragment
 						.showAlertMessageForBackendNotIntegrated("Image Update service at server side is pending.");
