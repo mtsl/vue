@@ -628,31 +628,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				} else {
 					mVueAiselFragment.mEditTextFindAt.setText("");
 				}
-
-				ArrayList<String> imagePathList = b
-						.getStringArrayList(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-				ArrayList<String> imageUrlList = b
-						.getStringArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL);
-				ArrayList<Integer> imageWidthList = b
-						.getIntegerArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_WIDTH);
-				ArrayList<Integer> imageHeightList = b
-						.getIntegerArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_HEIGHT);
-				ArrayList<String> imageDetailsUrlList = b
-						.getStringArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_DETAILSURL);
-				ArrayList<String> imageStoreList = b
-						.getStringArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGE_STORE);
-				ArrayList<String> offlineImageIdList = b
-						.getStringArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OFFLINE_IMAGE_ID);
-				if (imagePathList != null && imagePathList.size() > 0) {
-					for (int i = 0; i < imagePathList.size(); i++) {
-						addImageToAisle(imagePathList.get(i),
-								imageUrlList.get(i), imageWidthList.get(i),
-								imageHeightList.get(i),
-								imageDetailsUrlList.get(i),
-								imageStoreList.get(i),
-								offlineImageIdList.get(i));
-					}
-				}
+	
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT) {
