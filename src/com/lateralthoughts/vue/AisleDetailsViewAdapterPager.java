@@ -73,7 +73,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
 
-public class AisleDetailsViewAdapterPager extends BaseAdapter { 
+public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	private Context mContext;
 	public static final String TAG = "AisleDetailsViewAdapter";
 	public static final int IMG_LIKE_STATUS = 1;
@@ -86,7 +86,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	private AisleDetailSwipeListener mswipeListner;
 	private boolean closeKeyboard = false;
 	VueUser storedVueUser = null;
-	int mFirstx = 0,mLastx = 0,mFirsty = 0,mLasty = 0;
+	int mFirstx = 0, mLastx = 0, mFirsty = 0, mLasty = 0;
 	public static final int SWIPE_MIN_DISTANCE = 30;
 	LayoutInflater mInflater;
 	// we need to customize the layout depending on screen height & width which
@@ -117,12 +117,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	private long mUserId;
 	private ImageLoader mImageLoader;
 	private ShareViaVueListner mShareViaVueListner;
-	  private BitmapLoaderUtils mBitmapLoaderUtils;
-	  int mPrevPosition/*,mCurrentPosition*/;
-	  PageListener pageListener;
-	  DetailImageClickListener detailsImageClickListenr;
-	  Animation myFadeInAnimation;
-	  private boolean mSetPager = true;
+	private BitmapLoaderUtils mBitmapLoaderUtils;
+	int mPrevPosition/* ,mCurrentPosition */;
+	PageListener pageListener;
+	DetailImageClickListener detailsImageClickListenr;
+	Animation myFadeInAnimation;
+	private boolean mSetPager = true;
 
 	@SuppressWarnings("unchecked")
 	public AisleDetailsViewAdapterPager(Context c,
@@ -137,8 +137,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				.getmAisleImgCurrentPos();
 		mSetPosition = true;
 		mContext = c;
-		myFadeInAnimation = AnimationUtils.loadAnimation(VueApplication.getInstance(), R.anim.fadein);
-		 mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
+		myFadeInAnimation = AnimationUtils.loadAnimation(
+				VueApplication.getInstance(), R.anim.fadein);
+		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
 		mImageLoader = new ImageLoader(VueApplication.getInstance()
 				.getRequestQueue(), BitmapLruCache.getInstance(mContext));
 		mTopBottomMargin = VueApplication.getInstance().getPixel(
@@ -236,7 +237,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			for (ImageComments comment : imgComments) {
 				mShowingList.add(comment.comment);
 			}
-		 
+
 			// mShowingList =
 			// getItem(mCurrentAislePosition).getAisleContext().mCommentList;
 
@@ -293,7 +294,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			}, mWaitTime);
 
 		}
-		  mBestHeight =Utils.modifyHeightForDetailsView(getItem(mCurrentAislePosition).getImageList());
+		mBestHeight = Utils.modifyHeightForDetailsView(getItem(
+				mCurrentAislePosition).getImageList());
 		Log.i("imageCurrenPosition", "imageCurrenPosition adapter: "
 				+ mCurrentDispImageIndex);
 		// mswipeListner.setFindAtText(getItem(mCurrentAislePosition).getImageList().get(0).mImageUrl);
@@ -310,7 +312,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	}
 
 	static class ViewHolder {
-		//AisleContentBrowser aisleContentBrowser;
+		// AisleContentBrowser aisleContentBrowser;
 		LinearLayout aisleContentBrowser;
 		TextView aisleDescription;
 		TextView aisleOwnersName;
@@ -332,9 +334,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		RelativeLayout enterCommentrellay;
 		RelativeLayout likelay, bookmarklay;
 		FrameLayout edtCommentLay;
-		ImageView commentSend/*starIcon*/;
-		LinearLayout /*editImage,*/starImage;
-		ViewPager myPager ;
+		ImageView commentSend/* starIcon */;
+		LinearLayout /* editImage, */starImage;
+		ViewPager myPager;
 		String tag;
 	}
 
@@ -349,14 +351,18 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		if (convertView == null) {
 			mViewHolder = new ViewHolder();
 			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
-			convertView = layoutInflator.inflate(R.layout.vue_details_adapter_pager,
-					null);
+			convertView = layoutInflator.inflate(
+					R.layout.vue_details_adapter_pager, null);
 			mViewHolder.aisleContentBrowser = (LinearLayout) convertView
 					.findViewById(R.id.showpieceadapter);
-		/*	mViewHolder.editImage = (LinearLayout) convertView
-					.findViewById(R.id.editImage);*/
-		/*	mViewHolder.starIcon = (ImageView) convertView
-					.findViewById(R.id.staricon);*/
+			/*
+			 * mViewHolder.editImage = (LinearLayout) convertView
+			 * .findViewById(R.id.editImage);
+			 */
+			/*
+			 * mViewHolder.starIcon = (ImageView) convertView
+			 * .findViewById(R.id.staricon);
+			 */
 			mViewHolder.starImage = (LinearLayout) convertView
 					.findViewById(R.id.starImage);
 			mViewHolder.imgContentlay = (LinearLayout) convertView
@@ -415,16 +421,20 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			mViewHolder.userComment.setTextSize(VueApplication.getInstance()
 					.getmTextSize());
 			mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
-			mViewHolder.myPager = (ViewPager)convertView. findViewById(R.id.myfivepanelpager);
+			mViewHolder.myPager = (ViewPager) convertView
+					.findViewById(R.id.myfivepanelpager);
 			int bestHeightTempHeight = VueApplication.getInstance().getPixel(
 					100);
 
-		/*	FrameLayout.LayoutParams showpieceParams = new FrameLayout.LayoutParams(
-					VueApplication.getInstance().getScreenWidth(),
-					bestHeightTempHeight);
-			mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
-			mViewHolder.aisleContentBrowser
-					.setAisleDetailSwipeListener(mswipeListner);*/
+			/*
+			 * FrameLayout.LayoutParams showpieceParams = new
+			 * FrameLayout.LayoutParams(
+			 * VueApplication.getInstance().getScreenWidth(),
+			 * bestHeightTempHeight);
+			 * mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
+			 * mViewHolder.aisleContentBrowser
+			 * .setAisleDetailSwipeListener(mswipeListner);
+			 */
 
 			mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			convertView.setTag(mViewHolder);
@@ -471,30 +481,29 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			mViewHolder.addCommentlay.setVisibility(View.GONE);
 			mViewHolder.separator.setVisibility(View.GONE);
 			mViewHolder.edtCommentLay.setVisibility(View.GONE);
-			if(mSetPager) {
-			mViewHolder.myPager.setAdapter(new MyPagerAdapter());
-			mViewHolder.myPager.setOnPageChangeListener(pageListener);
-			setParams(mViewHolder.aisleContentBrowser,mBestHeight);
-			mViewHolder.myPager.setPageTransformer(true, new ZoomOutPageTransformer());
-			mViewHolder.myPager.setCurrentItem(mCurrentDispImageIndex);
+			if (mSetPager) {
+				mViewHolder.myPager.setAdapter(new MyPagerAdapter());
+				mViewHolder.myPager.setOnPageChangeListener(pageListener);
+				setParams(mViewHolder.aisleContentBrowser, mBestHeight);
+				mViewHolder.myPager.setPageTransformer(true,
+						new ZoomOutPageTransformer());
+				mViewHolder.myPager.setCurrentItem(mCurrentDispImageIndex);
 			}
 			// mViewHolder.mWindowContent = mWindowContentTemp;
 			try {
-			/*	if (getItem(mCurrentAislePosition).getImageList().get(
-						mCurrentDispImageIndex).mOwnerUserId != null
-						&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
-					if (Long.parseLong(getItem(mCurrentAislePosition)
-							.getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId
-							|| Long.parseLong(getItem(mCurrentAislePosition)
-									.getAisleContext().mUserId) == mUserId) {
-					    hasToShow = true;
-						mswipeListner.hasToShowEditIcon(hasToShow);
-
-					} else {
-						  hasToShow = false;
-						mswipeListner.hasToShowEditIcon(hasToShow);
-					}
-				}*/
+				/*
+				 * if (getItem(mCurrentAislePosition).getImageList().get(
+				 * mCurrentDispImageIndex).mOwnerUserId != null &&
+				 * getItem(mCurrentAislePosition).getAisleContext().mUserId !=
+				 * null) { if (Long.parseLong(getItem(mCurrentAislePosition)
+				 * .getImageList().get(mCurrentDispImageIndex).mOwnerUserId) ==
+				 * mUserId || Long.parseLong(getItem(mCurrentAislePosition)
+				 * .getAisleContext().mUserId) == mUserId) { hasToShow = true;
+				 * mswipeListner.hasToShowEditIcon(hasToShow);
+				 * 
+				 * } else { hasToShow = false;
+				 * mswipeListner.hasToShowEditIcon(hasToShow); } }
+				 */
 				if (getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mHasMostLikes) {
 					Log.i("hasMostLikes",
@@ -522,16 +531,16 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 							0, 0);
 					mViewHolder.starImage.setLayoutParams(editIconParams);
 
-					if(getItem(mCurrentAislePosition).getImageList().get(
-						mCurrentDispImageIndex).mSameMostLikes){
-						//mViewHolder.starIcon.setImageResource(R.drawable.vue_star_light);
+					if (getItem(mCurrentAislePosition).getImageList().get(
+							mCurrentDispImageIndex).mSameMostLikes) {
+						// mViewHolder.starIcon.setImageResource(R.drawable.vue_star_light);
 
 					} else {
-						//mViewHolder.starIcon.setImageResource(R.drawable.vue_star_theme);
+						// mViewHolder.starIcon.setImageResource(R.drawable.vue_star_theme);
 					}
-					//mViewHolder.starImage.setVisibility(View.VISIBLE);
+					// mViewHolder.starImage.setVisibility(View.VISIBLE);
 				} else {
-					//mViewHolder.starImage.setVisibility(View.GONE);
+					// mViewHolder.starImage.setVisibility(View.GONE);
 				}
 
 				if (getItem(mCurrentAislePosition).getAisleContext().mDescription != null
@@ -581,12 +590,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				detailsImageClickListenr = new DetailImageClickListener();
 				// mWindowContentTemp = mViewHolder.mWindowContent;
 				mViewHolder.tag = TAG;
-		/*			mViewLoader.getAisleContentIntoView(mViewHolder,
-							scrollIndex, position,
-							new DetailImageClickListener(),
-							getItem(mCurrentAislePosition), mSetPosition,mViewHolder.editImage,mViewHolder.starImage);*/
-					mSetPosition = false;
- 
+				/*
+				 * mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
+				 * position, new DetailImageClickListener(),
+				 * getItem(mCurrentAislePosition),
+				 * mSetPosition,mViewHolder.editImage,mViewHolder.starImage);
+				 */
+				mSetPosition = false;
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -725,9 +736,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 
 			@Override
 			public void onClick(View v) {
-				//mSetPager = false;
+				// mSetPager = false;
 				toggleRatingImage();
-				//setmSetPagerToTrue();
+				// setmSetPagerToTrue();
 			}
 		});
 		return convertView;
@@ -816,7 +827,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	 * 
 	 * To handle the click and long press event on the imageview in the aisle
 	 * content and to allow only one like and one dislike allows
-	 */ 
+	 */
 	private class DetailImageClickListener implements DetailClickListener {
 		@Override
 		public void onImageClicked() {
@@ -1041,83 +1052,58 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	}
 
 	public void setAisleBrowserObjectsNull() {/*
+											 * 
+											 * if (mViewHolder != null &&
+											 * mViewHolder.aisleContentBrowser
+											 * != null) { if (mCommentsMapList
+											 * != null) for (int i = 0; i <
+											 * mCommentsMapList.size(); i++) {
+											 * mCommentsMapList.remove(i); }
+											 * mCommentsMapList = null;
+											 * mViewHolder.aisleContentBrowser.
+											 * setReferedObjectsNull();
+											 * mViewLoader.clearBrowser(getItem(
+											 * mCurrentAislePosition)
+											 * .getImageList());
+											 * ScaledImageViewFactory
+											 * mViewFactory =
+											 * ScaledImageViewFactory
+											 * .getInstance(mContext); for (int
+											 * i = 0; i <
+											 * mViewHolder.aisleContentBrowser
+											 * .getChildCount(); i++) {
+											 * mViewFactory
+											 * .returnUsedImageView(
+											 * (ScaleImageView)
+											 * mViewHolder.aisleContentBrowser
+											 * .getChildAt(i));
+											 * Log.i("bitmap reclying",
+											 * "bitmap reclying  in adapter"); }
+											 * if
+											 * (mViewHolder.aisleContentBrowser
+											 * != null) { ContentAdapterFactory
+											 * mContentAdapterFactory =
+											 * ContentAdapterFactory
+											 * .getInstance(mContext);
+											 * mContentAdapterFactory
+											 * .returnUsedAdapter
+											 * (mViewHolder.aisleContentBrowser
+											 * .getCustomAdapter());
+											 * mViewHolder.
+											 * aisleContentBrowser.setCustomAdapter
+											 * (null);
+											 * mViewHolder.aisleContentBrowser
+											 * .removeAllViews();
+											 * mViewHolder.aisleContentBrowser =
+											 * null; }
+											 * 
+											 * //
+											 * mViewHolder.aisleContentBrowser
+											 * .removeAllViews(); }
+											 */
+	}
 
-		if (mViewHolder != null && mViewHolder.aisleContentBrowser != null) {
-			if (mCommentsMapList != null)
-				for (int i = 0; i < mCommentsMapList.size(); i++) {
-					mCommentsMapList.remove(i);
-				}
-			mCommentsMapList = null;
-			mViewHolder.aisleContentBrowser.setReferedObjectsNull();
-			mViewLoader.clearBrowser(getItem(mCurrentAislePosition)
-					.getImageList());
-			ScaledImageViewFactory mViewFactory = ScaledImageViewFactory
-					.getInstance(mContext);
-			for (int i = 0; i < mViewHolder.aisleContentBrowser.getChildCount(); i++) {
-				mViewFactory
-						.returnUsedImageView((ScaleImageView) mViewHolder.aisleContentBrowser
-								.getChildAt(i));
-				Log.i("bitmap reclying", "bitmap reclying  in adapter");
-			}
-			if (mViewHolder.aisleContentBrowser != null) {
-				ContentAdapterFactory mContentAdapterFactory = ContentAdapterFactory
-						.getInstance(mContext);
-				mContentAdapterFactory
-						.returnUsedAdapter(mViewHolder.aisleContentBrowser
-								.getCustomAdapter());
-				mViewHolder.aisleContentBrowser.setCustomAdapter(null);
-				mViewHolder.aisleContentBrowser.removeAllViews();
-				mViewHolder.aisleContentBrowser = null;
-			}
-
-			// mViewHolder.aisleContentBrowser.removeAllViews();
-		}
-	*/}
-
-	public void addAisleToContentWindow(String imagePath, String imageUrl,
-			int imageWidth, int imageHeight, String title, String detailsUrl,
-			String store, String imageId, boolean isImageFromLocalSystem) {
-		Utils.isAisleChanged = true;
-		Utils.mChangeAilseId = getItem(mCurrentAislePosition).getAisleId();
-		AisleImageDetails imgDetails = new AisleImageDetails();
-		imgDetails.mAvailableHeight = imageHeight;
-		imgDetails.mAvailableWidth = imageWidth;
-		Log.i("new image", "new image height: " + imgDetails.mAvailableHeight);
-		if (imgDetails.mAvailableHeight > getItem(mCurrentAislePosition)
-				.getBestLargetHeightForWindow()) {
-			mBestHeight = imgDetails.mAvailableHeight;
-		}
-		if (imgDetails.mAvailableHeight < getItem(mCurrentAislePosition)
-				.getBestHeightForWindow()) {
-			getItem(mCurrentAislePosition).setBestHeightForWindow(
-					imgDetails.mAvailableHeight);
-			Log.i("bestsamallest", "bestsamallest height1: "
-					+ imgDetails.mAvailableHeight);
-		} else {
-			Log.i("bestsamallest",
-					"bestsamallest height1 else: window samallest height has not changed ");
-		}
-		imgDetails.mTitle = title;
-		imgDetails.mImageUrl = imageUrl;
-		imgDetails.mDetalsUrl = detailsUrl;
-		imgDetails.mId = imageId; // offline imageid
-		imgDetails.mIsFromLocalSystem = isImageFromLocalSystem;
-		imgDetails.mStore = store;
-		imgDetails.mTrendingImageHeight = imgDetails.mAvailableHeight;
-		imgDetails.mTrendingImageWidth = imgDetails.mAvailableWidth;
-		imgDetails.mOwnerAisleId = getItem(mCurrentAislePosition).getAisleId();
-		imgDetails.mOwnerUserId = Long.toString(mUserId);
-		getItem(mCurrentAislePosition).getImageList().add(imgDetails);
-		getItem(mCurrentAislePosition).addAisleContent(
-				getItem(mCurrentAislePosition).getAisleContext(),
-				getItem(mCurrentAislePosition).getImageList());
-		int bestHeight = Utils.modifyHeightForDetailsView(getItem(
-				mCurrentAislePosition).getImageList());
-		getItem(mCurrentAislePosition)
-				.setBestLargestHeightForWindow(bestHeight);
-		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-				.dataObserver();
-		 mBestHeight =Utils.modifyHeightForDetailsView(getItem(mCurrentAislePosition).getImageList());
+	public void addAisleToContentWindow() {
 		if (mViewHolder != null) {
 			// mswipeListner.onResetAdapter();
 			setAisleBrowserObjectsNull();
@@ -1135,13 +1121,16 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		}
 
 	}
-	  public void updateAisleListAdapter(){
-			int imageListSize = getItem(mCurrentAislePosition).getImageList().size();
-			  VueApplication.getInstance().setClickedWindowCount(imageListSize);
-			  VueApplication.getInstance().setmAisleImgCurrentPos(0);
-				setAisleBrowserObjectsNull();
-				mswipeListner.onResetAdapter();
-	  }
+
+	public void updateAisleListAdapter() {
+		int imageListSize = getItem(mCurrentAislePosition).getImageList()
+				.size();
+		VueApplication.getInstance().setClickedWindowCount(imageListSize);
+		VueApplication.getInstance().setmAisleImgCurrentPos(0);
+		setAisleBrowserObjectsNull();
+		mswipeListner.onResetAdapter();
+	}
+
 	public ArrayList<AisleImageDetails> getImageList() {
 		return getItem(mCurrentAislePosition).getImageList();
 	}
@@ -1540,15 +1529,17 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			}
 		}
 	}
+
 	private class MyPagerAdapter extends PagerAdapter implements
-	GestureDetector.OnGestureListener{
+			GestureDetector.OnGestureListener {
 		private GestureDetector gesturedetector = null;
+
 		/**
 		 * 
 		 * @param context
 		 *            Context
 		 */
-	 
+
 		@Override
 		public void destroyItem(View view, int arg1, Object object) {
 			((ViewPager) view).removeView((RelativeLayout) object);
@@ -1567,78 +1558,68 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		@SuppressWarnings("deprecation")
 		@Override
 		public Object instantiateItem(View view, int position) {
-			if(mInflater == null){
-			mInflater = (LayoutInflater) view.getContext()
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			if (mInflater == null) {
+				mInflater = (LayoutInflater) view.getContext()
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			}
 			Log.i("pager", "pager instantiateItem");
 			View myView = mInflater.inflate(R.layout.detailsbrowser, null);
-			ImageView browserImage = (ImageView) myView.findViewById(R.id.browserimage);
+			ImageView browserImage = (ImageView) myView
+					.findViewById(R.id.browserimage);
 			gesturedetector = new GestureDetector(this);
-			
-/*			browserImage.setOnTouchListener(new OnTouchListener() {
-				
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					
-					 if(event.getAction() == MotionEvent.ACTION_DOWN){
-						 mFirstx = 0;
-						 mFirsty = 0;
-					 } else if(event.getAction() == MotionEvent.ACTION_UP){
-						 mLastx = (int) event.getX();
-						 mLasty = (int) event.getY();
-						
-					 } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
-						 mLastx = (int) event.getX();
-						 mLasty = (int) event.getY();
-						 int xDiff = mLastx - mFirstx;
-						 if(xDiff < 0){
-							 xDiff = xDiff * -1;
-						 }
-						 int yDiff = mLasty - mFirsty;
-						 if(yDiff < 0){
-							 yDiff = yDiff * -1;
-						 }
-						 Log.i("diff", "diff x: "+xDiff);
-						 Log.i("diff", "diff y: "+yDiff);
-						 if(xDiff < yDiff) {
-							 mswipeListner.onAllowListResponse();
-						 } else  {
-							 mswipeListner.onDissAllowListResponse();
-							 return  false;
-				            }
-					 }
-					return false;
-				}
-			});*/
+
+			/*
+			 * browserImage.setOnTouchListener(new OnTouchListener() {
+			 * 
+			 * @Override public boolean onTouch(View v, MotionEvent event) {
+			 * 
+			 * if(event.getAction() == MotionEvent.ACTION_DOWN){ mFirstx = 0;
+			 * mFirsty = 0; } else if(event.getAction() ==
+			 * MotionEvent.ACTION_UP){ mLastx = (int) event.getX(); mLasty =
+			 * (int) event.getY();
+			 * 
+			 * } else if(event.getAction() == MotionEvent.ACTION_MOVE) { mLastx
+			 * = (int) event.getX(); mLasty = (int) event.getY(); int xDiff =
+			 * mLastx - mFirstx; if(xDiff < 0){ xDiff = xDiff * -1; } int yDiff
+			 * = mLasty - mFirsty; if(yDiff < 0){ yDiff = yDiff * -1; }
+			 * Log.i("diff", "diff x: "+xDiff); Log.i("diff", "diff y: "+yDiff);
+			 * if(xDiff < yDiff) { mswipeListner.onAllowListResponse(); } else {
+			 * mswipeListner.onDissAllowListResponse(); return false; } } return
+			 * false; } });
+			 */
 			browserImage.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
-					//mSetPager = false;
+					// mSetPager = false;
 					detailsImageClickListenr.onImageClicked();
-					//setmSetPagerToTrue();
-					
+					// setmSetPagerToTrue();
+
 				}
 			});
 			browserImage.setOnLongClickListener(new OnLongClickListener() {
-				
+
 				@Override
 				public boolean onLongClick(View v) {
-					//mSetPager = false;
+					// mSetPager = false;
 					detailsImageClickListenr.onImageLongPress();
-					//setmSetPagerToTrue();
+					// setmSetPagerToTrue();
 					return false;
 				}
 			});
-			//browserImage.setImageResource(R.drawable.ic_launcher);
-			LinearLayout starLay = (LinearLayout) myView.findViewById(R.id.starImage);
-			ImageView starImage = (ImageView) myView.findViewById(R.id.staricon);
-			LinearLayout editLay = (LinearLayout) myView.findViewById(R.id.editImage);
-			AisleImageDetails imageDetails = getItem(mCurrentAislePosition).getImageList().get(position);
-			ProgressBar progressBar = (ProgressBar) myView.findViewById(R.id.progressBar1);
+			// browserImage.setImageResource(R.drawable.ic_launcher);
+			LinearLayout starLay = (LinearLayout) myView
+					.findViewById(R.id.starImage);
+			ImageView starImage = (ImageView) myView
+					.findViewById(R.id.staricon);
+			LinearLayout editLay = (LinearLayout) myView
+					.findViewById(R.id.editImage);
+			AisleImageDetails imageDetails = getItem(mCurrentAislePosition)
+					.getImageList().get(position);
+			ProgressBar progressBar = (ProgressBar) myView
+					.findViewById(R.id.progressBar1);
 			editLay.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
@@ -1649,11 +1630,11 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			editLay.setVisibility(View.GONE);
 			progressBar.setVisibility(View.GONE);
 			Bitmap bitmap = null;
-			bitmap = BitmapLoaderUtils.getInstance().getCachedBitmap(imageDetails.mImageUrl);
-			if(bitmap != null){
+			bitmap = BitmapLoaderUtils.getInstance().getCachedBitmap(
+					imageDetails.mImageUrl);
+			if (bitmap != null) {
 				browserImage.setImageBitmap(bitmap);
-		   		if (getItem(mCurrentAislePosition).getImageList().get(
-		   				position).mOwnerUserId != null
+				if (getItem(mCurrentAislePosition).getImageList().get(position).mOwnerUserId != null
 						&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
 					if (Long.parseLong(getItem(mCurrentAislePosition)
 							.getImageList().get(position).mOwnerUserId) == mUserId
@@ -1667,21 +1648,24 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 						Log.i("editlay", "editlay gone1");
 					}
 				}
-	   		
-	   		if(imageDetails.mHasMostLikes){
-	   			starLay.setVisibility(View.VISIBLE);
-				if(imageDetails.mSameMostLikes){
-					starImage.setImageResource(R.drawable.vue_star_light);
+
+				if (imageDetails.mHasMostLikes) {
+					starLay.setVisibility(View.VISIBLE);
+					if (imageDetails.mSameMostLikes) {
+						starImage.setImageResource(R.drawable.vue_star_light);
+					} else {
+						starImage.setImageResource(R.drawable.vue_star_theme);
+					}
 				} else {
-					starImage.setImageResource(R.drawable.vue_star_theme);
+					starLay.setVisibility(View.GONE);
 				}
-			} else {
-				starLay.setVisibility(View.GONE);
-			}
-				
+
 			} else {
 				Log.i("editlay", "editlay from bg");
-				loadBitmap(getItem(mCurrentAislePosition).getImageList().get(position),browserImage , mBestHeight,0,progressBar,position,editLay,starLay,starImage);	
+				loadBitmap(
+						getItem(mCurrentAislePosition).getImageList().get(
+								position), browserImage, mBestHeight, 0,
+						progressBar, position, editLay, starLay, starImage);
 			}
 			((ViewPager) view).addView(myView);
 			return myView;
@@ -1706,14 +1690,15 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		public void startUpdate(View arg0) {
 
 		}
+
 		public int getItemPosition(Object object) {
-		    return POSITION_NONE;
+			return POSITION_NONE;
 		}
 
 		@Override
 		public boolean onDown(MotionEvent e) {
 			Log.i("ondown", "ondown calling");
-			
+
 			return false;
 		}
 
@@ -1727,20 +1712,20 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		@Override
 		public void onLongPress(MotionEvent e) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {
-			
+
 			return false;
 		}
 
 		@Override
 		public void onShowPress(MotionEvent e) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
@@ -1749,54 +1734,71 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			return false;
 		}
 	}
-    public void loadBitmap(AisleImageDetails itemDetails,ImageView imageView, int bestHeight,int scrollIndex,ProgressBar  progressBar,int currentPosition,LinearLayout editLay,LinearLayout starLay,ImageView starImage) {
-    	String loc = itemDetails.mImageUrl;
-    	String serverImageUrl = itemDetails.mImageUrl;
-      /*  ((ScaleImageView) imageView).setImageUrl(serverImageUrl,
-                new ImageLoader(VueApplication.getInstance().getRequestQueue(), VueApplication.getInstance().getBitmapCache()));*/
-    	Log.i("pager", "pager loadBitmap");
-         // if (cancelPotentialDownload(loc, imageView)) {
-            BitmapWorkerTask task = new BitmapWorkerTask(itemDetails,imageView, bestHeight,scrollIndex,progressBar,  currentPosition,editLay,starLay,starImage);
-            
-            String imagesArray[] = {loc, serverImageUrl};
-            task.execute(imagesArray);
-       // }
- 
-    }
-    class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
-        private final WeakReference<ImageView> imageViewReference;
-        //private final WeakReference<AisleContentBrowser>viewFlipperReference;
-        private String url = null;
-        private int mBestHeight;
-        int mAvailabeWidth,mAvailableHeight;
-        AisleImageDetails mItemDetails;
-        int mScrollIndex;
-        ProgressBar mProgressBar;
-        LinearLayout mEditLay,mStarLay;
-        int mImageListCurrentPosition;
-        ImageView mStarImage;
-        public BitmapWorkerTask(AisleImageDetails itemDetails,ImageView imageView, int bestHeight,int scrollIndex,ProgressBar progressBar,int currentPosition,LinearLayout editLay,LinearLayout starLay,ImageView starImage) {
-            // Use a WeakReference to ensure the ImageView can be garbage collected
-            imageViewReference = new WeakReference<ImageView>(imageView);
-            mBestHeight = bestHeight;
-            mAvailabeWidth = itemDetails.mAvailableWidth;
-            mAvailableHeight = itemDetails.mAvailableHeight;
-            mItemDetails = itemDetails;
-            mScrollIndex = scrollIndex;
-            mProgressBar = progressBar;
-            mImageListCurrentPosition = currentPosition;
-            mEditLay = editLay;
-            mStarLay = starLay;
-            mStarImage = starImage; 
-        }
-        @Override
-        protected void onPreExecute() {
-        	if(mProgressBar != null)
-        	mProgressBar.setVisibility(View.VISIBLE);
-        	super.onPreExecute();
-        }
-        // Decode image in background.
-        @Override
+
+	public void loadBitmap(AisleImageDetails itemDetails, ImageView imageView,
+			int bestHeight, int scrollIndex, ProgressBar progressBar,
+			int currentPosition, LinearLayout editLay, LinearLayout starLay,
+			ImageView starImage) {
+		String loc = itemDetails.mImageUrl;
+		String serverImageUrl = itemDetails.mImageUrl;
+		/*
+		 * ((ScaleImageView) imageView).setImageUrl(serverImageUrl, new
+		 * ImageLoader(VueApplication.getInstance().getRequestQueue(),
+		 * VueApplication.getInstance().getBitmapCache()));
+		 */
+		Log.i("pager", "pager loadBitmap");
+		// if (cancelPotentialDownload(loc, imageView)) {
+		BitmapWorkerTask task = new BitmapWorkerTask(itemDetails, imageView,
+				bestHeight, scrollIndex, progressBar, currentPosition, editLay,
+				starLay, starImage);
+
+		String imagesArray[] = { loc, serverImageUrl };
+		task.execute(imagesArray);
+		// }
+
+	}
+
+	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+		private final WeakReference<ImageView> imageViewReference;
+		// private final WeakReference<AisleContentBrowser>viewFlipperReference;
+		private String url = null;
+		private int mBestHeight;
+		int mAvailabeWidth, mAvailableHeight;
+		AisleImageDetails mItemDetails;
+		int mScrollIndex;
+		ProgressBar mProgressBar;
+		LinearLayout mEditLay, mStarLay;
+		int mImageListCurrentPosition;
+		ImageView mStarImage;
+
+		public BitmapWorkerTask(AisleImageDetails itemDetails,
+				ImageView imageView, int bestHeight, int scrollIndex,
+				ProgressBar progressBar, int currentPosition,
+				LinearLayout editLay, LinearLayout starLay, ImageView starImage) {
+			// Use a WeakReference to ensure the ImageView can be garbage
+			// collected
+			imageViewReference = new WeakReference<ImageView>(imageView);
+			mBestHeight = bestHeight;
+			mAvailabeWidth = itemDetails.mAvailableWidth;
+			mAvailableHeight = itemDetails.mAvailableHeight;
+			mItemDetails = itemDetails;
+			mScrollIndex = scrollIndex;
+			mProgressBar = progressBar;
+			mImageListCurrentPosition = currentPosition;
+			mEditLay = editLay;
+			mStarLay = starLay;
+			mStarImage = starImage;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			if (mProgressBar != null)
+				mProgressBar.setVisibility(View.VISIBLE);
+			super.onPreExecute();
+		}
+
+		// Decode image in background.
+		@Override
 		protected Bitmap doInBackground(String... params) {
 			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 			url = params[0];
@@ -1815,8 +1817,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			Log.i("pager", "pager doInBackground");
 			return bmp;
 		}
-        // Once complete, see if ImageView is still around and set bitmap.
-        @Override
+
+		// Once complete, see if ImageView is still around and set bitmap.
+		@Override
 		protected void onPostExecute(Bitmap bitmap) {
 			Log.i("pager", "pager onPostExecute: " + bitmap);
 			final ImageView imageView = imageViewReference.get();
@@ -1828,26 +1831,26 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 					imageView.startAnimation(myFadeInAnimation);
 				}
 			}
-			
-	   		if (getItem(mCurrentAislePosition).getImageList().get(
-	   				mImageListCurrentPosition).mOwnerUserId != null
-						&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
-					if (Long.parseLong(getItem(mCurrentAislePosition)
-							.getImageList().get(mImageListCurrentPosition).mOwnerUserId) == mUserId
-							|| Long.parseLong(getItem(mCurrentAislePosition)
-									.getAisleContext().mUserId) == mUserId) {
-						mEditLay.setVisibility(View.VISIBLE);
-						Log.i("editlay", "editlay visible2");
 
-					} else {
-						Log.i("editlay", "editlay gone2");
-						mEditLay.setVisibility(View.GONE);
-					}
+			if (getItem(mCurrentAislePosition).getImageList().get(
+					mImageListCurrentPosition).mOwnerUserId != null
+					&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
+				if (Long.parseLong(getItem(mCurrentAislePosition)
+						.getImageList().get(mImageListCurrentPosition).mOwnerUserId) == mUserId
+						|| Long.parseLong(getItem(mCurrentAislePosition)
+								.getAisleContext().mUserId) == mUserId) {
+					mEditLay.setVisibility(View.VISIBLE);
+					Log.i("editlay", "editlay visible2");
+
+				} else {
+					Log.i("editlay", "editlay gone2");
+					mEditLay.setVisibility(View.GONE);
 				}
-	   		
-	   		if(mItemDetails.mHasMostLikes){
+			}
+
+			if (mItemDetails.mHasMostLikes) {
 				mStarLay.setVisibility(View.VISIBLE);
-				if(mItemDetails.mSameMostLikes){
+				if (mItemDetails.mSameMostLikes) {
 					mStarImage.setImageResource(R.drawable.vue_star_light);
 				} else {
 					mStarImage.setImageResource(R.drawable.vue_star_theme);
@@ -1855,11 +1858,11 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			} else {
 				mStarLay.setVisibility(View.GONE);
 			}
-			 
+
 		}
-    }
-	private void setParams(LinearLayout vFlipper,
- int imgScreenHeight) {
+	}
+
+	private void setParams(LinearLayout vFlipper, int imgScreenHeight) {
 		Log.i("imageSize", "imageSize params Height: " + imgScreenHeight);
 		if (vFlipper != null) {
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
@@ -1870,82 +1873,87 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		}
 
 	}
-    //utility functions to keep track of all the async tasks that we instantiate
-    private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
-        if (imageView != null) {
-            Object task = ((ScaleImageView)imageView).getOpaqueWorkerObject();
-            if (task instanceof BitmapWorkerTask) {
-                BitmapWorkerTask workerTask = (BitmapWorkerTask)task;
-                return workerTask;
-            }
-        }
-        return null;
-    }
-    private  class PageListener extends SimpleOnPageChangeListener{
-        public void onPageSelected(int position) {
-            Log.i(TAG, "page selected " + position);
-            mCurrentDispImageIndex = position;
-            if(detailsImageClickListenr != null)
-            detailsImageClickListenr.onImageSwipe(position);
-            mSetPager = false;
-            mswipeListner.onAllowListResponse();
-            setmSetPagerToTrue();
-    		if(mPrevPosition == position){
-				//mswipeListner.onAisleSwipe("Right",position);
-			} else if(mPrevPosition < position){
-				mswipeListner.onAisleSwipe("Left",position);
+
+	// utility functions to keep track of all the async tasks that we
+	// instantiate
+	private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+		if (imageView != null) {
+			Object task = ((ScaleImageView) imageView).getOpaqueWorkerObject();
+			if (task instanceof BitmapWorkerTask) {
+				BitmapWorkerTask workerTask = (BitmapWorkerTask) task;
+				return workerTask;
+			}
+		}
+		return null;
+	}
+
+	private class PageListener extends SimpleOnPageChangeListener {
+		public void onPageSelected(int position) {
+			Log.i(TAG, "page selected " + position);
+			mCurrentDispImageIndex = position;
+			if (detailsImageClickListenr != null)
+				detailsImageClickListenr.onImageSwipe(position);
+			mSetPager = false;
+			mswipeListner.onAllowListResponse();
+			setmSetPagerToTrue();
+			if (mPrevPosition == position) {
+				// mswipeListner.onAisleSwipe("Right",position);
+			} else if (mPrevPosition < position) {
+				mswipeListner.onAisleSwipe("Left", position);
 				Log.i("positionissue", "positionissue: Left");
 			} else {
-				mswipeListner.onAisleSwipe("Right",position);
-			} 
+				mswipeListner.onAisleSwipe("Right", position);
+			}
 			mPrevPosition = mCurrentDispImageIndex;
-    }
-}
-    public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
-        private static final float MIN_SCALE = 0.85f;
-        private static final float MIN_ALPHA = 0.5f;
+		}
+	}
 
-        public void transformPage(View view, float position) {
-            int pageWidth = view.getWidth();
-            int pageHeight = view.getHeight();
+	public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
+		private static final float MIN_SCALE = 0.85f;
+		private static final float MIN_ALPHA = 0.5f;
 
-            if (position < -1) { // [-Infinity,-1)
-                // This page is way off-screen to the left.
-                view.setAlpha(0);
+		public void transformPage(View view, float position) {
+			int pageWidth = view.getWidth();
+			int pageHeight = view.getHeight();
 
-            } else if (position <= 1) { // [-1,1]
-                // Modify the default slide transition to shrink the page as well
-                float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
-                float vertMargin = pageHeight * (1 - scaleFactor) / 2;
-                float horzMargin = pageWidth * (1 - scaleFactor) / 2;
-                if (position < 0) {
-                    view.setTranslationX(horzMargin - vertMargin / 2);
-                } else {
-                    view.setTranslationX(-horzMargin + vertMargin / 2);
-                }
+			if (position < -1) { // [-Infinity,-1)
+				// This page is way off-screen to the left.
+				view.setAlpha(0);
 
-                // Scale the page down (between MIN_SCALE and 1)
-                view.setScaleX(scaleFactor);
-                view.setScaleY(scaleFactor);
+			} else if (position <= 1) { // [-1,1]
+				// Modify the default slide transition to shrink the page as
+				// well
+				float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
+				float vertMargin = pageHeight * (1 - scaleFactor) / 2;
+				float horzMargin = pageWidth * (1 - scaleFactor) / 2;
+				if (position < 0) {
+					view.setTranslationX(horzMargin - vertMargin / 2);
+				} else {
+					view.setTranslationX(-horzMargin + vertMargin / 2);
+				}
 
-                // Fade the page relative to its size.
-                view.setAlpha(MIN_ALPHA +
-                        (scaleFactor - MIN_SCALE) /
-                        (1 - MIN_SCALE) * (1 - MIN_ALPHA));
+				// Scale the page down (between MIN_SCALE and 1)
+				view.setScaleX(scaleFactor);
+				view.setScaleY(scaleFactor);
 
-            } else { // (1,+Infinity]
-                // This page is way off-screen to the right.
-                view.setAlpha(0);
-            }
-        }
-    }
-    private void setmSetPagerToTrue(){
-    	new Handler().postDelayed(new Runnable() {
-			
+				// Fade the page relative to its size.
+				view.setAlpha(MIN_ALPHA + (scaleFactor - MIN_SCALE)
+						/ (1 - MIN_SCALE) * (1 - MIN_ALPHA));
+
+			} else { // (1,+Infinity]
+				// This page is way off-screen to the right.
+				view.setAlpha(0);
+			}
+		}
+	}
+
+	private void setmSetPagerToTrue() {
+		new Handler().postDelayed(new Runnable() {
+
 			@Override
 			public void run() {
 				mSetPager = true;
-				
+
 			}
 		}, 1000);
 	}

@@ -22,24 +22,29 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DataEntryActivity extends BaseActivity {
 
 	public boolean mIsKeyboardShownFlag = false;
-	public TextView mVueDataentryActionbarScreenName;
+	public TextView mVueDataentryActionbarScreenName,
+			mActionbarDeleteBtnTextview;
 	RelativeLayout mDataentryActionbarMainLayout,
 			mVueDataentryActionbarAppIconLayout;
-	public LinearLayout mVueDataentryKeyboardLayout, mVueDataentryPostLayout;
+	public LinearLayout mVueDataentryKeyboardLayout, mVueDataentryPostLayout,
+			mVueDataentryDeleteLayout;
 	public FrameLayout mVueDataentryKeyboardDone, mVueDataentryKeyboardCancel,
-			mVueDataentryClose, mVueDataentryPost;
+			mVueDataentryClose, mVueDataentryPost, mVueDataentryDeleteCancel,
+			mVueDataentryDeleteDone;
 	private View mVueDataentryActionbarView;
 	private DataEntryFragment mDataEntryFragment;
 	private static final String CREATE_AISLE_SCREEN_VISITORS = "Create_Aisle_Screen_Visitors";
+	public ArrayList<Integer> mDeletedImagesPositionsList = null;
+	public int mDeletedImagesCount = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.e("Land", "vueland 64");
 		mVueDataentryActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_dataentry_actionbar, null);
 		mVueDataentryActionbarScreenName = (TextView) mVueDataentryActionbarView
@@ -62,11 +67,44 @@ public class DataEntryActivity extends BaseActivity {
 				.findViewById(R.id.actionbar_close);
 		mVueDataentryPost = (FrameLayout) mVueDataentryActionbarView
 				.findViewById(R.id.actionbar_post);
+		mVueDataentryDeleteLayout = (LinearLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_delete_layout);
+		mVueDataentryDeleteCancel = (FrameLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_delete_cancel);
+		mVueDataentryDeleteDone = (FrameLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_delete_done);
+		mActionbarDeleteBtnTextview = (TextView) mVueDataentryActionbarView
+				.findViewById(R.id.actionbar_delete_btn_textview);
 		getSupportActionBar().setCustomView(mVueDataentryActionbarView);
 		getSupportActionBar().setDisplayShowCustomEnabled(true);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
+
 		setContentView(R.layout.date_entry_main);
 
+		mVueDataentryDeleteCancel.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDiscardOtherAppImageDialog();
+			}
+		});
+		mVueDataentryDeleteDone.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (mDeletedImagesPositionsList != null
+						&& mDeletedImagesPositionsList.size() > 0) {
+					if (mDataEntryFragment == null) {
+						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+								.findFragmentById(
+										R.id.create_aisles_view_fragment);
+					}
+					mDataEntryFragment.deleteImage(mDeletedImagesPositionsList);
+				} else {
+					Toast.makeText(DataEntryActivity.this,
+							"Please select atleast one image to delete.",
+							Toast.LENGTH_LONG).show();
+				}
+			}
+		});
 		mVueDataentryKeyboardCancel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -308,8 +346,18 @@ public class DataEntryActivity extends BaseActivity {
 				mVueDataentryActionbarScreenName.setText(getResources()
 						.getString(R.string.add_imae_to_aisle_screen_title));
 				if (b.getBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG)) {
-					mVueDataentryActionbarScreenName.setText(getResources()
-							.getString(R.string.edit_aisle_screen_title));
+					mVueDataentryActionbarScreenName.setText("Delete Images");
+					mDataEntryFragment.mDataEntryAislesViewpager
+							.setVisibility(View.VISIBLE);
+					try {
+						mDataEntryFragment.mDataEntryAislesViewpager
+								.setAdapter(new DataEntryAilsePagerAdapter(
+										DataEntryActivity.this,
+										mDataEntryFragment.mAisleImagePathList,
+										false));
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}
 				}
 
 				if (!mDataEntryFragment.mIsUserAisleFlag) {
@@ -370,7 +418,7 @@ public class DataEntryActivity extends BaseActivity {
 					mVueDataentryActionbarScreenName
 							.setText(getResources().getString(
 									R.string.add_imae_to_aisle_screen_title));
-						mDataEntryFragment.mMainHeadingRow
+					mDataEntryFragment.mMainHeadingRow
 							.setVisibility(View.VISIBLE);
 					mDataEntryFragment.mCategoryheadingLayout
 							.setVisibility(View.VISIBLE);
@@ -494,87 +542,8 @@ public class DataEntryActivity extends BaseActivity {
 		Log.e("fff", "onkeyup");
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (mDataEntryFragment.mCategoryListviewLayout.getVisibility() == View.VISIBLE) {
-				if (mDataEntryFragment.mFindAtText.getText().toString().trim()
-						.length() == 0) {
-					mDataEntryFragment.mFindatClose.setVisibility(View.VISIBLE);
-					mDataEntryFragment.mFindAtPopUp.setVisibility(View.VISIBLE);
-					mDataEntryFragment.mLookingForPopup
-							.setVisibility(View.GONE);
-					mDataEntryFragment.mLookingForListviewLayout
-							.setVisibility(View.GONE);
-					mDataEntryFragment.mOccasionPopup.setVisibility(View.GONE);
-					mDataEntryFragment.mOccasionListviewLayout
-							.setVisibility(View.GONE);
-					mDataEntryFragment.mCategoryListviewLayout
-							.setVisibility(View.GONE);
-					mDataEntryFragment.mSelectCategoryLayout
-							.setVisibility(View.GONE);
-					mDataEntryFragment.mInputMethodManager
-							.hideSoftInputFromWindow(
-									mDataEntryFragment.mOccasionText
-											.getWindowToken(), 0);
-					mDataEntryFragment.mInputMethodManager
-							.hideSoftInputFromWindow(
-									mDataEntryFragment.mLookingForText
-											.getWindowToken(), 0);
-					mDataEntryFragment.mInputMethodManager
-							.hideSoftInputFromWindow(
-									mDataEntryFragment.mSaySomethingAboutAisle
-											.getWindowToken(), 0);
-					mDataEntryFragment.mFindAtText.requestFocus();
-					mDataEntryFragment.mFindAtText
-							.setSelection(mDataEntryFragment.mFindAtText
-									.getText().toString().length());
-					mDataEntryFragment.mInputMethodManager.showSoftInput(
-							mDataEntryFragment.mFindAtText, 0);
-					mDataentryActionbarMainLayout.setVisibility(View.GONE);
-					mVueDataentryKeyboardLayout.setVisibility(View.VISIBLE);
-					mVueDataentryKeyboardDone.setVisibility(View.VISIBLE);
-					mVueDataentryKeyboardCancel.setVisibility(View.VISIBLE);
-				} else {
-					mDataEntryFragment.mSaySomethingAboutAisle
-							.setVisibility(View.VISIBLE);
-					mDataEntryFragment.mSaysomethingClose
-							.setVisibility(View.VISIBLE);
-					mDataEntryFragment.mInputMethodManager
-							.hideSoftInputFromWindow(
-									mDataEntryFragment.mOccasionText
-											.getWindowToken(), 0);
-					mDataEntryFragment.mInputMethodManager
-							.hideSoftInputFromWindow(
-									mDataEntryFragment.mLookingForText
-											.getWindowToken(), 0);
-					mDataEntryFragment.mInputMethodManager
-							.hideSoftInputFromWindow(
-									mDataEntryFragment.mFindAtText
-											.getWindowToken(), 0);
-					mDataEntryFragment.mLookingForPopup
-							.setVisibility(View.GONE);
-					mDataEntryFragment.mLookingForListviewLayout
-							.setVisibility(View.GONE);
-					mDataEntryFragment.mOccasionPopup.setVisibility(View.GONE);
-					mDataEntryFragment.mOccasionListviewLayout
-							.setVisibility(View.GONE);
-					mDataEntryFragment.mFindatClose.setVisibility(View.GONE);
-					mDataEntryFragment.mFindAtPopUp.setVisibility(View.GONE);
-					mDataEntryFragment.mCategoryListviewLayout
-							.setVisibility(View.GONE);
-					mDataEntryFragment.mSelectCategoryLayout
-							.setVisibility(View.GONE);
-					final InputMethodManager inputMethodManager = (InputMethodManager) DataEntryActivity.this
-							.getSystemService(Context.INPUT_METHOD_SERVICE);
-					inputMethodManager.toggleSoftInputFromWindow(
-							mDataEntryFragment.mSaySomethingAboutAisle
-									.getApplicationWindowToken(),
-							InputMethodManager.SHOW_FORCED, 0);
-					mDataEntryFragment.mSaySomethingAboutAisle.requestFocus();
-					mDataEntryFragment.mInputMethodManager.showSoftInput(
-							mDataEntryFragment.mSaySomethingAboutAisle, 0);
-					mDataentryActionbarMainLayout.setVisibility(View.GONE);
-					mVueDataentryKeyboardLayout.setVisibility(View.VISIBLE);
-					mVueDataentryKeyboardDone.setVisibility(View.VISIBLE);
-					mVueDataentryKeyboardCancel.setVisibility(View.VISIBLE);
-				}
+				Toast.makeText(DataEntryActivity.this,
+						"Category is mandotory.", Toast.LENGTH_LONG).show();
 			} else if (getSlidingMenu().isMenuShowing()) {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();

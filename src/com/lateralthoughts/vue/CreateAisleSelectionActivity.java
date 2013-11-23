@@ -108,7 +108,7 @@ public class CreateAisleSelectionActivity extends Activity {
 		ShoppingApplicationDetails shoppingApplicationDetails1 = new ShoppingApplicationDetails(
 				getResources().getString(R.string.browser), null, null, null);
 		mDataEntryShoppingApplicationsList.add(shoppingApplicationDetails1);
-		Toast.makeText(this, "Select from source.", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "Select from source.", Toast.LENGTH_SHORT).show();
 
 	}
 
