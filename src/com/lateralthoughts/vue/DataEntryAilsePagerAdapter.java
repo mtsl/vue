@@ -59,7 +59,7 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 		if (mImagePathsList.get(position).isCheckedFlag()) {
 			deleteIcon.setImageResource(R.drawable.ic_action_selection);
 		} else {
-			deleteIcon.setImageResource(R.drawable.cancel);
+			deleteIcon.setImageResource(R.drawable.ic_action_delete);
 		}
 		try {
 			if (mDataEntryFragment == null) {
