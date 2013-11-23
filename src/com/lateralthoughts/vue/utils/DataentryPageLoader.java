@@ -23,7 +23,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 public class DataentryPageLoader {
 
@@ -47,21 +46,21 @@ public class DataentryPageLoader {
 	public void DisplayImage(String originalImagePath, String imageUrl,
 			String imagePath, ImageView imageView,
 			ProgressBar dataEntryRowAisleImage, LinearLayout imageDeleteBtn,
-			LinearLayout imageEditBtn, boolean isAddedToServer) {
+			boolean isAddedToServer, boolean hideDeleteButton) {
 		Log.e("DataentryPageLoader", "Display image called :: " + imagePath);
 		queuePhoto(originalImagePath, imageUrl, imagePath, imageView,
-				dataEntryRowAisleImage, imageDeleteBtn, imageEditBtn,
-				isAddedToServer);
+				dataEntryRowAisleImage, imageDeleteBtn, isAddedToServer,
+				hideDeleteButton);
 	}
 
 	private void queuePhoto(String originalImagePath, String imageUrl,
 			String imagePath, ImageView imageView,
 			ProgressBar dataEntryRowAisleImage, LinearLayout imageDeleteBtn,
-			LinearLayout imageEditBtn, boolean isAddedToServer) {
+			boolean isAddedToServer, boolean hideDeleteButton) {
 		photosQueue.Clean(imageView);
 		PhotoToLoad p = new PhotoToLoad(originalImagePath, imageUrl, imagePath,
 				imageView, dataEntryRowAisleImage, imageDeleteBtn,
-				imageEditBtn, isAddedToServer);
+				isAddedToServer, hideDeleteButton);
 		synchronized (photosQueue.photosToLoad) {
 			photosQueue.photosToLoad.push(p);
 			photosQueue.photosToLoad.notifyAll();
@@ -78,21 +77,20 @@ public class DataentryPageLoader {
 		String originalImagePath;
 		String imageUrl;
 		LinearLayout imageDeleteBtn;
-		LinearLayout imageEditBtn;
-		boolean isAddedToServer;
+		boolean isAddedToServer, hideDeleteButton;
 
 		public PhotoToLoad(String originalImagePath, String imageUrl, String u,
 				ImageView i, ProgressBar dataEntryRowAisleImage,
-				LinearLayout imageDeleteBtn, LinearLayout imageEditBtn,
-				boolean isAddedToServer) {
+				LinearLayout imageDeleteBtn, boolean isAddedToServer,
+				boolean hideDeleteButton) {
 			imagePath = u;
 			imageView = i;
 			this.dataEntryRowAisleImage = dataEntryRowAisleImage;
 			this.imageUrl = imageUrl;
 			this.originalImagePath = originalImagePath;
 			this.imageDeleteBtn = imageDeleteBtn;
-			this.imageEditBtn = imageEditBtn;
 			this.isAddedToServer = isAddedToServer;
+			this.hideDeleteButton = hideDeleteButton;
 		}
 	}
 
@@ -141,8 +139,8 @@ public class DataentryPageLoader {
 										photoToLoad.imageView,
 										photoToLoad.dataEntryRowAisleImage,
 										photoToLoad.imageDeleteBtn,
-										photoToLoad.imageEditBtn,
-										photoToLoad.isAddedToServer);
+										photoToLoad.isAddedToServer,
+										photoToLoad.hideDeleteButton);
 								Activity a = (Activity) photoToLoad.imageView
 										.getContext();
 								a.runOnUiThread(bd);
@@ -174,8 +172,8 @@ public class DataentryPageLoader {
 											bmp, photoToLoad.imageView,
 											photoToLoad.dataEntryRowAisleImage,
 											photoToLoad.imageDeleteBtn,
-											photoToLoad.imageEditBtn,
-											photoToLoad.isAddedToServer);
+											photoToLoad.isAddedToServer,
+											photoToLoad.hideDeleteButton);
 									Activity a = (Activity) photoToLoad.imageView
 											.getContext();
 									a.runOnUiThread(bd);
@@ -220,8 +218,8 @@ public class DataentryPageLoader {
 												photoToLoad.imageView,
 												photoToLoad.dataEntryRowAisleImage,
 												photoToLoad.imageDeleteBtn,
-												photoToLoad.imageEditBtn,
-												photoToLoad.isAddedToServer);
+												photoToLoad.isAddedToServer,
+												photoToLoad.hideDeleteButton);
 										Activity a = (Activity) photoToLoad.imageView
 												.getContext();
 										a.runOnUiThread(bd);
@@ -247,19 +245,18 @@ public class DataentryPageLoader {
 		ImageView imageView;
 		ProgressBar dataEntryRowAisleImage;
 		LinearLayout imageDeleteBtn;
-		LinearLayout imageEditBtn;
-		boolean isAddedToServer;
+		boolean isAddedToServer, hideDeleteButton;
 
 		public BitmapDisplayer(Bitmap bmp, ImageView i,
 				ProgressBar dataEntryRowAisleImage,
-				LinearLayout imageDeleteBtn, LinearLayout imageEditBtn,
-				boolean isAddedToServer) {
+				LinearLayout imageDeleteBtn, boolean isAddedToServer,
+				boolean hideDeleteButton) {
 			this.bmp = bmp;
 			imageView = i;
 			this.dataEntryRowAisleImage = dataEntryRowAisleImage;
 			this.imageDeleteBtn = imageDeleteBtn;
-			this.imageEditBtn = imageEditBtn;
 			this.isAddedToServer = isAddedToServer;
+			this.hideDeleteButton = hideDeleteButton;
 		}
 
 		public void run() {
@@ -267,16 +264,19 @@ public class DataentryPageLoader {
 			dataEntryRowAisleImage.setVisibility(View.GONE);
 			imageView.setVisibility(View.VISIBLE);
 			if (isAddedToServer) {
-				imageDeleteBtn.setVisibility(View.VISIBLE);
-				imageEditBtn.setVisibility(View.VISIBLE);
+				if (hideDeleteButton) {
+					imageDeleteBtn.setVisibility(View.GONE);
+				} else {
+					imageDeleteBtn.setVisibility(View.VISIBLE);
+				}
 			} else {
 				imageDeleteBtn.setVisibility(View.GONE);
-				imageEditBtn.setVisibility(View.GONE);
 			}
 			if (bmp != null) {
 				imageView.setImageBitmap(bmp);
-			} else
+			} else {
 				imageView.setImageResource(R.drawable.no_image);
+			}
 		}
 	}
 

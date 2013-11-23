@@ -38,8 +38,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.facebook.CreateAlbum;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Session;
@@ -91,7 +89,6 @@ public class VueLandingPageActivity extends BaseActivity {
 	public static String mOtherSourceAddImageAisleId = null;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
-     
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -320,9 +317,10 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-	void handleSendText(Intent intent, boolean fromOnCreateMethodFlag) {
+	private void handleSendText(Intent intent, boolean fromOnCreateMethodFlag) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText);
+		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText
+				+ "??? " + fromOnCreateMethodFlag);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
 			if (Utils.isLoadDataentryScreenFlag(this)) {
@@ -359,7 +357,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-	void handleSendImage(Intent intent, boolean fromOnCreateMethodFlag) {
+	private void handleSendImage(Intent intent, boolean fromOnCreateMethodFlag) {
 		Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
 		if (imageUri != null) {
 			if (Utils.isLoadDataentryScreenFlag(this)) {
@@ -412,7 +410,8 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 	}
 
-	void handleSendMultipleImages(Intent intent, boolean fromOnCreateMethodFlag) {
+	private void handleSendMultipleImages(Intent intent,
+			boolean fromOnCreateMethodFlag) {
 		ArrayList<Uri> imageUris = intent
 				.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
 		if (imageUris != null) {
@@ -472,7 +471,7 @@ public class VueLandingPageActivity extends BaseActivity {
 					getSlidingMenu().toggle();
 				}
 			} else if (StackViews.getInstance().getStackCount() > 0) {
-				
+
 				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				Log.i("stackcount", "stackcount onbckpresed: close window2 ");
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
@@ -835,9 +834,9 @@ public class VueLandingPageActivity extends BaseActivity {
 	class ProgresStatus implements NotifyProgress {
 		@Override
 		public void showProgress() {
-		 
-			 mLoadProgress.setVisibility(View.VISIBLE);
-			 
+
+			mLoadProgress.setVisibility(View.VISIBLE);
+
 			/*
 			 * LayoutInflater inflater = (LayoutInflater)
 			 * getSystemService(Context.LAYOUT_INFLATER_SERVICE); View layout =
@@ -959,11 +958,14 @@ public class VueLandingPageActivity extends BaseActivity {
 			public void onClick(View arg0) {
 
 				dialog.dismiss();
-				showCategory(getString(R.string.sidemenu_sub_option_My_Aisles),true);
+				showCategory(getString(R.string.sidemenu_sub_option_My_Aisles),
+						true);
 				mAddImageToAisleLayoutClickedAFlag = true;
 
-				/*Toast.makeText(VueLandingPageActivity.this, "In Progress.",
-						Toast.LENGTH_LONG).show();*/
+				/*
+				 * Toast.makeText(VueLandingPageActivity.this, "In Progress.",
+				 * Toast.LENGTH_LONG).show();
+				 */
 			}
 		});
 		createAisleLayout.setOnClickListener(new OnClickListener() {
@@ -1304,7 +1306,5 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 
 	}
-	
-
 
 }

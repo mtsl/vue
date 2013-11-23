@@ -628,7 +628,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				} else {
 					mVueAiselFragment.mEditTextFindAt.setText("");
 				}
-	
+				addImageToAisle();
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT
 				&& resultCode == VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT) {
@@ -983,36 +983,13 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		return newBitmap;
 	}
 
-	private void addImageToAisle(String imagePath, String imageUrl,
-			int imageWidth, int imageHeight, String detailsUrl, String store,
-			String imageId) {
-		boolean isImageFromLocalSystem = false;
-		if (imageUrl == null) {
-			isImageFromLocalSystem = true;
-		}
-
-		FileCache fileCache = new FileCache(this);
-		File f = null;
-		if (imageUrl != null) {
-			f = fileCache.getFile(imageUrl);
-		} else {
-			imageUrl = imagePath;
-			f = fileCache.getFile(imagePath);
-		}
-		File sourceFile = new File(imagePath);
-		Bitmap bmp = BitmapLoaderUtils.getInstance().decodeFile(sourceFile,
-				VueApplication.getInstance().mScreenHeight,
-				VueApplication.getInstance().getVueDetailsCardWidth(),
-				Utils.DETAILS_SCREEN);
-		Utils.saveBitmap(bmp, f);
-
+	private void addImageToAisle() {
 		if (mVueAiselFragment == null) {
 			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.aisle_details_view_fragment);
 		}
 		mVueAiselFragment
-				.addAisleToWindow(imagePath, imageUrl, imageWidth, imageHeight,
-						detailsUrl, store, imageId, isImageFromLocalSystem);
+				.addAisleToWindow();
 	}
 
 	private void clearBitmaps() {

@@ -42,6 +42,15 @@ public class DataentryImage implements Serializable {
 	private int imageWidth;
 	private int imageHeight;
 	private String imageStore;
+	private boolean isCheckedFlag;
+
+	public boolean isCheckedFlag() {
+		return isCheckedFlag;
+	}
+
+	public void setCheckedFlag(boolean isCheckedFlag) {
+		this.isCheckedFlag = isCheckedFlag;
+	}
 
 	public String getAisleId() {
 		return aisleId;
