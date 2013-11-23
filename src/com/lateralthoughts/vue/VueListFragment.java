@@ -192,12 +192,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
           FlurryAgent.logEvent(s);
           if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
             VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;
-            VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
-            vueLandingPageActivity1.showCategory(s,false);
             if (getActivity() instanceof SlidingFragmentActivity) {
               SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
               activity.getSlidingMenu().toggle();
               if (getActivity() instanceof VueLandingPageActivity) {
+                VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
+                vueLandingPageActivity1.showCategory(s,false);
                 VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
                 vueLandingPageActivity.mVueLandingActionbarScreenName
                     .setText(getString(R.string.trending));

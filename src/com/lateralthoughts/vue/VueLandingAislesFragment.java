@@ -318,7 +318,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
             LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 0);
             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
                 mProgressBar.getId());
-          //  mProgressBar.setLayoutParams(params);
+          // mProgressBar.setLayoutParams(params);
             mProgressBar.startAnimation(a);
           }
         }

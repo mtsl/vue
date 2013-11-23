@@ -98,29 +98,10 @@ public class VueLandingPageActivity extends BaseActivity {
 		super.onCreate(icicle);
 		//CreateAlbum.createUserAlbum();
 		landingPageActivity = this;
-
-
-		/*
-		 * new Thread(new Runnable() {
-		 * 
-		 * @Override public void run() { Callback callback = new
-		 * Request.Callback() { public void onCompleted(com.facebook.Response
-		 * response) { GraphObject obj = response.getGraphObject(); JSONObject
-		 * jsonObj = obj.getInnerJSONObject(); Log.e("VueLandingPageActivity",
-		 * "facebook Albums: 4 " + jsonObj.toString()); } };
-		 * Log.e("VueLandingPageActivity", "facebook Albums: 1"); Request
-		 * request = new Request(Session.getActiveSession(), "me/albums", null,
-		 * HttpMethod.POST, callback); Log.e("VueLandingPageActivity",
-		 * "facebook Albums: 2"); request.executeAsync();
-		 * Log.e("VueLandingPageActivity", "facebook Albums: 3"); } }).start();
-		 */
-
-		landingPageActivity = this;
 		clearDataEntryData();
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
 		VueApplication.getInstance().mLastRecordedTime = System
 				.currentTimeMillis();
-		Log.e("VueLandingPageActivity", "Oncreate called to test sssssssss");
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		setContentView(R.layout.vue_landing_main);
 		mLoadProgress = (ProgressBar) findViewById(R.id.adprogress_progressBar);
