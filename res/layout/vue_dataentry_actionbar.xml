@@ -33,6 +33,17 @@
             android:text="@string/app_name"
             android:textColor="@color/black"
             android:textSize="18dip" />
+
+        <LinearLayout
+            android:id="@+id/vue_dataentry_addimage_skip_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:showDividers="middle"
+            android:visibility="gone" >
+
+            <include layout="@layout/include_cancel_button" />
+        </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout

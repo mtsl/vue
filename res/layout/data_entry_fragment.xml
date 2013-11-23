@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="2dip"
+            android:layout_marginTop="4dip"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="horizontal"
             android:visibility="visible" >
@@ -38,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/mainheadingrow"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="2dp"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="horizontal"
             android:visibility="gone" >
@@ -101,7 +102,7 @@
                 android:layout_marginTop="8dip"
                 android:background="@color/white" >
 
-                <com.lateralthoughts.vue.utils.EditTextBackEvent
+                <EditText
                     android:id="@+id/lookingfortext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -165,14 +166,14 @@
                 android:layout_marginTop="8dip"
                 android:background="@color/white" >
 
-                <com.lateralthoughts.vue.utils.EditTextBackEvent
+                <EditText
                     android:id="@+id/find_at_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="4dip"
                     android:layout_marginRight="32dip"
-                    android:hint="Find at"
+                    android:hint="Find at...            "
                     android:singleLine="true"
                     android:textColor="@color/dataentrytextcolor"
                     android:textSize="15sp" />
@@ -245,7 +246,7 @@
                 android:layout_marginTop="8dip"
                 android:background="@color/white" >
 
-                <com.lateralthoughts.vue.utils.EditTextBackEvent
+                <EditText
                     android:id="@+id/occasiontext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -339,7 +340,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="8dp" >
 
-        <com.lateralthoughts.vue.utils.EditTextBackEvent
+        <EditText
             android:id="@+id/saysomethingaboutaisle"
             android:layout_width="match_parent"
             android:layout_height="48dip"

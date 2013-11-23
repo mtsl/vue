@@ -142,7 +142,7 @@
     <string name="aboutedittext">Type your message here</string>
     <string name="clear">Clear</string>
     <string name="send">Send</string>
-    <string name="data_entry_invite_friends_mandotory_mesg">Please choose atleast one friends to invite</string>
+    <string name="data_entry_invite_friends_mandatory_mesg">Please choose atleast one friends to invite</string>
     <string name="no_camera_label">Sorry, Threre is no camera in this device.</string>
     <string name="invite">Invite</string>
     <string name="abouttextfedbacktext">\nPlease write to us about how we might improve</string>

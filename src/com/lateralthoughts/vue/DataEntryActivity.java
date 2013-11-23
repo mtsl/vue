@@ -32,7 +32,7 @@ public class DataEntryActivity extends BaseActivity {
 	RelativeLayout mDataentryActionbarMainLayout,
 			mVueDataentryActionbarAppIconLayout;
 	public LinearLayout mVueDataentryKeyboardLayout, mVueDataentryPostLayout,
-			mVueDataentryDeleteLayout;
+			mVueDataentryDeleteLayout, mVueDataentryAddimageSkipLayout;
 	public FrameLayout mVueDataentryKeyboardDone, mVueDataentryKeyboardCancel,
 			mVueDataentryClose, mVueDataentryPost, mVueDataentryDeleteCancel,
 			mVueDataentryDeleteDone;
@@ -75,16 +75,26 @@ public class DataEntryActivity extends BaseActivity {
 				.findViewById(R.id.vue_dataentry_delete_done);
 		mActionbarDeleteBtnTextview = (TextView) mVueDataentryActionbarView
 				.findViewById(R.id.actionbar_delete_btn_textview);
+		mVueDataentryAddimageSkipLayout = (LinearLayout) mVueDataentryActionbarView
+				.findViewById(R.id.vue_dataentry_addimage_skip_layout);
 		getSupportActionBar().setCustomView(mVueDataentryActionbarView);
 		getSupportActionBar().setDisplayShowCustomEnabled(true);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
 
 		setContentView(R.layout.date_entry_main);
 
+		mVueDataentryAddimageSkipLayout
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						showDiscardOtherAppImageDialog("Do you want to cancel addImage?");
+					}
+				});
+
 		mVueDataentryDeleteCancel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showDiscardOtherAppImageDialog();
+				showDiscardOtherAppImageDialog(null);
 			}
 		});
 		mVueDataentryDeleteDone.setOnClickListener(new OnClickListener() {
@@ -231,7 +241,7 @@ public class DataEntryActivity extends BaseActivity {
 		mVueDataentryClose.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				showDiscardOtherAppImageDialog();
+				showDiscardOtherAppImageDialog(null);
 			}
 		});
 
@@ -442,6 +452,16 @@ public class DataEntryActivity extends BaseActivity {
 				}
 			}
 		}
+		if (mVueDataentryActionbarScreenName != null
+				&& mVueDataentryActionbarScreenName.getText() != null
+				&& mVueDataentryActionbarScreenName
+						.getText()
+						.toString()
+						.trim()
+						.equals(getResources().getString(
+								R.string.add_imae_to_aisle_screen_title))) {
+			mVueDataentryAddimageSkipLayout.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override
@@ -541,30 +561,32 @@ public class DataEntryActivity extends BaseActivity {
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		Log.e("fff", "onkeyup");
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (mDataEntryFragment.mCategoryListviewLayout.getVisibility() == View.VISIBLE) {
-				Toast.makeText(DataEntryActivity.this,
-						"Category is mandotory.", Toast.LENGTH_LONG).show();
-			} else if (getSlidingMenu().isMenuShowing()) {
+			if (getSlidingMenu().isMenuShowing()) {
 				if (!mFrag.listener.onBackPressed()) {
 					getSlidingMenu().toggle();
 				}
 			} else {
-				showDiscardOtherAppImageDialog();
+				showDiscardOtherAppImageDialog(null);
 			}
 		}
 		return false;
 
 	}
 
-	private void showDiscardOtherAppImageDialog() {
+	private void showDiscardOtherAppImageDialog(
+			final String addImageCancelAlertMesg) {
 		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.vue_popup);
 		final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
 		TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-		messagetext.setText(getResources().getString(
-				R.string.discard_dataentry_screen_changes));
+		if (addImageCancelAlertMesg != null) {
+			messagetext.setText(addImageCancelAlertMesg);
+		} else {
+			messagetext.setText(getResources().getString(
+					R.string.discard_dataentry_screen_changes));
+		}
 		yesButton.setText("Yes");
 		noButton.setText("No");
 		yesButton.setOnClickListener(new OnClickListener() {
@@ -609,6 +631,21 @@ public class DataEntryActivity extends BaseActivity {
 		noButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				dialog.dismiss();
+				if (addImageCancelAlertMesg != null) {
+					Utils.putTouchToChnageImagePosition(DataEntryActivity.this,
+							-1);
+					Utils.putTouchToChnageImageTempPosition(
+							DataEntryActivity.this, -1);
+					Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
+							false);
+					if (mDataEntryFragment == null) {
+						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
+								.findFragmentById(
+										R.id.create_aisles_view_fragment);
+					}
+					mDataEntryFragment
+							.addImageToAisleButtonClickFunctionality(true);
+				}
 			}
 		});
 		dialog.show();

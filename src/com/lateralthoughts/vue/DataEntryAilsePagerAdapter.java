@@ -87,19 +87,7 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 			e.printStackTrace();
 		}
 		((ViewPager) collection).addView(view, 0);
-		view.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (mDataEntryFragment == null) {
-					mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
-							.getSupportFragmentManager().findFragmentById(
-									R.id.create_aisles_view_fragment);
-				}
-				mDataEntryFragment.hideAllEditableTextboxes();
-			}
-		});
 		imageDeleteBtn.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View arg0) {
 				if (mDataEntryActivity == null) {

@@ -118,7 +118,7 @@ public class DataEntryInviteFriendsActivity extends Activity {
 									DataEntryInviteFriendsActivity.this,
 									getResources()
 											.getString(
-													R.string.data_entry_invite_friends_mandotory_mesg),
+													R.string.data_entry_invite_friends_mandatory_mesg),
 									Toast.LENGTH_LONG).show();
 						}
 
