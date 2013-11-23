@@ -71,7 +71,7 @@ import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
-public class VueListFragment extends SherlockFragment implements TextWatcher/* Fragment */{
+public class VueListFragment extends SherlockFragment implements TextWatcher {
 
 	public static final String TAG = "VueListFragment";
 	private ExpandableListView expandListView;
@@ -90,8 +90,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 	private LayoutInflater inflater;
 	private boolean isProfileEdited = false;
 	boolean isNewUser = false;
-	
-
 	private String profilePicUrl = "";
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -168,7 +166,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 					}
 					VueTrendingAislesDataModel.getInstance(getActivity())
 							.getNetworkHandler().requestSearch(s);
-					// TODO:close the keyboard here
 					final InputMethodManager mInputMethodManager = (InputMethodManager) getActivity()
 							.getSystemService(Context.INPUT_METHOD_SERVICE);
 					mInputMethodManager.hideSoftInputFromWindow(
@@ -180,7 +177,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
 		});
 
     expandListView.setOnGroupClickListener(new OnGroupClickListener() {
-
 
       @Override
       public boolean onGroupClick(ExpandableListView parent, View v,
@@ -288,8 +284,6 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
       @Override
       public boolean onChildClick(ExpandableListView parent, View v,
           int groupPosition, int childPosition, long id) {
-
-        // Added sidemenu_sub_option_My_Aisles functionality
         TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
         String s = textView.getText().toString();
         Log.e(TAG, "Child Click: Name of item: " + s);
@@ -314,32 +308,22 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
               return true;
         } else if (s.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
         	  if (getActivity() instanceof SlidingFragmentActivity) {
-        	   // if (getActivity() instanceof VueLandingPageActivity) {
         	    SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
         	    activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
-        	    /*((VueLandingPageActivity) getActivity())*/VueApplication.getInstance().landingPage.showCategory(s,false);
-        	   // } else {
-        	      //TODO: Need to implement in all the screens.
-        	   // }
+                VueApplication.getInstance().landingPage.showCategory(s,false);
                   activity.getSlidingMenu().toggle();
         	  }
         	return true;
         } else if (s.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
           Log.i("clicked on", "clicked on: "+s);
           if (getActivity() instanceof SlidingFragmentActivity) {
-          //  if (getActivity() instanceof VueLandingPageActivity) {
             SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
             activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
-              /*((VueLandingPageActivity) getActivity())*/VueApplication.getInstance().landingPage.showCategory(s,false);              
-            //} else {
-              //TODO: Need to implement in all the screens.
-           // }
-             // SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+            VueApplication.getInstance().landingPage.showCategory(s,false);              
               activity.getSlidingMenu().toggle();
     	  }
           return true;
         } else if(s.trim().equals(getString(R.string.sidemenu_sub_option_Interactions))) {
-        	//TODO: need to implement interactions option
         	Log.i("clicked on", "clicked on: "+s);
         	return true;
         }
@@ -361,22 +345,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher/* F
               SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
               activity.getSlidingMenu().toggle();
               if (getActivity() instanceof VueLandingPageActivity) {
-                /*
-                 * VueTrendingAislesDataModel model = VueTrendingAislesDataModel
-                 * .getInstance(getActivity()); model.clearAisles();
-                 */
                 AisleWindowContentFactory.getInstance(getActivity())
                     .clearObjectsInUse();
                 VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
                 vueLandingPageActivity.showCategory(cat,false);
               }
-
-              /*
-               * ScaledImageViewFactory mImageViewFactory =
-               * ScaledImageViewFactory .getInstance(getActivity());
-               * mImageViewFactory.clearAllImageViews();
-               */
-
               if (getActivity() instanceof AisleDetailsViewActivity) {
                 startActivity(new Intent(
                     (AisleDetailsViewActivity) getActivity(),
