@@ -94,9 +94,9 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-	  if (getActivity() instanceof VueLandingPageActivity) {
-	    VueApplication.getInstance().landingPage = (VueLandingPageActivity) getActivity();
-	  }
+		if (getActivity() instanceof VueLandingPageActivity) {
+			VueApplication.getInstance().landingPage = (VueLandingPageActivity) getActivity();
+		}
 		this.inflater = inflater;
 		sharedPreferencesObj = getActivity().getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -176,203 +176,230 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 			}
 		});
 
-    expandListView.setOnGroupClickListener(new OnGroupClickListener() {
+		expandListView.setOnGroupClickListener(new OnGroupClickListener() {
 
-      @Override
-      public boolean onGroupClick(ExpandableListView parent, View v,
-          int groupPosition, long id) {
-        if (VueLandingPageActivity.mOtherSourceImagePath == null) {
-          TextView textView = (TextView) v
-              .findViewById(R.id.vue_list_fragment_itemTextview);
-          String s = textView.getText().toString();
-          FlurryAgent.logEvent(s);
-          if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
-            VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;
-            if (getActivity() instanceof SlidingFragmentActivity) {
-              SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-              activity.getSlidingMenu().toggle();
-              if (getActivity() instanceof VueLandingPageActivity) {
-                VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
-                vueLandingPageActivity1.showCategory(s,false);
-                VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-                vueLandingPageActivity.mVueLandingActionbarScreenName
-                    .setText(getString(R.string.trending));
-              }
-              if (getActivity() instanceof AisleDetailsViewActivity) {
-                startActivity(new Intent(
-                    (AisleDetailsViewActivity) getActivity(),
-                    VueLandingPageActivity.class));
-              } else if (getActivity() instanceof DataEntryActivity) {
-                startActivity(new Intent((DataEntryActivity) getActivity(),
-                    VueLandingPageActivity.class));
-              }
-            }
+			@Override
+			public boolean onGroupClick(ExpandableListView parent, View v,
+					int groupPosition, long id) {
+				if (VueLandingPageActivity.mOtherSourceImagePath == null) {
+					TextView textView = (TextView) v
+							.findViewById(R.id.vue_list_fragment_itemTextview);
+					String s = textView.getText().toString();
+					FlurryAgent.logEvent(s);
+					if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
+						VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;
+						if (getActivity() instanceof SlidingFragmentActivity) {
+							SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+							activity.getSlidingMenu().toggle();
+							if (getActivity() instanceof VueLandingPageActivity) {
+								VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
+								vueLandingPageActivity1.showCategory(s, false);
+								VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+								vueLandingPageActivity.mVueLandingActionbarScreenName
+										.setText(getString(R.string.trending));
+							}
+							if (getActivity() instanceof AisleDetailsViewActivity) {
+								startActivity(new Intent(
+										(AisleDetailsViewActivity) getActivity(),
+										VueLandingPageActivity.class));
+							} else if (getActivity() instanceof DataEntryActivity) {
+								startActivity(new Intent(
+										(DataEntryActivity) getActivity(),
+										VueLandingPageActivity.class));
+							}
+						}
 
-          } else if (s.equals(getString(R.string.sidemenu_option_About))) {
-            inflateAboutLayout();
-          } else if (s.equals(getString(R.string.sidemenu_option_FeedBack))) {
-            startActivity(new Intent(getActivity(), FeedbackForm.class));
-          } else if (s.equals(getString(R.string.sidemeun_option_Settings))) {
-            inflateSettingsLayout();
-          } else if (s
-              .equals(getString(R.string.sidemenu_option_Invite_Friends))) {
-            View layoutInviewFriends = inflater.inflate(R.layout.invite, null);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            vue_list_fragment_invite_friendsLayout_mainxml
-                .addView(layoutInviewFriends);
-            invitefriendsLayout = (LinearLayout) layoutInviewFriends
-                .findViewById(R.id.vue_list_fragment_invite_friendsLayout);
-            invitefriendsLayout.setLayoutParams(params);
-            inviteFrirendsListView = (ListView) layoutInviewFriends
-                .findViewById(R.id.vue_list_fragment_Invitefriends_list);
-            inviteFrirendsListView
-                .setOnItemClickListener(new OnItemClickListener() {
+					} else if (s
+							.equals(getString(R.string.sidemenu_option_About))) {
+						inflateAboutLayout();
+					} else if (s
+							.equals(getString(R.string.sidemenu_option_FeedBack))) {
+						startActivity(new Intent(getActivity(),
+								FeedbackForm.class));
+					} else if (s
+							.equals(getString(R.string.sidemeun_option_Settings))) {
+						inflateSettingsLayout();
+					} else if (s
+							.equals(getString(R.string.sidemenu_option_Invite_Friends))) {
+						View layoutInviewFriends = inflater.inflate(
+								R.layout.invite, null);
+						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+								LayoutParams.MATCH_PARENT,
+								LayoutParams.MATCH_PARENT);
+						vue_list_fragment_invite_friendsLayout_mainxml
+								.addView(layoutInviewFriends);
+						invitefriendsLayout = (LinearLayout) layoutInviewFriends
+								.findViewById(R.id.vue_list_fragment_invite_friendsLayout);
+						invitefriendsLayout.setLayoutParams(params);
+						inviteFrirendsListView = (ListView) layoutInviewFriends
+								.findViewById(R.id.vue_list_fragment_Invitefriends_list);
+						inviteFrirendsListView
+								.setOnItemClickListener(new OnItemClickListener() {
 
-                  @Override
-                  public void onItemClick(AdapterView<?> parent, View view,
-                      int position, long id) {
+									@Override
+									public void onItemClick(
+											AdapterView<?> parent, View view,
+											int position, long id) {
 
-                    // TODO:
-                  }
-                });
-            
+										// TODO:
+									}
+								});
 
-          } else if (s.equals(getString(R.string.sidemenu_option_Login))) {
-            FlurryAgent.logEvent("Login_Without_Prompt");
-            sharedPreferencesObj = getActivity().getSharedPreferences(
-                VueConstants.SHAREDPREFERENCE_NAME, 0);
-            boolean fbloginfalg = sharedPreferencesObj.getBoolean(
-                VueConstants.FACEBOOK_LOGIN, false);
-            boolean googleplusloginfalg = sharedPreferencesObj.getBoolean(
-                VueConstants.GOOGLEPLUS_LOGIN, false);
-            if (!googleplusloginfalg || !fbloginfalg) {
+					} else if (s
+							.equals(getString(R.string.sidemenu_option_Login))) {
+						FlurryAgent.logEvent("Login_Without_Prompt");
+						sharedPreferencesObj = getActivity()
+								.getSharedPreferences(
+										VueConstants.SHAREDPREFERENCE_NAME, 0);
+						boolean fbloginfalg = sharedPreferencesObj.getBoolean(
+								VueConstants.FACEBOOK_LOGIN, false);
+						boolean googleplusloginfalg = sharedPreferencesObj
+								.getBoolean(VueConstants.GOOGLEPLUS_LOGIN,
+										false);
+						if (!googleplusloginfalg || !fbloginfalg) {
 
-              Intent i = new Intent(getActivity(), VueLoginActivity.class);
-              Bundle b = new Bundle();
-              b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
-              b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
-              b.putString(VueConstants.FROM_INVITEFRIENDS, null);
-              b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, true);
-              i.putExtras(b);
-              startActivity(i);
-            } else {
-              Toast.makeText(
-                  getActivity(),
-                  getActivity().getResources().getString(
-                      R.string.already_logged_in_msg), Toast.LENGTH_LONG)
-                  .show();
-            }
-          }
+							Intent i = new Intent(getActivity(),
+									VueLoginActivity.class);
+							Bundle b = new Bundle();
+							b.putBoolean(
+									VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
+									false);
+							b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
+									false);
+							b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+							b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
+									true);
+							i.putExtras(b);
+							startActivity(i);
+						} else {
+							Toast.makeText(
+									getActivity(),
+									getActivity().getResources().getString(
+											R.string.already_logged_in_msg),
+									Toast.LENGTH_LONG).show();
+						}
+					}
 
-          return false;
-        } else {
-          try {
-            VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-            vueLandingPageActivity.showDiscardOtherAppImageDialog();
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-          return false;
-        }
-      }
-    });
+					return false;
+				} else {
+					try {
+						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+						vueLandingPageActivity.showDiscardOtherAppImageDialog();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return false;
+				}
+			}
+		});
 
+		expandListView.setOnChildClickListener(new OnChildClickListener() {
 
-    expandListView.setOnChildClickListener(new OnChildClickListener() {
+			@Override
+			public boolean onChildClick(ExpandableListView parent, View v,
+					int groupPosition, int childPosition, long id) {
+				TextView textView = (TextView) v
+						.findViewById(R.id.child_itemTextview);
+				String s = textView.getText().toString();
+				Log.e(TAG, "Child Click: Name of item: " + s);
+				if (s.equals(getString(R.string.sidemenu_sub_option_My_Aisles))) {
+					Log.i("clicked on", "clicked on: " + s);
+					VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
 
-      @Override
-      public boolean onChildClick(ExpandableListView parent, View v,
-          int groupPosition, int childPosition, long id) {
-        TextView textView = (TextView) v.findViewById(R.id.child_itemTextview);
-        String s = textView.getText().toString();
-        Log.e(TAG, "Child Click: Name of item: " + s);
-        if (s.equals(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-        	Log.i("clicked on", "clicked on: "+s);
-          VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
+					if (getActivity() instanceof SlidingFragmentActivity) {
+						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+						activity.getSlidingMenu().toggle();
+						activity.startActivity(new Intent(getActivity(),
+								VueLandingPageActivity.class));
+						VueApplication.getInstance().landingPage.showCategory(
+								s, false);
+						if (getActivity() instanceof AisleDetailsViewActivity) {
+							startActivity(new Intent(
+									(AisleDetailsViewActivity) getActivity(),
+									VueLandingPageActivity.class));
+						} else if (getActivity() instanceof DataEntryActivity) {
+							startActivity(new Intent(
+									(DataEntryActivity) getActivity(),
+									VueLandingPageActivity.class));
+						}
+					}
+					return true;
+				} else if (s
+						.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
+					if (getActivity() instanceof SlidingFragmentActivity) {
+						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+						activity.startActivity(new Intent(getActivity(),
+								VueLandingPageActivity.class));
+						VueApplication.getInstance().landingPage.showCategory(
+								s, false);
+						activity.getSlidingMenu().toggle();
+					}
+					return true;
+				} else if (s
+						.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
+					Log.i("clicked on", "clicked on: " + s);
+					if (getActivity() instanceof SlidingFragmentActivity) {
+						SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+						activity.startActivity(new Intent(getActivity(),
+								VueLandingPageActivity.class));
+						VueApplication.getInstance().landingPage.showCategory(
+								s, false);
+						activity.getSlidingMenu().toggle();
+					}
+					return true;
+				} else if (s.trim().equals(
+						getString(R.string.sidemenu_sub_option_Interactions))) {
+					Log.i("clicked on", "clicked on: " + s);
+					return true;
+				}
+				Log.i("clicked on", "clicked on:2222 " + s);
 
-          if (getActivity() instanceof SlidingFragmentActivity) {
-            SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-            activity.getSlidingMenu().toggle();
-            activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
-            VueApplication.getInstance().landingPage.showCategory(s,false);
-            if (getActivity() instanceof AisleDetailsViewActivity) {
-              startActivity(new Intent(
-                  (AisleDetailsViewActivity) getActivity(),
-                  VueLandingPageActivity.class));
-            } else if (getActivity() instanceof DataEntryActivity) {
-              startActivity(new Intent((DataEntryActivity) getActivity(),
-                  VueLandingPageActivity.class));
-            }
-          }
-              return true;
-        } else if (s.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-        	  if (getActivity() instanceof SlidingFragmentActivity) {
-        	    SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-        	    activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
-                VueApplication.getInstance().landingPage.showCategory(s,false);
-                  activity.getSlidingMenu().toggle();
-        	  }
-        	return true;
-        } else if (s.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-          Log.i("clicked on", "clicked on: "+s);
-          if (getActivity() instanceof SlidingFragmentActivity) {
-            SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-            activity.startActivity(new Intent(getActivity(), VueLandingPageActivity.class));
-            VueApplication.getInstance().landingPage.showCategory(s,false);              
-              activity.getSlidingMenu().toggle();
-    	  }
-          return true;
-        } else if(s.trim().equals(getString(R.string.sidemenu_sub_option_Interactions))) {
-        	Log.i("clicked on", "clicked on: "+s);
-        	return true;
-        }
-        Log.i("clicked on", "clicked on:2222 "+s);
+				if (VueLandingPageActivity.mOtherSourceImagePath == null) {
+					if (s.equals(getString(R.string.sidemenu_option_Profile))) {
+						FlurryAgent.logEvent("Settings_" + s);
+						getUserInfo();
+					} else if (s
+							.equals(getString(R.string.sidemenu_sub_option_Facebook))
+							|| s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
+						FlurryAgent.logEvent("InviteFriends_" + s);
+						getFriendsList(s);
+					} else {
+						TextView categoryText = (TextView) v
+								.findViewById(R.id.child_itemTextview);
+						String cat = categoryText.getText().toString();
+						if (getActivity() instanceof SlidingFragmentActivity) {
+							SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
+							activity.getSlidingMenu().toggle();
+							if (getActivity() instanceof VueLandingPageActivity) {
+								AisleWindowContentFactory.getInstance(
+										getActivity()).clearObjectsInUse();
+								VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+								vueLandingPageActivity.showCategory(cat, false);
+							}
+							if (getActivity() instanceof AisleDetailsViewActivity) {
+								startActivity(new Intent(
+										(AisleDetailsViewActivity) getActivity(),
+										VueLandingPageActivity.class));
+							} else if (getActivity() instanceof DataEntryActivity) {
+								startActivity(new Intent(
+										(DataEntryActivity) getActivity(),
+										VueLandingPageActivity.class));
+							}
+						}
+					}
+					return false;
+				} else {
+					try {
+						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+						vueLandingPageActivity.showDiscardOtherAppImageDialog();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return false;
+				}
+			}
+		});
 
-        if (VueLandingPageActivity.mOtherSourceImagePath == null) {
-          if (s.equals(getString(R.string.sidemenu_option_Profile))) {
-            FlurryAgent.logEvent("Settings_" + s);
-            getUserInfo();
-          } else if (s.equals(getString(R.string.sidemenu_sub_option_Facebook))
-              || s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
-            FlurryAgent.logEvent("InviteFriends_" + s);
-            getFriendsList(s);
-          } else {
-            TextView categoryText = (TextView) v
-                .findViewById(R.id.child_itemTextview);
-            String cat = categoryText.getText().toString();
-            if (getActivity() instanceof SlidingFragmentActivity) {
-              SlidingFragmentActivity activity = (SlidingFragmentActivity) getActivity();
-              activity.getSlidingMenu().toggle();
-              if (getActivity() instanceof VueLandingPageActivity) {
-                AisleWindowContentFactory.getInstance(getActivity())
-                    .clearObjectsInUse();
-                VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-                vueLandingPageActivity.showCategory(cat,false);
-              }
-              if (getActivity() instanceof AisleDetailsViewActivity) {
-                startActivity(new Intent(
-                    (AisleDetailsViewActivity) getActivity(),
-                    VueLandingPageActivity.class));
-              } else if (getActivity() instanceof DataEntryActivity) {
-                startActivity(new Intent((DataEntryActivity) getActivity(),
-                    VueLandingPageActivity.class));
-              }
-            }
-          }
-          return false;
-        } else {
-          try {
-            VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-            vueLandingPageActivity.showDiscardOtherAppImageDialog();
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-          return false;
-        }
-      }
-    });
-    
 	}
 
 	/**
@@ -382,36 +409,37 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 	 * @return List<ListOptionItem> each ListOptionItem contains item name to
 	 *         display on screen, image to display and list of sub options.
 	 * */
-	private List<ListOptionItem> getBezelMenuOptionItems() {
-	  VueLoginActivity.getProfileImageChangeListenor(imageChangeListenor);
+	public List<ListOptionItem> getBezelMenuOptionItems() {
+		// VueLoginActivity.getProfileImageChangeListenor(imageChangeListenor);
 		List<ListOptionItem> groups = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Trending_Aisles),
 				R.drawable.trending, null);
 		groups.add(item);
-		
+
 		String userName = getUserId();
-		if(userName == null || userName.isEmpty()) {
-		  userName = getString(R.string.sidemenu_option_Me);
+		if (userName == null || userName.isEmpty()) {
+			userName = getString(R.string.sidemenu_option_Me);
 		}
-		  Log.e("VueListFragment", "USER PROFILE PIC TEST IS NAME: " + userName);
-		item = new ListOptionItem(userName,
-            R.drawable.profile, getMeChildren());
-		  File f = new FileCache(getActivity())
-          .getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
-		Log.e("VueListFragment", "USER PROFILE PIC TEST IS FILE EXIST: " + f.exists());
-		if(f.exists()) {
-          Bitmap bmp = BitmapFactory.decodeFile(f.getPath());
-          Log.e("VueListFragment", "USER PROFILE PIC TEST IS Bitmap null: " + bmp);
-          if(bmp != null) {
-            item.userPic = bmp;
-          }
-          }
-		
+		Log.e("VueListFragment", "USER PROFILE PIC TEST IS NAME: " + userName);
+		item = new ListOptionItem(userName, R.drawable.profile, getMeChildren());
+		File f = new FileCache(getActivity())
+				.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
+		Log.e("VueListFragment",
+				"USER PROFILE PIC TEST IS FILE EXIST: " + f.exists());
+		if (f.exists()) {
+			Bitmap bmp = BitmapFactory.decodeFile(f.getPath());
+			Log.e("VueListFragment", "USER PROFILE PIC TEST IS Bitmap null: "
+					+ bmp);
+			if (bmp != null) {
+				item.userPic = bmp;
+			}
+		}
+
 		groups.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Categories),
-				R.drawable.category, getCategoriesChildren());
+				R.drawable.new_categories, getCategoriesChildren());
 		groups.add(item);
 		item = new ListOptionItem(getString(R.string.sidemeun_option_Settings),
 				R.drawable.settings01, getSettingsChildren());
@@ -459,11 +487,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 		categoriesChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Entertainment),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.new_entertainment, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Events),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.new_events, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Food),
 				R.drawable.vue_launcher_icon, null);
@@ -586,10 +614,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 			} else {
 				holder = (Holder) convertView.getTag();
 			}
-			holder.icon.setImageResource(groups.get(groupPosition).children.get(childPosition).iconRes);
+			holder.icon.setImageResource(groups.get(groupPosition).children
+					.get(childPosition).iconRes);
 			// (This line of code will be used to set the icons for children at
 			// below line when get all the icons).
-			//holder.icon.setImageResource(R.drawable.vue_launcher_icon);
+			// holder.icon.setImageResource(R.drawable.vue_launcher_icon);
 			holder.itemName.setText(groups.get(groupPosition).children
 					.get(childPosition).tag);
 			return convertView;
@@ -601,8 +630,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 					|| (groups.get(groupPosition).tag
 							.equals(getString(R.string.sidemenu_option_Invite_Friends)))
 					|| groups.get(groupPosition).tag.equals("Settings")
-					|| groupPosition == 1/*groups.get(groupPosition).tag
-							.equals(getString(R.string.sidemenu_option_Me))*/) {
+					|| groupPosition == 1/*
+										 * groups.get(groupPosition).tag
+										 * .equals(
+										 * getString(R.string.sidemenu_option_Me
+										 * ))
+										 */) {
 				return groups.get(groupPosition).children.size();
 			}
 			return 0;
@@ -646,17 +679,25 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 			 * if(groups.get(groupPosition).tag.equals("Categories")) {
 			 * expandListView.expandGroup(groupPosition); }
 			 */
-			Log.e("VueListFragment", "USER PROFILE PIC TEST IS NAME: " + groups.get(groupPosition).tag + ", groupPosition: " + groupPosition);
-			if(groupPosition == 1) {
-			  Log.e("VueListFragment", "USER PROFILE PIC TEST IS GROUP POSITION: 1");
-			  Log.e("VueListFragment", "USER PROFILE PIC TEST IS GROUP POSITION: groups.get(groupPosition).userPic " + groups.get(groupPosition).userPic);
-			  if(groups.get(groupPosition).userPic != null) {
-			  holder.icon.setImageBitmap(groups.get(groupPosition).userPic);
-			  } else {
-			    holder.icon.setImageResource(groups.get(groupPosition).iconRes);
-			  }
+			Log.e("VueListFragment",
+					"USER PROFILE PIC TEST IS NAME: "
+							+ groups.get(groupPosition).tag
+							+ ", groupPosition: " + groupPosition);
+			if (groupPosition == 1) {
+				Log.e("VueListFragment",
+						"USER PROFILE PIC TEST IS GROUP POSITION: 1");
+				Log.e("VueListFragment",
+						"USER PROFILE PIC TEST IS GROUP POSITION: groups.get(groupPosition).userPic "
+								+ groups.get(groupPosition).userPic);
+				if (groups.get(groupPosition).userPic != null) {
+					holder.icon
+							.setImageBitmap(groups.get(groupPosition).userPic);
+				} else {
+					holder.icon
+							.setImageResource(groups.get(groupPosition).iconRes);
+				}
 			} else {
-			  holder.icon.setImageResource(groups.get(groupPosition).iconRes);
+				holder.icon.setImageResource(groups.get(groupPosition).iconRes);
 			}
 			holder.itemName.setText(groups.get(groupPosition).tag);
 			return convertView;
@@ -1112,36 +1153,46 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 		// isDataPickerOpen = true;
 		// }
 	}
-	
-	 ProfileImageChangeListenor imageChangeListenor = new ProfileImageChangeListenor() {
-	   public VueListFragmentAdapter adapter = null;
-       @Override
-       public void onImageChange() {
-          adapter = new VueListFragment.VueListFragmentAdapter(
-             VueListFragment.this.getActivity(), VueListFragment.this.getBezelMenuOptionItems());
-         VueListFragment.this.expandListView.setAdapter(adapter);
-       }
-     };
-	
-	
+
+	/*
+	 * ProfileImageChangeListenor imageChangeListenor = new
+	 * ProfileImageChangeListenor() { public VueListFragmentAdapter adapter =
+	 * null;
+	 * 
+	 * @Override public void onImageChange() {
+	 * 
+	 * } };
+	 */
+
 	public interface ProfileImageChangeListenor {
-	  public void onImageChange();
+		public void onImageChange();
 	}
 
-  public String getUserId() {
-    VueUser storedVueUser = null;
-    try {
-      storedVueUser = Utils.readUserObjectFromFile(
-          VueApplication.getInstance(),
-          VueConstants.VUE_APP_USEROBJECT__FILENAME);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    String userName = null;
-    if (storedVueUser != null) {
-      userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
-    }
-    return userName;
+	public String getUserId() {
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(
+					VueApplication.getInstance(),
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String userName = null;
+		if (storedVueUser != null) {
+			userName = storedVueUser.getFirstName() + " "
+					+ storedVueUser.getLastName();
+		}
+		return userName;
 
-  }
+	}
+
+	public void refreshBezelMenu() {
+		VueListFragmentAdapter adapter = null;
+		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage3 ");
+		adapter = new VueListFragment.VueListFragmentAdapter(
+				VueListFragment.this.getActivity(),
+				VueListFragment.this.getBezelMenuOptionItems());
+		VueListFragment.this.expandListView.setAdapter(adapter);
+		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage4 ");
+	}
 }
