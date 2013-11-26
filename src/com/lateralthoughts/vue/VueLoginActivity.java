@@ -60,6 +60,7 @@ import com.facebook.Request;
 import com.facebook.Request.Callback;
 import com.facebook.Request.GraphUserCallback;
 import com.facebook.Session;
+import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
@@ -139,7 +140,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.socialnetworkingloginscreen);
+		setContentView(R.layout.vue_login_screen);
 		mUiHelper = new UiLifecycleHelper(this, mCallback);
 		mUiHelper.onCreate(savedInstanceState);
 		mTrendingbg = (ImageView) findViewById(R.id.trendingbg);
@@ -227,6 +228,7 @@ public class VueLoginActivity extends FragmentActivity implements
 					instagramSignInButtonLayout.setVisibility(View.GONE);
 					fblog_in_buttonlayout.setVisibility(View.INVISIBLE);
 					cancellayout.setVisibility(View.GONE);
+					login_button.setPublishPermissions(PUBLISH_PERMISSIONS);
 					login_button.performClick();
 				}
 			} else {
@@ -325,7 +327,7 @@ public class VueLoginActivity extends FragmentActivity implements
 										VueLoginActivity.this, false);
 							}
 						});
-				login_button.setReadPermissions(READ_PERMISSIONS);
+				login_button.setPublishPermissions(PUBLISH_PERMISSIONS);
 				login_button
 						.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 							public void onUserInfoFetched(GraphUser user) {
@@ -585,7 +587,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		mSharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
 		final SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
-		Request.executeMeRequestAsync(session, new GraphUserCallback() {
+		Request.newMeRequest(session, new GraphUserCallback() {
 			@Override
 			public void onCompleted(final GraphUser user,
 					com.facebook.Response response) {
@@ -696,7 +698,7 @@ public class VueLoginActivity extends FragmentActivity implements
 						finish();
 				}
 			}
-		});
+		}).executeAsync();
 		try {
 			mSocialIntegrationMainLayout.setVisibility(View.GONE);
 			mTrendingbg.setVisibility(View.GONE);
@@ -755,11 +757,14 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	private void updateUI() {
+		Log.e("Loginscreen", "Update UI called.");
 		Session session = Session.getActiveSession();
 		boolean fbloggedin = (session != null && session.isOpened());
 		if (fbloggedin) {
+			Log.e("Loginscreen", "Update UI called. loggedin");
 			saveFBLoginDetails(session);
 			if (mFromDetailsFbShare) {
+				Log.e("Loginscreen", "Update UI called. from details fb share.");
 				try {
 					ArrayList<clsShare> filePathList = mBundle
 							.getParcelableArrayList(VueConstants.FBPOST_IMAGEURLS);
@@ -1349,18 +1354,22 @@ public class VueLoginActivity extends FragmentActivity implements
 		finish();
 	}
 
-	static ProfileImageChangeListenor profileImagechangeListor;
+	// ProfileImageChangeListenor profileImagechangeListor;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void downloadAndSaveUserProfileImage(String imageUrl,
 			final File filePath) {
-		Log.i("userImageUrl", "userImageUrl: " + imageUrl);
+		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage1 "
+				+ imageUrl);
 		Response.Listener listener = new Response.Listener<Bitmap>() {
 
 			@Override
 			public void onResponse(Bitmap bmp) {
 				Utils.saveBitmap(bmp, filePath);
-				profileImagechangeListor.onImageChange();
+				Log.i("userImageUrl",
+						"userImageUrl: downloadAndSaveUserProfileImage2 ");
+				// profileImagechangeListor.onImageChange();
+				getProfileImageChangeListenor();
 			}
 		};
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
@@ -1381,9 +1390,23 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	}
 
-	public static void getProfileImageChangeListenor(
-			ProfileImageChangeListenor profileImagechangeListor) {
-		VueLoginActivity.profileImagechangeListor = profileImagechangeListor;
+	public void getProfileImageChangeListenor() {
+		try {
+		VueLandingPageActivity lan = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
+		lan.mFrag.refreshBezelMenu();
+		} catch (Exception e) {
+		}
+		try {
+		AisleDetailsViewActivity details = (AisleDetailsViewActivity) AisleDetailsViewActivity.detailsActivity;
+		details.mFrag.refreshBezelMenu();
+		} catch (Exception e) {
+		}
+		/*
+		 * VueListFragment vueListFragment = (VueListFragment)
+		 * getSupportFragmentManager()
+		 * .findFragmentById(R.id.create_aisles_view_fragment);
+		 * VueLoginActivity.profileImagechangeListor = profileImagechangeListor;
+		 */
 	}
 
 }

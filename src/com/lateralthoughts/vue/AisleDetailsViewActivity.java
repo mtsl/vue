@@ -106,11 +106,14 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	ScaledImageViewFactory mViewFactory;
 	ComparisionAdapter mBottomAdapter, mTopAdapter;
 
+	public static AisleDetailsViewActivity detailsActivity = null; 
+	
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+		detailsActivity = this;
 		// setContentView(R.layout.vuedetails_frag);
 		setContentView(R.layout.aisle_details_activity_landing);
 

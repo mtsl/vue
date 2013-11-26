@@ -35,13 +35,13 @@
         android:layout_alignTop="@+id/browserimage"
         android:layout_marginRight="2dp"
         android:layout_marginTop="2dp"
-        android:background="@drawable/rectangle" >
+        android:background="@drawable/new_edit" >
 
-        <ImageView
+      <!--   <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/editwhite" />
+            android:src="@drawable/editwhite" /> -->
     </LinearLayout>
 
     <ProgressBar

@@ -90,11 +90,12 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 		imageDeleteBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				if (mDataEntryActivity == null) {
-					mDataEntryActivity = (DataEntryActivity) mContext;
-				}
-				if (!(mDataEntryActivity.mDeletedImagesPositionsList != null && mDataEntryActivity.mDeletedImagesPositionsList
-						.contains(position))) {
+				if (mImagePathsList.get(position).isCheckedFlag()) {
+					if (mDataEntryActivity.mDeletedImagesPositionsList == null) {
+						mDataEntryActivity.mDeletedImagesPositionsList = new ArrayList<Integer>();
+					}
+					mDataEntryActivity.mDeletedImagesPositionsList
+							.remove(Integer.valueOf(position));
 					mDataEntryActivity.mDataentryActionbarMainLayout
 							.setVisibility(View.GONE);
 					mDataEntryActivity.mVueDataentryKeyboardLayout
@@ -107,23 +108,70 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 							.setVisibility(View.GONE);
 					mDataEntryActivity.mVueDataentryDeleteLayout
 							.setVisibility(View.VISIBLE);
-					if (mDataEntryActivity.mDeletedImagesPositionsList == null) {
-						mDataEntryActivity.mDeletedImagesPositionsList = new ArrayList<Integer>();
+					if (mDataEntryActivity.mDeletedImagesCount != 0) {
+						mDataEntryActivity.mDeletedImagesCount -= 1;
 					}
-					mDataEntryActivity.mDeletedImagesPositionsList
-							.add(position);
-					mDataEntryActivity.mDeletedImagesCount += 1;
 					if (mDataEntryActivity.mDeletedImagesCount == 1) {
 						mDataEntryActivity.mActionbarDeleteBtnTextview
 								.setText("Delete 1 Image");
+					} else if (mDataEntryActivity.mDeletedImagesCount < 1) {
+						mDataEntryActivity.mDataentryActionbarMainLayout
+								.setVisibility(View.VISIBLE);
+						mDataEntryActivity.mVueDataentryKeyboardLayout
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryKeyboardDone
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryKeyboardCancel
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryPostLayout
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryDeleteLayout
+								.setVisibility(View.GONE);
 					} else {
 						mDataEntryActivity.mActionbarDeleteBtnTextview
 								.setText("Delete "
 										+ mDataEntryActivity.mDeletedImagesCount
 										+ " Images");
 					}
-					mImagePathsList.get(position).setCheckedFlag(true);
-					deleteIcon.setImageResource(R.drawable.ic_action_selection);
+					mImagePathsList.get(position).setCheckedFlag(false);
+					deleteIcon.setImageResource(R.drawable.ic_action_delete);
+				} else {
+					if (mDataEntryActivity == null) {
+						mDataEntryActivity = (DataEntryActivity) mContext;
+					}
+					if (!(mDataEntryActivity.mDeletedImagesPositionsList != null && mDataEntryActivity.mDeletedImagesPositionsList
+							.contains(position))) {
+						mDataEntryActivity.mDataentryActionbarMainLayout
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryKeyboardLayout
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryKeyboardDone
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryKeyboardCancel
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryPostLayout
+								.setVisibility(View.GONE);
+						mDataEntryActivity.mVueDataentryDeleteLayout
+								.setVisibility(View.VISIBLE);
+						if (mDataEntryActivity.mDeletedImagesPositionsList == null) {
+							mDataEntryActivity.mDeletedImagesPositionsList = new ArrayList<Integer>();
+						}
+						mDataEntryActivity.mDeletedImagesPositionsList
+								.add(position);
+						mDataEntryActivity.mDeletedImagesCount += 1;
+						if (mDataEntryActivity.mDeletedImagesCount == 1) {
+							mDataEntryActivity.mActionbarDeleteBtnTextview
+									.setText("Delete 1 Image");
+						} else {
+							mDataEntryActivity.mActionbarDeleteBtnTextview
+									.setText("Delete "
+											+ mDataEntryActivity.mDeletedImagesCount
+											+ " Images");
+						}
+						mImagePathsList.get(position).setCheckedFlag(true);
+						deleteIcon
+								.setImageResource(R.drawable.ic_action_selection);
+					}
 				}
 			}
 		});
