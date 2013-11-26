@@ -50,6 +50,7 @@ import android.widget.TextView.OnEditorActionListener;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.facebook.CreateAlbum;
 import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
@@ -114,7 +115,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	private Bundle mBundle = null;
 	private static final String TAG = "VueLoginActivity";
 	private final List<String> PUBLISH_PERMISSIONS = Arrays
-			.asList("publish_actions");
+			.asList("publish_stream", "manage_pages", "publish_actions");
 	private final List<String> READ_PERMISSIONS = Arrays.asList("email",
 			"user_birthday");
 	private ProgressDialog mFacebookProgressDialog, mGooglePlusProgressDialog;
@@ -875,8 +876,10 @@ public class VueLoginActivity extends FragmentActivity implements
 											}
 										}
 									};
-									Request request = new Request(Session
-											.getActiveSession(), "me/photos",
+									//TODO: Create album
+									 Session session = Session.getActiveSession();
+									 CreateAlbum.createAlbumRequest(session);
+									Request request = new Request(session, "me/photos",
 											parameters, HttpMethod.POST,
 											callback);
 									request.executeAsync();
