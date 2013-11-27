@@ -31,7 +31,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/cancel" />
+            android:src="@drawable/ic_action_delete" />
     </LinearLayout>
 
     <ProgressBar

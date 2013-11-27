@@ -258,8 +258,8 @@ public class ArcMenu extends RelativeLayout {
 						VueConstants.ETSY_ACTIVITY_NAME,
 						VueConstants.ETSY_PACKAGE_NAME, "Etsy");
 			} else {
-				createAisleSelectionActivity
-						.showAlertMessageForAppInstalation(VueConstants.ETSY_PACKAGE_NAME);
+				createAisleSelectionActivity.showAlertMessageForAppInstalation(
+						VueConstants.ETSY_PACKAGE_NAME, "Etsy");
 			}
 			break;
 		// Fancy
@@ -270,8 +270,8 @@ public class ArcMenu extends RelativeLayout {
 						VueConstants.FANCY_ACTIVITY_NAME,
 						VueConstants.FANCY_PACKAGE_NAME, "Fancy");
 			} else {
-				createAisleSelectionActivity
-						.showAlertMessageForAppInstalation(VueConstants.FANCY_PACKAGE_NAME);
+				createAisleSelectionActivity.showAlertMessageForAppInstalation(
+						VueConstants.FANCY_PACKAGE_NAME, "Fancy");
 			}
 			break;
 		// Gallery

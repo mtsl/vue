@@ -2,7 +2,6 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +27,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
@@ -75,9 +74,11 @@ public class CreateAisleSelectionActivity extends Activity {
 		mDataentryPopupMainLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				if (!isClickedFlag) {
-					isClickedFlag = true;
-					mDataentryArcMenu.mArcLayout.switchState(true);
+				if (!mFromCreateAilseScreenFlag) {
+					if (!isClickedFlag) {
+						isClickedFlag = true;
+						mDataentryArcMenu.mArcLayout.switchState(true);
+					}
 				}
 			}
 		});
@@ -108,8 +109,11 @@ public class CreateAisleSelectionActivity extends Activity {
 		ShoppingApplicationDetails shoppingApplicationDetails1 = new ShoppingApplicationDetails(
 				getResources().getString(R.string.browser), null, null, null);
 		mDataEntryShoppingApplicationsList.add(shoppingApplicationDetails1);
-		Toast.makeText(this, "Select from source.", Toast.LENGTH_SHORT).show();
-
+		Toast toast = Toast.makeText(this, "Select from one of the sources.",
+				Toast.LENGTH_SHORT);
+		toast.setGravity(Gravity.TOP | Gravity.CENTER, 0,
+				(int) Utils.dipToPixels(this, 54));
+		toast.show();
 	}
 
 	@Override
@@ -319,9 +323,13 @@ public class CreateAisleSelectionActivity extends Activity {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (!isClickedFlag) {
-				isClickedFlag = true;
-				mDataentryArcMenu.mArcLayout.switchState(true);
+			if (!mFromCreateAilseScreenFlag) {
+				if (!isClickedFlag) {
+					isClickedFlag = true;
+					mDataentryArcMenu.mArcLayout.switchState(true);
+				}
+			} else {
+				showDiscardOtherAppImageDialog();
 			}
 		}
 		return false;
@@ -336,22 +344,28 @@ public class CreateAisleSelectionActivity extends Activity {
 		finish();
 	}
 
-	public void showAlertMessageForAppInstalation(final String packageName) {
+	public void showAlertMessageForAppInstalation(final String packageName,
+			final String appName) {
 		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.vue_popup);
 		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
 		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-		messagetext.setText("Install from Play Store");
+		messagetext.setText("Install " + appName + " from Play Store");
 		okButton.setText("OK");
-		noButton.setVisibility(View.GONE);
 		okButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				dialog.dismiss();
 				Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
 						.parse("market://details?id=" + packageName));
 				startActivity(goToMarket);
+			}
+		});
+		noButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				dialog.dismiss();
 			}
 		});
 		dialog.setOnDismissListener(new OnDismissListener() {
@@ -382,23 +396,23 @@ public class CreateAisleSelectionActivity extends Activity {
 		ArrayList<String> your_array_list = new ArrayList<String>();
 		if (source.equalsIgnoreCase("Gallery")) {
 			dialogtitle.setText("Gallery");
-			your_array_list.add("Go to gallery");
-			your_array_list.add("Find the right image");
-			your_array_list.add("Share(share icon) with vue(vue icon)");
-			your_array_list.add("Comeback to vue");
+			your_array_list.add("1. Go to gallery");
+			your_array_list.add("2. Find the right image");
+			your_array_list.add("3. Share(share icon) with vue(vue icon)");
+			your_array_list.add("4. Comeback to vue");
 		} else if (source.equalsIgnoreCase("Camera")) {
 			dialogtitle.setText("Camera");
 
-			your_array_list.add("Go to camera");
-			your_array_list.add("Take a picture");
-			your_array_list.add("Come back to vue");
+			your_array_list.add("1. Go to camera");
+			your_array_list.add("2. Take a picture");
+			your_array_list.add("3. Come back to vue");
 		} else if (source.equalsIgnoreCase("OtherSource")) {
 			dialogtitle.setText(app);
-			String temp = "Proceed to " + app;
+			String temp = "1. Proceed to " + app;
 			your_array_list.add(temp);
-			your_array_list.add("Select an image");
-			your_array_list.add("Share(share icon) with vue(vue icon)");
-			your_array_list.add("Come back to vue");
+			your_array_list.add("2. Select an image");
+			your_array_list.add("3. Share(share icon) with vue(vue icon)");
+			your_array_list.add("4. Come back to vue");
 		}
 
 		mDialog.show();
@@ -509,7 +523,7 @@ public class CreateAisleSelectionActivity extends Activity {
 			}
 
 			if (text.contains("share") && text.contains("with vue")) {
-				holder.textone.setText("Share");
+				holder.textone.setText("3. Share");
 				holder.texttwo.setText("with vue");
 				holder.imageone.setVisibility(View.VISIBLE);
 				holder.imagetwo.setVisibility(View.VISIBLE);
@@ -527,5 +541,29 @@ public class CreateAisleSelectionActivity extends Activity {
 	private class Holder {
 		TextView textone, texttwo;
 		ImageView imageone, imagetwo;
+	}
+
+	private void showDiscardOtherAppImageDialog() {
+		final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.vue_popup);
+		final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+		TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
+		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+		messagetext.setText("Do you want to cancel addImage?");
+		yesButton.setText("Yes");
+		noButton.setText("No");
+		yesButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				dialog.dismiss();
+				finish();
+			}
+		});
+		noButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show();
 	}
 }

@@ -151,5 +151,6 @@ public class OtherSourcesDialog {
 		});
 		dialog.setCanceledOnTouchOutside(false);
 		dialog.show();
+		Toast.makeText(mActivity, "Select Image", Toast.LENGTH_LONG).show();
 	}
 }

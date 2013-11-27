@@ -32,9 +32,8 @@
         android:orientation="horizontal"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:layout_above="@+id/progressbar"
          >
-
+<!-- android:layout_above="@id/progressbar" -->
         <ListView
             android:id="@+id/list_view_left"
             android:layout_width="fill_parent"
