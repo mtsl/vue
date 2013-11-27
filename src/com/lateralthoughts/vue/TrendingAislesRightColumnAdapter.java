@@ -53,9 +53,6 @@ public class TrendingAislesRightColumnAdapter extends
 	private AisleLoader mLoader;
 
 	private static final boolean DEBUG = true;
-
-	public int firstX;
-	public int lastX;
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
 	BitmapLoaderUtils mBitmapLoaderUtils;

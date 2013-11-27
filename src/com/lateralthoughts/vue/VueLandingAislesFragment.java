@@ -68,7 +68,8 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	private ListView mLeftColumnView;
 	private ListView mRightColumnView;
-	// private ProgressBar mProgressBar;
+	//private ProgressBar mProgressBar;
+ 
 
 	private AisleClickListener mAisleClickListener;
 	// private MultiColumnListView mView;
@@ -135,17 +136,15 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
 		// synchronized list view approach
 		View v = inflater.inflate(R.layout.aisles_view_fragment2, container,
 				false);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 		pulltorefresh = (LinearLayout) v.findViewById(R.id.pulltorefresh);
-		// mProgressBar = (ProgressBar) v.findViewById(R.id.progressbar);
+		//mProgressBar = (ProgressBar) v.findViewById(R.id.progressbar);
 		// mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		// mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-		
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
 		mRightColumnView.setAdapter(mRightColumnAdapter);
 		mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -240,6 +239,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			if (firstVisibleItem > 5) {
 				mIsListRefreshRecently = false;
 			}
+			int localTop = 0;
 			if (view.getChildAt(0) != null) {
 				if (view.equals(mLeftColumnView)) {
 					mLeftViewsHeights[view.getFirstVisiblePosition()] = view
@@ -260,6 +260,17 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					int top = h - hi + view.getChildAt(0).getTop();
 					mRightColumnView.setSelectionFromTop(
 							mRightColumnView.getFirstVisiblePosition(), top);
+				/*	localTop = top;
+					
+					if(mLeftColumnView.getLastVisiblePosition() == totalItemCount) {
+						if(mRightColumnView.getLastVisiblePosition() < totalItemCount) {
+							AisleWindowContent content = (AisleWindowContent) mRightColumnView
+									.getAdapter().getItem(mRightColumnView.getLastVisiblePosition() + 1);
+							mRightColumnView.setSelectionFromTop(
+									mRightColumnView.getFirstVisiblePosition(), localTop + content.mWindowSmallestHeight+VueApplication.getInstance().getPixel(100));
+							
+						}
+					}*/
 				} else if (view.equals(mRightColumnView)) {
 					mRightViewsHeights[view.getFirstVisiblePosition()] = view
 							.getChildAt(0).getHeight();
@@ -280,7 +291,22 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 					mLeftColumnView.setSelectionFromTop(
 							mLeftColumnView.getFirstVisiblePosition(), top);
+				/*	localTop = top;
+					if(mRightColumnView.getLastVisiblePosition() == totalItemCount) {
+						if(mLeftColumnView.getLastVisiblePosition() < totalItemCount) {
+							AisleWindowContent content = (AisleWindowContent) mLeftColumnView
+									.getAdapter().getItem(mLeftColumnView.getLastVisiblePosition() + 1);
+							if(mLeftColumnView.canScrollVertically(-1)){
+								mLeftColumnView.setScrollY(mLeftColumnView.getBottom());
+							}
+							mLeftColumnView.setSelectionFromTop(
+									mLeftColumnView.getFirstVisiblePosition(), localTop + content.mWindowSmallestHeight+VueApplication.getInstance().getPixel(100));
+							
+						}
+					}*/
 				}
+				
+				 
 			}
 
 			//VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();

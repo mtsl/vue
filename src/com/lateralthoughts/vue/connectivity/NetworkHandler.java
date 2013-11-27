@@ -278,6 +278,7 @@ public class NetworkHandler {
 			mHandler.sendMessage(msg);
 
 		} else {
+			mLimit = 30;
 			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 					mTrendingAislesParser, loadMore, screenName);
 		}
@@ -367,6 +368,8 @@ public class NetworkHandler {
 											if (aislesList != null
 													&& aislesList.size() > 0) {
 												clearList(progress);
+												VueLandingPageActivity
+												.changeScreenName(screenName);
 												for (int i = 0; i < aislesList
 														.size(); i++) {
 													Log.i("aislesList myaisles",
@@ -408,8 +411,6 @@ public class NetworkHandler {
 												// go
 												// ahead
 												// notify the data set changed
-												VueLandingPageActivity
-														.changeScreenName(screenName);
 											} else {
 												// if this is the first set of
 												// data
