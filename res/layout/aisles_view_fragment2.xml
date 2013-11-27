@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:orientation="vertical"
-    android:layout_height="fill_parent" >
-<LinearLayout android:layout_width="fill_parent"
-              android:layout_height="48dp"
-              android:visibility="gone"
-              android:id="@+id/pulltorefresh"
-              android:layout_alignParentTop="true"
-              android:background="#ffffff">
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content" />
-    
-</LinearLayout>
-    <!-- <ProgressBar 
+    <LinearLayout
+        android:id="@+id/pulltorefresh"
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:background="#ffffff"
+        android:visibility="gone" >
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+    <!--
+         <ProgressBar 
         android:id="@+id/progressbar"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
-        /> -->
+        />
+    -->
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -31,9 +33,10 @@
         android:background="#CCCCCC"
         android:orientation="horizontal"
         android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-         >
-<!-- android:layout_above="@id/progressbar" -->
+        android:paddingRight="5dp" >
+
+        <!-- android:layout_above="@id/progressbar" -->
+
         <ListView
             android:id="@+id/list_view_left"
             android:layout_width="fill_parent"
@@ -56,4 +59,5 @@
             android:scrollbars="none" >
         </ListView>
     </LinearLayout>
+
 </RelativeLayout>
