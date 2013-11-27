@@ -5,14 +5,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.util.Log;
 import com.android.volley.*;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.facebook.model.GraphUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 import org.apache.http.entity.StringEntity;
@@ -1123,5 +1126,30 @@ public class VueUserManager {
 				}
 			}
 		}).start();
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void downloadUserProfileImage(String imageUrl) {
+		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage1 "
+				+ imageUrl);
+		Response.Listener listener = new Response.Listener<Bitmap>() {
+
+			@Override
+			public void onResponse(Bitmap bmp) {
+				Utils.saveBitmap(bmp, new FileCache(VueApplication.getInstance())
+				.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
+			}
+		};
+		Response.ErrorListener errorListener = new Response.ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+			}
+		};
+
+		ImageRequest imagerequestObj = new ImageRequest(imageUrl, listener, 0,
+				0, null, errorListener);
+		VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
+
 	}
 }

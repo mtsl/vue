@@ -1,8 +1,11 @@
 package com.lateralthoughts.vue.utils;
 
 public class UrlConstants {
-    //Curated Url: "http://2dot4-java.vueapi-canary-development.appspot.com/";
-	public static final String SERVER_BASE_URL = "http://2dot4-java.vueapi-canary.appspot.com/";
+
+	public static final String SERVER_BASE_URL = "http://2dot5-java.vueapi-canary.appspot.com/"; // "http://2dot4-java.vueapi-canary-development.appspot.com/";
+																									// curated
+																									// server
+
 	/**
 	 * (C)reate routine URL's
 	 */
@@ -19,9 +22,7 @@ public class UrlConstants {
 	public static final String CREATE_AISLECOMMENT_RESTURL = SERVER_BASE_URL
 			+ "api/aislecommentcreate";
 	public static final String CREATE_IMAGECOMMENT_RESTURL = SERVER_BASE_URL
-			+ "api/imagecommentcreate"; 
-	
-
+			+ "api/imagecommentcreate";
 
 	public static final String GET_USER_RESTURL = SERVER_BASE_URL
 			+ "api/userget/id/";
@@ -56,11 +57,12 @@ public class UrlConstants {
 			+ "api/userupdate";
 	public static final String UPDATE_AISLE_RESTURL = SERVER_BASE_URL
 			+ "api/aisleupdate";
-	
+
 	public static final String SEARCH_BY_KEYWORD_BASE_URL = SERVER_BASE_URL
 			+ "api/getaisleswithmatchingoccassion/";
 	public static final String SEARCH_BY_USER = SERVER_BASE_URL
 			+ "api/getaisleswithmatchingfacebookORGPlus/";
-	
-	public static final String DELETE_IMAGE_RESTURL = SERVER_BASE_URL+"api/imagedelete";
+
+	public static final String DELETE_IMAGE_RESTURL = SERVER_BASE_URL
+			+ "api/imagedelete";
 }
