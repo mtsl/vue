@@ -29,7 +29,7 @@ public class Parser {
 	// imageItemsArray. Instead the called function clones and keeps a copy.
 	// This is pretty inconsistent.
 	// Let the allocation happen in one place for both items. Fix this!
-	
+
 	public ArrayList<AisleWindowContent> parseTrendingAislesResultData(
 			String resultString, boolean loadMore) {
 
@@ -99,6 +99,7 @@ public class Parser {
 
 	public AisleImageDetails parseAisleImageData(JSONObject jsonObject)
 			throws JSONException {
+		Log.e("Parser", "Image Response : " + jsonObject);
 		AisleImageDetails aisleImageDetails = new AisleImageDetails();
 		aisleImageDetails.mId = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_ID);
@@ -307,8 +308,8 @@ public class Parser {
 					bookmarkAisle.setId(jsonArray.getJSONObject(i).getLong(
 							VueConstants.JSON_OBJ_ID));
 					bookmarkAisle.setLastModifiedTimestamp(jsonArray
-                        .getJSONObject(i).getLong(
-                                VueConstants.LAST_MODIFIED_TIME));
+							.getJSONObject(i).getLong(
+									VueConstants.LAST_MODIFIED_TIME));
 					bookmarkAisle
 							.setBookmarked((jsonArray.getJSONObject(i)
 									.getString(VueConstants.BOOKMARKED)
@@ -319,7 +320,7 @@ public class Parser {
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}  
+		}
 		if (aisleIdList != null && aisleIdList.size() > 0) {
 			Log.i("bookmarked aisle", "bookmarked aisle aisleIdList.size(): "
 					+ aisleIdList.size());
@@ -378,9 +379,8 @@ public class Parser {
 					imgRating
 							.setAisleId(Long.parseLong(jsonArray.getJSONObject(
 									i).getString(VueConstants.AISLE_Id)));
-					imgRating.setLastModifiedTimestamp(jsonArray
-							.getJSONObject(i).getLong(
-									VueConstants.LAST_MODIFIED_TIME));
+					imgRating.setLastModifiedTimestamp(jsonArray.getJSONObject(
+							i).getLong(VueConstants.LAST_MODIFIED_TIME));
 					imgRating.setLiked((jsonArray.getJSONObject(i).getString(
 							VueConstants.LIKED).equals("true")) ? true : false);
 					imgRatingList.add(imgRating);
@@ -398,19 +398,19 @@ public class Parser {
 			ArrayList<ImageRating> imgRatingList) {
 		int size = imgRatingList.size();
 		for (int i = 0; i < size; i++) {
-		   ImageRating current; 
-		  if(imgRatingList.size() > i) {
-			current = imgRatingList.get(i);
-		   } else {
-		     break;
-		   }
+			ImageRating current;
+			if (imgRatingList.size() > i) {
+				current = imgRatingList.get(i);
+			} else {
+				break;
+			}
 			for (int j = 0; j < i; ++j) {
-			  ImageRating previous;
-			  if(imgRatingList.size() > j) {
-			    previous = imgRatingList.get(j);
-	           } else {
-	             break;
-	           }
+				ImageRating previous;
+				if (imgRatingList.size() > j) {
+					previous = imgRatingList.get(j);
+				} else {
+					break;
+				}
 				final boolean relation = previous.compareTo(current);
 				if (relation) {
 					int isGrater = previous.compareTime(current
@@ -430,35 +430,36 @@ public class Parser {
 			ArrayList<AisleBookmark> bookmarkedAisles) {
 		int size = bookmarkedAisles.size();
 		for (int i = 0; i < size; i++) {
-		  AisleBookmark current;
-		  if(bookmarkedAisles.size() > i) {
-		    current = bookmarkedAisles.get(i);
-		  } else {
-		    break;
-		  }
-			
+			AisleBookmark current;
+			if (bookmarkedAisles.size() > i) {
+				current = bookmarkedAisles.get(i);
+			} else {
+				break;
+			}
+
 			for (int j = 0; j < i; ++j) {
-			  AisleBookmark previous;
-			  if(bookmarkedAisles.size() > j) {
-			    previous = bookmarkedAisles.get(j);
-			  } else {
-			    break;
-			  }
-				
+				AisleBookmark previous;
+				if (bookmarkedAisles.size() > j) {
+					previous = bookmarkedAisles.get(j);
+				} else {
+					break;
+				}
+
 				final boolean relation = previous.compareTo(current);
 				if (relation) {
-				  if(current.getLastModifiedTimestamp() != null) {
-				  long currentTime = current
-                  .getLastModifiedTimestamp().longValue();
-					int isGrater = previous.compareTime(currentTime);
-					if (isGrater == AisleBookmark.NEW_TIME_STAMP) {
-						bookmarkedAisles.remove(i);
+					if (current.getLastModifiedTimestamp() != null) {
+						long currentTime = current.getLastModifiedTimestamp()
+								.longValue();
+						int isGrater = previous.compareTime(currentTime);
+						if (isGrater == AisleBookmark.NEW_TIME_STAMP) {
+							bookmarkedAisles.remove(i);
+						} else {
+							bookmarkedAisles.remove(j);
+						}
 					} else {
-						bookmarkedAisles.remove(j);
+						Log.i("bookmarked aisle",
+								"bookmarked aisle current time is null: ");
 					}
-				  } else {
-				    Log.i("bookmarked aisle", "bookmarked aisle current time is null: ");
-				  }
 				}
 			}
 		}

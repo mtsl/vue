@@ -707,12 +707,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	private void saveFacebookProfileDetails(GraphUser user) {
-		downloadAndSaveUserProfileImage(
-				VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
-						+ user.getId()
-						+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
-				new FileCache(VueLoginActivity.this)
-						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
+		getProfileImageChangeListenor();
 		String location = "";
 		try {
 			if (user.getLocation() != null) {
@@ -1164,10 +1159,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		downloadAndSaveUserProfileImage(
-				person.getImage().getUrl(),
-				new FileCache(VueLoginActivity.this)
-						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
+		getProfileImageChangeListenor();
 		if (storedUserProfile == null) {
 			VueUserProfile vueUserProfile = new VueUserProfile(person
 					.getImage().getUrl(), mSharedPreferencesObj.getString(
@@ -1263,10 +1255,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	private void saveInstagramUserProfile() {
-		downloadAndSaveUserProfileImage(
-				mInstagramApp.getProfilePicture(),
-				new FileCache(VueLoginActivity.this)
-						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
+		getProfileImageChangeListenor();
 		VueUserProfile storedUserProfile = null;
 		try {
 			storedUserProfile = Utils.readUserProfileObjectFromFile(this,
@@ -1351,37 +1340,6 @@ public class VueLoginActivity extends FragmentActivity implements
 		finish();
 	}
 
-	// ProfileImageChangeListenor profileImagechangeListor;
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void downloadAndSaveUserProfileImage(String imageUrl,
-			final File filePath) {
-		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage1 "
-				+ imageUrl);
-		Response.Listener listener = new Response.Listener<Bitmap>() {
-
-			@Override
-			public void onResponse(Bitmap bmp) {
-				Utils.saveBitmap(bmp, filePath);
-				Log.i("userImageUrl",
-						"userImageUrl: downloadAndSaveUserProfileImage2 ");
-				// profileImagechangeListor.onImageChange();
-				getProfileImageChangeListenor();
-			}
-		};
-		Response.ErrorListener errorListener = new Response.ErrorListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError arg0) {
-			}
-		};
-
-		ImageRequest imagerequestObj = new ImageRequest(imageUrl, listener, 0,
-				0, null, errorListener);
-		VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
-
-	}
-
 	@Override
 	public void onBackPressed() {
 
@@ -1389,13 +1347,13 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	public void getProfileImageChangeListenor() {
 		try {
-		VueLandingPageActivity lan = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
-		lan.mFrag.refreshBezelMenu();
+			VueLandingPageActivity lan = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
+			lan.mFrag.refreshBezelMenu();
 		} catch (Exception e) {
 		}
 		try {
-		AisleDetailsViewActivity details = (AisleDetailsViewActivity) AisleDetailsViewActivity.detailsActivity;
-		details.mFrag.refreshBezelMenu();
+			AisleDetailsViewActivity details = (AisleDetailsViewActivity) AisleDetailsViewActivity.detailsActivity;
+			details.mFrag.refreshBezelMenu();
 		} catch (Exception e) {
 		}
 		/*
