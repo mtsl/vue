@@ -1,7 +1,7 @@
 package com.lateralthoughts.vue.utils;
 
 public class UrlConstants {
-
+    //Curated Url: "http://2dot4-java.vueapi-canary-development.appspot.com/";
 	public static final String SERVER_BASE_URL = "http://2dot4-java.vueapi-canary.appspot.com/";
 	/**
 	 * (C)reate routine URL's

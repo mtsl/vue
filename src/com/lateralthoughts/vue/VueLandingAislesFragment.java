@@ -44,6 +44,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.flurry.android.FlurryAgent;
+import com.huewu.pla.lib.internal.MultiColumnListView;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
@@ -68,7 +69,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	private ListView mLeftColumnView;
 	private ListView mRightColumnView;
-	private ProgressBar mProgressBar;
+	//private ProgressBar mProgressBar;
 
 	private AisleClickListener mAisleClickListener;
 	// private MultiColumnListView mView;
@@ -135,14 +136,13 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
 		// synchronized list view approach
 		View v = inflater.inflate(R.layout.aisles_view_fragment2, container,
 				false);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 		pulltorefresh = (LinearLayout) v.findViewById(R.id.pulltorefresh);
-		mProgressBar = (ProgressBar) v.findViewById(R.id.progressbar);
+		//mProgressBar = (ProgressBar) v.findViewById(R.id.progressbar);
 		// mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		// mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
@@ -323,7 +323,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
         } else if (view.equals(mRightColumnView)) {
           totalItems = mRightColumnAdapter.getCount();
         }
-        if ((totalItems - lastVisiblePosition) < 2) {
+        /*if ((totalItems - lastVisiblePosition) < 2) {
           if (mProgressBar.getLayoutParams().height == 0) {
             ProgressBarAnimation a = new ProgressBarAnimation(mProgressBar,
                 targetHeight, false);
@@ -347,7 +347,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
           //  mProgressBar.setLayoutParams(params);
             mProgressBar.startAnimation(a);
           }
-        }
+        }*/
         if ((totalItems - lastVisiblePosition) < 5) {
           Log.i("offeset and limit", "offeset00000: load moredata");
           VueTrendingAislesDataModel
