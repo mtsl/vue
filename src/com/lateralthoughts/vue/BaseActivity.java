@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.inputmethod.InputMethodManager;
 
+import com.lateralthoughts.vue.utils.FragmentAccess;
+import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.SlidingMenu.OnClosedListener;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -14,6 +16,7 @@ public class BaseActivity extends SlidingFragmentActivity {
   private int mTitleRes = 0;
   public VueListFragment mFrag;
   boolean isBaseOnResumeCalled = false;
+  ListFragementObj mListObj;
 
   // private OnBackHandle onBackHandle;
   // private boolean isBaseStarts = true;
@@ -53,25 +56,12 @@ public class BaseActivity extends SlidingFragmentActivity {
       // customize the SlidingMenu
       FragmentTransaction t = BaseActivity.this.getSupportFragmentManager()
           .beginTransaction();
-      mFrag = new VueListFragment();
+      mFrag = new VueListFragment(new ListFragment());
       // mFrag.setListClass(new ListClass());
       t.replace(R.id.menu_frame, mFrag);
       t.commit();
     }
   }
-
-  public void disp(String catname, int no, String tag) {
-
-  }
-
-  public void onTextSizeChanged() {
-
-  }
-
-  public void notifyDataCursor() {
-
-  }
-
   public class ClosingDashboard implements OnClosedListener {
 
     public void onClosed() {
@@ -82,5 +72,18 @@ public class BaseActivity extends SlidingFragmentActivity {
     }
 
   }
+ public class ListFragment implements FragmentAccess{
 
+	@Override
+	public void setFragmentAccess(ListFragementObj obj) {
+		mListObj = obj;
+		
+		VueApplication.getInstance().setListRefreshFrag(mListObj);
+		
+	}
+	 
+ }
+ public void onRefreshList(){
+	 mListObj.refreshBezelMenu();
+ }
 }

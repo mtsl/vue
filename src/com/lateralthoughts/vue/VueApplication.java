@@ -12,6 +12,7 @@ import com.android.volley.toolbox.Volley;
 import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnAppName;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
@@ -48,6 +49,7 @@ public class VueApplication extends Application {
 
 	public long mLaunchTime;
 	public long mLastRecordedTime;
+	ListFragementObj mListRefresobj;
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
@@ -252,7 +254,13 @@ public class VueApplication extends Application {
 	public int getmTextSize() {
 		return mTextSize;
 	}
-
+    public void setListRefreshFrag(ListFragementObj obj){
+    	mListRefresobj = obj;
+    }
+    public ListFragementObj getListRefdreshFrag(){
+		
+    	return mListRefresobj;
+    }
 	public int getPixel(int dp) {
 		Resources r = getResources();
 		int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,

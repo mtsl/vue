@@ -106,6 +106,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	@SuppressLint("UseSparseArrays")
 	Map<Integer, ArrayList<ImageComments>> mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
 	ArrayList<String> mShowingList;
+	ArrayList<String> mShowingListCommenterUrl;
 	private int mBestHeight;
 	private int mTopBottomMargin = 24;
 	ViewHolder mViewHolder;
@@ -156,6 +157,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 					.getNetworkHandler().getUserId());
 		}
 		mShowingList = new ArrayList<String>();
+		mShowingListCommenterUrl = new ArrayList<String>();
 		if (DEBUG)
 			Log.e(TAG, "About to initiate request for trending aisles");
 		Log.i("bookmarked aisle", "bookmarked persist issue  aisleid: "
@@ -231,11 +233,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 					VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
 			if (mShowingList == null) {
 				mShowingList = new ArrayList<String>();
+				mShowingListCommenterUrl = new ArrayList<String>();
 			} else if (mShowingList.size() > 0) {
 				mShowingList.clear();
+				mShowingListCommenterUrl.clear();
 			}
 			for (ImageComments comment : imgComments) {
-				mShowingList.add(comment.comment);
+				mShowingList.add(comment.mComment);
+				mShowingListCommenterUrl.add(comment.mCommenterUrl);
 			}
 
 			// mShowingList =
@@ -663,6 +668,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 						.setImageUrl(
 								"https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50",
 								mImageLoader);
+				//TODO: uncomment below code when user pic is available in commenter object.
+				//mViewHolder.userPic.setImageUrl(mShowingListCommenterUrl.get(position), mImageLoader);
 			}
 
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
@@ -858,11 +865,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 						mCurrentDispImageIndex).mCommentsList;
 				if (mShowingList == null) {
 					mShowingList = new ArrayList<String>();
+					mShowingListCommenterUrl = new ArrayList<String>();
 				} else if (mShowingList.size() > 0) {
 					mShowingList.clear();
+					mShowingListCommenterUrl.clear();
 				}
 				for (ImageComments comment : imgComments) {
-					mShowingList.add(comment.comment);
+					mShowingList.add(comment.mComment);
+					mShowingListCommenterUrl.add(comment.mCommenterUrl);
 				}
 
 				if (mShowingList.size() < mShowFixedRowCount) {
@@ -1164,7 +1174,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				if (itemDetails.mCommentsList == null) {
 					getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList = new ArrayList<ImageComments>();
 				}
-				String commentAdded = itemDetails.mCommentsList.get(0).comment;
+				String commentAdded = itemDetails.mCommentsList.get(0).mComment;
 			} else if (reqType.equals(CHANGE_LIKES)) {
 				// aisleId,imageId,likesCount,likeStatus
 				likeCount = itemDetails.mLikesCount;
@@ -1379,7 +1389,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	@SuppressWarnings("unchecked")
 	public void createComment(String commentString) {
 		ImageComments comments = new ImageComments();
-		comments.comment = commentString;
+		comments.mComment = commentString;
 
 		if (commentString == null || commentString.length() < 1) {
 			return;
@@ -1398,11 +1408,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				.get(mCurrentDispImageIndex);
 		if (mShowingList == null) {
 			mShowingList = new ArrayList<String>();
+			mShowingListCommenterUrl = new ArrayList<String>();
 		} else if (mShowingList.size() > 0) {
 			mShowingList.clear();
+			mShowingListCommenterUrl.clear();
 		}
 		for (ImageComments comment : imgComments) {
-			mShowingList.add(comment.comment);
+			mShowingList.add(comment.mComment);
+			mShowingListCommenterUrl.add(comment.mCommenterUrl);
 		}
 		if (mShowingList.size() < mShowFixedRowCount) {
 			mListCount = mShowingList.size() + mShowFixedRowCount;
@@ -1457,11 +1470,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				.get(mCurrentDispImageIndex);
 		if (mShowingList == null) {
 			mShowingList = new ArrayList<String>();
+			mShowingListCommenterUrl = new ArrayList<String>();
 		} else if (mShowingList.size() > 0) {
 			mShowingList.clear();
+			mShowingListCommenterUrl.clear();
 		}
 		for (ImageComments comment : imgComments) {
-			mShowingList.add(comment.comment);
+			mShowingList.add(comment.mComment);
+			mShowingListCommenterUrl.add(comment.mCommenterUrl);
 		}
 	}
 

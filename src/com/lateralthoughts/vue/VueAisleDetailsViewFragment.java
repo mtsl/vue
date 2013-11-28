@@ -196,7 +196,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			@Override
 			public void run() {
 				String profileUrl = null;
-				//TODO : get Aisle Aisle owner image url.
+				//TODO : get Aisle  owner image url.
 		/*	  profileUrl = VueTrendingAislesDataModel
 						.getInstance(getActivity())
 						.getAisleItem(

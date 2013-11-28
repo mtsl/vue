@@ -63,10 +63,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.BaseActivity.ListFragment;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -91,6 +93,12 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 	private boolean isProfileEdited = false;
 	boolean isNewUser = false;
 	private String profilePicUrl = "";
+	ListFragment mListFragment;
+
+	public VueListFragment(ListFragment listFragment) {
+		mListFragment = listFragment;
+		mListFragment.setFragmentAccess(new RefreshList());
+	}
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -1194,5 +1202,19 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 				VueListFragment.this.getBezelMenuOptionItems());
 		VueListFragment.this.expandListView.setAdapter(adapter);
 		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage4 ");
+	}
+	private class RefreshList implements ListFragementObj {
+
+		@Override
+		public void refreshBezelMenu() {
+			VueListFragmentAdapter adapter = null;
+			Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage3 ");
+			adapter = new VueListFragment.VueListFragmentAdapter(
+					VueListFragment.this.getActivity(),
+					VueListFragment.this.getBezelMenuOptionItems());
+			VueListFragment.this.expandListView.setAdapter(adapter); 
+			
+		}
+		
 	}
 }
