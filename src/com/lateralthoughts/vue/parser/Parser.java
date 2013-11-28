@@ -137,19 +137,19 @@ public class Parser {
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject commnetObj = jsonArray.getJSONObject(i);
 				imgComments = new ImageComments();
-				imgComments.Id = commnetObj
+				imgComments.mId = commnetObj
 						.getLong(VueConstants.AISLE_IMAGE_COMMENTS_ID);
-				imgComments.imageId = commnetObj
+				imgComments.mImageId = commnetObj
 						.getLong(VueConstants.AISLE_IMAGE_COMMENTS_IMAGEID);
-				imgComments.comment = commnetObj
+				imgComments.mComment = commnetObj
 						.getString(VueConstants.COMMENT);
 				if (commnetObj.getString(
 						VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME)
 						.equals("null")) {
-					imgComments.lastModifiedTimestamp = commnetObj
+					imgComments.mLastModifiedTimestamp = commnetObj
 							.getLong(VueConstants.AISLE_IMAGE_COMMENTS_CREATED_TIME);
 				} else {
-					imgComments.lastModifiedTimestamp = commnetObj
+					imgComments.mLastModifiedTimestamp = commnetObj
 							.getLong(VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME);
 				}
 				commentList.add(imgComments);

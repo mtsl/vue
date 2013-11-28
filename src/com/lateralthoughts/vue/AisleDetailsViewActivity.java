@@ -488,7 +488,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 			}, mComparisionDelay);
 		}
-
 	}
 
 	private Handler mHandler = new Handler() {

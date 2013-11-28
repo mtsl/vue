@@ -13,13 +13,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -44,8 +47,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -59,7 +62,6 @@ import com.facebook.Request;
 import com.facebook.Request.Callback;
 import com.facebook.Request.GraphUserCallback;
 import com.facebook.Session;
-import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
@@ -80,7 +82,6 @@ import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
 import com.instagram.InstagramApp;
 import com.instagram.InstagramApp.OAuthAuthenticationListener;
-import com.lateralthoughts.vue.VueListFragment.ProfileImageChangeListenor;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
@@ -926,6 +927,23 @@ public class VueLoginActivity extends FragmentActivity implements
 				alertMessage = error.getErrorMessage();
 			}
 		}
+		try {
+			VueLandingPageActivity lan = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
+			lan.mFrag.refreshBezelMenu();
+		} catch (Exception e) {
+		}
+		try {
+			AisleDetailsViewActivity details = (AisleDetailsViewActivity) AisleDetailsViewActivity.detailsActivity;
+			details.mFrag.refreshBezelMenu();
+		} catch (Exception e) {
+		}
+		/*
+		 * VueListFragment vueListFragment = (VueListFragment)
+		 * getSupportFragmentManager()
+		 * .findFragmentById(R.id.create_aisles_view_fragment);
+		 * VueLoginActivity.profileImagechangeListor = profileImagechangeListor;
+		 */
+	
 		final Dialog dialog = new Dialog(VueLoginActivity.this,
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

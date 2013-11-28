@@ -211,6 +211,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		 */
 
 		if (VueApplication.getInstance().getmUserId() != null) {
+
 			if (String.valueOf(VueApplication.getInstance().getmUserId())
 					.equals(VueTrendingAislesDataModel
 							.getInstance(getActivity())
