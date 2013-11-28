@@ -79,8 +79,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	private int mListCount = 3;
 	private int mTotalScreenCount;
 	// private VueContentGateway mVueContentGateway;
-	//change for viewpager.
-	//AisleDetailsViewAdapter mAisleDetailsAdapter;
+	// change for viewpager.
+	// AisleDetailsViewAdapter mAisleDetailsAdapter;
 	AisleDetailsViewAdapterPager mAisleDetailsAdapter;
 	AisleDetailsSwipeListner mSwipeListener;
 	private ActionBarHandler mHandleActionBar;
@@ -115,13 +115,15 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		// adding test comment
 		// without much ado lets get started with retrieving the trending aisles
 		// list
-	 
+
 		mSwipeListener = new AisleDetailsSwipeListner();
-		//this code is for viewflipper use of detailsscreen viewflipper
-		/*mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
-				mSwipeListener, mListCount, null, new ShareViaVueListner());*/
-		//this code is for viewflipper use of detailsscreen viewpager
-		mAisleDetailsAdapter =  new AisleDetailsViewAdapterPager(mContext,
+		// this code is for viewflipper use of detailsscreen viewflipper
+		/*
+		 * mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
+		 * mSwipeListener, mListCount, null, new ShareViaVueListner());
+		 */
+		// this code is for viewflipper use of detailsscreen viewpager
+		mAisleDetailsAdapter = new AisleDetailsViewAdapterPager(mContext,
 				mSwipeListener, mListCount, null, new ShareViaVueListner());
 
 	}
@@ -158,16 +160,16 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		mEditIconLay = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.editImage);
 		mEditIconLay.setOnClickListener(new OnClickListener() {
- 
+
 			@Override
 			public void onClick(View v) {
-				 editAisle();
+				editAisle();
 			}
 		});
 
 		String detailsUrl = null;
 		try {
-			//TODO: get user profile url
+			// TODO: get user profile url
 			detailsUrl = VueTrendingAislesDataModel
 					.getInstance(getActivity())
 					.getAisleItem(
@@ -191,36 +193,24 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			mEditTextFindAt.setText("");
 			mFindAtUrl = "";
 		}
-         new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				String profileUrl = null;
-				//TODO : get Aisle Aisle owner image url.
-		/*	  profileUrl = VueTrendingAislesDataModel
-						.getInstance(getActivity())
-						.getAisleItem(
-								VueApplication.getInstance().getClickedWindowID()).getAisleContext().mu*/
-				if(profileUrl != null) {
-				 boolean cacheBitmap = false;
-				final Bitmap bmp =  BitmapLoaderUtils.getInstance().getBitmap(profileUrl, profileUrl, cacheBitmap,
-							VueApplication.getInstance().getPixel(32),
-							VueApplication.getInstance().getPixel(32), Utils.TRENDING_SCREEN);
-				if(bmp != null){
-				getActivity().runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						
-						mVueUserPic.setImageBitmap(bmp); 
-						
-					}
-				});
-				}
-				}
-			}
-		}).start();
-/*		if (VueApplication.getInstance().getmUserId() != null) {
+		/*
+		 * new Thread(new Runnable() {
+		 * 
+		 * @Override public void run() { String profileUrl = null; profileUrl =
+		 * VueTrendingAislesDataModel .getInstance(getActivity()) .getAisleItem(
+		 * VueApplication.getInstance() .getClickedWindowID())
+		 * .getAisleContext().mAisleOwnerImageURL; if (profileUrl != null) {
+		 * boolean cacheBitmap = false; final Bitmap bmp =
+		 * BitmapLoaderUtils.getInstance() .getBitmap(profileUrl, profileUrl,
+		 * cacheBitmap, VueApplication.getInstance().getPixel(32),
+		 * VueApplication.getInstance().getPixel(32), Utils.TRENDING_SCREEN); if
+		 * (bmp != null) { getActivity().runOnUiThread(new Runnable() {
+		 * 
+		 * @Override public void run() { mVueUserPic.setImageBitmap(bmp); } });
+		 * } } } }).start();
+		 */
+
+		if (VueApplication.getInstance().getmUserId() != null) {
 			if (String.valueOf(VueApplication.getInstance().getmUserId())
 					.equals(VueTrendingAislesDataModel
 							.getInstance(getActivity())
@@ -234,7 +224,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 					mVueUserPic.setImageURI(Uri.fromFile(f));
 				}
 			}
-		}*/
+		}
 
 		mEditTextFindAt.setOnClickListener(new OnClickListener() {
 
@@ -580,14 +570,16 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		public void onResetAdapter() {
 			if (VueApplication.getInstance().getClickedWindowCount() != 0) {
 				upDatePageDots(0, "right");
-				//this code is for viewflipper use of detailsscreen viewflipper
-		/*		mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
-						mSwipeListener, mListCount, null,
-						new ShareViaVueListner());*/
- 
-				//this code is for viewflipper use of detailsscreen viewpager
-				mAisleDetailsAdapter =  new AisleDetailsViewAdapterPager(mContext,
-						mSwipeListener, mListCount, null, new ShareViaVueListner());
+				// this code is for viewflipper use of detailsscreen viewflipper
+				/*
+				 * mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
+				 * mSwipeListener, mListCount, null, new ShareViaVueListner());
+				 */
+
+				// this code is for viewflipper use of detailsscreen viewpager
+				mAisleDetailsAdapter = new AisleDetailsViewAdapterPager(
+						mContext, mSwipeListener, mListCount, null,
+						new ShareViaVueListner());
 				mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
 			} else {
 				getActivity().finish();
@@ -767,13 +759,13 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public void onDissAllowListResponse() {
-			//mAisleDetailsList.setScrollContainer(false);
+			// mAisleDetailsList.setScrollContainer(false);
 			mAisleDetailsList.requestDisallowInterceptTouchEvent(true);
 		}
 
 		@Override
 		public void onAllowListResponse() {
-			//mAisleDetailsList.setScrollContainer(true);
+			// mAisleDetailsList.setScrollContainer(true);
 			mAisleDetailsList.requestDisallowInterceptTouchEvent(false);
 		}
 
@@ -803,8 +795,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 
 		@Override
 		public void onEditAisle() {
-		 editAisle();
-			
+			editAisle();
+
 		}
 
 	}
@@ -1087,7 +1079,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	public void updateAisleScreen() {
 		mAisleDetailsAdapter.updateAisleListAdapter();
 	}
-	public void editAisle(){
+
+	public void editAisle() {
 		if (mAisleDetailsActivity == null) {
 			mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
 		}

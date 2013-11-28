@@ -204,6 +204,7 @@ public class VueConstants {
 	public static final String AISLE_DESCRIPTION = "description";
 	public static final String AISLE_OWNER_FIRSTNAME = "aisleOwnerFirstName";
 	public static final String AISLE_OWNER_LASTNAME = "aisleOwnerLastName";
+	public static final String AISLE_OWNER_IMAGE_URL = "aisleOwnerImageURL";
 	public static final String AISLE_BOOKMARK_COUNT = "bookmarkCount";
 	// Aisle Images Response Keys
 	public static final String AISLE_IMAGE_ID = "id";
@@ -235,6 +236,7 @@ public class VueConstants {
 	public static final String USER_LAST_NAME = "lastName";
 	public static final String USER_FACEBOOK_ID = "facebookId";
 	public static final String USER_GOOGLEPLUS_ID = "googlePlusId";
+	public static final String USER_PROFILE_IMAGE_URL = "userImageURL";
 	// Reciver constants
 	public static final int AISLE_TRENDING_LIST_DATA = 1;
 	public static final int AISLE_TRENDING_PARSED_DATA = 2;

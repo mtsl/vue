@@ -125,7 +125,8 @@ public class AisleLoader {
 	@SuppressWarnings("deprecation")
 	public void getAisleContentIntoView(ViewHolder holder, int scrollIndex,
 			int position, boolean placeholderOnly,
-			AisleContentClickListener listener,String whichAdapter,ImageView startImageLay) {
+			AisleContentClickListener listener, String whichAdapter,
+			ImageView startImageLay) {
 
 		Log.i("TrendingDataModel",
 				"DataObserver for List Refresh: getAisleContentView called "
@@ -139,11 +140,11 @@ public class AisleLoader {
 		if (null == holder)
 			return;
 		AisleWindowContent windowContent = holder.mWindowContent;
-		
 
 		if (null == windowContent)
 			return;
-		Log.i("memory issue", "memory issue aisle missing 1  "+windowContent.getAisleId());
+		Log.i("memory issue",
+				"memory issue aisle missing 1  " + windowContent.getAisleId());
 
 		// String currentContentId = holder.aisleContentBrowser.getUniqueId();
 
@@ -162,13 +163,15 @@ public class AisleLoader {
 			// before or has to be filled with same content. Either way, no need
 			// to worry about cleaning up anything!
 			holder.aisleContentBrowser.setScrollIndex(scrollIndex);
-			//Log.i("memory issue", "memory issue aisle missing return  "+windowContent.getAisleId());
-			Log.i("memory issue", "memory issue aisle missing 2  "+windowContent.getAisleId());
+			// Log.i("memory issue",
+			// "memory issue aisle missing return  "+windowContent.getAisleId());
+			Log.i("memory issue", "memory issue aisle missing 2  "
+					+ windowContent.getAisleId());
 			return;
 		} else {
-			Log.i("memory issue", "memory issue aisle missing 3  "+windowContent.getAisleId());
-		 
-			 
+			Log.i("memory issue", "memory issue aisle missing 3  "
+					+ windowContent.getAisleId());
+
 			// we are going to re-use an existing object to show some new
 			// content
 			// lets release the scaleimageviews first
@@ -192,26 +195,29 @@ public class AisleLoader {
 			holder.aisleContentBrowser.setScrollIndex(scrollIndex);
 			holder.aisleContentBrowser.setCustomAdapter(adapter);
 			holder.uniqueContentId = desiredContentId;
-			if(whichAdapter.equalsIgnoreCase("LeftAdapter")){
+			if (whichAdapter.equalsIgnoreCase("LeftAdapter")) {
 				holder.aisleContentBrowser.isLeft = true;
-			}else {
+			} else {
 				holder.aisleContentBrowser.isRight = true;
 			}
 			// mContentViewMap.put(holder.uniqueContentId, holder);
 		}
-		 
+
 		mListener = listener;
 		imageDetailsArr = windowContent.getImageList();
-		Log.i("memory issue", "memory issue aisle missing null 3.1  "+windowContent.getAisleId());
+		Log.i("memory issue", "memory issue aisle missing null 3.1  "
+				+ windowContent.getAisleId());
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
-			Log.i("memory issue", "memory issue aisle missing null 3.2  "+windowContent.getAisleId());
+			Log.i("memory issue", "memory issue aisle missing null 3.2  "
+					+ windowContent.getAisleId());
 			itemDetails = imageDetailsArr.get(0);
-			if(itemDetails.mHasMostLikes){
-				ImageView image = (ImageView)startImageLay.findViewById(R.id.staricon);
-				if(itemDetails.mSameMostLikes) {
-					image.setImageResource(R.drawable.vue_star_light) ;
+			if (itemDetails.mHasMostLikes) {
+				ImageView image = (ImageView) startImageLay
+						.findViewById(R.id.staricon);
+				if (itemDetails.mSameMostLikes) {
+					image.setImageResource(R.drawable.vue_star_light);
 				} else {
-					image.setImageResource(R.drawable.vue_star_theme) ;
+					image.setImageResource(R.drawable.vue_star_theme);
 				}
 				startImageLay.setVisibility(View.VISIBLE);
 			} else {
@@ -219,7 +225,8 @@ public class AisleLoader {
 			}
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
-			Log.i("memory issue", "memory issue aisle missing null 3.3  "+windowContent.getAisleId());
+			Log.i("memory issue", "memory issue aisle missing null 3.3  "
+					+ windowContent.getAisleId());
 			Log.i("AisleLoader", "CustomImageUrl:? "
 					+ itemDetails.mCustomImageUrl);
 			Bitmap bitmap = null;
@@ -236,20 +243,29 @@ public class AisleLoader {
 			contentBrowser.setLayoutParams(mShowpieceParams2);
 			Log.i("bestsamallest", "bestsamallest height22: "
 					+ itemDetails.mTrendingImageHeight);
-			Log.i("memory issue", "memory issue aisle missing null 3.4  "+windowContent.getAisleId());
+			Log.i("memory issue", "memory issue aisle missing null 3.4  "
+					+ windowContent.getAisleId());
 			if (bitmap != null) {
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
 				contentBrowser.addView(imageView);
-				String profleUrl = null;
-				Log.i("memory issue", "memory issue aisle missing null 3.5 placeholder:   "+windowContent.getAisleId());
-				if (!placeholderOnly){
-					Log.i("memory issue", "memory issue aisle missing null 3.6 placeholder:   "+windowContent.getAisleId());
+				String profleUrl = null;/*
+										 * windowContent.getAisleContext().
+										 * mAisleOwnerImageURL;
+										 */
+				Log.i("memory issue",
+						"memory issue aisle missing null 3.5 placeholder:   "
+								+ windowContent.getAisleId());
+				if (!placeholderOnly) {
+					Log.i("memory issue",
+							"memory issue aisle missing null 3.6 placeholder:   "
+									+ windowContent.getAisleId());
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
 							bestHeight, windowContent.getAisleId(),
-							itemDetails, listener,profleUrl,holder.profileThumbnail);
+							itemDetails, listener, profleUrl,
+							holder.profileThumbnail);
 				}
 			}
 		}
@@ -274,31 +290,40 @@ public class AisleLoader {
 			holder.profileThumbnail
 					.setBackgroundResource(R.drawable.profile_thumbnail);
 		}
-		 
+
 	}
 
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
-			String asileId, AisleImageDetails itemDetails,AisleContentClickListener listener,String profileUrl,ImageView profileImage) {
-		Log.i("memory issue", "memory issue aisle missing null 3.7 loadBitmap :   "+asileId);
-		if(Utils.isAisleChanged){
-			Log.i("memory issue", "memory issue aisle missing null 3.8 loadBitmap :   "+asileId);
+			String asileId, AisleImageDetails itemDetails,
+			AisleContentClickListener listener, String profileUrl,
+			ImageView profileImage) {
+		Log.i("memory issue",
+				"memory issue aisle missing null 3.7 loadBitmap :   " + asileId);
+		if (Utils.isAisleChanged) {
+			Log.i("memory issue",
+					"memory issue aisle missing null 3.8 loadBitmap :   "
+							+ asileId);
 			Utils.isAisleChanged = false;
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight, asileId, itemDetails,listener,profileImage);
+					bestHeight, asileId, itemDetails, listener, profileImage);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
-			String[] urlsArray = { loc, serverImageUrl,profileUrl };
+			String[] urlsArray = { loc, serverImageUrl, profileUrl };
 			task.execute(urlsArray);
 		} else {
-			Log.i("memory issue", "memory issue aisle missing null 3.9 loadBitmap :   "+asileId);
-		/*if (cancelPotentialDownload(loc, imageView)) {*/
-			Log.i("memory issue", "memory issue aisle missing null 3.10 loadBitmap :   "+asileId);
+			Log.i("memory issue",
+					"memory issue aisle missing null 3.9 loadBitmap :   "
+							+ asileId);
+			/* if (cancelPotentialDownload(loc, imageView)) { */
+			Log.i("memory issue",
+					"memory issue aisle missing null 3.10 loadBitmap :   "
+							+ asileId);
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight, asileId, itemDetails,listener,profileImage);
+					bestHeight, asileId, itemDetails, listener, profileImage);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
-			String[] urlsArray = { loc, serverImageUrl,profileUrl };
+			String[] urlsArray = { loc, serverImageUrl, profileUrl };
 			task.execute(urlsArray);
-		/*}*/
+			/* } */
 		}
 		/*
 		 * ((ScaleImageView) imageView).setImageUrl(serverImageUrl, new
@@ -322,11 +347,13 @@ public class AisleLoader {
 
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
 				ImageView imageView, int bestHeight, String aisleId,
-				AisleImageDetails itemDetails,AisleContentClickListener listener,ImageView profileImage) {
+				AisleImageDetails itemDetails,
+				AisleContentClickListener listener, ImageView profileImage) {
 			// Use a WeakReference to ensure the ImageView can be garbage
 			// collected
 			imageViewReference = new WeakReference<ImageView>(imageView);
-			profileImageViewReference = new WeakReference<ImageView>(profileImage);
+			profileImageViewReference = new WeakReference<ImageView>(
+					profileImage);
 			viewFlipperReference = new WeakReference<AisleContentBrowser>(
 					vFlipper);
 			mListener = listener;
@@ -337,9 +364,9 @@ public class AisleLoader {
 		// Decode image in background.
 		@Override
 		protected Bitmap[] doInBackground(String... params) {
-			if(!mListener.isFlingCalled()){
-			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-			Log.i("downloading speed", "fling calls stop");
+			if (!mListener.isFlingCalled()) {
+				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+				Log.i("downloading speed", "fling calls stop");
 			} else {
 				Log.i("downloading speed", "fling calls");
 			}
@@ -350,9 +377,12 @@ public class AisleLoader {
 			bmp[0] = mBitmapLoaderUtils.getBitmap(url, params[1], cacheBitmap,
 					mItemDetails.mTrendingImageHeight,
 					mItemDetails.mTrendingImageWidth, Utils.TRENDING_SCREEN);
-			bmp[1] = mBitmapLoaderUtils.getBitmap(params[2], params[2], cacheBitmap,
-					VueApplication.getInstance().getPixel(32),
-					VueApplication.getInstance().getPixel(32), Utils.TRENDING_SCREEN);
+			if (params[2] != null && params[2].trim().length() > 0) {
+				bmp[1] = mBitmapLoaderUtils.getBitmap(params[2], params[2],
+						cacheBitmap, VueApplication.getInstance().getPixel(36),
+						VueApplication.getInstance().getPixel(36),
+						Utils.TRENDING_SCREEN);
+			}
 			return bmp;
 		}
 
@@ -360,9 +390,9 @@ public class AisleLoader {
 		@Override
 		protected void onPostExecute(Bitmap[] bitmap) {
 			final ImageView profileImage = profileImageViewReference.get();
-			 if(bitmap[1] != null){
-				 profileImage.setImageBitmap(bitmap[1]);
-			 }
+			if (bitmap[1] != null) {
+				profileImage.setImageBitmap(bitmap[1]);
+			}
 
 			if (viewFlipperReference != null && imageViewReference != null
 					&& bitmap[0] != null) {
@@ -379,13 +409,16 @@ public class AisleLoader {
 						holder.aisleDescriptor.setVisibility(View.VISIBLE);
 					}
 					imageView.setImageBitmap(bitmap[0]);
-					Log.i("memory issue", "memory issue aisle missing not null 4  "+mAisleId);
+					Log.i("memory issue",
+							"memory issue aisle missing not null 4  "
+									+ mAisleId);
 					if (mListener.isFlingCalled()) {
 						// mListener.refreshList();
 					}
 				}
 			} else {
-				Log.i("memory issue", "memory issue aisle missing null 5  "+mAisleId);
+				Log.i("memory issue", "memory issue aisle missing null 5  "
+						+ mAisleId);
 			}
 		}
 	}

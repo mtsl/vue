@@ -12,7 +12,9 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.facebook.model.GraphUser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -21,6 +23,7 @@ import com.lateralthoughts.vue.utils.Utils;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -155,8 +158,8 @@ public class VueUserManager {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void createFBIdentifiedUser(final GraphUser graphUser,
-			final UserUpdateCallback callback) {
+	public void createFBIdentifiedUser(final String userProfileImageUrl,
+			final GraphUser graphUser, final UserUpdateCallback callback) {
 		// lets throw an exception if the current user is not NULL.
 		if (null != mCurrentUser)
 			throw new RuntimeException(
@@ -273,8 +276,14 @@ public class VueUserManager {
 									userAsString,
 									UrlConstants.CREATE_USER_RESTURL, listener,
 									errorListener);
+							/*
+							 * if (userProfileImageUrl != null) {
+							 * downloadUserProfileImage(userProfileImageUrl,
+							 * request, user); } else {
+							 */
 							VueApplication.getInstance().getRequestQueue()
 									.add(request);
+							// }
 						} catch (Exception e) {
 
 						}
@@ -290,8 +299,14 @@ public class VueUserManager {
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.CREATE_USER_RESTURL,
 								listener, errorListener);
+						/*
+						 * if (userProfileImageUrl != null) {
+						 * downloadUserProfileImage(userProfileImageUrl,
+						 * request, user); } else {
+						 */
 						VueApplication.getInstance().getRequestQueue()
 								.add(request);
+						// }
 					} catch (Exception e) {
 
 					}
@@ -316,7 +331,8 @@ public class VueUserManager {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void createGooglePlusIdentifiedUser(final VueUser vueUser,
+	public void createGooglePlusIdentifiedUser(
+			final String userProfileImageUrl, final VueUser vueUser,
 			final UserUpdateCallback callback) {
 		// lets throw an exception if the current user is not NULL.
 		if (null != mCurrentUser)
@@ -436,8 +452,14 @@ public class VueUserManager {
 									userAsString,
 									UrlConstants.CREATE_USER_RESTURL, listener,
 									errorListener);
+							/*
+							 * if (userProfileImageUrl != null) {
+							 * downloadUserProfileImage(userProfileImageUrl,
+							 * request, vueUser); } else {
+							 */
 							VueApplication.getInstance().getRequestQueue()
 									.add(request);
+							// }
 						} catch (Exception e) {
 
 						}
@@ -453,8 +475,14 @@ public class VueUserManager {
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.CREATE_USER_RESTURL,
 								listener, errorListener);
+						/*
+						 * if (userProfileImageUrl != null) {
+						 * downloadUserProfileImage(userProfileImageUrl,
+						 * request, vueUser); } else {
+						 */
 						VueApplication.getInstance().getRequestQueue()
 								.add(request);
+						// }
 					} catch (Exception e) {
 
 					}
@@ -521,8 +549,9 @@ public class VueUserManager {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void updateFBIdentifiedUser(final GraphUser graphUser,
-			final VueUser vueUser, final UserUpdateCallback callback) {
+	public void updateFBIdentifiedUser(final String userProfileImageUrl,
+			final GraphUser graphUser, final VueUser vueUser,
+			final UserUpdateCallback callback) {
 		final VueUser user = parseGraphUserIntoVueUser(graphUser, vueUser);
 		final Response.Listener listener = new Response.Listener<String>() {
 			@Override
@@ -637,8 +666,14 @@ public class VueUserManager {
 									userAsString,
 									UrlConstants.UPDATE_USER_RESTURL, listener,
 									errorListener);
+							/*
+							 * if (userProfileImageUrl != null) {
+							 * downloadUserProfileImage(userProfileImageUrl,
+							 * request, user); } else {
+							 */
 							VueApplication.getInstance().getRequestQueue()
 									.add(request);
+							// }
 						} catch (Exception e) {
 
 						}
@@ -653,8 +688,14 @@ public class VueUserManager {
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.UPDATE_USER_RESTURL,
 								listener, errorListener);
+						/*
+						 * if (userProfileImageUrl != null) {
+						 * downloadUserProfileImage(userProfileImageUrl,
+						 * request, user); } else {
+						 */
 						VueApplication.getInstance().getRequestQueue()
 								.add(request);
+						// }
 					} catch (Exception e) {
 
 					}
@@ -679,7 +720,8 @@ public class VueUserManager {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void updateGooglePlusIdentifiedUser(final VueUser vueUser,
+	public void updateGooglePlusIdentifiedUser(
+			final String userProfileImageUrl, final VueUser vueUser,
 			final UserUpdateCallback callback) {
 
 		final Response.Listener listener = new Response.Listener<String>() {
@@ -798,8 +840,14 @@ public class VueUserManager {
 									userAsString,
 									UrlConstants.UPDATE_USER_RESTURL, listener,
 									errorListener);
+							/*
+							 * if (userProfileImageUrl != null) {
+							 * downloadUserProfileImage(userProfileImageUrl,
+							 * request, vueUser); } else {
+							 */
 							VueApplication.getInstance().getRequestQueue()
 									.add(request);
+							// }
 						} catch (Exception e) {
 
 						}
@@ -815,8 +863,14 @@ public class VueUserManager {
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.UPDATE_USER_RESTURL,
 								listener, errorListener);
+						/*
+						 * if (userProfileImageUrl != null) {
+						 * downloadUserProfileImage(userProfileImageUrl,
+						 * request, vueUser); } else {
+						 */
 						VueApplication.getInstance().getRequestQueue()
 								.add(request);
+						// }
 					} catch (Exception e) {
 
 					}
@@ -1057,7 +1111,7 @@ public class VueUserManager {
 			}
 			vueUser = new VueUser(null, email, firstName, lastName, null,
 					Utils.getDeviceId(), facebookId,
-					VueUser.DEFAULT_GOOGLEPLUS_ID);
+					VueUser.DEFAULT_GOOGLEPLUS_ID, null);
 			if (storedVueUser != null) {
 				vueUser.setDeviceId(storedVueUser.getDeviceId());
 				vueUser.setGooglePlusId(storedVueUser.getGooglePlusId());
@@ -1128,28 +1182,37 @@ public class VueUserManager {
 		}).start();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void downloadUserProfileImage(String imageUrl) {
-		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage1 "
-				+ imageUrl);
-		Response.Listener listener = new Response.Listener<Bitmap>() {
-
-			@Override
-			public void onResponse(Bitmap bmp) {
-				Utils.saveBitmap(bmp, new FileCache(VueApplication.getInstance())
-				.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
-			}
-		};
-		Response.ErrorListener errorListener = new Response.ErrorListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError arg0) {
-			}
-		};
-
-		ImageRequest imagerequestObj = new ImageRequest(imageUrl, listener, 0,
-				0, null, errorListener);
-		VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
-
-	}
+	/*
+	 * @SuppressWarnings({ "rawtypes", "unchecked" }) private void
+	 * downloadUserProfileImage(String imageUrl, final UserCreateOrUpdateRequest
+	 * request, final VueUser vueUser) { Log.i("userImageUrl",
+	 * "userImageUrl: downloadAndSaveUserProfileImage1 " + imageUrl);
+	 * Response.Listener listener = new Response.Listener<Bitmap>() {
+	 * 
+	 * @Override public void onResponse(Bitmap bmp) { Utils.saveBitmap( bmp, new
+	 * FileCache(VueApplication.getInstance())
+	 * .getVueAppUserProfilePictureFile(VueConstants
+	 * .USER_PROFILE_IMAGE_FILE_NAME)); VueTrendingAislesDataModel
+	 * .getInstance(VueApplication.getInstance()) .getNetworkHandler()
+	 * .requestForUploadImage( new FileCache(VueApplication.getInstance())
+	 * .getVueAppUserProfilePictureFile
+	 * (VueConstants.USER_PROFILE_IMAGE_FILE_NAME), new ImageUploadCallback() {
+	 * 
+	 * @Override public void onImageUploaded(String imageUrl) { if (imageUrl !=
+	 * null) { vueUser.setUserImageURL(imageUrl); ObjectMapper mapper = new
+	 * ObjectMapper(); try { String userAsString = mapper
+	 * .writeValueAsString(vueUser); Log.e("VueUserDebug", "vueuser: request " +
+	 * userAsString); request.muserAsString = userAsString; } catch
+	 * (JsonProcessingException e) { } VueApplication.getInstance()
+	 * .getRequestQueue() .add(request); } else { VueApplication.getInstance()
+	 * .getRequestQueue() .add(request); } } }); } }; Response.ErrorListener
+	 * errorListener = new Response.ErrorListener() {
+	 * 
+	 * @Override public void onErrorResponse(VolleyError arg0) {
+	 * VueApplication.getInstance().getRequestQueue().add(request); } };
+	 * 
+	 * ImageRequest imagerequestObj = new ImageRequest(imageUrl, listener, 0, 0,
+	 * null, errorListener);
+	 * VueApplication.getInstance().getRequestQueue().add(imagerequestObj); }
+	 */
 }

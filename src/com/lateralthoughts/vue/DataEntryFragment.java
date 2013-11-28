@@ -54,11 +54,10 @@ public class DataEntryFragment extends Fragment {
 	public EditText mLookingForText = null, mOccasionText = null,
 			mSaySomethingAboutAisle = null, mFindAtText = null;
 	private String mCategoryitemsArray[] = null;
-	private int mCategoryitemsDrawablesArray[] = {
-			R.drawable.vue_launcher_icon, R.drawable.vue_launcher_icon,
-			R.drawable.vue_launcher_icon, R.drawable.new_entertainment,
-			R.drawable.new_events, R.drawable.vue_launcher_icon,
-			R.drawable.vue_launcher_icon };
+	private int mCategoryitemsDrawablesArray[] = { R.drawable.new_apparel,
+			R.drawable.new_beauty, R.drawable.new_electronics,
+			R.drawable.new_entertainment, R.drawable.new_events,
+			R.drawable.new_food, R.drawable.new_home };
 	InputMethodManager mInputMethodManager;
 	public String mPreviousFindAtText = null;
 	private String mImagePath = null, mResizedImagePath = null;

@@ -23,6 +23,15 @@ public class VueUser implements Serializable {
 	private String lastName;
 	private Long joinTime;
 	private String deviceId;
+	private String userImageURL;
+
+	public String getUserImageURL() {
+		return userImageURL;
+	}
+
+	public void setUserImageURL(String userImageURL) {
+		this.userImageURL = userImageURL;
+	}
 
 	/** Indexed as objectify can only query indexed fields */
 	private String facebookId;
@@ -35,7 +44,7 @@ public class VueUser implements Serializable {
 
 	public VueUser(Long id, String email, String firstName, String lastName,
 			Long joinTime, String deviceId, String facebookId,
-			String googlePlusId) {
+			String googlePlusId, String userImageURL) {
 		this.id = id;
 		this.email = email;
 		this.firstName = firstName;
@@ -44,6 +53,7 @@ public class VueUser implements Serializable {
 		this.deviceId = deviceId;
 		this.facebookId = facebookId;
 		this.googlePlusId = googlePlusId;
+		this.userImageURL = userImageURL;
 	}
 
 	public String getEmail() {

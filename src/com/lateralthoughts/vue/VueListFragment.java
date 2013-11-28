@@ -475,15 +475,15 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 		List<ListOptionItem> categoriesChildren = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Apparel),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.new_apparel, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Beauty),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.new_beauty, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Electronics),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.new_electronics, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Entertainment),
@@ -494,10 +494,10 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 				R.drawable.new_events, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Food),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.new_food, null);
 		categoriesChildren.add(item);
 		item = new ListOptionItem(getString(R.string.sidemenu_sub_option_Home),
-				R.drawable.vue_launcher_icon, null);
+				R.drawable.new_home, null);
 		categoriesChildren.add(item);
 
 		return categoriesChildren;
