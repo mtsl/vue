@@ -16,11 +16,11 @@
 
 package com.googleplus;
 
-import com.google.android.gms.plus.model.moments.ItemScope;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+
+import com.google.android.gms.plus.model.moments.ItemScope;
 
 /**
  * Handles creation of moment JSON.

@@ -24,24 +24,20 @@
 
 package com.lateralthoughts.vue;
 
-import android.widget.BaseAdapter;
+import java.util.ArrayList;
+
+import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.content.Context;
-import android.util.Log;
 
-//java util imports
-import java.util.ArrayList;
-
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-//internal imports
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
 
 public class TrendingAislesGenericAdapter extends BaseAdapter implements
 		IAisleDataObserver {
@@ -147,7 +143,8 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 		AisleContentBrowser aisleContentBrowser;
 		TextView aisleOwnersName;
 		TextView aisleContext;
-		ImageView profileThumbnail,starIcon;
+		ImageView starIcon;
+		NetworkImageView profileThumbnail;
 		String uniqueContentId;
 		LinearLayout aisleDescriptor/*,startImageLay*/;
 		AisleWindowContent mWindowContent;

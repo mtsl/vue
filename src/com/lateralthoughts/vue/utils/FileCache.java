@@ -3,9 +3,10 @@ package com.lateralthoughts.vue.utils;
 import java.io.File;
 import java.util.Date;
 
-import com.lateralthoughts.vue.VueConstants;
 import android.content.Context;
 import android.util.Log;
+
+import com.lateralthoughts.vue.VueConstants;
 
 public class FileCache {
 
@@ -45,6 +46,7 @@ public class FileCache {
 		// Find the dir to save cached images
 		if (android.os.Environment.getExternalStorageState().equals(
 				android.os.Environment.MEDIA_MOUNTED)) {
+			Log.i("filecache", "filecache: from sdcard");
 			cacheDir = new File(
 			/* android.os.Environment.getExternalStorageDirectory() */
 			context.getExternalCacheDir(), "LazyList");
@@ -57,6 +59,7 @@ public class FileCache {
 					context.getExternalFilesDir(null),
 					VueConstants.VUE_APP_USER_PROFILE_PICTURES_FOLDER);
 		} else {
+			Log.i("filecache", "filecache: from phone storage");
 			cacheDir = context.getCacheDir();
 			mVueAppCameraPicsDir = new File(context.getFilesDir(),
 					VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);

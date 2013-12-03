@@ -21,8 +21,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
 public class ScaleImageView extends /*Network*/ImageView {

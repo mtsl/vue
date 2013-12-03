@@ -16,8 +16,6 @@
 
 package com.facebook.internal;
 
-import com.facebook.internal.Utility;
-
 import java.util.Collection;
 
 /**

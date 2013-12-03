@@ -8,8 +8,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 public class MyCustomAnimation extends Animation {
 

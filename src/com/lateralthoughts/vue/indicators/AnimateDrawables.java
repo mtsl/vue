@@ -1,14 +1,7 @@
 package com.lateralthoughts.vue.indicators;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 
 public class AnimateDrawables extends Activity {
 //test commit

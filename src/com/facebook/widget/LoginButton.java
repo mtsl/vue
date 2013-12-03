@@ -49,7 +49,6 @@ import com.facebook.internal.SessionTracker;
 import com.facebook.internal.Utility;
 import com.facebook.model.GraphUser;
 import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueLoginActivity;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 
 /**

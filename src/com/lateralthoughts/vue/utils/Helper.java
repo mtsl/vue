@@ -1,14 +1,12 @@
 package com.lateralthoughts.vue.utils;
 
-import com.lateralthoughts.vue.VueApplication;
-
-import android.content.res.Resources;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import com.lateralthoughts.vue.VueApplication;
 
 public class Helper {
     public static void getListViewSize(ListView myListView) {

@@ -11,19 +11,15 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.lateralthoughts.vue.DataEntryFragment;
-import com.lateralthoughts.vue.VueApplication;
-
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.os.Environment;
 import android.util.Log;
-import android.webkit.WebView.HitTestResult;
+
+import com.lateralthoughts.vue.VueApplication;
 
 public class BitmapLoaderUtils {
 
@@ -87,8 +83,8 @@ public class BitmapLoaderUtils {
 			conn.setReadTimeout(30000);
 			conn.setInstanceFollowRedirects(true);
 			InputStream is = conn.getInputStream();
-			int hashCode = url.hashCode();
-			String filename = String.valueOf(hashCode);
+			// int hashCode = url.hashCode();
+			// String filename = String.valueOf(hashCode);
 			OutputStream os = new FileOutputStream(f);
 			Utils.CopyStream(is, os);
 			os.close();

@@ -8,8 +8,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Stack;
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueApplication;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +16,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
+import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
 
 public class OtherSourceImageLoader {
 

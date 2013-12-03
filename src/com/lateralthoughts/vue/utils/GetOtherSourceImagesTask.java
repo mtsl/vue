@@ -15,11 +15,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+
 import com.lateralthoughts.vue.DataEntryFragment;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueLandingPageActivity;
@@ -136,8 +139,8 @@ public class GetOtherSourceImagesTask extends
 	protected void onPostExecute(ArrayList<OtherSourceImageDetails> result) {
 		super.onPostExecute(result);
 		if (!mFromLandingScreenFlag) {
-			DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mContext)
-					.getSupportFragmentManager().findFragmentById(
+			DataEntryFragment fragment = (DataEntryFragment) ((Activity) mContext)
+					.getFragmentManager().findFragmentById(
 							R.id.create_aisles_view_fragment);
 			fragment.showOtherSourcesGridview(result, mSourceUrl);
 		} else {

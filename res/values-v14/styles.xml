@@ -7,6 +7,9 @@
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- API 14 theme customizations can go here. -->
+         <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
     </style>
-
+   <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@drawable/actionbar_bg</item>
+    </style>
 </resources>

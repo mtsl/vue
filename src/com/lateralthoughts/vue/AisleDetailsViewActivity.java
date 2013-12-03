@@ -11,25 +11,28 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -39,34 +42,24 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.flurry.android.FlurryAgent;
-import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
-import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
-import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
-import com.lateralthoughts.vue.connectivity.DataBaseManager;
-import com.lateralthoughts.vue.domain.Aisle;
-import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
-import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapCacheDetailsScreen;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
-import com.slidingmenu.lib.SlidingMenu;
+ 
 
-public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */{
+public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActivity */{
 	Fragment mFragRight;
 	public static final String CLICK_EVENT = "click";
 	public static final String LONG_PRESS_EVENT = "longpress";
@@ -98,16 +91,18 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	int mCurentAislePosistion;
 	private FileCache mFileCache;
 	private BitmapCacheDetailsScreen mAisleImagesCache;
-	// AisleContentBrowser mTopScroller, mBottomScroller;
 	private boolean isSlidePanleLoaded = false;
-	// private ViewPager mTopScroller,mBottomScroller;
-
 	ContentAdapterFactory mContentAdapterFactory;
 	ScaledImageViewFactory mViewFactory;
 	ComparisionAdapter mBottomAdapter, mTopAdapter;
 
-	public static AisleDetailsViewActivity detailsActivity = null; 
-	
+	public static AisleDetailsViewActivity detailsActivity = null;
+
+	private DrawerLayout mDrawerLayout;
+	private ActionBarDrawerToggle mDrawerToggle;
+	private FrameLayout content_frame2;
+	private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
+
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	@Override
@@ -116,7 +111,10 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		detailsActivity = this;
 		// setContentView(R.layout.vuedetails_frag);
 		setContentView(R.layout.aisle_details_activity_landing);
-
+		initialize();
+		content_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
+		 mSlidListFrag = (VueListFragment) getFragmentManager()
+					.findFragmentById(R.id.listfrag);
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(
@@ -128,16 +126,9 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT;
 
 		if (mCurrentapiVersion >= 11) {
-			getSupportActionBar().hide();
+			getActionBar().hide();
 		}
 		mSlidingDrawer = (SlidingDrawer) findViewById(R.id.drawer2);
-
-		/*
-		 * mFileCache = VueApplication.getInstance().getFileCache();
-		 * mAisleImagesCache =
-		 * BitmapCacheDetailsScreen.getInstance(VueApplication.getInstance());
-		 */
-
 		mSlidingDrawer
 				.setOnDrawerScrollListener(new SlidingDrawer.OnDrawerScrollListener() {
 					private Runnable mRunnable = new Runnable() {
@@ -149,7 +140,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 								// instructions.
 								Thread.yield();
 							}
-
 							// When the SlidingDrawer is no longer moving;
 							// trigger mHandler.
 							mHandler.sendEmptyMessage(0);
@@ -158,43 +148,26 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 					@Override
 					public void onScrollStarted() {
-						getSlidingMenu().setTouchModeAbove(
-								SlidingMenu.TOUCHMODE_NONE);
+						mDrawerLayout
+								.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 					}
 
 					@Override
 					public void onScrollEnded() {
 						new Thread(mRunnable).start();
+						mDrawerLayout
+								.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 					}
+
 				});
+
 		MContentLinearLay = (LinearLayout) findViewById(R.id.content2);
 		mTopScroller = (HorizontalListView) findViewById(R.id.topscroller);
 		mBottomScroller = (HorizontalListView) findViewById(R.id.bottomscroller);
 		mStatusbarHeight = VueApplication.getInstance().getmStatusBarHeight();
 		mScreenTotalHeight = VueApplication.getInstance().getScreenHeight();
 		mComparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight;
-		/*
-		 * View mVueLandingActionbarView; TextView
-		 * mVueLandingActionbarScreenName; LinearLayout
-		 * mVueLandingActionbarRightLayout; RelativeLayout
-		 * mVueLandingActionbarAppIconLayout; mVueLandingActionbarView =
-		 * LayoutInflater.from(this).inflate( R.layout.vue_landing_actionbar,
-		 * null); mVueLandingActionbarScreenName = (TextView)
-		 * mVueLandingActionbarView
-		 * .findViewById(R.id.vue_landing_actionbar_screen_name);
-		 * mVueLandingActionbarRightLayout = (LinearLayout)
-		 * mVueLandingActionbarView
-		 * .findViewById(R.id.vue_landing_actionbar_right_layout);
-		 * mVueLandingActionbarAppIconLayout = (RelativeLayout)
-		 * mVueLandingActionbarView
-		 * .findViewById(R.id.vue_landing_actionbar_app_icon_layout);
-		 * mVueLandingActionbarScreenName.setText(getResources().getString(
-		 * R.string.trending));
-		 * getSupportActionBar().setCustomView(mVueLandingActionbarView);
-		 * getSupportActionBar().setDisplayShowCustomEnabled(true);
-		 * getSupportActionBar().setDisplayShowHomeEnabled(false);
-		 */
-		getSupportActionBar().hide();
+		getActionBar().hide();
 
 		mTopScroller.setOnItemClickListener(new OnItemClickListener() {
 
@@ -209,11 +182,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					@Override
 					public void run() {
 						img.setVisibility(View.INVISIBLE);
-						if (mVueAiselFragment == null) {
-							mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-									.findFragmentById(
-											R.id.aisle_details_view_fragment);
-						}
 						mVueAiselFragment
 								.changeLikeCount(position, CLICK_EVENT);
 					}
@@ -234,11 +202,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					@Override
 					public void run() {
 						img.setVisibility(View.INVISIBLE);
-						if (mVueAiselFragment == null) {
-							mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-									.findFragmentById(
-											R.id.aisle_details_view_fragment);
-						}
 						mVueAiselFragment.changeLikeCount(position,
 								LONG_PRESS_EVENT);
 					}
@@ -259,11 +222,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 					@Override
 					public void run() {
 						img.setVisibility(View.INVISIBLE);
-						if (mVueAiselFragment == null) {
-							mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-									.findFragmentById(
-											R.id.aisle_details_view_fragment);
-						}
 						mVueAiselFragment
 								.changeLikeCount(position, CLICK_EVENT);
 					}
@@ -285,11 +243,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 							@Override
 							public void run() {
 								img.setVisibility(View.INVISIBLE);
-								if (mVueAiselFragment == null) {
-									mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-											.findFragmentById(
-													R.id.aisle_details_view_fragment);
-								}
 								mVueAiselFragment.changeLikeCount(position,
 										LONG_PRESS_EVENT);
 							}
@@ -299,6 +252,44 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				});
 	}
 
+	private void initialize() {
+
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		// set a custom shadow that overlays the main content when the drawer
+		// opens
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
+				GravityCompat.START);
+		// set up the drawer's list view with items and click listener
+		// enable ActionBar app icon to behave as action to toggle nav drawer
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+		// ActionBarDrawerToggle ties together the the proper interactions
+		// between the sliding drawer and the action bar app icon
+		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
+		mDrawerLayout, /* DrawerLayout object */
+		R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+		R.string.drawer_open, /* "open drawer" description for accessibility */
+		R.string.drawer_close /* "close drawer" description for accessibility */
+		) {
+			public void onDrawerClosed(View view) {
+				// getActionBar().setTitle(mTitle);
+				invalidateOptionsMenu(); // creates call to
+											// onPrepareOptionsMenu()
+			}
+
+			public void onDrawerOpened(View drawerView) {
+				// getActionBar().setTitle(mDrawerTitle);
+				invalidateOptionsMenu(); // creates call to
+											// onPrepareOptionsMenu()
+			}
+		};
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mVueAiselFragment = new VueAisleDetailsViewFragment();
+		FragmentManager fragmentManager = getFragmentManager();
+		fragmentManager.beginTransaction()
+				.replace(R.id.content_frame, mVueAiselFragment).commit();
+		mDrawerLayout.setFocusableInTouchMode(false);
+	}
 	@Override
 	protected void onStart() {
 		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
@@ -316,36 +307,26 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.title_options, menu);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		// Configure the search info and add any event listeners
-		return true;// super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case R.id.menu_create_aisles:
-			Intent intent = new Intent(AisleDetailsViewActivity.this,
-					CreateAisleSelectionActivity.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-			Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-					AisleDetailsViewActivity.this, false);
-			if (!CreateAisleSelectionActivity.isActivityShowing) {
-				CreateAisleSelectionActivity.isActivityShowing = true;
-				startActivity(intent);
-			}
-			return true;
-		case android.R.id.home:
-			getSlidingMenu().toggle();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+	/*
+	 * @Override public boolean onCreateOptionsMenu(Menu menu) {
+	 * getSupportMenuInflater().inflate(R.menu.title_options, menu);
+	 * getSupportActionBar().setHomeButtonEnabled(true); // Configure the search
+	 * info and add any event listeners return true;//
+	 * super.onCreateOptionsMenu(menu); }
+	 * 
+	 * @Override public boolean onOptionsItemSelected(MenuItem item) { // Handle
+	 * item selection switch (item.getItemId()) { case R.id.menu_create_aisles:
+	 * Intent intent = new Intent(AisleDetailsViewActivity.this,
+	 * CreateAisleSelectionActivity.class);
+	 * intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	 * Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+	 * AisleDetailsViewActivity.this, false); if
+	 * (!CreateAisleSelectionActivity.isActivityShowing) {
+	 * CreateAisleSelectionActivity.isActivityShowing = true;
+	 * startActivity(intent); } return true; case android.R.id.home:
+	 * //getSlidingMenu().toggle(); return true; default: return
+	 * super.onOptionsItemSelected(item); } }
+	 */
 
 	class ComparisionAdapter extends BaseAdapter {
 		LayoutInflater minflater;
@@ -435,12 +416,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	@Override
 	public void onResume() {
 		mHandleActionbar = new HandleActionBar();
-		if (mVueAiselFragment == null) {
-			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisle_details_view_fragment);
-		}
 		mVueAiselFragment.setActionBarHander(mHandleActionbar);
-
 		super.onResume();
 		Log.e("Land", "vueland 2");
 		Bundle b = getIntent().getExtras();
@@ -497,10 +473,11 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		public void handleMessage(Message msg) {
 
 			if (mSlidingDrawer.isOpened()) {
+				// mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
 			} else {
-				getSlidingMenu()
-						.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+				// mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 			}
+
 		}
 	};
 
@@ -510,20 +487,19 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (getSlidingMenu().isMenuShowing()) {
-				if (!mFrag.listener.onBackPressed()) {
-					getSlidingMenu().toggle();
+
+			if (mDrawerLayout.isDrawerOpen(content_frame2)) {
+
+				if (!mSlidListFrag.listener.onBackPressed()) {
+					mDrawerLayout.closeDrawer(content_frame2);
 				}
 			} else if (mSlidingDrawer.isOpened()) {
 				mSlidingDrawer.close();
 			} else {
-				if (mVueAiselFragment == null) {
-					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.aisle_details_view_fragment);
-				}
 				mVueAiselFragment.setAisleContentListenerNull();
 				MContentLinearLay.removeAllViews();
 				for (int i = 0; i < mImageDetailsArr.size(); i++) {
@@ -539,11 +515,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 
 	@Override
 	protected void onDestroy() {
-		Log.e("ondestory", "browsecheck ondestory detailsview");
-		if (mVueAiselFragment == null) {
-			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisle_details_view_fragment);
-		}
 		if (mVueAiselFragment != null)
 			mVueAiselFragment.setAisleContentListenerNull();
 		super.onDestroy();
@@ -556,8 +527,11 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
 				if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
-					mFrag.getFriendsList(data
-							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
+					//TODO: check with krishna about this commenting code
+					/*
+					 * mFrag.getFriendsList(data .getStringExtra(VueConstants.
+					 * INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
+					 */
 				}
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT
@@ -617,10 +591,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 															.getClickedWindowID())
 											.getAisleContext().mDescription);
 				}
-				if (mVueAiselFragment == null) {
-					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.aisle_details_view_fragment);
-				}
 				mVueAiselFragment.notifyAdapter();
 				ArrayList<String> findAtArrayList = b
 						.getStringArrayList(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT);
@@ -641,11 +611,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 		} else {
 
 			try {
-				if (mVueAiselFragment == null) {
-					mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-
-					.findFragmentById(R.id.aisle_details_view_fragment);
-				}
 				updateAisleScreen();
 				if (mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled) {
 					mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled = false;
@@ -737,10 +702,11 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	public void sendDataToDataentryScreen(Bundle b) {
 		Log.e("Land", "vueland 4");
 		String lookingFor, occation, category, userId, description;
-		if (mVueAiselFragment == null) {
-			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisle_details_view_fragment);
-		}
+		/*
+		 * if (mVueAiselFragment == null) { mVueAiselFragment =
+		 * (VueAisleDetailsViewFragment) getFragmentManager()
+		 * .findFragmentById(R.id.aisle_details_view_fragment); }
+		 */
 		AisleContext aisleInfo = mVueAiselFragment.getAisleContext();
 		lookingFor = aisleInfo.mLookingForItem;
 		occation = aisleInfo.mOccasion;
@@ -986,12 +952,7 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 	}
 
 	private void addImageToAisle() {
-		if (mVueAiselFragment == null) {
-			mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisle_details_view_fragment);
-		}
-		mVueAiselFragment
-				.addAisleToWindow();
+		mVueAiselFragment.addAisleToWindow();
 	}
 
 	private void clearBitmaps() {
@@ -1048,11 +1009,6 @@ public class AisleDetailsViewActivity extends BaseActivity/* FragmentActivity */
 			VueApplication.getInstance().setmFinishDetailsScreenFlag(false);
 			finish();
 		} else {
-			Log.e("DetailsScreen", "UpdateAislescreen");
-			if (mVueAiselFragment == null) {
-				mVueAiselFragment = (VueAisleDetailsViewFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.aisle_details_view_fragment);
-			}
 			mVueAiselFragment.updateAisleScreen();
 		}
 	}

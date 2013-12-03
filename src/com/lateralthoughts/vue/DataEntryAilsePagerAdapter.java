@@ -1,7 +1,8 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
-import com.lateralthoughts.vue.utils.DataentryPageLoader;
+
+import android.app.Activity;
 import android.content.Context;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
@@ -14,6 +15,8 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+
+import com.lateralthoughts.vue.utils.DataentryPageLoader;
 
 public class DataEntryAilsePagerAdapter extends PagerAdapter {
 
@@ -63,8 +66,8 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 		}
 		try {
 			if (mDataEntryFragment == null) {
-				mDataEntryFragment = (DataEntryFragment) ((FragmentActivity) mContext)
-						.getSupportFragmentManager().findFragmentById(
+				mDataEntryFragment = (DataEntryFragment) ((Activity) mContext)
+						.getFragmentManager().findFragmentById(
 								R.id.create_aisles_view_fragment);
 			}
 			Log.e("Adapter", "file path :::: "
