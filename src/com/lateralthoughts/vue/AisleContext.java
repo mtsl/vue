@@ -16,7 +16,7 @@ public class AisleContext {
 	public String mCategory;
 	public String mName;
 	public String mDescription;
-	//public String mAisleOwnerImageURL;
+	public String mAisleOwnerImageURL;
 	public int mBookmarkCount;
 	public ArrayList<String> mCommentList;
 

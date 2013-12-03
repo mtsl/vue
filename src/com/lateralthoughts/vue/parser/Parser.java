@@ -282,13 +282,13 @@ public class Parser {
 			} else {
 				aisleContext.mDescription = description;
 			}
-			/*
-			 * String aisleOwnerImageUrl = josnObject
-			 * .getString(VueConstants.AISLE_OWNER_IMAGE_URL); if
-			 * (aisleOwnerImageUrl == null || aisleOwnerImageUrl.equals("null"))
-			 * { aisleContext.mAisleOwnerImageURL = null; } else {
-			 * aisleContext.mAisleOwnerImageURL = aisleOwnerImageUrl; }
-			 */
+			String aisleOwnerImageUrl = josnObject
+					.getString(VueConstants.AISLE_OWNER_IMAGE_URL);
+			if (aisleOwnerImageUrl == null || aisleOwnerImageUrl.equals("null")) {
+				aisleContext.mAisleOwnerImageURL = null;
+			} else {
+				aisleContext.mAisleOwnerImageURL = aisleOwnerImageUrl;
+			}
 			aisleContext.mBookmarkCount = josnObject
 					.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
 
@@ -358,14 +358,12 @@ public class Parser {
 			}
 			VueUser vueUser = new VueUser(
 					jsonObject.getLong(VueConstants.USER_RESPONSE_ID),
-					jsonObject.getString(VueConstants.USER_EMAIL),
-					firstName,
-					lastName,
-					jsonObject.getLong(VueConstants.USER_JOINTIME),
+					jsonObject.getString(VueConstants.USER_EMAIL), firstName,
+					lastName, jsonObject.getLong(VueConstants.USER_JOINTIME),
 					jsonObject.getString(VueConstants.USER_DEVICE_ID),
 					jsonObject.getString(VueConstants.USER_FACEBOOK_ID),
 					jsonObject.getString(VueConstants.USER_GOOGLEPLUS_ID),
-					/* jsonObject.getString(VueConstants.USER_PROFILE_IMAGE_URL) */null);
+					jsonObject.getString(VueConstants.USER_PROFILE_IMAGE_URL));
 			return vueUser;
 		} catch (JSONException e) {
 			e.printStackTrace();

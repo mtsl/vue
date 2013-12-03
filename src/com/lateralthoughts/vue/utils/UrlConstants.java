@@ -2,9 +2,10 @@ package com.lateralthoughts.vue.utils;
 
 public class UrlConstants {
 
-	public static final String SERVER_BASE_URL = "http://2dot5-java.vueapi-canary.appspot.com/"; // "http://2dot4-java.vueapi-canary-development.appspot.com/";
-																									// curated
-																									// server
+	public static final String SERVER_BASE_URL = "http://2dot5-java.vueapi-canary.appspot.com/";
+	// "http://2dot5-java.vueapi-canary-development.appspot.com/";
+	// curated
+	// server
 
 	/**
 	 * (C)reate routine URL's

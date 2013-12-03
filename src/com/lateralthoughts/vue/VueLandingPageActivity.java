@@ -85,7 +85,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		//CreateAlbum.createUserAlbum();
+		// CreateAlbum.createUserAlbum();
 		landingPageActivity = this;
 		clearDataEntryData();
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
@@ -933,6 +933,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				showCategory(
 						getString(R.string.sidemenu_option_Trending_Aisles),
 						true);
+				Toast.makeText(VueLandingPageActivity.this,
+						"Choose the aisle to add to", Toast.LENGTH_LONG).show();
 				mAddImageToAisleLayoutClickedAFlag = true;
 			}
 		});
@@ -942,6 +944,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				dialog.dismiss();
 				showCategory(getString(R.string.sidemenu_sub_option_Bookmarks),
 						true);
+				Toast.makeText(VueLandingPageActivity.this,
+						"Choose the aisle to add to", Toast.LENGTH_LONG).show();
 				mAddImageToAisleLayoutClickedAFlag = true;
 			}
 		});
@@ -952,12 +956,9 @@ public class VueLandingPageActivity extends BaseActivity {
 				dialog.dismiss();
 				showCategory(getString(R.string.sidemenu_sub_option_My_Aisles),
 						true);
+				Toast.makeText(VueLandingPageActivity.this,
+						"Choose the aisle to add to", Toast.LENGTH_LONG).show();
 				mAddImageToAisleLayoutClickedAFlag = true;
-
-				/*
-				 * Toast.makeText(VueLandingPageActivity.this, "In Progress.",
-				 * Toast.LENGTH_LONG).show();
-				 */
 			}
 		});
 		createAisleLayout.setOnClickListener(new OnClickListener() {

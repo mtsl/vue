@@ -193,39 +193,36 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 			mEditTextFindAt.setText("");
 			mFindAtUrl = "";
 		}
-		/*
-		 * new Thread(new Runnable() {
-		 * 
-		 * @Override public void run() { String profileUrl = null; profileUrl =
-		 * VueTrendingAislesDataModel .getInstance(getActivity()) .getAisleItem(
-		 * VueApplication.getInstance() .getClickedWindowID())
-		 * .getAisleContext().mAisleOwnerImageURL; if (profileUrl != null) {
-		 * boolean cacheBitmap = false; final Bitmap bmp =
-		 * BitmapLoaderUtils.getInstance() .getBitmap(profileUrl, profileUrl,
-		 * cacheBitmap, VueApplication.getInstance().getPixel(32),
-		 * VueApplication.getInstance().getPixel(32), Utils.TRENDING_SCREEN); if
-		 * (bmp != null) { getActivity().runOnUiThread(new Runnable() {
-		 * 
-		 * @Override public void run() { mVueUserPic.setImageBitmap(bmp); } });
-		 * } } } }).start();
-		 */
 
-		if (VueApplication.getInstance().getmUserId() != null) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				String profileUrl = null;
+				profileUrl = VueTrendingAislesDataModel
+						.getInstance(getActivity())
+						.getAisleItem(
+								VueApplication.getInstance()
+										.getClickedWindowID())
+						.getAisleContext().mAisleOwnerImageURL;
+				if (profileUrl != null) {
+					boolean cacheBitmap = false;
+					final Bitmap bmp = BitmapLoaderUtils.getInstance()
+							.getBitmap(profileUrl, profileUrl, cacheBitmap,
+									VueApplication.getInstance().getPixel(32),
+									VueApplication.getInstance().getPixel(32),
+									Utils.TRENDING_SCREEN);
+					if (bmp != null) {
+						getActivity().runOnUiThread(new Runnable() {
 
-			if (String.valueOf(VueApplication.getInstance().getmUserId())
-					.equals(VueTrendingAislesDataModel
-							.getInstance(getActivity())
-							.getAisleItem(
-									VueApplication.getInstance()
-											.getClickedWindowID())
-							.getAisleContext().mUserId)) {
-				File f = new FileCache(mContext)
-						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
-				if (f.exists()) {
-					mVueUserPic.setImageURI(Uri.fromFile(f));
+							@Override
+							public void run() {
+								mVueUserPic.setImageBitmap(bmp);
+							}
+						});
+					}
 				}
 			}
-		}
+		}).start();
 
 		mEditTextFindAt.setOnClickListener(new OnClickListener() {
 

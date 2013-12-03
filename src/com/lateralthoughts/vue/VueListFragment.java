@@ -430,7 +430,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 			userName = getString(R.string.sidemenu_option_Me);
 		}
 		Log.e("VueListFragment", "USER PROFILE PIC TEST IS NAME: " + userName);
-		item = new ListOptionItem(userName, R.drawable.profile, getMeChildren());
+		item = new ListOptionItem(userName, R.drawable.new_profile, getMeChildren());
 		File f = new FileCache(getActivity())
 				.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
 		Log.e("VueListFragment",
@@ -533,7 +533,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 		List<ListOptionItem> settingsChildren = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_option_Profile),
-				R.drawable.profile, null);
+				R.drawable.new_profile, null);
 		settingsChildren.add(item);
 		return settingsChildren;
 	}
@@ -542,11 +542,11 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 		List<ListOptionItem> meChildren = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_My_Aisles),
-				R.drawable.profile, null);
+				R.drawable.new_profile, null);
 		meChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Interactions),
-				R.drawable.profile, null);
+				R.drawable.new_profile, null);
 		meChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Bookmarks),
@@ -554,7 +554,7 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 		meChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles),
-				R.drawable.profile, null);
+				R.drawable.new_recently_viewed, null);
 		meChildren.add(item);
 		return meChildren;
 	}
@@ -1203,18 +1203,20 @@ public class VueListFragment extends SherlockFragment implements TextWatcher {
 		VueListFragment.this.expandListView.setAdapter(adapter);
 		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage4 ");
 	}
+
 	private class RefreshList implements ListFragementObj {
 
 		@Override
 		public void refreshBezelMenu() {
 			VueListFragmentAdapter adapter = null;
-			Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage3 ");
+			Log.i("userImageUrl",
+					"userImageUrl: downloadAndSaveUserProfileImage3 ");
 			adapter = new VueListFragment.VueListFragmentAdapter(
 					VueListFragment.this.getActivity(),
 					VueListFragment.this.getBezelMenuOptionItems());
-			VueListFragment.this.expandListView.setAdapter(adapter); 
-			
+			VueListFragment.this.expandListView.setAdapter(adapter);
+
 		}
-		
+
 	}
 }

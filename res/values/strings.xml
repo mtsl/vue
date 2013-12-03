@@ -27,13 +27,13 @@
     <string name="aisle_owner_profile_desc">Profile of the aisle owner</string>
     <string name="progress_message">Signing in to Google&#8230;</string>
     <string name="app_installation_mesg">Enable Share via</string>
-    <string name="no_thanks_click_alert_mesg">To be friendly, please provide initials</string>
+    <string name="no_thanks_click_alert_mesg">How may we address you?</string>
     <string name="plus_example_deep_link_id">/+/mobile/android/</string>
     <string name="plus_example_deep_link_url">        https://developers.google.com/+/mobile/android/</string>
     <string name="googleplus_button_text">Sign In with Google</string>
     <string name="instagram_button_text">Sign In with Instagram</string>
     <string name="facebook_button_text">Sign In with Facebook</string>
-    <string name="cancel_button_text">No Thanks</string>
+    <string name="cancel_button_text">Continue as Guest</string>
     <string name="share_via_mesg">SHARE VIA</string>
     <string name="com_facebook_dialogloginactivity_ok_button">OK</string>
     <string name="com_facebook_loginview_log_out_button">Log Out</string>
@@ -70,8 +70,8 @@
     <string name="gmail">Gmail</string>
     <string name="create_ailse_screen_title">Create Aisle</string>
     <string name="add_imae_to_aisle_screen_title">Add image</string>
-        <string name="edit_aisle_screen_title">Edit Aisle</string>
-        <string name="success">Success</string>
+    <string name="edit_aisle_screen_title">Edit Aisle</string>
+    <string name="success">Success</string>
     <string name="successfully_posted_post">Successfully posted.</string>
     <string name="error">Error</string>
     <string name="photo_post">Photo Post</string>

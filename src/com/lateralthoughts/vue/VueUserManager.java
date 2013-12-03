@@ -267,6 +267,7 @@ public class VueUserManager {
 					} else {
 						try {
 							Log.e("VueUserDebug", "vueuser: method called ");
+							user.setUserImageURL(userProfileImageUrl);
 							ObjectMapper mapper = new ObjectMapper();
 							String userAsString = mapper
 									.writeValueAsString(user);
@@ -276,14 +277,8 @@ public class VueUserManager {
 									userAsString,
 									UrlConstants.CREATE_USER_RESTURL, listener,
 									errorListener);
-							/*
-							 * if (userProfileImageUrl != null) {
-							 * downloadUserProfileImage(userProfileImageUrl,
-							 * request, user); } else {
-							 */
 							VueApplication.getInstance().getRequestQueue()
 									.add(request);
-							// }
 						} catch (Exception e) {
 
 						}
@@ -291,6 +286,7 @@ public class VueUserManager {
 					}
 				} else {
 					try {
+						user.setUserImageURL(userProfileImageUrl);
 						Log.e("VueUserDebug", "vueuser: method called ");
 						ObjectMapper mapper = new ObjectMapper();
 						String userAsString = mapper.writeValueAsString(user);
@@ -299,14 +295,8 @@ public class VueUserManager {
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.CREATE_USER_RESTURL,
 								listener, errorListener);
-						/*
-						 * if (userProfileImageUrl != null) {
-						 * downloadUserProfileImage(userProfileImageUrl,
-						 * request, user); } else {
-						 */
 						VueApplication.getInstance().getRequestQueue()
 								.add(request);
-						// }
 					} catch (Exception e) {
 
 					}
@@ -442,6 +432,7 @@ public class VueUserManager {
 								.getNetworkHandler().getRatedImageList();
 					} else {
 						try {
+							vueUser.setUserImageURL(userProfileImageUrl);
 							Log.e("VueUserDebug", "vueuser: method called ");
 							ObjectMapper mapper = new ObjectMapper();
 							String userAsString = mapper
@@ -452,20 +443,15 @@ public class VueUserManager {
 									userAsString,
 									UrlConstants.CREATE_USER_RESTURL, listener,
 									errorListener);
-							/*
-							 * if (userProfileImageUrl != null) {
-							 * downloadUserProfileImage(userProfileImageUrl,
-							 * request, vueUser); } else {
-							 */
 							VueApplication.getInstance().getRequestQueue()
 									.add(request);
-							// }
 						} catch (Exception e) {
 
 						}
 					}
 				} else {
 					try {
+						vueUser.setUserImageURL(userProfileImageUrl);
 						Log.e("VueUserDebug", "vueuser: method called ");
 						ObjectMapper mapper = new ObjectMapper();
 						String userAsString = mapper
@@ -475,14 +461,8 @@ public class VueUserManager {
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.CREATE_USER_RESTURL,
 								listener, errorListener);
-						/*
-						 * if (userProfileImageUrl != null) {
-						 * downloadUserProfileImage(userProfileImageUrl,
-						 * request, vueUser); } else {
-						 */
 						VueApplication.getInstance().getRequestQueue()
 								.add(request);
-						// }
 					} catch (Exception e) {
 
 					}
@@ -656,6 +636,7 @@ public class VueUserManager {
 								.getNetworkHandler().getRatedImageList();
 					} else {
 						try {
+							user.setUserImageURL(userProfileImageUrl);
 							Log.e("VueUserDebug", "vueuser: method called ");
 							ObjectMapper mapper = new ObjectMapper();
 							String userAsString = mapper
@@ -666,14 +647,8 @@ public class VueUserManager {
 									userAsString,
 									UrlConstants.UPDATE_USER_RESTURL, listener,
 									errorListener);
-							/*
-							 * if (userProfileImageUrl != null) {
-							 * downloadUserProfileImage(userProfileImageUrl,
-							 * request, user); } else {
-							 */
 							VueApplication.getInstance().getRequestQueue()
 									.add(request);
-							// }
 						} catch (Exception e) {
 
 						}
@@ -681,6 +656,7 @@ public class VueUserManager {
 					}
 				} else {
 					try {
+						user.setUserImageURL(userProfileImageUrl);
 						ObjectMapper mapper = new ObjectMapper();
 						String userAsString = mapper.writeValueAsString(user);
 						Log.e("VueUserDebug", "vueuser: request "
@@ -688,14 +664,8 @@ public class VueUserManager {
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.UPDATE_USER_RESTURL,
 								listener, errorListener);
-						/*
-						 * if (userProfileImageUrl != null) {
-						 * downloadUserProfileImage(userProfileImageUrl,
-						 * request, user); } else {
-						 */
 						VueApplication.getInstance().getRequestQueue()
 								.add(request);
-						// }
 					} catch (Exception e) {
 
 					}
@@ -830,6 +800,7 @@ public class VueUserManager {
 								.getNetworkHandler().getRatedImageList();
 					} else {
 						try {
+							vueUser.setUserImageURL(userProfileImageUrl);
 							Log.e("VueUserDebug", "vueuser: method called ");
 							ObjectMapper mapper = new ObjectMapper();
 							String userAsString = mapper
@@ -840,20 +811,15 @@ public class VueUserManager {
 									userAsString,
 									UrlConstants.UPDATE_USER_RESTURL, listener,
 									errorListener);
-							/*
-							 * if (userProfileImageUrl != null) {
-							 * downloadUserProfileImage(userProfileImageUrl,
-							 * request, vueUser); } else {
-							 */
 							VueApplication.getInstance().getRequestQueue()
 									.add(request);
-							// }
 						} catch (Exception e) {
 
 						}
 					}
 				} else {
 					try {
+						vueUser.setUserImageURL(userProfileImageUrl);
 						Log.e("VueUserDebug", "vueuser: method called ");
 						ObjectMapper mapper = new ObjectMapper();
 						String userAsString = mapper
@@ -863,14 +829,8 @@ public class VueUserManager {
 						UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 								userAsString, UrlConstants.UPDATE_USER_RESTURL,
 								listener, errorListener);
-						/*
-						 * if (userProfileImageUrl != null) {
-						 * downloadUserProfileImage(userProfileImageUrl,
-						 * request, vueUser); } else {
-						 */
 						VueApplication.getInstance().getRequestQueue()
 								.add(request);
-						// }
 					} catch (Exception e) {
 
 					}
@@ -1182,37 +1142,4 @@ public class VueUserManager {
 		}).start();
 	}
 
-	/*
-	 * @SuppressWarnings({ "rawtypes", "unchecked" }) private void
-	 * downloadUserProfileImage(String imageUrl, final UserCreateOrUpdateRequest
-	 * request, final VueUser vueUser) { Log.i("userImageUrl",
-	 * "userImageUrl: downloadAndSaveUserProfileImage1 " + imageUrl);
-	 * Response.Listener listener = new Response.Listener<Bitmap>() {
-	 * 
-	 * @Override public void onResponse(Bitmap bmp) { Utils.saveBitmap( bmp, new
-	 * FileCache(VueApplication.getInstance())
-	 * .getVueAppUserProfilePictureFile(VueConstants
-	 * .USER_PROFILE_IMAGE_FILE_NAME)); VueTrendingAislesDataModel
-	 * .getInstance(VueApplication.getInstance()) .getNetworkHandler()
-	 * .requestForUploadImage( new FileCache(VueApplication.getInstance())
-	 * .getVueAppUserProfilePictureFile
-	 * (VueConstants.USER_PROFILE_IMAGE_FILE_NAME), new ImageUploadCallback() {
-	 * 
-	 * @Override public void onImageUploaded(String imageUrl) { if (imageUrl !=
-	 * null) { vueUser.setUserImageURL(imageUrl); ObjectMapper mapper = new
-	 * ObjectMapper(); try { String userAsString = mapper
-	 * .writeValueAsString(vueUser); Log.e("VueUserDebug", "vueuser: request " +
-	 * userAsString); request.muserAsString = userAsString; } catch
-	 * (JsonProcessingException e) { } VueApplication.getInstance()
-	 * .getRequestQueue() .add(request); } else { VueApplication.getInstance()
-	 * .getRequestQueue() .add(request); } } }); } }; Response.ErrorListener
-	 * errorListener = new Response.ErrorListener() {
-	 * 
-	 * @Override public void onErrorResponse(VolleyError arg0) {
-	 * VueApplication.getInstance().getRequestQueue().add(request); } };
-	 * 
-	 * ImageRequest imagerequestObj = new ImageRequest(imageUrl, listener, 0, 0,
-	 * null, errorListener);
-	 * VueApplication.getInstance().getRequestQueue().add(imagerequestObj); }
-	 */
 }

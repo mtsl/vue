@@ -250,10 +250,8 @@ public class AisleLoader {
 				contentBrowser.addView(imageView);
 			} else {
 				contentBrowser.addView(imageView);
-				String profleUrl = null;/*
-										 * windowContent.getAisleContext().
-										 * mAisleOwnerImageURL;
-										 */
+				String profleUrl = windowContent.getAisleContext().mAisleOwnerImageURL;
+
 				Log.i("memory issue",
 						"memory issue aisle missing null 3.5 placeholder:   "
 								+ windowContent.getAisleId());
@@ -269,28 +267,6 @@ public class AisleLoader {
 				}
 			}
 		}
-		if (VueApplication.getInstance().getmUserId() != null) {
-			if (String.valueOf(VueApplication.getInstance().getmUserId())
-					.equals(windowContent.getAisleContext().mUserId)) {
-				File f = new FileCache(mContext)
-						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
-				if (f.exists()) {
-					holder.profileThumbnail
-							.setBackgroundDrawable(new BitmapDrawable(
-									BitmapFactory.decodeFile(f.getPath())));
-				} else {
-					holder.profileThumbnail
-							.setBackgroundResource(R.drawable.profile_thumbnail);
-				}
-			} else {
-				holder.profileThumbnail
-						.setBackgroundResource(R.drawable.profile_thumbnail);
-			}
-		} else {
-			holder.profileThumbnail
-					.setBackgroundResource(R.drawable.profile_thumbnail);
-		}
-
 	}
 
 	public void loadBitmap(String loc, String serverImageUrl,
