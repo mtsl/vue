@@ -1,13 +1,16 @@
 package com.lateralthoughts.vue.connectivity;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.http.client.ClientProtocolException;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.Response.ErrorListener;
+import com.android.volley.VolleyError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -20,11 +23,6 @@ import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.util.Log;
 
 public class NetworkStateChangeReciver extends BroadcastReceiver {
 

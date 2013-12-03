@@ -10,9 +10,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Stack;
-import com.lateralthoughts.vue.DataEntryFragment;
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueApplication;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -23,6 +21,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+
+import com.lateralthoughts.vue.DataEntryFragment;
+import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
 
 public class DataentryPageLoader {
 

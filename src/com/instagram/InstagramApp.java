@@ -7,14 +7,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import com.instagram.InstagramDialog.OAuthDialogListener;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
+import com.instagram.InstagramDialog.OAuthDialogListener;
 
 public class InstagramApp {
 

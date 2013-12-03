@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -27,6 +28,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;

@@ -7,7 +7,8 @@
 
     <TextView
         android:id="@+id/actionbar_cancle_btn_textview"
-        style="?android:actionBarTabTextStyle"
+          android:textColor="@color/black"
+          android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

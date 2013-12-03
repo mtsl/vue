@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseLeftListLisner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
@@ -118,7 +119,7 @@ public class TrendingAislesLeftColumnAdapter extends
 			 */
 			holder.aisleDescriptor = (LinearLayout) convertView
 					.findViewById(R.id.aisle_descriptor);
-			holder.profileThumbnail = (ImageView) holder.aisleDescriptor
+			holder.profileThumbnail = (NetworkImageView) holder.aisleDescriptor
 					.findViewById(R.id.profile_icon_descriptor);
 			holder.aisleOwnersName = (TextView) holder.aisleDescriptor
 					.findViewById(R.id.descriptor_aisle_owner_name);

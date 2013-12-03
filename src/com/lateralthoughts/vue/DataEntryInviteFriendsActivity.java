@@ -3,9 +3,11 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -24,12 +26,6 @@ import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.lateralthoughts.vue.InviteFriendsAdapter;
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueLandingPageActivity;
-import com.lateralthoughts.vue.VueLoginActivity;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 

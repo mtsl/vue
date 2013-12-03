@@ -16,7 +16,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -31,8 +30,6 @@ import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flurry.android.monolithic.sdk.impl.mc;
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -40,7 +37,6 @@ import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueUser;
-import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.parser.ImageComments;

@@ -928,13 +928,13 @@ public class VueLoginActivity extends FragmentActivity implements
 			}
 		}
 		try {
-			VueLandingPageActivity lan = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
-			lan.mFrag.refreshBezelMenu();
+		/*	VueLandingPageActivity lan = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
+			lan.mFrag.refreshBezelMenu();*/
 		} catch (Exception e) {
 		}
 		try {
-			AisleDetailsViewActivity details = (AisleDetailsViewActivity) AisleDetailsViewActivity.detailsActivity;
-			details.mFrag.refreshBezelMenu();
+		/*	AisleDetailsViewActivity details = (AisleDetailsViewActivity) AisleDetailsViewActivity.detailsActivity;
+			details.mFrag.refreshBezelMenu();*/
 		} catch (Exception e) {
 		}
 		/*
@@ -1418,13 +1418,13 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	public void getProfileImageChangeListenor() {
 		try {
-			VueLandingPageActivity lan = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
-			lan.mFrag.refreshBezelMenu();
+		/*	VueLandingPageActivity lan = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
+			lan.mFrag.refreshBezelMenu();*/
 		} catch (Exception e) {
 		}
 		try {
-			AisleDetailsViewActivity details = (AisleDetailsViewActivity) AisleDetailsViewActivity.detailsActivity;
-			details.mFrag.refreshBezelMenu();
+		/*	AisleDetailsViewActivity details = (AisleDetailsViewActivity) AisleDetailsViewActivity.detailsActivity;
+			details.mFrag.refreshBezelMenu();*/
 		} catch (Exception e) {
 		}
 	}

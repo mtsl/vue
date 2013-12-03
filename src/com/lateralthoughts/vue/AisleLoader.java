@@ -3,13 +3,11 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -17,18 +15,16 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 
-//import com.lateralthoughts.vue.TrendingAislesAdapter.ViewHolder;
+import com.android.volley.toolbox.ImageLoader;
+import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
-import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
+import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
-import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 
 public class AisleLoader {
 	private static final boolean DEBUG = false;
@@ -41,6 +37,7 @@ public class AisleLoader {
 	private ScaledImageViewFactory mViewFactory = null;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
 	AisleContentClickListener mListener;
+	private ImageLoader mImageLoader;
 
 	// private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String,
 	// ViewHolder>();
@@ -95,6 +92,8 @@ public class AisleLoader {
 		mViewFactory = ScaledImageViewFactory.getInstance(context);
 		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
 		mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
+		mImageLoader = new ImageLoader(VueApplication.getInstance()
+				.getRequestQueue(), BitmapLruCache.getInstance(mContext));
 		// mTopBottomMargin = (int)
 		// Utils.dipToPixels(VueApplication.getInstance(), mTopBottomMargin);
 		if (DEBUG)
@@ -262,8 +261,16 @@ public class AisleLoader {
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
 							bestHeight, windowContent.getAisleId(),
+<<<<<<< HEAD
 							itemDetails, listener, profleUrl,
 							holder.profileThumbnail);
+=======
+							itemDetails, listener,profleUrl);
+				/*	holder.profileThumbnail
+					.setImageUrl(
+							"https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50",
+							mImageLoader);*/
+>>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 				}
 			}
 		}
@@ -271,6 +278,7 @@ public class AisleLoader {
 
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
+<<<<<<< HEAD
 			String asileId, AisleImageDetails itemDetails,
 			AisleContentClickListener listener, String profileUrl,
 			ImageView profileImage) {
@@ -283,6 +291,15 @@ public class AisleLoader {
 			Utils.isAisleChanged = false;
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
 					bestHeight, asileId, itemDetails, listener, profileImage);
+=======
+			String asileId, AisleImageDetails itemDetails,AisleContentClickListener listener,String profileUrl) {
+		Log.i("memory issue", "memory issue aisle missing null 3.7 loadBitmap :   "+asileId);
+		if(Utils.isAisleChanged){
+			Log.i("memory issue", "memory issue aisle missing null 3.8 loadBitmap :   "+asileId);
+			Utils.isAisleChanged = false;
+			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
+					bestHeight, asileId, itemDetails,listener);
+>>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
 			String[] urlsArray = { loc, serverImageUrl, profileUrl };
 			task.execute(urlsArray);
@@ -295,7 +312,11 @@ public class AisleLoader {
 					"memory issue aisle missing null 3.10 loadBitmap :   "
 							+ asileId);
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
+<<<<<<< HEAD
 					bestHeight, asileId, itemDetails, listener, profileImage);
+=======
+					bestHeight, asileId, itemDetails,listener);
+>>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
 			String[] urlsArray = { loc, serverImageUrl, profileUrl };
 			task.execute(urlsArray);
@@ -310,9 +331,9 @@ public class AisleLoader {
 		 */
 	}
 
-	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap[]> {
+	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		private final WeakReference<ImageView> imageViewReference;
-		private final WeakReference<ImageView> profileImageViewReference;
+		//private final WeakReference<ImageView> profileImageViewReference;
 		private final WeakReference<AisleContentBrowser> viewFlipperReference;
 		private String url = null;
 		private int mBestHeight;
@@ -323,6 +344,7 @@ public class AisleLoader {
 
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
 				ImageView imageView, int bestHeight, String aisleId,
+<<<<<<< HEAD
 				AisleImageDetails itemDetails,
 				AisleContentClickListener listener, ImageView profileImage) {
 			// Use a WeakReference to ensure the ImageView can be garbage
@@ -330,6 +352,13 @@ public class AisleLoader {
 			imageViewReference = new WeakReference<ImageView>(imageView);
 			profileImageViewReference = new WeakReference<ImageView>(
 					profileImage);
+=======
+				AisleImageDetails itemDetails,AisleContentClickListener listener) {
+			// Use a WeakReference to ensure the ImageView can be garbage
+			// collected
+			imageViewReference = new WeakReference<ImageView>(imageView);
+			//profileImageViewReference = new WeakReference<ImageView>(profileImage);
+>>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 			viewFlipperReference = new WeakReference<AisleContentBrowser>(
 					vFlipper);
 			mListener = listener;
@@ -339,43 +368,63 @@ public class AisleLoader {
 
 		// Decode image in background.
 		@Override
+<<<<<<< HEAD
 		protected Bitmap[] doInBackground(String... params) {
 			if (!mListener.isFlingCalled()) {
 				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 				Log.i("downloading speed", "fling calls stop");
+=======
+		protected Bitmap  doInBackground(String... params) {
+			if(!mListener.isFlingCalled()){
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+			Log.i("downloading speed", "fling calls stop");
+>>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 			} else {
 				Log.i("downloading speed", "fling calls");
 			}
 			url = params[0];
-			Bitmap bmp[] = new Bitmap[2];
+			Bitmap bmp  ;
 			// we want to get the bitmap and also add it into the memory cache
 			boolean cacheBitmap = false;
-			bmp[0] = mBitmapLoaderUtils.getBitmap(url, params[1], cacheBitmap,
+			bmp  = mBitmapLoaderUtils.getBitmap(url, params[1], cacheBitmap,
 					mItemDetails.mTrendingImageHeight,
 					mItemDetails.mTrendingImageWidth, Utils.TRENDING_SCREEN);
+<<<<<<< HEAD
 			if (params[2] != null && params[2].trim().length() > 0) {
 				bmp[1] = mBitmapLoaderUtils.getBitmap(params[2], params[2],
 						cacheBitmap, VueApplication.getInstance().getPixel(36),
 						VueApplication.getInstance().getPixel(36),
 						Utils.TRENDING_SCREEN);
 			}
+=======
+ 
+>>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 			return bmp;
 		}
 
 		// Once complete, see if ImageView is still around and set bitmap.
 		@Override
+<<<<<<< HEAD
 		protected void onPostExecute(Bitmap[] bitmap) {
 			final ImageView profileImage = profileImageViewReference.get();
 			if (bitmap[1] != null) {
 				profileImage.setImageBitmap(bitmap[1]);
 			}
 
+=======
+		protected void onPostExecute(Bitmap bitmap) {
+			Log.i("memory issue", "bitmap loadedonPostExecute  " );
+		 
+			 Log.i("memory issue", "bitmap loaded 1 " );
+>>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 			if (viewFlipperReference != null && imageViewReference != null
-					&& bitmap[0] != null) {
+					&& bitmap  != null) {
+				Log.i("memory issue", "bitmap loaded 2 " );
 				final ImageView imageView = imageViewReference.get();
 				BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
 				if (this == bitmapWorkerTask) {
+					Log.i("memory issue", "bitmap loaded 3 " );
 					ViewHolder holder = (ViewHolder) ((ScaleImageView) imageView)
 							.getContainerObject();
 					if (null != holder) {
@@ -384,17 +433,25 @@ public class AisleLoader {
 						holder.profileThumbnail.setVisibility(View.VISIBLE);
 						holder.aisleDescriptor.setVisibility(View.VISIBLE);
 					}
+<<<<<<< HEAD
 					imageView.setImageBitmap(bitmap[0]);
 					Log.i("memory issue",
 							"memory issue aisle missing not null 4  "
 									+ mAisleId);
+=======
+					imageView.setImageBitmap(bitmap );
+>>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 					if (mListener.isFlingCalled()) {
 						// mListener.refreshList();
 					}
 				}
 			} else {
+<<<<<<< HEAD
 				Log.i("memory issue", "memory issue aisle missing null 5  "
 						+ mAisleId);
+=======
+				 Log.i("memory issue", "bitmap loaded else part " );
+>>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 			}
 		}
 	}

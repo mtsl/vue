@@ -161,5 +161,9 @@ Before you start this class, be sure you have your development environment set u
 If you haven\'t already done these tasks, start by downloading the Android SDK and following the install steps. Once you\'ve finished the setup, you\'re ready to begin this class.
 
 This class uses a tutorial format that incrementally builds a small Android app that teaches you some fundamental concepts about Android development, so it\'s important that you follow each step.</string>
-
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
+ 
 </resources>

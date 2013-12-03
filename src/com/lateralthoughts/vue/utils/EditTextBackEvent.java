@@ -1,7 +1,5 @@
 package com.lateralthoughts.vue.utils;
 
-import com.lateralthoughts.vue.DataEntryFragment;
-import com.lateralthoughts.vue.VueApplication;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;

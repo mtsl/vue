@@ -1,39 +1,5 @@
 package com.lateralthoughts.vue.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
-
-import android.widget.ViewFlipper;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.widget.ImageView;
-
-import android.os.AsyncTask;
-import java.lang.ref.WeakReference;
-
-import com.lateralthoughts.vue.AisleImageDetails;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.ui.ScaleImageView;
-
-import android.util.DisplayMetrics;
-import android.util.Log;
 
 /**
  * Using LazyList via https://github.com/thest1/LazyList/tree/master/src/com/fedorvlasov/lazylist

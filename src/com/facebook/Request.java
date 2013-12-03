@@ -16,6 +16,31 @@
 
 package com.facebook;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
@@ -24,23 +49,16 @@ import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Pair;
-import com.facebook.internal.ServerProtocol;
-import com.facebook.model.*;
+
 import com.facebook.internal.Logger;
+import com.facebook.internal.ServerProtocol;
 import com.facebook.internal.Utility;
 import com.facebook.internal.Validate;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
+import com.facebook.model.GraphMultiResult;
+import com.facebook.model.GraphObject;
+import com.facebook.model.GraphObjectList;
+import com.facebook.model.GraphPlace;
+import com.facebook.model.GraphUser;
 
 /**
  * A single request to be sent to the Facebook Platform through either the <a

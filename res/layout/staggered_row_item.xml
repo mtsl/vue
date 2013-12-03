@@ -54,7 +54,7 @@
         android:background="#FFFFFF"
         android:orientation="horizontal" >
 
-        <ImageView
+        <com.android.volley.toolbox.NetworkImageView
             android:id="@id/profile_icon_descriptor"
             android:layout_width="36dip"
             android:layout_height="36dip"

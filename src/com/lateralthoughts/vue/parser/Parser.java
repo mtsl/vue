@@ -1,10 +1,7 @@
 package com.lateralthoughts.vue.parser;
 
-import android.util.Log;
-import com.lateralthoughts.vue.*;
-import com.lateralthoughts.vue.domain.AisleBookmark;
-import com.lateralthoughts.vue.domain.ImageComment;
-import com.lateralthoughts.vue.utils.UrlConstants;
+import java.net.URL;
+import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -14,8 +11,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
-import java.util.ArrayList;
+import android.util.Log;
+
+import com.lateralthoughts.vue.AisleContext;
+import com.lateralthoughts.vue.AisleImageDetails;
+import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.ImageRating;
+import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueTrendingAislesDataModel;
+import com.lateralthoughts.vue.VueUser;
+import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.utils.UrlConstants;
 
 public class Parser {
 	// ========================= START OF PARSING TAGS

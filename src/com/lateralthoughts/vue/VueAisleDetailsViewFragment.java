@@ -1,21 +1,19 @@
 package com.lateralthoughts.vue;
 
 //generic android & java goodies
-import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
-import android.text.Layout;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -45,16 +43,13 @@ import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockFragment;
-import com.fasterxml.jackson.databind.deser.impl.SetterlessProperty;
+ 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
-import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -66,7 +61,7 @@ import com.lateralthoughts.vue.utils.Utils;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
+public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment */{
 	private Context mContext;
 	public static final String SCREEN_NAME = "DETAILS_SCREEN";
 	public static final String SWIPE_LEFT_TO_RIGHT = "LEFT";
@@ -125,6 +120,8 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 		// this code is for viewflipper use of detailsscreen viewpager
 		mAisleDetailsAdapter = new AisleDetailsViewAdapterPager(mContext,
 				mSwipeListener, mListCount, null, new ShareViaVueListner());
+		
+		Log.i("mAisleDetailsAdapter", "mAisleDetailsAdapter value: "+mAisleDetailsAdapter);
 
 	}
 
@@ -840,6 +837,7 @@ public class VueAisleDetailsViewFragment extends SherlockFragment/* Fragment */{
 	}
 
 	public void setAisleContentListenerNull() {
+		if(mAisleDetailsAdapter != null)
 		mAisleDetailsAdapter.setAisleBrowserObjectsNull();
 	}
 

@@ -6,43 +6,42 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.Fragment;
+ 
+ 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
+ 
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -60,7 +59,7 @@ import com.lateralthoughts.vue.utils.Utils;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
+public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 	private Context mContext;
 	private VueContentGateway mVueContentGateway;
 	private TrendingAislesLeftColumnAdapter mLeftColumnAdapter;

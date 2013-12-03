@@ -10,10 +10,11 @@
  */
 package com.lateralthoughts.vue;
 
-import android.util.Log;
-import com.lateralthoughts.vue.utils.Utils;
-
 import java.util.ArrayList;
+
+import android.util.Log;
+
+import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleWindowContent {
 	public static final String EMPTY_AISLE_CONTENT_ID = "EmptyAisleWindow";

@@ -2,13 +2,10 @@ package com.lateralthoughts.vue.connectivity;
 
 import java.util.ArrayList;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
-
-import com.lateralthoughts.vue.*;
 
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
@@ -17,8 +14,6 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.parser.Parser;
-
-import java.util.ArrayList;
 
 public class TrendingAislesContentParser extends ResultReceiver {
 	private int mState;

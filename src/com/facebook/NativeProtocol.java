@@ -16,6 +16,9 @@
 
 package com.facebook;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -24,10 +27,8 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.os.Bundle;
 import android.text.TextUtils;
-import com.facebook.internal.Utility;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.facebook.internal.Utility;
 
 final class NativeProtocol {
     static final String KATANA_PACKAGE = "com.neem23.fishwrap";

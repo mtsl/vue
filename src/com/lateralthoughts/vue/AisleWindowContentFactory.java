@@ -3,7 +3,6 @@ package com.lateralthoughts.vue;
 //java utils
 import java.util.ArrayList;
 
-//android imports
 import android.content.Context;
 import android.util.Log;
 

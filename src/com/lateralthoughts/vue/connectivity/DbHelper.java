@@ -1,10 +1,10 @@
 package com.lateralthoughts.vue.connectivity;
 
-import com.lateralthoughts.vue.VueConstants;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.lateralthoughts.vue.VueConstants;
 
 public class DbHelper extends SQLiteOpenHelper {
 

@@ -10,8 +10,14 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
+     <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
+  
     </style>
+ 
 
+    <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@drawable/actionbar_bg</item>
+    </style>
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
@@ -59,10 +65,10 @@
         <item name="android:layout_marginRight">2dp</item>
        
     </style>
-    <style name="Theme.VueTheme" parent="Theme.Sherlock.Light">
+ <!--    <style name="Theme.VueTheme" parent="Theme.Sherlock.Light">
         <item name="actionBarStyle">@style/Widget.VueTheme.ActionBar</item>
         <item name="actionButtonStyle">@style/actionButtonStyle</item>
-        <!-- <item name="android:minWidth">24dp</item> -->
+        <item name="android:minWidth">24dp</item>
     </style>
 
     <style name="Widget.VueTheme.ActionBar" parent="Widget.Sherlock.ActionBar">
@@ -73,7 +79,8 @@
     <style name="actionButtonStyle" parent="Widget.Sherlock.ActionButton">
     <item name="android:minWidth">24dp</item>
     <item name="android:padding">24dp</item>
-</style>
+</style> -->
+ 
 <declare-styleable name="MySlider">
     <attr name = "SlidingDrawer_orientation"  format="integer"/>
     <attr name = "SlidingDrawer_bottomOffset" format = "dimension"/>

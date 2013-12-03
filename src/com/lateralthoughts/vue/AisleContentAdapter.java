@@ -1,6 +1,20 @@
 package com.lateralthoughts.vue;
 
 //android imports
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,25 +22,20 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.*;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import com.android.volley.toolbox.ImageLoader;
+
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.*;
-
-import java.io.*;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.BitmapLruCache;
+import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.ImageDimension;
+import com.lateralthoughts.vue.utils.Utils;
 
 //java imports
 //internal imports
