@@ -6,18 +6,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.http.entity.StringEntity;
 import org.json.JSONObject;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.util.Log;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -25,29 +21,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.facebook.model.GraphUser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.parser.Parser;
-import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
-<<<<<<< HEAD
-import org.apache.http.entity.StringEntity;
-import org.json.JSONObject;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-=======
->>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 
 public class VueUserManager {
 	public interface UserUpdateCallback {

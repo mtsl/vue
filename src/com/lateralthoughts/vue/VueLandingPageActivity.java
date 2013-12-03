@@ -104,11 +104,7 @@ public class VueLandingPageActivity extends Activity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-<<<<<<< HEAD
-		// CreateAlbum.createUserAlbum();
-=======
 		setContentView(R.layout.vue_landing_main);
->>>>>>> 097ab3e9e50c232ee3c4f9cdc2aaaaa2f73d480e
 		landingPageActivity = this;
 		initialize();
 		content_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
