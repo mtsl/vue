@@ -124,7 +124,7 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 		if (mLeftColumnAdapter != null) {
 
 			mLeftColumnAdapter.notifyDataSetChanged();
-			Log.i("listadapter", "adapter leftadapter notified");
+			 
 		}
 		if (mRightColumnAdapter != null) {
 			mRightColumnAdapter.notifyDataSetChanged();

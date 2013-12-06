@@ -1170,7 +1170,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
 		@Override
 		public void onReceive(Context arg0, Intent intent) {
 			if (intent != null) {
+				try{
 				refreshBezelMenu();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		}
 	}
