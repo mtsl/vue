@@ -526,10 +526,10 @@ public class DataEntryActivity extends /*Base*/Activity {
 					@Override
 					public boolean onEditorAction(TextView v, int actionId,
 							KeyEvent event) {
-						/*
-						 * Toast.makeText( VueLandingPageActivity.this,
-						 * "Search triggered", Toast.LENGTH_LONG).show();
-						 */
+						mDrawerLayout.closeDrawer(mContent_frame2);
+						  Toast.makeText( DataEntryActivity.this,
+						   "Search string: "+mSearchEdit.getText().toString(), Toast.LENGTH_SHORT).show();
+						 
 						return false;
 					}
 				});

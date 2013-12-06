@@ -298,7 +298,7 @@ private void initialize(){
 									int actionId, KeyEvent event) {
 								 
 								Toast.makeText(VueLandingPageActivity.this,
-										"Search string: "+mSearchEdit.getText().toString(), Toast.LENGTH_LONG)
+										"Search string: "+mSearchEdit.getText().toString(), Toast.LENGTH_SHORT)
 										.show();
 								mDrawerLayout.closeDrawer(mContent_frame2);
 								return false;
@@ -584,13 +584,9 @@ public boolean onOptionsItemSelected(MenuItem item) {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		Log.i("stackcount", "stackcount onbckpresed: close window1**## "+mDrawerLayout.isDrawerOpen(mContent_frame2));
+	 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-			Log.i("stackcount", "stackcount onbckpresed: "
-					+ StackViews.getInstance().getStackCount());
-		 
-			Log.i("stackcount", "stackcount onbckpresed: close window1** "+mDrawerLayout.isDrawerOpen(mContent_frame2));
+ 
 			
 			if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
 				
@@ -600,7 +596,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 			} else if (StackViews.getInstance().getStackCount() > 0) {
 
 				mVueLandingKeyboardLayout.setVisibility(View.GONE);
-				Log.i("stackcount", "stackcount onbckpresed: close window2 ");
+		 
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
 				if (viewInfo != null) {
 					mVueLandingActionbarScreenName.setText(viewInfo.mVueName);
@@ -609,7 +605,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 					super.onBackPressed();
 				}
 			} else {
-				Log.i("stackcount", "stackcount onbckpresed: close window0 ");
+		 
 				CancelNotification(this,
 						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID);
 				CancelNotification(this,
@@ -911,15 +907,14 @@ public boolean onOptionsItemSelected(MenuItem item) {
 							screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-			Log.i("meoptions", "meoptions: Bookmarks");
+	 
 			getBookmarkedAisles(screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-			Log.i("meoptions", "meoptions: Recent");
+	 
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
-			Log.i("meoptions",
-					"meoptions: Recent: size " + windowContent.size());
+ 
 			if (windowContent.size() > 0) {
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -1221,8 +1216,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 
 	private void getTrendingAislesFromDb(String screenName, boolean fromServer,
 			boolean loadMore) {
-		Log.i("dbloading issue",
-				"dbloading issue: showPreviousScreen back press");
+ 
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).isFromDb = true;
@@ -1365,8 +1359,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 			AisleImageDetails imgDetails = new AisleImageDetails();
 			imgDetails.mAvailableHeight = imageHeight;
 			imgDetails.mAvailableWidth = imageWidth;
-			Log.i("new image", "new image height: "
-					+ imgDetails.mAvailableHeight);
+		 
 			if (imgDetails.mAvailableHeight < aisleItem
 					.getBestHeightForWindow()) {
 				aisleItem.setBestHeightForWindow(imgDetails.mAvailableHeight);

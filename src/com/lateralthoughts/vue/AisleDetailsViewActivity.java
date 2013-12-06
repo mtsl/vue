@@ -45,6 +45,7 @@ import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SlidingDrawer;
@@ -344,6 +345,7 @@ public class AisleDetailsViewActivity extends Activity {
 						.findViewById(R.id.vue_compareimg);
 				viewHolder.likeImage = (ImageView) convertView
 						.findViewById(R.id.compare_like_dislike);
+				viewHolder.pb = (ProgressBar) convertView.findViewById(R.id.progressBar1);
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 						mComparisionScreenHeight / 2,
 						mComparisionScreenHeight / 2);
@@ -365,13 +367,13 @@ public class AisleDetailsViewActivity extends Activity {
 
 			viewHolder.likeImage.setImageResource(R.drawable.thumb_up);
 			if (bitmap != null) {
-				Log.i("cachecheck", "cachecheck if :" + position);
+				 
 				viewHolder.img.setImageBitmap(bitmap);
 			} else {
-				Log.i("cachecheck", "cachecheck else " + position);
-				viewHolder.img.setImageResource(R.drawable.ic_launcher);
+				 
+				viewHolder.img.setImageResource(R.drawable.no_image); 
 				BitmapWorkerTask task = new BitmapWorkerTask(null,
-						viewHolder.img, mComparisionScreenHeight / 2);
+						viewHolder.img, mComparisionScreenHeight / 2,viewHolder.pb);
 				String[] imagesArray = {
 						mImageDetailsArr.get(position).mCustomImageUrl,
 						mImageDetailsArr.get(position).mImageUrl };
@@ -386,6 +388,7 @@ public class AisleDetailsViewActivity extends Activity {
 	private class ViewHolder {
 		ImageView img;
 		ImageView likeImage;
+		ProgressBar pb;
 	}
 
 	@Override
@@ -556,16 +559,6 @@ public class AisleDetailsViewActivity extends Activity {
 									VueApplication.getInstance()
 											.getClickedWindowID())
 							.getAisleContext().mDescription = description;
-					Log.i("descrption issue",
-							"descrption issue  onactivity result: "
-									+ VueTrendingAislesDataModel
-											.getInstance(
-													AisleDetailsViewActivity.this)
-											.getAisleAt(
-													VueApplication
-															.getInstance()
-															.getClickedWindowID())
-											.getAisleContext().mDescription);
 				}
 				mVueAiselFragment.notifyAdapter();
 				ArrayList<String> findAtArrayList = b
@@ -588,7 +581,6 @@ public class AisleDetailsViewActivity extends Activity {
 			try {
 				if (mVueAiselFragment.mAisleDetailsAdapter.mShare != null
 						&& mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled) {
-					Log.i("logindialoge", "logindialoge: showing 3");
 					mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled = false;
 					mVueAiselFragment.mAisleDetailsAdapter.mShare
 							.dismisDialog();
@@ -616,15 +608,22 @@ public class AisleDetailsViewActivity extends Activity {
 		// private final WeakReference<AisleContentBrowser>viewFlipperReference;
 		private String url = null;
 		private int mBestHeight;
+		private ProgressBar progressBar;
 
 		public BitmapWorkerTask(AisleContentBrowser vFlipper,
-				ImageView imageView, int bestHeight) {
+				ImageView imageView, int bestHeight,ProgressBar bp) {
 			// Use a WeakReference to ensure the ImageView can be garbage
 			// collected
+			progressBar = bp;
 			imageViewReference = new WeakReference<ImageView>(imageView);
 			mBestHeight = bestHeight;
 		}
-
+     @Override
+    protected void onPreExecute() {
+    	// TODO Auto-generated method stub
+    	super.onPreExecute();
+    	progressBar.setVisibility(View.VISIBLE);
+    }
 		// Decode image in background.
 		@Override
 		protected Bitmap doInBackground(String... params) {
@@ -644,10 +643,14 @@ public class AisleDetailsViewActivity extends Activity {
 		// Once complete, see if ImageView is still around and set bitmap.
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
+			progressBar.setVisibility(View.GONE);
 			if (imageViewReference != null && bitmap != null) {
 				final ImageView imageView = imageViewReference.get();
-				if (imageView != null)
+				if (imageView != null) {
 					imageView.setImageBitmap(bitmap);
+				} else {
+					imageView.setImageResource(R.drawable.no_image); 
+				}
 
 			}
 		}
@@ -752,12 +755,12 @@ public class AisleDetailsViewActivity extends Activity {
 	 */
 	private Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap,
 			int bestHeight) {
-		Log.i("added url", "added url  getBitmap " + url);
+	 
 		File f = mFileCache.getFile(url);
-		Log.i("added url", "added url  getBitmap " + f);
+	 
 		// from SD cache
 		Bitmap b = decodeFile(f, bestHeight);
-		Log.i("added url", "added url  getBitmap " + b);
+ 
 		if (b != null) {
 
 			if (cacheBitmap)
@@ -779,12 +782,11 @@ public class AisleDetailsViewActivity extends Activity {
 			conn.setReadTimeout(30000);
 			conn.setInstanceFollowRedirects(true);
 			InputStream is = conn.getInputStream();
-			Log.i("added url", "added url  InputStream " + is);
-			Log.i("added url", "added url  InputStream url " + url);
+		 
 
 			int hashCode = url.hashCode();
 			String filename = String.valueOf(hashCode);
-			Log.i("added url", "added url  InputStream imgname " + filename);
+	 
 			OutputStream os = new FileOutputStream(f);
 			Utils.CopyStream(is, os);
 			os.close();
@@ -804,8 +806,7 @@ public class AisleDetailsViewActivity extends Activity {
 
 	// decodes image and scales it to reduce memory consumption
 	public Bitmap decodeFile(File f, int bestHeight) {
-		Log.i("added url", "added url in  decodeFile: bestheight is "
-				+ bestHeight);
+ 
 
 		try {
 			// decode image size
@@ -818,9 +819,7 @@ public class AisleDetailsViewActivity extends Activity {
 			// final int REQUIRED_SIZE = mScreenWidth/2;
 			int height = o.outHeight;
 			int width = o.outWidth;
-			Log.i("added url", "added urldecodeFile  bitmap o.height : "
-					+ height);
-			Log.i("added url", "added urldecodeFile  bitmap o.width : " + width);
+ 
 			int reqWidth = VueApplication.getInstance()
 					.getVueDetailsCardWidth();
 
@@ -872,20 +871,19 @@ public class AisleDetailsViewActivity extends Activity {
 				}
 			}
 			if (bitmap != null) {
-				Log.i("added url",
-						"added url  urldecodeFile width " + bitmap.getWidth());
+				 
 
 			} else {
-				Log.i("added url", "added urldecodeFile  bitmap null ");
+	 
 			}
 			return bitmap;
 		} catch (FileNotFoundException e) {
-			Log.i("added url", "added urldecodeFile  filenotfound exception ");
+		 
 		} catch (IOException e) {
-			Log.i("added url", "added urldecodeFile  io exception ");
+			 
 			e.printStackTrace();
 		} catch (Throwable ex) {
-			Log.i("added url", "added urldecodeFile  throwable exception ");
+			 
 			ex.printStackTrace();
 			if (ex instanceof OutOfMemoryError) {
 				mAisleImagesCache.evictAll();
@@ -915,12 +913,7 @@ public class AisleDetailsViewActivity extends Activity {
 		Paint paint = new Paint();
 		paint.setFilterBitmap(true);
 		canvas.drawBitmap(originalImage, transformation, paint);
-		Log.i("imagenotcoming",
-				"bitmap issue scalleddown: originalbitmap width "
-						+ newBitmap.getWidth());
-		Log.i("imagenotcoming",
-				"bitmap issue:scalleddown originalbitmap height:  "
-						+ newBitmap.getHeight());
+ 
 		return newBitmap;
 	}
 
@@ -929,9 +922,9 @@ public class AisleDetailsViewActivity extends Activity {
 	}
 
 	private void clearBitmaps() {
-		Log.i("clearbitamps", "clearbitamps 1");
+ 
 		for (int i = 0; i < mTopScroller.getChildCount(); i++) {
-			Log.i("clearbitamps", "clearbitamps 2");
+	 
 			RelativeLayout topLayout = (RelativeLayout) mTopScroller
 					.getChildAt(i);
 
@@ -951,7 +944,7 @@ public class AisleDetailsViewActivity extends Activity {
 			}
 		}
 		for (int i = 0; i < mBottomScroller.getChildCount(); i++) {
-			Log.i("clearbitamps", "clearbitamps 3");
+			 
 			RelativeLayout topLayout = (RelativeLayout) mBottomScroller
 					.getChildAt(i);
 

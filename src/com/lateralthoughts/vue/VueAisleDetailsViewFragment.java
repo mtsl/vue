@@ -125,8 +125,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		mAisleDetailsAdapter = new AisleDetailsViewAdapterPager(mContext,
 				mSwipeListener, mListCount, null, new ShareViaVueListner());
 
-		Log.i("mAisleDetailsAdapter", "mAisleDetailsAdapter value: "
-				+ mAisleDetailsAdapter);
+ 
 
 	}
 
@@ -242,7 +241,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 							mEditTextFindAt.getApplicationWindowToken(),
 							InputMethodManager.SHOW_FORCED, 0);
 				}
-				Log.i("find at", "find at test1 url " + url);
+				 
 				if (url != null && url.startsWith("http")) {
 					/*
 					 * Uri uriUrl = Uri.parse(url.trim()); Log.i("browserUrl",
@@ -336,7 +335,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				if (url != null && url.startsWith("http")) {
 					mAisleDetailsAdapter.closeKeyboard();
 					Uri uriUrl = Uri.parse(url.trim());
-					Log.i("browserUrl", "browserUrl: " + url);
+			 
 					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
 							uriUrl);
 					startActivity(launchBrowser);
@@ -387,8 +386,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 					switch (scrollState) {
 					case OnScrollListener.SCROLL_STATE_IDLE:
 						if (mAisleDetailsList.getChildAt(0).getTop() == 0) {
-							Log.i("scrolling",
-									"scrolling here scrolling is SCROLL_STATE_IDLE");
+				 
 							if (mHandleActionBar != null) {
 								mHandleActionBar.showActionBar();
 							}
@@ -526,8 +524,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				mVueUserName.getViewTreeObserver()
 						.removeGlobalOnLayoutListener(this);
 				mVueUserName.setText(mAisleDetailsAdapter.mVueusername);
-				Log.i("userName", "userName: "
-						+ mAisleDetailsAdapter.mVueusername);
+		 
 			}
 		});
 	}
