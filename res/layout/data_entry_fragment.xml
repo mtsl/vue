@@ -122,7 +122,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="4dip"
-                    android:src="@drawable/closebtn" />
+                    android:src="@drawable/small_close_btn_selector" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -185,7 +185,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="4dip"
-                    android:src="@drawable/closebtn" />
+                    android:src="@drawable/small_close_btn_selector" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -266,7 +266,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="4dip"
-                    android:src="@drawable/closebtn" />
+                    android:src="@drawable/small_close_btn_selector" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -367,7 +367,7 @@
             android:layout_marginBottom="10dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="16dip"
-            android:src="@drawable/closebtn"
+            android:src="@drawable/small_close_btn_selector"
             android:visibility="gone" />
     </RelativeLayout>
 

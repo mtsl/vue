@@ -7,7 +7,8 @@
     <RelativeLayout
         android:id="@+id/vue_landing_actionbar_app_icon_layout"
         android:layout_width="48dip"
-        android:layout_height="48dip" >
+        android:layout_height="48dip"
+        android:background="@drawable/vue_button_selector" >
 
         <ImageView
             android:id="@+id/vue_landing_actionbar_app_icon"
@@ -33,6 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dip"
         android:layout_alignParentRight="true"
+        android:background="@drawable/vue_button_selector"
         android:orientation="horizontal" >
 
         <ImageView

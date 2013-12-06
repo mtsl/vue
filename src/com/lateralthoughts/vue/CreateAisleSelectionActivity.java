@@ -2,7 +2,6 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,7 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,12 +21,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
@@ -36,7 +33,6 @@ import com.lateralthoughts.vue.utils.Utils;
 
 public class CreateAisleSelectionActivity extends Activity {
 
-	private RelativeLayout mDataentryPopupMainLayout = null;
 	private boolean mFromCreateAilseScreenFlag = false,
 			mFromDetailsScreenFlag = false;
 	private String mCameraImageName = null;
@@ -50,10 +46,11 @@ public class CreateAisleSelectionActivity extends Activity {
 	private boolean isClickedFlag = false;
 	private ShareDialog mShareDialog = null;
 	private Dialog mDialog;
+	private Button mDataentryPopupCancelBtn;
+	private TextView mDataentryPopupScreenTitle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.e("CreateAisleSelectionActivity", "23neem onCreate called");
 		isActivityShowing = true;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_asilse_selection);
@@ -64,7 +61,21 @@ public class CreateAisleSelectionActivity extends Activity {
 			mFromDetailsScreenFlag = b
 					.getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG);
 		}
-		mDataentryPopupMainLayout = (RelativeLayout) findViewById(R.id.dataentrypopup_mainlayout);
+		mDataentryPopupScreenTitle = (TextView) findViewById(R.id.dataentry_popup_screen_title);
+		if (mFromDetailsScreenFlag) {
+			mDataentryPopupScreenTitle
+					.setText("Post image to this aisle \n Select One of the Sources");
+		}
+		mDataentryPopupCancelBtn = (Button) findViewById(R.id.dataentry_popup_cancel_btn);
+		mDataentryPopupCancelBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				if (!isClickedFlag) {
+					isClickedFlag = true;
+					mDataentryArcMenu.mArcLayout.switchState(true);
+				}
+			}
+		});
 		mDataentryArcMenu = (ArcMenu) findViewById(R.id.dataentry_arc_menu);
 		mDataentryArcMenu.initArcMenu(mDataentryArcMenu,
 				VueApplication.POPUP_ITEM_DRAWABLES);
@@ -74,18 +85,6 @@ public class CreateAisleSelectionActivity extends Activity {
 				showPopUp();
 			}
 		}, ANIM_DELAY);
-		mDataentryPopupMainLayout.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				if (!mFromCreateAilseScreenFlag) {
-					if (!isClickedFlag) {
-						isClickedFlag = true;
-						mDataentryArcMenu.mArcLayout.switchState(true);
-					}
-				}
-			}
-		});
-
 		if (VueApplication.getInstance().mShoppingApplicationDetailsList != null) {
 			for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
 					.size(); i++) {
@@ -112,11 +111,6 @@ public class CreateAisleSelectionActivity extends Activity {
 		ShoppingApplicationDetails shoppingApplicationDetails1 = new ShoppingApplicationDetails(
 				getResources().getString(R.string.browser), null, null, null);
 		mDataEntryShoppingApplicationsList.add(shoppingApplicationDetails1);
-		Toast toast = Toast.makeText(this, "Select from one of the sources.",
-				Toast.LENGTH_SHORT);
-		toast.setGravity(Gravity.TOP | Gravity.CENTER, 0,
-				(int) Utils.dipToPixels(this, 54));
-		toast.show();
 	}
 
 	@Override
@@ -382,7 +376,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	}
 
 	private void openHintDialog(final String source, String app,
-			final String activityName, final String packageName) { 
+			final String activityName, final String packageName) {
 		mDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
 		mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mDialog.setContentView(R.layout.hintdialog);
@@ -422,7 +416,7 @@ public class CreateAisleSelectionActivity extends Activity {
 
 			@Override
 			public void onDismiss(DialogInterface arg0) {
-				//finish();
+				// finish();
 			}
 		});
 		dontshow.setOnClickListener(new OnClickListener() {
@@ -478,19 +472,16 @@ public class CreateAisleSelectionActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
 			return mHintList.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
 			return position;
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return position;
 		}
 
@@ -521,7 +512,7 @@ public class CreateAisleSelectionActivity extends Activity {
 
 					@Override
 					public void onClick(View v) {
-						if(mDialog != null){
+						if (mDialog != null) {
 							mDialog.dismiss();
 						}
 						if (mSource.equals("Camera")) {

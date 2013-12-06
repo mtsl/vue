@@ -1057,7 +1057,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
 			aboutlayout.setLayoutParams(params);
 			aboutdonelayout = (RelativeLayout) aboutLayoutView
 					.findViewById(R.id.aboutdonelayout);
-			aboutdonelayout.setLayoutParams(params);
+			aboutdonelayout.setLayoutParams(params2);
 			aboutdonelayout.setOnClickListener(new OnClickListener() {
 
 				@Override
