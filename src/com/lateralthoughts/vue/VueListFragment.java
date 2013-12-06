@@ -14,8 +14,10 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,13 +63,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
- 
 
 @SuppressLint("ValidFragment")
-public class VueListFragment extends  Fragment implements TextWatcher {
+public class VueListFragment extends Fragment implements TextWatcher {
 
 	public static final String TAG = "VueListFragment";
 	private ExpandableListView expandListView;
@@ -88,8 +88,12 @@ public class VueListFragment extends  Fragment implements TextWatcher {
 	boolean isNewUser = false;
 	private String profilePicUrl = "";
 	private RelativeLayout vue_list_fragment_actionbar;
-	public VueListFragment( ) {
-	 
+
+	public VueListFragment() {
+		IntentFilter ifiltercategory = new IntentFilter(
+				"RefreshBezelMenuReciver");
+		VueApplication.getInstance().registerReceiver(
+				new BezelMenuRefreshReciever(), ifiltercategory);
 	}
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -136,13 +140,15 @@ public class VueListFragment extends  Fragment implements TextWatcher {
 				R.id.side_Menu_searchBar);
 		mBezelMainLayout = (RelativeLayout) getActivity().findViewById(
 				R.id.bezel_menu_main_layout);
-		Log.i("mBezelMainLayout", "mBezelMainLayout mSideMenuSearchBar: "+mSideMenuSearchBar);
+		Log.i("mBezelMainLayout", "mBezelMainLayout mSideMenuSearchBar: "
+				+ mSideMenuSearchBar);
 		vue_list_fragment_invite_friendsLayout_mainxml = (RelativeLayout) getActivity()
 				.findViewById(
 						R.id.vue_list_fragment_invite_friendsLayout_mainxml);
 		expandListView = (ExpandableListView) getActivity().findViewById(
 				R.id.vue_list_fragment_list);
-		vue_list_fragment_actionbar = (RelativeLayout) getActivity().findViewById(R.id.vue_list_fragment_sidemenu_actionbar);
+		vue_list_fragment_actionbar = (RelativeLayout) getActivity()
+				.findViewById(R.id.vue_list_fragment_sidemenu_actionbar);
 
 		final VueListFragmentAdapter adapter = new VueListFragmentAdapter(
 				getActivity(), getBezelMenuOptionItems());
@@ -185,23 +191,22 @@ public class VueListFragment extends  Fragment implements TextWatcher {
 					FlurryAgent.logEvent(s);
 					if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
 						VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;
-							if (getActivity() instanceof VueLandingPageActivity) {
-								VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
-								vueLandingPageActivity1.showCategory(s, false);
-								VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-								vueLandingPageActivity.mVueLandingActionbarScreenName
-										.setText(getString(R.string.trending));
-							}
-							if (getActivity() instanceof AisleDetailsViewActivity) {
-								startActivity(new Intent(
-										(AisleDetailsViewActivity) getActivity(),
-										VueLandingPageActivity.class));
-							} else if (getActivity() instanceof DataEntryActivity) {
-								startActivity(new Intent(
-										(DataEntryActivity) getActivity(),
-										VueLandingPageActivity.class));
-							}
-						 
+						if (getActivity() instanceof VueLandingPageActivity) {
+							VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
+							vueLandingPageActivity1.showCategory(s, false);
+							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+							vueLandingPageActivity.mVueLandingActionbarScreenName
+									.setText(getString(R.string.trending));
+						}
+						if (getActivity() instanceof AisleDetailsViewActivity) {
+							startActivity(new Intent(
+									(AisleDetailsViewActivity) getActivity(),
+									VueLandingPageActivity.class));
+						} else if (getActivity() instanceof DataEntryActivity) {
+							startActivity(new Intent(
+									(DataEntryActivity) getActivity(),
+									VueLandingPageActivity.class));
+						}
 
 					} else if (s
 							.equals(getString(R.string.sidemenu_option_About))) {
@@ -292,7 +297,7 @@ public class VueListFragment extends  Fragment implements TextWatcher {
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id) {
-				
+
 				TextView textView = (TextView) v
 						.findViewById(R.id.child_itemTextview);
 				String s = textView.getText().toString();
@@ -333,7 +338,7 @@ public class VueListFragment extends  Fragment implements TextWatcher {
 								VueLandingPageActivity.class));
 						VueApplication.getInstance().landingPage.showCategory(
 								s, false);
-						//activity.getSlidingMenu().toggle();
+						// activity.getSlidingMenu().toggle();
 					}
 					return true;
 				} else if (s.trim().equals(
@@ -395,6 +400,7 @@ public class VueListFragment extends  Fragment implements TextWatcher {
 			vue_list_fragment_actionbar.setVisibility(View.GONE);
 		}
 	}
+
 	/**
 	 * It will prepare and return a list of options to show in side menu in
 	 * bezel.
@@ -415,7 +421,8 @@ public class VueListFragment extends  Fragment implements TextWatcher {
 			userName = getString(R.string.sidemenu_option_Me);
 		}
 		Log.e("VueListFragment", "USER PROFILE PIC TEST IS NAME: " + userName);
-		item = new ListOptionItem(userName, R.drawable.new_profile, getMeChildren());
+		item = new ListOptionItem(userName, R.drawable.new_profile,
+				getMeChildren());
 		File f = new FileCache(getActivity())
 				.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
 		Log.e("VueListFragment",
@@ -1189,19 +1196,13 @@ public class VueListFragment extends  Fragment implements TextWatcher {
 		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage4 ");
 	}
 
-	private class RefreshList implements ListFragementObj {
-
+	public class BezelMenuRefreshReciever extends BroadcastReceiver {
 		@Override
-		public void refreshBezelMenu() {
-			VueListFragmentAdapter adapter = null;
-			Log.i("userImageUrl",
-					"userImageUrl: downloadAndSaveUserProfileImage3 ");
-			adapter = new VueListFragment.VueListFragmentAdapter(
-					VueListFragment.this.getActivity(),
-					VueListFragment.this.getBezelMenuOptionItems());
-			VueListFragment.this.expandListView.setAdapter(adapter);
-
+		public void onReceive(Context arg0, Intent intent) {
+			if (intent != null) {
+				refreshBezelMenu();
+			}
 		}
-
 	}
+
 }

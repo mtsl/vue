@@ -6,14 +6,17 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.http.entity.StringEntity;
 import org.json.JSONObject;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -23,6 +26,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.facebook.model.GraphUser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.parser.Parser;
@@ -229,40 +233,62 @@ public class VueUserManager {
 							+ jsonArray);
 					VueUser vueUser = new Parser().parseUserData(jsonArray);
 					if (vueUser != null) {
-						if (VueApplication.getInstance().getmUserInitials() == null) {
-							VueApplication.getInstance().setmUserInitials(
-									vueUser.getFirstName());
+						if (vueUser.getUserImageURL() != null
+								&& vueUser.getUserImageURL().equals(
+										userProfileImageUrl)) {
+							if (VueApplication.getInstance().getmUserInitials() == null) {
+								VueApplication.getInstance().setmUserInitials(
+										vueUser.getFirstName());
+							}
+							VueApplication.getInstance().setmUserId(
+									vueUser.getId());
+							VueApplication.getInstance().setmUserName(
+									vueUser.getFirstName() + " "
+											+ vueUser.getLastName());
+							VueUserManager.this.setCurrentUser(vueUser);
+							Log.i("imageurl", "imageurl is ok got user id: "
+									+ vueUser);
+							callback.onUserUpdated(vueUser);
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
+											null, null);
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.BOOKMARKER_AISLES_URI,
+											null, null);
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.RATED_IMAGES_URI,
+											null, null);
+							VueTrendingAislesDataModel
+									.getInstance(VueApplication.getInstance())
+									.getNetworkHandler()
+									.getBookmarkAisleByUser();
+							VueTrendingAislesDataModel
+									.getInstance(VueApplication.getInstance())
+									.getNetworkHandler().getRatedImageList();
+						} else {
+							vueUser.setUserImageURL(userProfileImageUrl);
+							ObjectMapper mapper = new ObjectMapper();
+							String userAsString = null;
+							try {
+								userAsString = mapper
+										.writeValueAsString(vueUser);
+							} catch (JsonProcessingException e) {
+							}
+							Log.e("VueUserDebug", "vueuser: request "
+									+ userAsString);
+							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+									userAsString,
+									UrlConstants.UPDATE_USER_RESTURL, listener,
+									errorListener);
+							VueApplication.getInstance().getRequestQueue()
+									.add(request);
 						}
-						VueApplication.getInstance()
-								.setmUserId(vueUser.getId());
-						VueApplication.getInstance().setmUserName(
-								vueUser.getFirstName() + " "
-										+ vueUser.getLastName());
-						VueUserManager.this.setCurrentUser(vueUser);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser);
-						callback.onUserUpdated(vueUser);
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
-										null, null);
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.BOOKMARKER_AISLES_URI,
-										null, null);
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.RATED_IMAGES_URI, null,
-										null);
-						VueTrendingAislesDataModel
-								.getInstance(VueApplication.getInstance())
-								.getNetworkHandler().getBookmarkAisleByUser();
-						VueTrendingAislesDataModel
-								.getInstance(VueApplication.getInstance())
-								.getNetworkHandler().getRatedImageList();
 					} else {
 						try {
 							Log.e("VueUserDebug", "vueuser: method called ");
@@ -395,40 +421,62 @@ public class VueUserManager {
 							+ jsonArray);
 					VueUser vueUser1 = new Parser().parseUserData(jsonArray);
 					if (vueUser1 != null) {
-						if (VueApplication.getInstance().getmUserInitials() == null) {
-							VueApplication.getInstance().setmUserInitials(
-									vueUser1.getFirstName());
+						if (vueUser1.getUserImageURL() != null
+								&& vueUser1.getUserImageURL().equals(
+										userProfileImageUrl)) {
+							if (VueApplication.getInstance().getmUserInitials() == null) {
+								VueApplication.getInstance().setmUserInitials(
+										vueUser1.getFirstName());
+							}
+							VueApplication.getInstance().setmUserId(
+									vueUser1.getId());
+							VueApplication.getInstance().setmUserName(
+									vueUser1.getFirstName() + " "
+											+ vueUser1.getLastName());
+							VueUserManager.this.setCurrentUser(vueUser1);
+							Log.i("imageurl", "imageurl is ok got user id: "
+									+ vueUser1);
+							callback.onUserUpdated(vueUser1);
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
+											null, null);
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.BOOKMARKER_AISLES_URI,
+											null, null);
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.RATED_IMAGES_URI,
+											null, null);
+							VueTrendingAislesDataModel
+									.getInstance(VueApplication.getInstance())
+									.getNetworkHandler()
+									.getBookmarkAisleByUser();
+							VueTrendingAislesDataModel
+									.getInstance(VueApplication.getInstance())
+									.getNetworkHandler().getRatedImageList();
+						} else {
+							vueUser1.setUserImageURL(userProfileImageUrl);
+							ObjectMapper mapper = new ObjectMapper();
+							String userAsString = null;
+							try {
+								userAsString = mapper
+										.writeValueAsString(vueUser);
+							} catch (JsonProcessingException e) {
+							}
+							Log.e("VueUserDebug", "vueuser: request "
+									+ userAsString);
+							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+									userAsString,
+									UrlConstants.UPDATE_USER_RESTURL, listener,
+									errorListener);
+							VueApplication.getInstance().getRequestQueue()
+									.add(request);
 						}
-						VueApplication.getInstance().setmUserId(
-								vueUser1.getId());
-						VueApplication.getInstance().setmUserName(
-								vueUser1.getFirstName() + " "
-										+ vueUser1.getLastName());
-						VueUserManager.this.setCurrentUser(vueUser1);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser1);
-						callback.onUserUpdated(vueUser1);
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
-										null, null);
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.BOOKMARKER_AISLES_URI,
-										null, null);
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.RATED_IMAGES_URI, null,
-										null);
-						VueTrendingAislesDataModel
-								.getInstance(VueApplication.getInstance())
-								.getNetworkHandler().getBookmarkAisleByUser();
-						VueTrendingAislesDataModel
-								.getInstance(VueApplication.getInstance())
-								.getNetworkHandler().getRatedImageList();
 					} else {
 						try {
 							vueUser.setUserImageURL(userProfileImageUrl);
@@ -597,42 +645,64 @@ public class VueUserManager {
 							+ jsonArray);
 					VueUser vueUser2 = new Parser().parseUserData(jsonArray);
 					if (vueUser2 != null) {
-						if (VueApplication.getInstance().getmUserInitials() == null) {
-							VueApplication.getInstance().setmUserInitials(
-									vueUser2.getFirstName());
+						if (vueUser2.getUserImageURL() != null
+								&& vueUser2.getUserImageURL().equals(
+										userProfileImageUrl)) {
+							if (VueApplication.getInstance().getmUserInitials() == null) {
+								VueApplication.getInstance().setmUserInitials(
+										vueUser2.getFirstName());
+							}
+							VueApplication.getInstance().setmUserId(
+									vueUser2.getId());
+							VueApplication.getInstance().setmUserName(
+									vueUser2.getFirstName() + " "
+											+ vueUser2.getLastName());
+							VueUserManager.this.setCurrentUser(vueUser2);
+							Log.i("imageurl", "imageurl is ok got user id: "
+									+ vueUser2);
+							callback.onUserUpdated(vueUser2);
+							showNotificationForSwitchingUser(String
+									.valueOf(vueUser.getId()));
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
+											null, null);
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.BOOKMARKER_AISLES_URI,
+											null, null);
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.RATED_IMAGES_URI,
+											null, null);
+							VueTrendingAislesDataModel
+									.getInstance(VueApplication.getInstance())
+									.getNetworkHandler()
+									.getBookmarkAisleByUser();
+							VueTrendingAislesDataModel
+									.getInstance(VueApplication.getInstance())
+									.getNetworkHandler().getRatedImageList();
+						} else {
+							vueUser2.setUserImageURL(userProfileImageUrl);
+							ObjectMapper mapper = new ObjectMapper();
+							String userAsString = null;
+							try {
+								userAsString = mapper
+										.writeValueAsString(vueUser2);
+							} catch (JsonProcessingException e) {
+							}
+							Log.e("VueUserDebug", "vueuser: request "
+									+ userAsString);
+							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+									userAsString,
+									UrlConstants.UPDATE_USER_RESTURL, listener,
+									errorListener);
+							VueApplication.getInstance().getRequestQueue()
+									.add(request);
 						}
-						VueApplication.getInstance().setmUserId(
-								vueUser2.getId());
-						VueApplication.getInstance().setmUserName(
-								vueUser2.getFirstName() + " "
-										+ vueUser2.getLastName());
-						VueUserManager.this.setCurrentUser(vueUser2);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser2);
-						callback.onUserUpdated(vueUser2);
-						showNotificationForSwitchingUser(String.valueOf(vueUser
-								.getId()));
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
-										null, null);
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.BOOKMARKER_AISLES_URI,
-										null, null);
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.RATED_IMAGES_URI, null,
-										null);
-						VueTrendingAislesDataModel
-								.getInstance(VueApplication.getInstance())
-								.getNetworkHandler().getBookmarkAisleByUser();
-						VueTrendingAislesDataModel
-								.getInstance(VueApplication.getInstance())
-								.getNetworkHandler().getRatedImageList();
 					} else {
 						try {
 							user.setUserImageURL(userProfileImageUrl);
@@ -760,43 +830,65 @@ public class VueUserManager {
 							+ jsonArray);
 					VueUser vueUser2 = new Parser().parseUserData(jsonArray);
 					if (vueUser2 != null) {
-						if (VueApplication.getInstance().getmUserInitials() == null) {
-							VueApplication.getInstance().setmUserInitials(
-									vueUser2.getFirstName());
+						if (vueUser2.getUserImageURL() != null
+								&& vueUser2.getUserImageURL().equals(
+										userProfileImageUrl)) {
+							if (VueApplication.getInstance().getmUserInitials() == null) {
+								VueApplication.getInstance().setmUserInitials(
+										vueUser2.getFirstName());
+							}
+							VueApplication.getInstance().setmUserId(
+									vueUser2.getId());
+							VueApplication.getInstance().setmUserName(
+									vueUser2.getFirstName() + " "
+											+ vueUser2.getLastName());
+							VueUserManager.this.setCurrentUser(vueUser2);
+							VueUserManager.this.setCurrentUser(vueUser2);
+							Log.i("imageurl", "imageurl is ok got user id: "
+									+ vueUser2);
+							callback.onUserUpdated(vueUser2);
+							showNotificationForSwitchingUser(String
+									.valueOf(vueUser.getId()));
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
+											null, null);
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.BOOKMARKER_AISLES_URI,
+											null, null);
+							VueApplication
+									.getInstance()
+									.getContentResolver()
+									.delete(VueConstants.RATED_IMAGES_URI,
+											null, null);
+							VueTrendingAislesDataModel
+									.getInstance(VueApplication.getInstance())
+									.getNetworkHandler()
+									.getBookmarkAisleByUser();
+							VueTrendingAislesDataModel
+									.getInstance(VueApplication.getInstance())
+									.getNetworkHandler().getRatedImageList();
+						} else {
+							vueUser2.setUserImageURL(userProfileImageUrl);
+							ObjectMapper mapper = new ObjectMapper();
+							String userAsString = null;
+							try {
+								userAsString = mapper
+										.writeValueAsString(vueUser2);
+							} catch (JsonProcessingException e) {
+							}
+							Log.e("VueUserDebug", "vueuser: request "
+									+ userAsString);
+							UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+									userAsString,
+									UrlConstants.UPDATE_USER_RESTURL, listener,
+									errorListener);
+							VueApplication.getInstance().getRequestQueue()
+									.add(request);
 						}
-						VueApplication.getInstance().setmUserId(
-								vueUser2.getId());
-						VueApplication.getInstance().setmUserName(
-								vueUser2.getFirstName() + " "
-										+ vueUser2.getLastName());
-						VueUserManager.this.setCurrentUser(vueUser2);
-						VueUserManager.this.setCurrentUser(vueUser2);
-						Log.i("imageurl", "imageurl is ok got user id: "
-								+ vueUser2);
-						callback.onUserUpdated(vueUser2);
-						showNotificationForSwitchingUser(String.valueOf(vueUser
-								.getId()));
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
-										null, null);
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.BOOKMARKER_AISLES_URI,
-										null, null);
-						VueApplication
-								.getInstance()
-								.getContentResolver()
-								.delete(VueConstants.RATED_IMAGES_URI, null,
-										null);
-						VueTrendingAislesDataModel
-								.getInstance(VueApplication.getInstance())
-								.getNetworkHandler().getBookmarkAisleByUser();
-						VueTrendingAislesDataModel
-								.getInstance(VueApplication.getInstance())
-								.getNetworkHandler().getRatedImageList();
 					} else {
 						try {
 							vueUser.setUserImageURL(userProfileImageUrl);
@@ -890,7 +982,6 @@ public class VueUserManager {
 	}
 
 	private class UserCreateOrUpdateRequest extends Request<String> {
-		// ... other methods go here
 		private Response.Listener<String> mListener;
 		private Response.ErrorListener mErrorListener;
 		private String muserAsString;
@@ -900,6 +991,7 @@ public class VueUserManager {
 				Response.Listener<String> listener,
 				Response.ErrorListener errorListener) {
 			super(Method.PUT, url, errorListener);
+			Log.e("VueUserManager", "URL : " + url);
 			mListener = listener;
 			mErrorListener = errorListener;
 			muserAsString = userAsString;
@@ -947,8 +1039,8 @@ public class VueUserManager {
 
 		@Override
 		protected void deliverResponse(String s) {
-			mListener.onResponse(s);
 			Log.e("VueUser", "response = " + s);
+			mListener.onResponse(s);
 		}
 
 		@Override

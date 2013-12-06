@@ -261,11 +261,11 @@ public class AisleLoader {
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
 							bestHeight, windowContent.getAisleId(),
-							itemDetails, listener,profleUrl);
-				/*	holder.profileThumbnail
+							itemDetails, listener);
+					holder.profileThumbnail
 					.setImageUrl(
-							"https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50",
-							mImageLoader);*/
+							profleUrl,
+							mImageLoader);
 				}
 			}
 		}
@@ -273,7 +273,7 @@ public class AisleLoader {
 
 	public void loadBitmap(String loc, String serverImageUrl,
 			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
-			String asileId, AisleImageDetails itemDetails,AisleContentClickListener listener,String profileUrl) {
+			String asileId, AisleImageDetails itemDetails,AisleContentClickListener listener ) {
 		Log.i("memory issue", "memory issue aisle missing null 3.7 loadBitmap :   "+asileId);
 		if(Utils.isAisleChanged){
 			Log.i("memory issue", "memory issue aisle missing null 3.8 loadBitmap :   "+asileId);
@@ -281,7 +281,7 @@ public class AisleLoader {
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
 					bestHeight, asileId, itemDetails,listener);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
-			String[] urlsArray = { loc, serverImageUrl, profileUrl };
+			String[] urlsArray = { loc, serverImageUrl};
 			task.execute(urlsArray);
 		} else {
 			Log.i("memory issue",
@@ -294,7 +294,7 @@ public class AisleLoader {
 			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
 					bestHeight, asileId, itemDetails,listener);
 			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
-			String[] urlsArray = { loc, serverImageUrl, profileUrl };
+			String[] urlsArray = { loc, serverImageUrl};
 			task.execute(urlsArray);
 			/* } */
 		}

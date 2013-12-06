@@ -928,13 +928,19 @@ public class VueLoginActivity extends FragmentActivity implements
 			}
 		}
 		try {
-		/*	VueLandingPageActivity lan = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
-			lan.mFrag.refreshBezelMenu();*/
+			/*
+			 * VueLandingPageActivity lan = (VueLandingPageActivity)
+			 * VueLandingPageActivity.landingPageActivity;
+			 * lan.mFrag.refreshBezelMenu();
+			 */
 		} catch (Exception e) {
 		}
 		try {
-		/*	AisleDetailsViewActivity details = (AisleDetailsViewActivity) AisleDetailsViewActivity.detailsActivity;
-			details.mFrag.refreshBezelMenu();*/
+			/*
+			 * AisleDetailsViewActivity details = (AisleDetailsViewActivity)
+			 * AisleDetailsViewActivity.detailsActivity;
+			 * details.mFrag.refreshBezelMenu();
+			 */
 		} catch (Exception e) {
 		}
 		/*
@@ -943,7 +949,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		 * .findFragmentById(R.id.create_aisles_view_fragment);
 		 * VueLoginActivity.profileImagechangeListor = profileImagechangeListor;
 		 */
-	
+
 		final Dialog dialog = new Dialog(VueLoginActivity.this,
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1417,16 +1423,8 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	public void getProfileImageChangeListenor() {
-		try {
-		/*	VueLandingPageActivity lan = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
-			lan.mFrag.refreshBezelMenu();*/
-		} catch (Exception e) {
-		}
-		try {
-		/*	AisleDetailsViewActivity details = (AisleDetailsViewActivity) AisleDetailsViewActivity.detailsActivity;
-			details.mFrag.refreshBezelMenu();*/
-		} catch (Exception e) {
-		}
+		Intent i = new Intent("RefreshBezelMenuReciver");
+		VueApplication.getInstance().sendBroadcast(i);
 	}
 
 }
