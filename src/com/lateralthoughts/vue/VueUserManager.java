@@ -465,7 +465,7 @@ public class VueUserManager {
 							String userAsString = null;
 							try {
 								userAsString = mapper
-										.writeValueAsString(vueUser);
+										.writeValueAsString(vueUser1);
 							} catch (JsonProcessingException e) {
 							}
 							Log.e("VueUserDebug", "vueuser: request "

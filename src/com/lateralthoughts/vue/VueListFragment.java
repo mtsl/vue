@@ -329,19 +329,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
 						.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
 					Log.i("clicked on", "clicked on: " + s);
 					if (getActivity() instanceof VueLandingPageActivity) {
-<<<<<<< HEAD
-						VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
-						activity.startActivity(new Intent(getActivity(),
-								VueLandingPageActivity.class));
-						VueApplication.getInstance().landingPage.showCategory(
-								s, false);
-						// activity.getSlidingMenu().toggle();
-=======
 						 ((VueLandingPageActivity) getActivity()).showCategory(
 								s, false); 
 					} else {
 						creatingNewViewFromaOtherActivity(s);
->>>>>>> 4a3d72b1b7e55a7ba84e77e28cba4a0dbf7f2dc4
 					}
 					return true;
 				} else if (s.trim().equals(
@@ -1173,7 +1164,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
 		VueListFragment.this.expandListView.setAdapter(adapter);
 		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage4 ");
 	}
-<<<<<<< HEAD
+ 
 
 	public class BezelMenuRefreshReciever extends BroadcastReceiver {
 		@Override
@@ -1184,7 +1175,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
 		}
 	}
 
-=======
+ 
     private void creatingNewViewFromaOtherActivity(String s){
     	VueApplication.getInstance().mNewViewSelection = true;
 		VueApplication.getInstance().mNewlySelectedView = s;
@@ -1197,5 +1188,5 @@ public class VueListFragment extends Fragment implements TextWatcher {
 				mSideMenuSearchBar.getWindowToken(), 0);
 		 
     }
->>>>>>> 4a3d72b1b7e55a7ba84e77e28cba4a0dbf7f2dc4
+ 
 }
