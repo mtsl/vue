@@ -57,9 +57,8 @@ import com.lateralthoughts.vue.utils.BitmapCacheDetailsScreen;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
- 
 
-public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActivity */{
+public class AisleDetailsViewActivity extends Activity {
 	Fragment mFragRight;
 	public static final String CLICK_EVENT = "click";
 	public static final String LONG_PRESS_EVENT = "longpress";
@@ -69,15 +68,12 @@ public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActiv
 	private static final String DETAILS_SCREEN_VISITOR = "Details_Screen_Visitors";
 	HorizontalListView mTopScroller, mBottomScroller;
 	private int mComparisionDelay = 500;
-	// int mStatusbarHeight;
 	int mScreenTotalHeight;
 	int mComparisionScreenHeight;
 	Context mContext;
 	AisleWindowContent mWindowContent;
 	private SlidingDrawer mSlidingDrawer;
 	ArrayList<AisleImageDetails> mImageDetailsArr = null;
-	// AisleImageDetails mItemDetails = null;
-	private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
 	private int mLikeImageShowTime = 1000;
 	private boolean isActionBarShown = false;
@@ -109,12 +105,11 @@ public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActiv
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		detailsActivity = this;
-		// setContentView(R.layout.vuedetails_frag);
 		setContentView(R.layout.aisle_details_activity_landing);
 		initialize();
 		content_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
-		 mSlidListFrag = (VueListFragment) getFragmentManager()
-					.findFragmentById(R.id.listfrag);
+		mSlidListFrag = (VueListFragment) getFragmentManager()
+				.findFragmentById(R.id.listfrag);
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(
@@ -253,7 +248,6 @@ public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActiv
 	}
 
 	private void initialize() {
-
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		// set a custom shadow that overlays the main content when the drawer
 		// opens
@@ -261,7 +255,7 @@ public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActiv
 				GravityCompat.START);
 		// set up the drawer's list view with items and click listener
 		// enable ActionBar app icon to behave as action to toggle nav drawer
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(false);
 		getActionBar().setHomeButtonEnabled(true);
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the sliding drawer and the action bar app icon
@@ -275,6 +269,8 @@ public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActiv
 				// getActionBar().setTitle(mTitle);
 				invalidateOptionsMenu(); // creates call to
 											// onPrepareOptionsMenu()
+				mSlidListFrag.closeKeybaord();
+
 			}
 
 			public void onDrawerOpened(View drawerView) {
@@ -290,6 +286,7 @@ public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActiv
 				.replace(R.id.content_frame, mVueAiselFragment).commit();
 		mDrawerLayout.setFocusableInTouchMode(false);
 	}
+
 	@Override
 	protected void onStart() {
 		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
@@ -302,31 +299,9 @@ public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActiv
 	@Override
 	protected void onStop() {
 		super.onStop();
-		Log.e("ondestory", "browsecheck onStop detailsview");
 		FlurryAgent.onEndSession(this);
 
 	}
-
-	/*
-	 * @Override public boolean onCreateOptionsMenu(Menu menu) {
-	 * getSupportMenuInflater().inflate(R.menu.title_options, menu);
-	 * getSupportActionBar().setHomeButtonEnabled(true); // Configure the search
-	 * info and add any event listeners return true;//
-	 * super.onCreateOptionsMenu(menu); }
-	 * 
-	 * @Override public boolean onOptionsItemSelected(MenuItem item) { // Handle
-	 * item selection switch (item.getItemId()) { case R.id.menu_create_aisles:
-	 * Intent intent = new Intent(AisleDetailsViewActivity.this,
-	 * CreateAisleSelectionActivity.class);
-	 * intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-	 * Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-	 * AisleDetailsViewActivity.this, false); if
-	 * (!CreateAisleSelectionActivity.isActivityShowing) {
-	 * CreateAisleSelectionActivity.isActivityShowing = true;
-	 * startActivity(intent); } return true; case android.R.id.home:
-	 * //getSlidingMenu().toggle(); return true; default: return
-	 * super.onOptionsItemSelected(item); } }
-	 */
 
 	class ComparisionAdapter extends BaseAdapter {
 		LayoutInflater minflater;
@@ -523,15 +498,16 @@ public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActiv
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		if (VueApplication.getInstance().mNewViewSelection) {
+			finish();
+		}
 		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
 				if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
-					//TODO: check with krishna about this commenting code
-					/*
-					 * mFrag.getFriendsList(data .getStringExtra(VueConstants.
-					 * INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
-					 */
+					mSlidListFrag
+							.getFriendsList(data
+									.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
 				}
 			}
 		} else if (requestCode == VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT
@@ -609,13 +585,15 @@ public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActiv
 				sendDataToDataentryScreen(b);
 			}
 		} else {
-
 			try {
-				updateAisleScreen();
-				if (mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled) {
+				if (mVueAiselFragment.mAisleDetailsAdapter.mShare != null
+						&& mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled) {
+					Log.i("logindialoge", "logindialoge: showing 3");
 					mVueAiselFragment.mAisleDetailsAdapter.mShare.mShareIntentCalled = false;
 					mVueAiselFragment.mAisleDetailsAdapter.mShare
 							.dismisDialog();
+				} else {
+					updateAisleScreen();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -702,11 +680,6 @@ public class AisleDetailsViewActivity extends /* Base */Activity/* FragmentActiv
 	public void sendDataToDataentryScreen(Bundle b) {
 		Log.e("Land", "vueland 4");
 		String lookingFor, occation, category, userId, description;
-		/*
-		 * if (mVueAiselFragment == null) { mVueAiselFragment =
-		 * (VueAisleDetailsViewFragment) getFragmentManager()
-		 * .findFragmentById(R.id.aisle_details_view_fragment); }
-		 */
 		AisleContext aisleInfo = mVueAiselFragment.getAisleContext();
 		lookingFor = aisleInfo.mLookingForItem;
 		occation = aisleInfo.mOccasion;

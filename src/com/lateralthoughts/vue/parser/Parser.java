@@ -2,6 +2,7 @@ package com.lateralthoughts.vue.parser;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -159,9 +160,11 @@ public class Parser {
 					imgComments.mLastModifiedTimestamp = commnetObj
 							.getLong(VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME);
 				}
+				imgComments.mCommenterUrl = commnetObj.getString(VueConstants.IMAGE_COMMENT_OWNER_IMAGE_URL);
 				commentList.add(imgComments);
 			}
 		}
+		 Collections.reverse(commentList);
 		aisleImageDetails.mCommentsList = commentList;
 		return aisleImageDetails;
 	}

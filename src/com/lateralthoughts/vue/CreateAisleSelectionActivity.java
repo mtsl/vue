@@ -49,6 +49,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	private static final int ANIM_DELAY = 100;
 	private boolean isClickedFlag = false;
 	private ShareDialog mShareDialog = null;
+	private Dialog mDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -381,8 +382,7 @@ public class CreateAisleSelectionActivity extends Activity {
 	}
 
 	private void openHintDialog(final String source, String app,
-			final String activityName, final String packageName) {
-		final Dialog mDialog;
+			final String activityName, final String packageName) { 
 		mDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
 		mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mDialog.setContentView(R.layout.hintdialog);
@@ -395,29 +395,36 @@ public class CreateAisleSelectionActivity extends Activity {
 				R.drawable.share_dialog_divider));
 		TextView dontshow = (TextView) mDialog.findViewById(R.id.dontshow);
 		TextView proceed = (TextView) mDialog.findViewById(R.id.proceed);
-		ArrayList<String> your_array_list = new ArrayList<String>();
+		ArrayList<String> hint_array_list = new ArrayList<String>();
 		if (source.equalsIgnoreCase("Gallery")) {
 			dialogtitle.setText("Gallery");
-			your_array_list.add("1. Go to gallery");
-			your_array_list.add("2. Find the right image");
-			your_array_list.add("3. Share(share icon) with vue(vue icon)");
-			your_array_list.add("4. Comeback to vue");
+			hint_array_list.add("1. Go to gallery");
+			hint_array_list.add("2. Find the right image");
+			hint_array_list.add("3. Share(share icon) with vue(vue icon)");
+			hint_array_list.add("4. Comeback to vue");
 		} else if (source.equalsIgnoreCase("Camera")) {
 			dialogtitle.setText("Camera");
 
-			your_array_list.add("1. Go to camera");
-			your_array_list.add("2. Take a picture");
-			your_array_list.add("3. Come back to vue");
+			hint_array_list.add("1. Go to camera");
+			hint_array_list.add("2. Take a picture");
+			hint_array_list.add("3. Come back to vue");
 		} else if (source.equalsIgnoreCase("OtherSource")) {
 			dialogtitle.setText(app);
 			String temp = "1. Proceed to " + app;
-			your_array_list.add(temp);
-			your_array_list.add("2. Select an image");
-			your_array_list.add("3. Share(share icon) with vue(vue icon)");
-			your_array_list.add("4. Come back to vue");
+			hint_array_list.add(temp);
+			hint_array_list.add("2. Select an image");
+			hint_array_list.add("3. Share(share icon) with vue(vue icon)");
+			hint_array_list.add("4. Come back to vue");
 		}
 
 		mDialog.show();
+		mDialog.setOnDismissListener(new OnDismissListener() {
+
+			@Override
+			public void onDismiss(DialogInterface arg0) {
+				//finish();
+			}
+		});
 		dontshow.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -427,7 +434,7 @@ public class CreateAisleSelectionActivity extends Activity {
 				SharedPreferences.Editor editor = sharedPreferences.edit();
 				editor.putBoolean("dontshowpopup", true);
 				editor.commit();
-
+				mDialog.dismiss();
 				if (source.equalsIgnoreCase("Gallery")) {
 					galleryIntent();
 				} else if (source.equalsIgnoreCase("Camera")) {
@@ -441,6 +448,7 @@ public class CreateAisleSelectionActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
+				mDialog.dismiss();
 				if (source.equalsIgnoreCase("Gallery")) {
 					galleryIntent();
 				} else if (source.equalsIgnoreCase("Camera")) {
@@ -451,7 +459,7 @@ public class CreateAisleSelectionActivity extends Activity {
 			}
 		});
 
-		listview.setAdapter(new HintAdapter(your_array_list, source,
+		listview.setAdapter(new HintAdapter(hint_array_list, source,
 				activityName, packageName));
 
 	}
@@ -513,6 +521,9 @@ public class CreateAisleSelectionActivity extends Activity {
 
 					@Override
 					public void onClick(View v) {
+						if(mDialog != null){
+							mDialog.dismiss();
+						}
 						if (mSource.equals("Camera")) {
 							cameraIntent();
 						} else if (mSource.equals("Gallery")) {

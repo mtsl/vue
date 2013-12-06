@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -35,6 +36,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -66,14 +68,12 @@ public class VueLandingPageActivity extends Activity {
 
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
-	private VueLandingAislesFragment mFragment;
 	public static TextView mVueLandingActionbarScreenName;
 	private LinearLayout mVueLandingActionbarRightLayout;
 	LinearLayout mVueLandingKeyboardLayout;
 	private FrameLayout mVueLandingKeyboardCancel, mVueLandingKeyboardDone;
 	private View mVueLandingActionbarView;
 	private RelativeLayout mVueLandingActionbarAppIconLayout;
-	//private ProgressBar mLoadProgress;
 	private ProgressDialog mProgressDialog;
 	private TextView mActionbarCancleBtnTextview;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
@@ -96,10 +96,11 @@ public class VueLandingPageActivity extends Activity {
 	private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
-    private FrameLayout content_frame2;
+    private FrameLayout mContent_frame2;
     private Fragment mLandingAilsesFrag;
-      EditText searchEdit;
+      EditText mSearchEdit;
+      private Handler mHandler;
+      private String mCatName; boolean mFromDialog;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -107,7 +108,7 @@ public class VueLandingPageActivity extends Activity {
 		setContentView(R.layout.vue_landing_main);
 		landingPageActivity = this;
 		initialize();
-		content_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
+		mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
 		  mSlidListFrag = (VueListFragment) getFragmentManager()
 					.findFragmentById(R.id.listfrag);
 		  
@@ -188,10 +189,10 @@ public class VueLandingPageActivity extends Activity {
 					@Override
 					public void onClick(View arg0) {
 						 
-						if(mDrawerLayout.isDrawerOpen(content_frame2)){
-							mDrawerLayout.closeDrawer(content_frame2);
+						if(mDrawerLayout.isDrawerOpen(mContent_frame2)){
+							mDrawerLayout.closeDrawer(mContent_frame2);
 						} else {
-							mDrawerLayout.openDrawer(content_frame2);
+							mDrawerLayout.openDrawer(mContent_frame2);
 						}
 					}
 				});
@@ -230,7 +231,6 @@ public class VueLandingPageActivity extends Activity {
 		} 
 	}
 private void initialize(){
-    mTitle = mDrawerTitle = getTitle();
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     // set a custom shadow that overlays the main content when the drawer opens
     mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -240,7 +240,7 @@ private void initialize(){
     // enable ActionBar app icon to behave as action to toggle nav drawer
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setHomeButtonEnabled(true);
-
+	
     // ActionBarDrawerToggle ties together the the proper interactions
     // between the sliding drawer and the action bar app icon
     mDrawerToggle = new ActionBarDrawerToggle(
@@ -250,57 +250,62 @@ private void initialize(){
             R.string.drawer_open,  /* "open drawer" description for accessibility */
             R.string.drawer_close  /* "close drawer" description for accessibility */
             ) {
-        public void onDrawerClosed(View view) {
-            getActionBar().setTitle(mTitle);
-            invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            getActionBar().setCustomView(mVueLandingActionbarView);
-    		getActionBar().setDisplayShowCustomEnabled(true);
-    		getActionBar().setDisplayShowHomeEnabled(false);
-    		
-    		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-    		imm.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
-
-
-        }
-       
-        public void onDrawerOpened(View drawerView) {
-            getActionBar().setTitle(mDrawerTitle); 
-            invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            
-   		 
-		    // add the custom view to the action bar
-		 getActionBar().setCustomView(R.layout.actionbar_view); 
-		 getActionBar().getCustomView().findViewById(R.id.home).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				mDrawerLayout.closeDrawer(content_frame2);
-				
+			public void onDrawerClosed(View view) {
+				final InputMethodManager mInputMethodManager = (InputMethodManager) VueLandingPageActivity.this
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSearchEdit.getWindowToken(), 0);
+				invalidateOptionsMenu(); // creates call to
+											// onPrepareOptionsMenu()
+				getActionBar().setCustomView(mVueLandingActionbarView);
+				getActionBar().setDisplayShowCustomEnabled(true);
+				getActionBar().setDisplayShowHomeEnabled(false);
 			}
-		}); 
-	  searchEdit =(EditText)getActionBar().getCustomView().findViewById(R.id.searchfield);
-		 searchEdit.setActivated(true);
-		 getActionBar().getCustomView().findViewById(R.id.search_cancel).setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					 
-					searchEdit.setText("");
-				}
-			});
-		    EditText search = (EditText) getActionBar().getCustomView().findViewById(R.id.searchfield);
-		    search.setOnEditorActionListener(new OnEditorActionListener() {
 
-		      @Override
-		      public boolean onEditorAction(TextView v, int actionId,
-		          KeyEvent event) {
-		        Toast.makeText( VueLandingPageActivity.this, "Search triggered",
-		            Toast.LENGTH_LONG).show();
-		        return false;
-		      }
-		    });
-	 
-        }
+			@SuppressLint("CutPasteId")
+			public void onDrawerOpened(View drawerView) {
+				getActionBar().setTitle(mDrawerTitle);
+				invalidateOptionsMenu(); // creates call to
+											// onPrepareOptionsMenu()
+				// add the custom view to the action bar
+				getActionBar().setCustomView(R.layout.actionbar_view);
+				getActionBar().getCustomView().findViewById(R.id.home)
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								mDrawerLayout.closeDrawer(mContent_frame2);
+
+							}
+						});
+				mSearchEdit = (EditText) getActionBar().getCustomView()
+						.findViewById(R.id.searchfield);
+				mSearchEdit.setActivated(true);
+				getActionBar().getCustomView().findViewById(R.id.search_cancel)
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								mSearchEdit.setText("");
+							}
+						});
+
+				mSearchEdit
+						.setOnEditorActionListener(new OnEditorActionListener() {
+
+							@Override
+							public boolean onEditorAction(TextView v,
+									int actionId, KeyEvent event) {
+								 
+								Toast.makeText(VueLandingPageActivity.this,
+										"Search string: "+mSearchEdit.getText().toString(), Toast.LENGTH_LONG)
+										.show();
+								mDrawerLayout.closeDrawer(mContent_frame2);
+								return false;
+							}
+						});
+
+			}
     };
     mDrawerLayout.setDrawerListener(mDrawerToggle);
    mLandingAilsesFrag = new VueLandingAislesFragment();
@@ -428,8 +433,8 @@ public boolean onOptionsItemSelected(MenuItem item) {
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
 				if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
-					/*mFrag.getFriendsList(data
-							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));*/
+					mSlidListFrag.getFriendsList(data
+							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
 				}
 			}
 		}
@@ -579,18 +584,18 @@ public boolean onOptionsItemSelected(MenuItem item) {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		Log.i("stackcount", "stackcount onbckpresed: close window1**## "+mDrawerLayout.isDrawerOpen(content_frame2));
+		Log.i("stackcount", "stackcount onbckpresed: close window1**## "+mDrawerLayout.isDrawerOpen(mContent_frame2));
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 
 			Log.i("stackcount", "stackcount onbckpresed: "
 					+ StackViews.getInstance().getStackCount());
 		 
-			Log.i("stackcount", "stackcount onbckpresed: close window1** "+mDrawerLayout.isDrawerOpen(content_frame2));
+			Log.i("stackcount", "stackcount onbckpresed: close window1** "+mDrawerLayout.isDrawerOpen(mContent_frame2));
 			
-			if (mDrawerLayout.isDrawerOpen(content_frame2)) {
+			if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
 				
 				if (!mSlidListFrag.listener.onBackPressed()) {
-					mDrawerLayout.closeDrawer(content_frame2);
+					mDrawerLayout.closeDrawer(mContent_frame2);
 				}
 			} else if (StackViews.getInstance().getStackCount() > 0) {
 
@@ -678,7 +683,12 @@ public boolean onOptionsItemSelected(MenuItem item) {
 		if(mLandingAilsesFrag != null){
 			((VueLandingAislesFragment) mLandingAilsesFrag).notifyAdapters();
 		}
-
+          if(VueApplication.getInstance().mNewViewSelection){
+        	  boolean fromDialog = false;
+        	  VueApplication.getInstance().mNewViewSelection = false;
+        	  showCategory(VueApplication.getInstance().mNewlySelectedView,fromDialog);
+        	 
+          }
 		new Handler().postDelayed(new Runnable() {
 
 			@Override
@@ -692,6 +702,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 
 			}
 		}, DELAY_TIME);
+		getActionBar().setDisplayHomeAsUpEnabled(false);
 	}
 
 	@Override
@@ -732,7 +743,27 @@ public boolean onOptionsItemSelected(MenuItem item) {
 	}
 
 	public void showCategory(final String catName, boolean fromDialog) {
-		mDrawerLayout.closeDrawer(content_frame2);
+		mDrawerLayout.closeDrawer(mContent_frame2);
+		mCatName = catName;
+		mFromDialog = fromDialog;
+		if (mHandler == null) {
+			mHandler = new Handler();
+		}
+		//close the drawer before call for new views.
+		mHandler.postDelayed(r, 100);
+	}
+
+	Runnable r = new Runnable() {
+		@Override
+		public void run() {
+			if (!mDrawerLayout.isDrawerOpen(mContent_frame2)) {
+				callForNewView(mCatName, mFromDialog);
+			} else {
+				mHandler.postDelayed(r, 100);
+			}
+		}
+	};
+    private void callForNewView(final String catName, boolean fromDialog) {
 		if (getScreenName().equalsIgnoreCase(catName)) {
 			return;
 		}
@@ -742,9 +773,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 		viewInfo.mOffset = VueTrendingAislesDataModel
 				.getInstance(VueLandingPageActivity.this).getNetworkHandler()
 				.getmOffset();
-
 		StackViews.getInstance().push(viewInfo);
-
 		boolean loadMore = false;
 		boolean fromServer = true;
 		if (catName
@@ -823,11 +852,9 @@ public boolean onOptionsItemSelected(MenuItem item) {
 		}
 
 		FlurryAgent.logEvent(catName);
-
-	}
-
+    }
 	private void getBookmarkedAisles(String screenName) {
-	
+
 		ArrayList<AisleWindowContent> windowContent = null;
 		ArrayList<AisleBookmark> bookmarkedAisles = DataBaseManager
 				.getInstance(VueLandingPageActivity.this)
@@ -849,7 +876,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 		}
 		if (windowContent != null && windowContent.size() > 0) {
 			changeScreenName(screenName);
-((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 			VueTrendingAislesDataModel.getInstance(this).clearAisles();
 			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
 					.clearObjectsInUse();
@@ -907,13 +934,6 @@ public boolean onOptionsItemSelected(MenuItem item) {
 
 			}
 		} else {
-			/*
-			 * Log.i("meoptions", "meoptions: else option Screen name: " +
-			 * screenName); VueTrendingAislesDataModel
-			 * .getInstance(VueLandingPageActivity.this) .getNetworkHandler()
-			 * .reqestByCategory(screenName, new ProgresStatus(), fromServer,
-			 * loadMore, screenName);
-			 */
 		}
 	}
 

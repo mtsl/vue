@@ -21,6 +21,7 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -117,9 +118,13 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
         NetworkHandler networkHandler = new NetworkHandler(context);
         for(ImageComment comment : comments) {
           try {
-            networkHandler.createImageComment(comment);
-          } catch (Exception e) {
-            // TODO Auto-generated catch block
+        	  ImageCommentRequest imageRequest = new ImageCommentRequest();
+        	  imageRequest.setComment(comment.getComment());
+        	  imageRequest.setLastModifiedTimestamp(comment.getLastModifiedTimestamp());
+        	  imageRequest.setOwnerImageId(comment.getOwnerImageId());
+        	  imageRequest.setOwnerUserId(comment.getOwnerUserId());
+            networkHandler.createImageComment(imageRequest);
+          } catch (Exception e) { 
             e.printStackTrace();
           }
         }

@@ -12,10 +12,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -55,11 +64,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueAisleDetailsViewFragment.ShareViaVueListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.Comment;
 import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
@@ -67,6 +79,7 @@ import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
 
@@ -102,8 +115,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	public ArrayList<String> mImageDetailsArr = null;
 	@SuppressLint("UseSparseArrays")
 	Map<Integer, ArrayList<ImageComments>> mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
-	ArrayList<String> mShowingList;
-	ArrayList<String> mShowingListCommenterUrl;
+	//ArrayList<String> mShowingList;
+	//ArrayList<String> mShowingListCommenterUrl;
+	ArrayList<Comment> mShowingCommentList = new ArrayList<Comment>();
 	private int mBestHeight;
 	private int mTopBottomMargin = 24;
 	ViewHolder mViewHolder;
@@ -153,8 +167,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler().getUserId());
 		}
-		mShowingList = new ArrayList<String>();
-		mShowingListCommenterUrl = new ArrayList<String>();
+		 
+		 
+		mShowingCommentList = new ArrayList<Comment>();
 		if (DEBUG)
 			Log.e(TAG, "About to initiate request for trending aisles");
 		Log.i("bookmarked aisle", "bookmarked persist issue  aisleid: "
@@ -228,21 +243,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			ArrayList<ImageComments> imgComments = getItem(
 					mCurrentAislePosition).getImageList().get(
 					VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
-			if (mShowingList == null) {
-				mShowingList = new ArrayList<String>();
-				mShowingListCommenterUrl = new ArrayList<String>();
-			} else if (mShowingList.size() > 0) {
-				mShowingList.clear();
-				mShowingListCommenterUrl.clear();
-			}
-			for (ImageComments comment : imgComments) {
-				mShowingList.add(comment.mComment);
-				mShowingListCommenterUrl.add(comment.mCommenterUrl);
-			}
-
-			// mShowingList =
-			// getItem(mCurrentAislePosition).getAisleContext().mCommentList;
-
+			prepareCommentList(imgComments);
 			int imgPosition = 0;
 			if (VueApplication.getInstance().getmAisleImgCurrentPos() < getItem(
 					mCurrentAislePosition).getImageList().size()) {
@@ -318,7 +319,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		LinearLayout aisleContentBrowser;
 		TextView aisleDescription;
 		TextView aisleOwnersName;
-		TextView aisleContext, commentCount, likeCount;
+		TextView aisleContext, commentCount, likeCount,textcount;
 		TextView bookMarkCount;
 		ImageView profileThumbnail;
 		ImageView vueWindowBookmarkImg;
@@ -425,31 +426,22 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
 			mViewHolder.myPager = (ViewPager) convertView
 					.findViewById(R.id.myfivepanelpager);
+			mViewHolder.textcount = (TextView) convertView.findViewById(R.id.textcount);
 			int bestHeightTempHeight = VueApplication.getInstance().getPixel(
 					100);
-
-			/*
-			 * FrameLayout.LayoutParams showpieceParams = new
-			 * FrameLayout.LayoutParams(
-			 * VueApplication.getInstance().getScreenWidth(),
-			 * bestHeightTempHeight);
-			 * mViewHolder.aisleContentBrowser.setLayoutParams(showpieceParams);
-			 * mViewHolder.aisleContentBrowser
-			 * .setAisleDetailSwipeListener(mswipeListner);
-			 */
-
 			mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			convertView.setTag(mViewHolder);
 		} else {
 			mViewHolder = (ViewHolder) convertView.getTag();
 		}
+		Log.i("entercommentclick", "entercommentclick 2 mListCount: "+mListCount);
 		if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
 			mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
 		} else {
 			mViewHolder.vueWindowBookmarkImg
 					.setImageResource(R.drawable.save_dark_small);
 		}
-		if (mShowingList.size() != 0) {
+		if (mShowingCommentList.size() != 0) {
 			mViewHolder.vueWndowCommentImg.setImageResource(R.drawable.comment);
 		} else {
 			mViewHolder.vueWndowCommentImg
@@ -466,7 +458,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
 		}
 		Log.i("imagedispissue", "imagedispissue0_2");
-		mViewHolder.commentCount.setText((mShowingList.size() + " Comments"));
+		mViewHolder.commentCount.setText((mShowingCommentList.size() + " Comments"));
 		mViewHolder.bookMarkCount.setText("" + mBookmarksCount);
 		mViewHolder.likeCount.setText("" + mLikes);
 		mViewHolder.imgContentlay.setVisibility(View.VISIBLE);
@@ -625,8 +617,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			mViewHolder.edtCommentLay.setVisibility(View.GONE);
 			// image content gone
 		} else if (position == mListCount - 1) {
+			Log.i("entercommentclick", "entercommentclick 3");
 			mViewHolder.separator.setVisibility(View.GONE);
-
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
 			mViewHolder.vueCommentheader.setVisibility(View.GONE);
 			mViewHolder.commentContentlay.setVisibility(View.GONE);
@@ -644,6 +636,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 
 						@Override
 						public void onClick(View v) {
+							Log.i("entercommentclick", "entercommentclick 1");
 							mViewHolder.edtCommentLay
 									.setVisibility(View.VISIBLE);
 							mViewHolder.enterCommentrellay
@@ -652,21 +645,24 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 									mViewHolder.enterCommentrellay,
 									mViewHolder.edtComment,
 									mViewHolder.commentSend,
-									mViewHolder.edtCommentLay);
+									mViewHolder.edtCommentLay,mListCount - 1,mViewHolder.textcount);
 						}
 					});
 		} else {
 			// first two views are image and comment layout. so use position - 2
 			// to display all the comments from start
-			if (position - mInitialCommentsToShowSize < mShowingList.size()) {
-				mViewHolder.userComment.setText(mShowingList.get(position
-						- mInitialCommentsToShowSize));
-				mViewHolder.userPic
+			if (position - mInitialCommentsToShowSize < mShowingCommentList.size()) {
+				Comment comment = mShowingCommentList.get(position
+						- mInitialCommentsToShowSize);
+				mViewHolder.userComment.setText(comment.mComment);
+					mViewHolder.userPic
 						.setImageUrl(
-								"https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50",
+								comment.mComenterUrl,
 								mImageLoader);
-				//TODO: uncomment below code when user pic is available in commenter object.
-				//mViewHolder.userPic.setImageUrl(mShowingListCommenterUrl.get(position), mImageLoader);
+				// TODO: uncomment below code when user pic is available in
+				// commenter object.
+				// mViewHolder.userPic.setImageUrl(mShowingListCommenterUrl.get(position),
+				// mImageLoader);
 			}
 
 			mViewHolder.imgContentlay.setVisibility(View.GONE);
@@ -684,13 +680,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				// mswipeListner.onResetAdapter();
 				mSetPager = false;
 				if (mListCount == (mShowFixedRowCount + mInitialCommentsToShowSize)) {
-					mListCount = mShowingList.size() + mShowFixedRowCount;
+					mListCount = mShowingCommentList.size() + mShowFixedRowCount;
 				} else {
-					if (mShowingList.size() > 2) {
+					if (mShowingCommentList.size() > 2) {
 						mListCount = mShowFixedRowCount
 								+ mInitialCommentsToShowSize;
 					} else {
-						mListCount = mShowingList.size() + mShowFixedRowCount;
+						mListCount = mShowingCommentList.size() + mShowFixedRowCount;
 					}
 				}
 				mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
@@ -747,7 +743,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		});
 		return convertView;
 	}
-
+ 
 	public void notifyAdapter() {
 		Log.i("editiconshowing",
 				"editiconshowing in adapter  notify adapters: ");
@@ -860,21 +856,28 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				ArrayList<ImageComments> imgComments = getItem(
 						mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mCommentsList;
-				if (mShowingList == null) {
+				prepareCommentList(imgComments);
+			/*	if (mShowingList == null) {
 					mShowingList = new ArrayList<String>();
 					mShowingListCommenterUrl = new ArrayList<String>();
+					mShowingCommentList = new ArrayList<Comment>();
 				} else if (mShowingList.size() > 0) {
 					mShowingList.clear();
 					mShowingListCommenterUrl.clear();
+					mShowingCommentList.clear();
 				}
 				for (ImageComments comment : imgComments) {
 					mShowingList.add(comment.mComment);
 					mShowingListCommenterUrl.add(comment.mCommenterUrl);
-				}
+					Comment showComment = new Comment();
+					showComment.mComenterUrl = comment.mCommenterUrl;
+					showComment.mComment = comment.mComment;
+					mShowingCommentList.add(showComment);
+				}*/
 
-				if (mShowingList.size() < mShowFixedRowCount) {
+				if (mShowingCommentList.size() < mShowFixedRowCount) {
 
-					mListCount = mShowFixedRowCount + mShowingList.size();
+					mListCount = mShowFixedRowCount + mShowingCommentList.size();
 				} else {
 					mListCount = mShowFixedRowCount
 							+ mInitialCommentsToShowSize;
@@ -1058,57 +1061,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		}
 	}
 
-	public void setAisleBrowserObjectsNull() {/*
-											 * 
-											 * if (mViewHolder != null &&
-											 * mViewHolder.aisleContentBrowser
-											 * != null) { if (mCommentsMapList
-											 * != null) for (int i = 0; i <
-											 * mCommentsMapList.size(); i++) {
-											 * mCommentsMapList.remove(i); }
-											 * mCommentsMapList = null;
-											 * mViewHolder.aisleContentBrowser.
-											 * setReferedObjectsNull();
-											 * mViewLoader.clearBrowser(getItem(
-											 * mCurrentAislePosition)
-											 * .getImageList());
-											 * ScaledImageViewFactory
-											 * mViewFactory =
-											 * ScaledImageViewFactory
-											 * .getInstance(mContext); for (int
-											 * i = 0; i <
-											 * mViewHolder.aisleContentBrowser
-											 * .getChildCount(); i++) {
-											 * mViewFactory
-											 * .returnUsedImageView(
-											 * (ScaleImageView)
-											 * mViewHolder.aisleContentBrowser
-											 * .getChildAt(i));
-											 * Log.i("bitmap reclying",
-											 * "bitmap reclying  in adapter"); }
-											 * if
-											 * (mViewHolder.aisleContentBrowser
-											 * != null) { ContentAdapterFactory
-											 * mContentAdapterFactory =
-											 * ContentAdapterFactory
-											 * .getInstance(mContext);
-											 * mContentAdapterFactory
-											 * .returnUsedAdapter
-											 * (mViewHolder.aisleContentBrowser
-											 * .getCustomAdapter());
-											 * mViewHolder.
-											 * aisleContentBrowser.setCustomAdapter
-											 * (null);
-											 * mViewHolder.aisleContentBrowser
-											 * .removeAllViews();
-											 * mViewHolder.aisleContentBrowser =
-											 * null; }
-											 * 
-											 * //
-											 * mViewHolder.aisleContentBrowser
-											 * .removeAllViews(); }
-											 */
-	}
+	public void setAisleBrowserObjectsNull() { }
 
 	public void addAisleToContentWindow() {
 		if (mViewHolder != null) {
@@ -1130,6 +1083,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	}
 
 	public void updateAisleListAdapter() {
+		
 		int imageListSize = getItem(mCurrentAislePosition).getImageList()
 				.size();
 		VueApplication.getInstance().setClickedWindowCount(imageListSize);
@@ -1380,13 +1334,32 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	public void updateListCount(String newComment) {
 		mListCount = mListCount + 1;
 		// mShowingList.add(0,newComment);
-		Log.i("sizeoflist", "sizeoflist: " + mShowingList.size());
+		Log.i("sizeoflist", "sizeoflist: " + mShowingCommentList.size());
 	}
 
 	@SuppressWarnings("unchecked")
 	public void createComment(String commentString) {
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(
+					VueApplication.getInstance(),
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String commenterUrl = null;
+		if (storedVueUser != null) {
+			commenterUrl =  storedVueUser.getUserImageURL()  ;
+		}
+         if(commenterUrl != null && commenterUrl.length() < 6){
+        	 commenterUrl = "https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50";
+         } else if(commenterUrl == null){
+        	 commenterUrl = "https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50";
+         }
+		
 		ImageComments comments = new ImageComments();
 		comments.mComment = commentString;
+		comments.mCommenterUrl = commenterUrl;
 
 		if (commentString == null || commentString.length() < 1) {
 			return;
@@ -1403,41 +1376,41 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 
 		ArrayList<ImageComments> imgComments = mCommentsMapList
 				.get(mCurrentDispImageIndex);
-		if (mShowingList == null) {
-			mShowingList = new ArrayList<String>();
-			mShowingListCommenterUrl = new ArrayList<String>();
-		} else if (mShowingList.size() > 0) {
-			mShowingList.clear();
-			mShowingListCommenterUrl.clear();
-		}
-		for (ImageComments comment : imgComments) {
-			mShowingList.add(comment.mComment);
-			mShowingListCommenterUrl.add(comment.mCommenterUrl);
-		}
-		if (mShowingList.size() < mShowFixedRowCount) {
-			mListCount = mShowingList.size() + mShowFixedRowCount;
+	
+		prepareCommentList(imgComments);
+		if (mShowingCommentList.size() < mShowFixedRowCount) {
+			mListCount = mShowingCommentList.size() + mShowFixedRowCount;
 		} else {
 			mListCount = mShowFixedRowCount + mInitialCommentsToShowSize;
 		}
-		final ImageComment imgComment = new ImageComment();
-		imgComment.setComment(commentString);
-		imgComment.setCommenterFirstName(getItem(mCurrentAislePosition)
+		final ImageCommentRequest imgComment = new ImageCommentRequest();
+		
+		/*imgComment.setCommenterFirstName(getItem(mCurrentAislePosition)
 				.getAisleContext().mFirstName);
 		imgComment.setCommenterLastName(getItem(mCurrentAislePosition)
-				.getAisleContext().mLastName);
-		imgComment.setOwnerImageId(Long
-				.parseLong(getItem(mCurrentAislePosition).getImageList().get(
-						mCurrentDispImageIndex).mId));
-		imgComment.setCreatedTimestamp(System.currentTimeMillis());
+				.getAisleContext().mLastName);*/
+		imgComment.setComment(commentString);
+		imgComment. setLastModifiedTimestamp(System.currentTimeMillis());
 		imgComment.setOwnerUserId(Long.parseLong(VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance()).getNetworkHandler()
 				.getUserId()));
 		imgComment.setOwnerImageId(Long
 				.parseLong(getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mId));
-
-		System.out.println("Comment Response: aisleId "
-				+ getItem(mCurrentAislePosition).getAisleId());
+/** Save the image comment and verify the save *//*
+	 new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+			try {
+				testCreateImageComment(imgComment);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+	}).start();*/
 		new Thread(new Runnable() {
 
 			@Override
@@ -1465,7 +1438,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		}
 		ArrayList<ImageComments> imgComments = (ArrayList<ImageComments>) mCommentsMapList
 				.get(mCurrentDispImageIndex);
-		if (mShowingList == null) {
+		prepareCommentList(imgComments);
+	/*	if (mShowingList == null) {
 			mShowingList = new ArrayList<String>();
 			mShowingListCommenterUrl = new ArrayList<String>();
 		} else if (mShowingList.size() > 0) {
@@ -1475,9 +1449,27 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		for (ImageComments comment : imgComments) {
 			mShowingList.add(comment.mComment);
 			mShowingListCommenterUrl.add(comment.mCommenterUrl);
-		}
+		}*/
 	}
-
+  private void prepareCommentList(ArrayList<ImageComments> imgComments){
+		if (mShowingCommentList == null) {
+			mShowingCommentList = new ArrayList<Comment>();
+		} else if (mShowingCommentList.size() > 0) {
+			mShowingCommentList.clear();
+		}
+		for (ImageComments comment : imgComments) {
+			Comment showComment = new Comment();
+			showComment.mComment = comment.mComment;
+			showComment.mComenterUrl = comment.mCommenterUrl;
+			
+			if(showComment.mComenterUrl == null || showComment.mComenterUrl.length()< 8){
+					//place holder for the profile picture.
+				showComment.mComenterUrl = "https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50";
+			}
+			
+			mShowingCommentList.add(showComment);
+		}
+  }
 	private void writeToSdcard(String message) {
 
 		String path = Environment.getExternalStorageDirectory().toString();
@@ -1970,4 +1962,55 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			}
 		}, 1000);
 	}
+
+    public static ImageComment testCreateImageComment(
+                     ImageCommentRequest comment ) throws Exception{
+    	
+    	VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(
+					VueApplication.getInstance(),
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String userId = null;
+		if (storedVueUser != null) {
+			userId = Long.valueOf(storedVueUser.getId()).toString();
+			storedVueUser.getUserImageURL();
+		}
+		 
+    	
+    	
+            ImageComment createdImageComment = null;
+            ObjectMapper mapper =
+                            new ObjectMapper();
+
+            URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL +
+                            "/" + userId);
+            HttpPut httpPut = new HttpPut(url.toString());
+            StringEntity entity = new StringEntity(mapper.writeValueAsString(comment));
+            System.out.println("ImageComment create request: "+mapper.writeValueAsString(comment));
+            entity.setContentType("application/json;charset=UTF-8");
+            entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
+            httpPut.setEntity(entity);
+
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpResponse response = httpClient.execute(httpPut);
+            if(response.getEntity()!=null &&
+                            response.getStatusLine().getStatusCode() == 200) {
+            	    
+                    String responseMessage = EntityUtils.toString(response.getEntity());
+                	Log.i("imageComment", "imageComment success response1234: "+responseMessage);
+                    System.out.println("Response: "+responseMessage);
+                    if (responseMessage.length() > 0)
+                    {
+                            createdImageComment = (new ObjectMapper()).readValue(responseMessage, ImageComment.class);
+                    }
+            } else {
+            	Log.i("imageComment", "imageComment success response: failed "+ response.getStatusLine().getStatusCode());
+            }
+
+            return createdImageComment;
+    }
 }
