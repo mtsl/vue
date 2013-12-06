@@ -9,6 +9,7 @@ public class AisleComment {
       String commenterLastName;
       Long lastModifiedTimestamp;
       Long createdTimestamp;
+ 
       
       public AisleComment() {
       }

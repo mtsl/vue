@@ -4,6 +4,7 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
@@ -43,13 +45,14 @@ import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
- 
+
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
+import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -61,7 +64,7 @@ import com.lateralthoughts.vue.utils.Utils;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment */{
+public class VueAisleDetailsViewFragment extends Fragment {
 	private Context mContext;
 	public static final String SCREEN_NAME = "DETAILS_SCREEN";
 	public static final String SWIPE_LEFT_TO_RIGHT = "LEFT";
@@ -94,6 +97,7 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 	String mFindAtUrl;
 	LinearLayout mEditIconLay;
 	AisleDetailsViewActivity mAisleDetailsActivity = null;
+	InputMethodManager mInputMethodManager;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -120,8 +124,9 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 		// this code is for viewflipper use of detailsscreen viewpager
 		mAisleDetailsAdapter = new AisleDetailsViewAdapterPager(mContext,
 				mSwipeListener, mListCount, null, new ShareViaVueListner());
-		
-		Log.i("mAisleDetailsAdapter", "mAisleDetailsAdapter value: "+mAisleDetailsAdapter);
+
+		Log.i("mAisleDetailsAdapter", "mAisleDetailsAdapter value: "
+				+ mAisleDetailsAdapter);
 
 	}
 
@@ -237,14 +242,16 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 							mEditTextFindAt.getApplicationWindowToken(),
 							InputMethodManager.SHOW_FORCED, 0);
 				}
+				Log.i("find at", "find at test1 url " + url);
 				if (url != null && url.startsWith("http")) {
-					Uri uriUrl = Uri.parse(url.trim());
-					Log.i("browserUrl", "browserUrl: " + url);
-					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
-							uriUrl);
-					startActivity(launchBrowser);
+					/*
+					 * Uri uriUrl = Uri.parse(url.trim()); Log.i("browserUrl",
+					 * "browserUrl: " + url); Intent launchBrowser = new
+					 * Intent(Intent.ACTION_VIEW, uriUrl);
+					 * startActivity(launchBrowser);
+					 */
 				} else {
-					Toast.makeText(mContext, "There is no url",
+					Toast.makeText(mContext, "No source url found",
 							Toast.LENGTH_SHORT).show();
 				}
 
@@ -318,7 +325,6 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 		});
 		RelativeLayout bottomBar = (RelativeLayout) mDetailsContentView
 				.findViewById(R.id.vue_bottom_bar);
-		// bottomBar.getBackground().setAlpha(25);
 		mAddVueAisle = (ImageView) mDetailsContentView
 				.findViewById(R.id.vue_aisle);
 		mAddVueAisle.setOnClickListener(new OnClickListener() {
@@ -326,7 +332,6 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 			@Override
 			public void onClick(View v) {
 				FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
-				// TODO: FIND AT SHOULD GO DIRIECTLY TO THE BROWSER
 				String url = mFindAtUrl;
 				if (url != null && url.startsWith("http")) {
 					mAisleDetailsAdapter.closeKeyboard();
@@ -335,19 +340,10 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
 							uriUrl);
 					startActivity(launchBrowser);
+				} else {
+					Toast.makeText(mContext, "No source url found",
+							Toast.LENGTH_SHORT).show();
 				}
-
-				/*
-				 * final InputMethodManager inputMethodManager =
-				 * (InputMethodManager) getActivity()
-				 * .getSystemService(Context.INPUT_METHOD_SERVICE);
-				 * inputMethodManager.toggleSoftInputFromWindow(
-				 * mEditTextFindAt.getApplicationWindowToken(),
-				 * InputMethodManager.SHOW_FORCED, 0);
-				 * mDetailsFindAtPopup.setVisibility(View.VISIBLE);
-				 * mEditTextFindAt.requestFocus();
-				 */
-
 			}
 		});
 
@@ -591,7 +587,7 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 		@Override
 		public void onAddCommentClick(final RelativeLayout view,
 				final EditText editText, final ImageView sendComment,
-				final FrameLayout edtCommentLay) {
+				final FrameLayout edtCommentLay, int position,  final TextView textCount) {
 			mAisleDetailsList
 					.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
 			mAisleDetailsList.setOnTouchListener(new OnTouchListener() {
@@ -611,25 +607,22 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 					return false;
 				}
 			});
-			view.setVisibility(View.GONE);
+			// view.setVisibility(View.GONE);
 			final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
 					.getSystemService(Context.INPUT_METHOD_SERVICE);
 			inputMethodManager.toggleSoftInputFromWindow(
 					editText.getApplicationWindowToken(),
 					InputMethodManager.SHOW_FORCED, 0);
-
 			editText.requestFocus();
-			final InputMethodManager mInputMethodManager = (InputMethodManager) getActivity()
+		  mInputMethodManager = (InputMethodManager) getActivity()
 					.getSystemService(Context.INPUT_METHOD_SERVICE);
 			mInputMethodManager.showSoftInput(editText, 0);
-
 			edtCommentLay.setVisibility(View.VISIBLE);
 			editText.setVisibility(View.VISIBLE);
 			editText.setCursorVisible(true);
 			editText.setTextColor(Color.parseColor(getResources().getString(
 					R.color.black)));
 			editText.requestFocus();
-
 			((EditTextBackEvent) editText)
 					.setonInterceptListen(new OnInterceptListener() {
 
@@ -640,15 +633,76 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 
 						@Override
 						public void onKeyBackPressed() {
+							if(editText.getText().toString().length() < 1){
+								editText.setText("");
+								edtCommentLay.setVisibility(View.GONE);
+								view.setVisibility(View.VISIBLE);
+								new Handler().postDelayed(new Runnable() {
 
-							mInputMethodManager.hideSoftInputFromWindow(
-									editText.getWindowToken(), 0);
+									@Override
+									public void run() {
+										mInputMethodManager.hideSoftInputFromWindow(
+												editText.getWindowToken(), 0);
+										mAisleDetailsAdapter.notifyDataSetChanged();
 
-							editText.setText("");
-							edtCommentLay.setVisibility(View.GONE);
-							view.setVisibility(View.VISIBLE);
-							mAisleDetailsAdapter.notifyDataSetChanged();
+									}
+								}, 100);
+								
+								new Handler().postDelayed(new Runnable() {
 
+									@Override
+									public void run() {
+										mAisleDetailsAdapter.notifyDataSetChanged();
+									}
+								}, 500);
+								return;
+							}
+							
+							final Dialog dialog = new Dialog(getActivity(), R.style.Theme_Dialog_Translucent);
+							dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+							dialog.setContentView(R.layout.vue_popup);
+							final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+							TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
+							TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+								messagetext.setText(getResources().getString(
+										R.string.discard_comment));
+							yesButton.setText("Yes");
+							noButton.setText("No");
+							yesButton.setOnClickListener(new OnClickListener() {
+								public void onClick(View v) {
+									dialog.dismiss();
+									/*mInputMethodManager.hideSoftInputFromWindow(
+											editText.getWindowToken(), 0);*/
+									editText.setText("");
+									edtCommentLay.setVisibility(View.GONE);
+									view.setVisibility(View.VISIBLE);
+									new Handler().postDelayed(new Runnable() {
+
+										@Override
+										public void run() {
+											mInputMethodManager.hideSoftInputFromWindow(
+													editText.getWindowToken(), 0);
+											mAisleDetailsAdapter.notifyDataSetChanged();
+
+										}
+									}, 100);
+									
+									new Handler().postDelayed(new Runnable() {
+
+										@Override
+										public void run() {
+											mAisleDetailsAdapter.notifyDataSetChanged();
+										}
+									}, 500);
+								}
+							});
+							noButton.setOnClickListener(new OnClickListener() {
+								public void onClick(View v) {
+									dialog.dismiss();
+									mInputMethodManager.showSoftInput(editText, 0);
+								}
+							});
+							dialog.show();
 						}
 
 						@Override
@@ -730,8 +784,10 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 						int before, int count) {
 					if (s != null && s.length() >= 1) {
 						sendComment.setVisibility(View.VISIBLE);
+						textCount.setText(s.length()+"");
 					} else {
 						sendComment.setVisibility(View.GONE);
+						textCount.setText("");
 					}
 				}
 
@@ -745,8 +801,10 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 				public void afterTextChanged(Editable s) {
 					if (s != null && s.length() >= 1) {
 						sendComment.setVisibility(View.VISIBLE);
+						textCount.setText(s.length()+"");
 					} else {
 						sendComment.setVisibility(View.GONE);
+						textCount.setText("");
 					}
 				}
 			});
@@ -803,26 +861,30 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 		inputMethodManager.toggleSoftInputFromWindow(
 				editText.getApplicationWindowToken(),
 				InputMethodManager.SHOW_FORCED, 0);
-		/*
-		 * @SuppressWarnings("unchecked") ArrayList<String> commentList =
-		 * (ArrayList<String>) mAisleDetailsAdapter.mCommentsMapList
-		 * .get(mAisleDetailsAdapter.mCurrentDispImageIndex);
-		 */
 		if (etText != null) {
-
 			mAisleDetailsAdapter.updateListCount(etText);
 			mAisleDetailsAdapter.createComment(etText);
 		}
-		/*
-		 * mAisleDetailsAdapter.sendDataToDb(
-		 * mAisleDetailsAdapter.mCurrentDispImageIndex,
-		 * mAisleDetailsAdapter.CHANGE_COMMENT);
-		 */
-		// mAisleDetailsAdapter.mShowingList = commentList;
 		editText.setVisibility(View.GONE);
 		editText.setText("");
 		view.setVisibility(View.VISIBLE);
-		mAisleDetailsAdapter.notifyDataSetChanged();
+		new Handler().postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				mAisleDetailsAdapter.notifyDataSetChanged();
+				
+			}
+		}, 100);
+		
+		new Handler().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				mAisleDetailsAdapter.notifyDataSetChanged();
+
+			}
+		}, 500);
 	}
 
 	protected MotionEvent mLastOnDownEvent = null;
@@ -837,8 +899,8 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 	}
 
 	public void setAisleContentListenerNull() {
-		if(mAisleDetailsAdapter != null)
-		mAisleDetailsAdapter.setAisleBrowserObjectsNull();
+		if (mAisleDetailsAdapter != null)
+			mAisleDetailsAdapter.setAisleBrowserObjectsNull();
 	}
 
 	@Override
@@ -1073,6 +1135,7 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 	}
 
 	public void updateAisleScreen() {
+		
 		mAisleDetailsAdapter.updateAisleListAdapter();
 	}
 
@@ -1081,5 +1144,25 @@ public class VueAisleDetailsViewFragment extends /*Sherlock*/Fragment/* Fragment
 			mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
 		}
 		mAisleDetailsActivity.sendDataToDataentryScreen(null);
+	}
+	private void showDiscardOtherAppImageDialog(
+			final String addImageCancelAlertMesg) {
+		final Dialog dialog = new Dialog(getActivity(), R.style.Theme_Dialog_Translucent);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.vue_popup);
+		final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+		TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
+		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+			messagetext.setText(getResources().getString(
+					R.string.discard_dataentry_screen_changes));
+		yesButton.setText("Yes");
+		noButton.setText("No");
+		yesButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) { }
+		});
+		noButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) { }
+		});
+		dialog.show();
 	}
 }

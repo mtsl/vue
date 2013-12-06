@@ -41,6 +41,8 @@ public class VueApplication extends Application {
 	public boolean mShareViaVueClickedFlag = false;
 	public String mShareViaVueClickedAisleId = null;
 	public String mShareViaVueClickedImageId = null;
+	public boolean mNewViewSelection = false;
+	public String mNewlySelectedView;
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
 	public ArrayList<ShoppingApplicationDetails> mMoreInstalledApplicationDetailsList;
 	public static final int[] POPUP_ITEM_DRAWABLES = {

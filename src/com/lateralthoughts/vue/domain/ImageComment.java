@@ -8,7 +8,9 @@ public class ImageComment {
     String commenterFirstName;
     String commenterLastName;
     Long lastModifiedTimestamp;
-    Long createdTimestamp;
+	Long createdTimestamp;
+    String imageCommentOwnerImageURL;
+    
     
     public ImageComment() {
     }
@@ -76,4 +78,12 @@ public class ImageComment {
     public void setCommenterLastName(String commenterLastName) {
             this.commenterLastName = commenterLastName;
     }
+    
+    public String getImageCommentOwnerImageURL() {
+		return imageCommentOwnerImageURL;
+	}
+
+	public void setImageCommentOwnerImageURL(String imageCommentOwnerImageURL) {
+		this.imageCommentOwnerImageURL = imageCommentOwnerImageURL;
+	}
 }

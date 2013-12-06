@@ -1,54 +1,35 @@
-<!-- <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-     <fragment android:name="com.lateralthoughts.vue.VueLandingAislesFragment"
-        android:id="@+id/aisles_view_fragment"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
-    
-        <ProgressBar
-        android:id="@+id/adprogress_progressBar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" 
-        style="?android:attr/progressBarStyleLarge" 
-        android:layout_centerInParent="true"
-        android:layout_margin="10dp"
-        android:visibility="invisible"
-    />  -->
-  
-        
-        
-        <android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
+
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- android:layout_gravity="start" tells DrawerLayout to treat
+    <!--
+         android:layout_gravity="start" tells DrawerLayout to treat
          this as a sliding drawer on the left side for left-to-right
          languages and on the right side for right-to-left languages.
          The drawer is given a fixed width in dp and extends the full height of
          the container. A solid background is used for contrast
-         with the content view. -->
-     
-       <FrameLayout
+         with the content view.
+    -->
+
+    <FrameLayout
         android:id="@+id/content_frame2"
-         android:layout_gravity="start"
-         android:background="#ffffff"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-         <fragment android:name="com.lateralthoughts.vue.VueListFragment"
-         android:id="@+id/listfrag"
-         android:layout_gravity="start"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-              </FrameLayout>
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#ffffff" >
+
+        <fragment
+            android:id="@+id/listfrag"
+            android:name="com.lateralthoughts.vue.VueListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start" />
+    </FrameLayout>
+
 </android.support.v4.widget.DrawerLayout>
-        
-  

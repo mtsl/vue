@@ -49,6 +49,7 @@ import com.lateralthoughts.vue.VueAisleDetailsViewFragment.ShareViaVueListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
@@ -292,7 +293,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		AisleContentBrowser aisleContentBrowser;
 		TextView aisleDescription;
 		TextView aisleOwnersName;
-		TextView aisleContext, commentCount, likeCount;
+		TextView aisleContext, commentCount, likeCount,textcount;
 		TextView bookMarkCount;
 		ImageView profileThumbnail;
 		ImageView vueWindowBookmarkImg;
@@ -362,6 +363,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					.findViewById(R.id.bookmarklay);
 			mViewHolder.enterCommentrellay = (RelativeLayout) convertView
 					.findViewById(R.id.entercmentrellay);
+			mViewHolder.textcount = (TextView) convertView.findViewById(R.id.textcount);
 
 			mViewHolder.edtComment = (EditText) convertView
 					.findViewById(R.id.edtcomment);
@@ -652,7 +654,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 									mViewHolder.enterCommentrellay,
 									mViewHolder.edtComment,
 									mViewHolder.commentSend,
-									mViewHolder.edtCommentLay);
+									mViewHolder.edtCommentLay, mListCount - 1,mViewHolder.textcount);
 						}
 					});
 		} else {
@@ -693,6 +695,14 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 				}
 				mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
 				notifyDataSetChanged();
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						notifyDataSetChanged();
+						
+					}
+				}, 500);
 			}
 		});
 		mViewHolder.bookmarklay.setOnClickListener(new OnClickListener() {
@@ -1428,16 +1438,16 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		} else {
 			mListCount = mShowFixedRowCount + mInitialCommentsToShowSize;
 		}
-		final ImageComment imgComment = new ImageComment();
+		final ImageCommentRequest imgComment = new ImageCommentRequest();
 		imgComment.setComment(commentString);
-		imgComment.setCommenterFirstName(getItem(mCurrentAislePosition)
+	/*	imgComment.setCommenterFirstName(getItem(mCurrentAislePosition)
 				.getAisleContext().mFirstName);
 		imgComment.setCommenterLastName(getItem(mCurrentAislePosition)
-				.getAisleContext().mLastName);
+				.getAisleContext().mLastName);*/
 		imgComment.setOwnerImageId(Long
 				.parseLong(getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mId));
-		imgComment.setCreatedTimestamp(System.currentTimeMillis());
+		imgComment. setLastModifiedTimestamp(System.currentTimeMillis());
 		imgComment.setOwnerUserId(Long.parseLong(VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance()).getNetworkHandler()
 				.getUserId()));

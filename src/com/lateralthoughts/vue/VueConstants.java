@@ -139,6 +139,7 @@ public class VueConstants {
 	public static final String VUE_APP_USEROBJECT__FILENAME = "vueuser.ser";
 	public static final String VUE_APP_USERPROFILEOBJECT__FILENAME = "vueuserprofile.ser";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
+	public static final String IMAGE_COMMENT_OWNER_IMAGE_URL = "imageCommentOwnerImageURL";
 
 	// Column names for lookingFor, occasion, category table.
 	public static final String KEYWORD = "keyWord";
@@ -254,4 +255,5 @@ public class VueConstants {
 	public static final String LAST_MODIFIED_TIME = "lastModifiedTimestamp";
 	public static final String LIKED = "liked";
 	public static final String BOOKMARKED = "bookmarked";
+	public static final String COMMENTER_URL = "commenterUrl";
 }

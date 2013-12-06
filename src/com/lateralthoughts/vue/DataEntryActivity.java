@@ -58,9 +58,8 @@ public class DataEntryActivity extends /*Base*/Activity {
 	private ProgressDialog mPd;
 	private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
-    private FrameLayout content_frame2;
+    private FrameLayout mContent_frame2;
+    private  EditText mSearchEdit;
  
 
 	@Override
@@ -69,7 +68,7 @@ public class DataEntryActivity extends /*Base*/Activity {
 
 		setContentView(R.layout.date_entry_main);
 		initialize();
-		content_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
+		mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
 		  mSlidListFrag = (VueListFragment) getFragmentManager()
 					.findFragmentById(R.id.listfrag);
 		mVueDataentryActionbarView = LayoutInflater.from(this).inflate(
@@ -128,11 +127,6 @@ public class DataEntryActivity extends /*Base*/Activity {
 			public void onClick(View v) {
 				if (mDeletedImagesPositionsList != null
 						&& mDeletedImagesPositionsList.size() > 0) {
-				/*	if (mDataEntryFragment == null) {
-						mDataEntryFrag = (DataEntryFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.create_aisles_view_fragment);
-					}*/
 					mDataEntryFragment.deleteImage(mDeletedImagesPositionsList);
 				} else {
 					Toast.makeText(DataEntryActivity.this,
@@ -144,10 +138,6 @@ public class DataEntryActivity extends /*Base*/Activity {
 		mVueDataentryKeyboardCancel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-			/*	if (mDataEntryFragment == null) {
-					mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.create_aisles_view_fragment);
-				}*/
 				if (mDataEntryFragment.mLookingForPopup.getVisibility() == View.VISIBLE) {
 					mDataEntryFragment
 							.lookingForInterceptListnerFunctionality();
@@ -256,10 +246,6 @@ public class DataEntryActivity extends /*Base*/Activity {
 
 			@Override
 			public void onClick(View v) {
-			/*	if (mDataEntryFragment == null) {
-					mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.create_aisles_view_fragment);
-				}*/
 				mDataEntryFragment.hideAllEditableTextboxes();
 			}
 		});
@@ -274,10 +260,6 @@ public class DataEntryActivity extends /*Base*/Activity {
 		mVueDataentryPost.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				/*if (mDataEntryFragment == null) {
-					mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.create_aisles_view_fragment);
-				}*/
 				Utils.putTouchToChnageImagePosition(DataEntryActivity.this, -1);
 				Utils.putTouchToChnageImageTempPosition(DataEntryActivity.this,
 						-1);
@@ -290,19 +272,15 @@ public class DataEntryActivity extends /*Base*/Activity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						//getSlidingMenu().toggle();
+					 
+						 
 					}
 				});
 
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
-			Log.e("cs", "30");
 			String aisleImagePath = b
 					.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-			/*if (mDataEntryFragment == null) {
-				mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.create_aisles_view_fragment);
-			}*/
 			mDataEntryFragment.mFromDetailsScreenFlag = b.getBoolean(
 					VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG,
 					false);
@@ -490,17 +468,13 @@ public class DataEntryActivity extends /*Base*/Activity {
 		}
 	}
 	private void initialize(){
-	    mTitle = mDrawerTitle = getTitle();
 	    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 	    // set a custom shadow that overlays the main content when the drawer opens
 	    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 	    // set up the drawer's list view with items and click listener
-
-
 	    // enable ActionBar app icon to behave as action to toggle nav drawer
-	    getActionBar().setDisplayHomeAsUpEnabled(true);
+	    getActionBar().setDisplayHomeAsUpEnabled(false);
 	    getActionBar().setHomeButtonEnabled(true);
-
 	    // ActionBarDrawerToggle ties together the the proper interactions
 	    // between the sliding drawer and the action bar app icon
 	    mDrawerToggle = new ActionBarDrawerToggle(
@@ -511,61 +485,61 @@ public class DataEntryActivity extends /*Base*/Activity {
 	            R.string.drawer_close  /* "close drawer" description for accessibility */
 	            ) {
 	        public void onDrawerClosed(View view) {
-	            getActionBar().setTitle(mTitle);
+	    		final InputMethodManager mInputMethodManager = (InputMethodManager) DataEntryActivity.this
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSearchEdit.getWindowToken(), 0);
 	            invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 	            getActionBar().setCustomView(mVueDataentryActionbarView);
 	    		getActionBar().setDisplayShowCustomEnabled(true);
 	    		getActionBar().setDisplayShowHomeEnabled(false);
 	        }
 	       
-	        public void onDrawerOpened(View drawerView) {
-	            getActionBar().setTitle(mDrawerTitle); 
-	            invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-	            
-	   		 
-			    // add the custom view to the action bar
-			 getActionBar().setCustomView(R.layout.actionbar_view); 
-			 getActionBar().getCustomView().findViewById(R.id.home).setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					mDrawerLayout.closeDrawer(content_frame2);
-					
-				}
-			});
-			 final EditText searchEdit =(EditText)getActionBar().getCustomView().findViewById(R.id.searchfield);
-			 searchEdit.setActivated(true);
-			 getActionBar().getCustomView().findViewById(R.id.search_cancel).setOnClickListener(new OnClickListener() {
-					
+			public void onDrawerOpened(View drawerView) {
+				invalidateOptionsMenu(); // creates call to
+											// onPrepareOptionsMenu()
+				// add the custom view to the action bar
+				getActionBar().setCustomView(R.layout.actionbar_view);
+				getActionBar().getCustomView().findViewById(R.id.home)
+						.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								mDrawerLayout.closeDrawer(mContent_frame2);
+							}
+						});
+				mSearchEdit = (EditText) getActionBar().getCustomView()
+						.findViewById(R.id.searchfield);
+				mSearchEdit.setActivated(true);
+				getActionBar().getCustomView().findViewById(R.id.search_cancel)
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+
+								mSearchEdit.setText("");
+							}
+						});
+				EditText search = (EditText) getActionBar().getCustomView()
+						.findViewById(R.id.searchfield);
+				search.setOnEditorActionListener(new OnEditorActionListener() {
+
 					@Override
-					public void onClick(View v) {
-						 
-						searchEdit.setText("");
+					public boolean onEditorAction(TextView v, int actionId,
+							KeyEvent event) {
+						/*
+						 * Toast.makeText( VueLandingPageActivity.this,
+						 * "Search triggered", Toast.LENGTH_LONG).show();
+						 */
+						return false;
 					}
 				});
-			    EditText search = (EditText) getActionBar().getCustomView().findViewById(R.id.searchfield);
-			    search.setOnEditorActionListener(new OnEditorActionListener() {
 
-			      @Override
-			      public boolean onEditorAction(TextView v, int actionId,
-			          KeyEvent event) {
-			    /*    Toast.makeText( VueLandingPageActivity.this, "Search triggered",
-			            Toast.LENGTH_LONG).show();*/
-			        return false;
-			      }
-			    });
-		 
-	        }
+			}
 	    };
 	    mDrawerLayout.setDrawerListener(mDrawerToggle);
 	    mDataEntryFragment =(DataEntryFragment) getFragmentManager()
 				.findFragmentById(
 						R.id.create_aisles_view_fragment);
-	    
-	    		/* new  DataEntryFragment();
-		FragmentManager fragmentManager = getFragmentManager();
-		fragmentManager.beginTransaction()
-				.replace(R.id.content_frame, mDataEntryFragment).commit();*/
 		mDrawerLayout.setFocusableInTouchMode(false);
 	}
 	@Override
@@ -592,11 +566,6 @@ public class DataEntryActivity extends /*Base*/Activity {
 				if (b != null) {
 					String imagePath = b
 							.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-				/*	if (mDataEntryFragment == null) {
-						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.create_aisles_view_fragment);
-					}*/
 					if (Utils.getTouchToChangeFlag(DataEntryActivity.this)) {
 						Utils.putTouchToChnageImagePosition(
 								DataEntryActivity.this,
@@ -612,17 +581,12 @@ public class DataEntryActivity extends /*Base*/Activity {
 					&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 				if (data != null) {
 					if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
-					/*	mFrag.getFriendsList(data
-								.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));*/
+						mSlidListFrag.getFriendsList(data
+								.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
 					}
 				}
 			} else {
 				try {
-				/*	if (mDataEntryFragment == null) {
-						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.create_aisles_view_fragment);
-					}*/
 					if (mDataEntryFragment.mShare.mShareIntentCalled) {
 						mDataEntryFragment.mShare.mShareIntentCalled = false;
 						mDataEntryFragment.mShare.dismisDialog();
@@ -635,11 +599,6 @@ public class DataEntryActivity extends /*Base*/Activity {
 			e.printStackTrace();
 		}
 	}
-
-	public void showBezelMenu() {
-		//getSlidingMenu().toggle();
-	}
-
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -648,12 +607,11 @@ public class DataEntryActivity extends /*Base*/Activity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		Log.e("fff", "onkeyup");
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (mDrawerLayout.isDrawerOpen(content_frame2)) {
+			if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
 
 				if (!mSlidListFrag.listener.onBackPressed()) {
-					mDrawerLayout.closeDrawer(content_frame2);
+					mDrawerLayout.closeDrawer(mContent_frame2);
 				}
 
 			} else {
@@ -729,11 +687,6 @@ public class DataEntryActivity extends /*Base*/Activity {
 							DataEntryActivity.this, -1);
 					Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
 							false);
-				/*	if (mDataEntryFragment == null) {
-						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.create_aisles_view_fragment);
-					}*/
 					mDataEntryFragment
 							.addImageToAisleButtonClickFunctionality(true);
 				}

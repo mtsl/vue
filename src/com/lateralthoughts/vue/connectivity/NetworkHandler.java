@@ -49,6 +49,7 @@ import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -477,7 +478,7 @@ public class NetworkHandler {
 			@Override
 			public void run() {
 				try {
-					String userId = getUserId();
+					String userId =  getUserId();
 					Log.i("bookmarked aisle",
 							"bookmarked persist issue  userid: " + userId);
 					if (userId == null) {
@@ -559,7 +560,7 @@ public class NetworkHandler {
 		return false;
 	}
 
-	public String getUserId() {
+	public VueUser getUserObj() {
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(
@@ -571,12 +572,28 @@ public class NetworkHandler {
 		String userId = null;
 		if (storedVueUser != null) {
 			userId = Long.valueOf(storedVueUser.getId()).toString();
+			storedVueUser.getUserImageURL();
 		}
-		return userId;
+		return storedVueUser;
 
 	}
-
-	public ImageComment createImageComment(ImageComment comment)
+  public String getUserId(){
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(
+					VueApplication.getInstance(),
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String userId = null;
+		if (storedVueUser != null) {
+			userId = Long.valueOf(storedVueUser.getId()).toString();
+			storedVueUser.getUserImageURL();
+		}
+		return userId;
+  }
+	public ImageComment createImageComment(ImageCommentRequest comment)
 			throws Exception {
 		ImageComment createdImageComment = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -584,7 +601,7 @@ public class NetworkHandler {
 		if (VueConnectivityManager.isNetworkConnected(mContext)) {
 			Log.e("NetworkHandler", "Comments Issue: Network is there");
 			URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL + "/"
-					+ getUserId());
+					+ Long.valueOf(getUserObj().getId()).toString());
 			HttpPut httpPut = new HttpPut(url.toString());
 			StringEntity entity = new StringEntity(
 					mapper.writeValueAsString(comment));
@@ -603,6 +620,7 @@ public class NetworkHandler {
 				String responseMessage = EntityUtils.toString(response
 						.getEntity());
 				System.out.println("Comment Response: " + responseMessage);
+				Log.i("createimageCommenterUrl", "createimageCommenterUrl res: "+responseMessage);
 				if (responseMessage.length() > 0) {
 					Log.e("NetworkHandler",
 							"Comments Issue: responseMessage size is > 0 responseMessage: "
@@ -623,7 +641,12 @@ public class NetworkHandler {
 			Editor editor = mSharedPreferencesObj.edit();
 			editor.putBoolean(VueConstants.IS_COMMENT_DIRTY, true);
 			editor.commit();
-			DataBaseManager.getInstance(mContext).addComments(comment, true);
+			createdImageComment = new ImageComment();
+			createdImageComment.setComment(comment.getComment());
+			createdImageComment.setLastModifiedTimestamp(comment.getLastModifiedTimestamp());
+			createdImageComment.setOwnerImageId(comment.getOwnerImageId());
+			createdImageComment.setOwnerUserId(comment.getOwnerUserId());
+			DataBaseManager.getInstance(mContext).addComments(createdImageComment, true);
 		}
 		return createdImageComment;
 	}
