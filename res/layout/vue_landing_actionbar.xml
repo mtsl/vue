@@ -8,6 +8,7 @@
         android:id="@+id/vue_landing_actionbar_app_icon_layout"
         android:layout_width="48dip"
         android:layout_height="48dip"
+        android:visibility="gone"
         android:background="@drawable/vue_button_selector" >
 
         <ImageView
@@ -80,7 +81,7 @@
         android:id="@+id/data_entry_third_line_divider"
         android:layout_width="match_parent"
         android:layout_height="2dip"
-        android:layout_below="@+id/vue_landing_actionbar_app_icon_layout"
+        android:layout_below="@+id/vue_landing_actionbar_screen_name"
         android:background="#ADADAD" />
 
 </RelativeLayout>

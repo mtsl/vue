@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="4dip"
+            android:padding="16dp"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="horizontal"
             android:visibility="visible" >
@@ -39,6 +40,7 @@
             android:layout_below="@+id/mainheadingrow"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="2dp"
+            android:padding="16dp"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="horizontal"
             android:visibility="gone" >
@@ -70,6 +72,7 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/mainheadingrow"
             android:layout_marginLeft="8dip"
+            android:padding="16dp"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="vertical"
             android:visibility="gone" >
@@ -136,6 +139,7 @@
             android:layout_marginRight="8dip"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="vertical"
+            android:padding="16dp"
             android:visibility="gone" >
 
             <LinearLayout
@@ -214,7 +218,8 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/mainheadingrow"
             android:layout_marginRight="8dip"
-            android:background="@drawable/lookingfor_list_bg"
+            android:padding="16dp"
+            android:background="@drawable/dataentry_title_bg"
             android:orientation="vertical"
             android:visibility="gone" >
 
@@ -276,7 +281,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/mainheadingrow"
             android:layout_toLeftOf="@+id/ocassionpopup"
-            android:background="@drawable/dataentry_title_bg"
+            android:background="@drawable/dataentry_title_bg_without_right_shadow"
+            android:padding="16dp"
             android:maxHeight="256dip"
             android:visibility="gone" >
 
@@ -300,7 +306,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/categorylistviewlayout"
                 android:layout_toLeftOf="@+id/categorylistviewlayout"
-                android:background="@drawable/dataentry_title_bg"
+                android:background="@drawable/dataentry_title_bg_without_right_shadow"
+                android:padding="16dp"
                 android:orientation="horizontal"
                 android:visibility="gone" >
 
@@ -328,6 +335,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/dataentry_title_bg"
+                    android:padding="16dp"
                     android:scrollbars="none" >
                 </ListView>
             </LinearLayout>
@@ -349,6 +357,7 @@
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
             android:background="@drawable/dataentry_title_bg"
+            android:padding="16dp"
             android:cursorVisible="false"
             android:focusable="true"
             android:hint="Say more about what you are looking for"

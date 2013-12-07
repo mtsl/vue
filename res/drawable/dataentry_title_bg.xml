@@ -1,34 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <!-- Drop Shadow Stack -->
+    <item>
+        <shape>
+            <padding
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
 
-    <item
-        >
-        <shape
-            android:dither="true"
-            android:shape="rectangle" >
-            <corners android:radius="2dp" />
-
-            <solid android:color="#DBDBDB" />
+            <solid android:color="#00CCCCCC" />
         </shape>
     </item>
-    <item
-        android:bottom="1dp"
-        android:left="1dp"
-        android:right="1dp"
-        android:top="1dp">
-        <shape
-            android:dither="true"
-            android:shape="rectangle" >
-            <corners android:radius="2dp" />
-
-            <solid android:color="#ffffff" />
-
+    <item>
+        <shape>
             <padding
-                android:bottom="9dp"
-                android:left="9dp"
-                android:right="9dp"
-                android:top="9dp" />
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+
+            <solid android:color="#10CCCCCC" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <padding
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+
+            <solid android:color="#20CCCCCC" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <padding
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+
+            <solid android:color="#30CCCCCC" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <padding
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+
+            <solid android:color="#50CCCCCC" />
+        </shape>
+    </item>
+
+    <!-- Background -->
+    <item >
+        <shape>
+            <solid android:color="@color/white" />
+
+           
         </shape>
     </item>
 

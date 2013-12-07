@@ -118,7 +118,7 @@
             android:layout_marginTop="8dp"
             android:layout_toLeftOf="@+id/vuesharelayout"
             android:contentDescription="@string/Image"
-            android:src="@drawable/new_find_at" />
+            android:src="@drawable/find_at_selector" />
 
         <RelativeLayout
             android:id="@+id/vuesharelayout"

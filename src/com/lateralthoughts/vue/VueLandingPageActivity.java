@@ -32,6 +32,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -142,10 +143,12 @@ public class VueLandingPageActivity extends Activity {
 		mActionbarCancleBtnTextview.setText("Cancel");
 		mVueLandingActionbarScreenName.setText(getResources().getString(
 				R.string.trending));
-		getActionBar().setCustomView(mVueLandingActionbarView);
+		invalidateOptionsMenu(); 
+		//getActionBar().setCustomView(mVueLandingActionbarView);
 		 
-		getActionBar().setDisplayShowCustomEnabled(true);
-		getActionBar().setDisplayShowHomeEnabled(false);
+		//getActionBar().setDisplayShowCustomEnabled(true);
+		getActionBar().setDisplayShowHomeEnabled(true);
+		
 		mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -240,6 +243,7 @@ private void initialize(){
     // enable ActionBar app icon to behave as action to toggle nav drawer
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setHomeButtonEnabled(true);
+    getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.dataentry_bg));
 	
     // ActionBarDrawerToggle ties together the the proper interactions
     // between the sliding drawer and the action bar app icon
@@ -336,7 +340,13 @@ public boolean onOptionsItemSelected(MenuItem item) {
 
     return super.onOptionsItemSelected(item);
 }
-
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.title_options, menu);
+        getActionBar().setHomeButtonEnabled(true);
+        // Configure the search info and add any event listeners
+        return true;// super.onCreateOptionsMenu(menu);
+}
 
 	@Override
 	protected void onStart() {
