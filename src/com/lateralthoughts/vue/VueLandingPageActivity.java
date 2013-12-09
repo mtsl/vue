@@ -126,6 +126,7 @@ SearchView.OnCloseListener {
 		mPd.setMessage("Loading...");
 		mPd.setCancelable(false);
 		clearDataEntryData();
+		getActionBar().setTitle(getString(R.string.sidemenu_option_Trending_Aisles));
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
 		VueApplication.getInstance().mLastRecordedTime = System
 				.currentTimeMillis();
@@ -786,6 +787,7 @@ SearchView.OnCloseListener {
 			} else {
 				fromServer = false;
 			}
+			 
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
