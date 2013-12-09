@@ -44,7 +44,7 @@
             android:layout_height="36dip"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="6dip"
-            android:src="@drawable/createaisle" />
+            android:src="@drawable/new_save" />
 
         <TextView
             android:id="@+id/vue_landing_actionbar_createaisle_text"
@@ -52,6 +52,7 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:paddingRight="6dip"
+            android:visibility="gone"
             android:text="@string/create_ailse_screen_title"
             android:textColor="@color/black"
             android:textSize="18dip" />
