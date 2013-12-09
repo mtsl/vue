@@ -72,7 +72,7 @@ public class DataEntryActivity extends /*Base*/Activity {
 		  mSlidListFrag = (VueListFragment) getFragmentManager()
 					.findFragmentById(R.id.listfrag);
 		mVueDataentryActionbarView = LayoutInflater.from(this).inflate(
-				R.layout.vue_dataentry_actionbar, null);
+				R.layout.vue_dataentry_custom_actionbar, null);
 		mVueDataentryActionbarScreenName = (TextView) mVueDataentryActionbarView
 				.findViewById(R.id.vue_dataentry_actionbar_screenname);
 		mVueDataentryActionbarAppIconLayout = (RelativeLayout) mVueDataentryActionbarView
