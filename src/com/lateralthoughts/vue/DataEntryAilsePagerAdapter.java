@@ -1,11 +1,9 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Parcelable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -15,7 +13,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-
 import com.lateralthoughts.vue.utils.DataentryPageLoader;
 
 public class DataEntryAilsePagerAdapter extends PagerAdapter {
@@ -99,8 +96,6 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 					}
 					mDataEntryActivity.mDeletedImagesPositionsList
 							.remove(Integer.valueOf(position));
-					mDataEntryActivity.mDataentryActionbarMainLayout
-							.setVisibility(View.GONE);
 					mDataEntryActivity.mVueDataentryKeyboardLayout
 							.setVisibility(View.GONE);
 					mDataEntryActivity.mVueDataentryKeyboardDone
@@ -111,6 +106,7 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 							.setVisibility(View.GONE);
 					mDataEntryActivity.mVueDataentryDeleteLayout
 							.setVisibility(View.VISIBLE);
+					mDataEntryActivity.hideDefaultActionbar();
 					if (mDataEntryActivity.mDeletedImagesCount != 0) {
 						mDataEntryActivity.mDeletedImagesCount -= 1;
 					}
@@ -118,8 +114,6 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 						mDataEntryActivity.mActionbarDeleteBtnTextview
 								.setText("Delete 1 Image");
 					} else if (mDataEntryActivity.mDeletedImagesCount < 1) {
-						mDataEntryActivity.mDataentryActionbarMainLayout
-								.setVisibility(View.VISIBLE);
 						mDataEntryActivity.mVueDataentryKeyboardLayout
 								.setVisibility(View.GONE);
 						mDataEntryActivity.mVueDataentryKeyboardDone
@@ -130,6 +124,7 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 								.setVisibility(View.GONE);
 						mDataEntryActivity.mVueDataentryDeleteLayout
 								.setVisibility(View.GONE);
+						mDataEntryActivity.showDefaultActionbar();
 					} else {
 						mDataEntryActivity.mActionbarDeleteBtnTextview
 								.setText("Delete "
@@ -144,8 +139,6 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 					}
 					if (!(mDataEntryActivity.mDeletedImagesPositionsList != null && mDataEntryActivity.mDeletedImagesPositionsList
 							.contains(position))) {
-						mDataEntryActivity.mDataentryActionbarMainLayout
-								.setVisibility(View.GONE);
 						mDataEntryActivity.mVueDataentryKeyboardLayout
 								.setVisibility(View.GONE);
 						mDataEntryActivity.mVueDataentryKeyboardDone
@@ -156,6 +149,7 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 								.setVisibility(View.GONE);
 						mDataEntryActivity.mVueDataentryDeleteLayout
 								.setVisibility(View.VISIBLE);
+						mDataEntryActivity.hideDefaultActionbar();
 						if (mDataEntryActivity.mDeletedImagesPositionsList == null) {
 							mDataEntryActivity.mDeletedImagesPositionsList = new ArrayList<Integer>();
 						}

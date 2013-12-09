@@ -1,56 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <RelativeLayout
-        android:id="@+id/dataentry_actionbar_main_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="48dip"
-        android:background="@drawable/dataentry_bg" >
-
-        <RelativeLayout
-            android:id="@+id/vue_dataentry_actionbar_app_icon_layout"
-            android:layout_width="48dip"
-            android:layout_height="48dip"
-            android:orientation="horizontal" >
-
-            <ImageView
-                android:id="@+id/vue_dataentry_actionbar_app_icon"
-                android:layout_width="36dip"
-                android:layout_height="36dip"
-                android:layout_centerInParent="true"
-                android:src="@drawable/vue_launcher_icon" />
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/vue_dataentry_actionbar_screenname"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_toRightOf="@+id/vue_dataentry_actionbar_app_icon_layout"
-            android:gravity="center_vertical"
-            android:text="@string/app_name"
-            android:textColor="@color/black"
-            android:textSize="18dip" />
-
-        <LinearLayout
-            android:id="@+id/vue_dataentry_addimage_skip_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:showDividers="middle"
-            android:visibility="gone" >
-
-            <include layout="@layout/include_cancel_button" />
-        </LinearLayout>
-    </RelativeLayout>
+   >
 
     <LinearLayout
         android:id="@+id/vue_dataentry_keyboard_layout"
         android:layout_width="match_parent"
         android:layout_height="48dip"
-        android:background="@drawable/dataentry_bg"
         android:divider="?android:attr/dividerVertical"
         android:dividerPadding="12dp"
         android:orientation="horizontal"
@@ -70,7 +27,6 @@
         android:id="@+id/vue_dataentry_post_layout"
         android:layout_width="match_parent"
         android:layout_height="48dip"
-        android:background="@drawable/dataentry_bg"
         android:divider="?android:attr/dividerVertical"
         android:dividerPadding="12dp"
         android:orientation="horizontal"
@@ -90,7 +46,6 @@
         android:id="@+id/vue_dataentry_delete_layout"
         android:layout_width="match_parent"
         android:layout_height="48dip"
-        android:background="@drawable/dataentry_bg"
         android:divider="?android:attr/dividerVertical"
         android:dividerPadding="12dp"
         android:orientation="horizontal"
@@ -106,10 +61,4 @@
             layout="@layout/include_delete_btn" />
     </LinearLayout>
 
-    <View
-        android:id="@+id/data_entry_third_line_divider"
-        android:layout_width="match_parent"
-        android:layout_height="2dip"
-        android:background="#ADADAD" />
-
-</LinearLayout>
+</RelativeLayout>

@@ -152,7 +152,7 @@ public class VueLandingPageActivity extends Activity {
 				((VueLandingAislesFragment) mLandingAilsesFrag)
 						.notifyAdapters();
 				mHideDefaultActionbar = false;
-				invalidateOptionsMenu();				
+				invalidateOptionsMenu();
 			}
 		});
 		VueUser storedVueUser = null;
@@ -218,7 +218,10 @@ public class VueLandingPageActivity extends Activity {
 		// between the sliding drawer and the action bar app icon
 		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
 		mDrawerLayout, /* DrawerLayout object */
-		R.drawable.ic_navigation_drawer, /* nav drawer image to replace 'Up' caret */
+		R.drawable.ic_navigation_drawer, /*
+										 * nav drawer image to replace 'Up'
+										 * caret
+										 */
 		R.string.drawer_open, /* "open drawer" description for accessibility */
 		R.string.drawer_close /* "close drawer" description for accessibility */
 		) {
@@ -298,7 +301,6 @@ public class VueLandingPageActivity extends Activity {
 		if (isdrawOpen) {
 			menu.findItem(R.id.menu_search).setVisible(true);
 			menu.findItem(R.id.menu_create_aisle).setVisible(false);
-			// menu.findItem(R.id.menu_custom).setVisible(false);
 		} else {
 			if (mHideDefaultActionbar) {
 				getActionBar().setDisplayHomeAsUpEnabled(false);
@@ -310,7 +312,6 @@ public class VueLandingPageActivity extends Activity {
 			} else {
 				menu.findItem(R.id.menu_search).setVisible(false);
 				menu.findItem(R.id.menu_create_aisle).setVisible(true);
-				// menu.findItem(R.id.menu_custom).setVisible(false);
 			}
 		}
 		return super.onPrepareOptionsMenu(menu);

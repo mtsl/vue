@@ -1,14 +1,12 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -17,33 +15,26 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.TextView.OnEditorActionListener;
-
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
-public class DataEntryActivity extends /*Base*/Activity {
+public class DataEntryActivity extends Activity {
 
-	//public boolean mIsKeyboardShownFlag = false;
-	public TextView mVueDataentryActionbarScreenName,
-			mActionbarDeleteBtnTextview;
-	RelativeLayout mDataentryActionbarMainLayout,
-			mVueDataentryActionbarAppIconLayout;
+	public TextView mActionbarDeleteBtnTextview;
 	public LinearLayout mVueDataentryKeyboardLayout, mVueDataentryPostLayout,
-			mVueDataentryDeleteLayout, mVueDataentryAddimageSkipLayout;
+			mVueDataentryDeleteLayout;
 	public FrameLayout mVueDataentryKeyboardDone, mVueDataentryKeyboardCancel,
 			mVueDataentryClose, mVueDataentryPost, mVueDataentryDeleteCancel,
 			mVueDataentryDeleteDone;
@@ -52,35 +43,25 @@ public class DataEntryActivity extends /*Base*/Activity {
 	private static final String CREATE_AISLE_SCREEN_VISITORS = "Create_Aisle_Screen_Visitors";
 	public ArrayList<Integer> mDeletedImagesPositionsList = null;
 	public int mDeletedImagesCount = 0;
-	
-	
 	private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
-	private ProgressDialog mPd;
 	private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private FrameLayout mContent_frame2;
-    private  EditText mSearchEdit;
- 
+	private ActionBarDrawerToggle mDrawerToggle;
+	private FrameLayout mContent_frame2;
+	private boolean mHideDefaultActionbar = false;
+	private boolean mShowSkipButton = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.date_entry_main);
 		initialize();
 		mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
-		  mSlidListFrag = (VueListFragment) getFragmentManager()
-					.findFragmentById(R.id.listfrag);
+		mSlidListFrag = (VueListFragment) getFragmentManager()
+				.findFragmentById(R.id.listfrag);
 		mVueDataentryActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_dataentry_custom_actionbar, null);
-		mVueDataentryActionbarScreenName = (TextView) mVueDataentryActionbarView
-				.findViewById(R.id.vue_dataentry_actionbar_screenname);
-		mVueDataentryActionbarAppIconLayout = (RelativeLayout) mVueDataentryActionbarView
-				.findViewById(R.id.vue_dataentry_actionbar_app_icon_layout);
-		mVueDataentryActionbarScreenName.setText(getResources().getString(
-				R.string.create_aisle_screen_title));
-		mDataentryActionbarMainLayout = (RelativeLayout) mVueDataentryActionbarView
-				.findViewById(R.id.dataentry_actionbar_main_layout);
+		getActionBar().setTitle(
+				getResources().getString(R.string.create_aisle_screen_title));
 		mVueDataentryKeyboardLayout = (LinearLayout) mVueDataentryActionbarView
 				.findViewById(R.id.vue_dataentry_keyboard_layout);
 		mVueDataentryKeyboardDone = (FrameLayout) mVueDataentryActionbarView
@@ -101,21 +82,7 @@ public class DataEntryActivity extends /*Base*/Activity {
 				.findViewById(R.id.vue_dataentry_delete_done);
 		mActionbarDeleteBtnTextview = (TextView) mVueDataentryActionbarView
 				.findViewById(R.id.actionbar_delete_btn_textview);
-		mVueDataentryAddimageSkipLayout = (LinearLayout) mVueDataentryActionbarView
-				.findViewById(R.id.vue_dataentry_addimage_skip_layout);
-		getActionBar().setCustomView(mVueDataentryActionbarView);
-		getActionBar().setDisplayShowCustomEnabled(true);
-		getActionBar().setDisplayShowHomeEnabled(false);
-
-
-		mVueDataentryAddimageSkipLayout
-				.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						showDiscardOtherAppImageDialog("Do you want to cancel addImage?");
-					}
-				});
-
+		invalidateOptionsMenu();
 		mVueDataentryDeleteCancel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -181,10 +148,11 @@ public class DataEntryActivity extends /*Base*/Activity {
 										.getText().toString().length());
 						mDataEntryFragment.mInputMethodManager.showSoftInput(
 								mDataEntryFragment.mFindAtText, 0);
-						mDataentryActionbarMainLayout.setVisibility(View.GONE);
 						mVueDataentryKeyboardLayout.setVisibility(View.VISIBLE);
 						mVueDataentryKeyboardDone.setVisibility(View.VISIBLE);
 						mVueDataentryKeyboardCancel.setVisibility(View.VISIBLE);
+						mHideDefaultActionbar = true;
+						invalidateOptionsMenu();
 					} else {
 						mDataEntryFragment.mSaySomethingAboutAisle
 								.setVisibility(View.VISIBLE);
@@ -228,10 +196,11 @@ public class DataEntryActivity extends /*Base*/Activity {
 								.requestFocus();
 						mDataEntryFragment.mInputMethodManager.showSoftInput(
 								mDataEntryFragment.mSaySomethingAboutAisle, 0);
-						mDataentryActionbarMainLayout.setVisibility(View.GONE);
 						mVueDataentryKeyboardLayout.setVisibility(View.VISIBLE);
 						mVueDataentryKeyboardDone.setVisibility(View.VISIBLE);
 						mVueDataentryKeyboardCancel.setVisibility(View.VISIBLE);
+						mHideDefaultActionbar = true;
+						invalidateOptionsMenu();
 					}
 				} else if (mDataEntryFragment.mFindAtPopUp.getVisibility() == View.VISIBLE) {
 					mDataEntryFragment.findAtInterceptListnerFunctionality();
@@ -267,15 +236,6 @@ public class DataEntryActivity extends /*Base*/Activity {
 				mDataEntryFragment.createAisleClickFunctionality();
 			}
 		});
-
-		mVueDataentryActionbarAppIconLayout
-				.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-					 
-						 
-					}
-				});
 
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
@@ -357,10 +317,11 @@ public class DataEntryActivity extends /*Base*/Activity {
 					mDataEntryFragment
 							.showDetailsScreenImagesInDataentryScreen();
 				}
-				mVueDataentryActionbarScreenName.setText(getResources()
-						.getString(R.string.add_imae_to_aisle_screen_title));
+				getActionBar().setTitle(
+						getResources().getString(
+								R.string.add_imae_to_aisle_screen_title));
 				if (b.getBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG)) {
-					mVueDataentryActionbarScreenName.setText("Delete Images");
+					getActionBar().setTitle("Delete Images");
 					mDataEntryFragment.mDataEntryAislesViewpager
 							.setVisibility(View.VISIBLE);
 					try {
@@ -405,7 +366,7 @@ public class DataEntryActivity extends /*Base*/Activity {
 			}
 			if (aisleImagePath != null) {
 				mDataEntryFragment.setGalleryORCameraImage(aisleImagePath,
-						false,this);
+						false, this);
 			}
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
 				if (!mDataEntryFragment.mFromDetailsScreenFlag
@@ -422,15 +383,16 @@ public class DataEntryActivity extends /*Base*/Activity {
 					}
 					if (mAisleImagePathList != null
 							&& mAisleImagePathList.size() > 0) {
-						mVueDataentryActionbarScreenName
-								.setText(getResources()
-										.getString(
-												R.string.add_imae_to_aisle_screen_title));
+						getActionBar()
+								.setTitle(
+										getResources()
+												.getString(
+														R.string.add_imae_to_aisle_screen_title));
 					}
 				}
 				if (Utils.getDataentryAddImageAisleFlag(DataEntryActivity.this)) {
-					mVueDataentryActionbarScreenName
-							.setText(getResources().getString(
+					getActionBar().setTitle(
+							getResources().getString(
 									R.string.add_imae_to_aisle_screen_title));
 					mDataEntryFragment.mMainHeadingRow
 							.setVisibility(View.VISIBLE);
@@ -456,92 +418,125 @@ public class DataEntryActivity extends /*Base*/Activity {
 				}
 			}
 		}
-		if (mVueDataentryActionbarScreenName != null
-				&& mVueDataentryActionbarScreenName.getText() != null
-				&& mVueDataentryActionbarScreenName
-						.getText()
+		if (getActionBar().getTitle().toString() != null
+				&& getActionBar()
+						.getTitle()
 						.toString()
 						.trim()
 						.equals(getResources().getString(
 								R.string.add_imae_to_aisle_screen_title))) {
-			mVueDataentryAddimageSkipLayout.setVisibility(View.VISIBLE);
+			showDefaultActionbarWithSkipButton();
 		}
 	}
-	private void initialize(){
-	    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-	    // set a custom shadow that overlays the main content when the drawer opens
-	    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-	    // set up the drawer's list view with items and click listener
-	    // enable ActionBar app icon to behave as action to toggle nav drawer
-	    getActionBar().setDisplayHomeAsUpEnabled(false);
-	    getActionBar().setHomeButtonEnabled(true);
-	    // ActionBarDrawerToggle ties together the the proper interactions
-	    // between the sliding drawer and the action bar app icon
-	    mDrawerToggle = new ActionBarDrawerToggle(
-	            this,                  /* host Activity */
-	            mDrawerLayout,         /* DrawerLayout object */
-	            R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
-	            R.string.drawer_open,  /* "open drawer" description for accessibility */
-	            R.string.drawer_close  /* "close drawer" description for accessibility */
-	            ) {
-	        public void onDrawerClosed(View view) {
-	    		final InputMethodManager mInputMethodManager = (InputMethodManager) DataEntryActivity.this
-						.getSystemService(Context.INPUT_METHOD_SERVICE);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mSearchEdit.getWindowToken(), 0);
-	            invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-	            getActionBar().setCustomView(mVueDataentryActionbarView);
-	    		getActionBar().setDisplayShowCustomEnabled(true);
-	    		getActionBar().setDisplayShowHomeEnabled(false);
-	        }
-	       
-			public void onDrawerOpened(View drawerView) {/*
-				invalidateOptionsMenu(); // creates call to
-											// onPrepareOptionsMenu()
-				// add the custom view to the action bar
-				getActionBar().setCustomView(R.layout.actionbar_view);
-				getActionBar().getCustomView().findViewById(R.id.home)
-						.setOnClickListener(new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								mDrawerLayout.closeDrawer(mContent_frame2);
-							}
-						});
-				mSearchEdit = (EditText) getActionBar().getCustomView()
-						.findViewById(R.id.searchfield);
-				mSearchEdit.setActivated(true);
-				getActionBar().getCustomView().findViewById(R.id.search_cancel)
-						.setOnClickListener(new OnClickListener() {
 
-							@Override
-							public void onClick(View v) {
+	private void initialize() {
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		// set a custom shadow that overlays the main content when the drawer
+		// opens
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
+				GravityCompat.START);
+		// set up the drawer's list view with items and click listener
 
-								mSearchEdit.setText("");
-							}
-						});
-				EditText search = (EditText) getActionBar().getCustomView()
-						.findViewById(R.id.searchfield);
-				search.setOnEditorActionListener(new OnEditorActionListener() {
+		// enable ActionBar app icon to behave as action to toggle nav drawer
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+		getActionBar().setBackgroundDrawable(
+				getResources().getDrawable(R.drawable.actionbar_bg));
 
-					@Override
-					public boolean onEditorAction(TextView v, int actionId,
-							KeyEvent event) {
-						mDrawerLayout.closeDrawer(mContent_frame2);
-						  Toast.makeText( DataEntryActivity.this,
-						   "Search string: "+mSearchEdit.getText().toString(), Toast.LENGTH_SHORT).show();
-						 
-						return false;
-					}
-				});
+		// ActionBarDrawerToggle ties together the the proper interactions
+		// between the sliding drawer and the action bar app icon
+		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
+		mDrawerLayout, /* DrawerLayout object */
+		R.drawable.ic_navigation_drawer, /*
+										 * nav drawer image to replace 'Up'
+										 * caret
+										 */
+		R.string.drawer_open, /* "open drawer" description for accessibility */
+		R.string.drawer_close /* "close drawer" description for accessibility */
+		) {
+			public void onDrawerClosed(View view) {
+				invalidateOptionsMenu();
+			}
 
-			*/}
-	    };
-	    mDrawerLayout.setDrawerListener(mDrawerToggle);
-	    mDataEntryFragment =(DataEntryFragment) getFragmentManager()
-				.findFragmentById(
-						R.id.create_aisles_view_fragment);
+			@SuppressLint("CutPasteId")
+			public void onDrawerOpened(View drawerView) {
+				invalidateOptionsMenu();
+			}
+		};
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mDataEntryFragment = (DataEntryFragment) getFragmentManager()
+				.findFragmentById(R.id.create_aisles_view_fragment);
 		mDrawerLayout.setFocusableInTouchMode(false);
 	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		// Sync the toggle state after onRestoreInstanceState has occurred.
+		mDrawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Pass the event to ActionBarDrawerToggle, if it returns
+		// true, then it has handled the app icon touch event
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		} else if (item.getItemId() == R.id.menu_close_dataentry) {
+			showDiscardOtherAppImageDialog("Do you want to cancel addImage?");
+		}
+		// Handle your other action bar items...
+
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.dataentry_actionbar, menu);
+		getActionBar().setHomeButtonEnabled(true);
+		// Configure the search info and add any event listeners
+		return true;// super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		boolean isdrawOpen = mDrawerLayout.isDrawerOpen(mContent_frame2);
+		getActionBar().setHomeButtonEnabled(true);
+		getActionBar().setDisplayShowCustomEnabled(false);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayShowHomeEnabled(true);
+		getActionBar().setCustomView(null);
+		getActionBar().setDisplayShowTitleEnabled(true);
+		if (isdrawOpen) {
+			menu.findItem(R.id.menu_search).setVisible(true);
+			menu.findItem(R.id.menu_close_dataentry).setVisible(false);
+		} else {
+			if (mHideDefaultActionbar) {
+				mShowSkipButton = false;
+				getActionBar().setDisplayShowTitleEnabled(false);
+				getActionBar().setDisplayHomeAsUpEnabled(false);
+				getActionBar().setDisplayShowCustomEnabled(true);
+				getActionBar().setDisplayShowHomeEnabled(false);
+				getActionBar().setCustomView(mVueDataentryActionbarView);
+				menu.findItem(R.id.menu_search).setVisible(false);
+				menu.findItem(R.id.menu_close_dataentry).setVisible(false);
+			} else if (mShowSkipButton) {
+				menu.findItem(R.id.menu_search).setVisible(false);
+				menu.findItem(R.id.menu_close_dataentry).setVisible(true);
+			} else {
+				menu.findItem(R.id.menu_search).setVisible(false);
+				menu.findItem(R.id.menu_close_dataentry).setVisible(false);
+			}
+		}
+		return super.onPrepareOptionsMenu(menu);
+	}
+
 	@Override
 	protected void onStart() {
 		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
@@ -574,15 +569,16 @@ public class DataEntryActivity extends /*Base*/Activity {
 					mDataEntryFragment.mFindAtText.setText("");
 					mDataEntryFragment.mOtherSourceSelectedImageStore = "UnKnown";
 					mDataEntryFragment.mOtherSourceSelectedImageUrl = null;
-					mDataEntryFragment
-							.setGalleryORCameraImage(imagePath, false,this);
+					mDataEntryFragment.setGalleryORCameraImage(imagePath,
+							false, this);
 				}
 			} else if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 					&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 				if (data != null) {
 					if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
-						mSlidListFrag.getFriendsList(data
-								.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
+						mSlidListFrag
+								.getFriendsList(data
+										.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
 					}
 				}
 			} else {
@@ -599,6 +595,7 @@ public class DataEntryActivity extends /*Base*/Activity {
 			e.printStackTrace();
 		}
 	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -724,5 +721,21 @@ public class DataEntryActivity extends /*Base*/Activity {
 		fileCache.clearVueAppResizedPictures();
 		fileCache.clearVueAppCameraPictures();
 		finish();
+	}
+
+	public void showDefaultActionbar() {
+		mHideDefaultActionbar = false;
+		invalidateOptionsMenu();
+	}
+
+	public void hideDefaultActionbar() {
+		mHideDefaultActionbar = true;
+		invalidateOptionsMenu();
+	}
+
+	public void showDefaultActionbarWithSkipButton() {
+		mShowSkipButton = true;
+		mHideDefaultActionbar = false;
+		invalidateOptionsMenu();
 	}
 }
