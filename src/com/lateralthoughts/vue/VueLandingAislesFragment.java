@@ -47,6 +47,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.ui.MyCustomAnimation;
 import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.utils.Utils;
 
 //java utils
@@ -321,6 +322,10 @@ public class VueLandingAislesFragment extends /* SherlockFragment */Fragment {
 
 			// VueLandingPageActivity lan = (VueLandingPageActivity)
 			// getActivity();
+			  if(!StackViews.getInstance().getTop().equals(getResources().getString(
+									R.string.trending))) {
+				  return;
+			  }
 
 			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
 					&& VueLandingPageActivity.mLandingScreenName != null
@@ -336,26 +341,6 @@ public class VueLandingAislesFragment extends /* SherlockFragment */Fragment {
 				} else if (view.equals(mRightColumnView)) {
 					totalItems = mRightColumnAdapter.getCount();
 				}
-				/*
-				 * if ((totalItems - lastVisiblePosition) < 2) { if
-				 * (mProgressBar.getLayoutParams().height == 0) {
-				 * ProgressBarAnimation a = new
-				 * ProgressBarAnimation(mProgressBar, targetHeight, false);
-				 * a.setDuration(1000); LayoutParams params = new
-				 * LayoutParams(LayoutParams.MATCH_PARENT, 60);
-				 * params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
-				 * mProgressBar.getId()); mProgressBar.setLayoutParams(params);
-				 * mProgressBar.startAnimation(a); }
-				 * 
-				 * } else { if (mProgressBar.getLayoutParams().height > 0) {
-				 * ProgressBarAnimation a = new
-				 * ProgressBarAnimation(mProgressBar, 0, true);
-				 * a.setDuration(1000); LayoutParams params = new
-				 * LayoutParams(LayoutParams.MATCH_PARENT, 0);
-				 * params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
-				 * mProgressBar.getId()); mProgressBar.setLayoutParams(params);
-				 * mProgressBar.startAnimation(a); } }
-				 */
 				if ((totalItems - lastVisiblePosition) < 5) {
 					Log.i("offeset and limit", "offeset00000: load moredata");
 					VueTrendingAislesDataModel
@@ -365,8 +350,6 @@ public class VueLandingAislesFragment extends /* SherlockFragment */Fragment {
 									getResources().getString(R.string.trending));
 				}
 			} else {
-				// LayoutParams params = new LayoutParams(0,
-				// LayoutParams.MATCH_PARENT);
 				Log.i("offeset and limit",
 						"offeset00000: load moredata else "
 								+ VueTrendingAislesDataModel
