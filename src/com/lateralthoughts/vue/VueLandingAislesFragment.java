@@ -12,13 +12,11 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.Fragment;
- 
- 
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
- 
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,7 +57,7 @@ import com.lateralthoughts.vue.utils.Utils;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
+public class VueLandingAislesFragment extends /* SherlockFragment */Fragment {
 	private Context mContext;
 	private VueContentGateway mVueContentGateway;
 	private TrendingAislesLeftColumnAdapter mLeftColumnAdapter;
@@ -67,8 +65,7 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 
 	private ListView mLeftColumnView;
 	private ListView mRightColumnView;
-	//private ProgressBar mProgressBar;
- 
+	// private ProgressBar mProgressBar;
 
 	private AisleClickListener mAisleClickListener;
 	// private MultiColumnListView mView;
@@ -124,14 +121,16 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 		if (mLeftColumnAdapter != null) {
 
 			mLeftColumnAdapter.notifyDataSetChanged();
-			 
+
 		}
 		if (mRightColumnAdapter != null) {
 			mRightColumnAdapter.notifyDataSetChanged();
 			Log.i("listadapter", "adapter adapter notified");
 		}
 	}
-    int targetHeight = 60;
+
+	int targetHeight = 60;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -141,7 +140,7 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 		pulltorefresh = (LinearLayout) v.findViewById(R.id.pulltorefresh);
-		//mProgressBar = (ProgressBar) v.findViewById(R.id.progressbar);
+		// mProgressBar = (ProgressBar) v.findViewById(R.id.progressbar);
 		// mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		// mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
@@ -216,11 +215,13 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 				mIsIdleState = false;
 				mIsFlingCalled = false;
 				mIsListRefreshRecently = false;
-				/*if(view.getLastVisiblePosition() < view.getCount() - 1) {
-				  LayoutParams params = new LayoutParams(0, LayoutParams.MATCH_PARENT);
-	                mProgressBar.setLayoutParams(params);  
-				}*/
-				
+				/*
+				 * if(view.getLastVisiblePosition() < view.getCount() - 1) {
+				 * LayoutParams params = new LayoutParams(0,
+				 * LayoutParams.MATCH_PARENT);
+				 * mProgressBar.setLayoutParams(params); }
+				 */
+
 			}
 			int first = view.getFirstVisiblePosition();
 			int count = view.getChildCount();
@@ -259,17 +260,24 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 					int top = h - hi + view.getChildAt(0).getTop();
 					mRightColumnView.setSelectionFromTop(
 							mRightColumnView.getFirstVisiblePosition(), top);
-				/*	localTop = top;
-					
-					if(mLeftColumnView.getLastVisiblePosition() == totalItemCount) {
-						if(mRightColumnView.getLastVisiblePosition() < totalItemCount) {
-							AisleWindowContent content = (AisleWindowContent) mRightColumnView
-									.getAdapter().getItem(mRightColumnView.getLastVisiblePosition() + 1);
-							mRightColumnView.setSelectionFromTop(
-									mRightColumnView.getFirstVisiblePosition(), localTop + content.mWindowSmallestHeight+VueApplication.getInstance().getPixel(100));
-							
-						}
-					}*/
+					/*
+					 * localTop = top;
+					 * 
+					 * if(mLeftColumnView.getLastVisiblePosition() ==
+					 * totalItemCount) {
+					 * if(mRightColumnView.getLastVisiblePosition() <
+					 * totalItemCount) { AisleWindowContent content =
+					 * (AisleWindowContent) mRightColumnView
+					 * .getAdapter().getItem
+					 * (mRightColumnView.getLastVisiblePosition() + 1);
+					 * mRightColumnView.setSelectionFromTop(
+					 * mRightColumnView.getFirstVisiblePosition(), localTop +
+					 * content
+					 * .mWindowSmallestHeight+VueApplication.getInstance()
+					 * .getPixel(100));
+					 * 
+					 * } }
+					 */
 				} else if (view.equals(mRightColumnView)) {
 					mRightViewsHeights[view.getFirstVisiblePosition()] = view
 							.getChildAt(0).getHeight();
@@ -290,76 +298,82 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 
 					mLeftColumnView.setSelectionFromTop(
 							mLeftColumnView.getFirstVisiblePosition(), top);
-				/*	localTop = top;
-					if(mRightColumnView.getLastVisiblePosition() == totalItemCount) {
-						if(mLeftColumnView.getLastVisiblePosition() < totalItemCount) {
-							AisleWindowContent content = (AisleWindowContent) mLeftColumnView
-									.getAdapter().getItem(mLeftColumnView.getLastVisiblePosition() + 1);
-							if(mLeftColumnView.canScrollVertically(-1)){
-								mLeftColumnView.setScrollY(mLeftColumnView.getBottom());
-							}
-							mLeftColumnView.setSelectionFromTop(
-									mLeftColumnView.getFirstVisiblePosition(), localTop + content.mWindowSmallestHeight+VueApplication.getInstance().getPixel(100));
-							
-						}
-					}*/
+					/*
+					 * localTop = top;
+					 * if(mRightColumnView.getLastVisiblePosition() ==
+					 * totalItemCount) {
+					 * if(mLeftColumnView.getLastVisiblePosition() <
+					 * totalItemCount) { AisleWindowContent content =
+					 * (AisleWindowContent) mLeftColumnView
+					 * .getAdapter().getItem
+					 * (mLeftColumnView.getLastVisiblePosition() + 1);
+					 * if(mLeftColumnView.canScrollVertically(-1)){
+					 * mLeftColumnView.setScrollY(mLeftColumnView.getBottom());
+					 * } mLeftColumnView.setSelectionFromTop(
+					 * mLeftColumnView.getFirstVisiblePosition(), localTop +
+					 * content
+					 * .mWindowSmallestHeight+VueApplication.getInstance()
+					 * .getPixel(100));
+					 * 
+					 * } }
+					 */
 				}
-				
-				 
+
 			}
 
-			//VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();
+			// VueLandingPageActivity lan = (VueLandingPageActivity)
+			// getActivity();
 
 			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
-					&& VueLandingPageActivity.getScreenName().equalsIgnoreCase(
-							getResources().getString(R.string.trending))
-          && !VueTrendingAislesDataModel.getInstance(mContext).isFromDb) {
-        int lastVisiblePosition = firstVisibleItem + visibleItemCount;
-        Log.i("more aisle request", "more aisle request calling");
-        int totalItems = 0;
-        if (view.equals(mLeftColumnView)) {
-          totalItems = mLeftColumnAdapter.getCount();
-        } else if (view.equals(mRightColumnView)) {
-          totalItems = mRightColumnAdapter.getCount();
-        }
-        /*if ((totalItems - lastVisiblePosition) < 2) {
-          if (mProgressBar.getLayoutParams().height == 0) {
-            ProgressBarAnimation a = new ProgressBarAnimation(mProgressBar,
-                targetHeight, false);
-            a.setDuration(1000);
-            LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
-                60);
-            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
-                mProgressBar.getId());
-            mProgressBar.setLayoutParams(params);
-            mProgressBar.startAnimation(a);
-          }
-
-        } else {
-          if (mProgressBar.getLayoutParams().height > 0) {
-            ProgressBarAnimation a = new ProgressBarAnimation(mProgressBar, 0,
-                true);
-            a.setDuration(1000);
-            LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 0);
-            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
-                mProgressBar.getId());
-           mProgressBar.setLayoutParams(params);
-            mProgressBar.startAnimation(a);
-          }
-        }*/
-        if ((totalItems - lastVisiblePosition) < 5) {
-          Log.i("offeset and limit", "offeset00000: load moredata");
-          VueTrendingAislesDataModel
-              .getInstance(mContext)
-              .getNetworkHandler()
-              .requestMoreAisle(true,
-                  getResources().getString(R.string.trending));
-        }
-      } else {
-        // LayoutParams params = new LayoutParams(0, LayoutParams.MATCH_PARENT);
-        Log.i("offeset and limit", "offeset00000: load moredata else "
-            + VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest);
-      }
+					&& VueLandingPageActivity.mLandingScreenName != null
+					&& VueLandingPageActivity.mLandingScreenName
+							.equalsIgnoreCase(getResources().getString(
+									R.string.trending))
+					&& !VueTrendingAislesDataModel.getInstance(mContext).isFromDb) {
+				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
+				Log.i("more aisle request", "more aisle request calling");
+				int totalItems = 0;
+				if (view.equals(mLeftColumnView)) {
+					totalItems = mLeftColumnAdapter.getCount();
+				} else if (view.equals(mRightColumnView)) {
+					totalItems = mRightColumnAdapter.getCount();
+				}
+				/*
+				 * if ((totalItems - lastVisiblePosition) < 2) { if
+				 * (mProgressBar.getLayoutParams().height == 0) {
+				 * ProgressBarAnimation a = new
+				 * ProgressBarAnimation(mProgressBar, targetHeight, false);
+				 * a.setDuration(1000); LayoutParams params = new
+				 * LayoutParams(LayoutParams.MATCH_PARENT, 60);
+				 * params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
+				 * mProgressBar.getId()); mProgressBar.setLayoutParams(params);
+				 * mProgressBar.startAnimation(a); }
+				 * 
+				 * } else { if (mProgressBar.getLayoutParams().height > 0) {
+				 * ProgressBarAnimation a = new
+				 * ProgressBarAnimation(mProgressBar, 0, true);
+				 * a.setDuration(1000); LayoutParams params = new
+				 * LayoutParams(LayoutParams.MATCH_PARENT, 0);
+				 * params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
+				 * mProgressBar.getId()); mProgressBar.setLayoutParams(params);
+				 * mProgressBar.startAnimation(a); } }
+				 */
+				if ((totalItems - lastVisiblePosition) < 5) {
+					Log.i("offeset and limit", "offeset00000: load moredata");
+					VueTrendingAislesDataModel
+							.getInstance(mContext)
+							.getNetworkHandler()
+							.requestMoreAisle(true,
+									getResources().getString(R.string.trending));
+				}
+			} else {
+				// LayoutParams params = new LayoutParams(0,
+				// LayoutParams.MATCH_PARENT);
+				Log.i("offeset and limit",
+						"offeset00000: load moredata else "
+								+ VueTrendingAislesDataModel
+										.getInstance(mContext).loadOnRequest);
+			}
 
 		}
 	};
@@ -404,8 +418,8 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 				startActivity(intent);
 			} else {
 				VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-				vueLandingPageActivity.mVueLandingKeyboardLayout
-						.setVisibility(View.VISIBLE);
+				/*vueLandingPageActivity.mVueLandingKeyboardLayout
+						.setVisibility(View.VISIBLE);*/
 				VueLandingPageActivity.mOtherSourceAddImageAisleId = id;
 				notifyAdapters();
 			}
@@ -684,41 +698,41 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
 				.dataObserver();
 	}
-	
-  class ProgressBarAnimation extends Animation {
-    private final int targetHeight;
-    private final View view;
-    private final boolean down;
 
+	class ProgressBarAnimation extends Animation {
+		private final int targetHeight;
+		private final View view;
+		private final boolean down;
 
-    public ProgressBarAnimation(View view, int targetHeight, boolean down) {
-      this.view = view;
-      this.targetHeight = targetHeight;
-      this.down = down;
-    }
+		public ProgressBarAnimation(View view, int targetHeight, boolean down) {
+			this.view = view;
+			this.targetHeight = targetHeight;
+			this.down = down;
+		}
 
-    @Override
-    protected void applyTransformation(float interpolatedTime, Transformation t) {
-      // super.applyTransformation(interpolatedTime, t);
-      int newHeight;
-     // if (down) {
-        newHeight = (int) (targetHeight * interpolatedTime);
-   //   } else {
-     //   newHeight = (int) (targetHeight * (1 - interpolatedTime));
-     // }
-      view.getLayoutParams().height = newHeight;
-      view.requestLayout();
-    }
-    
-    @Override
-    public void initialize(int width, int height, int parentWidth,
-            int parentHeight) {
-        super.initialize(width, height, parentWidth, parentHeight);
-    }
+		@Override
+		protected void applyTransformation(float interpolatedTime,
+				Transformation t) {
+			// super.applyTransformation(interpolatedTime, t);
+			int newHeight;
+			// if (down) {
+			newHeight = (int) (targetHeight * interpolatedTime);
+			// } else {
+			// newHeight = (int) (targetHeight * (1 - interpolatedTime));
+			// }
+			view.getLayoutParams().height = newHeight;
+			view.requestLayout();
+		}
 
-    @Override
-    public boolean willChangeBounds() {
-        return true;
-    }
-  }
+		@Override
+		public void initialize(int width, int height, int parentWidth,
+				int parentHeight) {
+			super.initialize(width, height, parentWidth, parentHeight);
+		}
+
+		@Override
+		public boolean willChangeBounds() {
+			return true;
+		}
+	}
 }

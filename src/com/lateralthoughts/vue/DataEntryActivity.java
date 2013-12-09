@@ -495,7 +495,7 @@ public class DataEntryActivity extends /*Base*/Activity {
 	    		getActionBar().setDisplayShowHomeEnabled(false);
 	        }
 	       
-			public void onDrawerOpened(View drawerView) {
+			public void onDrawerOpened(View drawerView) {/*
 				invalidateOptionsMenu(); // creates call to
 											// onPrepareOptionsMenu()
 				// add the custom view to the action bar
@@ -534,7 +534,7 @@ public class DataEntryActivity extends /*Base*/Activity {
 					}
 				});
 
-			}
+			*/}
 	    };
 	    mDrawerLayout.setDrawerListener(mDrawerToggle);
 	    mDataEntryFragment =(DataEntryFragment) getFragmentManager()

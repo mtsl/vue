@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
@@ -95,7 +96,13 @@ public class VueContentGateway {
 						responseBundle.putBoolean("loadMore", loadMore);
 						responseBundle.putInt("offset", offset);
 						receiver.send(1, responseBundle);
-				        VueLandingPageActivity.changeScreenName(screenName);
+						Intent intent = new Intent(
+								VueConstants.LANDING_SCREEN_RECEIVER);
+						intent.putExtra(
+								VueConstants.LANDING_SCREEN_RECEIVER_KEY,
+								screenName);
+						VueApplication.getInstance()
+								.sendBroadcast(intent);
 					}
 				}
 			};

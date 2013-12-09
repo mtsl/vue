@@ -156,13 +156,11 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 									if (aisleImageDetails != null) {
 										mImageAddedCallback
 												.onImageAdded(aisleImageDetails.mId);
-										if (VueLandingPageActivity
-												.getScreenName()
-												.equalsIgnoreCase("Trending")
-												|| VueLandingPageActivity
-														.getScreenName()
-														.equalsIgnoreCase(
-																"My Aisles")) {
+										if (VueLandingPageActivity.mLandingScreenName != null
+												&& VueLandingPageActivity.mLandingScreenName
+														.equalsIgnoreCase("Trending")
+												|| (VueLandingPageActivity.mLandingScreenName != null && VueLandingPageActivity.mLandingScreenName
+														.equalsIgnoreCase("My Aisles"))) {
 											AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
 													.getInstance(
 															VueApplication
