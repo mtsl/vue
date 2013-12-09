@@ -15,6 +15,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
  
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -45,6 +47,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
  
@@ -67,7 +70,8 @@ import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
-public class VueLandingPageActivity extends Activity {
+public class VueLandingPageActivity extends Activity implements SearchView.OnQueryTextListener,
+SearchView.OnCloseListener {
 
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
@@ -102,6 +106,7 @@ public class VueLandingPageActivity extends Activity {
 	public static String mLandingScreenName = null;
 	private boolean mHideDefaultActionbar = false;
 	private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
+	 private SearchView mSearchView;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -286,13 +291,23 @@ public class VueLandingPageActivity extends Activity {
 		getMenuInflater().inflate(R.menu.landing_actionbar, menu);
 		getActionBar().setHomeButtonEnabled(true);
 		// Configure the search info and add any event listeners
+		
+		  SearchManager searchManager =
+		           (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		  mSearchView =
+		            (SearchView) menu.findItem(R.id.menu_search).getActionView();
+		  
+		
+
+		
+		
 		return true;// super.onCreateOptionsMenu(menu);
 	}
-
+	 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean isdrawOpen = mDrawerLayout.isDrawerOpen(mContent_frame2);
-		getActionBar().setHomeButtonEnabled(true);
+		getActionBar().setHomeButtonEnabled(true); 
 		getActionBar().setDisplayShowCustomEnabled(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setDisplayShowHomeEnabled(true);
@@ -302,6 +317,10 @@ public class VueLandingPageActivity extends Activity {
 			menu.findItem(R.id.menu_create_aisle).setVisible(false);
 			// menu.findItem(R.id.menu_custom).setVisible(false);
 		} else {
+			   
+			//mSearchView.setIconified(true);
+			
+			
 			if (mHideDefaultActionbar) {
 				getActionBar().setDisplayHomeAsUpEnabled(false);
 				getActionBar().setDisplayShowCustomEnabled(true);
@@ -311,6 +330,7 @@ public class VueLandingPageActivity extends Activity {
 				menu.findItem(R.id.menu_create_aisle).setVisible(false);
 			} else {
 				menu.findItem(R.id.menu_search).setVisible(false);
+				menu.findItem(R.id.menu_search).collapseActionView();
 				menu.findItem(R.id.menu_create_aisle).setVisible(true);
 				// menu.findItem(R.id.menu_custom).setVisible(false);
 			}
@@ -1399,4 +1419,51 @@ public class VueLandingPageActivity extends Activity {
 			}
 		}
 	}
+
+	   private void setupSearchView() {
+
+	        mSearchView.setIconifiedByDefault(true);
+
+	        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+	        if (searchManager != null) {
+	            List<SearchableInfo> searchables = searchManager.getSearchablesInGlobalSearch();
+
+	            // Try to use the "applications" global search provider
+	            SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
+	            for (SearchableInfo inf : searchables) {
+	                if (inf.getSuggestAuthority() != null
+	                        && inf.getSuggestAuthority().startsWith("applications")) {
+	                    info = inf;
+	                }
+	            }
+	            mSearchView.setSearchableInfo(info);
+	        }
+
+	        mSearchView.setOnQueryTextListener(this);
+	        mSearchView.setOnCloseListener(this);
+	    }
+
+	    public boolean onQueryTextChange(String newText) {
+	        
+	        return false;
+	    }
+
+	    public boolean onQueryTextSubmit(String query) {
+	       // mStatusView.setText("Query = " + query + " : submitted");
+	        return false;
+	    }
+
+	    public boolean onClose() {
+	        //mStatusView.setText("Closed!");
+	        return false;
+	    }
+
+	    public void onClick(View view) {/*
+	        if (view == mCloseButton) {
+	            mSearchView.setIconified(true);
+	        } else if (view == mOpenButton) {
+	            mSearchView.setIconified(false);
+	        }
+	    */}
+	 
 }

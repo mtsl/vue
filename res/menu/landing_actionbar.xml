@@ -10,7 +10,7 @@
     <item
         android:id="@+id/menu_create_aisle"
         android:icon="@drawable/new_save"
-        android:showAsAction="always|withText"
+        android:showAsAction="always"
         android:title="@string/create_aisle"/>
   
 </menu>
