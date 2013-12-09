@@ -663,8 +663,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
 							TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
 								messagetext.setText(getResources().getString(
 										R.string.discard_comment));
-							yesButton.setText("Yes");
-							noButton.setText("No");
+							yesButton.setText("Discard");
+							noButton.setText("Continue");
 							yesButton.setOnClickListener(new OnClickListener() {
 								public void onClick(View v) {
 									dialog.dismiss();

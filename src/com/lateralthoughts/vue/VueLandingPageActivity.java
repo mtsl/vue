@@ -15,6 +15,9 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
+ 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,6 +38,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+ 
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,9 +47,10 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+ 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -65,11 +70,15 @@ import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
-public class VueLandingPageActivity extends Activity {
+public class VueLandingPageActivity extends Activity implements SearchView.OnQueryTextListener,
+SearchView.OnCloseListener {
 
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 	private ProgressDialog mProgressDialog;
+	private LinearLayout mVueLandingKeyboardLayout;
+	private FrameLayout mVueLandingKeyboardCancel, mVueLandingKeyboardDone;
+	private View mVueLandingActionbarView;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
 	private boolean mAddImageToAisleLayoutClickedAFlag = false;
 	public static String mOtherSourceImagePath = null;
@@ -95,7 +104,9 @@ public class VueLandingPageActivity extends Activity {
 	private String mCatName;
 	boolean mFromDialog;
 	public static String mLandingScreenName = null;
+	private boolean mHideDefaultActionbar = false;
 	private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
+	 private SearchView mSearchView;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -120,6 +131,37 @@ public class VueLandingPageActivity extends Activity {
 				.currentTimeMillis();
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		invalidateOptionsMenu();
+		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
+				R.layout.vue_landing_custom_actionbar, null);
+		mVueLandingKeyboardLayout = (LinearLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landin_keyboard_layout);
+		mVueLandingKeyboardCancel = (FrameLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_keyboard_cancel);
+		mVueLandingKeyboardDone = (FrameLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_keyboard_done);
+		mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mVueLandingKeyboardLayout.setVisibility(View.GONE);
+				addImageToExistingAisle(mOtherSourceAddImageAisleId);
+				mOtherSourceAddImageAisleId = null;
+				((VueLandingAislesFragment) mLandingAilsesFrag)
+						.notifyAdapters();
+				mHideDefaultActionbar = false;
+				invalidateOptionsMenu();
+			}
+		});
+		mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mVueLandingKeyboardLayout.setVisibility(View.GONE);
+				mOtherSourceAddImageAisleId = null;
+				((VueLandingAislesFragment) mLandingAilsesFrag)
+						.notifyAdapters();
+				mHideDefaultActionbar = false;
+				invalidateOptionsMenu();				
+			}
+		});
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(this,
@@ -183,7 +225,7 @@ public class VueLandingPageActivity extends Activity {
 		// between the sliding drawer and the action bar app icon
 		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
 		mDrawerLayout, /* DrawerLayout object */
-		R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+		R.drawable.ic_navigation_drawer, /* nav drawer image to replace 'Up' caret */
 		R.string.drawer_open, /* "open drawer" description for accessibility */
 		R.string.drawer_close /* "close drawer" description for accessibility */
 		) {
@@ -238,9 +280,9 @@ public class VueLandingPageActivity extends Activity {
 			} else {
 				showDiscardOtherAppImageDialog();
 			}
+ 
 		}
 		// Handle your other action bar items...
-
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -249,20 +291,49 @@ public class VueLandingPageActivity extends Activity {
 		getMenuInflater().inflate(R.menu.landing_actionbar, menu);
 		getActionBar().setHomeButtonEnabled(true);
 		// Configure the search info and add any event listeners
+		
+		  SearchManager searchManager =
+		           (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		  mSearchView =
+		            (SearchView) menu.findItem(R.id.menu_search).getActionView();
+		  
+		
+
+		
+		
 		return true;// super.onCreateOptionsMenu(menu);
 	}
-
+	 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean isdrawOpen = mDrawerLayout.isDrawerOpen(mContent_frame2);
+		getActionBar().setHomeButtonEnabled(true); 
+		getActionBar().setDisplayShowCustomEnabled(false);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayShowHomeEnabled(true);
+		getActionBar().setCustomView(null);
 		if (isdrawOpen) {
 			menu.findItem(R.id.menu_search).setVisible(true);
 			menu.findItem(R.id.menu_create_aisle).setVisible(false);
-			menu.findItem(R.id.menu_custom).setVisible(false);
+			// menu.findItem(R.id.menu_custom).setVisible(false);
 		} else {
-			menu.findItem(R.id.menu_search).setVisible(false);
-			menu.findItem(R.id.menu_create_aisle).setVisible(true);
-			menu.findItem(R.id.menu_custom).setVisible(false);
+			   
+			//mSearchView.setIconified(true);
+			
+			
+			if (mHideDefaultActionbar) {
+				getActionBar().setDisplayHomeAsUpEnabled(false);
+				getActionBar().setDisplayShowCustomEnabled(true);
+				getActionBar().setDisplayShowHomeEnabled(false);
+				getActionBar().setCustomView(mVueLandingActionbarView);
+				menu.findItem(R.id.menu_search).setVisible(false);
+				menu.findItem(R.id.menu_create_aisle).setVisible(false);
+			} else {
+				menu.findItem(R.id.menu_search).setVisible(false);
+				menu.findItem(R.id.menu_search).collapseActionView();
+				menu.findItem(R.id.menu_create_aisle).setVisible(true);
+				// menu.findItem(R.id.menu_custom).setVisible(false);
+			}
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -523,9 +594,7 @@ public class VueLandingPageActivity extends Activity {
 					mDrawerLayout.closeDrawer(mContent_frame2);
 				}
 			} else if (StackViews.getInstance().getStackCount() > 0) {
-
-				//mVueLandingKeyboardLayout.setVisibility(View.GONE);
-
+				showDefaultActionbar();
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
 				if (viewInfo != null) {
 					getActionBar().setTitle(viewInfo.mVueName);
@@ -690,6 +759,7 @@ public class VueLandingPageActivity extends Activity {
 			}
 		}
 	};
+ 
 
 	private void callForNewView(final String catName, boolean fromDialog) {
 		if (mLandingScreenName != null
@@ -706,8 +776,10 @@ public class VueLandingPageActivity extends Activity {
 		StackViews.getInstance().push(viewInfo);
 		boolean loadMore = false;
 		boolean fromServer = true;
+		 
 		if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
+			 
 			if (VueConnectivityManager.isNetworkConnected(VueApplication
 					.getInstance())) {
 				fromServer = true;
@@ -721,6 +793,7 @@ public class VueLandingPageActivity extends Activity {
 							catName);
 		} else if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
+			Log.i("fromDialog", "Trending profilce 4: ");
 			if (fromDialog) {
 				fromServer = false;
 				loadMore = false;
@@ -749,13 +822,16 @@ public class VueLandingPageActivity extends Activity {
 			}
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
+			
 			getBookmarkedAisles(catName);
 
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
+			 Log.i("recently viewed", "recently viewed showcateMethod 1");
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
+				 Log.i("recently viewed", "recently viewed showcateMethod 1 windowContent.size()"+windowContent.size());
 				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -776,6 +852,7 @@ public class VueLandingPageActivity extends Activity {
 				StackViews.getInstance().pull();
 			}
 		} else {
+			 
 			/*
 			 * VueTrendingAislesDataModel
 			 * .getInstance(VueLandingPageActivity.this) .getNetworkHandler()
@@ -1079,7 +1156,6 @@ public class VueLandingPageActivity extends Activity {
 				sourceUrl, this, true);
 		getImagesTask.execute();
 	}
-
 	public void CancelNotification(Context ctx, int notifyId) {
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager nMgr = (NotificationManager) ctx
@@ -1319,6 +1395,16 @@ public class VueLandingPageActivity extends Activity {
 
 	}
 
+	public void hideDefaultActionbar() {
+		mHideDefaultActionbar = true;
+		invalidateOptionsMenu();
+	}
+
+	public void showDefaultActionbar() {
+		mHideDefaultActionbar = false;
+		invalidateOptionsMenu();
+	}
+
 	public class LandingScreenTitleReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context arg0, Intent intent) {
@@ -1334,4 +1420,51 @@ public class VueLandingPageActivity extends Activity {
 			}
 		}
 	}
+
+	   private void setupSearchView() {
+
+	        mSearchView.setIconifiedByDefault(true);
+
+	        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+	        if (searchManager != null) {
+	            List<SearchableInfo> searchables = searchManager.getSearchablesInGlobalSearch();
+
+	            // Try to use the "applications" global search provider
+	            SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
+	            for (SearchableInfo inf : searchables) {
+	                if (inf.getSuggestAuthority() != null
+	                        && inf.getSuggestAuthority().startsWith("applications")) {
+	                    info = inf;
+	                }
+	            }
+	            mSearchView.setSearchableInfo(info);
+	        }
+
+	        mSearchView.setOnQueryTextListener(this);
+	        mSearchView.setOnCloseListener(this);
+	    }
+
+	    public boolean onQueryTextChange(String newText) {
+	        
+	        return false;
+	    }
+
+	    public boolean onQueryTextSubmit(String query) {
+	       // mStatusView.setText("Query = " + query + " : submitted");
+	        return false;
+	    }
+
+	    public boolean onClose() {
+	        //mStatusView.setText("Closed!");
+	        return false;
+	    }
+
+	    public void onClick(View view) {/*
+	        if (view == mCloseButton) {
+	            mSearchView.setIconified(true);
+	        } else if (view == mOpenButton) {
+	            mSearchView.setIconified(false);
+	        }
+	    */}
+	 
 }

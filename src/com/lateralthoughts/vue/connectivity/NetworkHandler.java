@@ -303,8 +303,15 @@ public class NetworkHandler {
 				ArrayList<AisleWindowContent> windowList = DataBaseManager
 						.getInstance(VueApplication.getInstance())
 						.getAislesByUserId(userId);
-				Log.i("meoptions", "meoptions: MyAisle list size: "
-						+ windowList.size());
+				if(windowList != null && windowList.size() > 0) {
+					Log.i("userAisle", "userailse: userId 1111: "+userId +"  list Size: "+windowList.size());
+					for(AisleWindowContent aisleItem : windowList) {
+						Log.i("userAisle", "userailse: userId: "+aisleItem.getAisleContext().mUserId);
+						if(!aisleItem.getAisleContext().mUserId.equals(userId)) {
+							windowList.remove(aisleItem);
+						}
+					}
+				}
 				if (windowList != null && windowList.size() > 0) {
 					clearList(progress);
 					for (int i = 0; i < windowList.size(); i++) {
@@ -350,6 +357,16 @@ public class NetworkHandler {
 							aislesList = null;
 							String userId = getUserId();
 							aislesList = getAislesByUser(userId);
+							
+							if(aislesList != null && aislesList.size() > 0) {
+								Log.i("userAisle", "userailse: userId 1111: "+userId +"  list Size: "+aislesList.size());
+								for(AisleWindowContent aisleItem : aislesList) {
+									Log.i("userAisle", "userailse: userId: "+aisleItem.getAisleContext().mUserId);
+									if(!aisleItem.getAisleContext().mUserId.equals(userId)) {
+										aislesList.remove(aisleItem);
+									}
+								}
+							}
 							Log.i("aislesList myaisles",
 									"aislesList myaisles: " + aislesList.size());
 						} catch (Exception e) {
@@ -365,6 +382,7 @@ public class NetworkHandler {
 															.getInstance()).loadOnRequest = false;
 											if (aislesList != null
 													&& aislesList.size() > 0) {
+ 
 												clearList(progress);
 												Intent intent = new Intent(
 														VueConstants.LANDING_SCREEN_RECEIVER);
@@ -375,11 +393,6 @@ public class NetworkHandler {
 														.sendBroadcast(intent);
 												for (int i = 0; i < aislesList
 														.size(); i++) {
-													Log.i("aislesList myaisles",
-															"aislesList myaisles: "
-																	+ aislesList
-																			.get(i)
-																			.getAisleId());
 													VueTrendingAislesDataModel
 															.getInstance(
 																	VueApplication
@@ -407,21 +420,7 @@ public class NetworkHandler {
 																aislesList,
 																mOffset,
 																DataBaseManager.MY_AISLES);
-												// if this is the first set of
-												// data
-												// we
-												// are receiving
-												// go
-												// ahead
-												// notify the data set changed
 											} else {
-												// if this is the first set of
-												// data
-												// we
-												// are receiving
-												// go
-												// ahead
-												// notify the data set changed
 												StackViews.getInstance().pull();
 												Toast.makeText(
 														VueLandingPageActivity.landingPageActivity,
@@ -446,6 +445,7 @@ public class NetworkHandler {
 						VueApplication.getInstance().getResources()
 								.getString(R.string.no_network),
 						Toast.LENGTH_LONG).show();
+				StackViews.getInstance().pull();
 			}
 		}
 	}
@@ -488,16 +488,13 @@ public class NetworkHandler {
 			@Override
 			public void run() {
 				try {
+ 
 					String userId = getUserId();
 					Log.i("bookmarked aisle",
 							"bookmarked persist issue  userid: " + userId);
 					if (userId == null) {
-						Log.i("bookmarked aisle",
-								"bookmarked aisle ID IS NULL RETURNING");
 						return;
 					}
-					Log.i("bookmarked aisle", "bookmarked aisle 2 User Id; "
-							+ userId);
 					URL url = new URL(UrlConstants.GET_BOOKMARK_Aisles + "/"
 							+ userId + "/" + "0");
 					HttpGet httpGet = new HttpGet(url.toString());
@@ -508,13 +505,6 @@ public class NetworkHandler {
 									+ response.getStatusLine().getStatusCode());
 					if (response.getEntity() != null
 							&& response.getStatusLine().getStatusCode() == 200) {
-						/*
-						 * Cursor aisleIdCursor =
-						 * mContext.getContentResolver().query(
-						 * VueConstants.CONTENT_URI, new String[]
-						 * {VueConstants.AISLE_Id}, null, null, null);
-						 */
-
 						String responseMessage = EntityUtils.toString(response
 								.getEntity());
 						if (responseMessage != null) {
@@ -697,12 +687,6 @@ public class NetworkHandler {
 							ArrayList<ImageRating> retrievedImageRating = null;
 							if (response.length() > 0) {
 								try {
-									/*
-									 * retrievedImageRating = (new
-									 * ObjectMapper()).readValue(
-									 * response.toString(), new
-									 * TypeReference<List<ImageRating>>() {});
-									 */
 									retrievedImageRating = Parser
 											.parseRatedImages(response
 													.toString());

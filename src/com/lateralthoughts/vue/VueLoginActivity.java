@@ -1420,6 +1420,8 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	public void getProfileImageChangeListenor() {
+		//get the currently displayed aisles and update the user photo
+		 //call updateProfileImatgeInAisles(userId,imageUrl)
 		Intent i = new Intent("RefreshBezelMenuReciver");
 		VueApplication.getInstance().sendBroadcast(i);
 	}

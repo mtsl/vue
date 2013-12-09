@@ -50,7 +50,9 @@ public class Parser {
 			return aisleWindowContentList;
 		}
 		try {
+			Log.i("fromDialog", "Trending profile parseAilse 3 started: ");
 			aisleWindowContentList = parseAisleInformation(contentArray);
+			Log.i("fromDialog", "Trending profile parseAilse 3 ended: ");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -226,7 +228,9 @@ public class Parser {
 			AisleContext aisleContext = parseAisleData(ailseItem);
 			ArrayList<AisleImageDetails> aisleImageDetailsList = null;
 			try {
+				Log.i("fromDialog", "Trending profile ImageData 3 started: ");
 				aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
+				Log.i("fromDialog", "Trending profile ImageData 3 ended: ");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
