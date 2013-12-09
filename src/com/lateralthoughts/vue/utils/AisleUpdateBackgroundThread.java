@@ -98,10 +98,11 @@ public class AisleUpdateBackgroundThread implements Runnable,
 			HttpResponse response = httpClient.execute(httpPut);
 			if (response.getEntity() != null
 					&& response.getStatusLine().getStatusCode() == 200) {
-				mNotification.setLatestEventInfo(VueApplication.getInstance(),
+				mNotification.setLatestEventInfo(
+						VueApplication.getInstance(),
 						VueApplication.getInstance().getResources()
-						.getString(R.string.upload_successful_mesg), "",
-						contentIntent);
+								.getString(R.string.upload_successful_mesg),
+						"", contentIntent);
 				mNotification.flags = Notification.FLAG_AUTO_CANCEL;
 				mNotificationManager.notify(
 						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
@@ -113,9 +114,10 @@ public class AisleUpdateBackgroundThread implements Runnable,
 						"myailsedebug: recieved response*******:  "
 								+ mResponseMessage);
 			} else {
-				mNotification.setLatestEventInfo(VueApplication.getInstance(),
+				mNotification.setLatestEventInfo(
+						VueApplication.getInstance(),
 						VueApplication.getInstance().getResources()
-						.getString(R.string.upload_failed_mesg), "",
+								.getString(R.string.upload_failed_mesg), "",
 						contentIntent);
 				mNotification.flags = Notification.FLAG_AUTO_CANCEL;
 				mNotificationManager.notify(
@@ -143,12 +145,11 @@ public class AisleUpdateBackgroundThread implements Runnable,
 								AisleContext aisleContext = new Parser()
 										.parseAisleData(jsonObject);
 								if (aisleContext != null) {
-									if (VueLandingPageActivity.getScreenName()
-											.equalsIgnoreCase("Trending")
-											|| VueLandingPageActivity
-													.getScreenName()
-													.equalsIgnoreCase(
-															"My Aisles")) {
+									if (VueLandingPageActivity.mLandingScreenName != null
+											&& VueLandingPageActivity.mLandingScreenName
+													.equalsIgnoreCase("Trending")
+											|| (VueLandingPageActivity.mLandingScreenName != null && VueLandingPageActivity.mLandingScreenName
+													.equalsIgnoreCase("My Aisles"))) {
 										AisleWindowContent existedAisle = VueTrendingAislesDataModel
 												.getInstance(
 														VueApplication

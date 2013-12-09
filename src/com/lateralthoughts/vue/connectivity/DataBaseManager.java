@@ -139,6 +139,7 @@ public class DataBaseManager {
 	 * @param AisleContext
 	 *            context.
 	 * */
+	@Deprecated
 	public void aisleUpdateToDB(final AisleContext context) {
 		runTask(new Runnable() {
 
@@ -286,6 +287,7 @@ public class DataBaseManager {
 			values.put(VueConstants.BOOKMARK_COUNT, info.mBookmarkCount);
 			values.put(VueConstants.CATEGORY, info.mCategory);
 			values.put(VueConstants.AISLE_DESCRIPTION, info.mDescription);
+			values.put(VueConstants.AISLE_OWNER_IMAGE_URL, info.mAisleOwnerImageURL);
 			values.put(VueConstants.DELETE_FLAG, 0);
 
 			if (aisleIds.contains(info.mAisleId)) {
@@ -1535,6 +1537,19 @@ public class DataBaseManager {
 		return (minEntry == null) ? 0 : minEntry.getValue();
 	}
 
+	private void upDateCommenterUrl(String userId, String userImgUrl) {
+    Cursor c = mContext.getContentResolver().query(VueConstants.CONTENT_URI,
+        new String[] {VueConstants.AISLE_OWNER_IMAGE_URL}, VueConstants.USER_ID + "=?",
+        new String[] {userId}, null);
+    if(c.moveToFirst()) {
+      do {
+        /*if() {
+          
+        }*/
+      } while(c.moveToNext());
+    }
+	}
+	
 	@Deprecated
 	// not in use by Surendra
 	private void updateAisleOrder() {

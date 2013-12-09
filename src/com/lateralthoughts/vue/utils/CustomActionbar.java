@@ -18,7 +18,7 @@ public class CustomActionbar extends ActionProvider {
 	@Override
 	public View onCreateActionView() {
 		LayoutInflater layoutInflater = LayoutInflater.from(mContext);
-	    View view = layoutInflater.inflate(R.layout.vue_landing_actionbar, null);
+	    View view = layoutInflater.inflate(R.layout.vue_landing_custom_actionbar, null);
 		return view;
 	}
 

@@ -11,7 +11,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	 public static final String DATABASE_NAME = "Vue.db";
 	 public static final String DATABASE_TABLE_AISLES = "aisles";
 	 public static final String DATABASE_TABLE_AISLES_IMAGES = "aisleImages";
-	 public static final String DATABASE_TABLE_DATA_TO_SYNC = "dataToSync";
+	 //public static final String DATABASE_TABLE_DATA_TO_SYNC = "dataToSync";
 	 public static final String DATABASE_TABLE_LOOKINGFOR = "lookingFor";
 	 public static final String DATABASE_TABLE_OCCASION = "occasion";
 	 public static final String DATABASE_TABLE_CATEGORY = "category";
@@ -37,6 +37,7 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.DELETE_FLAG + " integer, "
      + VueConstants.AISLE_DESCRIPTION + " text, "
+     + VueConstants.AISLE_OWNER_IMAGE_URL + " text, "
      + VueConstants.ID + " text);";
 
      private String createAisleImagesTable = "create table if not exists " + DATABASE_TABLE_AISLES_IMAGES
