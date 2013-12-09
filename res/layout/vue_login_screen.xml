@@ -26,7 +26,7 @@
             android:layout_marginBottom="8dip"
             android:layout_marginLeft="24dip"
             android:layout_marginRight="24dip"
-            android:background="@drawable/instagram_background" >
+            android:background="@drawable/instagram_btn_selector" >
 
             <Button
                 android:id="@+id/instagramplusign_in_button"
@@ -52,7 +52,7 @@
             android:layout_marginBottom="8dip"
             android:layout_marginLeft="24dip"
             android:layout_marginRight="24dip"
-            android:background="@drawable/googleplus_background" >
+            android:background="@drawable/google_plus_bg_selector" >
 
             <Button
                 android:id="@+id/googleplusign_in_button"
@@ -78,7 +78,7 @@
             android:layout_marginBottom="8dip"
             android:layout_marginLeft="24dip"
             android:layout_marginRight="24dip"
-            android:background="@drawable/facebookbtnbg" >
+            android:background="@drawable/facebook_btn_selector" >
 
             <Button
                 android:id="@+id/fblog_in_button"
@@ -110,7 +110,7 @@
             android:layout_marginBottom="8dip"
             android:layout_marginLeft="24dip"
             android:layout_marginRight="24dip"
-            android:background="@drawable/cancel_button_bg" >
+            android:background="@drawable/cancel_btn_selector" >
 
             <Button
                 android:id="@+id/cancel"

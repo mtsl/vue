@@ -76,7 +76,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
 			vue_list_fragment_invite_friendsLayout_mainxml;
 	private ImageView userProfilePic;
 	private EditText userNameEdit, userDOBEdit, userGenderEdit, userEmailEdit,
-			userLocationEdit,mSideMenuSearchBar;
+			userLocationEdit, mSideMenuSearchBar;
 	private Animation animDown;
 	private Animation animUp;
 	private ListView inviteFrirendsListView;
@@ -88,12 +88,25 @@ public class VueListFragment extends Fragment implements TextWatcher {
 	boolean isNewUser = false;
 	private String profilePicUrl = "";
 	private RelativeLayout vue_list_fragment_actionbar;
+	private BezelMenuRefreshReciever mBezelMenuRefreshReciever = null;
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		try {
+			if (mBezelMenuRefreshReciever != null) {
+				getActivity().unregisterReceiver(mBezelMenuRefreshReciever);
+			}
+		} catch (Exception e) {
+		}
+	}
 
 	public VueListFragment() {
+		mBezelMenuRefreshReciever = new BezelMenuRefreshReciever();
 		IntentFilter ifiltercategory = new IntentFilter(
 				"RefreshBezelMenuReciver");
 		VueApplication.getInstance().registerReceiver(
-				new BezelMenuRefreshReciever(), ifiltercategory);
+				mBezelMenuRefreshReciever, ifiltercategory);
 	}
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -194,6 +207,15 @@ public class VueListFragment extends Fragment implements TextWatcher {
 						if (getActivity() instanceof VueLandingPageActivity) {
 							VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
 							vueLandingPageActivity1.showCategory(s, false);
+<<<<<<< HEAD
+=======
+							Intent intent = new Intent(
+									VueConstants.LANDING_SCREEN_RECEIVER);
+							intent.putExtra(
+									VueConstants.LANDING_SCREEN_RECEIVER_KEY,
+									getString(R.string.trending));
+							VueApplication.getInstance().sendBroadcast(intent);
+>>>>>>> 9f8ef8aafab1f478fe8dc313eaa9fe89e28a1554
 						}
 						if (getActivity() instanceof AisleDetailsViewActivity) {
 							startActivity(new Intent(
@@ -305,10 +327,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
 					if (getActivity() instanceof VueLandingPageActivity) {
 						((VueLandingPageActivity) getActivity()).showCategory(
 								s, false);
-					}else {
+					} else {
 						creatingNewViewFromaOtherActivity(s);
 					}
-					 
+
 					return true;
 				} else if (s
 						.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
@@ -326,8 +348,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
 						.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
 					Log.i("clicked on", "clicked on: " + s);
 					if (getActivity() instanceof VueLandingPageActivity) {
-						 ((VueLandingPageActivity) getActivity()).showCategory(
-								s, false); 
+						((VueLandingPageActivity) getActivity()).showCategory(
+								s, false);
 					} else {
 						creatingNewViewFromaOtherActivity(s);
 					}
@@ -346,24 +368,24 @@ public class VueListFragment extends Fragment implements TextWatcher {
 						FlurryAgent.logEvent("InviteFriends_" + s);
 						getFriendsList(s);
 					} else {
-					/*	TextView categoryText = (TextView) v
-								.findViewById(R.id.child_itemTextview);
-						String cat = categoryText.getText().toString();
-						if (getActivity() instanceof VueLandingPageActivity) {
-							AisleWindowContentFactory
-									.getInstance(getActivity())
-									.clearObjectsInUse();
-							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-							vueLandingPageActivity.showCategory(cat, false);
-						} else if (getActivity() instanceof AisleDetailsViewActivity) {
-							startActivity(new Intent(
-									(AisleDetailsViewActivity) getActivity(),
-									VueLandingPageActivity.class));
-						} else if (getActivity() instanceof DataEntryActivity) {
-							startActivity(new Intent(
-									(DataEntryActivity) getActivity(),
-									VueLandingPageActivity.class));
-						}*/
+						/*
+						 * TextView categoryText = (TextView) v
+						 * .findViewById(R.id.child_itemTextview); String cat =
+						 * categoryText.getText().toString(); if (getActivity()
+						 * instanceof VueLandingPageActivity) {
+						 * AisleWindowContentFactory .getInstance(getActivity())
+						 * .clearObjectsInUse(); VueLandingPageActivity
+						 * vueLandingPageActivity = (VueLandingPageActivity)
+						 * getActivity();
+						 * vueLandingPageActivity.showCategory(cat, false); }
+						 * else if (getActivity() instanceof
+						 * AisleDetailsViewActivity) { startActivity(new Intent(
+						 * (AisleDetailsViewActivity) getActivity(),
+						 * VueLandingPageActivity.class)); } else if
+						 * (getActivity() instanceof DataEntryActivity) {
+						 * startActivity(new Intent( (DataEntryActivity)
+						 * getActivity(), VueLandingPageActivity.class)); }
+						 */
 					}
 					return false;
 				} else {
@@ -1054,7 +1076,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
 			aboutlayout.setLayoutParams(params);
 			aboutdonelayout = (RelativeLayout) aboutLayoutView
 					.findViewById(R.id.aboutdonelayout);
-			aboutdonelayout.setLayoutParams(params);
+			aboutdonelayout.setLayoutParams(params2);
 			aboutdonelayout.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -1161,33 +1183,32 @@ public class VueListFragment extends Fragment implements TextWatcher {
 		VueListFragment.this.expandListView.setAdapter(adapter);
 		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage4 ");
 	}
- 
 
 	public class BezelMenuRefreshReciever extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context arg0, Intent intent) {
 			if (intent != null) {
-				try{
-				refreshBezelMenu();
-				}catch(Exception e){
+				try {
+					refreshBezelMenu();
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
 	}
 
- 
-    private void creatingNewViewFromaOtherActivity(String s){
-    	VueApplication.getInstance().mNewViewSelection = true;
+	private void creatingNewViewFromaOtherActivity(String s) {
+		VueApplication.getInstance().mNewViewSelection = true;
 		VueApplication.getInstance().mNewlySelectedView = s;
 		getActivity().finish();
-    }
-    public void closeKeybaord(){
-    	final InputMethodManager mInputMethodManager = (InputMethodManager) getActivity()
+	}
+
+	public void closeKeybaord() {
+		final InputMethodManager mInputMethodManager = (InputMethodManager) getActivity()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		mInputMethodManager.hideSoftInputFromWindow(
 				mSideMenuSearchBar.getWindowToken(), 0);
-		 
-    }
- 
+
+	}
+
 }

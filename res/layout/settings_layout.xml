@@ -1,186 +1,182 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/customlayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:visibility="visible" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/customlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:visibility="visible" >
+
+    <TextView
+        android:id="@+id/setsizeid"
+        android:layout_width="fill_parent"
+        android:layout_height="42dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/red"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="18dp"
+        android:text="@string/profile"
+        android:textColor="#ffffff" />
+
+    <RelativeLayout
+        android:id="@+id/user_info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" >
+
+        <ImageView
+            android:id="@+id/user_profilePic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/image_contentDescription" />
+
         <TextView
-            android:id="@+id/setsizeid"
-            android:layout_width="fill_parent"
-            android:layout_height="42dp"
-            android:layout_marginTop="0dp"
-            android:background="@color/red"
-            android:gravity="left|center_vertical"
-            android:paddingLeft="18dp"
-            android:text="@string/profile"
-            android:textColor="#ffffff" />
-      <RelativeLayout
-            android:id="@+id/user_info"
-            android:layout_width="fill_parent"
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            >
-            <ImageView
-                android:id="@+id/user_profilePic"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="@string/image_contentDescription"
-                />
-          <TextView
-              android:id="@+id/user_name"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="Name:"
-              android:layout_marginTop="6dp"
-              android:layout_marginBottom="6dp"
-              android:layout_marginLeft="4dp"
-              android:layout_marginRight="4dp"
-              android:textSize="18sp"
-              android:layout_below="@+id/user_profilePic"              
-              />
+            android:layout_below="@+id/user_profilePic"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="6dp"
+            android:text="Name:"
+            android:textSize="18sp" />
 
-          <EditText
-              android:id="@+id/user_name_EditText"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_above="@+id/user_date_Of_birth"
-              android:layout_alignLeft="@+id/user_DOB_EditText"
-              
-              android:textSize="18sp"
-              android:singleLine="true" />
+        <EditText
+            android:id="@+id/user_name_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/user_date_Of_birth"
+            android:layout_alignLeft="@+id/user_DOB_EditText"
+            android:singleLine="true"
+            android:textSize="18sp" />
 
-          <TextView
-              android:id="@+id/user_date_Of_birth"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="DOB:"
-              android:layout_marginTop="6dp"
-              android:layout_marginBottom="6dp"
-              android:layout_marginLeft="4dp"
-              android:layout_marginRight="4dp"
-              android:textSize="18sp"
-              android:layout_below="@+id/user_name"
-              />
+        <TextView
+            android:id="@+id/user_date_Of_birth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_name"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="6dp"
+            android:text="DOB:"
+            android:textSize="18sp" />
 
-          <EditText
-              android:id="@+id/user_DOB_EditText"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_above="@+id/user_gender"
-              android:layout_below="@+id/user_name_EditText"
-              android:layout_toRightOf="@+id/user_profilePic"
-              android:textSize="18sp"
-              android:singleLine="true" />
+        <EditText
+            android:id="@+id/user_DOB_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/user_gender"
+            android:layout_below="@+id/user_name_EditText"
+            android:layout_toRightOf="@+id/user_profilePic"
+            android:singleLine="true"
+            android:textSize="18sp" />
 
-          <TextView
-              android:id="@+id/user_gender"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="Gender:"
-              android:textSize="18sp"
-              android:layout_marginTop="6dp"
-              android:layout_marginBottom="6dp"
-              android:layout_marginLeft="4dp"
-              android:layout_marginRight="4dp"
-              android:layout_below="@+id/user_date_Of_birth"
-              />
+        <TextView
+            android:id="@+id/user_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_date_Of_birth"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="6dp"
+            android:text="Gender:"
+            android:textSize="18sp" />
 
-          <TextView
-              android:id="@+id/user_Email"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_below="@+id/user_gender"
-              android:text="Email:"
-              android:textSize="18sp"
-              android:layout_marginTop="6dp"
-              android:layout_marginBottom="6dp"
-              android:layout_marginLeft="4dp"
-              android:layout_marginRight="4dp"
-              />
+        <TextView
+            android:id="@+id/user_Email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_gender"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="6dp"
+            android:text="Email:"
+            android:textSize="18sp" />
 
-           <EditText
-               android:id="@+id/user_Email_EditText"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_alignBottom="@+id/user_Email"
-               android:layout_alignLeft="@+id/user_DOB_EditText"
-               android:layout_alignParentRight="true"
-               
-               android:textSize="18sp"
-               android:singleLine="true" />
+        <EditText
+            android:id="@+id/user_Email_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/user_Email"
+            android:layout_alignLeft="@+id/user_DOB_EditText"
+            android:layout_alignParentRight="true"
+            android:singleLine="true"
+            android:textSize="18sp" />
 
-          <EditText
-              android:id="@+id/user_location_EditText"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_alignBottom="@+id/user_current_location"
-              android:layout_alignParentRight="true"
-             
-              android:layout_toRightOf="@+id/user_current_location"
-              android:textSize="18sp"
-              android:singleLine="true" />
+        <EditText
+            android:id="@+id/user_location_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/user_current_location"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/user_current_location"
+            android:singleLine="true"
+            android:textSize="18sp" />
 
-          <TextView
-              android:id="@+id/user_current_location"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_alignParentLeft="true"
-              android:layout_below="@+id/user_Email_EditText"
-              android:text="Current Location:"
-              android:textSize="18sp"
-              android:layout_marginTop="6dp"
-              android:layout_marginBottom="6dp"
-              android:layout_marginLeft="4dp"
-              android:layout_marginRight="4dp"
-              />
+        <TextView
+            android:id="@+id/user_current_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/user_Email_EditText"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="6dp"
+            android:text="Current Location:"
+            android:textSize="18sp" />
 
-          <EditText
-              android:id="@+id/user_Gender_EditText"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_above="@+id/user_Email"
-              android:layout_alignParentRight="true"
-              android:layout_toRightOf="@+id/user_gender"
-              android:textSize="18sp"
-              android:singleLine="true" >
+        <EditText
+            android:id="@+id/user_Gender_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/user_Email"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/user_gender"
+            android:singleLine="true"
+            android:textSize="18sp" >
+        </EditText>
+    </RelativeLayout>
 
-          </EditText>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal" >
 
-      </RelativeLayout>
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:background="@color/red"
             android:orientation="horizontal" >
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+
+            <RelativeLayout
+                android:id="@+id/donelayout"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
                 android:layout_gravity="bottom"
-                android:background="@color/red"
+                android:layout_margin="4dp"
+                android:layout_weight="2"
+                android:background="@drawable/white_bg_selector"
                 android:orientation="horizontal" >
 
-                <RelativeLayout
-                    android:id="@+id/donelayout"
-                    android:layout_width="0dp"
-                    android:layout_height="42dp"
-                    android:layout_gravity="bottom"
-                    android:layout_margin="4dp"
-                    android:layout_weight="2"
-                    android:background="#ffffff"
-                    android:orientation="horizontal" >
-                    <TextView
-                        android:id="@+id/done"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical"
-                        android:text="Done"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
-                </RelativeLayout>
-            </LinearLayout>
+                <TextView
+                    android:id="@+id/done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="Done"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
+
+</LinearLayout>

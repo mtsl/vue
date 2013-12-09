@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
+    android:padding="8dp"
     android:background="@drawable/dataentry_title_bg"
     android:orientation="vertical" >
 
@@ -11,11 +13,10 @@
         android:id="@+id/popupheadid"
         layout="@layout/popupheading" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dip"
-        android:orientation="vertical" >
+        android:layout_margin="8dip" >
 
         <TextView
             android:id="@+id/nothanks_alert_title_mesg"
@@ -28,15 +29,45 @@
             android:id="@+id/nothanks_alert_name_box"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/nothanks_alert_title_mesg"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:layout_marginTop="4dip"
+            android:background="@color/white"
             android:singleLine="true" >
         </EditText>
-    </LinearLayout>
+
+        <View
+            android:id="@+id/leftline"
+            android:layout_width="1dp"
+            android:layout_height="4dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/nothanks_alert_name_box"
+            android:layout_marginTop="4dp"
+            android:background="@color/grey" />
+
+        <View
+            android:id="@+id/leftline"
+            android:layout_width="1dp"
+            android:layout_height="4dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/nothanks_alert_name_box"
+            android:layout_marginTop="4dp"
+            android:background="@color/grey" />
+
+        <View
+            android:id="@+id/bottomline"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/nothanks_alert_name_box"
+            android:layout_marginTop="8dp"
+            android:background="@color/grey" />
+    </RelativeLayout>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:background="@color/orange" />
+        android:background="@color/popupbgcolor" />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -48,6 +79,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="2"
+            android:background="@drawable/vue_button_selector"
             android:gravity="center"
             android:text="Continue to Vue..."
             android:textColor="@android:color/black" />

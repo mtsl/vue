@@ -145,11 +145,11 @@ public class AisleCreationBackgroundThread implements Runnable,
 							try {
 								AisleWindowContent aileItem = new Parser()
 										.getAisleCotent(mResponseMessage);
-								if (VueLandingPageActivity.getScreenName()
-										.equalsIgnoreCase("Trending")
-										|| VueLandingPageActivity
-												.getScreenName()
-												.equalsIgnoreCase("My Aisles")) {
+								if (VueLandingPageActivity.mLandingScreenName != null
+										&& VueLandingPageActivity.mLandingScreenName
+												.equalsIgnoreCase("Trending")
+										|| (VueLandingPageActivity.mLandingScreenName != null && VueLandingPageActivity.mLandingScreenName
+												.equalsIgnoreCase("My Aisles"))) {
 									VueTrendingAislesDataModel
 											.getInstance(
 													VueApplication

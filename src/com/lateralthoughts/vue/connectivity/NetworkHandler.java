@@ -17,6 +17,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
@@ -174,12 +175,13 @@ public class NetworkHandler {
 		AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
 	}
 
-	public void requestForDeleteImage(Image image,String aisleId) {
-		AisleManager.getAisleManager().deleteImage(image,aisleId);
+	public void requestForDeleteImage(Image image, String aisleId) {
+		AisleManager.getAisleManager().deleteImage(image, aisleId);
 	}
 
 	public void requestForAddImage(boolean fromDetailsScreenFlag,
-			String imageId, VueImage image, ImageAddedCallback imageAddedCallback) {
+			String imageId, VueImage image,
+			ImageAddedCallback imageAddedCallback) {
 		AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag,
 				imageId, image, imageAddedCallback);
 	}
@@ -318,7 +320,10 @@ public class NetworkHandler {
 								windowList.get(i).getAisleContext().mAisleId,
 								windowList.get(i));
 					}
-					VueLandingPageActivity.changeScreenName(screenName);
+					Intent i = new Intent(VueConstants.LANDING_SCREEN_RECEIVER);
+					i.putExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY,
+							screenName);
+					VueApplication.getInstance().sendBroadcast(i);
 					VueTrendingAislesDataModel.getInstance(
 							VueApplication.getInstance()).dataObserver();
 				} else {
@@ -377,9 +382,15 @@ public class NetworkHandler {
 															.getInstance()).loadOnRequest = false;
 											if (aislesList != null
 													&& aislesList.size() > 0) {
-												VueLandingPageActivity
-												.changeScreenName(screenName);
+ 
 												clearList(progress);
+												Intent intent = new Intent(
+														VueConstants.LANDING_SCREEN_RECEIVER);
+												intent.putExtra(
+														VueConstants.LANDING_SCREEN_RECEIVER_KEY,
+														screenName);
+												VueApplication.getInstance()
+														.sendBroadcast(intent);
 												for (int i = 0; i < aislesList
 														.size(); i++) {
 													VueTrendingAislesDataModel
@@ -477,7 +488,10 @@ public class NetworkHandler {
 			@Override
 			public void run() {
 				try {
-					String userId =  getUserId();
+ 
+					String userId = getUserId();
+					Log.i("bookmarked aisle",
+							"bookmarked persist issue  userid: " + userId);
 					if (userId == null) {
 						return;
 					}
@@ -563,7 +577,8 @@ public class NetworkHandler {
 		return storedVueUser;
 
 	}
-  public String getUserId(){
+
+	public String getUserId() {
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(
@@ -578,7 +593,8 @@ public class NetworkHandler {
 			storedVueUser.getUserImageURL();
 		}
 		return userId;
-  }
+	}
+
 	public ImageComment createImageComment(ImageCommentRequest comment)
 			throws Exception {
 		ImageComment createdImageComment = null;
@@ -606,7 +622,8 @@ public class NetworkHandler {
 				String responseMessage = EntityUtils.toString(response
 						.getEntity());
 				System.out.println("Comment Response: " + responseMessage);
-				Log.i("createimageCommenterUrl", "createimageCommenterUrl res: "+responseMessage);
+				Log.i("createimageCommenterUrl",
+						"createimageCommenterUrl res: " + responseMessage);
 				if (responseMessage.length() > 0) {
 					Log.e("NetworkHandler",
 							"Comments Issue: responseMessage size is > 0 responseMessage: "
@@ -629,10 +646,12 @@ public class NetworkHandler {
 			editor.commit();
 			createdImageComment = new ImageComment();
 			createdImageComment.setComment(comment.getComment());
-			createdImageComment.setLastModifiedTimestamp(comment.getLastModifiedTimestamp());
+			createdImageComment.setLastModifiedTimestamp(comment
+					.getLastModifiedTimestamp());
 			createdImageComment.setOwnerImageId(comment.getOwnerImageId());
 			createdImageComment.setOwnerUserId(comment.getOwnerUserId());
-			DataBaseManager.getInstance(mContext).addComments(createdImageComment, true);
+			DataBaseManager.getInstance(mContext).addComments(
+					createdImageComment, true);
 		}
 		return createdImageComment;
 	}

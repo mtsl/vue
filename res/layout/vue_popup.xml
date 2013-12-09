@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="16dp"
+    android:padding="16dp"
     android:layout_marginRight="16dp"
     android:background="@drawable/dataentry_title_bg"
     android:orientation="vertical" >
@@ -43,6 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="2"
+            android:background="@drawable/vue_button_selector"
             android:gravity="center"
             android:text="Cancel"
             android:textColor="@android:color/black"
@@ -59,11 +61,11 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="2"
+            android:background="@drawable/vue_button_selector"
             android:gravity="center"
             android:text="Install"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
     </LinearLayout>
- 
-    
+
 </LinearLayout>

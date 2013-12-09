@@ -12,29 +12,28 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dip"
             android:background="@color/white"
             android:orientation="vertical" >
 
             <include
                 android:id="@+id/bannerid"
                 android:layout_marginBottom="10dp"
-                layout="@layout/feedbacktext" />
+                layout="@layout/feedbacktext"
+                android:visibility="visible" />
 
             <RelativeLayout
                 android:id="@+id/aboutdonelayout"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
-                android:background="@drawable/buton_rounded_corners"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal" >
+                android:background="@drawable/button_rounded_corners_selector" >
 
                 <TextView
                     android:id="@+id/aboutdone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:layout_gravity="center"
                     android:text="@string/done"
                     android:textColor="#ffffff"
                     android:textSize="16sp" />

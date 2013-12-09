@@ -15,9 +15,11 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
-import android.app.SearchManager;
+ 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -34,24 +36,22 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
+ 
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
  
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
+import com.lateralthoughts.vue.VueListFragment.BezelMenuRefreshReciever;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
@@ -71,14 +71,10 @@ public class VueLandingPageActivity extends Activity {
 
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
-	public static TextView mVueLandingActionbarScreenName;
-	private LinearLayout mVueLandingActionbarRightLayout;
-	LinearLayout mVueLandingKeyboardLayout;
+	private ProgressDialog mProgressDialog;
+	private LinearLayout mVueLandingKeyboardLayout;
 	private FrameLayout mVueLandingKeyboardCancel, mVueLandingKeyboardDone;
 	private View mVueLandingActionbarView;
-	private RelativeLayout mVueLandingActionbarAppIconLayout;
-	private ProgressDialog mProgressDialog;
-	private TextView mActionbarCancleBtnTextview;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
 	private boolean mAddImageToAisleLayoutClickedAFlag = false;
 	public static String mOtherSourceImagePath = null;
@@ -93,70 +89,61 @@ public class VueLandingPageActivity extends Activity {
 	public static String mOtherSourceAddImageAisleId = null;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
-	
 	private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
 	private ProgressDialog mPd;
 	private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private CharSequence mDrawerTitle;
-    private FrameLayout mContent_frame2;
-    private Fragment mLandingAilsesFrag;
-      EditText mSearchEdit;
-      private Handler mHandler;
-      private String mCatName; boolean mFromDialog;
+	private ActionBarDrawerToggle mDrawerToggle;
+	private FrameLayout mContent_frame2;
+	private Fragment mLandingAilsesFrag;
+	EditText mSearchEdit;
+	private Handler mHandler;
+	private String mCatName;
+	boolean mFromDialog;
+	public static String mLandingScreenName = null;
+	private boolean mHideDefaultActionbar = false;
+	private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
 
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+		mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
+		IntentFilter ifiltercategory = new IntentFilter(
+				VueConstants.LANDING_SCREEN_RECEIVER);
+		VueApplication.getInstance().registerReceiver(
+				mLandingScreenTitleReceiver, ifiltercategory);
 		setContentView(R.layout.vue_landing_main);
 		landingPageActivity = this;
 		initialize();
 		mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
-		  mSlidListFrag = (VueListFragment) getFragmentManager()
-					.findFragmentById(R.id.listfrag);
-		  
-		  
-		  mPd = new ProgressDialog(this);
-		  mPd.setMessage("Loading...");
-		  mPd.setCancelable(false);
-		//CreateAlbum.createUserAlbum();
-		
+		mSlidListFrag = (VueListFragment) getFragmentManager()
+				.findFragmentById(R.id.listfrag);
+		mPd = new ProgressDialog(this);
+		mPd.setMessage("Loading...");
+		mPd.setCancelable(false);
 		clearDataEntryData();
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
 		VueApplication.getInstance().mLastRecordedTime = System
 				.currentTimeMillis();
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+		invalidateOptionsMenu();
 		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
-				R.layout.vue_landing_actionbar, null);
-		mVueLandingActionbarScreenName = (TextView) mVueLandingActionbarView
-				.findViewById(R.id.vue_landing_actionbar_screen_name);
-		mVueLandingActionbarRightLayout = (LinearLayout) mVueLandingActionbarView
-				.findViewById(R.id.vue_landing_actionbar_right_layout);
-		mVueLandingActionbarAppIconLayout = (RelativeLayout) mVueLandingActionbarView
-				.findViewById(R.id.vue_landing_actionbar_app_icon_layout);
+				R.layout.vue_landing_custom_actionbar, null);
 		mVueLandingKeyboardLayout = (LinearLayout) mVueLandingActionbarView
 				.findViewById(R.id.vue_landin_keyboard_layout);
 		mVueLandingKeyboardCancel = (FrameLayout) mVueLandingActionbarView
 				.findViewById(R.id.vue_landing_keyboard_cancel);
 		mVueLandingKeyboardDone = (FrameLayout) mVueLandingActionbarView
 				.findViewById(R.id.vue_landing_keyboard_done);
-		mActionbarCancleBtnTextview = (TextView) mVueLandingActionbarView
-				.findViewById(R.id.actionbar_cancle_btn_textview);
-		mActionbarCancleBtnTextview.setText("Cancel");
-		mVueLandingActionbarScreenName.setText(getResources().getString(
-				R.string.trending));
-		getActionBar().setCustomView(mVueLandingActionbarView);
-		 
-		getActionBar().setDisplayShowCustomEnabled(true);
-		getActionBar().setDisplayShowHomeEnabled(false);
-		invalidateOptionsMenu();
 		mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				addImageToExistingAisle(mOtherSourceAddImageAisleId);
 				mOtherSourceAddImageAisleId = null;
-				((VueLandingAislesFragment) mLandingAilsesFrag).notifyAdapters();
+				((VueLandingAislesFragment) mLandingAilsesFrag)
+						.notifyAdapters();
+				mHideDefaultActionbar = false;
+				invalidateOptionsMenu();
 			}
 		});
 		mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
@@ -164,43 +151,12 @@ public class VueLandingPageActivity extends Activity {
 			public void onClick(View v) {
 				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				mOtherSourceAddImageAisleId = null;
-				((VueLandingAislesFragment) mLandingAilsesFrag).notifyAdapters();
+				((VueLandingAislesFragment) mLandingAilsesFrag)
+						.notifyAdapters();
+				mHideDefaultActionbar = false;
+				invalidateOptionsMenu();				
 			}
 		});
-		mVueLandingActionbarRightLayout
-				.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						if (mOtherSourceImagePath == null) {
-							FlurryAgent.logEvent("Create_Aisle_Button_Click");
-							Intent intent = new Intent(
-									VueLandingPageActivity.this,
-									CreateAisleSelectionActivity.class);
-							Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-									VueLandingPageActivity.this, false);
-							intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-							if (!CreateAisleSelectionActivity.isActivityShowing) {
-								CreateAisleSelectionActivity.isActivityShowing = true;
-								startActivity(intent);
-							}
-						} else {
-							showDiscardOtherAppImageDialog();
-						}
-					}
-				});
-		mVueLandingActionbarAppIconLayout
-				.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						 
-						if(mDrawerLayout.isDrawerOpen(mContent_frame2)){
-							mDrawerLayout.closeDrawer(mContent_frame2);
-						} else {
-							mDrawerLayout.openDrawer(mContent_frame2);
-						}
-					}
-				});
-
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(this,
@@ -232,140 +188,135 @@ public class VueLandingPageActivity extends Activity {
 			if (type.startsWith("image/")) {
 				handleSendMultipleImages(intent, true);
 			}
-		} 
+		}
 	}
-private void initialize(){
-    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-    // set a custom shadow that overlays the main content when the drawer opens
-    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-    // set up the drawer's list view with items and click listener
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		try {
+			if (mLandingScreenTitleReceiver != null) {
+				unregisterReceiver(mLandingScreenTitleReceiver);
+			}
+		} catch (Exception e) {
+		}
+	}
 
-    // enable ActionBar app icon to behave as action to toggle nav drawer
-    getActionBar().setDisplayHomeAsUpEnabled(true);
-    getActionBar().setHomeButtonEnabled(true);
-	
-    // ActionBarDrawerToggle ties together the the proper interactions
-    // between the sliding drawer and the action bar app icon
-    mDrawerToggle = new ActionBarDrawerToggle(
-            this,                  /* host Activity */
-            mDrawerLayout,         /* DrawerLayout object */
-            R.drawable.ic_navigation_drawer,  /* nav drawer image to replace 'Up' caret */
-            R.string.drawer_open,  /* "open drawer" description for accessibility */
-            R.string.drawer_close  /* "close drawer" description for accessibility */
-            ) {
+	private void initialize() {
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		// set a custom shadow that overlays the main content when the drawer
+		// opens
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
+				GravityCompat.START);
+		// set up the drawer's list view with items and click listener
+
+		// enable ActionBar app icon to behave as action to toggle nav drawer
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+		getActionBar().setBackgroundDrawable(
+				getResources().getDrawable(R.drawable.actionbar_bg));
+
+		// ActionBarDrawerToggle ties together the the proper interactions
+		// between the sliding drawer and the action bar app icon
+		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
+		mDrawerLayout, /* DrawerLayout object */
+		R.drawable.ic_navigation_drawer, /* nav drawer image to replace 'Up' caret */
+		R.string.drawer_open, /* "open drawer" description for accessibility */
+		R.string.drawer_close /* "close drawer" description for accessibility */
+		) {
 			public void onDrawerClosed(View view) {
-				final InputMethodManager mInputMethodManager = (InputMethodManager) VueLandingPageActivity.this
-						.getSystemService(Context.INPUT_METHOD_SERVICE);
-				mInputMethodManager.hideSoftInputFromWindow(
-						mSearchEdit.getWindowToken(), 0);
-				invalidateOptionsMenu(); // creates call to
-											// onPrepareOptionsMenu()
-				getActionBar().setCustomView(mVueLandingActionbarView);
-				getActionBar().setDisplayShowCustomEnabled(true);
-				getActionBar().setDisplayShowHomeEnabled(false);
+				invalidateOptionsMenu();
 			}
 
 			@SuppressLint("CutPasteId")
 			public void onDrawerOpened(View drawerView) {
-				getActionBar().setTitle(mDrawerTitle);
-				invalidateOptionsMenu(); // creates call to
-											// onPrepareOptionsMenu()
-				// add the custom view to the action bar
-				getActionBar().setCustomView(R.layout.actionbar_view);
-				getActionBar().getCustomView().findViewById(R.id.home)
-						.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								mDrawerLayout.closeDrawer(mContent_frame2);
-
-							}
-						});
-				mSearchEdit = (EditText) getActionBar().getCustomView()
-						.findViewById(R.id.searchfield);
-				mSearchEdit.setActivated(true);
-				getActionBar().getCustomView().findViewById(R.id.search_cancel)
-						.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								mSearchEdit.setText("");
-							}
-						});
-
-				mSearchEdit
-						.setOnEditorActionListener(new OnEditorActionListener() {
-
-							@Override
-							public boolean onEditorAction(TextView v,
-									int actionId, KeyEvent event) {
-								 
-								Toast.makeText(VueLandingPageActivity.this,
-										"Search string: "+mSearchEdit.getText().toString(), Toast.LENGTH_SHORT)
-										.show();
-								mDrawerLayout.closeDrawer(mContent_frame2);
-								return false;
-							}
-						});
-
+				invalidateOptionsMenu();
 			}
-    };
-    mDrawerLayout.setDrawerListener(mDrawerToggle);
-   mLandingAilsesFrag = new VueLandingAislesFragment();
-	FragmentManager fragmentManager = getFragmentManager();
-	fragmentManager.beginTransaction()
-			.replace(R.id.content_frame, mLandingAilsesFrag).commit();
-	mDrawerLayout.setFocusableInTouchMode(false);
-}
-/*@Override
-public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.main, menu);
-    return super.onCreateOptionsMenu(menu);
-}
+		};
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mLandingAilsesFrag = new VueLandingAislesFragment();
+		FragmentManager fragmentManager = getFragmentManager();
+		fragmentManager.beginTransaction()
+				.replace(R.id.content_frame, mLandingAilsesFrag).commit();
+		mDrawerLayout.setFocusableInTouchMode(false);
+	}
 
-// Called whenever we call invalidateOptionsMenu() 
-@Override
-public boolean onPrepareOptionsMenu(Menu menu) {
-    // If the nav drawer is open, hide action items related to the content view
-	  boolean drawerOpen = mDrawerLayout.isDrawerOpen(mContent_frame2);
-    menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
-    menu.findItem(R.id.action_button).setVisible(!drawerOpen);
-    return super.onPrepareOptionsMenu(menu);
-}
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		// Sync the toggle state after onRestoreInstanceState has occurred.
+		mDrawerToggle.syncState();
+	}
 
-@Override
-public boolean onOptionsItemSelected(MenuItem item) {
-     // The action bar home/up action should open or close the drawer.
-     // ActionBarDrawerToggle will take care of this.
-    if (mDrawerToggle.onOptionsItemSelected(item)) {
-        return true;
-    }
-    // Handle action buttonsmDrawerToggle
-		switch (item.getItemId()) {
-		case R.id.action_websearch:
-			// create intent to perform web search for this planet
-			Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG)
-					.show();
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Pass the event to ActionBarDrawerToggle, if it returns
+		// true, then it has handled the app icon touch event
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
 			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-}*/
-@Override
-protected void onPostCreate(Bundle savedInstanceState) {
-    super.onPostCreate(savedInstanceState);
-    // Sync the toggle state after onRestoreInstanceState has occurred.
-    mDrawerToggle.syncState();
-}
-@Override
-public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-    mDrawerToggle.onConfigurationChanged(newConfig);
-}
+		} else if (item.getItemId() == R.id.menu_create_aisle) {
+			if (mOtherSourceImagePath == null) {
+				FlurryAgent.logEvent("Create_Aisle_Button_Click");
+				Intent intent = new Intent(VueLandingPageActivity.this,
+						CreateAisleSelectionActivity.class);
+				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+						VueLandingPageActivity.this, false);
+				intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				if (!CreateAisleSelectionActivity.isActivityShowing) {
+					CreateAisleSelectionActivity.isActivityShowing = true;
+					startActivity(intent);
+				}
+			} else {
+				showDiscardOtherAppImageDialog();
+			}
  
+		}
+		// Handle your other action bar items...
+		return super.onOptionsItemSelected(item);
+	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.landing_actionbar, menu);
+		getActionBar().setHomeButtonEnabled(true);
+		// Configure the search info and add any event listeners
+		return true;// super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		boolean isdrawOpen = mDrawerLayout.isDrawerOpen(mContent_frame2);
+		getActionBar().setHomeButtonEnabled(true);
+		getActionBar().setDisplayShowCustomEnabled(false);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayShowHomeEnabled(true);
+		getActionBar().setCustomView(null);
+		if (isdrawOpen) {
+			menu.findItem(R.id.menu_search).setVisible(true);
+			menu.findItem(R.id.menu_create_aisle).setVisible(false);
+			// menu.findItem(R.id.menu_custom).setVisible(false);
+		} else {
+			if (mHideDefaultActionbar) {
+				getActionBar().setDisplayHomeAsUpEnabled(false);
+				getActionBar().setDisplayShowCustomEnabled(true);
+				getActionBar().setDisplayShowHomeEnabled(false);
+				getActionBar().setCustomView(mVueLandingActionbarView);
+				menu.findItem(R.id.menu_search).setVisible(false);
+				menu.findItem(R.id.menu_create_aisle).setVisible(false);
+			} else {
+				menu.findItem(R.id.menu_search).setVisible(false);
+				menu.findItem(R.id.menu_create_aisle).setVisible(true);
+				// menu.findItem(R.id.menu_custom).setVisible(false);
+			}
+		}
+		return super.onPrepareOptionsMenu(menu);
+	}
 
 	@Override
 	protected void onStart() {
@@ -462,8 +413,9 @@ public void onConfigurationChanged(Configuration newConfig) {
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
 				if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
-					mSlidListFrag.getFriendsList(data
-							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
+					mSlidListFrag
+							.getFriendsList(data
+									.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
 				}
 			}
 		}
@@ -613,28 +565,26 @@ public void onConfigurationChanged(Configuration newConfig) {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-	 
+
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
- 
-			
+
 			if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
-				
+
 				if (!mSlidListFrag.listener.onBackPressed()) {
 					mDrawerLayout.closeDrawer(mContent_frame2);
 				}
 			} else if (StackViews.getInstance().getStackCount() > 0) {
-
-				mVueLandingKeyboardLayout.setVisibility(View.GONE);
-		 
+				showDefaultActionbar();
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
 				if (viewInfo != null) {
-					mVueLandingActionbarScreenName.setText(viewInfo.mVueName);
+					getActionBar().setTitle(viewInfo.mVueName);
+					mLandingScreenName = viewInfo.mVueName;
 					showPreviousScreen(viewInfo.mVueName);
-				 } else {
+				} else {
 					super.onBackPressed();
 				}
 			} else {
-		 
+
 				CancelNotification(this,
 						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID);
 				CancelNotification(this,
@@ -705,15 +655,16 @@ public void onConfigurationChanged(Configuration newConfig) {
 				}
 			}
 		}
-		if(mLandingAilsesFrag != null){
+		if (mLandingAilsesFrag != null) {
 			((VueLandingAislesFragment) mLandingAilsesFrag).notifyAdapters();
 		}
-          if(VueApplication.getInstance().mNewViewSelection){
-        	  boolean fromDialog = false;
-        	  VueApplication.getInstance().mNewViewSelection = false;
-        	  showCategory(VueApplication.getInstance().mNewlySelectedView,fromDialog);
-        	 
-          }
+		if (VueApplication.getInstance().mNewViewSelection) {
+			boolean fromDialog = false;
+			VueApplication.getInstance().mNewViewSelection = false;
+			showCategory(VueApplication.getInstance().mNewlySelectedView,
+					fromDialog);
+
+		}
 		new Handler().postDelayed(new Runnable() {
 
 			@Override
@@ -727,7 +678,7 @@ public void onConfigurationChanged(Configuration newConfig) {
 
 			}
 		}, DELAY_TIME);
-		getActionBar().setDisplayHomeAsUpEnabled(false);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override
@@ -774,7 +725,7 @@ public void onConfigurationChanged(Configuration newConfig) {
 		if (mHandler == null) {
 			mHandler = new Handler();
 		}
-		//close the drawer before call for new views.
+		// close the drawer before call for new views.
 		mHandler.postDelayed(r, 100);
 	}
 
@@ -788,14 +739,17 @@ public void onConfigurationChanged(Configuration newConfig) {
 			}
 		}
 	};
-    private void callForNewView(final String catName, boolean fromDialog) {
-     
-		if (getScreenName().equalsIgnoreCase(catName)) {
+ 
+
+	private void callForNewView(final String catName, boolean fromDialog) {
+		if (mLandingScreenName != null
+				&& mLandingScreenName.equalsIgnoreCase(catName)) {
 			return;
 		}
 		ViewInfo viewInfo = new ViewInfo();
-		viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
-		viewInfo.mPosition = ((VueLandingAislesFragment) mLandingAilsesFrag).getListPosition();
+		viewInfo.mVueName = getActionBar().getTitle().toString();
+		viewInfo.mPosition = ((VueLandingAislesFragment) mLandingAilsesFrag)
+				.getListPosition();
 		viewInfo.mOffset = VueTrendingAislesDataModel
 				.getInstance(VueLandingPageActivity.this).getNetworkHandler()
 				.getmOffset();
@@ -866,7 +820,10 @@ public void onConfigurationChanged(Configuration newConfig) {
 					VueTrendingAislesDataModel.getInstance(this).addItemToList(
 							content.getAisleId(), content);
 				}
-				changeScreenName(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles));
+				getActionBar()
+						.setTitle(
+								getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles));
+				mLandingScreenName = getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles);
 				VueTrendingAislesDataModel.getInstance(
 						VueApplication.getInstance()).dataObserver();
 			} else {
@@ -885,7 +842,8 @@ public void onConfigurationChanged(Configuration newConfig) {
 		}
 
 		FlurryAgent.logEvent(catName);
-    }
+	}
+
 	private void getBookmarkedAisles(String screenName) {
 
 		ArrayList<AisleWindowContent> windowContent = null;
@@ -908,7 +866,8 @@ public void onConfigurationChanged(Configuration newConfig) {
 			windowContent.add(w);
 		}
 		if (windowContent != null && windowContent.size() > 0) {
-			changeScreenName(screenName);
+			getActionBar().setTitle(screenName);
+			mLandingScreenName = screenName;
 			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 			VueTrendingAislesDataModel.getInstance(this).clearAisles();
 			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
@@ -944,14 +903,14 @@ public void onConfigurationChanged(Configuration newConfig) {
 							screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-	 
+
 			getBookmarkedAisles(screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-	 
+
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
- 
+
 			if (windowContent.size() > 0) {
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -969,31 +928,29 @@ public void onConfigurationChanged(Configuration newConfig) {
 		}
 	}
 
-	public static void changeScreenName(String screenName) {
-		mVueLandingActionbarScreenName.setText(screenName);
-	}
-
 	class ProgresStatus implements NotifyProgress {
 		@Override
 		public void showProgress() {
-            mPd.show();
+			mPd.show();
 		}
 
 		@Override
 		public void dismissProgress(boolean fromWhere) {
-			  mPd.dismiss();
+			mPd.dismiss();
 			if (fromWhere) {
 				// mFragment.moveListToPosition(0);
 			} else {
 				// mFragment.moveListToPosition(mCurentScreenPosition);
 			}
 		}
+
 		@Override
 		public boolean isAlreadyDownloaed(String category) {
 			boolean isDowoaded = StackViews.getInstance().categoryCheck(
 					category);
 			return isDowoaded;
 		}
+
 		@Override
 		public void clearBrowsers() {
 			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
@@ -1178,16 +1135,6 @@ public void onConfigurationChanged(Configuration newConfig) {
 				sourceUrl, this, true);
 		getImagesTask.execute();
 	}
-
-	public static String getScreenName() {
-		    
-		if (mVueLandingActionbarScreenName != null) {
-			return mVueLandingActionbarScreenName.getText().toString();
-		 
-		}
-		return "";
-	}
-
 	public void CancelNotification(Context ctx, int notifyId) {
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager nMgr = (NotificationManager) ctx
@@ -1255,7 +1202,7 @@ public void onConfigurationChanged(Configuration newConfig) {
 
 	private void getTrendingAislesFromDb(String screenName, boolean fromServer,
 			boolean loadMore) {
- 
+
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).isFromDb = true;
@@ -1398,7 +1345,7 @@ public void onConfigurationChanged(Configuration newConfig) {
 			AisleImageDetails imgDetails = new AisleImageDetails();
 			imgDetails.mAvailableHeight = imageHeight;
 			imgDetails.mAvailableWidth = imageWidth;
-		 
+
 			if (imgDetails.mAvailableHeight < aisleItem
 					.getBestHeightForWindow()) {
 				aisleItem.setBestHeightForWindow(imgDetails.mAvailableHeight);
@@ -1427,4 +1374,29 @@ public void onConfigurationChanged(Configuration newConfig) {
 
 	}
 
+	public void hideDefaultActionbar() {
+		mHideDefaultActionbar = true;
+		invalidateOptionsMenu();
+	}
+
+	public void showDefaultActionbar() {
+		mHideDefaultActionbar = false;
+		invalidateOptionsMenu();
+	}
+
+	public class LandingScreenTitleReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context arg0, Intent intent) {
+			if (intent != null) {
+				if (intent
+						.getStringExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY) != null) {
+					getActionBar()
+							.setTitle(
+									intent.getStringExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY));
+					mLandingScreenName = intent
+							.getStringExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY);
+				}
+			}
+		}
+	}
 }
