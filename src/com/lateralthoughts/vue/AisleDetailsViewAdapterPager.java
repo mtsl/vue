@@ -1759,7 +1759,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 						.getImageList().get(mImageListCurrentPosition).mOwnerUserId) == mUserId
 						|| Long.parseLong(getItem(mCurrentAislePosition)
 								.getAisleContext().mUserId) == mUserId) {
+					if (bitmap != null) {
 					mEditLay.setVisibility(View.VISIBLE);
+					}
 					 
 
 				} else {
@@ -1767,16 +1769,17 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 					mEditLay.setVisibility(View.GONE);
 				}
 			}
-
-			if (mItemDetails.mHasMostLikes) {
-				mStarLay.setVisibility(View.VISIBLE);
-				if (mItemDetails.mSameMostLikes) {
-					mStarImage.setImageResource(R.drawable.vue_star_light);
+			if (bitmap != null) {
+				if (mItemDetails.mHasMostLikes) {
+					mStarLay.setVisibility(View.VISIBLE);
+					if (mItemDetails.mSameMostLikes) {
+						mStarImage.setImageResource(R.drawable.vue_star_light);
+					} else {
+						mStarImage.setImageResource(R.drawable.vue_star_theme);
+					}
 				} else {
-					mStarImage.setImageResource(R.drawable.vue_star_theme);
+					mStarLay.setVisibility(View.GONE);
 				}
-			} else {
-				mStarLay.setVisibility(View.GONE);
 			}
 
 		}

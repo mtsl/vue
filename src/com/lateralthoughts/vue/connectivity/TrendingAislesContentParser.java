@@ -26,6 +26,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
 	}
 
 	@Override
+ 
 	protected void onReceiveResult(int resultCode, final Bundle resultData) {
 		switch (mState) {
 		case VueConstants.AISLE_TRENDING_LIST_DATA:

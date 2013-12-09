@@ -60,7 +60,7 @@
             android:layout_height="36dip"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="8dp"
-            android:background="@drawable/profile_thumbnail"
+            android:background="@drawable/new_profile"
             android:contentDescription="@string/aisle_owner_profile_desc" />
 
         <LinearLayout
