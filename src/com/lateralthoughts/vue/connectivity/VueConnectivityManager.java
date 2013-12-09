@@ -1,13 +1,8 @@
 package com.lateralthoughts.vue.connectivity;
 
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.utils.Utils;
-
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;

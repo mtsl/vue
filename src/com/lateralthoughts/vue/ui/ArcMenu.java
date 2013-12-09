@@ -15,6 +15,7 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
 import com.lateralthoughts.vue.CreateAisleSelectionActivity;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueConstants;
@@ -88,22 +89,6 @@ public class ArcMenu extends RelativeLayout {
 			@Override
 			public void onClick(View arg0) {
 				itemClickFunctionality(mEtsyLayout, 1);
-			}
-		});
-
-		final ViewGroup controlLayout = (ViewGroup) findViewById(R.id.control_layout);
-		controlLayout.setClickable(true);
-		controlLayout.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					mHintView
-							.startAnimation(createHintSwitchAnimation(mArcLayout
-									.isExpanded()));
-					mArcLayout.switchState(true);
-				}
-				return false;
 			}
 		});
 

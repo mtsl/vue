@@ -1,14 +1,9 @@
 package com.lateralthoughts.vue.indicators;
 
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueApplication;
-
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -17,6 +12,9 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+
+import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
 
 
 public class IndicatorView extends LinearLayout {

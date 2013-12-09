@@ -33,16 +33,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
-import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseLeftListLisner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseRighttRightLisner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.Utils;
 
 public class TrendingAislesRightColumnAdapter extends
 		TrendingAislesGenericAdapter {
@@ -53,9 +50,6 @@ public class TrendingAislesRightColumnAdapter extends
 	private AisleLoader mLoader;
 
 	private static final boolean DEBUG = true;
-
-	public int firstX;
-	public int lastX;
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
 	BitmapLoaderUtils mBitmapLoaderUtils;
@@ -127,7 +121,7 @@ public class TrendingAislesRightColumnAdapter extends
 			// holder.aisleContentBrowser.setLayoutParams(showpieceParams);
 			holder.aisleDescriptor = (LinearLayout) convertView
 					.findViewById(R.id.aisle_descriptor);
-			holder.profileThumbnail = (ImageView) holder.aisleDescriptor
+			holder.profileThumbnail = (NetworkImageView) holder.aisleDescriptor
 					.findViewById(R.id.profile_icon_descriptor);
 			holder.aisleOwnersName = (TextView) holder.aisleDescriptor
 					.findViewById(R.id.descriptor_aisle_owner_name);

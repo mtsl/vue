@@ -16,7 +16,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
@@ -31,8 +30,6 @@ import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flurry.android.monolithic.sdk.impl.mc;
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -40,9 +37,9 @@ import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueUser;
-import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.UrlConstants;
@@ -400,20 +397,18 @@ public class DataBaseManager {
 					commentValues.put(VueConstants.DELETE_FLAG, false);
 					commentValues.put(VueConstants.AISLE_Id, info.mAisleId);
 					for (ImageComments commnts : imageDetails.mCommentsList) {
-						commentValues.put(VueConstants.COMMENTS,
-								commnts.comment);
-						commentValues
-								.put(VueConstants.LAST_MODIFIED_TIME,
-										(commnts.lastModifiedTimestamp != null) ? commnts.lastModifiedTimestamp
-												: System.currentTimeMillis());
-						if (commentsImgId.contains(commnts.Id.longValue())) {
-							Uri uri = Uri
-									.parse(VueConstants.COMMENTS_ON_IMAGE_URI
-											+ "/" + commnts.Id);
+						commentValues.put(VueConstants.COMMENTS, commnts.mComment);
+						commentValues.put(VueConstants.COMMENTER_URL, commnts.mCommenterUrl);
+						commentValues.put(VueConstants.LAST_MODIFIED_TIME,
+						(commnts.mLastModifiedTimestamp != null) ?
+						commnts.mLastModifiedTimestamp : System.currentTimeMillis());
+						if (commentsImgId.contains(commnts.mId.longValue())) {
+							Uri uri = Uri.parse(VueConstants.COMMENTS_ON_IMAGE_URI
+								+ "/" + commnts.mId);
 							context.getContentResolver().update(uri,
 									commentValues, null, null);
 						} else {
-							commentValues.put(VueConstants.ID, commnts.Id);
+							commentValues.put(VueConstants.ID, commnts.mId);
 							context.getContentResolver().insert(
 									VueConstants.COMMENTS_ON_IMAGE_URI,
 									commentValues);
@@ -432,6 +427,7 @@ public class DataBaseManager {
 	 * @param AisleContext
 	 *            context.
 	 * */
+	@Deprecated
 	private void aisleUpdate(AisleContext context) {
 		boolean isAisle = false;
 		if (aislesOrderMap != null && aislesOrderMap.isEmpty()) {
@@ -653,18 +649,19 @@ public class DataBaseManager {
 										.getColumnIndex(VueConstants.IMAGE_ID)) == Long
 										.parseLong(imageItemDetails.mId)) {
 									comments = new ImageComments();
-									comments.Id = imgCommentCursor
+									comments.mId = imgCommentCursor
 											.getLong(imgCommentCursor
 													.getColumnIndex(VueConstants.ID));
-									comments.imageId = imgCommentCursor
+									comments.mImageId = imgCommentCursor
 											.getLong(imgCommentCursor
 													.getColumnIndex(VueConstants.IMAGE_ID));
-									comments.comment = imgCommentCursor
+									comments.mComment = imgCommentCursor
 											.getString(imgCommentCursor
 													.getColumnIndex(VueConstants.COMMENTS));
-									comments.lastModifiedTimestamp = Long
+									comments.mLastModifiedTimestamp = Long
 											.parseLong(imgCommentCursor.getString(imgCommentCursor
 													.getColumnIndex(VueConstants.LAST_MODIFIED_TIME)));
+									comments.mCommenterUrl = imgCommentCursor.getString(imgCommentCursor.getColumnIndex(VueConstants.COMMENTER_URL));
 									imageItemDetails.mCommentsList
 											.add(comments);
 								}
@@ -692,7 +689,7 @@ public class DataBaseManager {
 		return aisleContentArray;
 	}
 
-	public void addComments(final ImageComment createdImageComment,
+	public void addComments(final ImageComment  createdImageComment,
 			final boolean isCommentDirty) {
 		runTask(new Runnable() {
 
@@ -796,7 +793,7 @@ public class DataBaseManager {
 	 * @param String
 	 *            aisleID
 	 * */
-	private void addCommentsToDb(ImageComment createdImageComment,
+	private void addCommentsToDb(ImageComment  createdImageComment,
 			boolean isCommentDirty) {
 		ContentValues commentValues = new ContentValues();
 		commentValues.put(VueConstants.ID, createdImageComment.getId()
@@ -810,6 +807,8 @@ public class DataBaseManager {
 								: System.currentTimeMillis());
 		commentValues.put(VueConstants.COMMENTS,
 				createdImageComment.getComment());
+		commentValues.put(VueConstants.COMMENTER_URL,
+				createdImageComment.getImageCommentOwnerImageURL());
 		commentValues.put(VueConstants.DIRTY_FLAG, isCommentDirty);
 		commentValues.put(VueConstants.DELETE_FLAG, false);
 		Uri uri = mContext.getContentResolver().insert(
@@ -1173,16 +1172,16 @@ public class DataBaseManager {
 										.getColumnIndex(VueConstants.IMAGE_ID)) == Long
 										.parseLong(imageItemDetails.mId)) {
 									comments = new ImageComments();
-									comments.Id = imgCommentCursor
+									comments.mId = imgCommentCursor
 											.getLong(imgCommentCursor
 													.getColumnIndex(VueConstants.ID));
-									comments.imageId = imgCommentCursor
+									comments.mImageId = imgCommentCursor
 											.getLong(imgCommentCursor
 													.getColumnIndex(VueConstants.IMAGE_ID));
-									comments.comment = imgCommentCursor
+									comments.mComment = imgCommentCursor
 											.getString(imgCommentCursor
 													.getColumnIndex(VueConstants.COMMENTS));
-									comments.lastModifiedTimestamp = Long
+									comments.mLastModifiedTimestamp = Long
 											.parseLong(imgCommentCursor.getString(imgCommentCursor
 													.getColumnIndex(VueConstants.LAST_MODIFIED_TIME)));
 									imageItemDetails.mCommentsList
@@ -1288,7 +1287,7 @@ public class DataBaseManager {
 				null);
 		if (cursor.moveToFirst()) {
 			do {
-				ImageComment comment = new ImageComment();
+				ImageComment  comment = new ImageComment();
 				// comment.setId(cursor.getLong(cursor.getColumnIndex(VueConstants.ID)));
 				comment.setOwnerImageId(cursor.getLong(cursor
 						.getColumnIndex(VueConstants.IMAGE_ID)));

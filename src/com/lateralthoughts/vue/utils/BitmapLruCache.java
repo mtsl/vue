@@ -1,12 +1,12 @@
 package com.lateralthoughts.vue.utils;
 
-import com.android.volley.toolbox.ImageLoader.ImageCache;
-
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
+
+import com.android.volley.toolbox.ImageLoader.ImageCache;
 
 
 public class BitmapLruCache extends LruCache<String, Bitmap> implements ImageCache {

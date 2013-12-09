@@ -2,8 +2,10 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,18 +16,28 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
+
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -36,7 +48,11 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.VueImage;
-import com.lateralthoughts.vue.utils.*;
+import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
+import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
+import com.lateralthoughts.vue.utils.Utils;
 
 /**
  * Fragment for creating Aisle, Updating Ailse and AddingImageToAisle
@@ -54,11 +70,10 @@ public class DataEntryFragment extends Fragment {
 	public EditText mLookingForText = null, mOccasionText = null,
 			mSaySomethingAboutAisle = null, mFindAtText = null;
 	private String mCategoryitemsArray[] = null;
-	private int mCategoryitemsDrawablesArray[] = {
-			R.drawable.vue_launcher_icon, R.drawable.vue_launcher_icon,
-			R.drawable.vue_launcher_icon, R.drawable.new_entertainment,
-			R.drawable.new_events, R.drawable.vue_launcher_icon,
-			R.drawable.vue_launcher_icon };
+	private int mCategoryitemsDrawablesArray[] = { R.drawable.new_apparel,
+			R.drawable.new_beauty, R.drawable.new_electronics,
+			R.drawable.new_entertainment, R.drawable.new_events,
+			R.drawable.new_food, R.drawable.new_home };
 	InputMethodManager mInputMethodManager;
 	public String mPreviousFindAtText = null;
 	private String mImagePath = null, mResizedImagePath = null;
@@ -96,6 +111,7 @@ public class DataEntryFragment extends Fragment {
 	String mLookingFor = null;
 	String mOccasion = null;
 	LinearLayout mSelectCategoryLayout;
+	private Context mContext;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -105,6 +121,7 @@ public class DataEntryFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
+		mContext = activity;
 	}
 
 	@Override
@@ -180,7 +197,7 @@ public class DataEntryFragment extends Fragment {
 				.getDataentryTopAddImageAisleOccasion(getActivity());
 		String savedDescription = Utils
 				.getDataentryTopAddImageAisleDescription(getActivity());
-		if (Utils.getDataentryTopAddImageAisleFlag(getActivity())
+		if (Utils.getDataentryTopAddImageAisleFlag(mContext)
 				&& savedLookingFor != null
 				&& savedLookingFor.trim().length() > 0) {
 			mLookingForText.setText(savedLookingFor);
@@ -220,7 +237,7 @@ public class DataEntryFragment extends Fragment {
 		}
 		mOccassionAisleKeywordsList = mDbManager
 				.getAisleKeywords(VueConstants.OCCASION_TABLE);
-		if (Utils.getDataentryTopAddImageAisleFlag(getActivity())
+		if (Utils.getDataentryTopAddImageAisleFlag(mContext)
 				&& savedOccasion != null && savedOccasion.trim().length() > 0) {
 			mOccasionText.setText(savedOccasion);
 			mOccasion = savedOccasion;
@@ -276,7 +293,7 @@ public class DataEntryFragment extends Fragment {
 		}
 		mCategoryAilseKeywordsList = mDbManager
 				.getAisleKeywords(VueConstants.CATEGORY_TABLE);
-		if (Utils.getDataentryTopAddImageAisleFlag(getActivity())
+		if (Utils.getDataentryTopAddImageAisleFlag(mContext)
 				&& savedCategory != null && savedCategory.trim().length() > 0) {
 			mCategoryheading.setText(savedCategory);
 			mCategoryheadingLayout.setVisibility(View.VISIBLE);
@@ -297,7 +314,7 @@ public class DataEntryFragment extends Fragment {
 				}
 			}
 		}
-		if (Utils.getDataentryTopAddImageAisleFlag(getActivity())
+		if (Utils.getDataentryTopAddImageAisleFlag(mContext)
 				&& savedDescription != null
 				&& savedDescription.trim().length() > 0) {
 			mSaySomethingAboutAisle.setText(savedDescription);
@@ -911,7 +928,7 @@ public class DataEntryFragment extends Fragment {
 		if (mLookingFor != null
 				&& (mCategoryheading.getText().toString().trim().length() > 0)) {
 			if (Utils.getDataentryAddImageAisleFlag(getActivity())
-					|| Utils.getDataentryTopAddImageAisleFlag(getActivity())
+					|| Utils.getDataentryTopAddImageAisleFlag(mContext)
 					|| mFromDetailsScreenFlag) {
 				addImageToAisle();
 			} else {
@@ -1350,8 +1367,13 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	public void setGalleryORCameraImage(String picturePath,
-			boolean dontResizeImageFlag) {
-		if (!Utils.getDataentryTopAddImageAisleFlag(getActivity())
+			boolean dontResizeImageFlag, Context context) {
+		if(getActivity() == null){
+		Log.i("activity fragment", "activity fragment is null");
+		} else {
+			Log.i("activity fragment", "activity fragment is not null");
+		}
+		if (!Utils.getDataentryTopAddImageAisleFlag(context)
 				&& !mFromDetailsScreenFlag) {
 			new Handler().postDelayed(new Runnable() {
 				@Override
@@ -2177,6 +2199,8 @@ public class DataEntryFragment extends Fragment {
 			mProgressDialog = ProgressDialog.show(getActivity(), "",
 					"Please wait...");
 		}
+		// sourceUrl =
+		// "http://www.boden.co.uk/en-GB/Baby-0-3yrs-Knitwear/71289/Baby-0-3yrs-Fair-Isle-Knitted-Dress.html";
 		mOtherSourceSelectedImageStore = Utils.getStoreNameFromUrl(sourceUrl);
 		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
 				sourceUrl, getActivity(), false);

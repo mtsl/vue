@@ -3,7 +3,6 @@ package com.lateralthoughts.vue;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;

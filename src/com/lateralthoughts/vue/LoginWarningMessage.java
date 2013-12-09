@@ -1,9 +1,6 @@
 package com.lateralthoughts.vue;
 
-import com.flurry.android.FlurryAgent;
-import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
-import com.lateralthoughts.vue.utils.Utils;
-
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -11,12 +8,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class LoginWarningMessage {
 
@@ -72,8 +73,8 @@ public class LoginWarningMessage {
 								VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE,
 								count + 1);
 						editor.commit();
-						DataEntryFragment fragment = (DataEntryFragment) ((FragmentActivity) mContext)
-								.getSupportFragmentManager().findFragmentById(
+						DataEntryFragment fragment = (DataEntryFragment) ((Activity) mContext)
+								.getFragmentManager().findFragmentById(
 										R.id.create_aisles_view_fragment);
 						VueUser storedVueUser = null;
 						try {
@@ -107,10 +108,10 @@ public class LoginWarningMessage {
 								VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
 								count + 1);
 						editor.commit();
-						VueAisleDetailsViewFragment mVueAiselFragment = (VueAisleDetailsViewFragment) ((FragmentActivity) mContext)
-								.getSupportFragmentManager().findFragmentById(
+					/*	VueAisleDetailsViewFragment mVueAiselFragment = (VueAisleDetailsViewFragment) ((FragmentActivity) mContext)
+								.getFragmentManager().findFragmentById(
 										R.id.aisle_details_view_fragment);
-						mVueAiselFragment.addComment(editText, view);
+						mVueAiselFragment.addComment(editText, view);*/
 					}
 				}
 			}

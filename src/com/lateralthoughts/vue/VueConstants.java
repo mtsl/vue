@@ -139,6 +139,7 @@ public class VueConstants {
 	public static final String VUE_APP_USEROBJECT__FILENAME = "vueuser.ser";
 	public static final String VUE_APP_USERPROFILEOBJECT__FILENAME = "vueuserprofile.ser";
 	public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
+	public static final String IMAGE_COMMENT_OWNER_IMAGE_URL = "imageCommentOwnerImageURL";
 
 	// Column names for lookingFor, occasion, category table.
 	public static final String KEYWORD = "keyWord";
@@ -204,6 +205,7 @@ public class VueConstants {
 	public static final String AISLE_DESCRIPTION = "description";
 	public static final String AISLE_OWNER_FIRSTNAME = "aisleOwnerFirstName";
 	public static final String AISLE_OWNER_LASTNAME = "aisleOwnerLastName";
+	public static final String AISLE_OWNER_IMAGE_URL = "aisleOwnerImageURL";
 	public static final String AISLE_BOOKMARK_COUNT = "bookmarkCount";
 	// Aisle Images Response Keys
 	public static final String AISLE_IMAGE_ID = "id";
@@ -235,6 +237,7 @@ public class VueConstants {
 	public static final String USER_LAST_NAME = "lastName";
 	public static final String USER_FACEBOOK_ID = "facebookId";
 	public static final String USER_GOOGLEPLUS_ID = "googlePlusId";
+	public static final String USER_PROFILE_IMAGE_URL = "userImageURL";
 	// Reciver constants
 	public static final int AISLE_TRENDING_LIST_DATA = 1;
 	public static final int AISLE_TRENDING_PARSED_DATA = 2;
@@ -252,4 +255,5 @@ public class VueConstants {
 	public static final String LAST_MODIFIED_TIME = "lastModifiedTimestamp";
 	public static final String LIKED = "liked";
 	public static final String BOOKMARKED = "bookmarked";
+	public static final String COMMENTER_URL = "commenterUrl";
 }

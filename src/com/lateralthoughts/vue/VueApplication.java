@@ -1,5 +1,13 @@
 package com.lateralthoughts.vue;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -7,22 +15,16 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnAppName;
-import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class VueApplication extends Application {
 	private static VueApplication sInstance;
@@ -39,6 +41,8 @@ public class VueApplication extends Application {
 	public boolean mShareViaVueClickedFlag = false;
 	public String mShareViaVueClickedAisleId = null;
 	public String mShareViaVueClickedImageId = null;
+	public boolean mNewViewSelection = false;
+	public String mNewlySelectedView;
 	public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
 	public ArrayList<ShoppingApplicationDetails> mMoreInstalledApplicationDetailsList;
 	public static final int[] POPUP_ITEM_DRAWABLES = {
@@ -48,6 +52,7 @@ public class VueApplication extends Application {
 
 	public long mLaunchTime;
 	public long mLastRecordedTime;
+	ListFragementObj mListRefresobj;
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
@@ -252,7 +257,13 @@ public class VueApplication extends Application {
 	public int getmTextSize() {
 		return mTextSize;
 	}
-
+    public void setListRefreshFrag(ListFragementObj obj){
+    	mListRefresobj = obj;
+    }
+    public ListFragementObj getListRefdreshFrag(){
+		
+    	return mListRefresobj;
+    }
 	public int getPixel(int dp) {
 		Resources r = getResources();
 		int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,

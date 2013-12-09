@@ -10,26 +10,37 @@
         android:id="@+id/edtcommentlay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone" >
+        android:visibility="gone"
+     >
 
         <com.lateralthoughts.vue.utils.EditTextBackEvent
             android:id="@+id/edtcomment"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="48dp"
             android:cursorVisible="true"
             android:imeOptions="actionGo"
             android:inputType="text|textMultiLine"
             android:maxLines="4"
             android:scrollbars="vertical"
+            android:hint="Type comment"
+            android:gravity="bottom"
             android:textCursorDrawable="@null" />
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textcount"
+            
 
+             android:singleLine="true"
+             android:layout_marginRight="24dp"
+            android:layout_gravity="right|bottom"/>
         <ImageView
             android:id="@+id/sendcomment"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="right|center_vertical"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="8dp"
             android:contentDescription="@string/Image"
             android:src="@drawable/sendcomment" />
     </FrameLayout>
@@ -57,7 +68,7 @@
             android:layout_height="1dp"
             android:layout_below="@+id/vue_user_entercomment"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="48dp"
             android:background="@color/grey" />
 
         <View
@@ -66,7 +77,7 @@
             android:layout_above="@+id/textvuelay"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="48dp"
             android:background="@color/grey" />
 
         <View
@@ -75,7 +86,7 @@
             android:layout_above="@+id/textvuelay"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="48dp"
             android:background="@color/grey" />
     </RelativeLayout>
        <View

@@ -2,12 +2,12 @@ package com.lateralthoughts.vue.utils;
 
 import java.util.ArrayList;
 
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueConstants;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+
+import com.lateralthoughts.vue.VueConstants;
 
 public class InstalledPackageRetriever {
 	private ArrayList<Drawable> mAppIcons = new ArrayList<Drawable>();

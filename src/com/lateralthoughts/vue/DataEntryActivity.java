@@ -1,32 +1,43 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
-import com.flurry.android.FlurryAgent;
-import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
-import com.lateralthoughts.vue.utils.Utils;
+
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 
-public class DataEntryActivity extends BaseActivity {
+import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.utils.FileCache;
+import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
+import com.lateralthoughts.vue.utils.Utils;
 
-	public boolean mIsKeyboardShownFlag = false;
+public class DataEntryActivity extends /*Base*/Activity {
+
+	//public boolean mIsKeyboardShownFlag = false;
 	public TextView mVueDataentryActionbarScreenName,
 			mActionbarDeleteBtnTextview;
 	RelativeLayout mDataentryActionbarMainLayout,
@@ -41,10 +52,25 @@ public class DataEntryActivity extends BaseActivity {
 	private static final String CREATE_AISLE_SCREEN_VISITORS = "Create_Aisle_Screen_Visitors";
 	public ArrayList<Integer> mDeletedImagesPositionsList = null;
 	public int mDeletedImagesCount = 0;
+	
+	
+	private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
+	private ProgressDialog mPd;
+	private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private FrameLayout mContent_frame2;
+    private  EditText mSearchEdit;
+ 
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.date_entry_main);
+		initialize();
+		mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
+		  mSlidListFrag = (VueListFragment) getFragmentManager()
+					.findFragmentById(R.id.listfrag);
 		mVueDataentryActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_dataentry_actionbar, null);
 		mVueDataentryActionbarScreenName = (TextView) mVueDataentryActionbarView
@@ -77,11 +103,10 @@ public class DataEntryActivity extends BaseActivity {
 				.findViewById(R.id.actionbar_delete_btn_textview);
 		mVueDataentryAddimageSkipLayout = (LinearLayout) mVueDataentryActionbarView
 				.findViewById(R.id.vue_dataentry_addimage_skip_layout);
-		getSupportActionBar().setCustomView(mVueDataentryActionbarView);
-		getSupportActionBar().setDisplayShowCustomEnabled(true);
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		getActionBar().setCustomView(mVueDataentryActionbarView);
+		getActionBar().setDisplayShowCustomEnabled(true);
+		getActionBar().setDisplayShowHomeEnabled(false);
 
-		setContentView(R.layout.date_entry_main);
 
 		mVueDataentryAddimageSkipLayout
 				.setOnClickListener(new OnClickListener() {
@@ -102,11 +127,6 @@ public class DataEntryActivity extends BaseActivity {
 			public void onClick(View v) {
 				if (mDeletedImagesPositionsList != null
 						&& mDeletedImagesPositionsList.size() > 0) {
-					if (mDataEntryFragment == null) {
-						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.create_aisles_view_fragment);
-					}
 					mDataEntryFragment.deleteImage(mDeletedImagesPositionsList);
 				} else {
 					Toast.makeText(DataEntryActivity.this,
@@ -118,10 +138,6 @@ public class DataEntryActivity extends BaseActivity {
 		mVueDataentryKeyboardCancel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				if (mDataEntryFragment == null) {
-					mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.create_aisles_view_fragment);
-				}
 				if (mDataEntryFragment.mLookingForPopup.getVisibility() == View.VISIBLE) {
 					mDataEntryFragment
 							.lookingForInterceptListnerFunctionality();
@@ -230,10 +246,6 @@ public class DataEntryActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				if (mDataEntryFragment == null) {
-					mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.create_aisles_view_fragment);
-				}
 				mDataEntryFragment.hideAllEditableTextboxes();
 			}
 		});
@@ -248,10 +260,6 @@ public class DataEntryActivity extends BaseActivity {
 		mVueDataentryPost.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (mDataEntryFragment == null) {
-					mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.create_aisles_view_fragment);
-				}
 				Utils.putTouchToChnageImagePosition(DataEntryActivity.this, -1);
 				Utils.putTouchToChnageImageTempPosition(DataEntryActivity.this,
 						-1);
@@ -264,19 +272,15 @@ public class DataEntryActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						getSlidingMenu().toggle();
+					 
+						 
 					}
 				});
 
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
-			Log.e("cs", "30");
 			String aisleImagePath = b
 					.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-			if (mDataEntryFragment == null) {
-				mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.create_aisles_view_fragment);
-			}
 			mDataEntryFragment.mFromDetailsScreenFlag = b.getBoolean(
 					VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_FLAG,
 					false);
@@ -401,7 +405,7 @@ public class DataEntryActivity extends BaseActivity {
 			}
 			if (aisleImagePath != null) {
 				mDataEntryFragment.setGalleryORCameraImage(aisleImagePath,
-						false);
+						false,this);
 			}
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
 				if (!mDataEntryFragment.mFromDetailsScreenFlag
@@ -463,7 +467,81 @@ public class DataEntryActivity extends BaseActivity {
 			mVueDataentryAddimageSkipLayout.setVisibility(View.VISIBLE);
 		}
 	}
+	private void initialize(){
+	    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+	    // set a custom shadow that overlays the main content when the drawer opens
+	    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+	    // set up the drawer's list view with items and click listener
+	    // enable ActionBar app icon to behave as action to toggle nav drawer
+	    getActionBar().setDisplayHomeAsUpEnabled(false);
+	    getActionBar().setHomeButtonEnabled(true);
+	    // ActionBarDrawerToggle ties together the the proper interactions
+	    // between the sliding drawer and the action bar app icon
+	    mDrawerToggle = new ActionBarDrawerToggle(
+	            this,                  /* host Activity */
+	            mDrawerLayout,         /* DrawerLayout object */
+	            R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
+	            R.string.drawer_open,  /* "open drawer" description for accessibility */
+	            R.string.drawer_close  /* "close drawer" description for accessibility */
+	            ) {
+	        public void onDrawerClosed(View view) {
+	    		final InputMethodManager mInputMethodManager = (InputMethodManager) DataEntryActivity.this
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSearchEdit.getWindowToken(), 0);
+	            invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+	            getActionBar().setCustomView(mVueDataentryActionbarView);
+	    		getActionBar().setDisplayShowCustomEnabled(true);
+	    		getActionBar().setDisplayShowHomeEnabled(false);
+	        }
+	       
+			public void onDrawerOpened(View drawerView) {
+				invalidateOptionsMenu(); // creates call to
+											// onPrepareOptionsMenu()
+				// add the custom view to the action bar
+				getActionBar().setCustomView(R.layout.actionbar_view);
+				getActionBar().getCustomView().findViewById(R.id.home)
+						.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								mDrawerLayout.closeDrawer(mContent_frame2);
+							}
+						});
+				mSearchEdit = (EditText) getActionBar().getCustomView()
+						.findViewById(R.id.searchfield);
+				mSearchEdit.setActivated(true);
+				getActionBar().getCustomView().findViewById(R.id.search_cancel)
+						.setOnClickListener(new OnClickListener() {
 
+							@Override
+							public void onClick(View v) {
+
+								mSearchEdit.setText("");
+							}
+						});
+				EditText search = (EditText) getActionBar().getCustomView()
+						.findViewById(R.id.searchfield);
+				search.setOnEditorActionListener(new OnEditorActionListener() {
+
+					@Override
+					public boolean onEditorAction(TextView v, int actionId,
+							KeyEvent event) {
+						mDrawerLayout.closeDrawer(mContent_frame2);
+						  Toast.makeText( DataEntryActivity.this,
+						   "Search string: "+mSearchEdit.getText().toString(), Toast.LENGTH_SHORT).show();
+						 
+						return false;
+					}
+				});
+
+			}
+	    };
+	    mDrawerLayout.setDrawerListener(mDrawerToggle);
+	    mDataEntryFragment =(DataEntryFragment) getFragmentManager()
+				.findFragmentById(
+						R.id.create_aisles_view_fragment);
+		mDrawerLayout.setFocusableInTouchMode(false);
+	}
 	@Override
 	protected void onStart() {
 		FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
@@ -488,11 +566,6 @@ public class DataEntryActivity extends BaseActivity {
 				if (b != null) {
 					String imagePath = b
 							.getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
-					if (mDataEntryFragment == null) {
-						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.create_aisles_view_fragment);
-					}
 					if (Utils.getTouchToChangeFlag(DataEntryActivity.this)) {
 						Utils.putTouchToChnageImagePosition(
 								DataEntryActivity.this,
@@ -502,23 +575,18 @@ public class DataEntryActivity extends BaseActivity {
 					mDataEntryFragment.mOtherSourceSelectedImageStore = "UnKnown";
 					mDataEntryFragment.mOtherSourceSelectedImageUrl = null;
 					mDataEntryFragment
-							.setGalleryORCameraImage(imagePath, false);
+							.setGalleryORCameraImage(imagePath, false,this);
 				}
 			} else if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 					&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 				if (data != null) {
 					if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
-						mFrag.getFriendsList(data
+						mSlidListFrag.getFriendsList(data
 								.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
 					}
 				}
 			} else {
 				try {
-					if (mDataEntryFragment == null) {
-						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.create_aisles_view_fragment);
-					}
 					if (mDataEntryFragment.mShare.mShareIntentCalled) {
 						mDataEntryFragment.mShare.mShareIntentCalled = false;
 						mDataEntryFragment.mShare.dismisDialog();
@@ -531,40 +599,21 @@ public class DataEntryActivity extends BaseActivity {
 			e.printStackTrace();
 		}
 	}
-
-	public void showBezelMenu() {
-		getSlidingMenu().toggle();
-	}
-
 	@Override
 	public void onResume() {
-		final View createAisleActivityRootLayout = findViewById(R.id.create_aisle_activity_root_layout);
-		createAisleActivityRootLayout.getViewTreeObserver()
-				.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-					@Override
-					public void onGlobalLayout() {
-						int heightDiff = createAisleActivityRootLayout
-								.getRootView().getHeight()
-								- createAisleActivityRootLayout.getHeight();
-						if (heightDiff > 100) { // if more than 100 pixels, its
-							// probably a keyboard...
-							mIsKeyboardShownFlag = true;
-						} else {
-							mIsKeyboardShownFlag = false;
-						}
-					}
-				});
 		super.onResume();
+		mSlidListFrag.setEditTextVisible(false);
 	}
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		Log.e("fff", "onkeyup");
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (getSlidingMenu().isMenuShowing()) {
-				if (!mFrag.listener.onBackPressed()) {
-					getSlidingMenu().toggle();
+			if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
+
+				if (!mSlidListFrag.listener.onBackPressed()) {
+					mDrawerLayout.closeDrawer(mContent_frame2);
 				}
+
 			} else {
 				showDiscardOtherAppImageDialog(null);
 			}
@@ -638,11 +687,6 @@ public class DataEntryActivity extends BaseActivity {
 							DataEntryActivity.this, -1);
 					Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
 							false);
-					if (mDataEntryFragment == null) {
-						mDataEntryFragment = (DataEntryFragment) getSupportFragmentManager()
-								.findFragmentById(
-										R.id.create_aisles_view_fragment);
-					}
 					mDataEntryFragment
 							.addImageToAisleButtonClickFunctionality(true);
 				}

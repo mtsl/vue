@@ -8,6 +8,7 @@
     <string name="instagram_callbackurl">instagram://connect</string>
     <!-- the following string are tags used in API endpoints -->
     <string name="discard_dataentry_screen_changes">Would you like to discard the changes?</string>
+     <string name="discard_comment">Would you like to discard the comment?</string>
     <string name="trending">Trending</string>
     <string name="trending_aisles_tag">aisle/trending</string>
     <string name="dataentry_edit_permission">Do you want to change the existing data?</string>
@@ -27,13 +28,13 @@
     <string name="aisle_owner_profile_desc">Profile of the aisle owner</string>
     <string name="progress_message">Signing in to Google&#8230;</string>
     <string name="app_installation_mesg">Enable Share via</string>
-    <string name="no_thanks_click_alert_mesg">To be friendly, please provide initials</string>
+    <string name="no_thanks_click_alert_mesg">How may we address you?</string>
     <string name="plus_example_deep_link_id">/+/mobile/android/</string>
     <string name="plus_example_deep_link_url">        https://developers.google.com/+/mobile/android/</string>
     <string name="googleplus_button_text">Sign In with Google</string>
     <string name="instagram_button_text">Sign In with Instagram</string>
     <string name="facebook_button_text">Sign In with Facebook</string>
-    <string name="cancel_button_text">No Thanks</string>
+    <string name="cancel_button_text">Continue as Guest</string>
     <string name="share_via_mesg">SHARE VIA</string>
     <string name="com_facebook_dialogloginactivity_ok_button">OK</string>
     <string name="com_facebook_loginview_log_out_button">Log Out</string>
@@ -70,8 +71,8 @@
     <string name="gmail">Gmail</string>
     <string name="create_ailse_screen_title">Create Aisle</string>
     <string name="add_imae_to_aisle_screen_title">Add image</string>
-        <string name="edit_aisle_screen_title">Edit Aisle</string>
-        <string name="success">Success</string>
+    <string name="edit_aisle_screen_title">Edit Aisle</string>
+    <string name="success">Success</string>
     <string name="successfully_posted_post">Successfully posted.</string>
     <string name="error">Error</string>
     <string name="photo_post">Photo Post</string>
@@ -161,5 +162,9 @@ Before you start this class, be sure you have your development environment set u
 If you haven\'t already done these tasks, start by downloading the Android SDK and following the install steps. Once you\'ve finished the setup, you\'re ready to begin this class.
 
 This class uses a tutorial format that incrementally builds a small Android app that teaches you some fundamental concepts about Android development, so it\'s important that you follow each step.</string>
-
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
+ 
 </resources>

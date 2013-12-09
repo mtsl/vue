@@ -3,17 +3,10 @@ package com.lateralthoughts.vue;
 //java utils
 import java.util.ArrayList;
 
-//android imports
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
 
-//vue internal imports
 import com.lateralthoughts.vue.ui.ScaleImageView;
 
 //Factory class for ScaledImageView to manage memory more efficiently.

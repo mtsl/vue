@@ -1,5 +1,6 @@
 package com.facebook;
 
+<<<<<<< HEAD
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -21,6 +22,23 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.Request.Callback;
+=======
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
+import android.util.Log;
+
+import com.facebook.Request.GraphUserCallback;
+>>>>>>> 457aac8254090429ce32017a29e44df5166d99c6
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.lateralthoughts.vue.VueApplication;
@@ -60,6 +78,7 @@ public class CreateAlbum {
    
   }
   
+<<<<<<< HEAD
  // private static final List<String> PERMISSIONS = Arrays.asList("publish_stream", "manage_pages");
  // private static final int REAUTH_ACTIVITY_CODE = 100;
   
@@ -152,6 +171,11 @@ public class CreateAlbum {
     
     
 /*    Request.executeMeRequestAsync(session, new GraphUserCallback() {
+=======
+  public static void createAlbumRequest(Session session) {
+    
+    Request.executeMeRequestAsync(session, new GraphUserCallback() {
+>>>>>>> 457aac8254090429ce32017a29e44df5166d99c6
       
       @Override
       public void onCompleted(final GraphUser user, Response response) {
@@ -190,7 +214,11 @@ public class CreateAlbum {
           }
         }).start();
       }
+<<<<<<< HEAD
     });*/
+=======
+    });
+>>>>>>> 457aac8254090429ce32017a29e44df5166d99c6
   
   }
 }

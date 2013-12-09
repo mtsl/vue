@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="50dip"
+    android:layout_height="48dip"
     android:background="@drawable/dataentry_bg" >
 
     <RelativeLayout
         android:id="@+id/vue_landing_actionbar_app_icon_layout"
         android:layout_width="48dip"
-        android:layout_height="48dip" >
+        android:layout_height="48dip"
+        android:visibility="gone"
+        android:background="@drawable/vue_button_selector" >
 
         <ImageView
             android:id="@+id/vue_landing_actionbar_app_icon"
@@ -33,6 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dip"
         android:layout_alignParentRight="true"
+        android:background="@drawable/vue_button_selector"
         android:orientation="horizontal" >
 
         <ImageView
@@ -78,7 +81,7 @@
         android:id="@+id/data_entry_third_line_divider"
         android:layout_width="match_parent"
         android:layout_height="2dip"
-        android:layout_below="@+id/vue_landing_actionbar_app_icon_layout"
+        android:layout_below="@+id/vue_landing_actionbar_screen_name"
         android:background="#ADADAD" />
 
 </RelativeLayout>

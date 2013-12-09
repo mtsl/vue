@@ -1,8 +1,8 @@
 package com.instagram;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.Context;
 
 public class InstagramSession {
 

@@ -15,10 +15,9 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import com.lateralthoughts.vue.AisleContext;
-import com.lateralthoughts.vue.AisleDetailsViewActivity;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
 import com.lateralthoughts.vue.R;
@@ -472,7 +471,7 @@ public class AisleContentBrowser extends ViewFlipper {
 		public void onResetAdapter();
 
 		public void onAddCommentClick(RelativeLayout view, EditText editText,
-				ImageView commentSend, FrameLayout editLay);
+				ImageView commentSend, FrameLayout editLay,int position,TextView textCount);
 
 		public void onDissAllowListResponse();
 
@@ -483,6 +482,8 @@ public class AisleContentBrowser extends ViewFlipper {
 		public void setOccasion(String occasion);
 		public void hasToShowEditIcon(boolean hasToShow);
 		public void onEditAisle();
+
+ 
 	}
 	private AilseLeftListLisner mLeftListListener;
 	private AilseRighttRightLisner mRightListListener;

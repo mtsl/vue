@@ -1,16 +1,6 @@
 package com.lateralthoughts.vue;
 
 //android imports
-import android.content.Context;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import com.lateralthoughts.vue.connectivity.DataBaseManager;
-import com.lateralthoughts.vue.connectivity.DbHelper;
-import com.lateralthoughts.vue.connectivity.NetworkHandler;
-import com.lateralthoughts.vue.ui.NotifyProgress;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,6 +10,17 @@ import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import android.content.Context;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.connectivity.DbHelper;
+import com.lateralthoughts.vue.connectivity.NetworkHandler;
+import com.lateralthoughts.vue.ui.NotifyProgress;
 
 public class VueTrendingAislesDataModel {
 
@@ -361,6 +362,7 @@ public class VueTrendingAislesDataModel {
 	}
 
 	public void showProgress() {
+		if(mNotifyProgress != null)
 		mNotifyProgress.showProgress();
 	}
 

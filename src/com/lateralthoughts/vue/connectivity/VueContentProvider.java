@@ -1,6 +1,5 @@
 package com.lateralthoughts.vue.connectivity;
 
-import com.lateralthoughts.vue.VueConstants;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -12,6 +11,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.lateralthoughts.vue.VueConstants;
 
 public class VueContentProvider extends ContentProvider{
 

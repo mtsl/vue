@@ -1,13 +1,16 @@
 package com.lateralthoughts.vue.connectivity;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.http.client.ClientProtocolException;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.Response.ErrorListener;
+import com.android.volley.VolleyError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -18,13 +21,9 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.util.Log;
 
 public class NetworkStateChangeReciver extends BroadcastReceiver {
 
@@ -119,9 +118,13 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
         NetworkHandler networkHandler = new NetworkHandler(context);
         for(ImageComment comment : comments) {
           try {
-            networkHandler.createImageComment(comment);
-          } catch (Exception e) {
-            // TODO Auto-generated catch block
+        	  ImageCommentRequest imageRequest = new ImageCommentRequest();
+        	  imageRequest.setComment(comment.getComment());
+        	  imageRequest.setLastModifiedTimestamp(comment.getLastModifiedTimestamp());
+        	  imageRequest.setOwnerImageId(comment.getOwnerImageId());
+        	  imageRequest.setOwnerUserId(comment.getOwnerUserId());
+            networkHandler.createImageComment(imageRequest);
+          } catch (Exception e) { 
             e.printStackTrace();
           }
         }

@@ -1,10 +1,8 @@
 package com.lateralthoughts.vue.parser;
 
-import android.util.Log;
-import com.lateralthoughts.vue.*;
-import com.lateralthoughts.vue.domain.AisleBookmark;
-import com.lateralthoughts.vue.domain.ImageComment;
-import com.lateralthoughts.vue.utils.UrlConstants;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -14,8 +12,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
-import java.util.ArrayList;
+import android.util.Log;
+
+import com.lateralthoughts.vue.AisleContext;
+import com.lateralthoughts.vue.AisleImageDetails;
+import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.ImageRating;
+import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueTrendingAislesDataModel;
+import com.lateralthoughts.vue.VueUser;
+import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.utils.UrlConstants;
 
 public class Parser {
 	// ========================= START OF PARSING TAGS
@@ -29,7 +37,7 @@ public class Parser {
 	// imageItemsArray. Instead the called function clones and keeps a copy.
 	// This is pretty inconsistent.
 	// Let the allocation happen in one place for both items. Fix this!
-	
+
 	public ArrayList<AisleWindowContent> parseTrendingAislesResultData(
 			String resultString, boolean loadMore) {
 
@@ -99,6 +107,7 @@ public class Parser {
 
 	public AisleImageDetails parseAisleImageData(JSONObject jsonObject)
 			throws JSONException {
+		Log.e("Parser", "Image Response : " + jsonObject);
 		AisleImageDetails aisleImageDetails = new AisleImageDetails();
 		aisleImageDetails.mId = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_ID);
@@ -136,24 +145,26 @@ public class Parser {
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject commnetObj = jsonArray.getJSONObject(i);
 				imgComments = new ImageComments();
-				imgComments.Id = commnetObj
+				imgComments.mId = commnetObj
 						.getLong(VueConstants.AISLE_IMAGE_COMMENTS_ID);
-				imgComments.imageId = commnetObj
+				imgComments.mImageId = commnetObj
 						.getLong(VueConstants.AISLE_IMAGE_COMMENTS_IMAGEID);
-				imgComments.comment = commnetObj
+				imgComments.mComment = commnetObj
 						.getString(VueConstants.COMMENT);
 				if (commnetObj.getString(
 						VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME)
 						.equals("null")) {
-					imgComments.lastModifiedTimestamp = commnetObj
+					imgComments.mLastModifiedTimestamp = commnetObj
 							.getLong(VueConstants.AISLE_IMAGE_COMMENTS_CREATED_TIME);
 				} else {
-					imgComments.lastModifiedTimestamp = commnetObj
+					imgComments.mLastModifiedTimestamp = commnetObj
 							.getLong(VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME);
 				}
+				imgComments.mCommenterUrl = commnetObj.getString(VueConstants.IMAGE_COMMENT_OWNER_IMAGE_URL);
 				commentList.add(imgComments);
 			}
 		}
+		 Collections.reverse(commentList);
 		aisleImageDetails.mCommentsList = commentList;
 		return aisleImageDetails;
 	}
@@ -281,6 +292,13 @@ public class Parser {
 			} else {
 				aisleContext.mDescription = description;
 			}
+			String aisleOwnerImageUrl = josnObject
+					.getString(VueConstants.AISLE_OWNER_IMAGE_URL);
+			if (aisleOwnerImageUrl == null || aisleOwnerImageUrl.equals("null")) {
+				aisleContext.mAisleOwnerImageURL = null;
+			} else {
+				aisleContext.mAisleOwnerImageURL = aisleOwnerImageUrl;
+			}
 			aisleContext.mBookmarkCount = josnObject
 					.getInt(VueConstants.AISLE_BOOKMARK_COUNT);
 
@@ -307,8 +325,8 @@ public class Parser {
 					bookmarkAisle.setId(jsonArray.getJSONObject(i).getLong(
 							VueConstants.JSON_OBJ_ID));
 					bookmarkAisle.setLastModifiedTimestamp(jsonArray
-                        .getJSONObject(i).getLong(
-                                VueConstants.LAST_MODIFIED_TIME));
+							.getJSONObject(i).getLong(
+									VueConstants.LAST_MODIFIED_TIME));
 					bookmarkAisle
 							.setBookmarked((jsonArray.getJSONObject(i)
 									.getString(VueConstants.BOOKMARKED)
@@ -319,7 +337,7 @@ public class Parser {
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}  
+		}
 		if (aisleIdList != null && aisleIdList.size() > 0) {
 			Log.i("bookmarked aisle", "bookmarked aisle aisleIdList.size(): "
 					+ aisleIdList.size());
@@ -354,7 +372,8 @@ public class Parser {
 					lastName, jsonObject.getLong(VueConstants.USER_JOINTIME),
 					jsonObject.getString(VueConstants.USER_DEVICE_ID),
 					jsonObject.getString(VueConstants.USER_FACEBOOK_ID),
-					jsonObject.getString(VueConstants.USER_GOOGLEPLUS_ID));
+					jsonObject.getString(VueConstants.USER_GOOGLEPLUS_ID),
+					jsonObject.getString(VueConstants.USER_PROFILE_IMAGE_URL));
 			return vueUser;
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -378,9 +397,8 @@ public class Parser {
 					imgRating
 							.setAisleId(Long.parseLong(jsonArray.getJSONObject(
 									i).getString(VueConstants.AISLE_Id)));
-					imgRating.setLastModifiedTimestamp(jsonArray
-							.getJSONObject(i).getLong(
-									VueConstants.LAST_MODIFIED_TIME));
+					imgRating.setLastModifiedTimestamp(jsonArray.getJSONObject(
+							i).getLong(VueConstants.LAST_MODIFIED_TIME));
 					imgRating.setLiked((jsonArray.getJSONObject(i).getString(
 							VueConstants.LIKED).equals("true")) ? true : false);
 					imgRatingList.add(imgRating);
@@ -398,19 +416,19 @@ public class Parser {
 			ArrayList<ImageRating> imgRatingList) {
 		int size = imgRatingList.size();
 		for (int i = 0; i < size; i++) {
-		   ImageRating current; 
-		  if(imgRatingList.size() > i) {
-			current = imgRatingList.get(i);
-		   } else {
-		     break;
-		   }
+			ImageRating current;
+			if (imgRatingList.size() > i) {
+				current = imgRatingList.get(i);
+			} else {
+				break;
+			}
 			for (int j = 0; j < i; ++j) {
-			  ImageRating previous;
-			  if(imgRatingList.size() > j) {
-			    previous = imgRatingList.get(j);
-	           } else {
-	             break;
-	           }
+				ImageRating previous;
+				if (imgRatingList.size() > j) {
+					previous = imgRatingList.get(j);
+				} else {
+					break;
+				}
 				final boolean relation = previous.compareTo(current);
 				if (relation) {
 					int isGrater = previous.compareTime(current
@@ -430,35 +448,36 @@ public class Parser {
 			ArrayList<AisleBookmark> bookmarkedAisles) {
 		int size = bookmarkedAisles.size();
 		for (int i = 0; i < size; i++) {
-		  AisleBookmark current;
-		  if(bookmarkedAisles.size() > i) {
-		    current = bookmarkedAisles.get(i);
-		  } else {
-		    break;
-		  }
-			
+			AisleBookmark current;
+			if (bookmarkedAisles.size() > i) {
+				current = bookmarkedAisles.get(i);
+			} else {
+				break;
+			}
+
 			for (int j = 0; j < i; ++j) {
-			  AisleBookmark previous;
-			  if(bookmarkedAisles.size() > j) {
-			    previous = bookmarkedAisles.get(j);
-			  } else {
-			    break;
-			  }
-				
+				AisleBookmark previous;
+				if (bookmarkedAisles.size() > j) {
+					previous = bookmarkedAisles.get(j);
+				} else {
+					break;
+				}
+
 				final boolean relation = previous.compareTo(current);
 				if (relation) {
-				  if(current.getLastModifiedTimestamp() != null) {
-				  long currentTime = current
-                  .getLastModifiedTimestamp().longValue();
-					int isGrater = previous.compareTime(currentTime);
-					if (isGrater == AisleBookmark.NEW_TIME_STAMP) {
-						bookmarkedAisles.remove(i);
+					if (current.getLastModifiedTimestamp() != null) {
+						long currentTime = current.getLastModifiedTimestamp()
+								.longValue();
+						int isGrater = previous.compareTime(currentTime);
+						if (isGrater == AisleBookmark.NEW_TIME_STAMP) {
+							bookmarkedAisles.remove(i);
+						} else {
+							bookmarkedAisles.remove(j);
+						}
 					} else {
-						bookmarkedAisles.remove(j);
+						Log.i("bookmarked aisle",
+								"bookmarked aisle current time is null: ");
 					}
-				  } else {
-				    Log.i("bookmarked aisle", "bookmarked aisle current time is null: ");
-				  }
 				}
 			}
 		}

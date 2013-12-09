@@ -2,24 +2,14 @@ package com.lateralthoughts.vue.utils;
 
 import java.net.URL;
 import java.util.ArrayList;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flurry.android.FlurryAgent;
-import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueLandingPageActivity;
-import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
-import com.lateralthoughts.vue.connectivity.DataBaseManager;
-import com.lateralthoughts.vue.domain.Aisle;
-import com.lateralthoughts.vue.parser.Parser;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,6 +17,19 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
+import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.VueTrendingAislesDataModel;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.parser.Parser;
 
 public class AisleCreationBackgroundThread implements Runnable,
 		CountingStringEntity.UploadListener {

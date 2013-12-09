@@ -6,6 +6,7 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     android:layout_marginTop="60dp"
+    android:padding="8dp"
     android:background="@drawable/dataentry_title_bg"
     android:orientation="vertical" >
 
@@ -28,28 +29,31 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/bellwolay"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-         android:id="@+id/bellwolay"
         android:orientation="vertical" >
-   <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/popupbgcolor" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/popupbgcolor" />
+
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal" >
 
             <TextView
                 android:id="@+id/dontshow"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
+                android:background="@drawable/vue_button_selector"
                 android:gravity="center"
-                android:text="Don't show again"
+                android:text="Don&apos;t show again"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -62,8 +66,9 @@
             <TextView
                 android:id="@+id/proceed"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
+                android:background="@drawable/vue_button_selector"
                 android:gravity="center"
                 android:text="Proceed"
                 android:textColor="@color/black"

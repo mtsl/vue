@@ -30,10 +30,6 @@ import android.util.Log;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
-//android utilities
-//http related object imports
-//import org.apache.http.HttpRequest;
-//internal imports
 
 public class VueContentRestService extends IntentService {
 

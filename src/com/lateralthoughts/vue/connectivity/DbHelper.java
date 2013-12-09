@@ -1,10 +1,10 @@
 package com.lateralthoughts.vue.connectivity;
 
-import com.lateralthoughts.vue.VueConstants;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.lateralthoughts.vue.VueConstants;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -62,8 +62,9 @@ public class DbHelper extends SQLiteOpenHelper {
      + VueConstants.DIRTY_FLAG + " integer, "
      + VueConstants.DELETE_FLAG + " integer, "
      + VueConstants.LAST_MODIFIED_TIME + " long, "
+     + VueConstants.COMMENTER_URL + " text, "
      + VueConstants.COMMENTS + " text);";
-
+     
     private String createLookingForTable = "create table if not exists " + DATABASE_TABLE_LOOKINGFOR
         + " (" + VueConstants.ID + " integer primary key autoincrement, " 
         + VueConstants.KEYWORD + " text, "

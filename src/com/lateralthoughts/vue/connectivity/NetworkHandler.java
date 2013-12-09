@@ -1,7 +1,21 @@
 package com.lateralthoughts.vue.connectivity;
 
-import android.app.Activity;
-import android.content.ContentValues;
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -16,12 +30,9 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.lateralthoughts.vue.AisleManager;
+import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -34,35 +45,17 @@ import com.lateralthoughts.vue.VueContentGateway;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
-import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
-import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class NetworkHandler {
 
@@ -278,6 +271,7 @@ public class NetworkHandler {
 			mHandler.sendMessage(msg);
 
 		} else {
+			mLimit = 30;
 			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 					mTrendingAislesParser, loadMore, screenName);
 		}
@@ -367,6 +361,8 @@ public class NetworkHandler {
 											if (aislesList != null
 													&& aislesList.size() > 0) {
 												clearList(progress);
+												VueLandingPageActivity
+												.changeScreenName(screenName);
 												for (int i = 0; i < aislesList
 														.size(); i++) {
 													Log.i("aislesList myaisles",
@@ -408,8 +404,6 @@ public class NetworkHandler {
 												// go
 												// ahead
 												// notify the data set changed
-												VueLandingPageActivity
-														.changeScreenName(screenName);
 											} else {
 												// if this is the first set of
 												// data
@@ -484,7 +478,7 @@ public class NetworkHandler {
 			@Override
 			public void run() {
 				try {
-					String userId = getUserId();
+					String userId =  getUserId();
 					Log.i("bookmarked aisle",
 							"bookmarked persist issue  userid: " + userId);
 					if (userId == null) {
@@ -566,7 +560,7 @@ public class NetworkHandler {
 		return false;
 	}
 
-	public String getUserId() {
+	public VueUser getUserObj() {
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(
@@ -578,12 +572,28 @@ public class NetworkHandler {
 		String userId = null;
 		if (storedVueUser != null) {
 			userId = Long.valueOf(storedVueUser.getId()).toString();
+			storedVueUser.getUserImageURL();
 		}
-		return userId;
+		return storedVueUser;
 
 	}
-
-	public ImageComment createImageComment(ImageComment comment)
+  public String getUserId(){
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(
+					VueApplication.getInstance(),
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String userId = null;
+		if (storedVueUser != null) {
+			userId = Long.valueOf(storedVueUser.getId()).toString();
+			storedVueUser.getUserImageURL();
+		}
+		return userId;
+  }
+	public ImageComment createImageComment(ImageCommentRequest comment)
 			throws Exception {
 		ImageComment createdImageComment = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -591,7 +601,7 @@ public class NetworkHandler {
 		if (VueConnectivityManager.isNetworkConnected(mContext)) {
 			Log.e("NetworkHandler", "Comments Issue: Network is there");
 			URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL + "/"
-					+ getUserId());
+					+ Long.valueOf(getUserObj().getId()).toString());
 			HttpPut httpPut = new HttpPut(url.toString());
 			StringEntity entity = new StringEntity(
 					mapper.writeValueAsString(comment));
@@ -610,6 +620,7 @@ public class NetworkHandler {
 				String responseMessage = EntityUtils.toString(response
 						.getEntity());
 				System.out.println("Comment Response: " + responseMessage);
+				Log.i("createimageCommenterUrl", "createimageCommenterUrl res: "+responseMessage);
 				if (responseMessage.length() > 0) {
 					Log.e("NetworkHandler",
 							"Comments Issue: responseMessage size is > 0 responseMessage: "
@@ -630,7 +641,12 @@ public class NetworkHandler {
 			Editor editor = mSharedPreferencesObj.edit();
 			editor.putBoolean(VueConstants.IS_COMMENT_DIRTY, true);
 			editor.commit();
-			DataBaseManager.getInstance(mContext).addComments(comment, true);
+			createdImageComment = new ImageComment();
+			createdImageComment.setComment(comment.getComment());
+			createdImageComment.setLastModifiedTimestamp(comment.getLastModifiedTimestamp());
+			createdImageComment.setOwnerImageId(comment.getOwnerImageId());
+			createdImageComment.setOwnerUserId(comment.getOwnerUserId());
+			DataBaseManager.getInstance(mContext).addComments(createdImageComment, true);
 		}
 		return createdImageComment;
 	}

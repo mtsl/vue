@@ -1,8 +1,9 @@
 package com.lateralthoughts.vue.parser;
 
 public class ImageComments {
-   public Long Id;
-   public String comment;
-   public Long imageId;
-   public Long lastModifiedTimestamp;
+   public Long mId;
+   public String mComment;
+   public Long mImageId;
+   public Long mLastModifiedTimestamp;
+   public String mCommenterUrl;
 }

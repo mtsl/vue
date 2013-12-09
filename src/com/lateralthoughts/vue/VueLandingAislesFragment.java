@@ -6,43 +6,42 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.Fragment;
+ 
+ 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
+ 
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -60,7 +59,7 @@ import com.lateralthoughts.vue.utils.Utils;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
+public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 	private Context mContext;
 	private VueContentGateway mVueContentGateway;
 	private TrendingAislesLeftColumnAdapter mLeftColumnAdapter;
@@ -68,7 +67,12 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 	private ListView mLeftColumnView;
 	private ListView mRightColumnView;
+<<<<<<< HEAD
     private ProgressBar mProgressBar;
+=======
+	//private ProgressBar mProgressBar;
+ 
+>>>>>>> 457aac8254090429ce32017a29e44df5166d99c6
 
 	private AisleClickListener mAisleClickListener;
 	// private MultiColumnListView mView;
@@ -124,7 +128,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 		if (mLeftColumnAdapter != null) {
 
 			mLeftColumnAdapter.notifyDataSetChanged();
-			Log.i("listadapter", "adapter leftadapter notified");
+			 
 		}
 		if (mRightColumnAdapter != null) {
 			mRightColumnAdapter.notifyDataSetChanged();
@@ -135,17 +139,19 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
 		// synchronized list view approach
 		View v = inflater.inflate(R.layout.aisles_view_fragment2, container,
 				false);
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 		pulltorefresh = (LinearLayout) v.findViewById(R.id.pulltorefresh);
+<<<<<<< HEAD
 		 mProgressBar = (ProgressBar) v.findViewById(R.id.progressbar);
+=======
+		//mProgressBar = (ProgressBar) v.findViewById(R.id.progressbar);
+>>>>>>> 457aac8254090429ce32017a29e44df5166d99c6
 		// mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		// mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-		
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
 		mRightColumnView.setAdapter(mRightColumnAdapter);
 		mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -240,6 +246,7 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 			if (firstVisibleItem > 5) {
 				mIsListRefreshRecently = false;
 			}
+			int localTop = 0;
 			if (view.getChildAt(0) != null) {
 				if (view.equals(mLeftColumnView)) {
 					mLeftViewsHeights[view.getFirstVisiblePosition()] = view
@@ -260,6 +267,17 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 					int top = h - hi + view.getChildAt(0).getTop();
 					mRightColumnView.setSelectionFromTop(
 							mRightColumnView.getFirstVisiblePosition(), top);
+				/*	localTop = top;
+					
+					if(mLeftColumnView.getLastVisiblePosition() == totalItemCount) {
+						if(mRightColumnView.getLastVisiblePosition() < totalItemCount) {
+							AisleWindowContent content = (AisleWindowContent) mRightColumnView
+									.getAdapter().getItem(mRightColumnView.getLastVisiblePosition() + 1);
+							mRightColumnView.setSelectionFromTop(
+									mRightColumnView.getFirstVisiblePosition(), localTop + content.mWindowSmallestHeight+VueApplication.getInstance().getPixel(100));
+							
+						}
+					}*/
 				} else if (view.equals(mRightColumnView)) {
 					mRightViewsHeights[view.getFirstVisiblePosition()] = view
 							.getChildAt(0).getHeight();
@@ -280,7 +298,22 @@ public class VueLandingAislesFragment extends SherlockFragment/* Fragment */{
 
 					mLeftColumnView.setSelectionFromTop(
 							mLeftColumnView.getFirstVisiblePosition(), top);
+				/*	localTop = top;
+					if(mRightColumnView.getLastVisiblePosition() == totalItemCount) {
+						if(mLeftColumnView.getLastVisiblePosition() < totalItemCount) {
+							AisleWindowContent content = (AisleWindowContent) mLeftColumnView
+									.getAdapter().getItem(mLeftColumnView.getLastVisiblePosition() + 1);
+							if(mLeftColumnView.canScrollVertically(-1)){
+								mLeftColumnView.setScrollY(mLeftColumnView.getBottom());
+							}
+							mLeftColumnView.setSelectionFromTop(
+									mLeftColumnView.getFirstVisiblePosition(), localTop + content.mWindowSmallestHeight+VueApplication.getInstance().getPixel(100));
+							
+						}
+					}*/
 				}
+				
+				 
 			}
 
 			//VueLandingPageActivity lan = (VueLandingPageActivity) getActivity();

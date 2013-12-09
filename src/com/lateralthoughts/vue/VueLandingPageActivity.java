@@ -8,41 +8,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONObject;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
-import com.facebook.HttpMethod;
-import com.facebook.Request;
-import com.facebook.Session;
-import com.facebook.Request.Callback;
-import com.facebook.model.GraphObject;
+
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -61,18 +65,16 @@ import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
-public class VueLandingPageActivity extends BaseActivity {
+public class VueLandingPageActivity extends Activity {
 
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
-	private VueLandingAislesFragment mFragment;
 	public static TextView mVueLandingActionbarScreenName;
 	private LinearLayout mVueLandingActionbarRightLayout;
 	LinearLayout mVueLandingKeyboardLayout;
 	private FrameLayout mVueLandingKeyboardCancel, mVueLandingKeyboardDone;
 	private View mVueLandingActionbarView;
 	private RelativeLayout mVueLandingActionbarAppIconLayout;
-	private ProgressBar mLoadProgress;
 	private ProgressDialog mProgressDialog;
 	private TextView mActionbarCancleBtnTextview;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
@@ -89,19 +91,39 @@ public class VueLandingPageActivity extends BaseActivity {
 	public static String mOtherSourceAddImageAisleId = null;
 	private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
 	public static Activity landingPageActivity = null;
+	
+	private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
+	private ProgressDialog mPd;
+	private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private CharSequence mDrawerTitle;
+    private FrameLayout mContent_frame2;
+    private Fragment mLandingAilsesFrag;
+      EditText mSearchEdit;
+      private Handler mHandler;
+      private String mCatName; boolean mFromDialog;
 
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		//CreateAlbum.createUserAlbum();
+		setContentView(R.layout.vue_landing_main);
 		landingPageActivity = this;
+		initialize();
+		mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
+		  mSlidListFrag = (VueListFragment) getFragmentManager()
+					.findFragmentById(R.id.listfrag);
+		  
+		  
+		  mPd = new ProgressDialog(this);
+		  mPd.setMessage("Loading...");
+		  mPd.setCancelable(false);
+		//CreateAlbum.createUserAlbum();
+		
 		clearDataEntryData();
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
 		VueApplication.getInstance().mLastRecordedTime = System
 				.currentTimeMillis();
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
-		setContentView(R.layout.vue_landing_main);
-		mLoadProgress = (ProgressBar) findViewById(R.id.adprogress_progressBar);
 		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_landing_actionbar, null);
 		mVueLandingActionbarScreenName = (TextView) mVueLandingActionbarView
@@ -121,20 +143,19 @@ public class VueLandingPageActivity extends BaseActivity {
 		mActionbarCancleBtnTextview.setText("Cancel");
 		mVueLandingActionbarScreenName.setText(getResources().getString(
 				R.string.trending));
-		getSupportActionBar().setCustomView(mVueLandingActionbarView);
-		getSupportActionBar().setDisplayShowCustomEnabled(true);
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		invalidateOptionsMenu(); 
+		//getActionBar().setCustomView(mVueLandingActionbarView);
+		 
+		//getActionBar().setDisplayShowCustomEnabled(true);
+		getActionBar().setDisplayShowHomeEnabled(true);
+		
 		mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				addImageToExistingAisle(mOtherSourceAddImageAisleId);
 				mOtherSourceAddImageAisleId = null;
-				if (mFragment == null) {
-					mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.aisles_view_fragment);
-				}
-				mFragment.notifyAdapters();
+				((VueLandingAislesFragment) mLandingAilsesFrag).notifyAdapters();
 			}
 		});
 		mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
@@ -142,11 +163,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			public void onClick(View v) {
 				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				mOtherSourceAddImageAisleId = null;
-				if (mFragment == null) {
-					mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.aisles_view_fragment);
-				}
-				mFragment.notifyAdapters();
+				((VueLandingAislesFragment) mLandingAilsesFrag).notifyAdapters();
 			}
 		});
 		mVueLandingActionbarRightLayout
@@ -174,7 +191,12 @@ public class VueLandingPageActivity extends BaseActivity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						getSlidingMenu().toggle();
+						 
+						if(mDrawerLayout.isDrawerOpen(mContent_frame2)){
+							mDrawerLayout.closeDrawer(mContent_frame2);
+						} else {
+							mDrawerLayout.openDrawer(mContent_frame2);
+						}
 					}
 				});
 
@@ -196,8 +218,6 @@ public class VueLandingPageActivity extends BaseActivity {
 		} else {
 			showLogInDialog(false);
 		}
-		mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.aisles_view_fragment);
 		Intent intent = getIntent();
 		String action = intent.getAction();
 		String type = intent.getType();
@@ -211,9 +231,122 @@ public class VueLandingPageActivity extends BaseActivity {
 			if (type.startsWith("image/")) {
 				handleSendMultipleImages(intent, true);
 			}
-		}
-
+		} 
 	}
+private void initialize(){
+    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+    // set a custom shadow that overlays the main content when the drawer opens
+    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+    // set up the drawer's list view with items and click listener
+
+
+    // enable ActionBar app icon to behave as action to toggle nav drawer
+    getActionBar().setDisplayHomeAsUpEnabled(true);
+    getActionBar().setHomeButtonEnabled(true);
+    getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.dataentry_bg));
+	
+    // ActionBarDrawerToggle ties together the the proper interactions
+    // between the sliding drawer and the action bar app icon
+    mDrawerToggle = new ActionBarDrawerToggle(
+            this,                  /* host Activity */
+            mDrawerLayout,         /* DrawerLayout object */
+            R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
+            R.string.drawer_open,  /* "open drawer" description for accessibility */
+            R.string.drawer_close  /* "close drawer" description for accessibility */
+            ) {
+			public void onDrawerClosed(View view) {
+				final InputMethodManager mInputMethodManager = (InputMethodManager) VueLandingPageActivity.this
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+				mInputMethodManager.hideSoftInputFromWindow(
+						mSearchEdit.getWindowToken(), 0);
+				invalidateOptionsMenu(); // creates call to
+											// onPrepareOptionsMenu()
+				getActionBar().setCustomView(mVueLandingActionbarView);
+				getActionBar().setDisplayShowCustomEnabled(true);
+				getActionBar().setDisplayShowHomeEnabled(false);
+			}
+
+			@SuppressLint("CutPasteId")
+			public void onDrawerOpened(View drawerView) {
+				getActionBar().setTitle(mDrawerTitle);
+				invalidateOptionsMenu(); // creates call to
+											// onPrepareOptionsMenu()
+				// add the custom view to the action bar
+				getActionBar().setCustomView(R.layout.actionbar_view);
+				getActionBar().getCustomView().findViewById(R.id.home)
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								mDrawerLayout.closeDrawer(mContent_frame2);
+
+							}
+						});
+				mSearchEdit = (EditText) getActionBar().getCustomView()
+						.findViewById(R.id.searchfield);
+				mSearchEdit.setActivated(true);
+				getActionBar().getCustomView().findViewById(R.id.search_cancel)
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								mSearchEdit.setText("");
+							}
+						});
+
+				mSearchEdit
+						.setOnEditorActionListener(new OnEditorActionListener() {
+
+							@Override
+							public boolean onEditorAction(TextView v,
+									int actionId, KeyEvent event) {
+								 
+								Toast.makeText(VueLandingPageActivity.this,
+										"Search string: "+mSearchEdit.getText().toString(), Toast.LENGTH_SHORT)
+										.show();
+								mDrawerLayout.closeDrawer(mContent_frame2);
+								return false;
+							}
+						});
+
+			}
+    };
+    mDrawerLayout.setDrawerListener(mDrawerToggle);
+   mLandingAilsesFrag = new VueLandingAislesFragment();
+	FragmentManager fragmentManager = getFragmentManager();
+	fragmentManager.beginTransaction()
+			.replace(R.id.content_frame, mLandingAilsesFrag).commit();
+	mDrawerLayout.setFocusableInTouchMode(false);
+}
+@Override
+protected void onPostCreate(Bundle savedInstanceState) {
+    super.onPostCreate(savedInstanceState);
+    // Sync the toggle state after onRestoreInstanceState has occurred.
+    mDrawerToggle.syncState();
+}
+@Override
+public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    mDrawerToggle.onConfigurationChanged(newConfig);
+}
+@Override
+public boolean onOptionsItemSelected(MenuItem item) {
+    // Pass the event to ActionBarDrawerToggle, if it returns
+    // true, then it has handled the app icon touch event
+    if (mDrawerToggle.onOptionsItemSelected(item)) {
+      return true;
+    }
+    // Handle your other action bar items...
+
+    return super.onOptionsItemSelected(item);
+}
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.title_options, menu);
+        getActionBar().setHomeButtonEnabled(true);
+        // Configure the search info and add any event listeners
+        return true;// super.onCreateOptionsMenu(menu);
+}
 
 	@Override
 	protected void onStart() {
@@ -310,7 +443,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
 				if (data.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY) != null) {
-					mFrag.getFriendsList(data
+					mSlidListFrag.getFriendsList(data
 							.getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
 				}
 			}
@@ -461,40 +594,28 @@ public class VueLandingPageActivity extends BaseActivity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
+	 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-			Log.i("stackcount", "stackcount onbckpresed: "
-					+ StackViews.getInstance().getStackCount());
-			if (getSlidingMenu().isMenuShowing()) {
-				Log.i("stackcount", "stackcount onbckpresed: close window1 ");
-				if (!mFrag.listener.onBackPressed()) {
-					getSlidingMenu().toggle();
+ 
+			
+			if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
+				
+				if (!mSlidListFrag.listener.onBackPressed()) {
+					mDrawerLayout.closeDrawer(mContent_frame2);
 				}
 			} else if (StackViews.getInstance().getStackCount() > 0) {
 
 				mVueLandingKeyboardLayout.setVisibility(View.GONE);
-				Log.i("stackcount", "stackcount onbckpresed: close window2 ");
+		 
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
 				if (viewInfo != null) {
 					mVueLandingActionbarScreenName.setText(viewInfo.mVueName);
 					showPreviousScreen(viewInfo.mVueName);
-					/*
-					 * if (!mVueLandingActionbarScreenName.getText().toString()
-					 * .equalsIgnoreCase("Trending")) {
-					 * mVueLandingActionbarScreenName
-					 * .setText(viewInfo.mVueName); mCurentScreenPosition =
-					 * viewInfo.mPosition; VueTrendingAislesDataModel
-					 * .getInstance(VueLandingPageActivity.this)
-					 * .getNetworkHandler() .reqestByCategory(viewInfo.mVueName,
-					 * new ProgresStatus(), false, false);
-					 * 
-					 * } else { mOtherSourceImagePath = null;
-					 * super.onBackPressed(); }
-					 */} else {
+				 } else {
 					super.onBackPressed();
 				}
 			} else {
-				Log.i("stackcount", "stackcount onbckpresed: close window0 ");
+		 
 				CancelNotification(this,
 						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID);
 				CancelNotification(this,
@@ -535,6 +656,7 @@ public class VueLandingPageActivity extends BaseActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		mSlidListFrag.setEditTextVisible(false);
 		// ShareViaVue...
 		if (VueApplication.getInstance().mShareViaVueClickedFlag) {
 			VueApplication.getInstance().mShareViaVueClickedFlag = false;
@@ -564,10 +686,15 @@ public class VueLandingPageActivity extends BaseActivity {
 				}
 			}
 		}
-		if (mFragment != null) {
-			mFragment.notifyAdapters();
+		if(mLandingAilsesFrag != null){
+			((VueLandingAislesFragment) mLandingAilsesFrag).notifyAdapters();
 		}
-
+          if(VueApplication.getInstance().mNewViewSelection){
+        	  boolean fromDialog = false;
+        	  VueApplication.getInstance().mNewViewSelection = false;
+        	  showCategory(VueApplication.getInstance().mNewlySelectedView,fromDialog);
+        	 
+          }
 		new Handler().postDelayed(new Runnable() {
 
 			@Override
@@ -581,6 +708,7 @@ public class VueLandingPageActivity extends BaseActivity {
 
 			}
 		}, DELAY_TIME);
+		getActionBar().setDisplayHomeAsUpEnabled(false);
 	}
 
 	@Override
@@ -621,22 +749,37 @@ public class VueLandingPageActivity extends BaseActivity {
 	}
 
 	public void showCategory(final String catName, boolean fromDialog) {
-		if (mFragment == null) {
-			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisles_view_fragment);
+		mDrawerLayout.closeDrawer(mContent_frame2);
+		mCatName = catName;
+		mFromDialog = fromDialog;
+		if (mHandler == null) {
+			mHandler = new Handler();
 		}
+		//close the drawer before call for new views.
+		mHandler.postDelayed(r, 100);
+	}
+
+	Runnable r = new Runnable() {
+		@Override
+		public void run() {
+			if (!mDrawerLayout.isDrawerOpen(mContent_frame2)) {
+				callForNewView(mCatName, mFromDialog);
+			} else {
+				mHandler.postDelayed(r, 100);
+			}
+		}
+	};
+    private void callForNewView(final String catName, boolean fromDialog) {
 		if (getScreenName().equalsIgnoreCase(catName)) {
 			return;
 		}
 		ViewInfo viewInfo = new ViewInfo();
 		viewInfo.mVueName = mVueLandingActionbarScreenName.getText().toString();
-		viewInfo.mPosition = mFragment.getListPosition();
+		viewInfo.mPosition = ((VueLandingAislesFragment) mLandingAilsesFrag).getListPosition();
 		viewInfo.mOffset = VueTrendingAislesDataModel
 				.getInstance(VueLandingPageActivity.this).getNetworkHandler()
 				.getmOffset();
-
 		StackViews.getInstance().push(viewInfo);
-
 		boolean loadMore = false;
 		boolean fromServer = true;
 		if (catName
@@ -665,11 +808,7 @@ public class VueLandingPageActivity extends BaseActivity {
 				VueTrendingAislesDataModel
 						.getInstance(VueApplication.getInstance())
 						.getNetworkHandler().makeOffseZero();
-				if (mFragment == null) {
-					mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.aisles_view_fragment);
-				}
-				mFragment.clearBitmaps();
+				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(
 						VueApplication.getInstance()).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -693,11 +832,7 @@ public class VueLandingPageActivity extends BaseActivity {
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
-				if (mFragment == null) {
-					mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.aisles_view_fragment);
-				}
-				mFragment.clearBitmaps();
+				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
 						VueApplication.getInstance()).clearObjectsInUse();
@@ -723,9 +858,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 
 		FlurryAgent.logEvent(catName);
-
-	}
-
+    }
 	private void getBookmarkedAisles(String screenName) {
 
 		ArrayList<AisleWindowContent> windowContent = null;
@@ -749,12 +882,7 @@ public class VueLandingPageActivity extends BaseActivity {
 		}
 		if (windowContent != null && windowContent.size() > 0) {
 			changeScreenName(screenName);
-			if (mFragment == null) {
-				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.aisles_view_fragment);
-			}
-			mFragment.clearBitmaps();
-
+			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 			VueTrendingAislesDataModel.getInstance(this).clearAisles();
 			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
 					.clearObjectsInUse();
@@ -775,18 +903,13 @@ public class VueLandingPageActivity extends BaseActivity {
 	private void showPreviousScreen(String screenName) {
 		boolean fromServer = false;
 		boolean loadMore = false;
-		if (mFragment == null) {
-			mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.aisles_view_fragment);
-		}
-		mFragment.clearBitmaps();
+		((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
 			getTrendingAislesFromDb(screenName, fromServer, loadMore);
 
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-			Log.i("meoptions", "meoptions: MyAisle");
 			VueTrendingAislesDataModel
 					.getInstance(VueLandingPageActivity.this)
 					.getNetworkHandler()
@@ -794,15 +917,14 @@ public class VueLandingPageActivity extends BaseActivity {
 							screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-			Log.i("meoptions", "meoptions: Bookmarks");
+	 
 			getBookmarkedAisles(screenName);
 		} else if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-			Log.i("meoptions", "meoptions: Recent");
+	 
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
-			Log.i("meoptions",
-					"meoptions: Recent: size " + windowContent.size());
+ 
 			if (windowContent.size() > 0) {
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -817,13 +939,6 @@ public class VueLandingPageActivity extends BaseActivity {
 
 			}
 		} else {
-			/*
-			 * Log.i("meoptions", "meoptions: else option Screen name: " +
-			 * screenName); VueTrendingAislesDataModel
-			 * .getInstance(VueLandingPageActivity.this) .getNetworkHandler()
-			 * .reqestByCategory(screenName, new ProgresStatus(), fromServer,
-			 * loadMore, screenName);
-			 */
 		}
 	}
 
@@ -834,50 +949,28 @@ public class VueLandingPageActivity extends BaseActivity {
 	class ProgresStatus implements NotifyProgress {
 		@Override
 		public void showProgress() {
-
-			mLoadProgress.setVisibility(View.VISIBLE);
-
-			/*
-			 * LayoutInflater inflater = (LayoutInflater)
-			 * getSystemService(Context.LAYOUT_INFLATER_SERVICE); View layout =
-			 * inflater.inflate(R.layout.loadingPopup, (ViewGroup)
-			 * findViewById(R.id.yourLayoutRoot)); AlertDialog.Builder builder =
-			 * new AlertDialog.Builder(this) .setView(layout); AlertDialog
-			 * alertDialog = builder.create(); alertDialog.show();
-			 */
+            mPd.show();
 		}
 
 		@Override
 		public void dismissProgress(boolean fromWhere) {
-			mLoadProgress.setVisibility(View.INVISIBLE);
-			if (mFragment == null) {
-				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.aisles_view_fragment);
-			}
+			  mPd.dismiss();
 			if (fromWhere) {
 				// mFragment.moveListToPosition(0);
 			} else {
 				// mFragment.moveListToPosition(mCurentScreenPosition);
 			}
 		}
-
 		@Override
 		public boolean isAlreadyDownloaed(String category) {
 			boolean isDowoaded = StackViews.getInstance().categoryCheck(
 					category);
-			Log.i("isAlredeDownloaded", "isAlredeDownloaded: " + isDowoaded);
 			return isDowoaded;
 		}
-
 		@Override
 		public void clearBrowsers() {
-			if (mFragment == null) {
-				mFragment = (VueLandingAislesFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.aisles_view_fragment);
-			}
-			mFragment.clearBitmaps();
+			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 		}
-
 	}
 
 	public void showDiscardOtherAppImageDialog() {
@@ -941,6 +1034,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				showCategory(
 						getString(R.string.sidemenu_option_Trending_Aisles),
 						true);
+				Toast.makeText(VueLandingPageActivity.this,
+						"Choose the aisle to add to", Toast.LENGTH_LONG).show();
 				mAddImageToAisleLayoutClickedAFlag = true;
 			}
 		});
@@ -950,6 +1045,8 @@ public class VueLandingPageActivity extends BaseActivity {
 				dialog.dismiss();
 				showCategory(getString(R.string.sidemenu_sub_option_Bookmarks),
 						true);
+				Toast.makeText(VueLandingPageActivity.this,
+						"Choose the aisle to add to", Toast.LENGTH_LONG).show();
 				mAddImageToAisleLayoutClickedAFlag = true;
 			}
 		});
@@ -960,12 +1057,9 @@ public class VueLandingPageActivity extends BaseActivity {
 				dialog.dismiss();
 				showCategory(getString(R.string.sidemenu_sub_option_My_Aisles),
 						true);
+				Toast.makeText(VueLandingPageActivity.this,
+						"Choose the aisle to add to", Toast.LENGTH_LONG).show();
 				mAddImageToAisleLayoutClickedAFlag = true;
-
-				/*
-				 * Toast.makeText(VueLandingPageActivity.this, "In Progress.",
-				 * Toast.LENGTH_LONG).show();
-				 */
 			}
 		});
 		createAisleLayout.setOnClickListener(new OnClickListener() {
@@ -1132,8 +1226,7 @@ public class VueLandingPageActivity extends BaseActivity {
 
 	private void getTrendingAislesFromDb(String screenName, boolean fromServer,
 			boolean loadMore) {
-		Log.i("dbloading issue",
-				"dbloading issue: showPreviousScreen back press");
+ 
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).isFromDb = true;
@@ -1273,12 +1366,10 @@ public class VueLandingPageActivity extends BaseActivity {
 				VueTrendingAislesDataModel.getInstance(
 						VueApplication.getInstance()).getAisleAt(aisleId));
 		if (aisleItem != null) {
-
 			AisleImageDetails imgDetails = new AisleImageDetails();
 			imgDetails.mAvailableHeight = imageHeight;
 			imgDetails.mAvailableWidth = imageWidth;
-			Log.i("new image", "new image height: "
-					+ imgDetails.mAvailableHeight);
+		 
 			if (imgDetails.mAvailableHeight < aisleItem
 					.getBestHeightForWindow()) {
 				aisleItem.setBestHeightForWindow(imgDetails.mAvailableHeight);
