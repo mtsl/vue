@@ -176,7 +176,15 @@ public class VueTrendingAislesDataModel {
 		}
 		return null;
 	}
-
+    public void updateProfileImatgeInAisles(String userId,String profileImageUrl){
+    	 for(int i=0;i<mAisleContentList.size();i++){
+    		 AisleWindowContent aisleItem = mAisleContentList.get(i);
+    		   if(aisleItem.getAisleContext().mUserId.equals(userId)){
+    			   aisleItem.getAisleContext().mAisleOwnerImageURL = profileImageUrl;
+    		   }
+    	 }
+    	 dataObserver();
+    }
 	public AisleWindowContent getAisleAt(String aisleId) {
 		return mAisleContentListMap.get(aisleId);
 	}
