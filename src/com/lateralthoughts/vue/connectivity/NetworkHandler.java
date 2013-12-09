@@ -303,17 +303,14 @@ public class NetworkHandler {
 				ArrayList<AisleWindowContent> windowList = DataBaseManager
 						.getInstance(VueApplication.getInstance())
 						.getAislesByUserId(userId);
-				if(windowList != null && windowList.size() > 0) {
-					Log.i("userAisle", "userailse: userId 1111: "+userId +"  list Size: "+windowList.size());
+				if (windowList != null && windowList.size() > 0) {
+					clearList(progress);
 					for(AisleWindowContent aisleItem : windowList) {
 						Log.i("userAisle", "userailse: userId: "+aisleItem.getAisleContext().mUserId);
 						if(!aisleItem.getAisleContext().mUserId.equals(userId)) {
 							windowList.remove(aisleItem);
 						}
 					}
-				}
-				if (windowList != null && windowList.size() > 0) {
-					clearList(progress);
 					for (int i = 0; i < windowList.size(); i++) {
 						VueTrendingAislesDataModel.getInstance(
 								VueApplication.getInstance()).addItemToList(
@@ -326,7 +323,9 @@ public class NetworkHandler {
 					VueApplication.getInstance().sendBroadcast(i);
 					VueTrendingAislesDataModel.getInstance(
 							VueApplication.getInstance()).dataObserver();
+					 
 				} else {
+					 
 					StackViews.getInstance().pull();
 					Toast.makeText(VueLandingPageActivity.landingPageActivity,
 							"There are no Aisles for this User.",
@@ -433,6 +432,7 @@ public class NetworkHandler {
 															VueApplication
 																	.getInstance())
 													.dismissProgress();
+										 
 										}
 
 									});
@@ -440,6 +440,7 @@ public class NetworkHandler {
 					}
 				}).start();
 			} else {
+				 
 				Toast.makeText(
 						VueApplication.getInstance(),
 						VueApplication.getInstance().getResources()

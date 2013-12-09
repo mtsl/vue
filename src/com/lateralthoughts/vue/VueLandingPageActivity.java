@@ -126,6 +126,7 @@ SearchView.OnCloseListener {
 		mPd.setMessage("Loading...");
 		mPd.setCancelable(false);
 		clearDataEntryData();
+		getActionBar().setTitle(getString(R.string.sidemenu_option_Trending_Aisles));
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
 		VueApplication.getInstance().mLastRecordedTime = System
 				.currentTimeMillis();
@@ -787,6 +788,7 @@ SearchView.OnCloseListener {
 			} else {
 				fromServer = false;
 			}
+			 
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
@@ -913,6 +915,7 @@ SearchView.OnCloseListener {
 		((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
+		  Log.e("VueLandingPage", "SURU BACK PRESSED CHECK");
 			getTrendingAislesFromDb(screenName, fromServer, loadMore);
 
 		} else if (screenName
