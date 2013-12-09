@@ -96,6 +96,7 @@ public class VueContentGateway {
 						responseBundle.putInt("offset", offset);
 						receiver.send(1, responseBundle);
 				        VueLandingPageActivity.changeScreenName(screenName);
+				        Log.i("fromDialog", "Trending profile 1 ended: ");
 					}
 				}
 			};

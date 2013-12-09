@@ -1084,6 +1084,7 @@ public class DataBaseManager {
 	}
 
 	private ArrayList<AisleWindowContent> getAisles(Cursor aislesCursor) {
+		 Log.i("recently viewed", "recently viewed  getAisles  aislesCursor  data base manger size:   "+aislesCursor.getCount());
 		AisleContext userInfo;
 		AisleImageDetails imageItemDetails;
 		AisleWindowContent aisleItem = null;
@@ -1181,6 +1182,9 @@ public class DataBaseManager {
 									comments.mComment = imgCommentCursor
 											.getString(imgCommentCursor
 													.getColumnIndex(VueConstants.COMMENTS));
+									comments.mCommenterUrl = imgCommentCursor
+											.getString(imgCommentCursor
+													.getColumnIndex(VueConstants.COMMENTER_URL));
 									comments.mLastModifiedTimestamp = Long
 											.parseLong(imgCommentCursor.getString(imgCommentCursor
 													.getColumnIndex(VueConstants.LAST_MODIFIED_TIME)));
@@ -1328,11 +1332,13 @@ public class DataBaseManager {
 	}
 
 	public ArrayList<AisleWindowContent> getRecentlyViewedAisles() {
+		 Log.i("recently viewed", "recently viewed getRecentlyViewedAisles  ");
 		ArrayList<AisleWindowContent> aisles = new ArrayList<AisleWindowContent>();
 		for (String aisleId : getRecentlyViewedAislesId()) {
-			Log.e("DataBaseManager", "Suru recently viewed aisleId: " + aisleId);
+			 
 			aisles.addAll(getAisleByAisleId(aisleId));
 		}
+		 Log.i("recently viewed", "recently viewed  getAisles size:   "+aisles.size());
 		return aisles;
 	}
 
@@ -1347,6 +1353,7 @@ public class DataBaseManager {
 						.getColumnIndex(VueConstants.RECENTLY_VIEWED_AISLE_ID)));
 			} while (cursor.moveToNext());
 		}
+		 Log.i("recently viewed", "recently viewed getRecentlyViewedAislesId id size:   "+aisleIds.size());
 		return aisleIds;
 	}
 
@@ -1535,8 +1542,8 @@ public class DataBaseManager {
 		return (minEntry == null) ? 0 : minEntry.getValue();
 	}
 
-	@Deprecated
 	// not in use by Surendra
+	@Deprecated
 	private void updateAisleOrder() {
 		ContentValues values = new ContentValues();
 		Cursor aisleIdCursor = mContext.getContentResolver().query(

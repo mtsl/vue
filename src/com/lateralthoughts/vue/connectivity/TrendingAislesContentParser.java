@@ -27,6 +27,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
 
 	@Override
   protected void onReceiveResult(int resultCode, final Bundle resultData) {
+		Log.i("fromDialog", "Trending profile 2 started: ");
     switch (mState) {
       case VueConstants.AISLE_TRENDING_LIST_DATA:
         long elapsedTime = System.currentTimeMillis()
@@ -40,19 +41,18 @@ public class TrendingAislesContentParser extends ResultReceiver {
         Thread t = new Thread(new Runnable() {
           @Override
           public void run() {
-        	
+        	  Log.i("fromDialog", "Trending profile parser 2  started: ");
             final ArrayList<AisleWindowContent> aislesList = new Parser()
                 .parseTrendingAislesResultData(resultData.getString("result"),
                     resultData.getBoolean("loadMore"));
                 int offset = resultData.getInt("offset");
-            
-         
+                Log.i("fromDialog", "Trending profile dbwriting 2 started: ");
             DataBaseManager
                 .getInstance(VueApplication.getInstance())
                 .addTrentingAislesFromServerToDB(VueApplication.getInstance(),
                     aislesList, offset,
                     DataBaseManager.TRENDING);
-
+            Log.i("fromDialog", "Trending profile dbwriting 2 ended: ");
             Log.i("ailsesize",
                 "Suru comment show: " + aislesList.size());
              
@@ -72,7 +72,14 @@ public class TrendingAislesContentParser extends ResultReceiver {
                 refreshListFlag = true;
               }
             }
-            VueLandingPageActivity.landingPageActivity
+       
+            if(VueLandingPageActivity.landingPageActivity != null
+                && (VueLandingPageActivity.mVueLandingActionbarScreenName
+                    .getText().toString().equals(VueApplication.getInstance()
+                    .getString(R.string.sidemenu_sub_option_My_Aisles)))){
+            	refreshListFlag = false;
+            } else if(VueLandingPageActivity.landingPageActivity != null){
+                VueLandingPageActivity.landingPageActivity
                 .runOnUiThread(new Runnable() {
                   @Override
                   public void run() {
@@ -81,11 +88,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
 
                   }
                 });
-            if(VueLandingPageActivity.landingPageActivity != null
-                && (VueLandingPageActivity.mVueLandingActionbarScreenName
-                    .getText().toString().equals(VueApplication.getInstance()
-                    .getString(R.string.sidemenu_sub_option_My_Aisles)))){
-            	refreshListFlag = false;
             }
          /* } else {
          	  VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = true;
@@ -97,10 +99,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                   .runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                      Log.e(
-                          "TrendingAislesContentParser",
-                          "Surendra check check Screen Name: "
-                              + VueLandingPageActivity.mVueLandingActionbarScreenName);
+                    	  Log.i("fromDialog", "Trending profile uipdating 2 started: ");
                       if (VueLandingPageActivity.getScreenName().equals(
                           VueApplication.getInstance().getString(
                               R.string.sidemenu_sub_option_Bookmarks))) {
@@ -124,9 +123,12 @@ public class TrendingAislesContentParser extends ResultReceiver {
                           // notify the data set changed
                           VueTrendingAislesDataModel.getInstance(
                               VueApplication.getInstance()).dataObserver();
+                          Log.i("fromDialog", "Trending profile 2 ended: ");
                         }
                       }
+                      Log.i("fromDialog", "Trending profile uipdating 2 ended: ");
                     }
+                    
                   });
             }
             

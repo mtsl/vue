@@ -15,6 +15,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
@@ -32,6 +33,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,7 +48,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
-
+ 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -146,6 +149,7 @@ public class VueLandingPageActivity extends Activity {
 		 
 		getActionBar().setDisplayShowCustomEnabled(true);
 		getActionBar().setDisplayShowHomeEnabled(false);
+		invalidateOptionsMenu();
 		mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -246,7 +250,7 @@ private void initialize(){
     mDrawerToggle = new ActionBarDrawerToggle(
             this,                  /* host Activity */
             mDrawerLayout,         /* DrawerLayout object */
-            R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
+            R.drawable.ic_navigation_drawer,  /* nav drawer image to replace 'Up' caret */
             R.string.drawer_open,  /* "open drawer" description for accessibility */
             R.string.drawer_close  /* "close drawer" description for accessibility */
             ) {
@@ -314,6 +318,41 @@ private void initialize(){
 			.replace(R.id.content_frame, mLandingAilsesFrag).commit();
 	mDrawerLayout.setFocusableInTouchMode(false);
 }
+/*@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.main, menu);
+    return super.onCreateOptionsMenu(menu);
+}
+
+// Called whenever we call invalidateOptionsMenu() 
+@Override
+public boolean onPrepareOptionsMenu(Menu menu) {
+    // If the nav drawer is open, hide action items related to the content view
+	  boolean drawerOpen = mDrawerLayout.isDrawerOpen(mContent_frame2);
+    menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+    menu.findItem(R.id.action_button).setVisible(!drawerOpen);
+    return super.onPrepareOptionsMenu(menu);
+}
+
+@Override
+public boolean onOptionsItemSelected(MenuItem item) {
+     // The action bar home/up action should open or close the drawer.
+     // ActionBarDrawerToggle will take care of this.
+    if (mDrawerToggle.onOptionsItemSelected(item)) {
+        return true;
+    }
+    // Handle action buttonsmDrawerToggle
+		switch (item.getItemId()) {
+		case R.id.action_websearch:
+			// create intent to perform web search for this planet
+			Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG)
+					.show();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+}*/
 @Override
 protected void onPostCreate(Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
@@ -325,17 +364,7 @@ public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
     mDrawerToggle.onConfigurationChanged(newConfig);
 }
-@Override
-public boolean onOptionsItemSelected(MenuItem item) {
-    // Pass the event to ActionBarDrawerToggle, if it returns
-    // true, then it has handled the app icon touch event
-    if (mDrawerToggle.onOptionsItemSelected(item)) {
-      return true;
-    }
-    // Handle your other action bar items...
-
-    return super.onOptionsItemSelected(item);
-}
+ 
 
 
 	@Override
@@ -760,6 +789,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 		}
 	};
     private void callForNewView(final String catName, boolean fromDialog) {
+     
 		if (getScreenName().equalsIgnoreCase(catName)) {
 			return;
 		}
@@ -772,8 +802,10 @@ public boolean onOptionsItemSelected(MenuItem item) {
 		StackViews.getInstance().push(viewInfo);
 		boolean loadMore = false;
 		boolean fromServer = true;
+		 
 		if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
+			 
 			if (VueConnectivityManager.isNetworkConnected(VueApplication
 					.getInstance())) {
 				fromServer = true;
@@ -787,6 +819,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 							catName);
 		} else if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
+			Log.i("fromDialog", "Trending profilce 4: ");
 			if (fromDialog) {
 				fromServer = false;
 				loadMore = false;
@@ -815,13 +848,16 @@ public boolean onOptionsItemSelected(MenuItem item) {
 			}
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
+			
 			getBookmarkedAisles(catName);
 
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
+			 Log.i("recently viewed", "recently viewed showcateMethod 1");
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
+				 Log.i("recently viewed", "recently viewed showcateMethod 1 windowContent.size()"+windowContent.size());
 				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -839,6 +875,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 				StackViews.getInstance().pull();
 			}
 		} else {
+			 
 			/*
 			 * VueTrendingAislesDataModel
 			 * .getInstance(VueLandingPageActivity.this) .getNetworkHandler()
@@ -1143,8 +1180,10 @@ public boolean onOptionsItemSelected(MenuItem item) {
 	}
 
 	public static String getScreenName() {
+		    
 		if (mVueLandingActionbarScreenName != null) {
 			return mVueLandingActionbarScreenName.getText().toString();
+		 
 		}
 		return "";
 	}
