@@ -67,12 +67,7 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 
 	private ListView mLeftColumnView;
 	private ListView mRightColumnView;
-<<<<<<< HEAD
-    private ProgressBar mProgressBar;
-=======
-	//private ProgressBar mProgressBar;
- 
->>>>>>> 457aac8254090429ce32017a29e44df5166d99c6
+
 
 	private AisleClickListener mAisleClickListener;
 	// private MultiColumnListView mView;
@@ -145,11 +140,8 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
 		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
 		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
 		pulltorefresh = (LinearLayout) v.findViewById(R.id.pulltorefresh);
-<<<<<<< HEAD
-		 mProgressBar = (ProgressBar) v.findViewById(R.id.progressbar);
-=======
+
 		//mProgressBar = (ProgressBar) v.findViewById(R.id.progressbar);
->>>>>>> 457aac8254090429ce32017a29e44df5166d99c6
 		// mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		// mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mLeftColumnView.setAdapter(mLeftColumnAdapter);
@@ -330,7 +322,7 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
         } else if (view.equals(mRightColumnView)) {
           totalItems = mRightColumnAdapter.getCount();
         }
-        if ((totalItems - lastVisiblePosition) < 2) {
+    /*    if ((totalItems - lastVisiblePosition) < 2) {
           if (mProgressBar.getLayoutParams().height == 0) {
             ProgressBarAnimation a = new ProgressBarAnimation(mProgressBar,
                 targetHeight, false);
@@ -354,7 +346,7 @@ public class VueLandingAislesFragment extends /*SherlockFragment*/ Fragment {
            mProgressBar.setLayoutParams(params);
             mProgressBar.startAnimation(a);
           }
-        }
+        }*/
         if ((totalItems - lastVisiblePosition) < 5) {
           Log.i("offeset and limit", "offeset00000: load moredata");
           VueTrendingAislesDataModel
