@@ -425,7 +425,7 @@ public class DataEntryActivity extends Activity {
 						.trim()
 						.equals(getResources().getString(
 								R.string.add_imae_to_aisle_screen_title))) {
-			showDefaultActionbarWithSkipButton();
+			//showDefaultActionbarWithSkipButton();
 		}
 	}
 
@@ -527,9 +527,11 @@ public class DataEntryActivity extends Activity {
 				menu.findItem(R.id.menu_search).setVisible(false);
 				menu.findItem(R.id.menu_close_dataentry).setVisible(false);
 			} else if (mShowSkipButton) {
+				menu.findItem(R.id.menu_search).collapseActionView();
 				menu.findItem(R.id.menu_search).setVisible(false);
 				menu.findItem(R.id.menu_close_dataentry).setVisible(true);
 			} else {
+				menu.findItem(R.id.menu_search).collapseActionView();
 				menu.findItem(R.id.menu_search).setVisible(false);
 				menu.findItem(R.id.menu_close_dataentry).setVisible(false);
 			}

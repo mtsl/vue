@@ -115,11 +115,8 @@ public class VueLoginActivity extends FragmentActivity implements
 	private Activity mContext;
 	private LinearLayout mSocialIntegrationMainLayout;
 	private Bundle mBundle = null;
-	private static final String TAG = "VueLoginActivity";
 	private final List<String> PUBLISH_PERMISSIONS = Arrays
 			.asList("publish_actions");
-	private final List<String> READ_PERMISSIONS = Arrays.asList("email",
-			"user_birthday");
 	private ProgressDialog mFacebookProgressDialog, mGooglePlusProgressDialog;
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
 			.getInstance().getString(R.string.pendingActionBundleKey);
@@ -623,7 +620,10 @@ public class VueLoginActivity extends FragmentActivity implements
 															VueLoginActivity.this,
 															VueConstants.VUE_APP_USEROBJECT__FILENAME,
 															vueUser);
-													saveFacebookProfileDetails(user);
+													saveFacebookProfileDetails(
+															user,
+															String.valueOf(vueUser
+																	.getId()));
 												} catch (Exception e) {
 													e.printStackTrace();
 												}
@@ -645,7 +645,10 @@ public class VueLoginActivity extends FragmentActivity implements
 															VueLoginActivity.this,
 															VueConstants.VUE_APP_USEROBJECT__FILENAME,
 															vueUser);
-													saveFacebookProfileDetails(user);
+													saveFacebookProfileDetails(
+															user,
+															String.valueOf(vueUser
+																	.getId()));
 												} catch (Exception e) {
 													e.printStackTrace();
 												}
@@ -720,8 +723,9 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 	}
 
-	private void saveFacebookProfileDetails(GraphUser user) {
+	private void saveFacebookProfileDetails(GraphUser user, String userId) {
 		refreshBezelMenu(
+				userId,
 				VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
 						+ user.getId()
 						+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
@@ -1151,7 +1155,8 @@ public class VueLoginActivity extends FragmentActivity implements
 												VueLoginActivity.this,
 												VueConstants.VUE_APP_USEROBJECT__FILENAME,
 												user);
-										saveGooglePlusUserProfile(person);
+										saveGooglePlusUserProfile(person,
+												String.valueOf(user.getId()));
 									} catch (Exception e) {
 										e.printStackTrace();
 									}
@@ -1169,7 +1174,8 @@ public class VueLoginActivity extends FragmentActivity implements
 											VueLoginActivity.this,
 											VueConstants.VUE_APP_USEROBJECT__FILENAME,
 											user);
-									saveGooglePlusUserProfile(person);
+									saveGooglePlusUserProfile(person,
+											String.valueOf(user.getId()));
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -1195,7 +1201,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 	};
 
-	private void saveGooglePlusUserProfile(Person person) {
+	private void saveGooglePlusUserProfile(Person person, String userId) {
 		VueUserProfile storedUserProfile = null;
 		try {
 			storedUserProfile = Utils.readUserProfileObjectFromFile(this,
@@ -1204,6 +1210,7 @@ public class VueLoginActivity extends FragmentActivity implements
 			e.printStackTrace();
 		}
 		refreshBezelMenu(
+				userId,
 				person.getImage().getUrl(),
 				new FileCache(VueLoginActivity.this)
 						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
@@ -1263,7 +1270,8 @@ public class VueLoginActivity extends FragmentActivity implements
 											VueLoginActivity.this,
 											VueConstants.VUE_APP_USEROBJECT__FILENAME,
 											user);
-									saveInstagramUserProfile();
+									saveInstagramUserProfile(String
+											.valueOf(user.getId()));
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -1279,7 +1287,8 @@ public class VueLoginActivity extends FragmentActivity implements
 											VueLoginActivity.this,
 											VueConstants.VUE_APP_USEROBJECT__FILENAME,
 											user);
-									saveInstagramUserProfile();
+									saveInstagramUserProfile(String
+											.valueOf(user.getId()));
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -1301,8 +1310,9 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 	}
 
-	private void saveInstagramUserProfile() {
+	private void saveInstagramUserProfile(String userId) {
 		refreshBezelMenu(
+				userId,
 				mInstagramApp.getProfilePicture(),
 				new FileCache(VueLoginActivity.this)
 						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
@@ -1366,9 +1376,11 @@ public class VueLoginActivity extends FragmentActivity implements
 						return true;
 					};
 				});
-		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		dialog.getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		dialog.show();
-		//dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+		// dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+		// | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 	}
 
 	private void createUserInServer(String userInitials) {
@@ -1397,7 +1409,8 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void refreshBezelMenu(String imageUrl, final File filePath) {
+	private void refreshBezelMenu(final String userId, final String imageUrl,
+			final File filePath) {
 		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage1 "
 				+ imageUrl);
 		Response.Listener listener = new Response.Listener<Bitmap>() {
@@ -1407,8 +1420,7 @@ public class VueLoginActivity extends FragmentActivity implements
 				Utils.saveBitmap(bmp, filePath);
 				Log.i("userImageUrl",
 						"userImageUrl: downloadAndSaveUserProfileImage2 ");
-				// profileImagechangeListor.onImageChange();
-				getProfileImageChangeListenor();
+				getProfileImageChangeListenor(userId, imageUrl);
 			}
 		};
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
@@ -1424,11 +1436,10 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	}
 
-	public void getProfileImageChangeListenor() {
-		//get the currently displayed aisles and update the user photo
-		 //call updateProfileImatgeInAisles(userId,imageUrl)
+	public void getProfileImageChangeListenor(String userId, String imageUrl) {
+		VueTrendingAislesDataModel.getInstance(this)
+				.updateProfileImatgeInAisles(userId, imageUrl);
 		Intent i = new Intent("RefreshBezelMenuReciver");
 		VueApplication.getInstance().sendBroadcast(i);
 	}
-
 }
