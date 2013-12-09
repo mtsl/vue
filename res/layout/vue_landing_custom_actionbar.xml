@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dip"
-    android:background="@drawable/actionbar_bg" >
+   >
     <LinearLayout
         android:id="@+id/vue_landin_keyboard_layout"
         android:layout_width="match_parent"
@@ -11,7 +11,7 @@
         android:dividerPadding="12dp"
         android:orientation="horizontal"
         android:showDividers="middle"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <include
             android:id="@+id/vue_landing_keyboard_cancel"

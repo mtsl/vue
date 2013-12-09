@@ -70,6 +70,9 @@ public class VueLandingPageActivity extends Activity {
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 	private ProgressDialog mProgressDialog;
+	private LinearLayout mVueLandingKeyboardLayout;
+	private FrameLayout mVueLandingKeyboardCancel, mVueLandingKeyboardDone;
+	private View mVueLandingActionbarView;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
 	private boolean mAddImageToAisleLayoutClickedAFlag = false;
 	public static String mOtherSourceImagePath = null;
@@ -95,6 +98,7 @@ public class VueLandingPageActivity extends Activity {
 	private String mCatName;
 	boolean mFromDialog;
 	public static String mLandingScreenName = null;
+	private boolean mHideDefaultActionbar = false;
 	private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
 
 	@Override
@@ -120,6 +124,37 @@ public class VueLandingPageActivity extends Activity {
 				.currentTimeMillis();
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 		invalidateOptionsMenu();
+		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
+				R.layout.vue_landing_custom_actionbar, null);
+		mVueLandingKeyboardLayout = (LinearLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landin_keyboard_layout);
+		mVueLandingKeyboardCancel = (FrameLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_keyboard_cancel);
+		mVueLandingKeyboardDone = (FrameLayout) mVueLandingActionbarView
+				.findViewById(R.id.vue_landing_keyboard_done);
+		mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mVueLandingKeyboardLayout.setVisibility(View.GONE);
+				addImageToExistingAisle(mOtherSourceAddImageAisleId);
+				mOtherSourceAddImageAisleId = null;
+				((VueLandingAislesFragment) mLandingAilsesFrag)
+						.notifyAdapters();
+				mHideDefaultActionbar = false;
+				invalidateOptionsMenu();
+			}
+		});
+		mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mVueLandingKeyboardLayout.setVisibility(View.GONE);
+				mOtherSourceAddImageAisleId = null;
+				((VueLandingAislesFragment) mLandingAilsesFrag)
+						.notifyAdapters();
+				mHideDefaultActionbar = false;
+				invalidateOptionsMenu();				
+			}
+		});
 		VueUser storedVueUser = null;
 		try {
 			storedVueUser = Utils.readUserObjectFromFile(this,
@@ -183,7 +218,7 @@ public class VueLandingPageActivity extends Activity {
 		// between the sliding drawer and the action bar app icon
 		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
 		mDrawerLayout, /* DrawerLayout object */
-		R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+		R.drawable.ic_navigation_drawer, /* nav drawer image to replace 'Up' caret */
 		R.string.drawer_open, /* "open drawer" description for accessibility */
 		R.string.drawer_close /* "close drawer" description for accessibility */
 		) {
@@ -255,14 +290,28 @@ public class VueLandingPageActivity extends Activity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean isdrawOpen = mDrawerLayout.isDrawerOpen(mContent_frame2);
+		getActionBar().setHomeButtonEnabled(true);
+		getActionBar().setDisplayShowCustomEnabled(false);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayShowHomeEnabled(true);
+		getActionBar().setCustomView(null);
 		if (isdrawOpen) {
 			menu.findItem(R.id.menu_search).setVisible(true);
 			menu.findItem(R.id.menu_create_aisle).setVisible(false);
-			menu.findItem(R.id.menu_custom).setVisible(false);
+			// menu.findItem(R.id.menu_custom).setVisible(false);
 		} else {
-			menu.findItem(R.id.menu_search).setVisible(false);
-			menu.findItem(R.id.menu_create_aisle).setVisible(true);
-			menu.findItem(R.id.menu_custom).setVisible(false);
+			if (mHideDefaultActionbar) {
+				getActionBar().setDisplayHomeAsUpEnabled(false);
+				getActionBar().setDisplayShowCustomEnabled(true);
+				getActionBar().setDisplayShowHomeEnabled(false);
+				getActionBar().setCustomView(mVueLandingActionbarView);
+				menu.findItem(R.id.menu_search).setVisible(false);
+				menu.findItem(R.id.menu_create_aisle).setVisible(false);
+			} else {
+				menu.findItem(R.id.menu_search).setVisible(false);
+				menu.findItem(R.id.menu_create_aisle).setVisible(true);
+				// menu.findItem(R.id.menu_custom).setVisible(false);
+			}
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -523,9 +572,7 @@ public class VueLandingPageActivity extends Activity {
 					mDrawerLayout.closeDrawer(mContent_frame2);
 				}
 			} else if (StackViews.getInstance().getStackCount() > 0) {
-
-				//mVueLandingKeyboardLayout.setVisibility(View.GONE);
-
+				showDefaultActionbar();
 				final ViewInfo viewInfo = StackViews.getInstance().pull();
 				if (viewInfo != null) {
 					getActionBar().setTitle(viewInfo.mVueName);
@@ -1316,6 +1363,16 @@ public class VueLandingPageActivity extends Activity {
 					.getInstance(VueApplication.getInstance()).dataObserver();
 		}
 
+	}
+
+	public void hideDefaultActionbar() {
+		mHideDefaultActionbar = true;
+		invalidateOptionsMenu();
+	}
+
+	public void showDefaultActionbar() {
+		mHideDefaultActionbar = false;
+		invalidateOptionsMenu();
 	}
 
 	public class LandingScreenTitleReceiver extends BroadcastReceiver {

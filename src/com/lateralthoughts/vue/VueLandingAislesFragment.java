@@ -418,8 +418,7 @@ public class VueLandingAislesFragment extends /* SherlockFragment */Fragment {
 				startActivity(intent);
 			} else {
 				VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-				/*vueLandingPageActivity.mVueLandingKeyboardLayout
-						.setVisibility(View.VISIBLE);*/
+				vueLandingPageActivity.hideDefaultActionbar();
 				VueLandingPageActivity.mOtherSourceAddImageAisleId = id;
 				notifyAdapters();
 			}
