@@ -349,8 +349,6 @@ public class DataEntryFragment extends Fragment {
 						if (mDataEntryActivity == null) {
 							mDataEntryActivity = (DataEntryActivity) getActivity();
 						}
-						mDataEntryActivity.mDataentryActionbarMainLayout
-								.setVisibility(View.GONE);
 						mDataEntryActivity.mVueDataentryKeyboardLayout
 								.setVisibility(View.GONE);
 						mDataEntryActivity.mVueDataentryKeyboardDone
@@ -361,6 +359,7 @@ public class DataEntryFragment extends Fragment {
 						mSaysomethingClose.setVisibility(View.GONE);
 						mDataEntryActivity.mVueDataentryPostLayout
 								.setVisibility(View.VISIBLE);
+						mDataEntryActivity.hideDefaultActionbar();
 						return true;
 					}
 				});
@@ -411,8 +410,6 @@ public class DataEntryFragment extends Fragment {
 							if (mDataEntryActivity == null) {
 								mDataEntryActivity = (DataEntryActivity) getActivity();
 							}
-							mDataEntryActivity.mDataentryActionbarMainLayout
-									.setVisibility(View.GONE);
 							mDataEntryActivity.mVueDataentryKeyboardLayout
 									.setVisibility(View.VISIBLE);
 							mDataEntryActivity.mVueDataentryKeyboardDone
@@ -420,6 +417,7 @@ public class DataEntryFragment extends Fragment {
 							mDataEntryActivity.mVueDataentryKeyboardCancel
 									.setVisibility(View.VISIBLE);
 							mMainHeadingRow.setVisibility(View.VISIBLE);
+							mDataEntryActivity.hideDefaultActionbar();
 							if (mOccasion != null) {
 								mLookingForOccasionTextview.setText(mLookingFor
 										+ " for " + mOccasion);
@@ -445,14 +443,13 @@ public class DataEntryFragment extends Fragment {
 				if (mDataEntryActivity == null) {
 					mDataEntryActivity = (DataEntryActivity) getActivity();
 				}
-				mDataEntryActivity.mDataentryActionbarMainLayout
-						.setVisibility(View.VISIBLE);
 				mDataEntryActivity.mVueDataentryKeyboardLayout
 						.setVisibility(View.GONE);
 				mDataEntryActivity.mVueDataentryKeyboardDone
 						.setVisibility(View.GONE);
 				mDataEntryActivity.mVueDataentryKeyboardCancel
 						.setVisibility(View.GONE);
+				mDataEntryActivity.showDefaultActionbar();
 				if (mOccasionText.getText().toString().trim().length() > 0) {
 					mOccasion = mOccasionText.getText().toString();
 					mLookingForOccasionTextview.setText(mLookingFor + " for "
@@ -504,14 +501,13 @@ public class DataEntryFragment extends Fragment {
 				if (mDataEntryActivity == null) {
 					mDataEntryActivity = (DataEntryActivity) getActivity();
 				}
-				mDataEntryActivity.mDataentryActionbarMainLayout
-						.setVisibility(View.GONE);
 				mDataEntryActivity.mVueDataentryKeyboardLayout
 						.setVisibility(View.VISIBLE);
 				mDataEntryActivity.mVueDataentryKeyboardDone
 						.setVisibility(View.VISIBLE);
 				mDataEntryActivity.mVueDataentryKeyboardCancel
 						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.hideDefaultActionbar();
 				return true;
 			};
 		});
@@ -681,8 +677,6 @@ public class DataEntryFragment extends Fragment {
 				if (mDataEntryActivity == null) {
 					mDataEntryActivity = (DataEntryActivity) getActivity();
 				}
-				mDataEntryActivity.mDataentryActionbarMainLayout
-						.setVisibility(View.GONE);
 				mDataEntryActivity.mVueDataentryKeyboardLayout
 						.setVisibility(View.VISIBLE);
 				mDataEntryActivity.mVueDataentryKeyboardDone
@@ -690,6 +684,7 @@ public class DataEntryFragment extends Fragment {
 				mDataEntryActivity.mVueDataentryKeyboardCancel
 						.setVisibility(View.VISIBLE);
 				mMainHeadingRow.setVisibility(View.VISIBLE);
+				mDataEntryActivity.hideDefaultActionbar();
 				if (mOccasion != null) {
 					mLookingForOccasionTextview.setText(mLookingFor + " for "
 							+ mOccasion);
@@ -705,14 +700,13 @@ public class DataEntryFragment extends Fragment {
 				if (mDataEntryActivity == null) {
 					mDataEntryActivity = (DataEntryActivity) getActivity();
 				}
-				mDataEntryActivity.mDataentryActionbarMainLayout
-						.setVisibility(View.GONE);
 				mDataEntryActivity.mVueDataentryKeyboardLayout
 						.setVisibility(View.VISIBLE);
 				mDataEntryActivity.mVueDataentryKeyboardDone
 						.setVisibility(View.VISIBLE);
 				mDataEntryActivity.mVueDataentryKeyboardCancel
 						.setVisibility(View.GONE);
+				mDataEntryActivity.hideDefaultActionbar();
 				Toast.makeText(getActivity(), "LookingFor is mandatory.",
 						Toast.LENGTH_LONG).show();
 			}
@@ -722,14 +716,13 @@ public class DataEntryFragment extends Fragment {
 			if (mDataEntryActivity == null) {
 				mDataEntryActivity = (DataEntryActivity) getActivity();
 			}
-			mDataEntryActivity.mDataentryActionbarMainLayout
-					.setVisibility(View.VISIBLE);
 			mDataEntryActivity.mVueDataentryKeyboardLayout
 					.setVisibility(View.GONE);
 			mDataEntryActivity.mVueDataentryKeyboardDone
 					.setVisibility(View.GONE);
 			mDataEntryActivity.mVueDataentryKeyboardCancel
 					.setVisibility(View.GONE);
+			mDataEntryActivity.showDefaultActionbar();
 			if (mOccasionText.getText().toString().trim().length() > 0) {
 				mOccasion = mOccasionText.getText().toString();
 				mLookingForOccasionTextview.setText(mLookingFor + " for "
@@ -770,18 +763,15 @@ public class DataEntryFragment extends Fragment {
 			if (mDataEntryActivity == null) {
 				mDataEntryActivity = (DataEntryActivity) getActivity();
 			}
-			mDataEntryActivity.mDataentryActionbarMainLayout
-					.setVisibility(View.GONE);
 			mDataEntryActivity.mVueDataentryKeyboardLayout
 					.setVisibility(View.VISIBLE);
 			mDataEntryActivity.mVueDataentryKeyboardDone
 					.setVisibility(View.VISIBLE);
 			mDataEntryActivity.mVueDataentryKeyboardCancel
 					.setVisibility(View.VISIBLE);
+			mDataEntryActivity.hideDefaultActionbar();
 		} else if (mSaySomethingAboutAisle.getVisibility() == View.VISIBLE) {
 			mSaySomethingAboutAisle.setVisibility(View.GONE);
-			mDataEntryActivity.mDataentryActionbarMainLayout
-					.setVisibility(View.GONE);
 			mDataEntryActivity.mVueDataentryKeyboardLayout
 					.setVisibility(View.GONE);
 			mDataEntryActivity.mVueDataentryKeyboardDone
@@ -790,6 +780,7 @@ public class DataEntryFragment extends Fragment {
 					.setVisibility(View.GONE);
 			mDataEntryActivity.mVueDataentryPostLayout
 					.setVisibility(View.VISIBLE);
+			mDataEntryActivity.hideDefaultActionbar();
 		}
 	}
 
@@ -820,14 +811,13 @@ public class DataEntryFragment extends Fragment {
 			if (mDataEntryActivity == null) {
 				mDataEntryActivity = (DataEntryActivity) getActivity();
 			}
-			mDataEntryActivity.mDataentryActionbarMainLayout
-					.setVisibility(View.GONE);
 			mDataEntryActivity.mVueDataentryKeyboardLayout
 					.setVisibility(View.VISIBLE);
 			mDataEntryActivity.mVueDataentryKeyboardDone
 					.setVisibility(View.VISIBLE);
 			mDataEntryActivity.mVueDataentryKeyboardCancel
 					.setVisibility(View.VISIBLE);
+			mDataEntryActivity.hideDefaultActionbar();
 		} else {
 			Toast.makeText(getActivity(), "Lookingfor is mandatory.",
 					Toast.LENGTH_LONG).show();
@@ -849,11 +839,10 @@ public class DataEntryFragment extends Fragment {
 		if (mDataEntryActivity == null) {
 			mDataEntryActivity = (DataEntryActivity) getActivity();
 		}
-		mDataEntryActivity.mDataentryActionbarMainLayout
-				.setVisibility(View.VISIBLE);
 		mDataEntryActivity.mVueDataentryKeyboardLayout.setVisibility(View.GONE);
 		mDataEntryActivity.mVueDataentryKeyboardDone.setVisibility(View.GONE);
 		mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
+		mDataEntryActivity.showDefaultActionbar();
 		categoryIconClickFunctionality();
 	}
 
@@ -895,14 +884,13 @@ public class DataEntryFragment extends Fragment {
 		if (mDataEntryActivity == null) {
 			mDataEntryActivity = (DataEntryActivity) getActivity();
 		}
-		mDataEntryActivity.mDataentryActionbarMainLayout
-				.setVisibility(View.GONE);
 		mDataEntryActivity.mVueDataentryKeyboardLayout
 				.setVisibility(View.VISIBLE);
 		mDataEntryActivity.mVueDataentryKeyboardDone
 				.setVisibility(View.VISIBLE);
 		mDataEntryActivity.mVueDataentryKeyboardCancel
 				.setVisibility(View.VISIBLE);
+		mDataEntryActivity.hideDefaultActionbar();
 	}
 
 	public void saySomethingABoutAisleInterceptListnerFunctionality() {
@@ -914,13 +902,12 @@ public class DataEntryFragment extends Fragment {
 		if (mDataEntryActivity == null) {
 			mDataEntryActivity = (DataEntryActivity) getActivity();
 		}
-		mDataEntryActivity.mDataentryActionbarMainLayout
-				.setVisibility(View.GONE);
 		mDataEntryActivity.mVueDataentryKeyboardLayout.setVisibility(View.GONE);
 		mDataEntryActivity.mVueDataentryKeyboardDone.setVisibility(View.GONE);
 		mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
 		Log.e("Dataentry Fragment", "Intercept listener called.");
 		mDataEntryActivity.mVueDataentryPostLayout.setVisibility(View.VISIBLE);
+		mDataEntryActivity.hideDefaultActionbar();
 	}
 
 	public void createAisleClickFunctionality() {
@@ -1027,14 +1014,13 @@ public class DataEntryFragment extends Fragment {
 				if (mDataEntryActivity == null) {
 					mDataEntryActivity = (DataEntryActivity) getActivity();
 				}
-				mDataEntryActivity.mDataentryActionbarMainLayout
-						.setVisibility(View.GONE);
 				mDataEntryActivity.mVueDataentryKeyboardLayout
 						.setVisibility(View.VISIBLE);
 				mDataEntryActivity.mVueDataentryKeyboardDone
 						.setVisibility(View.VISIBLE);
 				mDataEntryActivity.mVueDataentryKeyboardCancel
 						.setVisibility(View.GONE);
+				mDataEntryActivity.hideDefaultActionbar();
 			}
 
 		});
@@ -1299,14 +1285,13 @@ public class DataEntryFragment extends Fragment {
 						if (mDataEntryActivity == null) {
 							mDataEntryActivity = (DataEntryActivity) getActivity();
 						}
-						mDataEntryActivity.mDataentryActionbarMainLayout
-								.setVisibility(View.GONE);
 						mDataEntryActivity.mVueDataentryKeyboardLayout
 								.setVisibility(View.VISIBLE);
 						mDataEntryActivity.mVueDataentryKeyboardDone
 								.setVisibility(View.VISIBLE);
 						mDataEntryActivity.mVueDataentryKeyboardCancel
 								.setVisibility(View.VISIBLE);
+						mDataEntryActivity.hideDefaultActionbar();
 					} else {
 						mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
 						mSaysomethingClose.setVisibility(View.VISIBLE);
@@ -1336,14 +1321,13 @@ public class DataEntryFragment extends Fragment {
 						if (mDataEntryActivity == null) {
 							mDataEntryActivity = (DataEntryActivity) getActivity();
 						}
-						mDataEntryActivity.mDataentryActionbarMainLayout
-								.setVisibility(View.GONE);
 						mDataEntryActivity.mVueDataentryKeyboardLayout
 								.setVisibility(View.VISIBLE);
 						mDataEntryActivity.mVueDataentryKeyboardDone
 								.setVisibility(View.VISIBLE);
 						mDataEntryActivity.mVueDataentryKeyboardCancel
 								.setVisibility(View.VISIBLE);
+						mDataEntryActivity.hideDefaultActionbar();
 					}
 				}
 			});
@@ -1368,8 +1352,8 @@ public class DataEntryFragment extends Fragment {
 
 	public void setGalleryORCameraImage(String picturePath,
 			boolean dontResizeImageFlag, Context context) {
-		if(getActivity() == null){
-		Log.i("activity fragment", "activity fragment is null");
+		if (getActivity() == null) {
+			Log.i("activity fragment", "activity fragment is null");
 		} else {
 			Log.i("activity fragment", "activity fragment is not null");
 		}
@@ -1385,8 +1369,6 @@ public class DataEntryFragment extends Fragment {
 			if (mDataEntryActivity == null) {
 				mDataEntryActivity = (DataEntryActivity) getActivity();
 			}
-			mDataEntryActivity.mDataentryActionbarMainLayout
-					.setVisibility(View.GONE);
 			mDataEntryActivity.mVueDataentryKeyboardLayout
 					.setVisibility(View.GONE);
 			mDataEntryActivity.mVueDataentryKeyboardDone
@@ -1395,6 +1377,7 @@ public class DataEntryFragment extends Fragment {
 					.setVisibility(View.GONE);
 			mDataEntryActivity.mVueDataentryPostLayout
 					.setVisibility(View.VISIBLE);
+			mDataEntryActivity.hideDefaultActionbar();
 		}
 		try {
 			Log.e("frag1", "gallery called,,,," + picturePath);
@@ -1416,8 +1399,8 @@ public class DataEntryFragment extends Fragment {
 				if (mDataEntryActivity == null) {
 					mDataEntryActivity = (DataEntryActivity) getActivity();
 				}
-				mDataEntryActivity.mVueDataentryActionbarScreenName
-						.setText(getResources().getString(
+				getActivity().getActionBar().setTitle(
+						getResources().getString(
 								R.string.add_imae_to_aisle_screen_title));
 				mMainHeadingRow.setVisibility(View.VISIBLE);
 				mCategoryheadingLayout.setVisibility(View.VISIBLE);
@@ -2396,10 +2379,7 @@ public class DataEntryFragment extends Fragment {
 				if (mDataEntryActivity == null) {
 					mDataEntryActivity = (DataEntryActivity) getActivity();
 				}
-				mDataEntryActivity.mDataentryActionbarMainLayout
-						.setVisibility(View.VISIBLE);
-				mDataEntryActivity.mVueDataentryAddimageSkipLayout
-						.setVisibility(View.VISIBLE);
+				mDataEntryActivity.showDefaultActionbarWithSkipButton();
 				mDataEntryActivity.mVueDataentryKeyboardLayout
 						.setVisibility(View.GONE);
 				mDataEntryActivity.mVueDataentryKeyboardDone
@@ -2408,8 +2388,8 @@ public class DataEntryFragment extends Fragment {
 						.setVisibility(View.GONE);
 				mDataEntryActivity.mVueDataentryPostLayout
 						.setVisibility(View.GONE);
-				mDataEntryActivity.mVueDataentryActionbarScreenName
-						.setText(getResources().getString(
+				getActivity().getActionBar().setTitle(
+						getResources().getString(
 								R.string.add_imae_to_aisle_screen_title));
 				Utils.putTouchToChnageImagePosition(getActivity(), -1);
 				Utils.putTouchToChnageImageTempPosition(getActivity(), -1);

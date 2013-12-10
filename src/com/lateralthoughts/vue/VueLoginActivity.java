@@ -54,6 +54,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.facebook.CreateAlbum;
 import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
@@ -115,11 +116,8 @@ public class VueLoginActivity extends FragmentActivity implements
 	private Activity mContext;
 	private LinearLayout mSocialIntegrationMainLayout;
 	private Bundle mBundle = null;
-	private static final String TAG = "VueLoginActivity";
 	private final List<String> PUBLISH_PERMISSIONS = Arrays
 			.asList("publish_actions");
-	private final List<String> READ_PERMISSIONS = Arrays.asList("email",
-			"user_birthday");
 	private ProgressDialog mFacebookProgressDialog, mGooglePlusProgressDialog;
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
 			.getInstance().getString(R.string.pendingActionBundleKey);
@@ -623,7 +621,10 @@ public class VueLoginActivity extends FragmentActivity implements
 															VueLoginActivity.this,
 															VueConstants.VUE_APP_USEROBJECT__FILENAME,
 															vueUser);
-													saveFacebookProfileDetails(user);
+													saveFacebookProfileDetails(
+															user,
+															String.valueOf(vueUser
+																	.getId()));
 												} catch (Exception e) {
 													e.printStackTrace();
 												}
@@ -645,7 +646,10 @@ public class VueLoginActivity extends FragmentActivity implements
 															VueLoginActivity.this,
 															VueConstants.VUE_APP_USEROBJECT__FILENAME,
 															vueUser);
-													saveFacebookProfileDetails(user);
+													saveFacebookProfileDetails(
+															user,
+															String.valueOf(vueUser
+																	.getId()));
 												} catch (Exception e) {
 													e.printStackTrace();
 												}
@@ -720,8 +724,9 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 	}
 
-	private void saveFacebookProfileDetails(GraphUser user) {
+	private void saveFacebookProfileDetails(GraphUser user, String userId) {
 		refreshBezelMenu(
+				userId,
 				VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
 						+ user.getId()
 						+ VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
@@ -821,95 +826,90 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	private void postPhoto(final ArrayList<clsShare> fileList,
-			final String articledesc) {
-		if (hasPublishPermission()) {
-			mFacebookProgressDialog.show();
-			// Post photo....
-			if (fileList != null) {
-				Thread t = new Thread(new Runnable() {
-					@Override
-					public void run() {
+      final String articledesc) {
+    if (hasPublishPermission()) {
+      mFacebookProgressDialog.show();
+      // Post photo....
+      if (fileList != null) {
+        Thread t = new Thread(new Runnable() {
+          @Override
+          public void run() {
 
-						for (int i = 0; i < fileList.size(); i++) {
-							final File f = new File(fileList.get(i)
-									.getFilepath());
-							if (!f.exists()) {
-								@SuppressWarnings("rawtypes")
-								Response.Listener listener = new Response.Listener<InputStream>() {
-									@Override
-									public void onResponse(InputStream is) {
-										OutputStream os = null;
-										try {
-											os = new FileOutputStream(f);
-										} catch (FileNotFoundException e) {
-											e.printStackTrace();
-										}
-										Utils.CopyStream(is, os);
-									}
-								};
-								Response.ErrorListener errorListener = new Response.ErrorListener() {
-									@Override
-									public void onErrorResponse(VolleyError arg0) {
-									}
-								};
-								if (fileList.get(i).getImageUrl() != null) {
-									@SuppressWarnings("unchecked")
-									ImageRequest imagerequestObj = new ImageRequest(
-											fileList.get(i).getImageUrl(),
-											listener, 0, 0, null, errorListener);
-									VueApplication.getInstance()
-											.getRequestQueue()
-											.add(imagerequestObj);
-								}
-							}
-							final int index = i;
-							VueLoginActivity.this.runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									Bundle parameters = new Bundle(1);
-									parameters.putString("message", articledesc
-											+ "");
-									ParcelFileDescriptor descriptor = null;
-									try {
-										descriptor = ParcelFileDescriptor
-												.open(new File(fileList.get(
-														index).getFilepath()),
-														ParcelFileDescriptor.MODE_READ_ONLY);
-									} catch (FileNotFoundException e) {
-										e.printStackTrace();
-									}
-									parameters.putParcelable("picture",
-											descriptor);
-									Callback callback = new Request.Callback() {
-										public void onCompleted(
-												com.facebook.Response response) {
-											if (index == fileList.size() - 1) {
-												mFacebookProgressDialog
-														.dismiss();
-												showPublishResult(
-														VueLoginActivity.this
-																.getString(R.string.photo_post),
-														response.getGraphObject(),
-														response.getError());
-											}
-										}
-									};
-									Request request = new Request(Session
-											.getActiveSession(), "me/photos",
-											parameters, HttpMethod.POST,
-											callback);
-									request.executeAsync();
-								}
-							});
-						}
-					}
-				});
-				t.start();
-			} else {
-				mFacebookProgressDialog.dismiss();
-			}
-		}
-	}
+            for (int i = 0; i < fileList.size(); i++) {
+              final File f = new File(fileList.get(i).getFilepath());
+              if (!f.exists()) {
+                @SuppressWarnings("rawtypes")
+                Response.Listener listener = new Response.Listener<InputStream>() {
+                  @Override
+                  public void onResponse(InputStream is) {
+                    OutputStream os = null;
+                    try {
+                      os = new FileOutputStream(f);
+                    } catch (FileNotFoundException e) {
+                      e.printStackTrace();
+                    }
+                    Utils.CopyStream(is, os);
+                  }
+                };
+                Response.ErrorListener errorListener = new Response.ErrorListener() {
+                  @Override
+                  public void onErrorResponse(VolleyError arg0) {
+                  }
+                };
+                if (fileList.get(i).getImageUrl() != null) {
+                  @SuppressWarnings("unchecked")
+                  ImageRequest imagerequestObj = new ImageRequest(fileList.get(
+                      i).getImageUrl(), listener, 0, 0, null, errorListener);
+                  VueApplication.getInstance().getRequestQueue()
+                      .add(imagerequestObj);
+                }
+              }
+              final int index = i;
+              VueLoginActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                  // TODO: Create album
+                  
+                  new CreateAlbum().createNewAlbumRequest(VueLoginActivity.this,
+                      "SURU GOT SUCCESS");
+                  
+                  Bundle parameters = new Bundle(1);
+                  parameters.putString("message", articledesc + "");
+                  ParcelFileDescriptor descriptor = null;
+                  try {
+                    descriptor = ParcelFileDescriptor.open(new File(fileList
+                        .get(index).getFilepath()),
+                        ParcelFileDescriptor.MODE_READ_ONLY);
+                  } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                  }
+                  parameters.putParcelable("picture", descriptor);
+                  Callback callback = new Request.Callback() {
+                    public void onCompleted(com.facebook.Response response) {
+                      if (index == fileList.size() - 1) {
+                        mFacebookProgressDialog.dismiss();
+                        showPublishResult(VueLoginActivity.this
+                            .getString(R.string.photo_post), response
+                            .getGraphObject(), response.getError());
+                      }
+                    }
+                  };
+                  Session session = Session.getActiveSession(); 
+                  // CreateAlbum.createAlbumRequest(session);
+                  Request request = new Request(session, "me/photos",
+                      parameters, HttpMethod.POST, callback);
+                  request.executeAsync();
+                }
+              });
+            }
+          }
+        });
+        t.start();
+      } else {
+        mFacebookProgressDialog.dismiss();
+      }
+    }
+  }
 
 	private void showPublishResult(String message, GraphObject result,
 			FacebookRequestError error) {
@@ -1151,7 +1151,8 @@ public class VueLoginActivity extends FragmentActivity implements
 												VueLoginActivity.this,
 												VueConstants.VUE_APP_USEROBJECT__FILENAME,
 												user);
-										saveGooglePlusUserProfile(person);
+										saveGooglePlusUserProfile(person,
+												String.valueOf(user.getId()));
 									} catch (Exception e) {
 										e.printStackTrace();
 									}
@@ -1169,7 +1170,8 @@ public class VueLoginActivity extends FragmentActivity implements
 											VueLoginActivity.this,
 											VueConstants.VUE_APP_USEROBJECT__FILENAME,
 											user);
-									saveGooglePlusUserProfile(person);
+									saveGooglePlusUserProfile(person,
+											String.valueOf(user.getId()));
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -1195,7 +1197,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 	};
 
-	private void saveGooglePlusUserProfile(Person person) {
+	private void saveGooglePlusUserProfile(Person person, String userId) {
 		VueUserProfile storedUserProfile = null;
 		try {
 			storedUserProfile = Utils.readUserProfileObjectFromFile(this,
@@ -1204,6 +1206,7 @@ public class VueLoginActivity extends FragmentActivity implements
 			e.printStackTrace();
 		}
 		refreshBezelMenu(
+				userId,
 				person.getImage().getUrl(),
 				new FileCache(VueLoginActivity.this)
 						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
@@ -1263,7 +1266,8 @@ public class VueLoginActivity extends FragmentActivity implements
 											VueLoginActivity.this,
 											VueConstants.VUE_APP_USEROBJECT__FILENAME,
 											user);
-									saveInstagramUserProfile();
+									saveInstagramUserProfile(String
+											.valueOf(user.getId()));
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -1279,7 +1283,8 @@ public class VueLoginActivity extends FragmentActivity implements
 											VueLoginActivity.this,
 											VueConstants.VUE_APP_USEROBJECT__FILENAME,
 											user);
-									saveInstagramUserProfile();
+									saveInstagramUserProfile(String
+											.valueOf(user.getId()));
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -1301,8 +1306,9 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 	}
 
-	private void saveInstagramUserProfile() {
+	private void saveInstagramUserProfile(String userId) {
 		refreshBezelMenu(
+				userId,
 				mInstagramApp.getProfilePicture(),
 				new FileCache(VueLoginActivity.this)
 						.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
@@ -1366,9 +1372,11 @@ public class VueLoginActivity extends FragmentActivity implements
 						return true;
 					};
 				});
-		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		dialog.getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		dialog.show();
-		//dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+		// dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+		// | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 	}
 
 	private void createUserInServer(String userInitials) {
@@ -1397,7 +1405,8 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void refreshBezelMenu(String imageUrl, final File filePath) {
+	private void refreshBezelMenu(final String userId, final String imageUrl,
+			final File filePath) {
 		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage1 "
 				+ imageUrl);
 		Response.Listener listener = new Response.Listener<Bitmap>() {
@@ -1407,8 +1416,7 @@ public class VueLoginActivity extends FragmentActivity implements
 				Utils.saveBitmap(bmp, filePath);
 				Log.i("userImageUrl",
 						"userImageUrl: downloadAndSaveUserProfileImage2 ");
-				// profileImagechangeListor.onImageChange();
-				getProfileImageChangeListenor();
+				getProfileImageChangeListenor(userId, imageUrl);
 			}
 		};
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
@@ -1424,11 +1432,10 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	}
 
-	public void getProfileImageChangeListenor() {
-		//get the currently displayed aisles and update the user photo
-		 //call updateProfileImatgeInAisles(userId,imageUrl)
+	public void getProfileImageChangeListenor(String userId, String imageUrl) {
+		VueTrendingAislesDataModel.getInstance(this)
+				.updateProfileImatgeInAisles(userId, imageUrl);
 		Intent i = new Intent("RefreshBezelMenuReciver");
 		VueApplication.getInstance().sendBroadcast(i);
 	}
-
 }

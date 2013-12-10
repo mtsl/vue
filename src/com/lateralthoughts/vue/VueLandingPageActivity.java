@@ -161,7 +161,7 @@ SearchView.OnCloseListener {
 				((VueLandingAislesFragment) mLandingAilsesFrag)
 						.notifyAdapters();
 				mHideDefaultActionbar = false;
-				invalidateOptionsMenu();				
+				invalidateOptionsMenu();
 			}
 		});
 		VueUser storedVueUser = null;
@@ -227,7 +227,10 @@ SearchView.OnCloseListener {
 		// between the sliding drawer and the action bar app icon
 		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
 		mDrawerLayout, /* DrawerLayout object */
-		R.drawable.ic_navigation_drawer, /* nav drawer image to replace 'Up' caret */
+		R.drawable.ic_navigation_drawer, /*
+										 * nav drawer image to replace 'Up'
+										 * caret
+										 */
 		R.string.drawer_open, /* "open drawer" description for accessibility */
 		R.string.drawer_close /* "close drawer" description for accessibility */
 		) {
@@ -317,7 +320,6 @@ SearchView.OnCloseListener {
 		if (isdrawOpen) {
 			menu.findItem(R.id.menu_search).setVisible(true);
 			menu.findItem(R.id.menu_create_aisle).setVisible(false);
-			// menu.findItem(R.id.menu_custom).setVisible(false);
 		} else {
 			   
 			//mSearchView.setIconified(true);
@@ -334,7 +336,6 @@ SearchView.OnCloseListener {
 				menu.findItem(R.id.menu_search).setVisible(false);
 				menu.findItem(R.id.menu_search).collapseActionView();
 				menu.findItem(R.id.menu_create_aisle).setVisible(true);
-				// menu.findItem(R.id.menu_custom).setVisible(false);
 			}
 		}
 		return super.onPrepareOptionsMenu(menu);
@@ -915,6 +916,7 @@ SearchView.OnCloseListener {
 		((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
+		  Log.e("VueLandingPage", "SURU BACK PRESSED CHECK");
 			getTrendingAislesFromDb(screenName, fromServer, loadMore);
 
 		} else if (screenName
