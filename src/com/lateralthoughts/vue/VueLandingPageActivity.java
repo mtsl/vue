@@ -17,7 +17,7 @@ import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
- 
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,7 +38,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
- 
+
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -50,7 +50,7 @@ import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
- 
+
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -70,8 +70,8 @@ import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
-public class VueLandingPageActivity extends Activity implements SearchView.OnQueryTextListener,
-SearchView.OnCloseListener {
+public class VueLandingPageActivity extends Activity implements
+		SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
@@ -106,8 +106,8 @@ SearchView.OnCloseListener {
 	public static String mLandingScreenName = null;
 	private boolean mHideDefaultActionbar = false;
 	private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
-	 private SearchView mSearchView;
-	 public static boolean mIsMyAilseCallEnable = false;
+	private SearchView mSearchView;
+	public static boolean mIsMyAilseCallEnable = false;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -127,7 +127,8 @@ SearchView.OnCloseListener {
 		mPd.setMessage("Loading...");
 		mPd.setCancelable(false);
 		clearDataEntryData();
-		getActionBar().setTitle(getString(R.string.sidemenu_option_Trending_Aisles));
+		getActionBar().setTitle(
+				getString(R.string.sidemenu_option_Trending_Aisles));
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
 		VueApplication.getInstance().mLastRecordedTime = System
 				.currentTimeMillis();
@@ -158,6 +159,15 @@ SearchView.OnCloseListener {
 			public void onClick(View v) {
 				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				mOtherSourceAddImageAisleId = null;
+				mOtherSourceImagePath = null;
+				mOtherSourceImageUrl = null;
+				mOtherSourceImageWidth = 0;
+				mOtherSourceImageHeight = 0;
+				mOtherSourceImageDetailsUrl = null;
+				mOtherSourceImageStore = null;
+				mOtherSourceImageLookingFor = null;
+				mOtherSourceImageCategory = null;
+				mOtherSourceImageOccasion = null;
 				((VueLandingAislesFragment) mLandingAilsesFrag)
 						.notifyAdapters();
 				mHideDefaultActionbar = false;
@@ -285,7 +295,7 @@ SearchView.OnCloseListener {
 			} else {
 				showDiscardOtherAppImageDialog();
 			}
- 
+
 		}
 		// Handle your other action bar items...
 		return super.onOptionsItemSelected(item);
@@ -296,23 +306,18 @@ SearchView.OnCloseListener {
 		getMenuInflater().inflate(R.menu.landing_actionbar, menu);
 		getActionBar().setHomeButtonEnabled(true);
 		// Configure the search info and add any event listeners
-		
-		  SearchManager searchManager =
-		           (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		  mSearchView =
-		            (SearchView) menu.findItem(R.id.menu_search).getActionView();
-		  
-		
 
-		
-		
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		mSearchView = (SearchView) menu.findItem(R.id.menu_search)
+				.getActionView();
+
 		return true;// super.onCreateOptionsMenu(menu);
 	}
-	 
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean isdrawOpen = mDrawerLayout.isDrawerOpen(mContent_frame2);
-		getActionBar().setHomeButtonEnabled(true); 
+		getActionBar().setHomeButtonEnabled(true);
 		getActionBar().setDisplayShowCustomEnabled(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setDisplayShowHomeEnabled(true);
@@ -321,10 +326,9 @@ SearchView.OnCloseListener {
 			menu.findItem(R.id.menu_search).setVisible(true);
 			menu.findItem(R.id.menu_create_aisle).setVisible(false);
 		} else {
-			   
-			//mSearchView.setIconified(true);
-			
-			
+
+			// mSearchView.setIconified(true);
+
 			if (mHideDefaultActionbar) {
 				getActionBar().setDisplayHomeAsUpEnabled(false);
 				getActionBar().setDisplayShowCustomEnabled(true);
@@ -648,6 +652,14 @@ SearchView.OnCloseListener {
 	@Override
 	public void onResume() {
 		super.onResume();
+		/*
+		 * VueUser storedVueUser = null; try { storedVueUser =
+		 * Utils.readUserObjectFromFile(this,
+		 * VueConstants.VUE_APP_USEROBJECT__FILENAME); } catch (Exception e1) {
+		 * e1.printStackTrace(); } if (storedVueUser == null) { if
+		 * (!VueLoginActivity.mIsLogInScreenIsVisible) { showLogInDialog(false);
+		 * } }
+		 */
 		mSlidListFrag.setEditTextVisible(false);
 		// ShareViaVue...
 		if (VueApplication.getInstance().mShareViaVueClickedFlag) {
@@ -762,7 +774,6 @@ SearchView.OnCloseListener {
 			}
 		}
 	};
- 
 
 	private void callForNewView(final String catName, boolean fromDialog) {
 		if (mLandingScreenName != null
@@ -779,7 +790,7 @@ SearchView.OnCloseListener {
 		StackViews.getInstance().push(viewInfo);
 		boolean loadMore = false;
 		boolean fromServer = true;
-		 
+
 		if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
 			mIsMyAilseCallEnable = true;
@@ -789,7 +800,7 @@ SearchView.OnCloseListener {
 			} else {
 				fromServer = false;
 			}
-			 
+
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
@@ -797,7 +808,7 @@ SearchView.OnCloseListener {
 							catName);
 		} else if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
-	 
+
 			if (fromDialog) {
 				fromServer = false;
 				loadMore = false;
@@ -826,16 +837,16 @@ SearchView.OnCloseListener {
 			}
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-			
+
 			getBookmarkedAisles(catName);
 
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-	 
+
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
-		 
+
 				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -856,7 +867,7 @@ SearchView.OnCloseListener {
 				StackViews.getInstance().pull();
 			}
 		} else {
-		 
+
 		}
 
 		FlurryAgent.logEvent(catName);
@@ -1153,6 +1164,7 @@ SearchView.OnCloseListener {
 				sourceUrl, this, true);
 		getImagesTask.execute();
 	}
+
 	public void CancelNotification(Context ctx, int notifyId) {
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager nMgr = (NotificationManager) ctx
@@ -1359,7 +1371,8 @@ SearchView.OnCloseListener {
 				VueApplication.getInstance()).getAisleFromList(
 				VueTrendingAislesDataModel.getInstance(
 						VueApplication.getInstance()).getAisleAt(aisleId));
-		if (aisleItem != null) {
+		if (aisleItem != null
+				&& VueApplication.getInstance().getmUserId() != null) {
 			AisleImageDetails imgDetails = new AisleImageDetails();
 			imgDetails.mAvailableHeight = imageHeight;
 			imgDetails.mAvailableWidth = imageWidth;
@@ -1418,50 +1431,52 @@ SearchView.OnCloseListener {
 		}
 	}
 
-	   private void setupSearchView() {
+	private void setupSearchView() {
 
-	        mSearchView.setIconifiedByDefault(true);
+		mSearchView.setIconifiedByDefault(true);
 
-	        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-	        if (searchManager != null) {
-	            List<SearchableInfo> searchables = searchManager.getSearchablesInGlobalSearch();
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		if (searchManager != null) {
+			List<SearchableInfo> searchables = searchManager
+					.getSearchablesInGlobalSearch();
 
-	            // Try to use the "applications" global search provider
-	            SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-	            for (SearchableInfo inf : searchables) {
-	                if (inf.getSuggestAuthority() != null
-	                        && inf.getSuggestAuthority().startsWith("applications")) {
-	                    info = inf;
-	                }
-	            }
-	            mSearchView.setSearchableInfo(info);
-	        }
+			// Try to use the "applications" global search provider
+			SearchableInfo info = searchManager
+					.getSearchableInfo(getComponentName());
+			for (SearchableInfo inf : searchables) {
+				if (inf.getSuggestAuthority() != null
+						&& inf.getSuggestAuthority().startsWith("applications")) {
+					info = inf;
+				}
+			}
+			mSearchView.setSearchableInfo(info);
+		}
 
-	        mSearchView.setOnQueryTextListener(this);
-	        mSearchView.setOnCloseListener(this);
-	    }
+		mSearchView.setOnQueryTextListener(this);
+		mSearchView.setOnCloseListener(this);
+	}
 
-	    public boolean onQueryTextChange(String newText) {
-	        
-	        return false;
-	    }
+	public boolean onQueryTextChange(String newText) {
 
-	    public boolean onQueryTextSubmit(String query) {
-	       // mStatusView.setText("Query = " + query + " : submitted");
-	        return false;
-	    }
+		return false;
+	}
 
-	    public boolean onClose() {
-	        //mStatusView.setText("Closed!");
-	        return false;
-	    }
+	public boolean onQueryTextSubmit(String query) {
+		// mStatusView.setText("Query = " + query + " : submitted");
+		return false;
+	}
 
-	    public void onClick(View view) {/*
-	        if (view == mCloseButton) {
-	            mSearchView.setIconified(true);
-	        } else if (view == mOpenButton) {
-	            mSearchView.setIconified(false);
-	        }
-	    */}
-	 
+	public boolean onClose() {
+		// mStatusView.setText("Closed!");
+		return false;
+	}
+
+	public void onClick(View view) {/*
+									 * if (view == mCloseButton) {
+									 * mSearchView.setIconified(true); } else if
+									 * (view == mOpenButton) {
+									 * mSearchView.setIconified(false); }
+									 */
+	}
+
 }

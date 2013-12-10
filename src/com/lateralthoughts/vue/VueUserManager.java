@@ -95,6 +95,8 @@ public class VueUserManager {
 						VueUserManager.this.setCurrentUser(vueUser);
 						Log.i("imageurl", "imageurl is ok got user id: "
 								+ vueUser);
+						VueApplication.getInstance()
+						.setmUserId(vueUser.getId());
 						callback.onUserUpdated(vueUser);
 						try {
 							VueTrendingAislesDataModel.getInstance(

@@ -123,6 +123,7 @@ public class VueLoginActivity extends FragmentActivity implements
 			.getInstance().getString(R.string.pendingActionBundleKey);
 	private PendingAction mPendingAction = PendingAction.NONE;
 	private boolean mIsAlreadyLoggedInWithVue = false;
+	public static boolean mIsLogInScreenIsVisible = false;
 
 	private enum PendingAction {
 		NONE, POST_PHOTO, POST_STATUS_UPDATE
@@ -139,6 +140,7 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		mIsLogInScreenIsVisible = true;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.vue_login_screen);
 		mUiHelper = new UiLifecycleHelper(this, mCallback);
@@ -408,6 +410,7 @@ public class VueLoginActivity extends FragmentActivity implements
 
 	@Override
 	public void onDestroy() {
+		mIsLogInScreenIsVisible = false;
 		super.onDestroy();
 		mUiHelper.onDestroy();
 	}
