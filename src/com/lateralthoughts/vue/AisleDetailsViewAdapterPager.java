@@ -1310,7 +1310,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			return getItem(mCurrentAislePosition).getImageList().size();
 		}
 
-		@SuppressWarnings("deprecation")
+ 
 		@Override
 		public Object instantiateItem(View view, int position) {
 			if (mInflater == null) {

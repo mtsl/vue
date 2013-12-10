@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -29,6 +30,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView.FindListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -76,7 +78,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	AisleDetailsViewAdapterPager mAisleDetailsAdapter;
 	private AisleDetailsSwipeListner mSwipeListener;
 	private ActionBarHandler mHandleActionBar;
-	private ImageView mDetailsAddImageToAisle = null, mAddVueAisle;
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
 	private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
@@ -145,8 +146,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
 		mDetailsFindAtPopup = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_popup);
-		mDetailsAddImageToAisle = (ImageView) mDetailsContentView
-				.findViewById(R.id.details_add_image_to_aisle);
 		mEditTextFindAt = (EditTextBackEvent) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_text);
 		mVueUserPic = (ImageView) mDetailsContentView
@@ -286,54 +285,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				return false;
 			}
 		});
-
-		mDetailsAddImageToAisle.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
-				mAisleDetailsAdapter.closeKeyboard();
-				Intent intent = new Intent(getActivity(),
-						CreateAisleSelectionActivity.class);
-				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-						getActivity(), true);
-				intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				Bundle b = new Bundle();
-				b.putBoolean(
-						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
-						true);
-				intent.putExtras(b);
-				if (!CreateAisleSelectionActivity.isActivityShowing) {
-					CreateAisleSelectionActivity.isActivityShowing = true;
-					getActivity()
-							.startActivityForResult(
-									intent,
-									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
-				}
-			}
-		});
-	 
-		mAddVueAisle = (ImageView) mDetailsContentView
-				.findViewById(R.id.vue_aisle);
-		mAddVueAisle.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
-				String url = mFindAtUrl;
-				if (url != null && url.startsWith("http")) {
-					mAisleDetailsAdapter.closeKeyboard();
-					Uri uriUrl = Uri.parse(url.trim());
-			 
-					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
-							uriUrl);
-					startActivity(launchBrowser);
-				} else {
-					Toast.makeText(mContext, "No source url found",
-							Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
-
 		mAisleDetailsList = (ListView) mDetailsContentView
 				.findViewById(R.id.aisle_details_list);
 		mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
@@ -484,7 +435,96 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			public void onClick(View arg0) {
 				FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
 				mAisleDetailsAdapter.closeKeyboard();
-				mAisleDetailsAdapter.share(getActivity(), getActivity());
+				//to smoothen the touch response
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						mAisleDetailsAdapter.share(getActivity(), getActivity());
+					}
+				}, 200);
+				
+			}
+		});
+		vueShareLayout.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+			 Toast.makeText(mContext, "Share", Toast.LENGTH_SHORT).show();
+				return false;
+			}
+		});
+		RelativeLayout vue_aislelayout = (RelativeLayout) mDetailsContentView
+				.findViewById(R.id.vue_aislelayout);
+		vue_aislelayout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
+				String url = mFindAtUrl;
+				if (url != null && url.startsWith("http")) {
+					mAisleDetailsAdapter.closeKeyboard();
+					Uri uriUrl = Uri.parse(url.trim());
+			 
+					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
+							uriUrl);
+					startActivity(launchBrowser);
+				} else {
+					Toast.makeText(mContext, "No source url found",
+							Toast.LENGTH_SHORT).show();
+				}
+			
+				
+			}
+		});
+		vue_aislelayout.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+			 Toast.makeText(mContext, "Find at", Toast.LENGTH_SHORT).show();
+				return false;
+			}
+		});
+		
+		RelativeLayout detailsAddImageLayout = (RelativeLayout)mDetailsContentView.findViewById(R.id.details_add_image_to_aisle_layout)	;
+		detailsAddImageLayout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
+				mAisleDetailsAdapter.closeKeyboard();
+				//to smoothen the touch response
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						Intent intent = new Intent(getActivity(),
+								CreateAisleSelectionActivity.class);
+						Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+								getActivity(), true);
+						intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+						Bundle b = new Bundle();
+						b.putBoolean(
+								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
+								true);
+						intent.putExtras(b);
+						if (!CreateAisleSelectionActivity.isActivityShowing) {
+							CreateAisleSelectionActivity.isActivityShowing = true;
+							getActivity()
+									.startActivityForResult(
+											intent,
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
+						} 
+					}
+				}, 200);
+			}
+		});
+		detailsAddImageLayout.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+			 Toast.makeText(mContext, "Add image to aisle", Toast.LENGTH_SHORT).show();
+				return false;
 			}
 		});
 		mAisleDetailsAdapter.notifyDataSetChanged();
