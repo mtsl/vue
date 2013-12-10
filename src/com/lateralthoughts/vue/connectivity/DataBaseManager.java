@@ -594,6 +594,8 @@ public class DataBaseManager {
 						.getColumnIndex(VueConstants.CATEGORY));
 				userInfo.mDescription = aislesCursor.getString(aislesCursor
 						.getColumnIndex(VueConstants.AISLE_DESCRIPTION));
+				userInfo.mAisleOwnerImageURL = aislesCursor.getString(aislesCursor
+				        .getColumnIndex(VueConstants.AISLE_OWNER_IMAGE_URL));
 				map.put(userInfo.mAisleId, userInfo);
 			} while (aislesCursor.moveToNext());
 		}

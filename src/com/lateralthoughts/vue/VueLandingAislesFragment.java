@@ -322,11 +322,8 @@ public class VueLandingAislesFragment extends /* SherlockFragment */Fragment {
 
 			// VueLandingPageActivity lan = (VueLandingPageActivity)
 			// getActivity();
-/*			  if(!StackViews.getInstance().getTop().equals(getResources().getString(
-									R.string.trending))) {
-				  return;
-			  }*/
 
+	  
 			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
 					&& VueLandingPageActivity.mLandingScreenName != null
 					&& VueLandingPageActivity.mLandingScreenName

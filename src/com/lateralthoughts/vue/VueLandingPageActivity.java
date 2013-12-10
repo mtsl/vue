@@ -107,6 +107,7 @@ SearchView.OnCloseListener {
 	private boolean mHideDefaultActionbar = false;
 	private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
 	 private SearchView mSearchView;
+	 public static boolean mIsMyAilseCallEnable = false;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -781,7 +782,7 @@ SearchView.OnCloseListener {
 		 
 		if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-			 
+			mIsMyAilseCallEnable = true;
 			if (VueConnectivityManager.isNetworkConnected(VueApplication
 					.getInstance())) {
 				fromServer = true;
