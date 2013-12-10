@@ -305,9 +305,11 @@ public class NetworkHandler {
 						.getAislesByUserId(userId);
 				if (windowList != null && windowList.size() > 0) {
 					clearList(progress);
-					for(AisleWindowContent aisleItem : windowList) {
-						Log.i("userAisle", "userailse: userId: "+aisleItem.getAisleContext().mUserId);
-						if(!aisleItem.getAisleContext().mUserId.equals(userId)) {
+					for (AisleWindowContent aisleItem : windowList) {
+						Log.i("userAisle",
+								"userailse: userId: "
+										+ aisleItem.getAisleContext().mUserId);
+						if (!aisleItem.getAisleContext().mUserId.equals(userId)) {
 							windowList.remove(aisleItem);
 						}
 					}
@@ -323,9 +325,9 @@ public class NetworkHandler {
 					VueApplication.getInstance().sendBroadcast(i);
 					VueTrendingAislesDataModel.getInstance(
 							VueApplication.getInstance()).dataObserver();
-					 
+
 				} else {
-					 
+
 					StackViews.getInstance().pull();
 					Toast.makeText(VueLandingPageActivity.landingPageActivity,
 							"There are no Aisles for this User.",
@@ -356,12 +358,19 @@ public class NetworkHandler {
 							aislesList = null;
 							String userId = getUserId();
 							aislesList = getAislesByUser(userId);
-							
-							if(aislesList != null && aislesList.size() > 0) {
-								Log.i("userAisle", "userailse: userId 1111: "+userId +"  list Size: "+aislesList.size());
-								for(AisleWindowContent aisleItem : aislesList) {
-									Log.i("userAisle", "userailse: userId: "+aisleItem.getAisleContext().mUserId);
-									if(!aisleItem.getAisleContext().mUserId.equals(userId)) {
+
+							if (aislesList != null && aislesList.size() > 0) {
+								Log.i("userAisle",
+										"userailse: userId 1111: " + userId
+												+ "  list Size: "
+												+ aislesList.size());
+								for (AisleWindowContent aisleItem : aislesList) {
+									Log.i("userAisle",
+											"userailse: userId: "
+													+ aisleItem
+															.getAisleContext().mUserId);
+									if (!aisleItem.getAisleContext().mUserId
+											.equals(userId)) {
 										aislesList.remove(aisleItem);
 									}
 								}
@@ -381,8 +390,7 @@ public class NetworkHandler {
 															.getInstance()).loadOnRequest = false;
 											if (aislesList != null
 													&& aislesList.size() > 0) {
- 
-												
+
 												Intent intent = new Intent(
 														VueConstants.LANDING_SCREEN_RECEIVER);
 												intent.putExtra(
@@ -433,7 +441,7 @@ public class NetworkHandler {
 															VueApplication
 																	.getInstance())
 													.dismissProgress();
-										 
+
 										}
 
 									});
@@ -441,7 +449,7 @@ public class NetworkHandler {
 					}
 				}).start();
 			} else {
-				 
+
 				Toast.makeText(
 						VueApplication.getInstance(),
 						VueApplication.getInstance().getResources()

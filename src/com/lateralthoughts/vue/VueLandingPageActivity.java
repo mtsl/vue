@@ -797,7 +797,7 @@ SearchView.OnCloseListener {
 							catName);
 		} else if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
-			Log.i("fromDialog", "Trending profilce 4: ");
+	 
 			if (fromDialog) {
 				fromServer = false;
 				loadMore = false;
@@ -831,11 +831,11 @@ SearchView.OnCloseListener {
 
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-			 Log.i("recently viewed", "recently viewed showcateMethod 1");
+	 
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
-				 Log.i("recently viewed", "recently viewed showcateMethod 1 windowContent.size()"+windowContent.size());
+		 
 				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -856,13 +856,7 @@ SearchView.OnCloseListener {
 				StackViews.getInstance().pull();
 			}
 		} else {
-			 
-			/*
-			 * VueTrendingAislesDataModel
-			 * .getInstance(VueLandingPageActivity.this) .getNetworkHandler()
-			 * .reqestByCategory(catName, new ProgresStatus(), fromServer,
-			 * loadMore, catName);
-			 */
+		 
 		}
 
 		FlurryAgent.logEvent(catName);
