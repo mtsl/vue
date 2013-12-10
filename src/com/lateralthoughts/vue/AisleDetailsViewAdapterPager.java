@@ -1023,18 +1023,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		return getItem(mCurrentAislePosition).getImageList();
 	}
 
-	int likeCount = 0;
-	ImageRating imgRating;
+	int mLikeCount = 0;
+	ImageRating mImgRating;
 
 	public void sendDataToDb(int imgPosition, String reqType,
 			boolean likeOrDislike) {
 		String aisleId = null;
 		String imageId = null;
 		AisleImageDetails itemDetails;
-
-		int likeStatus = 0;
-
-		Log.e("ImageRating Resopnse", "SURU ImageRating sendDataToDb() called");
 		if (getItem(mCurrentAislePosition).getImageList() != null
 				&& getItem(mCurrentAislePosition).getImageList().size() != 0) {
 			aisleId = getItem(mCurrentAislePosition).getAisleId();
@@ -1055,25 +1051,23 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				String commentAdded = itemDetails.mCommentsList.get(0).mComment;
 			} else if (reqType.equals(CHANGE_LIKES)) {
 				// aisleId,imageId,likesCount,likeStatus
-				likeCount = itemDetails.mLikesCount;
-				likeStatus = itemDetails.mLikeDislikeStatus;
-
+				mLikeCount = itemDetails.mLikesCount;
 				ArrayList<ImageRating> imgRatingList = DataBaseManager
 						.getInstance(mContext).getRatedImagesList(aisleId);
-				imgRating = new ImageRating();
-				imgRating.setAisleId(Long.parseLong(aisleId));
-				imgRating.setImageId(Long.parseLong(imageId));
-				imgRating.setLiked(likeOrDislike);
+				mImgRating = new ImageRating();
+				mImgRating.setAisleId(Long.parseLong(aisleId));
+				mImgRating.setImageId(Long.parseLong(imageId));
+				mImgRating.setLiked(likeOrDislike);
 				for (ImageRating imgRat : imgRatingList) {
-					if (imgRating.getImageId().longValue() == imgRat
+					if (mImgRating.getImageId().longValue() == imgRat
 							.getImageId().longValue()) {
-						imgRating.setId(/* l2 */imgRat.getId().longValue());
+						mImgRating.setId(/* l2 */imgRat.getId().longValue());
 						break;
 					}
 				}
 				try {
-					AisleManager.getAisleManager().updateRating(imgRating,
-							likeCount);
+					AisleManager.getAisleManager().updateRating(mImgRating,
+							mLikeCount);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1310,13 +1304,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			mListCount = mShowFixedRowCount + mInitialCommentsToShowSize;
 		}
 		final ImageCommentRequest imgComment = new ImageCommentRequest();
-
-		/*
-		 * imgComment.setCommenterFirstName(getItem(mCurrentAislePosition)
-		 * .getAisleContext().mFirstName);
-		 * imgComment.setCommenterLastName(getItem(mCurrentAislePosition)
-		 * .getAisleContext().mLastName);
-		 */
 		imgComment.setComment(commentString);
 		imgComment.setLastModifiedTimestamp(System.currentTimeMillis());
 		imgComment.setOwnerUserId(Long.parseLong(VueTrendingAislesDataModel
