@@ -382,7 +382,7 @@ public class NetworkHandler {
 											if (aislesList != null
 													&& aislesList.size() > 0) {
  
-												clearList(progress);
+												
 												Intent intent = new Intent(
 														VueConstants.LANDING_SCREEN_RECEIVER);
 												intent.putExtra(
@@ -390,6 +390,7 @@ public class NetworkHandler {
 														screenName);
 												VueApplication.getInstance()
 														.sendBroadcast(intent);
+												clearList(progress);
 												for (int i = 0; i < aislesList
 														.size(); i++) {
 													VueTrendingAislesDataModel
