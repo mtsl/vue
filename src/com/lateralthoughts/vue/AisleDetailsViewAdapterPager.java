@@ -95,9 +95,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	private AisleDetailsViewListLoader mViewLoader;
 	private AisleDetailSwipeListener mswipeListner;
 	private boolean mCloseKeyboard = false;
-	VueUser mStoredVueUser = null;
+	private VueUser mStoredVueUser = null;
 	public static final int SWIPE_MIN_DISTANCE = 30;
-	LayoutInflater mInflater;
+	private LayoutInflater mInflater;
 	// we need to customize the layout depending on screen height & width which
 	// we will get on the fly
 	private int mListCount;
@@ -106,8 +106,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	public int mCurrentDispImageIndex;
 	private boolean mIsLikeImageClicked = false;
 	private boolean mIsBookImageClciked = false;
-	int mShowFixedRowCount = 3;
-	int mInitialCommentsToShowSize = 2;
+	private int mShowFixedRowCount = 3;
+	private int mInitialCommentsToShowSize = 2;
 	public String mVueusername;
 	ShareDialog mShare;
 	public int mCurrentAislePosition;
@@ -116,23 +116,23 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	Map<Integer, ArrayList<ImageComments>> mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
 	// ArrayList<String> mShowingList;
 	// ArrayList<String> mShowingListCommenterUrl;
-	ArrayList<Comment> mShowingCommentList = new ArrayList<Comment>();
+	private ArrayList<Comment> mShowingCommentList = new ArrayList<Comment>();
 	private int mBestHeight;
 	private int mTopBottomMargin = 24;
-	ViewHolder mViewHolder;
+	private ViewHolder mViewHolder;
 	private boolean mSetPosition;
 	private static final int mWaitTime = 1000;
-	VueTrendingAislesDataModel mVueTrendingAislesDataModel;
+	private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
 	public ArrayList<String> mCustomUrls = new ArrayList<String>();
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private long mUserId;
 	private ImageLoader mImageLoader;
 	private ShareViaVueListner mShareViaVueListner;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
-	int mPrevPosition/* ,mCurrentPosition */;
-	PageListener pageListener;
-	DetailImageClickListener detailsImageClickListenr;
-	Animation myFadeInAnimation;
+	private int mPrevPosition/* ,mCurrentPosition */;
+	private PageListener pageListener;
+	private DetailImageClickListener detailsImageClickListenr;
+	private Animation myFadeInAnimation;
 	private boolean mSetPager = true;
 
 	@SuppressWarnings("unchecked")

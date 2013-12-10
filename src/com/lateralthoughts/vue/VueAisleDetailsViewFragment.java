@@ -80,7 +80,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	// change for viewpager.
 	// AisleDetailsViewAdapter mAisleDetailsAdapter;
 	AisleDetailsViewAdapterPager mAisleDetailsAdapter;
-	AisleDetailsSwipeListner mSwipeListener;
+	private AisleDetailsSwipeListner mSwipeListener;
 	private ActionBarHandler mHandleActionBar;
 	// private ScaledImageViewFactory mImageViewFactory;
 	private ImageView mDetailsAddImageToAisle = null, mAddVueAisle;
@@ -88,16 +88,16 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	private View mDetailsContentView = null;
 	private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
 			mDotSeven, mDotEight, mDotNine, mDotTen, mVueUserPic;
-	TextView mLeftArrow, mRightArrow, mVueUserName;
+	private TextView mLeftArrow, mRightArrow, mVueUserName;
 	private ListView mAisleDetailsList;
 	EditTextBackEvent mEditTextFindAt;
-	LinearLayout mDetailsFindAtPopup;
-	TextView vueAisleHeading;
-	String mOccasion;
-	String mFindAtUrl;
-	LinearLayout mEditIconLay;
-	AisleDetailsViewActivity mAisleDetailsActivity = null;
-	InputMethodManager mInputMethodManager;
+	private LinearLayout mDetailsFindAtPopup;
+	private TextView vueAisleHeading;
+	private String mOccasion;
+	private String mFindAtUrl;
+	private LinearLayout mEditIconLay;
+	private AisleDetailsViewActivity mAisleDetailsActivity = null;
+	private InputMethodManager mInputMethodManager;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent

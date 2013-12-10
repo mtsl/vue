@@ -386,12 +386,10 @@ public class AisleDetailsViewActivity extends Activity {
 		mHandleActionbar = new HandleActionBar();
 		mVueAiselFragment.setActionBarHander(mHandleActionbar);
 		super.onResume();
-		Log.e("Land", "vueland 2");
 		Bundle b = getIntent().getExtras();
 		if (b != null && mTempflag) {
 			mTempflag = false;
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
-				Log.e("Land", "vueland 3");
 				sendDataToDataentryScreen(b);
 			}
 		}
