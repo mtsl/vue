@@ -331,13 +331,6 @@ public class AisleDetailsViewActivity extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Bitmap bitmap = null;
-			// mItemDetails = mImageDetailsArr.get(position);
-			/*
-			 * Bitmap bitmap =
-			 * mBitmapLoaderUtils.getCachedBitmap(mImageDetailsArr
-			 * .get(position).mCustomImageUrl);
-			 */
-
 			if (convertView == null) {
 				viewHolder = new ViewHolder();
 				convertView = minflater.inflate(R.layout.vuecompareimg, null);
@@ -593,16 +586,6 @@ public class AisleDetailsViewActivity extends Activity {
 
 		}
 	}
-
-	/*
-	 * public void loadBitmap(String url, AisleContentBrowser flipper, ImageView
-	 * imageView, int bestHeight) {
-	 * 
-	 * // if (cancelPotentialDownload(loc, imageView)) { BitmapWorkerTask task =
-	 * new BitmapWorkerTask(flipper, imageView, bestHeight); ((ScaleImageView)
-	 * imageView).setOpaqueWorkerObject(task); task.execute(url); // } }
-	 */
-
 	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		private final WeakReference<ImageView> imageViewReference;
 		// private final WeakReference<AisleContentBrowser>viewFlipperReference;
