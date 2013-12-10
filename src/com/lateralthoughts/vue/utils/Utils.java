@@ -295,21 +295,12 @@ public class Utils {
 
 	public static ImageDimension getScalledImage(Bitmap bitmap,
 			int availableWidth, int availableHeight) {
-		Log.i("imageSize", "imageSize originalImageHeight: " + availableHeight);
-		Log.i("imageSize", "imageSize originalImageWidth: " + availableWidth);
-
 		ImageDimension imgDimension = new ImageDimension();
 		float requiredWidth, requiredHeight;
 		float bitmapOriginalWidth = bitmap.getWidth();
 		float bitmapOriginalHeight = bitmap.getHeight();
 		float scaleFactor;
 		requiredHeight = availableHeight;
-
-		Log.i("imageSize", "imageSize cardWidth: "
-				+ VueApplication.getInstance().getScreenWidth());
-		Log.i("imageSize", "imageSize cardHeight: "
-				+ VueApplication.getInstance().getScreenHeight());
-
 		if ((availableWidth < VueApplication.getInstance().getScreenWidth() && availableHeight < VueApplication
 				.getInstance().getScreenHeight())) {
 			imgDimension.mImgWidth = availableWidth;

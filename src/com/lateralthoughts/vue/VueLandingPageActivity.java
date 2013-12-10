@@ -17,13 +17,12 @@ import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
- 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -38,7 +37,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
- 
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -50,11 +48,10 @@ import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
- 
+
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
-import com.lateralthoughts.vue.VueListFragment.BezelMenuRefreshReciever;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
@@ -296,16 +293,10 @@ SearchView.OnCloseListener {
 		getMenuInflater().inflate(R.menu.landing_actionbar, menu);
 		getActionBar().setHomeButtonEnabled(true);
 		// Configure the search info and add any event listeners
-		
 		  SearchManager searchManager =
 		           (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 		  mSearchView =
 		            (SearchView) menu.findItem(R.id.menu_search).getActionView();
-		  
-		
-
-		
-		
 		return true;// super.onCreateOptionsMenu(menu);
 	}
 	 
@@ -321,10 +312,6 @@ SearchView.OnCloseListener {
 			menu.findItem(R.id.menu_search).setVisible(true);
 			menu.findItem(R.id.menu_create_aisle).setVisible(false);
 		} else {
-			   
-			//mSearchView.setIconified(true);
-			
-			
 			if (mHideDefaultActionbar) {
 				getActionBar().setDisplayHomeAsUpEnabled(false);
 				getActionBar().setDisplayShowCustomEnabled(true);
@@ -1223,7 +1210,7 @@ SearchView.OnCloseListener {
 
 		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).loadOnRequest = false;
 
-		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).isFromDb = true;
+		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).mIsFromDb = true;
 		VueTrendingAislesDataModel.getInstance(VueLandingPageActivity.this)
 				.clearContent();
 
@@ -1456,12 +1443,6 @@ SearchView.OnCloseListener {
 	        return false;
 	    }
 
-	    public void onClick(View view) {/*
-	        if (view == mCloseButton) {
-	            mSearchView.setIconified(true);
-	        } else if (view == mOpenButton) {
-	            mSearchView.setIconified(false);
-	        }
-	    */}
+	    public void onClick(View view) { }
 	 
 }

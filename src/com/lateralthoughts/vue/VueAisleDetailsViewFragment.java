@@ -17,17 +17,16 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
@@ -52,7 +51,6 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
-import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -75,14 +73,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	private int mHighlightPosition;
 	private int mTotalPageCount;
 	private int mListCount = 3;
-	private int mTotalScreenCount;
-	// private VueContentGateway mVueContentGateway;
-	// change for viewpager.
-	// AisleDetailsViewAdapter mAisleDetailsAdapter;
 	AisleDetailsViewAdapterPager mAisleDetailsAdapter;
 	private AisleDetailsSwipeListner mSwipeListener;
 	private ActionBarHandler mHandleActionBar;
-	// private ScaledImageViewFactory mImageViewFactory;
 	private ImageView mDetailsAddImageToAisle = null, mAddVueAisle;
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
@@ -170,7 +163,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 
 		String detailsUrl = null;
 		try {
-			// TODO: get user profile url
 			detailsUrl = VueTrendingAislesDataModel
 					.getInstance(getActivity())
 					.getAisleItem(
@@ -274,8 +266,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 
 			@Override
 			public void setFlag(boolean flag) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -293,7 +283,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 
 			@Override
 			public boolean getFlag() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		});
@@ -322,8 +311,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				}
 			}
 		});
-		RelativeLayout bottomBar = (RelativeLayout) mDetailsContentView
-				.findViewById(R.id.vue_bottom_bar);
+	 
 		mAddVueAisle = (ImageView) mDetailsContentView
 				.findViewById(R.id.vue_aisle);
 		mAddVueAisle.setOnClickListener(new OnClickListener() {
@@ -378,11 +366,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			mAisleDetailsList.setOnScrollListener(new OnScrollListener() {
 				public void onScrollStateChanged(AbsListView view,
 						int scrollState) {
-					/*
-					 * if (scrollState != 0) isScrolling = true; else {
-					 * isScrolling = false; ((MyBaseAdapter)
-					 * imglist.getAdapter()).notifyDataSetChanged(); }
-					 */
 					switch (scrollState) {
 					case OnScrollListener.SCROLL_STATE_IDLE:
 						if (mAisleDetailsList.getChildAt(0).getTop() == 0) {
@@ -491,8 +474,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 
 			@Override
 			public void run() {
-				// TODO need to invisible this view in a smooth way
-
 				dotIndicatorBg.setVisibility(View.GONE);
 			}
 		}, AISLE_HEADER_SHOW_TIME);
@@ -513,7 +494,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		// setMaxIndiCount();
 		upDatePageDots(mHighlightPosition, "right");
 		mAisleDetailsAdapter.notifyDataSetChanged();
 		ViewTreeObserver vto = mVueUserName.getViewTreeObserver();
@@ -551,7 +531,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		}
 
 		public void onReceiveImageCount(int count) {
-			mTotalScreenCount = count;
+			 
 		}
 
 		@Override
@@ -590,7 +570,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			mAisleDetailsList.setOnTouchListener(new OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					// TODO Auto-generated method stub
 					editText.getParent().requestDisallowInterceptTouchEvent(
 							false);
 					return false;
@@ -1141,25 +1120,5 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
 		}
 		mAisleDetailsActivity.sendDataToDataentryScreen(null);
-	}
-	private void showDiscardOtherAppImageDialog(
-			final String addImageCancelAlertMesg) {
-		final Dialog dialog = new Dialog(getActivity(), R.style.Theme_Dialog_Translucent);
-		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.vue_popup);
-		final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-		TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
-		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-			messagetext.setText(getResources().getString(
-					R.string.discard_dataentry_screen_changes));
-		yesButton.setText("Yes");
-		noButton.setText("No");
-		yesButton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) { }
-		});
-		noButton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) { }
-		});
-		dialog.show();
 	}
 }

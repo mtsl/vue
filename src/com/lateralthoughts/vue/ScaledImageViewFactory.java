@@ -111,16 +111,7 @@ public class ScaledImageViewFactory {
 		if(-1 == index){
 			return;
 		}
-	/*	 
-		
-
-		Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-		if(bitmap != null){
-			bitmap.recycle();
-			Log.i("recycle bitmap1111", "recycle bitmap1111");
-		}else {
-			Log.i("recycle bitmap1111", "recycle bitmap2222");
-		}*/
+ 
 		synchronized(this){
 			view = mObjectsInUse.remove(index);
 			//view.setImageBitmap(null);

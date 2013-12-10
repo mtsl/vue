@@ -255,7 +255,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
 									public void onItemClick(
 											AdapterView<?> parent, View view,
 											int position, long id) {
-
 										// TODO:
 									}
 								});
@@ -602,7 +601,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
 
 		@Override
 		public long getChildId(int groupPosition, int childPosition) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
@@ -664,7 +662,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
 
 		@Override
 		public long getGroupId(int groupPosition) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
@@ -714,7 +711,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
 
 		@Override
 		public boolean hasStableIds() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
@@ -1105,12 +1101,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count,
 			int after) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
-		// TODO Auto-generated method stub
 	}
 
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -1138,17 +1132,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
 		// isDataPickerOpen = true;
 		// }
 	}
-
-	/*
-	 * ProfileImageChangeListenor imageChangeListenor = new
-	 * ProfileImageChangeListenor() { public VueListFragmentAdapter adapter =
-	 * null;
-	 * 
-	 * @Override public void onImageChange() {
-	 * 
-	 * } };
-	 */
-
 	public interface ProfileImageChangeListenor {
 		public void onImageChange();
 	}
