@@ -17,19 +17,20 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView.FindListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -52,7 +53,6 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
-import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -75,15 +75,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	private int mHighlightPosition;
 	private int mTotalPageCount;
 	private int mListCount = 3;
-	private int mTotalScreenCount;
-	// private VueContentGateway mVueContentGateway;
-	// change for viewpager.
-	// AisleDetailsViewAdapter mAisleDetailsAdapter;
 	AisleDetailsViewAdapterPager mAisleDetailsAdapter;
 	private AisleDetailsSwipeListner mSwipeListener;
 	private ActionBarHandler mHandleActionBar;
-	// private ScaledImageViewFactory mImageViewFactory;
-	private ImageView mDetailsAddImageToAisle = null, mAddVueAisle;
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
 	private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
@@ -152,8 +146,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
 		mDetailsFindAtPopup = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_popup);
-		mDetailsAddImageToAisle = (ImageView) mDetailsContentView
-				.findViewById(R.id.details_add_image_to_aisle);
 		mEditTextFindAt = (EditTextBackEvent) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_text);
 		mVueUserPic = (ImageView) mDetailsContentView
@@ -170,7 +162,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 
 		String detailsUrl = null;
 		try {
-			// TODO: get user profile url
 			detailsUrl = VueTrendingAislesDataModel
 					.getInstance(getActivity())
 					.getAisleItem(
@@ -274,8 +265,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 
 			@Override
 			public void setFlag(boolean flag) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -293,59 +282,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
 
 			@Override
 			public boolean getFlag() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		});
-
-		mDetailsAddImageToAisle.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
-				mAisleDetailsAdapter.closeKeyboard();
-				Intent intent = new Intent(getActivity(),
-						CreateAisleSelectionActivity.class);
-				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-						getActivity(), true);
-				intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				Bundle b = new Bundle();
-				b.putBoolean(
-						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
-						true);
-				intent.putExtras(b);
-				if (!CreateAisleSelectionActivity.isActivityShowing) {
-					CreateAisleSelectionActivity.isActivityShowing = true;
-					getActivity()
-							.startActivityForResult(
-									intent,
-									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
-				}
-			}
-		});
-		RelativeLayout bottomBar = (RelativeLayout) mDetailsContentView
-				.findViewById(R.id.vue_bottom_bar);
-		mAddVueAisle = (ImageView) mDetailsContentView
-				.findViewById(R.id.vue_aisle);
-		mAddVueAisle.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
-				String url = mFindAtUrl;
-				if (url != null && url.startsWith("http")) {
-					mAisleDetailsAdapter.closeKeyboard();
-					Uri uriUrl = Uri.parse(url.trim());
-			 
-					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
-							uriUrl);
-					startActivity(launchBrowser);
-				} else {
-					Toast.makeText(mContext, "No source url found",
-							Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
-
 		mAisleDetailsList = (ListView) mDetailsContentView
 				.findViewById(R.id.aisle_details_list);
 		mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
@@ -378,11 +317,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			mAisleDetailsList.setOnScrollListener(new OnScrollListener() {
 				public void onScrollStateChanged(AbsListView view,
 						int scrollState) {
-					/*
-					 * if (scrollState != 0) isScrolling = true; else {
-					 * isScrolling = false; ((MyBaseAdapter)
-					 * imglist.getAdapter()).notifyDataSetChanged(); }
-					 */
 					switch (scrollState) {
 					case OnScrollListener.SCROLL_STATE_IDLE:
 						if (mAisleDetailsList.getChildAt(0).getTop() == 0) {
@@ -491,8 +425,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 
 			@Override
 			public void run() {
-				// TODO need to invisible this view in a smooth way
-
 				dotIndicatorBg.setVisibility(View.GONE);
 			}
 		}, AISLE_HEADER_SHOW_TIME);
@@ -503,7 +435,96 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			public void onClick(View arg0) {
 				FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
 				mAisleDetailsAdapter.closeKeyboard();
-				mAisleDetailsAdapter.share(getActivity(), getActivity());
+				//to smoothen the touch response
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						mAisleDetailsAdapter.share(getActivity(), getActivity());
+					}
+				}, 200);
+				
+			}
+		});
+		vueShareLayout.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+			 Toast.makeText(mContext, "Share", Toast.LENGTH_SHORT).show();
+				return false;
+			}
+		});
+		RelativeLayout vue_aislelayout = (RelativeLayout) mDetailsContentView
+				.findViewById(R.id.vue_aislelayout);
+		vue_aislelayout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
+				String url = mFindAtUrl;
+				if (url != null && url.startsWith("http")) {
+					mAisleDetailsAdapter.closeKeyboard();
+					Uri uriUrl = Uri.parse(url.trim());
+			 
+					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
+							uriUrl);
+					startActivity(launchBrowser);
+				} else {
+					Toast.makeText(mContext, "No source url found",
+							Toast.LENGTH_SHORT).show();
+				}
+			
+				
+			}
+		});
+		vue_aislelayout.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+			 Toast.makeText(mContext, "Find at", Toast.LENGTH_SHORT).show();
+				return false;
+			}
+		});
+		
+		RelativeLayout detailsAddImageLayout = (RelativeLayout)mDetailsContentView.findViewById(R.id.details_add_image_to_aisle_layout)	;
+		detailsAddImageLayout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
+				mAisleDetailsAdapter.closeKeyboard();
+				//to smoothen the touch response
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						Intent intent = new Intent(getActivity(),
+								CreateAisleSelectionActivity.class);
+						Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+								getActivity(), true);
+						intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+						Bundle b = new Bundle();
+						b.putBoolean(
+								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
+								true);
+						intent.putExtras(b);
+						if (!CreateAisleSelectionActivity.isActivityShowing) {
+							CreateAisleSelectionActivity.isActivityShowing = true;
+							getActivity()
+									.startActivityForResult(
+											intent,
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
+						} 
+					}
+				}, 200);
+			}
+		});
+		detailsAddImageLayout.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+			 Toast.makeText(mContext, "Add image to aisle", Toast.LENGTH_SHORT).show();
+				return false;
 			}
 		});
 		mAisleDetailsAdapter.notifyDataSetChanged();
@@ -513,7 +534,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		// setMaxIndiCount();
 		upDatePageDots(mHighlightPosition, "right");
 		mAisleDetailsAdapter.notifyDataSetChanged();
 		ViewTreeObserver vto = mVueUserName.getViewTreeObserver();
@@ -551,7 +571,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		}
 
 		public void onReceiveImageCount(int count) {
-			mTotalScreenCount = count;
+			 
 		}
 
 		@Override
@@ -590,7 +610,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			mAisleDetailsList.setOnTouchListener(new OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					// TODO Auto-generated method stub
 					editText.getParent().requestDisallowInterceptTouchEvent(
 							false);
 					return false;
@@ -1141,25 +1160,5 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
 		}
 		mAisleDetailsActivity.sendDataToDataentryScreen(null);
-	}
-	private void showDiscardOtherAppImageDialog(
-			final String addImageCancelAlertMesg) {
-		final Dialog dialog = new Dialog(getActivity(), R.style.Theme_Dialog_Translucent);
-		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.vue_popup);
-		final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-		TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
-		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-			messagetext.setText(getResources().getString(
-					R.string.discard_dataentry_screen_changes));
-		yesButton.setText("Yes");
-		noButton.setText("No");
-		yesButton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) { }
-		});
-		noButton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) { }
-		});
-		dialog.show();
 	}
 }

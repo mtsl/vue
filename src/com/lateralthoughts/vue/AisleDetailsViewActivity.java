@@ -71,8 +71,6 @@ public class AisleDetailsViewActivity extends Activity {
 	private int mComparisionDelay = 500;
 	private int mScreenTotalHeight;
 	private int mComparisionScreenHeight;
-	private Context mContext;
-	private AisleWindowContent mWindowContent;
 	private SlidingDrawer mSlidingDrawer;
 	private ArrayList<AisleImageDetails> mImageDetailsArr = null;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
@@ -85,12 +83,9 @@ public class AisleDetailsViewActivity extends Activity {
 	private VueAisleDetailsViewFragment mVueAiselFragment;
 	private ViewHolder viewHolder;
 	private LinearLayout mContentLinearLay;
-	private int mCurentAislePosistion;
 	private FileCache mFileCache;
 	private BitmapCacheDetailsScreen mAisleImagesCache;
 	private boolean mIsSlidePanleLoaded = false;
-	private ContentAdapterFactory mContentAdapterFactory;
-	private ScaledImageViewFactory mViewFactory;
 	private ComparisionAdapter mBottomAdapter, mTopAdapter;
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
@@ -108,16 +103,7 @@ public class AisleDetailsViewActivity extends Activity {
 		mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
 		mSlidListFrag = (VueListFragment) getFragmentManager()
 				.findFragmentById(R.id.listfrag);
-		VueUser storedVueUser = null;
-		try {
-			storedVueUser = Utils.readUserObjectFromFile(
-					AisleDetailsViewActivity.this,
-					VueConstants.VUE_APP_USEROBJECT__FILENAME);
-		} catch (Exception e2) {
-			e2.printStackTrace();
-		}
 		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT;
-
 		if (mCurrentapiVersion >= 11) {
 			getActionBar().hide();
 		}
@@ -138,22 +124,18 @@ public class AisleDetailsViewActivity extends Activity {
 							mHandler.sendEmptyMessage(0);
 						}
 					};
-
 					@Override
 					public void onScrollStarted() {
 						mDrawerLayout
 								.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 					}
-
 					@Override
 					public void onScrollEnded() {
 						new Thread(mRunnable).start();
 						mDrawerLayout
 								.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 					}
-
 				});
-
 		mContentLinearLay = (LinearLayout) findViewById(R.id.content2);
 		mTopScroller = (HorizontalListView) findViewById(R.id.topscroller);
 		mBottomScroller = (HorizontalListView) findViewById(R.id.bottomscroller);
@@ -268,9 +250,7 @@ public class AisleDetailsViewActivity extends Activity {
 				invalidateOptionsMenu(); // creates call to
 											// onPrepareOptionsMenu()
 				mSlidListFrag.closeKeybaord();
-
 			}
-
 			public void onDrawerOpened(View drawerView) {
 				// getActionBar().setTitle(mDrawerTitle);
 				invalidateOptionsMenu(); // creates call to
@@ -357,7 +337,6 @@ public class AisleDetailsViewActivity extends Activity {
 
 			viewHolder.likeImage.setImageResource(R.drawable.thumb_up);
 			if (bitmap != null) {
-				 
 				viewHolder.img.setImageBitmap(bitmap);
 			} else {
 				 
@@ -784,8 +763,6 @@ public class AisleDetailsViewActivity extends Activity {
 
 	// decodes image and scales it to reduce memory consumption
 	public Bitmap decodeFile(File f, int bestHeight) {
- 
-
 		try {
 			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
@@ -797,37 +774,26 @@ public class AisleDetailsViewActivity extends Activity {
 			// final int REQUIRED_SIZE = mScreenWidth/2;
 			int height = o.outHeight;
 			int width = o.outWidth;
- 
 			int reqWidth = VueApplication.getInstance()
 					.getVueDetailsCardWidth();
-
 			int scale = 1;
-
 			if (height > bestHeight) {
-
 				// Calculate ratios of height and width to requested height and
 				// width
 				final int heightRatio = Math.round((float) height
 						/ (float) bestHeight);
 				final int widthRatio = Math.round((float) width
 						/ (float) reqWidth);
-
 				// Choose the smallest ratio as inSampleSize value, this will
 				// guarantee
 				// a final image with both dimensions larger than or equal to
 				// the
 				// requested height and width.
 				scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
-
 			}
-
 			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
-			// o2.inSampleSize = o.inSampleSize;
-			// if(DEBUG) Log.d("Jaws","using inSampleSizeScale = " + scale +
-			// " original width = " + o.outWidth + "screen width = " +
-			// mScreenWidth);
 			FileInputStream stream2 = new FileInputStream(f);
 			Bitmap bitmap = BitmapFactory.decodeStream(stream2, null, o2);
 
@@ -837,15 +803,9 @@ public class AisleDetailsViewActivity extends Activity {
 				height = bitmap.getHeight();
 
 				if (width > reqWidth) {
-
 					float tempHeight = (height * reqWidth) / width;
 					height = (int) tempHeight;
-					/*
-					 * Bitmap bitmaptest = Bitmap.createScaledBitmap(bitmap,
-					 * reqWidth, height, true);
-					 */
 					bitmap = getModifiedBitmap(bitmap, reqWidth, height);
-
 				}
 			}
 			if (bitmap != null) {

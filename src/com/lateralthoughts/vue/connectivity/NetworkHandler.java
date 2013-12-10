@@ -110,11 +110,10 @@ public class NetworkHandler {
 				mOffset += mLimit;
 				mLimit = TRENDING_AISLES_BATCH_SIZE;
 			}
-			Log.i("listmovingissue", "listmovingissue***: " + mOffset);
 			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
 					mTrendingAislesParser, loadMore, screenname);
 		} else {
-			Log.i("offeset and limit", "offeset1: else part");
+			 
 		}
 
 	}
@@ -149,7 +148,7 @@ public class NetworkHandler {
 					.getAislesFromDB(null, false);
 			if (aisleContentArray.size() == 0) {
 				VueTrendingAislesDataModel.getInstance(VueApplication
-						.getInstance()).isFromDb = false;
+						.getInstance()).mIsFromDb = false;
 				return;
 			}
 
@@ -254,8 +253,7 @@ public class NetworkHandler {
 
 	public void loadInitialData(boolean loadMore, Handler mHandler,
 			String screenName) {
-
-		Log.i("formdbtrending", "formdbtrending***: loadInitialData");
+ 
 		getBookmarkAisleByUser();
 		getRatedImageList();
 
@@ -295,9 +293,6 @@ public class NetworkHandler {
 
 		mOffset = 0;
 		if (!fromServer) {
-			// TODO get data from local db.
-			Log.i("myaisledbcheck",
-					"myaisledbcheck aisle are my aisles are fetching from db $$$$: ");
 			String userId = getUserId();
 			if (userId != null) {
 				ArrayList<AisleWindowContent> windowList = DataBaseManager
@@ -306,9 +301,6 @@ public class NetworkHandler {
 				if (windowList != null && windowList.size() > 0) {
 					clearList(progress);
 					for (AisleWindowContent aisleItem : windowList) {
-						Log.i("userAisle",
-								"userailse: userId: "
-										+ aisleItem.getAisleContext().mUserId);
 						if (!aisleItem.getAisleContext().mUserId.equals(userId)) {
 							windowList.remove(aisleItem);
 						}
@@ -360,23 +352,13 @@ public class NetworkHandler {
 							aislesList = getAislesByUser(userId);
 
 							if (aislesList != null && aislesList.size() > 0) {
-								Log.i("userAisle",
-										"userailse: userId 1111: " + userId
-												+ "  list Size: "
-												+ aislesList.size());
 								for (AisleWindowContent aisleItem : aislesList) {
-									Log.i("userAisle",
-											"userailse: userId: "
-													+ aisleItem
-															.getAisleContext().mUserId);
 									if (!aisleItem.getAisleContext().mUserId
 											.equals(userId)) {
 										aislesList.remove(aisleItem);
 									}
 								}
 							}
-							Log.i("aislesList myaisles",
-									"aislesList myaisles: " + aislesList.size());
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -484,8 +466,6 @@ public class NetworkHandler {
 		if (response.getEntity() != null
 				&& response.getStatusLine().getStatusCode() == 200) {
 			String responseMessage = EntityUtils.toString(response.getEntity());
-			Log.i("aisleWindowImageUrl",
-					"aisleWindowImageUrl response Message: " + responseMessage);
 			return new Parser().getUserAilseLIst(responseMessage);
 		}
 		return null;
@@ -500,8 +480,6 @@ public class NetworkHandler {
 				try {
  
 					String userId = getUserId();
-					Log.i("bookmarked aisle",
-							"bookmarked persist issue  userid: " + userId);
 					if (userId == null) {
 						return;
 					}
@@ -521,9 +499,6 @@ public class NetworkHandler {
 							ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
 									.parseBookmarkedAisles(responseMessage);
 							for (AisleBookmark aB : bookmarkedAisles) {
-								Log.i("bookmarked aisle",
-										"bookmarked persist issue  aisleId: "
-												+ aB.getAisleId());
 								DataBaseManager.getInstance(mContext)
 										.updateBookmarkAisles(aB.getId(),
 												Long.toString(aB.getAisleId()),
@@ -535,7 +510,6 @@ public class NetworkHandler {
 						// bookmarkedAisles.size());
 					}
 				} catch (Exception e) {
-					Log.i("bookmarked aisle", "bookmarked aisle 3 error: ");
 					e.printStackTrace();
 				}
 
@@ -545,8 +519,6 @@ public class NetworkHandler {
 	}
 
 	public boolean isAisleBookmarked(String aisleId) {
-		Log.i("bookmarked aisle",
-				"bookmarked my bookmarks id enter in method: " + aisleId);
 		Cursor cursor = mContext.getContentResolver().query(
 				VueConstants.BOOKMARKER_AISLES_URI, null,
 				VueConstants.AISLE_ID + "=?", new String[] { aisleId }, null);
@@ -632,8 +604,6 @@ public class NetworkHandler {
 				String responseMessage = EntityUtils.toString(response
 						.getEntity());
 				System.out.println("Comment Response: " + responseMessage);
-				Log.i("createimageCommenterUrl",
-						"createimageCommenterUrl res: " + responseMessage);
 				if (responseMessage.length() > 0) {
 					Log.e("NetworkHandler",
 							"Comments Issue: responseMessage size is > 0 responseMessage: "
@@ -708,8 +678,7 @@ public class NetworkHandler {
 								}
 							}
 						}
-						Log.e("get reating image Resopnse",
-								"SURU get reating image Resopnse : " + response);
+					 
 					}
 				}, new Response.ErrorListener() {
 

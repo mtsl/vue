@@ -50,9 +50,7 @@ public class Parser {
 			return aisleWindowContentList;
 		}
 		try {
-			Log.i("fromDialog", "Trending profile parseAilse 3 started: ");
 			aisleWindowContentList = parseAisleInformation(contentArray);
-			Log.i("fromDialog", "Trending profile parseAilse 3 ended: ");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -228,9 +226,7 @@ public class Parser {
 			AisleContext aisleContext = parseAisleData(ailseItem);
 			ArrayList<AisleImageDetails> aisleImageDetailsList = null;
 			try {
-				Log.i("fromDialog", "Trending profile ImageData 3 started: ");
 				aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
-				Log.i("fromDialog", "Trending profile ImageData 3 ended: ");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -243,7 +239,6 @@ public class Parser {
 						aisleImageDetailsList);
 				aisleWindowContent
 						.setmAisleBookmarksCount(aisleContext.mBookmarkCount);
-				// Log.i("aisleItemId", "aisleItemId: "+aisleContext.mAisleId);
 				aisleWindowContentList.add(aisleWindowContent);
 			}
 		}
@@ -313,7 +308,6 @@ public class Parser {
 	}
 
 	public ArrayList<AisleBookmark> parseBookmarkedAisles(String response) {
-		Log.i("bookmarked aisle", "bookmarked aisle response SURU: " + response);
 		ArrayList<AisleBookmark> aisleIdList = new ArrayList<AisleBookmark>();
 		AisleBookmark bookmarkAisle = null;
 		try {
@@ -479,8 +473,7 @@ public class Parser {
 							bookmarkedAisles.remove(j);
 						}
 					} else {
-						Log.i("bookmarked aisle",
-								"bookmarked aisle current time is null: ");
+					 
 					}
 				}
 			}
