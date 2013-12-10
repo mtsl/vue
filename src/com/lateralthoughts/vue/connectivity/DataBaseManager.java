@@ -188,16 +188,14 @@ public class DataBaseManager {
 					"SURU updated aisle Order: whichScreen == TRENDING, offsetValue == "
 							+ offsetValue);
 			ArrayList<String> bookmarkaisleIds = new ArrayList<String>();
-			String[] iDs = bookmarkaisleIds.toArray(new String[bookmarkaisleIds
-					.size()]);
+			Log.e("DataBaseManager",
+                "SURU updated aisle Order: whichScreen == TRENDING, SURUSURUSURU");
 			int aislesDeleted = context.getContentResolver().delete(
 					VueConstants.CONTENT_URI, null, null);
 			int imagesDeleted = context.getContentResolver().delete(
-					VueConstants.IMAGES_CONTENT_URI,
-					VueConstants.AISLE_Id + "!=?", iDs);
+					VueConstants.IMAGES_CONTENT_URI, null, null);
 			int commentsDeleted = context.getContentResolver().delete(
-					VueConstants.COMMENTS_ON_IMAGE_URI,
-					VueConstants.AISLE_Id + "!=?", iDs);
+					VueConstants.COMMENTS_ON_IMAGE_URI, null, null);
 			Log.e("DataBaseManager",
 					"SURU updated aisle Order: aislesDeleted: " + aislesDeleted
 							+ ", imagesDeleted: " + imagesDeleted
@@ -1338,13 +1336,15 @@ public class DataBaseManager {
 	}
 
 	public ArrayList<AisleWindowContent> getRecentlyViewedAisles() {
-		 Log.i("recently viewed", "recently viewed getRecentlyViewedAisles  ");
+	  Log.e("DataBaseManager", "SURU TESTING ME getRecentlyViewedAisles() call");
 		ArrayList<AisleWindowContent> aisles = new ArrayList<AisleWindowContent>();
 		for (String aisleId : getRecentlyViewedAislesId()) {
 			 
 			aisles.addAll(getAisleByAisleId(aisleId));
 		}
-		 Log.i("recently viewed", "recently viewed  getAisles size:   "+aisles.size());
+		
+    Log.e("DataBaseManager", "SURU TESTING ME getRecentlyViewedAisles() " +
+    		"aisles.size(): " + aisles.size());
 		return aisles;
 	}
 
@@ -1364,9 +1364,12 @@ public class DataBaseManager {
 	}
 
 	private void updateOrAddRecentlyViewedAislesList(String aisleId) {
+	  Log.e("DataBaseManager", "SURU TESTING ME updateOrAddRecentlyViewedAislesList() call");
 		Cursor cursor = mContext.getContentResolver().query(
 				VueConstants.RECENTLY_VIEW_AISLES_URI, null, null, null,
 				VueConstants.VIEW_TIME + " DESC");
+    Log.e("DataBaseManager", "SURU TESTING ME updateOrAddRecentlyViewedAislesList() " +
+    		"cursor.getCount(): " + cursor.getCount());
 		boolean isAisleViewed = false;
 		String viewedId = null;
 		if (cursor.moveToFirst()) {
@@ -1388,11 +1391,29 @@ public class DataBaseManager {
 			Uri url = Uri.parse(VueConstants.RECENTLY_VIEW_AISLES_URI + "/"
 					+ viewedId);
 			mContext.getContentResolver().update(url, values, null, null);
+      Log.e("DataBaseManager", "SURU TESTING ME updateOrAddRecentlyViewedAislesList() " +
+      		"previously viewed aisle time updated");
 		} else {
 			values.put(VueConstants.RECENTLY_VIEWED_AISLE_ID, aisleId);
 			values.put(VueConstants.VIEW_TIME, System.currentTimeMillis());
 			mContext.getContentResolver().insert(
 					VueConstants.RECENTLY_VIEW_AISLES_URI, values);
+      Log.e("DataBaseManager", "SURU TESTING ME updateOrAddRecentlyViewedAislesList() " +
+      		"aisle view first time: aisle Id: " + aisleId);
+      Cursor aisleCursor = mContext.getContentResolver().query(
+          VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id},
+          VueConstants.AISLE_Id + "=?", new String[] {aisleId}, null);
+      if(aisleCursor.moveToFirst()) {
+        do {
+          if(aisleCursor.getString(aisleCursor.getColumnIndex(VueConstants.AISLE_Id)).equals(aisleId)) {
+            Log.e("DataBaseManager", "SURU TESTING ME updateOrAddRecentlyViewedAislesList() aisle is in DATABASE");
+          } else {
+            Log.e("DataBaseManager", "SURU TESTING ME updateOrAddRecentlyViewedAislesList() aisle NOT FOUND DO WHILE");
+          }
+        } while(aisleCursor.moveToNext());
+      } else {
+        Log.e("DataBaseManager", "SURU TESTING ME updateOrAddRecentlyViewedAislesList() aisle NOT FOUND");
+      }
 		}
 	}
 

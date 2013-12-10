@@ -831,7 +831,7 @@ SearchView.OnCloseListener {
 
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-			 Log.i("recently viewed", "recently viewed showcateMethod 1");
+			 Log.i("recently viewed", "SURU TESTING ME recently viewed showcateMethod 1");
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
