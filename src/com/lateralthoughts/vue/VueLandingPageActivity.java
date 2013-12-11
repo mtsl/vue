@@ -142,7 +142,6 @@ public class VueLandingPageActivity extends Activity implements
 		mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				addImageToExistingAisle(mOtherSourceAddImageAisleId);
 				mOtherSourceAddImageAisleId = null;
 				((VueLandingAislesFragment) mLandingAilsesFrag)
@@ -154,7 +153,6 @@ public class VueLandingPageActivity extends Activity implements
 		mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				mOtherSourceAddImageAisleId = null;
 				mOtherSourceImagePath = null;
 				mOtherSourceImageUrl = null;
@@ -318,11 +316,13 @@ public class VueLandingPageActivity extends Activity implements
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setDisplayShowHomeEnabled(true);
 		getActionBar().setCustomView(null);
+		getActionBar().setDisplayShowTitleEnabled(true);
 		if (isdrawOpen) {
 			menu.findItem(R.id.menu_search).setVisible(true);
 			menu.findItem(R.id.menu_create_aisle).setVisible(false);
 		} else {
 			if (mHideDefaultActionbar) {
+				getActionBar().setDisplayShowTitleEnabled(false);
 				getActionBar().setDisplayHomeAsUpEnabled(false);
 				getActionBar().setDisplayShowCustomEnabled(true);
 				getActionBar().setDisplayShowHomeEnabled(false);
