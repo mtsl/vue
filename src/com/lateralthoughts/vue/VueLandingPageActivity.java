@@ -73,7 +73,6 @@ public class VueLandingPageActivity extends Activity implements
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 	private ProgressDialog mProgressDialog;
-	private LinearLayout mVueLandingKeyboardLayout;
 	private FrameLayout mVueLandingKeyboardCancel, mVueLandingKeyboardDone;
 	private View mVueLandingActionbarView;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
@@ -133,8 +132,6 @@ public class VueLandingPageActivity extends Activity implements
 		invalidateOptionsMenu();
 		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_landing_custom_actionbar, null);
-		mVueLandingKeyboardLayout = (LinearLayout) mVueLandingActionbarView
-				.findViewById(R.id.vue_landin_keyboard_layout);
 		mVueLandingKeyboardCancel = (FrameLayout) mVueLandingActionbarView
 				.findViewById(R.id.vue_landing_keyboard_cancel);
 		mVueLandingKeyboardDone = (FrameLayout) mVueLandingActionbarView

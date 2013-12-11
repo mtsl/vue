@@ -290,8 +290,6 @@ public class VueLoginActivity extends FragmentActivity implements
 											.appInstalledOrNot(
 													VueConstants.GOOGLE_PLAY_SERVICES_PACKAGE_NAME,
 													VueLoginActivity.this)) {
-										mSocialIntegrationMainLayout
-												.setVisibility(View.GONE);
 										mGoogleplusLoggedinDialogFlag = true;
 										if (mFromGoogleplusInvitefriends)
 											mGooglePlusProgressDialog.show();
