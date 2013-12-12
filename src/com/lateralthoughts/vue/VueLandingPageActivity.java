@@ -205,7 +205,7 @@ public class VueLandingPageActivity extends Activity implements
 		super.onDestroy();
 		try {
 			if (mLandingScreenTitleReceiver != null) {
-				unregisterReceiver(mLandingScreenTitleReceiver);
+				VueApplication.getInstance().unregisterReceiver(mLandingScreenTitleReceiver);
 			}
 		} catch (Exception e) {
 		}

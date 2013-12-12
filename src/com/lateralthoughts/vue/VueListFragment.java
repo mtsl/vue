@@ -89,18 +89,25 @@ public class VueListFragment extends Fragment implements TextWatcher {
 	private String profilePicUrl = "";
 	private RelativeLayout vue_list_fragment_actionbar;
 	private BezelMenuRefreshReciever mBezelMenuRefreshReciever = null;
+	View mView = null;
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		Log.i("fragDestroy", "fragDestroy: listfrage1");
 		try {
 			if (mBezelMenuRefreshReciever != null) {
-				getActivity().unregisterReceiver(mBezelMenuRefreshReciever);
+				VueApplication.getInstance().unregisterReceiver(mBezelMenuRefreshReciever);
 			}
 		} catch (Exception e) {
 		}
 	}
-
+@Override
+public void onDestroyView() {
+	super.onDestroyView();
+	Log.i("fragDestroy", "fragDestroy: listfrage2");
+	mView = null;
+}
 	public VueListFragment() {
 		mBezelMenuRefreshReciever = new BezelMenuRefreshReciever();
 		IntentFilter ifiltercategory = new IntentFilter(
@@ -111,6 +118,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		setRetainInstance(true);
 		if (getActivity() instanceof VueLandingPageActivity) {
 			VueApplication.getInstance().landingPage = (VueLandingPageActivity) getActivity();
 		}
@@ -144,9 +152,14 @@ public class VueListFragment extends Fragment implements TextWatcher {
 				return returnWhat;
 			}
 		};
-		return inflater.inflate(R.layout.vue_list_fragment, null);
+		mView =  inflater.inflate(R.layout.vue_list_fragment, null);
+		return mView;
 	}
-
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mSideMenuSearchBar = (EditText) getActivity().findViewById(
@@ -542,7 +555,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
 		List<ListOptionItem> meChildren = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_My_Aisles),
-				R.drawable.new_profile, null);
+				R.drawable.my_aisles, null);
 		meChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Interactions),

@@ -291,7 +291,7 @@ public class VueLandingAislesFragment extends  Fragment {
 				VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
 				Intent intent = new Intent();
 				intent.setClass(VueApplication.getInstance(),
-						AisleDetailsViewActivity.class);
+						 AisleDetailsViewActivity.class);
 				VueApplication.getInstance().setClickedWindowID(id);
 				VueApplication.getInstance().setClickedWindowCount(count);
 				VueApplication.getInstance().setmAisleImgCurrentPos(

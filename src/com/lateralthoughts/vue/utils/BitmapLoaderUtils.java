@@ -111,7 +111,7 @@ public class BitmapLoaderUtils {
 			int reqWidth = bestWidth;
 			int scale = 1;
 
-			if (height > bestHeight) {
+			if (height > bestHeight || width > bestWidth) {
 
 				// Calculate ratios of height and width to requested height and
 				// width
@@ -123,7 +123,7 @@ public class BitmapLoaderUtils {
 				// a final image with both dimensions larger than or equal to
 				// the
 				// requested height and width.
-				scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
+				scale = heightRatio < widthRatio ? heightRatio : widthRatio;
 
 			}
 
