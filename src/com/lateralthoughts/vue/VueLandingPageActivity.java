@@ -642,14 +642,6 @@ public class VueLandingPageActivity extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
-		/*
-		 * VueUser storedVueUser = null; try { storedVueUser =
-		 * Utils.readUserObjectFromFile(this,
-		 * VueConstants.VUE_APP_USEROBJECT__FILENAME); } catch (Exception e1) {
-		 * e1.printStackTrace(); } if (storedVueUser == null) { if
-		 * (!VueLoginActivity.mIsLogInScreenIsVisible) { showLogInDialog(false);
-		 * } }
-		 */
 		mSlidListFrag.setEditTextVisible(false);
 		// ShareViaVue...
 		if (VueApplication.getInstance().mShareViaVueClickedFlag) {
