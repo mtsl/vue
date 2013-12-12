@@ -2,16 +2,13 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.Dialog;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
@@ -49,7 +46,7 @@ public class OtherSourcesDialog {
 							OtherSourcesDialog.this.imagesList.get(position)
 									.getImageUri(), mActivity);
 					if (!fromLandingScreenFlag) {
-						final DataEntryFragment fragment = (DataEntryFragment) (  mActivity)
+						final DataEntryFragment fragment = (DataEntryFragment) (mActivity)
 								.getFragmentManager().findFragmentById(
 										R.id.create_aisles_view_fragment);
 						fragment.mOtherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
@@ -68,7 +65,8 @@ public class OtherSourcesDialog {
 						OtherSourcesDialog.this.imagesList.clear();
 						mOtherSourcesImageAdapter.notifyDataSetChanged();
 						dialog.cancel();
-						fragment.setGalleryORCameraImage(picturePath, false,mActivity);
+						fragment.setGalleryORCameraImage(picturePath, false,
+								mActivity);
 					} else {
 						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
 						String otherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
@@ -98,8 +96,7 @@ public class OtherSourcesDialog {
 					if (f.exists()) {
 						if (!fromLandingScreenFlag) {
 							final DataEntryFragment fragment = (DataEntryFragment) (mActivity)
-									.getFragmentManager()
-									.findFragmentById(
+									.getFragmentManager().findFragmentById(
 											R.id.create_aisles_view_fragment);
 							fragment.mOtherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
 									.get(position).getOriginUrl();
@@ -117,7 +114,8 @@ public class OtherSourcesDialog {
 							OtherSourcesDialog.this.imagesList.clear();
 							mOtherSourcesImageAdapter.notifyDataSetChanged();
 							dialog.cancel();
-							fragment.setGalleryORCameraImage(f.getPath(), true,mActivity);
+							fragment.setGalleryORCameraImage(f.getPath(), true,
+									mActivity);
 						} else {
 							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
 							String otherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
@@ -142,8 +140,7 @@ public class OtherSourcesDialog {
 											otherSourceSelectedImageStore);
 						}
 					} else {
-						Toast.makeText(mActivity,
-								"Please wait. Image is loading.",
+						Toast.makeText(mActivity, "Image is not downloaded.",
 								Toast.LENGTH_LONG).show();
 					}
 				}
