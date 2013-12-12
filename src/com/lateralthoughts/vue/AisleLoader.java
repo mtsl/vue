@@ -262,10 +262,10 @@ public class AisleLoader {
 							itemDetails.mImageUrl, contentBrowser, imageView,
 							bestHeight, windowContent.getAisleId(),
 							itemDetails, listener);
-					holder.profileThumbnail
+					/*holder.profileThumbnail
 					.setImageUrl(
 							profleUrl,
-							mImageLoader);
+							mImageLoader);*/
 				}
 			}
 		}
