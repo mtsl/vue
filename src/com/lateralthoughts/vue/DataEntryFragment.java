@@ -39,6 +39,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
+import com.flurry.android.monolithic.sdk.impl.so;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
