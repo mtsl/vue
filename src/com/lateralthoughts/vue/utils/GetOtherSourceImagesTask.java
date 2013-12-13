@@ -179,9 +179,6 @@ public class GetOtherSourceImagesTask extends
 				conn = (HttpURLConnection) new URL(newUrl).openConnection();
 				conn.setRequestProperty("Cookie", cookies);
 				conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
-				conn.addRequestProperty("User-Agent", "Mozilla");
-				conn.addRequestProperty("Referer", "google.com");
-				System.out.println("Redirect to URL : " + newUrl);
 			}
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					conn.getInputStream()));
