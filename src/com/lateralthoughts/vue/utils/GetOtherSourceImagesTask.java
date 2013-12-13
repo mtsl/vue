@@ -161,10 +161,9 @@ public class GetOtherSourceImagesTask extends
 			conn.setRequestProperty(
 					"User-Agent",
 					"Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
+			conn.setRequestProperty("Accept", "*/*");
 			conn.setReadTimeout(5000);
 			conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
-			conn.addRequestProperty("User-Agent", "Mozilla");
-			conn.addRequestProperty("Referer", "google.com");
 			boolean redirect = false;
 			// normally, 3xx is redirect
 			int status = conn.getResponseCode();
