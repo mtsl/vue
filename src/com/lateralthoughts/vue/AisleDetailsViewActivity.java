@@ -77,7 +77,6 @@ public class AisleDetailsViewActivity extends Activity {
 	private int mLikeImageShowTime = 1000;
 	private boolean mIsActionBarShown = false;
 	private int mCurrentapiVersion;
-	private HandleActionBar mHandleActionbar;
 	private int mStatusbarHeight;
 	private boolean mTempflag = true;
 	private VueAisleDetailsViewFragment mVueAiselFragment;
@@ -362,8 +361,6 @@ public class AisleDetailsViewActivity extends Activity {
 
 	@Override
 	public void onResume() {
-		mHandleActionbar = new HandleActionBar();
-		mVueAiselFragment.setActionBarHander(mHandleActionbar);
 		super.onResume();
 		Bundle b = getIntent().getExtras();
 		if (b != null && mTempflag) {
@@ -592,8 +589,6 @@ public class AisleDetailsViewActivity extends Activity {
 							VueApplication.getInstance()
 									.getVueDetailsCardWidth() / 2,
 							Utils.DETAILS_SCREEN);
-
-			// bmp = getBitmap(url, true, mBestHeight);
 			return bmp;
 		}
 
@@ -612,30 +607,7 @@ public class AisleDetailsViewActivity extends Activity {
 			}
 		}
 	}
-
-	private class HandleActionBar implements ActionBarHandler {
-
-		@Override
-		public void showActionBar() {
-			if (!mIsActionBarShown) {
-				mIsActionBarShown = true;
-				// getSupportActionBar().hide();
-			}
-
-		}
-
-		@Override
-		public void hideActionBar() {
-			if (mIsActionBarShown) {
-				if (mCurrentapiVersion >= 11) {
-					// getSupportActionBar().hide();
-				}
-				mIsActionBarShown = false;
-			}
-
-		}
-
-	}
+ 
 
 	public void sendDataToDataentryScreen(Bundle b) {
 		Log.e("Land", "vueland 4");
@@ -700,159 +672,6 @@ public class AisleDetailsViewActivity extends Activity {
 		this.startActivityForResult(
 				intent,
 				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT);
-	}
-
-	/*
-	 * This function is strictly for use by internal APIs. Not that we have
-	 * anything external but there is some trickery here! The getBitmap function
-	 * cannot be invoked from the UI thread. Having to deal with complexity of
-	 * when & how to call this API is too much for those who just want to have
-	 * the bitmap. This is a utility function and is public because it is to be
-	 * shared by other components in the internal implementation.
-	 */
-	private Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap,
-			int bestHeight) {
-	 
-		File f = mFileCache.getFile(url);
-	 
-		// from SD cache
-		Bitmap b = decodeFile(f, bestHeight);
- 
-		if (b != null) {
-
-			if (cacheBitmap)
-				mAisleImagesCache.putBitmap(url, b);
-			return b;
-		}
-
-		// from web
-		try {
-			if (serverUrl == null || serverUrl.length() < 1) {
-
-				return null;
-			}
-			Bitmap bitmap = null;
-			URL imageUrl = new URL(serverUrl);
-			HttpURLConnection conn = (HttpURLConnection) imageUrl
-					.openConnection();
-			conn.setConnectTimeout(30000);
-			conn.setReadTimeout(30000);
-			conn.setInstanceFollowRedirects(true);
-			InputStream is = conn.getInputStream();
-		 
-
-			int hashCode = url.hashCode();
-			String filename = String.valueOf(hashCode);
-	 
-			OutputStream os = new FileOutputStream(f);
-			Utils.CopyStream(is, os);
-			os.close();
-			bitmap = decodeFile(f, bestHeight);
-			if (cacheBitmap)
-				mAisleImagesCache.putBitmap(url, bitmap);
-
-			return bitmap;
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-			if (ex instanceof OutOfMemoryError) {
-				mAisleImagesCache.evictAll();
-			}
-			return null;
-		}
-	}
-
-	// decodes image and scales it to reduce memory consumption
-	public Bitmap decodeFile(File f, int bestHeight) {
-		try {
-			// decode image size
-			BitmapFactory.Options o = new BitmapFactory.Options();
-			o.inJustDecodeBounds = true;
-			FileInputStream stream1 = new FileInputStream(f);
-			BitmapFactory.decodeStream(stream1, null, o);
-			stream1.close();
-			// Find the correct scale value. It should be the power of 2.
-			// final int REQUIRED_SIZE = mScreenWidth/2;
-			int height = o.outHeight;
-			int width = o.outWidth;
-			int reqWidth = VueApplication.getInstance()
-					.getVueDetailsCardWidth();
-			int scale = 1;
-			if (height > bestHeight) {
-				// Calculate ratios of height and width to requested height and
-				// width
-				final int heightRatio = Math.round((float) height
-						/ (float) bestHeight);
-				final int widthRatio = Math.round((float) width
-						/ (float) reqWidth);
-				// Choose the smallest ratio as inSampleSize value, this will
-				// guarantee
-				// a final image with both dimensions larger than or equal to
-				// the
-				// requested height and width.
-				scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
-			}
-			// decode with inSampleSize
-			BitmapFactory.Options o2 = new BitmapFactory.Options();
-			o2.inSampleSize = scale;
-			FileInputStream stream2 = new FileInputStream(f);
-			Bitmap bitmap = BitmapFactory.decodeStream(stream2, null, o2);
-
-			stream2.close();
-			if (bitmap != null) {
-				width = bitmap.getWidth();
-				height = bitmap.getHeight();
-
-				if (width > reqWidth) {
-					float tempHeight = (height * reqWidth) / width;
-					height = (int) tempHeight;
-					bitmap = getModifiedBitmap(bitmap, reqWidth, height);
-				}
-			}
-			if (bitmap != null) {
-				 
-
-			} else {
-	 
-			}
-			return bitmap;
-		} catch (FileNotFoundException e) {
-		 
-		} catch (IOException e) {
-			 
-			e.printStackTrace();
-		} catch (Throwable ex) {
-			 
-			ex.printStackTrace();
-			if (ex instanceof OutOfMemoryError) {
-				mAisleImagesCache.evictAll();
-			}
-			return null;
-		}
-		return null;
-	}
-
-	private Bitmap getModifiedBitmap(Bitmap originalImage, int width, int height) {
-		// here width & height are the desired width & height values)
-
-		// first lets create a new bitmap and a canvas to draw into it.
-		Bitmap newBitmap = Bitmap.createBitmap((int) width, (int) height,
-				Config.ARGB_8888);
-		float originalWidth = originalImage.getWidth(), originalHeight = originalImage
-				.getHeight();
-		Canvas canvas = new Canvas(newBitmap);
-		float scale = width / originalWidth;
-		float xTranslation = 0.0f, yTranslation = (height - originalHeight
-				* scale) / 2.0f;
-		Matrix transformation = new Matrix();
-		// now that we have the transformations, set that for our drawing ops
-		transformation.postTranslate(xTranslation, yTranslation);
-		transformation.preScale(scale, scale);
-		// create a paint and draw into new canvas
-		Paint paint = new Paint();
-		paint.setFilterBitmap(true);
-		canvas.drawBitmap(originalImage, transformation, paint);
- 
-		return newBitmap;
 	}
 
 	private void addImageToAisle() {
