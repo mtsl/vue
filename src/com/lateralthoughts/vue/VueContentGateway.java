@@ -30,6 +30,17 @@ import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
+import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.UnsupportedEncodingException;
+
 public class VueContentGateway {
 	private final String TAG = "VueContentGateway";
 	private final boolean DEBUG = false;
@@ -109,10 +120,11 @@ public class VueContentGateway {
 					 
 				}
 			};
-			JsonArrayRequest vueRequest = new JsonArrayRequest(requestUrl,
+            VueAislesRequest vueRequest = new VueAislesRequest(requestUrl,
 					listener, errorListener) {
             };
-      
+
+
       vueRequest.setRetryPolicy(new DefaultRetryPolicy(
       		DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 
               Utils.MAX_RETRIES, 
@@ -135,4 +147,24 @@ public class VueContentGateway {
 	private void addParams(String name, String value) {
 		mParams.add(new ParcelableNameValuePair(name, value));
 	}
+
+    private class VueAislesRequest extends JsonArrayRequest {
+
+        /**
+         * Creates a new request.
+         * @param url URL to fetch the JSON from
+         * @param listener Listener to receive the JSON response
+         * @param errorListener Error listener, or null to ignore errors.
+         */
+        private Priority mPriority = Priority.HIGH;
+
+        @Override
+        public Priority getPriority() {
+            return mPriority;
+        }
+
+        public VueAislesRequest(String url, Listener<JSONArray> listener, ErrorListener errorListener) {
+            super(url, listener, errorListener);
+        }
+    }
 }

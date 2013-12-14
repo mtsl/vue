@@ -113,9 +113,24 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
             title = title + lookingFor;
         }
         holder.aisleContext.setText(title);
-        if(mVueTrendingAislesDataModel.getNetworkHandler().getmOffset() - position < 40){
+        //if(mVueTrendingAislesDataModel.getNetworkHandler().getmOffset() - position < 10){
             mVueTrendingAislesDataModel.getNetworkHandler().requestMoreAisle(true, mContext.getString(R.string.trending));
-        }
+        //}
         return convertView;
     }
+
+    private class AisleBrowserScrollListener implements AisleContentBrowser.AilseLeftListLisner {
+
+        @Override
+        public void onSwipe(boolean mustShow, String aisleId, boolean sameLikes) {
+            mHasToShow = mustShow;
+            mShowStarAisle = aisleId;
+            mHasSameLikes = sameLikes;
+            notifyDataSetChanged();
+
+        }
+    }
+    private boolean mHasToShow = true;
+    private boolean mHasSameLikes = false;
+    private String mShowStarAisle = " ";
 }

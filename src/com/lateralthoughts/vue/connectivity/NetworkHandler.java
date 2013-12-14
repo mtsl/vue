@@ -67,7 +67,7 @@ public class NetworkHandler {
 	protected VueContentGateway mVueContentGateway;
 	protected TrendingAislesContentParser mTrendingAislesParser;
 	private static final int NOTIFICATION_THRESHOLD = 4;
-	private static final int TRENDING_AISLES_BATCH_SIZE = 10;
+	private static final int TRENDING_AISLES_BATCH_SIZE = 20;
 	public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
 	private static String MY_AISLES = "aislesget/user/";
 	protected int mLimit;
@@ -110,12 +110,10 @@ public class NetworkHandler {
 				mOffset += mLimit;
 				mLimit = TRENDING_AISLES_BATCH_SIZE;
 			}
-			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-					mTrendingAislesParser, loadMore, screenname);
+			mVueContentGateway.getTrendingAisles(mLimit, mOffset,mTrendingAislesParser, loadMore, screenname);
 		} else {
 			 
 		}
-
 	}
 
 	// get the aisle based on the category

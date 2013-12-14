@@ -198,6 +198,7 @@ public class Parser {
 				&& response.getStatusLine().getStatusCode() == 200) {
 			String responseMessage = EntityUtils.toString(response.getEntity());
 			if (responseMessage != null) {
+                try{
 				JSONObject mainJsonObject = new JSONObject(responseMessage);
 				JSONArray jsonArray = mainJsonObject.getJSONArray("images");
 				for (int i = 0; i < jsonArray.length(); i++) {
@@ -213,7 +214,10 @@ public class Parser {
 						imageList.add(aisleImageDetails);
 					}
 				}
-			}
+			}catch(Exception ex){
+                    Log.e("Exception parsing JSON","exception = " + ex.getStackTrace());
+                }
+            }
 		}
 		return imageList;
 	}
