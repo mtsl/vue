@@ -32,9 +32,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
 		case VueConstants.AISLE_TRENDING_LIST_DATA:
 			long elapsedTime = System.currentTimeMillis()
 					- VueApplication.getInstance().mLastRecordedTime;
-			Log.e("PERF_VUE",
-					"AISLE_TRENDING_LIST_DATA is the state. Received content. Time elapsed = "
-							+ elapsedTime);
 			VueApplication.getInstance().mLastRecordedTime = System
 					.currentTimeMillis();
 
@@ -52,9 +49,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
 							.addTrentingAislesFromServerToDB(
 									VueApplication.getInstance(), aislesList,
 									offset, DataBaseManager.TRENDING);
-
-					Log.i("ailsesize",
-							"Suru comment show: " + aislesList.size());
 
 					boolean refreshListFlag = true;
 					/*
@@ -96,12 +90,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
 													R.string.sidemenu_sub_option_My_Aisles)))) {
 						refreshListFlag = false;
 					}
-					/*
-					 * } else {
-					 * VueTrendingAislesDataModel.getInstance(VueApplication
-					 * .getInstance()).loadOnRequest = true;
-					 * Log.i("listmovingissue", "listmovingissue***: dbcase"); }
-					 */
 
 					if (refreshListFlag) {
 						VueLandingPageActivity.landingPageActivity
@@ -176,24 +164,4 @@ public class TrendingAislesContentParser extends ResultReceiver {
 			break;
 		}
 	}
-
-	/*
-	 * private class DbDataSetter extends AsyncTask<Void, Void, Void> {
-	 * ArrayList<AisleWindowContent> mAislesList;
-	 * 
-	 * public DbDataSetter(ArrayList<AisleWindowContent> aislesList) {
-	 * mAislesList = aislesList; }
-	 * 
-	 * @Override protected void onPreExecute() { // TODO Auto-generated method
-	 * stub super.onPreExecute(); }
-	 * 
-	 * @Override protected Void doInBackground(Void... params) {
-	 * DataBaseManager.
-	 * getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB
-	 * ( VueApplication.getInstance(), mAislesList); return null; }
-	 * 
-	 * @Override protected void onPostExecute(Void result) {
-	 * mAislesList.clear(); super.onPostExecute(result); } }
-	 */
-
 }

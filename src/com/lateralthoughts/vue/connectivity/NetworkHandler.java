@@ -272,8 +272,7 @@ public class NetworkHandler {
 
 		} else {
 			mLimit = 30;
-			mVueContentGateway.getTrendingAisles(mLimit, mOffset,
-					mTrendingAislesParser, loadMore, screenName);
+			mVueContentGateway.getTrendingAisles(mLimit, mOffset,mTrendingAislesParser, loadMore, screenName);
 		}
 
 	}

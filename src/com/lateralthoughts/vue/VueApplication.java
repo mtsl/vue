@@ -3,6 +3,8 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import android.graphics.Bitmap;
+import android.util.LruCache;
 import com.android.volley.toolbox.ImageLoader;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -137,6 +139,7 @@ public class VueApplication extends Application {
 			"com.robemall.zovi" };
 
 	public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
+    private final int MAX_BITMAP_COUNT = 512;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -211,6 +214,17 @@ public class VueApplication extends Application {
 
 		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 				crittercismConfig);
+
+        mImageLoader = new NetworkImageLoader(mVolleyRequestQueue, new ImageLoader.ImageCache() {
+            private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(MAX_BITMAP_COUNT);
+
+            public void putBitmap(String url, Bitmap bitmap) {
+                mCache.put(url, bitmap);
+            }
+            public Bitmap getBitmap(String url) {
+                return mCache.get(url);
+            }
+        });
 
 	}
 
