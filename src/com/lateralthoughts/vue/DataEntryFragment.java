@@ -39,6 +39,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
+import com.flurry.android.monolithic.sdk.impl.so;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
@@ -2182,8 +2183,6 @@ public class DataEntryFragment extends Fragment {
 			mProgressDialog = ProgressDialog.show(getActivity(), "",
 					"Please wait...");
 		}
-		// sourceUrl =
-		// "http://www.boden.co.uk/en-GB/Baby-0-3yrs-Knitwear/71289/Baby-0-3yrs-Fair-Isle-Knitted-Dress.html";
 		mOtherSourceSelectedImageStore = Utils.getStoreNameFromUrl(sourceUrl);
 		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
 				sourceUrl, getActivity(), false);

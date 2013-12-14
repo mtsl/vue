@@ -18,9 +18,11 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
@@ -327,7 +329,6 @@ public class VueApplication extends Application {
     public ImageLoader getImageCacheLoader(){
         return mImageLoader;
     }
-
     private BitmapCache sBitmapCache;
     private ImageLoader mImageLoader;
 

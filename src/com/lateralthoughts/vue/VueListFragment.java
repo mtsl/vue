@@ -89,18 +89,23 @@ public class VueListFragment extends Fragment implements TextWatcher {
 	private String profilePicUrl = "";
 	private RelativeLayout vue_list_fragment_actionbar;
 	private BezelMenuRefreshReciever mBezelMenuRefreshReciever = null;
+	View mView = null;
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		try {
 			if (mBezelMenuRefreshReciever != null) {
-				getActivity().unregisterReceiver(mBezelMenuRefreshReciever);
+				VueApplication.getInstance().unregisterReceiver(mBezelMenuRefreshReciever);
 			}
 		} catch (Exception e) {
 		}
 	}
-
+@Override
+public void onDestroyView() {
+	super.onDestroyView();
+	mView = null;
+}
 	public VueListFragment() {
 		mBezelMenuRefreshReciever = new BezelMenuRefreshReciever();
 		IntentFilter ifiltercategory = new IntentFilter(
@@ -111,6 +116,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		setRetainInstance(true);
 		if (getActivity() instanceof VueLandingPageActivity) {
 			VueApplication.getInstance().landingPage = (VueLandingPageActivity) getActivity();
 		}
@@ -144,17 +150,20 @@ public class VueListFragment extends Fragment implements TextWatcher {
 				return returnWhat;
 			}
 		};
-		return inflater.inflate(R.layout.vue_list_fragment, null);
+		mView =  inflater.inflate(R.layout.vue_list_fragment, null);
+		return mView;
 	}
-
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mSideMenuSearchBar = (EditText) getActivity().findViewById(
 				R.id.side_Menu_searchBar);
 		mBezelMainLayout = (RelativeLayout) getActivity().findViewById(
 				R.id.bezel_menu_main_layout);
-		Log.i("mBezelMainLayout", "mBezelMainLayout mSideMenuSearchBar: "
-				+ mSideMenuSearchBar);
 		vue_list_fragment_invite_friendsLayout_mainxml = (RelativeLayout) getActivity()
 				.findViewById(
 						R.id.vue_list_fragment_invite_friendsLayout_mainxml);
@@ -316,9 +325,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
 				TextView textView = (TextView) v
 						.findViewById(R.id.child_itemTextview);
 				String s = textView.getText().toString();
-				Log.e(TAG, "Child Click: Name of item: " + s);
 				if (s.equals(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-					Log.i("clicked on", "clicked on: " + s);
 					VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
 					if (getActivity() instanceof VueLandingPageActivity) {
 						((VueLandingPageActivity) getActivity()).showCategory(
@@ -342,7 +349,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
 					return true;
 				} else if (s
 						.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-					Log.i("clicked on", "clicked on: " + s);
 					if (getActivity() instanceof VueLandingPageActivity) {
 						((VueLandingPageActivity) getActivity()).showCategory(
 								s, false);
@@ -428,17 +434,13 @@ public class VueListFragment extends Fragment implements TextWatcher {
 		if (userName == null || userName.isEmpty()) {
 			userName = getString(R.string.sidemenu_option_Me);
 		}
-		Log.e("VueListFragment", "USER PROFILE PIC TEST IS NAME: " + userName);
 		item = new ListOptionItem(userName, R.drawable.new_profile,
 				getMeChildren());
 		File f = new FileCache(getActivity())
 				.getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
-		Log.e("VueListFragment",
-				"USER PROFILE PIC TEST IS FILE EXIST: " + f.exists());
 		if (f.exists()) {
 			Bitmap bmp = BitmapFactory.decodeFile(f.getPath());
-			Log.e("VueListFragment", "USER PROFILE PIC TEST IS Bitmap null: "
-					+ bmp);
+		 
 			if (bmp != null) {
 				item.userPic = bmp;
 			}
@@ -542,7 +544,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
 		List<ListOptionItem> meChildren = new ArrayList<VueListFragment.ListOptionItem>();
 		ListOptionItem item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_My_Aisles),
-				R.drawable.new_profile, null);
+				R.drawable.my_aisles, null);
 		meChildren.add(item);
 		item = new ListOptionItem(
 				getString(R.string.sidemenu_sub_option_Interactions),
@@ -1156,12 +1158,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
 
 	public void refreshBezelMenu() {
 		VueListFragmentAdapter adapter = null;
-		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage3 ");
 		adapter = new VueListFragment.VueListFragmentAdapter(
 				VueListFragment.this.getActivity(),
 				VueListFragment.this.getBezelMenuOptionItems());
 		VueListFragment.this.expandListView.setAdapter(adapter);
-		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage4 ");
 	}
 
 	public class BezelMenuRefreshReciever extends BroadcastReceiver {

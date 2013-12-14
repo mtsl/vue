@@ -10,23 +10,18 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-
 import com.lateralthoughts.vue.DataEntryFragment;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueLandingPageActivity;
-import com.lateralthoughts.vue.logging.Logger;
 
 public class GetOtherSourceImagesTask extends
 		AsyncTask<String, String, ArrayList<OtherSourceImageDetails>> {
@@ -150,8 +145,6 @@ public class GetOtherSourceImagesTask extends
 	}
 
 	private String getData(String url) {
-		// InputStream is = null;
-		// StringBuilder sb = null;
 		StringBuffer html = null;
 
 		if (url == null) {
@@ -163,16 +156,14 @@ public class GetOtherSourceImagesTask extends
 
 			HttpURLConnection conn = (HttpURLConnection) rssURL
 					.openConnection();
-			conn.setInstanceFollowRedirects(true); // you still need to handle
-													// redirect manully.
+			conn.setInstanceFollowRedirects(true);
 			HttpURLConnection.setFollowRedirects(true);
 			conn.setRequestProperty(
 					"User-Agent",
 					"Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
+			conn.setRequestProperty("Accept", "*/*");
 			conn.setReadTimeout(5000);
 			conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
-			conn.addRequestProperty("User-Agent", "Mozilla");
-			conn.addRequestProperty("Referer", "google.com");
 			boolean redirect = false;
 			// normally, 3xx is redirect
 			int status = conn.getResponseCode();
@@ -182,26 +173,12 @@ public class GetOtherSourceImagesTask extends
 						|| status == HttpURLConnection.HTTP_SEE_OTHER)
 					redirect = true;
 			}
-
-			Log.e("GetOtherSourceImagesTask", "Response Code ... " + status);
-
 			if (redirect) {
-
-				// get redirect url from "location" header field
 				String newUrl = conn.getHeaderField("Location");
-
-				// get the cookie if need, for login
 				String cookies = conn.getHeaderField("Set-Cookie");
-
-				// open the new connnection again
 				conn = (HttpURLConnection) new URL(newUrl).openConnection();
 				conn.setRequestProperty("Cookie", cookies);
 				conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
-				conn.addRequestProperty("User-Agent", "Mozilla");
-				conn.addRequestProperty("Referer", "google.com");
-
-				System.out.println("Redirect to URL : " + newUrl);
-
 			}
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					conn.getInputStream()));
@@ -212,18 +189,6 @@ public class GetOtherSourceImagesTask extends
 				html.append(inputLine);
 			}
 			in.close();
-
-			/*
-			 * URLConnection connection = rssURL.openConnection(); connection
-			 * .setRequestProperty( "User-Agent",
-			 * "Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19"
-			 * ); is = connection.getInputStream();
-			 * 
-			 * BufferedReader br = null; sb = new StringBuilder(); String line;
-			 * 
-			 * br = new BufferedReader(new InputStreamReader(is)); while ((line
-			 * = br.readLine()) != null) { sb.append(line); }
-			 */
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			return null;
@@ -235,9 +200,7 @@ public class GetOtherSourceImagesTask extends
 			return null;
 		}
 		String st = html.toString();
-		Logger.log("error", "GetOtherSourceImages", st);
-		Log.e("GetOtherSourceImagesTask", "PARSED HTML PAGE: " + st);
-		return st;/* sb.toString(); */
+		return st;
 	}
 
 	private OtherSourceImageDetails getHeightWidth(String absUrl, int reqWidth,
