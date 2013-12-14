@@ -810,7 +810,7 @@ public class VueLandingPageActivity extends Activity implements
 				VueTrendingAislesDataModel
 						.getInstance(VueApplication.getInstance())
 						.getNetworkHandler().makeOffseZero();
-				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+				//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(
 						VueApplication.getInstance()).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -837,7 +837,7 @@ public class VueLandingPageActivity extends Activity implements
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
 
-				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+				//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
 						VueApplication.getInstance()).clearObjectsInUse();
@@ -887,7 +887,7 @@ public class VueLandingPageActivity extends Activity implements
 		if (windowContent != null && windowContent.size() > 0) {
 			getActionBar().setTitle(screenName);
 			mLandingScreenName = screenName;
-			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+			//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 			VueTrendingAislesDataModel.getInstance(this).clearAisles();
 			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
 					.clearObjectsInUse();
@@ -908,7 +908,7 @@ public class VueLandingPageActivity extends Activity implements
 	private void showPreviousScreen(String screenName) {
 		boolean fromServer = false;
 		boolean loadMore = false;
-		((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+		//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
 			getTrendingAislesFromDb(screenName, fromServer, loadMore);
@@ -972,7 +972,7 @@ public class VueLandingPageActivity extends Activity implements
 
 		@Override
 		public void clearBrowsers() {
-			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+			//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 		}
 	}
 

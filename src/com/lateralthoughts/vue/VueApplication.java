@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.android.volley.toolbox.ImageLoader;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
@@ -53,6 +54,9 @@ public class VueApplication extends Application {
 	public long mLaunchTime;
 	public long mLastRecordedTime;
 	ListFragementObj mListRefresobj;
+
+    public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
+    public static final String LOAD_IMAGES_REQUEST_TAG="LoadImagesTag";
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
@@ -320,7 +324,11 @@ public class VueApplication extends Application {
 	 * 
 	 * return sBitmapCache; }
 	 */
+    public ImageLoader getImageCacheLoader(){
+        return mImageLoader;
+    }
 
-	private BitmapCache sBitmapCache;
+    private BitmapCache sBitmapCache;
+    private ImageLoader mImageLoader;
 
 }

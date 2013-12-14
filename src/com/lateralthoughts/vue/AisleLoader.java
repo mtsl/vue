@@ -210,7 +210,7 @@ public class AisleLoader {
 			Log.i("memory issue", "memory issue aisle missing null 3.2  "
 					+ windowContent.getAisleId());
 			itemDetails = imageDetailsArr.get(0);
-			if (itemDetails.mHasMostLikes) {
+			/*if (itemDetails.mHasMostLikes) {
 				ImageView image = (ImageView) startImageLay
 						.findViewById(R.id.staricon);
 				if (itemDetails.mSameMostLikes) {
@@ -221,7 +221,7 @@ public class AisleLoader {
 				startImageLay.setVisibility(View.VISIBLE);
 			} else {
 				startImageLay.setVisibility(View.GONE);
-			}
+			}*/
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
 			Log.i("memory issue", "memory issue aisle missing null 3.3  "

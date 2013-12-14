@@ -40,7 +40,9 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.Utils;
+import com.origamilabs.library.views.StaggeredGridView;
 
 //java utils
 
@@ -51,77 +53,105 @@ import com.lateralthoughts.vue.utils.Utils;
 //mTrendingAislesContentView.
 
 public class VueLandingAislesFragment extends  Fragment {
-	private Context mContext;
-	private VueContentGateway mVueContentGateway;
-	private TrendingAislesLeftColumnAdapter mLeftColumnAdapter;
-	private TrendingAislesRightColumnAdapter mRightColumnAdapter;
+    private Context mContext;
+    private VueContentGateway mVueContentGateway;
+    private LandingPageViewAdapter mStaggeredAdapter;
 
-	private ListView mLeftColumnView;
-	private ListView mRightColumnView;
+    private StaggeredGridView mStaggeredView;
 
-	private AisleClickListener mAisleClickListener;
-	int[] mLeftViewsHeights;
-	int[] mRightViewsHeights;
-	public boolean mIsFlingCalled;
-	public boolean mIsIdleState;
- 
+    private AisleClickListener mAisleClickListener;
+    public boolean mIsFlingCalled;
 
-	// TODO: define a public interface that can be implemented by the parent
-	// activity so that we can notify it with an ArrayList of AisleWindowContent
-	// once we have received the result and parsed it. The idea is that the
-	// activity
-	// can then initiate a worker in the background to go fetch more content and
-	// get
-	// ready to launch other activities/fragments within the application
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		mContext = activity;
+    public boolean mIsIdleState;
 
-		// without much ado lets get started with retrieving the trending aisles
-		// list
-		mVueContentGateway = VueContentGateway.getInstance();
-		if (null == mVueContentGateway) {
-			// assert here: this is a no go!
-		}
-		mAisleClickListener = new AisleClickListener();
-		mLeftColumnAdapter = new TrendingAislesLeftColumnAdapter(mContext,
-				mAisleClickListener, null);
-		mRightColumnAdapter = new TrendingAislesRightColumnAdapter(mContext,
-				mAisleClickListener, null);
-	}
+    // TODO: define a public interface that can be implemented by the parent
+    // activity so that we can notify it with an ArrayList of AisleWindowContent
+    // once we have received the result and parsed it. The idea is that the
+    // activity
+    // can then initiate a worker in the background to go fetch more content and
+    // get
+    // ready to launch other activities/fragments within the application
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		// TODO: any particular state that we want to restore?
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mContext = activity;
 
-	}
+        // without much ado lets get started with retrieving the trending aisles
+        // list
+        mVueContentGateway = VueContentGateway.getInstance();
+        if (null == mVueContentGateway) {
+            // assert here: this is a no go!
+        }
 
-	public void notifyAdapters() {
-		if (mLeftColumnAdapter != null) {
-			mLeftColumnAdapter.notifyDataSetChanged();
-		}
-		if (mRightColumnAdapter != null) {
-			mRightColumnAdapter.notifyDataSetChanged();
-			Log.i("listadapter", "adapter adapter notified");
-		}
-	}
+        mAisleClickListener = new AisleClickListener();
+        mStaggeredAdapter = new LandingPageViewAdapter(mContext, mAisleClickListener);
+    }
 
-	int targetHeight = 60;
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // TODO: any particular state that we want to restore?
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		// synchronized list view approach
-		View v = inflater.inflate(R.layout.aisles_view_fragment2, container,
-				false);
-		mLeftColumnView = (ListView) v.findViewById(R.id.list_view_left);
-		mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
-		mLeftColumnView.setAdapter(mLeftColumnAdapter);
-		mRightColumnView.setAdapter(mRightColumnAdapter);
-		mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    }
+
+    public void notifyAdapters() {
+        if(null != mStaggeredAdapter){
+            mStaggeredAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        // synchronized list view approach
+        View v = inflater.inflate(R.layout.aisles_view_fragment, container,
+                false);
+        mStaggeredView = (StaggeredGridView) v.findViewById(R.id.aisles_grid);
+        int margin = getResources().getDimensionPixelSize(R.dimen.margin);
+        mStaggeredView.setItemMargin(margin); // set the GridView margin
+
+        mStaggeredView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well
+        mStaggeredView.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
+
+        mStaggeredView.setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                switch(i){
+                    case SCROLL_STATE_FLING:
+                    case SCROLL_STATE_TOUCH_SCROLL:
+                        mStaggeredAdapter.setIsScrolling(true);
+                        VueApplication.getInstance().getRequestQueue().cancelAll(VueApplication.LOAD_IMAGES_REQUEST_TAG);
+                        break;
+
+                    case SCROLL_STATE_IDLE:
+                        mStaggeredAdapter.setIsScrolling(false);
+                        VueApplication.getInstance().getRequestQueue().cancelAll(VueApplication.MORE_AISLES_REQUEST_TAG);
+                        break;
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+
+            }
+        });
+
+        //mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
+
+        //mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        //mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+        mStaggeredView.setAdapter(mStaggeredAdapter);
+
+		/*mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		mRightColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		mLeftColumnView.setOnTouchListener(touchListener);
 		mRightColumnView.setOnTouchListener(touchListener);
@@ -134,393 +164,199 @@ public class VueLandingAislesFragment extends  Fragment {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
+						Logging.d("Clicks",
+								"ok...we are getting item clicks!!");
+
 					}
 				});
 
 		mLeftViewsHeights = new int[1000];
 		mRightViewsHeights = new int[1000];
-		return v;
-	}
+		Logging.d("VueLandingAislesFragment",
+				"Get ready to displayed staggered view");*/
 
-	// Passing the touch event to the opposite list
-	OnTouchListener touchListener = new OnTouchListener() {
-		boolean dispatched = false;
-
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-			if (v.equals(mLeftColumnView) && !dispatched) {
-				dispatched = true;
-				mRightColumnView.dispatchTouchEvent(event);
-			} else if (v.equals(mRightColumnView) && !dispatched) {
-				dispatched = true;
-				mLeftColumnView.dispatchTouchEvent(event);
-			}
-
-			dispatched = false;
-			return false;
-		}
-	};
-	/**
-	 * Synchronizing scrolling Distance from the top of the first visible
-	 * element opposite list: sum_heights(opposite invisible screens) -
-	 * sum_heights(invisible screens) + distance from top of the first visible
-	 * child
-	 */
-	OnScrollListener scrollListener = new OnScrollListener() {
-		@Override
-		public void onScrollStateChanged(AbsListView view, int scrollState) {
-			mLeftColumnAdapter.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
-			mRightColumnAdapter
-					.setIsScrolling(scrollState != SCROLL_STATE_IDLE);
-			if (scrollState == SCROLL_STATE_FLING) {
-				mIsFlingCalled = true;
-				mIsIdleState = false;
-			} else if (scrollState == SCROLL_STATE_IDLE) {
-				mIsIdleState = true;
-				mIsFlingCalled = false;
-				// notify the adapters.
-				mLeftColumnAdapter.notifyDataSetChanged();
-				mRightColumnAdapter.notifyDataSetChanged();
-
-			} else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
-				mIsIdleState = false;
-				mIsFlingCalled = false;
-			}
-			int first = view.getFirstVisiblePosition();
-			int count = view.getChildCount();
-			if (scrollState == SCROLL_STATE_IDLE
-					|| (first + count > mLeftColumnAdapter.getCount())
-					|| (first + count > mRightColumnAdapter.getCount())) {
-				mLeftColumnView.invalidateViews();
-				mRightColumnView.invalidateViews();
-			}
-		}
-
-		@Override
-		public void onScroll(AbsListView view, int firstVisibleItem,
-				int visibleItemCount, int totalItemCount) {
-			if (view.getChildAt(0) != null) {
-				if (view.equals(mLeftColumnView)) {
-					mLeftViewsHeights[view.getFirstVisiblePosition()] = view
-							.getChildAt(0).getHeight();
-					int h = 0;
-					for (int i = 0; i < mRightColumnView
-							.getFirstVisiblePosition(); i++) {
-						h += mRightViewsHeights[i];
-					}
-					int hi = 0;
-					for (int i = 0; i < mLeftColumnView
-							.getFirstVisiblePosition(); i++) {
-						hi += mLeftViewsHeights[i];
-					}
-
-					int top = h - hi + view.getChildAt(0).getTop();
-					mRightColumnView.setSelectionFromTop(
-							mRightColumnView.getFirstVisiblePosition(), top);
-				} else if (view.equals(mRightColumnView)) {
-					mRightViewsHeights[view.getFirstVisiblePosition()] = view
-							.getChildAt(0).getHeight();
-
-					int h = 0;
-					for (int i = 0; i < mLeftColumnView
-							.getFirstVisiblePosition(); i++) {
-						h += mLeftViewsHeights[i];
-					}
-
-					int hi = 0;
-					for (int i = 0; i < mRightColumnView
-							.getFirstVisiblePosition(); i++) {
-						hi += mRightViewsHeights[i];
-					}
-
-					int top = h - hi + view.getChildAt(0).getTop();
-
-					mLeftColumnView.setSelectionFromTop(
-							mLeftColumnView.getFirstVisiblePosition(), top);
-				}
-
-			}
-			if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
-					&& VueLandingPageActivity.mLandingScreenName != null
-					&& VueLandingPageActivity.mLandingScreenName
-							.equalsIgnoreCase(getResources().getString(
-									R.string.trending))
-					&& !VueTrendingAislesDataModel.getInstance(mContext).mIsFromDb) {
-				int lastVisiblePosition = firstVisibleItem + visibleItemCount;
-				int totalItems = 0;
-				if (view.equals(mLeftColumnView)) {
-					totalItems = mLeftColumnAdapter.getCount();
-				} else if (view.equals(mRightColumnView)) {
-					totalItems = mRightColumnAdapter.getCount();
-				}
-				if ((totalItems - lastVisiblePosition) < 5) {
-					VueTrendingAislesDataModel
-							.getInstance(mContext)
-							.getNetworkHandler()
-							.requestMoreAisle(true,
-									getResources().getString(R.string.trending));
-				}
-			}  
-
-		}
-	};
-
-	private class AisleClickListener implements AisleContentClickListener {
-		@Override
-		public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
-
-			if (VueLandingPageActivity.mOtherSourceImagePath == null) {
-				Map<String, String> articleParams = new HashMap<String, String>();
-				VueUser storedVueUser = null;
-				try {
-					storedVueUser = Utils.readUserObjectFromFile(getActivity(),
-							VueConstants.VUE_APP_USEROBJECT__FILENAME);
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-				if (storedVueUser != null) {
-					articleParams.put("User_Id",
-							Long.valueOf(storedVueUser.getId()).toString());
-				} else {
-					articleParams.put("User_Id", "anonymous");
-				}
-				DataBaseManager.getInstance(mContext)
-						.updateOrAddRecentlyViewedAisles(id);
-				FlurryAgent.logEvent("User_Select_Aisle", articleParams);
-
-				VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-				Intent intent = new Intent();
-				intent.setClass(VueApplication.getInstance(),
-						AisleDetailsViewActivity.class);
-				VueApplication.getInstance().setClickedWindowID(id);
-				VueApplication.getInstance().setClickedWindowCount(count);
-				VueApplication.getInstance().setmAisleImgCurrentPos(
-						aisleImgCurrentPos);
-				startActivity(intent);
-			} else {
-				VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-				vueLandingPageActivity.hideDefaultActionbar();
-				VueLandingPageActivity.mOtherSourceAddImageAisleId = id;
-				notifyAdapters();
-			}
-		}
-
-		@Override
-		public boolean isFlingCalled() {
-			return mIsFlingCalled;
-		}
-
-		@Override
-		public boolean isIdelState() {
-			return mIsIdleState;
-		}
-
-		@Override
-		public boolean onDoubleTap(String id) {
-			//TODO: this is the test code remove it later.
-			AisleWindowContent windowItem = VueTrendingAislesDataModel
-					.getInstance(VueApplication.getInstance()).getAisleAt(id);
-			int finalWidth = 0, finaHeight = 0;
-			if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
-					.getBestHeightForWindow()) {
-				finalWidth = (windowItem.getImageList().get(0).mAvailableWidth * windowItem
-						.getBestHeightForWindow())
-						/ windowItem.getImageList().get(0).mAvailableHeight;
-				finaHeight = windowItem.getBestHeightForWindow();
-			}
-
-			if (finalWidth > VueApplication.getInstance().getScreenWidth() / 2) {
-
-				finaHeight = (finaHeight
-						* VueApplication.getInstance().getScreenWidth() / 2)
-						/ finalWidth;
-				finalWidth = VueApplication.getInstance().getScreenWidth() / 2;
-			}
-			String writeSdCard = null;
-			writeSdCard = "*************************aisle info:"
-					+ " started***********************\n";
-			writeSdCard = writeSdCard + "\nAisleId: " + windowItem.getAisleId()
-					+ "\n" + "Smallest Image Height: "
-					+ windowItem.getImageList().get(0).mTrendingImageHeight
-					+ "\n" + "Card Width: "
-					+ VueApplication.getInstance().getVueDetailsCardWidth() / 2
-					+ "\n";
-			for (int i = 0; i < windowItem.getImageList().size(); i++) {
-				writeSdCard = writeSdCard + "\n ImageUrl: "
-						+ windowItem.getImageList().get(i).mImageUrl;
-				writeSdCard = writeSdCard + "\n" + "image Width: "
-						+ windowItem.getImageList().get(i).mAvailableWidth
-						+ " Height: "
-						+ windowItem.getImageList().get(i).mAvailableHeight;
-			}
-			writeSdCard = writeSdCard + "\n\n After Resized Aisle height: "
-					+ windowItem.getImageList().get(0).mTrendingImageHeight
-					+ " After Resized Aisle width: "
-					+ VueApplication.getInstance().getVueDetailsCardWidth() / 2;
-
-			for (int i = 0; i < windowItem.getImageList().size(); i++) {
-				writeSdCard = writeSdCard + "\n CustomImageUrl: "
-						+ windowItem.getImageList().get(i).mCustomImageUrl;
-			}
-
-			writeSdCard = writeSdCard
-					+ "\n###################### info end ################################";
-			writeToSdcard(writeSdCard);
-			return false;
-		}
-
-		@Override
-		public void refreshList() {
-			mLeftColumnAdapter.notifyDataSetChanged();
-			mRightColumnAdapter.notifyDataSetChanged();
-		}
-	}
-	public int getListPosition() {
-		return mLeftColumnView.getFirstVisiblePosition();
-
-	}
-
-	private void initArcMenu(ArcMenu menu, int[] itemDrawables) {
-		final int itemCount = itemDrawables.length;
-		for (int i = 0; i < itemCount; i++) {
-			ImageView item = new ImageView(getActivity());
-			item.setImageResource(itemDrawables[i]);
-			LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
-					LayoutParams.WRAP_CONTENT);
-			lp.setMargins(4, 4, 4, 4);
-			final int position = i;
-			menu.addItem(i, lp, item, new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Toast.makeText(getActivity(), "position:" + position,
-							Toast.LENGTH_SHORT).show();
-				}
-			});
-		}
-	}
-
-	private void writeToSdcard(String message) {
-
-		String path = Environment.getExternalStorageDirectory().toString();
-		File dir = new File(path + "/vueImageDetails/");
-		if (!dir.isDirectory()) {
-			dir.mkdir();
-		}
-		File file = new File(dir, "/"
-				+ Calendar.getInstance().get(Calendar.DATE) + ".txt");
-		try {
-			file.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			PrintWriter out = new PrintWriter(new BufferedWriter(
-					new FileWriter(file, true)));
-			out.write("\n" + message + "\n");
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
- 
-
-	public void clearBitmaps() {
-
-		for (int i = 0; i < mLeftColumnView.getChildCount(); i++) {
-			LinearLayout leftLayout = (LinearLayout) mLeftColumnView
-					.getChildAt(i);
-			com.lateralthoughts.vue.ui.AisleContentBrowser aisleBrowser = (AisleContentBrowser) leftLayout
-					.findViewById(R.id.aisle_content_flipper);
-			// aisleBrowser.removeAllViews();
-			clearBrowser(aisleBrowser);
-
-		}
-		for (int i = 0; i < mRightColumnView.getChildCount(); i++) {
-			LinearLayout rightLayout = (LinearLayout) mRightColumnView
-					.getChildAt(i);
-			com.lateralthoughts.vue.ui.AisleContentBrowser aisleBrowser = (AisleContentBrowser) rightLayout
-					.findViewById(R.id.aisle_content_flipper);
-			// aisleBrowser.removeAllViews();
-			clearBrowser(aisleBrowser);
-		}
-		mLeftColumnView.setAdapter(mLeftColumnAdapter);
-		mRightColumnView.setAdapter(mRightColumnAdapter);
-		mLeftColumnAdapter.notifyDataSetChanged();
-		mRightColumnAdapter.notifyDataSetChanged();
-	}
-
-	private void clearBrowser(AisleContentBrowser aisleContentBrowser) {
-		if (aisleContentBrowser != null) {
-			ScaledImageViewFactory mViewFactory = ScaledImageViewFactory
-					.getInstance(mContext);
-			for (int i = 0; i < aisleContentBrowser.getChildCount(); i++) {
-				/*
-				 * try { ImageView image = (ScaleImageView) aisleContentBrowser
-				 * .getChildAt(i); Bitmap bitmap = ((BitmapDrawable)
-				 * image.getDrawable()) .getBitmap(); Log.i("clearlist",
-				 * "clearlist bitmap recycling"); bitmap.recycle(); bitmap =
-				 * null; } catch (Exception e) {
-				 * 
-				 * }
-				 */
-
-				mViewFactory
-						.returnUsedImageView((ScaleImageView) aisleContentBrowser
-								.getChildAt(i));
-
-			}
-		}
-		if (aisleContentBrowser != null) {
-			ContentAdapterFactory mContentAdapterFactory = ContentAdapterFactory
-					.getInstance(mContext);
-			mContentAdapterFactory.returnUsedAdapter(aisleContentBrowser
-					.getCustomAdapter());
-			aisleContentBrowser.setCustomAdapter(null);
-			aisleContentBrowser.removeAllViews();
-			aisleContentBrowser = null;
-		}
-		VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
-				.dataObserver();
-	}
-	
-  class ProgressBarAnimation extends Animation {
-    private final int targetHeight;
-    private final View view;
-    //private final boolean down;
-
-
-    public ProgressBarAnimation(View view, int targetHeight, boolean down) {
-      this.view = view;
-      this.targetHeight = targetHeight;
-     // this.down = down;
+        return v;
     }
 
-    @Override
-    protected void applyTransformation(float interpolatedTime, Transformation t) {
-      // super.applyTransformation(interpolatedTime, t);
-      int newHeight;
-     // if (down) {
-        newHeight = (int) (targetHeight * interpolatedTime);
-   //   } else {
-     //   newHeight = (int) (targetHeight * (1 - interpolatedTime));
-     // }
-      view.getLayoutParams().height = newHeight;
-      view.requestLayout();
+    private class AisleClickListener implements AisleContentClickListener {
+        @Override
+        public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
+            Map<String, String> articleParams = new HashMap<String, String>();
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(getActivity(),
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            if (storedVueUser != null) {
+                articleParams.put("User_Id", Long
+                        .valueOf(storedVueUser.getId()).toString());
+            } else {
+                articleParams.put("User_Id", "anonymous");
+            }
+            Logging.d("VueLandingAisleFragment", "Suru aisle clicked aisle Id: "
+                    + id);
+            DataBaseManager.getInstance(mContext)
+                    .updateOrAddRecentlyViewedAisles(id);
+            FlurryAgent.logEvent("User_Select_Aisle", articleParams);
+
+            VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+            Logging.d("clickedwindow", "clickedwindow ID: " + id);
+            Intent intent = new Intent();
+            intent.setClass(VueApplication.getInstance(),
+                    AisleDetailsViewActivity.class);
+            VueApplication.getInstance().setClickedWindowID(id);
+            VueApplication.getInstance().setClickedWindowCount(count);
+            VueApplication.getInstance().setmAisleImgCurrentPos(
+                    aisleImgCurrentPos);
+            startActivity(intent);
+        }
+
+        @Override
+        public boolean isFlingCalled() {
+            Logging.d("flingcheck", "flingcheck  isFlingCalled val: "
+                    + mIsFlingCalled);
+            return mIsFlingCalled;
+        }
+
+        @Override
+        public boolean isIdelState() {
+
+            return mIsIdleState;
+        }
+
+        @Override
+        public boolean onDoubleTap(String id) {
+            AisleWindowContent windowItem = VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance()).getAisleAt(id);
+
+            Logging.i("aisleItem", "aisleItem: id " + windowItem.getAisleId());
+            Logging.i("aisleItem",
+                    "aisleItem:best smallest Height : "
+                            + windowItem.getBestHeightForWindow());
+            Logging.i("aisleItem", "aisleItem:best cardwidth : "
+                    + VueApplication.getInstance().getScreenWidth() / 2);
+            String imageUrls = "";
+            for (int i = 0; i < windowItem.getImageList().size(); i++) {
+                Logging.i("aisleItem", "aisleItem: imageUrl "
+                        + windowItem.getImageList().get(i).mImageUrl);
+                Logging.i("aisleItem", "aisleItem: imageUrl height"
+                        + windowItem.getImageList().get(i).mAvailableHeight
+                        + " width: "
+                        + windowItem.getImageList().get(i).mAvailableWidth);
+            }
+            int finalWidth = 0, finaHeight = 0;
+            if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
+                    .getBestHeightForWindow()) {
+                finalWidth = (windowItem.getImageList().get(0).mAvailableWidth * windowItem
+                        .getBestHeightForWindow())
+                        / windowItem.getImageList().get(0).mAvailableHeight;
+                finaHeight = windowItem.getBestHeightForWindow();
+            }
+
+            if (finalWidth > VueApplication.getInstance().getScreenWidth() / 2) {
+
+                finaHeight = (finaHeight
+                        * VueApplication.getInstance().getScreenWidth() / 2)
+                        / finalWidth;
+                finalWidth = VueApplication.getInstance().getScreenWidth() / 2;
+            }
+            Logging.i("aisleItem", "aisleItem: after resize aisle width "
+                    + finalWidth + " height: " + finaHeight);
+
+            String writeSdCard = null;
+            writeSdCard = "*************************aisle info:"
+                    + " started***********************\n";
+            writeSdCard = writeSdCard + "\nAisleId: " + windowItem.getAisleId()
+                    + "\n" + "Smallest Image Height: "
+                    + windowItem.getImageList().get(0).mTrendingImageHeight
+                    + "\n" + "Card Width: "
+                    + VueApplication.getInstance().getVueDetailsCardWidth() / 2
+                    + "\n";
+            for (int i = 0; i < windowItem.getImageList().size(); i++) {
+                writeSdCard = writeSdCard + "\n ImageUrl: "
+                        + windowItem.getImageList().get(i).mImageUrl;
+                writeSdCard = writeSdCard + "\n" + "image Width: "
+                        + windowItem.getImageList().get(i).mAvailableWidth
+                        + " Height: "
+                        + windowItem.getImageList().get(i).mAvailableHeight;
+            }
+            writeSdCard = writeSdCard + "\n\n After Resized Aisle height: "
+                    + windowItem.getImageList().get(0).mTrendingImageHeight
+                    + " After Resized Aisle width: "
+                    + VueApplication.getInstance().getVueDetailsCardWidth() / 2;
+
+            for (int i = 0; i < windowItem.getImageList().size(); i++) {
+                writeSdCard = writeSdCard + "\n CustomImageUrl: "
+                        + windowItem.getImageList().get(i).mCustomImageUrl;
+            }
+
+            writeSdCard = writeSdCard
+                    + "\n###################### info end ################################";
+            writeToSdcard(writeSdCard);
+            return false;
+        }
+
+        @Override
+        public void refreshList() {
+            mStaggeredAdapter.notifyDataSetChanged();
+        }
     }
 
-    @Override
-    public void initialize(int width, int height, int parentWidth,
-            int parentHeight) {
-        super.initialize(width, height, parentWidth, parentHeight);
+    public int getListPosition() {
+        return mStaggeredView.getFirstPosition();
+
     }
 
-    @Override
-    public boolean willChangeBounds() {
-        return true;
+    private void initArcMenu(ArcMenu menu, int[] itemDrawables) {
+        final int itemCount = itemDrawables.length;
+        for (int i = 0; i < itemCount; i++) {
+            ImageView item = new ImageView(getActivity());
+            item.setImageResource(itemDrawables[i]);
+            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
+                    LayoutParams.WRAP_CONTENT);
+            lp.setMargins(4, 4, 4, 4);
+            final int position = i;
+            menu.addItem(i, lp, item, new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "position:" + position,
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
-  }
+
+    private void writeToSdcard(String message) {
+
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/vueImageDetails/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/"
+                + Calendar.getInstance().get(Calendar.DATE) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            Logging.i("pathsaving", "pathsaving in sdcard2 error");
+            e.printStackTrace();
+        }
+
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            Logging.i("pathsaving", "pathsaving in sdcard2 success");
+        } catch (IOException e) {
+            Logging.i("pathsaving", "pathsaving in sdcard3 error");
+            e.printStackTrace();
+        }
+    }
+
 
 }
