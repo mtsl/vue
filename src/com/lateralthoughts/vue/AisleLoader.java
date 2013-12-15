@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
@@ -95,10 +94,6 @@ public class AisleLoader {
 		mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
 		mImageLoader = new ImageLoader(VueApplication.getInstance()
 				.getRequestQueue(), BitmapLruCache.getInstance(mContext));
-		// mTopBottomMargin = (int)
-		// Utils.dipToPixels(VueApplication.getInstance(), mTopBottomMargin);
-		if (DEBUG)
-			Log.e(TAG, "Log something to remove warning");
 	}
 
 	// This method adds the intelligence to fetch the contents of this aisle
