@@ -36,8 +36,6 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (null == convertView) {
-            Logging.i("TrendingDataModel",
-                    "DataObserver for List Refresh: Left getview if ");
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
             convertView = layoutInflator.inflate(R.layout.staggered_row_item,
                     null);
@@ -118,19 +116,4 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         //}
         return convertView;
     }
-
-    private class AisleBrowserScrollListener implements AisleContentBrowser.AilseLeftListLisner {
-
-        @Override
-        public void onSwipe(boolean mustShow, String aisleId, boolean sameLikes) {
-            mHasToShow = mustShow;
-            mShowStarAisle = aisleId;
-            mHasSameLikes = sameLikes;
-            notifyDataSetChanged();
-
-        }
-    }
-    private boolean mHasToShow = true;
-    private boolean mHasSameLikes = false;
-    private String mShowStarAisle = " ";
 }

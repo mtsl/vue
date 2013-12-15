@@ -417,8 +417,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 					} else {
 						imageView.startAnimation(myFadeInAnimation);
 					}
-					VueTrendingAislesDataModel.getInstance(
-							VueApplication.getInstance()).dataObserver();
+					//VueTrendingAislesDataModel.getInstance(
+					//		VueApplication.getInstance()).dataObserver();
 				}
 			}
 		}
