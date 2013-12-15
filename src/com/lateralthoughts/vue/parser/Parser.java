@@ -295,8 +295,7 @@ public class Parser {
 			} else {
 				aisleContext.mDescription = description;
 			}
-			String aisleOwnerImageUrl = josnObject
-					.getString(VueConstants.AISLE_OWNER_IMAGE_URL);
+			String aisleOwnerImageUrl = josnObject.optString(VueConstants.AISLE_OWNER_IMAGE_URL);
 			if (aisleOwnerImageUrl == null || aisleOwnerImageUrl.equals("null")) {
 				aisleContext.mAisleOwnerImageURL = null;
 			} else {

@@ -186,7 +186,7 @@ public class AisleLoader {
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 	 
 			itemDetails = imageDetailsArr.get(0);
-			/*if (itemDetails.mHasMostLikes) {
+			if (itemDetails.mHasMostLikes) {
 				ImageView image = (ImageView) startImageLay
 						.findViewById(R.id.staricon);
 				if (itemDetails.mSameMostLikes) {
@@ -197,7 +197,7 @@ public class AisleLoader {
 				startImageLay.setVisibility(View.VISIBLE);
 			} else {
 				startImageLay.setVisibility(View.GONE);
-			}*/
+			}
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
 			Bitmap bitmap = null;
@@ -215,16 +215,14 @@ public class AisleLoader {
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
+                String profleUrl = windowContent.getAisleContext().mAisleOwnerImageURL;
 				contentBrowser.addView(imageView);
 				if (!placeholderOnly) {
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
 							bestHeight, windowContent.getAisleId(),
 							itemDetails, listener);
-					/*holder.profileThumbnail
-					.setImageUrl(
-							profleUrl,
-							mImageLoader);*/
+					holder.profileThumbnail.setImageUrl(profleUrl,mImageLoader);
 				}
 			}
 		}
