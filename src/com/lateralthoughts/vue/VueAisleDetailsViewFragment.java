@@ -47,11 +47,14 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -81,7 +84,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
 	private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
-			mDotSeven, mDotEight, mDotNine, mDotTen, mVueUserPic;
+			mDotSeven, mDotEight, mDotNine, mDotTen;
+	private NetworkImageView mVueUserPic;
 	private TextView mLeftArrow, mRightArrow, mVueUserName;
 	private ListView mAisleDetailsList;
 	EditTextBackEvent mEditTextFindAt;
@@ -148,7 +152,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				.findViewById(R.id.detaisl_find_at_popup);
 		mEditTextFindAt = (EditTextBackEvent) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_text);
-		mVueUserPic = (ImageView) mDetailsContentView
+		mVueUserPic = (NetworkImageView) mDetailsContentView
 				.findViewById(R.id.vue_user_pic);
 		mEditIconLay = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.editImage);
@@ -185,37 +189,22 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			mEditTextFindAt.setText("");
 			mFindAtUrl = "";
 		}
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				String profileUrl = null;
-				profileUrl = VueTrendingAislesDataModel
-						.getInstance(getActivity())
-						.getAisleItem(
-								VueApplication.getInstance()
-										.getClickedWindowID())
-						.getAisleContext().mAisleOwnerImageURL;
-				if (profileUrl != null) {
-					boolean cacheBitmap = false;
-					final Bitmap bmp = BitmapLoaderUtils.getInstance()
-							.getBitmap(profileUrl, profileUrl, cacheBitmap,
-									VueApplication.getInstance().getPixel(32),
-									VueApplication.getInstance().getPixel(32),
-									Utils.TRENDING_SCREEN);
-					if (bmp != null) {
-						getActivity().runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								mVueUserPic.setImageBitmap(bmp);
-							}
-						});
-					}
-				}
-			}
-		}).start();
-
+		    
+		ImageLoader mImageLoader = new ImageLoader(VueApplication.getInstance()
+					.getRequestQueue(), BitmapLruCache.getInstance(mContext));
+		String profileUrl = null;
+		profileUrl = VueTrendingAislesDataModel
+				.getInstance(getActivity())
+				.getAisleItem(
+						VueApplication.getInstance()
+								.getClickedWindowID())
+				.getAisleContext().mAisleOwnerImageURL;
+		if(profileUrl != null) {
+		mVueUserPic
+		.setImageUrl(
+				profileUrl,
+				mImageLoader);
+		}
 		mEditTextFindAt.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -234,12 +223,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				}
 				 
 				if (url != null && url.startsWith("http")) {
-					/*
-					 * Uri uriUrl = Uri.parse(url.trim()); Log.i("browserUrl",
-					 * "browserUrl: " + url); Intent launchBrowser = new
-					 * Intent(Intent.ACTION_VIEW, uriUrl);
-					 * startActivity(launchBrowser);
-					 */
+				 
 				} else {
 					Toast.makeText(mContext, "No source url found",
 							Toast.LENGTH_SHORT).show();

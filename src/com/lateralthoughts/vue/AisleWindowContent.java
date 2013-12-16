@@ -150,10 +150,6 @@ public class AisleWindowContent {
 		imageDetails.mCustomImageUrl = Utils.addImageInfo(
 				imageDetails.mCustomImageUrl, imageDetails.mAvailableWidth,
 				imageDetails.mAvailableHeight);
-		Log.i("AisleWindowContent", "Image Url and CustominageUrl : "
-				+ imageDetails.mCustomImageUrl + " ??? "
-				+ imageDetails.mImageUrl);
-
 	}
 
 	public AisleContext getAisleContext() {
@@ -198,11 +194,7 @@ public class AisleWindowContent {
 		float imageHeight, imageWidth;
 		float cardWidth = VueApplication.getInstance().getVueDetailsCardWidth() / 2;
 		float aisleHeightOnCard = 0;
-
-		Log.i("availableScreenHeight", "availableScreenHeight1: "
-				+ availableScreenHeight);
-		Log.i("availableScreenHeight", "availableScreenHeight cardWidth: "
-				+ cardWidth);
+  
 
 		for (int i = 0; i < imageList.size(); i++) {
 			imageHeight = imageList.get(i).mAvailableHeight;

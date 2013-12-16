@@ -1549,7 +1549,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 					imageView.startAnimation(myFadeInAnimation);
 				}
 			}
-
+            if(getItem(mCurrentAislePosition).getImageList().size() == mImageListCurrentPosition){
+            	mImageListCurrentPosition = getItem(mCurrentAislePosition).getImageList().size() -1;
+            }
 			if (getItem(mCurrentAislePosition).getImageList().get(
 					mImageListCurrentPosition).mOwnerUserId != null
 					&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
