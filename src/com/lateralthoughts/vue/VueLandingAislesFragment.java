@@ -22,24 +22,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
-import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
-import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.Utils;
 import com.origamilabs.library.views.StaggeredGridView;
 
@@ -194,14 +186,11 @@ public class VueLandingAislesFragment extends  Fragment {
             } else {
                 articleParams.put("User_Id", "anonymous");
             }
-            Logging.d("VueLandingAisleFragment", "Suru aisle clicked aisle Id: "
-                    + id);
             DataBaseManager.getInstance(mContext)
                     .updateOrAddRecentlyViewedAisles(id);
             FlurryAgent.logEvent("User_Select_Aisle", articleParams);
 
             VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-            Logging.d("clickedwindow", "clickedwindow ID: " + id);
             Intent intent = new Intent();
             intent.setClass(VueApplication.getInstance(),
                     AisleDetailsViewActivity.class);
@@ -214,8 +203,6 @@ public class VueLandingAislesFragment extends  Fragment {
 
         @Override
         public boolean isFlingCalled() {
-            Logging.d("flingcheck", "flingcheck  isFlingCalled val: "
-                    + mIsFlingCalled);
             return mIsFlingCalled;
         }
 
@@ -229,22 +216,9 @@ public class VueLandingAislesFragment extends  Fragment {
         public boolean onDoubleTap(String id) {
             AisleWindowContent windowItem = VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).getAisleAt(id);
-
-            Logging.i("aisleItem", "aisleItem: id " + windowItem.getAisleId());
-            Logging.i("aisleItem",
-                    "aisleItem:best smallest Height : "
-                            + windowItem.getBestHeightForWindow());
-            Logging.i("aisleItem", "aisleItem:best cardwidth : "
-                    + VueApplication.getInstance().getScreenWidth() / 2);
+ 
             String imageUrls = "";
-            for (int i = 0; i < windowItem.getImageList().size(); i++) {
-                Logging.i("aisleItem", "aisleItem: imageUrl "
-                        + windowItem.getImageList().get(i).mImageUrl);
-                Logging.i("aisleItem", "aisleItem: imageUrl height"
-                        + windowItem.getImageList().get(i).mAvailableHeight
-                        + " width: "
-                        + windowItem.getImageList().get(i).mAvailableWidth);
-            }
+          
             int finalWidth = 0, finaHeight = 0;
             if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
                     .getBestHeightForWindow()) {
@@ -261,8 +235,7 @@ public class VueLandingAislesFragment extends  Fragment {
                         / finalWidth;
                 finalWidth = VueApplication.getInstance().getScreenWidth() / 2;
             }
-            Logging.i("aisleItem", "aisleItem: after resize aisle width "
-                    + finalWidth + " height: " + finaHeight);
+          
 
             String writeSdCard = null;
             writeSdCard = "*************************aisle info:"
@@ -340,7 +313,6 @@ public class VueLandingAislesFragment extends  Fragment {
         try {
             file.createNewFile();
         } catch (IOException e) {
-            Logging.i("pathsaving", "pathsaving in sdcard2 error");
             e.printStackTrace();
         }
 
@@ -350,9 +322,9 @@ public class VueLandingAislesFragment extends  Fragment {
             out.write("\n" + message + "\n");
             out.flush();
             out.close();
-            Logging.i("pathsaving", "pathsaving in sdcard2 success");
+            
         } catch (IOException e) {
-            Logging.i("pathsaving", "pathsaving in sdcard3 error");
+            
             e.printStackTrace();
         }
     }

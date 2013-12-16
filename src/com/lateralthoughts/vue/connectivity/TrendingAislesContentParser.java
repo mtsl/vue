@@ -211,16 +211,16 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                                 }
                                             });
                                 }
-                                /*final ArrayList<AisleWindowContent> aislesList = new Parser()
+                               /* final ArrayList<AisleWindowContent> aislesList = new Parser()
                                         .parseTrendingAislesResultData(
                                                 resultData.getString("result"),
                                                 resultData.getBoolean("loadMore"));
-                                int offset = resultData.getInt("offset");
+                                int offset = resultData.getInt("offset");*/
 
                                 DataBaseManager.getInstance(VueApplication.getInstance())
                                         .addTrentingAislesFromServerToDB(
                                                 VueApplication.getInstance(), aislesList,
-                                                offset, DataBaseManager.TRENDING);*/
+                                                offset, DataBaseManager.TRENDING);
                             }
                             break;
                         }
