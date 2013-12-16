@@ -197,6 +197,7 @@ public class Parser {
 				&& response.getStatusLine().getStatusCode() == 200) {
 			String responseMessage = EntityUtils.toString(response.getEntity());
 			if (responseMessage != null) {
+                try{
 				JSONObject mainJsonObject = new JSONObject(responseMessage);
 				JSONArray jsonArray = mainJsonObject.getJSONArray("images");
 				for (int i = 0; i < jsonArray.length(); i++) {
@@ -212,7 +213,10 @@ public class Parser {
 						imageList.add(aisleImageDetails);
 					}
 				}
-			}
+			}catch(Exception ex){
+                    Log.e("Exception parsing JSON","exception = " + ex.getStackTrace());
+                }
+            }
 		}
 		return imageList;
 	}
@@ -290,8 +294,7 @@ public class Parser {
 			} else {
 				aisleContext.mDescription = description;
 			}
-			String aisleOwnerImageUrl = josnObject
-					.getString(VueConstants.AISLE_OWNER_IMAGE_URL);
+			String aisleOwnerImageUrl = josnObject.optString(VueConstants.AISLE_OWNER_IMAGE_URL);
 			if (aisleOwnerImageUrl == null || aisleOwnerImageUrl.equals("null")) {
 				aisleContext.mAisleOwnerImageURL = null;
 			} else {

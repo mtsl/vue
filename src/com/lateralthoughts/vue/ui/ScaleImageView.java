@@ -19,11 +19,11 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.widget.ImageView;
+import com.android.volley.toolbox.NetworkImageView;
 
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
-public class ScaleImageView extends /*Network*/ImageView {
+public class ScaleImageView extends NetworkImageView {
 	private ImageChangeListener imageChangeListener;
 	private boolean scaleToWidth = false; // this flag determines if should
 											// measure height manually dependent
