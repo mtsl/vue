@@ -11,7 +11,6 @@ import java.util.Stack;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -21,15 +20,15 @@ import com.lateralthoughts.vue.VueApplication;
 public class OtherSourceImageLoader {
 
 	FileCache mFileCache;
-	PhotosQueue photosQueue;
-	PhotosLoader photoLoaderThread;
+	PhotosQueue mPhotosQueue;
+	PhotosLoader mPhotoLoaderThread;
 	public static OtherSourceImageLoader mOtherSourceImageLoader;
 
 	public OtherSourceImageLoader() {
 		mFileCache = new FileCache(VueApplication.getInstance());
-		photosQueue = new PhotosQueue();
-		photoLoaderThread = new PhotosLoader();
-		photoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
+		mPhotosQueue = new PhotosQueue();
+		mPhotoLoaderThread = new PhotosLoader();
+		mPhotoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
 	}
 
 	public static OtherSourceImageLoader getInstatnce() {
@@ -62,15 +61,15 @@ public class OtherSourceImageLoader {
 
 	private void queuePhoto(String url, ImageView imageView,
 			RelativeLayout otherSourceAisleImage) {
-		photosQueue.Clean(imageView);
+		mPhotosQueue.Clean(imageView);
 		PhotoToLoad p = new PhotoToLoad(url, imageView, otherSourceAisleImage);
-		synchronized (photosQueue.photosToLoad) {
-			photosQueue.photosToLoad.push(p);
-			photosQueue.photosToLoad.notifyAll();
+		synchronized (mPhotosQueue.photosToLoad) {
+			mPhotosQueue.photosToLoad.push(p);
+			mPhotosQueue.photosToLoad.notifyAll();
 		}
 
-		if (photoLoaderThread.getState() == Thread.State.NEW)
-			photoLoaderThread.start();
+		if (mPhotoLoaderThread.getState() == Thread.State.NEW)
+			mPhotoLoaderThread.start();
 	}
 
 	private File getBitmap(String url) {
@@ -103,19 +102,11 @@ public class OtherSourceImageLoader {
 			int scale = 1;
 			int heightRatio = 0;
 			int widthRatio = 0;
-			Log.e("Utils bitmap width",
-					width + "..." + VueApplication.getInstance().mScreenWidth);
-			Log.e("Utils bitmap height",
-					height + "..." + VueApplication.getInstance().mScreenHeight);
 			if (height > VueApplication.getInstance().mScreenHeight) {
-				// Calculate ratios of height and width to requested height and
-				// width
 				heightRatio = Math.round((float) height
 						/ (float) VueApplication.getInstance().mScreenHeight);
 			}
 			if (width > VueApplication.getInstance().mScreenWidth) {
-				// Calculate ratios of height and width to requested height and
-				// width
 				widthRatio = Math.round((float) width
 						/ (float) VueApplication.getInstance().mScreenWidth);
 			}
@@ -161,7 +152,7 @@ public class OtherSourceImageLoader {
 	}
 
 	public void stopThread() {
-		photoLoaderThread.interrupt();
+		mPhotoLoaderThread.interrupt();
 	}
 
 	class PhotosQueue {
@@ -181,14 +172,14 @@ public class OtherSourceImageLoader {
 		public void run() {
 			try {
 				while (true) {
-					if (photosQueue.photosToLoad.size() == 0)
-						synchronized (photosQueue.photosToLoad) {
-							photosQueue.photosToLoad.wait();
+					if (mPhotosQueue.photosToLoad.size() == 0)
+						synchronized (mPhotosQueue.photosToLoad) {
+							mPhotosQueue.photosToLoad.wait();
 						}
-					if (photosQueue.photosToLoad.size() != 0) {
+					if (mPhotosQueue.photosToLoad.size() != 0) {
 						PhotoToLoad photoToLoad;
-						synchronized (photosQueue.photosToLoad) {
-							photoToLoad = photosQueue.photosToLoad.pop();
+						synchronized (mPhotosQueue.photosToLoad) {
+							photoToLoad = mPhotosQueue.photosToLoad.pop();
 						}
 						File f = getBitmap(photoToLoad.url);
 						if (f != null && f.exists()) {

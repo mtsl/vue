@@ -37,7 +37,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -343,8 +342,6 @@ public class VueLoginActivity extends FragmentActivity implements
 						.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 							public void onUserInfoFetched(GraphUser user) {
 								if (!mDontCallUserInfoChangesMethod) {
-									Log.e("VueLoginActivity",
-											"update UI called from user info changed method");
 									updateUI(false);
 								}
 							}
@@ -401,7 +398,6 @@ public class VueLoginActivity extends FragmentActivity implements
 	private class NullHostNameVerifier implements HostnameVerifier {
 
 		public boolean verify(String hostname, SSLSession session) {
-			Log.i("RestUtilImpl", "Approving certificate for " + hostname);
 			return true;
 		}
 	}
@@ -463,8 +459,6 @@ public class VueLoginActivity extends FragmentActivity implements
 		try {
 			mUiHelper.onActivityResult(requestCode, resultCode, data);
 			if (!mDontCallUserInfoChangesMethod) {
-				Log.e("VueLoginActivity",
-						"update UI called from onActivityResult method");
 				updateUI(true);
 			}
 		} catch (Exception e) {
@@ -666,8 +660,6 @@ public class VueLoginActivity extends FragmentActivity implements
 												} catch (Exception e) {
 													e.printStackTrace();
 												}
-												Log.e("Vue User Creation",
-														"callback from successful user creation");
 											}
 										});
 					}
@@ -788,14 +780,11 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	private void updateUI(boolean fromOnActivityResult) {
-		Log.e("Loginscreen", "Update UI called.");
 		Session session = Session.getActiveSession();
 		boolean fbloggedin = (session != null && session.isOpened());
 		if (fbloggedin) {
-			Log.e("Loginscreen", "Update UI called. loggedin");
 			saveFBLoginDetails(session);
 			if (mFromDetailsFbShare) {
-				Log.e("Loginscreen", "Update UI called. from details fb share.");
 				try {
 					ArrayList<clsShare> filePathList = mBundle
 							.getParcelableArrayList(VueConstants.FBPOST_IMAGEURLS);
@@ -1210,8 +1199,6 @@ public class VueLoginActivity extends FragmentActivity implements
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
-								Log.e("Vue User Creation",
-										"callback from successful user creation");
 							}
 						});
 			}
@@ -1323,8 +1310,6 @@ public class VueLoginActivity extends FragmentActivity implements
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
-								Log.e("Vue User Creation",
-										"callback from successful user creation");
 							}
 						});
 			}
@@ -1421,8 +1406,6 @@ public class VueLoginActivity extends FragmentActivity implements
 					@Override
 					public void onUserUpdated(VueUser user) {
 						try {
-							Log.i("userid",
-									"userid123456 null check storedVueUser seting loging page: ");
 							Utils.writeUserObjectToFile(VueLoginActivity.this,
 									VueConstants.VUE_APP_USEROBJECT__FILENAME,
 									user);
@@ -1448,15 +1431,11 @@ public class VueLoginActivity extends FragmentActivity implements
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void refreshBezelMenu(final String userId, final String imageUrl,
 			final File filePath) {
-		Log.i("userImageUrl", "userImageUrl: downloadAndSaveUserProfileImage1 "
-				+ imageUrl);
 		Response.Listener listener = new Response.Listener<Bitmap>() {
 
 			@Override
 			public void onResponse(Bitmap bmp) {
 				Utils.saveBitmap(bmp, filePath);
-				Log.i("userImageUrl",
-						"userImageUrl: downloadAndSaveUserProfileImage2 ");
 				getProfileImageChangeListenor(userId, imageUrl);
 			}
 		};

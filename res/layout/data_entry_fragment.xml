@@ -15,9 +15,9 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="4dip"
-            android:padding="16dp"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="horizontal"
+            android:padding="16dp"
             android:visibility="visible" >
 
             <TextView
@@ -40,9 +40,9 @@
             android:layout_below="@+id/mainheadingrow"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="2dp"
-            android:padding="16dp"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="horizontal"
+            android:padding="16dp"
             android:visibility="gone" >
 
             <TextView
@@ -72,9 +72,9 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/mainheadingrow"
             android:layout_marginLeft="8dip"
-            android:padding="16dp"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="vertical"
+            android:padding="16dp"
             android:visibility="gone" >
 
             <LinearLayout
@@ -218,9 +218,9 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/mainheadingrow"
             android:layout_marginRight="8dip"
-            android:padding="16dp"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="vertical"
+            android:padding="16dp"
             android:visibility="gone" >
 
             <LinearLayout
@@ -232,7 +232,7 @@
                     android:id="@+id/imageView1"
                     android:layout_width="32dip"
                     android:layout_height="32dip"
-                    android:src="@drawable/add" />
+                    android:src="@drawable/new_occassion" />
 
                 <TextView
                     android:id="@+id/textView1"
@@ -282,8 +282,8 @@
             android:layout_below="@+id/mainheadingrow"
             android:layout_toLeftOf="@+id/ocassionpopup"
             android:background="@drawable/dataentry_title_bg_without_right_shadow"
-            android:padding="16dp"
             android:maxHeight="256dip"
+            android:padding="16dp"
             android:visibility="gone" >
 
             <ListView
@@ -307,8 +307,8 @@
                 android:layout_alignTop="@+id/categorylistviewlayout"
                 android:layout_toLeftOf="@+id/categorylistviewlayout"
                 android:background="@drawable/dataentry_title_bg_without_right_shadow"
-                android:padding="16dp"
                 android:orientation="horizontal"
+                android:padding="16dp"
                 android:visibility="gone" >
 
                 <TextView
@@ -357,10 +357,10 @@
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
             android:background="@drawable/dataentry_title_bg"
-            android:padding="16dp"
             android:cursorVisible="false"
             android:focusable="true"
             android:hint="Say more about what you are looking for"
+            android:padding="16dp"
             android:paddingRight="32dip"
             android:singleLine="true"
             android:textColor="@color/grey"

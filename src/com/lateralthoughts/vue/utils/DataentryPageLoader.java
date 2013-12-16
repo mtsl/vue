@@ -27,14 +27,14 @@ import com.lateralthoughts.vue.VueApplication;
 
 public class DataentryPageLoader {
 
-	PhotosQueue photosQueue;
-	PhotosLoader photoLoaderThread;
+	PhotosQueue mPhotosQueue;
+	PhotosLoader mPhotoLoaderThread;
 	public static DataentryPageLoader mOtherSourceImageLoader;
 
 	public DataentryPageLoader() {
-		photosQueue = new PhotosQueue();
-		photoLoaderThread = new PhotosLoader();
-		photoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
+		mPhotosQueue = new PhotosQueue();
+		mPhotoLoaderThread = new PhotosLoader();
+		mPhotoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
 	}
 
 	public static DataentryPageLoader getInstatnce() {
@@ -57,17 +57,17 @@ public class DataentryPageLoader {
 			String imagePath, ImageView imageView,
 			ProgressBar dataEntryRowAisleImage, LinearLayout imageDeleteBtn,
 			boolean isAddedToServer, boolean hideDeleteButton) {
-		photosQueue.Clean(imageView);
+		mPhotosQueue.Clean(imageView);
 		PhotoToLoad p = new PhotoToLoad(originalImagePath, imageUrl, imagePath,
 				imageView, dataEntryRowAisleImage, imageDeleteBtn,
 				isAddedToServer, hideDeleteButton);
-		synchronized (photosQueue.photosToLoad) {
-			photosQueue.photosToLoad.push(p);
-			photosQueue.photosToLoad.notifyAll();
+		synchronized (mPhotosQueue.photosToLoad) {
+			mPhotosQueue.photosToLoad.push(p);
+			mPhotosQueue.photosToLoad.notifyAll();
 		}
 
-		if (photoLoaderThread.getState() == Thread.State.NEW)
-			photoLoaderThread.start();
+		if (mPhotoLoaderThread.getState() == Thread.State.NEW)
+			mPhotoLoaderThread.start();
 	}
 
 	private class PhotoToLoad {
@@ -95,7 +95,7 @@ public class DataentryPageLoader {
 	}
 
 	public void stopThread() {
-		photoLoaderThread.interrupt();
+		mPhotoLoaderThread.interrupt();
 	}
 
 	class PhotosQueue {
@@ -115,14 +115,14 @@ public class DataentryPageLoader {
 		public void run() {
 			try {
 				while (true) {
-					if (photosQueue.photosToLoad.size() == 0)
-						synchronized (photosQueue.photosToLoad) {
-							photosQueue.photosToLoad.wait();
+					if (mPhotosQueue.photosToLoad.size() == 0)
+						synchronized (mPhotosQueue.photosToLoad) {
+							mPhotosQueue.photosToLoad.wait();
 						}
-					if (photosQueue.photosToLoad.size() != 0) {
+					if (mPhotosQueue.photosToLoad.size() != 0) {
 						PhotoToLoad photoToLoad;
-						synchronized (photosQueue.photosToLoad) {
-							photoToLoad = photosQueue.photosToLoad.pop();
+						synchronized (mPhotosQueue.photosToLoad) {
+							photoToLoad = mPhotosQueue.photosToLoad.pop();
 						}
 						File f = new File(photoToLoad.imagePath);
 						if (f != null && f.exists()) {
@@ -271,7 +271,6 @@ public class DataentryPageLoader {
 	private void getResizedImage(File f, File resizedFileName,
 			float screenHeight, float screenWidth, Context mContext) {
 		try {
-			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
 			FileInputStream stream1 = new FileInputStream(f);
@@ -283,21 +282,12 @@ public class DataentryPageLoader {
 			int heightRatio = 0;
 			int widthRatio = 0;
 			if (height > screenHeight) {
-				// Calculate ratios of height and width to requested height and
-				// width
 				heightRatio = Math.round((float) height / (float) screenHeight);
 			}
 			if (width > screenWidth) {
-				// Calculate ratios of height and width to requested height and
-				// width
 				widthRatio = Math.round((float) width / (float) screenWidth);
 			}
-			// Choose the smallest ratio as inSampleSize value, this will
-			// guarantee
-			// a final image with both dimensions larger than or equal to the
-			// requested height and width.
 			scale = heightRatio < widthRatio ? heightRatio : widthRatio;
-			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = (int) scale;
 			FileInputStream stream2 = new FileInputStream(f);

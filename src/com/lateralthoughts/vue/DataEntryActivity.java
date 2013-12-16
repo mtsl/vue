@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -310,10 +309,7 @@ public class DataEntryActivity extends Activity {
 				if (mDataEntryFragment.mAisleImagePathList.size() == 0) {
 					firstTimeFlag = true;
 				}
-				Log.e("DataentryActivity", "firsttimeflag called : "
-						+ firstTimeFlag);
 				if (firstTimeFlag) {
-					Log.e("DataentryActivity", "if firsttimeflag called : ");
 					mDataEntryFragment
 							.showDetailsScreenImagesInDataentryScreen();
 				}
@@ -348,7 +344,6 @@ public class DataEntryActivity extends Activity {
 									.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE));
 				}
 			}
-			Log.e("cs", "32");
 			mDataEntryFragment.mOtherSourceSelectedImageUrl = b
 					.getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IMAGEURL);
 			mDataEntryFragment.mOtherSourceImageOriginalWidth = b
@@ -418,40 +413,24 @@ public class DataEntryActivity extends Activity {
 				}
 			}
 		}
-		if (getActionBar().getTitle().toString() != null
-				&& getActionBar()
-						.getTitle()
-						.toString()
-						.trim()
-						.equals(getResources().getString(
-								R.string.add_imae_to_aisle_screen_title))) {
-			//showDefaultActionbarWithSkipButton();
-		}
 	}
 
 	private void initialize() {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		// set a custom shadow that overlays the main content when the drawer
-		// opens
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
-		// set up the drawer's list view with items and click listener
-
-		// enable ActionBar app icon to behave as action to toggle nav drawer
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
 		getActionBar().setBackgroundDrawable(
 				getResources().getDrawable(R.drawable.actionbar_bg));
-
-		// ActionBarDrawerToggle ties together the the proper interactions
-		// between the sliding drawer and the action bar app icon
 		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
 		mDrawerLayout, /* DrawerLayout object */
-		R.drawable.ic_navigation_drawer, /*
-										 * nav drawer image to replace 'Up'
-										 * caret
-										 */
-		R.string.drawer_open, /* "open drawer" description for accessibility */
+		R.drawable.ic_navigation_drawer, R.string.drawer_open, /*
+																 * "open drawer"
+																 * description
+																 * for
+																 * accessibility
+																 */
 		R.string.drawer_close /* "close drawer" description for accessibility */
 		) {
 			public void onDrawerClosed(View view) {
@@ -472,7 +451,6 @@ public class DataEntryActivity extends Activity {
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		// Sync the toggle state after onRestoreInstanceState has occurred.
 		mDrawerToggle.syncState();
 	}
 
@@ -491,8 +469,6 @@ public class DataEntryActivity extends Activity {
 		} else if (item.getItemId() == R.id.menu_close_dataentry) {
 			showDiscardOtherAppImageDialog("Do you want to cancel addImage?");
 		}
-		// Handle your other action bar items...
-
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -500,8 +476,7 @@ public class DataEntryActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.dataentry_actionbar, menu);
 		getActionBar().setHomeButtonEnabled(true);
-		// Configure the search info and add any event listeners
-		return true;// super.onCreateOptionsMenu(menu);
+		return true;
 	}
 
 	@Override

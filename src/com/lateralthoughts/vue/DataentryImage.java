@@ -3,6 +3,11 @@ package com.lateralthoughts.vue;
 import java.io.Serializable;
 
 public class DataentryImage implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2194853816198755934L;
+
 	public String getResizedImagePath() {
 		return resizedImagePath;
 	}

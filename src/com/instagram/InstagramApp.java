@@ -15,8 +15,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-
 import com.instagram.InstagramDialog.OAuthDialogListener;
 
 public class InstagramApp {
@@ -26,14 +24,10 @@ public class InstagramApp {
 	private OAuthAuthenticationListener mListener;
 	private ProgressDialog mProgress;
 	private String mAuthUrl;
-	private String mTokenUrl;
 	private String mAccessToken;
-	private Context mCtx;
-
 	private String mClientId;
 	private String mClientSecret;
 
-	private static int WHAT_FINALIZE = 0;
 	private static int WHAT_ERROR = 1;
 	private static int WHAT_FETCH_INFO = 2;
 
@@ -45,22 +39,15 @@ public class InstagramApp {
 	public static String mCallbackUrl = "";
 	private static final String AUTH_URL = "https://api.instagram.com/oauth/authorize/";
 	private static final String TOKEN_URL = "https://api.instagram.com/oauth/access_token";
-	private static final String API_URL = "https://api.instagram.com/v1";
-
-	private static final String TAG = "InstagramAPI";
 
 	public InstagramApp(Context context, String clientId, String clientSecret,
 			String callbackUrl) {
 
 		mClientId = clientId;
 		mClientSecret = clientSecret;
-		mCtx = context;
 		mSession = new InstagramSession(context);
 		mAccessToken = mSession.getAccessToken();
 		mCallbackUrl = callbackUrl;
-		mTokenUrl = TOKEN_URL + "?client_id=" + clientId + "&client_secret="
-				+ clientSecret + "&redirect_uri=" + mCallbackUrl
-				+ "&grant_type=authorization_code";
 		mAuthUrl = AUTH_URL
 				+ "?client_id="
 				+ clientId
@@ -92,18 +79,14 @@ public class InstagramApp {
 		new Thread() {
 			@Override
 			public void run() {
-				Log.i(TAG, "Getting access token");
 				int what = WHAT_FETCH_INFO;
 				try {
 					URL url = new URL(TOKEN_URL);
-					// URL url = new URL(mTokenUrl + "&code=" + code);
-					Log.i(TAG, "Opening Token URL " + url.toString());
 					HttpURLConnection urlConnection = (HttpURLConnection) url
 							.openConnection();
 					urlConnection.setRequestMethod("POST");
 					urlConnection.setDoInput(true);
 					urlConnection.setDoOutput(true);
-					// urlConnection.connect();
 					OutputStreamWriter writer = new OutputStreamWriter(
 							urlConnection.getOutputStream());
 					writer.write("client_id=" + mClientId + "&client_secret="
@@ -112,13 +95,10 @@ public class InstagramApp {
 					writer.flush();
 					String response = streamToString(urlConnection
 							.getInputStream());
-					Log.i(TAG, "response " + response);
 					JSONObject jsonObj = (JSONObject) new JSONTokener(response)
 							.nextValue();
 
 					mAccessToken = jsonObj.getString("access_token");
-					Log.i(TAG, "Got access token: " + mAccessToken);
-
 					String id = jsonObj.getJSONObject("user").getString("id");
 					String user = jsonObj.getJSONObject("user").getString(
 							"username");
@@ -143,45 +123,6 @@ public class InstagramApp {
 		}.start();
 	}
 
-	private void fetchUserName() {
-		mProgress.setMessage("Finalizing ...");
-
-		new Thread() {
-			@Override
-			public void run() {
-				Log.i(TAG, "Fetching user info");
-				int what = WHAT_FINALIZE;
-				try {
-					URL url = new URL(API_URL + "/users/" + mSession.getId()
-							+ "/?access_token=" + mAccessToken);
-
-					Log.d(TAG, "Opening URL " + url.toString());
-					HttpURLConnection urlConnection = (HttpURLConnection) url
-							.openConnection();
-					urlConnection.setRequestMethod("GET");
-					urlConnection.setDoInput(true);
-					urlConnection.setDoOutput(true);
-					urlConnection.connect();
-					String response = streamToString(urlConnection
-							.getInputStream());
-					System.out.println(response);
-					JSONObject jsonObj = (JSONObject) new JSONTokener(response)
-							.nextValue();
-					String name = jsonObj.getJSONObject("data").getString(
-							"full_name");
-					String bio = jsonObj.getJSONObject("data").getString("bio");
-					Log.i(TAG, "Got name: " + name + ", bio [" + bio + "]");
-				} catch (Exception ex) {
-					what = WHAT_ERROR;
-					ex.printStackTrace();
-				}
-
-				mHandler.sendMessage(mHandler.obtainMessage(what, 2, 0));
-			}
-		}.start();
-
-	}
-
 	private Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -192,9 +133,7 @@ public class InstagramApp {
 				} else if (msg.arg1 == 2) {
 					mListener.onFail("Failed to get user information");
 				}
-			} /*else if (msg.what == WHAT_FETCH_INFO) {
-				 fetchUserName();
-			} */else {
+			} else {
 				mProgress.dismiss();
 				mListener.onSuccess();
 			}
@@ -234,9 +173,6 @@ public class InstagramApp {
 	}
 
 	public void authorize() {
-		// Intent webAuthIntent = new Intent(Intent.ACTION_VIEW);
-		// webAuthIntent.setData(Uri.parse(AUTH_URL));
-		// mCtx.startActivity(webAuthIntent);
 		mDialog.show();
 	}
 
