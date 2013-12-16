@@ -2169,7 +2169,6 @@ public class DataEntryFragment extends Fragment {
 			mProgressDialog = ProgressDialog.show(getActivity(), "",
 					"Please wait...");
 		}
-		sourceUrl = "http://m.bananarepublic.gap.com/product.html?dn=bp932409002&dv=0&shopid=2&pdn=bd5343";
 		mOtherSourceSelectedImageStore = Utils.getStoreNameFromUrl(sourceUrl);
 		GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
 				sourceUrl, getActivity(), false);
