@@ -198,6 +198,7 @@ public class VueConnectivityManager {
 * @param context
 * @return true if enabled.
 */
+  @SuppressWarnings("deprecation")
   private static boolean isAirplaneModeOn(Context context) {
 
     return Settings.System.getInt(context.getContentResolver(),

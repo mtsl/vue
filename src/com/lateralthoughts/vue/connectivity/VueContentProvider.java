@@ -464,7 +464,7 @@ public class VueContentProvider extends ContentProvider{
     String id;
 
     /*
-     * Update record in articles table and get the row number of recently
+     * Update record in aisles table and get the row number of recently
      * updated.
      */
     switch (URIMATCHER.match(uri)) {

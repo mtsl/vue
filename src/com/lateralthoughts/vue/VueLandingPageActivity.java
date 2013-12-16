@@ -808,10 +808,6 @@ public class VueLandingPageActivity extends Activity implements
 
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
-<<<<<<< HEAD
-=======
-
->>>>>>> 613869d100b8ca9561ab9a828fe784691e0e7078
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
