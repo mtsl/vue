@@ -5,17 +5,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.android.volley.toolbox.NetworkImageView;
-import com.lateralthoughts.vue.TrendingAislesLeftColumnAdapter.LeftList;
-import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseLeftListLisner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
-import com.lateralthoughts.vue.utils.Logging;
 
 
 public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
