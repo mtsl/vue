@@ -45,5 +45,10 @@ limitations under the License.
         <attr name="login_text" format="string" />
         <attr name="logout_text" format="string" />
     </declare-styleable>
+    <declare-styleable name="StaggeredGridView">
+        <attr name="sgv_drawSelectorOnTop" format="boolean" />
+        <attr name="sgv_numColumns" format="integer" />
+        <attr name="sgv_itemMargin" format="dimension" />
+    </declare-styleable>
 
 </resources>

@@ -16,7 +16,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -49,7 +48,6 @@ public class DataentryPageLoader {
 			String imagePath, ImageView imageView,
 			ProgressBar dataEntryRowAisleImage, LinearLayout imageDeleteBtn,
 			boolean isAddedToServer, boolean hideDeleteButton) {
-		Log.e("DataentryPageLoader", "Display image called :: " + imagePath);
 		queuePhoto(originalImagePath, imageUrl, imagePath, imageView,
 				dataEntryRowAisleImage, imageDeleteBtn, isAddedToServer,
 				hideDeleteButton);
@@ -128,13 +126,8 @@ public class DataentryPageLoader {
 						}
 						File f = new File(photoToLoad.imagePath);
 						if (f != null && f.exists()) {
-							Log.e("DataentryPageLoader",
-									"Display image called 1 :: " + f.getPath());
 							if (((String) photoToLoad.imageView.getTag())
 									.equals(photoToLoad.imagePath)) {
-								Log.e("DataentryPageLoader",
-										"Display image called 11 :: "
-												+ f.getPath());
 								Bitmap bmp = BitmapFactory.decodeFile(f
 										.getPath());
 								BitmapDisplayer bd = new BitmapDisplayer(bmp,
@@ -165,9 +158,6 @@ public class DataentryPageLoader {
 										VueApplication.getInstance());
 								if (((String) photoToLoad.imageView.getTag())
 										.equals(photoToLoad.imagePath)) {
-									Log.e("DataentryPageLoader",
-											"Display image called 11 :: "
-													+ f.getPath());
 									Bitmap bmp = BitmapFactory.decodeFile(f
 											.getPath());
 									BitmapDisplayer bd = new BitmapDisplayer(
@@ -210,9 +200,6 @@ public class DataentryPageLoader {
 									if (((String) photoToLoad.imageView
 											.getTag())
 											.equals(photoToLoad.imagePath)) {
-										Log.e("DataentryPageLoader",
-												"Display image called 11 :: "
-														+ f.getPath());
 										Bitmap bmp = BitmapFactory.decodeFile(f
 												.getPath());
 										BitmapDisplayer bd = new BitmapDisplayer(
@@ -262,7 +249,6 @@ public class DataentryPageLoader {
 		}
 
 		public void run() {
-			Log.e("DataentryPageLoader", "Display image called 111 :: ");
 			dataEntryRowAisleImage.setVisibility(View.GONE);
 			imageView.setVisibility(View.VISIBLE);
 			if (isAddedToServer) {
@@ -291,15 +277,11 @@ public class DataentryPageLoader {
 			FileInputStream stream1 = new FileInputStream(f);
 			BitmapFactory.decodeStream(stream1, null, o);
 			stream1.close();
-			Log.e("cs", "10");
 			int height = o.outHeight;
 			int width = o.outWidth;
 			int scale = 1;
 			int heightRatio = 0;
 			int widthRatio = 0;
-			Log.e("Utils bitmap path", f.getPath());
-			Log.e("Utils bitmap width", width + "..." + screenWidth);
-			Log.e("Utils bitmap height", height + "..." + screenHeight);
 			if (height > screenHeight) {
 				// Calculate ratios of height and width to requested height and
 				// width
@@ -316,14 +298,12 @@ public class DataentryPageLoader {
 			// requested height and width.
 			scale = heightRatio < widthRatio ? heightRatio : widthRatio;
 			// decode with inSampleSize
-			Log.e("cs", "12");
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = (int) scale;
 			FileInputStream stream2 = new FileInputStream(f);
 			Bitmap resizedBitmap = BitmapFactory
 					.decodeStream(stream2, null, o2);
 			stream2.close();
-			Log.e("cs", "13");
 			Utils.saveBitmap(resizedBitmap, resizedFileName);
 			BitmapFactory.Options o3 = new BitmapFactory.Options();
 			o3.inJustDecodeBounds = true;

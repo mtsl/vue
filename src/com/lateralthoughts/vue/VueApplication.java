@@ -12,11 +12,14 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.LruCache;
 import android.util.TypedValue;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
@@ -53,6 +56,9 @@ public class VueApplication extends Application {
 	public long mLaunchTime;
 	public long mLastRecordedTime;
 	ListFragementObj mListRefresobj;
+
+    public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
+    public static final String LOAD_IMAGES_REQUEST_TAG="LoadImagesTag";
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
@@ -131,6 +137,7 @@ public class VueApplication extends Application {
 			"com.robemall.zovi" };
 
 	public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
+    private final int MAX_BITMAP_COUNT = 512;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -205,6 +212,17 @@ public class VueApplication extends Application {
 
 		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 				crittercismConfig);
+
+        mImageLoader = new NetworkImageLoader(mVolleyRequestQueue, new ImageLoader.ImageCache() {
+            private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(MAX_BITMAP_COUNT);
+
+            public void putBitmap(String url, Bitmap bitmap) {
+                mCache.put(url, bitmap);
+            }
+            public Bitmap getBitmap(String url) {
+                return mCache.get(url);
+            }
+        });
 
 	}
 
@@ -302,25 +320,9 @@ public class VueApplication extends Application {
 			throw new IllegalStateException("RequestQueue not initialized");
 		}
 	}
-
-	/*
-	 * public boolean newVueTrendingAislesDataModel() { Log.e("Profiling",
-	 * "Profiling newVueTrendingAislesDataModel : " +
-	 * newVueTrendingAislesDataModel); return newVueTrendingAislesDataModel; }
-	 */
-
-	/*
-	 * public void setNewVueTrendingAislesDataModel (boolean createNewObject) {
-	 * newVueTrendingAislesDataModel = createNewObject; }
-	 */
-
-	/*
-	 * public BitmapCache getBitmapCache() { if (sBitmapCache == null)
-	 * sBitmapCache = new BitmapCache(512);
-	 * 
-	 * return sBitmapCache; }
-	 */
-
-	private BitmapCache sBitmapCache;
+    public ImageLoader getImageCacheLoader(){
+        return mImageLoader;
+    }
+    private ImageLoader mImageLoader;
 
 }

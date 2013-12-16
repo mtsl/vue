@@ -33,7 +33,6 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -67,13 +66,12 @@ import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
-public class VueLandingPageActivity extends Activity implements SearchView.OnQueryTextListener,
-SearchView.OnCloseListener {
+public class VueLandingPageActivity extends Activity implements
+		SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
 	private static final int DELAY_TIME = 500;
 	public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
 	private ProgressDialog mProgressDialog;
-	private LinearLayout mVueLandingKeyboardLayout;
 	private FrameLayout mVueLandingKeyboardCancel, mVueLandingKeyboardDone;
 	private View mVueLandingActionbarView;
 	private OtherSourcesDialog mOtherSourcesDialog = null;
@@ -103,8 +101,8 @@ SearchView.OnCloseListener {
 	public static String mLandingScreenName = null;
 	private boolean mHideDefaultActionbar = false;
 	private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
-	 private SearchView mSearchView;
-	 public static boolean mIsMyAilseCallEnable = false;
+	private SearchView mSearchView;
+	public static boolean mIsMyAilseCallEnable = false;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -124,7 +122,8 @@ SearchView.OnCloseListener {
 		mPd.setMessage("Loading...");
 		mPd.setCancelable(false);
 		clearDataEntryData();
-		getActionBar().setTitle(getString(R.string.sidemenu_option_Trending_Aisles));
+		getActionBar().setTitle(
+				getString(R.string.sidemenu_option_Trending_Aisles));
 		VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
 		VueApplication.getInstance().mLastRecordedTime = System
 				.currentTimeMillis();
@@ -132,8 +131,6 @@ SearchView.OnCloseListener {
 		invalidateOptionsMenu();
 		mVueLandingActionbarView = LayoutInflater.from(this).inflate(
 				R.layout.vue_landing_custom_actionbar, null);
-		mVueLandingKeyboardLayout = (LinearLayout) mVueLandingActionbarView
-				.findViewById(R.id.vue_landin_keyboard_layout);
 		mVueLandingKeyboardCancel = (FrameLayout) mVueLandingActionbarView
 				.findViewById(R.id.vue_landing_keyboard_cancel);
 		mVueLandingKeyboardDone = (FrameLayout) mVueLandingActionbarView
@@ -141,7 +138,6 @@ SearchView.OnCloseListener {
 		mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				addImageToExistingAisle(mOtherSourceAddImageAisleId);
 				mOtherSourceAddImageAisleId = null;
 				((VueLandingAislesFragment) mLandingAilsesFrag)
@@ -153,8 +149,16 @@ SearchView.OnCloseListener {
 		mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mVueLandingKeyboardLayout.setVisibility(View.GONE);
 				mOtherSourceAddImageAisleId = null;
+				mOtherSourceImagePath = null;
+				mOtherSourceImageUrl = null;
+				mOtherSourceImageWidth = 0;
+				mOtherSourceImageHeight = 0;
+				mOtherSourceImageDetailsUrl = null;
+				mOtherSourceImageStore = null;
+				mOtherSourceImageLookingFor = null;
+				mOtherSourceImageCategory = null;
+				mOtherSourceImageOccasion = null;
 				((VueLandingAislesFragment) mLandingAilsesFrag)
 						.notifyAdapters();
 				mHideDefaultActionbar = false;
@@ -200,7 +204,7 @@ SearchView.OnCloseListener {
 		super.onDestroy();
 		try {
 			if (mLandingScreenTitleReceiver != null) {
-				unregisterReceiver(mLandingScreenTitleReceiver);
+				VueApplication.getInstance().unregisterReceiver(mLandingScreenTitleReceiver);
 			}
 		} catch (Exception e) {
 		}
@@ -282,7 +286,7 @@ SearchView.OnCloseListener {
 			} else {
 				showDiscardOtherAppImageDialog();
 			}
- 
+
 		}
 		// Handle your other action bar items...
 		return super.onOptionsItemSelected(item);
@@ -293,26 +297,28 @@ SearchView.OnCloseListener {
 		getMenuInflater().inflate(R.menu.landing_actionbar, menu);
 		getActionBar().setHomeButtonEnabled(true);
 		// Configure the search info and add any event listeners
-		  SearchManager searchManager =
+	  SearchManager searchManager =
 		           (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 		  mSearchView =
 		            (SearchView) menu.findItem(R.id.menu_search).getActionView();
 		return true;// super.onCreateOptionsMenu(menu);
 	}
-	 
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean isdrawOpen = mDrawerLayout.isDrawerOpen(mContent_frame2);
-		getActionBar().setHomeButtonEnabled(true); 
+		getActionBar().setHomeButtonEnabled(true);
 		getActionBar().setDisplayShowCustomEnabled(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setDisplayShowHomeEnabled(true);
 		getActionBar().setCustomView(null);
+		getActionBar().setDisplayShowTitleEnabled(true);
 		if (isdrawOpen) {
 			menu.findItem(R.id.menu_search).setVisible(true);
 			menu.findItem(R.id.menu_create_aisle).setVisible(false);
 		} else {
 			if (mHideDefaultActionbar) {
+				getActionBar().setDisplayShowTitleEnabled(false);
 				getActionBar().setDisplayHomeAsUpEnabled(false);
 				getActionBar().setDisplayShowCustomEnabled(true);
 				getActionBar().setDisplayShowHomeEnabled(false);
@@ -433,8 +439,6 @@ SearchView.OnCloseListener {
 
 	private void handleSendText(Intent intent, boolean fromOnCreateMethodFlag) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText
-				+ "??? " + fromOnCreateMethodFlag);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
 			if (Utils.isLoadDataentryScreenFlag(this)) {
@@ -443,7 +447,6 @@ SearchView.OnCloseListener {
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
 							VueLandingPageActivity.this, false);
-					Log.e("Land", "vueland 1");
 					if (VueTrendingAislesDataModel.getInstance(this)
 							.getAisleCount() > 0) {
 						Intent i = new Intent(this,
@@ -480,10 +483,8 @@ SearchView.OnCloseListener {
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
 							VueLandingPageActivity.this, false);
-					Log.e("Land", "vueland 1");
 					if (VueTrendingAislesDataModel.getInstance(this)
 							.getAisleCount() > 0) {
-						Log.e("Land", "vueland 1");
 						Intent i = new Intent(this,
 								AisleDetailsViewActivity.class);
 						Bundle b = new Bundle();
@@ -535,10 +536,8 @@ SearchView.OnCloseListener {
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
 							VueLandingPageActivity.this, false);
-					Log.e("Land", "vueland 1");
 					if (VueTrendingAislesDataModel.getInstance(this)
 							.getAisleCount() > 0) {
-						Log.e("Land", "vueland 1");
 						Intent i = new Intent(this,
 								AisleDetailsViewActivity.class);
 						Bundle b = new Bundle();
@@ -705,23 +704,15 @@ SearchView.OnCloseListener {
 		String type = intent.getType();
 
 		if (Intent.ACTION_SEND.equals(action) && type != null) {
-			Log.e("CretaeAisleSelectionActivity send text", type);
 			if ("text/plain".equals(type)) {
 				handleSendText(intent, false); // Handle text being sent
-				Log.e("CretaeAisleSelectionActivity send text",
-						"textplain match");
 			} else if (type.startsWith("image/")) {
 				handleSendImage(intent, false); // Handle single image being
-												// sent
-				Log.e("CretaeAisleSelectionActivity send text", "image match");
 			}
 		} else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
 			if (type.startsWith("image/")) {
 				handleSendMultipleImages(intent, false); // Handle multiple
 															// images
-				// being sent
-				Log.e("CretaeAisleSelectionActivity send text",
-						"multiple image match");
 			}
 		} else {
 			// Handle other intents, such as being started from the home screen
@@ -749,7 +740,6 @@ SearchView.OnCloseListener {
 			}
 		}
 	};
- 
 
 	private void callForNewView(final String catName, boolean fromDialog) {
 		if (mLandingScreenName != null
@@ -766,7 +756,7 @@ SearchView.OnCloseListener {
 		StackViews.getInstance().push(viewInfo);
 		boolean loadMore = false;
 		boolean fromServer = true;
-		 
+
 		if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
 			mIsMyAilseCallEnable = true;
@@ -776,7 +766,7 @@ SearchView.OnCloseListener {
 			} else {
 				fromServer = false;
 			}
-			 
+
 			VueTrendingAislesDataModel
 					.getInstance(VueApplication.getInstance())
 					.getNetworkHandler()
@@ -784,7 +774,7 @@ SearchView.OnCloseListener {
 							catName);
 		} else if (catName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
-	 
+
 			if (fromDialog) {
 				fromServer = false;
 				loadMore = false;
@@ -796,7 +786,7 @@ SearchView.OnCloseListener {
 				VueTrendingAislesDataModel
 						.getInstance(VueApplication.getInstance())
 						.getNetworkHandler().makeOffseZero();
-				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+				//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(
 						VueApplication.getInstance()).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -813,16 +803,20 @@ SearchView.OnCloseListener {
 			}
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-			
+
 			getBookmarkedAisles(catName);
 
 		} else if (catName
 				.equals(getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 613869d100b8ca9561ab9a828fe784691e0e7078
 			ArrayList<AisleWindowContent> windowContent = DataBaseManager
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
-		 
-				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+
+				//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
 						VueApplication.getInstance()).clearObjectsInUse();
@@ -842,7 +836,7 @@ SearchView.OnCloseListener {
 				StackViews.getInstance().pull();
 			}
 		} else {
-		 
+
 		}
 
 		FlurryAgent.logEvent(catName);
@@ -872,7 +866,7 @@ SearchView.OnCloseListener {
 		if (windowContent != null && windowContent.size() > 0) {
 			getActionBar().setTitle(screenName);
 			mLandingScreenName = screenName;
-			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+			//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 			VueTrendingAislesDataModel.getInstance(this).clearAisles();
 			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
 					.clearObjectsInUse();
@@ -893,7 +887,7 @@ SearchView.OnCloseListener {
 	private void showPreviousScreen(String screenName) {
 		boolean fromServer = false;
 		boolean loadMore = false;
-		((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+		//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
 			getTrendingAislesFromDb(screenName, fromServer, loadMore);
@@ -957,7 +951,7 @@ SearchView.OnCloseListener {
 
 		@Override
 		public void clearBrowsers() {
-			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+			//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 		}
 	}
 
@@ -1139,6 +1133,7 @@ SearchView.OnCloseListener {
 				sourceUrl, this, true);
 		getImagesTask.execute();
 	}
+
 	public void CancelNotification(Context ctx, int notifyId) {
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager nMgr = (NotificationManager) ctx
@@ -1345,7 +1340,8 @@ SearchView.OnCloseListener {
 				VueApplication.getInstance()).getAisleFromList(
 				VueTrendingAislesDataModel.getInstance(
 						VueApplication.getInstance()).getAisleAt(aisleId));
-		if (aisleItem != null) {
+		if (aisleItem != null
+				&& VueApplication.getInstance().getmUserId() != null) {
 			AisleImageDetails imgDetails = new AisleImageDetails();
 			imgDetails.mAvailableHeight = imageHeight;
 			imgDetails.mAvailableWidth = imageWidth;

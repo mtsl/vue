@@ -44,7 +44,6 @@ public class VueContentRestService extends IntentService {
 	private HttpClient mHttpClient;
     public VueContentRestService(){
         super("VueContentRestService");
-        Log.e("VueContentRestService", "network connection VueContentRestService()");
     }
 
     @Override
@@ -53,7 +52,6 @@ public class VueContentRestService extends IntentService {
         VueApplication app = VueApplication.getInstance();
         mHttpClient = app.getHttpClient();
         //mHttpClient = new DefaultHttpClient();
-        Log.e("VueContentRestService", "network connection onStartCommand()");
         return START_STICKY;
     }
 
@@ -62,7 +60,6 @@ public class VueContentRestService extends IntentService {
     	if(null == intent)
     		return;
     	 if(!VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
-           Log.e("VueContentRestService", "network connection No");
            return;
          }
         mParams = intent.getParcelableArrayListExtra(PARAMS_FIELD);
@@ -125,7 +122,6 @@ public class VueContentRestService extends IntentService {
                 mReceiver.send(1, responseBundle);
                 instream.close();
             }else{
-                Log.e("VueTrendingAislesDataModel","looks like we don't have anything more?");
             }
 
         } catch (ClientProtocolException e)  {
@@ -162,11 +158,6 @@ public class VueContentRestService extends IntentService {
     ArrayList <ParcelableNameValuePair> mHeaders;
     private String mUrl;
     private ResultReceiver mReceiver;
-    
-    //private int mOffset;
-    //private int mLimit;
-    //private int mBatchSize;
-
     //http related objects that we need for the service
     HttpRequestBase mRequest;
 

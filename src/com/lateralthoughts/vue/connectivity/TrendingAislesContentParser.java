@@ -5,7 +5,11 @@ import java.util.ArrayList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Process;
+import junit.framework.Assert;
 
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
@@ -19,10 +23,28 @@ public class TrendingAislesContentParser extends ResultReceiver {
 	private int mState;
 
 	// this variable above is usually set to one of the following values
-
-	public TrendingAislesContentParser(Handler handler, int reciverSource) {
+    private static final int MORE_AISLES_PARSED = 1;
+    private static final int INITIALIZE = 2;
+	public TrendingAislesContentParser(Handler handler, int receiverSource) {
 		super(handler);
-		mState = reciverSource;
+		mState = receiverSource;
+
+        synchronized (TrendingAislesContentParser.class) {
+            if (sParserDBThreadHandler == null) {
+                // Create a global thread and start it.
+                Thread t = new Thread(new ContentParserDBThread());
+                t.setName("DB Writer");
+                t.start();
+                try {
+                    TrendingAislesContentParser.class.wait();
+                    Message msg = new Message();
+                    msg.what = INITIALIZE;
+                    sParserDBThreadHandler.sendMessage(msg);
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                }
+            }
+        }
 	}
 
 	@Override
@@ -30,135 +52,14 @@ public class TrendingAislesContentParser extends ResultReceiver {
 	protected void onReceiveResult(int resultCode, final Bundle resultData) {
 		switch (mState) {
 		case VueConstants.AISLE_TRENDING_LIST_DATA:
-			long elapsedTime = System.currentTimeMillis()
-					- VueApplication.getInstance().mLastRecordedTime;
-			Log.e("PERF_VUE",
-					"AISLE_TRENDING_LIST_DATA is the state. Received content. Time elapsed = "
-							+ elapsedTime);
-			VueApplication.getInstance().mLastRecordedTime = System
-					.currentTimeMillis();
+			long elapsedTime = System.currentTimeMillis() - VueApplication.getInstance().mLastRecordedTime;
+			VueApplication.getInstance().mLastRecordedTime = System.currentTimeMillis();
 
-			Thread t = new Thread(new Runnable() {
-				@Override
-				public void run() {
-
-					final ArrayList<AisleWindowContent> aislesList = new Parser()
-							.parseTrendingAislesResultData(
-									resultData.getString("result"),
-									resultData.getBoolean("loadMore"));
-					int offset = resultData.getInt("offset");
-
-					DataBaseManager.getInstance(VueApplication.getInstance())
-							.addTrentingAislesFromServerToDB(
-									VueApplication.getInstance(), aislesList,
-									offset, DataBaseManager.TRENDING);
-
-					Log.i("ailsesize",
-							"Suru comment show: " + aislesList.size());
-
-					boolean refreshListFlag = true;
-					/*
-					 * if(!VueTrendingAislesDataModel.getInstance(VueApplication.
-					 * getInstance()).isFromDb) {
-					 */
-					if (VueLandingPageActivity.landingPageActivity != null
-							&& VueLandingPageActivity.mLandingScreenName != null
-							&& (VueLandingPageActivity.mLandingScreenName
-									.equals(VueApplication
-											.getInstance()
-											.getString(
-													R.string.sidemenu_option_Trending_Aisles)))) {
-						if (VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag) {
-							VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
-							if (resultData.getInt("offset") == 0) {
-								refreshListFlag = true;
-							}
-						} else {
-							refreshListFlag = true;
-						}
-					}
-					VueLandingPageActivity.landingPageActivity
-							.runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									VueTrendingAislesDataModel.getInstance(
-											VueApplication.getInstance())
-											.dismissProgress();
-
-								}
-							});
-					if (VueLandingPageActivity.landingPageActivity != null
-							&& VueLandingPageActivity.mLandingScreenName != null
-							&& (VueLandingPageActivity.mLandingScreenName
-									.equals(VueApplication
-											.getInstance()
-											.getString(
-													R.string.sidemenu_sub_option_My_Aisles)))) {
-						refreshListFlag = false;
-					}
-					/*
-					 * } else {
-					 * VueTrendingAislesDataModel.getInstance(VueApplication
-					 * .getInstance()).loadOnRequest = true;
-					 * Log.i("listmovingissue", "listmovingissue***: dbcase"); }
-					 */
-
-					if (refreshListFlag) {
-						VueLandingPageActivity.landingPageActivity
-								.runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-
-										if (VueLandingPageActivity.mLandingScreenName != null
-												&& VueLandingPageActivity.mLandingScreenName
-														.equals(VueApplication
-																.getInstance()
-																.getString(
-																		R.string.sidemenu_sub_option_Bookmarks))) {
-											VueTrendingAislesDataModel
-													.getInstance(VueApplication
-															.getInstance()).loadOnRequest = false;
-										} else {
-											VueTrendingAislesDataModel
-													.getInstance(VueApplication
-															.getInstance()).loadOnRequest = true;
-											if (aislesList != null
-													&& aislesList.size() > 0) {
-											  int listSize = aislesList.size();
-	                                                for (int i = 0; i < listSize; i++) {
-													VueTrendingAislesDataModel model = VueTrendingAislesDataModel
-															.getInstance(VueApplication
-																	.getInstance());
-													model.addItemToList(
-															aislesList
-																	.get(i)
-																	.getAisleContext().mAisleId,
-															aislesList.get(i));
-												}
-
-												VueTrendingAislesDataModel
-														.getInstance(
-																VueApplication
-																		.getInstance())
-														.dismissProgress();
-												// if this is the first set of
-												// data we are receiving
-												// go ahead
-												// notify the data set changed
-												VueTrendingAislesDataModel
-														.getInstance(
-																VueApplication
-																		.getInstance())
-														.dataObserver();
-											}
-										}
-									}
-								});
-					}
-
-				}
-			});
-			t.start();
+            Message msg = new Message();
+            msg.what = MORE_AISLES_PARSED;
+            msg.obj = resultData;
+            //sParserDBThreadHandler.sendMessageDelayed(msg, 1000);
+            sParserDBThreadHandler.sendMessage(msg);
 			break;
 		case VueConstants.AISLE_TRENDING_PARSED_DATA:
 			VueTrendingAislesDataModel
@@ -177,23 +78,155 @@ public class TrendingAislesContentParser extends ResultReceiver {
 		}
 	}
 
-	/*
-	 * private class DbDataSetter extends AsyncTask<Void, Void, Void> {
-	 * ArrayList<AisleWindowContent> mAislesList;
-	 * 
-	 * public DbDataSetter(ArrayList<AisleWindowContent> aislesList) {
-	 * mAislesList = aislesList; }
-	 * 
-	 * @Override protected void onPreExecute() { // TODO Auto-generated method
-	 * stub super.onPreExecute(); }
-	 * 
-	 * @Override protected Void doInBackground(Void... params) {
-	 * DataBaseManager.
-	 * getInstance(VueApplication.getInstance()).addTrentingAislesFromServerToDB
-	 * ( VueApplication.getInstance(), mAislesList); return null; }
-	 * 
-	 * @Override protected void onPostExecute(Void result) {
-	 * mAislesList.clear(); super.onPostExecute(result); } }
-	 */
+    private static Handler sParserDBThreadHandler;
+    private static class ContentParserDBThread implements Runnable {
+        // Message id for initializing a new WebViewCore.
+        private static final int INITIALIZE = 0;
+        private static final int REDUCE_PRIORITY = 1;
+        private static final int RESUME_PRIORITY = 2;
 
+        public void run() {
+            Looper.prepare();
+            Assert.assertNull(sParserDBThreadHandler);
+            synchronized (TrendingAislesContentParser.class) {
+                sParserDBThreadHandler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        switch (msg.what) {
+                            case INITIALIZE:
+                                //WebViewCore core = (WebViewCore) msg.obj;
+                                //core.initialize();
+                                Process.setThreadPriority(Process.THREAD_PRIORITY_MORE_FAVORABLE);
+                                break;
+
+                            /*case REDUCE_PRIORITY:
+                                // 3 is an adjustable number.
+                                Process.setThreadPriority(
+                                        Process.THREAD_PRIORITY_DEFAULT + 3 *
+                                                Process.THREAD_PRIORITY_LESS_FAVORABLE);
+                                break;
+
+                            case RESUME_PRIORITY:
+                                Process.setThreadPriority(
+                                        Process.THREAD_PRIORITY_DEFAULT);
+                                break;*/
+
+                            case MORE_AISLES_PARSED:
+                            {
+                                Bundle resultData = (Bundle)msg.obj;
+                                boolean refreshListFlag = true;
+                                final ArrayList<AisleWindowContent> aislesList = new Parser()
+                                        .parseTrendingAislesResultData(
+                                                resultData.getString("result"),
+                                                resultData.getBoolean("loadMore"));
+                                int offset = resultData.getInt("offset");
+
+                                if (VueLandingPageActivity.landingPageActivity != null
+                                        && VueLandingPageActivity.mLandingScreenName != null
+                                        && (VueLandingPageActivity.mLandingScreenName
+                                        .equals(VueApplication
+                                                .getInstance()
+                                                .getString(
+                                                        R.string.sidemenu_option_Trending_Aisles)))) {
+                                    if (VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag) {
+                                        VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
+                                        if (resultData.getInt("offset") == 0) {
+                                            refreshListFlag = true;
+                                        }
+                                    } else {
+                                        refreshListFlag = true;
+                                    }
+                                }
+                                VueLandingPageActivity.landingPageActivity
+                                        .runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                VueTrendingAislesDataModel.getInstance(
+                                                        VueApplication.getInstance())
+                                                        .dismissProgress();
+
+                                            }
+                                        });
+                                if (VueLandingPageActivity.landingPageActivity != null
+                                        && VueLandingPageActivity.mLandingScreenName != null
+                                        && (VueLandingPageActivity.mLandingScreenName
+                                        .equals(VueApplication
+                                                .getInstance()
+                                                .getString(
+                                                        R.string.sidemenu_sub_option_My_Aisles)))) {
+                                    refreshListFlag = false;
+                                }
+
+                                if (refreshListFlag) {
+                                    VueLandingPageActivity.landingPageActivity
+                                            .runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+
+                                                    if (VueLandingPageActivity.mLandingScreenName != null
+                                                            && VueLandingPageActivity.mLandingScreenName
+                                                            .equals(VueApplication
+                                                                    .getInstance()
+                                                                    .getString(
+                                                                            R.string.sidemenu_sub_option_Bookmarks))) {
+                                                        VueTrendingAislesDataModel
+                                                                .getInstance(VueApplication
+                                                                        .getInstance()).loadOnRequest = false;
+                                                    } else {
+                                                        VueTrendingAislesDataModel
+                                                                .getInstance(VueApplication
+                                                                        .getInstance()).loadOnRequest = true;
+                                                        if (aislesList != null
+                                                                && aislesList.size() > 0) {
+                                                            for (int i = 0; i < aislesList
+                                                                    .size(); i++) {
+                                                                VueTrendingAislesDataModel model = VueTrendingAislesDataModel
+                                                                        .getInstance(VueApplication
+                                                                                .getInstance());
+                                                                model.addItemToList(
+                                                                        aislesList
+                                                                                .get(i)
+                                                                                .getAisleContext().mAisleId,
+                                                                        aislesList.get(i));
+                                                            }
+
+                                                            VueTrendingAislesDataModel
+                                                                    .getInstance(
+                                                                            VueApplication
+                                                                                    .getInstance())
+                                                                    .dismissProgress();
+                                                            // if this is the first set of
+                                                            // data we are receiving
+                                                            // go ahead
+                                                            // notify the data set changed
+                                                            VueTrendingAislesDataModel
+                                                                    .getInstance(
+                                                                            VueApplication
+                                                                                    .getInstance())
+                                                                    .dataObserver();
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                }
+                                /*final ArrayList<AisleWindowContent> aislesList = new Parser()
+                                        .parseTrendingAislesResultData(
+                                                resultData.getString("result"),
+                                                resultData.getBoolean("loadMore"));
+                                int offset = resultData.getInt("offset");*/
+
+                                DataBaseManager.getInstance(VueApplication.getInstance())
+                                        .addTrentingAislesFromServerToDB(
+                                                VueApplication.getInstance(), aislesList,
+                                                offset, DataBaseManager.TRENDING);
+                            }
+                            break;
+                        }
+                    }
+                };
+                TrendingAislesContentParser.class.notify();
+            }
+            Looper.loop();
+        }
+    }
 }

@@ -6,7 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
+ 
 
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
@@ -34,10 +34,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent inetent) {
-    Log.e("NetworkStateChangeReciver", "SURU NEWWORK STATE CHANGED : ");
     if (VueConnectivityManager.isNetworkConnected(context)) {
-      Log.e("NetworkStateChangeReciver",
-          "SURU NEWWORK STATE CHANGED : network CONNECTED");
       // TODO: if Database is dirty use shared preference here.
       mSharedPreferencesObj = context.getSharedPreferences(
           VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -66,7 +63,6 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
 
               @Override
               public void onResponse(String jsonArray) {
-                Log.e("Search Resopnse", "SURU bookmark success Resopnse : ");
                 if (jsonArray != null) {
                   try {
                     createdAisleBookmark = (new ObjectMapper()).readValue(
@@ -85,8 +81,6 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
               @Override
               public void onErrorResponse(VolleyError error) {
                 isDirty = true;
-                Log.e("Search Resopnse", "SURU bookmark Error Resopnse : "
-                    + error.getMessage());
               }
             };
             BookmarkPutRequest request = new BookmarkPutRequest(

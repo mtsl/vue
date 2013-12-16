@@ -98,68 +98,7 @@ public class AisleManager {
 		Thread t = new Thread(
 				new AisleCreationBackgroundThread(aisle, callback));
 		t.start();
-		// TODO: change to vally.
-		/*
-		 * if (null == aisle) throw new RuntimeException(
-		 * "Can't create Aisle without a non null aisle object"); String
-		 * aisleAsString = null; try { aisleAsString =
-		 * mObjectMapper.writeValueAsString(aisle); } catch
-		 * (JsonProcessingException ex2) {
-		 * 
-		 * } Response.Listener listener = new Response.Listener<String>() {
-		 * 
-		 * @Override public void onResponse(String jsonArray) { if (null !=
-		 * jsonArray) {
-		 * 
-		 * Log.i("myailsedebug", "myailsedebug: recieved response:  " +
-		 * jsonArray); try { // JSONObject userInfo = new JSONObject(jsonArray);
-		 * 
-		 * AisleWindowContent aileItem = new Parser()
-		 * .getAisleCotent(jsonArray); VueTrendingAislesDataModel.getInstance(
-		 * VueApplication.getInstance()).addItemToListAt(
-		 * aileItem.getAisleContext().mAisleId, aileItem, 0);
-		 * VueTrendingAislesDataModel.getInstance(
-		 * VueApplication.getInstance()).dataObserver();
-		 * ArrayList<AisleWindowContent> list = new
-		 * ArrayList<AisleWindowContent>(); list.add(aileItem);
-		 * DataBaseManager.getInstance(VueApplication.getInstance
-		 * ()).addTrentingAislesFromServerToDB
-		 * (VueApplication.getInstance(),list); // JSONObject user =
-		 * userInfo.getJSONObject("user"); // TODO: GET THE AISLE OBJECT FROM
-		 * THE PARSER CLASE SEND // THE AISLE AND AISLE ID BACK.
-		 * callback.onAisleUpdated(aileItem.getAisleContext().mAisleId);
-		 * FlurryAgent.logEvent("Create_Aisle_Success"); //
-		 * VueTrendingAislesDataModel
-		 * .getInstance(VueApplication.getInstance()).getNetworkHandler
-		 * ().requestAislesByUser(); } catch (Exception ex) { Log.e("Profiling",
-		 * "Profiling : onResponse() **************** error");
-		 * ex.printStackTrace(); } } else {
-		 * Toast.makeText(VueApplication.getInstance(),
-		 * "New Aisle Creation in server is failed.", Toast.LENGTH_LONG).show();
-		 * 
-		 * } } }; Response.ErrorListener errorListener = new
-		 * Response.ErrorListener() {
-		 * 
-		 * @Override public void onErrorResponse(VolleyError error) {
-		 * Log.i("imageurl", "imageurl  aisle creation error response ");
-		 * Toast.makeText(VueApplication.getInstance(),
-		 * "New Aisle Creation in server is failed.", Toast.LENGTH_LONG).show();
-		 * if (null != error.networkResponse && null !=
-		 * error.networkResponse.data) { String errorData =
-		 * error.networkResponse.data.toString();
-		 * 
-		 * } } }; Log.i("imageurl",
-		 * "imageurl  aisle creation request aisleAsString: " + aisleAsString);
-		 * // String requestUrl = VUE_API_BASE_URI + CREATE_AISLE_ENDPOINT;
-		 * String requestUrl = UrlConstants.CREATE_AISLE_RESTURL;
-		 * 
-		 * Log.i("imageurl", "imageurl  aisle creation request url: " +
-		 * requestUrl);
-		 * 
-		 * AislePutRequest request = new AislePutRequest(aisleAsString,
-		 * listener, errorListener, requestUrl);
-		 * VueApplication.getInstance().getRequestQueue().add(request);
-		 */}
+	 }
 
 	public void updateAisle(final Aisle aisle) {
 		Thread t = new Thread(new AisleUpdateBackgroundThread(aisle));
@@ -194,8 +133,6 @@ public class AisleManager {
 	public void addImageToAisle(final boolean fromDetailsScreenFlag,
 			String imageId, VueImage image,
 			ImageAddedCallback imageAddedCallback) {
-		Log.i("addimagefuncitonality",
-				"addimagefuncitonality entered in method");
 		if (null == image) {
 			throw new RuntimeException(
 					"Can't create Aisle without a non null aisle object");
@@ -204,54 +141,6 @@ public class AisleManager {
 		Thread t = new Thread(new AddImageToAisleBackgroundThread(image,
 				fromDetailsScreenFlag, imageId, imageAddedCallback));
 		t.start();
-		/*
-		 * String imageAsString = null; try { imageAsString =
-		 * mObjectMapper.writeValueAsString(image); } catch
-		 * (JsonProcessingException ex2) {
-		 * 
-		 * } Response.Listener listener = new Response.Listener<String>() {
-		 * 
-		 * @Override public void onResponse(String jsonArray) {
-		 * 
-		 * if (null != jsonArray) {
-		 * 
-		 * if (!fromDetailsScreenFlag) { Log.i("addimagefuncitonality",
-		 * "addimagefuncitonality jsonArray response: " + jsonArray); try {
-		 * AisleImageDetails aisleImageDetails = new Parser()
-		 * .parseAisleImageData(new JSONObject( jsonArray)); if
-		 * (aisleImageDetails != null) { AisleWindowContent aisleWindowContent =
-		 * VueTrendingAislesDataModel .getInstance(
-		 * VueApplication.getInstance()) .getAisleAt(
-		 * aisleImageDetails.mOwnerAisleId); aisleWindowContent
-		 * .prepareCustomUrl(aisleImageDetails); Log.i("Ailse Manager",
-		 * "customimageurl add image to aisle: " +
-		 * aisleImageDetails.mCustomImageUrl);
-		 * aisleWindowContent.getImageList().add( aisleImageDetails);
-		 * VueTrendingAislesDataModel.getInstance( VueApplication.getInstance())
-		 * .dataObserver(); String s[] = { aisleImageDetails.mOwnerAisleId };
-		 * ArrayList<AisleWindowContent> list = DataBaseManager .getInstance(
-		 * VueApplication.getInstance()) .getAislesFromDB(s); if (list != null)
-		 * { list.get(0).getImageList() .add(aisleImageDetails); DataBaseManager
-		 * .getInstance( VueApplication .getInstance())
-		 * .addTrentingAislesFromServerToDB( VueApplication .getInstance(),
-		 * list); } } } catch (JSONException e) { e.printStackTrace(); } } //
-		 * callback.onImageAdded(new // Parser().getImageDetails(jsonArray)); }
-		 * } }; Response.ErrorListener errorListener = new
-		 * Response.ErrorListener() {
-		 * 
-		 * @Override public void onErrorResponse(VolleyError error) {
-		 * 
-		 * if (null != error.networkResponse && null !=
-		 * error.networkResponse.data) { String errorData =
-		 * error.networkResponse.data.toString(); Log.i("addimagefuncitonality",
-		 * "addimagefuncitonality jsonArray response ERROR: "); } } };
-		 * Log.i("addimagefuncitonality",
-		 * "addimagefuncitonality entered in method requst String: " +
-		 * imageAsString); AislePutRequest request = new
-		 * AislePutRequest(imageAsString, listener, errorListener,
-		 * UrlConstants.CREATE_IMAGE_RESTURL);
-		 * VueApplication.getInstance().getRequestQueue().add(request);
-		 */
 	}
 
 	private class AislePutRequest extends Request<String> {
@@ -334,13 +223,7 @@ public class AisleManager {
 		if (response.getEntity() != null
 				&& response.getStatusLine().getStatusCode() == 200) {
 			responseMessage = EntityUtils.toString(response.getEntity());
-			System.out.println("AISLE CREATED Response: " + responseMessage);
-			Log.i("myailsedebug", "myailsedebug: recieved response*******:  "
-					+ responseMessage);
 		} else {
-			Log.i("myailsedebug",
-					"myailsedebug: recieved response******* response code :  "
-							+ response.getStatusLine().getStatusCode());
 		}
 		return responseMessage;
 

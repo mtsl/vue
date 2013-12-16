@@ -27,7 +27,6 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -57,8 +56,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 	public TrendingAislesGenericAdapter(Context c,
 			ArrayList<AisleWindowContent> content) {
 		mContext = c;
-		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+
 		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
 				.getInstance(mContext);
 		mVueTrendingAislesDataModel.registerAisleDataObserver(this);
@@ -75,8 +73,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 			AisleContentClickListener listener,
 			ArrayList<AisleWindowContent> content) {
 		mContext = c;
-		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+
 		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
 				.getInstance(mContext);
 		mVueTrendingAislesDataModel.registerAisleDataObserver(this);
@@ -108,15 +105,11 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
 
 	// create a new ImageView for each item referenced by the Adapter
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Log.i("TrendingDataModel",
-				"DataObserver for List Refresh:   Generic getview called");
 		return convertView;
 	}
 
 	@Override
 	public void onAisleDataUpdated(int newCount) {
-		Log.i("TrendingDataModel",
-				"DataObserver for List Refresh:  Generic Aisle Update Called ");
 		notifyDataSetChanged();
 
 	}

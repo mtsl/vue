@@ -1,6 +1,6 @@
 package com.lateralthoughts.vue;
 
-//android imports
+ 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,8 +15,6 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
@@ -24,7 +22,7 @@ import com.lateralthoughts.vue.ui.NotifyProgress;
 
 public class VueTrendingAislesDataModel {
 
-	private static final boolean DEBUG = false;
+ 
 	private Context mContext;
 	private static VueTrendingAislesDataModel sVueTrendingAislesDataModel;
 	private ArrayList<IAisleDataObserver> mAisleDataObserver;
@@ -64,7 +62,6 @@ public class VueTrendingAislesDataModel {
 	NetworkHandler mNetworkHandler;
 
 	private VueTrendingAislesDataModel(Context context) {
-		Log.e("Profiling", "Profining DATA CHECK VueTrendingAislesDataModel()");
 		mContext = context;
 		mAisleWindowContentFactory = AisleWindowContentFactory
 				.getInstance(mContext);
@@ -78,8 +75,6 @@ public class VueTrendingAislesDataModel {
 		boolean loadMore = true;
 		long elapsedTime = System.currentTimeMillis()
 				- VueApplication.getInstance().mLastRecordedTime;
-		Log.e("PERF_VUE", "about to invoke loadInitialData. Time elapsed = "
-				+ elapsedTime);
 		VueApplication.getInstance().mLastRecordedTime = System
 				.currentTimeMillis();
 		mNetworkHandler.loadInitialData(loadMore, mHandler, mContext
@@ -98,11 +93,7 @@ public class VueTrendingAislesDataModel {
 		observer.onAisleDataUpdated(mAisleContentList.size());
 	}
 
-	/*
-	 * public void insertNewAisleToDb(String aisleId){ Log.e("Profiling",
-	 * "Profiling inserting new aisles to db id: user created2********************** "
-	 * +aisleId); aisleIds.add(aisleId); writeToDb(); }
-	 */
+ 
 	public AisleWindowContent getAisleItem(String aisleId) {
 		AisleWindowContent aisleItem = null;
 		aisleItem = mAisleContentListMap.get(aisleId);
@@ -127,8 +118,7 @@ public class VueTrendingAislesDataModel {
 		} else {
 			aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
 		}
-		// mAisleContentListMap.put(aisleId, aisleItem);
-		// mAisleContentList.add(aisleItem);
+ ;
 		return aisleItem;
 	}
 
@@ -152,9 +142,6 @@ public class VueTrendingAislesDataModel {
 	public int getAisleCount() {
 		if (null != mAisleContentList) {
 			return mAisleContentList.size();
-		} else {
-			Log.i("mAisleContentList",
-					" mAisleContentList is null returining 0");
 		}
 		return 0;
 	}
@@ -220,7 +207,6 @@ public class VueTrendingAislesDataModel {
 
 	public static VueTrendingAislesDataModel getInstance(Context context) {
 		if (null == sVueTrendingAislesDataModel) {
-			Log.e("Profiling", "Profiling getInstance()111 : new instance");
 			sVueTrendingAislesDataModel = new VueTrendingAislesDataModel(
 					context);
 		}
@@ -239,16 +225,9 @@ public class VueTrendingAislesDataModel {
 
 	public void dataObserver() {
 		for (IAisleDataObserver observer : mAisleDataObserver) {
-			Log.i("TrendingDataModel", "DataObserver for List Refresh:  ");
 			observer.onAisleDataUpdated(mAisleContentList.size());
 		}
-		for (AisleWindowContent content : mAisleContentList) {
-			Log.e("TrendingDataModel",
-					"bookmarkfeaturetest: count in TrendingDataModel: "
-							+ content.getAisleContext().mBookmarkCount);
-		}
 		loadOnRequest = true;
-		Log.i("TrendingDataModel", "loadOnRequest:  " + loadOnRequest);
 	}
 
 	public int listSize() {
@@ -260,12 +239,8 @@ public class VueTrendingAislesDataModel {
 		public void handleMessage(android.os.Message msg) {
 			@SuppressWarnings("unchecked")
 			ArrayList<AisleWindowContent> aisleContentArray = (ArrayList<AisleWindowContent>) msg.obj;
-			Log.e("DataBaseManager",
-					"SURU updated aisle Order: DATABASE LODING 2 aisleContentArray.size(): "
-							+ aisleContentArray.size());
 			mIsFromDb = true;
-			Log.i("arrayList", "arrayList from db sized1 uirefresh: "
-					+ aisleContentArray.size());
+
 			for (AisleWindowContent content : aisleContentArray) {
 				AisleWindowContent aisleItem = getAisleItem(content
 						.getAisleId());
@@ -276,21 +251,12 @@ public class VueTrendingAislesDataModel {
 			for (IAisleDataObserver observer : mAisleDataObserver) {
 				observer.onAisleDataUpdated(mAisleContentList.size());
 			}
-			Log.e("DataBaseManager",
-					"SURU updated aisle Order: DATABASE LODING 3 aisleContentArray.size(): "
-							+ aisleContentArray.size());
 			runTask(new Runnable() {
 				public void run() {
-					Log.e("DataBaseManager",
-							"SURU updated aisle Order: DATABASE LODING 4 aisleContentArray.size(): ");
+
 					loadOnRequest = false;
-					Log.i("TrendingDataModel", "loadOnRequest from db:  "
-							+ loadOnRequest);
 					ArrayList<AisleWindowContent> aislesList = mDbManager
 							.getAislesFromDB(null, false);
-					Log.e("DataBaseManager",
-							"SURU updated aisle Order: DATABASE LODING 5 aisleContentArray.size(): "
-									+ aislesList.size());
 					if (aislesList.size() == 0) {
 						loadOnRequest = true;
 						mIsFromDb = false;

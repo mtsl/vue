@@ -75,13 +75,8 @@ public class ScaledImageViewFactory {
 			if(!mAvailableObjects.isEmpty()){
 				imageView = mAvailableObjects.remove(mAvailableObjects.size()-1);
 				mObjectsInUse.add(imageView);
-				if(DEBUG) Log.e("ImageViewFactory","get an empty image view. mAvailableObjects.size() = " + mAvailableObjects.size());
-				
 			}
 		}
-		Log.e("ImageViewFactory","imageCount mAvailableObjects: " + mAvailableObjects.size());
-		Log.e("ImageViewFactory","imageCount mObjectsInUse: " + mObjectsInUse.size());
-	 
 		return imageView;
 	}
 	
@@ -144,7 +139,6 @@ public class ScaledImageViewFactory {
 	public void clearAllImageViews(){
 		ScaleImageView view;
 		for(int i=0;i<mObjectsInUse.size();i++){
-			Log.i("removeiamgeviews", "removeiamgeviews: "+i);
 			view = mObjectsInUse.remove(i);
 			if(view != null) {
 				view.setImageBitmap(null);

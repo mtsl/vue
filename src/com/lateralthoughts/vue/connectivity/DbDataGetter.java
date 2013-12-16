@@ -3,7 +3,6 @@ package com.lateralthoughts.vue.connectivity;
 import java.util.ArrayList;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.VueApplication;
@@ -32,15 +31,6 @@ public class DbDataGetter extends AsyncTask<String, Void, Void>{
 	protected Void doInBackground(String... params) {
 		mCategory = params[0];
 		aisleWindowList = DataBaseManager.getInstance(VueApplication.getInstance()).getAislesByCategory(mCategory);
-		for (int i = 0; i < aisleWindowList.size(); i++) {
-			if (aisleWindowList.get(i).getImageList().size() == 0) {
-				Log.i("loading from db",
-						"loading from db2 this window has no images:  "
-								+ aisleWindowList.get(i).getAisleId());
-				// Log.i("loading from db",
-				// "loading from db2 this window has no images:  "+aisleWindowList.get(i).);
-			}
-		}
 		return null;
 	}
 

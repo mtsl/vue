@@ -12,8 +12,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
+ 
 
+ 
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -32,7 +33,6 @@ public class Parser {
 	// the tags defined here should be in sync the API documentation for the
 	// backend
 
-	// TODO: code cleanup. This function here allocated the new
 	// AisleImageObjects but re-uses the
 	// imageItemsArray. Instead the called function clones and keeps a copy.
 	// This is pretty inconsistent.
@@ -107,7 +107,6 @@ public class Parser {
 
 	public AisleImageDetails parseAisleImageData(JSONObject jsonObject)
 			throws JSONException {
-		Log.e("Parser", "Image Response : " + jsonObject);
 		AisleImageDetails aisleImageDetails = new AisleImageDetails();
 		aisleImageDetails.mId = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_ID);
@@ -198,6 +197,7 @@ public class Parser {
 				&& response.getStatusLine().getStatusCode() == 200) {
 			String responseMessage = EntityUtils.toString(response.getEntity());
 			if (responseMessage != null) {
+                try{
 				JSONObject mainJsonObject = new JSONObject(responseMessage);
 				JSONArray jsonArray = mainJsonObject.getJSONArray("images");
 				for (int i = 0; i < jsonArray.length(); i++) {
@@ -213,7 +213,10 @@ public class Parser {
 						imageList.add(aisleImageDetails);
 					}
 				}
-			}
+			}catch(Exception ex){
+                    ex.printStackTrace();
+                }
+            }
 		}
 		return imageList;
 	}
@@ -246,8 +249,6 @@ public class Parser {
 	}
 
 	public AisleContext parseAisleData(JSONObject josnObject) {
-		// TODO:
-
 		AisleContext aisleContext = new AisleContext();
 		try {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
@@ -291,8 +292,7 @@ public class Parser {
 			} else {
 				aisleContext.mDescription = description;
 			}
-			String aisleOwnerImageUrl = josnObject
-					.getString(VueConstants.AISLE_OWNER_IMAGE_URL);
+			String aisleOwnerImageUrl = josnObject.optString(VueConstants.AISLE_OWNER_IMAGE_URL);
 			if (aisleOwnerImageUrl == null || aisleOwnerImageUrl.equals("null")) {
 				aisleContext.mAisleOwnerImageURL = null;
 			} else {
@@ -335,13 +335,6 @@ public class Parser {
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}
-		if (aisleIdList != null && aisleIdList.size() > 0) {
-			Log.i("bookmarked aisle", "bookmarked aisle aisleIdList.size(): "
-					+ aisleIdList.size());
-		} else {
-			Log.i("bookmarked aisle", "bookmarked aisle not found: ");
-
 		}
 		return aisleIdList;
 	}

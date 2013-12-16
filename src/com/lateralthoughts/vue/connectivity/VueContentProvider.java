@@ -91,7 +91,6 @@ public class VueContentProvider extends ContentProvider{
     int rowsDeleted = 0;
     String id;
     SQLiteDatabase aislesDB = dbHelper.getWritableDatabase();
-    Log.v("test", "vazeer test uri matcher1: "+uri);
     switch (URIMATCHER.match(uri)) {
       case AISLES_MATCH:
         rowsDeleted = aislesDB.delete(VueConstants.AISLES, selection,
@@ -176,7 +175,7 @@ public class VueContentProvider extends ContentProvider{
             selection, selectionArgs);
         break;
       case BOOKMARKED_AISLE_MATCH:
-        Log.v("test", "vazeer test uri matcher2: "+uri);
+       
         id = uri.getLastPathSegment();
         rowsDeleted = aislesDB.delete(VueConstants.BOOKMARKER_AISLES,
             VueConstants.ID + "=" + id + (!TextUtils.isEmpty(selection) ?
@@ -292,28 +291,20 @@ public class VueContentProvider extends ContentProvider{
         }
         break;
       case COMMENTS_ROW_MATCH:
-        Log.e("provider", "Must use comments url for inserting: " + uri);
         throw new IllegalArgumentException("Unsupported URI: " + uri);
       case CATEGORY_ROW_MATCH:
-        Log.e("provider", "Must use category url for inserting: " + uri);
         throw new IllegalArgumentException("Unsupported URI: " + uri);
       case OCCATION_ROW_MATCH:
-        Log.e("provider", "Must use occation url for inserting: " + uri);
         throw new IllegalArgumentException("Unsupported URI: " + uri);
       case LOOKING_FOR_ROW_MATCH:
-        Log.e("provider", "Must use lookingFor url for inserting: " + uri);
         throw new IllegalArgumentException("Unsupported URI: " + uri);
       case IMAGE_MATCH:
-        Log.e("provider", "Must use images url for inserting: " + uri);
         throw new IllegalArgumentException("Unsupported URI: " + uri);
       case AISLE_MATCH:
-        Log.e("provider", "Must use ARTICLES url for inserting: " + uri);
         throw new IllegalArgumentException("Unsupported URI: " + uri);
       case BOOKMARKED_AISLE_MATCH:
-        Log.e("provider", "Must use BookmarkedAisles url for inserting: " + uri);
         throw new IllegalArgumentException("Unsupported URI: " + uri);
       default:
-        Log.e("provider", "Unsupported URI for inserting: " + uri);
         throw new IllegalArgumentException("Unsupported URI: " + uri);
     }
     throw new SQLException("Failed to insert row: " + uri);
@@ -490,14 +481,11 @@ public class VueContentProvider extends ContentProvider{
                     : ""), selectionArgs);
         break;
       case AISLE_IMAGES_MATCH:
-          Log.e("Content Provider", "Images Update: Image URL " + values.get(VueConstants.IMAGE_URL));  
         rowsUpdated = aislesDB.update(VueConstants.AISLE_IMAGES, values,
             selection, selectionArgs);
         break;
       case IMAGE_MATCH:
         id = uri.getLastPathSegment();
-        Log.e("Content Provider", "Images Update: Image id " + values.get(VueConstants.IMAGE_ID));
-        Log.e("Content Provider", "Images Update: Image URL " + values.get(VueConstants.IMAGE_URL));
         rowsUpdated = aislesDB.update(VueConstants.AISLE_IMAGES, values,
             VueConstants.IMAGE_ID + "=" + id
                 + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')'

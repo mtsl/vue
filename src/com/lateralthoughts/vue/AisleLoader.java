@@ -10,13 +10,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
@@ -94,10 +94,6 @@ public class AisleLoader {
 		mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
 		mImageLoader = new ImageLoader(VueApplication.getInstance()
 				.getRequestQueue(), BitmapLruCache.getInstance(mContext));
-		// mTopBottomMargin = (int)
-		// Utils.dipToPixels(VueApplication.getInstance(), mTopBottomMargin);
-		if (DEBUG)
-			Log.e(TAG, "Log something to remove warning");
 	}
 
 	// This method adds the intelligence to fetch the contents of this aisle
@@ -126,11 +122,6 @@ public class AisleLoader {
 			int position, boolean placeholderOnly,
 			AisleContentClickListener listener, String whichAdapter,
 			ImageView startImageLay) {
-
-		Log.i("TrendingDataModel",
-				"DataObserver for List Refresh: getAisleContentView called "
-						+ holder.mWindowContent.getAisleId() + "???" + position
-						+ "????" + placeholderOnly);
 		ScaleImageView imageView = null;
 		ArrayList<AisleImageDetails> imageDetailsArr = null;
 		AisleImageDetails itemDetails = null;
@@ -142,45 +133,29 @@ public class AisleLoader {
 
 		if (null == windowContent)
 			return;
-		Log.i("memory issue",
-				"memory issue aisle missing 1  " + windowContent.getAisleId());
+ 
 
 		// String currentContentId = holder.aisleContentBrowser.getUniqueId();
 
 		String desiredContentId = windowContent.getAisleId();
 		contentBrowser = holder.aisleContentBrowser;
-		if (Utils.isAisleChanged) {
-			if (Utils.mChangeAilseId != null
-					&& desiredContentId.equalsIgnoreCase(Utils.mChangeAilseId)) {
-				// Utils.isAisleChanged = false;
-				Utils.mChangeAilseId = null;
-				holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-			}
-		}
+
 		if (holder.uniqueContentId.equals(desiredContentId)) {
 			// we are looking at a visual object that has either not been used
 			// before or has to be filled with same content. Either way, no need
 			// to worry about cleaning up anything!
 			holder.aisleContentBrowser.setScrollIndex(scrollIndex);
-			// Log.i("memory issue",
-			// "memory issue aisle missing return  "+windowContent.getAisleId());
-			Log.i("memory issue", "memory issue aisle missing 2  "
-					+ windowContent.getAisleId());
+  
 			return;
 		} else {
-			Log.i("memory issue", "memory issue aisle missing 3  "
-					+ windowContent.getAisleId());
-
 			// we are going to re-use an existing object to show some new
 			// content
 			// lets release the scaleimageviews first
 			for (int i = 0; i < contentBrowser.getChildCount(); i++) {
-				// ((ScaleImageView)contentBrowser.getChildAt(i)).setContainerObject(null);
 				mViewFactory
 						.returnUsedImageView((ScaleImageView) contentBrowser
 								.getChildAt(i));
 			}
-			Log.i("calling", "calling new view   ");
 			IAisleContentAdapter adapter = mContentAdapterFactory
 					.getAisleContentAdapter();
 			mContentAdapterFactory.returnUsedAdapter(holder.aisleContentBrowser
@@ -193,7 +168,6 @@ public class AisleLoader {
 			holder.aisleContentBrowser.setUniqueId(desiredContentId);
 			holder.aisleContentBrowser.setScrollIndex(scrollIndex);
 			holder.aisleContentBrowser.setCustomAdapter(adapter);
-			holder.uniqueContentId = desiredContentId;
 			if (whichAdapter.equalsIgnoreCase("LeftAdapter")) {
 				holder.aisleContentBrowser.isLeft = true;
 			} else {
@@ -204,11 +178,8 @@ public class AisleLoader {
 
 		mListener = listener;
 		imageDetailsArr = windowContent.getImageList();
-		Log.i("memory issue", "memory issue aisle missing null 3.1  "
-				+ windowContent.getAisleId());
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
-			Log.i("memory issue", "memory issue aisle missing null 3.2  "
-					+ windowContent.getAisleId());
+	 
 			itemDetails = imageDetailsArr.get(0);
 			if (itemDetails.mHasMostLikes) {
 				ImageView image = (ImageView) startImageLay
@@ -224,10 +195,6 @@ public class AisleLoader {
 			}
 			imageView = mViewFactory.getPreconfiguredImageView(position);
 			imageView.setContainerObject(holder);
-			Log.i("memory issue", "memory issue aisle missing null 3.3  "
-					+ windowContent.getAisleId());
-			Log.i("AisleLoader", "CustomImageUrl:? "
-					+ itemDetails.mCustomImageUrl);
 			Bitmap bitmap = null;
 			/*
 			 * Bitmap bitmap = mBitmapLoaderUtils
@@ -236,181 +203,30 @@ public class AisleLoader {
 			int bestHeight = windowContent.getBestHeightForWindow();
 			FrameLayout.LayoutParams mShowpieceParams2 = new FrameLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT, itemDetails.mTrendingImageHeight);
-
-			Log.i("cardHeight", "bestsamallest cardHeight bestHeight11: "
-					+ bestHeight);
+ 
 			contentBrowser.setLayoutParams(mShowpieceParams2);
-			Log.i("bestsamallest", "bestsamallest height22: "
-					+ itemDetails.mTrendingImageHeight);
-			Log.i("memory issue", "memory issue aisle missing null 3.4  "
-					+ windowContent.getAisleId());
+		 
 			if (bitmap != null) {
 				imageView.setImageBitmap(bitmap);
 				contentBrowser.addView(imageView);
 			} else {
+                String profleUrl = windowContent.getAisleContext().mAisleOwnerImageURL;
 				contentBrowser.addView(imageView);
-				String profleUrl = windowContent.getAisleContext().mAisleOwnerImageURL;
-
-				Log.i("memory issue",
-						"memory issue aisle missing null 3.5 placeholder:   "
-								+ windowContent.getAisleId());
 				if (!placeholderOnly) {
-					Log.i("memory issue",
-							"memory issue aisle missing null 3.6 placeholder:   "
-									+ windowContent.getAisleId());
 					loadBitmap(itemDetails.mCustomImageUrl,
 							itemDetails.mImageUrl, contentBrowser, imageView,
 							bestHeight, windowContent.getAisleId(),
 							itemDetails, listener);
-					holder.profileThumbnail
-					.setImageUrl(
-							profleUrl,
-							mImageLoader);
+					holder.profileThumbnail.setImageUrl(profleUrl,mImageLoader);
 				}
 			}
 		}
 	}
 
-	public void loadBitmap(String loc, String serverImageUrl,
-			AisleContentBrowser flipper, ImageView imageView, int bestHeight,
-			String asileId, AisleImageDetails itemDetails,AisleContentClickListener listener ) {
-		Log.i("memory issue", "memory issue aisle missing null 3.7 loadBitmap :   "+asileId);
-		if(Utils.isAisleChanged){
-			Log.i("memory issue", "memory issue aisle missing null 3.8 loadBitmap :   "+asileId);
-			Utils.isAisleChanged = false;
-			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight, asileId, itemDetails,listener);
-			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
-			String[] urlsArray = { loc, serverImageUrl};
-			task.execute(urlsArray);
-		} else {
-			Log.i("memory issue",
-					"memory issue aisle missing null 3.9 loadBitmap :   "
-							+ asileId);
-			/* if (cancelPotentialDownload(loc, imageView)) { */
-			Log.i("memory issue",
-					"memory issue aisle missing null 3.10 loadBitmap :   "
-							+ asileId);
-			BitmapWorkerTask task = new BitmapWorkerTask(flipper, imageView,
-					bestHeight, asileId, itemDetails,listener);
-			((ScaleImageView) imageView).setOpaqueWorkerObject(task);
-			String[] urlsArray = { loc, serverImageUrl};
-			task.execute(urlsArray);
-			/* } */
-		}
-		/*
-		 * ((ScaleImageView) imageView).setImageUrl(serverImageUrl, new
-		 * ImageLoader(VueApplication.getInstance().getRequestQueue(),
-		 * VueApplication.getInstance().getBitmapCache()),
-		 * VueApplication.getInstance().getVueDetailsCardWidth() / 2,
-		 * bestHeight);
-		 */
-	}
-
-	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
-		private final WeakReference<ImageView> imageViewReference;
-		//private final WeakReference<ImageView> profileImageViewReference;
-		private final WeakReference<AisleContentBrowser> viewFlipperReference;
-		private String url = null;
-		private int mBestHeight;
-
-		AisleImageDetails mItemDetails;
-		AisleContentClickListener mListener;
-		String mAisleId;
-
-		public BitmapWorkerTask(AisleContentBrowser vFlipper,
-				ImageView imageView, int bestHeight, String aisleId,
-				AisleImageDetails itemDetails,AisleContentClickListener listener) {
-			// Use a WeakReference to ensure the ImageView can be garbage
-			// collected
-			imageViewReference = new WeakReference<ImageView>(imageView);
-			//profileImageViewReference = new WeakReference<ImageView>(profileImage);
-			viewFlipperReference = new WeakReference<AisleContentBrowser>(
-					vFlipper);
-			mListener = listener;
-			mItemDetails = itemDetails;
-			mAisleId = aisleId;
-		}
-
-		// Decode image in background.
-		@Override
-		protected Bitmap  doInBackground(String... params) {
-			if(!mListener.isFlingCalled()){
-			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-			Log.i("downloading speed", "fling calls stop");
-			} else {
-				Log.i("downloading speed", "fling calls");
-			}
-			url = params[0];
-			Bitmap bmp  ;
-			// we want to get the bitmap and also add it into the memory cache
-			boolean cacheBitmap = false;
-			bmp  = mBitmapLoaderUtils.getBitmap(url, params[1], cacheBitmap,
-					mItemDetails.mTrendingImageHeight,
-					mItemDetails.mTrendingImageWidth, Utils.TRENDING_SCREEN);
- 
-			return bmp;
-		}
-
-		// Once complete, see if ImageView is still around and set bitmap.
-		@Override
-		protected void onPostExecute(Bitmap bitmap) {
-			Log.i("memory issue", "bitmap loadedonPostExecute  " );
-		 
-			 Log.i("memory issue", "bitmap loaded 1 " );
-			if (viewFlipperReference != null && imageViewReference != null
-					&& bitmap  != null) {
-				Log.i("memory issue", "bitmap loaded 2 " );
-				final ImageView imageView = imageViewReference.get();
-				BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
-				if (this == bitmapWorkerTask) {
-					Log.i("memory issue", "bitmap loaded 3 " );
-					ViewHolder holder = (ViewHolder) ((ScaleImageView) imageView)
-							.getContainerObject();
-					if (null != holder) {
-						holder.aisleContext.setVisibility(View.VISIBLE);
-						holder.aisleOwnersName.setVisibility(View.VISIBLE);
-						holder.profileThumbnail.setVisibility(View.VISIBLE);
-						holder.aisleDescriptor.setVisibility(View.VISIBLE);
-					}
-					imageView.setImageBitmap(bitmap );
-					if (mListener.isFlingCalled()) {
-						// mListener.refreshList();
-					}
-				}
-			} else {
-				 Log.i("memory issue", "bitmap loaded else part " );
-			}
-		}
-	}
-
-	// utility functions to keep track of all the async tasks that we
-	// instantiate
-	private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
-		if (imageView != null) {
-			Object task = ((ScaleImageView) imageView).getOpaqueWorkerObject();
-			if (task instanceof BitmapWorkerTask) {
-				BitmapWorkerTask workerTask = (BitmapWorkerTask) task;
-				return workerTask;
-			}
-		}
-		return null;
-	}
-
-	private static boolean cancelPotentialDownload(String url,
-			ImageView imageView) {
-		BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
-		if (bitmapWorkerTask != null) {
-			String bitmapUrl = bitmapWorkerTask.url;
-			if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
-				bitmapWorkerTask.cancel(true);
-			} else {
-				// The same URL is already being downloaded.
-				return false;
-			}
-		}
-		return true;
-	}
+    public void loadBitmap(String loc, String serverImageUrl,
+                           AisleContentBrowser flipper, ImageView imageView, int bestHeight,
+                           String asileId, AisleImageDetails itemDetails, AisleContentClickListener listener) {
+        ((NetworkImageView)imageView).setImageUrl(itemDetails.mImageUrl,VueApplication.getInstance().getImageCacheLoader(),
+                itemDetails.mTrendingImageWidth, itemDetails.mTrendingImageHeight, NetworkImageView.BitmapProfile.ProfileLandingView);
+    }
 }

@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -29,6 +30,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView.FindListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -45,11 +47,14 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.ActionBarHandler;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
+import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -75,12 +80,12 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	private int mListCount = 3;
 	AisleDetailsViewAdapterPager mAisleDetailsAdapter;
 	private AisleDetailsSwipeListner mSwipeListener;
-	private ActionBarHandler mHandleActionBar;
-	private ImageView mDetailsAddImageToAisle = null, mAddVueAisle;
+	//private ActionBarHandler mHandleActionBar;
 	private LoginWarningMessage mLoginWarningMessage = null;
 	private View mDetailsContentView = null;
 	private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
-			mDotSeven, mDotEight, mDotNine, mDotTen, mVueUserPic;
+			mDotSeven, mDotEight, mDotNine, mDotTen;
+	private NetworkImageView mVueUserPic;
 	private TextView mLeftArrow, mRightArrow, mVueUserName;
 	private ListView mAisleDetailsList;
 	EditTextBackEvent mEditTextFindAt;
@@ -91,6 +96,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	private LinearLayout mEditIconLay;
 	private AisleDetailsViewActivity mAisleDetailsActivity = null;
 	private InputMethodManager mInputMethodManager;
+	int mAdapterNotifyDelay = 500;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -145,11 +151,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
 		mDetailsFindAtPopup = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_popup);
-		mDetailsAddImageToAisle = (ImageView) mDetailsContentView
-				.findViewById(R.id.details_add_image_to_aisle);
 		mEditTextFindAt = (EditTextBackEvent) mDetailsContentView
 				.findViewById(R.id.detaisl_find_at_text);
-		mVueUserPic = (ImageView) mDetailsContentView
+		mVueUserPic = (NetworkImageView) mDetailsContentView
 				.findViewById(R.id.vue_user_pic);
 		mEditIconLay = (LinearLayout) mDetailsContentView
 				.findViewById(R.id.editImage);
@@ -186,37 +190,22 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			mEditTextFindAt.setText("");
 			mFindAtUrl = "";
 		}
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				String profileUrl = null;
-				profileUrl = VueTrendingAislesDataModel
-						.getInstance(getActivity())
-						.getAisleItem(
-								VueApplication.getInstance()
-										.getClickedWindowID())
-						.getAisleContext().mAisleOwnerImageURL;
-				if (profileUrl != null) {
-					boolean cacheBitmap = false;
-					final Bitmap bmp = BitmapLoaderUtils.getInstance()
-							.getBitmap(profileUrl, profileUrl, cacheBitmap,
-									VueApplication.getInstance().getPixel(32),
-									VueApplication.getInstance().getPixel(32),
-									Utils.TRENDING_SCREEN);
-					if (bmp != null) {
-						getActivity().runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								mVueUserPic.setImageBitmap(bmp);
-							}
-						});
-					}
-				}
-			}
-		}).start();
-
+		    
+		ImageLoader mImageLoader = new ImageLoader(VueApplication.getInstance()
+					.getRequestQueue(), BitmapLruCache.getInstance(mContext));
+		String profileUrl = null;
+		profileUrl = VueTrendingAislesDataModel
+				.getInstance(getActivity())
+				.getAisleItem(
+						VueApplication.getInstance()
+								.getClickedWindowID())
+				.getAisleContext().mAisleOwnerImageURL;
+		if(profileUrl != null) {
+		mVueUserPic
+		.setImageUrl(
+				profileUrl,
+				mImageLoader);
+		}
 		mEditTextFindAt.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -235,12 +224,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				}
 				 
 				if (url != null && url.startsWith("http")) {
-					/*
-					 * Uri uriUrl = Uri.parse(url.trim()); Log.i("browserUrl",
-					 * "browserUrl: " + url); Intent launchBrowser = new
-					 * Intent(Intent.ACTION_VIEW, uriUrl);
-					 * startActivity(launchBrowser);
-					 */
+				 
 				} else {
 					Toast.makeText(mContext, "No source url found",
 							Toast.LENGTH_SHORT).show();
@@ -286,54 +270,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				return false;
 			}
 		});
-
-		mDetailsAddImageToAisle.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
-				mAisleDetailsAdapter.closeKeyboard();
-				Intent intent = new Intent(getActivity(),
-						CreateAisleSelectionActivity.class);
-				Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-						getActivity(), true);
-				intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				Bundle b = new Bundle();
-				b.putBoolean(
-						VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
-						true);
-				intent.putExtras(b);
-				if (!CreateAisleSelectionActivity.isActivityShowing) {
-					CreateAisleSelectionActivity.isActivityShowing = true;
-					getActivity()
-							.startActivityForResult(
-									intent,
-									VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
-				}
-			}
-		});
-	 
-		mAddVueAisle = (ImageView) mDetailsContentView
-				.findViewById(R.id.vue_aisle);
-		mAddVueAisle.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
-				String url = mFindAtUrl;
-				if (url != null && url.startsWith("http")) {
-					mAisleDetailsAdapter.closeKeyboard();
-					Uri uriUrl = Uri.parse(url.trim());
-			 
-					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
-							uriUrl);
-					startActivity(launchBrowser);
-				} else {
-					Toast.makeText(mContext, "No source url found",
-							Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
-
 		mAisleDetailsList = (ListView) mDetailsContentView
 				.findViewById(R.id.aisle_details_list);
 		mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
@@ -368,17 +304,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 						int scrollState) {
 					switch (scrollState) {
 					case OnScrollListener.SCROLL_STATE_IDLE:
-						if (mAisleDetailsList.getChildAt(0).getTop() == 0) {
-				 
-							if (mHandleActionBar != null) {
-								mHandleActionBar.showActionBar();
-							}
-						} else if (mAisleDetailsList.getChildAt(0).getTop() <= -30) {
-
-							if (mHandleActionBar != null) {
-								mHandleActionBar.hideActionBar();
-							}
-						}
+					 
 						break;
 					case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
 
@@ -402,18 +328,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				if (arg2 != 0 && arg2 != 1) {
-					/* if (mListCount - 1 == arg2) { */
-					/*
-					 * // will be called when press on the enter comment text //
-					 * edit text will be expand TextView v = (TextView) arg1
-					 * .findViewById(R.id.vue_user_entercomment); EditText
-					 * vueEdt = (EditText) arg1 .findViewById(R.id.edtcomment);
-					 * vueEdt.setVisibility(View.VISIBLE);
-					 * vueEdt.setFocusable(true);
-					 * mAisleDetailsAdapter.notifyDataSetChanged();
-					 * 
-					 * } else {
-					 */
+					int maxLinesCount = 2;
 					mAisleDetailsAdapter.closeKeyboard();
 					// will be called when press on the user comment,
 					// comment text will be expand and collapse for
@@ -421,7 +336,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 					TextView v = (TextView) arg1
 							.findViewById(R.id.vue_user_comment);
 					int x = v.getLineCount();
-					if (x <= 2) {
+					if (x <= maxLinesCount) {
 						LinearLayout.LayoutParams params;
 						params = new LinearLayout.LayoutParams(
 								LayoutParams.MATCH_PARENT,
@@ -438,10 +353,11 @@ public class VueAisleDetailsViewFragment extends Fragment {
 						v.setLayoutParams(params);
 						v.setMaxLines(Integer.MAX_VALUE);
 					} else {
-						v.setMaxLines(2);
+						v.setMaxLines(maxLinesCount);
 					}
 					/* } */
 				} else if (arg2 == 0) {
+					int descriptionMaxCount = 3;
 					mAisleDetailsAdapter.closeKeyboard();
 					// will be called when press on the description, description
 					// text will be expand and collapse for
@@ -454,7 +370,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 					TextView v = (TextView) arg1
 							.findViewById(R.id.vue_details_descreption);
 					int x = v.getLineCount();
-					if (x == 3) {
+					if (x == descriptionMaxCount) {
 						LinearLayout.LayoutParams params;
 						params = new LinearLayout.LayoutParams(
 								LayoutParams.MATCH_PARENT,
@@ -464,7 +380,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 						v.setMaxLines(Integer.MAX_VALUE);
 					} else {
 
-						v.setMaxLines(3);
+						v.setMaxLines(descriptionMaxCount);
 					}
 				}
 			}
@@ -479,12 +395,103 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		}, AISLE_HEADER_SHOW_TIME);
 		RelativeLayout vueShareLayout = (RelativeLayout) mDetailsContentView
 				.findViewById(R.id.vuesharelayout);
+		final int shareDelay = 200;
 		vueShareLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
 				mAisleDetailsAdapter.closeKeyboard();
-				mAisleDetailsAdapter.share(getActivity(), getActivity());
+				//to smoothen the touch response
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						mAisleDetailsAdapter.share(getActivity(), getActivity());
+					}
+				}, shareDelay);
+				
+			}
+		});
+		vueShareLayout.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+			 Toast.makeText(mContext, "Share", Toast.LENGTH_SHORT).show();
+				return false;
+			}
+		});
+		RelativeLayout vue_aislelayout = (RelativeLayout) mDetailsContentView
+				.findViewById(R.id.vue_aislelayout);
+		vue_aislelayout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
+				String url = mFindAtUrl;
+				if (url != null && url.startsWith("http")) {
+					mAisleDetailsAdapter.closeKeyboard();
+					Uri uriUrl = Uri.parse(url.trim());
+			 
+					Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
+							uriUrl);
+					startActivity(launchBrowser);
+				} else {
+					Toast.makeText(mContext, "No source url found",
+							Toast.LENGTH_SHORT).show();
+				}
+			
+				
+			}
+		});
+		vue_aislelayout.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+			 Toast.makeText(mContext, "Find at", Toast.LENGTH_SHORT).show();
+				return false;
+			}
+		});
+		
+		RelativeLayout detailsAddImageLayout = (RelativeLayout)mDetailsContentView.findViewById(R.id.details_add_image_to_aisle_layout)	;
+		detailsAddImageLayout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
+				mAisleDetailsAdapter.closeKeyboard();
+				//to smoothen the touch response
+				int addAilseDelay = 200;
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						Intent intent = new Intent(getActivity(),
+								CreateAisleSelectionActivity.class);
+						Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+								getActivity(), true);
+						intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+						Bundle b = new Bundle();
+						b.putBoolean(
+								VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
+								true);
+						intent.putExtras(b);
+						if (!CreateAisleSelectionActivity.isActivityShowing) {
+							CreateAisleSelectionActivity.isActivityShowing = true;
+							getActivity()
+									.startActivityForResult(
+											intent,
+											VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
+						} 
+					}
+				}, addAilseDelay);
+			}
+		});
+		detailsAddImageLayout.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+			 Toast.makeText(mContext, "Add image to aisle", Toast.LENGTH_SHORT).show();
+				return false;
 			}
 		});
 		mAisleDetailsAdapter.notifyDataSetChanged();
@@ -613,24 +620,16 @@ public class VueAisleDetailsViewFragment extends Fragment {
 								editText.setText("");
 								edtCommentLay.setVisibility(View.GONE);
 								view.setVisibility(View.VISIBLE);
-								new Handler().postDelayed(new Runnable() {
-
-									@Override
-									public void run() {
 										mInputMethodManager.hideSoftInputFromWindow(
 												editText.getWindowToken(), 0);
 										mAisleDetailsAdapter.notifyDataSetChanged();
-
-									}
-								}, 100);
-								
 								new Handler().postDelayed(new Runnable() {
 
 									@Override
 									public void run() {
 										mAisleDetailsAdapter.notifyDataSetChanged();
 									}
-								}, 500);
+								}, mAdapterNotifyDelay);
 								return;
 							}
 							
@@ -647,29 +646,19 @@ public class VueAisleDetailsViewFragment extends Fragment {
 							yesButton.setOnClickListener(new OnClickListener() {
 								public void onClick(View v) {
 									dialog.dismiss();
-									/*mInputMethodManager.hideSoftInputFromWindow(
-											editText.getWindowToken(), 0);*/
 									editText.setText("");
 									edtCommentLay.setVisibility(View.GONE);
 									view.setVisibility(View.VISIBLE);
-									new Handler().postDelayed(new Runnable() {
-
-										@Override
-										public void run() {
 											mInputMethodManager.hideSoftInputFromWindow(
 													editText.getWindowToken(), 0);
 											mAisleDetailsAdapter.notifyDataSetChanged();
-
-										}
-									}, 100);
-									
 									new Handler().postDelayed(new Runnable() {
 
 										@Override
 										public void run() {
 											mAisleDetailsAdapter.notifyDataSetChanged();
 										}
-									}, 500);
+									}, mAdapterNotifyDelay);
 								}
 							});
 							noButton.setOnClickListener(new OnClickListener() {
@@ -844,14 +833,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		editText.setVisibility(View.GONE);
 		editText.setText("");
 		view.setVisibility(View.VISIBLE);
-		new Handler().postDelayed(new Runnable() {
-			
-			@Override
-			public void run() {
-				mAisleDetailsAdapter.notifyDataSetChanged();
-				
-			}
-		}, 100);
+		mAisleDetailsAdapter.notifyDataSetChanged();
 		
 		new Handler().postDelayed(new Runnable() {
 
@@ -860,7 +842,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				mAisleDetailsAdapter.notifyDataSetChanged();
 
 			}
-		}, 500);
+		}, mAdapterNotifyDelay);
 	}
 
 	protected MotionEvent mLastOnDownEvent = null;
@@ -870,9 +852,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 				clickType);
 	}
 
-	public void setActionBarHander(ActionBarHandler handleActionBar) {
-		mHandleActionBar = handleActionBar;
-	}
+ 
 
 	public void setAisleContentListenerNull() {
 		if (mAisleDetailsAdapter != null)
@@ -926,8 +906,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
 	}
 
 	private void upDatePageDots(int currentPosition, String direction) {
-
-		mHighlightPosition = currentPosition % 10;
+          int maxDotsCout = 10;
+		mHighlightPosition = currentPosition % maxDotsCout;
 		hightLightCurrentPage(mHighlightPosition);
 		mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
 		if (mTotalPageCount > DOT_MAX_COUUNT) {
@@ -942,7 +922,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
 			} else {
 				showLeftArrow();
 				int remainingDots = mTotalPageCount - currentPosition;
-				if (currentPosition % 10 == 0) {
+				if (currentPosition % maxDotsCout == 0) {
 					if (remainingDots > DOT_MAX_COUUNT) {
 						showRightArrow();
 						showDots(DOT_MAX_COUUNT);
@@ -962,14 +942,14 @@ public class VueAisleDetailsViewFragment extends Fragment {
 							showDots(DOT_MAX_COUUNT);
 						} else {
 							disableRightArrow();
-							if (mTotalPageCount % 10 == 0) {
-								showDots(10);
+							if (mTotalPageCount % maxDotsCout == 0) {
+								showDots(maxDotsCout);
 							} else {
-								showDots(mTotalPageCount % 10);
+								showDots(mTotalPageCount % maxDotsCout);
 							}
 						}
 					} else if (direction.equalsIgnoreCase(SWIPE_RIGHT_TO_LEFT)) {
-						if ((currentPosition + 1) % 10 == 0) {
+						if ((currentPosition + 1) % maxDotsCout == 0) {
 							showDots(DOT_MAX_COUUNT);
 							if (remainingDots > 1) {
 								showRightArrow();
@@ -980,10 +960,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
 								showDots(DOT_MAX_COUUNT);
 							} else {
 								disableRightArrow();
-								if (mTotalPageCount % 10 == 0) {
-									showDots(10);
+								if (mTotalPageCount % maxDotsCout == 0) {
+									showDots(maxDotsCout);
 								} else {
-									showDots(mTotalPageCount % 10);
+									showDots(mTotalPageCount % maxDotsCout);
 								}
 							}
 						}

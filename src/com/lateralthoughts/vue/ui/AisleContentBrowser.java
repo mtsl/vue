@@ -130,7 +130,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	@Override
 	public void onAnimationEnd() {
 		super.onAnimationEnd();
-		Log.e("AisleContentAdapter", "onAnimationEnd is called!");
 	}
 
 	@Override
@@ -163,7 +162,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	        }
 
 	        else if(event.getAction() == MotionEvent.ACTION_MOVE){	
-	        	Log.i("browsermove", "browsermove1");
 	            mLastX = (int)event.getX();
 	            mLastY = (int)event.getY();
 	            if(mFirstY - mLastY > SWIPE_MIN_DISTANCE ||
@@ -221,7 +219,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    aisleContentBrowser.setOutAnimation(currentGoLeft);
 	                    currentGoLeft.setAnimationListener(new Animation.AnimationListener(){
                             public void onAnimationEnd(Animation animation) {
-                                Log.e("AisleContentAdapter","End of go left animtation");
                                 if(mSwipeListener != null) {
                                   	 
                                    	mSwipeListener.onAllowListResponse();
@@ -234,27 +231,6 @@ public class AisleContentBrowser extends ViewFlipper {
         	                    if(detailImgClickListenr != null) {
         		                    detailImgClickListenr.onImageSwipe(currentIndex+1);
         		                    }
-        	                    if(aisleContentBrowser.isLeft){
-    	                        	if(null != mSpecialNeedsAdapter){
-    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex+1)){
-    	                        			if(mLeftListListener != null)
-    	                        			mLeftListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
-    	                        		} else {
-    	                        			if(mLeftListListener != null)
-    	                        			mLeftListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
-    	                        		}
-    	                        	}
-    	                        } else if(aisleContentBrowser.isRight){
-    	                        	if(null != mSpecialNeedsAdapter){
-    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex+1)){
-    	                        			if(mRightListListener != null)
-    	                        			mRightListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
-    	                        		} else {
-    	                        			if(mRightListListener != null)
-    	                        			mRightListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
-    	                        		}
-    	                        	}
-    	                        }
         	                   // aisleContentBrowser.setDisplayedChild(currentIndex+1);
                             }
                             public void onAnimationStart(Animation animation) {
@@ -271,7 +247,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	                }                           
 	            } else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE){
 	                requestDisallowInterceptTouchEvent(true);
-	                Log.i("browsermove", "browsermove1 right");
 	                mTouchMoved = true;
 	                if(false == mAnimationInProgress){
 	                       final int currentIndex = aisleContentBrowser.indexOfChild(aisleContentBrowser.getCurrentView());
@@ -315,7 +290,6 @@ public class AisleContentBrowser extends ViewFlipper {
 	                    aisleContentBrowser.setOutAnimation(currentGoRight);
 	                    currentGoRight.setAnimationListener(new Animation.AnimationListener(){
                             public void onAnimationEnd(Animation animation) {
-                                Log.e("AisleContentAdapter","End of go right animtation");
                                 if(mSwipeListener != null) {
                                   	 
                                    	mSwipeListener.onAllowListResponse();
@@ -328,25 +302,6 @@ public class AisleContentBrowser extends ViewFlipper {
     	                        if(detailImgClickListenr != null) {
     	 	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
     	 	                       }
-    	                        if(aisleContentBrowser.isLeft){
-    	                        	if(null != mSpecialNeedsAdapter){
-    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex-1)){
-    	                        			mLeftListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
-    	                        		} else {
-    	                        			mLeftListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
-    	                        		}
-    	                        	}
-    	                        } else if(aisleContentBrowser.isRight){
-    	                        	if(null != mSpecialNeedsAdapter){
-    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex-1)){
-    	                        			mRightListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
-    	                        		} else {
-    	                        			mRightListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
-    	                        		}
-    	                        	}
-    	                        }
-    	                       // aisleContentBrowser.setDisplayedChild(currentIndex-1);
-    	                      
                             }
                             public void onAnimationStart(Animation animation) {
 
@@ -409,9 +364,6 @@ public class AisleContentBrowser extends ViewFlipper {
 				mClickListener.onAisleClicked(mAisleUniqueId,
 						mSpecialNeedsAdapter.getAisleItemsCount(),
 						mCurrentIndex);
-				 
-				Log.i("imageCurrenPosition", "imageCurrenPosition browser : "+mCurrentIndex);
-
 			}
 			if (detailImgClickListenr != null && null != mSpecialNeedsAdapter) {
 				detailImgClickListenr.onSetBrowserArea(getmBrowserArea());

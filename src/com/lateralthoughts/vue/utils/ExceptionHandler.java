@@ -35,8 +35,6 @@ public class ExceptionHandler implements
 		final StringWriter stackTrace = new StringWriter();
 		exception.printStackTrace(new PrintWriter(stackTrace));
 		writeToSdcard(stackTrace.toString());
-		Log.i("Vue", "" + stackTrace);
-		
 	}
 	  private  void writeToSdcard(String message) {
 		    
