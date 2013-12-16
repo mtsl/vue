@@ -81,8 +81,6 @@ public class VueContentGateway {
 	public boolean getTrendingAisles(int limit, final int offset,
 			final ResultReceiver receiver, final boolean loadMore, final String screenName) {
 		boolean status = true;
-		Log.i("datarequest", "datarequest parsing data offset: " + offset
-				+ "  limit: " + limit);
 		mParams.clear();
 		boolean isConnection = VueConnectivityManager
 				.isNetworkConnected(mContext);

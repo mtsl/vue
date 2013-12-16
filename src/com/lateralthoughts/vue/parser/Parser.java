@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
  
 
+ 
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -32,7 +33,6 @@ public class Parser {
 	// the tags defined here should be in sync the API documentation for the
 	// backend
 
-	// TODO: code cleanup. This function here allocated the new
 	// AisleImageObjects but re-uses the
 	// imageItemsArray. Instead the called function clones and keeps a copy.
 	// This is pretty inconsistent.
@@ -214,7 +214,7 @@ public class Parser {
 					}
 				}
 			}catch(Exception ex){
-                    Log.e("Exception parsing JSON","exception = " + ex.getStackTrace());
+                    ex.printStackTrace();
                 }
             }
 		}
@@ -249,8 +249,6 @@ public class Parser {
 	}
 
 	public AisleContext parseAisleData(JSONObject josnObject) {
-		// TODO:
-
 		AisleContext aisleContext = new AisleContext();
 		try {
 			aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);

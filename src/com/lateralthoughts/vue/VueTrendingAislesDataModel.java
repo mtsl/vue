@@ -1,6 +1,6 @@
 package com.lateralthoughts.vue;
 
-//android imports
+ 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,7 +22,7 @@ import com.lateralthoughts.vue.ui.NotifyProgress;
 
 public class VueTrendingAislesDataModel {
 
-	private static final boolean DEBUG = false;
+ 
 	private Context mContext;
 	private static VueTrendingAislesDataModel sVueTrendingAislesDataModel;
 	private ArrayList<IAisleDataObserver> mAisleDataObserver;
@@ -93,11 +93,7 @@ public class VueTrendingAislesDataModel {
 		observer.onAisleDataUpdated(mAisleContentList.size());
 	}
 
-	/*
-	 * public void insertNewAisleToDb(String aisleId){ Log.e("Profiling",
-	 * "Profiling inserting new aisles to db id: user created2********************** "
-	 * +aisleId); aisleIds.add(aisleId); writeToDb(); }
-	 */
+ 
 	public AisleWindowContent getAisleItem(String aisleId) {
 		AisleWindowContent aisleItem = null;
 		aisleItem = mAisleContentListMap.get(aisleId);
@@ -122,8 +118,7 @@ public class VueTrendingAislesDataModel {
 		} else {
 			aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
 		}
-		// mAisleContentListMap.put(aisleId, aisleItem);
-		// mAisleContentList.add(aisleItem);
+ ;
 		return aisleItem;
 	}
 

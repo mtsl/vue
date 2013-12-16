@@ -3,9 +3,6 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import android.graphics.Bitmap;
-import android.util.LruCache;
-import com.android.volley.toolbox.ImageLoader;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
@@ -15,8 +12,10 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.LruCache;
 import android.util.TypedValue;
 
 import com.android.volley.RequestQueue;
@@ -24,7 +23,6 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
@@ -322,28 +320,9 @@ public class VueApplication extends Application {
 			throw new IllegalStateException("RequestQueue not initialized");
 		}
 	}
-
-	/*
-	 * public boolean newVueTrendingAislesDataModel() { Log.e("Profiling",
-	 * "Profiling newVueTrendingAislesDataModel : " +
-	 * newVueTrendingAislesDataModel); return newVueTrendingAislesDataModel; }
-	 */
-
-	/*
-	 * public void setNewVueTrendingAislesDataModel (boolean createNewObject) {
-	 * newVueTrendingAislesDataModel = createNewObject; }
-	 */
-
-	/*
-	 * public BitmapCache getBitmapCache() { if (sBitmapCache == null)
-	 * sBitmapCache = new BitmapCache(512);
-	 * 
-	 * return sBitmapCache; }
-	 */
     public ImageLoader getImageCacheLoader(){
         return mImageLoader;
     }
-    private BitmapCache sBitmapCache;
     private ImageLoader mImageLoader;
 
 }
