@@ -185,7 +185,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                 return;
             
             for(int i = startIndex; i<count+startIndex; i++){
-                //Log.e("FileCacher","about to cache file for index = " + mBitmapsToFetch.mImagesList.get(i).mCustomImageUrl);
                 cacheBitmapToLocal(mBitmapsToFetch.mImagesList.get(i).mCustomImageUrl,  mBitmapsToFetch.mImagesList.get(i).mImageUrl, mBitmapsToFetch.mBestHeight);
             }
         }
@@ -468,7 +467,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
 		// from SD cache
 		Bitmap b = decodeFile(f, bestHeight);
 		if (b != null) {
-			// Log.e("AisleContentAdapter","found file in file cache");
 			mContentImagesCache.put(url, b);
 			return b;
 		}

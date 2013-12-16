@@ -610,7 +610,6 @@ public class AisleDetailsViewActivity extends Activity {
  
 
 	public void sendDataToDataentryScreen(Bundle b) {
-		Log.e("Land", "vueland 4");
 		String lookingFor, occation, category, userId, description;
 		AisleContext aisleInfo = mVueAiselFragment.getAisleContext();
 		lookingFor = aisleInfo.mLookingForItem;
@@ -668,7 +667,6 @@ public class AisleDetailsViewActivity extends Activity {
 					true);
 		}
 		intent.putExtras(b1);
-		Log.e("Land", "vueland 5");
 		this.startActivityForResult(
 				intent,
 				VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT);

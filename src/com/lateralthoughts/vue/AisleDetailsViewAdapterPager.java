@@ -107,7 +107,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	private ImageLoader mImageLoader;
 	private ShareViaVueListner mShareViaVueListner;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
-	private int mPrevPosition/* ,mCurrentPosition */;
+	private int mPrevPosition;
 	private PageListener pageListener;
 	private DetailImageClickListener detailsImageClickListenr;
 	private Animation myFadeInAnimation;
@@ -144,8 +144,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		}
 
 		mShowingCommentList = new ArrayList<Comment>();
-		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
 
 		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
 			if (getItem(i).getAisleId().equalsIgnoreCase(
@@ -566,8 +564,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				Comment comment = mShowingCommentList.get(position
 						- mInitialCommentsToShowSize);
 				mViewHolder.userComment.setText(comment.mComment);
+				int urlLength = 5;
 				if (comment.mComenterUrl != null
-						&& comment.mComenterUrl.length() > 5) {
+						&& comment.mComenterUrl.length() > urlLength) {
 					mViewHolder.userPic.setImageUrl(comment.mComenterUrl,
 							mImageLoader);
 				} else {
@@ -626,8 +625,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 							bookmarkStatus);
 					handleBookmark(bookmarkStatus,
 							getItem(mCurrentAislePosition).getAisleId());
-					Log.e("AisleManager",
-							"bookmarkfeaturetest: count BOOKMARK RESPONSE: mViewHolder.bookmarklay if called ");
 				} else {
 					bookmarkStatus = true;
 					FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
@@ -1163,12 +1160,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			commenterUrl = storedVueUser.getUserImageURL();
 		}
 		if (commenterUrl != null && commenterUrl.length() < 6) {
-			// commenterUrl =
-			// "https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50";
 			commenterUrl = null;
 		} else if (commenterUrl == null) {
-			// commenterUrl =
-			// "https://lh5.googleusercontent.com/-u5KwAmhVoUI/AAAAAAAAAAI/AAAAAAAAADg/5zfJJy26SNE/photo.jpg?sz=50";
 			commenterUrl = null;
 		}
 
@@ -1478,16 +1471,17 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 
 	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		private final WeakReference<ImageView> imageViewReference;
-		// private final WeakReference<AisleContentBrowser>viewFlipperReference;
+		private final WeakReference<ImageView> mStarImageReference;
+		private final WeakReference<LinearLayout> starLayoutReference;
+		private final WeakReference<LinearLayout> editLayoutReference;
+		private final WeakReference<ProgressBar> progressBarReference;
 		private String url = null;
 		private int mBestHeight;
 		int mAvailabeWidth, mAvailableHeight;
 		AisleImageDetails mItemDetails;
 		int mScrollIndex;
-		ProgressBar mProgressBar;
-		LinearLayout mEditLay, mStarLay;
 		int mImageListCurrentPosition;
-		ImageView mStarImage;
+	 
 
 		public BitmapWorkerTask(AisleImageDetails itemDetails,
 				ImageView imageView, int bestHeight, int scrollIndex,
@@ -1496,22 +1490,23 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			// Use a WeakReference to ensure the ImageView can be garbage
 			// collected
 			imageViewReference = new WeakReference<ImageView>(imageView);
+			mStarImageReference =  new WeakReference<ImageView>(starImage);
+			starLayoutReference = new WeakReference<LinearLayout>(starLay);
+			editLayoutReference = new WeakReference<LinearLayout>(editLay);
+			progressBarReference = new WeakReference<ProgressBar>(progressBar);
 			mBestHeight = bestHeight;
 			mAvailabeWidth = itemDetails.mAvailableWidth;
 			mAvailableHeight = itemDetails.mAvailableHeight;
 			mItemDetails = itemDetails;
 			mScrollIndex = scrollIndex;
-			mProgressBar = progressBar;
 			mImageListCurrentPosition = currentPosition;
-			mEditLay = editLay;
-			mStarLay = starLay;
-			mStarImage = starImage;
 		}
 
 		@Override
 		protected void onPreExecute() {
-			if (mProgressBar != null)
-				mProgressBar.setVisibility(View.VISIBLE);
+			ProgressBar pb = progressBarReference.get();
+			if (pb != null)
+				pb.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
 
@@ -1541,17 +1536,24 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		protected void onPostExecute(Bitmap bitmap) {
 
 			final ImageView imageView = imageViewReference.get();
-			if (mProgressBar != null)
-				mProgressBar.setVisibility(View.GONE);
+			LinearLayout editLay = editLayoutReference.get();
+			ProgressBar pb = progressBarReference.get();
+			LinearLayout starLay = starLayoutReference.get();
+			ImageView starImage = mStarImageReference.get();
+
+			if (pb != null) {
+				pb.setVisibility(View.GONE);
+			}
 			if (imageView != null && bitmap != null) {
 				imageView.setImageBitmap(bitmap);
 				if (mImageListCurrentPosition == mCurrentDispImageIndex) {
 					imageView.startAnimation(myFadeInAnimation);
 				}
 			}
-            if(getItem(mCurrentAislePosition).getImageList().size() == mImageListCurrentPosition){
-            	mImageListCurrentPosition = getItem(mCurrentAislePosition).getImageList().size() -1;
-            }
+			if (getItem(mCurrentAislePosition).getImageList().size() == mImageListCurrentPosition) {
+				mImageListCurrentPosition = getItem(mCurrentAislePosition)
+						.getImageList().size() - 1;
+			}
 			if (getItem(mCurrentAislePosition).getImageList().get(
 					mImageListCurrentPosition).mOwnerUserId != null
 					&& getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
@@ -1560,24 +1562,36 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 						|| Long.parseLong(getItem(mCurrentAislePosition)
 								.getAisleContext().mUserId) == mUserId) {
 					if (bitmap != null) {
-						mEditLay.setVisibility(View.VISIBLE);
+						if (editLay != null) {
+							editLay.setVisibility(View.VISIBLE);
+						}
 					}
 
 				} else {
-
-					mEditLay.setVisibility(View.GONE);
+					if (editLay != null) {
+						editLay.setVisibility(View.GONE);
+					}
 				}
 			}
 			if (bitmap != null) {
 				if (mItemDetails.mHasMostLikes) {
-					mStarLay.setVisibility(View.VISIBLE);
-					if (mItemDetails.mSameMostLikes) {
-						mStarImage.setImageResource(R.drawable.vue_star_light);
-					} else {
-						mStarImage.setImageResource(R.drawable.vue_star_theme);
+					if (starLay != null) {
+						starLay.setVisibility(View.VISIBLE);
+					}
+
+					if (starImage != null) {
+						if (mItemDetails.mSameMostLikes) {
+							starImage
+									.setImageResource(R.drawable.vue_star_light);
+						} else {
+							starImage
+									.setImageResource(R.drawable.vue_star_theme);
+						}
 					}
 				} else {
-					mStarLay.setVisibility(View.GONE);
+					if (starLay != null) {
+						starLay.setVisibility(View.GONE);
+					}
 				}
 			}
 

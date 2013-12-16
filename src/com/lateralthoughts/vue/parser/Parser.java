@@ -12,7 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
+ 
 
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -107,7 +107,6 @@ public class Parser {
 
 	public AisleImageDetails parseAisleImageData(JSONObject jsonObject)
 			throws JSONException {
-		Log.e("Parser", "Image Response : " + jsonObject);
 		AisleImageDetails aisleImageDetails = new AisleImageDetails();
 		aisleImageDetails.mId = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_ID);
@@ -335,13 +334,6 @@ public class Parser {
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}
-		if (aisleIdList != null && aisleIdList.size() > 0) {
-			Log.i("bookmarked aisle", "bookmarked aisle aisleIdList.size(): "
-					+ aisleIdList.size());
-		} else {
-			Log.i("bookmarked aisle", "bookmarked aisle not found: ");
-
 		}
 		return aisleIdList;
 	}

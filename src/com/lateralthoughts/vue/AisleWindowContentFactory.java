@@ -86,7 +86,6 @@ public class AisleWindowContentFactory {
 	//internal utility functions
 	private void expandPoolOrDie(){
 		if(mObjectsInUse.size() >= POOL_MAX_SIZE){
-		  Log.e("Profiling", "Profiling expandPoolOrDie() : POOL_MAX_SIZE Reached");
 			//TODO: assert & die here!
 			//throw new java.lang.OutOfMemoryError("hey watch it! We are running out of objects here!");
 		}
@@ -95,7 +94,6 @@ public class AisleWindowContentFactory {
 		if(POOL_MAX_SIZE - mObjectsInUse.size() < POOL_STEP_SIZE){
 			numObjectsToAllocate = POOL_MAX_SIZE - mObjectsInUse.size();
 		}
-		Log.e("Profiling", "Profiling expandPoolOrDie() : numObjectsToAllocate : " + numObjectsToAllocate);
 		synchronized(this){
 			for(int i=0;i<numObjectsToAllocate;i++){
 				mAvailableObjects.add(new AisleWindowContent(EMPTY_AISLE_ID, false));

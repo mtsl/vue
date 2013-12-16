@@ -57,7 +57,6 @@ public class AisleDetailsViewListLoader {
         mContentAdapterFactory = ContentAdapterFactory.getInstance(VueApplication.getInstance());
         //DisplayMetrics dm = VueApplication.getInstance().getResources().getDisplayMetrics();
        //mBitmapLoaderUtils.clearCache();
-        if(DEBUG) Log.e(TAG,"Log something to remove warning");
     }
     public void getAisleContentIntoView(AisleDetailsViewAdapter.ViewHolder holder,
             int scrollIndex, int position,DetailClickListener detailListener,AisleWindowContent windowContent,boolean setPosistion,/*LinearLayout editImageLay,*/LinearLayout starImageLay){
@@ -109,7 +108,6 @@ public class AisleDetailsViewListLoader {
             holder.uniqueContentId = desiredContentId;
         } 
         imageDetailsArr = windowContent.getImageList();
-        Log.e("clickedwindow", "clickedwindow Aisle Id : " + windowContent.getAisleId());
 		if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
 			 
 			 for(int i = 0;i<imageDetailsArr.size();i++) {

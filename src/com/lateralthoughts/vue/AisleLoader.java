@@ -96,8 +96,7 @@ public class AisleLoader {
 				.getRequestQueue(), BitmapLruCache.getInstance(mContext));
 		// mTopBottomMargin = (int)
 		// Utils.dipToPixels(VueApplication.getInstance(), mTopBottomMargin);
-		if (DEBUG)
-			Log.e(TAG, "Log something to remove warning");
+	 
 	}
 
 	// This method adds the intelligence to fetch the contents of this aisle

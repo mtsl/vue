@@ -67,8 +67,6 @@ public class ContentAdapterFactory {
             if(!mAvailableObjects.isEmpty()){
                 aisleContentAdapter = mAvailableObjects.remove(mAvailableObjects.size()-1);
                 mObjectsInUse.add(aisleContentAdapter);
-                Log.e("ImageViewFactory","get an empty image view. mAvailableObjects.size() = " + mAvailableObjects.size());
-                
             }
         }
         return aisleContentAdapter;

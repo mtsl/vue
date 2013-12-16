@@ -84,10 +84,8 @@ public class VueUserManager {
 
 			@Override
 			public void onResponse(String jsonArray) {
-				Log.e("VueUserDebug", "vueuser: response listener ");
+				 
 				if (null != jsonArray) {
-					Log.e("Profiling", "Create User: Profiling : onResponse()"
-							+ jsonArray);
 					VueUser vueUser = new Parser().parseUserData(jsonArray);
 					if (vueUser != null) {
 						VueApplication.getInstance().setmUserInitials(
