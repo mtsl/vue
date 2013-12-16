@@ -55,12 +55,6 @@ public class EditTextBackEvent extends EditText {
 		try {
 			if (keyCode == KeyEvent.KEYCODE_BACK
 					&& event.getAction() == KeyEvent.ACTION_UP) {
-				//VueApplication.getInstance().mSoftKeboardIndicator = true;
-				if (mOnInterceptListenr.getFlag()) {
-				 
-						//VueApplication.getInstance().mSoftKeboardIndicator = false;
-					 
-				}
 				mOnInterceptListenr.onKeyBackPressed();
 				return true;
 			}

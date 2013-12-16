@@ -16,7 +16,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -97,8 +96,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 			CountingStringEntity entity = new CountingStringEntity(
 					mapper.writeValueAsString(mVueImage));
 			entity.setUploadListener(this);
-			System.out.println("Aisle create request: "
-					+ mapper.writeValueAsString(mVueImage));
 			entity.setContentType("application/json;charset=UTF-8");
 			entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
 					"application/json;charset=UTF-8"));
@@ -118,11 +115,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 						mNotification);
 				mResponseMessage = EntityUtils.toString(response.getEntity());
-				System.out.println("AISLE CREATED Response: "
-						+ mResponseMessage);
-				Log.i("myailsedebug",
-						"myailsedebug: recieved response*******:  "
-								+ mResponseMessage);
 			} else {
 				mNotification.setLatestEventInfo(
 						VueApplication.getInstance(),
@@ -133,9 +125,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 				mNotificationManager.notify(
 						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 						mNotification);
-				Log.i("myailsedebug",
-						"myailsedebug: recieved response******* response code :  "
-								+ response.getStatusLine().getStatusCode());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -146,9 +135,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 					public void run() {
 						if (null != mResponseMessage) {
 							if (!mFromDetailsScreenFlag) {
-								Log.i("addimagefuncitonality",
-										"addimagefuncitonality jsonArray response: "
-												+ mFromDetailsScreenFlag);
 								try {
 									AisleImageDetails aisleImageDetails = new Parser()
 											.parseAisleImageData(new JSONObject(
@@ -172,15 +158,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 															VueApplication
 																	.getInstance())
 													.dataObserver();
-											/*
-											 * AisleWindowContent
-											 * aisleWindowContent =
-											 * VueTrendingAislesDataModel
-											 * .getInstance( VueApplication
-											 * .getInstance()) .getAisleAt(
-											 * aisleImageDetails.mOwnerAisleId);
-											 */
-
 											aisleWindowContent.getImageList()
 													.add(aisleImageDetails);
 											aisleWindowContent.addAisleContent(

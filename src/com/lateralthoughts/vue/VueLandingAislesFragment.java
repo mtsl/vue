@@ -22,23 +22,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
-import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
-import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.Utils;
 import com.origamilabs.library.views.StaggeredGridView;
 
@@ -179,6 +172,7 @@ public class VueLandingAislesFragment extends  Fragment {
     private class AisleClickListener implements AisleContentClickListener {
         @Override
         public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
+            if (VueLandingPageActivity.mOtherSourceImagePath == null) {
             Map<String, String> articleParams = new HashMap<String, String>();
             VueUser storedVueUser = null;
             try {
@@ -193,12 +187,10 @@ public class VueLandingAislesFragment extends  Fragment {
             } else {
                 articleParams.put("User_Id", "anonymous");
             }
-          
+
             DataBaseManager.getInstance(mContext)
                     .updateOrAddRecentlyViewedAisles(id);
             FlurryAgent.logEvent("User_Select_Aisle", articleParams);
-
-            VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
             Intent intent = new Intent();
             intent.setClass(VueApplication.getInstance(),
                     AisleDetailsViewActivity.class);
@@ -207,6 +199,14 @@ public class VueLandingAislesFragment extends  Fragment {
             VueApplication.getInstance().setmAisleImgCurrentPos(
                     aisleImgCurrentPos);
             startActivity(intent);
+            }else
+            {
+            	VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+				vueLandingPageActivity.hideDefaultActionbar();
+				VueLandingPageActivity.mOtherSourceAddImageAisleId = id;
+				notifyAdapters();
+            }
+      
         }
 
         @Override
@@ -225,6 +225,7 @@ public class VueLandingAislesFragment extends  Fragment {
             AisleWindowContent windowItem = VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).getAisleAt(id);
             String imageUrls = "";
+
             int finalWidth = 0, finaHeight = 0;
             if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
                     .getBestHeightForWindow()) {
@@ -327,6 +328,7 @@ public class VueLandingAislesFragment extends  Fragment {
             out.write("\n" + message + "\n");
             out.flush();
             out.close();
+            
         } catch (IOException e) {
             e.printStackTrace();
         }

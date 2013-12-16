@@ -153,7 +153,6 @@ public class RequestAsyncTask extends AsyncTask<Void, Void, List<Response>> {
         super.onPostExecute(result);
 
         if (exception != null) {
-            Log.d(TAG, String.format("onPostExecute: exception encountered during request: %s", exception.getMessage()));
         }
     }
 

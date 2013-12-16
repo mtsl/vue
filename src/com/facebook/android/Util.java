@@ -258,48 +258,6 @@ public final class Util {
 	}
 
 	/**
-	 * Parse a server response into a JSON Object. This is a basic
-	 * implementation using org.json.JSONObject representation. More
-	 * sophisticated applications may wish to do their own parsing.
-	 * 
-	 * The parsed JSON is checked for a variety of error fields and a
-	 * FacebookException is thrown if an error condition is set, populated with
-	 * the error message and error type or code if available.
-	 * 
-	 * @param response
-	 *            - string representation of the response
-	 * @return the response as a JSON Object
-	 * @throws JSONException
-	 *             - if the response is not valid JSON
-	 * @throws FacebookError
-	 *             - if an error condition is set
-	 */
-	// @Deprecated
-	/*
-	 * public static JSONObject parseJson(String response) throws JSONException,
-	 * FacebookError { // Edge case: when sending a POST request to
-	 * /[post_id]/likes // the return value is 'true' or 'false'. Unfortunately
-	 * // these values cause the JSONObject constructor to throw // an
-	 * exception. if (response.equals("false")) { throw new
-	 * FacebookError("request failed"); } if (response.equals("true")) {
-	 * response = "{value : true}"; } JSONObject json = new
-	 * JSONObject(response);
-	 * 
-	 * // errors set by the server are not consistent // they depend on the
-	 * method and endpoint if (json.has("error")) { JSONObject error =
-	 * json.getJSONObject("error"); throw new FacebookError(
-	 * error.getString("message"), error.getString("type"), 0); } if
-	 * (json.has("error_code") && json.has("error_msg")) { throw new
-	 * FacebookError(json.getString("error_msg"), "",
-	 * Integer.parseInt(json.getString("error_code"))); } if
-	 * (json.has("error_code")) { throw new FacebookError("request failed", "",
-	 * Integer.parseInt(json.getString("error_code"))); } if
-	 * (json.has("error_msg")) { throw new
-	 * FacebookError(json.getString("error_msg")); } if
-	 * (json.has("error_reason")) { throw new
-	 * FacebookError(json.getString("error_reason")); } return json; }
-	 */
-	/**
 	 * Display a simple alert dialog with the given text and title.
 	 * 
 	 * @param context

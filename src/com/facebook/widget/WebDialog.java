@@ -28,7 +28,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -157,7 +156,6 @@ public class WebDialog extends Dialog {
 		Uri uri = Utility.buildUri(ServerProtocol.DIALOG_AUTHORITY,
 				ServerProtocol.DIALOG_PATH + action, parameters);
 		this.url = uri.toString();
-		Log.e("webdialog", this.url);
 		onCompleteListener = listener;
 	}
 

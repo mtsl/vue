@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -108,10 +107,6 @@ public class LoginWarningMessage {
 								VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
 								count + 1);
 						editor.commit();
-					/*	VueAisleDetailsViewFragment mVueAiselFragment = (VueAisleDetailsViewFragment) ((FragmentActivity) mContext)
-								.getFragmentManager().findFragmentById(
-										R.id.aisle_details_view_fragment);
-						mVueAiselFragment.addComment(editText, view);*/
 					}
 				}
 			}

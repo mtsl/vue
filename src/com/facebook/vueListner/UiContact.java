@@ -1,4 +1,4 @@
-package com.facebook.fishwraplisner;
+package com.facebook.vueListner;
 
 public class UiContact {
 public void setNotifyAlertInstance(NotifiShowAlert notifyInstance) {

@@ -209,7 +209,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                                 }
                                             });
                                 }
-                                /*final ArrayList<AisleWindowContent> aislesList = new Parser()
+                               /* final ArrayList<AisleWindowContent> aislesList = new Parser()
                                         .parseTrendingAislesResultData(
                                                 resultData.getString("result"),
                                                 resultData.getBoolean("loadMore"));

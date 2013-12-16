@@ -1,11 +1,7 @@
 package com.lateralthoughts.vue.utils;
 
 import java.io.File;
-import java.util.Date;
-
 import android.content.Context;
-import android.util.Log;
-
 import com.lateralthoughts.vue.VueConstants;
 
 public class FileCache {
@@ -46,9 +42,7 @@ public class FileCache {
 		// Find the dir to save cached images
 		if (android.os.Environment.getExternalStorageState().equals(
 				android.os.Environment.MEDIA_MOUNTED)) {
-			cacheDir = new File(
-			/* android.os.Environment.getExternalStorageDirectory() */
-			context.getExternalCacheDir(), "LazyList");
+			cacheDir = new File(context.getExternalCacheDir(), "LazyList");
 			mVueAppCameraPicsDir = new File(context.getExternalFilesDir(null),
 					VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
 			mVueAppResizedImagesDir = new File(
@@ -78,13 +72,8 @@ public class FileCache {
 	}
 
 	public File getFile(String url) {
-		// I identify images by hashcode. Not a perfect solution, good for the
-		// demo.
-
 		int hashCode = url.hashCode();
 		String filename = String.valueOf(hashCode);
-		// Another possible solution (thanks to grantland)
-		// String filename = URLEncoder.encode(url);
 		File f = new File(cacheDir, filename + ".jpg");
 		return f;
 
@@ -135,7 +124,6 @@ public class FileCache {
 		if (files == null) {
 			return;
 		}
-		int count = 0;
 		for (File f : files) {
 			long lastModifidedDate = f.lastModified();
 			if (System.currentTimeMillis() - lastModifidedDate >= twoDaysOldTime) {

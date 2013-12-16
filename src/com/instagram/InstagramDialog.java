@@ -98,8 +98,6 @@ public class InstagramDialog extends Dialog {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			Log.d(TAG, "Redirecting URL " + url);
-
 			if (url.startsWith(InstagramApp.mCallbackUrl)) {
 				String urls[] = url.split("=");
 				mListener.onComplete(urls[1]);
@@ -112,8 +110,6 @@ public class InstagramDialog extends Dialog {
 		@Override
 		public void onReceivedError(WebView view, int errorCode,
 				String description, String failingUrl) {
-			Log.d(TAG, "Page error: " + description);
-
 			super.onReceivedError(view, errorCode, description, failingUrl);
 			mListener.onError(description);
 			InstagramDialog.this.dismiss();
@@ -121,8 +117,6 @@ public class InstagramDialog extends Dialog {
 
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
-			Log.d(TAG, "Loading URL: " + url);
-
 			super.onPageStarted(view, url, favicon);
 			mSpinner.show();
 		}
@@ -134,7 +128,6 @@ public class InstagramDialog extends Dialog {
 			if (title != null && title.length() > 0) {
 				mTitle.setText(title);
 			}
-			Log.d(TAG, "onPageFinished URL: " + url);
 			mSpinner.dismiss();
 		}
 

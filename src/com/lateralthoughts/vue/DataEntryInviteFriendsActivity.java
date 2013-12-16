@@ -13,7 +13,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -269,9 +268,6 @@ public class DataEntryInviteFriendsActivity extends Activity {
 			Response.ErrorListener errorListener = new Response.ErrorListener() {
 				@Override
 				public void onErrorResponse(VolleyError error) {
-					Log.e("VueNetworkError",
-							"Vue encountered network operations error. Error = "
-									+ error.networkResponse);
 					if (mProgressDialog.isShowing()) {
 						mProgressDialog.dismiss();
 					}
@@ -327,8 +323,6 @@ public class DataEntryInviteFriendsActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.e("InviteFriends Activity", "request code ::" + requestCode
-				+ " ::: result code :::" + resultCode);
 		if (requestCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE
 				&& resultCode == VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE) {
 			if (data != null) {
