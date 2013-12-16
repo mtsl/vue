@@ -172,6 +172,7 @@ public class VueLandingAislesFragment extends  Fragment {
     private class AisleClickListener implements AisleContentClickListener {
         @Override
         public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
+            if (VueLandingPageActivity.mOtherSourceImagePath == null) {
             Map<String, String> articleParams = new HashMap<String, String>();
             VueUser storedVueUser = null;
             try {
@@ -189,8 +190,6 @@ public class VueLandingAislesFragment extends  Fragment {
             DataBaseManager.getInstance(mContext)
                     .updateOrAddRecentlyViewedAisles(id);
             FlurryAgent.logEvent("User_Select_Aisle", articleParams);
-
-            VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
             Intent intent = new Intent();
             intent.setClass(VueApplication.getInstance(),
                     AisleDetailsViewActivity.class);
@@ -199,6 +198,14 @@ public class VueLandingAislesFragment extends  Fragment {
             VueApplication.getInstance().setmAisleImgCurrentPos(
                     aisleImgCurrentPos);
             startActivity(intent);
+            }else
+            {
+            	VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+				vueLandingPageActivity.hideDefaultActionbar();
+				VueLandingPageActivity.mOtherSourceAddImageAisleId = id;
+				notifyAdapters();
+            }
+      
         }
 
         @Override
