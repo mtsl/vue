@@ -232,7 +232,7 @@
                     android:id="@+id/imageView1"
                     android:layout_width="32dip"
                     android:layout_height="32dip"
-                    android:src="@drawable/new_occassion" />
+                    android:src="@drawable/action_search" />
 
                 <TextView
                     android:id="@+id/textView1"
