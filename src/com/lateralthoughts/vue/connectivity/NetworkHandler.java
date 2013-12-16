@@ -125,8 +125,6 @@ public class NetworkHandler {
 		String downLoadFromServer = "fromDb";
 		if (fromServer) {
 			downLoadFromServer = "fromServer";
-			Log.e("DataBaseManager",
-					"SURU updated aisle Order: DATABASE LODING FROM SERVER 1");
 			mOffset = 0;
 			mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
 			VueTrendingAislesDataModel
@@ -207,8 +205,6 @@ public class NetworkHandler {
 
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				Log.e("Search Resopnse", "SURU Search Error Resopnse : "
-						+ error.getMessage());
 			}
 		});
 		// RETRY POLICY
@@ -234,14 +230,11 @@ public class NetworkHandler {
 					responseBundle.putBoolean("loadMore", false);
 					mTrendingAislesParser.send(1, responseBundle);
 				}
-				Log.e("Search Resopnse", "SURU Search Resopnse : " + response);
 			}
 		}, new Response.ErrorListener() {
 
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				Log.e("Search Resopnse", "SURU Search Error Resopnse : "
-						+ error.getMessage());
 			}
 		});
 
@@ -485,9 +478,6 @@ public class NetworkHandler {
 					HttpGet httpGet = new HttpGet(url.toString());
 					DefaultHttpClient httpClient = new DefaultHttpClient();
 					HttpResponse response = httpClient.execute(httpGet);
-					Log.e("bookmarked aisle",
-							"bookmarked aisle response.getStatusLine().getStatusCode(); "
-									+ response.getStatusLine().getStatusCode());
 					if (response.getEntity() != null
 							&& response.getStatusLine().getStatusCode() == 200) {
 						String responseMessage = EntityUtils.toString(response
@@ -502,9 +492,6 @@ public class NetworkHandler {
 												aB.getBookmarked());
 							}
 						}
-						// Log.e("bookmarked aisle",
-						// "bookmarked aisle bookmarkedAisles size(); " +
-						// bookmarkedAisles.size());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -578,9 +565,7 @@ public class NetworkHandler {
 			throws Exception {
 		ImageComment createdImageComment = null;
 		ObjectMapper mapper = new ObjectMapper();
-		Log.e("NetworkHandler", "Comments Issue: createImageComment()");
 		if (VueConnectivityManager.isNetworkConnected(mContext)) {
-			Log.e("NetworkHandler", "Comments Issue: Network is there");
 			URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL + "/"
 					+ Long.valueOf(getUserObj().getId()).toString());
 			HttpPut httpPut = new HttpPut(url.toString());
@@ -597,14 +582,10 @@ public class NetworkHandler {
 			HttpResponse response = httpClient.execute(httpPut);
 			if (response.getEntity() != null
 					&& response.getStatusLine().getStatusCode() == 200) {
-				Log.e("NetworkHandler", "Comments Issue: got success responce");
 				String responseMessage = EntityUtils.toString(response
 						.getEntity());
 				System.out.println("Comment Response: " + responseMessage);
 				if (responseMessage.length() > 0) {
-					Log.e("NetworkHandler",
-							"Comments Issue: responseMessage size is > 0 responseMessage: "
-									+ responseMessage);
 					createdImageComment = (new ObjectMapper()).readValue(
 							responseMessage, ImageComment.class);
 					Editor editor = mSharedPreferencesObj.edit();
@@ -614,8 +595,6 @@ public class NetworkHandler {
 							createdImageComment, false);
 				}
 			} else {
-				Log.e("NetworkHandler", "Comments Issue: responce fail: "
-						+ response.getStatusLine().getStatusCode());
 			}
 		} else {
 			Editor editor = mSharedPreferencesObj.edit();
@@ -701,9 +680,4 @@ public class NetworkHandler {
 	public void makeOffseZero() {
 		mOffset = 0;
 	}
-	/*
-	 * public void setOffset(int offset){ mOffset = offset;
-	 * Log.i("listmovingissue", "listmovingissue  setting to: "+mOffset); }
-	 */
-
 }

@@ -48,9 +48,4 @@ public class StackViews {
 		}
 		return flag;
 	}
-	/*
-	 * public void showAllItems(){ for(int i = 0;i<mViewStack.size();i++){
-	 * Log.i("item",
-	 * "item: "+i+" namenamename:   : "+mViewStack.get(i).mVueName); } }
-	 */
 }

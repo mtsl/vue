@@ -46,7 +46,6 @@ public class FileCache {
 		// Find the dir to save cached images
 		if (android.os.Environment.getExternalStorageState().equals(
 				android.os.Environment.MEDIA_MOUNTED)) {
-			Log.i("filecache", "filecache: from sdcard");
 			cacheDir = new File(
 			/* android.os.Environment.getExternalStorageDirectory() */
 			context.getExternalCacheDir(), "LazyList");
@@ -59,7 +58,6 @@ public class FileCache {
 					context.getExternalFilesDir(null),
 					VueConstants.VUE_APP_USER_PROFILE_PICTURES_FOLDER);
 		} else {
-			Log.i("filecache", "filecache: from phone storage");
 			cacheDir = context.getCacheDir();
 			mVueAppCameraPicsDir = new File(context.getFilesDir(),
 					VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
@@ -137,17 +135,11 @@ public class FileCache {
 		if (files == null) {
 			return;
 		}
-		Log.e("Profiling", "Profiling files Array size: " + files.length);
 		int count = 0;
 		for (File f : files) {
 			long lastModifidedDate = f.lastModified();
-			Log.e("Profiling", "Profiling deleting two lastModifidedDate : "
-					+ new Date(lastModifidedDate));
 			if (System.currentTimeMillis() - lastModifidedDate >= twoDaysOldTime) {
-				Log.e("Profiling", "Profiling deleting two days old images");
 				if (f.delete()) {
-					Log.e("Profiling", "Profiling Total images Deleted: "
-							+ ++count);
 				}
 			}
 		}

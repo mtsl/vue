@@ -23,7 +23,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,7 +47,6 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueAisleDetailsViewFragment.ShareViaVueListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
-import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -69,7 +67,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	private static final String CHANGE_BOOKMARK = "BOOKMARK";
 	public static final String CHANGE_COMMENT = "COMMENT";
 	private static final String CHANGE_LIKES = "LIKES";
-	private static final boolean DEBUG = false;
 	private AisleDetailsViewListLoader mViewLoader;
 	private AisleDetailSwipeListener mswipeListner;
 	private boolean closeKeyboard = false;
@@ -131,8 +128,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 					.getNetworkHandler().getUserId());
 		}
 		mShowingList = new ArrayList<String>();
-		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+ 
 	  
 		for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
 			if (getItem(i).getAisleId().equalsIgnoreCase(
@@ -701,8 +697,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 							bookmarkStatus);
 					handleBookmark(bookmarkStatus,
 							getItem(mCurrentAislePosition).getAisleId());
-					Log.e("AisleManager",
-							"bookmarkfeaturetest: count BOOKMARK RESPONSE: mViewHolder.bookmarklay if called ");
 				} else {
 					bookmarkStatus = true;
 					FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
@@ -906,8 +900,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 		@Override
 		public void onSetBrowserArea(String area) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
@@ -1130,9 +1122,8 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		String imageId = null;
 		AisleImageDetails itemDetails;
 
-		int likeStatus = 0;
-
-		Log.e("ImageRating Resopnse", "SURU ImageRating sendDataToDb() called");
+ 
+ 
 		if (getItem(mCurrentAislePosition).getImageList() != null
 				&& getItem(mCurrentAislePosition).getImageList().size() != 0) {
 			aisleId = getItem(mCurrentAislePosition).getAisleId();
@@ -1141,20 +1132,16 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			imageId = itemDetails.mId;
 			if (reqType.equals(CHANGE_BOOKMARK)) {
 				// aisleId,imageId,bookMarksCount,bookmarkIndicator
-				int bookMarksCount = getItem(mCurrentAislePosition)
-						.getmAisleBookmarksCount();
-				boolean bookmarkIndicator = getItem(mCurrentAislePosition)
-						.getWindowBookmarkIndicator();
+			 
 			} else if (reqType.equals(CHANGE_COMMENT)) {
 				// aisleId,imageId,comment
 				if (itemDetails.mCommentsList == null) {
 					getItem(mCurrentAislePosition).getImageList().get(0).mCommentsList = new ArrayList<ImageComments>();
 				}
-				String commentAdded = itemDetails.mCommentsList.get(0).mComment;
+			 
 			} else if (reqType.equals(CHANGE_LIKES)) {
 				// aisleId,imageId,likesCount,likeStatus
 				likeCount = itemDetails.mLikesCount;
-				likeStatus = itemDetails.mLikeDislikeStatus;
 				ArrayList<ImageRating> imgRatingList = DataBaseManager
 						.getInstance(mContext).getRatedImagesList(aisleId);
 				imgRating = new ImageRating();
@@ -1319,18 +1306,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
-
-	private int getBestHeight(int largeHeight) {
-		int screenHeight = VueApplication.getInstance().getScreenHeight();
-		int screenWidth = VueApplication.getInstance().getScreenWidth();
-		if (largeHeight > screenHeight) {
-			largeHeight = screenHeight;
-		}
-
-		return largeHeight;
-
-	}
-
 	private void setImageRating() {
 		ArrayList<AisleImageDetails> aisleImgDetais = getItem(
 				mCurrentAislePosition).getImageList();
@@ -1386,10 +1361,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 		}
 		final ImageCommentRequest imgComment = new ImageCommentRequest();
 		imgComment.setComment(commentString);
-	/*	imgComment.setCommenterFirstName(getItem(mCurrentAislePosition)
-				.getAisleContext().mFirstName);
-		imgComment.setCommenterLastName(getItem(mCurrentAislePosition)
-				.getAisleContext().mLastName);*/
 		imgComment.setOwnerImageId(Long
 				.parseLong(getItem(mCurrentAislePosition).getImageList().get(
 						mCurrentDispImageIndex).mId));
@@ -1408,11 +1379,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 			@Override
 			public void run() {
 				try {
-					ImageComment createdComment = VueTrendingAislesDataModel
+					  VueTrendingAislesDataModel
 							.getInstance(VueApplication.getInstance())
 							.getNetworkHandler().createImageComment(imgComment);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -1420,6 +1390,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 
 	}
 
+	@SuppressLint("UseSparseArrays")
 	@SuppressWarnings("unchecked")
 	private void getCommentList() {
 		mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
@@ -1471,7 +1442,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
 	 */
 	private void findMostLikesImage() {
 		int mostLikePosition = 0, mLikes = 0;
-		boolean hasLikes = false, mSameMostLikes;
+		boolean hasLikes = false;
 		for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
 				.size(); i++) {
 			getItem(mCurrentAislePosition).getImageList().get(i).mHasMostLikes = false;

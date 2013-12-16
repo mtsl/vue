@@ -223,13 +223,7 @@ public class AisleManager {
 		if (response.getEntity() != null
 				&& response.getStatusLine().getStatusCode() == 200) {
 			responseMessage = EntityUtils.toString(response.getEntity());
-			System.out.println("AISLE CREATED Response: " + responseMessage);
-			Log.i("myailsedebug", "myailsedebug: recieved response*******:  "
-					+ responseMessage);
 		} else {
-			Log.i("myailsedebug",
-					"myailsedebug: recieved response******* response code :  "
-							+ response.getStatusLine().getStatusCode());
 		}
 		return responseMessage;
 

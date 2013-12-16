@@ -59,8 +59,7 @@ public class TrendingAislesLeftColumnAdapter extends
 		super(c, content);
 		mContext = c;
 
-		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+	 
 		// mVueTrendingAislesDataModel.registerAisleDataObserver(this);
 	}
 
@@ -71,8 +70,7 @@ public class TrendingAislesLeftColumnAdapter extends
 		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
 		mContext = c;
 		this.listener = listener;
-		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+ 
 		// mVueTrendingAislesDataModel.registerAisleDataObserver(this);
 	}
 
@@ -99,11 +97,8 @@ public class TrendingAislesLeftColumnAdapter extends
 		ViewHolder holder;
 
 		int actualPosition = calculateActualPosition(position);
-		Log.i("TrendingDataModel",
-				"DataObserver for List Refresh: Left getview ");
+ 
 		if (null == convertView) {
-			Log.i("TrendingDataModel",
-					"DataObserver for List Refresh: Left getview if ");
 			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
 			convertView = layoutInflator.inflate(R.layout.staggered_row_item,
 					null);
@@ -125,10 +120,6 @@ public class TrendingAislesLeftColumnAdapter extends
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
 			holder.aisleContentBrowser.setAilseLeftListLisner(new LeftList());
 			convertView.setTag(holder);
-
-			if (DEBUG)
-				Log.e("Jaws2", "getView invoked for a new view at position1 = "
-						+ position);
 		}
 		holder = (ViewHolder) convertView.getTag();
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);

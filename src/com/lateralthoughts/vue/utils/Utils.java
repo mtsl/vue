@@ -37,7 +37,6 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -79,7 +78,6 @@ public class Utils {
 			os.close();
 			is.close();
 		} catch (Exception ex) {
-			Log.i("added url", "added url  InputStream got error ");
 			ex.printStackTrace();
 		}
 	}
@@ -177,19 +175,17 @@ public class Utils {
 
 	// Getting Image file path from URI.
 	public static String getPath(Uri uri, Activity activity) {
-		Log.e("getPath", "" + uri);
+ 
 		Cursor cursor = activity.getContentResolver().query(uri, null, null,
 				null, null);
-		Log.e("cs", "5");
+	 
 		if (cursor == null) { // Source is Dropbox or other similar local file
-			Log.e("getPath if", "" + uri.getPath()); // path
+	  // path
 			return uri.getPath();
 		} else {
 			cursor.moveToFirst();
 			int idx = cursor
 					.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-			Log.e("cs", "6");
-			Log.e("getPath else", "" + cursor.getString(idx) + "..?" + idx);
 			return cursor.getString(idx);
 		}
 	}
@@ -206,7 +202,6 @@ public class Utils {
 			FileInputStream stream1 = new FileInputStream(f);
 			BitmapFactory.decodeStream(stream1, null, o);
 			stream1.close();
-			Log.e("cs", "10");
 			int height = o.outHeight;
 			int width = o.outWidth;
 			returnArray[1] = width + "";
@@ -214,9 +209,6 @@ public class Utils {
 			int scale = 1;
 			int heightRatio = 0;
 			int widthRatio = 0;
-			Log.e("Utils bitmap path", f.getPath());
-			Log.e("Utils bitmap width", width + "..." + screenWidth);
-			Log.e("Utils bitmap height", height + "..." + screenHeight);
 			if (height > screenHeight) {
 				// Calculate ratios of height and width to requested height and
 				// width
@@ -233,14 +225,12 @@ public class Utils {
 			// requested height and width.
 			scale = heightRatio < widthRatio ? heightRatio : widthRatio;
 			// decode with inSampleSize
-			Log.e("cs", "12");
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = (int) scale;
 			FileInputStream stream2 = new FileInputStream(f);
 			Bitmap resizedBitmap = BitmapFactory
 					.decodeStream(stream2, null, o2);
 			stream2.close();
-			Log.e("cs", "13");
 			File resizedFileName = new File(
 					vueAppResizedImageFileName(mContext));
 			saveBitmap(resizedBitmap, resizedFileName);
@@ -471,7 +461,6 @@ public class Utils {
 	public static String getDeviceId() {
 		String deviceId = Secure.getString(VueApplication.getInstance()
 				.getContentResolver(), Secure.ANDROID_ID);
-		Log.e("Utils", "get device id method called" + deviceId);
 		return deviceId;
 	}
 
@@ -739,12 +728,6 @@ public class Utils {
 			imageHeight = adjustedImageHeight;
 			imageWidth = adjustedImageWidth;
 		}
-		Log.e("Utils", "getBestDementions orignal width ??? " + originalWidth
-				+ "?? original height ?? " + originalHeight
-				+ "??? availablewidth ?? " + availableScreenWidth
-				+ "??? avaialable height ???" + availableScreenHeight
-				+ "??? image width ???" + imageWidth + "?? image height ???"
-				+ imageHeight);
 		return BitmapLoaderUtils.getInstance().getBitmap(bitmap,
 				(int) imageWidth, (int) imageHeight);
 	}

@@ -54,7 +54,6 @@ public class ScaleImageView extends NetworkImageView {
 
 	@Override
 	public void setImageBitmap(Bitmap bm) {
-		Log.i("calling here", "calling here");
 		//new BitmapReszie().execute(bm);
 		 super.setImageBitmap(bm);
 		// this.setImageBitmap(bm);

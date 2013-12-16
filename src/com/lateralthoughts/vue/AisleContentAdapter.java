@@ -167,14 +167,12 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             	 bitmap = getCachedBitmap(itemDetails.mImageUrl);
             } else {
              // bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
-              Log.i("imageResize", "imageResize custom from cache 1");
                
             }
             if(bitmap != null){
                 if(contentBrowser.getmSourceName() != null && contentBrowser.getmSourceName().equalsIgnoreCase(AisleDetailsViewAdapter.TAG)) {
                     mImageDimension = Utils.getScalledImage(bitmap, itemDetails.mAvailableWidth, itemDetails.mAvailableHeight);
                     if(bitmap.getHeight() < mImageDimension.mImgHeight) {
-                        Log.i("detailscrop", "detailscrop resize agian");
                         loadBitmap(itemDetails,mImageDimension.mImgHeight,contentBrowser, imageView,wantedIndex);
                     }
                 }

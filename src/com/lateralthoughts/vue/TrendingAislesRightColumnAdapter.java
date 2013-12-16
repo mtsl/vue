@@ -61,8 +61,7 @@ public class TrendingAislesRightColumnAdapter extends
 			ArrayList<AisleWindowContent> content) {
 		super(c, content);
 		mContext = c;
-		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
+	 
 		mLoader = AisleLoader.getInstance(mContext);
 	}
 
@@ -74,9 +73,6 @@ public class TrendingAislesRightColumnAdapter extends
 		mContext = c;
 		mLoader = AisleLoader.getInstance(mContext);
 		this.listener = listener;
-
-		if (DEBUG)
-			Log.e(TAG, "About to initiate request for trending aisles");
 		// mVueTrendingAislesDataModel.registerAisleDataObserver(this);
 	}
 
@@ -97,13 +93,11 @@ public class TrendingAislesRightColumnAdapter extends
 
 	// create a new ImageView for each item referenced by the Adapter
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Log.i("SCROLL_STATE_IDLE", "SCROLL_STATE_IDLE 3 getview");
+ 
 		ViewHolder holder;
-		Log.i("TrendingDataModel",
-				"DataObserver for List Refresh:  Right getview ");
+	 
 		if (null == convertView) {
-			Log.i("TrendingDataModel",
-					"DataObserver for List Refresh: Right getview if ");
+ 
 			LayoutInflater layoutInflator = LayoutInflater.from(mContext);
 			convertView = layoutInflator.inflate(R.layout.staggered_row_item,
 					null);
@@ -128,10 +122,7 @@ public class TrendingAislesRightColumnAdapter extends
 			holder.aisleContentBrowser
 					.setAilseRighttListLisner(new RightList());
 			convertView.setTag(holder);
-
-			if (DEBUG)
-				Log.e("Jaws2", "getView invoked for a new view at position2 = "
-						+ position);
+ ;
 		}
 		holder = (ViewHolder) convertView.getTag();
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
@@ -228,8 +219,6 @@ public class TrendingAislesRightColumnAdapter extends
 
 	@Override
 	public void onAisleDataUpdated(int newCount) {
-		Log.i("TrendingDataModel",
-				"DataObserver for List Refresh: Right List AisleUpdate Called ");
 		notifyDataSetChanged();
 	}
 
@@ -248,7 +237,6 @@ public class TrendingAislesRightColumnAdapter extends
 			mHasToShow = hasToShwo;
 			mShowStarAisle = aisleId;
 			mHasSameLikes = sameLikes;
-			Log.i("settingAdaptersrest", "settingAdaptersrestRight");
 			notifyDataSetChanged();
 
 		}
