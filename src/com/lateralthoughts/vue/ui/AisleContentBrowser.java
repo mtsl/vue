@@ -234,27 +234,6 @@ public class AisleContentBrowser extends ViewFlipper {
         	                    if(detailImgClickListenr != null) {
         		                    detailImgClickListenr.onImageSwipe(currentIndex+1);
         		                    }
-        	                    if(aisleContentBrowser.isLeft){
-    	                        	if(null != mSpecialNeedsAdapter){
-    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex+1)){
-    	                        			if(mLeftListListener != null)
-    	                        			mLeftListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
-    	                        		} else {
-    	                        			if(mLeftListListener != null)
-    	                        			mLeftListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
-    	                        		}
-    	                        	}
-    	                        } else if(aisleContentBrowser.isRight){
-    	                        	if(null != mSpecialNeedsAdapter){
-    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex+1)){
-    	                        			if(mRightListListener != null)
-    	                        			mRightListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
-    	                        		} else {
-    	                        			if(mRightListListener != null)
-    	                        			mRightListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex+1));
-    	                        		}
-    	                        	}
-    	                        }
         	                   // aisleContentBrowser.setDisplayedChild(currentIndex+1);
                             }
                             public void onAnimationStart(Animation animation) {
@@ -328,25 +307,6 @@ public class AisleContentBrowser extends ViewFlipper {
     	                        if(detailImgClickListenr != null) {
     	 	                       detailImgClickListenr.onImageSwipe(currentIndex-1);
     	 	                       }
-    	                        if(aisleContentBrowser.isLeft){
-    	                        	if(null != mSpecialNeedsAdapter){
-    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex-1)){
-    	                        			mLeftListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
-    	                        		} else {
-    	                        			mLeftListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
-    	                        		}
-    	                        	}
-    	                        } else if(aisleContentBrowser.isRight){
-    	                        	if(null != mSpecialNeedsAdapter){
-    	                        		if(mSpecialNeedsAdapter.hasMostLikes(currentIndex-1)){
-    	                        			mRightListListener.onSwipe(true,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
-    	                        		} else {
-    	                        			mRightListListener.onSwipe(false,mSpecialNeedsAdapter.getAisleId(),mSpecialNeedsAdapter.hasSameLikes(currentIndex-1));
-    	                        		}
-    	                        	}
-    	                        }
-    	                       // aisleContentBrowser.setDisplayedChild(currentIndex-1);
-    	                      
                             }
                             public void onAnimationStart(Animation animation) {
 

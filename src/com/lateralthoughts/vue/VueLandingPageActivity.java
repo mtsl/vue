@@ -33,7 +33,6 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -440,8 +439,6 @@ public class VueLandingPageActivity extends Activity implements
 
 	private void handleSendText(Intent intent, boolean fromOnCreateMethodFlag) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-		Log.e("VueLandingPageActivity", "Recived Text ::: " + sharedText
-				+ "??? " + fromOnCreateMethodFlag);
 		if (sharedText != null) {
 			String sourceUrl = Utils.getUrlFromString(sharedText);
 			if (Utils.isLoadDataentryScreenFlag(this)) {
@@ -450,7 +447,6 @@ public class VueLandingPageActivity extends Activity implements
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
 							VueLandingPageActivity.this, false);
-					Log.e("Land", "vueland 1");
 					if (VueTrendingAislesDataModel.getInstance(this)
 							.getAisleCount() > 0) {
 						Intent i = new Intent(this,
@@ -487,10 +483,8 @@ public class VueLandingPageActivity extends Activity implements
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
 							VueLandingPageActivity.this, false);
-					Log.e("Land", "vueland 1");
 					if (VueTrendingAislesDataModel.getInstance(this)
 							.getAisleCount() > 0) {
-						Log.e("Land", "vueland 1");
 						Intent i = new Intent(this,
 								AisleDetailsViewActivity.class);
 						Bundle b = new Bundle();
@@ -542,10 +536,8 @@ public class VueLandingPageActivity extends Activity implements
 						.getFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(VueLandingPageActivity.this)) {
 					Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
 							VueLandingPageActivity.this, false);
-					Log.e("Land", "vueland 1");
 					if (VueTrendingAislesDataModel.getInstance(this)
 							.getAisleCount() > 0) {
-						Log.e("Land", "vueland 1");
 						Intent i = new Intent(this,
 								AisleDetailsViewActivity.class);
 						Bundle b = new Bundle();
@@ -712,23 +704,15 @@ public class VueLandingPageActivity extends Activity implements
 		String type = intent.getType();
 
 		if (Intent.ACTION_SEND.equals(action) && type != null) {
-			Log.e("CretaeAisleSelectionActivity send text", type);
 			if ("text/plain".equals(type)) {
 				handleSendText(intent, false); // Handle text being sent
-				Log.e("CretaeAisleSelectionActivity send text",
-						"textplain match");
 			} else if (type.startsWith("image/")) {
 				handleSendImage(intent, false); // Handle single image being
-												// sent
-				Log.e("CretaeAisleSelectionActivity send text", "image match");
 			}
 		} else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
 			if (type.startsWith("image/")) {
 				handleSendMultipleImages(intent, false); // Handle multiple
 															// images
-				// being sent
-				Log.e("CretaeAisleSelectionActivity send text",
-						"multiple image match");
 			}
 		} else {
 			// Handle other intents, such as being started from the home screen
@@ -802,7 +786,7 @@ public class VueLandingPageActivity extends Activity implements
 				VueTrendingAislesDataModel
 						.getInstance(VueApplication.getInstance())
 						.getNetworkHandler().makeOffseZero();
-				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+				//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(
 						VueApplication.getInstance()).clearAisles();
 				AisleWindowContentFactory.getInstance(
@@ -829,7 +813,7 @@ public class VueLandingPageActivity extends Activity implements
 					.getInstance(this).getRecentlyViewedAisles();
 			if (windowContent.size() > 0) {
 
-				((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+				//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 				VueTrendingAislesDataModel.getInstance(this).clearAisles();
 				AisleWindowContentFactory.getInstance(
 						VueApplication.getInstance()).clearObjectsInUse();
@@ -879,7 +863,7 @@ public class VueLandingPageActivity extends Activity implements
 		if (windowContent != null && windowContent.size() > 0) {
 			getActionBar().setTitle(screenName);
 			mLandingScreenName = screenName;
-			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+			//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 			VueTrendingAislesDataModel.getInstance(this).clearAisles();
 			AisleWindowContentFactory.getInstance(VueApplication.getInstance())
 					.clearObjectsInUse();
@@ -900,7 +884,7 @@ public class VueLandingPageActivity extends Activity implements
 	private void showPreviousScreen(String screenName) {
 		boolean fromServer = false;
 		boolean loadMore = false;
-		((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+		//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 		if (screenName
 				.equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
 			getTrendingAislesFromDb(screenName, fromServer, loadMore);
@@ -964,7 +948,7 @@ public class VueLandingPageActivity extends Activity implements
 
 		@Override
 		public void clearBrowsers() {
-			((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
+			//((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
 		}
 	}
 

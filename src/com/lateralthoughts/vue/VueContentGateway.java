@@ -30,6 +30,17 @@ import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
+import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.UnsupportedEncodingException;
+
 public class VueContentGateway {
 	private final String TAG = "VueContentGateway";
 	private final boolean DEBUG = false;
@@ -79,30 +90,23 @@ public class VueContentGateway {
 			Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_LONG)
 					.show();
 			VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
-			Log.e(TAG, "network connection No");
 			return status;
 		} else if (isConnection) {
 			final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL + "/" + limit
-					+ "/" + offset;  
-			Log.i("Gateway", "jsonresponse trendig requestUrl:  " + requestUrl);
+					+ "/" + offset;
 			Response.Listener listener = new Response.Listener<JSONArray>() {
 				@Override
 				public void onResponse(JSONArray jsonArray) {
 					if (null != jsonArray) {
-						Log.i("Gateway", "jsonresponse trendig:  " + jsonArray);
 						Bundle responseBundle = new Bundle();
 						responseBundle
 								.putString("result", jsonArray.toString());
 						responseBundle.putBoolean("loadMore", loadMore);
 						responseBundle.putInt("offset", offset);
 						receiver.send(1, responseBundle);
-						Intent intent = new Intent(
-								VueConstants.LANDING_SCREEN_RECEIVER);
-						intent.putExtra(
-								VueConstants.LANDING_SCREEN_RECEIVER_KEY,
-								screenName);
-						VueApplication.getInstance()
-								.sendBroadcast(intent);
+						Intent intent = new Intent(VueConstants.LANDING_SCREEN_RECEIVER);
+						intent.putExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY,screenName);
+						VueApplication.getInstance().sendBroadcast(intent);
 					}
 				}
 			};
@@ -112,27 +116,15 @@ public class VueContentGateway {
 					Bundle responseBundle = new Bundle();
 					responseBundle.putString("result", "error");
 					receiver.send(1, responseBundle);
-					Log.i("Gateway", "jsonresponse trendig error response:  "   );
-					Log.e("VueNetworkError",
-							"Vue encountered network operations error. Error = "
-									+ error.networkResponse);
- 
-							VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
+                    VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dismissProgress();
 					 
 				}
 			};
-			JsonArrayRequest vueRequest = new JsonArrayRequest(requestUrl,
+            VueAislesRequest vueRequest = new VueAislesRequest(requestUrl,
 					listener, errorListener) {
+            };
 
-        /*@Override
-        public Map<String, String> getHeaders() throws AuthFailureError {
-          HashMap<String, String> headersMap = new HashMap<String, String>();
-          headersMap.put("Accept-Encoding", "gzip");
-          headersMap.put("Content-Type", "application/json");
-          return headersMap;
-        }*/
-      };
-      
+
       vueRequest.setRetryPolicy(new DefaultRetryPolicy(
       		DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 
               Utils.MAX_RETRIES, 
@@ -155,4 +147,24 @@ public class VueContentGateway {
 	private void addParams(String name, String value) {
 		mParams.add(new ParcelableNameValuePair(name, value));
 	}
+
+    private class VueAislesRequest extends JsonArrayRequest {
+
+        /**
+         * Creates a new request.
+         * @param url URL to fetch the JSON from
+         * @param listener Listener to receive the JSON response
+         * @param errorListener Error listener, or null to ignore errors.
+         */
+        private Priority mPriority = Priority.HIGH;
+
+        @Override
+        public Priority getPriority() {
+            return mPriority;
+        }
+
+        public VueAislesRequest(String url, Listener<JSONArray> listener, ErrorListener errorListener) {
+            super(url, listener, errorListener);
+        }
+    }
 }

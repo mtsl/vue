@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -297,8 +296,7 @@ public void onDestroyView() {
 						} else {
 							Toast.makeText(
 									getActivity(),
-									getActivity().getResources().getString(
-											R.string.already_logged_in_msg),
+									getActivity().getResources().getString(R.string.already_logged_in_msg),
 									Toast.LENGTH_LONG).show();
 						}
 					}
@@ -687,16 +685,7 @@ public void onDestroyView() {
 			 * if(groups.get(groupPosition).tag.equals("Categories")) {
 			 * expandListView.expandGroup(groupPosition); }
 			 */
-			Log.e("VueListFragment",
-					"USER PROFILE PIC TEST IS NAME: "
-							+ groups.get(groupPosition).tag
-							+ ", groupPosition: " + groupPosition);
 			if (groupPosition == 1) {
-				Log.e("VueListFragment",
-						"USER PROFILE PIC TEST IS GROUP POSITION: 1");
-				Log.e("VueListFragment",
-						"USER PROFILE PIC TEST IS GROUP POSITION: groups.get(groupPosition).userPic "
-								+ groups.get(groupPosition).userPic);
 				if (groups.get(groupPosition).userPic != null) {
 					holder.icon
 							.setImageBitmap(groups.get(groupPosition).userPic);
@@ -769,14 +758,11 @@ public void onDestroyView() {
 		} else if (s.equals(getResources().getString(
 				R.string.sidemenu_sub_option_Googleplus))) {
 			if (googleplusloginflag) {
-				Log.e(getTag(), "GOOGLEPLUS : Value of s : 1");
 				getGPlusFriendsList();
 			} else {
 				if (progress.isShowing()) {
 					progress.dismiss();
 				}
-				Log.e(getTag(), "GOOGLEPLUS : Value of s : 2");
-				Log.e(getTag(), "GOOGLEPLUS : Value of s : 3");
 				Intent i = new Intent(getActivity(), VueLoginActivity.class);
 				Bundle b = new Bundle();
 				b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
@@ -842,9 +828,6 @@ public void onDestroyView() {
 			Response.ErrorListener errorListener = new Response.ErrorListener() {
 				@Override
 				public void onErrorResponse(VolleyError error) {
-					Log.e("VueNetworkError",
-							"Vue encountered network operations error. Error = "
-									+ error.networkResponse);
 					if (progress.isShowing()) {
 						progress.dismiss();
 					}
@@ -1007,7 +990,6 @@ public void onDestroyView() {
 				public void onClick(View v) {
 					// Utils.saveNetworkSettings(getActivity(),
 					// wifich.isChecked());
-					Log.e("Profiling", "Profiling User Profile onClick");
 					if (userNameEdit.getText().toString().isEmpty()) {
 						Toast.makeText(getActivity(),
 								"User name cannot be blank", Toast.LENGTH_LONG)
@@ -1018,9 +1000,6 @@ public void onDestroyView() {
 					customlayout.startAnimation(animDown);
 					expandListView.setVisibility(View.VISIBLE);
 					if (isProfileEdited || isNewUser) {
-						Log.e("Profiling",
-								"Profiling User Profile onClick isProfileEdited : "
-										+ isProfileEdited);
 						userDOBEdit.getText().toString();
 						userGenderEdit.getText().toString();
 						userEmailEdit.getText().toString();
@@ -1090,14 +1069,8 @@ public void onDestroyView() {
 
 	@Override
 	public void afterTextChanged(Editable s) {
-		Log.e("Profiling",
-				"Profiling User Profile onClick afterTextChanged 1 : "
-						+ isProfileEdited);
 		if (!isProfileEdited)
 			isProfileEdited = true;
-		Log.e("Profiling",
-				"Profiling User Profile onClick afterTextChanged 2 : "
-						+ isProfileEdited);
 	}
 
 	@Override
