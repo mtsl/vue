@@ -153,9 +153,6 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
             title = title + lookingFor;
         }
         holder.aisleContext.setText(title);
-
-        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestMoreAisle(true, 
-				mContext.getString(R.string.sidemenu_option_Trending_Aisles));
         return convertView;
     }
 	private class ShowLikes implements AilseLeftListLisner {
