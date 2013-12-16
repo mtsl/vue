@@ -43,7 +43,7 @@ public class VueTrendingAislesDataModel {
 	private long mKeepAliveTime = 10;
 	public boolean mMoreDataAvailable = true;
 	private boolean mMarkAislesToDelete = false;
-	public boolean isFromDb = false;
+	public boolean mIsFromDb = false;
 
 	// ===== The following set of variables are used for state management
 	// ==================================
@@ -263,7 +263,7 @@ public class VueTrendingAislesDataModel {
 			Log.e("DataBaseManager",
 					"SURU updated aisle Order: DATABASE LODING 2 aisleContentArray.size(): "
 							+ aisleContentArray.size());
-			isFromDb = true;
+			mIsFromDb = true;
 			Log.i("arrayList", "arrayList from db sized1 uirefresh: "
 					+ aisleContentArray.size());
 			for (AisleWindowContent content : aisleContentArray) {
@@ -293,7 +293,7 @@ public class VueTrendingAislesDataModel {
 									+ aislesList.size());
 					if (aislesList.size() == 0) {
 						loadOnRequest = true;
-						isFromDb = false;
+						mIsFromDb = false;
 						VueTrendingAislesDataModel.getInstance(
 								VueApplication.getInstance()).setmOffset(
 								listSize());

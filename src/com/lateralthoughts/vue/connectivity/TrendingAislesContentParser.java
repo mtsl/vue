@@ -124,8 +124,8 @@ public class TrendingAislesContentParser extends ResultReceiver {
 															.getInstance()).loadOnRequest = true;
 											if (aislesList != null
 													&& aislesList.size() > 0) {
-												for (int i = 0; i < aislesList
-														.size(); i++) {
+											  int listSize = aislesList.size();
+	                                                for (int i = 0; i < listSize; i++) {
 													VueTrendingAislesDataModel model = VueTrendingAislesDataModel
 															.getInstance(VueApplication
 																	.getInstance());

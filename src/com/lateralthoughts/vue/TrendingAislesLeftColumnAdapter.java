@@ -50,7 +50,6 @@ public class TrendingAislesLeftColumnAdapter extends
 	private boolean mHasToShow = true;
 	private boolean mHasSameLikes = false;
 	private String mShowStarAisle = " ";
-	// public static boolean mIsLeftDataChanged = false;
 	AisleContentClickListener listener;
 	LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
 	BitmapLoaderUtils mBitmapLoaderUtils;
@@ -113,10 +112,6 @@ public class TrendingAislesLeftColumnAdapter extends
 					.findViewById(R.id.aisle_content_flipper);
 			holder.starIcon = (ImageView) convertView
 					.findViewById(R.id.staricon);
-			/*
-			 * holder.startImageLay = (LinearLayout) convertView
-			 * .findViewById(R.id.starImagelay);
-			 */
 			holder.aisleDescriptor = (LinearLayout) convertView
 					.findViewById(R.id.aisle_descriptor);
 			holder.profileThumbnail = (NetworkImageView) holder.aisleDescriptor
@@ -139,14 +134,6 @@ public class TrendingAislesLeftColumnAdapter extends
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
 		int scrollIndex = 0;
-		/*
-		 * if( holder.mWindowContent.getImageList().get(0).mHasMostLikes &&
-		 * holder.aisleContentBrowser.getCurrentIndex() == 0){
-		 * if(holder.mWindowContent.getImageList().get(0).mSameMostLikes){
-		 * holder.starIcon.setImageResource(R.drawable.share_light); } else {
-		 * holder.starIcon.setImageResource(R.drawable.share ); }
-		 * holder.startImageLay.setVisibility(View.VISIBLE); }
-		 */
 		if (mHasToShow) {
 			if (holder.mWindowContent != null
 					&& mShowStarAisle
@@ -245,8 +232,6 @@ public class TrendingAislesLeftColumnAdapter extends
 
 	@Override
 	public void onAisleDataUpdated(int newCount) {
-		Log.i("TrendingDataModel",
-				"DataObserver for List Refresh: Right List AisleUpdate Called ");
 		notifyDataSetChanged();
 	}
 
@@ -257,7 +242,6 @@ public class TrendingAislesLeftColumnAdapter extends
 			mHasToShow = hasToShwo;
 			mShowStarAisle = aisleId;
 			mHasSameLikes = sameLikes;
-			Log.i("settingAdaptersrest", "settingAdaptersrestRight");
 			notifyDataSetChanged();
 
 		}

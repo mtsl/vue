@@ -67,37 +67,29 @@ public class AisleDetailsViewActivity extends Activity {
 	public static final String TOP_SCROLLER = "topscroller";
 	public static final String BOTTOM_SCROLLER = "bottomscroller";
 	private static final String DETAILS_SCREEN_VISITOR = "Details_Screen_Visitors";
-	HorizontalListView mTopScroller, mBottomScroller;
+	private HorizontalListView mTopScroller, mBottomScroller;
 	private int mComparisionDelay = 500;
-	int mScreenTotalHeight;
-	int mComparisionScreenHeight;
-	Context mContext;
-	AisleWindowContent mWindowContent;
+	private int mScreenTotalHeight;
+	private int mComparisionScreenHeight;
 	private SlidingDrawer mSlidingDrawer;
-	ArrayList<AisleImageDetails> mImageDetailsArr = null;
+	private ArrayList<AisleImageDetails> mImageDetailsArr = null;
 	private BitmapLoaderUtils mBitmapLoaderUtils;
 	private int mLikeImageShowTime = 1000;
-	private boolean isActionBarShown = false;
+	private boolean mIsActionBarShown = false;
 	private int mCurrentapiVersion;
 	private HandleActionBar mHandleActionbar;
 	private int mStatusbarHeight;
 	private boolean mTempflag = true;
-	VueAisleDetailsViewFragment mVueAiselFragment;
-	ViewHolder viewHolder;
-	LinearLayout MContentLinearLay;
-	int mCurentAislePosistion;
+	private VueAisleDetailsViewFragment mVueAiselFragment;
+	private ViewHolder viewHolder;
+	private LinearLayout mContentLinearLay;
 	private FileCache mFileCache;
 	private BitmapCacheDetailsScreen mAisleImagesCache;
-	private boolean isSlidePanleLoaded = false;
-	ContentAdapterFactory mContentAdapterFactory;
-	ScaledImageViewFactory mViewFactory;
-	ComparisionAdapter mBottomAdapter, mTopAdapter;
-
-	public static AisleDetailsViewActivity detailsActivity = null;
-
+	private boolean mIsSlidePanleLoaded = false;
+	private ComparisionAdapter mBottomAdapter, mTopAdapter;
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
-	private FrameLayout content_frame2;
+	private FrameLayout mContent_frame2;
 	private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
 
 	@SuppressWarnings("deprecation")
@@ -105,22 +97,13 @@ public class AisleDetailsViewActivity extends Activity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		detailsActivity = this;
+		 
 		setContentView(R.layout.aisle_details_activity_landing);
 		initialize();
-		content_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
+		mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
 		mSlidListFrag = (VueListFragment) getFragmentManager()
 				.findFragmentById(R.id.listfrag);
-		VueUser storedVueUser = null;
-		try {
-			storedVueUser = Utils.readUserObjectFromFile(
-					AisleDetailsViewActivity.this,
-					VueConstants.VUE_APP_USEROBJECT__FILENAME);
-		} catch (Exception e2) {
-			e2.printStackTrace();
-		}
 		mCurrentapiVersion = android.os.Build.VERSION.SDK_INT;
-
 		if (mCurrentapiVersion >= 11) {
 			getActionBar().hide();
 		}
@@ -141,23 +124,19 @@ public class AisleDetailsViewActivity extends Activity {
 							mHandler.sendEmptyMessage(0);
 						}
 					};
-
 					@Override
 					public void onScrollStarted() {
 						mDrawerLayout
 								.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 					}
-
 					@Override
 					public void onScrollEnded() {
 						new Thread(mRunnable).start();
 						mDrawerLayout
 								.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 					}
-
 				});
-
-		MContentLinearLay = (LinearLayout) findViewById(R.id.content2);
+		mContentLinearLay = (LinearLayout) findViewById(R.id.content2);
 		mTopScroller = (HorizontalListView) findViewById(R.id.topscroller);
 		mBottomScroller = (HorizontalListView) findViewById(R.id.bottomscroller);
 		mStatusbarHeight = VueApplication.getInstance().getmStatusBarHeight();
@@ -271,9 +250,7 @@ public class AisleDetailsViewActivity extends Activity {
 				invalidateOptionsMenu(); // creates call to
 											// onPrepareOptionsMenu()
 				mSlidListFrag.closeKeybaord();
-
 			}
-
 			public void onDrawerOpened(View drawerView) {
 				// getActionBar().setTitle(mDrawerTitle);
 				invalidateOptionsMenu(); // creates call to
@@ -331,13 +308,6 @@ public class AisleDetailsViewActivity extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Bitmap bitmap = null;
-			// mItemDetails = mImageDetailsArr.get(position);
-			/*
-			 * Bitmap bitmap =
-			 * mBitmapLoaderUtils.getCachedBitmap(mImageDetailsArr
-			 * .get(position).mCustomImageUrl);
-			 */
-
 			if (convertView == null) {
 				viewHolder = new ViewHolder();
 				convertView = minflater.inflate(R.layout.vuecompareimg, null);
@@ -367,7 +337,6 @@ public class AisleDetailsViewActivity extends Activity {
 
 			viewHolder.likeImage.setImageResource(R.drawable.thumb_up);
 			if (bitmap != null) {
-				 
 				viewHolder.img.setImageBitmap(bitmap);
 			} else {
 				 
@@ -396,12 +365,10 @@ public class AisleDetailsViewActivity extends Activity {
 		mHandleActionbar = new HandleActionBar();
 		mVueAiselFragment.setActionBarHander(mHandleActionbar);
 		super.onResume();
-		Log.e("Land", "vueland 2");
 		Bundle b = getIntent().getExtras();
 		if (b != null && mTempflag) {
 			mTempflag = false;
 			if (b.getBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG)) {
-				Log.e("Land", "vueland 3");
 				sendDataToDataentryScreen(b);
 			}
 		}
@@ -415,8 +382,8 @@ public class AisleDetailsViewActivity extends Activity {
 				mTopAdapter.notifyDataSetChanged();
 			}
 		}
-		if (!isSlidePanleLoaded) {
-			isSlidePanleLoaded = true;
+		if (!mIsSlidePanleLoaded) {
+			mIsSlidePanleLoaded = true;
 			new Handler().postDelayed(new Runnable() {
 
 				@Override
@@ -470,16 +437,16 @@ public class AisleDetailsViewActivity extends Activity {
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-			if (mDrawerLayout.isDrawerOpen(content_frame2)) {
+			if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
 
 				if (!mSlidListFrag.listener.onBackPressed()) {
-					mDrawerLayout.closeDrawer(content_frame2);
+					mDrawerLayout.closeDrawer(mContent_frame2);
 				}
 			} else if (mSlidingDrawer.isOpened()) {
 				mSlidingDrawer.close();
 			} else {
 				mVueAiselFragment.setAisleContentListenerNull();
-				MContentLinearLay.removeAllViews();
+				mContentLinearLay.removeAllViews();
 				for (int i = 0; i < mImageDetailsArr.size(); i++) {
 					// mBitmapLoaderUtils.removeBitmapFromCache(mImageDetailsArr.get(i));
 				}
@@ -593,16 +560,6 @@ public class AisleDetailsViewActivity extends Activity {
 
 		}
 	}
-
-	/*
-	 * public void loadBitmap(String url, AisleContentBrowser flipper, ImageView
-	 * imageView, int bestHeight) {
-	 * 
-	 * // if (cancelPotentialDownload(loc, imageView)) { BitmapWorkerTask task =
-	 * new BitmapWorkerTask(flipper, imageView, bestHeight); ((ScaleImageView)
-	 * imageView).setOpaqueWorkerObject(task); task.execute(url); // } }
-	 */
-
 	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 		private final WeakReference<ImageView> imageViewReference;
 		// private final WeakReference<AisleContentBrowser>viewFlipperReference;
@@ -660,8 +617,8 @@ public class AisleDetailsViewActivity extends Activity {
 
 		@Override
 		public void showActionBar() {
-			if (!isActionBarShown) {
-				isActionBarShown = true;
+			if (!mIsActionBarShown) {
+				mIsActionBarShown = true;
 				// getSupportActionBar().hide();
 			}
 
@@ -669,11 +626,11 @@ public class AisleDetailsViewActivity extends Activity {
 
 		@Override
 		public void hideActionBar() {
-			if (isActionBarShown) {
+			if (mIsActionBarShown) {
 				if (mCurrentapiVersion >= 11) {
 					// getSupportActionBar().hide();
 				}
-				isActionBarShown = false;
+				mIsActionBarShown = false;
 			}
 
 		}
@@ -806,8 +763,6 @@ public class AisleDetailsViewActivity extends Activity {
 
 	// decodes image and scales it to reduce memory consumption
 	public Bitmap decodeFile(File f, int bestHeight) {
- 
-
 		try {
 			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
@@ -819,37 +774,26 @@ public class AisleDetailsViewActivity extends Activity {
 			// final int REQUIRED_SIZE = mScreenWidth/2;
 			int height = o.outHeight;
 			int width = o.outWidth;
- 
 			int reqWidth = VueApplication.getInstance()
 					.getVueDetailsCardWidth();
-
 			int scale = 1;
-
 			if (height > bestHeight) {
-
 				// Calculate ratios of height and width to requested height and
 				// width
 				final int heightRatio = Math.round((float) height
 						/ (float) bestHeight);
 				final int widthRatio = Math.round((float) width
 						/ (float) reqWidth);
-
 				// Choose the smallest ratio as inSampleSize value, this will
 				// guarantee
 				// a final image with both dimensions larger than or equal to
 				// the
 				// requested height and width.
 				scale = heightRatio; // < widthRatio ? heightRatio : widthRatio;
-
 			}
-
 			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
-			// o2.inSampleSize = o.inSampleSize;
-			// if(DEBUG) Log.d("Jaws","using inSampleSizeScale = " + scale +
-			// " original width = " + o.outWidth + "screen width = " +
-			// mScreenWidth);
 			FileInputStream stream2 = new FileInputStream(f);
 			Bitmap bitmap = BitmapFactory.decodeStream(stream2, null, o2);
 
@@ -859,15 +803,9 @@ public class AisleDetailsViewActivity extends Activity {
 				height = bitmap.getHeight();
 
 				if (width > reqWidth) {
-
 					float tempHeight = (height * reqWidth) / width;
 					height = (int) tempHeight;
-					/*
-					 * Bitmap bitmaptest = Bitmap.createScaledBitmap(bitmap,
-					 * reqWidth, height, true);
-					 */
 					bitmap = getModifiedBitmap(bitmap, reqWidth, height);
-
 				}
 			}
 			if (bitmap != null) {

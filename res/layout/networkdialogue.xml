@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    android:background="@color/lightblack"
+    android:background="@drawable/dataentry_title_bg"
     android:orientation="vertical" >
   <include android:id="@+id/popupheadid" layout="@layout/popupheading"/>
    <LinearLayout android:layout_width="fill_parent"
@@ -14,13 +14,14 @@
        <TextView android:layout_width="fill_parent"
                  android:layout_height="wrap_content"
                  android:layout_gravity="center"
+                 android:textColor="@color/black"
                  android:id="@+id/messagetext"
                  />
        
    </LinearLayout>
    <View android:layout_width="fill_parent"
          android:layout_height="1dp"
-         android:background="@color/orange"/>
+         android:background="@color/grey"/>
    <LinearLayout android:layout_width="fill_parent"
                  android:orientation="horizontal"
                  android:layout_height="42dp">
@@ -30,12 +31,14 @@
                android:gravity="center"
                android:layout_height="fill_parent"
                android:id="@+id/nobutton"
+               android:textColor="@color/black"
                android:text="No"/>
           <View android:layout_width="1dp"
               android:id="@+id/networkdialogline"
          android:layout_height="fill_parent"
-         android:background="@color/orange"/>
+         android:background="@color/grey"/>
          <TextView android:layout_width="0dp"
+               android:textColor="@color/black"
                android:layout_height="fill_parent"
                 android:layout_weight="2"
                  android:gravity="center"

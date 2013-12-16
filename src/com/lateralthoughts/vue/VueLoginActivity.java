@@ -122,6 +122,7 @@ public class VueLoginActivity extends FragmentActivity implements
 	private final String PENDING_ACTION_BUNDLE_KEY = VueApplication
 			.getInstance().getString(R.string.pendingActionBundleKey);
 	private PendingAction mPendingAction = PendingAction.NONE;
+	private boolean mIsAlreadyLoggedInWithVue = false;
 
 	private enum PendingAction {
 		NONE, POST_PHOTO, POST_STATUS_UPDATE
@@ -154,6 +155,17 @@ public class VueLoginActivity extends FragmentActivity implements
 		LoginButton login_button = (LoginButton) findViewById(R.id.login_button);
 		mSocialIntegrationMainLayout = (LinearLayout) findViewById(R.id.socialintegrationmainlayotu);
 		RelativeLayout cancellayout = (RelativeLayout) findViewById(R.id.cancellayout);
+		VueUser storedVueUser = null;
+		try {
+			storedVueUser = Utils.readUserObjectFromFile(VueLoginActivity.this,
+					VueConstants.VUE_APP_USEROBJECT__FILENAME);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		if (storedVueUser != null) {
+			cancellayout.setVisibility(View.GONE);
+			mIsAlreadyLoggedInWithVue = true;
+		}
 		mContext = this;
 		mSharedPreferencesObj = this.getSharedPreferences(
 				VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -333,7 +345,7 @@ public class VueLoginActivity extends FragmentActivity implements
 								if (!mDontCallUserInfoChangesMethod) {
 									Log.e("VueLoginActivity",
 											"update UI called from user info changed method");
-									updateUI();
+									updateUI(false);
 								}
 							}
 						});
@@ -452,7 +464,7 @@ public class VueLoginActivity extends FragmentActivity implements
 			if (!mDontCallUserInfoChangesMethod) {
 				Log.e("VueLoginActivity",
 						"update UI called from onActivityResult method");
-				updateUI();
+				updateUI(true);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -774,7 +786,7 @@ public class VueLoginActivity extends FragmentActivity implements
 		}
 	}
 
-	private void updateUI() {
+	private void updateUI(boolean fromOnActivityResult) {
 		Log.e("Loginscreen", "Update UI called.");
 		Session session = Session.getActiveSession();
 		boolean fbloggedin = (session != null && session.isOpened());
@@ -790,6 +802,15 @@ public class VueLoginActivity extends FragmentActivity implements
 							mBundle.getString(VueConstants.FBPOST_TEXT));
 				} catch (Exception e) {
 					e.printStackTrace();
+				}
+			}
+		} else {
+			if (mFromDetailsFbShare) {
+				if (fromOnActivityResult) {
+					Toast.makeText(VueLoginActivity.this,
+							"Please login with Facebook to share.",
+							Toast.LENGTH_LONG);
+					finish();
 				}
 			}
 		}
@@ -1413,7 +1434,13 @@ public class VueLoginActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onBackPressed() {
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (mIsAlreadyLoggedInWithVue) {
+				super.onBackPressed();
+			}
+		}
+		return false;
 
 	}
 

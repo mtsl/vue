@@ -187,7 +187,6 @@ public class DataBaseManager {
 			Log.e("DataBaseManager",
 					"SURU updated aisle Order: whichScreen == TRENDING, offsetValue == "
 							+ offsetValue);
-			ArrayList<String> bookmarkaisleIds = new ArrayList<String>();
 			Log.e("DataBaseManager",
                 "SURU updated aisle Order: whichScreen == TRENDING, SURUSURUSURU");
 			int aislesDeleted = context.getContentResolver().delete(

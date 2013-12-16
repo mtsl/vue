@@ -22,16 +22,11 @@ import android.util.Log;
 import com.lateralthoughts.vue.VueApplication;
 
 public class BitmapLoaderUtils {
-
-	// private Context mContext;
 	private static BitmapLoaderUtils sBitmapLoaderUtils;
 	private FileCache mFileCache;
 	// private VueMemoryCache<Bitmap> mAisleImagesCache;
 	private BitmapLruCache mAisleImagesCache;
-	// private int mScreenWidth;
-	// private final boolean DEBUG = false;
 	private BitmapLoaderUtils() {
-		// mContext = context;
 		mFileCache = VueApplication.getInstance().getFileCache();
 		mAisleImagesCache = BitmapLruCache.getInstance(VueApplication
 				.getInstance());
@@ -83,8 +78,6 @@ public class BitmapLoaderUtils {
 			conn.setReadTimeout(30000);
 			conn.setInstanceFollowRedirects(true);
 			InputStream is = conn.getInputStream();
-			// int hashCode = url.hashCode();
-			// String filename = String.valueOf(hashCode);
 			OutputStream os = new FileOutputStream(f);
 			Utils.CopyStream(is, os);
 			os.close();
@@ -104,17 +97,10 @@ public class BitmapLoaderUtils {
 	// decodes image and scales it to reduce memory consumption
 	public Bitmap decodeFile(File f, int bestHeight, int bestWidth,
 			String source) {
-		Log.i("added url", "added url in  decodeFile: bestheight is "
-				+ bestHeight);
-
 		try {
 			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
-			Log.i("imageHeight", "imageHeight: " + o.outHeight);
-			Log.i("imageHeight", "imageHeight: " + o.outWidth);
-			Log.i("imageHeight", "imageUri: " + f.getAbsolutePath());
-
 			FileInputStream stream1 = new FileInputStream(f);
 			BitmapFactory.decodeStream(stream1, null, o);
 			stream1.close();
@@ -122,10 +108,6 @@ public class BitmapLoaderUtils {
 			// final int REQUIRED_SIZE = mScreenWidth/2;
 			int height = o.outHeight;
 			int width = o.outWidth;
-			Log.i("window", "clickedwindow ID bitmap Height4 bestHeight: "
-					+ bestHeight);
-			Log.i("window", "clickedwindow ID original height: " + height);
-
 			int reqWidth = bestWidth;
 			int scale = 1;
 
@@ -154,11 +136,6 @@ public class BitmapLoaderUtils {
 			// mScreenWidth);
 			FileInputStream stream2 = new FileInputStream(f);
 			Bitmap bitmap = BitmapFactory.decodeStream(stream2, null, o2);
-			Log.i("imagenotshowing",
-					"imagenotshowing: Not   found locally bitmap " + bitmap);
-			Log.i("imagenotshowing",
-					"imagenotshowing: Not   found locally bitmap "
-							+ bitmap.getHeight());
 			stream2.close();
 			if (source.equalsIgnoreCase(Utils.TRENDING_SCREEN)) {
 				return getBitmap(bitmap, bestWidth, bestHeight);
@@ -190,14 +167,8 @@ public class BitmapLoaderUtils {
 					bitmap = getModifiedBitmap(bitmap, reqWidth, height);
 				}
 			}
-			Log.i("window",
-					"clickedwindow ID  new bitmap height2 : "
-							+ bitmap.getHeight());
-			Log.i("window",
-					"clickedwindow ID new bitmap widht2: " + bitmap.getWidth());
 			return bitmap;
 		} catch (FileNotFoundException e) {
-			Log.i("added url", "added urldecodeFile  filenotfound exception ");
 		} catch (IOException e) {
 			 
 			e.printStackTrace();
@@ -214,27 +185,6 @@ public class BitmapLoaderUtils {
 	}
 
 	public Bitmap getBitmap(Bitmap bitmap, int bestWidth, int bestHeight) {
-/*		int width, height;
-		if (bitmap != null) {
-			width = bitmap.getWidth();
-			height = bitmap.getHeight();
-			if (height >= bestHeight) {
-				float tempWidth = (width * bestHeight) / height;
-				width = (int) tempWidth;
-				bitmap = getModifiedBitmap(bitmap, width, bestHeight);
-			}
-
-			if (bitmap != null) {
-				width = bitmap.getWidth();
-				height = bitmap.getHeight();
-
-				if (width > bestWidth) {
-					float tempHeight = (height * bestWidth) / width;
-					height = (int) tempHeight;
-					bitmap = getModifiedBitmap(bitmap, bestWidth, height);
-				}
-			}
-		}*/
 		return getModifiedBitmap(bitmap,bestWidth,bestHeight);
 	}
 	private Bitmap getModifiedBitmap(Bitmap originalImage, int width, int height) {

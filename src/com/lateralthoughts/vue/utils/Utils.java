@@ -295,21 +295,12 @@ public class Utils {
 
 	public static ImageDimension getScalledImage(Bitmap bitmap,
 			int availableWidth, int availableHeight) {
-		Log.i("imageSize", "imageSize originalImageHeight: " + availableHeight);
-		Log.i("imageSize", "imageSize originalImageWidth: " + availableWidth);
-
 		ImageDimension imgDimension = new ImageDimension();
 		float requiredWidth, requiredHeight;
 		float bitmapOriginalWidth = bitmap.getWidth();
 		float bitmapOriginalHeight = bitmap.getHeight();
 		float scaleFactor;
 		requiredHeight = availableHeight;
-
-		Log.i("imageSize", "imageSize cardWidth: "
-				+ VueApplication.getInstance().getScreenWidth());
-		Log.i("imageSize", "imageSize cardHeight: "
-				+ VueApplication.getInstance().getScreenHeight());
-
 		if ((availableWidth < VueApplication.getInstance().getScreenWidth() && availableHeight < VueApplication
 				.getInstance().getScreenHeight())) {
 			imgDimension.mImgWidth = availableWidth;
@@ -367,11 +358,11 @@ public class Utils {
 	 * 
 	 * @return
 	 */
-	/*public static String date() {
-		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
-				VueConstants.DATE_FORMAT);
-		return dateFormatGmt.format(new Date());
-	}*/
+	/*
+	 * public static String date() { SimpleDateFormat dateFormatGmt = new
+	 * SimpleDateFormat( VueConstants.DATE_FORMAT); return
+	 * dateFormatGmt.format(new Date()); }
+	 */
 
 	/**
 	 * 7 * 24 * 60 * 60 * 1000
@@ -382,7 +373,8 @@ public class Utils {
 		long twoWeeksDifferenceTime = (System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000));
 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
 				VueConstants.DATE_FORMAT);
-		return twoWeeksDifferenceTime + "";//dateFormatGmt.format(new Date(twoWeeksDifferenceTime));
+		return twoWeeksDifferenceTime + "";// dateFormatGmt.format(new
+											// Date(twoWeeksDifferenceTime));
 	}
 
 	public static Bitmap getBitmap() {
@@ -783,12 +775,14 @@ public class Utils {
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.vue_popup);
+		View networkdialogline = dialog.findViewById(R.id.networkdialogline);
 		TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
 		TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
 		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
 		messagetext.setText("Sorry, Server side integration is pending.");
 		okButton.setText("OK");
 		noButton.setVisibility(View.GONE);
+		networkdialogline.setVisibility(View.GONE);
 		okButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				dialog.dismiss();

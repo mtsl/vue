@@ -112,13 +112,8 @@ public class TrendingAislesRightColumnAdapter extends
 					.findViewById(R.id.aisle_content_flipper);
 			holder.starIcon = (ImageView) convertView
 					.findViewById(R.id.staricon);
-			/*
-			 * holder.startImageLay = (LinearLayout) convertView
-			 * .findViewById(R.id.starImagelay);
-			 */
 			LinearLayout.LayoutParams showpieceParams = new LinearLayout.LayoutParams(
 					VueApplication.getInstance().getScreenWidth() / 2, 200);
-			// holder.aisleContentBrowser.setLayoutParams(showpieceParams);
 			holder.aisleDescriptor = (LinearLayout) convertView
 					.findViewById(R.id.aisle_descriptor);
 			holder.profileThumbnail = (NetworkImageView) holder.aisleDescriptor
@@ -138,19 +133,10 @@ public class TrendingAislesRightColumnAdapter extends
 				Log.e("Jaws2", "getView invoked for a new view at position2 = "
 						+ position);
 		}
-		// AisleWindowContent windowContent =
-		// (AisleWindowContent)getItem(position);
 		holder = (ViewHolder) convertView.getTag();
 		holder.mWindowContent = (AisleWindowContent) getItem(position);
 		holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
 		int scrollIndex = 0; // getContentBrowserIndexForId(windowContent.getAisleId());
-		/*
-		 * if( holder.mWindowContent.getImageList().get(0).mHasMostLikes){
-		 * if(holder.mWindowContent.getImageList().get(0).mSameMostLikes){
-		 * holder.starIcon.setImageResource(R.drawable.share_light); } else {
-		 * holder.starIcon.setImageResource(R.drawable.share); }
-		 * holder.startImageLay.setVisibility(View.VISIBLE); }
-		 */
 		if (mHasToShow) {
 			if (holder.mWindowContent != null
 					&& mShowStarAisle

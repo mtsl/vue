@@ -49,7 +49,6 @@ public class ExceptionHandler implements
 		      try {
 		        file.createNewFile();
 		      } catch (IOException e) {
-		    	  Log.i("pathsaving", "pathsaving in sdcard2 error");
 		        e.printStackTrace();
 		      }
 		      
@@ -58,9 +57,9 @@ public class ExceptionHandler implements
 		        out.write("\n"+message+"\n");
 		        out.flush();
 		        out.close();
-		        Log.i("pathsaving", "pathsaving in sdcard2 success");
+		        
 		      } catch (IOException e) {
-		    	  Log.i("pathsaving", "pathsaving in sdcard3 error");
+		    	  
 		        e.printStackTrace();
 		      }
 		  }
