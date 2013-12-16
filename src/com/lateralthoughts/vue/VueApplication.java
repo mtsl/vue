@@ -3,6 +3,9 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import android.graphics.Bitmap;
+import android.util.LruCache;
+import com.android.volley.toolbox.ImageLoader;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
@@ -55,6 +58,9 @@ public class VueApplication extends Application {
 	public long mLaunchTime;
 	public long mLastRecordedTime;
 	ListFragementObj mListRefresobj;
+
+    public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
+    public static final String LOAD_IMAGES_REQUEST_TAG="LoadImagesTag";
 
 	public int getmStatusBarHeight() {
 		return mStatusBarHeight;
@@ -133,6 +139,7 @@ public class VueApplication extends Application {
 			"com.robemall.zovi" };
 
 	public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
+    private final int MAX_BITMAP_COUNT = 512;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -207,6 +214,17 @@ public class VueApplication extends Application {
 
 		Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
 				crittercismConfig);
+
+        mImageLoader = new NetworkImageLoader(mVolleyRequestQueue, new ImageLoader.ImageCache() {
+            private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(MAX_BITMAP_COUNT);
+
+            public void putBitmap(String url, Bitmap bitmap) {
+                mCache.put(url, bitmap);
+            }
+            public Bitmap getBitmap(String url) {
+                return mCache.get(url);
+            }
+        });
 
 	}
 
@@ -322,17 +340,10 @@ public class VueApplication extends Application {
 	 * 
 	 * return sBitmapCache; }
 	 */
-
-	private BitmapCache sBitmapCache;
-	private ImageLoader mImageLoader;
-	public  ImageLoader getImageLoader(){
-		if(mImageLoader == null){
-			mImageLoader = new ImageLoader(VueApplication.getInstance()
-					.getRequestQueue(), BitmapLruCache.getInstance(VueApplication.getInstance()));
-		}
-		
-		return mImageLoader;
-		
-	}
+    public ImageLoader getImageCacheLoader(){
+        return mImageLoader;
+    }
+    private BitmapCache sBitmapCache;
+    private ImageLoader mImageLoader;
 
 }
