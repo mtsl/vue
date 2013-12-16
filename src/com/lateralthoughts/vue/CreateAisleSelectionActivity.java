@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -186,7 +185,6 @@ public class CreateAisleSelectionActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		Log.e("CreateAisleSelectionActivity", "23neem onDestroye called");
 		super.onDestroy();
 		isActivityShowing = false;
 	}
@@ -210,8 +208,6 @@ public class CreateAisleSelectionActivity extends Activity {
 			shoppingAppIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			Utils.setLoadDataentryScreenFlag(this, true);
 			shoppingAppIntent.setClassName(packageName, activityName);
-			Log.i("apname", "apname1: " + packageName);
-			Log.i("apname", "apname2: " + activityName);
 			finish();
 			startActivity(shoppingAppIntent);
 		} else {
@@ -225,16 +221,12 @@ public class CreateAisleSelectionActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		try {
-			Log.e("cs", "1");
 			// From Gallery...
 			if (requestCode == VueConstants.SELECT_PICTURE) {
 				Uri selectedImageUri = data.getData();
-				Log.e("cs", "2");
 				// MEDIA GALLERY
 				String selectedImagePath = Utils
 						.getPath(selectedImageUri, this);
-				Log.e("cs", "3");
-				Log.e("frag", "uri..." + selectedImagePath);
 				if (mFromDetailsScreenFlag) {
 					Intent intent = new Intent();
 					Bundle b = new Bundle();
@@ -253,11 +245,9 @@ public class CreateAisleSelectionActivity extends Activity {
 							VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 							selectedImagePath);
 					intent.putExtras(b);
-					Log.e("cs", "7");
 					startActivity(intent);
 					finish();
 				} else {
-					Log.e("cs", "4");
 					Intent intent = new Intent();
 					Bundle b = new Bundle();
 					b.putString(
@@ -291,11 +281,9 @@ public class CreateAisleSelectionActivity extends Activity {
 								VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
 								mCameraImageName);
 						intent.putExtras(b);
-						Log.e("cs", "7");
 						startActivity(intent);
 						finish();
 					} else {
-						Log.e("cs", "4");
 						Intent intent = new Intent();
 						Bundle b = new Bundle();
 						b.putString(

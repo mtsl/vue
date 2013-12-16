@@ -14,7 +14,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -90,8 +89,6 @@ public class AisleCreationBackgroundThread implements Runnable,
 			CountingStringEntity entity = new CountingStringEntity(
 					mapper.writeValueAsString(mAisle));
 			entity.setUploadListener(this);
-			System.out.println("Aisle create request: "
-					+ mapper.writeValueAsString(mAisle));
 			entity.setContentType("application/json;charset=UTF-8");
 			entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
 					"application/json;charset=UTF-8"));
@@ -111,11 +108,6 @@ public class AisleCreationBackgroundThread implements Runnable,
 						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 						mNotification);
 				mResponseMessage = EntityUtils.toString(response.getEntity());
-				System.out.println("AISLE CREATED Response: "
-						+ mResponseMessage);
-				Log.i("myailsedebug",
-						"myailsedebug: recieved response*******:  "
-								+ mResponseMessage);
 			} else {
 				mNotification.setLatestEventInfo(
 						VueApplication.getInstance(),
@@ -126,9 +118,6 @@ public class AisleCreationBackgroundThread implements Runnable,
 				mNotificationManager.notify(
 						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 						mNotification);
-				Log.i("myailsedebug",
-						"myailsedebug: recieved response******* response code :  "
-								+ response.getStatusLine().getStatusCode());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -138,10 +127,6 @@ public class AisleCreationBackgroundThread implements Runnable,
 					@Override
 					public void run() {
 						if (null != mResponseMessage) {
-
-							Log.i("myailsedebug",
-									"myailsedebug: recieved response:  "
-											+ mResponseMessage);
 							try {
 								AisleWindowContent aileItem = new Parser()
 										.getAisleCotent(mResponseMessage);
@@ -175,20 +160,12 @@ public class AisleCreationBackgroundThread implements Runnable,
 																		.getInstance())
 														.getNetworkHandler().mOffset,
 												DataBaseManager.AISLE_CREATED);
-								// JSONObject user =
-								// userInfo.getJSONObject("user");
-								// TODO: GET THE AISLE OBJECT FROM
-								// THE PARSER CLASE SEND
-								// THE AISLE AND AISLE ID BACK.
 								mAisleUpdateCallback.onAisleUpdated(
 										aileItem.getAisleContext().mAisleId,
 										aileItem.getImageList().get(0).mId);
 
 								FlurryAgent.logEvent("Create_Aisle_Success");
-								// VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestAislesByUser();
 							} catch (Exception ex) {
-								Log.e("Profiling",
-										"Profiling : onResponse() **************** error");
 								ex.printStackTrace();
 							}
 						} else {
@@ -202,9 +179,6 @@ public class AisleCreationBackgroundThread implements Runnable,
 									Toast.LENGTH_LONG).show();
 
 						}
-
-						// ///////////////////////////////////////////////////////////
-
 					}
 				});
 	}

@@ -33,8 +33,6 @@ public class ParcelableNameValuePair implements NameValuePair, Parcelable {
 		out.writeString(value);
 	}
 
-	// this is used to regenerate your object. All Parcelables must have a
-	// CREATOR that implements these two methods
 	public static final Parcelable.Creator<ParcelableNameValuePair> CREATOR = new Parcelable.Creator<ParcelableNameValuePair>() {
 		public ParcelableNameValuePair createFromParcel(Parcel in) {
 			return new ParcelableNameValuePair(in);

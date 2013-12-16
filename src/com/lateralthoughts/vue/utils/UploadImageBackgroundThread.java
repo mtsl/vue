@@ -92,7 +92,6 @@ public class UploadImageBackgroundThread implements Runnable,
 				mNotificationManager.notify(
 						VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 						mNotification);
-				System.out.println("Upload Image Url" + mImageUrl);
 
 			} else {
 				mNotification.setLatestEventInfo(
@@ -122,8 +121,6 @@ public class UploadImageBackgroundThread implements Runnable,
 		if (response.getEntity() != null
 				&& response.getStatusLine().getStatusCode() == 200) {
 			String responseMessage = EntityUtils.toString(response.getEntity());
-			System.out
-					.println("Received unique upload URL: " + responseMessage);
 			return responseMessage;
 		}
 		return null;
@@ -146,7 +143,6 @@ public class UploadImageBackgroundThread implements Runnable,
 		if (response.getEntity() != null
 				&& response.getStatusLine().getStatusCode() == 200) {
 			String responseMessage = EntityUtils.toString(response.getEntity());
-			System.out.println("Received response: " + responseMessage);
 			return responseMessage;
 		} else
 			return null;

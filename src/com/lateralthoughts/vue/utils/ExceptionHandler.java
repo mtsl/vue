@@ -10,7 +10,6 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.os.Environment;
-import android.util.Log;
 
 public class ExceptionHandler implements
 		java.lang.Thread.UncaughtExceptionHandler {

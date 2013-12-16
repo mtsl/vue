@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -175,12 +174,12 @@ public class Utils {
 
 	// Getting Image file path from URI.
 	public static String getPath(Uri uri, Activity activity) {
- 
+
 		Cursor cursor = activity.getContentResolver().query(uri, null, null,
 				null, null);
-	 
+
 		if (cursor == null) { // Source is Dropbox or other similar local file
-	  // path
+			// path
 			return uri.getPath();
 		} else {
 			cursor.moveToFirst();
@@ -196,7 +195,6 @@ public class Utils {
 			float screenWidth, Context mContext) {
 		try {
 			String[] returnArray = new String[3];
-			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
 			FileInputStream stream1 = new FileInputStream(f);
@@ -210,21 +208,12 @@ public class Utils {
 			int heightRatio = 0;
 			int widthRatio = 0;
 			if (height > screenHeight) {
-				// Calculate ratios of height and width to requested height and
-				// width
 				heightRatio = Math.round((float) height / (float) screenHeight);
 			}
 			if (width > screenWidth) {
-				// Calculate ratios of height and width to requested height and
-				// width
 				widthRatio = Math.round((float) width / (float) screenWidth);
 			}
-			// Choose the smallest ratio as inSampleSize value, this will
-			// guarantee
-			// a final image with both dimensions larger than or equal to the
-			// requested height and width.
 			scale = heightRatio < widthRatio ? heightRatio : widthRatio;
-			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = (int) scale;
 			FileInputStream stream2 = new FileInputStream(f);
@@ -302,8 +291,6 @@ public class Utils {
 			requiredWidth = VueApplication.getInstance().getScreenWidth();
 		} else {
 			requiredWidth = availableWidth;
-			// requiredWidth =
-			// VueApplication.getInstance().getVueDetailsCardWidth();
 		}
 
 		float temp = requiredWidth / bitmapOriginalWidth;
@@ -331,8 +318,6 @@ public class Utils {
 
 		imgDimension.mImgWidth = (int) requiredWidth;
 		imgDimension.mImgHeight = (int) requiredHeight;
-		// bitmap = createBitmap(bitmap, (int)requiredWidth,
-		// (int)requiredHeight);
 		return imgDimension;
 
 	}
@@ -343,17 +328,6 @@ public class Utils {
 				metrics);
 	}
 
-	/***
-	 * Getting Current Date...
-	 * 
-	 * @return
-	 */
-	/*
-	 * public static String date() { SimpleDateFormat dateFormatGmt = new
-	 * SimpleDateFormat( VueConstants.DATE_FORMAT); return
-	 * dateFormatGmt.format(new Date()); }
-	 */
-
 	/**
 	 * 7 * 24 * 60 * 60 * 1000
 	 * 
@@ -361,10 +335,7 @@ public class Utils {
 	 */
 	public static String twoWeeksBeforeTime() {
 		long twoWeeksDifferenceTime = (System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000));
-		SimpleDateFormat dateFormatGmt = new SimpleDateFormat(
-				VueConstants.DATE_FORMAT);
-		return twoWeeksDifferenceTime + "";// dateFormatGmt.format(new
-											// Date(twoWeeksDifferenceTime));
+		return twoWeeksDifferenceTime + "";
 	}
 
 	public static Bitmap getBitmap() {

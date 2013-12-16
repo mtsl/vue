@@ -21,7 +21,6 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +38,6 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
-import com.flurry.android.monolithic.sdk.impl.so;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
@@ -906,7 +904,6 @@ public class DataEntryFragment extends Fragment {
 		mDataEntryActivity.mVueDataentryKeyboardLayout.setVisibility(View.GONE);
 		mDataEntryActivity.mVueDataentryKeyboardDone.setVisibility(View.GONE);
 		mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
-		Log.e("Dataentry Fragment", "Intercept listener called.");
 		mDataEntryActivity.mVueDataentryPostLayout.setVisibility(View.VISIBLE);
 		mDataEntryActivity.hideDefaultActionbar();
 	}
@@ -995,7 +992,6 @@ public class DataEntryFragment extends Fragment {
 	}
 
 	public void lookingForTextClickFunctionality() {
-		System.out.println("looking for text click functionality is called.");
 		mLookingForPopup.setVisibility(View.VISIBLE);
 		if (mLookingForAisleKeywordsList != null
 				&& mLookingForAisleKeywordsList.size() > 0) {
@@ -1005,8 +1001,6 @@ public class DataEntryFragment extends Fragment {
 		}
 		mLookingForText.post(new Runnable() {
 			public void run() {
-				System.out
-						.println("looking for text click functionality is called.11");
 				mLookingForText.setSelection(mLookingForText.getText()
 						.toString().length());
 				mLookingForText.setFocusable(true);
@@ -1353,11 +1347,6 @@ public class DataEntryFragment extends Fragment {
 
 	public void setGalleryORCameraImage(String picturePath,
 			boolean dontResizeImageFlag, Context context) {
-		if (getActivity() == null) {
-			Log.i("activity fragment", "activity fragment is null");
-		} else {
-			Log.i("activity fragment", "activity fragment is not null");
-		}
 		if (!Utils.getDataentryTopAddImageAisleFlag(context)
 				&& !mFromDetailsScreenFlag) {
 			new Handler().postDelayed(new Runnable() {
@@ -1381,8 +1370,6 @@ public class DataEntryFragment extends Fragment {
 			mDataEntryActivity.hideDefaultActionbar();
 		}
 		try {
-			Log.e("frag1", "gallery called,,,," + picturePath);
-			Log.e("cs", "8");
 			mImagePath = picturePath;
 			if (dontResizeImageFlag) {
 				mResizedImagePath = mImagePath;
@@ -2106,7 +2093,6 @@ public class DataEntryFragment extends Fragment {
 
 		@Override
 		protected void onPostExecute(Activity result) {
-			Log.e("cs", "9");
 			if (mResizedImagePath != null) {
 				addImageToViewPager(false);
 			} else {
@@ -2229,13 +2215,8 @@ public class DataEntryFragment extends Fragment {
 
 	void showDetailsScreenImagesInDataentryScreen() {
 		ArrayList<AisleImageDetails> aisleImageDetailsList = null;
-		Log.e("DataentryFragment",
-				"showDetailsScreenImagesInDataentryScreen : "
-						+ mIsUserAisleFlag);
 		// User Ailse from Details screen...
 		if (mIsUserAisleFlag) {
-			Log.e("DataentryFragment", "iif from details screen : "
-					+ mIsUserAisleFlag);
 			AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
 					.getInstance(getActivity()).getAisleAt(
 							VueApplication.getInstance().getClickedWindowID());
@@ -2312,7 +2293,6 @@ public class DataEntryFragment extends Fragment {
 					for (int position = 0; position < mAisleImagePathList
 							.size(); position++) {
 						if (deletedImagesPositions.contains(position)) {
-							Log.e("deleteimage", "deleteimage 2 : " + position);
 							Image image = new Image();
 							image.setDetailsUrl(mAisleImagePathList.get(
 									position).getDetailsUrl());
@@ -2327,13 +2307,9 @@ public class DataEntryFragment extends Fragment {
 							image.setTitle("Android Test"); // TODO By Krishna
 							image.setOwnerUserId(Long.valueOf(Long.valueOf(
 									storedVueUser.getId()).toString()));
-							Log.e("deleteimage", "deleteimage 2 : "
-									+ mAisleImagePathList.get(position)
-											.getAisleId());
 							String aisleId = mAisleImagePathList.get(position)
 									.getAisleId();
 							if (aisleId == null || aisleId.equals("null")) {
-								Log.e("deleteimage", "deleteimage 3 : ");
 								aisleId = VueApplication.getInstance()
 										.getClickedWindowID();
 							}
@@ -2460,8 +2436,6 @@ public class DataEntryFragment extends Fragment {
 			AisleImageDetails imgDetails = new AisleImageDetails();
 			imgDetails.mAvailableHeight = imageHeight;
 			imgDetails.mAvailableWidth = imageWidth;
-			Log.i("new image", "new image height: "
-					+ imgDetails.mAvailableHeight);
 			if (imgDetails.mAvailableHeight < aisleItem
 					.getBestHeightForWindow()) {
 				aisleItem.setBestHeightForWindow(imgDetails.mAvailableHeight);

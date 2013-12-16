@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -67,8 +66,6 @@ public class DataEntryAilsePagerAdapter extends PagerAdapter {
 						.getFragmentManager().findFragmentById(
 								R.id.create_aisles_view_fragment);
 			}
-			Log.e("Adapter", "file path :::: "
-					+ mImagePathsList.get(position).getResizedImagePath());
 			dataEntryRowAisleImage.setTag(mImagePathsList.get(position)
 					.getResizedImagePath());
 			if (mImagePathsList.get(position).isAddedToServerFlag()) {

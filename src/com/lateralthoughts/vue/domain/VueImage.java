@@ -1,10 +1,9 @@
 package com.lateralthoughts.vue.domain;
 
 public class VueImage {
-	
-  /*  Long id;*/
-    Long ownerUserId;
-    Long ownerAisleId;
+
+	Long ownerUserId;
+	Long ownerAisleId;
 	String detailsUrl;
 	Integer height;
 	Integer width;
@@ -12,15 +11,14 @@ public class VueImage {
 	Integer rating;
 	String store;
 	String title;
-	
-	
-	public VueImage() {}
 
-	public VueImage(/*Long id,*/ String detailsUrl, Integer height, Integer width,
+	public VueImage() {
+	}
+
+	public VueImage(String detailsUrl, Integer height, Integer width,
 			String imageUrl, Integer rating, String store, String title,
 			Long ownerUserId, Long ownerAisleId) {
 		super();
-		//this.id = id;
 		this.detailsUrl = detailsUrl;
 		this.height = height;
 		this.width = width;
@@ -31,14 +29,6 @@ public class VueImage {
 		this.ownerAisleId = ownerAisleId;
 		this.ownerUserId = ownerUserId;
 	}
-
-	/*public Long getId() {
-		return id;
-	}*/
-
-	/*public void setId(Long id) {
-		this.id = id;
-	}*/
 
 	public String getDetailsUrl() {
 		return detailsUrl;

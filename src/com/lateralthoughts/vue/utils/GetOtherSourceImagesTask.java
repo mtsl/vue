@@ -18,7 +18,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 import com.lateralthoughts.vue.DataEntryFragment;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueLandingPageActivity;
@@ -46,7 +45,6 @@ public class GetOtherSourceImagesTask extends
 
 	@Override
 	protected ArrayList<OtherSourceImageDetails> doInBackground(String... arg0) {
-		Log.e("asyntask", "url ???" + mSourceUrl);
 		try {
 			if (mSourceUrl != null) {
 				ArrayList<OtherSourceImageDetails> imgDetails = parseHtml(
@@ -66,12 +64,9 @@ public class GetOtherSourceImagesTask extends
 		OtherSourceImageDetails OtherSourceImageDetails = null;
 		Document doc = null;
 		doc = Jsoup.parse(getData(url), url);
-		System.out.println("Img elements  doc size : " + doc.childNodeSize());
 		Elements elements = doc.select("img");
-		System.out.println("Img elements size : " + elements.size());
 		if (elements.size() == 0) {
 			for (int i = 0; i < 3; i++) {
-				System.out.println("Img elements retry count : " + i);
 				doc = Jsoup.parse(getData(url), url);
 				elements = doc.select("img");
 				if (elements.size() > 0) {
@@ -91,7 +86,7 @@ public class GetOtherSourceImagesTask extends
 						height = Integer.parseInt(elements2.get(j).attr(
 								"height"));
 					} catch (NumberFormatException e) {
-						System.out.println("NumberFormatException");
+						e.printStackTrace();
 					}
 					if (width > reqWidth && height > reqHeight) {
 						OtherSourceImageDetails = new OtherSourceImageDetails();

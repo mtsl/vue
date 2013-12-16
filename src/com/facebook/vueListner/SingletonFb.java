@@ -1,4 +1,4 @@
-package com.facebook.fishwraplisner;
+package com.facebook.vueListner;
 public class SingletonFb {
 	public NotifiShowAlert notifyInstance;
 	  private static SingletonFb singleInstance = new SingletonFb();

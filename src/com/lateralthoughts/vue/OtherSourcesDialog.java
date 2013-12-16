@@ -16,7 +16,7 @@ import com.lateralthoughts.vue.utils.Utils;
 public class OtherSourcesDialog {
 	private Activity mActivity = null;
 	private FileCache mFileCache = null;
-	private ArrayList<OtherSourceImageDetails> imagesList;
+	private ArrayList<OtherSourceImageDetails> mImagesList;
 	private OtherSourcesImageAdapter mOtherSourcesImageAdapter;
 
 	public OtherSourcesDialog(Activity activity) {
@@ -32,53 +32,53 @@ public class OtherSourcesDialog {
 		dialog.setContentView(R.layout.other_sources_images_dailog);
 		ListView listview = (ListView) dialog
 				.findViewById(R.id.othersources_listview);
-		this.imagesList = imagesList;
+		this.mImagesList = imagesList;
 		mOtherSourcesImageAdapter = new OtherSourcesImageAdapter(mActivity,
-				this.imagesList);
+				this.mImagesList);
 		listview.setAdapter(mOtherSourcesImageAdapter);
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				if (OtherSourcesDialog.this.imagesList.get(position)
+				if (OtherSourcesDialog.this.mImagesList.get(position)
 						.getImageUri() != null) {
 					String picturePath = Utils.getPath(
-							OtherSourcesDialog.this.imagesList.get(position)
+							OtherSourcesDialog.this.mImagesList.get(position)
 									.getImageUri(), mActivity);
 					if (!fromLandingScreenFlag) {
 						final DataEntryFragment fragment = (DataEntryFragment) (mActivity)
 								.getFragmentManager().findFragmentById(
 										R.id.create_aisles_view_fragment);
-						fragment.mOtherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
+						fragment.mOtherSourceSelectedImageUrl = OtherSourcesDialog.this.mImagesList
 								.get(position).getOriginUrl();
-						fragment.mOtherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
+						fragment.mOtherSourceImageOriginalHeight = OtherSourcesDialog.this.mImagesList
 								.get(position).getHeight();
 						fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
 						fragment.mOtherSourceSelectedImageStore = Utils
 								.getStoreNameFromUrl(sourceUrl);
-						fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
+						fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.mImagesList
 								.get(position).getWidth();
 						fragment.mFindAtText.setText(sourceUrl);
 						fragment.mPreviousFindAtText = fragment.mFindAtText
 								.getText().toString();
 						fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
-						OtherSourcesDialog.this.imagesList.clear();
+						OtherSourcesDialog.this.mImagesList.clear();
 						mOtherSourcesImageAdapter.notifyDataSetChanged();
 						dialog.cancel();
 						fragment.setGalleryORCameraImage(picturePath, false,
 								mActivity);
 					} else {
 						VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
-						String otherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
+						String otherSourceSelectedImageUrl = OtherSourcesDialog.this.mImagesList
 								.get(position).getOriginUrl();
-						int otherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
+						int otherSourceImageOriginalHeight = OtherSourcesDialog.this.mImagesList
 								.get(position).getHeight();
 						String otherSourceSelectedImageDetailsUrl = sourceUrl;
 						String otherSourceSelectedImageStore = Utils
 								.getStoreNameFromUrl(sourceUrl);
-						int otherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
+						int otherSourceImageOriginalWidth = OtherSourcesDialog.this.mImagesList
 								.get(position).getWidth();
-						OtherSourcesDialog.this.imagesList.clear();
+						OtherSourcesDialog.this.mImagesList.clear();
 						mOtherSourcesImageAdapter.notifyDataSetChanged();
 						dialog.cancel();
 						vueLandingPageActivity
@@ -91,18 +91,18 @@ public class OtherSourcesDialog {
 					}
 				} else {
 					File f = mFileCache.getVueAppResizedPictureFile(String
-							.valueOf(OtherSourcesDialog.this.imagesList
+							.valueOf(OtherSourcesDialog.this.mImagesList
 									.get(position).getOriginUrl().hashCode()));
 					if (f.exists()) {
 						if (!fromLandingScreenFlag) {
 							final DataEntryFragment fragment = (DataEntryFragment) (mActivity)
 									.getFragmentManager().findFragmentById(
 											R.id.create_aisles_view_fragment);
-							fragment.mOtherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
+							fragment.mOtherSourceSelectedImageUrl = OtherSourcesDialog.this.mImagesList
 									.get(position).getOriginUrl();
-							fragment.mOtherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
+							fragment.mOtherSourceImageOriginalHeight = OtherSourcesDialog.this.mImagesList
 									.get(position).getHeight();
-							fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
+							fragment.mOtherSourceImageOriginalWidth = OtherSourcesDialog.this.mImagesList
 									.get(position).getWidth();
 							fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
 							fragment.mOtherSourceSelectedImageStore = Utils
@@ -111,23 +111,23 @@ public class OtherSourcesDialog {
 							fragment.mPreviousFindAtText = fragment.mFindAtText
 									.getText().toString();
 							fragment.mOtherSourceSelectedImageDetailsUrl = sourceUrl;
-							OtherSourcesDialog.this.imagesList.clear();
+							OtherSourcesDialog.this.mImagesList.clear();
 							mOtherSourcesImageAdapter.notifyDataSetChanged();
 							dialog.cancel();
 							fragment.setGalleryORCameraImage(f.getPath(), true,
 									mActivity);
 						} else {
 							VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) mActivity;
-							String otherSourceSelectedImageUrl = OtherSourcesDialog.this.imagesList
+							String otherSourceSelectedImageUrl = OtherSourcesDialog.this.mImagesList
 									.get(position).getOriginUrl();
-							int otherSourceImageOriginalHeight = OtherSourcesDialog.this.imagesList
+							int otherSourceImageOriginalHeight = OtherSourcesDialog.this.mImagesList
 									.get(position).getHeight();
 							String otherSourceSelectedImageDetailsUrl = sourceUrl;
 							String otherSourceSelectedImageStore = Utils
 									.getStoreNameFromUrl(sourceUrl);
-							int otherSourceImageOriginalWidth = OtherSourcesDialog.this.imagesList
+							int otherSourceImageOriginalWidth = OtherSourcesDialog.this.mImagesList
 									.get(position).getWidth();
-							OtherSourcesDialog.this.imagesList.clear();
+							OtherSourcesDialog.this.mImagesList.clear();
 							mOtherSourcesImageAdapter.notifyDataSetChanged();
 							dialog.cancel();
 							vueLandingPageActivity

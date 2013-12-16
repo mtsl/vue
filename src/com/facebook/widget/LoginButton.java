@@ -30,7 +30,6 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -64,7 +63,6 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
  */
 public class LoginButton extends Button {
 
-	private static final String TAG = LoginButton.class.getName();
 	private String applicationId = null;
 	private SessionTracker sessionTracker;
 	private GraphUser user = null;
@@ -136,8 +134,6 @@ public class LoginButton extends Button {
 			if (currentSession != null && currentSession.isOpened()) {
 				if (!Utility.isSubset(permissions,
 						currentSession.getPermissions())) {
-					Log.e(TAG,
-							"Cannot set additional permissions when session is already open.");
 					return false;
 				}
 			}
@@ -225,27 +221,7 @@ public class LoginButton extends Button {
 			// apparently there's no method of setting a default style in xml,
 			// so in case the users do not explicitly specify a style, we need
 			// to use sensible defaults.
-			/*
-			 * this.setTextColor(getResources().getColor(R.color.
-			 * com_facebook_loginview_text_color));
-			 * this.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-			 * getResources().getDimension
-			 * (R.dimen.com_facebook_loginview_text_size));
-			 * this.setPadding(getResources
-			 * ().getDimensionPixelSize(R.dimen.com_facebook_loginview_padding_left
-			 * ), getResources().getDimensionPixelSize(R.dimen.
-			 * com_facebook_loginview_padding_top),
-			 * getResources().getDimensionPixelSize
-			 * (R.dimen.com_facebook_loginview_padding_right),
-			 * getResources().getDimensionPixelSize
-			 * (R.dimen.com_facebook_loginview_padding_bottom));
-			 * this.setWidth(getResources
-			 * ().getDimensionPixelSize(R.dimen.com_facebook_loginview_width));
-			 * this.setHeight(getResources().getDimensionPixelSize(R.dimen.
-			 * com_facebook_loginview_height)); this.setGravity(Gravity.CENTER);
-			 */
 
-			parseAttributes(attrs);
 			if (isInEditMode()) {
 				// cannot use a drawable in edit mode, so setting the background
 				// color instead
@@ -267,7 +243,6 @@ public class LoginButton extends Button {
 	 */
 	public LoginButton(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		parseAttributes(attrs);
 		initializeActiveSessionWithCachedToken(context);
 	}
 
@@ -512,7 +487,6 @@ public class LoginButton extends Button {
 	public void setSession(Session newSession) {
 		sessionTracker.setSession(newSession);
 		fetchUserInfo();
-		setButtonText();
 	}
 
 	@Override
@@ -523,7 +497,6 @@ public class LoginButton extends Button {
 
 	private void finishInit() {
 		setOnClickListener(new LoginClickListener());
-		setButtonText();
 		if (!isInEditMode()) {
 			sessionTracker = new SessionTracker(getContext(),
 					new LoginButtonCallback(), null, false);
@@ -550,7 +523,6 @@ public class LoginButton extends Button {
 		if (sessionTracker != null && !sessionTracker.isTracking()) {
 			sessionTracker.startTracking();
 			fetchUserInfo();
-			setButtonText();
 		}
 	}
 
@@ -569,31 +541,6 @@ public class LoginButton extends Button {
 
 	void setProperties(LoginButtonProperties properties) {
 		this.properties = properties;
-	}
-
-	private void parseAttributes(AttributeSet attrs) {
-		/*
-		 * TypedArray a = getContext().obtainStyledAttributes(attrs,
-		 * R.styleable.com_facebook_login_view); confirmLogout =
-		 * a.getBoolean(R.styleable.com_facebook_login_view_confirm_logout,
-		 * true); fetchUserInfo =
-		 * a.getBoolean(R.styleable.com_facebook_login_view_fetch_user_info,
-		 * true); loginText =
-		 * a.getString(R.styleable.com_facebook_login_view_login_text);
-		 * logoutText =
-		 * a.getString(R.styleable.com_facebook_login_view_logout_text);
-		 * a.recycle();
-		 */
-	}
-
-	private void setButtonText() {
-		if (sessionTracker != null && sessionTracker.getOpenSession() != null) {
-			// setText((logoutText != null) ? logoutText :
-			// getResources().getString(R.string.com_facebook_loginview_log_out_button));
-		} else {
-			// setText((loginText != null) ? loginText :
-			// getResources().getString(R.string.com_facebook_loginview_log_in_button));
-		}
 	}
 
 	private boolean initializeActiveSessionWithCachedToken(Context context) {
@@ -822,7 +769,6 @@ public class LoginButton extends Button {
 		public void call(Session session, SessionState state,
 				Exception exception) {
 			fetchUserInfo();
-			setButtonText();
 			if (exception != null) {
 				handleError(exception);
 			}
