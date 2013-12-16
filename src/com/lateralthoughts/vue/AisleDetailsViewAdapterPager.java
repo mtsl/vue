@@ -31,6 +31,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -375,7 +376,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		} else {
 			mViewHolder = (ViewHolder) convertView.getTag();
 		}
-
 		if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
 			mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
 		} else {
@@ -1335,6 +1335,30 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 					return false;
 				}
 			});
+			ImageView testImage = (ImageView) myView.findViewById(R.id.testimage);
+			testImage.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// mSetPager = false;
+					//detailsImageClickListenr.onImageClicked();
+					// setmSetPagerToTrue();
+
+				}
+			});
+			testImage.setOnLongClickListener(new OnLongClickListener() {
+
+				@Override
+				public boolean onLongClick(View v) {
+					// mSetPager = false;
+				//	detailsImageClickListenr.onImageLongPress();
+					// setmSetPagerToTrue();
+					return false;
+				}
+			});
+			
+			
+			
 			LinearLayout starLay = (LinearLayout) myView
 					.findViewById(R.id.starImage);
 			ImageView starImage = (ImageView) myView
@@ -1668,7 +1692,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			}
 		}
 	}
-
+int mlikepageDealay = 1000;
 	private void setmSetPagerToTrue() {
 		new Handler().postDelayed(new Runnable() {
 
@@ -1677,6 +1701,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				mSetPager = true;
 
 			}
-		}, 1000);
+		}, mlikepageDealay);
 	}
 }
