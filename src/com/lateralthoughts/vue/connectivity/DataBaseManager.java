@@ -67,9 +67,6 @@ public class DataBaseManager {
 	private HashMap<String, Integer> aislesOrderMap;
 	private HashMap<String, Integer> bookmarkedAislesOrderMap = new HashMap<String, Integer>();
 
-	// private HashMap<String, HashMap<String, Integer>> imagesOrderMap = new
-	// HashMap<String, HashMap<String,Integer>>();
-
 	private DataBaseManager(Context context) {
 		mContext = context;
 		threadPool = new ThreadPoolExecutor(mPoolSize, mMaxPoolSize,
@@ -120,13 +117,13 @@ public class DataBaseManager {
 	}
 
 	public void deleteOutDatedAisles(Context context, String aisleID) {
-		int deletedAisles = context.getContentResolver().delete(
+		context.getContentResolver().delete(
 				VueConstants.CONTENT_URI, VueConstants.AISLE_Id + "=?",
 				new String[] { aisleID });
-		int deletedImages = context.getContentResolver().delete(
+		context.getContentResolver().delete(
 				VueConstants.IMAGES_CONTENT_URI, VueConstants.AISLE_Id + "=?",
 				new String[] { aisleID });
-		int deletedComments = context.getContentResolver().delete(
+		context.getContentResolver().delete(
 				VueConstants.COMMENTS_ON_IMAGE_URI,
 				VueConstants.AISLE_Id + "=?", new String[] { aisleID });
 	}
@@ -180,18 +177,12 @@ public class DataBaseManager {
 		}
 		aislesOrderMap = new HashMap<String, Integer>();
 		if (offsetValue == 0 && whichScreen == TRENDING && !isBookmarkedAisle) {
-			ArrayList<String> bookmarkaisleIds = new ArrayList<String>();
-			String[] iDs = bookmarkaisleIds.toArray(new String[bookmarkaisleIds
-					.size()]);
-			int aislesDeleted = context.getContentResolver().delete(
+			context.getContentResolver().delete(
 					VueConstants.CONTENT_URI, null, null);
-			int imagesDeleted = context.getContentResolver().delete(
-					VueConstants.IMAGES_CONTENT_URI,
-					VueConstants.AISLE_Id + "!=?", iDs);
-			int commentsDeleted = context.getContentResolver().delete(
-					VueConstants.COMMENTS_ON_IMAGE_URI,
-					VueConstants.AISLE_Id + "!=?", iDs);
-			// imagesOrderMap.clear();
+			context.getContentResolver().delete(
+					VueConstants.IMAGES_CONTENT_URI, null, null);
+			context.getContentResolver().delete(
+					VueConstants.COMMENTS_ON_IMAGE_URI, null, null);
 		} else if (isBookmarkedAisle) {
 			bookmarkedAislesOrderMap.clear();
 		}
@@ -297,7 +288,7 @@ public class DataBaseManager {
 						values.put(VueConstants.ID,
 								String.format(FORMATE, order));
 						values.put(VueConstants.AISLE_Id, info.mAisleId);
-						Uri uri = context.getContentResolver().insert(
+						context.getContentResolver().insert(
 								VueConstants.MY_BOOKMARKED_AISLES_URI, values);
 					}
 
@@ -321,7 +312,7 @@ public class DataBaseManager {
 						values.put(VueConstants.ID,
 								String.format(FORMATE, order));
 						values.put(VueConstants.AISLE_Id, info.mAisleId);
-						Uri uri = context.getContentResolver().insert(
+						context.getContentResolver().insert(
 								VueConstants.MY_BOOKMARKED_AISLES_URI, values);
 					 
 					}
@@ -366,7 +357,7 @@ public class DataBaseManager {
 						imgValues.put(VueConstants.ID,
 								String.format(FORMATE, ++imgCount));
 						try {
-							Uri x = context.getContentResolver().insert(
+							context.getContentResolver().insert(
 									VueConstants.IMAGES_CONTENT_URI, imgValues);
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -781,7 +772,7 @@ public class DataBaseManager {
 				createdImageComment.getImageCommentOwnerImageURL());
 		commentValues.put(VueConstants.DIRTY_FLAG, isCommentDirty);
 		commentValues.put(VueConstants.DELETE_FLAG, false);
-		Uri uri = mContext.getContentResolver().insert(
+		mContext.getContentResolver().insert(
 				VueConstants.COMMENTS_ON_IMAGE_URI, commentValues);
 	}
 
@@ -791,7 +782,7 @@ public class DataBaseManager {
 		aisleValues.put(VueConstants.LIKE_OR_DISLIKE, likeStatus);
 		aisleValues.put(VueConstants.LIKES_COUNT, likeCount);
 		aisleValues.put(VueConstants.DIRTY_FLAG, (dirtyFlag == true) ? 1 : 0);
-		int rowsUpdated = mContext.getContentResolver().update(
+		mContext.getContentResolver().update(
 				VueConstants.IMAGES_CONTENT_URI,
 				aisleValues,
 				VueConstants.AISLE_Id + "=? AND " + VueConstants.IMAGE_ID
@@ -877,7 +868,7 @@ public class DataBaseManager {
 					DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 			VueApplication.getInstance().getRequestQueue().add(request);
 		} else {
-			int rowdeleted = mContext.getContentResolver().delete(
+			 mContext.getContentResolver().delete(
 					VueConstants.MY_BOOKMARKED_AISLES_URI,
 					VueConstants.AISLE_Id + "=?",
 					new String[] { bookmarkedAisleId });
@@ -902,7 +893,7 @@ public class DataBaseManager {
 		cursor.close();
 		if (!isMatched) {
 			values.put(VueConstants.ID, bookmarkId);
-			Uri uri = mContext.getContentResolver().insert(
+			mContext.getContentResolver().insert(
 					VueConstants.BOOKMARKER_AISLES_URI, values);
 		}
 
@@ -1016,23 +1007,11 @@ public class DataBaseManager {
 	public static boolean markOldAislesToDelete(Context context) {
 		ContentValues values = new ContentValues();
 		values.put(VueConstants.DELETE_FLAG, DELETE_ROW);
-		int updatedaisleRows = context.getContentResolver().update(
+		context.getContentResolver().update(
 				VueConstants.CONTENT_URI, values, null, null);
-		int updatedimagesRows = context.getContentResolver().update(
+		context.getContentResolver().update(
 				VueConstants.IMAGES_CONTENT_URI, values, null, null);
 		return true;
-	}
-
-	private static void deleteOutDatedAisles(Context context) {
-		int deletedAisles = context.getContentResolver().delete(
-				VueConstants.CONTENT_URI, VueConstants.DELETE_FLAG + "=?",
-				new String[] { DELETE_ROW });
-		int deletedImages = context.getContentResolver().delete(
-				VueConstants.IMAGES_CONTENT_URI,
-				VueConstants.DELETE_FLAG + "=?", new String[] { DELETE_ROW });
-		int deletedComments = context.getContentResolver().delete(
-				VueConstants.COMMENTS_ON_IMAGE_URI,
-				VueConstants.DELETE_FLAG + "=?", new String[] { DELETE_ROW });
 	}
 
 	private ArrayList<AisleWindowContent> getAisles(Cursor aislesCursor) {
@@ -1280,7 +1259,7 @@ public class DataBaseManager {
 	private void changeDeleteFlag() {
 		ContentValues values = new ContentValues();
 		values.put(VueConstants.DELETE_FLAG, 1);
-		int rowsUpdated = mContext.getContentResolver().update(
+		mContext.getContentResolver().update(
 				VueConstants.CONTENT_URI, values, null, null);
 	}
 
@@ -1360,7 +1339,7 @@ public class DataBaseManager {
 					String imgId = cursor.getString(cursor
 							.getColumnIndex(VueConstants.IMAGE_ID));
 					if (imgId.equals(imId)) {
-						int updatedrows = mContext.getContentResolver()
+						mContext.getContentResolver()
 								.update(VueConstants.RATED_IMAGES_URI,
 										values,
 										VueConstants.IMAGE_ID + "=? AND "
@@ -1403,7 +1382,7 @@ public class DataBaseManager {
 				String imgId = c.getString(c
 						.getColumnIndex(VueConstants.IMAGE_ID));
 				if (imgId.equals(imageID)) {
-					int updatedrows = mContext.getContentResolver().update(
+					mContext.getContentResolver().update(
 							VueConstants.RATED_IMAGES_URI,
 							values,
 							VueConstants.IMAGE_ID + "=? AND "
@@ -1416,7 +1395,7 @@ public class DataBaseManager {
 		}
 		c.close();
 		if (!isMatched) {
-			Uri uri = mContext.getContentResolver().insert(
+			mContext.getContentResolver().insert(
 					VueConstants.RATED_IMAGES_URI, values);
 		}
 	}
@@ -1521,7 +1500,7 @@ public class DataBaseManager {
 			Integer value = (Integer) entry.getValue();
 			values.put(VueConstants.ID, String.format(FORMATE, value));
 			Uri uri = Uri.parse(VueConstants.CONTENT_URI + "/" + key);
-			int rowsUpdated = mContext.getContentResolver().update(uri, values,
+			mContext.getContentResolver().update(uri, values,
 					null, null);
 		}
 	}

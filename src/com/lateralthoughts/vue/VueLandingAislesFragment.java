@@ -187,6 +187,7 @@ public class VueLandingAislesFragment extends  Fragment {
             } else {
                 articleParams.put("User_Id", "anonymous");
             }
+
             DataBaseManager.getInstance(mContext)
                     .updateOrAddRecentlyViewedAisles(id);
             FlurryAgent.logEvent("User_Select_Aisle", articleParams);
@@ -223,9 +224,8 @@ public class VueLandingAislesFragment extends  Fragment {
         public boolean onDoubleTap(String id) {
             AisleWindowContent windowItem = VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).getAisleAt(id);
- 
             String imageUrls = "";
-          
+
             int finalWidth = 0, finaHeight = 0;
             if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
                     .getBestHeightForWindow()) {
@@ -242,7 +242,6 @@ public class VueLandingAislesFragment extends  Fragment {
                         / finalWidth;
                 finalWidth = VueApplication.getInstance().getScreenWidth() / 2;
             }
-          
 
             String writeSdCard = null;
             writeSdCard = "*************************aisle info:"
@@ -331,7 +330,6 @@ public class VueLandingAislesFragment extends  Fragment {
             out.close();
             
         } catch (IOException e) {
-            
             e.printStackTrace();
         }
     }

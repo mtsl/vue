@@ -62,7 +62,6 @@ public class NetworkHandler {
 
 	Context mContext;
 	private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
-	// http://2-java.vueapi-canary-development1.appspot.com/api/
 	public DataBaseManager mDbManager;
 	protected VueContentGateway mVueContentGateway;
 	protected TrendingAislesContentParser mTrendingAislesParser;
@@ -74,10 +73,6 @@ public class NetworkHandler {
 	public int mOffset;
 	ArrayList<AisleWindowContent> aislesList = null;
 	private SharedPreferences mSharedPreferencesObj;
-
-	/* public ArrayList<String> bookmarkedAisles = new ArrayList<String>(); */
-	// public ArrayList<AisleWindowContent> bookmarkedAisleContent = new
-	// ArrayList<AisleWindowContent>();
 
 	public NetworkHandler(Context context) {
 		mContext = context;
@@ -94,7 +89,7 @@ public class NetworkHandler {
 		mOffset = 0;
 	}
 
-	// whle user scrolls down get next 10 aisles
+	// while user scrolls down get next 10 aisles
 	public void requestMoreAisle(boolean loadMore, String screenname) {
 
 		if (VueTrendingAislesDataModel
@@ -584,7 +579,6 @@ public class NetworkHandler {
 					&& response.getStatusLine().getStatusCode() == 200) {
 				String responseMessage = EntityUtils.toString(response
 						.getEntity());
-				System.out.println("Comment Response: " + responseMessage);
 				if (responseMessage.length() > 0) {
 					createdImageComment = (new ObjectMapper()).readValue(
 							responseMessage, ImageComment.class);

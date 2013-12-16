@@ -18,7 +18,6 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.parser.Parser;
-import com.lateralthoughts.vue.utils.Logging;
 
 public class TrendingAislesContentParser extends ResultReceiver {
 	private int mState;
@@ -42,8 +41,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                     msg.what = INITIALIZE;
                     sParserDBThreadHandler.sendMessage(msg);
                 } catch (InterruptedException e) {
-                    Logging.e("TrendingAislesContentParser", "Caught exception while waiting for thread creation");
-                    Logging.e("TrendingAislesContentParser", "stack trace = " + e.getStackTrace());
+                  e.printStackTrace();
                 }
             }
         }
