@@ -1,5 +1,5 @@
 package com.lateralthoughts.vue.utils;
 
 public interface FragmentAccess {
-public void setFragmentAccess(ListFragementObj obj);
+    public void setFragmentAccess(ListFragementObj obj);
 }

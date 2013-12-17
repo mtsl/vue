@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string-array name="category_items_array">
         <item>Apparel</item>
         <item>Beauty</item>
@@ -9,4 +10,5 @@
         <item>Food</item>
         <item>Home</item>
     </string-array>
+
 </resources>

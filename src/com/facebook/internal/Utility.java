@@ -54,26 +54,28 @@ import com.facebook.Session;
 import com.lateralthoughts.vue.BuildConfig;
 
 /**
- * com.facebook.internal is solely for the use of other packages within the Facebook SDK for Android. Use of
- * any of the classes in this package is unsupported, and they may be modified or removed without warning at
- * any time.
+ * com.facebook.internal is solely for the use of other packages within the
+ * Facebook SDK for Android. Use of any of the classes in this package is
+ * unsupported, and they may be modified or removed without warning at any time.
  */
 public final class Utility {
     static final String LOG_TAG = "FacebookSDK";
     private static final String HASH_ALGORITHM_MD5 = "MD5";
     private static final String URL_SCHEME = "https";
-
-    // This is the default used by the buffer streams, but they trace a warning if you do not specify.
+    
+    // This is the default used by the buffer streams, but they trace a warning
+    // if you do not specify.
     public static final int DEFAULT_STREAM_BUFFER_SIZE = 8192;
-
+    
     // Returns true iff all items in subset are in superset, treating null and
     // empty collections as
     // the same.
-    public static <T> boolean isSubset(Collection<T> subset, Collection<T> superset) {
+    public static <T> boolean isSubset(Collection<T> subset,
+            Collection<T> superset) {
         if ((superset == null) || (superset.size() == 0)) {
             return ((subset == null) || (subset.size() == 0));
         }
-
+        
         HashSet<T> hash = new HashSet<T>(superset);
         for (T t : subset) {
             if (!hash.contains(t)) {
@@ -82,19 +84,19 @@ public final class Utility {
         }
         return true;
     }
-
+    
     public static <T> boolean isNullOrEmpty(Collection<T> c) {
         return (c == null) || (c.size() == 0);
     }
-
+    
     public static boolean isNullOrEmpty(String s) {
         return (s == null) || (s.length() == 0);
     }
-
+    
     public static <T> Collection<T> unmodifiableCollection(T... ts) {
         return Collections.unmodifiableCollection(Arrays.asList(ts));
     }
-
+    
     public static <T> ArrayList<T> arrayList(T... ts) {
         ArrayList<T> arrayList = new ArrayList<T>(ts.length);
         for (T t : ts) {
@@ -102,7 +104,7 @@ public final class Utility {
         }
         return arrayList;
     }
-
+    
     static String md5hash(String key) {
         MessageDigest hash = null;
         try {
@@ -110,7 +112,7 @@ public final class Utility {
         } catch (NoSuchAlgorithmException e) {
             return null;
         }
-
+        
         hash.update(key.getBytes());
         byte[] digest = hash.digest();
         StringBuilder builder = new StringBuilder();
@@ -120,7 +122,7 @@ public final class Utility {
         }
         return builder.toString();
     }
-
+    
     public static Uri buildUri(String authority, String path, Bundle parameters) {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme(URL_SCHEME);
@@ -134,7 +136,7 @@ public final class Utility {
         }
         return builder.build();
     }
-
+    
     public static void putObjectInBundle(Bundle bundle, String key, Object value) {
         if (value instanceof String) {
             bundle.putString(key, (String) value);
@@ -143,10 +145,11 @@ public final class Utility {
         } else if (value instanceof byte[]) {
             bundle.putByteArray(key, (byte[]) value);
         } else {
-            throw new FacebookException("attempted to add unsupported type to Bundle");
+            throw new FacebookException(
+                    "attempted to add unsupported type to Bundle");
         }
     }
-
+    
     public static void closeQuietly(Closeable closeable) {
         try {
             if (closeable != null) {
@@ -156,27 +159,28 @@ public final class Utility {
             // ignore
         }
     }
-
+    
     public static void disconnectQuietly(URLConnection connection) {
         if (connection instanceof HttpURLConnection) {
-            ((HttpURLConnection)connection).disconnect();
+            ((HttpURLConnection) connection).disconnect();
         }
     }
-
+    
     public static String getMetadataApplicationId(Context context) {
         try {
-            ApplicationInfo ai = context.getPackageManager().getApplicationInfo(
-                    context.getPackageName(), PackageManager.GET_META_DATA);
+            ApplicationInfo ai = context.getPackageManager()
+                    .getApplicationInfo(context.getPackageName(),
+                            PackageManager.GET_META_DATA);
             if (ai.metaData != null) {
                 return ai.metaData.getString(Session.APPLICATION_ID_PROPERTY);
             }
         } catch (PackageManager.NameNotFoundException e) {
             // if we can't find it in the manifest, just return null
         }
-
+        
         return null;
     }
-
+    
     static Map<String, Object> convertJSONObjectToHashMap(JSONObject jsonObject) {
         HashMap<String, Object> map = new HashMap<String, Object>();
         JSONArray keys = jsonObject.names();
@@ -194,17 +198,19 @@ public final class Utility {
         }
         return map;
     }
-
-    // Returns either a JSONObject or JSONArray representation of the 'key' property of 'jsonObject'.
-    public static Object getStringPropertyAsJSON(JSONObject jsonObject, String key, String nonJSONPropertyKey)
-            throws JSONException {
+    
+    // Returns either a JSONObject or JSONArray representation of the 'key'
+    // property of 'jsonObject'.
+    public static Object getStringPropertyAsJSON(JSONObject jsonObject,
+            String key, String nonJSONPropertyKey) throws JSONException {
         Object value = jsonObject.opt(key);
         if (value != null && value instanceof String) {
             JSONTokener tokener = new JSONTokener((String) value);
             value = tokener.nextValue();
         }
-
-        if (value != null && !(value instanceof JSONObject || value instanceof JSONArray)) {
+        
+        if (value != null
+                && !(value instanceof JSONObject || value instanceof JSONArray)) {
             if (nonJSONPropertyKey != null) {
                 // Facebook sometimes gives us back a non-JSON value such as
                 // literal "true" or "false" as a result.
@@ -215,40 +221,42 @@ public final class Utility {
                 jsonObject.putOpt(nonJSONPropertyKey, value);
                 return jsonObject;
             } else {
-                throw new FacebookException("Got an unexpected non-JSON object.");
+                throw new FacebookException(
+                        "Got an unexpected non-JSON object.");
             }
         }
-
+        
         return value;
-
+        
     }
-
-    public static String readStreamToString(InputStream inputStream) throws IOException {
+    
+    public static String readStreamToString(InputStream inputStream)
+            throws IOException {
         BufferedInputStream bufferedInputStream = null;
         InputStreamReader reader = null;
         try {
             bufferedInputStream = new BufferedInputStream(inputStream);
             reader = new InputStreamReader(bufferedInputStream);
             StringBuilder stringBuilder = new StringBuilder();
-
+            
             final int bufferSize = 1024 * 2;
             char[] buffer = new char[bufferSize];
             int n = 0;
             while ((n = reader.read(buffer)) != -1) {
                 stringBuilder.append(buffer, 0, n);
             }
-
+            
             return stringBuilder.toString();
         } finally {
             closeQuietly(bufferedInputStream);
             closeQuietly(reader);
         }
     }
-
+    
     public static boolean stringsEqualOrEmpty(String a, String b) {
         boolean aEmpty = TextUtils.isEmpty(a);
         boolean bEmpty = TextUtils.isEmpty(b);
-
+        
         if (aEmpty && bEmpty) {
             // Both null or empty, they match.
             return true;
@@ -260,40 +268,45 @@ public final class Utility {
         // One empty, one non-empty, can't match.
         return false;
     }
-
+    
     private static void clearCookiesForDomain(Context context, String domain) {
-        // This is to work around a bug where CookieManager may fail to instantiate if CookieSyncManager
+        // This is to work around a bug where CookieManager may fail to
+        // instantiate if CookieSyncManager
         // has never been created.
-        CookieSyncManager syncManager = CookieSyncManager.createInstance(context);
+        CookieSyncManager syncManager = CookieSyncManager
+                .createInstance(context);
         syncManager.sync();
-
+        
         CookieManager cookieManager = CookieManager.getInstance();
-
+        
         String cookies = cookieManager.getCookie(domain);
         if (cookies == null) {
             return;
         }
-
+        
         String[] splitCookies = cookies.split(";");
         for (String cookie : splitCookies) {
             String[] cookieParts = cookie.split("=");
             if (cookieParts.length > 0) {
-                String newCookie = cookieParts[0].trim() + "=;expires=Sat, 1 Jan 2000 00:00:01 UTC;";
+                String newCookie = cookieParts[0].trim()
+                        + "=;expires=Sat, 1 Jan 2000 00:00:01 UTC;";
                 cookieManager.setCookie(domain, newCookie);
             }
         }
         cookieManager.removeExpiredCookie();
     }
-
+    
     public static void clearFacebookCookies(Context context) {
-        // setCookie acts differently when trying to expire cookies between builds of Android that are using
-        // Chromium HTTP stack and those that are not. Using both of these domains to ensure it works on both.
+        // setCookie acts differently when trying to expire cookies between
+        // builds of Android that are using
+        // Chromium HTTP stack and those that are not. Using both of these
+        // domains to ensure it works on both.
         clearCookiesForDomain(context, "facebook.com");
         clearCookiesForDomain(context, ".facebook.com");
         clearCookiesForDomain(context, "https://facebook.com");
         clearCookiesForDomain(context, "https://.facebook.com");
     }
-
+    
     public static void logd(String tag, String msg) {
         if (BuildConfig.DEBUG) {
             Log.d(tag, msg);

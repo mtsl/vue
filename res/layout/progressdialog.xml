@@ -9,8 +9,8 @@
         android:id="@+id/progressBar1"
         style="?android:attr/progressBarStyleSmall"
         android:layout_width="32dp"
-        android:layout_gravity="center"
-        android:layout_height="32dp" />
+        android:layout_height="32dp"
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/dataentryitemname"
@@ -22,4 +22,5 @@
         android:text="Loading..."
         android:textColor="@color/dataentrytextcolor"
         android:textSize="15sp" />
+
 </LinearLayout>

@@ -17,59 +17,41 @@
             android:layout_height="wrap_content"
             android:background="@color/white" >
 
-       <!--      <com.lateralthoughts.vue.ui.AisleContentBrowser
+            <LinearLayout
                 android:id="@+id/showpieceadapter"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" >
-            </com.lateralthoughts.vue.ui.AisleContentBrowser> -->
-            
-            <LinearLayout 
-    android:id="@+id/showpieceadapter"
-    android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-     >
-<com.lateralthoughts.vue.ui.UninterceptableViewPager
-    android:id="@+id/myfivepanelpager"
-       android:layout_width="fill_parent"
-    android:layout_height="fill_parent" />
-    
-    </LinearLayout>
-         <!--    <LinearLayout android:layout_width="32dp"
-                          android:layout_height="32dp"
-                          android:layout_marginTop="8dp"
-                          android:layout_marginRight="8dp"
-                          android:id="@+id/editImage"
-                          android:layout_gravity="top|right"
-                          android:background="@drawable/rectangle">
-            <ImageView android:layout_width="fill_parent"
-                       android:layout_height="fill_parent"
-                       android:layout_gravity="center_horizontal"
-                       android:src="@drawable/editwhite"/>
-            </LinearLayout> -->
-              <LinearLayout android:layout_width="32dp"
-                          android:layout_height="32dp"
-                          android:layout_marginTop="8dp"
-                          android:layout_marginLeft="8dp"
-                          android:id="@+id/starImage"
-                          android:layout_gravity="top|left"
-                          android:visibility="gone"
-                          android:background="@drawable/rectangle">
-            <ImageView android:layout_width="fill_parent"
-                       android:layout_height="fill_parent"
-                       android:layout_gravity="center_horizontal"
-                       android:id="@+id/staricon"
-                       android:src="@drawable/share"/>
+                android:layout_height="match_parent" >
+
+                <com.lateralthoughts.vue.ui.UninterceptableViewPager
+                    android:id="@+id/myfivepanelpager"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/starImage"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="top|left"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rectangle"
+                android:visibility="gone" >
+
+                <ImageView
+                    android:id="@+id/staricon"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/share" />
             </LinearLayout>
         </FrameLayout>
 
         <LinearLayout
+            android:id="@+id/descriptionlayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
-            android:id="@+id/descriptionlayout"
             android:background="@android:color/white" >
 
             <TextView
@@ -150,7 +132,7 @@
             android:layout_height="1dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            android:background="@color/actionbarclor"/>
+            android:background="@color/actionbarclor" />
     </LinearLayout>
 
 </LinearLayout>

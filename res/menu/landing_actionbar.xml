@@ -5,12 +5,12 @@
         android:id="@+id/menu_search"
         android:actionViewClass="android.widget.SearchView"
         android:icon="@drawable/lookingfor"
-         android:title="Search Category"
-        android:showAsAction="ifRoom|collapseActionView"/>
+        android:showAsAction="ifRoom|collapseActionView"
+        android:title="Search Category"/>
     <item
         android:id="@+id/menu_create_aisle"
         android:icon="@drawable/new_save"
         android:showAsAction="always"
         android:title="@string/create_aisle"/>
-  
+
 </menu>

@@ -23,45 +23,52 @@ import android.support.v4.app.DialogFragment;
 import com.google.android.gms.plus.GooglePlusUtil;
 
 /**
- * Wraps the {@link Dialog} returned by {@link GooglePlusUtil#getErrorDialog}
- * so that it can be properly managed by the {@link android.app.Activity}.
+ * Wraps the {@link Dialog} returned by {@link GooglePlusUtil#getErrorDialog} so
+ * that it can be properly managed by the {@link android.app.Activity}.
  */
 public final class GooglePlusErrorDialogFragment extends DialogFragment {
-
+    
     /**
      * The error code returned by the
      * {@link GooglePlusUtil#checkGooglePlusApp(android.content.Context)} call.
      */
     public static final String ARG_ERROR_CODE = "errorCode";
-
+    
     /**
-     * The request code given when calling {@link android.app.Activity#startActivityForResult}.
+     * The request code given when calling
+     * {@link android.app.Activity#startActivityForResult}.
      */
     public static final String ARG_REQUEST_CODE = "requestCode";
-
+    
     /**
      * Creates a {@link DialogFragment}.
      */
-    public GooglePlusErrorDialogFragment() {}
-
+    public GooglePlusErrorDialogFragment() {
+    }
+    
     /**
-     * Returns a {@link Dialog} created by {@link GooglePlusUtil#getErrorDialog} with the
-     * provided errorCode, activity, and request code.
-     *
-     * @param savedInstanceState Not used.
+     * Returns a {@link Dialog} created by {@link GooglePlusUtil#getErrorDialog}
+     * with the provided errorCode, activity, and request code.
+     * 
+     * @param savedInstanceState
+     *            Not used.
      */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
-        return GooglePlusUtil.getErrorDialog(args.getInt(ARG_ERROR_CODE), getActivity(),
-                args.getInt(ARG_REQUEST_CODE));
+        return GooglePlusUtil.getErrorDialog(args.getInt(ARG_ERROR_CODE),
+                getActivity(), args.getInt(ARG_REQUEST_CODE));
     }
-
+    
     /**
-     * Create a {@link DialogFragment} for displaying the {@link GooglePlusUtil#getErrorDialog}.
-     * @param errorCode The error code returned by
-     *              {@link GooglePlusUtil#checkGooglePlusApp(android.content.Context)}
-     * @param requestCode The request code for resolving the resolution activity.
+     * Create a {@link DialogFragment} for displaying the
+     * {@link GooglePlusUtil#getErrorDialog}.
+     * 
+     * @param errorCode
+     *            The error code returned by
+     *            {@link GooglePlusUtil#checkGooglePlusApp(android.content.Context)}
+     * @param requestCode
+     *            The request code for resolving the resolution activity.
      * @return The {@link DialogFragment}.
      */
     public static DialogFragment create(int errorCode, int requestCode) {

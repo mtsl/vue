@@ -16,7 +16,6 @@
         android:divider="@null"
         android:scrollbars="none" >
     </ListView>
-    <!-- android:layout_above="@+id/vue_bottom_bar" -->
 
     <RelativeLayout
         android:id="@+id/vue_image_indicator"
@@ -61,14 +60,6 @@
         android:layout_marginTop="6dp"
         android:background="@drawable/edit_btn_selector"
         android:visibility="gone" >
-
-        <!--
-             <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/editwhite" />
-        -->
     </LinearLayout>
 
     <RelativeLayout
@@ -124,16 +115,17 @@
             android:id="@+id/vue_aislelayout"
             android:layout_width="48dip"
             android:layout_height="48dp"
+            android:layout_marginTop="8dp"
             android:layout_toLeftOf="@+id/vuesharelayout"
             android:background="@drawable/vue_button_selector" >
 
             <ImageView
                 android:id="@+id/vue_aisle"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
                 android:layout_centerInParent="true"
                 android:contentDescription="@string/Image"
-                android:src="@drawable/find_at_selector" />
+                android:src="@drawable/finditat" />
         </RelativeLayout>
 
         <RelativeLayout

@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 /**
  * This class helps to create, automatically open (if applicable), save, and
@@ -34,20 +33,23 @@ import android.util.Log;
  * methods can result in improperly initialized or uninitialized Sessions.
  */
 public class UiLifecycleHelper {
-
+    
     private final static String ACTIVITY_NULL_MESSAGE = "activity cannot be null";
-
+    
     private final Activity activity;
     private final Session.StatusCallback callback;
     private final BroadcastReceiver receiver;
     private final LocalBroadcastManager broadcastManager;
-
+    
     /**
      * Creates a new UiLifecycleHelper.
-     *
-     * @param activity the Activity associated with the helper. If calling from a Fragment,
-     *                 use {@link android.support.v4.app.Fragment#getActivity()}
-     * @param callback the callback for Session status changes, can be null
+     * 
+     * @param activity
+     *            the Activity associated with the helper. If calling from a
+     *            Fragment, use
+     *            {@link android.support.v4.app.Fragment#getActivity()}
+     * @param callback
+     *            the callback for Session status changes, can be null
      */
     public UiLifecycleHelper(Activity activity, Session.StatusCallback callback) {
         if (activity == null) {
@@ -58,37 +60,36 @@ public class UiLifecycleHelper {
         this.receiver = new ActiveSessionBroadcastReceiver();
         this.broadcastManager = LocalBroadcastManager.getInstance(activity);
     }
-
+    
     /**
      * To be called from an Activity or Fragment's onCreate method.
-     *
-     * @param savedInstanceState the previously saved state
+     * 
+     * @param savedInstanceState
+     *            the previously saved state
      */
     public void onCreate(Bundle savedInstanceState) {
-    	
-    	 Log.e("fb", "17");
-    	
         Session session = Session.getActiveSession();
         if (session == null) {
             if (savedInstanceState != null) {
-                session = Session.restoreSession(activity, null, callback, savedInstanceState);
+                session = Session.restoreSession(activity, null, callback,
+                        savedInstanceState);
             }
             if (session == null) {
                 session = new Session(activity);
             }
             Session.setActiveSession(session);
         }
-
+        
         // add the broadcast receiver
         IntentFilter filter = new IntentFilter();
         filter.addAction(Session.ACTION_ACTIVE_SESSION_SET);
         filter.addAction(Session.ACTION_ACTIVE_SESSION_UNSET);
-
+        
         // Add a broadcast receiver to listen to when the active Session
         // is set or unset, and add/remove our callback as appropriate
         broadcastManager.registerReceiver(receiver, filter);
     }
-
+    
     /**
      * To be called from an Activity or Fragment's onResume method.
      */
@@ -102,34 +103,36 @@ public class UiLifecycleHelper {
                 session.openForRead(null);
             }
         }
-
+        
     }
-
+    
     /**
      * To be called from an Activity or Fragment's onActivityResult method.
-     *
-     * @param requestCode the request code
-     * @param resultCode the result code
-     * @param data the result data
+     * 
+     * @param requestCode
+     *            the request code
+     * @param resultCode
+     *            the result code
+     * @param data
+     *            the result data
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	 Log.e("fb", "78");
         Session session = Session.getActiveSession();
         if (session != null) {
-        	 Log.e("fb", "79");
             session.onActivityResult(activity, requestCode, resultCode, data);
         }
     }
-
+    
     /**
      * To be called from an Activity or Fragment's onSaveInstanceState method.
-     *
-     * @param outState the bundle to save state in
+     * 
+     * @param outState
+     *            the bundle to save state in
      */
     public void onSaveInstanceState(Bundle outState) {
         Session.saveSession(Session.getActiveSession(), outState);
     }
-
+    
     /**
      * To be called from an Activity or Fragment's onPause method.
      */
@@ -141,7 +144,7 @@ public class UiLifecycleHelper {
             }
         }
     }
-
+    
     /**
      * To be called from an Activity or Fragment's onDestroy method.
      */
@@ -149,10 +152,10 @@ public class UiLifecycleHelper {
         // remove the broadcast receiver
         broadcastManager.unregisterReceiver(receiver);
     }
-
+    
     /**
-     * The BroadcastReceiver implementation that either adds or removes the callback
-     * from the active Session object as it's SET or UNSET.
+     * The BroadcastReceiver implementation that either adds or removes the
+     * callback from the active Session object as it's SET or UNSET.
      */
     private class ActiveSessionBroadcastReceiver extends BroadcastReceiver {
         @Override
@@ -162,7 +165,8 @@ public class UiLifecycleHelper {
                 if (session != null && callback != null) {
                     session.addCallback(callback);
                 }
-            } else if (Session.ACTION_ACTIVE_SESSION_UNSET.equals(intent.getAction())) {
+            } else if (Session.ACTION_ACTIVE_SESSION_UNSET.equals(intent
+                    .getAction())) {
                 Session session = Session.getActiveSession();
                 if (session != null && callback != null) {
                     session.removeCallback(callback);

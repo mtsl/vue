@@ -16,30 +16,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
-import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
-import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.Utils;
 import com.origamilabs.library.views.StaggeredGridView;
 
@@ -51,19 +44,18 @@ import com.origamilabs.library.views.StaggeredGridView;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueLandingAislesFragment extends  Fragment {
+public class VueLandingAislesFragment extends Fragment {
     private Context mContext;
     private VueContentGateway mVueContentGateway;
     private LandingPageViewAdapter mStaggeredAdapter;
-
+    
     private StaggeredGridView mStaggeredView;
-
+    
     private AisleClickListener mAisleClickListener;
     public boolean mIsFlingCalled;
-
-
+    
     public boolean mIsIdleState;
-
+    
     // TODO: define a public interface that can be implemented by the parent
     // activity so that we can notify it with an ArrayList of AisleWindowContent
     // once we have received the result and parsed it. The idea is that the
@@ -71,180 +63,159 @@ public class VueLandingAislesFragment extends  Fragment {
     // can then initiate a worker in the background to go fetch more content and
     // get
     // ready to launch other activities/fragments within the application
-
+    
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mContext = activity;
-
+        
         // without much ado lets get started with retrieving the trending aisles
         // list
         mVueContentGateway = VueContentGateway.getInstance();
         if (null == mVueContentGateway) {
             // assert here: this is a no go!
         }
-
+        
         mAisleClickListener = new AisleClickListener();
-        mStaggeredAdapter = new LandingPageViewAdapter(mContext, mAisleClickListener);
+        mStaggeredAdapter = new LandingPageViewAdapter(mContext,
+                mAisleClickListener);
     }
-
+    
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // TODO: any particular state that we want to restore?
-
+        
     }
-
+    
     public void notifyAdapters() {
-        if(null != mStaggeredAdapter){
+        if (null != mStaggeredAdapter) {
             mStaggeredAdapter.notifyDataSetChanged();
         }
     }
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+            Bundle savedInstanceState) {
+        
         // synchronized list view approach
         View v = inflater.inflate(R.layout.aisles_view_fragment, container,
                 false);
         mStaggeredView = (StaggeredGridView) v.findViewById(R.id.aisles_grid);
         int margin = getResources().getDimensionPixelSize(R.dimen.margin);
         mStaggeredView.setItemMargin(margin); // set the GridView margin
-
-        mStaggeredView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well
+        
+        mStaggeredView.setPadding(margin, 0, margin, 0); // have the margin on
+                                                         // the sides as well
         mStaggeredView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                return false;  //To change body of implemented methods use File | Settings | File Templates.
+                return false; // To change body of implemented methods use File
+                              // | Settings | File Templates.
             }
         });
-
+        
         mStaggeredView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
-                switch(i){
-                    case SCROLL_STATE_FLING:
-                    case SCROLL_STATE_TOUCH_SCROLL:
-                        mStaggeredAdapter.setIsScrolling(true);
-                        VueApplication.getInstance().getRequestQueue().cancelAll(VueApplication.LOAD_IMAGES_REQUEST_TAG);
-                        break;
-
-                    case SCROLL_STATE_IDLE:
-                        mStaggeredAdapter.setIsScrolling(false);
-                        VueApplication.getInstance().getRequestQueue().cancelAll(VueApplication.MORE_AISLES_REQUEST_TAG);
-                        break;
+                switch (i) {
+                case SCROLL_STATE_FLING:
+                case SCROLL_STATE_TOUCH_SCROLL:
+                    mStaggeredAdapter.setIsScrolling(true);
+                    VueApplication.getInstance().getRequestQueue()
+                            .cancelAll(VueApplication.LOAD_IMAGES_REQUEST_TAG);
+                    break;
+                
+                case SCROLL_STATE_IDLE:
+                    mStaggeredAdapter.setIsScrolling(false);
+                    VueApplication.getInstance().getRequestQueue()
+                            .cancelAll(VueApplication.MORE_AISLES_REQUEST_TAG);
+                    break;
                 }
             }
-
+            
             @Override
-            public void onScroll(AbsListView absListView, int i, int i2, int i3) {
-
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                    int visibleItemCount, int totalItemCount) {
+                if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
+                        && VueLandingPageActivity.mLandingScreenName != null
+                        && VueLandingPageActivity.mLandingScreenName
+                                .equalsIgnoreCase(getResources().getString(
+                                        R.string.trending))
+                        && !VueTrendingAislesDataModel.getInstance(mContext).mIsFromDb) {
+                    int lastVisiblePosition = firstVisibleItem
+                            + visibleItemCount;
+                    if ((totalItemCount - lastVisiblePosition) < 5) {
+                        VueTrendingAislesDataModel
+                                .getInstance(mContext)
+                                .getNetworkHandler()
+                                .requestMoreAisle(
+                                        true,
+                                        getResources().getString(
+                                                R.string.trending));
+                    }
+                }
+                
             }
         });
-
-        //mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
-
-        //mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        //mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-
         mStaggeredView.setAdapter(mStaggeredAdapter);
-
-		/*mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		mRightColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		mLeftColumnView.setOnTouchListener(touchListener);
-		mRightColumnView.setOnTouchListener(touchListener);
-		mLeftColumnView.setOnScrollListener(scrollListener);
-		mRightColumnView.setOnScrollListener(scrollListener);
-
-		mLeftColumnView.setClickable(true);
-		mLeftColumnView
-				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						Logging.d("Clicks",
-								"ok...we are getting item clicks!!");
-
-					}
-				});
-
-		mLeftViewsHeights = new int[1000];
-		mRightViewsHeights = new int[1000];
-		Logging.d("VueLandingAislesFragment",
-				"Get ready to displayed staggered view");*/
-
         return v;
     }
-
+    
     private class AisleClickListener implements AisleContentClickListener {
         @Override
         public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
-            Map<String, String> articleParams = new HashMap<String, String>();
-            VueUser storedVueUser = null;
-            try {
-                storedVueUser = Utils.readUserObjectFromFile(getActivity(),
-                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            } catch (Exception e2) {
-                e2.printStackTrace();
-            }
-            if (storedVueUser != null) {
-                articleParams.put("User_Id", Long
-                        .valueOf(storedVueUser.getId()).toString());
+            if (VueLandingPageActivity.mOtherSourceImagePath == null) {
+                Map<String, String> articleParams = new HashMap<String, String>();
+                VueUser storedVueUser = null;
+                try {
+                    storedVueUser = Utils.readUserObjectFromFile(getActivity(),
+                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                }
+                if (storedVueUser != null) {
+                    articleParams.put("User_Id",
+                            Long.valueOf(storedVueUser.getId()).toString());
+                } else {
+                    articleParams.put("User_Id", "anonymous");
+                }
+                
+                DataBaseManager.getInstance(mContext)
+                        .updateOrAddRecentlyViewedAisles(id);
+                FlurryAgent.logEvent("User_Select_Aisle", articleParams);
+                Intent intent = new Intent();
+                intent.setClass(VueApplication.getInstance(),
+                        AisleDetailsViewActivity.class);
+                VueApplication.getInstance().setClickedWindowID(id);
+                VueApplication.getInstance().setClickedWindowCount(count);
+                VueApplication.getInstance().setmAisleImgCurrentPos(
+                        aisleImgCurrentPos);
+                startActivity(intent);
             } else {
-                articleParams.put("User_Id", "anonymous");
+                VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
+                vueLandingPageActivity.hideDefaultActionbar();
+                VueLandingPageActivity.mOtherSourceAddImageAisleId = id;
+                notifyAdapters();
             }
-            Logging.d("VueLandingAisleFragment", "Suru aisle clicked aisle Id: "
-                    + id);
-            DataBaseManager.getInstance(mContext)
-                    .updateOrAddRecentlyViewedAisles(id);
-            FlurryAgent.logEvent("User_Select_Aisle", articleParams);
-
-            VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
-            Logging.d("clickedwindow", "clickedwindow ID: " + id);
-            Intent intent = new Intent();
-            intent.setClass(VueApplication.getInstance(),
-                    AisleDetailsViewActivity.class);
-            VueApplication.getInstance().setClickedWindowID(id);
-            VueApplication.getInstance().setClickedWindowCount(count);
-            VueApplication.getInstance().setmAisleImgCurrentPos(
-                    aisleImgCurrentPos);
-            startActivity(intent);
+            
         }
-
+        
         @Override
         public boolean isFlingCalled() {
-            Logging.d("flingcheck", "flingcheck  isFlingCalled val: "
-                    + mIsFlingCalled);
             return mIsFlingCalled;
         }
-
+        
         @Override
         public boolean isIdelState() {
-
+            
             return mIsIdleState;
         }
-
+        
         @Override
         public boolean onDoubleTap(String id) {
             AisleWindowContent windowItem = VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).getAisleAt(id);
-
-            Logging.i("aisleItem", "aisleItem: id " + windowItem.getAisleId());
-            Logging.i("aisleItem",
-                    "aisleItem:best smallest Height : "
-                            + windowItem.getBestHeightForWindow());
-            Logging.i("aisleItem", "aisleItem:best cardwidth : "
-                    + VueApplication.getInstance().getScreenWidth() / 2);
-            String imageUrls = "";
-            for (int i = 0; i < windowItem.getImageList().size(); i++) {
-                Logging.i("aisleItem", "aisleItem: imageUrl "
-                        + windowItem.getImageList().get(i).mImageUrl);
-                Logging.i("aisleItem", "aisleItem: imageUrl height"
-                        + windowItem.getImageList().get(i).mAvailableHeight
-                        + " width: "
-                        + windowItem.getImageList().get(i).mAvailableWidth);
-            }
             int finalWidth = 0, finaHeight = 0;
             if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
                     .getBestHeightForWindow()) {
@@ -253,17 +224,15 @@ public class VueLandingAislesFragment extends  Fragment {
                         / windowItem.getImageList().get(0).mAvailableHeight;
                 finaHeight = windowItem.getBestHeightForWindow();
             }
-
+            
             if (finalWidth > VueApplication.getInstance().getScreenWidth() / 2) {
-
+                
                 finaHeight = (finaHeight
                         * VueApplication.getInstance().getScreenWidth() / 2)
                         / finalWidth;
                 finalWidth = VueApplication.getInstance().getScreenWidth() / 2;
             }
-            Logging.i("aisleItem", "aisleItem: after resize aisle width "
-                    + finalWidth + " height: " + finaHeight);
-
+            
             String writeSdCard = null;
             writeSdCard = "*************************aisle info:"
                     + " started***********************\n";
@@ -285,29 +254,29 @@ public class VueLandingAislesFragment extends  Fragment {
                     + windowItem.getImageList().get(0).mTrendingImageHeight
                     + " After Resized Aisle width: "
                     + VueApplication.getInstance().getVueDetailsCardWidth() / 2;
-
+            
             for (int i = 0; i < windowItem.getImageList().size(); i++) {
                 writeSdCard = writeSdCard + "\n CustomImageUrl: "
                         + windowItem.getImageList().get(i).mCustomImageUrl;
             }
-
+            
             writeSdCard = writeSdCard
                     + "\n###################### info end ################################";
             writeToSdcard(writeSdCard);
             return false;
         }
-
+        
         @Override
         public void refreshList() {
             mStaggeredAdapter.notifyDataSetChanged();
         }
     }
-
+    
     public int getListPosition() {
         return mStaggeredView.getFirstPosition();
-
+        
     }
-
+    
     private void initArcMenu(ArcMenu menu, int[] itemDrawables) {
         final int itemCount = itemDrawables.length;
         for (int i = 0; i < itemCount; i++) {
@@ -318,7 +287,7 @@ public class VueLandingAislesFragment extends  Fragment {
             lp.setMargins(4, 4, 4, 4);
             final int position = i;
             menu.addItem(i, lp, item, new OnClickListener() {
-
+                
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getActivity(), "position:" + position,
@@ -327,9 +296,9 @@ public class VueLandingAislesFragment extends  Fragment {
             });
         }
     }
-
+    
     private void writeToSdcard(String message) {
-
+        
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/vueImageDetails/");
         if (!dir.isDirectory()) {
@@ -340,22 +309,19 @@ public class VueLandingAislesFragment extends  Fragment {
         try {
             file.createNewFile();
         } catch (IOException e) {
-            Logging.i("pathsaving", "pathsaving in sdcard2 error");
             e.printStackTrace();
         }
-
+        
         try {
             PrintWriter out = new PrintWriter(new BufferedWriter(
                     new FileWriter(file, true)));
             out.write("\n" + message + "\n");
             out.flush();
             out.close();
-            Logging.i("pathsaving", "pathsaving in sdcard2 success");
+            
         } catch (IOException e) {
-            Logging.i("pathsaving", "pathsaving in sdcard3 error");
             e.printStackTrace();
         }
     }
-
-
+    
 }

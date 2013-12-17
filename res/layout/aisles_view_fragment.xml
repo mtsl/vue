@@ -3,10 +3,12 @@
     android:id="@+id/aisles_view_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#CCCCCC">
+    android:background="#CCCCCC"
+    android:orientation="vertical" >
+
     <com.origamilabs.library.views.StaggeredGridView
         android:id="@+id/aisles_grid"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="fill_parent" />
+
 </LinearLayout>

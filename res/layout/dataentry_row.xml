@@ -14,10 +14,5 @@
         android:text="Redecoration"
         android:textColor="@color/dataentrytextcolor"
         android:textSize="15sp" />
-    <!--
-         <View android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:background="@color/dataentrylistbordercolor"/>
-    -->
 
 </LinearLayout>

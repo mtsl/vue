@@ -5,15 +5,14 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
+
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-     <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
-  
+        <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
     </style>
- 
 
     <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@drawable/actionbar_bg</item>
@@ -22,20 +21,23 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+
     <style name="vue_comeents_imgalign">
         <item name="android:layout_width">16dp</item>
         <item name="android:layout_height">16dp</item>
         <item name="android:layout_centerVertical">true</item>
     </style>
-     <style name="vue_comeents_text_align">
+
+    <style name="vue_comeents_text_align">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerVertical">true</item>
     </style>
-     <style name="Theme_Dialog_Translucent"
-           parent="android:Theme.Dialog">
+
+    <style name="Theme_Dialog_Translucent" parent="android:Theme.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
+
     <style name="textviewwrapcontent">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -53,43 +55,30 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">60dp</item>
     </style>
-     <style name="popupbottom_proceed">
+
+    <style name="popupbottom_proceed">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">60dp</item>
     </style>
-   <style name="dotimg" >
+
+    <style name="dotimg">
         <item name="android:layout_width">8dp</item>
         <item name="android:layout_height">8dp</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_marginLeft">2dp</item>
         <item name="android:layout_marginRight">2dp</item>
-       
-    </style>
- <!--    <style name="Theme.VueTheme" parent="Theme.Sherlock.Light">
-        <item name="actionBarStyle">@style/Widget.VueTheme.ActionBar</item>
-        <item name="actionButtonStyle">@style/actionButtonStyle</item>
-        <item name="android:minWidth">24dp</item>
     </style>
 
-    <style name="Widget.VueTheme.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="android:background">@drawable/actionbar_bg</item>
-        <item name="background">@drawable/actionbar_bg</item>
-    </style>
+    <declare-styleable name="MySlider">
+        <attr name="SlidingDrawer_orientation" format="integer" />
+        <attr name="SlidingDrawer_bottomOffset" format="dimension" />
+        <attr name="SlidingDrawer_topOffset" format="dimension" />
+        <attr name="SlidingDrawer_allowSingleTap" format="boolean" />
+        <attr name="SlidingDrawer_animateOnClick" format="boolean" />
+        <attr name="SlidingDrawer_handle" format="reference" />
+        <attr name="SlidingDrawer_content" format="reference" />
+        <!-- and we are going to add a new styleable resource maxHeight -->
+        <attr name="SlidingDrawer_maxHeight" format="dimension" />
+    </declare-styleable>
 
-    <style name="actionButtonStyle" parent="Widget.Sherlock.ActionButton">
-    <item name="android:minWidth">24dp</item>
-    <item name="android:padding">24dp</item>
-</style> -->
- 
-<declare-styleable name="MySlider">
-    <attr name = "SlidingDrawer_orientation"  format="integer"/>
-    <attr name = "SlidingDrawer_bottomOffset" format = "dimension"/>
-    <attr name = "SlidingDrawer_topOffset" format = "dimension"/>
-    <attr name = "SlidingDrawer_allowSingleTap" format = "boolean"/>
-    <attr name = "SlidingDrawer_animateOnClick" format = "boolean"/>
-    <attr name = "SlidingDrawer_handle" format = "reference"/>
-    <attr name = "SlidingDrawer_content" format = "reference"/>
-    <!-- and we are going to add a new styleable resource maxHeight -->
-    <attr name = "SlidingDrawer_maxHeight" format = "dimension"/>
-</declare-styleable>
 </resources>

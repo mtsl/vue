@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 //vue internal imports
 
@@ -37,79 +36,80 @@ public class ContentAdapterFactory {
     public Drawable mEvenColumnBackground;
     public Drawable mOddColumnBackground;
     
-    private ContentAdapterFactory(Context context){
+    private ContentAdapterFactory(Context context) {
         mAvailableObjects = new ArrayList<AisleContentAdapter>();
         mObjectsInUse = new ArrayList<AisleContentAdapter>();
         
-        //TODO: assert if context is null
+        // TODO: assert if context is null
         mContext = context;
         
-        for(int i=0; i<POOL_SIZE;i++){
-            mAvailableObjects.add(new AisleContentAdapter(mContext));            
+        for (int i = 0; i < POOL_SIZE; i++) {
+            mAvailableObjects.add(new AisleContentAdapter(mContext));
         }
     }
     
-    public static ContentAdapterFactory getInstance(Context context){
-        if(null == sContentAdapterFactory){
+    public static ContentAdapterFactory getInstance(Context context) {
+        if (null == sContentAdapterFactory) {
             sContentAdapterFactory = new ContentAdapterFactory(context);
         }
         return sContentAdapterFactory;
     }
     
-    public IAisleContentAdapter getAisleContentAdapter(){
+    public IAisleContentAdapter getAisleContentAdapter() {
         AisleContentAdapter aisleContentAdapter = null;
         
-        if(mAvailableObjects.isEmpty()){
+        if (mAvailableObjects.isEmpty()) {
             expandPoolOrDie();
         }
         
-        synchronized(this){ 
-            if(!mAvailableObjects.isEmpty()){
-                aisleContentAdapter = mAvailableObjects.remove(mAvailableObjects.size()-1);
+        synchronized (this) {
+            if (!mAvailableObjects.isEmpty()) {
+                aisleContentAdapter = mAvailableObjects
+                        .remove(mAvailableObjects.size() - 1);
                 mObjectsInUse.add(aisleContentAdapter);
-                Log.e("ImageViewFactory","get an empty image view. mAvailableObjects.size() = " + mAvailableObjects.size());
-                
             }
         }
         return aisleContentAdapter;
     }
     
-    public void returnUsedAdapter(IAisleContentAdapter aisleContentAdapter){
+    public void returnUsedAdapter(IAisleContentAdapter aisleContentAdapter) {
         int index = -1;
-        if(null == aisleContentAdapter){
+        if (null == aisleContentAdapter) {
             return;
         }
         index = mObjectsInUse.indexOf(aisleContentAdapter);
-        if(-1 == index){
+        if (-1 == index) {
             return;
         }
         
-        synchronized(this){
+        synchronized (this) {
             AisleContentAdapter ac = mObjectsInUse.remove(index);
-            //ac.releaseContentSource();
-            mAvailableObjects.add(ac);            
-            //TODO: we have a way to expand the pool once the initial objects get used up - should
-            //we have an equivalent to free up some of the objects?
+            // ac.releaseContentSource();
+            mAvailableObjects.add(ac);
+            // TODO: we have a way to expand the pool once the initial objects
+            // get used up - should
+            // we have an equivalent to free up some of the objects?
         }
     }
     
-    //internal utility functions
-    private void expandPoolOrDie(){
-        if(mObjectsInUse.size() >= POOL_MAX_SIZE){
-            //TODO: assert & die here!
-            //throw new java.lang.OutOfMemoryError("hey watch it! We are running out of objects here!");
+    // internal utility functions
+    private void expandPoolOrDie() {
+        if (mObjectsInUse.size() >= POOL_MAX_SIZE) {
+            // TODO: assert & die here!
+            // throw new
+            // java.lang.OutOfMemoryError("hey watch it! We are running out of objects here!");
         }
         
         int numObjectsToAllocate = POOL_MAX_SIZE - mObjectsInUse.size();
-        synchronized(this){
+        synchronized (this) {
             if (POOL_STEP_SIZE > POOL_MAX_SIZE - mObjectsInUse.size())
                 numObjectsToAllocate = POOL_MAX_SIZE - mObjectsInUse.size();
             else
                 numObjectsToAllocate = POOL_STEP_SIZE;
             
-            for(int i=0;i<numObjectsToAllocate;i++){
+            for (int i = 0; i < numObjectsToAllocate; i++) {
                 mAvailableObjects.add(new AisleContentAdapter(mContext));
             }
-        }       
+        }
     }
 }

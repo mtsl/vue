@@ -17,11 +17,12 @@
 package com.facebook;
 
 /**
- * An Exception indicating that a Session failed to open or obtain new permissions.
+ * An Exception indicating that a Session failed to open or obtain new
+ * permissions.
  */
 public class FacebookAuthorizationException extends FacebookException {
     static final long serialVersionUID = 1;
-
+    
     /**
      * Constructs a FacebookAuthorizationException with no additional
      * information.
@@ -29,7 +30,7 @@ public class FacebookAuthorizationException extends FacebookException {
     public FacebookAuthorizationException() {
         super();
     }
-
+    
     /**
      * Constructs a FacebookAuthorizationException with a message.
      * 
@@ -39,7 +40,7 @@ public class FacebookAuthorizationException extends FacebookException {
     public FacebookAuthorizationException(String message) {
         super(message);
     }
-
+    
     /**
      * Constructs a FacebookAuthorizationException with a message and inner
      * error.
@@ -52,7 +53,7 @@ public class FacebookAuthorizationException extends FacebookException {
     public FacebookAuthorizationException(String message, Throwable throwable) {
         super(message, throwable);
     }
-
+    
     /**
      * Constructs a FacebookAuthorizationException with an inner error.
      * 

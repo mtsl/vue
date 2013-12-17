@@ -6,11 +6,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 public class UninterceptableViewPager extends ViewPager {
-
+    
     public UninterceptableViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-
+    
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         boolean ret = super.onInterceptTouchEvent(ev);
@@ -18,7 +18,7 @@ public class UninterceptableViewPager extends ViewPager {
             getParent().requestDisallowInterceptTouchEvent(true);
         return ret;
     }
-
+    
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         boolean ret = super.onTouchEvent(ev);

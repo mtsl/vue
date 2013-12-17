@@ -1,52 +1,43 @@
 package com.lateralthoughts.vue;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.android.volley.toolbox.NetworkImageView;
-import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
-import com.lateralthoughts.vue.utils.Logging;
-
 
 public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
-
+    
     private AisleLoader mLoader;
     private Context mContext;
-
-    private boolean mHasToShow = true;
-    private boolean mHasSameLikes = false;
-    private String mShowStarAisle = " ";
-
-    public LandingPageViewAdapter(Context context,AisleContentClickListener clickListener) {
+    AisleContentClickListener mClickListener;
+    
+    public LandingPageViewAdapter(Context context,
+            AisleContentClickListener clickListener) {
         super(context, clickListener, null);
         mContext = context;
         mLoader = AisleLoader.getInstance(context);
+        mClickListener = clickListener;
     }
-
+    
     @Override
     public int getCount() {
         return mVueTrendingAislesDataModel.getAisleCount();
     }
-
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        
         ViewHolder holder;
-
+        
         int actualPosition = position;
-        Log.i("TrendingDataModel",
-                "DataObserver for List Refresh: Left getview ");
         if (null == convertView) {
-            Log.i("TrendingDataModel",
-                    "DataObserver for List Refresh: Left getview if ");
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
             convertView = layoutInflator.inflate(R.layout.staggered_row_item,
                     null);
@@ -72,27 +63,10 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         holder.mWindowContent = (AisleWindowContent) getItem(position);
         int scrollIndex = 0;
-        if (mHasToShow) {
-            if (holder.mWindowContent != null
-                    && mShowStarAisle
-                    .equals(holder.mWindowContent.getAisleId())) {
-                if (mHasSameLikes) {
-                    holder.starIcon.setImageResource(R.drawable.vue_star_light);
-                } else {
-                    holder.starIcon.setImageResource(R.drawable.vue_star_theme);
-                }
-                // holder.startImageLay.setVisibility(View.VISIBLE);
-                holder.starIcon.setVisibility(View.VISIBLE);
-            }
-        } else {
-            if (holder.mWindowContent != null && mShowStarAisle.equals(holder.mWindowContent.getAisleId()))
-                // holder.startImageLay.setVisibility(View.GONE);
-                holder.starIcon.setVisibility(View.GONE);
-        }
         if (VueLandingPageActivity.mOtherSourceImagePath != null) {
             if (VueLandingPageActivity.mOtherSourceAddImageAisleId != null
                     && VueLandingPageActivity.mOtherSourceAddImageAisleId
-                    .equals(holder.mWindowContent.getAisleId())) {
+                            .equals(holder.mWindowContent.getAisleId())) {
                 holder.aisleselectlay.setVisibility(View.VISIBLE);
             } else {
                 holder.aisleselectlay.setVisibility(View.GONE);
@@ -100,7 +74,8 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         } else {
             holder.aisleselectlay.setVisibility(View.GONE);
         }
-        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,false, mClickListener,"left", holder.starIcon);
+        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
+                false, mClickListener, "left", holder.starIcon);
         AisleContext context = holder.mWindowContent.getAisleContext();
         String mVueusername = null;
         if (context.mFirstName != null && context.mLastName != null) {
@@ -153,8 +128,6 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
             title = title + lookingFor;
         }
         holder.aisleContext.setText(title);
-
-        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().requestMoreAisle(true, "LandingScreen");
         return convertView;
     }
 }
