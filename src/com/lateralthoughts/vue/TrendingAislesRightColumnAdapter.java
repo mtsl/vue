@@ -48,7 +48,6 @@ public class TrendingAislesRightColumnAdapter extends
     
     private AisleLoader mLoader;
     
-    private static final boolean DEBUG = true;
     AisleContentClickListener listener;
     LinearLayout.LayoutParams mShowpieceParams, mShowpieceParamsDefault;
     BitmapLoaderUtils mBitmapLoaderUtils;
@@ -72,7 +71,6 @@ public class TrendingAislesRightColumnAdapter extends
         mContext = c;
         mLoader = AisleLoader.getInstance(mContext);
         this.listener = listener;
-        // mVueTrendingAislesDataModel.registerAisleDataObserver(this);
     }
     
     @Override
@@ -105,8 +103,6 @@ public class TrendingAislesRightColumnAdapter extends
                     .findViewById(R.id.aisle_content_flipper);
             holder.starIcon = (ImageView) convertView
                     .findViewById(R.id.staricon);
-            LinearLayout.LayoutParams showpieceParams = new LinearLayout.LayoutParams(
-                    VueApplication.getInstance().getScreenWidth() / 2, 200);
             holder.aisleDescriptor = (LinearLayout) convertView
                     .findViewById(R.id.aisle_descriptor);
             holder.profileThumbnail = (NetworkImageView) holder.aisleDescriptor
@@ -126,7 +122,7 @@ public class TrendingAislesRightColumnAdapter extends
         holder = (ViewHolder) convertView.getTag();
         holder.mWindowContent = (AisleWindowContent) getItem(position);
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
-        int scrollIndex = 0; // getContentBrowserIndexForId(windowContent.getAisleId());
+        int scrollIndex = 0;
         if (mHasToShow) {
             if (holder.mWindowContent != null
                     && mShowStarAisle
@@ -136,7 +132,6 @@ public class TrendingAislesRightColumnAdapter extends
                 } else {
                     holder.starIcon.setImageResource(R.drawable.vue_star_theme);
                 }
-                // holder.startImageLay.setVisibility(View.VISIBLE);
                 holder.starIcon.setVisibility(View.VISIBLE);
                 
             }
@@ -144,7 +139,6 @@ public class TrendingAislesRightColumnAdapter extends
             if (holder.mWindowContent != null
                     && mShowStarAisle
                             .equals(holder.mWindowContent.getAisleId()))
-                // holder.startImageLay.setVisibility(View.GONE);
                 holder.starIcon.setVisibility(View.GONE);
         }
         if (VueLandingPageActivity.mOtherSourceImagePath != null) {

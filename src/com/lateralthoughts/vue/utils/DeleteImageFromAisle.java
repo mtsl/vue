@@ -14,7 +14,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +29,7 @@ import com.lateralthoughts.vue.domain.Image;
 
 public class DeleteImageFromAisle implements Runnable,
         CountingStringEntity.UploadListener {
-    Image image;
+    Image mImage;
     private NotificationManager mNotificationManager;
     private Notification mNotification;
     private int mLastPercent = 0;
@@ -41,7 +40,7 @@ public class DeleteImageFromAisle implements Runnable,
         mNotificationManager = (NotificationManager) VueApplication
                 .getInstance().getSystemService(
                         VueApplication.getInstance().NOTIFICATION_SERVICE);
-        this.image = image;
+        this.mImage = image;
         mAisleId = aisleId;
         
     }
@@ -66,16 +65,15 @@ public class DeleteImageFromAisle implements Runnable,
                         
                         @Override
                         public void run() {
-                            System.out.println("success response");
-                            Utils.isAisleChanged = true;
+                            Utils.sIsAisleChanged = true;
                             Utils.mChangeAilseId = mAisleId;
                             deleteImageFromAisleList(
-                                    String.valueOf(image.getId()),
-                                    String.valueOf(image.getOwnerAisleId()));
+                                    String.valueOf(mImage.getId()),
+                                    String.valueOf(mImage.getOwnerAisleId()));
                             VueTrendingAislesDataModel.getInstance(
                                     VueApplication.getInstance())
                                     .dataObserver();
-                            deleteImageFromDb(String.valueOf(image.getId()));
+                            deleteImageFromDb(String.valueOf(mImage.getId()));
                             
                         }
                     });
@@ -99,8 +97,7 @@ public class DeleteImageFromAisle implements Runnable,
             ObjectMapper mapper = new ObjectMapper();
             URL url = new URL(UrlConstants.DELETE_IMAGE_RESTURL);
             HttpPut httpPut = new HttpPut(url.toString());
-            String request = mapper.writeValueAsString(image);
-            System.out.println("Request: " + request);
+            String request = mapper.writeValueAsString(mImage);
             CountingStringEntity entity = new CountingStringEntity(request);
             entity.setUploadListener(this);
             entity.setContentType("application/json;charset=UTF-8");
@@ -113,7 +110,6 @@ public class DeleteImageFromAisle implements Runnable,
             if (response.getEntity() != null) {
                 String responseMessage = EntityUtils.toString(response
                         .getEntity());
-                System.out.println("Response: " + responseMessage);
                 result = (new ObjectMapper()).readValue(responseMessage,
                         Boolean.class);
             }
@@ -127,20 +123,6 @@ public class DeleteImageFromAisle implements Runnable,
                 mNotificationManager.notify(
                         VueConstants.IMAGE_DELETE_NOTIFICATION_ID,
                         mNotification);
-                /*
-                 * VueLandingPageActivity.landingPageActivity .runOnUiThread(new
-                 * Runnable() {
-                 * 
-                 * @Override public void run() {
-                 * System.out.println("success response");
-                 * deleteImageFromAisleList( String.valueOf(image.getId()),
-                 * String.valueOf(image.getOwnerAisleId()));
-                 * VueTrendingAislesDataModel.getInstance(
-                 * VueApplication.getInstance()) .dataObserver();
-                 * deleteImageFromDb(String.valueOf(image.getId()));
-                 * 
-                 * } });
-                 */
             } else {
                 mNotification.setLatestEventInfo(
                         VueApplication.getInstance(),
@@ -151,13 +133,10 @@ public class DeleteImageFromAisle implements Runnable,
                 mNotificationManager.notify(
                         VueConstants.IMAGE_DELETE_NOTIFICATION_ID,
                         mNotification);
-                Log.e("imageDelete", "imageDeletion failed");
             }
         } catch (MalformedURLException e) {
-            Log.e("imageDelete", "imageDelete failed");
             e.printStackTrace();
         } catch (Exception e) {
-            Log.e("imageDelete", "imageDelete failed");
             e.printStackTrace();
         }
         
@@ -180,15 +159,9 @@ public class DeleteImageFromAisle implements Runnable,
                 imageDetails = aisleItem.getImageList().get(i);
                 if (imageId.equalsIgnoreCase(imageDetails.mId)) {
                     aisleItem.getImageList().remove(i);
-                    Log.e("imageDelete",
-                            "imageDeletion  succesully completes in  UI");
                     break;
                 }
             }
-            
-        } else {
-            Log.e("imageDelete",
-                    "imageDeletion  now this aisle is not showing in UI");
         }
         if (aisleItem != null && aisleItem.getImageList() != null
                 && aisleItem.getImageList().size() == 0) {

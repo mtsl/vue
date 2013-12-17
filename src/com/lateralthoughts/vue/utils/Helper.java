@@ -29,11 +29,6 @@ public class Helper {
         params.height = totalHeight
                 + (myListView.getDividerHeight() * (myListAdapter.getCount() - 1))
                 - pixel;
-        // params.height = 200;
-        // params.height = VueApplication.getInstance().getScreenHeight() -
-        // (VueApplication.getInstance().getScreenHeight()*( 60/100))
-        // -VueApplication.getInstance().getPixel(72);
         myListView.setLayoutParams(params);
-        // print height of adapter on log
     }
 }

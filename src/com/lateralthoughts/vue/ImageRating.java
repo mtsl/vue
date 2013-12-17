@@ -5,10 +5,10 @@ public class ImageRating {
     public static final int NEW_TIME_STAMP = 2;
     public static final int OLD_TIME_STAMP = 1;
     public static final int SAME_TIME_STAMP = 0;
-    Long id;
-    Boolean liked;
-    Long aisleId;
-    Long imageId;
+    Long mId;
+    Boolean mLiked;
+    Long mAisleId;
+    Long mImageId;
     Long lastModifiedTimestamp;
     
     public ImageRating() {
@@ -17,41 +17,41 @@ public class ImageRating {
     
     public ImageRating(Long id, Boolean liked, Long aisleId) {
         super();
-        this.id = id;
-        this.liked = liked;
-        this.aisleId = aisleId;
+        this.mId = id;
+        this.mLiked = liked;
+        this.mAisleId = aisleId;
     }
     
     public Long getId() {
-        return id;
+        return mId;
     }
     
     public void setId(Long id) {
-        this.id = id;
+        this.mId = id;
     }
     
     public Boolean getLiked() {
-        return liked;
+        return mLiked;
     }
     
     public void setLiked(Boolean liked) {
-        this.liked = liked;
+        this.mLiked = liked;
     }
     
     public Long getAisleId() {
-        return aisleId;
+        return mAisleId;
     }
     
     public void setAisleId(Long aisleId) {
-        this.aisleId = aisleId;
+        this.mAisleId = aisleId;
     }
     
     public Long getImageId() {
-        return imageId;
+        return mImageId;
     }
     
     public void setImageId(Long imageId) {
-        this.imageId = imageId;
+        this.mImageId = imageId;
     }
     
     public Long getLastModifiedTimestamp() {
@@ -64,7 +64,7 @@ public class ImageRating {
     
     public boolean compareTo(ImageRating other) {
         boolean imgIdMatched = false;
-        if (this.imageId.longValue() == other.imageId.longValue()) {
+        if (this.mImageId.longValue() == other.mImageId.longValue()) {
             imgIdMatched = true;
         }
         if (imgIdMatched) {

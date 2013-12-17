@@ -45,9 +45,6 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
     private final String TAG = "TrendingAislesGenericAdapter";
     
     protected AisleLoader mLoader;
-    private static final boolean DEBUG = false;
-    public int firstX;
-    public int lastX;
     public boolean mAnimationInProgress;
     protected boolean mIsScrolling;
     protected AisleContentClickListener mClickListener;
@@ -56,15 +53,9 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
     public TrendingAislesGenericAdapter(Context c,
             ArrayList<AisleWindowContent> content) {
         mContext = c;
-        
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel
                 .getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
-        /*
-         * if(mVueTrendingAislesDataModel.isDownloadFail) {
-         * mVueTrendingAislesDataModel.loadData(true); }
-         */
-        
         mLoader = AisleLoader.getInstance(mContext);
         mIsScrolling = false;
     }
@@ -77,11 +68,6 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel
                 .getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
-        /*
-         * if(mVueTrendingAislesDataModel.isDownloadFail) {
-         * mVueTrendingAislesDataModel.loadData(true); }
-         */
-        
         mLoader = AisleLoader.getInstance(mContext);
         mIsScrolling = false;
         mClickListener = listener;
@@ -123,7 +109,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
     }
     
     public void setIsScrolling(boolean isScrolling) {
-        // mIsScrolling = isScrolling;
+        
     }
     
     static class ViewHolder {
@@ -133,7 +119,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
         ImageView starIcon;
         NetworkImageView profileThumbnail;
         String uniqueContentId;
-        LinearLayout aisleDescriptor/* ,startImageLay */;
+        LinearLayout aisleDescriptor;
         AisleWindowContent mWindowContent;
         LinearLayout aisleselectlay;
     }

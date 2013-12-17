@@ -2423,7 +2423,7 @@ public class DataEntryFragment extends Fragment {
             String imageUrl, int imageWidth, int imageHeight, String title,
             String detailsUrl, String store, String imageId,
             boolean isImageFromLocalSystem) {
-        Utils.isAisleChanged = true;
+        Utils.sIsAisleChanged = true;
         Utils.mChangeAilseId = aisleId;
         
         AisleWindowContent aisleItem = VueTrendingAislesDataModel.getInstance(

@@ -61,7 +61,7 @@ public class AisleDetailsViewActivity extends Activity {
     private int mStatusbarHeight;
     private boolean mTempflag = true;
     private VueAisleDetailsViewFragment mVueAiselFragment;
-    private ViewHolder viewHolder;
+    private ViewHolder mViewHolder;
     private LinearLayout mContentLinearLay;
     private boolean mIsSlidePanleLoaded = false;
     private ComparisionAdapter mBottomAdapter, mTopAdapter;
@@ -284,13 +284,13 @@ public class AisleDetailsViewActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                viewHolder = new ViewHolder();
+                mViewHolder = new ViewHolder();
                 convertView = minflater.inflate(R.layout.vuecompareimg, null);
-                viewHolder.img = (ImageView) convertView
+                mViewHolder.img = (ImageView) convertView
                         .findViewById(R.id.vue_compareimg);
-                viewHolder.likeImage = (ImageView) convertView
+                mViewHolder.likeImage = (ImageView) convertView
                         .findViewById(R.id.compare_like_dislike);
-                viewHolder.pb = (ProgressBar) convertView
+                mViewHolder.pb = (ProgressBar) convertView
                         .findViewById(R.id.progressBar1);
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                         mComparisionScreenHeight / 2,
@@ -298,22 +298,22 @@ public class AisleDetailsViewActivity extends Activity {
                 params.addRule(RelativeLayout.CENTER_IN_PARENT);
                 params.setMargins(VueApplication.getInstance().getPixel(10), 0,
                         0, 0);
-                viewHolder.img.setLayoutParams(params);
-                viewHolder.img.setBackgroundColor(Color
+                mViewHolder.img.setLayoutParams(params);
+                mViewHolder.img.setBackgroundColor(Color
                         .parseColor(getResources().getString(R.color.white)));
                 RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 params2.addRule(RelativeLayout.CENTER_IN_PARENT);
-                viewHolder.likeImage.setLayoutParams(params2);
+                mViewHolder.likeImage.setLayoutParams(params2);
                 
-                convertView.setTag(viewHolder);
+                convertView.setTag(mViewHolder);
             }
-            viewHolder = (ViewHolder) convertView.getTag();
-            viewHolder.likeImage.setVisibility(View.INVISIBLE);
-            viewHolder.likeImage.setImageResource(R.drawable.thumb_up);
-            viewHolder.img.setImageResource(R.drawable.no_image);
-            BitmapWorkerTask task = new BitmapWorkerTask(null, viewHolder.img,
-                    mComparisionScreenHeight / 2, viewHolder.pb);
+            mViewHolder = (ViewHolder) convertView.getTag();
+            mViewHolder.likeImage.setVisibility(View.INVISIBLE);
+            mViewHolder.likeImage.setImageResource(R.drawable.thumb_up);
+            mViewHolder.img.setImageResource(R.drawable.no_image);
+            BitmapWorkerTask task = new BitmapWorkerTask(null, mViewHolder.img,
+                    mComparisionScreenHeight / 2, mViewHolder.pb);
             String[] imagesArray = {
                     mImageDetailsArr.get(position).mCustomImageUrl,
                     mImageDetailsArr.get(position).mImageUrl };
@@ -385,12 +385,6 @@ public class AisleDetailsViewActivity extends Activity {
         @SuppressLint("HandlerLeak")
         public void handleMessage(Message msg) {
             
-            if (mSlidingDrawer.isOpened()) {
-                // mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
-            } else {
-                // mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            }
-            
         }
     };
     
@@ -415,9 +409,6 @@ public class AisleDetailsViewActivity extends Activity {
             } else {
                 mVueAiselFragment.setAisleContentListenerNull();
                 mContentLinearLay.removeAllViews();
-                for (int i = 0; i < mImageDetailsArr.size(); i++) {
-                    // mBitmapLoaderUtils.removeBitmapFromCache(mImageDetailsArr.get(i));
-                }
                 clearBitmaps();
                 super.onBackPressed();
             }
@@ -531,7 +522,6 @@ public class AisleDetailsViewActivity extends Activity {
     
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
-        // private final WeakReference<AisleContentBrowser>viewFlipperReference;
         private String url = null;
         private int mBestHeight;
         private ProgressBar progressBar;

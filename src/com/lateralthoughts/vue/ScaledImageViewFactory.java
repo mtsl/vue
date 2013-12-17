@@ -35,7 +35,7 @@ public class ScaledImageViewFactory {
     private Context mContext;
     public Drawable mEvenColumnBackground;
     public Drawable mOddColumnBackground;
-    private static final boolean DEBUG = false;
+    
     
     private ScaledImageViewFactory(Context context) {
         mAvailableObjects = new ArrayList<ScaleImageView>();

@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class VueUserProfile implements Serializable {
     
     public String getUserProfilePicture() {

@@ -4,83 +4,83 @@ import android.net.Uri;
 
 public class OtherSourceImageDetails {
     public String getThumbUrl() {
-        return thumbUrl;
+        return mTthumbUrl;
     }
     
     public void setThumbUrl(String thumbUrl) {
-        this.thumbUrl = thumbUrl;
+        this.mTthumbUrl = thumbUrl;
     }
     
     public String getTitle() {
-        return title;
+        return mTitle;
     }
     
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
     
     public String getOriginUrl() {
-        return originUrl;
+        return mOriginUrl;
     }
     
     public void setOriginUrl(String originUrl) {
-        this.originUrl = originUrl;
+        this.mOriginUrl = originUrl;
     }
     
     public int getWidth() {
-        return width;
+        return mWidth;
     }
     
     public void setWidth(int width) {
-        this.width = width;
+        this.mWidth = width;
     }
     
     public int getHeight() {
-        return height;
+        return mHeight;
     }
     
     public void setHeight(int height) {
-        this.height = height;
+        this.mHeight = height;
     }
     
     public OtherSourceImageDetails(String thumbUrl, String title,
             String originUrl, int width, int height, Uri imageUri,
             int widthHeightMultipliedValue) {
-        this.thumbUrl = thumbUrl;
-        this.title = title;
-        this.originUrl = originUrl;
-        this.width = width;
-        this.height = height;
-        this.imageUri = imageUri;
-        this.widthHeightMultipliedValue = widthHeightMultipliedValue;
+        this.mTthumbUrl = thumbUrl;
+        this.mTitle = title;
+        this.mOriginUrl = originUrl;
+        this.mWidth = width;
+        this.mHeight = height;
+        this.mImageUri = imageUri;
+        this.mWidthHeightMultipliedValue = widthHeightMultipliedValue;
     }
     
     public OtherSourceImageDetails() {
         
     }
     
-    private String thumbUrl;
-    private String title;
-    private String originUrl;
-    private int width;
-    private int height;
-    private Uri imageUri;
-    private int widthHeightMultipliedValue;
+    private String mTthumbUrl;
+    private String mTitle;
+    private String mOriginUrl;
+    private int mWidth;
+    private int mHeight;
+    private Uri mImageUri;
+    private int mWidthHeightMultipliedValue;
     
     public int getWidthHeightMultipliedValue() {
-        return widthHeightMultipliedValue;
+        return mWidthHeightMultipliedValue;
     }
     
     public void setWidthHeightMultipliedValue(int widthHeightMultipliedValue) {
-        this.widthHeightMultipliedValue = widthHeightMultipliedValue;
+        this.mWidthHeightMultipliedValue = widthHeightMultipliedValue;
     }
     
     public Uri getImageUri() {
-        return imageUri;
+        return mImageUri;
     }
     
     public void setImageUri(Uri imageUri) {
-        this.imageUri = imageUri;
+        this.mImageUri = imageUri;
     }
     
 }

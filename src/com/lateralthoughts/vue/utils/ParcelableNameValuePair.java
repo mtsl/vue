@@ -7,21 +7,21 @@ import android.os.Parcelable;
 
 public class ParcelableNameValuePair implements NameValuePair, Parcelable {
     
-    String name, value;
+    String mName, mValue;
     
     public ParcelableNameValuePair(String name, String value) {
-        this.name = name;
-        this.value = value;
+        this.mName = name;
+        this.mValue = value;
     }
     
     @Override
     public String getName() {
-        return name;
+        return mName;
     }
     
     @Override
     public String getValue() {
-        return value;
+        return mValue;
     }
     
     public int describeContents() {
@@ -29,8 +29,8 @@ public class ParcelableNameValuePair implements NameValuePair, Parcelable {
     }
     
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(name);
-        out.writeString(value);
+        out.writeString(mName);
+        out.writeString(mValue);
     }
     
     public static final Parcelable.Creator<ParcelableNameValuePair> CREATOR = new Parcelable.Creator<ParcelableNameValuePair>() {
@@ -44,8 +44,8 @@ public class ParcelableNameValuePair implements NameValuePair, Parcelable {
     };
     
     private ParcelableNameValuePair(Parcel in) {
-        name = in.readString();
-        value = in.readString();
+        mName = in.readString();
+        mValue = in.readString();
     }
     
 }

@@ -3,7 +3,6 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -16,19 +15,15 @@ import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.BitmapLruCache;
 
 public class AisleLoader {
-    private static final boolean DEBUG = false;
-    private static final String TAG = "AisleLoader";
     Handler handler = new Handler();
     private Context mContext;
     private ContentAdapterFactory mContentAdapterFactory;
     
     private static AisleLoader sAisleLoaderInstance = null;
     private ScaledImageViewFactory mViewFactory = null;
-    private BitmapLoaderUtils mBitmapLoaderUtils;
     AisleContentClickListener mListener;
     private ImageLoader mImageLoader;
     
@@ -83,7 +78,6 @@ public class AisleLoader {
         // static method
         mContext = context;
         mViewFactory = ScaledImageViewFactory.getInstance(context);
-        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
         mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
         mImageLoader = new ImageLoader(VueApplication.getInstance()
                 .getRequestQueue(), BitmapLruCache.getInstance(mContext));
@@ -110,7 +104,6 @@ public class AisleLoader {
     // When the task completes check to make sure that the url for which the
     // task was started is still
     // valid. If so, add the downloaded image to the view object
-    @SuppressWarnings("deprecation")
     public void getAisleContentIntoView(ViewHolder holder, int scrollIndex,
             int position, boolean placeholderOnly,
             AisleContentClickListener listener, String whichAdapter,
@@ -165,7 +158,6 @@ public class AisleLoader {
             } else {
                 holder.aisleContentBrowser.isRight = true;
             }
-            // mContentViewMap.put(holder.uniqueContentId, holder);
         }
         
         mListener = listener;
@@ -187,31 +179,19 @@ public class AisleLoader {
             }
             imageView = mViewFactory.getPreconfiguredImageView(position);
             imageView.setContainerObject(holder);
-            Bitmap bitmap = null;
-            /*
-             * Bitmap bitmap = mBitmapLoaderUtils
-             * .getCachedBitmap(itemDetails.mCustomImageUrl);
-             */
             int bestHeight = windowContent.getBestHeightForWindow();
             FrameLayout.LayoutParams mShowpieceParams2 = new FrameLayout.LayoutParams(
                     LayoutParams.MATCH_PARENT, itemDetails.mTrendingImageHeight);
             
             contentBrowser.setLayoutParams(mShowpieceParams2);
             
-            if (bitmap != null) {
-                imageView.setImageBitmap(bitmap);
-                contentBrowser.addView(imageView);
-            } else {
-                String profleUrl = windowContent.getAisleContext().mAisleOwnerImageURL;
-                contentBrowser.addView(imageView);
-                if (!placeholderOnly) {
-                    loadBitmap(itemDetails.mCustomImageUrl,
-                            itemDetails.mImageUrl, contentBrowser, imageView,
-                            bestHeight, windowContent.getAisleId(),
-                            itemDetails, listener);
-                    holder.profileThumbnail
-                            .setImageUrl(profleUrl, mImageLoader);
-                }
+            String profleUrl = windowContent.getAisleContext().mAisleOwnerImageURL;
+            contentBrowser.addView(imageView);
+            if (!placeholderOnly) {
+                loadBitmap(itemDetails.mCustomImageUrl, itemDetails.mImageUrl,
+                        contentBrowser, imageView, bestHeight,
+                        windowContent.getAisleId(), itemDetails, listener);
+                holder.profileThumbnail.setImageUrl(profleUrl, mImageLoader);
             }
         }
     }

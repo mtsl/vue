@@ -1,6 +1,5 @@
 package com.lateralthoughts.vue.utils;
 
-//android imports
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,16 +22,12 @@ import com.lateralthoughts.vue.VueApplication;
 public class BitmapLoaderUtils {
     private static BitmapLoaderUtils sBitmapLoaderUtils;
     private FileCache mFileCache;
-    // private VueMemoryCache<Bitmap> mAisleImagesCache;
     private BitmapLruCache mAisleImagesCache;
     
     private BitmapLoaderUtils() {
         mFileCache = VueApplication.getInstance().getFileCache();
         mAisleImagesCache = BitmapLruCache.getInstance(VueApplication
                 .getInstance());
-        // DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-        // mScreenWidth = metrics.widthPixels;
-        // mExecutorService = Executors.newFixedThreadPool(5);
     }
     
     public static BitmapLoaderUtils getInstance() {
@@ -82,15 +77,9 @@ public class BitmapLoaderUtils {
             Utils.CopyStream(is, os);
             os.close();
             bitmap = decodeFile(f, bestHeight, bestWidth, source);
-            /*
-             * if (cacheBitmap) mAisleImagesCache.putBitmap(url, bitmap);
-             */
             return bitmap;
         } catch (Throwable ex) {
             ex.printStackTrace();
-            if (ex instanceof OutOfMemoryError) {
-                // mAisleImagesCache.evictAll();
-            }
             return null;
         }
     }
@@ -106,7 +95,6 @@ public class BitmapLoaderUtils {
             BitmapFactory.decodeStream(stream1, null, o);
             stream1.close();
             // Find the correct scale value. It should be the power of 2.
-            // final int REQUIRED_SIZE = mScreenWidth/2;
             int height = o.outHeight;
             int width = o.outWidth;
             int reqWidth = bestWidth;
@@ -171,12 +159,7 @@ public class BitmapLoaderUtils {
             
             e.printStackTrace();
         } catch (Throwable ex) {
-            
             ex.printStackTrace();
-            if (ex instanceof OutOfMemoryError) {
-                // mAisleImagesCache.evictAll();
-                
-            }
             return null;
         }
         return null;
@@ -213,12 +196,12 @@ public class BitmapLoaderUtils {
         return mAisleImagesCache.get(url);
     }
     
+    @Deprecated
     public void clearCache() {
-        // mAisleImagesCache.clear();
-        // mFileCache.clear();
+        
     }
     
+    @Deprecated
     public void removeBitmapFromCache(String id) {
-        // mAisleImagesCache.removeBitmap(id);
     }
 }

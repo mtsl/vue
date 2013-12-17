@@ -61,8 +61,8 @@ public class Utils {
     public static final String FLURRY_APP_KEY = "6938R8DC7R5HZWF976TJ";
     public static int MAX_RETRIES = 3;
     public static String mChangeAilseId;
-    public static boolean isAisleChanged = false;
-    public static boolean mAinmate = true;
+    public static boolean sIsAisleChanged = false;
+    public static boolean sAinmate = true;
     
     public static void CopyStream(InputStream is, OutputStream os) {
         final int buffer_size = 1024;

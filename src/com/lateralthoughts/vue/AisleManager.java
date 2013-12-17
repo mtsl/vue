@@ -1,35 +1,17 @@
 package com.lateralthoughts.vue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
@@ -47,8 +29,6 @@ import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleManager {
     
-    private ObjectMapper mObjectMapper;
-    
     public interface AisleUpdateCallback {
         public void onAisleUpdated(String id, String imageId);
     }
@@ -61,21 +41,13 @@ public class AisleManager {
         public void onImageAdded(String imageId);
     }
     
-    // private static String VUE_API_BASE_URI =
-    // "http://2-java.vueapi-canary-development1.appspot.com/";
-    
-    // private String VUE_API_BASE_URI = "https://vueapi-canary.appspot.com/";
-    // private static String CREATE_AISLE_ENDPOINT = "api/aislecreate";
-    private String CREATE_IMAGE_ENDPOINT = "imagecreate";
     private static AisleManager sAisleManager = null;
-    private VueUser mCurrentUser;
-    private boolean isDirty;
+    private boolean mIsDirty;
     private SharedPreferences mSharedPreferencesObj;
     
     private AisleManager() {
         mSharedPreferencesObj = VueApplication.getInstance()
                 .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-        mObjectMapper = new ObjectMapper();
     }
     
     public static AisleManager getAisleManager() {
@@ -109,13 +81,6 @@ public class AisleManager {
         t.start();
     }
     
-    private AisleContext parseAisleContent(JSONObject user) {
-        AisleContext aisle = null;
-        
-        return aisle;
-        
-    }
-    
     public void uploadImage(File imageName,
             ImageUploadCallback imageUploadCallback) {
         if (null == imageName) {
@@ -142,92 +107,6 @@ public class AisleManager {
         t.start();
     }
     
-    private class AislePutRequest extends Request<String> {
-        // ... other methods go here
-        private Map<String, String> mParams;
-        Response.Listener<String> mListener;
-        private String mAisleAsString;
-        private StringEntity mEntity;
-        
-        public AislePutRequest(String aisleAsString,
-                Response.Listener<String> listener,
-                Response.ErrorListener errorListener, String url) {
-            super(Method.PUT, url, errorListener);
-            mListener = listener;
-            mAisleAsString = aisleAsString;
-            try {
-                mEntity = new StringEntity(mAisleAsString);
-            } catch (UnsupportedEncodingException ex) {
-            }
-        }
-        
-        @Override
-        public String getBodyContentType() {
-            return mEntity.getContentType().getValue();
-        }
-        
-        @Override
-        public byte[] getBody() throws AuthFailureError {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            try {
-                mEntity.writeTo(bos);
-            } catch (IOException e) {
-                VolleyLog.e("IOException writing to ByteArrayOutputStream");
-            }
-            return bos.toByteArray();
-        }
-        
-        @Override
-        public Map<String, String> getHeaders() {
-            HashMap<String, String> headersMap = new HashMap<String, String>();
-            headersMap.put("Content-Type", "application/json");
-            return headersMap;
-        }
-        
-        @Override
-        protected Response<String> parseNetworkResponse(NetworkResponse response) {
-            String parsed;
-            try {
-                parsed = new String(response.data,
-                        HttpHeaderParser.parseCharset(response.headers));
-            } catch (UnsupportedEncodingException e) {
-                parsed = new String(response.data);
-            }
-            return Response.success(parsed,
-                    HttpHeaderParser.parseCacheHeaders(response));
-        }
-        
-        @Override
-        protected void deliverResponse(String s) {
-            mListener.onResponse(s);
-        }
-    }
-    
-    public String testCreateAisle(Aisle aisle) throws Exception {
-        Aisle createdAisle = null;
-        ObjectMapper mapper = new ObjectMapper();
-        String responseMessage = null;
-        URL url = new URL(UrlConstants.CREATE_AISLE_RESTURL);
-        HttpPut httpPut = new HttpPut(url.toString());
-        StringEntity entity = new StringEntity(mapper.writeValueAsString(aisle));
-        System.out.println("Aisle create request: "
-                + mapper.writeValueAsString(aisle));
-        entity.setContentType("application/json;charset=UTF-8");
-        entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
-                "application/json;charset=UTF-8"));
-        httpPut.setEntity(entity);
-        
-        DefaultHttpClient httpClient = new DefaultHttpClient();
-        HttpResponse response = httpClient.execute(httpPut);
-        if (response.getEntity() != null
-                && response.getStatusLine().getStatusCode() == 200) {
-            responseMessage = EntityUtils.toString(response.getEntity());
-        } else {
-        }
-        return responseMessage;
-        
-    }
-    
     /**
      * send the book mark information to server and writes the response to db if
      * network is not available then it will write the book mark info to db and
@@ -244,7 +123,7 @@ public class AisleManager {
     public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark,
     
     String userId) throws ClientProtocolException, IOException {
-        isDirty = true;
+        mIsDirty = true;
         String url;
         if (aisleBookmark.getId() == null) {
             url = UrlConstants.CREATE_BOOKMARK_RESTURL + "/";
@@ -265,6 +144,7 @@ public class AisleManager {
             String bookmarkAisleAsString = mapper
                     .writeValueAsString(aisleBookmark);
             
+            @SuppressWarnings("rawtypes")
             Response.Listener listener = new Response.Listener<String>() {
                 
                 @Override
@@ -273,7 +153,7 @@ public class AisleManager {
                         try {
                             AisleBookmark createdAisleBookmark = (new ObjectMapper())
                                     .readValue(jsonArray, AisleBookmark.class);
-                            isDirty = false;
+                            mIsDirty = false;
                             Editor editor = mSharedPreferencesObj.edit();
                             editor.putBoolean(VueConstants.IS_AISLE_DIRTY,
                                     false);
@@ -293,7 +173,7 @@ public class AisleManager {
                                                         .getAisleId()));
                             }
                             updateBookmartToDb(windowList,
-                                    createdAisleBookmark, isDirty);
+                                    createdAisleBookmark, mIsDirty);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -306,7 +186,7 @@ public class AisleManager {
                 
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    isDirty = true;
+                    mIsDirty = true;
                     Editor editor = mSharedPreferencesObj.edit();
                     editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
                     editor.commit();
@@ -324,16 +204,17 @@ public class AisleManager {
                                         Long.toString(aisleBookmark
                                                 .getAisleId()));
                     }
-                    updateBookmartToDb(windowList, aisleBookmark, isDirty);
+                    updateBookmartToDb(windowList, aisleBookmark, mIsDirty);
                 }
                 
             };
+            @SuppressWarnings("unchecked")
             BookmarkPutRequest request = new BookmarkPutRequest(
                     bookmarkAisleAsString, listener, errorListener, url
                             + storedVueUser.getId());
             VueApplication.getInstance().getRequestQueue().add(request);
         } else {
-            isDirty = true;
+            mIsDirty = true;
             Editor editor = mSharedPreferencesObj.edit();
             editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
             editor.commit();
@@ -348,7 +229,7 @@ public class AisleManager {
                         .getAisleByAisleIdFromBookmarks(
                                 Long.toString(aisleBookmark.getAisleId()));
             }
-            updateBookmartToDb(windowList, aisleBookmark, isDirty);
+            updateBookmartToDb(windowList, aisleBookmark, mIsDirty);
         }
         
     }
@@ -401,6 +282,7 @@ public class AisleManager {
             ObjectMapper mapper = new ObjectMapper();
             String imageRatingString = mapper.writeValueAsString(imageRating);
             
+            @SuppressWarnings("rawtypes")
             Response.Listener listener = new Response.Listener<String>() {
                 
                 @Override
@@ -433,6 +315,7 @@ public class AisleManager {
                 }
                 
             };
+            @SuppressWarnings("unchecked")
             ImageRatingPutRequest request = new ImageRatingPutRequest(
                     imageRatingString, listener, errorListener, url
                             + storedVueUser.getId());

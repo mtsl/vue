@@ -44,7 +44,6 @@ public class TrendingAislesLeftColumnAdapter extends
     private Context mContext;
     
     private final String TAG = "TrendingAislesLeftColumnAdapter";
-    private static final boolean DEBUG = true;
     private boolean mHasToShow = true;
     private boolean mHasSameLikes = false;
     private String mShowStarAisle = " ";
@@ -223,16 +222,4 @@ public class TrendingAislesLeftColumnAdapter extends
     public void onAisleDataUpdated(int newCount) {
         notifyDataSetChanged();
     }
-    
-    /*
-     * private class LeftList implements AilseLeftListLisner {
-     * 
-     * @Override public void onSwipe(boolean hasToShwo, String aisleId, boolean
-     * sameLikes) { mHasToShow = hasToShwo; mShowStarAisle = aisleId;
-     * mHasSameLikes = sameLikes; notifyDataSetChanged();
-     * 
-     * }
-     * 
-     * }
-     */
 }

@@ -69,14 +69,13 @@ public class VueAisleDetailsViewFragment extends Fragment {
     public static final String SWIPE_LEFT_TO_RIGHT = "LEFT";
     public static final String SWIPE_RIGHT_TO_LEFT = "RIGHT";
     private static final int AISLE_HEADER_SHOW_TIME = 5000;
-    private int DOT_MAX_COUUNT = 10;
+    private int mDotMaxCount = 10;
     private int mDotsCount = 0;
     private int mHighlightPosition;
     private int mTotalPageCount;
     private int mListCount = 3;
     AisleDetailsViewAdapterPager mAisleDetailsAdapter;
     private AisleDetailsSwipeListner mSwipeListener;
-    // private ActionBarHandler mHandleActionBar;
     private LoginWarningMessage mLoginWarningMessage = null;
     private View mDetailsContentView = null;
     private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
@@ -111,12 +110,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
         // list
         
         mSwipeListener = new AisleDetailsSwipeListner();
-        // this code is for viewflipper use of detailsscreen viewflipper
-        /*
-         * mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
-         * mSwipeListener, mListCount, null, new ShareViaVueListner());
-         */
-        // this code is for viewflipper use of detailsscreen viewpager
         mAisleDetailsAdapter = new AisleDetailsViewAdapterPager(mContext,
                 mSwipeListener, mListCount, null, new ShareViaVueListner());
         
@@ -344,7 +337,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
                     } else {
                         v.setMaxLines(maxLinesCount);
                     }
-                    /* } */
                 } else if (arg2 == 0) {
                     int descriptionMaxCount = 3;
                     mAisleDetailsAdapter.closeKeyboard();
@@ -497,6 +489,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         ViewTreeObserver vto = mVueUserName.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
             
+            @SuppressWarnings("deprecation")
             @Override
             public void onGlobalLayout() {
                 mVueUserName.getViewTreeObserver()
@@ -536,13 +529,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
         public void onResetAdapter() {
             if (VueApplication.getInstance().getClickedWindowCount() != 0) {
                 upDatePageDots(0, "right");
-                // this code is for viewflipper use of detailsscreen viewflipper
-                /*
-                 * mAisleDetailsAdapter = new AisleDetailsViewAdapter(mContext,
-                 * mSwipeListener, mListCount, null, new ShareViaVueListner());
-                 */
-                
-                // this code is for viewflipper use of detailsscreen viewpager
                 mAisleDetailsAdapter = new AisleDetailsViewAdapterPager(
                         mContext, mSwipeListener, mListCount, null,
                         new ShareViaVueListner());
@@ -582,7 +568,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
                     return false;
                 }
             });
-            // view.setVisibility(View.GONE);
             final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.toggleSoftInputFromWindow(
@@ -778,13 +763,11 @@ public class VueAisleDetailsViewFragment extends Fragment {
         
         @Override
         public void onDissAllowListResponse() {
-            // mAisleDetailsList.setScrollContainer(false);
             mAisleDetailsList.requestDisallowInterceptTouchEvent(true);
         }
         
         @Override
         public void onAllowListResponse() {
-            // mAisleDetailsList.setScrollContainer(true);
             mAisleDetailsList.requestDisallowInterceptTouchEvent(false);
         }
         
@@ -909,11 +892,11 @@ public class VueAisleDetailsViewFragment extends Fragment {
         mHighlightPosition = currentPosition % maxDotsCout;
         hightLightCurrentPage(mHighlightPosition);
         mTotalPageCount = VueApplication.getInstance().getClickedWindowCount();
-        if (mTotalPageCount > DOT_MAX_COUUNT) {
+        if (mTotalPageCount > mDotMaxCount) {
             
-            if (currentPosition < DOT_MAX_COUUNT) {
+            if (currentPosition < mDotMaxCount) {
                 
-                mDotsCount = DOT_MAX_COUUNT;
+                mDotsCount = mDotMaxCount;
                 showDots(mDotsCount);
                 disableLeftArrow();
                 showRightArrow();
@@ -922,9 +905,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 showLeftArrow();
                 int remainingDots = mTotalPageCount - currentPosition;
                 if (currentPosition % maxDotsCout == 0) {
-                    if (remainingDots > DOT_MAX_COUUNT) {
+                    if (remainingDots > mDotMaxCount) {
                         showRightArrow();
-                        showDots(DOT_MAX_COUUNT);
+                        showDots(mDotMaxCount);
                     } else {
                         disableRightArrow();
                         if (remainingDots == 0) {
@@ -938,7 +921,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                     if (direction.equalsIgnoreCase(SWIPE_LEFT_TO_RIGHT)) {
                         if (mRightArrow.getVisibility() == View.VISIBLE) {
                             showRightArrow();
-                            showDots(DOT_MAX_COUUNT);
+                            showDots(mDotMaxCount);
                         } else {
                             disableRightArrow();
                             if (mTotalPageCount % maxDotsCout == 0) {
@@ -949,14 +932,14 @@ public class VueAisleDetailsViewFragment extends Fragment {
                         }
                     } else if (direction.equalsIgnoreCase(SWIPE_RIGHT_TO_LEFT)) {
                         if ((currentPosition + 1) % maxDotsCout == 0) {
-                            showDots(DOT_MAX_COUUNT);
+                            showDots(mDotMaxCount);
                             if (remainingDots > 1) {
                                 showRightArrow();
                             }
                         } else {
                             if (mRightArrow.getVisibility() == View.VISIBLE) {
                                 showRightArrow();
-                                showDots(DOT_MAX_COUUNT);
+                                showDots(mDotMaxCount);
                             } else {
                                 disableRightArrow();
                                 if (mTotalPageCount % maxDotsCout == 0) {
@@ -1056,7 +1039,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 mDotTen.setVisibility(View.VISIBLE);
             }
         }
-        for (int i = dotsCount; i < DOT_MAX_COUUNT; i++) {
+        for (int i = dotsCount; i < mDotMaxCount; i++) {
             if (i == 0) {
                 mDotOne.setVisibility(View.GONE);
             } else if (i == 1) {

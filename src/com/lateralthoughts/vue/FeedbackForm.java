@@ -19,12 +19,12 @@ import android.widget.TextView;
 
 public class FeedbackForm extends Activity {
     
-    EditText editone;
-    Button send, cancle;
-    TextView phoneinfo;
-    String phoneinfotext = null;
-    TextView feedbackheading, contentone, contenttwo,
-            feedbackform_customtextid;
+    EditText mEditone;
+    Button mSend, mCancle;
+    TextView mPhoneinfo;
+    String mPhoneinfotext = null;
+    TextView mFeedbackheading, mContentOne, mContentTwo,
+            mFeedbackFormCustomTextId;
     
     // Typeface face;
     
@@ -33,21 +33,17 @@ public class FeedbackForm extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.feedbackform);
-        // face = Typeface.createFromAsset(this.getAssets(),
-        // "Roboto-Regular.ttf");
-        phoneinfo = (TextView) findViewById(R.id.phoneinfo);
-        editone = (EditText) findViewById(R.id.editone);
-        send = (Button) findViewById(R.id.send);
-        cancle = (Button) findViewById(R.id.cancle);
-        // feedbackform_customtextid = (TextView)
-        // findViewById(R.id.feedbackform_customtextid);
-        feedbackheading = (TextView) findViewById(R.id.aboutfishwrap);
-        contentone = (TextView) findViewById(R.id.contentone);
-        contenttwo = (TextView) findViewById(R.id.contenttwo);
-        cancle.setOnClickListener(new OnClickListener() {
+        mPhoneinfo = (TextView) findViewById(R.id.phoneinfo);
+        mEditone = (EditText) findViewById(R.id.editone);
+        mSend = (Button) findViewById(R.id.send);
+        mCancle = (Button) findViewById(R.id.cancle);
+        mFeedbackheading = (TextView) findViewById(R.id.aboutfishwrap);
+        mContentOne = (TextView) findViewById(R.id.contentone);
+        mContentTwo = (TextView) findViewById(R.id.contenttwo);
+        mCancle.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
-                editone.setText("");
+                mEditone.setText("");
                 
             }
         });
@@ -81,15 +77,15 @@ public class FeedbackForm extends Activity {
             break;
         
         }
-        phoneinfotext = "\nScreen height: " + height + "\nScreen width: "
+        mPhoneinfotext = "\nScreen height: " + height + "\nScreen width: "
                 + wwidth + "\nPhone info: " + name + "\nVersion:" + version
                 + "\nDensity: " + resolution;
-        phoneinfo.setText(phoneinfotext);
+        mPhoneinfo.setText(mPhoneinfotext);
         
-        send.setOnClickListener(new OnClickListener() {
+        mSend.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
-                String feedbackmessart = editone.getText().toString();
+                String feedbackmessart = mEditone.getText().toString();
                 if (feedbackmessart != null
                         && feedbackmessart.trim().length() > 0) {
                     Intent sendIntent = new Intent(
@@ -98,7 +94,7 @@ public class FeedbackForm extends Activity {
                     sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
                             "Vue feedback");
                     sendIntent.putExtra(android.content.Intent.EXTRA_TEXT,
-                            feedbackmessart + "\n" + phoneinfotext);
+                            feedbackmessart + "\n" + mPhoneinfotext);
                     sendIntent.setClassName("com.google.android.gm",
                             "com.google.android.gm.ComposeActivityGmail");
                     sendIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
@@ -109,7 +105,7 @@ public class FeedbackForm extends Activity {
             
         });
         
-        editone.setOnKeyListener(new OnKeyListener() {
+        mEditone.setOnKeyListener(new OnKeyListener() {
             
             @Override
             public boolean onKey(View view, int keyCode, KeyEvent event) {
@@ -118,7 +114,7 @@ public class FeedbackForm extends Activity {
                     case KeyEvent.KEYCODE_DPAD_CENTER:
                     case KeyEvent.KEYCODE_ENTER:
                         
-                        String feedbackmessart = editone.getText().toString();
+                        String feedbackmessart = mEditone.getText().toString();
                         if (feedbackmessart != null
                                 && feedbackmessart.trim().length() > 0) {
                             Intent sendIntent = new Intent(
@@ -129,7 +125,7 @@ public class FeedbackForm extends Activity {
                                     "Vue feedback");
                             sendIntent.putExtra(
                                     android.content.Intent.EXTRA_TEXT,
-                                    feedbackmessart + "\n" + phoneinfotext);
+                                    feedbackmessart + "\n" + mPhoneinfotext);
                             sendIntent
                                     .setClassName("com.google.android.gm",
                                             "com.google.android.gm.ComposeActivityGmail");
@@ -151,10 +147,10 @@ public class FeedbackForm extends Activity {
     
     private void setHeaderText() {
         
-        feedbackheading.setText(Html.fromHtml("Feedback on " + " <b>"
+        mFeedbackheading.setText(Html.fromHtml("Feedback on " + " <b>"
                 + this.getResources().getString(R.string.app_name) + "</b>"
                 + "!"));
-        contentone.setText(Html.fromHtml(this.getResources().getString(
+        mContentOne.setText(Html.fromHtml(this.getResources().getString(
                 R.string.abouttextfedbacktext)
                 + " <b>"
                 + this.getResources().getString(R.string.app_name)
@@ -162,12 +158,7 @@ public class FeedbackForm extends Activity {
                 + " "
                 + this.getResources().getString(
                         R.string.abouttextfedbacktexttwo)));
-        contenttwo.setText(this.getResources().getString(
+        mContentTwo.setText(this.getResources().getString(
                 R.string.abouttextfedbacktextt));
-        
-        /*
-         * feedbackheading.setTypeface(face); contentone.setTypeface(face);
-         * contenttwo.setTypeface(face); phoneinfo.setTypeface(face);
-         */
     }
 }

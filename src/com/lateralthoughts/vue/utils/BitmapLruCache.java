@@ -35,15 +35,6 @@ public class BitmapLruCache extends LruCache<String, Bitmap> implements
         return value.getByteCount();
     }
     
-    /*
-     * @Override protected void entryRemoved(boolean evicted, String key, Bitmap
-     * oldValue, Bitmap newValue) {
-     * 
-     * if (!oldValue.isRecycled()) { oldValue.recycle(); oldValue = null; }
-     * 
-     * }
-     */
-    
     @Override
     public Bitmap getBitmap(String key) {
         return this.get(key);
