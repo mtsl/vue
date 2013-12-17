@@ -61,16 +61,16 @@ public class NetworkHandler {
     
     Context mContext;
     private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
-    public DataBaseManager mDbManager;
+    public DataBaseManager dbManager;
     protected VueContentGateway mVueContentGateway;
     protected TrendingAislesContentParser mTrendingAislesParser;
     private static final int NOTIFICATION_THRESHOLD = 4;
     private static final int TRENDING_AISLES_BATCH_SIZE = 20;
     public static final int TRENDING_AISLES_BATCH_INITIAL_SIZE = 10;
-    private static String MY_AISLES = "aislesget/user/";
+    private static final String MY_AISLES = "aislesget/user/";
     protected int mLimit;
-    public int mOffset;
-    ArrayList<AisleWindowContent> aislesList = null;
+    public int offset;
+    ArrayList<AisleWindowContent> mAislesList = null;
     private SharedPreferences mSharedPreferencesObj;
     
     public NetworkHandler(Context context) {
@@ -83,9 +83,9 @@ public class NetworkHandler {
                     new Handler(), VueConstants.AISLE_TRENDING_LIST_DATA);
         } catch (Exception e) {
         }
-        mDbManager = DataBaseManager.getInstance(mContext);
+        dbManager = DataBaseManager.getInstance(mContext);
         mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
-        mOffset = 0;
+        offset = 0;
     }
     
     // while user scrolls down get next 10 aisles
@@ -98,13 +98,13 @@ public class NetworkHandler {
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).loadOnRequest = false;
             
-            if (mOffset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
-                mOffset += mLimit;
+            if (offset < NOTIFICATION_THRESHOLD * TRENDING_AISLES_BATCH_SIZE)
+                offset += mLimit;
             else {
-                mOffset += mLimit;
+                offset += mLimit;
                 mLimit = TRENDING_AISLES_BATCH_SIZE;
             }
-            mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+            mVueContentGateway.getTrendingAisles(mLimit, offset,
                     mTrendingAislesParser, loadMore, screenname);
         } else {
             
@@ -117,10 +117,8 @@ public class NetworkHandler {
         
         VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
                 .setNotificationProgress(progress, fromServer);
-        String downLoadFromServer = "fromDb";
         if (fromServer) {
-            downLoadFromServer = "fromServer";
-            mOffset = 0;
+            offset = 0;
             mLimit = TRENDING_AISLES_BATCH_INITIAL_SIZE;
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).clearContent();
@@ -129,13 +127,13 @@ public class NetworkHandler {
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())
                     .setMoreDataAVailable(true);
-            mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+            mVueContentGateway.getTrendingAisles(mLimit, offset,
                     mTrendingAislesParser, loadMore, screenname);
             
         } else {
             DataBaseManager.getInstance(VueApplication.getInstance())
                     .resetDbParams();
-            ArrayList<AisleWindowContent> aisleContentArray = mDbManager
+            ArrayList<AisleWindowContent> aisleContentArray = dbManager
                     .getAislesFromDB(null, false);
             if (aisleContentArray.size() == 0) {
                 VueTrendingAislesDataModel.getInstance(VueApplication
@@ -148,10 +146,6 @@ public class NetworkHandler {
             VueTrendingAislesDataModel.getInstance(mContext).mHandler
                     .sendMessage(msg);
         }
-        
-    }
-    
-    public static void requestTrending() {
         
     }
     
@@ -243,11 +237,11 @@ public class NetworkHandler {
         getBookmarkAisleByUser();
         getRatedImageList();
         
-        mOffset = 0;
+        offset = 0;
         if (!VueConnectivityManager.isNetworkConnected(mContext)) {
             Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
                     .show();
-            ArrayList<AisleWindowContent> aisleContentArray = mDbManager
+            ArrayList<AisleWindowContent> aisleContentArray = dbManager
                     .getAislesFromDB(null, false);
             if (aisleContentArray.size() == 0) {
                 return;
@@ -258,7 +252,7 @@ public class NetworkHandler {
             
         } else {
             mLimit = 30;
-            mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+            mVueContentGateway.getTrendingAisles(mLimit, offset,
                     mTrendingAislesParser, loadMore, screenName);
         }
         
@@ -270,14 +264,14 @@ public class NetworkHandler {
                 .setNotificationProgress(progress, fromServer);
         VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
                 .showProgress();
-        mVueContentGateway.getTrendingAisles(mLimit, mOffset,
+        mVueContentGateway.getTrendingAisles(mLimit, offset,
                 mTrendingAislesParser, loadMore, screenName);
     }
     
     public void requestAislesByUser(boolean fromServer,
             final NotifyProgress progress, final String screenName) {
         
-        mOffset = 0;
+        offset = 0;
         if (!fromServer) {
             String userId = getUserId();
             if (userId != null) {
@@ -333,15 +327,15 @@ public class NetworkHandler {
                     @Override
                     public void run() {
                         try {
-                            aislesList = null;
+                            mAislesList = null;
                             String userId = getUserId();
-                            aislesList = getAislesByUser(userId);
+                            mAislesList = getAislesByUser(userId);
                             
-                            if (aislesList != null && aislesList.size() > 0) {
-                                for (AisleWindowContent aisleItem : aislesList) {
+                            if (mAislesList != null && mAislesList.size() > 0) {
+                                for (AisleWindowContent aisleItem : mAislesList) {
                                     if (!aisleItem.getAisleContext().mUserId
                                             .equals(userId)) {
-                                        aislesList.remove(aisleItem);
+                                        mAislesList.remove(aisleItem);
                                     }
                                 }
                             }
@@ -356,8 +350,8 @@ public class NetworkHandler {
                                             VueTrendingAislesDataModel
                                                     .getInstance(VueApplication
                                                             .getInstance()).loadOnRequest = false;
-                                            if (aislesList != null
-                                                    && aislesList.size() > 0) {
+                                            if (mAislesList != null
+                                                    && mAislesList.size() > 0) {
                                                 
                                                 Intent intent = new Intent(
                                                         VueConstants.LANDING_SCREEN_RECEIVER);
@@ -367,17 +361,17 @@ public class NetworkHandler {
                                                 VueApplication.getInstance()
                                                         .sendBroadcast(intent);
                                                 clearList(progress);
-                                                for (int i = 0; i < aislesList
+                                                for (int i = 0; i < mAislesList
                                                         .size(); i++) {
                                                     VueTrendingAislesDataModel
                                                             .getInstance(
                                                                     VueApplication
                                                                             .getInstance())
                                                             .addItemToList(
-                                                                    aislesList
+                                                                    mAislesList
                                                                             .get(i)
                                                                             .getAisleContext().mAisleId,
-                                                                    aislesList
+                                                                    mAislesList
                                                                             .get(i));
                                                 }
                                                 VueTrendingAislesDataModel
@@ -393,8 +387,8 @@ public class NetworkHandler {
                                                         .addTrentingAislesFromServerToDB(
                                                                 VueApplication
                                                                         .getInstance(),
-                                                                aislesList,
-                                                                mOffset,
+                                                                mAislesList,
+                                                                offset,
                                                                 DataBaseManager.MY_AISLES);
                                             } else {
                                                 StackViews.getInstance().pull();
@@ -429,11 +423,11 @@ public class NetworkHandler {
     }
     
     public int getmOffset() {
-        return mOffset;
+        return offset;
     }
     
     public void setmOffset(int mOffset) {
-        this.mOffset = mOffset;
+        this.offset = mOffset;
     }
     
     public ArrayList<AisleWindowContent> getAislesByUser(String userId)
@@ -531,9 +525,7 @@ public class NetworkHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String userId = null;
         if (storedVueUser != null) {
-            userId = Long.valueOf(storedVueUser.getId()).toString();
             storedVueUser.getUserImageURL();
         }
         return storedVueUser;
@@ -567,8 +559,6 @@ public class NetworkHandler {
             HttpPut httpPut = new HttpPut(url.toString());
             StringEntity entity = new StringEntity(
                     mapper.writeValueAsString(comment));
-            System.out.println("ImageComment create request: "
-                    + mapper.writeValueAsString(comment));
             entity.setContentType("application/json;charset=UTF-8");
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
                     "application/json;charset=UTF-8"));
@@ -610,7 +600,6 @@ public class NetworkHandler {
     public void getCommentsFromDb(String aisleId) {
         Map<Long, ArrayList<String>> commentsMap = new HashMap<Long, ArrayList<String>>();
         String imageId = null;
-        Object temp;
         ArrayList<String> tempComments;
         tempComments = commentsMap.remove(Long.parseLong(imageId));
         if (tempComments == null) {
@@ -673,6 +662,6 @@ public class NetworkHandler {
     }
     
     public void makeOffseZero() {
-        mOffset = 0;
+        offset = 0;
     }
 }

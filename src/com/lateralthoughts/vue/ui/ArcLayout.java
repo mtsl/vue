@@ -22,7 +22,7 @@ public class ArcLayout extends ViewGroup {
     /**
      * children will be set the same size.
      */
-    public static int CHILD_SIZE = 48;
+    public static int sChildSize = 48;
     
     private int mChildPadding = 5;
     
@@ -36,12 +36,12 @@ public class ArcLayout extends ViewGroup {
     
     private float mToDegrees = DEFAULT_TO_DEGREES;
     
-    private static int MIN_RADIUS = 76;
+    private static int sMinRadius = 76;
     
     /* the distance between the layout's center and any child's center */
     private int mRadius;
     
-    public boolean mExpanded = false;
+    public boolean expanded = false;
     
     private Context mContext;
     
@@ -54,25 +54,19 @@ public class ArcLayout extends ViewGroup {
         
         mContext = context;
         
-        CHILD_SIZE = 48;
-        MIN_RADIUS = 76;
+        sChildSize = 48;
+        sMinRadius = 76;
         mChildPadding = 5;
         mLayoutPadding = 10;
         
-        CHILD_SIZE = (int) Utils.dipToPixels(context, CHILD_SIZE);
-        MIN_RADIUS = (int) Utils.dipToPixels(context, MIN_RADIUS);
+        sChildSize = (int) Utils.dipToPixels(context, sChildSize);
+        sMinRadius = (int) Utils.dipToPixels(context, sMinRadius);
         mChildPadding = (int) Utils.dipToPixels(context, mChildPadding);
         mLayoutPadding = (int) Utils.dipToPixels(context, mLayoutPadding);
         
         if (attrs != null) {
-            /*
-             * TypedArray a = getContext().obtainStyledAttributes(attrs,
-             * R.styleable.ArcLayout, 0, 0);
-             */
             mFromDegrees = DEFAULT_FROM_DEGREES;
             mToDegrees = DEFAULT_TO_DEGREES;
-            
-            // a.recycle();
         }
     }
     
@@ -111,8 +105,8 @@ public class ArcLayout extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int radius = mRadius = computeRadius(
                 Math.abs(mToDegrees - mFromDegrees), getChildCount(),
-                CHILD_SIZE, mChildPadding, MIN_RADIUS);
-        final int size = radius * 2 + CHILD_SIZE + mChildPadding
+                sChildSize, mChildPadding, sMinRadius);
+        final int size = radius * 2 + sChildSize + mChildPadding
                 + mLayoutPadding * 2;
         
         setMeasuredDimension(size, size);
@@ -121,9 +115,9 @@ public class ArcLayout extends ViewGroup {
         for (int i = 0; i < count; i++) {
             getChildAt(i)
                     .measure(
-                            MeasureSpec.makeMeasureSpec(CHILD_SIZE,
+                            MeasureSpec.makeMeasureSpec(sChildSize,
                                     MeasureSpec.EXACTLY),
-                            MeasureSpec.makeMeasureSpec(CHILD_SIZE,
+                            MeasureSpec.makeMeasureSpec(sChildSize,
                                     MeasureSpec.EXACTLY));
         }
     }
@@ -132,7 +126,7 @@ public class ArcLayout extends ViewGroup {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int centerX = getWidth() / 2;
         final int centerY = getHeight() / 2;
-        final int radius = mExpanded ? mRadius : 0;
+        final int radius = expanded ? mRadius : 0;
         
         final int childCount = getChildCount();
         final float perDegrees = (mToDegrees - mFromDegrees) / (childCount - 1);
@@ -140,7 +134,7 @@ public class ArcLayout extends ViewGroup {
         float degrees = mFromDegrees;
         for (int i = 0; i < childCount; i++) {
             Rect frame = computeChildFrame(centerX, centerY, radius, degrees,
-                    CHILD_SIZE);
+                    sChildSize);
             degrees += perDegrees;
             getChildAt(i).layout(frame.left, frame.top, frame.right,
                     frame.bottom);
@@ -217,7 +211,7 @@ public class ArcLayout extends ViewGroup {
     
     private void bindChildAnimation(final View child, final int index,
             final long duration, final boolean isExpand) {
-        final boolean expanded = mExpanded;
+        final boolean expanded = this.expanded;
         final int centerX = getWidth() / 2;
         final int centerY = getHeight() / 2;
         final int radius = expanded ? 0 : mRadius;
@@ -225,17 +219,17 @@ public class ArcLayout extends ViewGroup {
         final int childCount = getChildCount();
         final float perDegrees = (mToDegrees - mFromDegrees) / (childCount - 1);
         Rect frame = computeChildFrame(centerX, centerY, radius, mFromDegrees
-                + index * perDegrees, CHILD_SIZE);
+                + index * perDegrees, sChildSize);
         
         final int toXDelta = frame.left - child.getLeft();
         final int toYDelta = frame.top - child.getTop();
         
-        Interpolator interpolator = mExpanded ? new AccelerateInterpolator()
+        Interpolator interpolator = expanded ? new AccelerateInterpolator()
                 : new OvershootInterpolator(1.5f);
-        final long startOffset = computeStartOffset(childCount, mExpanded,
+        final long startOffset = computeStartOffset(childCount, expanded,
                 index, 0.1f, duration, interpolator);
         
-        Animation animation = mExpanded ? createShrinkAnimation(0, toXDelta, 0,
+        Animation animation = expanded ? createShrinkAnimation(0, toXDelta, 0,
                 toYDelta, startOffset, duration, interpolator)
                 : createExpandAnimation(0, toXDelta, 0, toYDelta, startOffset,
                         duration, interpolator);
@@ -271,7 +265,7 @@ public class ArcLayout extends ViewGroup {
     }
     
     public boolean isExpanded() {
-        return mExpanded;
+        return expanded;
     }
     
     public void setArc(float fromDegrees, float toDegrees) {
@@ -286,17 +280,17 @@ public class ArcLayout extends ViewGroup {
     }
     
     public void setChildSize(int size) {
-        if (CHILD_SIZE == size || size < 0) {
+        if (sChildSize == size || size < 0) {
             return;
         }
         
-        CHILD_SIZE = size;
+        sChildSize = size;
         
         requestLayout();
     }
     
     public int getChildSize() {
-        return CHILD_SIZE;
+        return sChildSize;
     }
     
     /**
@@ -307,13 +301,13 @@ public class ArcLayout extends ViewGroup {
     public void switchState(final boolean showAnimation) {
         if (showAnimation) {
             final int childCount = getChildCount();
-            final boolean isExpand = mExpanded;
+            final boolean isExpand = expanded;
             for (int i = 0; i < childCount; i++) {
                 bindChildAnimation(getChildAt(i), i, 300, isExpand);
             }
         }
         
-        mExpanded = !mExpanded;
+        expanded = !expanded;
         
         if (!showAnimation) {
             requestLayout();

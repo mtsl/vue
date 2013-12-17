@@ -75,8 +75,6 @@
             android:gravity="center_horizontal"
             android:orientation="horizontal" >
 
-            <!-- android:layout_above="@+id/phoneinfo" -->
-
             <Button
                 android:id="@+id/cancle"
                 android:layout_width="0dp"

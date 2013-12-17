@@ -53,7 +53,6 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.facebook.CreateAlbum;
 import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
@@ -882,12 +881,7 @@ public class VueLoginActivity extends FragmentActivity implements
                             VueLoginActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    // TODO: Create album
-                                    
-                                    new CreateAlbum().createNewAlbumRequest(
-                                            VueLoginActivity.this,
-                                            "SURU GOT SUCCESS");
-                                    
+                                  
                                     Bundle parameters = new Bundle(1);
                                     parameters.putString("message", articledesc
                                             + "");

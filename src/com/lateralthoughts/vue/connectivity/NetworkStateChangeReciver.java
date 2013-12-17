@@ -27,10 +27,11 @@ import com.lateralthoughts.vue.utils.Utils;
 public class NetworkStateChangeReciver extends BroadcastReceiver {
     
     private SharedPreferences mSharedPreferencesObj;
-    AisleBookmark createdAisleBookmark = null;
-    AisleBookmark aisleBookmark = null;
-    boolean isDirty = true;
+    AisleBookmark mCreatedAisleBookmark = null;
+    AisleBookmark mAisleBookmark = null;
+    boolean mIsDirty = true;
     
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public void onReceive(Context context, Intent inetent) {
         if (VueConnectivityManager.isNetworkConnected(context)) {
@@ -49,7 +50,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                 final ArrayList<AisleWindowContent> aisles = DataBaseManager
                         .getInstance(context).getDirtyAisles("1");
                 for (AisleWindowContent content : aisles) {
-                    aisleBookmark = new AisleBookmark(null, true,
+                    mAisleBookmark = new AisleBookmark(null, true,
                             Long.parseLong(content.getAisleId()));
                     try {
                         storedVueUser = Utils.readUserObjectFromFile(
@@ -58,19 +59,19 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                         
                         ObjectMapper mapper = new ObjectMapper();
                         String bookmarkAisleAsString = mapper
-                                .writeValueAsString(aisleBookmark);
+                                .writeValueAsString(mAisleBookmark);
                         Response.Listener listener = new Response.Listener<String>() {
                             
                             @Override
                             public void onResponse(String jsonArray) {
                                 if (jsonArray != null) {
                                     try {
-                                        createdAisleBookmark = (new ObjectMapper())
+                                        mCreatedAisleBookmark = (new ObjectMapper())
                                                 .readValue(jsonArray,
                                                         AisleBookmark.class);
                                         AisleManager.getAisleManager()
                                                 .updateBookmartToDb(aisles,
-                                                        aisleBookmark, false);
+                                                        mAisleBookmark, false);
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -82,7 +83,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                             
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                isDirty = true;
+                                mIsDirty = true;
                             }
                         };
                         BookmarkPutRequest request = new BookmarkPutRequest(

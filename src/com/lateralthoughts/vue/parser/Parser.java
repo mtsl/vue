@@ -200,7 +200,7 @@ public class Parser {
                     JSONArray jsonArray = mainJsonObject.getJSONArray("images");
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject); // /randomimage.jpg
+                        AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject);
                         
                         if (aisleImageDetails.mImageUrl != null
                                 && (!aisleImageDetails.mImageUrl

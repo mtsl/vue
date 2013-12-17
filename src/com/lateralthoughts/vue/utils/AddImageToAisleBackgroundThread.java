@@ -206,7 +206,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                                     .getInstance(
                                                                             VueApplication
                                                                                     .getInstance())
-                                                                    .getNetworkHandler().mOffset,
+                                                                    .getNetworkHandler().offset,
                                                             DataBaseManager.MY_AISLES);
                                         }
                                         
@@ -276,7 +276,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                                             .getInstance(
                                                                                     VueApplication
                                                                                             .getInstance())
-                                                                            .getNetworkHandler().mOffset,
+                                                                            .getNetworkHandler().offset,
                                                                     DataBaseManager.MY_AISLES);
                                                 }
                                             } catch (Exception e) {

@@ -13,8 +13,6 @@ package com.lateralthoughts.vue.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
@@ -23,12 +21,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
 public class ScaleImageView extends NetworkImageView {
-    private ImageChangeListener imageChangeListener;
-    private boolean scaleToWidth = false; // this flag determines if should
-                                          // measure height manually dependent
-                                          // of width
-    private Rect mRect;
-    private Paint mPaint;
+    private ImageChangeListener mImageChangeListener;
+    private boolean mScaleToWidth = false;
     private int mBestHeight;
     private int mBestWidth;
     
@@ -53,20 +47,17 @@ public class ScaleImageView extends NetworkImageView {
     
     @Override
     public void setImageBitmap(Bitmap bm) {
-        // new BitmapReszie().execute(bm);
         super.setImageBitmap(bm);
-        // this.setImageBitmap(bm);
-        
-        if (imageChangeListener != null)
-            imageChangeListener.changed((bm == null));
+        if (mImageChangeListener != null)
+            mImageChangeListener.changed((bm == null));
     }
     
     @Override
     public void setImageDrawable(Drawable d) {
         super.setImageDrawable(d);
         
-        if (imageChangeListener != null)
-            imageChangeListener.changed((d == null));
+        if (mImageChangeListener != null)
+            mImageChangeListener.changed((d == null));
     }
     
     @Override
@@ -75,16 +66,15 @@ public class ScaleImageView extends NetworkImageView {
     }
     
     public interface ImageChangeListener {
-        // a callback for when a change has been made to this imageView
         void changed(boolean isEmpty);
     }
     
     public ImageChangeListener getImageChangeListener() {
-        return imageChangeListener;
+        return mImageChangeListener;
     }
     
     public void setImageChangeListener(ImageChangeListener imageChangeListener) {
-        this.imageChangeListener = imageChangeListener;
+        this.mImageChangeListener = imageChangeListener;
     }
     
     @Override
@@ -97,10 +87,10 @@ public class ScaleImageView extends NetworkImageView {
         
         if (widthMode == MeasureSpec.EXACTLY
                 || widthMode == MeasureSpec.AT_MOST) {
-            scaleToWidth = true;
+            mScaleToWidth = true;
         } else if (heightMode == MeasureSpec.EXACTLY
                 || heightMode == MeasureSpec.AT_MOST) {
-            scaleToWidth = false;
+            mScaleToWidth = false;
         } else
             throw new IllegalStateException(
                     "width or height needs to be set to match_parent or a specific dimension");
@@ -110,7 +100,7 @@ public class ScaleImageView extends NetworkImageView {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         } else {
-            if (scaleToWidth) {
+            if (mScaleToWidth) {
                 int iw = this.getDrawable().getIntrinsicWidth();
                 int ih = this.getDrawable().getIntrinsicHeight();
                 int heightC = width * ih / iw;
@@ -127,14 +117,6 @@ public class ScaleImageView extends NetworkImageView {
             } else {
                 // need to scale to height instead
                 int marg = 0;
-                /*
-                 * if(getParent()!=null){ if(getParent().getParent()!=null){
-                 * marg+= ((RelativeLayout)
-                 * getParent().getParent()).getPaddingTop(); marg+=
-                 * ((RelativeLayout)
-                 * getParent().getParent()).getPaddingBottom(); } }
-                 */
-                
                 int iw = this.getDrawable().getIntrinsicWidth();
                 int ih = this.getDrawable().getIntrinsicHeight();
                 
@@ -163,12 +145,6 @@ public class ScaleImageView extends NetworkImageView {
         return mContainer;
     }
     
-    /*
-     * public void setImageUrl(String url, ImageLoader imageLoader, int
-     * bestWidth, int bestHeight) { mBestHeight = bestHeight; mBestWidth =
-     * bestWidth; super.setImageUrl(url, imageLoader); }
-     */
-    
     private Object mObject;
     private Object mContainer;
     
@@ -176,13 +152,11 @@ public class ScaleImageView extends NetworkImageView {
         
         @Override
         protected void onPreExecute() {
-            // TODO Auto-generated method stub
             super.onPreExecute();
         }
         
         @Override
         protected Bitmap doInBackground(Bitmap... params) {
-            // TODO Auto-generated method stub
             Bitmap bm = BitmapLoaderUtils.getInstance().getBitmap(params[0],
                     mBestWidth, mBestHeight);
             return bm;
@@ -190,7 +164,6 @@ public class ScaleImageView extends NetworkImageView {
         
         @Override
         protected void onPostExecute(Bitmap result) {
-            // TODO Auto-generated method stub
             super.onPostExecute(result);
             if (result != null) {
                 setImage(result);

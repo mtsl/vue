@@ -36,7 +36,6 @@
         <!-- Start of Crittercism.com Code -->
         <activity android:name="com.crittercism.NotificationActivity" />
         <!-- End of Crittercism.com Code -->
-        <!-- android:theme="@style/Sherlock.__Theme.Light" -->
         <activity
             android:name=".VueLandingPageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

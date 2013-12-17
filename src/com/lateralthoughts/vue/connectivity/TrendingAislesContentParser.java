@@ -51,15 +51,12 @@ public class TrendingAislesContentParser extends ResultReceiver {
     protected void onReceiveResult(int resultCode, final Bundle resultData) {
         switch (mState) {
         case VueConstants.AISLE_TRENDING_LIST_DATA:
-            long elapsedTime = System.currentTimeMillis()
-                    - VueApplication.getInstance().mLastRecordedTime;
             VueApplication.getInstance().mLastRecordedTime = System
                     .currentTimeMillis();
             
             Message msg = new Message();
             msg.what = MORE_AISLES_PARSED;
             msg.obj = resultData;
-            // sParserDBThreadHandler.sendMessageDelayed(msg, 1000);
             sParserDBThreadHandler.sendMessage(msg);
             break;
         case VueConstants.AISLE_TRENDING_PARSED_DATA:
@@ -84,8 +81,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
     private static class ContentParserDBThread implements Runnable {
         // Message id for initializing a new WebViewCore.
         private static final int INITIALIZE = 0;
-        private static final int REDUCE_PRIORITY = 1;
-        private static final int RESUME_PRIORITY = 2;
         
         public void run() {
             Looper.prepare();
@@ -96,21 +91,8 @@ public class TrendingAislesContentParser extends ResultReceiver {
                     public void handleMessage(Message msg) {
                         switch (msg.what) {
                         case INITIALIZE:
-                            // WebViewCore core = (WebViewCore) msg.obj;
-                            // core.initialize();
                             Process.setThreadPriority(Process.THREAD_PRIORITY_MORE_FAVORABLE);
                             break;
-                        
-                        /*
-                         * case REDUCE_PRIORITY: // 3 is an adjustable number.
-                         * Process.setThreadPriority(
-                         * Process.THREAD_PRIORITY_DEFAULT + 3 *
-                         * Process.THREAD_PRIORITY_LESS_FAVORABLE); break;
-                         * 
-                         * case RESUME_PRIORITY: Process.setThreadPriority(
-                         * Process.THREAD_PRIORITY_DEFAULT); break;
-                         */
-                        
                         case MORE_AISLES_PARSED: {
                             Bundle resultData = (Bundle) msg.obj;
                             boolean refreshListFlag = true;

@@ -11,7 +11,7 @@ import android.os.Environment;
 import android.util.Log;
 
 public class Logger {
-    private static boolean wrightToSdCard = true;
+    private static boolean sWrightToSdCard = true;
     
     public static void log(String level, String TAG, String message) {
         
@@ -28,7 +28,7 @@ public class Logger {
     }
     
     private static void writeToSdcard(String message) {
-        if (!wrightToSdCard) {
+        if (!sWrightToSdCard) {
             return;
         }
         String path = Environment.getExternalStorageDirectory().toString();

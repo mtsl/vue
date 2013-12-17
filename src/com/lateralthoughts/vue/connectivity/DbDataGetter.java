@@ -12,7 +12,7 @@ import com.lateralthoughts.vue.ui.NotifyProgress;
 public class DbDataGetter extends AsyncTask<String, Void, Void> {
     
     String mCategory;
-    ArrayList<AisleWindowContent> aisleWindowList;
+    ArrayList<AisleWindowContent> mAisleWindowList;
     NotifyProgress mNotifyProgress;
     
     public DbDataGetter(NotifyProgress progress) {
@@ -32,7 +32,7 @@ public class DbDataGetter extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... params) {
         mCategory = params[0];
-        aisleWindowList = DataBaseManager.getInstance(
+        mAisleWindowList = DataBaseManager.getInstance(
                 VueApplication.getInstance()).getAislesByCategory(mCategory);
         return null;
     }
@@ -40,14 +40,13 @@ public class DbDataGetter extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void result) {
         
-        for (AisleWindowContent content : aisleWindowList) {
+        for (AisleWindowContent content : mAisleWindowList) {
             
             AisleWindowContent aisleItem = VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).getAisleItem(
                             content.getAisleId());
             aisleItem.addAisleContent(content.getAisleContext(),
                     content.getImageList());
-            // getAisleItem(content.getAisleId());
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).addItemToList(
                             aisleItem.getAisleId(), aisleItem);

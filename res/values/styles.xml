@@ -68,23 +68,6 @@
         <item name="android:layout_marginLeft">2dp</item>
         <item name="android:layout_marginRight">2dp</item>
     </style>
-    <!--
-<style name="Theme.VueTheme" parent="Theme.Sherlock.Light">
-        <item name="actionBarStyle">@style/Widget.VueTheme.ActionBar</item>
-        <item name="actionButtonStyle">@style/actionButtonStyle</item>
-        <item name="android:minWidth">24dp</item>
-    </style>
-
-    <style name="Widget.VueTheme.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="android:background">@drawable/actionbar_bg</item>
-        <item name="background">@drawable/actionbar_bg</item>
-    </style>
-
-    <style name="actionButtonStyle" parent="Widget.Sherlock.ActionButton">
-    <item name="android:minWidth">24dp</item>
-    <item name="android:padding">24dp</item>
-</style>
-    -->
 
     <declare-styleable name="MySlider">
         <attr name="SlidingDrawer_orientation" format="integer" />

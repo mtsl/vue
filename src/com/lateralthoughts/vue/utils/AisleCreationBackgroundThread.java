@@ -158,7 +158,7 @@ public class AisleCreationBackgroundThread implements Runnable,
                                                         .getInstance(
                                                                 VueApplication
                                                                         .getInstance())
-                                                        .getNetworkHandler().mOffset,
+                                                        .getNetworkHandler().offset,
                                                 DataBaseManager.AISLE_CREATED);
                                 mAisleUpdateCallback.onAisleUpdated(
                                         aileItem.getAisleContext().mAisleId,

@@ -20,17 +20,17 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class ArcMenu extends RelativeLayout {
-    public ArcLayout mArcLayout;
+    public ArcLayout arcLayout;
     
-    public RelativeLayout mCameraLayout;
-    public RelativeLayout mGalleryLayout;
-    public RelativeLayout mEtsyLayout;
-    public RelativeLayout mFancyLayout;
-    public RelativeLayout mMoreLayout;
+    public RelativeLayout cameraLayout;
+    public RelativeLayout galleryLayout;
+    public RelativeLayout etsyLayout;
+    public RelativeLayout fancyLayout;
+    public RelativeLayout moreLayout;
     
-    public ImageView mHintView;
+    public ImageView hintView;
     
-    public Context mContext;
+    public Context context;
     
     public ArcMenu(Context context) {
         super(context);
@@ -44,77 +44,68 @@ public class ArcMenu extends RelativeLayout {
     }
     
     private void init(Context context) {
-        mContext = context;
+        this.context = context;
         LayoutInflater li = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         li.inflate(R.layout.arc_menu, this);
         
-        mArcLayout = (ArcLayout) findViewById(R.id.item_layout);
-        mArcLayout.setVisibility(View.INVISIBLE);
+        arcLayout = (ArcLayout) findViewById(R.id.item_layout);
+        arcLayout.setVisibility(View.INVISIBLE);
         
-        mFancyLayout = (RelativeLayout) findViewById(R.id.fancy_layout);
-        mCameraLayout = (RelativeLayout) findViewById(R.id.camera_layout);
-        mGalleryLayout = (RelativeLayout) findViewById(R.id.gallery_layout);
-        mMoreLayout = (RelativeLayout) findViewById(R.id.more_layout);
-        mEtsyLayout = (RelativeLayout) findViewById(R.id.etsy_layout);
+        fancyLayout = (RelativeLayout) findViewById(R.id.fancy_layout);
+        cameraLayout = (RelativeLayout) findViewById(R.id.camera_layout);
+        galleryLayout = (RelativeLayout) findViewById(R.id.gallery_layout);
+        moreLayout = (RelativeLayout) findViewById(R.id.more_layout);
+        etsyLayout = (RelativeLayout) findViewById(R.id.etsy_layout);
         
-        mFancyLayout.setOnClickListener(new OnClickListener() {
+        fancyLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                itemClickFunctionality(mFancyLayout, 2);
+                itemClickFunctionality(fancyLayout, 2);
             }
         });
-        mCameraLayout.setOnClickListener(new OnClickListener() {
+        cameraLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                itemClickFunctionality(mCameraLayout, 0);
+                itemClickFunctionality(cameraLayout, 0);
             }
         });
-        mGalleryLayout.setOnClickListener(new OnClickListener() {
+        galleryLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                itemClickFunctionality(mGalleryLayout, 4);
+                itemClickFunctionality(galleryLayout, 4);
             }
         });
-        mMoreLayout.setOnClickListener(new OnClickListener() {
+        moreLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
+                CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) ArcMenu.this.context;
                 createAisleSelectionActivity.moreClickFunctionality();
             }
         });
-        mEtsyLayout.setOnClickListener(new OnClickListener() {
+        etsyLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                itemClickFunctionality(mEtsyLayout, 1);
+                itemClickFunctionality(etsyLayout, 1);
             }
         });
         
-        mHintView = (ImageView) findViewById(R.id.control_hint);
+        hintView = (ImageView) findViewById(R.id.control_hint);
     }
     
     private void applyAttrs(AttributeSet attrs) {
         if (attrs != null) {
-            /*
-             * TypedArray a = getContext().obtainStyledAttributes(attrs,
-             * R.styleable.ArcLayout, 0, 0);
-             */
-            
             float fromDegrees = ArcLayout.DEFAULT_FROM_DEGREES;
             float toDegrees = ArcLayout.DEFAULT_TO_DEGREES;
-            mArcLayout.setArc(fromDegrees, toDegrees);
-            
-            // int defaultChildSize = mArcLayout.getChildSize();
-            int newChildSize = ArcLayout.CHILD_SIZE;
-            mArcLayout.setChildSize(newChildSize);
-            
-            // a.recycle();
+            arcLayout.setArc(fromDegrees, toDegrees);
+            int newChildSize = ArcLayout.sChildSize;
+            arcLayout.setChildSize(newChildSize);
         }
     }
     
     public void addItem(int position, LayoutParams lp, View item,
             OnClickListener listener) {
-        mArcLayout.addView(item, lp);
+        arcLayout.addView(item, lp);
         item.setOnClickListener(getItemClickListener(position, listener));
     }
     
@@ -126,7 +117,7 @@ public class ArcMenu extends RelativeLayout {
             public void onClick(final View viewClicked) {
                 // More
                 if (position == 3) {
-                    CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
+                    CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) context;
                     createAisleSelectionActivity.moreClickFunctionality();
                 } else {
                     Animation animation = bindItemAnimation(viewClicked, true,
@@ -155,16 +146,16 @@ public class ArcMenu extends RelativeLayout {
                         }
                     });
                     
-                    final int itemCount = mArcLayout.getChildCount();
+                    final int itemCount = arcLayout.getChildCount();
                     for (int i = 0; i < itemCount; i++) {
-                        View item = mArcLayout.getChildAt(i);
+                        View item = arcLayout.getChildAt(i);
                         if (viewClicked != item) {
                             bindItemAnimation(item, false, 300);
                         }
                     }
                     
-                    mArcLayout.invalidate();
-                    mHintView.startAnimation(createHintSwitchAnimation(true));
+                    arcLayout.invalidate();
+                    hintView.startAnimation(createHintSwitchAnimation(true));
                     
                     if (listener != null) {
                         listener.onClick(viewClicked);
@@ -209,25 +200,25 @@ public class ArcMenu extends RelativeLayout {
             }
         });
         
-        final int itemCount = mArcLayout.getChildCount();
+        final int itemCount = arcLayout.getChildCount();
         for (int i = 0; i < itemCount; i++) {
-            View item = mArcLayout.getChildAt(i);
+            View item = arcLayout.getChildAt(i);
             if (viewClicked != item) {
                 bindItemAnimation(item, false, 300);
             }
         }
-        mArcLayout.invalidate();
-        mHintView.startAnimation(createHintSwitchAnimation(true));
+        arcLayout.invalidate();
+        hintView.startAnimation(createHintSwitchAnimation(true));
     }
     
     private void itemDidDisappear(int position) {
-        final int itemCount = mArcLayout.getChildCount();
+        final int itemCount = arcLayout.getChildCount();
         for (int i = 0; i < itemCount; i++) {
-            View item = mArcLayout.getChildAt(i);
+            View item = arcLayout.getChildAt(i);
             item.clearAnimation();
         }
-        mArcLayout.setVisibility(View.INVISIBLE);
-        CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
+        arcLayout.setVisibility(View.INVISIBLE);
+        CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) context;
         switch (position) {
         // Camera
         case 0:
@@ -235,8 +226,8 @@ public class ArcMenu extends RelativeLayout {
             break;
         // Etsy
         case 1:
-            if (Utils.appInstalledOrNot(VueConstants.ETSY_PACKAGE_NAME,
-                    mContext)) {
+            if (Utils
+                    .appInstalledOrNot(VueConstants.ETSY_PACKAGE_NAME, context)) {
                 createAisleSelectionActivity.loadShoppingApplication(
                         VueConstants.ETSY_ACTIVITY_NAME,
                         VueConstants.ETSY_PACKAGE_NAME, "Etsy");
@@ -248,7 +239,7 @@ public class ArcMenu extends RelativeLayout {
         // Fancy
         case 2:
             if (Utils.appInstalledOrNot(VueConstants.FANCY_PACKAGE_NAME,
-                    mContext)) {
+                    context)) {
                 createAisleSelectionActivity.loadShoppingApplication(
                         VueConstants.FANCY_ACTIVITY_NAME,
                         VueConstants.FANCY_PACKAGE_NAME, "Fancy");
@@ -265,8 +256,8 @@ public class ArcMenu extends RelativeLayout {
             createAisleSelectionActivity.finish();
             break;
         }
-        mArcLayout.mExpanded = !mArcLayout.mExpanded;
-        mArcLayout.removeAllViews();
+        arcLayout.expanded = !arcLayout.expanded;
+        arcLayout.removeAllViews();
     }
     
     static Animation createItemDisapperAnimation(final long duration,
@@ -297,70 +288,6 @@ public class ArcMenu extends RelativeLayout {
         return animation;
     }
     
-    @SuppressWarnings("deprecation")
-    public void initArcMenu(ArcMenu menu, int[] itemDrawables) {/*
-                                                                 * final int
-                                                                 * itemCount =
-                                                                 * itemDrawables
-                                                                 * .length; for
-                                                                 * (int i = 0; i
-                                                                 * < itemCount;
-                                                                 * i++) { //
-                                                                 * ImageView
-                                                                 * item = new
-                                                                 * ImageView
-                                                                 * (mContext);
-                                                                 * // item.
-                                                                 * setImageResource
-                                                                 * (
-                                                                 * itemDrawables
-                                                                 * [i]);
-                                                                 * 
-                                                                 * Button item =
-                                                                 * new
-                                                                 * Button(mContext
-                                                                 * ); item.
-                                                                 * setBackgroundResource
-                                                                 * (R.drawable.
-                                                                 * black_round_circle
-                                                                 * );
-                                                                 * item.setTextColor
-                                                                 * (
-                                                                 * R.color.red);
-                                                                 * item.setText(
-                                                                 * "Gallery");
-                                                                 * LayoutParams
-                                                                 * lp = new
-                                                                 * LayoutParams
-                                                                 * (LayoutParams
-                                                                 * .
-                                                                 * WRAP_CONTENT,
-                                                                 * LayoutParams
-                                                                 * .WRAP_CONTENT
-                                                                 * ); //
-                                                                 * lp.setMargins
-                                                                 * (4, 4, 4, 4);
-                                                                 * 
-                                                                 * final int
-                                                                 * position = i;
-                                                                 * menu
-                                                                 * .addItem(i,
-                                                                 * lp, item, new
-                                                                 * OnClickListener
-                                                                 * () {
-                                                                 * 
-                                                                 * @Override
-                                                                 * public void
-                                                                 * onClick(View
-                                                                 * v) {
-                                                                 * Toast.makeText
-                                                                 * (mContext,
-                                                                 * "position:" +
-                                                                 * position,
-                                                                 * Toast
-                                                                 * .LENGTH_SHORT
-                                                                 * ).show(); }
-                                                                 * }); }
-                                                                 */
+    public void initArcMenu(ArcMenu menu, int[] itemDrawables) {
     }
 }

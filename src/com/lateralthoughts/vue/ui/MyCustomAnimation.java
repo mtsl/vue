@@ -18,12 +18,12 @@ public class MyCustomAnimation extends Animation {
     private int mEndHeight;
     private int mType;
     private AbsListView.LayoutParams mLayoutParams;
-    Context context;
+    Context mContext;
     
     public MyCustomAnimation(Context context, View view, int duration, int type) {
         
         setDuration(duration);
-        this.context = context;
+        this.mContext = context;
         mView = view;
         mEndHeight = mView.getHeight();
         mLayoutParams = ((AbsListView.LayoutParams) view.getLayoutParams());
@@ -61,7 +61,7 @@ public class MyCustomAnimation extends Animation {
             mView.requestLayout();
         } else {
             if (mType == EXPAND) {
-                Resources r = context.getResources();
+                Resources r = mContext.getResources();
                 mLayoutParams.height = (int) TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP, 48, r.getDisplayMetrics());
                 ;

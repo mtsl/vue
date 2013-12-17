@@ -6,8 +6,6 @@
             <solid android:color="#ADADAD" />
         </shape>
     </item>
-
-    <!-- Background -->
     <item android:bottom="1dp">
         <shape>
             <solid android:color="#F5F5F5" />

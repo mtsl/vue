@@ -73,7 +73,7 @@ public class CreateAisleSelectionActivity extends Activity {
             public void onClick(View arg0) {
                 if (!isClickedFlag) {
                     isClickedFlag = true;
-                    mDataentryArcMenu.mArcLayout.switchState(true);
+                    mDataentryArcMenu.arcLayout.switchState(true);
                 }
             }
         });
@@ -313,7 +313,7 @@ public class CreateAisleSelectionActivity extends Activity {
             if (!mFromCreateAilseScreenFlag) {
                 if (!isClickedFlag) {
                     isClickedFlag = true;
-                    mDataentryArcMenu.mArcLayout.switchState(true);
+                    mDataentryArcMenu.arcLayout.switchState(true);
                 }
             } else {
                 showDiscardOtherAppImageDialog();
@@ -323,8 +323,8 @@ public class CreateAisleSelectionActivity extends Activity {
     }
     
     private void showPopUp() {
-        mDataentryArcMenu.mArcLayout.setVisibility(View.VISIBLE);
-        mDataentryArcMenu.mArcLayout.switchState(true);
+        mDataentryArcMenu.arcLayout.setVisibility(View.VISIBLE);
+        mDataentryArcMenu.arcLayout.switchState(true);
     }
     
     public void closeScreen() {

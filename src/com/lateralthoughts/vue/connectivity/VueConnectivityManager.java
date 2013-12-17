@@ -9,8 +9,6 @@ import android.widget.Toast;
 
 public class VueConnectivityManager {
     
-    private static boolean isTostShown = false;
-    
     /**
      * Get the network info
      * 
@@ -139,6 +137,7 @@ public class VueConnectivityManager {
      *            for any network available.
      * @return boolean.
      * */
+    @SuppressWarnings("unused")
     private static boolean checkConnection(Context context, boolean isWifi) {
         NetworkInfo info = VueConnectivityManager.getNetworkInfo(context);
         if (info == null) {

@@ -35,7 +35,7 @@ public class VueContentProvider extends ContentProvider {
     private static final int BOOKMARKED_AISLE_MATCH = 18;
     private static final int MY_BOOKMARKED_AISLES_MATCH = 19;
     private static final int MY_BOOKMARKED_AISLE_MATCH = 20;
-    private DbHelper dbHelper;
+    private DbHelper mDbHelper;
     private static final UriMatcher URIMATCHER;
     
     /** uri matchers for articles table and articles fts3 table query method. */
@@ -93,7 +93,7 @@ public class VueContentProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int rowsDeleted = 0;
         String id;
-        SQLiteDatabase aislesDB = dbHelper.getWritableDatabase();
+        SQLiteDatabase aislesDB = mDbHelper.getWritableDatabase();
         switch (URIMATCHER.match(uri)) {
         case AISLES_MATCH:
             rowsDeleted = aislesDB.delete(VueConstants.AISLES, selection,
@@ -236,13 +236,12 @@ public class VueContentProvider extends ContentProvider {
     
     @Override
     public String getType(Uri uri) {
-        // TODO Auto-generated method stub
         return null;
     }
     
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        SQLiteDatabase aislesDB = dbHelper.getWritableDatabase();
+        SQLiteDatabase aislesDB = mDbHelper.getWritableDatabase();
         Uri rowUri = null;
         long rowId = 0;
         
@@ -366,7 +365,7 @@ public class VueContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
             String[] selectionArgs, String sortOrder) {
-        SQLiteDatabase aislesDB = dbHelper.getReadableDatabase();
+        SQLiteDatabase aislesDB = mDbHelper.getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         Cursor cursor = null;
         String id;
@@ -374,8 +373,6 @@ public class VueContentProvider extends ContentProvider {
         switch (URIMATCHER.match(uri)) {
         case AISLES_MATCH:
             qb.setTables(VueConstants.AISLES);
-            // cursor = aislesDB.query(VueConstants.AISLES, projection,
-            // selection, selectionArgs, null, null, sortOrder);
             cursor = qb.query(aislesDB, projection, selection, selectionArgs,
                     null, null, sortOrder);
             break;
@@ -523,7 +520,7 @@ public class VueContentProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
             String[] selectionArgs) {
-        SQLiteDatabase aislesDB = dbHelper.getWritableDatabase();
+        SQLiteDatabase aislesDB = mDbHelper.getWritableDatabase();
         int rowsUpdated = 0;
         String id;
         
@@ -685,7 +682,7 @@ public class VueContentProvider extends ContentProvider {
     
     @Override
     public boolean onCreate() {
-        dbHelper = new DbHelper(getContext());
-        return (dbHelper == null) ? false : true;
+        mDbHelper = new DbHelper(getContext());
+        return (mDbHelper == null) ? false : true;
     }
 }
