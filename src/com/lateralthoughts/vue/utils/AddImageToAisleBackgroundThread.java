@@ -166,7 +166,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                     aisleWindowContent
                                                             .getImageList());
                                             
-                                            Utils.isAisleChanged = true;
+                                            Utils.sIsAisleChanged = true;
                                             Utils.mChangeAilseId = aisleWindowContent
                                                     .getAisleId();
                                             

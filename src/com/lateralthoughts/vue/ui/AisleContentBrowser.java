@@ -388,7 +388,7 @@ public class AisleContentBrowser extends ViewFlipper {
     }
     
     public void setCurrentImage() {
-        Utils.mAinmate = false;
+        Utils.sAinmate = false;
         for (int i = 0; i < VueApplication.getInstance()
                 .getmAisleImgCurrentPos(); i++) {
             mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this, i,
@@ -397,7 +397,7 @@ public class AisleContentBrowser extends ViewFlipper {
         final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser) this;
         aisleContentBrowser.setDisplayedChild(VueApplication.getInstance()
                 .getmAisleImgCurrentPos());
-        Utils.mAinmate = true;
+        Utils.sAinmate = true;
         
     }
     

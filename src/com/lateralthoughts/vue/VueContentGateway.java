@@ -33,7 +33,6 @@ import com.lateralthoughts.vue.utils.Utils;
 
 public class VueContentGateway {
     private final String TAG = "VueContentGateway";
-    private final boolean DEBUG = false;
     private static VueContentGateway sInstance;
     private Context mContext; // application context;
     
@@ -86,6 +85,7 @@ public class VueContentGateway {
         } else if (isConnection) {
             final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL
                     + "/" + limit + "/" + offset;
+            @SuppressWarnings("rawtypes")
             Response.Listener listener = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
@@ -116,6 +116,7 @@ public class VueContentGateway {
                     
                 }
             };
+            @SuppressWarnings("unchecked")
             VueAislesRequest vueRequest = new VueAislesRequest(requestUrl,
                     listener, errorListener) {
             };
@@ -139,6 +140,7 @@ public class VueContentGateway {
         mHeaders.add(new ParcelableNameValuePair(name, value));
     }
     
+    @SuppressWarnings("unused")
     private void addParams(String name, String value) {
         mParams.add(new ParcelableNameValuePair(name, value));
     }

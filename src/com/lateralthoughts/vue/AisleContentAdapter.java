@@ -1,6 +1,5 @@
 package com.lateralthoughts.vue;
 
-//android imports
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,9 +20,6 @@ import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ImageDimension;
 import com.lateralthoughts.vue.utils.Utils;
-
-//java imports
-//internal imports
 
 /**
  * The AisleContentAdapter object will be associated with aisles on a per-aisle
@@ -46,7 +42,6 @@ import com.lateralthoughts.vue.utils.Utils;
  */
 public class AisleContentAdapter implements IAisleContentAdapter {
     
-    // private VueMemoryCache<Bitmap> mContentImagesCache;
     private BitmapLruCache mContentImagesCache;
     
     private ArrayList<AisleImageDetails> mAisleImageDetails;
@@ -59,14 +54,11 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private ColorDrawable mColorDrawable;
     private int mCurrentPivotIndex;
     private BitmapLoaderUtils mBitmapLoaderUtils;
-    // public String mSourceName;
     private ImageDimension mImageDimension;
     Animation myFadeInAnimation;
     
     public AisleContentAdapter(Context context) {
         mContext = context;
-        // mContentImagesCache =
-        // VueApplication.getInstance().getAisleContentCache();
         mContentImagesCache = BitmapLruCache.getInstance(VueApplication
                 .getInstance());
         mFileCache = VueApplication.getInstance().getFileCache();
@@ -84,13 +76,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     @Override
     public void setContentSource(String uniqueAisleId,
             AisleWindowContent windowContent) {
-        // TODO Auto-generated method stub
         mWindowContent = windowContent;
         mAisleImageDetails = mWindowContent.getImageList();
-        
-        // lets file cache the first two items in the list
-        // queueImagePrefetch(mAisleImageDetails,
-        // mWindowContent.getBestHeightForWindow(), 1,2);
     }
     
     public boolean hasMostLikes(int position) {
@@ -108,7 +95,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     
     @Override
     public void releaseContentSource() {
-        // TODO Auto-generated method stub
         mCurrentPivotIndex = -1;
         mAisleImageDetails.clear();
         mWindowContent = null;
@@ -117,13 +103,11 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     
     @Override
     public ScaleImageView getItemAt(int index, boolean isPivot) {
-        // TODO Auto-generated method stub
         return null;
     }
     
     @Override
     public void setPivot(int index) {
-        // TODO Auto-generated method stub
         
     }
     
@@ -157,9 +141,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                     && contentBrowser.getmSourceName().equalsIgnoreCase(
                             AisleDetailsViewAdapter.TAG)) {
                 bitmap = getCachedBitmap(itemDetails.mImageUrl);
-            } else {
-                // bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
-                
             }
             if (bitmap != null) {
                 if (contentBrowser.getmSourceName() != null

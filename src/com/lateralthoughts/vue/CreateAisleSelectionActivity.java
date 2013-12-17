@@ -44,7 +44,7 @@ public class CreateAisleSelectionActivity extends Activity {
     public static boolean isActivityShowing = false;
     private ArcMenu mDataentryArcMenu = null;
     private static final int ANIM_DELAY = 100;
-    private boolean isClickedFlag = false;
+    private boolean mIsClickedFlag = false;
     private ShareDialog mShareDialog = null;
     private Dialog mDialog;
     private Button mDataentryPopupCancelBtn;
@@ -71,8 +71,8 @@ public class CreateAisleSelectionActivity extends Activity {
         mDataentryPopupCancelBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (!isClickedFlag) {
-                    isClickedFlag = true;
+                if (!mIsClickedFlag) {
+                    mIsClickedFlag = true;
                     mDataentryArcMenu.arcLayout.switchState(true);
                 }
             }
@@ -311,8 +311,8 @@ public class CreateAisleSelectionActivity extends Activity {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (!mFromCreateAilseScreenFlag) {
-                if (!isClickedFlag) {
-                    isClickedFlag = true;
+                if (!mIsClickedFlag) {
+                    mIsClickedFlag = true;
                     mDataentryArcMenu.arcLayout.switchState(true);
                 }
             } else {

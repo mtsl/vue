@@ -17,7 +17,6 @@ import com.android.volley.toolbox.HttpHeaderParser;
 
 public class ImageRatingPutRequest extends Request<String> {
     // ... other methods go here
-    private Map<String, String> mParams;
     Response.Listener<String> mListener;
     private String mImageRatingString;
     private StringEntity mEntity;

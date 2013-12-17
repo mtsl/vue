@@ -475,47 +475,6 @@ public class VueUserManager {
         VueApplication.getInstance().getRequestQueue().add(userGetRequest);
     }
     
-    public void createInstagramIdentifiedUser(final VueUser vueUser,
-            final UserUpdateCallback callback) {
-        // TODO Need to add instagram id in the backend.
-        /*
-         * // lets throw an exception if the current user is not NULL. if (null
-         * != mCurrentUser) throw new RuntimeException(
-         * "Cannot call createFBIdentifiedUser when User is " +
-         * "already available. Try the update APIs");
-         * 
-         * Response.Listener listener = new Response.Listener<String>() {
-         * 
-         * @Override public void onResponse(String jsonArray) { if (null !=
-         * jsonArray) { Log.e("Profiling",
-         * "Create User: Profiling : onResponse()" + jsonArray); VueUser vueUser
-         * = new Parser().parseUserData(jsonArray); if
-         * (VueApplication.getInstance().getmUserInitials() == null) {
-         * VueApplication.getInstance().setmUserInitials(
-         * vueUser.getFirstName()); }
-         * VueUserManager.this.setCurrentUser(vueUser); Log.i("imageurl",
-         * "imageurl is ok got user id: " + vueUser);
-         * callback.onUserUpdated(vueUser); } } }; Response.ErrorListener
-         * errorListener = new Response.ErrorListener() {
-         * 
-         * @Override public void onErrorResponse(VolleyError error) { if (null
-         * != error.networkResponse && null != error.networkResponse.data) {
-         * String errorData = error.networkResponse.data.toString();
-         * Log.e("VueUserDebug", "error date = " + errorData); } } };
-         * 
-         * try { Log.e("VueUserDebug", "vueuser: method called "); ObjectMapper
-         * mapper = new ObjectMapper(); String userAsString =
-         * mapper.writeValueAsString(vueUser); Log.e("VueUserDebug",
-         * "vueuser: request " + userAsString); UserCreateRequest request = new
-         * UserCreateRequest(userAsString, UrlConstants.CREATE_USER_RESTURL,
-         * listener, errorListener);
-         * VueApplication.getInstance().getRequestQueue().add(request); } catch
-         * (Exception e) {
-         * 
-         * }
-         */
-    }
-    
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void updateFBIdentifiedUser(final String userProfileImageUrl,
             final GraphUser graphUser, final VueUser vueUser,
@@ -834,41 +793,6 @@ public class VueUserManager {
                         + vueUser.getGooglePlusId(), getListener,
                 getErrorListener);
         VueApplication.getInstance().getRequestQueue().add(userGetRequest);
-    }
-    
-    public void updateInstagramIdentifiedUser(final VueUser vueUser,
-            final UserUpdateCallback callback) {
-        // TODO Need to add instagram id in the backend.
-        /*
-         * Response.Listener listener = new Response.Listener<String>() {
-         * 
-         * @Override public void onResponse(String jsonArray) { if (null !=
-         * jsonArray) { Log.e("Profiling",
-         * "Create User: Profiling : onResponse()" + jsonArray); VueUser vueUser
-         * = new Parser().parseUserData(jsonArray); if
-         * (VueApplication.getInstance().getmUserInitials() == null) {
-         * VueApplication.getInstance().setmUserInitials(
-         * vueUser.getFirstName()); }
-         * VueUserManager.this.setCurrentUser(vueUser); Log.i("imageurl",
-         * "imageurl is ok got user id: " + vueUser);
-         * callback.onUserUpdated(vueUser); } } }; Response.ErrorListener
-         * errorListener = new Response.ErrorListener() {
-         * 
-         * @Override public void onErrorResponse(VolleyError error) { if (null
-         * != error.networkResponse && null != error.networkResponse.data) {
-         * String errorData = error.networkResponse.data.toString();
-         * Log.e("VueUserDebug", "error date = " + errorData); } } }; try {
-         * Log.e("VueUserDebug", "vueuser: method called "); ObjectMapper mapper
-         * = new ObjectMapper(); String userAsString =
-         * mapper.writeValueAsString(vueUser); Log.e("VueUserDebug",
-         * "vueuser: request " + userAsString); UserCreateRequest request = new
-         * UserCreateRequest(userAsString, UrlConstants.UPDATE_USER_RESTURL,
-         * listener, errorListener);
-         * VueApplication.getInstance().getRequestQueue().add(request); } catch
-         * (Exception e) {
-         * 
-         * }
-         */
     }
     
     private class UserCreateOrUpdateRequest extends Request<String> {

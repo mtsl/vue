@@ -300,7 +300,7 @@ public class VueLandingPageActivity extends Activity implements
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) menu.findItem(R.id.menu_search)
                 .getActionView();
-        return true;// super.onCreateOptionsMenu(menu);
+        return true;
     }
     
     @Override
@@ -372,10 +372,6 @@ public class VueLandingPageActivity extends Activity implements
             FlurryAgent.logEvent("Rigestered_Users", articleParams);
             FlurryAgent.logEvent("Login_Time_Ends", articleParams, true);
         }
-        /*
-         * FlurryAgent.setAge(arg0); FlurryAgent.setGender(arg0);
-         * FlurryAgent.setUserId(arg0);
-         */
         FlurryAgent.onPageView();
         
         super.onStart();
@@ -785,8 +781,6 @@ public class VueLandingPageActivity extends Activity implements
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler().makeOffseZero();
-                // ((VueLandingAislesFragment)
-                // mLandingAilsesFrag).clearBitmaps();
                 VueTrendingAislesDataModel.getInstance(
                         VueApplication.getInstance()).clearAisles();
                 AisleWindowContentFactory.getInstance(
@@ -811,9 +805,6 @@ public class VueLandingPageActivity extends Activity implements
             ArrayList<AisleWindowContent> windowContent = DataBaseManager
                     .getInstance(this).getRecentlyViewedAisles();
             if (windowContent.size() > 0) {
-                
-                // ((VueLandingAislesFragment)
-                // mLandingAilsesFrag).clearBitmaps();
                 VueTrendingAislesDataModel.getInstance(this).clearAisles();
                 AisleWindowContentFactory.getInstance(
                         VueApplication.getInstance()).clearObjectsInUse();
@@ -1330,7 +1321,7 @@ public class VueLandingPageActivity extends Activity implements
             String imageUrl, int imageWidth, int imageHeight, String title,
             String detailsUrl, String store, String imageId,
             boolean isImageFromLocalSystem) {
-        Utils.isAisleChanged = true;
+        Utils.sIsAisleChanged = true;
         Utils.mChangeAilseId = aisleId;
         
         AisleWindowContent aisleItem = VueTrendingAislesDataModel.getInstance(

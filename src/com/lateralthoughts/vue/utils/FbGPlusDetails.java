@@ -8,18 +8,18 @@ import com.google.android.gms.plus.model.people.Person;
  */
 public class FbGPlusDetails {
     
-    private Person googleplusFriend;
+    private Person mGoogleplusFriend;
     
     public Person getGoogleplusFriend() {
-        return googleplusFriend;
+        return mGoogleplusFriend;
     }
     
     public void setGoogleplusFriend(Person googleplusFriend) {
-        this.googleplusFriend = googleplusFriend;
+        this.mGoogleplusFriend = googleplusFriend;
     }
     
-    private String name = null;
-    private String profile_image_url = null;
+    private String mName = null;
+    private String mProfile_image_url = null;
     
     public String getId() {
         return id;
@@ -32,27 +32,27 @@ public class FbGPlusDetails {
     private String id = null;
     
     public String getName() {
-        return name;
+        return mName;
     }
     
     public void setName(String name) {
-        this.name = name;
+        this.mName = name;
     }
     
     public String getProfile_image_url() {
-        return profile_image_url;
+        return mProfile_image_url;
     }
     
     public void setProfile_image_url(String profile_image_url) {
-        this.profile_image_url = profile_image_url;
+        this.mProfile_image_url = profile_image_url;
     }
     
     public FbGPlusDetails(String id, String name, String profile_image_url,
             Person googleplusFriend) {
-        this.name = name;
-        this.profile_image_url = profile_image_url;
+        this.mName = name;
+        this.mProfile_image_url = profile_image_url;
         this.id = id;
-        this.googleplusFriend = googleplusFriend;
+        this.mGoogleplusFriend = googleplusFriend;
     }
     
 }

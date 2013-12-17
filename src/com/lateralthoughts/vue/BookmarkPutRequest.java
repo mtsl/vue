@@ -17,7 +17,6 @@ import com.android.volley.toolbox.HttpHeaderParser;
 
 public class BookmarkPutRequest extends Request<String> {
     // ... other methods go here
-    private Map<String, String> mParams;
     Response.Listener<String> mListener;
     private String mBookmarkString;
     private StringEntity mEntity;

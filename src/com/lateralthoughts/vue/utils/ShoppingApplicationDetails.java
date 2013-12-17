@@ -3,50 +3,50 @@ package com.lateralthoughts.vue.utils;
 import android.graphics.drawable.Drawable;
 
 public class ShoppingApplicationDetails {
-    private String appName;
+    private String mAppName;
     
     public String getAppName() {
-        return appName;
+        return mAppName;
     }
     
     public void setAppName(String appName) {
-        this.appName = appName;
+        this.mAppName = appName;
     }
     
     public String getActivityName() {
-        return activityName;
+        return mActivityName;
     }
     
     public void setActivityName(String activityName) {
-        this.activityName = activityName;
+        this.mActivityName = activityName;
     }
     
     public String getPackageName() {
-        return packageName;
+        return mPackageName;
     }
     
     public void setPackageName(String packageName) {
-        this.packageName = packageName;
+        this.mPackageName = packageName;
     }
     
-    private String activityName;
-    private String packageName;
+    private String mActivityName;
+    private String mPackageName;
     
     public Drawable getAppIcon() {
-        return appIcon;
+        return mAppIcon;
     }
     
     public void setAppIcon(Drawable appIcon) {
-        this.appIcon = appIcon;
+        this.mAppIcon = appIcon;
     }
     
-    private Drawable appIcon;
+    private Drawable mAppIcon;
     
     public ShoppingApplicationDetails(String appName, String activityName,
             String packageName, Drawable appIcon) {
-        this.appName = appName;
-        this.activityName = activityName;
-        this.packageName = packageName;
-        this.appIcon = appIcon;
+        this.mAppName = appName;
+        this.mActivityName = activityName;
+        this.mPackageName = packageName;
+        this.mAppIcon = appIcon;
     }
 }

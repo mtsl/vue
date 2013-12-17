@@ -157,36 +157,7 @@ public class VueLandingAislesFragment extends Fragment {
                 
             }
         });
-        
-        // mRightColumnView = (ListView) v.findViewById(R.id.list_view_right);
-        
-        // mLeftColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        // mRightColumnView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        
         mStaggeredView.setAdapter(mStaggeredAdapter);
-        
-        /*
-         * mLeftColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-         * mRightColumnView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-         * mLeftColumnView.setOnTouchListener(touchListener);
-         * mRightColumnView.setOnTouchListener(touchListener);
-         * mLeftColumnView.setOnScrollListener(scrollListener);
-         * mRightColumnView.setOnScrollListener(scrollListener);
-         * 
-         * mLeftColumnView.setClickable(true); mLeftColumnView
-         * .setOnItemClickListener(new AdapterView.OnItemClickListener() {
-         * 
-         * @Override public void onItemClick(AdapterView<?> parent, View view,
-         * int position, long id) { Logging.d("Clicks",
-         * "ok...we are getting item clicks!!");
-         * 
-         * } });
-         * 
-         * mLeftViewsHeights = new int[1000]; mRightViewsHeights = new
-         * int[1000]; Logging.d("VueLandingAislesFragment",
-         * "Get ready to displayed staggered view");
-         */
-        
         return v;
     }
     
@@ -244,8 +215,6 @@ public class VueLandingAislesFragment extends Fragment {
         public boolean onDoubleTap(String id) {
             AisleWindowContent windowItem = VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).getAisleAt(id);
-            String imageUrls = "";
-            
             int finalWidth = 0, finaHeight = 0;
             if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
                     .getBestHeightForWindow()) {

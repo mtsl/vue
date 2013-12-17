@@ -8,8 +8,8 @@ import com.lateralthoughts.vue.VueConstants;
 
 public class FileCache {
     
-    private File cacheDir;
-    private long twoDaysOldTime = 2 * 24 * 60 * 60 * 1000;
+    private File mCacheDir;
+    private long mTwoDaysOldTime = 2 * 24 * 60 * 60 * 1000;
     private File mVueAppCameraPicsDir;
     
     public File getmVueAppCameraPicsDir() {
@@ -44,7 +44,7 @@ public class FileCache {
         // Find the dir to save cached images
         if (android.os.Environment.getExternalStorageState().equals(
                 android.os.Environment.MEDIA_MOUNTED)) {
-            cacheDir = new File(context.getExternalCacheDir(), "LazyList");
+            mCacheDir = new File(context.getExternalCacheDir(), "LazyList");
             mVueAppCameraPicsDir = new File(context.getExternalFilesDir(null),
                     VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
             mVueAppResizedImagesDir = new File(
@@ -54,7 +54,7 @@ public class FileCache {
                     context.getExternalFilesDir(null),
                     VueConstants.VUE_APP_USER_PROFILE_PICTURES_FOLDER);
         } else {
-            cacheDir = context.getCacheDir();
+            mCacheDir = context.getCacheDir();
             mVueAppCameraPicsDir = new File(context.getFilesDir(),
                     VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
             mVueAppResizedImagesDir = new File(context.getFilesDir(),
@@ -63,8 +63,8 @@ public class FileCache {
                     VueConstants.VUE_APP_USER_PROFILE_PICTURES_FOLDER);
         }
         
-        if (!cacheDir.exists())
-            cacheDir.mkdirs();
+        if (!mCacheDir.exists())
+            mCacheDir.mkdirs();
         if (!mVueAppCameraPicsDir.exists())
             mVueAppCameraPicsDir.mkdirs();
         if (!mVueAppResizedImagesDir.exists())
@@ -76,7 +76,7 @@ public class FileCache {
     public File getFile(String url) {
         int hashCode = url.hashCode();
         String filename = String.valueOf(hashCode);
-        File f = new File(cacheDir, filename + ".jpg");
+        File f = new File(mCacheDir, filename + ".jpg");
         return f;
         
     }
@@ -98,7 +98,7 @@ public class FileCache {
     
     @Deprecated
     public void clear() {
-        File[] files = cacheDir.listFiles();
+        File[] files = mCacheDir.listFiles();
         if (files == null)
             return;
         for (File f : files)
@@ -122,13 +122,13 @@ public class FileCache {
     }
     
     public void clearTwoDaysOldPictures() {
-        File[] files = cacheDir.listFiles();
+        File[] files = mCacheDir.listFiles();
         if (files == null) {
             return;
         }
         for (File f : files) {
             long lastModifidedDate = f.lastModified();
-            if (System.currentTimeMillis() - lastModifidedDate >= twoDaysOldTime) {
+            if (System.currentTimeMillis() - lastModifidedDate >= mTwoDaysOldTime) {
                 if (f.delete()) {
                 }
             }

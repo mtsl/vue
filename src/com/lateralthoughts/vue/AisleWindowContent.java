@@ -23,11 +23,8 @@ public class AisleWindowContent {
     private String mImageFormatSpecifier = "._SY%d.jpg";
     private int mAisleBookmarksCount = 0;
     private boolean mAisleBookmarkIndicator = false;
-    // public boolean mIsDataChanged = false;
     public int mTrendingBestHeight = 0;
     public int mAisleCardHeight;
-    
-    public int mTrendingTestBestHeight, mTrendingTestBestWidth;
     
     public boolean getWindowBookmarkIndicator() {
         return mAisleBookmarkIndicator;
@@ -51,7 +48,6 @@ public class AisleWindowContent {
     int mWindowSmallestHeight = 0;
     int mWindowSamllestWidth = 0;
     private int mWindowLargestHeight = 0;
-    private int mWindowLargestWidth = 0;
     
     public AisleWindowContent(String aisleId) {
         mAisleId = aisleId;
@@ -105,10 +101,7 @@ public class AisleWindowContent {
     
     private boolean udpateImageUrlsForDevice() {
         AisleImageDetails imageDetails;
-        // TODO: when more images available set this variable to smallest height
-        // among all
-        
-        mWindowSmallestHeight = /* 34 */0;
+        mWindowSmallestHeight = 0;
         if (mAisleImagesList == null) {
             return true;
         }

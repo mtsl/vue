@@ -70,22 +70,22 @@ public class VueListFragment extends Fragment implements TextWatcher {
     
     public static final String TAG = "VueListFragment";
     private ExpandableListView expandListView;
-    private LinearLayout customlayout, aboutlayout, invitefriendsLayout;
-    private RelativeLayout mBezelMainLayout, donelayout, aboutdonelayout,
+    private LinearLayout mCustomlayout, mAboutLayout, mInviteFriendsLayout;
+    private RelativeLayout mBezelMainLayout, mDoneLayout, mAboutDoneLayout,
             vue_list_fragment_invite_friendsLayout_mainxml;
-    private ImageView userProfilePic;
-    private EditText userNameEdit, userDOBEdit, userGenderEdit, userEmailEdit,
-            userLocationEdit, mSideMenuSearchBar;
-    private Animation animDown;
-    private Animation animUp;
-    private ListView inviteFrirendsListView;
+    private ImageView mUserProfilePic;
+    private EditText mUserNameEdit, mUuserDobEdit, mUserGenderEdit,
+            mUserEmailEdit, mUserLocationEdit, mSideMenuSearchBar;
+    private Animation mAnimDown;
+    private Animation mAnimUp;
+    private ListView mInviteFrirendsListView;
     public FriendsListener listener;
-    private SharedPreferences sharedPreferencesObj;
-    private ProgressDialog progress;
+    private SharedPreferences mSharedPreferencesObj;
+    private ProgressDialog mProgress;
     private LayoutInflater inflater;
-    private boolean isProfileEdited = false;
-    boolean isNewUser = false;
-    private String profilePicUrl = "";
+    private boolean mIsProfileEdited = false;
+    boolean mIsNewUser = false;
+    private String mProfilePicUrl = "";
     private RelativeLayout vue_list_fragment_actionbar;
     private BezelMenuRefreshReciever mBezelMenuRefreshReciever = null;
     View mView = null;
@@ -123,29 +123,29 @@ public class VueListFragment extends Fragment implements TextWatcher {
             VueApplication.getInstance().landingPage = (VueLandingPageActivity) getActivity();
         }
         this.inflater = inflater;
-        sharedPreferencesObj = getActivity().getSharedPreferences(
+        mSharedPreferencesObj = getActivity().getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         listener = new FriendsListener() {
             @Override
             public boolean onBackPressed() {
                 boolean returnWhat = false;
-                if (invitefriendsLayout != null
-                        && invitefriendsLayout.getVisibility() == View.VISIBLE) {
-                    invitefriendsLayout.setVisibility(View.GONE);
+                if (mInviteFriendsLayout != null
+                        && mInviteFriendsLayout.getVisibility() == View.VISIBLE) {
+                    mInviteFriendsLayout.setVisibility(View.GONE);
                     expandListView.setVisibility(View.VISIBLE);
                     returnWhat = true;
                 }
-                if (aboutlayout != null
-                        && aboutlayout.getVisibility() == View.VISIBLE) {
-                    aboutlayout.setVisibility(View.GONE);
-                    aboutlayout.startAnimation(animDown);
+                if (mAboutLayout != null
+                        && mAboutLayout.getVisibility() == View.VISIBLE) {
+                    mAboutLayout.setVisibility(View.GONE);
+                    mAboutLayout.startAnimation(mAnimDown);
                     expandListView.setVisibility(View.VISIBLE);
                     returnWhat = true;
                 }
-                if (customlayout != null
-                        && customlayout.getVisibility() == View.VISIBLE) {
-                    customlayout.setVisibility(View.GONE);
-                    customlayout.startAnimation(animDown);
+                if (mCustomlayout != null
+                        && mCustomlayout.getVisibility() == View.VISIBLE) {
+                    mCustomlayout.setVisibility(View.GONE);
+                    mCustomlayout.startAnimation(mAnimDown);
                     expandListView.setVisibility(View.VISIBLE);
                     returnWhat = true;
                 }
@@ -179,9 +179,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
         final VueListFragmentAdapter adapter = new VueListFragmentAdapter(
                 getActivity(), getBezelMenuOptionItems());
         expandListView.setAdapter(adapter);
-        animDown = AnimationUtils
-                .loadAnimation(getActivity(), R.anim.anim_down);
-        animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_up);
+        mAnimDown = AnimationUtils.loadAnimation(getActivity(),
+                R.anim.anim_down);
+        mAnimUp = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_up);
         mSideMenuSearchBar.setOnKeyListener(new OnKeyListener() {
             
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -256,12 +256,12 @@ public class VueListFragment extends Fragment implements TextWatcher {
                                 LayoutParams.MATCH_PARENT);
                         vue_list_fragment_invite_friendsLayout_mainxml
                                 .addView(layoutInviewFriends);
-                        invitefriendsLayout = (LinearLayout) layoutInviewFriends
+                        mInviteFriendsLayout = (LinearLayout) layoutInviewFriends
                                 .findViewById(R.id.vue_list_fragment_invite_friendsLayout);
-                        invitefriendsLayout.setLayoutParams(params);
-                        inviteFrirendsListView = (ListView) layoutInviewFriends
+                        mInviteFriendsLayout.setLayoutParams(params);
+                        mInviteFrirendsListView = (ListView) layoutInviewFriends
                                 .findViewById(R.id.vue_list_fragment_Invitefriends_list);
-                        inviteFrirendsListView
+                        mInviteFrirendsListView
                                 .setOnItemClickListener(new OnItemClickListener() {
                                     
                                     @Override
@@ -275,12 +275,12 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     } else if (s
                             .equals(getString(R.string.sidemenu_option_Login))) {
                         FlurryAgent.logEvent("Login_Without_Prompt");
-                        sharedPreferencesObj = getActivity()
+                        mSharedPreferencesObj = getActivity()
                                 .getSharedPreferences(
                                         VueConstants.SHAREDPREFERENCE_NAME, 0);
-                        boolean fbloginfalg = sharedPreferencesObj.getBoolean(
+                        boolean fbloginfalg = mSharedPreferencesObj.getBoolean(
                                 VueConstants.FACEBOOK_LOGIN, false);
-                        boolean googleplusloginfalg = sharedPreferencesObj
+                        boolean googleplusloginfalg = mSharedPreferencesObj
                                 .getBoolean(VueConstants.GOOGLEPLUS_LOGIN,
                                         false);
                         if (!googleplusloginfalg || !fbloginfalg) {
@@ -373,25 +373,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
                             || s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
                         FlurryAgent.logEvent("InviteFriends_" + s);
                         getFriendsList(s);
-                    } else {
-                        /*
-                         * TextView categoryText = (TextView) v
-                         * .findViewById(R.id.child_itemTextview); String cat =
-                         * categoryText.getText().toString(); if (getActivity()
-                         * instanceof VueLandingPageActivity) {
-                         * AisleWindowContentFactory .getInstance(getActivity())
-                         * .clearObjectsInUse(); VueLandingPageActivity
-                         * vueLandingPageActivity = (VueLandingPageActivity)
-                         * getActivity();
-                         * vueLandingPageActivity.showCategory(cat, false); }
-                         * else if (getActivity() instanceof
-                         * AisleDetailsViewActivity) { startActivity(new Intent(
-                         * (AisleDetailsViewActivity) getActivity(),
-                         * VueLandingPageActivity.class)); } else if
-                         * (getActivity() instanceof DataEntryActivity) {
-                         * startActivity(new Intent( (DataEntryActivity)
-                         * getActivity(), VueLandingPageActivity.class)); }
-                         */
                     }
                     return false;
                 } else {
@@ -427,7 +408,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
      *         display on screen, image to display and list of sub options.
      * */
     public List<ListOptionItem> getBezelMenuOptionItems() {
-        // VueLoginActivity.getProfileImageChangeListenor(imageChangeListenor);
         List<ListOptionItem> groups = new ArrayList<VueListFragment.ListOptionItem>();
         ListOptionItem item = new ListOptionItem(
                 getString(R.string.sidemenu_option_Trending_Aisles),
@@ -523,11 +503,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 getString(R.string.sidemenu_sub_option_Facebook),
                 R.drawable.comment, null);
         inviteFriendsChildren.add(item);
-        /*
-         * item = new ListOptionItem(
-         * getString(R.string.sidemenu_sub_option_Twitter), R.drawable.comment,
-         * null); inviteFriendsChildren.add(item);
-         */
         item = new ListOptionItem(
                 getString(R.string.sidemenu_sub_option_Googleplus),
                 R.drawable.comment, null);
@@ -643,12 +618,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     || (groups.get(groupPosition).tag
                             .equals(getString(R.string.sidemenu_option_Invite_Friends)))
                     || groups.get(groupPosition).tag.equals("Settings")
-                    || groupPosition == 1/*
-                                          * groups.get(groupPosition).tag
-                                          * .equals(
-                                          * getString(R.string.sidemenu_option_Me
-                                          * ))
-                                          */) {
+                    || groupPosition == 1) {
                 return groups.get(groupPosition).children.size();
             }
             return 0;
@@ -687,10 +657,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
             } else {
                 holder = (Holder) convertView.getTag();
             }
-            /*
-             * if(groups.get(groupPosition).tag.equals("Categories")) {
-             * expandListView.expandGroup(groupPosition); }
-             */
             if (groupPosition == 1) {
                 if (groups.get(groupPosition).userPic != null) {
                     holder.icon
@@ -733,12 +699,12 @@ public class VueListFragment extends Fragment implements TextWatcher {
     
     public void getFriendsList(String s) {
         
-        progress = ProgressDialog.show(getActivity(), "", "Please wait...");
-        sharedPreferencesObj = getActivity().getSharedPreferences(
+        mProgress = ProgressDialog.show(getActivity(), "", "Please wait...");
+        mSharedPreferencesObj = getActivity().getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
-        boolean facebookloginflag = sharedPreferencesObj.getBoolean(
+        boolean facebookloginflag = mSharedPreferencesObj.getBoolean(
                 VueConstants.FACEBOOK_LOGIN, false);
-        boolean googleplusloginflag = sharedPreferencesObj.getBoolean(
+        boolean googleplusloginflag = mSharedPreferencesObj.getBoolean(
                 VueConstants.GOOGLEPLUS_LOGIN, false);
         if (s.equals(getResources().getString(
                 R.string.sidemenu_sub_option_Facebook))) {
@@ -746,8 +712,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
             if (facebookloginflag) {
                 fbFriendsList();
             } else {
-                if (progress.isShowing()) {
-                    progress.dismiss();
+                if (mProgress.isShowing()) {
+                    mProgress.dismiss();
                 }
                 Intent i = new Intent(getActivity(), VueLoginActivity.class);
                 Bundle b = new Bundle();
@@ -766,8 +732,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
             if (googleplusloginflag) {
                 getGPlusFriendsList();
             } else {
-                if (progress.isShowing()) {
-                    progress.dismiss();
+                if (mProgress.isShowing()) {
+                    mProgress.dismiss();
                 }
                 Intent i = new Intent(getActivity(), VueLoginActivity.class);
                 Bundle b = new Bundle();
@@ -782,13 +748,14 @@ public class VueListFragment extends Fragment implements TextWatcher {
             }
             
         } else {
-            if (progress.isShowing()) {
-                progress.dismiss();
+            if (mProgress.isShowing()) {
+                mProgress.dismiss();
             }
         }
     }
     
     // Pull and display fb friends from facebook.com
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void fbFriendsList() {
         SharedPreferences sharedPreferencesObj = getActivity()
                 .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -804,14 +771,14 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     try {
                         fbGPlusFriends = JsonParsing(response);
                         if (fbGPlusFriends != null) {
-                            inviteFrirendsListView
+                            mInviteFrirendsListView
                                     .setAdapter(new InviteFriendsAdapter(
                                             getActivity(), fbGPlusFriends,
                                             false));
                             
                             expandListView.setVisibility(View.GONE);
-                            invitefriendsLayout.setVisibility(View.VISIBLE);
-                            invitefriendsLayout.startAnimation(animUp);
+                            mInviteFriendsLayout.setVisibility(View.VISIBLE);
+                            mInviteFriendsLayout.startAnimation(mAnimUp);
                         } else {
                             Toast.makeText(
                                     getActivity(),
@@ -819,13 +786,13 @@ public class VueListFragment extends Fragment implements TextWatcher {
                                             R.string.fb_no_friends),
                                     Toast.LENGTH_LONG).show();
                         }
-                        if (progress.isShowing()) {
-                            progress.dismiss();
+                        if (mProgress.isShowing()) {
+                            mProgress.dismiss();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        if (progress.isShowing()) {
-                            progress.dismiss();
+                        if (mProgress.isShowing()) {
+                            mProgress.dismiss();
                         }
                     }
                 }
@@ -834,8 +801,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    if (progress.isShowing()) {
-                        progress.dismiss();
+                    if (mProgress.isShowing()) {
+                        mProgress.dismiss();
                     }
                 }
             };
@@ -845,8 +812,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
             VueApplication.getInstance().getRequestQueue().add(myReq);
             
         } else {
-            if (progress.isShowing()) {
-                progress.dismiss();
+            if (mProgress.isShowing()) {
+                mProgress.dismiss();
             }
         }
     }
@@ -854,20 +821,20 @@ public class VueListFragment extends Fragment implements TextWatcher {
     // Pull and display G+ friends from plus.google.com.
     private void getGPlusFriendsList() {
         if (VueLandingPageActivity.mGooglePlusFriendsDetailsList != null) {
-            inviteFrirendsListView
+            mInviteFrirendsListView
                     .setAdapter(new InviteFriendsAdapter(
                             getActivity(),
                             VueLandingPageActivity.mGooglePlusFriendsDetailsList,
                             false));
             expandListView.setVisibility(View.GONE);
-            invitefriendsLayout.setVisibility(View.VISIBLE);
-            invitefriendsLayout.startAnimation(animUp);
-            if (progress.isShowing()) {
-                progress.dismiss();
+            mInviteFriendsLayout.setVisibility(View.VISIBLE);
+            mInviteFriendsLayout.startAnimation(mAnimUp);
+            if (mProgress.isShowing()) {
+                mProgress.dismiss();
             }
         } else {
-            if (progress.isShowing()) {
-                progress.dismiss();
+            if (mProgress.isShowing()) {
+                mProgress.dismiss();
             }
             Intent i = new Intent(getActivity(), VueLoginActivity.class);
             Bundle b = new Bundle();
@@ -885,8 +852,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
     
     private void getUserInfo() {
         expandListView.setVisibility(View.GONE);
-        customlayout.startAnimation(animUp);
-        customlayout.setVisibility(View.VISIBLE);
+        mCustomlayout.startAnimation(mAnimUp);
+        mCustomlayout.setVisibility(View.VISIBLE);
         
         VueUserProfile vueUserProfile = null;
         try {
@@ -897,23 +864,23 @@ public class VueListFragment extends Fragment implements TextWatcher {
         }
         
         if (vueUserProfile != null) {
-            isNewUser = true;
-            profilePicUrl = vueUserProfile.getUserProfilePicture();
-            userNameEdit.setText(vueUserProfile.getUserName());
-            userDOBEdit.setText(vueUserProfile.getUserDOB());
-            userGenderEdit.setText(vueUserProfile.getUserGender());
-            userEmailEdit.setText(vueUserProfile.getUserEmail());
-            userLocationEdit.setText(vueUserProfile.getUserLocation());
-            if (!userEmailEdit.getText().toString().isEmpty()) {
-                userEmailEdit.setEnabled(false);
+            mIsNewUser = true;
+            mProfilePicUrl = vueUserProfile.getUserProfilePicture();
+            mUserNameEdit.setText(vueUserProfile.getUserName());
+            mUuserDobEdit.setText(vueUserProfile.getUserDOB());
+            mUserGenderEdit.setText(vueUserProfile.getUserGender());
+            mUserEmailEdit.setText(vueUserProfile.getUserEmail());
+            mUserLocationEdit.setText(vueUserProfile.getUserLocation());
+            if (!mUserEmailEdit.getText().toString().isEmpty()) {
+                mUserEmailEdit.setEnabled(false);
             }
         }
         
-        if (profilePicUrl != null) {
+        if (mProfilePicUrl != null) {
             File f = new FileCache(getActivity())
                     .getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME);
             if (f.exists()) {
-                userProfilePic.setImageURI(Uri.fromFile(f));
+                mUserProfilePic.setImageURI(Uri.fromFile(f));
             }
         }
     }
@@ -954,27 +921,27 @@ public class VueListFragment extends Fragment implements TextWatcher {
     
     private void inflateSettingsLayout() {
         View layoutSettings = null;
-        if (customlayout == null) {
+        if (mCustomlayout == null) {
             layoutSettings = inflater.inflate(R.layout.settings_layout, null);
             LinearLayout.LayoutParams params = new LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            customlayout = (LinearLayout) layoutSettings
+            mCustomlayout = (LinearLayout) layoutSettings
                     .findViewById(R.id.customlayout);
-            customlayout.setLayoutParams(params);
-            userProfilePic = (ImageView) layoutSettings
+            mCustomlayout.setLayoutParams(params);
+            mUserProfilePic = (ImageView) layoutSettings
                     .findViewById(R.id.user_profilePic);
-            userNameEdit = (EditText) layoutSettings
+            mUserNameEdit = (EditText) layoutSettings
                     .findViewById(R.id.user_name_EditText);
-            userDOBEdit = (EditText) layoutSettings
+            mUuserDobEdit = (EditText) layoutSettings
                     .findViewById(R.id.user_DOB_EditText);
-            userGenderEdit = (EditText) layoutSettings
+            mUserGenderEdit = (EditText) layoutSettings
                     .findViewById(R.id.user_Gender_EditText);
-            userEmailEdit = (EditText) layoutSettings
+            mUserEmailEdit = (EditText) layoutSettings
                     .findViewById(R.id.user_Email_EditText);
-            userLocationEdit = (EditText) layoutSettings
+            mUserLocationEdit = (EditText) layoutSettings
                     .findViewById(R.id.user_location_EditText);
             
-            userDOBEdit.setOnTouchListener(new OnTouchListener() {
+            mUuserDobEdit.setOnTouchListener(new OnTouchListener() {
                 
                 @Override
                 public boolean onTouch(View view, MotionEvent event) {
@@ -984,41 +951,40 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     return false;
                 }
             });
-            userNameEdit.addTextChangedListener(this);
-            userDOBEdit.addTextChangedListener(this);
-            userGenderEdit.addTextChangedListener(this);
-            userEmailEdit.addTextChangedListener(this);
-            userLocationEdit.addTextChangedListener(this);
-            donelayout = (RelativeLayout) layoutSettings
+            mUserNameEdit.addTextChangedListener(this);
+            mUuserDobEdit.addTextChangedListener(this);
+            mUserGenderEdit.addTextChangedListener(this);
+            mUserEmailEdit.addTextChangedListener(this);
+            mUserLocationEdit.addTextChangedListener(this);
+            mDoneLayout = (RelativeLayout) layoutSettings
                     .findViewById(R.id.donelayout);
-            donelayout.setOnClickListener(new OnClickListener() {
+            mDoneLayout.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Utils.saveNetworkSettings(getActivity(),
-                    // wifich.isChecked());
-                    if (userNameEdit.getText().toString().isEmpty()) {
+                    if (mUserNameEdit.getText().toString().isEmpty()) {
                         Toast.makeText(getActivity(),
                                 "User name cannot be blank", Toast.LENGTH_LONG)
                                 .show();
                         return;
                     }
-                    customlayout.setVisibility(View.GONE);
-                    customlayout.startAnimation(animDown);
+                    mCustomlayout.setVisibility(View.GONE);
+                    mCustomlayout.startAnimation(mAnimDown);
                     expandListView.setVisibility(View.VISIBLE);
-                    if (isProfileEdited || isNewUser) {
-                        userDOBEdit.getText().toString();
-                        userGenderEdit.getText().toString();
-                        userEmailEdit.getText().toString();
-                        userLocationEdit.getText().toString();
-                        userEmailEdit.getText().toString();
+                    if (mIsProfileEdited || mIsNewUser) {
+                        mUuserDobEdit.getText().toString();
+                        mUserGenderEdit.getText().toString();
+                        mUserEmailEdit.getText().toString();
+                        mUserLocationEdit.getText().toString();
+                        mUserEmailEdit.getText().toString();
                         try {
                             VueUserProfile vueUserProfile = new VueUserProfile(
-                                    profilePicUrl, userEmailEdit.getText()
-                                            .toString(), userNameEdit.getText()
-                                            .toString(), userDOBEdit.getText()
-                                            .toString(), userGenderEdit
+                                    mProfilePicUrl, mUserEmailEdit.getText()
+                                            .toString(), mUserNameEdit
                                             .getText().toString(),
-                                    userLocationEdit.getText().toString(), true);
+                                    mUuserDobEdit.getText().toString(),
+                                    mUserGenderEdit.getText().toString(),
+                                    mUserLocationEdit.getText().toString(),
+                                    true);
                             Utils.writeUserProfileObjectToFile(
                                     getActivity(),
                                     VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
@@ -1026,20 +992,20 @@ public class VueListFragment extends Fragment implements TextWatcher {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        isProfileEdited = false;
-                        isNewUser = false;
+                        mIsProfileEdited = false;
+                        mIsNewUser = false;
                     }
                 }
             });
             mBezelMainLayout.addView(layoutSettings);
         }
-        customlayout.setVisibility(View.GONE);
+        mCustomlayout.setVisibility(View.GONE);
         
     }
     
     private void inflateAboutLayout() {
         View aboutLayoutView = null;
-        if (aboutlayout == null) {
+        if (mAboutLayout == null) {
             aboutLayoutView = inflater.inflate(R.layout.about, null);
             LinearLayout.LayoutParams params = new LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -1051,32 +1017,32 @@ public class VueListFragment extends Fragment implements TextWatcher {
                             TypedValue.COMPLEX_UNIT_DIP, 48, getActivity()
                                     .getResources().getDisplayMetrics()));
             params2.gravity = Gravity.CENTER_HORIZONTAL;
-            aboutlayout = (LinearLayout) aboutLayoutView
+            mAboutLayout = (LinearLayout) aboutLayoutView
                     .findViewById(R.id.aboutlayout);
-            aboutlayout.setLayoutParams(params);
-            aboutdonelayout = (RelativeLayout) aboutLayoutView
+            mAboutLayout.setLayoutParams(params);
+            mAboutDoneLayout = (RelativeLayout) aboutLayoutView
                     .findViewById(R.id.aboutdonelayout);
-            aboutdonelayout.setLayoutParams(params2);
-            aboutdonelayout.setOnClickListener(new OnClickListener() {
+            mAboutDoneLayout.setLayoutParams(params2);
+            mAboutDoneLayout.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View arg0) {
                     expandListView.setVisibility(View.VISIBLE);
-                    aboutlayout.setVisibility(View.GONE);
-                    aboutlayout.startAnimation(animDown);
+                    mAboutLayout.setVisibility(View.GONE);
+                    mAboutLayout.startAnimation(mAnimDown);
                 }
             });
             mBezelMainLayout.addView(aboutLayoutView);
         }
         expandListView.setVisibility(View.GONE);
-        aboutlayout.setVisibility(View.VISIBLE);
-        aboutlayout.startAnimation(animUp);
+        mAboutLayout.setVisibility(View.VISIBLE);
+        mAboutLayout.startAnimation(mAnimUp);
     }
     
     @Override
     public void afterTextChanged(Editable s) {
-        if (!isProfileEdited)
-            isProfileEdited = true;
+        if (!mIsProfileEdited)
+            mIsProfileEdited = true;
     }
     
     @Override
@@ -1095,14 +1061,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
             String y = Integer.toString(year);
             String m = Integer.toString(monthOfYear);
             String d = Integer.toString(dayOfMonth);
-            userDOBEdit.setText(y + "/" + m + "/" + d);
+            mUuserDobEdit.setText(y + "/" + m + "/" + d);
         }
     };
     
-    // private boolean isDataPickerOpen = false;
     private void dataPicker() {
-        // if(!isDataPickerOpen) {
-        // isProfileEdited = true;
         final Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR);
         int mMonth = c.get(Calendar.MONTH);
@@ -1110,8 +1073,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
         DatePickerDialog DPD = new DatePickerDialog(getActivity(),
                 mDateSetListener, mYear, mMonth, mDay);
         DPD.show();
-        // isDataPickerOpen = true;
-        // }
     }
     
     public interface ProfileImageChangeListenor {

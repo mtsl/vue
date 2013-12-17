@@ -28,9 +28,5 @@ public interface IAisleContentAdapter {
     public String getAisleId();
     
     public boolean hasSameLikes(int position);
-    
-    /*
-     * public void setSourceName(String sourceName); public String
-     * getSourceName();
-     */
+  
 }

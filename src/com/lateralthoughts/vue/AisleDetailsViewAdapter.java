@@ -105,7 +105,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
             AisleDetailSwipeListener swipeListner, int listCount,
             ArrayList<AisleWindowContent> content,
             ShareViaVueListner shareViaVueListner) {
-        /* super(c, content); */
         mShareViaVueListner = shareViaVueListner;
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance());
@@ -191,10 +190,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
             for (ImageComments comment : imgComments) {
                 mShowingList.add(comment.mComment);
             }
-            
-            // mShowingList =
-            // getItem(mCurrentAislePosition).getAisleContext().mCommentList;
-            
             int imgPosition = 0;
             if (VueApplication.getInstance().getmAisleImgCurrentPos() < getItem(
                     mCurrentAislePosition).getImageList().size()) {
@@ -251,8 +246,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
             }, mWaitTime);
             
         }
-        
-        // mswipeListner.setFindAtText(getItem(mCurrentAislePosition).getImageList().get(0).mImageUrl);
     }
     
     @Override
@@ -288,7 +281,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
         RelativeLayout likelay, bookmarklay;
         FrameLayout edtCommentLay;
         ImageView commentSend, starIcon;
-        LinearLayout /* editImage, */starImage;
+        LinearLayout starImage;
         
         String tag;
     }
@@ -308,10 +301,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
                     null);
             mViewHolder.aisleContentBrowser = (AisleContentBrowser) convertView
                     .findViewById(R.id.showpieceadapter);
-            /*
-             * mViewHolder.editImage = (LinearLayout) convertView
-             * .findViewById(R.id.editImage);
-             */
             mViewHolder.starIcon = (ImageView) convertView
                     .findViewById(R.id.staricon);
             
@@ -421,7 +410,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
         mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
         mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
         
-        // mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
         if (position == 0) {
             boolean hasToShow = false;
             
@@ -430,9 +418,7 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
             mViewHolder.addCommentlay.setVisibility(View.GONE);
             mViewHolder.separator.setVisibility(View.GONE);
             mViewHolder.edtCommentLay.setVisibility(View.GONE);
-            // mViewHolder.mWindowContent = mWindowContentTemp;
             try {
-                // mViewHolder.editImage.setVisibility(View.GONE);
                 if (getItem(mCurrentAislePosition).getImageList().get(
                         mCurrentDispImageIndex).mOwnerUserId != null
                         && getItem(mCurrentAislePosition).getAisleContext().mUserId != null) {
@@ -440,46 +426,12 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
                             .getImageList().get(mCurrentDispImageIndex).mOwnerUserId) == mUserId
                             || Long.parseLong(getItem(mCurrentAislePosition)
                                     .getAisleContext().mUserId) == mUserId) {
-                        /*
-                         * int browserHeight = getItem(mCurrentAislePosition)
-                         * .getBestLargetHeightForWindow(); int browserWidth =
-                         * VueApplication.getInstance()
-                         * .getVueDetailsCardWidth(); int imageHeight =
-                         * getItem(mCurrentAislePosition)
-                         * .getImageList().get(mCurrentDispImageIndex
-                         * ).mDetailsImageHeight; int imageWidth =
-                         * getItem(mCurrentAislePosition)
-                         * .getImageList().get(mCurrentDispImageIndex
-                         * ).mDetailsImageWidth; int imageRightSpace =
-                         * browserWidth - imageWidth; int imageTopAreaHeight =
-                         * (browserHeight / 2) - (imageHeight / 2);
-                         * FrameLayout.LayoutParams editIconParams = new
-                         * FrameLayout.LayoutParams(
-                         * VueApplication.getInstance().getPixel(32),
-                         * VueApplication.getInstance().getPixel(32));
-                         * editIconParams.setMargins(0, VueApplication
-                         * .getInstance().getPixel(10) + imageTopAreaHeight,
-                         * VueApplication .getInstance().getPixel(4) +
-                         * imageRightSpace / 2, 0);
-                         * 
-                         * editIconParams.gravity = Gravity.RIGHT;
-                         * mViewHolder.editImage
-                         * .setLayoutParams(editIconParams);
-                         * mViewHolder.editImage.setVisibility(View.VISIBLE);
-                         * mViewHolder.editImage .setOnClickListener(new
-                         * OnClickListener() {
-                         * 
-                         * @Override public void onClick(View v) {
-                         * Toast.makeText(mContext, "Edit Aisle Function",
-                         * Toast.LENGTH_SHORT).show(); } });
-                         */
                         hasToShow = true;
                         mswipeListner.hasToShowEditIcon(hasToShow);
                         
                     } else {
                         hasToShow = false;
                         mswipeListner.hasToShowEditIcon(hasToShow);
-                        // mViewHolder.editImage.setVisibility(View.GONE);
                     }
                 }
                 if (getItem(mCurrentAislePosition).getImageList().get(
@@ -563,15 +515,10 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
                 }
                 int scrollIndex = VueApplication.getInstance()
                         .getmAisleImgCurrentPos();
-                // mWindowContentTemp = mViewHolder.mWindowContent;
                 mViewHolder.tag = TAG;
                 mViewLoader.getAisleContentIntoView(mViewHolder, scrollIndex,
                         position, new DetailImageClickListener(),
-                        getItem(mCurrentAislePosition), mSetPosition,/*
-                                                                      * mViewHolder.
-                                                                      * editImage
-                                                                      * ,
-                                                                      */
+                        getItem(mCurrentAislePosition), mSetPosition,
                         mViewHolder.starImage);
                 mSetPosition = false;
                 
@@ -605,7 +552,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
             mViewHolder.imgContentlay.setVisibility(View.GONE);
             mViewHolder.vueCommentheader.setVisibility(View.GONE);
             mViewHolder.commentContentlay.setVisibility(View.GONE);
-            // mViewHolder.edtCommentLay.setVisibility(View.GONE);
             if (mViewHolder.enterCommentrellay.getVisibility() == View.VISIBLE) {
                 mViewHolder.commentSend.setVisibility(View.GONE);
             }
@@ -655,8 +601,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
         mViewHolder.exapandHolder.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
-                // mswipeListner.onResetAdapter();
-                
                 if (mListCount == (mShowFixedRowCount + mInitialCommentsToShowSize)) {
                     mListCount = mShowingList.size() + mShowFixedRowCount;
                 } else {
@@ -854,7 +798,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
         
         @Override
         public void onImageDoubleTap() {
-            /* if (mCurrentDispImageIndex == 0) { */
             int resizeWidth = getItem(mCurrentAislePosition).getImageList()
                     .get(mCurrentDispImageIndex).mTempResizeBitmapwidth;
             int resizeHeight = getItem(mCurrentAislePosition).getImageList()
@@ -891,12 +834,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
             writeToSdCard = writeToSdCard
                     + "\n***************DETAILS ADAPTER***********************";
             writeToSdcard(writeToSdCard);
-            /*
-             * } else { Toast.makeText(mContext,
-             * "Works For Only Starting Image", 1000) .show(); ;
-             * 
-             * }
-             */
         }
         
         @Override
@@ -1049,15 +986,13 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
                 mViewHolder.aisleContentBrowser.removeAllViews();
                 mViewHolder.aisleContentBrowser = null;
             }
-            
-            // mViewHolder.aisleContentBrowser.removeAllViews();
         }
     }
     
     public void addAisleToContentWindow(String imagePath, String imageUrl,
             int imageWidth, int imageHeight, String title, String detailsUrl,
             String store, String imageId, boolean isImageFromLocalSystem) {
-        Utils.isAisleChanged = true;
+        Utils.sIsAisleChanged = true;
         Utils.mChangeAilseId = getItem(mCurrentAislePosition).getAisleId();
         AisleImageDetails imgDetails = new AisleImageDetails();
         imgDetails.mAvailableHeight = imageHeight;
@@ -1094,7 +1029,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
                 .dataObserver();
         
         if (mViewHolder != null) {
-            // mswipeListner.onResetAdapter();
             setAisleBrowserObjectsNull();
             mswipeListner.onResetAdapter();
         } else {
@@ -1374,9 +1308,6 @@ public class AisleDetailsViewAdapter extends BaseAdapter {
         imgComment.setOwnerImageId(Long
                 .parseLong(getItem(mCurrentAislePosition).getImageList().get(
                         mCurrentDispImageIndex).mId));
-        
-        System.out.println("Comment Response: aisleId "
-                + getItem(mCurrentAislePosition).getAisleId());
         new Thread(new Runnable() {
             
             @Override
