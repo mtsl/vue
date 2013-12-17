@@ -72,7 +72,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	private static final String CHANGE_BOOKMARK = "BOOKMARK";
 	public static final String CHANGE_COMMENT = "COMMENT";
 	private static final String CHANGE_LIKES = "LIKES";
-	private static final boolean DEBUG = false;
 	private AisleDetailSwipeListener mswipeListner;
 	private boolean mCloseKeyboard = false;
 	private VueUser mStoredVueUser = null;
@@ -117,7 +116,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			AisleDetailSwipeListener swipeListner, int listCount,
 			ArrayList<AisleWindowContent> content,
 			ShareViaVueListner shareViaVueListner) {
-		/* super(c, content); */
 		mShareViaVueListner = shareViaVueListner;
 		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
 				.getInstance(VueApplication.getInstance());
@@ -286,8 +284,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		RelativeLayout enterCommentrellay;
 		RelativeLayout likelay, bookmarklay;
 		FrameLayout edtCommentLay;
-		ImageView commentSend/* starIcon */;
-		LinearLayout /* editImage, */starImage;
+		ImageView commentSend;
+		LinearLayout starImage;
 		ViewPager myPager;
 		String tag;
 	}
@@ -953,7 +951,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 				for (ImageRating imgRat : imgRatingList) {
 					if (mImgRating.getImageId().longValue() == imgRat
 							.getImageId().longValue()) {
-						mImgRating.setId(/* l2 */imgRat.getId().longValue());
+						mImgRating.setId(imgRat.getId().longValue());
 						break;
 					}
 				}
@@ -1131,7 +1129,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 
 	public void updateListCount(String newComment) {
 		mListCount = mListCount + 1;
-		// mShowingList.add(0,newComment);
 	}
 
 	public void createComment(String commentString) {
@@ -1269,7 +1266,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 
 	private class MyPagerAdapter extends PagerAdapter implements
 			GestureDetector.OnGestureListener {
-		// private GestureDetector gesturedetector = null;
 
 		/**
 		 * 
@@ -1302,7 +1298,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			View myView = mInflater.inflate(R.layout.detailsbrowser, null);
 			ImageView browserImage = (ImageView) myView
 					.findViewById(R.id.browserimage);
-			// gesturedetector = new GestureDetector(this);
 			browserImage.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -1621,7 +1616,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			mswipeListner.onAllowListResponse();
 			setmSetPagerToTrue();
 			if (mPrevPosition == position) {
-				// mswipeListner.onAisleSwipe("Right",position);
 			} else if (mPrevPosition < position) {
 				mswipeListner.onAisleSwipe("Left", position);
 
