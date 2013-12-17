@@ -27,6 +27,15 @@ public class AisleContentBrowser extends ViewFlipper {
     private String mAisleUniqueId;
     private String mSourceName;
     int mCurrentIndex;
+    private ImageView mStarIcon;
+    
+    public ImageView getmStarIcon() {
+        return mStarIcon;
+    }
+    
+    public void setmStarIcon(ImageView mStarIcon) {
+        this.mStarIcon = mStarIcon;
+    }
     
     public String getmSourceName() {
         return mSourceName;
@@ -249,23 +258,19 @@ public class AisleContentBrowser extends ViewFlipper {
                                     if (null != mSpecialNeedsAdapter) {
                                         if (mSpecialNeedsAdapter
                                                 .hasMostLikes(currentIndex + 1)) {
-                                            if (mLeftListListener != null)
-                                                mLeftListListener
-                                                        .onSwipe(
-                                                                true,
-                                                                mSpecialNeedsAdapter
-                                                                        .getAisleId(),
-                                                                mSpecialNeedsAdapter
-                                                                        .hasSameLikes(currentIndex + 1));
+                                            if (mSpecialNeedsAdapter
+                                                    .hasSameLikes(currentIndex + 1)) {
+                                                mStarIcon
+                                                        .setImageResource(R.drawable.vue_star_light);
+                                            } else {
+                                                mStarIcon
+                                                        .setImageResource(R.drawable.vue_star_theme);
+                                            }
+                                            mStarIcon
+                                                    .setVisibility(View.VISIBLE);
+                                            
                                         } else {
-                                            if (mLeftListListener != null)
-                                                mLeftListListener
-                                                        .onSwipe(
-                                                                false,
-                                                                mSpecialNeedsAdapter
-                                                                        .getAisleId(),
-                                                                mSpecialNeedsAdapter
-                                                                        .hasSameLikes(currentIndex + 1));
+                                            mStarIcon.setVisibility(View.GONE);
                                         }
                                     }
                                 }
@@ -368,21 +373,18 @@ public class AisleContentBrowser extends ViewFlipper {
                                     if (null != mSpecialNeedsAdapter) {
                                         if (mSpecialNeedsAdapter
                                                 .hasMostLikes(currentIndex - 1)) {
-                                            mLeftListListener
-                                                    .onSwipe(
-                                                            true,
-                                                            mSpecialNeedsAdapter
-                                                                    .getAisleId(),
-                                                            mSpecialNeedsAdapter
-                                                                    .hasSameLikes(currentIndex - 1));
+                                            if (mSpecialNeedsAdapter
+                                                    .hasSameLikes(currentIndex - 1)) {
+                                                mStarIcon
+                                                        .setImageResource(R.drawable.vue_star_light);
+                                            } else {
+                                                mStarIcon
+                                                        .setImageResource(R.drawable.vue_star_theme);
+                                            }
+                                            mStarIcon
+                                                    .setVisibility(View.VISIBLE);
                                         } else {
-                                            mLeftListListener
-                                                    .onSwipe(
-                                                            false,
-                                                            mSpecialNeedsAdapter
-                                                                    .getAisleId(),
-                                                            mSpecialNeedsAdapter
-                                                                    .hasSameLikes(currentIndex - 1));
+                                            mStarIcon.setVisibility(View.GONE);
                                         }
                                     }
                                     // aisleContentBrowser.setDisplayedChild(currentIndex-1);
@@ -405,8 +407,7 @@ public class AisleContentBrowser extends ViewFlipper {
         }
         return super.onTouchEvent(event);
     }
-    
-    // }
+ 
     public void setCurrentImage() {
         Utils.sAinmate = false;
         for (int i = 0; i < VueApplication.getInstance()
@@ -420,9 +421,6 @@ public class AisleContentBrowser extends ViewFlipper {
         Utils.sAinmate = true;
         
     }
-    
-    // }
-    
     public void setCustomAdapter(IAisleContentAdapter adapter) {
         mSpecialNeedsAdapter = adapter;
     }
@@ -533,28 +531,6 @@ public class AisleContentBrowser extends ViewFlipper {
         public void onEditAisle();
         
     }
-    
-    private AilseLeftListLisner mLeftListListener;
-    private AilseRighttRightLisner mRightListListener;
-    
-    public void setAilseLeftListLisner(AilseLeftListLisner leftListener) {
-        mLeftListListener = leftListener;
-    }
-    
-    public void setAilseRighttListLisner(AilseRighttRightLisner rightListener) {
-        mRightListListener = (AilseRighttRightLisner) rightListener;
-    }
-    
-    public interface AilseLeftListLisner {
-        public void onSwipe(boolean hasToShwo, String aisleId,
-                boolean hasSameLikes);
-    }
-    
-    public interface AilseRighttRightLisner {
-        public void onSwipe(boolean hasToShwo, String aisleId,
-                boolean hasSameLikes);
-    }
-    
     public void setAisleDetailSwipeListener(
             AisleDetailSwipeListener swipListener) {
         mSwipeListener = swipListener;

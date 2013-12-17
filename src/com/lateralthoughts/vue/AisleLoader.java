@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
@@ -150,6 +151,7 @@ public class AisleLoader {
             holder.aisleContentBrowser.setCustomAdapter(adapter);
             holder.uniqueContentId = desiredContentId;
             holder.aisleContentBrowser.removeAllViews();
+            holder.aisleContentBrowser.setmStarIcon(null);
             holder.aisleContentBrowser.setUniqueId(desiredContentId);
             holder.aisleContentBrowser.setScrollIndex(scrollIndex);
             holder.aisleContentBrowser.setCustomAdapter(adapter);
@@ -159,15 +161,15 @@ public class AisleLoader {
                 holder.aisleContentBrowser.isRight = true;
             }
         }
-        
         mListener = listener;
         imageDetailsArr = windowContent.getImageList();
         if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
-            
+            ImageView image = (ImageView) startImageLay
+                    .findViewById(R.id.staricon);
+            holder.aisleContentBrowser.setmStarIcon(image);
             itemDetails = imageDetailsArr.get(0);
             if (itemDetails.mHasMostLikes) {
-                ImageView image = (ImageView) startImageLay
-                        .findViewById(R.id.staricon);
+             
                 if (itemDetails.mSameMostLikes) {
                     image.setImageResource(R.drawable.vue_star_light);
                 } else {
@@ -182,9 +184,7 @@ public class AisleLoader {
             int bestHeight = windowContent.getBestHeightForWindow();
             FrameLayout.LayoutParams mShowpieceParams2 = new FrameLayout.LayoutParams(
                     LayoutParams.MATCH_PARENT, itemDetails.mTrendingImageHeight);
-            
             contentBrowser.setLayoutParams(mShowpieceParams2);
-            
             String profleUrl = windowContent.getAisleContext().mAisleOwnerImageURL;
             contentBrowser.addView(imageView);
             if (!placeholderOnly) {

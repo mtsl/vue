@@ -1322,12 +1322,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     // these listener does nothing. But inorder to give the
                     // control to the
                     // listview when touch out side of the image in the browser.
+                    detailsImageClickListenr.onImageClicked();
                 }
             });
             full_bg_image.setOnLongClickListener(new OnLongClickListener() {
                 
                 @Override
                 public boolean onLongClick(View v) {
+                    detailsImageClickListenr.onImageLongPress();
                     return false;
                 }
             });

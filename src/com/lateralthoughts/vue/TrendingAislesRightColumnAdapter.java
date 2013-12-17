@@ -36,7 +36,6 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
-import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseRighttRightLisner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
@@ -114,10 +113,7 @@ public class TrendingAislesRightColumnAdapter extends
             holder.aisleselectlay = (LinearLayout) convertView
                     .findViewById(R.id.aisleselectlay);
             holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-            holder.aisleContentBrowser
-                    .setAilseRighttListLisner(new RightList());
             convertView.setTag(holder);
-            ;
         }
         holder = (ViewHolder) convertView.getTag();
         holder.mWindowContent = (AisleWindowContent) getItem(position);
@@ -221,18 +217,5 @@ public class TrendingAislesRightColumnAdapter extends
         if (0 != position)
             actualPosition = (positionFactor * position) + actualPosition;
         return actualPosition;
-    }
-    
-    private class RightList implements AilseRighttRightLisner {
-        
-        @Override
-        public void onSwipe(boolean hasToShwo, String aisleId, boolean sameLikes) {
-            mHasToShow = hasToShwo;
-            mShowStarAisle = aisleId;
-            mHasSameLikes = sameLikes;
-            notifyDataSetChanged();
-            
-        }
-        
     }
 }
