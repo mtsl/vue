@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
@@ -38,17 +39,22 @@ public class AisleContentBrowser extends ViewFlipper {
     private int mScrollIndex;
     private Context mContext;
     
-    public boolean animationInProgress;
+    public boolean mAnimationInProgress;
+    private int mDebugTapCount = 0;
+    private long mDownPressStartTime = 0;
+    private final int MAX_ELAPSED_DURATION_FOR_TAP = 200;
     public static final int SWIPE_MIN_DISTANCE = 30;
     private IAisleContentAdapter mSpecialNeedsAdapter;
     
-    public int firstX;
-    public int lastX;
-    public int firstY;
-    public int lastY;
+    public int mFirstX;
+    public int mLastX;
+    public int mFirstY;
+    public int mLastY;
     private boolean mTouchMoved;
+    private int mTapTimeout;
     private String holderName;
     private String mBrowserArea;
+    private boolean mSetPosition;
     public boolean isLeft;
     public boolean isRight;
     
@@ -68,6 +74,8 @@ public class AisleContentBrowser extends ViewFlipper {
         this.holderName = holderName;
     }
     
+    private GestureDetector mDetector;
+    
     public AisleContentBrowser(Context context) {
         super(context);
         mContext = context;
@@ -79,14 +87,18 @@ public class AisleContentBrowser extends ViewFlipper {
         super(context, attribs);
         mAisleUniqueId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
         mScrollIndex = 0;
-        animationInProgress = false;
+        mAnimationInProgress = false;
         mContext = context;
         this.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                
             }
         });
+        mTapTimeout = ViewConfiguration.getTapTimeout();
         this.setBackgroundColor(Color.WHITE);
+        mDetector = new GestureDetector(AisleContentBrowser.this.getContext(),
+                new mListener());
     }
     
     public void setUniqueId(String id) {
@@ -118,41 +130,44 @@ public class AisleContentBrowser extends ViewFlipper {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser) this;
+        
+        boolean result = mDetector.onTouchEvent(event);
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             mCurrentIndex = aisleContentBrowser
                     .indexOfChild(aisleContentBrowser.getCurrentView());
-            animationInProgress = false;
-            firstX = (int) event.getX();
-            firstY = (int) event.getY();
+            mAnimationInProgress = false;
+            mFirstX = (int) event.getX();
+            mFirstY = (int) event.getY();
+            mDownPressStartTime = System.currentTimeMillis();
             return super.onTouchEvent(event);
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             if (mTouchMoved) {
                 mTouchMoved = false;
                 return true;
             }
-            animationInProgress = false;
+            mAnimationInProgress = false;
             
-            firstX = 0;
-            lastX = 0;
+            mFirstX = 0;
+            mLastX = 0;
             return super.onTouchEvent(event);
         }
         
         else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            lastX = (int) event.getX();
-            lastY = (int) event.getY();
-            if (firstY - lastY > SWIPE_MIN_DISTANCE
-                    || lastY - firstY > SWIPE_MIN_DISTANCE) {
+            mLastX = (int) event.getX();
+            mLastY = (int) event.getY();
+            if (mFirstY - mLastY > SWIPE_MIN_DISTANCE
+                    || mLastY - mFirstY > SWIPE_MIN_DISTANCE) {
                 return super.onTouchEvent(event);
             }
             
-            if (firstX - lastX > SWIPE_MIN_DISTANCE) {
+            if (mFirstX - mLastX > SWIPE_MIN_DISTANCE) {
                 // In this case, the user is moving the finger right to left
                 // The current image needs to slide out left and the "next"
                 // image
                 // needs to fade in
                 mTouchMoved = true;
                 requestDisallowInterceptTouchEvent(true);
-                if (false == animationInProgress) {
+                if (false == mAnimationInProgress) {
                     View nextView = null;
                     final int currentIndex = aisleContentBrowser
                             .indexOfChild(aisleContentBrowser.getCurrentView());
@@ -163,7 +178,7 @@ public class AisleContentBrowser extends ViewFlipper {
                         if (!mSpecialNeedsAdapter.setAisleContent(
                                 AisleContentBrowser.this, currentIndex,
                                 currentIndex + 1, true)) {
-                            animationInProgress = true;
+                            mAnimationInProgress = true;
                             
                             Animation cantWrapRight = AnimationUtils
                                     .loadAnimation(mContext,
@@ -208,7 +223,7 @@ public class AisleContentBrowser extends ViewFlipper {
                             mContext, R.anim.right_out);
                     final Animation nextFadeIn = AnimationUtils.loadAnimation(
                             mContext, R.anim.fade_in);
-                    animationInProgress = true;
+                    mAnimationInProgress = true;
                     aisleContentBrowser.setInAnimation(nextFadeIn);
                     aisleContentBrowser.setOutAnimation(currentGoLeft);
                     currentGoLeft
@@ -223,6 +238,7 @@ public class AisleContentBrowser extends ViewFlipper {
                                                 .onAisleSwipe(
                                                         VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT,
                                                         currentIndex + 1);
+                                        // mSwipeListener.onDissAllowListResponse();
                                     }
                                     mCurrentIndex = currentIndex + 1;
                                     if (detailImgClickListenr != null) {
@@ -265,12 +281,13 @@ public class AisleContentBrowser extends ViewFlipper {
                             });
                     
                     aisleContentBrowser.setDisplayedChild(currentIndex + 1);
+                    // aisleContentBrowser.invalidate();
                     return super.onTouchEvent(event);
                 }
-            } else if (lastX - firstX > SWIPE_MIN_DISTANCE) {
+            } else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE) {
                 requestDisallowInterceptTouchEvent(true);
                 mTouchMoved = true;
-                if (false == animationInProgress) {
+                if (false == mAnimationInProgress) {
                     final int currentIndex = aisleContentBrowser
                             .indexOfChild(aisleContentBrowser.getCurrentView());
                     View nextView = null;
@@ -325,7 +342,7 @@ public class AisleContentBrowser extends ViewFlipper {
                             mContext, R.anim.left_in);
                     final Animation nextFadeIn = AnimationUtils.loadAnimation(
                             mContext, R.anim.fade_in);
-                    animationInProgress = true;
+                    mAnimationInProgress = true;
                     aisleContentBrowser.setInAnimation(nextFadeIn);
                     aisleContentBrowser.setOutAnimation(currentGoRight);
                     currentGoRight
@@ -368,6 +385,8 @@ public class AisleContentBrowser extends ViewFlipper {
                                                                     .hasSameLikes(currentIndex - 1));
                                         }
                                     }
+                                    // aisleContentBrowser.setDisplayedChild(currentIndex-1);
+                                    
                                 }
                                 
                                 public void onAnimationStart(Animation animation) {
@@ -387,6 +406,7 @@ public class AisleContentBrowser extends ViewFlipper {
         return super.onTouchEvent(event);
     }
     
+    // }
     public void setCurrentImage() {
         Utils.sAinmate = false;
         for (int i = 0; i < VueApplication.getInstance()
@@ -400,6 +420,8 @@ public class AisleContentBrowser extends ViewFlipper {
         Utils.sAinmate = true;
         
     }
+    
+    // }
     
     public void setCustomAdapter(IAisleContentAdapter adapter) {
         mSpecialNeedsAdapter = adapter;
@@ -513,12 +535,14 @@ public class AisleContentBrowser extends ViewFlipper {
     }
     
     private AilseLeftListLisner mLeftListListener;
+    private AilseRighttRightLisner mRightListListener;
     
     public void setAilseLeftListLisner(AilseLeftListLisner leftListener) {
         mLeftListListener = leftListener;
     }
     
     public void setAilseRighttListLisner(AilseRighttRightLisner rightListener) {
+        mRightListListener = (AilseRighttRightLisner) rightListener;
     }
     
     public interface AilseLeftListLisner {
