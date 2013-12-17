@@ -45,177 +45,177 @@ import com.lateralthoughts.vue.utils.Utils;
  * performance and also optimize how much we need to do during startup time.
  */
 public class AisleContentAdapter implements IAisleContentAdapter {
-
-	// private VueMemoryCache<Bitmap> mContentImagesCache;
-	private BitmapLruCache mContentImagesCache;
-
-	private ArrayList<AisleImageDetails> mAisleImageDetails;
-	private AisleWindowContent mWindowContent;
-
-	private ExecutorService mExecutorService;
-	private Context mContext;
-	private FileCache mFileCache;
-	private ScaledImageViewFactory mImageViewFactory;
-	private ColorDrawable mColorDrawable;
-	private int mCurrentPivotIndex;
-	private BitmapLoaderUtils mBitmapLoaderUtils;
-	// public String mSourceName;
-	private ImageDimension mImageDimension;
-	Animation myFadeInAnimation;
-
-	public AisleContentAdapter(Context context) {
-		mContext = context;
-		// mContentImagesCache =
-		// VueApplication.getInstance().getAisleContentCache();
-		mContentImagesCache = BitmapLruCache.getInstance(VueApplication
-				.getInstance());
-		mFileCache = VueApplication.getInstance().getFileCache();
-		mCurrentPivotIndex = -1;
-		mImageViewFactory = ScaledImageViewFactory.getInstance(mContext);
-		mExecutorService = Executors.newFixedThreadPool(5);
-		mColorDrawable = new ColorDrawable(Color.WHITE);
-		mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
-		myFadeInAnimation = AnimationUtils.loadAnimation(
-				VueApplication.getInstance(), R.anim.fadein);
-	}
-
-	// ========================= Methods from the inherited IAisleContentAdapter
-	// ========================//
-	@Override
-	public void setContentSource(String uniqueAisleId,
-			AisleWindowContent windowContent) {
-		// TODO Auto-generated method stub
-		mWindowContent = windowContent;
-		mAisleImageDetails = mWindowContent.getImageList();
-
-		// lets file cache the first two items in the list
-		// queueImagePrefetch(mAisleImageDetails,
-		// mWindowContent.getBestHeightForWindow(), 1,2);
-	}
-
-	public boolean hasMostLikes(int position) {
-
-		return mWindowContent.getImageList().get(position).mHasMostLikes;
-	}
-
-	public boolean hasSameLikes(int position) {
-		return mWindowContent.getImageList().get(position).mSameMostLikes;
-	}
-
-	public String getAisleId() {
-		return mWindowContent.getAisleId();
-	}
-
-	@Override
-	public void releaseContentSource() {
-		// TODO Auto-generated method stub
-		mCurrentPivotIndex = -1;
-		mAisleImageDetails.clear();
-		mWindowContent = null;
-
-	}
-
-	@Override
-	public ScaleImageView getItemAt(int index, boolean isPivot) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setPivot(int index) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void registerAisleDataObserver(IAisleDataObserver observer) {
-
-	}
-
-	@Override
-	public void unregisterAisleDataObserver(IAisleDataObserver observer) {
-	}
-
-	public int getAisleItemsCount() {
-		return mAisleImageDetails.size();
-	}
-
-	@Override
-	public boolean setAisleContent(AisleContentBrowser contentBrowser,
-			int currentIndex, int wantedIndex, boolean shiftPivot) {
-		ScaleImageView imageView = null;
-		AisleImageDetails itemDetails = null;
-		if (wantedIndex >= mAisleImageDetails.size())
-			return false;
-		if (0 >= currentIndex && wantedIndex < currentIndex)
-			return false;
-		if (null != mAisleImageDetails && mAisleImageDetails.size() != 0) {
-			itemDetails = mAisleImageDetails.get(wantedIndex);
-			imageView = mImageViewFactory.getEmptyImageView();
-			Bitmap bitmap = null;
-			if (contentBrowser.getmSourceName() != null
-					&& contentBrowser.getmSourceName().equalsIgnoreCase(
-							AisleDetailsViewAdapter.TAG)) {
-				bitmap = getCachedBitmap(itemDetails.mImageUrl);
-			} else {
-				// bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
-
-			}
-			if (bitmap != null) {
-				if (contentBrowser.getmSourceName() != null
-						&& contentBrowser.getmSourceName().equalsIgnoreCase(
-								AisleDetailsViewAdapter.TAG)) {
-					mImageDimension = Utils.getScalledImage(bitmap,
-							itemDetails.mAvailableWidth,
-							itemDetails.mAvailableHeight);
-					if (bitmap.getHeight() < mImageDimension.mImgHeight) {
-						loadBitmap(itemDetails, mImageDimension.mImgHeight,
-								contentBrowser, imageView, wantedIndex);
-					}
-				}
-				imageView.setImageBitmap(bitmap);
-				contentBrowser.addView(imageView);
-			} else {
-				if (contentBrowser.getmSourceName() != null
-						&& contentBrowser.getmSourceName().equalsIgnoreCase(
-								AisleDetailsViewAdapter.TAG)) {
-					int bestHeight = mWindowContent
-							.getBestLargetHeightForWindow();
-					loadBitmap(itemDetails, bestHeight, contentBrowser,
-							imageView, wantedIndex);
-					contentBrowser.addView(imageView);
-				} else {
-					int bestHeight = mWindowContent.getBestHeightForWindow();
-					loadBitmap(itemDetails, itemDetails.mTrendingImageHeight,
-							contentBrowser, imageView, wantedIndex);
-					contentBrowser.addView(imageView);
-				}
-			}
-		}
-		return true;
-	}
-
-	public Bitmap getCachedBitmap(String url) {
-		return mContentImagesCache.get(url);
-	}
-
-	public void loadBitmap(AisleImageDetails itemDetails, int bestHeight,
-			AisleContentBrowser flipper, ImageView imageView, int wantedIndex) {
-		String loc = itemDetails.mImageUrl;
-		String serverUrl = itemDetails.mImageUrl;
-		if (flipper.getmSourceName() != null
-				&& flipper.getmSourceName().equalsIgnoreCase(
-						AisleDetailsViewAdapter.TAG)) {
-			loc = itemDetails.mImageUrl;
-		} else {
-			loc = itemDetails.mCustomImageUrl;
-		}
-
-		((NetworkImageView) imageView).setImageUrl(itemDetails.mImageUrl,
-				VueApplication.getInstance().getImageCacheLoader(),
-				itemDetails.mTrendingImageWidth,
-				itemDetails.mTrendingImageHeight,
-				NetworkImageView.BitmapProfile.ProfileLandingView);
-	}
-
+    
+    // private VueMemoryCache<Bitmap> mContentImagesCache;
+    private BitmapLruCache mContentImagesCache;
+    
+    private ArrayList<AisleImageDetails> mAisleImageDetails;
+    private AisleWindowContent mWindowContent;
+    
+    private ExecutorService mExecutorService;
+    private Context mContext;
+    private FileCache mFileCache;
+    private ScaledImageViewFactory mImageViewFactory;
+    private ColorDrawable mColorDrawable;
+    private int mCurrentPivotIndex;
+    private BitmapLoaderUtils mBitmapLoaderUtils;
+    // public String mSourceName;
+    private ImageDimension mImageDimension;
+    Animation myFadeInAnimation;
+    
+    public AisleContentAdapter(Context context) {
+        mContext = context;
+        // mContentImagesCache =
+        // VueApplication.getInstance().getAisleContentCache();
+        mContentImagesCache = BitmapLruCache.getInstance(VueApplication
+                .getInstance());
+        mFileCache = VueApplication.getInstance().getFileCache();
+        mCurrentPivotIndex = -1;
+        mImageViewFactory = ScaledImageViewFactory.getInstance(mContext);
+        mExecutorService = Executors.newFixedThreadPool(5);
+        mColorDrawable = new ColorDrawable(Color.WHITE);
+        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
+        myFadeInAnimation = AnimationUtils.loadAnimation(
+                VueApplication.getInstance(), R.anim.fadein);
+    }
+    
+    // ========================= Methods from the inherited IAisleContentAdapter
+    // ========================//
+    @Override
+    public void setContentSource(String uniqueAisleId,
+            AisleWindowContent windowContent) {
+        // TODO Auto-generated method stub
+        mWindowContent = windowContent;
+        mAisleImageDetails = mWindowContent.getImageList();
+        
+        // lets file cache the first two items in the list
+        // queueImagePrefetch(mAisleImageDetails,
+        // mWindowContent.getBestHeightForWindow(), 1,2);
+    }
+    
+    public boolean hasMostLikes(int position) {
+        
+        return mWindowContent.getImageList().get(position).mHasMostLikes;
+    }
+    
+    public boolean hasSameLikes(int position) {
+        return mWindowContent.getImageList().get(position).mSameMostLikes;
+    }
+    
+    public String getAisleId() {
+        return mWindowContent.getAisleId();
+    }
+    
+    @Override
+    public void releaseContentSource() {
+        // TODO Auto-generated method stub
+        mCurrentPivotIndex = -1;
+        mAisleImageDetails.clear();
+        mWindowContent = null;
+        
+    }
+    
+    @Override
+    public ScaleImageView getItemAt(int index, boolean isPivot) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public void setPivot(int index) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
+    public void registerAisleDataObserver(IAisleDataObserver observer) {
+        
+    }
+    
+    @Override
+    public void unregisterAisleDataObserver(IAisleDataObserver observer) {
+    }
+    
+    public int getAisleItemsCount() {
+        return mAisleImageDetails.size();
+    }
+    
+    @Override
+    public boolean setAisleContent(AisleContentBrowser contentBrowser,
+            int currentIndex, int wantedIndex, boolean shiftPivot) {
+        ScaleImageView imageView = null;
+        AisleImageDetails itemDetails = null;
+        if (wantedIndex >= mAisleImageDetails.size())
+            return false;
+        if (0 >= currentIndex && wantedIndex < currentIndex)
+            return false;
+        if (null != mAisleImageDetails && mAisleImageDetails.size() != 0) {
+            itemDetails = mAisleImageDetails.get(wantedIndex);
+            imageView = mImageViewFactory.getEmptyImageView();
+            Bitmap bitmap = null;
+            if (contentBrowser.getmSourceName() != null
+                    && contentBrowser.getmSourceName().equalsIgnoreCase(
+                            AisleDetailsViewAdapter.TAG)) {
+                bitmap = getCachedBitmap(itemDetails.mImageUrl);
+            } else {
+                // bitmap = getCachedBitmap(itemDetails.mCustomImageUrl);
+                
+            }
+            if (bitmap != null) {
+                if (contentBrowser.getmSourceName() != null
+                        && contentBrowser.getmSourceName().equalsIgnoreCase(
+                                AisleDetailsViewAdapter.TAG)) {
+                    mImageDimension = Utils.getScalledImage(bitmap,
+                            itemDetails.mAvailableWidth,
+                            itemDetails.mAvailableHeight);
+                    if (bitmap.getHeight() < mImageDimension.mImgHeight) {
+                        loadBitmap(itemDetails, mImageDimension.mImgHeight,
+                                contentBrowser, imageView, wantedIndex);
+                    }
+                }
+                imageView.setImageBitmap(bitmap);
+                contentBrowser.addView(imageView);
+            } else {
+                if (contentBrowser.getmSourceName() != null
+                        && contentBrowser.getmSourceName().equalsIgnoreCase(
+                                AisleDetailsViewAdapter.TAG)) {
+                    int bestHeight = mWindowContent
+                            .getBestLargetHeightForWindow();
+                    loadBitmap(itemDetails, bestHeight, contentBrowser,
+                            imageView, wantedIndex);
+                    contentBrowser.addView(imageView);
+                } else {
+                    int bestHeight = mWindowContent.getBestHeightForWindow();
+                    loadBitmap(itemDetails, itemDetails.mTrendingImageHeight,
+                            contentBrowser, imageView, wantedIndex);
+                    contentBrowser.addView(imageView);
+                }
+            }
+        }
+        return true;
+    }
+    
+    public Bitmap getCachedBitmap(String url) {
+        return mContentImagesCache.get(url);
+    }
+    
+    public void loadBitmap(AisleImageDetails itemDetails, int bestHeight,
+            AisleContentBrowser flipper, ImageView imageView, int wantedIndex) {
+        String loc = itemDetails.mImageUrl;
+        String serverUrl = itemDetails.mImageUrl;
+        if (flipper.getmSourceName() != null
+                && flipper.getmSourceName().equalsIgnoreCase(
+                        AisleDetailsViewAdapter.TAG)) {
+            loc = itemDetails.mImageUrl;
+        } else {
+            loc = itemDetails.mCustomImageUrl;
+        }
+        
+        ((NetworkImageView) imageView).setImageUrl(itemDetails.mImageUrl,
+                VueApplication.getInstance().getImageCacheLoader(),
+                itemDetails.mTrendingImageWidth,
+                itemDetails.mTrendingImageHeight,
+                NetworkImageView.BitmapProfile.ProfileLandingView);
+    }
+    
 }

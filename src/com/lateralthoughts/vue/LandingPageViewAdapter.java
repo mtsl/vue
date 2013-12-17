@@ -14,34 +14,34 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AilseLeftListLisner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 
-
 public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
-
+    
     private AisleLoader mLoader;
     private Context mContext;
-
+    
     private boolean mHasToShow = true;
     private boolean mHasSameLikes = false;
     private String mShowStarAisle = " ";
     AisleContentClickListener mClickListener;
-
-    public LandingPageViewAdapter(Context context,AisleContentClickListener clickListener) {
+    
+    public LandingPageViewAdapter(Context context,
+            AisleContentClickListener clickListener) {
         super(context, clickListener, null);
         mContext = context;
         mLoader = AisleLoader.getInstance(context);
         mClickListener = clickListener;
     }
-
+    
     @Override
     public int getCount() {
         return mVueTrendingAislesDataModel.getAisleCount();
     }
-
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        
         ViewHolder holder;
-
+        
         int actualPosition = position;
         if (null == convertView) {
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
@@ -73,7 +73,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         if (mHasToShow) {
             if (holder.mWindowContent != null
                     && mShowStarAisle
-                    .equals(holder.mWindowContent.getAisleId())) {
+                            .equals(holder.mWindowContent.getAisleId())) {
                 if (mHasSameLikes) {
                     holder.starIcon.setImageResource(R.drawable.vue_star_light);
                 } else {
@@ -83,14 +83,16 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
                 holder.starIcon.setVisibility(View.VISIBLE);
             }
         } else {
-            if (holder.mWindowContent != null && mShowStarAisle.equals(holder.mWindowContent.getAisleId()))
+            if (holder.mWindowContent != null
+                    && mShowStarAisle
+                            .equals(holder.mWindowContent.getAisleId()))
                 // holder.startImageLay.setVisibility(View.GONE);
                 holder.starIcon.setVisibility(View.GONE);
         }
         if (VueLandingPageActivity.mOtherSourceImagePath != null) {
             if (VueLandingPageActivity.mOtherSourceAddImageAisleId != null
                     && VueLandingPageActivity.mOtherSourceAddImageAisleId
-                    .equals(holder.mWindowContent.getAisleId())) {
+                            .equals(holder.mWindowContent.getAisleId())) {
                 holder.aisleselectlay.setVisibility(View.VISIBLE);
             } else {
                 holder.aisleselectlay.setVisibility(View.GONE);
@@ -98,7 +100,8 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         } else {
             holder.aisleselectlay.setVisibility(View.GONE);
         }
-        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,false, mClickListener,"left", holder.starIcon);
+        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
+                false, mClickListener, "left", holder.starIcon);
         AisleContext context = holder.mWindowContent.getAisleContext();
         String mVueusername = null;
         if (context.mFirstName != null && context.mLastName != null) {
@@ -153,17 +156,19 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         holder.aisleContext.setText(title);
         return convertView;
     }
-	private class ShowLikes implements AilseLeftListLisner {
-
-		@Override
-		public void onSwipe(boolean hasToShwo, String aisleId, boolean sameLikes) {
-			Log.i("swipe listener", "onSiwpe: "+hasToShwo+" aisleId: "+aisleId);
-			mHasToShow = hasToShwo;
-			mShowStarAisle = aisleId;
-			mHasSameLikes = sameLikes;
-			mClickListener.refreshList();
-
-		}
-
-	}
+    
+    private class ShowLikes implements AilseLeftListLisner {
+        
+        @Override
+        public void onSwipe(boolean hasToShwo, String aisleId, boolean sameLikes) {
+            Log.i("swipe listener", "onSiwpe: " + hasToShwo + " aisleId: "
+                    + aisleId);
+            mHasToShow = hasToShwo;
+            mShowStarAisle = aisleId;
+            mHasSameLikes = sameLikes;
+            mClickListener.refreshList();
+            
+        }
+        
+    }
 }

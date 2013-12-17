@@ -19,6 +19,9 @@ package com.origamilabs.library.views;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -39,16 +42,19 @@ import android.support.v4.widget.EdgeEffectCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.*;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.HapticFeedbackConstants;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
-import android.widget.AbsListView;
 
 import com.lateralthoughts.vue.R;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * ListView and GridView just not complex enough? Try StaggeredGridView!

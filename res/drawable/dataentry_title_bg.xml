@@ -59,11 +59,9 @@
     </item>
 
     <!-- Background -->
-    <item >
+    <item>
         <shape>
             <solid android:color="@color/white" />
-
-           
         </shape>
     </item>
 

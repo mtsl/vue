@@ -9,12 +9,12 @@ public class BitmapCache extends LruCache implements ImageLoader.ImageCache {
     public BitmapCache(int maxSize) {
         super(maxSize);
     }
-
+    
     @Override
     public Bitmap getBitmap(String url) {
-        return (Bitmap)get(url);
+        return (Bitmap) get(url);
     }
-
+    
     @Override
     public void putBitmap(String url, Bitmap bitmap) {
         put(url, bitmap);
