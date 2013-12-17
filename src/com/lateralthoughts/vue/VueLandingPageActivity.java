@@ -313,7 +313,9 @@ public class VueLandingPageActivity extends Activity implements
         getActionBar().setCustomView(null);
         getActionBar().setDisplayShowTitleEnabled(true);
         if (isdrawOpen) {
-            menu.findItem(R.id.menu_search).setVisible(true);
+            // set menu search visibility to true when backend functionality is
+            // ready
+            menu.findItem(R.id.menu_search).setVisible(false);
             menu.findItem(R.id.menu_create_aisle).setVisible(false);
         } else {
             if (mHideDefaultActionbar) {

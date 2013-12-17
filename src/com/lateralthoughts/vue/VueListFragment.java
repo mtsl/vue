@@ -175,6 +175,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 R.id.vue_list_fragment_list);
         vue_list_fragment_actionbar = (RelativeLayout) getActivity()
                 .findViewById(R.id.vue_list_fragment_sidemenu_actionbar);
+        vue_list_fragment_actionbar.setVisibility(View.GONE);
         
         final VueListFragmentAdapter adapter = new VueListFragmentAdapter(
                 getActivity(), getBezelMenuOptionItems());
@@ -431,10 +432,13 @@ public class VueListFragment extends Fragment implements TextWatcher {
         }
         
         groups.add(item);
-        item = new ListOptionItem(
-                getString(R.string.sidemenu_option_Categories),
-                R.drawable.new_categories, getCategoriesChildren());
-        groups.add(item);
+        // TODO: use this code when Backend server code is ready for categories
+        /*
+         * item = new ListOptionItem(
+         * getString(R.string.sidemenu_option_Categories),
+         * R.drawable.new_categories, getCategoriesChildren());
+         * groups.add(item);
+         */
         item = new ListOptionItem(getString(R.string.sidemeun_option_Settings),
                 R.drawable.settings01, getSettingsChildren());
         groups.add(item);
