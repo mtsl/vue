@@ -23,7 +23,6 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,7 +30,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -446,14 +444,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 
 					if (getItem(mCurrentAislePosition).getImageList().get(
 							mCurrentDispImageIndex).mSameMostLikes) {
-						// mViewHolder.starIcon.setImageResource(R.drawable.vue_star_light);
-
-					} else {
-						// mViewHolder.starIcon.setImageResource(R.drawable.vue_star_theme);
 					}
-					// mViewHolder.starImage.setVisibility(View.VISIBLE);
-				} else {
-					// mViewHolder.starImage.setVisibility(View.GONE);
 				}
 
 				if (getItem(mCurrentAislePosition).getAisleContext().mDescription != null
@@ -645,16 +636,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 
 			@Override
 			public void onClick(View v) {
-				// mSetPager = false;
 				toggleRatingImage();
-				// setmSetPagerToTrue();
 			}
 		});
 		return convertView;
 	}
 
 	public void notifyAdapter() {
-
 		this.notifyDataSetChanged();
 	}
 
@@ -1122,6 +1110,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
+
 	private void setImageRating() {
 		ArrayList<AisleImageDetails> aisleImgDetais = getItem(
 				mCurrentAislePosition).getImageList();
@@ -1145,7 +1134,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		// mShowingList.add(0,newComment);
 	}
 
- 
 	public void createComment(String commentString) {
 		VueUser storedVueUser = null;
 		try {
@@ -1206,7 +1194,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			@Override
 			public void run() {
 				try {
-					/*ImageComment createdComment =*/ VueTrendingAislesDataModel
+					VueTrendingAislesDataModel
 							.getInstance(VueApplication.getInstance())
 							.getNetworkHandler().createImageComment(imgComment);
 				} catch (Exception e) {
@@ -1216,7 +1204,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		}).start();
 
 	}
- 
+
 	private void getCommentList() {
 		mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
 		for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
@@ -1242,6 +1230,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			mShowingCommentList.add(showComment);
 		}
 	}
+
 	/**
 	 * show star to most likes on the image.
 	 */
@@ -1280,7 +1269,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 
 	private class MyPagerAdapter extends PagerAdapter implements
 			GestureDetector.OnGestureListener {
-	//	private GestureDetector gesturedetector = null;
+		// private GestureDetector gesturedetector = null;
 
 		/**
 		 * 
@@ -1303,7 +1292,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			return getItem(mCurrentAislePosition).getImageList().size();
 		}
 
- 
 		@Override
 		public Object instantiateItem(View view, int position) {
 			if (mInflater == null) {
@@ -1314,51 +1302,41 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			View myView = mInflater.inflate(R.layout.detailsbrowser, null);
 			ImageView browserImage = (ImageView) myView
 					.findViewById(R.id.browserimage);
-			//gesturedetector = new GestureDetector(this);
+			// gesturedetector = new GestureDetector(this);
 			browserImage.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					// mSetPager = false;
 					detailsImageClickListenr.onImageClicked();
-					// setmSetPagerToTrue();
-
 				}
 			});
 			browserImage.setOnLongClickListener(new OnLongClickListener() {
 
 				@Override
 				public boolean onLongClick(View v) {
-					// mSetPager = false;
 					detailsImageClickListenr.onImageLongPress();
-					// setmSetPagerToTrue();
 					return false;
 				}
 			});
-			ImageView testImage = (ImageView) myView.findViewById(R.id.testimage);
-			testImage.setOnClickListener(new OnClickListener() {
+			ImageView full_bg_image = (ImageView) myView
+					.findViewById(R.id.full_bg_image);
+			full_bg_image.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					// mSetPager = false;
-					//detailsImageClickListenr.onImageClicked();
-					// setmSetPagerToTrue();
-
+					// these listener does nothing. But inorder to give the
+					// control to the
+					// listview when touch out side of the image in the browser.
 				}
 			});
-			testImage.setOnLongClickListener(new OnLongClickListener() {
+			full_bg_image.setOnLongClickListener(new OnLongClickListener() {
 
 				@Override
 				public boolean onLongClick(View v) {
-					// mSetPager = false;
-				//	detailsImageClickListenr.onImageLongPress();
-					// setmSetPagerToTrue();
 					return false;
 				}
 			});
-			
-			
-			
+
 			LinearLayout starLay = (LinearLayout) myView
 					.findViewById(R.id.starImage);
 			ImageView starImage = (ImageView) myView
@@ -1505,7 +1483,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		AisleImageDetails mItemDetails;
 		int mScrollIndex;
 		int mImageListCurrentPosition;
-	 
 
 		public BitmapWorkerTask(AisleImageDetails itemDetails,
 				ImageView imageView, int bestHeight, int scrollIndex,
@@ -1514,7 +1491,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			// Use a WeakReference to ensure the ImageView can be garbage
 			// collected
 			imageViewReference = new WeakReference<ImageView>(imageView);
-			mStarImageReference =  new WeakReference<ImageView>(starImage);
+			mStarImageReference = new WeakReference<ImageView>(starImage);
 			starLayoutReference = new WeakReference<LinearLayout>(starLay);
 			editLayoutReference = new WeakReference<LinearLayout>(editLay);
 			progressBarReference = new WeakReference<ProgressBar>(progressBar);
@@ -1633,6 +1610,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 		}
 
 	}
+
 	private class PageListener extends SimpleOnPageChangeListener {
 		public void onPageSelected(int position) {
 
@@ -1692,15 +1670,19 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
 			}
 		}
 	}
-int mlikepageDealay = 1000;
+
+	int mlikepageDelay = 1000;
+
 	private void setmSetPagerToTrue() {
 		new Handler().postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
+				// to make sure the pager is not refresh when like and dislike
+				// the image and when bookmarked the image.
 				mSetPager = true;
 
 			}
-		}, mlikepageDealay);
+		}, mlikepageDelay);
 	}
 }

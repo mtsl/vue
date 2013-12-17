@@ -23,11 +23,13 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     private boolean mHasToShow = true;
     private boolean mHasSameLikes = false;
     private String mShowStarAisle = " ";
+    AisleContentClickListener mClickListener;
 
     public LandingPageViewAdapter(Context context,AisleContentClickListener clickListener) {
         super(context, clickListener, null);
         mContext = context;
         mLoader = AisleLoader.getInstance(context);
+        mClickListener = clickListener;
     }
 
     @Override
@@ -41,11 +43,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         ViewHolder holder;
 
         int actualPosition = position;
-        Log.i("TrendingDataModel",
-                "DataObserver for List Refresh: Left getview ");
         if (null == convertView) {
-            Log.i("TrendingDataModel",
-                    "DataObserver for List Refresh: Left getview if ");
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
             convertView = layoutInflator.inflate(R.layout.staggered_row_item,
                     null);
@@ -159,10 +157,11 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
 
 		@Override
 		public void onSwipe(boolean hasToShwo, String aisleId, boolean sameLikes) {
+			Log.i("swipe listener", "onSiwpe: "+hasToShwo+" aisleId: "+aisleId);
 			mHasToShow = hasToShwo;
 			mShowStarAisle = aisleId;
 			mHasSameLikes = sameLikes;
-			notifyDataSetChanged();
+			mClickListener.refreshList();
 
 		}
 

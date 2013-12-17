@@ -154,7 +154,7 @@ public class VueLandingAislesFragment extends Fragment {
 												R.string.trending));
 					}
 				}
-				  
+
 			}
 		});
 

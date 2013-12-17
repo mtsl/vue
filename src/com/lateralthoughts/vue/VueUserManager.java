@@ -83,7 +83,7 @@ public class VueUserManager {
 
 			@Override
 			public void onResponse(String jsonArray) {
-				 
+
 				if (null != jsonArray) {
 					VueUser vueUser = new Parser().parseUserData(jsonArray);
 					if (vueUser != null) {
@@ -91,7 +91,7 @@ public class VueUserManager {
 								userInitals);
 						VueUserManager.this.setCurrentUser(vueUser);
 						VueApplication.getInstance()
-						.setmUserId(vueUser.getId());
+								.setmUserId(vueUser.getId());
 						callback.onUserUpdated(vueUser);
 						try {
 							VueTrendingAislesDataModel.getInstance(
@@ -129,7 +129,7 @@ public class VueUserManager {
 		Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
- 
+
 			}
 		};
 
@@ -140,7 +140,7 @@ public class VueUserManager {
 			newUser.setLastName("");
 			newUser.setDeviceId(deviceId);
 			String userAsString = mapper.writeValueAsString(newUser);
-		 
+
 			UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
 					userAsString, UrlConstants.CREATE_USER_RESTURL, listener,
 					errorListener);
@@ -205,7 +205,7 @@ public class VueUserManager {
 		final Response.ErrorListener errorListener = new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
- 
+
 			}
 		};
 		Response.Listener getListener = new Response.Listener<String>() {
@@ -325,7 +325,7 @@ public class VueUserManager {
 			@Override
 			public void onResponse(String jsonArray) {
 				if (null != jsonArray) {
-			 
+
 					VueUser vueUser2 = new Parser().parseUserData(jsonArray);
 					if (vueUser2 != null) {
 						if (VueApplication.getInstance().getmUserInitials() == null) {

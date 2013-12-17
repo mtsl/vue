@@ -118,7 +118,7 @@ public class TrendingAislesLeftColumnAdapter extends
 			holder.aisleselectlay = (LinearLayout) convertView
 					.findViewById(R.id.aisleselectlay);
 			holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
-			holder.aisleContentBrowser.setAilseLeftListLisner(new LeftList());
+			//holder.aisleContentBrowser.setAilseLeftListLisner(new LeftList());
 			convertView.setTag(holder);
 		}
 		holder = (ViewHolder) convertView.getTag();
@@ -226,7 +226,7 @@ public class TrendingAislesLeftColumnAdapter extends
 		notifyDataSetChanged();
 	}
 
-	private class LeftList implements AilseLeftListLisner {
+/*	private class LeftList implements AilseLeftListLisner {
 
 		@Override
 		public void onSwipe(boolean hasToShwo, String aisleId, boolean sameLikes) {
@@ -237,5 +237,5 @@ public class TrendingAislesLeftColumnAdapter extends
 
 		}
 
-	}
+	}*/
 }
