@@ -1,7 +1,9 @@
 package com.facebook.vueListner;
 
 public interface NotifiShowAlert {
-public void callShowAlert();
-public boolean checkConnection();
-public boolean checkAnyNetConection();
+    public void callShowAlert();
+    
+    public boolean checkConnection();
+    
+    public boolean checkAnyNetConection();
 }

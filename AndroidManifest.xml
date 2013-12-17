@@ -1,8 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lateralthoughts.vue"
     android:versionCode="1"
-    android:versionName="1.0"
-    >
+    android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -29,8 +28,7 @@
         android:allowBackup="true"
         android:icon="@drawable/vue_launcher_icon"
         android:label="@string/app_name"
-        android:theme="@style/AppBaseTheme"
-       >
+        android:theme="@style/AppBaseTheme" >
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id" />
@@ -45,8 +43,7 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-             android:theme="@android:style/Theme.Holo.Light"
-            >
+            android:theme="@android:style/Theme.Holo.Light" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -80,26 +77,23 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-              android:theme="@style/AppBaseTheme">
+            android:theme="@style/AppBaseTheme"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name=".MemoryTestActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            
             android:windowSoftInputMode="adjustResize" >
         </activity>
-                <activity
+        <activity
             android:name=".BezelTestActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-           
             android:windowSoftInputMode="adjustResize" >
         </activity>
-        
         <activity
             android:name=".DataEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -136,14 +130,13 @@
             android:name="com.facebook.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-          android:theme="@style/AppBaseTheme" />
+            android:theme="@style/AppBaseTheme" />
         <activity
             android:name=".DetailsViewActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-             android:theme="@style/AppBaseTheme"
-              />
+            android:theme="@style/AppBaseTheme" />
         <activity
             android:name=".FeedbackForm"
             android:label="@string/app_name"
@@ -151,6 +144,7 @@
             android:windowSoftInputMode="adjustResize|" />
 
         <service android:name="com.lateralthoughts.vue.service.VueContentRestService" />
+
         <receiver
             android:name="com.lateralthoughts.vue.connectivity.NetworkStateChangeReciver"
             android:label="@string/app_name" >
@@ -160,6 +154,7 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
         <provider
             android:name="com.lateralthoughts.vue.connectivity.VueContentProvider"
             android:authorities="com.lateralthoughts.vue.connectivity.VueConstants"

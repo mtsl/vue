@@ -2,95 +2,99 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white" 
-    android:orientation="vertical">
+    android:background="@color/white"
+    android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical" >
+
         <TextView
             android:id="@+id/heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/about_Vue"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="16dp"
-            android:textSize="20sp"
+            android:text="@string/about_Vue"
             android:textColor="@color/orange"
-            android:layout_marginLeft="10dp" />
-        <TextView 
+            android:textSize="20sp" />
+
+        <TextView
             android:id="@+id/version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="10dp"
             android:text="@string/app_version"
-            android:layout_marginLeft="16dp"
-            android:textColor="@color/orange"/>
-         <TextView
+            android:textColor="@color/orange" />
+
+        <TextView
             android:id="@+id/about_table_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/about_tabel_Content_text"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="16dp"
-            android:textSize="20sp"
+            android:text="@string/about_tabel_Content_text"
             android:textColor="@color/orange"
-            android:layout_marginLeft="10dp" />
-          <TextView 
+            android:textSize="20sp" />
+
+        <TextView
             android:id="@+id/version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Introduction"
-            android:textSize="20sp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            android:textColor="@color/orange"/>
+            android:text="Introduction"
+            android:textColor="@color/orange"
+            android:textSize="20sp" />
+
         <TextView
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:textColor="@color/black"
-            android:lineSpacingExtra="8sp"
-            android:textSize="18sp"
             android:layout_marginTop="8dp"
+            android:lineSpacingExtra="8sp"
             android:text="@string/about_content"
-            />
-     
-<View
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="4dp"
             android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
             android:background="@color/orange" />
-     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/contentheading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/vue_content"
-            android:layout_marginTop="16dp"
-            android:textSize="20sp"
-            android:textColor="@color/orange"
-            android:layout_marginLeft="10dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/contenttext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-             android:textColor="@color/black"
-             android:textSize="18sp"
-             android:lineSpacingExtra="8sp"
-             android:layout_marginTop="8dp"
-            android:text="@string/about_content" />
-<!-- 
+            <TextView
+                android:id="@+id/contentheading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/vue_content"
+                android:textColor="@color/orange"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/contenttext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/about_content"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+            <!--
         <TextView
             android:id="@+id/contentsecondheading"
             android:layout_marginTop="10dp"
@@ -100,9 +104,12 @@
             android:lineSpacingExtra="8sp"
             android:textSize="20sp"
             android:text="@string/email_id"
-            android:layout_marginLeft="16dp" /> -->
+            android:layout_marginLeft="16dp" />
+            -->
 
-        <!-- <TextView
+
+            <!--
+             <TextView
             android:id="@+id/contentlasttext"
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
@@ -112,40 +119,43 @@
             android:lineSpacingExtra="8sp"
             android:text="@string/aboutextfeedback2"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp" /> -->
-    </LinearLayout>
-    <TextView
+            android:layout_marginRight="16dp" />
+            -->
+        </LinearLayout>
+
+        <TextView
             android:id="@+id/secondheading"
-            android:layout_marginTop="10dp"
-             android:textColor="@color/orange"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
             android:lineSpacingExtra="8sp"
-            android:textSize="20sp"
             android:text="@string/contact_us"
-            android:layout_marginLeft="10dp" />
-      <TextView
+            android:textColor="@color/orange"
+            android:textSize="20sp" />
+
+        <TextView
             android:id="@+id/lasttext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-             android:textColor="@color/black"
             android:layout_marginTop="8dp"
             android:lineSpacingExtra="8sp"
             android:text="@string/contact_us_text"
+            android:textColor="@color/black"
             android:textSize="18sp" />
-      
-       <TextView
+
+        <TextView
             android:id="@+id/fishwapmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-             android:textColor="@color/orange"
             android:layout_marginTop="2dp"
             android:text="@string/email_id"
+            android:textColor="@color/orange"
             android:textSize="18sp" />
-   
     </LinearLayout>
+
 </LinearLayout>

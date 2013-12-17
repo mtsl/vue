@@ -44,11 +44,11 @@ public class VueUserManager {
 		mCurrentUser = null;
 	}
 
-	public static VueUserManager getUserManager() {
-		if (null == sUserManager)
-			sUserManager = new VueUserManager();
-		return sUserManager;
-	}
+    public static VueUserManager getUserManager() {
+        if (null == sUserManager)
+            sUserManager = new VueUserManager();
+        return sUserManager;
+    }
 
 	private void setCurrentUser(VueUser user) {
 		mCurrentUser = user;

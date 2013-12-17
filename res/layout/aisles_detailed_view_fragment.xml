@@ -130,7 +130,6 @@
 
             <ImageView
                 android:id="@+id/vue_aisle"
-                
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
                 android:layout_centerInParent="true"

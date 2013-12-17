@@ -9,9 +9,9 @@
         android:layout_height="48dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="12dp"
+        android:background="@drawable/vue_button_selector"
         android:gravity="center_vertical"
         android:text="@string/gmail"
-        android:background="@drawable/vue_button_selector"
         android:textColor="@color/share_dailog_text_color"
         android:textSize="18sp" />
 
@@ -24,7 +24,7 @@
         android:layout_marginRight="2dp"
         android:layout_toRightOf="@+id/gmail"
         android:src="@drawable/share"
-          android:visibility="gone" />
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/vue"
@@ -34,11 +34,10 @@
         android:layout_marginLeft="1dp"
         android:layout_toRightOf="@+id/shareicon"
         android:gravity="center_vertical"
-            android:visibility="gone"
         android:text="asdfasdfsdf"
         android:textColor="@color/share_dailog_text_color"
         android:textSize="18sp"
-       />
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/shareicon2"
@@ -46,10 +45,9 @@
         android:layout_height="24dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="2dp"
-            android:visibility="gone"
         android:layout_marginRight="2dp"
         android:layout_toRightOf="@+id/vue"
         android:src="@drawable/vue_launcher_icon"
-       />
+        android:visibility="gone" />
 
 </RelativeLayout>

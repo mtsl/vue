@@ -21,14 +21,14 @@ package com.facebook;
  */
 public class FacebookException extends RuntimeException {
     static final long serialVersionUID = 1;
-
+    
     /**
      * Constructs a new FacebookException.
      */
     public FacebookException() {
         super();
     }
-
+    
     /**
      * Constructs a new FacebookException.
      * 
@@ -38,7 +38,7 @@ public class FacebookException extends RuntimeException {
     public FacebookException(String message) {
         super(message);
     }
-
+    
     /**
      * Constructs a new FacebookException.
      * 
@@ -50,7 +50,7 @@ public class FacebookException extends RuntimeException {
     public FacebookException(String message, Throwable throwable) {
         super(message, throwable);
     }
-
+    
     /**
      * Constructs a new FacebookException.
      * 

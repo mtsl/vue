@@ -37,11 +37,13 @@
         android:layout_marginTop="2dp"
         android:background="@drawable/edit_btn_selector" >
 
-      <!--   <ImageView
+        <!--
+             <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/editwhite" /> -->
+            android:src="@drawable/editwhite" />
+        -->
     </LinearLayout>
 
     <ProgressBar
@@ -49,9 +51,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
-    <ImageView android:layout_width="match_parent"
-                   android:id="@+id/full_bg_image"
-                    android:layout_height="match_parent"
-                   ></ImageView>
+
+    <ImageView
+        android:id="@+id/full_bg_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </ImageView>
 
 </RelativeLayout>

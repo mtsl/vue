@@ -32,88 +32,87 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 
 public class VueContentRestService extends IntentService {
-
-	public static final String PARAMS_FIELD = "params";
-	public static final String HEADERS_FIELD = "headers";
-	public static final String RECEIVER_FIELD = "receiver";
-	public static final String URL_FIELD = "url";
-	public static final String BATCH_DATA_FLAG = "BATCH_DATA";
-	public static final String LIMIT_DATA_FIELD = "LIMIT_DATA";
-	public static final String BATCH_SIZE_FIELD = "BATCH_SIZE";
-	public static final String STARTING_OFFSET_FIELD = "STARTING_OFFSET";
-	private HttpClient mHttpClient;
-    public VueContentRestService(){
+    
+    public static final String PARAMS_FIELD = "params";
+    public static final String HEADERS_FIELD = "headers";
+    public static final String RECEIVER_FIELD = "receiver";
+    public static final String URL_FIELD = "url";
+    public static final String BATCH_DATA_FLAG = "BATCH_DATA";
+    public static final String LIMIT_DATA_FIELD = "LIMIT_DATA";
+    public static final String BATCH_SIZE_FIELD = "BATCH_SIZE";
+    public static final String STARTING_OFFSET_FIELD = "STARTING_OFFSET";
+    private HttpClient mHttpClient;
+    
+    public VueContentRestService() {
         super("VueContentRestService");
     }
-
+    
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         VueApplication app = VueApplication.getInstance();
         mHttpClient = app.getHttpClient();
-        //mHttpClient = new DefaultHttpClient();
+        // mHttpClient = new DefaultHttpClient();
         return START_STICKY;
     }
-
+    
     @Override
-    protected void onHandleIntent(Intent intent){
-    	if(null == intent)
-    		return;
-    	 if(!VueConnectivityManager.isNetworkConnected(VueApplication.getInstance())) {
-           return;
-         }
+    protected void onHandleIntent(Intent intent) {
+        if (null == intent)
+            return;
+        if (!VueConnectivityManager.isNetworkConnected(VueApplication
+                .getInstance())) {
+            return;
+        }
         mParams = intent.getParcelableArrayListExtra(PARAMS_FIELD);
         mHeaders = intent.getParcelableArrayListExtra(HEADERS_FIELD);
         mUrl = intent.getStringExtra(URL_FIELD);
         mReceiver = (ResultReceiver) intent.getParcelableExtra(RECEIVER_FIELD);
-        try{
+        try {
             go();
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    private void go(){
+    
+    private void go() {
         String consolidatedParams = "";
-        if(!mParams.isEmpty()){
+        if (!mParams.isEmpty()) {
             consolidatedParams += "?";
-            for(ParcelableNameValuePair p : mParams)
-            {
+            for (ParcelableNameValuePair p : mParams) {
                 String paramString = null;
-                try{
-                    paramString = p.getName() + "=" + URLEncoder.encode(p.getValue(),"UTF-8");
-                }   catch(UnsupportedEncodingException encode_ex){
+                try {
+                    paramString = p.getName() + "="
+                            + URLEncoder.encode(p.getValue(), "UTF-8");
+                } catch (UnsupportedEncodingException encode_ex) {
                     encode_ex.printStackTrace();
                 }
-                if(consolidatedParams.length() > 1)
-                {
-                    consolidatedParams  +=  "&" + paramString;
-                }
-                else
-                {
+                if (consolidatedParams.length() > 1) {
+                    consolidatedParams += "&" + paramString;
+                } else {
                     consolidatedParams += paramString;
                 }
             }
         }
-
+        
         mRequest = new HttpGet(mUrl + consolidatedParams);
-
-        //add headers
-        for(ParcelableNameValuePair h : mHeaders){
+        
+        // add headers
+        for (ParcelableNameValuePair h : mHeaders) {
             mRequest.addHeader(h.getName(), h.getValue());
         }
         executeRequest();
     }
-
-    private void executeRequest(){
+    
+    private void executeRequest() {
         
         HttpResponse httpResponse;
-
+        
         try {
             httpResponse = mHttpClient.execute(mRequest);
-
+            
             HttpEntity entity = httpResponse.getEntity();
-
+            
             if (entity != null) {
                 InputStream instream = entity.getContent();
                 String response = convertStreamToString(instream);
@@ -121,23 +120,24 @@ public class VueContentRestService extends IntentService {
                 responseBundle.putString("result", response);
                 mReceiver.send(1, responseBundle);
                 instream.close();
-            }else{
+            } else {
             }
-
-        } catch (ClientProtocolException e)  {
+            
+        } catch (ClientProtocolException e) {
             mHttpClient.getConnectionManager().shutdown();
             e.printStackTrace();
         } catch (IOException e) {
             mHttpClient.getConnectionManager().shutdown();
             e.printStackTrace();
         }
-
+        
     }
+    
     private static String convertStreamToString(InputStream is) {
-
+        
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
-
+        
         String line = null;
         try {
             while ((line = reader.readLine()) != null) {
@@ -154,12 +154,12 @@ public class VueContentRestService extends IntentService {
         }
         return sb.toString();
     }
-    ArrayList <ParcelableNameValuePair> mParams;
-    ArrayList <ParcelableNameValuePair> mHeaders;
+    
+    ArrayList<ParcelableNameValuePair> mParams;
+    ArrayList<ParcelableNameValuePair> mHeaders;
     private String mUrl;
     private ResultReceiver mReceiver;
-    //http related objects that we need for the service
+    // http related objects that we need for the service
     HttpRequestBase mRequest;
-
+    
 }
-

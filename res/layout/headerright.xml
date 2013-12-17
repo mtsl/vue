@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:id="@+id/rightlay"
-       >
-<TextView android:layout_width="wrap_content"
-          android:layout_height="48dp"
-            android:id="@+id/rightlaytextvew"
-          
-          />
- 
-    </RelativeLayout>
+    android:id="@+id/rightlay"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="gone" >
+
+    <TextView
+        android:id="@+id/rightlaytextvew"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp" />
+
+</RelativeLayout>

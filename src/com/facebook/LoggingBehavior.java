@@ -18,7 +18,7 @@ package com.facebook;
 
 /**
  * Specifies different categories of logging messages that can be generated.
- *
+ * 
  * @see Settings#addLoggingBehavior(LoggingBehavior)
  */
 public enum LoggingBehavior {
@@ -27,11 +27,13 @@ public enum LoggingBehavior {
      */
     REQUESTS,
     /**
-     * Indicates that access tokens should be logged as part of the request logging; normally they are not.
+     * Indicates that access tokens should be logged as part of the request
+     * logging; normally they are not.
      */
     INCLUDE_ACCESS_TOKENS,
     /**
-     * Indicates that the entire raw HTTP response for each request should be logged.
+     * Indicates that the entire raw HTTP response for each request should be
+     * logged.
      */
     INCLUDE_RAW_RESPONSES,
     /**

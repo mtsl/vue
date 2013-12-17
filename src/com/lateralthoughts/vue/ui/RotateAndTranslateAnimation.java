@@ -26,45 +26,45 @@ import android.view.animation.Transformation;
  */
 public class RotateAndTranslateAnimation extends Animation {
     private int mFromXType = ABSOLUTE;
-
+    
     private int mToXType = ABSOLUTE;
-
+    
     private int mFromYType = ABSOLUTE;
-
+    
     private int mToYType = ABSOLUTE;
-
+    
     private float mFromXValue = 0.0f;
-
+    
     private float mToXValue = 0.0f;
-
+    
     private float mFromYValue = 0.0f;
-
+    
     private float mToYValue = 0.0f;
-
+    
     private float mFromXDelta;
-
+    
     private float mToXDelta;
-
+    
     private float mFromYDelta;
-
+    
     private float mToYDelta;
-
+    
     private float mFromDegrees;
-
+    
     private float mToDegrees;
-
+    
     private int mPivotXType = ABSOLUTE;
-
+    
     private int mPivotYType = ABSOLUTE;
-
+    
     private float mPivotXValue = 0.0f;
-
+    
     private float mPivotYValue = 0.0f;
-
+    
     private float mPivotX;
-
+    
     private float mPivotY;
-
+    
     /**
      * Constructor to use when building a TranslateAnimation from code
      * 
@@ -82,36 +82,37 @@ public class RotateAndTranslateAnimation extends Animation {
      * @param toDegrees
      *            Rotation offset to apply at the end of the animation.
      */
-    public RotateAndTranslateAnimation(float fromXDelta, float toXDelta, float fromYDelta, float toYDelta,
-            float fromDegrees, float toDegrees) {
+    public RotateAndTranslateAnimation(float fromXDelta, float toXDelta,
+            float fromYDelta, float toYDelta, float fromDegrees, float toDegrees) {
         mFromXValue = fromXDelta;
         mToXValue = toXDelta;
         mFromYValue = fromYDelta;
         mToYValue = toYDelta;
-
+        
         mFromXType = ABSOLUTE;
         mToXType = ABSOLUTE;
         mFromYType = ABSOLUTE;
         mToYType = ABSOLUTE;
-
+        
         mFromDegrees = fromDegrees;
         mToDegrees = toDegrees;
-
+        
         mPivotXValue = 0.5f;
         mPivotXType = RELATIVE_TO_SELF;
         mPivotYValue = 0.5f;
         mPivotYType = RELATIVE_TO_SELF;
     }
-
+    
     @Override
     protected void applyTransformation(float interpolatedTime, Transformation t) {
-        final float degrees = mFromDegrees + ((mToDegrees - mFromDegrees) * interpolatedTime);
+        final float degrees = mFromDegrees
+                + ((mToDegrees - mFromDegrees) * interpolatedTime);
         if (mPivotX == 0.0f && mPivotY == 0.0f) {
             t.getMatrix().setRotate(degrees);
         } else {
             t.getMatrix().setRotate(degrees, mPivotX, mPivotY);
         }
-
+        
         float dx = mFromXDelta;
         float dy = mFromYDelta;
         if (mFromXDelta != mToXDelta) {
@@ -120,18 +121,19 @@ public class RotateAndTranslateAnimation extends Animation {
         if (mFromYDelta != mToYDelta) {
             dy = mFromYDelta + ((mToYDelta - mFromYDelta) * interpolatedTime);
         }
-
+        
         t.getMatrix().postTranslate(dx, dy);
     }
-
+    
     @Override
-    public void initialize(int width, int height, int parentWidth, int parentHeight) {
+    public void initialize(int width, int height, int parentWidth,
+            int parentHeight) {
         super.initialize(width, height, parentWidth, parentHeight);
         mFromXDelta = resolveSize(mFromXType, mFromXValue, width, parentWidth);
         mToXDelta = resolveSize(mToXType, mToXValue, width, parentWidth);
         mFromYDelta = resolveSize(mFromYType, mFromYValue, height, parentHeight);
         mToYDelta = resolveSize(mToYType, mToYValue, height, parentHeight);
-
+        
         mPivotX = resolveSize(mPivotXType, mPivotXValue, width, parentWidth);
         mPivotY = resolveSize(mPivotYType, mPivotYValue, height, parentHeight);
     }

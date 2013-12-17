@@ -1,59 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-     
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-<RelativeLayout android:id="@+id/bezel_menu_main_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" > 
+
     <RelativeLayout
-        android:id="@+id/vue_list_fragment_sidemenu_actionbar"
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal" >
+        android:id="@+id/bezel_menu_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-        <Button
-            android:id="@+id/list_cancle"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="2dp"
-            android:background="@drawable/action_search" />
-
-        <EditText
-            android:id="@+id/side_Menu_searchBar"
+        <RelativeLayout
+            android:id="@+id/vue_list_fragment_sidemenu_actionbar"
             android:layout_width="fill_parent"
-            android:layout_height="42dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="12dp"
-            android:layout_toRightOf="@+id/list_cancle"
-            android:focusableInTouchMode="true"
-            android:gravity="center_vertical"
-            android:hint="@string/hint_search"
-            android:imeOptions="actionSearch"
-            android:singleLine="true"
-            android:textColor="#ff0000" />
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/list_cancle"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="2dp"
+                android:background="@drawable/action_search" />
+
+            <EditText
+                android:id="@+id/side_Menu_searchBar"
+                android:layout_width="fill_parent"
+                android:layout_height="42dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="12dp"
+                android:layout_toRightOf="@+id/list_cancle"
+                android:focusableInTouchMode="true"
+                android:gravity="center_vertical"
+                android:hint="@string/hint_search"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:textColor="#ff0000" />
+        </RelativeLayout>
+
+        <ExpandableListView
+            android:id="@+id/vue_list_fragment_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/vue_list_fragment_sidemenu_actionbar"
+            android:divider="@null"
+            android:fadingEdge="none"
+            android:groupIndicator="@null"
+            android:scrollbars="none" />
+
+        <RelativeLayout
+            android:id="@+id/vue_list_fragment_invite_friendsLayout_mainxml"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/vue_list_fragment_sidemenu_actionbar" >
+        </RelativeLayout>
     </RelativeLayout>
 
-    <ExpandableListView
-        android:id="@+id/vue_list_fragment_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/vue_list_fragment_sidemenu_actionbar"
-        android:divider="@null"
-        android:fadingEdge="none"
-        android:groupIndicator="@null"
-        android:scrollbars="none" />
-    
-       <RelativeLayout
-        android:id="@+id/vue_list_fragment_invite_friendsLayout_mainxml"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/vue_list_fragment_sidemenu_actionbar" >
-	</RelativeLayout>
-    </RelativeLayout>
 </RelativeLayout>

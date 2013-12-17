@@ -2,13 +2,13 @@
 
     <string name="app_name">Vue</string>
     <string name="app_version">Version: Alpha 1.0 \n\n</string>
-    <string name="app_id">606559369366437</string> <!-- Krishna id - 288419657969615 ; Vinodh id -  606559369366437; Surendra id -   769961779687972-->
+    <string name="app_id">606559369366437</string> <!-- Krishna id - 288419657969615 ; Vinodh id -  606559369366437; Surendra id -   769961779687972 -->
     <string name="instagram_client_id">379d744556c743c090c8a2014779f59f</string>
     <string name="instagram_client_secret">fd6ec75e44054da1a5088ad2d72f2253</string>
     <string name="instagram_callbackurl">instagram://connect</string>
     <!-- the following string are tags used in API endpoints -->
     <string name="discard_dataentry_screen_changes">Would you like to discard the changes?</string>
-     <string name="discard_comment">Would you like to discard the comment?</string>
+    <string name="discard_comment">Would you like to discard the comment?</string>
     <string name="trending">Trending</string>
     <string name="trending_aisles_tag">aisle/trending</string>
     <string name="dataentry_edit_permission">Do you want to change the existing data?</string>
@@ -166,5 +166,5 @@ This class uses a tutorial format that incrementally builds a small Android app 
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
- 
+
 </resources>
