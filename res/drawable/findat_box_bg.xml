@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
- 
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
- 
-  <item>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item>
         <shape
             android:dither="true"
             android:shape="rectangle" >
@@ -29,11 +28,12 @@
                 android:top="8dp" />
         </shape>
     </item>
- 
-<item android:top="34dp" android:bottom="4dp" >
-<shape android:shape="rectangle">
-<solid android:color="@android:color/white"/>
-</shape>
-</item>
- 
+    <item
+        android:bottom="4dp"
+        android:top="34dp">
+        <shape android:shape="rectangle" >
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+
 </layer-list>

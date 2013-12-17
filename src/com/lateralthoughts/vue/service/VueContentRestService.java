@@ -25,7 +25,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
-import android.util.Log;
 
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;

@@ -2,14 +2,13 @@ package com.lateralthoughts.vue.connectivity;
 
 import java.util.ArrayList;
 
+import junit.framework.Assert;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import junit.framework.Assert;
+import android.os.ResultReceiver;
 
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;

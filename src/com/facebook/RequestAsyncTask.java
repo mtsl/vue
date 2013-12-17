@@ -26,7 +26,6 @@ import java.util.concurrent.Executor;
 import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.Log;
 
 /**
  * Defines an AsyncTask suitable for executing a Request in the background. May be subclassed

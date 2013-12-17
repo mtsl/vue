@@ -15,6 +15,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+
 import com.instagram.InstagramDialog.OAuthDialogListener;
 
 public class InstagramApp {

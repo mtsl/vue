@@ -39,103 +39,103 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 
 public class TrendingAislesGenericAdapter extends BaseAdapter implements
-		IAisleDataObserver {
-	private Context mContext;
-
-	private final String TAG = "TrendingAislesGenericAdapter";
-
-	protected AisleLoader mLoader;
-	private static final boolean DEBUG = false;
-	public int firstX;
-	public int lastX;
-	public boolean mAnimationInProgress;
-	protected boolean mIsScrolling;
-	protected AisleContentClickListener mClickListener;
-	protected VueTrendingAislesDataModel mVueTrendingAislesDataModel;
-
-	public TrendingAislesGenericAdapter(Context c,
-			ArrayList<AisleWindowContent> content) {
-		mContext = c;
-
-		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
-				.getInstance(mContext);
-		mVueTrendingAislesDataModel.registerAisleDataObserver(this);
-		/*
-		 * if(mVueTrendingAislesDataModel.isDownloadFail) {
-		 * mVueTrendingAislesDataModel.loadData(true); }
-		 */
-
-		mLoader = AisleLoader.getInstance(mContext);
-		mIsScrolling = false;
-	}
-
-	public TrendingAislesGenericAdapter(Context c,
-			AisleContentClickListener listener,
-			ArrayList<AisleWindowContent> content) {
-		mContext = c;
-
-		mVueTrendingAislesDataModel = VueTrendingAislesDataModel
-				.getInstance(mContext);
-		mVueTrendingAislesDataModel.registerAisleDataObserver(this);
-		/*
-		 * if(mVueTrendingAislesDataModel.isDownloadFail) {
-		 * mVueTrendingAislesDataModel.loadData(true); }
-		 */
-
-		mLoader = AisleLoader.getInstance(mContext);
-		mIsScrolling = false;
-		mClickListener = listener;
-	}
-
-	public int getCount() {
-		return mVueTrendingAislesDataModel.getAisleCount() / 2;
-	}
-
-	public AisleWindowContent getItem(int position) {
-		return mVueTrendingAislesDataModel.getAisleAt(position);
-	}
-
-	public long getItemId(int position) {
-		return 0;
-	}
-
-	public boolean hasStableIds() {
-		return false;
-	}
-
-	// create a new ImageView for each item referenced by the Adapter
-	public View getView(int position, View convertView, ViewGroup parent) {
-		return convertView;
-	}
-
-	@Override
-	public void onAisleDataUpdated(int newCount) {
-		notifyDataSetChanged();
-
-	}
-
-	private int calculateActualPosition(int viewPosition) {
-		int actualPosition = 0;
-		if (0 != viewPosition)
-			actualPosition = (viewPosition * 2);
-
-		return actualPosition;
-	}
-
-	public void setIsScrolling(boolean isScrolling) {
-		// mIsScrolling = isScrolling;
-	}
-
-	static class ViewHolder {
-		AisleContentBrowser aisleContentBrowser;
-		TextView aisleOwnersName;
-		TextView aisleContext;
-		ImageView starIcon;
-		NetworkImageView profileThumbnail;
-		String uniqueContentId;
-		LinearLayout aisleDescriptor/*,startImageLay*/;
-		AisleWindowContent mWindowContent;
-		LinearLayout aisleselectlay;
-	}
-
+        IAisleDataObserver {
+    private Context mContext;
+    
+    private final String TAG = "TrendingAislesGenericAdapter";
+    
+    protected AisleLoader mLoader;
+    private static final boolean DEBUG = false;
+    public int firstX;
+    public int lastX;
+    public boolean mAnimationInProgress;
+    protected boolean mIsScrolling;
+    protected AisleContentClickListener mClickListener;
+    protected VueTrendingAislesDataModel mVueTrendingAislesDataModel;
+    
+    public TrendingAislesGenericAdapter(Context c,
+            ArrayList<AisleWindowContent> content) {
+        mContext = c;
+        
+        mVueTrendingAislesDataModel = VueTrendingAislesDataModel
+                .getInstance(mContext);
+        mVueTrendingAislesDataModel.registerAisleDataObserver(this);
+        /*
+         * if(mVueTrendingAislesDataModel.isDownloadFail) {
+         * mVueTrendingAislesDataModel.loadData(true); }
+         */
+        
+        mLoader = AisleLoader.getInstance(mContext);
+        mIsScrolling = false;
+    }
+    
+    public TrendingAislesGenericAdapter(Context c,
+            AisleContentClickListener listener,
+            ArrayList<AisleWindowContent> content) {
+        mContext = c;
+        
+        mVueTrendingAislesDataModel = VueTrendingAislesDataModel
+                .getInstance(mContext);
+        mVueTrendingAislesDataModel.registerAisleDataObserver(this);
+        /*
+         * if(mVueTrendingAislesDataModel.isDownloadFail) {
+         * mVueTrendingAislesDataModel.loadData(true); }
+         */
+        
+        mLoader = AisleLoader.getInstance(mContext);
+        mIsScrolling = false;
+        mClickListener = listener;
+    }
+    
+    public int getCount() {
+        return mVueTrendingAislesDataModel.getAisleCount() / 2;
+    }
+    
+    public AisleWindowContent getItem(int position) {
+        return mVueTrendingAislesDataModel.getAisleAt(position);
+    }
+    
+    public long getItemId(int position) {
+        return 0;
+    }
+    
+    public boolean hasStableIds() {
+        return false;
+    }
+    
+    // create a new ImageView for each item referenced by the Adapter
+    public View getView(int position, View convertView, ViewGroup parent) {
+        return convertView;
+    }
+    
+    @Override
+    public void onAisleDataUpdated(int newCount) {
+        notifyDataSetChanged();
+        
+    }
+    
+    private int calculateActualPosition(int viewPosition) {
+        int actualPosition = 0;
+        if (0 != viewPosition)
+            actualPosition = (viewPosition * 2);
+        
+        return actualPosition;
+    }
+    
+    public void setIsScrolling(boolean isScrolling) {
+        // mIsScrolling = isScrolling;
+    }
+    
+    static class ViewHolder {
+        AisleContentBrowser aisleContentBrowser;
+        TextView aisleOwnersName;
+        TextView aisleContext;
+        ImageView starIcon;
+        NetworkImageView profileThumbnail;
+        String uniqueContentId;
+        LinearLayout aisleDescriptor/* ,startImageLay */;
+        AisleWindowContent mWindowContent;
+        LinearLayout aisleselectlay;
+    }
+    
 }

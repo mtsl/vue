@@ -18,9 +18,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.util.Log;
-import com.android.volley.toolbox.NetworkImageView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 
 public class ScaleImageView extends NetworkImageView {
