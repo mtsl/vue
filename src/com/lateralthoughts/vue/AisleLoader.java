@@ -169,7 +169,7 @@ public class AisleLoader {
             holder.aisleContentBrowser.setmStarIcon(image);
             itemDetails = imageDetailsArr.get(0);
             if (itemDetails.mHasMostLikes) {
-             
+                
                 if (itemDetails.mSameMostLikes) {
                     image.setImageResource(R.drawable.vue_star_light);
                 } else {

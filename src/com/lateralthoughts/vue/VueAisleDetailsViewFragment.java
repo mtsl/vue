@@ -599,7 +599,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                                 view.setVisibility(View.VISIBLE);
                                 mInputMethodManager.hideSoftInputFromWindow(
                                         editText.getWindowToken(), 0);
-                                //mAisleDetailsAdapter.notifyDataSetChanged();
+                                // mAisleDetailsAdapter.notifyDataSetChanged();
                                 new Handler().postDelayed(new Runnable() {
                                     
                                     @Override
@@ -635,7 +635,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                                             .hideSoftInputFromWindow(
                                                     editText.getWindowToken(),
                                                     0);
-                                    //mAisleDetailsAdapter.notifyDataSetChanged();
+                                    // mAisleDetailsAdapter.notifyDataSetChanged();
                                     new Handler().postDelayed(new Runnable() {
                                         
                                         @Override
@@ -817,7 +817,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         editText.setVisibility(View.GONE);
         editText.setText("");
         view.setVisibility(View.VISIBLE);
-        //mAisleDetailsAdapter.notifyDataSetChanged();
+        // mAisleDetailsAdapter.notifyDataSetChanged();
         new Handler().postDelayed(new Runnable() {
             
             @Override
