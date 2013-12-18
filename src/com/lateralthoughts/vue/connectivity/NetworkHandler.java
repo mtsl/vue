@@ -454,7 +454,6 @@ public class NetworkHandler {
     }
     
     public void getBookmarkAisleByUser() {
-        Log.e("SURUSURU", "Surendra getBookmarkAisleByUser() called");
         new Thread(new Runnable() {
 
             @Override
@@ -465,7 +464,6 @@ public class NetworkHandler {
                     if (userId == null) {
                         return;
                     }
-                    Log.e("SURUSURU", "Surendra getBookmarkAisleByUser() Found UserId");
                     URL url = new URL(UrlConstants.GET_BOOKMARK_Aisles + "/"
                             + userId + "/" + "0");
                     HttpGet httpGet = new HttpGet(url.toString());
@@ -476,10 +474,8 @@ public class NetworkHandler {
                         String responseMessage = EntityUtils.toString(response
                                 .getEntity());
                         if (responseMessage != null) {
-                            Log.e("SURUSURU", "Surendra getBookmarkAisleByUser() Found UserId");
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                                     .parseBookmarkedAisles(responseMessage);
-                            Log.e("SURUSURU", "Surendra getBookmarkAisleByUser() Parsed resuld size() " + bookmarkedAisles.size());
                             for (AisleBookmark aB : bookmarkedAisles) {
                                 DataBaseManager.getInstance(mContext)
                                         .updateBookmarkAisles(aB.getId(),
