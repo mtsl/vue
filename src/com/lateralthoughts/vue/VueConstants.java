@@ -79,7 +79,6 @@ public class VueConstants {
     public static final String FANCY_PACKAGE_NAME = "com.thefancy.app";
     public static final String ETSY_ACTIVITY_NAME = "com.etsy.android.ui.HomeActivity";
     public static final String FANCY_ACTIVITY_NAME = "com.thefancy.app.common.Main";
-    public static final String DATAENTRY_SCREEN_AISLE_ID = "DataentryScreenAisleId";
     public static final String USER_PROFILE_IMAGE_FILE_NAME = "VueUserProfileImage";
     public static final String AISLE_ORDER = "aisleOrder";
     // Column names for aisles table.

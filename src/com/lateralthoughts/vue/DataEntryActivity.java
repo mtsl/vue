@@ -38,7 +38,7 @@ public class DataEntryActivity extends Activity {
             mVueDataentryDeleteLayout;
     public FrameLayout mVueDataentryKeyboardDone, mVueDataentryKeyboardCancel,
             mVueDataentryClose, mVueDataentryPost, mVueDataentryDeleteCancel,
-            mVueDataentryDeleteDone;
+            mVueDataentryDeleteDone, mActionbarNext;
     private View mVueDataentryActionbarView;
     private DataEntryFragment mDataEntryFragment;
     private static final String CREATE_AISLE_SCREEN_VISITORS = "Create_Aisle_Screen_Visitors";
@@ -47,7 +47,7 @@ public class DataEntryActivity extends Activity {
     private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private FrameLayout mContent_frame2;
+    private FrameLayout mContentFrame;
     private boolean mHideDefaultActionbar = false;
     private boolean mShowSkipButton = false;
     
@@ -56,7 +56,7 @@ public class DataEntryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.date_entry_main);
         initialize();
-        mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
+        mContentFrame = (FrameLayout) findViewById(R.id.content_frame2);
         mSlidListFrag = (VueListFragment) getFragmentManager()
                 .findFragmentById(R.id.listfrag);
         mVueDataentryActionbarView = LayoutInflater.from(this).inflate(
@@ -83,6 +83,8 @@ public class DataEntryActivity extends Activity {
                 .findViewById(R.id.vue_dataentry_delete_done);
         mActionbarDeleteBtnTextview = (TextView) mVueDataentryActionbarView
                 .findViewById(R.id.actionbar_delete_btn_textview);
+        mActionbarNext = (FrameLayout) mVueDataentryActionbarView
+                .findViewById(R.id.actionbar_next);
         invalidateOptionsMenu();
         mVueDataentryDeleteCancel.setOnClickListener(new OnClickListener() {
             @Override
@@ -237,7 +239,12 @@ public class DataEntryActivity extends Activity {
                 mDataEntryFragment.createAisleClickFunctionality();
             }
         });
-        
+        mActionbarNext.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                mDataEntryFragment.showAddMoreImagesDialog();
+            }
+        });
         Bundle b = getIntent().getExtras();
         if (b != null) {
             String aisleImagePath = b
@@ -250,8 +257,6 @@ public class DataEntryActivity extends Activity {
                     mDataEntryFragment.mFindAtText
                             .setText(b
                                     .getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FINDAT));
-                    mDataEntryFragment.mPreviousFindAtText = mDataEntryFragment.mFindAtText
-                            .getText().toString();
                 }
             } catch (Exception e1) {
             }
@@ -293,6 +298,11 @@ public class DataEntryActivity extends Activity {
                         .setVisibility(View.VISIBLE);
             }
             if (mDataEntryFragment.mFromDetailsScreenFlag) {
+                mDataEntryFragment.mOccasionLayout.setVisibility(View.GONE);
+                mDataEntryFragment.mFindatLayout.setVisibility(View.GONE);
+                mDataEntryFragment.mSaySomethingAboutAisle
+                        .setVisibility(View.GONE);
+                mDataEntryFragment.mSaysomethingClose.setVisibility(View.GONE);
                 mDataEntryFragment.mIsUserAisleFlag = b
                         .getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG);
                 boolean firstTimeFlag = false;
@@ -386,6 +396,14 @@ public class DataEntryActivity extends Activity {
                                                 .getString(
                                                         R.string.add_imae_to_aisle_screen_title));
                     }
+                }
+                if (Utils
+                        .getDataentryTopAddImageAisleFlag(DataEntryActivity.this)) {
+                    mVueDataentryKeyboardLayout.setVisibility(View.GONE);
+                    mVueDataentryKeyboardDone.setVisibility(View.GONE);
+                    mVueDataentryKeyboardCancel.setVisibility(View.GONE);
+                    mVueDataentryPostLayout.setVisibility(View.VISIBLE);
+                    hideDefaultActionbar();
                 }
                 if (Utils.getDataentryAddImageAisleFlag(DataEntryActivity.this)) {
                     getActionBar().setTitle(
@@ -483,7 +501,7 @@ public class DataEntryActivity extends Activity {
     
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean isdrawOpen = mDrawerLayout.isDrawerOpen(mContent_frame2);
+        boolean isdrawOpen = mDrawerLayout.isDrawerOpen(mContentFrame);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayShowCustomEnabled(false);
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -586,10 +604,10 @@ public class DataEntryActivity extends Activity {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
+            if (mDrawerLayout.isDrawerOpen(mContentFrame)) {
                 
                 if (!mSlidListFrag.listener.onBackPressed()) {
-                    mDrawerLayout.closeDrawer(mContent_frame2);
+                    mDrawerLayout.closeDrawer(mContentFrame);
                 }
                 
             } else {
@@ -635,7 +653,6 @@ public class DataEntryActivity extends Activity {
                         DataEntryActivity.this, null);
                 Utils.putDataentryTopAddImageAisleDescription(
                         DataEntryActivity.this, null);
-                Utils.putDataentryScreenAisleId(DataEntryActivity.this, null);
                 ArrayList<DataentryImage> mAisleImagePathList = null;
                 try {
                     mAisleImagePathList = Utils.readAisleImagePathListFromFile(
@@ -685,7 +702,6 @@ public class DataEntryActivity extends Activity {
         Utils.putDataentryTopAddImageAisleOccasion(DataEntryActivity.this, null);
         Utils.putDataentryTopAddImageAisleDescription(DataEntryActivity.this,
                 null);
-        Utils.putDataentryScreenAisleId(DataEntryActivity.this, null);
         ArrayList<DataentryImage> mAisleImagePathList = null;
         try {
             mAisleImagePathList = Utils.readAisleImagePathListFromFile(

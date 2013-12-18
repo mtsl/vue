@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -74,7 +75,6 @@ public class DataEntryFragment extends Fragment {
             R.drawable.new_entertainment, R.drawable.new_events,
             R.drawable.new_food, R.drawable.new_home };
     InputMethodManager mInputMethodManager;
-    public String mPreviousFindAtText = null;
     private String mImagePath = null, mResizedImagePath = null;
     LinearLayout mMainHeadingRow = null;
     public ShareDialog mShare = null;
@@ -87,8 +87,7 @@ public class DataEntryFragment extends Fragment {
     public static final String FINDAT = "findat";
     public static final String SAY_SOMETHING_ABOUT_AISLE = "SaysomethingAboutAisle";
     private ArrayList<String> mLookingForAisleKeywordsList = null,
-            mOccassionAisleKeywordsList = null,
-            mCategoryAilseKeywordsList = null;
+            mOccassionAisleKeywordsList = null;
     private DataBaseManager mDbManager;
     private View mDataEntryFragmentView;
     private ImageResizeAsynTask mImageResizeAsynTask = null;
@@ -111,6 +110,8 @@ public class DataEntryFragment extends Fragment {
     String mOccasion = null;
     LinearLayout mSelectCategoryLayout;
     private Context mContext;
+    RelativeLayout mOccasionLayout = null;
+    RelativeLayout mFindatLayout = null;
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -143,6 +144,10 @@ public class DataEntryFragment extends Fragment {
                 .findViewById(R.id.lookingfortext);
         mFindAtPopUp = (LinearLayout) mDataEntryFragmentView
                 .findViewById(R.id.find_at_popup);
+        mOccasionLayout = (RelativeLayout) mDataEntryFragmentView
+                .findViewById(R.id.occasion_layout);
+        mFindatLayout = (RelativeLayout) mDataEntryFragmentView
+                .findViewById(R.id.findat_layout);
         mCategoryheadingLayout = (LinearLayout) mDataEntryFragmentView
                 .findViewById(R.id.categoryheading);
         mCategoryheading = (TextView) mDataEntryFragmentView
@@ -202,34 +207,8 @@ public class DataEntryFragment extends Fragment {
             mLookingForText.setText(savedLookingFor);
             mLookingFor = savedLookingFor;
         } else if (mLookingForAisleKeywordsList != null) {
-            if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
-                if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
-                    try {
-                        mLookingForText
-                                .setText(VueTrendingAislesDataModel
-                                        .getInstance(getActivity())
-                                        .getAisleAt(
-                                                Utils.getDataentryScreenAisleId(getActivity()))
-                                        .getAisleContext().mLookingForItem);
-                        mLookingFor = VueTrendingAislesDataModel
-                                .getInstance(getActivity())
-                                .getAisleAt(
-                                        Utils.getDataentryScreenAisleId(getActivity()))
-                                .getAisleContext().mLookingForItem;
-                    } catch (Exception e) {
-                        mLookingForText.setText(mLookingForAisleKeywordsList
-                                .get(0));
-                        mLookingFor = mLookingForAisleKeywordsList.get(0);
-                    }
-                } else {
-                    mLookingForText
-                            .setText(mLookingForAisleKeywordsList.get(0));
-                    mLookingFor = mLookingForAisleKeywordsList.get(0);
-                }
-            } else {
-                mLookingForText.setText(mLookingForAisleKeywordsList.get(0));
-                mLookingFor = mLookingForAisleKeywordsList.get(0);
-            }
+            mLookingForText.setText(mLookingForAisleKeywordsList.get(0));
+            mLookingFor = mLookingForAisleKeywordsList.get(0);
         } else {
             mLookingForListviewLayout.setVisibility(View.GONE);
             mLookingForText.requestFocus();
@@ -241,44 +220,8 @@ public class DataEntryFragment extends Fragment {
             mOccasionText.setText(savedOccasion);
             mOccasion = savedOccasion;
         } else if (mOccassionAisleKeywordsList != null) {
-            if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
-                if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
-                    try {
-                        mOccasionText
-                                .setText(VueTrendingAislesDataModel
-                                        .getInstance(getActivity())
-                                        .getAisleAt(
-                                                Utils.getDataentryScreenAisleId(getActivity()))
-                                        .getAisleContext().mOccasion);
-                        if (VueTrendingAislesDataModel
-                                .getInstance(getActivity())
-                                .getAisleAt(
-                                        Utils.getDataentryScreenAisleId(getActivity()))
-                                .getAisleContext().mOccasion != null
-                                && VueTrendingAislesDataModel
-                                        .getInstance(getActivity())
-                                        .getAisleAt(
-                                                Utils.getDataentryScreenAisleId(getActivity()))
-                                        .getAisleContext().mOccasion.length() > 0) {
-                            mOccasion = VueTrendingAislesDataModel
-                                    .getInstance(getActivity())
-                                    .getAisleAt(
-                                            Utils.getDataentryScreenAisleId(getActivity()))
-                                    .getAisleContext().mOccasion;
-                        }
-                    } catch (Exception e) {
-                        mOccasionText.setText(mOccassionAisleKeywordsList
-                                .get(0));
-                        mOccasion = mOccassionAisleKeywordsList.get(0);
-                    }
-                } else {
-                    mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
-                    mOccasion = mOccassionAisleKeywordsList.get(0);
-                }
-            } else {
-                mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
-                mOccasion = mOccassionAisleKeywordsList.get(0);
-            }
+            mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
+            mOccasion = mOccassionAisleKeywordsList.get(0);
         }
         if (mLookingFor != null) {
             mMainHeadingRow.setVisibility(View.VISIBLE);
@@ -290,54 +233,22 @@ public class DataEntryFragment extends Fragment {
                         + mLookingFor);
             }
         }
-        mCategoryAilseKeywordsList = mDbManager
-                .getAisleKeywords(VueConstants.CATEGORY_TABLE);
         if (Utils.getDataentryTopAddImageAisleFlag(mContext)
                 && savedCategory != null && savedCategory.trim().length() > 0) {
             mCategoryheading.setText(savedCategory);
             mCategoryheadingLayout.setVisibility(View.VISIBLE);
-        } else if (mCategoryAilseKeywordsList != null) {
-            if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
-                if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
-                    try {
-                        mCategoryheading
-                                .setText(VueTrendingAislesDataModel
-                                        .getInstance(getActivity())
-                                        .getAisleAt(
-                                                Utils.getDataentryScreenAisleId(getActivity()))
-                                        .getAisleContext().mCategory);
-                        mCategoryheadingLayout.setVisibility(View.VISIBLE);
-                    } catch (Exception e) {
-                        
-                    }
-                }
-            }
         }
         if (Utils.getDataentryTopAddImageAisleFlag(mContext)
                 && savedDescription != null
                 && savedDescription.trim().length() > 0) {
             mSaySomethingAboutAisle.setText(savedDescription);
-        } else if (Utils.getDataentryAddImageAisleFlag(getActivity())) {
-            if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
-                try {
-                    String description = VueTrendingAislesDataModel
-                            .getInstance(getActivity())
-                            .getAisleAt(
-                                    Utils.getDataentryScreenAisleId(getActivity()))
-                            .getAisleContext().mDescription;
-                    if (description != null && description.trim().length() > 0) {
-                        mSaySomethingAboutAisle.setText(description);
-                    }
-                    
-                } catch (Exception e) {
-                }
-            }
         }
         mSaySomethingAboutAisle
                 .setOnEditorActionListener(new OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView arg0, int arg1,
                             KeyEvent arg2) {
+                        mSaysomethingClose.setVisibility(View.GONE);
                         mSaySomethingAboutAisle.setCursorVisible(false);
                         mInputMethodManager.hideSoftInputFromWindow(
                                 mSaySomethingAboutAisle.getWindowToken(), 0);
@@ -354,14 +265,28 @@ public class DataEntryFragment extends Fragment {
                                 .setVisibility(View.GONE);
                         mDataEntryActivity.mVueDataentryKeyboardCancel
                                 .setVisibility(View.GONE);
-                        mSaySomethingAboutAisle.setVisibility(View.GONE);
-                        mSaysomethingClose.setVisibility(View.GONE);
                         mDataEntryActivity.mVueDataentryPostLayout
                                 .setVisibility(View.VISIBLE);
                         mDataEntryActivity.hideDefaultActionbar();
                         return true;
                     }
                 });
+        mSaySomethingAboutAisle.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                mSaysomethingClose.setVisibility(View.VISIBLE);
+                mDataEntryActivity.mVueDataentryKeyboardLayout
+                        .setVisibility(View.VISIBLE);
+                mDataEntryActivity.mVueDataentryKeyboardDone
+                        .setVisibility(View.VISIBLE);
+                mDataEntryActivity.mVueDataentryKeyboardCancel
+                        .setVisibility(View.VISIBLE);
+                mDataEntryActivity.mVueDataentryPostLayout
+                        .setVisibility(View.GONE);
+                mDataEntryActivity.hideDefaultActionbar();
+            }
+        });
         mLookingForText.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -389,34 +314,7 @@ public class DataEntryFragment extends Fragment {
                             mLookingForListviewLayout.setVisibility(View.GONE);
                             mInputMethodManager.hideSoftInputFromWindow(
                                     mLookingForText.getWindowToken(), 0);
-                            mOccasionPopup.setVisibility(View.VISIBLE);
-                            if (mOccassionAisleKeywordsList != null
-                                    && mOccassionAisleKeywordsList.size() > 0) {
-                                mOccasionListviewLayout
-                                        .setVisibility(View.VISIBLE);
-                                mOccasionListview
-                                        .setAdapter(new OccassionAdapter(
-                                                getActivity(),
-                                                mOccassionAisleKeywordsList));
-                            }
-                            try {
-                                mOccasionText.setSelection(mOccasionText
-                                        .getText().toString().length());
-                            } catch (Exception e) {
-                            }
-                            mOccasionText.requestFocus();
-                            mInputMethodManager.showSoftInput(mOccasionText, 0);
-                            if (mDataEntryActivity == null) {
-                                mDataEntryActivity = (DataEntryActivity) getActivity();
-                            }
-                            mDataEntryActivity.mVueDataentryKeyboardLayout
-                                    .setVisibility(View.VISIBLE);
-                            mDataEntryActivity.mVueDataentryKeyboardDone
-                                    .setVisibility(View.VISIBLE);
-                            mDataEntryActivity.mVueDataentryKeyboardCancel
-                                    .setVisibility(View.VISIBLE);
                             mMainHeadingRow.setVisibility(View.VISIBLE);
-                            mDataEntryActivity.hideDefaultActionbar();
                             if (mOccasion != null) {
                                 mLookingForOccasionTextview.setText(mLookingFor
                                         + " for " + mOccasion);
@@ -424,6 +322,14 @@ public class DataEntryFragment extends Fragment {
                                 mLookingForOccasionTextview
                                         .setText("Looking for " + mLookingFor);
                             }
+                            mDataEntryActivity.mVueDataentryKeyboardLayout
+                                    .setVisibility(View.GONE);
+                            mDataEntryActivity.mVueDataentryKeyboardDone
+                                    .setVisibility(View.GONE);
+                            mDataEntryActivity.mVueDataentryKeyboardCancel
+                                    .setVisibility(View.GONE);
+                            mDataEntryActivity.showDefaultActionbar();
+                            categoryIconClickFunctionality();
                         } else {
                             Toast.makeText(getActivity(),
                                     "LookingFor is mandatory.",
@@ -460,7 +366,17 @@ public class DataEntryFragment extends Fragment {
                 }
                 mOccasionPopup.setVisibility(View.GONE);
                 mOccasionListviewLayout.setVisibility(View.GONE);
-                categoryIconClickFunctionality();
+                mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+                mSaysomethingClose.setVisibility(View.GONE);
+                mDataEntryActivity.mVueDataentryKeyboardLayout
+                        .setVisibility(View.GONE);
+                mDataEntryActivity.mVueDataentryKeyboardDone
+                        .setVisibility(View.GONE);
+                mDataEntryActivity.mVueDataentryKeyboardCancel
+                        .setVisibility(View.GONE);
+                mDataEntryActivity.mVueDataentryPostLayout
+                        .setVisibility(View.VISIBLE);
+                mDataEntryActivity.hideDefaultActionbar();
                 return true;
             };
         });
@@ -470,12 +386,12 @@ public class DataEntryFragment extends Fragment {
                     KeyEvent arg2) {
                 mInputMethodManager.hideSoftInputFromWindow(
                         mFindAtText.getWindowToken(), 0);
-                mPreviousFindAtText = mFindAtText.getText().toString();
-                mOtherSourceSelectedImageDetailsUrl = mPreviousFindAtText;
+                mOtherSourceSelectedImageDetailsUrl = mFindAtText.getText()
+                        .toString();
                 mFindatClose.setVisibility(View.GONE);
                 mFindAtPopUp.setVisibility(View.GONE);
                 mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
-                mSaysomethingClose.setVisibility(View.VISIBLE);
+                mSaysomethingClose.setVisibility(View.GONE);
                 mInputMethodManager.hideSoftInputFromWindow(
                         mOccasionText.getWindowToken(), 0);
                 mInputMethodManager.hideSoftInputFromWindow(
@@ -490,21 +406,13 @@ public class DataEntryFragment extends Fragment {
                 mFindAtPopUp.setVisibility(View.GONE);
                 mCategoryListviewLayout.setVisibility(View.GONE);
                 mSelectCategoryLayout.setVisibility(View.GONE);
-                final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInputFromWindow(
-                        mSaySomethingAboutAisle.getApplicationWindowToken(),
-                        InputMethodManager.SHOW_FORCED, 0);
-                mSaySomethingAboutAisle.requestFocus();
-                mInputMethodManager.showSoftInput(mSaySomethingAboutAisle, 0);
-                if (mDataEntryActivity == null) {
-                    mDataEntryActivity = (DataEntryActivity) getActivity();
-                }
                 mDataEntryActivity.mVueDataentryKeyboardLayout
-                        .setVisibility(View.VISIBLE);
+                        .setVisibility(View.GONE);
                 mDataEntryActivity.mVueDataentryKeyboardDone
-                        .setVisibility(View.VISIBLE);
+                        .setVisibility(View.GONE);
                 mDataEntryActivity.mVueDataentryKeyboardCancel
+                        .setVisibility(View.GONE);
+                mDataEntryActivity.mVueDataentryPostLayout
                         .setVisibility(View.VISIBLE);
                 mDataEntryActivity.hideDefaultActionbar();
                 return true;
@@ -634,6 +542,86 @@ public class DataEntryFragment extends Fragment {
                 mSaySomethingAboutAisle.setText("");
             }
         });
+        mOccasionLayout.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                if (mCategoryListviewLayout.getVisibility() == View.GONE
+                        && mLookingForPopup.getVisibility() == View.GONE
+                        && mFindAtPopUp.getVisibility() == View.GONE) {
+                    mSaySomethingAboutAisle.setVisibility(View.GONE);
+                    mSaysomethingClose.setVisibility(View.GONE);
+                    mOccasionPopup.setVisibility(View.VISIBLE);
+                    if (mOccassionAisleKeywordsList != null
+                            && mOccassionAisleKeywordsList.size() > 0) {
+                        mOccasionListviewLayout.setVisibility(View.VISIBLE);
+                        mOccasionListview.setAdapter(new OccassionAdapter(
+                                getActivity(), mOccassionAisleKeywordsList));
+                    }
+                    try {
+                        mOccasionText.setSelection(mOccasionText.getText()
+                                .toString().length());
+                    } catch (Exception e) {
+                    }
+                    mOccasionText.requestFocus();
+                    mInputMethodManager.showSoftInput(mOccasionText, 0);
+                    if (mDataEntryActivity == null) {
+                        mDataEntryActivity = (DataEntryActivity) getActivity();
+                    }
+                    mDataEntryActivity.mVueDataentryKeyboardLayout
+                            .setVisibility(View.VISIBLE);
+                    mDataEntryActivity.mVueDataentryKeyboardDone
+                            .setVisibility(View.VISIBLE);
+                    mDataEntryActivity.mVueDataentryKeyboardCancel
+                            .setVisibility(View.VISIBLE);
+                    mDataEntryActivity.mVueDataentryPostLayout
+                            .setVisibility(View.GONE);
+                    mDataEntryActivity.hideDefaultActionbar();
+                }
+            }
+        });
+        mFindatLayout.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                if (mCategoryListviewLayout.getVisibility() == View.GONE
+                        && mLookingForPopup.getVisibility() == View.GONE
+                        && mOccasionPopup.getVisibility() == View.GONE) {
+                    mSaySomethingAboutAisle.setVisibility(View.GONE);
+                    mSaysomethingClose.setVisibility(View.GONE);
+                    mFindatClose.setVisibility(View.VISIBLE);
+                    mFindAtPopUp.setVisibility(View.VISIBLE);
+                    mLookingForPopup.setVisibility(View.GONE);
+                    mLookingForListviewLayout.setVisibility(View.GONE);
+                    mOccasionPopup.setVisibility(View.GONE);
+                    mOccasionListviewLayout.setVisibility(View.GONE);
+                    mCategoryListviewLayout.setVisibility(View.GONE);
+                    mSelectCategoryLayout.setVisibility(View.GONE);
+                    mInputMethodManager.hideSoftInputFromWindow(
+                            mOccasionText.getWindowToken(), 0);
+                    mInputMethodManager.hideSoftInputFromWindow(
+                            mLookingForText.getWindowToken(), 0);
+                    mInputMethodManager.hideSoftInputFromWindow(
+                            mSaySomethingAboutAisle.getWindowToken(), 0);
+                    mFindAtText.requestFocus();
+                    mFindAtText.setSelection(mFindAtText.getText().toString()
+                            .length());
+                    mInputMethodManager.showSoftInput(mFindAtText, 0);
+                    if (mDataEntryActivity == null) {
+                        mDataEntryActivity = (DataEntryActivity) getActivity();
+                    }
+                    mDataEntryActivity.mVueDataentryKeyboardLayout
+                            .setVisibility(View.VISIBLE);
+                    mDataEntryActivity.mVueDataentryKeyboardDone
+                            .setVisibility(View.VISIBLE);
+                    mDataEntryActivity.mVueDataentryKeyboardCancel
+                            .setVisibility(View.VISIBLE);
+                    mDataEntryActivity.mVueDataentryPostLayout
+                            .setVisibility(View.GONE);
+                    mDataEntryActivity.hideDefaultActionbar();
+                }
+            }
+        });
         addImageToViewPager(true);
         return mDataEntryFragmentView;
     }
@@ -659,31 +647,7 @@ public class DataEntryFragment extends Fragment {
                 mLookingForListviewLayout.setVisibility(View.GONE);
                 mInputMethodManager.hideSoftInputFromWindow(
                         mLookingForText.getWindowToken(), 0);
-                mOccasionPopup.setVisibility(View.VISIBLE);
-                try {
-                    mOccasionText.setSelection(mOccasionText.getText()
-                            .toString().length());
-                } catch (Exception e) {
-                }
-                if (mOccassionAisleKeywordsList != null
-                        && mOccassionAisleKeywordsList.size() > 0) {
-                    mOccasionListviewLayout.setVisibility(View.VISIBLE);
-                    mOccasionListview.setAdapter(new OccassionAdapter(
-                            getActivity(), mOccassionAisleKeywordsList));
-                }
-                mOccasionText.requestFocus();
-                mInputMethodManager.showSoftInput(mOccasionText, 0);
-                if (mDataEntryActivity == null) {
-                    mDataEntryActivity = (DataEntryActivity) getActivity();
-                }
-                mDataEntryActivity.mVueDataentryKeyboardLayout
-                        .setVisibility(View.VISIBLE);
-                mDataEntryActivity.mVueDataentryKeyboardDone
-                        .setVisibility(View.VISIBLE);
-                mDataEntryActivity.mVueDataentryKeyboardCancel
-                        .setVisibility(View.VISIBLE);
                 mMainHeadingRow.setVisibility(View.VISIBLE);
-                mDataEntryActivity.hideDefaultActionbar();
                 if (mOccasion != null) {
                     mLookingForOccasionTextview.setText(mLookingFor + " for "
                             + mOccasion);
@@ -691,6 +655,14 @@ public class DataEntryFragment extends Fragment {
                     mLookingForOccasionTextview.setText("Looking for "
                             + mLookingFor);
                 }
+                mDataEntryActivity.mVueDataentryKeyboardLayout
+                        .setVisibility(View.GONE);
+                mDataEntryActivity.mVueDataentryKeyboardDone
+                        .setVisibility(View.GONE);
+                mDataEntryActivity.mVueDataentryKeyboardCancel
+                        .setVisibility(View.GONE);
+                mDataEntryActivity.showDefaultActionbar();
+                categoryIconClickFunctionality();
             } else {
                 mLookingForText.requestFocus();
                 mLookingForText.setSelection(mLookingForText.getText()
@@ -733,13 +705,23 @@ public class DataEntryFragment extends Fragment {
             }
             mOccasionPopup.setVisibility(View.GONE);
             mOccasionListviewLayout.setVisibility(View.GONE);
-            categoryIconClickFunctionality();
+            mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+            mSaysomethingClose.setVisibility(View.GONE);
+            mDataEntryActivity.mVueDataentryKeyboardLayout
+                    .setVisibility(View.GONE);
+            mDataEntryActivity.mVueDataentryKeyboardDone
+                    .setVisibility(View.GONE);
+            mDataEntryActivity.mVueDataentryKeyboardCancel
+                    .setVisibility(View.GONE);
+            mDataEntryActivity.mVueDataentryPostLayout
+                    .setVisibility(View.VISIBLE);
+            mDataEntryActivity.hideDefaultActionbar();
         } else if (mCategoryListviewLayout.getVisibility() == View.VISIBLE) {
             Toast.makeText(getActivity(), "Category is mandatory.",
                     Toast.LENGTH_LONG).show();
         } else if (mFindAtPopUp.getVisibility() == View.VISIBLE) {
             mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
-            mSaysomethingClose.setVisibility(View.VISIBLE);
+            mSaysomethingClose.setVisibility(View.GONE);
             mInputMethodManager.hideSoftInputFromWindow(
                     mOccasionText.getWindowToken(), 0);
             mInputMethodManager.hideSoftInputFromWindow(
@@ -754,23 +736,17 @@ public class DataEntryFragment extends Fragment {
             mFindAtPopUp.setVisibility(View.GONE);
             mCategoryListviewLayout.setVisibility(View.GONE);
             mSelectCategoryLayout.setVisibility(View.GONE);
-            final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.toggleSoftInputFromWindow(
-                    mSaySomethingAboutAisle.getApplicationWindowToken(),
-                    InputMethodManager.SHOW_FORCED, 0);
-            if (mDataEntryActivity == null) {
-                mDataEntryActivity = (DataEntryActivity) getActivity();
-            }
             mDataEntryActivity.mVueDataentryKeyboardLayout
-                    .setVisibility(View.VISIBLE);
+                    .setVisibility(View.GONE);
             mDataEntryActivity.mVueDataentryKeyboardDone
-                    .setVisibility(View.VISIBLE);
+                    .setVisibility(View.GONE);
             mDataEntryActivity.mVueDataentryKeyboardCancel
+                    .setVisibility(View.GONE);
+            mDataEntryActivity.mVueDataentryPostLayout
                     .setVisibility(View.VISIBLE);
             mDataEntryActivity.hideDefaultActionbar();
         } else if (mSaySomethingAboutAisle.getVisibility() == View.VISIBLE) {
-            mSaySomethingAboutAisle.setVisibility(View.GONE);
+            mSaysomethingClose.setVisibility(View.GONE);
             mDataEntryActivity.mVueDataentryKeyboardLayout
                     .setVisibility(View.GONE);
             mDataEntryActivity.mVueDataentryKeyboardDone
@@ -793,30 +769,14 @@ public class DataEntryFragment extends Fragment {
                     mOccasionText.getWindowToken(), 0);
             mInputMethodManager.hideSoftInputFromWindow(
                     mLookingForText.getWindowToken(), 0);
-            mOccasionPopup.setVisibility(View.VISIBLE);
-            if (mOccassionAisleKeywordsList != null
-                    && mOccassionAisleKeywordsList.size() > 0) {
-                mOccasionListviewLayout.setVisibility(View.VISIBLE);
-                mOccasionListview.setAdapter(new OccassionAdapter(
-                        getActivity(), mOccassionAisleKeywordsList));
-            }
-            try {
-                mOccasionText.setSelection(mOccasionText.getText().toString()
-                        .length());
-            } catch (Exception e) {
-            }
-            mOccasionText.requestFocus();
-            mInputMethodManager.showSoftInput(mOccasionText, 0);
-            if (mDataEntryActivity == null) {
-                mDataEntryActivity = (DataEntryActivity) getActivity();
-            }
             mDataEntryActivity.mVueDataentryKeyboardLayout
-                    .setVisibility(View.VISIBLE);
+                    .setVisibility(View.GONE);
             mDataEntryActivity.mVueDataentryKeyboardDone
-                    .setVisibility(View.VISIBLE);
+                    .setVisibility(View.GONE);
             mDataEntryActivity.mVueDataentryKeyboardCancel
-                    .setVisibility(View.VISIBLE);
-            mDataEntryActivity.hideDefaultActionbar();
+                    .setVisibility(View.GONE);
+            mDataEntryActivity.showDefaultActionbar();
+            categoryIconClickFunctionality();
         } else {
             Toast.makeText(getActivity(), "Lookingfor is mandatory.",
                     Toast.LENGTH_LONG).show();
@@ -842,11 +802,16 @@ public class DataEntryFragment extends Fragment {
         mDataEntryActivity.mVueDataentryKeyboardDone.setVisibility(View.GONE);
         mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
         mDataEntryActivity.showDefaultActionbar();
-        categoryIconClickFunctionality();
+        mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+        mSaysomethingClose.setVisibility(View.GONE);
+        mDataEntryActivity.mVueDataentryKeyboardLayout.setVisibility(View.GONE);
+        mDataEntryActivity.mVueDataentryKeyboardDone.setVisibility(View.GONE);
+        mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
+        mDataEntryActivity.mVueDataentryPostLayout.setVisibility(View.VISIBLE);
+        mDataEntryActivity.hideDefaultActionbar();
     }
     
     public void findAtInterceptListnerFunctionality() {
-        mFindAtText.setText(mPreviousFindAtText);
         mFindatClose.setVisibility(View.GONE);
         mFindAtPopUp.setVisibility(View.GONE);
         mInputMethodManager.hideSoftInputFromWindow(
@@ -858,7 +823,7 @@ public class DataEntryFragment extends Fragment {
         mInputMethodManager.hideSoftInputFromWindow(
                 mFindAtText.getWindowToken(), 0);
         mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
-        mSaysomethingClose.setVisibility(View.VISIBLE);
+        mSaysomethingClose.setVisibility(View.GONE);
         mInputMethodManager.hideSoftInputFromWindow(
                 mOccasionText.getWindowToken(), 0);
         mInputMethodManager.hideSoftInputFromWindow(
@@ -873,31 +838,18 @@ public class DataEntryFragment extends Fragment {
         mFindAtPopUp.setVisibility(View.GONE);
         mCategoryListviewLayout.setVisibility(View.GONE);
         mSelectCategoryLayout.setVisibility(View.GONE);
-        final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInputFromWindow(
-                mSaySomethingAboutAisle.getApplicationWindowToken(),
-                InputMethodManager.SHOW_FORCED, 0);
-        mSaySomethingAboutAisle.requestFocus();
-        mInputMethodManager.showSoftInput(mSaySomethingAboutAisle, 0);
-        if (mDataEntryActivity == null) {
-            mDataEntryActivity = (DataEntryActivity) getActivity();
-        }
-        mDataEntryActivity.mVueDataentryKeyboardLayout
-                .setVisibility(View.VISIBLE);
-        mDataEntryActivity.mVueDataentryKeyboardDone
-                .setVisibility(View.VISIBLE);
-        mDataEntryActivity.mVueDataentryKeyboardCancel
-                .setVisibility(View.VISIBLE);
+        mDataEntryActivity.mVueDataentryKeyboardLayout.setVisibility(View.GONE);
+        mDataEntryActivity.mVueDataentryKeyboardDone.setVisibility(View.GONE);
+        mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
+        mDataEntryActivity.mVueDataentryPostLayout.setVisibility(View.VISIBLE);
         mDataEntryActivity.hideDefaultActionbar();
     }
     
     public void saySomethingABoutAisleInterceptListnerFunctionality() {
+        mSaysomethingClose.setVisibility(View.GONE);
         mSaySomethingAboutAisle.setCursorVisible(false);
         mInputMethodManager.hideSoftInputFromWindow(
                 mSaySomethingAboutAisle.getWindowToken(), 0);
-        mSaySomethingAboutAisle.setVisibility(View.GONE);
-        mSaysomethingClose.setVisibility(View.GONE);
         if (mDataEntryActivity == null) {
             mDataEntryActivity = (DataEntryActivity) getActivity();
         }
@@ -912,18 +864,10 @@ public class DataEntryFragment extends Fragment {
         hideAllEditableTextboxes();
         if (mLookingFor != null
                 && (mCategoryheading.getText().toString().trim().length() > 0)) {
-            if (Utils.getDataentryAddImageAisleFlag(getActivity())
-                    || Utils.getDataentryTopAddImageAisleFlag(mContext)
-                    || mFromDetailsScreenFlag) {
+            if (mFromDetailsScreenFlag) {
                 addImageToAisle();
             } else {
-                if (mResizedImagePath != null) {
-                    addAisle();
-                } else {
-                    showAlertForMandatoryFields(getResources()
-                            .getString(
-                                    R.string.dataentry_mandtory_field_add_aisleimage_mesg));
-                }
+                addAisle();
             }
         } else {
             if (mCategoryheading.getText().toString().trim().length() == 0) {
@@ -1258,72 +1202,20 @@ public class DataEntryFragment extends Fragment {
                     mCategoryListview.setVisibility(View.GONE);
                     mCategoryListviewLayout.setVisibility(View.GONE);
                     mSelectCategoryLayout.setVisibility(View.GONE);
-                    if (mFindAtText.getText().toString().trim().length() == 0) {
-                        mFindatClose.setVisibility(View.VISIBLE);
-                        mFindAtPopUp.setVisibility(View.VISIBLE);
-                        mLookingForPopup.setVisibility(View.GONE);
-                        mLookingForListviewLayout.setVisibility(View.GONE);
-                        mOccasionPopup.setVisibility(View.GONE);
-                        mOccasionListviewLayout.setVisibility(View.GONE);
-                        mCategoryListviewLayout.setVisibility(View.GONE);
-                        mSelectCategoryLayout.setVisibility(View.GONE);
-                        mInputMethodManager.hideSoftInputFromWindow(
-                                mOccasionText.getWindowToken(), 0);
-                        mInputMethodManager.hideSoftInputFromWindow(
-                                mLookingForText.getWindowToken(), 0);
-                        mInputMethodManager.hideSoftInputFromWindow(
-                                mSaySomethingAboutAisle.getWindowToken(), 0);
-                        mFindAtText.requestFocus();
-                        mFindAtText.setSelection(mFindAtText.getText()
-                                .toString().length());
-                        mInputMethodManager.showSoftInput(mFindAtText, 0);
-                        if (mDataEntryActivity == null) {
-                            mDataEntryActivity = (DataEntryActivity) getActivity();
-                        }
-                        mDataEntryActivity.mVueDataentryKeyboardLayout
-                                .setVisibility(View.VISIBLE);
-                        mDataEntryActivity.mVueDataentryKeyboardDone
-                                .setVisibility(View.VISIBLE);
-                        mDataEntryActivity.mVueDataentryKeyboardCancel
-                                .setVisibility(View.VISIBLE);
-                        mDataEntryActivity.hideDefaultActionbar();
-                    } else {
-                        mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
-                        mSaysomethingClose.setVisibility(View.VISIBLE);
-                        mInputMethodManager.hideSoftInputFromWindow(
-                                mOccasionText.getWindowToken(), 0);
-                        mInputMethodManager.hideSoftInputFromWindow(
-                                mLookingForText.getWindowToken(), 0);
-                        mInputMethodManager.hideSoftInputFromWindow(
-                                mFindAtText.getWindowToken(), 0);
-                        mLookingForPopup.setVisibility(View.GONE);
-                        mLookingForListviewLayout.setVisibility(View.GONE);
-                        mOccasionPopup.setVisibility(View.GONE);
-                        mOccasionListviewLayout.setVisibility(View.GONE);
-                        mFindatClose.setVisibility(View.GONE);
-                        mFindAtPopUp.setVisibility(View.GONE);
-                        mCategoryListviewLayout.setVisibility(View.GONE);
-                        mSelectCategoryLayout.setVisibility(View.GONE);
-                        final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
-                                .getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.toggleSoftInputFromWindow(
-                                mSaySomethingAboutAisle
-                                        .getApplicationWindowToken(),
-                                InputMethodManager.SHOW_FORCED, 0);
-                        mSaySomethingAboutAisle.requestFocus();
-                        mInputMethodManager.showSoftInput(
-                                mSaySomethingAboutAisle, 0);
-                        if (mDataEntryActivity == null) {
-                            mDataEntryActivity = (DataEntryActivity) getActivity();
-                        }
-                        mDataEntryActivity.mVueDataentryKeyboardLayout
-                                .setVisibility(View.VISIBLE);
-                        mDataEntryActivity.mVueDataentryKeyboardDone
-                                .setVisibility(View.VISIBLE);
-                        mDataEntryActivity.mVueDataentryKeyboardCancel
-                                .setVisibility(View.VISIBLE);
-                        mDataEntryActivity.hideDefaultActionbar();
+                    mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+                    mSaysomethingClose.setVisibility(View.GONE);
+                    if (mDataEntryActivity == null) {
+                        mDataEntryActivity = (DataEntryActivity) getActivity();
                     }
+                    mDataEntryActivity.mVueDataentryKeyboardLayout
+                            .setVisibility(View.GONE);
+                    mDataEntryActivity.mVueDataentryKeyboardDone
+                            .setVisibility(View.GONE);
+                    mDataEntryActivity.mVueDataentryKeyboardCancel
+                            .setVisibility(View.GONE);
+                    mDataEntryActivity.mVueDataentryPostLayout
+                            .setVisibility(View.VISIBLE);
+                    mDataEntryActivity.hideDefaultActionbar();
                 }
             });
             return rowView;
@@ -1356,6 +1248,10 @@ public class DataEntryFragment extends Fragment {
                 }
             }, 200);
         } else {
+            mOccasionLayout.setVisibility(View.GONE);
+            mFindatLayout.setVisibility(View.GONE);
+            mSaySomethingAboutAisle.setVisibility(View.GONE);
+            mSaysomethingClose.setVisibility(View.GONE);
             if (mDataEntryActivity == null) {
                 mDataEntryActivity = (DataEntryActivity) getActivity();
             }
@@ -1416,22 +1312,8 @@ public class DataEntryFragment extends Fragment {
             }
             if (storedVueUser != null && storedVueUser.getId() != null) {
                 if (VueConnectivityManager.isNetworkConnected(getActivity())) {
-                    if (mFromDetailsScreenFlag) {
-                        addImageToAisleToServer(storedVueUser, VueApplication
-                                .getInstance().getClickedWindowID(), true);
-                        
-                    } else {
-                        if (Utils.getDataentryScreenAisleId(getActivity()) != null) {
-                            addImageToAisleToServer(
-                                    storedVueUser,
-                                    Utils.getDataentryScreenAisleId(getActivity()),
-                                    false);
-                        } else {
-                            Toast.makeText(getActivity(),
-                                    "This Aisle is not uploaded to server.",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
+                    addImageToAisleToServer(storedVueUser, VueApplication
+                            .getInstance().getClickedWindowID());
                 } else {
                     Toast.makeText(getActivity(),
                             getResources().getString(R.string.no_network),
@@ -1661,9 +1543,6 @@ public class DataEntryFragment extends Fragment {
             final Aisle aisle = new Aisle();
             if (aisleId != null) {
                 aisle.setId(Long.parseLong(aisleId));
-            } else {
-                aisle.setId(Long.parseLong(Utils
-                        .getDataentryScreenAisleId(getActivity())));
             }
             aisle.setCategory(categoery);
             aisle.setLookingFor(lookingfor);
@@ -1692,7 +1571,6 @@ public class DataEntryFragment extends Fragment {
     // Create ailse and send to server.
     public void addAisleToServer(VueUser vueUser) {
         if (mAisleImagePathList != null && mAisleImagePathList.size() > 0) {
-            showAddMoreImagesDialog();
             String categoery = mCategoryheading.getText().toString().trim();
             String lookingFor = mLookingFor.trim();
             String occassion = mOccasion;
@@ -1766,9 +1644,6 @@ public class DataEntryFragment extends Fragment {
                                                                 public void onAisleUpdated(
                                                                         String aisleId,
                                                                         String imageId) {
-                                                                    Utils.putDataentryScreenAisleId(
-                                                                            getActivity(),
-                                                                            aisleId);
                                                                     if (mAisleImagePathList != null
                                                                             && mAisleImagePathList
                                                                                     .size() > 0) {
@@ -1827,8 +1702,6 @@ public class DataEntryFragment extends Fragment {
                                     @Override
                                     public void onAisleUpdated(String aisleId,
                                             String imageId) {
-                                        Utils.putDataentryScreenAisleId(
-                                                getActivity(), aisleId);
                                         if (mAisleImagePathList != null
                                                 && mAisleImagePathList.size() > 0) {
                                             for (int i = 0; i < mAisleImagePathList
@@ -1867,6 +1740,10 @@ public class DataEntryFragment extends Fragment {
                                     }
                                 });
             }
+            if (mDataEntryActivity == null) {
+                mDataEntryActivity = (DataEntryActivity) getActivity();
+            }
+            mDataEntryActivity.shareViaVueClicked();
         } else {
             Toast.makeText(
                     getActivity(),
@@ -1977,19 +1854,19 @@ public class DataEntryFragment extends Fragment {
     }
     
     public void addImageToAisleToServer(VueUser storedVueUser,
-            String ownerAisleId, final boolean fromDetailsScreenFlag) {
+            String ownerAisleId) {
         if (mAisleImagePathList != null && mAisleImagePathList.size() > 0) {
-            VueImage vueImage = null;
-            String originalImagePath = null;
-            String detailsUrl = null;
-            String imageUrl = null;
-            int imageWidth = 0;
-            int imageHeight = 0;
-            String imageStore = null;
-            String offlineImageId = null;
+            final ArrayList<VueImage> vueImageList = new ArrayList<VueImage>();
+            ArrayList<String> detailsUrl = new ArrayList<String>();
+            ArrayList<String> imageUrl = new ArrayList<String>();
+            ArrayList<Integer> imageWidth = new ArrayList<Integer>();
+            ArrayList<Integer> imageHeight = new ArrayList<Integer>();
+            ArrayList<String> imageStore = new ArrayList<String>();
+            final ArrayList<String> originalImagePathList = new ArrayList<String>();
+            final ArrayList<String> offlineImageIdList = new ArrayList<String>();
             for (int i = 0; i < mAisleImagePathList.size(); i++) {
                 if (!(mAisleImagePathList.get(i).isAddedToServerFlag())) {
-                    vueImage = new VueImage();
+                    VueImage vueImage = new VueImage();
                     vueImage.setDetailsUrl(mAisleImagePathList.get(i)
                             .getDetailsUrl());
                     vueImage.setHeight(mAisleImagePathList.get(i)
@@ -2004,25 +1881,24 @@ public class DataEntryFragment extends Fragment {
                     vueImage.setOwnerUserId(Long.valueOf(Long.valueOf(
                             storedVueUser.getId()).toString()));
                     vueImage.setOwnerAisleId(Long.valueOf(ownerAisleId));
-                    originalImagePath = mAisleImagePathList.get(i)
-                            .getOriginalImagePath();
-                    offlineImageId = String.valueOf(System.currentTimeMillis()
-                            + i);
+                    vueImageList.add(vueImage);
+                    String offlineImageId = String.valueOf(System
+                            .currentTimeMillis() + i);
+                    offlineImageIdList.add(offlineImageId);
+                    originalImagePathList.add(mAisleImagePathList.get(i)
+                            .getOriginalImagePath());
                     mAisleImagePathList.get(i).setImageId(offlineImageId);
                     mAisleImagePathList.get(i).setAisleId(ownerAisleId);
                     mAisleImagePathList.get(i).setAddedToServerFlag(true);
-                    if (fromDetailsScreenFlag) {
-                        detailsUrl = mAisleImagePathList.get(i).getDetailsUrl();
-                        imageUrl = mAisleImagePathList.get(i).getImageUrl();
-                        imageWidth = mAisleImagePathList.get(i).getImageWidth();
-                        imageHeight = mAisleImagePathList.get(i)
-                                .getImageHeight();
-                        imageStore = mAisleImagePathList.get(i).getImageStore();
-                    }
-                    break;
+                    detailsUrl.add(mAisleImagePathList.get(i).getDetailsUrl());
+                    imageUrl.add(mAisleImagePathList.get(i).getImageUrl());
+                    imageWidth.add(mAisleImagePathList.get(i).getImageWidth());
+                    imageHeight
+                            .add(mAisleImagePathList.get(i).getImageHeight());
+                    imageStore.add(mAisleImagePathList.get(i).getImageStore());
                 }
             }
-            if (vueImage != null) {
+            if (vueImageList != null && vueImageList.size() > 0) {
                 try {
                     Utils.writeAisleImagePathListToFile(getActivity(),
                             VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
@@ -2038,38 +1914,42 @@ public class DataEntryFragment extends Fragment {
                     }
                 } catch (Exception e) {
                 }
-                if (!fromDetailsScreenFlag) {
-                    showAddMoreImagesDialog();
-                    addSingleImageToServer(vueImage, originalImagePath,
-                            fromDetailsScreenFlag, offlineImageId);
-                } else {
+                for (int j = 0; j < vueImageList.size(); j++) {
                     addImageToAisleWindow(VueApplication.getInstance()
-                            .getClickedWindowID(), originalImagePath, imageUrl,
-                            imageWidth, imageHeight, detailsUrl, imageStore,
-                            offlineImageId);
-                    Intent intent = new Intent();
-                    Bundle b = new Bundle();
-                    b.putString(
-                            VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
-                            mLookingFor);
-                    b.putString(
-                            VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
-                            mOccasion);
-                    b.putString(
-                            VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
-                            mCategoryheading.getText().toString());
-                    b.putString(
-                            VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
-                            mSaySomethingAboutAisle.getText().toString());
-                    intent.putExtras(b);
-                    getActivity()
-                            .setResult(
-                                    VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT,
-                                    intent);
-                    showAddMoreImagesDialog();
-                    addSingleImageToServer(vueImage, originalImagePath,
-                            fromDetailsScreenFlag, offlineImageId);
+                            .getClickedWindowID(),
+                            originalImagePathList.get(j), imageUrl.get(j),
+                            imageWidth.get(j), imageHeight.get(j),
+                            detailsUrl.get(j), imageStore.get(j),
+                            offlineImageIdList.get(j));
                 }
+                Intent intent = new Intent();
+                Bundle b = new Bundle();
+                b.putString(
+                        VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
+                        mLookingFor);
+                b.putString(
+                        VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_OCCASION,
+                        mOccasion);
+                b.putString(
+                        VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY,
+                        mCategoryheading.getText().toString());
+                b.putString(
+                        VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE,
+                        mSaySomethingAboutAisle.getText().toString());
+                intent.putExtras(b);
+                getActivity()
+                        .setResult(
+                                VueConstants.FROM_DETAILS_SCREEN_TO_DATAENTRY_SCREEN_ACTIVITY_RESULT,
+                                intent);
+                if (mDataEntryActivity == null) {
+                    mDataEntryActivity = (DataEntryActivity) getActivity();
+                }
+                for (int j = 0; j < vueImageList.size(); j++) {
+                    addSingleImageToServer(vueImageList.get(j),
+                            originalImagePathList.get(j), true,
+                            offlineImageIdList.get(j));
+                }
+                mDataEntryActivity.shareViaVueClicked();
             } else {
                 Toast.makeText(
                         getActivity(),
@@ -2337,7 +2217,7 @@ public class DataEntryFragment extends Fragment {
         }
     }
     
-    private void showAddMoreImagesDialog() {
+    public void showAddMoreImagesDialog() {
         final Dialog dialog = new Dialog(getActivity(),
                 R.style.Theme_Dialog_Translucent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -2351,21 +2231,6 @@ public class DataEntryFragment extends Fragment {
         yesButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 dialog.dismiss();
-                if (mDataEntryActivity == null) {
-                    mDataEntryActivity = (DataEntryActivity) getActivity();
-                }
-                mDataEntryActivity.showDefaultActionbarWithSkipButton();
-                mDataEntryActivity.mVueDataentryKeyboardLayout
-                        .setVisibility(View.GONE);
-                mDataEntryActivity.mVueDataentryKeyboardDone
-                        .setVisibility(View.GONE);
-                mDataEntryActivity.mVueDataentryKeyboardCancel
-                        .setVisibility(View.GONE);
-                mDataEntryActivity.mVueDataentryPostLayout
-                        .setVisibility(View.GONE);
-                getActivity().getActionBar().setTitle(
-                        getResources().getString(
-                                R.string.add_imae_to_aisle_screen_title));
                 Utils.putTouchToChnageImagePosition(getActivity(), -1);
                 Utils.putTouchToChnageImageTempPosition(getActivity(), -1);
                 Utils.putTouchToChnageImageFlag(getActivity(), false);
@@ -2375,10 +2240,6 @@ public class DataEntryFragment extends Fragment {
         noButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 dialog.dismiss();
-                if (mDataEntryActivity == null) {
-                    mDataEntryActivity = (DataEntryActivity) getActivity();
-                }
-                mDataEntryActivity.shareViaVueClicked();
             }
         });
         dialog.show();
