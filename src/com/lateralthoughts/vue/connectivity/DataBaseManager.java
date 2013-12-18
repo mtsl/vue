@@ -23,6 +23,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -62,6 +63,7 @@ public class DataBaseManager {
     private int mMaxPoolSize = 1;
     private long mKeepAliveTime = 10;
     private ThreadPoolExecutor threadPool;
+
     private final LinkedBlockingQueue<Runnable> mThreadsQueue = new LinkedBlockingQueue<Runnable>();
     private static DataBaseManager sManager;
     private HashMap<String, Integer> mAislesOrderMap;
@@ -150,7 +152,7 @@ public class DataBaseManager {
             
             @Override
             public void run() {
-                
+                Log.e("SURUSURU", "Surendra addBookmarkedAisles() in onResponse() jsonObject not null");
                 addAislesToDB(context, contentList, offsetValue, whichScreen,
                         true);
             }
@@ -169,6 +171,9 @@ public class DataBaseManager {
             List<AisleWindowContent> contentList, int offsetValue,
             int whichScreen, boolean isBookmarkedAisle) {
         
+        if(isBookmarkedAisle) {
+         Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle");
+        }
         if (contentList.size() == 0) {
             return;
         }
@@ -248,6 +253,7 @@ public class DataBaseManager {
                         null, null);
                 int count = cur.getCount() + 1;
                 cur.close();
+                Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle aisle count: " + count);
                 mBookmarkedAislesOrderMap.put(info.mAisleId, count);
             }
             ArrayList<AisleImageDetails> imageItemsArray = content
@@ -289,7 +295,8 @@ public class DataBaseManager {
                         context.getContentResolver().insert(
                                 VueConstants.MY_BOOKMARKED_AISLES_URI, values);
                     }
-                    
+                    Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle aisle inserted: " + rows);
+                    Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle aisle Already there");
                 }
             } else {
                 if (!isBookmarkedAisle) {
@@ -314,6 +321,8 @@ public class DataBaseManager {
                                 VueConstants.MY_BOOKMARKED_AISLES_URI, values);
                         
                     }
+                    Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle aisle inserted: " + rows);
+                    Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle aisle Old aisle");
                 }
             }
             if (imageItemsArray != null) {
@@ -818,16 +827,18 @@ public class DataBaseManager {
         values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, isBookmarked);
         values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
         if (isBookmarked) {
+            Log.e("SURUSURU", "Surendra updateBookmarkAislesToBDb() bookmark status: " + isBookmarked);
             String url = UrlConstants.GET_AISLE_RESTURL + "/"
                     + bookmarkedAisleId;
             
             Response.Listener listener = new Response.Listener<JSONObject>() {
-                
+
                 @Override
                 public void onResponse(final JSONObject jsonObject) {
                     if (jsonObject != null) {
+                        Log.e("SURUSURU", "Surendra updateBookmarkAislesToBDb() in onResponse() jsonObject not null");
                         Thread t = new Thread(new Runnable() {
-                            
+
                             @Override
                             public void run() {
                                 try {
@@ -842,13 +853,13 @@ public class DataBaseManager {
                                             imageDetails);
                                     ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
                                     aisleContentArray.add(aisleItem);
-                                    
+
                                     addBookmarkedAisles(mContext,
                                             aisleContentArray, 0, BOOKMARK);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                
+
                             }
                         });
                         t.start();
