@@ -8,82 +8,81 @@ public class ImageComment {
     String commenterFirstName;
     String commenterLastName;
     Long lastModifiedTimestamp;
-	Long createdTimestamp;
+    Long createdTimestamp;
     String imageCommentOwnerImageURL;
-    
     
     public ImageComment() {
     }
-
+    
     public Long getId() {
-            return id;
+        return id;
     }
-
+    
     public void setId(Long id) {
-            this.id = id;
+        this.id = id;
     }
-
+    
     public Long getOwnerUserId() {
-            return ownerUserId;
+        return ownerUserId;
     }
-
+    
     public void setOwnerUserId(Long ownerUserId) {
-            this.ownerUserId = ownerUserId;
+        this.ownerUserId = ownerUserId;
     }
-
+    
     public String getComment() {
-            return comment;
+        return comment;
     }
-
+    
     public void setComment(String comment) {
-            this.comment = comment;
+        this.comment = comment;
     }
-
+    
     public Long getLastModifiedTimestamp() {
-            return lastModifiedTimestamp;
+        return lastModifiedTimestamp;
     }
-
+    
     public void setLastModifiedTimestamp(Long lastModifiedTimestamp) {
-            this.lastModifiedTimestamp = lastModifiedTimestamp;
+        this.lastModifiedTimestamp = lastModifiedTimestamp;
     }
-
+    
     public Long getCreatedTimestamp() {
-            return createdTimestamp;
+        return createdTimestamp;
     }
-
+    
     public void setCreatedTimestamp(Long createdTimestamp) {
-            this.createdTimestamp = createdTimestamp;
+        this.createdTimestamp = createdTimestamp;
     }
-
+    
     public Long getOwnerImageId() {
-            return ownerImageId;
+        return ownerImageId;
     }
-
+    
     public void setOwnerImageId(Long ownerImageId) {
-            this.ownerImageId = ownerImageId;
+        this.ownerImageId = ownerImageId;
     }
-
+    
     public String getCommenterFirstName() {
-            return commenterFirstName;
+        return commenterFirstName;
     }
-
+    
     public void setCommenterFirstName(String commenterFirstName) {
-            this.commenterFirstName = commenterFirstName;
+        this.commenterFirstName = commenterFirstName;
     }
-
+    
     public String getCommenterLastName() {
-            return commenterLastName;
+        return commenterLastName;
     }
-
+    
     public void setCommenterLastName(String commenterLastName) {
-            this.commenterLastName = commenterLastName;
+        this.commenterLastName = commenterLastName;
     }
     
     public String getImageCommentOwnerImageURL() {
-		return imageCommentOwnerImageURL;
-	}
-
-	public void setImageCommentOwnerImageURL(String imageCommentOwnerImageURL) {
-		this.imageCommentOwnerImageURL = imageCommentOwnerImageURL;
-	}
+        return imageCommentOwnerImageURL;
+    }
+    
+    public void setImageCommentOwnerImageURL(String imageCommentOwnerImageURL) {
+        this.imageCommentOwnerImageURL = imageCommentOwnerImageURL;
+    }
 }

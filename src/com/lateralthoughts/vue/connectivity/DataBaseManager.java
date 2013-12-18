@@ -63,38 +63,40 @@ public class DataBaseManager {
     private int mMaxPoolSize = 1;
     private long mKeepAliveTime = 10;
     private ThreadPoolExecutor threadPool;
-    private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
-    private static DataBaseManager manager;
-    private HashMap<String, Integer> aislesOrderMap;
-    private HashMap<String, Integer> bookmarkedAislesOrderMap = new HashMap<String, Integer>();
 
+    private final LinkedBlockingQueue<Runnable> mThreadsQueue = new LinkedBlockingQueue<Runnable>();
+    private static DataBaseManager sManager;
+    private HashMap<String, Integer> mAislesOrderMap;
+    private HashMap<String, Integer> mBookmarkedAislesOrderMap = new HashMap<String, Integer>();
+    
     private DataBaseManager(Context context) {
         mContext = context;
         threadPool = new ThreadPoolExecutor(mPoolSize, mMaxPoolSize,
-                mKeepAliveTime, TimeUnit.SECONDS, threadsQueue);
+                mKeepAliveTime, TimeUnit.SECONDS, mThreadsQueue);
     }
-
+    
     public static DataBaseManager getInstance(Context context) {
-        if (manager == null) {
-            manager = new DataBaseManager(context);
+        if (sManager == null) {
+            sManager = new DataBaseManager(context);
         }
-        return manager;
+        return sManager;
     }
-
+    
     /**
      * to start thread pool.
      * 
-     * @param task Runnable
+     * @param task
+     *            Runnable
      */
     private void runTask(Runnable task) {
         threadPool.execute(task);
     }
-
+    
     public void addTrentingAislesFromServerToDB(final Context context,
             final List<AisleWindowContent> contentList, final int offsetValue,
             final int whichScreen) {
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
                 addAislesToDB(context, contentList, offsetValue, whichScreen,
@@ -102,12 +104,12 @@ public class DataBaseManager {
             }
         });
     }
-
+    
     public void addOrUpdateAisles(final Context context,
             final List<AisleWindowContent> contentList, final int offsetValue,
             final int whichScreen) {
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
                 addAislesToDB(context, contentList, offsetValue, whichScreen,
@@ -115,62 +117,67 @@ public class DataBaseManager {
             }
         });
     }
-
+    
     public void deleteOutDatedAisles(Context context, String aisleID) {
         context.getContentResolver().delete(VueConstants.CONTENT_URI,
-                VueConstants.AISLE_Id + "=?", new String[] {aisleID});
+                VueConstants.AISLE_Id + "=?", new String[] { aisleID });
         context.getContentResolver().delete(VueConstants.IMAGES_CONTENT_URI,
-                VueConstants.AISLE_Id + "=?", new String[] {aisleID});
+                VueConstants.AISLE_Id + "=?", new String[] { aisleID });
         context.getContentResolver().delete(VueConstants.COMMENTS_ON_IMAGE_URI,
-                VueConstants.AISLE_Id + "=?", new String[] {aisleID});
+                VueConstants.AISLE_Id + "=?", new String[] { aisleID });
     }
-
+    
     /**
      * update the aisle information in local DB, sends this task to thread pool.
      * 
-     * @param AisleContext context.
+     * @param AisleContext
+     *            context.
      * */
     @Deprecated
     public void aisleUpdateToDB(final AisleContext context) {
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
                 aisleUpdate(context);
             }
         });
     }
-
+    
     public void addBookmarkedAisles(final Context context,
             final List<AisleWindowContent> contentList, final int offsetValue,
             final int whichScreen) {
-
+        
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
-
+                Log.e("SURUSURU", "Surendra addBookmarkedAisles() in onResponse() jsonObject not null");
                 addAislesToDB(context, contentList, offsetValue, whichScreen,
                         true);
             }
         });
     }
-
+    
     /**
      * add all the aisles pulled from server to sqlite, if the aisle is already
      * there in sqlite then it will delete and insert the new data for that
      * aisle.
      * 
-     * @param Context context.
+     * @param Context
+     *            context.
      * */
     private void addAislesToDB(Context context,
             List<AisleWindowContent> contentList, int offsetValue,
             int whichScreen, boolean isBookmarkedAisle) {
-
+        
+        if(isBookmarkedAisle) {
+         Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle");
+        }
         if (contentList.size() == 0) {
             return;
         }
-        aislesOrderMap = new HashMap<String, Integer>();
+        mAislesOrderMap = new HashMap<String, Integer>();
         if (offsetValue == 0 && whichScreen == TRENDING && !isBookmarkedAisle) {
             context.getContentResolver().delete(VueConstants.CONTENT_URI, null,
                     null);
@@ -179,26 +186,23 @@ public class DataBaseManager {
             context.getContentResolver().delete(
                     VueConstants.COMMENTS_ON_IMAGE_URI, null, null);
         } else if (isBookmarkedAisle) {
-            bookmarkedAislesOrderMap.clear();
+            mBookmarkedAislesOrderMap.clear();
         }
-
+        
         Cursor aisleIdCursor = context.getContentResolver().query(
                 VueConstants.CONTENT_URI,
-                new String[] {VueConstants.AISLE_Id, VueConstants.ID}, null,
+                new String[] { VueConstants.AISLE_Id, VueConstants.ID }, null,
                 null, null);
         Cursor imageIdCursor = context.getContentResolver().query(
                 VueConstants.IMAGES_CONTENT_URI,
-                new String[] {VueConstants.IMAGE_ID}, null, null, null);
+                new String[] { VueConstants.IMAGE_ID }, null, null, null);
         Cursor commntsCursor = context.getContentResolver().query(
                 VueConstants.COMMENTS_ON_IMAGE_URI,
-                new String[] {VueConstants.ID}, null, null, null);
-
+                new String[] { VueConstants.ID }, null, null, null);
+        
         ArrayList<String> aisleIds = new ArrayList<String>();
         ArrayList<String> imageIds = new ArrayList<String>();
         ArrayList<Long> commentsImgId = new ArrayList<Long>();
-        Log.e("DataBaseManager",
-                "New aisles inserted aisleIdCursor.getCount(): "
-                        + aisleIdCursor.getColumnCount());
         if (aisleIdCursor.moveToFirst()) {
             do {
                 String aisleId = aisleIdCursor.getString(aisleIdCursor
@@ -207,7 +211,7 @@ public class DataBaseManager {
                 if (whichScreen == MY_AISLES || whichScreen == AISLE_CREATED) {
                     String order = aisleIdCursor.getString(aisleIdCursor
                             .getColumnIndex(VueConstants.ID));
-                    aislesOrderMap.put(aisleId, Integer.parseInt(order));
+                    mAislesOrderMap.put(aisleId, Integer.parseInt(order));
                 }
             } while (aisleIdCursor.moveToNext());
         }
@@ -231,25 +235,26 @@ public class DataBaseManager {
         for (int i = 0; i < aislesCount; i++) {
             AisleWindowContent content = contentList.get(i);
             AisleContext info = content.getAisleContext();
-            if (whichScreen == TRENDING && aislesOrderMap.isEmpty()) {
-                aislesOrderMap.put(info.mAisleId, THOUSAND);
-            } else if (whichScreen == TRENDING && !aislesOrderMap.isEmpty()) {
-                aislesOrderMap.put(info.mAisleId,
-                        getMaxAisleValue(aislesOrderMap) + 1);
+            if (whichScreen == TRENDING && mAislesOrderMap.isEmpty()) {
+                mAislesOrderMap.put(info.mAisleId, THOUSAND);
+            } else if (whichScreen == TRENDING && !mAislesOrderMap.isEmpty()) {
+                mAislesOrderMap.put(info.mAisleId,
+                        getMaxAisleValue(mAislesOrderMap) + 1);
             } else if (whichScreen == MY_AISLES
-                    && !aislesOrderMap.containsKey(info.mAisleId)) {
-                int newOrder = getMaxAisleValue(aislesOrderMap) + 1;
-                aislesOrderMap.put(info.mAisleId, newOrder);
+                    && !mAislesOrderMap.containsKey(info.mAisleId)) {
+                int newOrder = getMaxAisleValue(mAislesOrderMap) + 1;
+                mAislesOrderMap.put(info.mAisleId, newOrder);
             } else if (whichScreen == AISLE_CREATED) {
-                aislesOrderMap.put(info.mAisleId,
-                        getMinAisleValue(aislesOrderMap) - 1);
+                mAislesOrderMap.put(info.mAisleId,
+                        getMinAisleValue(mAislesOrderMap) - 1);
             } else if (isBookmarkedAisle) {
                 Cursor cur = mContext.getContentResolver().query(
                         VueConstants.MY_BOOKMARKED_AISLES_URI, null, null,
                         null, null);
                 int count = cur.getCount() + 1;
                 cur.close();
-                bookmarkedAislesOrderMap.put(info.mAisleId, count);
+                Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle aisle count: " + count);
+                mBookmarkedAislesOrderMap.put(info.mAisleId, count);
             }
             ArrayList<AisleImageDetails> imageItemsArray = content
                     .getImageList();
@@ -266,63 +271,65 @@ public class DataBaseManager {
             values.put(VueConstants.AISLE_OWNER_IMAGE_URL,
                     info.mAisleOwnerImageURL);
             values.put(VueConstants.DELETE_FLAG, 0);
-
+            
             if (aisleIds.contains(info.mAisleId)) {
                 if (!isBookmarkedAisle) {
-                    int order = aislesOrderMap.get(info.mAisleId);
+                    int order = mAislesOrderMap.get(info.mAisleId);
                     values.put(VueConstants.ID, String.format(FORMATE, order));
                     context.getContentResolver().update(
                             VueConstants.CONTENT_URI, values,
                             VueConstants.AISLE_Id + "=?",
-                            new String[] {info.mAisleId});
+                            new String[] { info.mAisleId });
                 } else {
-                    int order = bookmarkedAislesOrderMap.get(info.mAisleId);
+                    int order = mBookmarkedAislesOrderMap.get(info.mAisleId);
                     values.put(VueConstants.ID, String.format(FORMATE, order));
                     int rows = context.getContentResolver().update(
                             VueConstants.MY_BOOKMARKED_AISLES_URI, values,
                             VueConstants.AISLE_Id + "=?",
-                            new String[] {info.mAisleId});
+                            new String[] { info.mAisleId });
                     if (rows == 0) {
-                        order = bookmarkedAislesOrderMap.get(info.mAisleId);
+                        order = mBookmarkedAislesOrderMap.get(info.mAisleId);
                         values.put(VueConstants.ID,
                                 String.format(FORMATE, order));
                         values.put(VueConstants.AISLE_Id, info.mAisleId);
                         context.getContentResolver().insert(
                                 VueConstants.MY_BOOKMARKED_AISLES_URI, values);
                     }
-
+                    Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle aisle inserted: " + rows);
+                    Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle aisle Already there");
                 }
             } else {
                 if (!isBookmarkedAisle) {
-                    int order = aislesOrderMap.get(info.mAisleId);
+                    int order = mAislesOrderMap.get(info.mAisleId);
                     values.put(VueConstants.ID, String.format(FORMATE, order));
                     values.put(VueConstants.AISLE_Id, info.mAisleId);
-                    Uri uri = context.getContentResolver().insert(
+                    context.getContentResolver().insert(
                             VueConstants.CONTENT_URI, values);
-                    Log.e("DataBaseManager", "New aisles inserted Uri: " + uri);
                 } else {
-                    int order = bookmarkedAislesOrderMap.get(info.mAisleId);
+                    int order = mBookmarkedAislesOrderMap.get(info.mAisleId);
                     values.put(VueConstants.ID, String.format(FORMATE, order));
                     int rows = context.getContentResolver().update(
                             VueConstants.MY_BOOKMARKED_AISLES_URI, values,
                             VueConstants.AISLE_Id + "=?",
-                            new String[] {info.mAisleId});
+                            new String[] { info.mAisleId });
                     if (rows == 0) {
-                        order = bookmarkedAislesOrderMap.get(info.mAisleId);
+                        order = mBookmarkedAislesOrderMap.get(info.mAisleId);
                         values.put(VueConstants.ID,
                                 String.format(FORMATE, order));
                         values.put(VueConstants.AISLE_Id, info.mAisleId);
                         context.getContentResolver().insert(
                                 VueConstants.MY_BOOKMARKED_AISLES_URI, values);
-
+                        
                     }
+                    Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle aisle inserted: " + rows);
+                    Log.e("SURUSURU", "Surendra addAislesToDB() from isBookmarkedAisle aisle Old aisle");
                 }
             }
             if (imageItemsArray != null) {
                 for (AisleImageDetails imageDetails : imageItemsArray) {
                     Cursor imgCountCursor = context.getContentResolver().query(
                             VueConstants.IMAGES_CONTENT_URI,
-                            new String[] {"COUNT(*)"}, null, null, null);
+                            new String[] { "COUNT(*)" }, null, null, null);
                     String strImgCount = "";
                     int imgCount = 0;
                     if (imgCountCursor.moveToFirst()) {
@@ -346,12 +353,12 @@ public class DataBaseManager {
                     imgValues.put(VueConstants.AISLE_Id, info.mAisleId);
                     imgValues.put(VueConstants.LIKES_COUNT,
                             imageDetails.mLikesCount);
-
+                    
                     if (imageIds.contains(imageDetails.mId)) {
                         context.getContentResolver().update(
                                 VueConstants.IMAGES_CONTENT_URI, imgValues,
                                 VueConstants.IMAGE_ID + "=?",
-                                new String[] {imageDetails.mId});
+                                new String[] { imageDetails.mId });
                     } else {
                         imgValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
                         imgValues.put(VueConstants.ID,
@@ -363,7 +370,7 @@ public class DataBaseManager {
                             e.printStackTrace();
                         }
                     }
-
+                    
                     // image comments content values.
                     ContentValues commentValues = new ContentValues();
                     commentValues.put(VueConstants.IMAGE_ID, imageDetails.mId);
@@ -395,33 +402,33 @@ public class DataBaseManager {
                 }
             }
         }
-        // updateAisleOrder();
         copydbToSdcard();
     }
-
+    
     /**
      * update the aisle information in local DB.
      * 
-     * @param AisleContext context.
+     * @param AisleContext
+     *            context.
      * */
     @Deprecated
     private void aisleUpdate(AisleContext context) {
         boolean isAisle = false;
-        if (aislesOrderMap != null && aislesOrderMap.isEmpty()) {
+        if (mAislesOrderMap != null && mAislesOrderMap.isEmpty()) {
             Cursor aisleIdCursor = VueApplication
                     .getInstance()
                     .getContentResolver()
                     .query(VueConstants.CONTENT_URI,
-                            new String[] {VueConstants.AISLE_Id,
-                                    VueConstants.ID},
+                            new String[] { VueConstants.AISLE_Id,
+                                    VueConstants.ID },
                             VueConstants.AISLE_Id + "=?",
-                            new String[] {context.mAisleId}, null);
+                            new String[] { context.mAisleId }, null);
             if (aisleIdCursor.moveToFirst()) {
                 do {
                     String aisleId = aisleIdCursor.getString(aisleIdCursor
                             .getColumnIndex(VueConstants.AISLE_Id));
                     if (aisleId.equals(context.mAisleId)) {
-                        aislesOrderMap.put(context.mAisleId, Integer
+                        mAislesOrderMap.put(context.mAisleId, Integer
                                 .parseInt(aisleIdCursor.getString(aisleIdCursor
                                         .getColumnIndex(VueConstants.ID))));
                         isAisle = true;
@@ -429,17 +436,17 @@ public class DataBaseManager {
                     }
                 } while (aisleIdCursor.moveToNext());
                 if (!isAisle) {
-                    aislesOrderMap.put(context.mAisleId, THOUSAND
+                    mAislesOrderMap.put(context.mAisleId, THOUSAND
                             + (aisleIdCursor.getCount() + 1));
                 }
             }
             aisleIdCursor.close();
         } else {
-            if (aislesOrderMap == null) {
-                aislesOrderMap = new HashMap<String, Integer>();
+            if (mAislesOrderMap == null) {
+                mAislesOrderMap = new HashMap<String, Integer>();
             }
-            aislesOrderMap.put(context.mAisleId,
-                    getMaxAisleValue(aislesOrderMap) + 1);
+            mAislesOrderMap.put(context.mAisleId,
+                    getMaxAisleValue(mAislesOrderMap) + 1);
         }
         ContentValues values = new ContentValues();
         values.put(VueConstants.FIRST_NAME, context.mFirstName);
@@ -453,7 +460,7 @@ public class DataBaseManager {
         values.put(VueConstants.CATEGORY, context.mCategory);
         values.put(VueConstants.AISLE_DESCRIPTION, context.mDescription);
         values.put(VueConstants.DELETE_FLAG, 0);
-        int order = aislesOrderMap.get(context.mAisleId);
+        int order = mAislesOrderMap.get(context.mAisleId);
         values.put(VueConstants.ID, String.format(FORMATE, order));
         if (isAisle) {
             VueApplication
@@ -461,25 +468,27 @@ public class DataBaseManager {
                     .getContentResolver()
                     .update(VueConstants.CONTENT_URI, values,
                             VueConstants.AISLE_Id + "=?",
-                            new String[] {context.mAisleId});
+                            new String[] { context.mAisleId });
         } else {
             VueApplication.getInstance().getContentResolver()
                     .insert(VueConstants.CONTENT_URI, values);
         }
     }
-
+    
     /**
      * This method will return the aisles with aislesIds we give in parameter,
      * if the parameter is null then it will return aisles in installment of 10.
      * 
-     * @param String [] aislesIds
+     * @param String
+     *            [] aislesIds
      * @return ArrayList<AisleWindowContent>
      * */
+    @SuppressWarnings("rawtypes")
     public ArrayList<AisleWindowContent> getAislesFromDB(String[] aislesIds,
             boolean isBookmarked) {
         Cursor cursor = mContext.getContentResolver().query(
-                VueConstants.CONTENT_URI, new String[] {VueConstants.ID}, null,
-                null, VueConstants.ID + " ASC");
+                VueConstants.CONTENT_URI, new String[] { VueConstants.ID },
+                null, null, VueConstants.ID + " ASC");
         if (mStartPosition == 0) {
             if (cursor.moveToFirst()) {
                 mStartPosition = Integer.parseInt(cursor.getString(cursor
@@ -500,7 +509,7 @@ public class DataBaseManager {
                 mEndPosition = 1000;
             }
         }
-
+        
         cursor.close();
         mEndPosition = mEndPosition + mLocalAislesLimit;
         AisleContext userInfo;
@@ -508,18 +517,16 @@ public class DataBaseManager {
         AisleWindowContent aisleItem = null;
         String selection;
         String[] args = null;
-        String sortOrder = null;
         LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
         ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
         ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
-
+        
         if (aislesIds == null) {
             selection = VueConstants.ID + " >=? AND " + VueConstants.ID
                     + " <=? ";
-            String[] allAislesArgs = {String.format(FORMATE, mStartPosition),
-                    String.format(FORMATE, mEndPosition)};
+            String[] allAislesArgs = { String.format(FORMATE, mStartPosition),
+                    String.format(FORMATE, mEndPosition) };
             args = allAislesArgs;
-            sortOrder = VueConstants.ID + " ASC";
         } else {
             String questionSymbols = "?";
             for (int i = 1; i < aislesIds.length; i++) {
@@ -577,12 +584,10 @@ public class DataBaseManager {
         Cursor imgCommentCursor = mContext.getContentResolver().query(
                 VueConstants.COMMENTS_ON_IMAGE_URI, null, null, null,
                 VueConstants.LAST_MODIFIED_TIME + " DESC");
-
+        
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry) it.next();
-            System.out.println(pairs.getKey() + " = " + pairs.getValue());
-
             if (aisleImagesCursor.moveToFirst()) {
                 do {
                     if (aisleImagesCursor.getString(
@@ -617,7 +622,7 @@ public class DataBaseManager {
                         imageItemDetails.mOwnerUserId = aisleImagesCursor
                                 .getString(aisleImagesCursor
                                         .getColumnIndex(VueConstants.USER_ID));
-
+                        
                         if (imgCommentCursor.moveToFirst()) {
                             ImageComments comments;
                             do {
@@ -643,11 +648,11 @@ public class DataBaseManager {
                                     imageItemDetails.mCommentsList
                                             .add(comments);
                                 }
-
+                                
                             } while (imgCommentCursor.moveToNext());
                         }
                         imageItemsArray.add(imageItemDetails);
-
+                        
                     }
                 } while (aisleImagesCursor.moveToNext());
             }
@@ -666,23 +671,23 @@ public class DataBaseManager {
         }
         return aisleContentArray;
     }
-
+    
     public void addComments(final ImageComment createdImageComment,
             final boolean isCommentDirty) {
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
                 addCommentsToDb(createdImageComment, isCommentDirty);
             }
         });
     }
-
+    
     public void addLikeOrDisLike(final int likeStatus, final int likeCount,
             final Long id, final String imageID, final String aisleID,
             final boolean dirtyFlag) {
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
                 addLikeOrDisLikeToDb(likeStatus, likeCount, id, imageID,
@@ -690,12 +695,12 @@ public class DataBaseManager {
             }
         });
     }
-
+    
     public void bookMarkOrUnBookmarkAisle(final boolean isBookmarked,
             final int bookmarkCount, final Long bookmarkID,
             final String aisleID, final boolean isDirty) {
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
                 bookMarkOrUnBookmarkAisleToDb(isBookmarked, bookmarkCount,
@@ -703,33 +708,33 @@ public class DataBaseManager {
             }
         });
     }
-
+    
     public void updateOrAddRecentlyViewedAisles(final String aisleId) {
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
                 updateOrAddRecentlyViewedAislesList(aisleId);
-
+                
             }
         });
     }
-
+    
     public void insertRatedImages(
             final ArrayList<ImageRating> retrievedImageRating) {
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
                 insertRatedImagesToDB(retrievedImageRating);
             }
         });
     }
-
+    
     public void updateBookmarkAisles(final Long bookmarkId,
             final String bookmarkedAisleId, final boolean isBookarked) {
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
                 updateBookmarkAislesToBDb(bookmarkId, bookmarkedAisleId,
@@ -737,24 +742,27 @@ public class DataBaseManager {
             }
         });
     }
-
+    
     public void deleteImage(final String imgId) {
         runTask(new Runnable() {
-
+            
             @Override
             public void run() {
                 deleteImagesfromDB(imgId);
             }
         });
     }
-
+    
     /**
      * add new Comment on images and sets the DIRTY_FLAG true to indicate that
      * there is some new data to be uploaded to server.
      * 
-     * @param String comment
-     * @param String imageID
-     * @param String aisleID
+     * @param String
+     *            comment
+     * @param String
+     *            imageID
+     * @param String
+     *            aisleID
      * */
     private void addCommentsToDb(ImageComment createdImageComment,
             boolean isCommentDirty) {
@@ -777,7 +785,7 @@ public class DataBaseManager {
         mContext.getContentResolver().insert(
                 VueConstants.COMMENTS_ON_IMAGE_URI, commentValues);
     }
-
+    
     private void addLikeOrDisLikeToDb(int likeStatus, int likeCount, Long id,
             String imageID, String aisleID, boolean dirtyFlag) {
         ContentValues aisleValues = new ContentValues();
@@ -788,16 +796,17 @@ public class DataBaseManager {
                 VueConstants.IMAGES_CONTENT_URI,
                 aisleValues,
                 VueConstants.AISLE_Id + "=? AND " + VueConstants.IMAGE_ID
-                        + "=?", new String[] {aisleID, imageID});
+                        + "=?", new String[] { aisleID, imageID });
         updateRatedImages(id, imageID, aisleID, likeStatus);
     }
-
+    
     /**
      * if user bookmarks of unbookmarks any aisle then this method will mark
      * that aisle as the case.
      * 
      * @param boolean isBookmarked
-     * @param String aisleID
+     * @param String
+     *            aisleID
      * */
     private void bookMarkOrUnBookmarkAisleToDb(boolean isBookmarked,
             int bookmarkCount, Long bookmarkId, String aisleID, boolean isDirty) {
@@ -806,11 +815,11 @@ public class DataBaseManager {
         values.put(VueConstants.BOOKMARK_COUNT, bookmarkCount);
         values.put(VueConstants.DIRTY_FLAG, isDirty);
         mContext.getContentResolver().update(VueConstants.CONTENT_URI, values,
-                VueConstants.AISLE_Id + "=?", new String[] {aisleID});
+                VueConstants.AISLE_Id + "=?", new String[] { aisleID });
         updateBookmarkAislesToBDb(bookmarkId, aisleID, isBookmarked);
     }
-
-    // TODO: get aisles from server by aisle Id in a loop and insert it in db.
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void updateBookmarkAislesToBDb(Long bookmarkId,
             String bookmarkedAisleId, boolean isBookmarked) {
         boolean isMatched = false;
@@ -818,14 +827,16 @@ public class DataBaseManager {
         values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, isBookmarked);
         values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
         if (isBookmarked) {
+            Log.e("SURUSURU", "Surendra updateBookmarkAislesToBDb() bookmark status: " + isBookmarked);
             String url = UrlConstants.GET_AISLE_RESTURL + "/"
                     + bookmarkedAisleId;
-
+            
             Response.Listener listener = new Response.Listener<JSONObject>() {
 
                 @Override
                 public void onResponse(final JSONObject jsonObject) {
                     if (jsonObject != null) {
+                        Log.e("SURUSURU", "Surendra updateBookmarkAislesToBDb() in onResponse() jsonObject not null");
                         Thread t = new Thread(new Runnable() {
 
                             @Override
@@ -856,12 +867,12 @@ public class DataBaseManager {
                 }
             };
             Response.ErrorListener errorListener = new ErrorListener() {
-
+                
                 @Override
                 public void onErrorResponse(VolleyError arg0) {
                 }
             };
-
+            
             JsonObjectRequest request = new JsonObjectRequest(url, null,
                     listener, errorListener);
             request.setRetryPolicy(new DefaultRetryPolicy(
@@ -872,8 +883,8 @@ public class DataBaseManager {
             mContext.getContentResolver().delete(
                     VueConstants.MY_BOOKMARKED_AISLES_URI,
                     VueConstants.AISLE_Id + "=?",
-                    new String[] {bookmarkedAisleId});
-
+                    new String[] { bookmarkedAisleId });
+            
         }
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.BOOKMARKER_AISLES_URI, null, null, null, null);
@@ -885,7 +896,7 @@ public class DataBaseManager {
                     mContext.getContentResolver().update(
                             VueConstants.BOOKMARKER_AISLES_URI, values,
                             VueConstants.AISLE_ID + "=?",
-                            new String[] {bookmarkedAisleId});
+                            new String[] { bookmarkedAisleId });
                     isMatched = true;
                     break;
                 }
@@ -897,9 +908,9 @@ public class DataBaseManager {
             mContext.getContentResolver().insert(
                     VueConstants.BOOKMARKER_AISLES_URI, values);
         }
-
+        
     }
-
+    
     public void addAisleMetaDataToDB(String tableName, AisleData aisleData) {
         Uri uri = null;
         if (tableName.equals(VueConstants.LOOKING_FOR_TABLE)) {
@@ -920,10 +931,10 @@ public class DataBaseManager {
         } else {
             mContext.getContentResolver().update(uri, values,
                     VueConstants.KEYWORD + "=?",
-                    new String[] {aisleData.keyword});
+                    new String[] { aisleData.keyword });
         }
     }
-
+    
     public ArrayList<String> getAisleKeywords(String tableName) {
         ArrayList<UsedKeywords> aisleKeywordsList = null;
         Uri uri = null;
@@ -939,7 +950,7 @@ public class DataBaseManager {
         String twoWeeksBeforeTime = Utils.twoWeeksBeforeTime();
         Cursor c = mContext.getContentResolver().query(uri, null,
                 VueConstants.LAST_USED_TIME + ">?",
-                new String[] {twoWeeksBeforeTime},
+                new String[] { twoWeeksBeforeTime },
                 VueConstants.NUMBER_OF_TIMES_USED + " DESC");
         if (c.moveToFirst()) {
             aisleKeywordsList = new ArrayList<UsedKeywords>();
@@ -977,7 +988,7 @@ public class DataBaseManager {
         }
         return finalList;
     }
-
+    
     public AisleData getAisleMetaDataForKeyword(String keyWord, String tableName) {
         AisleData aisleDataObj = null;
         Uri uri = null;
@@ -991,7 +1002,7 @@ public class DataBaseManager {
             return null;
         }
         Cursor c = mContext.getContentResolver().query(uri, null,
-                VueConstants.KEYWORD + "=?", new String[] {keyWord}, null);
+                VueConstants.KEYWORD + "=?", new String[] { keyWord }, null);
         if (c.moveToFirst()) {
             aisleDataObj = new AisleData();
             aisleDataObj.keyword = c.getString(c
@@ -1004,7 +1015,7 @@ public class DataBaseManager {
         c.close();
         return aisleDataObj;
     }
-
+    
     public static boolean markOldAislesToDelete(Context context) {
         ContentValues values = new ContentValues();
         values.put(VueConstants.DELETE_FLAG, DELETE_ROW);
@@ -1014,19 +1025,17 @@ public class DataBaseManager {
                 values, null, null);
         return true;
     }
-
+    
+    @SuppressWarnings("rawtypes")
     private ArrayList<AisleWindowContent> getAisles(Cursor aislesCursor) {
         AisleContext userInfo;
         AisleImageDetails imageItemDetails;
         AisleWindowContent aisleItem = null;
-        String selection;
-        String[] args = null;
-        String sortOrder = null;
-
+        
         LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
         ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
         ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
-
+        
         if (aislesCursor.moveToFirst()) {
             do {
                 userInfo = new AisleContext();
@@ -1057,15 +1066,13 @@ public class DataBaseManager {
         Cursor aisleImagesCursor = mContext.getContentResolver().query(
                 VueConstants.IMAGES_CONTENT_URI, null, null, null,
                 VueConstants.ID + " ASC");
-
+        
         Cursor imgCommentCursor = mContext.getContentResolver().query(
                 VueConstants.COMMENTS_ON_IMAGE_URI, null, null, null,
                 VueConstants.LAST_MODIFIED_TIME + " DESC");
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry) it.next();
-            System.out.println(pairs.getKey() + " = " + pairs.getValue());
-
             if (aisleImagesCursor.moveToFirst()) {
                 do {
                     if (aisleImagesCursor.getString(
@@ -1125,10 +1132,10 @@ public class DataBaseManager {
                                     imageItemDetails.mCommentsList
                                             .add(comments);
                                 }
-
+                                
                             } while (imgCommentCursor.moveToNext());
                         }
-
+                        
                         imageItemsArray.add(imageItemDetails);
                     }
                 } while (aisleImagesCursor.moveToNext());
@@ -1143,38 +1150,39 @@ public class DataBaseManager {
         aislesCursor.close();
         aisleImagesCursor.close();
         imgCommentCursor.close();
-
+        
         return aisleContentArray;
-
+        
     }
-
+    
     public ArrayList<AisleWindowContent> getAislesByUserId(String userId) {
         return getAisles(getAislesCursor(userId, VueConstants.USER_ID, false));
     }
-
+    
     public ArrayList<AisleWindowContent> getAislesByCategory(String category) {
         return getAisles(getAislesCursor(category, VueConstants.CATEGORY, false));
     }
-
+    
     public ArrayList<AisleWindowContent> getAisleByAisleId(String aisleId) {
         return getAisles(getAislesCursor(aisleId, VueConstants.AISLE_Id, false));
     }
-
+    
     public ArrayList<AisleWindowContent> getAisleByAisleIdFromBookmarks(
             String aisleId) {
         return getAisles(getAislesCursor(aisleId, VueConstants.AISLE_Id, true));
     }
-
+    
     public ArrayList<AisleWindowContent> getDirtyAisles(String dirtyFlag) {
         return getAisles(getAislesCursor(dirtyFlag, VueConstants.DIRTY_FLAG,
                 false));
     }
-
+    
     public ArrayList<ImageRating> getDirtyImages(String dirtyFlag) {
         ArrayList<ImageRating> images = new ArrayList<ImageRating>();
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.IMAGES_CONTENT_URI, null,
-                VueConstants.DIRTY_FLAG + "=?", new String[] {dirtyFlag}, null);
+                VueConstants.DIRTY_FLAG + "=?", new String[] { dirtyFlag },
+                null);
         if (cursor.moveToFirst()) {
             do {
                 if (cursor.getInt(cursor
@@ -1194,37 +1202,37 @@ public class DataBaseManager {
         }
         return images;
     }
-
+    
     private Cursor getAislesCursor(String searchString, String searchBy,
             boolean isBookmark) {
         Cursor aislesCursor = null;
         if (isBookmark) {
             aislesCursor = mContext.getContentResolver().query(
                     VueConstants.MY_BOOKMARKED_AISLES_URI, null,
-                    searchBy + "=?", new String[] {searchString},
+                    searchBy + "=?", new String[] { searchString },
                     VueConstants.ID + " ASC");
         } else {
             aislesCursor = mContext.getContentResolver().query(
                     VueConstants.CONTENT_URI, null, searchBy + "=?",
-                    new String[] {searchString}, VueConstants.ID + " ASC");
+                    new String[] { searchString }, VueConstants.ID + " ASC");
         }
         return aislesCursor;
     }
-
+    
     public void resetDbParams() {
         mStartPosition = 0;
         mEndPosition = 0;
     }
-
+    
     public ArrayList<ImageComment> getDirtyComments(String dirtyFlag) {
         ArrayList<ImageComment> comments = new ArrayList<ImageComment>();
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.CATEGORY_CONTENT_URI, null,
-                VueConstants.DIRTY_FLAG + "=?", new String[] {dirtyFlag}, null);
+                VueConstants.DIRTY_FLAG + "=?", new String[] { dirtyFlag },
+                null);
         if (cursor.moveToFirst()) {
             do {
                 ImageComment comment = new ImageComment();
-                // comment.setId(cursor.getLong(cursor.getColumnIndex(VueConstants.ID)));
                 comment.setOwnerImageId(cursor.getLong(cursor
                         .getColumnIndex(VueConstants.IMAGE_ID)));
                 comment.setComment(cursor.getString(cursor
@@ -1235,10 +1243,10 @@ public class DataBaseManager {
                 comments.add(comment);
             } while (cursor.moveToNext());
         }
-
+        
         return comments;
     }
-
+    
     private String getUserId() {
         VueUser storedVueUser = null;
         try {
@@ -1253,25 +1261,26 @@ public class DataBaseManager {
             userId = Long.valueOf(storedVueUser.getId()).toString();
         }
         return userId;
-
+        
     }
-
+    
+    @SuppressWarnings("unused")
     private void changeDeleteFlag() {
         ContentValues values = new ContentValues();
         values.put(VueConstants.DELETE_FLAG, 1);
         mContext.getContentResolver().update(VueConstants.CONTENT_URI, values,
                 null, null);
     }
-
+    
     public ArrayList<AisleWindowContent> getRecentlyViewedAisles() {
         ArrayList<AisleWindowContent> aisles = new ArrayList<AisleWindowContent>();
         for (String aisleId : getRecentlyViewedAislesId()) {
-
+            
             aisles.addAll(getAisleByAisleId(aisleId));
         }
         return aisles;
     }
-
+    
     private ArrayList<String> getRecentlyViewedAislesId() {
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.RECENTLY_VIEW_AISLES_URI, null, null, null,
@@ -1285,7 +1294,7 @@ public class DataBaseManager {
         }
         return aisleIds;
     }
-
+    
     private void updateOrAddRecentlyViewedAislesList(String aisleId) {
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.RECENTLY_VIEW_AISLES_URI, null, null, null,
@@ -1318,13 +1327,13 @@ public class DataBaseManager {
                     VueConstants.RECENTLY_VIEW_AISLES_URI, values);
         }
     }
-
+    
     private void insertRatedImagesToDB(
             ArrayList<ImageRating> retrievedImageRating) {
         boolean isMatched = false;
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.RATED_IMAGES_URI, null, null, null, null);
-
+        
         for (ImageRating imageRating : retrievedImageRating) {
             isMatched = false;
             ContentValues values = new ContentValues();
@@ -1333,7 +1342,7 @@ public class DataBaseManager {
             values.put(VueConstants.IS_LIKED_OR_BOOKMARKED,
                     imageRating.getLiked());
             String imId = Long.toString(imageRating.getImageId().longValue());
-
+            
             if (cursor.moveToFirst()) {
                 do {
                     String imgId = cursor.getString(cursor
@@ -1348,11 +1357,11 @@ public class DataBaseManager {
                                                 Long.toString(imageRating
                                                         .getImageId()),
                                                 Long.toString(imageRating
-                                                        .getAisleId())});
+                                                        .getAisleId()) });
                         isMatched = true;
                         break;
                     }
-
+                    
                 } while (cursor.moveToNext());
             }
             if (!isMatched) {
@@ -1363,7 +1372,7 @@ public class DataBaseManager {
         }
         cursor.close();
     }
-
+    
     private void updateRatedImages(Long id, String imageID, String aisleID,
             int likeStatus) {
         if (id == null) {
@@ -1387,7 +1396,7 @@ public class DataBaseManager {
                             values,
                             VueConstants.IMAGE_ID + "=? AND "
                                     + VueConstants.AISLE_ID + "=?",
-                            new String[] {imageID, aisleID});
+                            new String[] { imageID, aisleID });
                     isMatched = true;
                     break;
                 }
@@ -1399,7 +1408,7 @@ public class DataBaseManager {
                     values);
         }
     }
-
+    
     public ArrayList<ImageRating> getRatedImagesList(String aisleId) {
         ArrayList<ImageRating> imgRatingList = new ArrayList<ImageRating>();
         Cursor cursor = mContext.getContentResolver().query(
@@ -1407,7 +1416,7 @@ public class DataBaseManager {
                 null,
                 VueConstants.AISLE_ID + "=? AND "
                         + VueConstants.IS_LIKED_OR_BOOKMARKED + "=?",
-                new String[] {aisleId, "1"}, null);
+                new String[] { aisleId, "1" }, null);
         if (cursor.moveToFirst()) {
             do {
                 ImageRating imgRating = new ImageRating();
@@ -1427,14 +1436,14 @@ public class DataBaseManager {
         copydbToSdcard();
         return imgRatingList;
     }
-
+    
     public ArrayList<AisleBookmark> getBookmarkAisleIdsList() {
         AisleBookmark aisleBookmark;
         ArrayList<AisleBookmark> bookmarkAisles = new ArrayList<AisleBookmark>();
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.BOOKMARKER_AISLES_URI, null,
-                VueConstants.IS_LIKED_OR_BOOKMARKED + "=?", new String[] {"1"},
-                null);
+                VueConstants.IS_LIKED_OR_BOOKMARKED + "=?",
+                new String[] { "1" }, null);
         if (cursor.moveToFirst()) {
             do {
                 aisleBookmark = new AisleBookmark();
@@ -1448,8 +1457,8 @@ public class DataBaseManager {
         cursor.close();
         return bookmarkAisles;
     }
-
-    private synchronized int getMaxAisleValue(HashMap<String, Integer> mapOrder) {
+    
+    private int getMaxAisleValue(HashMap<String, Integer> mapOrder) {
         Entry<String, Integer> maxEntry = null;
         for (Entry<String, Integer> entry : mapOrder.entrySet()) {
             if (maxEntry == null || entry.getValue() > maxEntry.getValue()) {
@@ -1458,7 +1467,7 @@ public class DataBaseManager {
         }
         return maxEntry.getValue();
     }
-
+    
     private int getMinAisleValue(HashMap<String, Integer> mapOrder) {
         Entry<String, Integer> minEntry = null;
         for (Entry<String, Integer> entry : mapOrder.entrySet()) {
@@ -1470,32 +1479,28 @@ public class DataBaseManager {
         }
         return (minEntry == null) ? 0 : minEntry.getValue();
     }
-
-
+    
+    @SuppressWarnings("unused")
     private void upDateCommenterUrl(String userId, String userImgUrl) {
         Cursor c = mContext.getContentResolver().query(
                 VueConstants.CONTENT_URI,
-                new String[] {VueConstants.AISLE_OWNER_IMAGE_URL},
-                VueConstants.USER_ID + "=?", new String[] {userId}, null);
+                new String[] { VueConstants.AISLE_OWNER_IMAGE_URL },
+                VueConstants.USER_ID + "=?", new String[] { userId }, null);
         if (c.moveToFirst()) {
             do {
-                /*
-                 * if() {
-                 * 
-                 * }
-                 */
             } while (c.moveToNext());
         }
     }
-
+    
     // not in use by Surendra
+    @SuppressWarnings({ "unused", "rawtypes" })
     @Deprecated
     private void updateAisleOrder() {
         ContentValues values = new ContentValues();
         Cursor aisleIdCursor = mContext.getContentResolver().query(
-                VueConstants.CONTENT_URI, new String[] {VueConstants.AISLE_Id},
-                null, null, null);
-        Iterator<Entry<String, Integer>> entries = aislesOrderMap.entrySet()
+                VueConstants.CONTENT_URI,
+                new String[] { VueConstants.AISLE_Id }, null, null, null);
+        Iterator<Entry<String, Integer>> entries = mAislesOrderMap.entrySet()
                 .iterator();
         while (entries.hasNext()) {
             Map.Entry entry = (Map.Entry) entries.next();
@@ -1506,40 +1511,41 @@ public class DataBaseManager {
             mContext.getContentResolver().update(uri, values, null, null);
         }
     }
-
+    
     private boolean deleteImagesfromDB(String imgId) {
         int rowDeleted = mContext.getContentResolver().delete(
                 VueConstants.IMAGES_CONTENT_URI, VueConstants.IMAGE_ID + "=?",
-                new String[] {imgId});
+                new String[] { imgId });
         return (rowDeleted == 1) ? true : false;
     }
-
+    
     private class UsedKeywords {
         String lastUsedTime;
         String numberOfTimesUsed;
         String keyWord;
-
+        
         public UsedKeywords(String keyWord, String lastUsedTime,
                 String numberOfTimesUsed) {
             this.keyWord = keyWord;
             this.lastUsedTime = lastUsedTime;
             this.numberOfTimesUsed = numberOfTimesUsed;
         }
-
+        
+        @SuppressWarnings("unused")
         public boolean compareKeyword(UsedKeywords other) {
             if (this.keyWord.equals(other.keyWord)) {
                 return true;
             }
             return false;
         }
-
+        
         public boolean compareTime(UsedKeywords other) {
             if (this.lastUsedTime.compareTo(other.lastUsedTime) > 0) {
                 return true;
             }
             return false;
         }
-
+        
         public int compareNumberOfTimesUsed(UsedKeywords other) {
             int result = this.numberOfTimesUsed
                     .compareTo(other.numberOfTimesUsed);
@@ -1551,7 +1557,7 @@ public class DataBaseManager {
             return LESS_TIMES_USED;
         }
     }
-
+    
     /**
      * FOR TESTING PERPOES ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS
      * CALLING AFTER TESTING, to copy FishWrap.db to sdCard.
@@ -1560,13 +1566,13 @@ public class DataBaseManager {
         try {
             File sd = Environment.getExternalStorageDirectory();
             File data = Environment.getDataDirectory();
-
+            
             if (sd.canWrite()) {
                 String currentDBPath = "//data//com.lateralthoughts.vue//databases//Vue.db";
                 String backupDBPath = "Vue.db";
                 File currentDB = new File(data, currentDBPath);
                 File backupDB = new File(sd, backupDBPath);
-
+                
                 if (currentDB.exists()) {
                     FileChannel src = new FileInputStream(currentDB)
                             .getChannel();
@@ -1581,5 +1587,5 @@ public class DataBaseManager {
             e.printStackTrace();
         }
     }
-
+    
 }

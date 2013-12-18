@@ -10,8 +10,7 @@
         android:id="@+id/edtcommentlay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-     >
+        android:visibility="gone" >
 
         <com.lateralthoughts.vue.utils.EditTextBackEvent
             android:id="@+id/edtcomment"
@@ -20,21 +19,22 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="48dp"
             android:cursorVisible="true"
+            android:gravity="bottom"
+            android:hint="Type comment"
             android:imeOptions="actionGo"
             android:inputType="text|textMultiLine"
             android:maxLines="4"
             android:scrollbars="vertical"
-            android:hint="Type comment"
-            android:gravity="bottom"
             android:textCursorDrawable="@null" />
-        <TextView android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textcount"
-            
 
-             android:singleLine="true"
-             android:layout_marginRight="24dp"
-            android:layout_gravity="right|bottom"/>
+        <TextView
+            android:id="@+id/textcount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginRight="24dp"
+            android:singleLine="true" />
+
         <ImageView
             android:id="@+id/sendcomment"
             android:layout_width="48dp"
@@ -89,8 +89,10 @@
             android:layout_marginRight="48dp"
             android:background="@color/grey" />
     </RelativeLayout>
-       <View
-            android:layout_width="fill_parent"
-            android:layout_height="56dp"
-            android:background="@color/transperent" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:background="@color/transperent" />
+
 </LinearLayout>

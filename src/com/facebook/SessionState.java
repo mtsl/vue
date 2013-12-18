@@ -31,7 +31,7 @@ public enum SessionState {
      * token. Opening a Session in this state will involve user interaction.
      */
     CREATED(Category.CREATED_CATEGORY),
-
+    
     /**
      * <p>
      * Indicates that the Session has not yet been opened and has a cached
@@ -39,24 +39,24 @@ public enum SessionState {
      * </p>
      * <p>
      * If you are using Session from an Android Service, you must provide a
-     * TokenCachingStrategy implementation that contains a valid token to the Session
-     * constructor. The resulting Session will be created in this state, and you
-     * can then safely call open, passing null for the Activity.
+     * TokenCachingStrategy implementation that contains a valid token to the
+     * Session constructor. The resulting Session will be created in this state,
+     * and you can then safely call open, passing null for the Activity.
      * </p>
      */
     CREATED_TOKEN_LOADED(Category.CREATED_CATEGORY),
-
+    
     /**
      * Indicates that the Session is in the process of opening.
      */
     OPENING(Category.CREATED_CATEGORY),
-
+    
     /**
      * Indicates that the Session is opened. In this state, the Session may be
      * used with a {@link Request}.
      */
     OPENED(Category.OPENED_CATEGORY),
-
+    
     /**
      * <p>
      * Indicates that the Session is opened and that the token has changed. In
@@ -68,7 +68,7 @@ public enum SessionState {
      * </p>
      */
     OPENED_TOKEN_UPDATED(Category.OPENED_CATEGORY),
-
+    
     /**
      * Indicates that the Session is closed, and that it was not closed
      * normally. Typically this means that the open call failed, and the
@@ -76,18 +76,18 @@ public enum SessionState {
      * be non-null.
      */
     CLOSED_LOGIN_FAILED(Category.CLOSED_CATEGORY),
-
+    
     /**
      * Indicates that the Session was closed normally.
      */
     CLOSED(Category.CLOSED_CATEGORY);
-
+    
     private final Category category;
-
+    
     SessionState(Category category) {
         this.category = category;
     }
-
+    
     /**
      * Returns a boolean indicating whether the state represents a successfully
      * opened state in which the Session can be used with a {@link Request}.
@@ -99,18 +99,18 @@ public enum SessionState {
     public boolean isOpened() {
         return this.category == Category.OPENED_CATEGORY;
     }
-
+    
     /**
      * Returns a boolean indicating whether the state represents a closed
      * Session that can no longer be used with a {@link Request}.
      * 
      * @return a boolean indicating whether the state represents a closed
-     * Session that can no longer be used with a {@link Request}.
+     *         Session that can no longer be used with a {@link Request}.
      */
     public boolean isClosed() {
         return this.category == Category.CLOSED_CATEGORY;
     }
-
+    
     private enum Category {
         CREATED_CATEGORY, OPENED_CATEGORY, CLOSED_CATEGORY
     }

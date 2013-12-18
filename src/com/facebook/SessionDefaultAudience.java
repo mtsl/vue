@@ -17,38 +17,42 @@
 package com.facebook;
 
 /**
- * Certain operations such as publishing a status or publishing a photo require an audience. When the user
- * grants an application permission to perform a publish operation, a default audience is selected as the
- * publication ceiling for the application. This enumerated value allows the application to select which
- * audience to ask the user to grant publish permission for.
+ * Certain operations such as publishing a status or publishing a photo require
+ * an audience. When the user grants an application permission to perform a
+ * publish operation, a default audience is selected as the publication ceiling
+ * for the application. This enumerated value allows the application to select
+ * which audience to ask the user to grant publish permission for.
  */
 public enum SessionDefaultAudience {
     /**
-     * Represents an invalid default audience value, can be used when only reading.
+     * Represents an invalid default audience value, can be used when only
+     * reading.
      */
     NONE(null),
-
+    
     /**
      * Indicates only the user is able to see posts made by the application.
      */
     ONLY_ME(NativeProtocol.AUDIENCE_ME),
-
+    
     /**
-     * Indicates that the user's friends are able to see posts made by the application.
+     * Indicates that the user's friends are able to see posts made by the
+     * application.
      */
     FRIENDS(NativeProtocol.AUDIENCE_FRIENDS),
-
+    
     /**
-     * Indicates that all Facebook users are able to see posts made by the application.
+     * Indicates that all Facebook users are able to see posts made by the
+     * application.
      */
     EVERYONE(NativeProtocol.AUDIENCE_EVERYONE);
-
+    
     private final String nativeProtocolAudience;
-
+    
     private SessionDefaultAudience(String protocol) {
         nativeProtocolAudience = protocol;
     }
-
+    
     String getNativeProtocolAudience() {
         return nativeProtocolAudience;
     }

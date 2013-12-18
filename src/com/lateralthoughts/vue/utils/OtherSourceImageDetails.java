@@ -3,84 +3,84 @@ package com.lateralthoughts.vue.utils;
 import android.net.Uri;
 
 public class OtherSourceImageDetails {
-	public String getThumbUrl() {
-		return thumbUrl;
-	}
-
-	public void setThumbUrl(String thumbUrl) {
-		this.thumbUrl = thumbUrl;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getOriginUrl() {
-		return originUrl;
-	}
-
-	public void setOriginUrl(String originUrl) {
-		this.originUrl = originUrl;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	public OtherSourceImageDetails(String thumbUrl, String title,
-			String originUrl, int width, int height, Uri imageUri,
-			int widthHeightMultipliedValue) {
-		this.thumbUrl = thumbUrl;
-		this.title = title;
-		this.originUrl = originUrl;
-		this.width = width;
-		this.height = height;
-		this.imageUri = imageUri;
-		this.widthHeightMultipliedValue = widthHeightMultipliedValue;
-	}
-
-	public OtherSourceImageDetails() {
-
-	}
-
-	private String thumbUrl;
-	private String title;
-	private String originUrl;
-	private int width;
-	private int height;
-	private Uri imageUri;
-	private int widthHeightMultipliedValue;
-
-	public int getWidthHeightMultipliedValue() {
-		return widthHeightMultipliedValue;
-	}
-
-	public void setWidthHeightMultipliedValue(int widthHeightMultipliedValue) {
-		this.widthHeightMultipliedValue = widthHeightMultipliedValue;
-	}
-
-	public Uri getImageUri() {
-		return imageUri;
-	}
-
-	public void setImageUri(Uri imageUri) {
-		this.imageUri = imageUri;
-	}
-
+    public String getThumbUrl() {
+        return mTthumbUrl;
+    }
+    
+    public void setThumbUrl(String thumbUrl) {
+        this.mTthumbUrl = thumbUrl;
+    }
+    
+    public String getTitle() {
+        return mTitle;
+    }
+    
+    public void setTitle(String title) {
+        this.mTitle = title;
+    }
+    
+    public String getOriginUrl() {
+        return mOriginUrl;
+    }
+    
+    public void setOriginUrl(String originUrl) {
+        this.mOriginUrl = originUrl;
+    }
+    
+    public int getWidth() {
+        return mWidth;
+    }
+    
+    public void setWidth(int width) {
+        this.mWidth = width;
+    }
+    
+    public int getHeight() {
+        return mHeight;
+    }
+    
+    public void setHeight(int height) {
+        this.mHeight = height;
+    }
+    
+    public OtherSourceImageDetails(String thumbUrl, String title,
+            String originUrl, int width, int height, Uri imageUri,
+            int widthHeightMultipliedValue) {
+        this.mTthumbUrl = thumbUrl;
+        this.mTitle = title;
+        this.mOriginUrl = originUrl;
+        this.mWidth = width;
+        this.mHeight = height;
+        this.mImageUri = imageUri;
+        this.mWidthHeightMultipliedValue = widthHeightMultipliedValue;
+    }
+    
+    public OtherSourceImageDetails() {
+        
+    }
+    
+    private String mTthumbUrl;
+    private String mTitle;
+    private String mOriginUrl;
+    private int mWidth;
+    private int mHeight;
+    private Uri mImageUri;
+    private int mWidthHeightMultipliedValue;
+    
+    public int getWidthHeightMultipliedValue() {
+        return mWidthHeightMultipliedValue;
+    }
+    
+    public void setWidthHeightMultipliedValue(int widthHeightMultipliedValue) {
+        this.mWidthHeightMultipliedValue = widthHeightMultipliedValue;
+    }
+    
+    public Uri getImageUri() {
+        return mImageUri;
+    }
+    
+    public void setImageUri(Uri imageUri) {
+        this.mImageUri = imageUri;
+    }
+    
 }

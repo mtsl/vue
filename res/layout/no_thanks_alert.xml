@@ -5,9 +5,9 @@
     android:layout_gravity="center"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    android:padding="8dp"
     android:background="@drawable/dataentry_title_bg"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="8dp" >
 
     <include
         android:id="@+id/popupheadid"

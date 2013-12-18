@@ -36,8 +36,8 @@ public enum AccessTokenSource {
     FACEBOOK_APPLICATION_NATIVE(true),
     /**
      * Indicates an access token was obtained by asking the Facebook app for the
-     * current token based on permissions the user has already granted to the app.
-     * No dialog was shown to the user in this case.
+     * current token based on permissions the user has already granted to the
+     * app. No dialog was shown to the user in this case.
      */
     FACEBOOK_APPLICATION_SERVICE(true),
     /**
@@ -50,13 +50,13 @@ public enum AccessTokenSource {
      * Facebook user.
      */
     TEST_USER(true);
-
+    
     private final boolean canExtendToken;
-
+    
     AccessTokenSource(boolean canExtendToken) {
         this.canExtendToken = canExtendToken;
     }
-
+    
     boolean canExtendToken() {
         return canExtendToken;
     }

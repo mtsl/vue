@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-  >
-     <ProgressBar
+    android:layout_height="match_parent" >
+
+    <ProgressBar
         android:id="@+id/adprogress_progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent" 
-        style="?android:attr/progressBarStyleLarge" 
         android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
         android:layout_margin="10dp"
         android:layout_toLeftOf="@+id/loadtxt"
-        android:layout_centerVertical="true"
-        android:visibility="invisible"
-    />
- <TextView android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/loadtxt"
-           android:text="Loading..."
-           android:layout_centerInParent="true"/>
-  
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/loadtxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Loading..." />
+
 </RelativeLayout>
