@@ -456,13 +456,6 @@ public class Utils {
         editor.commit();
     }
     
-    public static String getDataentryScreenAisleId(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                VueConstants.SHAREDPREFERENCE_NAME, 0);
-        return sharedPreferences.getString(
-                VueConstants.DATAENTRY_SCREEN_AISLE_ID, null);
-    }
-    
     public static void putTouchToChnageImageFlag(Context context, boolean flag) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -509,14 +502,6 @@ public class Utils {
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         return sharedPreferences.getInt(
                 VueConstants.TOUCH_TO_CHANGE_IMAGE_TEMP_POSITION, -1);
-    }
-    
-    public static void putDataentryScreenAisleId(Context context, String aisleId) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                VueConstants.SHAREDPREFERENCE_NAME, 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(VueConstants.DATAENTRY_SCREEN_AISLE_ID, aisleId);
-        editor.commit();
     }
     
     public static boolean getDataentryAddImageAisleFlag(Context context) {

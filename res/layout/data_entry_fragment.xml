@@ -9,6 +9,38 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
+        <RelativeLayout
+            android:id="@+id/occasion_layout"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignTop="@+id/mainheadingrow"
+            android:layout_toRightOf="@+id/mainheadingrow"
+            android:background="@drawable/vue_button_selector" >
+
+            <ImageView
+                android:id="@+id/occasion_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/new_occassion" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/findat_layout"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignTop="@+id/mainheadingrow"
+            android:layout_toLeftOf="@+id/mainheadingrow"
+            android:background="@drawable/vue_button_selector" >
+
+            <ImageView
+                android:id="@+id/findat_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/new_find_at" />
+        </RelativeLayout>
+
         <LinearLayout
             android:id="@+id/mainheadingrow"
             android:layout_width="wrap_content"
@@ -26,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:ellipsize="end"
-                android:maxWidth="300dip"
+                android:maxWidth="200dp"
                 android:singleLine="true"
                 android:text="Looking For"
                 android:textColor="@android:color/black"
@@ -133,10 +165,9 @@
             android:id="@+id/find_at_popup"
             android:layout_width="200dip"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="8dip"
-            android:layout_marginRight="8dip"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/mainheadingrow"
+            android:layout_marginLeft="8dip"
             android:background="@drawable/dataentry_title_bg"
             android:orientation="vertical"
             android:padding="16dp"
@@ -346,7 +377,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp" >
+        android:layout_marginBottom="4dp" >
 
         <EditText
             android:id="@+id/saysomethingaboutaisle"

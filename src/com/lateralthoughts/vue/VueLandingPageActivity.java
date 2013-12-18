@@ -297,7 +297,6 @@ public class VueLandingPageActivity extends Activity implements
         getMenuInflater().inflate(R.menu.landing_actionbar, menu);
         getActionBar().setHomeButtonEnabled(true);
         // Configure the search info and add any event listeners
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) menu.findItem(R.id.menu_search)
                 .getActionView();
         return true;
@@ -1171,7 +1170,6 @@ public class VueLandingPageActivity extends Activity implements
         Utils.putTouchToChnageImagePosition(VueLandingPageActivity.this, -1);
         Utils.putTouchToChnageImageTempPosition(VueLandingPageActivity.this, -1);
         Utils.putTouchToChnageImageFlag(VueLandingPageActivity.this, false);
-        Utils.putDataentryScreenAisleId(VueLandingPageActivity.this, null);
         ArrayList<DataentryImage> mAisleImagePathList = null;
         try {
             mAisleImagePathList = Utils.readAisleImagePathListFromFile(
