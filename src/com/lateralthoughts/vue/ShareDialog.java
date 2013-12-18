@@ -151,14 +151,6 @@ public class ShareDialog {
                                 ShareDialog shareDialog = new ShareDialog(
                                         mContext, mActivity);
                                 shareDialog.showAllInstalledApplications();
-                            } else if (mAppNames.get(position).equals(
-                                    mContext.getResources().getString(
-                                            R.string.browser))) {
-                                Utils.setLoadDataentryScreenFlag(mContext, true);
-                                // Load Browser...
-                                mContext.startActivity(new Intent(
-                                        Intent.ACTION_VIEW, Uri
-                                                .parse("http://www.google.com")));
                             }
                         } else {
                             createAisleSelectionActivity

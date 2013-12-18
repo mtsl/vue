@@ -43,6 +43,7 @@
                 android:background="@drawable/black_round_circle" >
 
                 <TextView
+                    android:id="@+id/etsy_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
@@ -53,7 +54,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/fancy_layout"
+            android:id="@+id/browser_layout"
             android:layout_width="48dip"
             android:layout_height="48dip"
             android:background="@drawable/white_round_shape" >
@@ -68,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="Fancy"
+                    android:text="Browser"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </RelativeLayout>
