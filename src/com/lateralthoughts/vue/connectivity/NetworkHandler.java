@@ -239,10 +239,6 @@ public class NetworkHandler {
 
 	public void loadInitialData(boolean loadMore, Handler mHandler,
 			String screenName) {
- 
-		getBookmarkAisleByUser();
-		getRatedImageList();
-
 		mOffset = 0;
 		if (!VueConnectivityManager.isNetworkConnected(mContext)) {
 			Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
@@ -257,6 +253,8 @@ public class NetworkHandler {
 			mHandler.sendMessage(msg);
 
 		} else {
+		  getBookmarkAisleByUser();
+	      getRatedImageList();
 			mLimit = 30;
 			mVueContentGateway.getTrendingAisles(mLimit, mOffset,mTrendingAislesParser, loadMore, screenName);
 		}

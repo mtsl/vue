@@ -112,6 +112,7 @@ public class DbHelper extends SQLiteOpenHelper {
         + VueConstants.DIRTY_FLAG + " integer, "
         + VueConstants.DELETE_FLAG + " integer, "
         + VueConstants.AISLE_DESCRIPTION + " text, "
+         + VueConstants.AISLE_OWNER_IMAGE_URL + " text, "
         + VueConstants.ID + " text);";
 
 	public DbHelper(Context context) {
