@@ -47,13 +47,9 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private ArrayList<AisleImageDetails> mAisleImageDetails;
     private AisleWindowContent mWindowContent;
     
-    private ExecutorService mExecutorService;
     private Context mContext;
-    private FileCache mFileCache;
     private ScaledImageViewFactory mImageViewFactory;
-    private ColorDrawable mColorDrawable;
-    private int mCurrentPivotIndex;
-    private BitmapLoaderUtils mBitmapLoaderUtils;
+    
     private ImageDimension mImageDimension;
     Animation myFadeInAnimation;
     
@@ -61,12 +57,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         mContext = context;
         mContentImagesCache = BitmapLruCache.getInstance(VueApplication
                 .getInstance());
-        mFileCache = VueApplication.getInstance().getFileCache();
-        mCurrentPivotIndex = -1;
         mImageViewFactory = ScaledImageViewFactory.getInstance(mContext);
-        mExecutorService = Executors.newFixedThreadPool(5);
-        mColorDrawable = new ColorDrawable(Color.WHITE);
-        mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
         myFadeInAnimation = AnimationUtils.loadAnimation(
                 VueApplication.getInstance(), R.anim.fadein);
     }
@@ -95,7 +86,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     
     @Override
     public void releaseContentSource() {
-        mCurrentPivotIndex = -1;
         mAisleImageDetails.clear();
         mWindowContent = null;
         
@@ -166,7 +156,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
                             imageView, wantedIndex);
                     contentBrowser.addView(imageView);
                 } else {
-                    int bestHeight = mWindowContent.getBestHeightForWindow();
                     loadBitmap(itemDetails, itemDetails.mTrendingImageHeight,
                             contentBrowser, imageView, wantedIndex);
                     contentBrowser.addView(imageView);
@@ -182,16 +171,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     
     public void loadBitmap(AisleImageDetails itemDetails, int bestHeight,
             AisleContentBrowser flipper, ImageView imageView, int wantedIndex) {
-        String loc = itemDetails.mImageUrl;
-        String serverUrl = itemDetails.mImageUrl;
-        if (flipper.getmSourceName() != null
-                && flipper.getmSourceName().equalsIgnoreCase(
-                        AisleDetailsViewAdapter.TAG)) {
-            loc = itemDetails.mImageUrl;
-        } else {
-            loc = itemDetails.mCustomImageUrl;
-        }
-        
         ((NetworkImageView) imageView).setImageUrl(itemDetails.mImageUrl,
                 VueApplication.getInstance().getImageCacheLoader(),
                 itemDetails.mTrendingImageWidth,

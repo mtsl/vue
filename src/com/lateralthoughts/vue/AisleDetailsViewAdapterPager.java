@@ -1319,7 +1319,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 
                 @Override
                 public void onClick(View v) {
-                    // these listener does nothing. But inorder to give the
+                    // these listener does nothing. But to give the
                     // control to the
                     // listview when touch out side of the image in the browser.
                     detailsImageClickListenr.onImageClicked();
@@ -1457,15 +1457,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             ImageView starImage) {
         String loc = itemDetails.mImageUrl;
         String serverImageUrl = itemDetails.mImageUrl;
-        // if (cancelPotentialDownload(loc, imageView)) {
         BitmapWorkerTask task = new BitmapWorkerTask(itemDetails, imageView,
                 bestHeight, scrollIndex, progressBar, currentPosition, editLay,
                 starLay, starImage);
         
         String imagesArray[] = { loc, serverImageUrl };
         task.execute(imagesArray);
-        // }
-        
     }
     
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
