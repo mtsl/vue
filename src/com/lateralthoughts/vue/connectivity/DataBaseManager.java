@@ -1210,6 +1210,12 @@ public class DataBaseManager {
             aislesCursor = mContext.getContentResolver().query(
                     VueConstants.CONTENT_URI, null, searchBy + "=?",
                     new String[] { searchString }, VueConstants.ID + " ASC");
+            if (aislesCursor.getCount() == 0) {
+                aislesCursor = mContext.getContentResolver().query(
+                        VueConstants.MY_BOOKMARKED_AISLES_URI, null,
+                        searchBy + "=?", new String[] {searchString},
+                        VueConstants.ID + " ASC");
+            }
         }
         return aislesCursor;
     }
@@ -1287,6 +1293,7 @@ public class DataBaseManager {
                         .getColumnIndex(VueConstants.RECENTLY_VIEWED_AISLE_ID)));
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return aisleIds;
     }
     
