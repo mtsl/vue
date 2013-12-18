@@ -12,6 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -201,7 +203,6 @@ public class Parser {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject);
-                        
                         if (aisleImageDetails.mImageUrl != null
                                 && (!aisleImageDetails.mImageUrl
                                         .contains("randomurl.com"))
@@ -212,7 +213,6 @@ public class Parser {
                         }
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                 }
             }
         }

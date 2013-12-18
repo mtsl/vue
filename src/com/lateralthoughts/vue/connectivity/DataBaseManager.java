@@ -41,6 +41,7 @@ import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -836,15 +837,20 @@ public class DataBaseManager {
                                             .parseAisleData(jsonObject);
                                     ArrayList<AisleImageDetails> imageDetails = parser
                                             .getImagesForAisleId(retrievedAisle.mAisleId);
-                                    AisleWindowContent aisleItem = new AisleWindowContent(
-                                            retrievedAisle.mAisleId);
-                                    aisleItem.addAisleContent(retrievedAisle,
-                                            imageDetails);
-                                    ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
-                                    aisleContentArray.add(aisleItem);
+                                    if(imageDetails.size() > 0) {
+                                        AisleWindowContent aisleItem = new AisleWindowContent(
+                                                retrievedAisle.mAisleId);
+                                        aisleItem.addAisleContent(retrievedAisle,
+                                                imageDetails);
+                                        ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
+                                        aisleContentArray.add(aisleItem);
 
-                                    addBookmarkedAisles(mContext,
-                                            aisleContentArray, 0, BOOKMARK);
+                                        addBookmarkedAisles(mContext,
+                                                aisleContentArray, 0, BOOKMARK);                                        
+                                    } else {
+                                        Logging.e("DataBaseManager", "Bookmarked aislesId with no images: " + retrievedAisle.mAisleId);
+                                    }
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -1285,11 +1291,11 @@ public class DataBaseManager {
     }
     
     private void updateOrAddRecentlyViewedAislesList(String aisleId) {
+        boolean isAisleViewed = false;
+        String viewedId = null;
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.RECENTLY_VIEW_AISLES_URI, null, null, null,
                 VueConstants.VIEW_TIME + " DESC");
-        boolean isAisleViewed = false;
-        String viewedId = null;
         if (cursor.moveToFirst()) {
             do {
                 String id = cursor.getString(cursor
