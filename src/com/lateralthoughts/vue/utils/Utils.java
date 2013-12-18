@@ -761,8 +761,6 @@ public class Utils {
             String packageName = ((ResolveInfo) a[i]).activityInfo.applicationInfo.packageName;
             if (!isSystemApp
                     && !(packageName.equals("com.lateralthoughts.vue"))
-                    && !(packageName.equals(VueConstants.ETSY_PACKAGE_NAME))
-                    && !(packageName.equals(VueConstants.FANCY_PACKAGE_NAME))
                     && !(Arrays
                             .asList(VueApplication.SHOPPINGAPP_PACKAGES_ARRAY)
                             .contains(packageName))) {

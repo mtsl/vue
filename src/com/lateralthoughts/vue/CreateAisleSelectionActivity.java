@@ -78,16 +78,16 @@ public class CreateAisleSelectionActivity extends Activity {
             }
         });
         mDataentryArcMenu = (ArcMenu) findViewById(R.id.dataentry_arc_menu);
-        mDataentryArcMenu.initArcMenu(mDataentryArcMenu,
-                VueApplication.POPUP_ITEM_DRAWABLES);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 showPopUp();
             }
         }, ANIM_DELAY);
-        if (VueApplication.getInstance().mShoppingApplicationDetailsList != null) {
-            for (int i = 0; i < VueApplication.getInstance().mShoppingApplicationDetailsList
+        if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
+                && VueApplication.getInstance().mShoppingApplicationDetailsList
+                        .size() > 1) {
+            for (int i = 1; i < VueApplication.getInstance().mShoppingApplicationDetailsList
                     .size(); i++) {
                 ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
                         VueApplication.getInstance().mShoppingApplicationDetailsList
@@ -108,10 +108,6 @@ public class CreateAisleSelectionActivity extends Activity {
         ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
                 getResources().getString(R.string.more), null, null, null);
         mDataEntryShoppingApplicationsList.add(shoppingApplicationDetails);
-        // Browser... To load the browser...
-        ShoppingApplicationDetails shoppingApplicationDetails1 = new ShoppingApplicationDetails(
-                getResources().getString(R.string.browser), null, null, null);
-        mDataEntryShoppingApplicationsList.add(shoppingApplicationDetails1);
     }
     
     @Override
