@@ -75,10 +75,6 @@ public class VueConstants {
     public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_DESCRIPTION = "DataentryTopAddImageAisleDescription";
     public static final String LOAD_DATAENTRY_SCREEN_FLAG = "LoadDataentryScreenFlag";
     public static final String AISLE_IMAGE_PATH_LIST_FILE_NAME = "AisleImagePathListFileName";
-    public static final String ETSY_PACKAGE_NAME = "com.etsy.android";
-    public static final String FANCY_PACKAGE_NAME = "com.thefancy.app";
-    public static final String ETSY_ACTIVITY_NAME = "com.etsy.android.ui.HomeActivity";
-    public static final String FANCY_ACTIVITY_NAME = "com.thefancy.app.common.Main";
     public static final String USER_PROFILE_IMAGE_FILE_NAME = "VueUserProfileImage";
     public static final String AISLE_ORDER = "aisleOrder";
     // Column names for aisles table.

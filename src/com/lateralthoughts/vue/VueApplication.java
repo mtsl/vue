@@ -48,11 +48,6 @@ public class VueApplication extends Application {
     public String mNewlySelectedView;
     public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
     public ArrayList<ShoppingApplicationDetails> mMoreInstalledApplicationDetailsList;
-    public static final int[] POPUP_ITEM_DRAWABLES = {
-            R.drawable.composer_camera, R.drawable.composer_music,
-            R.drawable.composer_place, R.drawable.composer_sleep,
-            R.drawable.composer_thought };
-    
     public long mLaunchTime;
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
@@ -123,18 +118,16 @@ public class VueApplication extends Application {
     
     public boolean mFbsharingflag = false;
     private RequestQueue mVolleyRequestQueue;
-    private static final String[] SHOPPINGAPP_NAMES_ARRAY = { "Amazon", "eBay",
-            "iShop", "Jewellery", "OLX", "Pinterest", "ZOVI" };
-    private static final String[] SHOPPINGAPP_ACTIVITIES_ARRAY = {
+    public static final String[] SHOPPINGAPP_NAMES_ARRAY = { "Etsy", "Fancy",
+            "Wanelo", "Amazon", "Pinterest" };
+    public static final String[] SHOPPINGAPP_ACTIVITIES_ARRAY = {
+            "com.etsy.android.ui.HomeActivity", "com.thefancy.app.common.Main",
+            "com.wanelo.android.ui.activity.LoginActivity",
             "com.amazon.mShop.home.HomeActivity",
-            "com.ebay.mobile.activities.eBay", "com.shopping.StartPage",
-            "com.greybit.jewellery.activity.Start", "com.olx.olx.activity.Olx",
-            "com.pinterest.activity.PinterestActivity",
-            "com.robemall.zovi.HomeActivity" };
+            "com.pinterest.activity.PinterestActivity" };
     public static final String[] SHOPPINGAPP_PACKAGES_ARRAY = {
-            "com.amazon.mShop.android", "com.ebay.mobile", "com.shopping",
-            "com.greybit.jewellery", "com.olx.olx", "com.pinterest",
-            "com.robemall.zovi" };
+            "com.etsy.android", "com.thefancy.app", "com.wanelo.android",
+            "com.amazon.mShop.android", "com.pinterest" };
     
     public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
     private final int MAX_BITMAP_COUNT = 512;
