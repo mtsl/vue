@@ -63,6 +63,7 @@ import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -769,9 +770,9 @@ public class VueLandingPageActivity extends Activity implements
                     .getNetworkHandler()
                     .requestAislesByUser(fromServer, new ProgresStatus(),
                             catName);
-        } else if (catName
-                .equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
-            
+        } else if (catName.trim().equalsIgnoreCase(
+                getString(R.string.sidemenu_option_Trending_Aisles))) {
+            mLandingScreenName = catName;
             if (fromDialog) {
                 fromServer = false;
                 loadMore = false;

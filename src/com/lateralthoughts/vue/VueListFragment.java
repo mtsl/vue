@@ -221,12 +221,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
                         if (getActivity() instanceof VueLandingPageActivity) {
                             VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
                             vueLandingPageActivity1.showCategory(s, false);
-                            Intent intent = new Intent(
-                                    VueConstants.LANDING_SCREEN_RECEIVER);
-                            intent.putExtra(
-                                    VueConstants.LANDING_SCREEN_RECEIVER_KEY,
-                                    getString(R.string.trending));
-                            VueApplication.getInstance().sendBroadcast(intent);
                         }
                         if (getActivity() instanceof AisleDetailsViewActivity) {
                             startActivity(new Intent(
