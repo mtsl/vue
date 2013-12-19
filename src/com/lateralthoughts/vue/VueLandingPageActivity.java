@@ -23,6 +23,8 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,7 +35,6 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,6 +56,7 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
@@ -63,7 +65,6 @@ import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
-import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -108,6 +109,15 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        final PackageManager pm = getPackageManager();
+        // get a list of installed apps.
+        List<ApplicationInfo> packages = pm
+                .getInstalledApplications(PackageManager.GET_META_DATA);
+        for (ApplicationInfo packageInfo : packages) {
+            String s = packageInfo.packageName + "\n"
+                    + pm.getLaunchIntentForPackage(packageInfo.packageName);
+            Logger.writeToSdcard(s);
+        }
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
                 VueConstants.LANDING_SCREEN_RECEIVER);

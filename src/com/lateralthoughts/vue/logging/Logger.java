@@ -27,7 +27,7 @@ public class Logger {
         writeToSdcard(level + "=> " + TAG + " : " + message);
     }
     
-    private static void writeToSdcard(String message) {
+    public static void writeToSdcard(String message) {
         if (!sWrightToSdCard) {
             return;
         }
