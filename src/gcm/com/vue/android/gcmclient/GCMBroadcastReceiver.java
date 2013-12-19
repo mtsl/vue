@@ -42,7 +42,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                         .getInstance().getSystemService(
                                 Context.NOTIFICATION_SERVICE);
                 Notification mNotification = new Notification(
-                        R.drawable.vue_notification_icon, "",
+                        R.drawable.vue_notification_icon, broadcastMessage,
                         System.currentTimeMillis());
                 Intent MyIntent = new Intent(Intent.ACTION_VIEW);
                 PendingIntent StartIntent = PendingIntent.getActivity(
@@ -50,7 +50,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                         0, MyIntent, PendingIntent.FLAG_CANCEL_CURRENT);
                 mNotification.flags = Notification.FLAG_AUTO_CANCEL;
                 mNotification.setLatestEventInfo(VueApplication.getInstance()
-                        .getApplicationContext(), "", broadcastMessage,
+                        .getApplicationContext(), broadcastMessage, "",
                         StartIntent);
                 notificationManager.notify(VueConstants.GCM_NOTIFICATION_ID,
                         mNotification);
@@ -81,7 +81,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                     .getInstance().getSystemService(
                             Context.NOTIFICATION_SERVICE);
             Notification mNotification = new Notification(
-                    R.drawable.vue_notification_icon, "",
+                    R.drawable.vue_notification_icon, broadcastMessage,
                     System.currentTimeMillis());
             Intent MyIntent = new Intent(Intent.ACTION_VIEW);
             PendingIntent StartIntent = PendingIntent.getActivity(
@@ -90,7 +90,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
             mNotification.flags = Notification.FLAG_AUTO_CANCEL;
             mNotification
                     .setLatestEventInfo(VueApplication.getInstance()
-                            .getApplicationContext(), "", broadcastMessage,
+                            .getApplicationContext(), broadcastMessage, "",
                             StartIntent);
             notificationManager.notify(VueConstants.GCM_NOTIFICATION_ID,
                     mNotification);
