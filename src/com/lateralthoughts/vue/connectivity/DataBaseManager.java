@@ -23,7 +23,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -848,7 +847,7 @@ public class DataBaseManager {
                                         addBookmarkedAisles(mContext,
                                                 aisleContentArray, 0, BOOKMARK);                                        
                                     } else {
-                                        Logging.e("DataBaseManager", "Bookmarked aislesId with no images: " + retrievedAisle.mAisleId);
+                                        Logging.d("DataBaseManager", "Bookmarked aislesId with no images: " +retrievedAisle.mAisleId);
                                     }
 
                                 } catch (Exception e) {

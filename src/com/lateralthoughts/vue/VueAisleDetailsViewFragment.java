@@ -564,6 +564,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
+                    //to provide touch scroll for edit text
                     v.getParent().requestDisallowInterceptTouchEvent(true);
                     return false;
                 }
@@ -599,7 +600,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                                 view.setVisibility(View.VISIBLE);
                                 mInputMethodManager.hideSoftInputFromWindow(
                                         editText.getWindowToken(), 0);
-                                // mAisleDetailsAdapter.notifyDataSetChanged();
+                                //notify the adapter after keybord gone
                                 new Handler().postDelayed(new Runnable() {
                                     
                                     @Override
@@ -635,7 +636,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                                             .hideSoftInputFromWindow(
                                                     editText.getWindowToken(),
                                                     0);
-                                    // mAisleDetailsAdapter.notifyDataSetChanged();
+                                    //notify the adapter after keybord gone
                                     new Handler().postDelayed(new Runnable() {
                                         
                                         @Override
@@ -817,7 +818,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         editText.setVisibility(View.GONE);
         editText.setText("");
         view.setVisibility(View.VISIBLE);
-        // mAisleDetailsAdapter.notifyDataSetChanged();
+        //notify the adapter after keybord gone
         new Handler().postDelayed(new Runnable() {
             
             @Override

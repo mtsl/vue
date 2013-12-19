@@ -99,7 +99,7 @@
                 android:layout_height="28dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="14dp"
-                android:src="@drawable/addperson02" />
+                android:background="@drawable/new_profile" />
 
             <TextView
                 android:id="@+id/vue_user_comment"

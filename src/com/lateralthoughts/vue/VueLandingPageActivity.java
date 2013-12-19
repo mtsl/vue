@@ -776,7 +776,6 @@ public class VueLandingPageActivity extends Activity implements
             if (fromDialog) {
                 fromServer = false;
                 loadMore = false;
-                
                 getTrendingAislesFromDb(
                         getString(R.string.sidemenu_option_Trending_Aisles),
                         fromServer, loadMore);
@@ -790,7 +789,6 @@ public class VueLandingPageActivity extends Activity implements
                         VueApplication.getInstance()).clearObjectsInUse();
                 VueTrendingAislesDataModel.getInstance(
                         VueApplication.getInstance()).dataObserver();
-                
                 loadMore = true;
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
@@ -812,8 +810,10 @@ public class VueLandingPageActivity extends Activity implements
                 AisleWindowContentFactory.getInstance(
                         VueApplication.getInstance()).clearObjectsInUse();
                 for (AisleWindowContent content : windowContent) {
+                    if(content.getImageList() != null && content.getImageList().size() > 0){
                     VueTrendingAislesDataModel.getInstance(this).addItemToList(
                             content.getAisleId(), content);
+                    }
                 }
                 getActionBar()
                         .setTitle(
@@ -1222,7 +1222,7 @@ public class VueLandingPageActivity extends Activity implements
             image.setOwnerAisleId(Long.valueOf(aisleId));
             final String offlineImageId = String.valueOf(System
                     .currentTimeMillis());
-            // Camera or Gallery...
+            //Camera or Gallery...
             if (mOtherSourceImageUrl == null) {
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
