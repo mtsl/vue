@@ -24,6 +24,7 @@ public class VueUser implements Serializable {
     private Long joinTime;
     private String deviceId;
     private String userImageURL;
+    private String gcmRegistrationId;
     
     public String getUserImageURL() {
         return userImageURL;
@@ -118,5 +119,13 @@ public class VueUser implements Serializable {
     
     public void setGooglePlusId(String googlePlusId) {
         this.googlePlusId = googlePlusId;
+    }
+    
+    public String getGcmRegistrationId() {
+        return gcmRegistrationId;
+    }
+    
+    public void setGcmRegistrationId(String gcmRegistrationId) {
+        this.gcmRegistrationId = gcmRegistrationId;
     }
 }

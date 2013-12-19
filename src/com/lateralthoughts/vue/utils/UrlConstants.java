@@ -2,10 +2,16 @@ package com.lateralthoughts.vue.utils;
 
 public class UrlConstants {
     
-    public static final String SERVER_BASE_URL = "http://2dot6-java.vueapi-canary.appspot.com/";
-    // "http://2dot6-java.vueapi-canary-development.appspot.com/";
+    public static final String SERVER_BASE_URL = "http://2dot7-java.vueapi-canary.appspot.com/";
+    // "http://2dot7-java.vueapi-canary-development.appspot.com/";
     // curated
     // server
+    
+    private static final String CANARY_SERVER_PROJECT_ID = "876955216873";
+    private static final String DEVELOPMENT_SERVER_PROJECT_ID = "477960328185";
+    private static final String DEVELOPMENT1_SERVER_PROJECT_ID = "341676083313";
+    
+    public static final String CURRENT_SERVER_PROJECT_ID = CANARY_SERVER_PROJECT_ID;
     
     /**
      * (C)reate routine URL's

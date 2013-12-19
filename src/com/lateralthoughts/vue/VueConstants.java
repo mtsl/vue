@@ -11,6 +11,7 @@ public class VueConstants {
     public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
     public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
     public static final String VUE_LOGIN = "VueLoginFlag";
+    public static final String GCM_REGISTRATION_ID = "GCMRegistrationId";
     public static final String LANDING_SCREEN_RECEIVER = "LandingscreenReceiver";
     public static final String LANDING_SCREEN_RECEIVER_KEY = "LandingScreenReceiverKey";
     public static final String FACEBOOK = "Facebook";
@@ -27,6 +28,7 @@ public class VueConstants {
     public static final int AISLE_INFO_UPLOAD_NOTIFICATION_ID = 1;
     public static final int IMAGE_DELETE_NOTIFICATION_ID = 2;
     public static final int CHANGE_USER_NOTIFICATION_ID = 3;
+    public static final int GCM_NOTIFICATION_ID = 4;
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.sss";
     public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
     public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";

@@ -1,5 +1,7 @@
 package com.lateralthoughts.vue;
 
+import gcm.com.vue.android.gcmclient.RegisterGCMClient;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -27,6 +29,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnAppName;
+import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class VueApplication extends Application {
@@ -138,26 +141,14 @@ public class VueApplication extends Application {
         super.onCreate();
         
         sInstance = this;
-        
         mVueApplicationContext = this;
-        
-        // mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
-        // mVueAisleImagesCache.setLimit(40);
-        // mVueAisleOwnerNamesCache = new VueMemoryCache<String>();
-        // mVueAisleOwnerNamesCache.setLimit(1);
-        // mVueAisleContextInfoCache = new VueMemoryCache<String>();
-        // mVueAisleContextInfoCache.setLimit(1);
+        RegisterGCMClient.registerClient(VueApplication.getInstance(),
+                UrlConstants.CURRENT_SERVER_PROJECT_ID);
         ScaledImageViewFactory.getInstance(this);
         AisleWindowContentFactory.getInstance(this);
-        
-        // mAisleContentCache = new VueMemoryCache<Bitmap>();
-        // mAisleContentCache.setLimit(10);
-        
         mHttpClient = new DefaultHttpClient();
         mFileCache = new FileCache(this);
-        
         ContentAdapterFactory.getInstance(this);
-        
         // create the JSONObject. (Do not forget to import org.json.JSONObject!)
         JSONObject crittercismConfig = new JSONObject();
         try {
@@ -201,7 +192,6 @@ public class VueApplication extends Application {
             Collections.sort(mMoreInstalledApplicationDetailsList,
                     new SortBasedOnAppName());
         }
-        // R.drawable.aisle_content_empty;
         
         Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
                 crittercismConfig);
@@ -226,19 +216,9 @@ public class VueApplication extends Application {
         return sInstance;
     }
     
-    /*
-     * public VueMemoryCache<Bitmap> getAisleImagesMemCache() { return
-     * mVueAisleImagesCache; }
-     */
-    
     public HttpClient getHttpClient() {
         return mHttpClient;
     }
-    
-    /*
-     * public VueMemoryCache<Bitmap> getAisleContentCache() { return
-     * mAisleContentCache; }
-     */
     
     public FileCache getFileCache() {
         return mFileCache;

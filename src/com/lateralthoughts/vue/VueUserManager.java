@@ -15,6 +15,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -28,6 +29,7 @@ import com.facebook.model.GraphUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
@@ -78,7 +80,6 @@ public class VueUserManager {
             throw new RuntimeException(
                     "Cannot call createFBIdentifiedUser when User is "
                             + "already available. Try the update APIs");
-        
         Response.Listener listener = new Response.Listener<String>() {
             
             @Override
@@ -139,8 +140,12 @@ public class VueUserManager {
             newUser.setFirstName(userInitals);
             newUser.setLastName("");
             newUser.setDeviceId(deviceId);
+            SharedPreferences sharedPreferencesObj = VueApplication
+                    .getInstance().getSharedPreferences(
+                            VueConstants.SHAREDPREFERENCE_NAME, 0);
+            newUser.setGcmRegistrationId(sharedPreferencesObj.getString(
+                    VueConstants.GCM_REGISTRATION_ID, null));
             String userAsString = mapper.writeValueAsString(newUser);
-            
             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                     userAsString, UrlConstants.CREATE_USER_RESTURL, listener,
                     errorListener);
@@ -214,9 +219,9 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser = new Parser().parseUserData(jsonArray);
                     if (vueUser != null) {
-                        if (vueUser.getUserImageURL() != null
-                                && vueUser.getUserImageURL().equals(
-                                        userProfileImageUrl)) {
+                        if ((vueUser.getUserImageURL() != null && vueUser
+                                .getUserImageURL().equals(userProfileImageUrl))
+                                && vueUser.getGcmRegistrationId() != null) {
                             if (VueApplication.getInstance().getmUserInitials() == null) {
                                 VueApplication.getInstance().setmUserInitials(
                                         vueUser.getFirstName());
@@ -252,6 +257,14 @@ public class VueUserManager {
                                     .getNetworkHandler().getRatedImageList();
                         } else {
                             vueUser.setUserImageURL(userProfileImageUrl);
+                            SharedPreferences sharedPreferencesObj = VueApplication
+                                    .getInstance().getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                            vueUser.setGcmRegistrationId(sharedPreferencesObj
+                                    .getString(
+                                            VueConstants.GCM_REGISTRATION_ID,
+                                            null));
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = null;
                             try {
@@ -269,6 +282,14 @@ public class VueUserManager {
                     } else {
                         try {
                             user.setUserImageURL(userProfileImageUrl);
+                            SharedPreferences sharedPreferencesObj = VueApplication
+                                    .getInstance().getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                            user.setGcmRegistrationId(sharedPreferencesObj
+                                    .getString(
+                                            VueConstants.GCM_REGISTRATION_ID,
+                                            null));
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(user);
@@ -286,6 +307,12 @@ public class VueUserManager {
                 } else {
                     try {
                         user.setUserImageURL(userProfileImageUrl);
+                        SharedPreferences sharedPreferencesObj = VueApplication
+                                .getInstance().getSharedPreferences(
+                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
+                        user.setGcmRegistrationId(sharedPreferencesObj
+                                .getString(VueConstants.GCM_REGISTRATION_ID,
+                                        null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = mapper.writeValueAsString(user);
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
@@ -325,7 +352,8 @@ public class VueUserManager {
             @Override
             public void onResponse(String jsonArray) {
                 if (null != jsonArray) {
-                    
+                    Logger.log("INFo", "GCMonGoogle+UserUpdate Response",
+                            jsonArray);
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
                         if (VueApplication.getInstance().getmUserInitials() == null) {
@@ -377,9 +405,9 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser1 = new Parser().parseUserData(jsonArray);
                     if (vueUser1 != null) {
-                        if (vueUser1.getUserImageURL() != null
-                                && vueUser1.getUserImageURL().equals(
-                                        userProfileImageUrl)) {
+                        if ((vueUser1.getUserImageURL() != null && vueUser1
+                                .getUserImageURL().equals(userProfileImageUrl))
+                                && vueUser1.getGcmRegistrationId() != null) {
                             if (VueApplication.getInstance().getmUserInitials() == null) {
                                 VueApplication.getInstance().setmUserInitials(
                                         vueUser1.getFirstName());
@@ -415,12 +443,24 @@ public class VueUserManager {
                                     .getNetworkHandler().getRatedImageList();
                         } else {
                             vueUser1.setUserImageURL(userProfileImageUrl);
+                            SharedPreferences sharedPreferencesObj = VueApplication
+                                    .getInstance().getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                            vueUser1.setGcmRegistrationId(sharedPreferencesObj
+                                    .getString(
+                                            VueConstants.GCM_REGISTRATION_ID,
+                                            null));
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = null;
                             try {
                                 userAsString = mapper
                                         .writeValueAsString(vueUser1);
+                                Logger.log("INFo",
+                                        "GCMonGoogle+UserUpdate Request",
+                                        userAsString);
                             } catch (JsonProcessingException e) {
+                                e.printStackTrace();
                             }
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
@@ -432,6 +472,14 @@ public class VueUserManager {
                     } else {
                         try {
                             vueUser.setUserImageURL(userProfileImageUrl);
+                            SharedPreferences sharedPreferencesObj = VueApplication
+                                    .getInstance().getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                            vueUser.setGcmRegistrationId(sharedPreferencesObj
+                                    .getString(
+                                            VueConstants.GCM_REGISTRATION_ID,
+                                            null));
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(vueUser);
@@ -448,6 +496,12 @@ public class VueUserManager {
                 } else {
                     try {
                         vueUser.setUserImageURL(userProfileImageUrl);
+                        SharedPreferences sharedPreferencesObj = VueApplication
+                                .getInstance().getSharedPreferences(
+                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
+                        vueUser.setGcmRegistrationId(sharedPreferencesObj
+                                .getString(VueConstants.GCM_REGISTRATION_ID,
+                                        null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = mapper
                                 .writeValueAsString(vueUser);
@@ -457,7 +511,7 @@ public class VueUserManager {
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
                     } catch (Exception e) {
-                        
+                        e.printStackTrace();
                     }
                 }
                 
@@ -534,9 +588,9 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
-                        if (vueUser2.getUserImageURL() != null
-                                && vueUser2.getUserImageURL().equals(
-                                        userProfileImageUrl)) {
+                        if ((vueUser2.getUserImageURL() != null && vueUser2
+                                .getUserImageURL().equals(userProfileImageUrl))
+                                && vueUser2.getGcmRegistrationId() != null) {
                             if (VueApplication.getInstance().getmUserInitials() == null) {
                                 VueApplication.getInstance().setmUserInitials(
                                         vueUser2.getFirstName());
@@ -574,6 +628,14 @@ public class VueUserManager {
                                     .getNetworkHandler().getRatedImageList();
                         } else {
                             vueUser2.setUserImageURL(userProfileImageUrl);
+                            SharedPreferences sharedPreferencesObj = VueApplication
+                                    .getInstance().getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                            vueUser2.setGcmRegistrationId(sharedPreferencesObj
+                                    .getString(
+                                            VueConstants.GCM_REGISTRATION_ID,
+                                            null));
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = null;
                             try {
@@ -591,6 +653,14 @@ public class VueUserManager {
                     } else {
                         try {
                             user.setUserImageURL(userProfileImageUrl);
+                            SharedPreferences sharedPreferencesObj = VueApplication
+                                    .getInstance().getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                            user.setGcmRegistrationId(sharedPreferencesObj
+                                    .getString(
+                                            VueConstants.GCM_REGISTRATION_ID,
+                                            null));
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(user);
@@ -608,6 +678,12 @@ public class VueUserManager {
                 } else {
                     try {
                         user.setUserImageURL(userProfileImageUrl);
+                        SharedPreferences sharedPreferencesObj = VueApplication
+                                .getInstance().getSharedPreferences(
+                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
+                        user.setGcmRegistrationId(sharedPreferencesObj
+                                .getString(VueConstants.GCM_REGISTRATION_ID,
+                                        null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = mapper.writeValueAsString(user);
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
@@ -694,9 +770,9 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
-                        if (vueUser2.getUserImageURL() != null
-                                && vueUser2.getUserImageURL().equals(
-                                        userProfileImageUrl)) {
+                        if ((vueUser2.getUserImageURL() != null && vueUser2
+                                .getUserImageURL().equals(userProfileImageUrl))
+                                && vueUser2.getGcmRegistrationId() != null) {
                             if (VueApplication.getInstance().getmUserInitials() == null) {
                                 VueApplication.getInstance().setmUserInitials(
                                         vueUser2.getFirstName());
@@ -735,6 +811,14 @@ public class VueUserManager {
                                     .getNetworkHandler().getRatedImageList();
                         } else {
                             vueUser2.setUserImageURL(userProfileImageUrl);
+                            SharedPreferences sharedPreferencesObj = VueApplication
+                                    .getInstance().getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                            vueUser2.setGcmRegistrationId(sharedPreferencesObj
+                                    .getString(
+                                            VueConstants.GCM_REGISTRATION_ID,
+                                            null));
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = null;
                             try {
@@ -752,6 +836,14 @@ public class VueUserManager {
                     } else {
                         try {
                             vueUser.setUserImageURL(userProfileImageUrl);
+                            SharedPreferences sharedPreferencesObj = VueApplication
+                                    .getInstance().getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                            vueUser.setGcmRegistrationId(sharedPreferencesObj
+                                    .getString(
+                                            VueConstants.GCM_REGISTRATION_ID,
+                                            null));
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(vueUser);
@@ -768,6 +860,12 @@ public class VueUserManager {
                 } else {
                     try {
                         vueUser.setUserImageURL(userProfileImageUrl);
+                        SharedPreferences sharedPreferencesObj = VueApplication
+                                .getInstance().getSharedPreferences(
+                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
+                        vueUser.setGcmRegistrationId(sharedPreferencesObj
+                                .getString(VueConstants.GCM_REGISTRATION_ID,
+                                        null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = mapper
                                 .writeValueAsString(vueUser);
