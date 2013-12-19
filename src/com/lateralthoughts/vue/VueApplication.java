@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -135,7 +134,6 @@ public class VueApplication extends Application {
     
     public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
     private final int MAX_BITMAP_COUNT = 512;
-    private SharedPreferences mSharedPreferences = null;
     
     @SuppressWarnings("unchecked")
     @Override
@@ -144,13 +142,8 @@ public class VueApplication extends Application {
         
         sInstance = this;
         mVueApplicationContext = this;
-        mSharedPreferences = VueApplication.getInstance().getSharedPreferences(
-                VueConstants.SHAREDPREFERENCE_NAME, 0);
-        if (mSharedPreferences
-                .getString(VueConstants.GCM_REGISTRATION_ID, null) == null) {
-            RegisterGCMClient.registerClient(VueApplication.getInstance(),
-                    UrlConstants.CURRENT_SERVER_PROJECT_ID);
-        }
+        RegisterGCMClient.registerClient(VueApplication.getInstance(),
+                UrlConstants.CURRENT_SERVER_PROJECT_ID);
         ScaledImageViewFactory.getInstance(this);
         AisleWindowContentFactory.getInstance(this);
         mHttpClient = new DefaultHttpClient();
@@ -289,7 +282,6 @@ public class VueApplication extends Application {
             if (statusBarHeight == 0) {
                 statusBarHeight = 24;
             }
-            
             // 4+4 top bottom margins
             // 8 dot indicator height.
             int topBottomMargin = 4 + 4 + 8 + statusBarHeight;

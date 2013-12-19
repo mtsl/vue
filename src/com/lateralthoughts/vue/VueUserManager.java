@@ -213,36 +213,6 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser = new Parser().parseUserData(jsonArray);
                     if (vueUser != null) {
-                        /*
-                         * if ((vueUser.getUserImageURL() != null && vueUser
-                         * .getUserImageURL().equals(userProfileImageUrl)) &&
-                         * vueUser.getGcmRegistrationId() != null) { if
-                         * (VueApplication.getInstance().getmUserInitials() ==
-                         * null) {
-                         * VueApplication.getInstance().setmUserInitials(
-                         * vueUser.getFirstName()); }
-                         * VueApplication.getInstance().setmUserId(
-                         * vueUser.getId());
-                         * VueApplication.getInstance().setmUserName(
-                         * vueUser.getFirstName() + " " +
-                         * vueUser.getLastName());
-                         * VueUserManager.this.setCurrentUser(vueUser);
-                         * callback.onUserUpdated(vueUser); VueApplication
-                         * .getInstance() .getContentResolver()
-                         * .delete(VueConstants.RECENTLY_VIEW_AISLES_URI, null,
-                         * null); VueApplication .getInstance()
-                         * .getContentResolver()
-                         * .delete(VueConstants.BOOKMARKER_AISLES_URI, null,
-                         * null); VueApplication .getInstance()
-                         * .getContentResolver()
-                         * .delete(VueConstants.RATED_IMAGES_URI, null, null);
-                         * VueTrendingAislesDataModel
-                         * .getInstance(VueApplication.getInstance())
-                         * .getNetworkHandler() .getBookmarkAisleByUser();
-                         * VueTrendingAislesDataModel
-                         * .getInstance(VueApplication.getInstance())
-                         * .getNetworkHandler().getRatedImageList(); } else {
-                         */
                         vueUser.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
@@ -261,7 +231,6 @@ public class VueUserManager {
                                 listener, errorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
-                        // }
                     } else {
                         try {
                             user.setUserImageURL(userProfileImageUrl);
@@ -388,36 +357,6 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser1 = new Parser().parseUserData(jsonArray);
                     if (vueUser1 != null) {
-                        /*
-                         * if ((vueUser1.getUserImageURL() != null && vueUser1
-                         * .getUserImageURL().equals(userProfileImageUrl)) &&
-                         * vueUser1.getGcmRegistrationId() != null) { if
-                         * (VueApplication.getInstance().getmUserInitials() ==
-                         * null) {
-                         * VueApplication.getInstance().setmUserInitials(
-                         * vueUser1.getFirstName()); }
-                         * VueApplication.getInstance().setmUserId(
-                         * vueUser1.getId());
-                         * VueApplication.getInstance().setmUserName(
-                         * vueUser1.getFirstName() + " " +
-                         * vueUser1.getLastName());
-                         * VueUserManager.this.setCurrentUser(vueUser1);
-                         * callback.onUserUpdated(vueUser1); VueApplication
-                         * .getInstance() .getContentResolver()
-                         * .delete(VueConstants.RECENTLY_VIEW_AISLES_URI, null,
-                         * null); VueApplication .getInstance()
-                         * .getContentResolver()
-                         * .delete(VueConstants.BOOKMARKER_AISLES_URI, null,
-                         * null); VueApplication .getInstance()
-                         * .getContentResolver()
-                         * .delete(VueConstants.RATED_IMAGES_URI, null, null);
-                         * VueTrendingAislesDataModel
-                         * .getInstance(VueApplication.getInstance())
-                         * .getNetworkHandler() .getBookmarkAisleByUser();
-                         * VueTrendingAislesDataModel
-                         * .getInstance(VueApplication.getInstance())
-                         * .getNetworkHandler().getRatedImageList(); } else {
-                         */
                         vueUser1.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
@@ -440,7 +379,6 @@ public class VueUserManager {
                                 listener, errorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
-                        // }
                     } else {
                         try {
                             vueUser.setUserImageURL(userProfileImageUrl);
@@ -560,38 +498,6 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
-                        /*
-                         * if ((vueUser2.getUserImageURL() != null && vueUser2
-                         * .getUserImageURL().equals(userProfileImageUrl)) &&
-                         * vueUser2.getGcmRegistrationId() != null) { if
-                         * (VueApplication.getInstance().getmUserInitials() ==
-                         * null) {
-                         * VueApplication.getInstance().setmUserInitials(
-                         * vueUser2.getFirstName()); }
-                         * VueApplication.getInstance().setmUserId(
-                         * vueUser2.getId());
-                         * VueApplication.getInstance().setmUserName(
-                         * vueUser2.getFirstName() + " " +
-                         * vueUser2.getLastName());
-                         * VueUserManager.this.setCurrentUser(vueUser2);
-                         * callback.onUserUpdated(vueUser2);
-                         * showNotificationForSwitchingUser(String
-                         * .valueOf(vueUser.getId())); VueApplication
-                         * .getInstance() .getContentResolver()
-                         * .delete(VueConstants.RECENTLY_VIEW_AISLES_URI, null,
-                         * null); VueApplication .getInstance()
-                         * .getContentResolver()
-                         * .delete(VueConstants.BOOKMARKER_AISLES_URI, null,
-                         * null); VueApplication .getInstance()
-                         * .getContentResolver()
-                         * .delete(VueConstants.RATED_IMAGES_URI, null, null);
-                         * VueTrendingAislesDataModel
-                         * .getInstance(VueApplication.getInstance())
-                         * .getNetworkHandler() .getBookmarkAisleByUser();
-                         * VueTrendingAislesDataModel
-                         * .getInstance(VueApplication.getInstance())
-                         * .getNetworkHandler().getRatedImageList(); } else {
-                         */
                         vueUser2.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
@@ -610,7 +516,6 @@ public class VueUserManager {
                                 listener, errorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
-                        // }
                     } else {
                         try {
                             user.setUserImageURL(userProfileImageUrl);
@@ -731,39 +636,6 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
-                        /*
-                         * if ((vueUser2.getUserImageURL() != null && vueUser2
-                         * .getUserImageURL().equals(userProfileImageUrl)) &&
-                         * vueUser2.getGcmRegistrationId() != null) { if
-                         * (VueApplication.getInstance().getmUserInitials() ==
-                         * null) {
-                         * VueApplication.getInstance().setmUserInitials(
-                         * vueUser2.getFirstName()); }
-                         * VueApplication.getInstance().setmUserId(
-                         * vueUser2.getId());
-                         * VueApplication.getInstance().setmUserName(
-                         * vueUser2.getFirstName() + " " +
-                         * vueUser2.getLastName());
-                         * VueUserManager.this.setCurrentUser(vueUser2);
-                         * VueUserManager.this.setCurrentUser(vueUser2);
-                         * callback.onUserUpdated(vueUser2);
-                         * showNotificationForSwitchingUser(String
-                         * .valueOf(vueUser.getId())); VueApplication
-                         * .getInstance() .getContentResolver()
-                         * .delete(VueConstants.RECENTLY_VIEW_AISLES_URI, null,
-                         * null); VueApplication .getInstance()
-                         * .getContentResolver()
-                         * .delete(VueConstants.BOOKMARKER_AISLES_URI, null,
-                         * null); VueApplication .getInstance()
-                         * .getContentResolver()
-                         * .delete(VueConstants.RATED_IMAGES_URI, null, null);
-                         * VueTrendingAislesDataModel
-                         * .getInstance(VueApplication.getInstance())
-                         * .getNetworkHandler() .getBookmarkAisleByUser();
-                         * VueTrendingAislesDataModel
-                         * .getInstance(VueApplication.getInstance())
-                         * .getNetworkHandler().getRatedImageList(); } else {
-                         */
                         vueUser2.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
@@ -782,7 +654,6 @@ public class VueUserManager {
                                 listener, errorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
-                        // }
                     } else {
                         try {
                             vueUser.setUserImageURL(userProfileImageUrl);
