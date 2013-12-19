@@ -112,8 +112,7 @@ public class AisleDetailsViewActivity extends Activity {
                     @Override
                     public void onScrollEnded() {
                         new Thread(mRunnable).start();
-                        mDrawerLayout
-                                .setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                        
                     }
                 });
         mContentLinearLay = (LinearLayout) findViewById(R.id.content2);
@@ -384,7 +383,15 @@ public class AisleDetailsViewActivity extends Activity {
         @SuppressWarnings("deprecation")
         @SuppressLint("HandlerLeak")
         public void handleMessage(Message msg) {
-            
+            // when comparison screen opened deactivate the left bezel
+            // other wise activate the right left bezel.
+            if (mSlidingDrawer.isOpened()) {
+                mDrawerLayout
+                        .setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            } else {
+                mDrawerLayout
+                        .setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
         }
     };
     
