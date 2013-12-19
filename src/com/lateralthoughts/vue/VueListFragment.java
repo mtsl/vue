@@ -524,10 +524,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 R.drawable.my_aisles, null);
         meChildren.add(item);
         item = new ListOptionItem(
-                getString(R.string.sidemenu_sub_option_Interactions),
-                R.drawable.new_profile, null);
-        meChildren.add(item);
-        item = new ListOptionItem(
                 getString(R.string.sidemenu_sub_option_Bookmarks),
                 R.drawable.bookmark, null);
         meChildren.add(item);
