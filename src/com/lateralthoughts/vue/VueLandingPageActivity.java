@@ -33,6 +33,7 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -102,10 +103,12 @@ public class VueLandingPageActivity extends Activity implements
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
     private SearchView mSearchView;
     public static boolean mIsMyAilseCallEnable = false;
+    public static String notification = null;
     
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        notification = (String) getIntent().getStringExtra("notfication");
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
                 VueConstants.LANDING_SCREEN_RECEIVER);
@@ -683,6 +686,12 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (VueLandingPageActivity.notification != null
+                && VueLandingPageActivity.notification
+                        .equalsIgnoreCase("MyAisles")) {
+            callForNewView(getString(R.string.sidemenu_sub_option_My_Aisles),
+                    false);
+        }
     }
     
     @Override

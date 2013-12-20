@@ -498,12 +498,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
     private List<ListOptionItem> getInviteFriendsChildren() {
         List<ListOptionItem> inviteFriendsChildren = new ArrayList<VueListFragment.ListOptionItem>();
         ListOptionItem item = new ListOptionItem(
-                getString(R.string.sidemenu_sub_option_Facebook),
-                R.drawable.comment, null);
+                getString(R.string.sidemenu_sub_option_Facebook), 0, null);
         inviteFriendsChildren.add(item);
         item = new ListOptionItem(
-                getString(R.string.sidemenu_sub_option_Googleplus),
-                R.drawable.comment, null);
+                getString(R.string.sidemenu_sub_option_Googleplus), 0, null);
         inviteFriendsChildren.add(item);
         return inviteFriendsChildren;
     }
