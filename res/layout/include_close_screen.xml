@@ -5,17 +5,11 @@
     android:layout_height="match_parent"
     android:layout_weight="1" >
 
-    <TextView
+    <ImageView
         android:id="@+id/actionbar_cancle_btn_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:drawableLeft="@drawable/ic_action_cancel"
-        android:drawablePadding="8dp"
-        android:gravity="center_vertical"
-        android:paddingRight="20dp"
-        android:text="Cancel"
-        android:textColor="@color/black"
-        android:textStyle="bold" />
+        android:src="@drawable/ic_action_cancel" />
 
 </FrameLayout>

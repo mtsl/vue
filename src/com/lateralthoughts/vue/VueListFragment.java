@@ -221,12 +221,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
                         if (getActivity() instanceof VueLandingPageActivity) {
                             VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
                             vueLandingPageActivity1.showCategory(s, false);
-                            Intent intent = new Intent(
-                                    VueConstants.LANDING_SCREEN_RECEIVER);
-                            intent.putExtra(
-                                    VueConstants.LANDING_SCREEN_RECEIVER_KEY,
-                                    getString(R.string.trending));
-                            VueApplication.getInstance().sendBroadcast(intent);
                         }
                         if (getActivity() instanceof AisleDetailsViewActivity) {
                             startActivity(new Intent(
@@ -528,10 +522,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
         ListOptionItem item = new ListOptionItem(
                 getString(R.string.sidemenu_sub_option_My_Aisles),
                 R.drawable.my_aisles, null);
-        meChildren.add(item);
-        item = new ListOptionItem(
-                getString(R.string.sidemenu_sub_option_Interactions),
-                R.drawable.new_profile, null);
         meChildren.add(item);
         item = new ListOptionItem(
                 getString(R.string.sidemenu_sub_option_Bookmarks),

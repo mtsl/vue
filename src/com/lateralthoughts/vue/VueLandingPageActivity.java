@@ -297,7 +297,6 @@ public class VueLandingPageActivity extends Activity implements
         getMenuInflater().inflate(R.menu.landing_actionbar, menu);
         getActionBar().setHomeButtonEnabled(true);
         // Configure the search info and add any event listeners
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) menu.findItem(R.id.menu_search)
                 .getActionView();
         return true;
@@ -769,13 +768,12 @@ public class VueLandingPageActivity extends Activity implements
                     .getNetworkHandler()
                     .requestAislesByUser(fromServer, new ProgresStatus(),
                             catName);
-        } else if (catName
-                .equalsIgnoreCase(getString(R.string.sidemenu_option_Trending_Aisles))) {
-            
+        } else if (catName.trim().equalsIgnoreCase(
+                getString(R.string.sidemenu_option_Trending_Aisles))) {
+            mLandingScreenName = catName;
             if (fromDialog) {
                 fromServer = false;
                 loadMore = false;
-                
                 getTrendingAislesFromDb(
                         getString(R.string.sidemenu_option_Trending_Aisles),
                         fromServer, loadMore);
@@ -789,7 +787,6 @@ public class VueLandingPageActivity extends Activity implements
                         VueApplication.getInstance()).clearObjectsInUse();
                 VueTrendingAislesDataModel.getInstance(
                         VueApplication.getInstance()).dataObserver();
-                
                 loadMore = true;
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
@@ -811,8 +808,10 @@ public class VueLandingPageActivity extends Activity implements
                 AisleWindowContentFactory.getInstance(
                         VueApplication.getInstance()).clearObjectsInUse();
                 for (AisleWindowContent content : windowContent) {
+                    if(content.getImageList() != null && content.getImageList().size() > 0){
                     VueTrendingAislesDataModel.getInstance(this).addItemToList(
                             content.getAisleId(), content);
+                    }
                 }
                 getActionBar()
                         .setTitle(
@@ -1171,7 +1170,6 @@ public class VueLandingPageActivity extends Activity implements
         Utils.putTouchToChnageImagePosition(VueLandingPageActivity.this, -1);
         Utils.putTouchToChnageImageTempPosition(VueLandingPageActivity.this, -1);
         Utils.putTouchToChnageImageFlag(VueLandingPageActivity.this, false);
-        Utils.putDataentryScreenAisleId(VueLandingPageActivity.this, null);
         ArrayList<DataentryImage> mAisleImagePathList = null;
         try {
             mAisleImagePathList = Utils.readAisleImagePathListFromFile(
@@ -1222,7 +1220,7 @@ public class VueLandingPageActivity extends Activity implements
             image.setOwnerAisleId(Long.valueOf(aisleId));
             final String offlineImageId = String.valueOf(System
                     .currentTimeMillis());
-            // Camera or Gallery...
+            //Camera or Gallery...
             if (mOtherSourceImageUrl == null) {
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())

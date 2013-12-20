@@ -1,5 +1,7 @@
 package com.lateralthoughts.vue;
 
+import gcm.com.vue.android.gcmclient.RegisterGCMClient;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -27,6 +29,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnAppName;
+import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class VueApplication extends Application {
@@ -48,11 +51,6 @@ public class VueApplication extends Application {
     public String mNewlySelectedView;
     public ArrayList<ShoppingApplicationDetails> mShoppingApplicationDetailsList;
     public ArrayList<ShoppingApplicationDetails> mMoreInstalledApplicationDetailsList;
-    public static final int[] POPUP_ITEM_DRAWABLES = {
-            R.drawable.composer_camera, R.drawable.composer_music,
-            R.drawable.composer_place, R.drawable.composer_sleep,
-            R.drawable.composer_thought };
-    
     public long mLaunchTime;
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
@@ -123,18 +121,16 @@ public class VueApplication extends Application {
     
     public boolean mFbsharingflag = false;
     private RequestQueue mVolleyRequestQueue;
-    private static final String[] SHOPPINGAPP_NAMES_ARRAY = { "Amazon", "eBay",
-            "iShop", "Jewellery", "OLX", "Pinterest", "ZOVI" };
-    private static final String[] SHOPPINGAPP_ACTIVITIES_ARRAY = {
+    public static final String[] SHOPPINGAPP_NAMES_ARRAY = { "Etsy", "Fancy",
+            "Wanelo", "Amazon", "Pinterest" };
+    public static final String[] SHOPPINGAPP_ACTIVITIES_ARRAY = {
+            "com.etsy.android.ui.HomeActivity", "com.thefancy.app.common.Main",
+            "com.wanelo.android.ui.activity.LoginActivity",
             "com.amazon.mShop.home.HomeActivity",
-            "com.ebay.mobile.activities.eBay", "com.shopping.StartPage",
-            "com.greybit.jewellery.activity.Start", "com.olx.olx.activity.Olx",
-            "com.pinterest.activity.PinterestActivity",
-            "com.robemall.zovi.HomeActivity" };
+            "com.pinterest.activity.PinterestActivity" };
     public static final String[] SHOPPINGAPP_PACKAGES_ARRAY = {
-            "com.amazon.mShop.android", "com.ebay.mobile", "com.shopping",
-            "com.greybit.jewellery", "com.olx.olx", "com.pinterest",
-            "com.robemall.zovi" };
+            "com.etsy.android", "com.thefancy.app", "com.wanelo.android",
+            "com.amazon.mShop.android", "com.pinterest" };
     
     public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
     private final int MAX_BITMAP_COUNT = 512;
@@ -145,26 +141,14 @@ public class VueApplication extends Application {
         super.onCreate();
         
         sInstance = this;
-        
         mVueApplicationContext = this;
-        
-        // mVueAisleImagesCache = new VueMemoryCache<Bitmap>();
-        // mVueAisleImagesCache.setLimit(40);
-        // mVueAisleOwnerNamesCache = new VueMemoryCache<String>();
-        // mVueAisleOwnerNamesCache.setLimit(1);
-        // mVueAisleContextInfoCache = new VueMemoryCache<String>();
-        // mVueAisleContextInfoCache.setLimit(1);
+        RegisterGCMClient.registerClient(VueApplication.getInstance(),
+                UrlConstants.CURRENT_SERVER_PROJECT_ID);
         ScaledImageViewFactory.getInstance(this);
         AisleWindowContentFactory.getInstance(this);
-        
-        // mAisleContentCache = new VueMemoryCache<Bitmap>();
-        // mAisleContentCache.setLimit(10);
-        
         mHttpClient = new DefaultHttpClient();
         mFileCache = new FileCache(this);
-        
         ContentAdapterFactory.getInstance(this);
-        
         // create the JSONObject. (Do not forget to import org.json.JSONObject!)
         JSONObject crittercismConfig = new JSONObject();
         try {
@@ -208,7 +192,6 @@ public class VueApplication extends Application {
             Collections.sort(mMoreInstalledApplicationDetailsList,
                     new SortBasedOnAppName());
         }
-        // R.drawable.aisle_content_empty;
         
         Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
                 crittercismConfig);
@@ -233,19 +216,9 @@ public class VueApplication extends Application {
         return sInstance;
     }
     
-    /*
-     * public VueMemoryCache<Bitmap> getAisleImagesMemCache() { return
-     * mVueAisleImagesCache; }
-     */
-    
     public HttpClient getHttpClient() {
         return mHttpClient;
     }
-    
-    /*
-     * public VueMemoryCache<Bitmap> getAisleContentCache() { return
-     * mAisleContentCache; }
-     */
     
     public FileCache getFileCache() {
         return mFileCache;
@@ -309,7 +282,6 @@ public class VueApplication extends Application {
             if (statusBarHeight == 0) {
                 statusBarHeight = 24;
             }
-            
             // 4+4 top bottom margins
             // 8 dot indicator height.
             int topBottomMargin = 4 + 4 + 8 + statusBarHeight;

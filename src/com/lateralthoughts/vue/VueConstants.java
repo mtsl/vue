@@ -11,6 +11,7 @@ public class VueConstants {
     public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
     public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
     public static final String VUE_LOGIN = "VueLoginFlag";
+    public static final String GCM_REGISTRATION_ID = "GCMRegistrationId";
     public static final String LANDING_SCREEN_RECEIVER = "LandingscreenReceiver";
     public static final String LANDING_SCREEN_RECEIVER_KEY = "LandingScreenReceiverKey";
     public static final String FACEBOOK = "Facebook";
@@ -27,6 +28,7 @@ public class VueConstants {
     public static final int AISLE_INFO_UPLOAD_NOTIFICATION_ID = 1;
     public static final int IMAGE_DELETE_NOTIFICATION_ID = 2;
     public static final int CHANGE_USER_NOTIFICATION_ID = 3;
+    public static final int GCM_NOTIFICATION_ID = 4;
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.sss";
     public static final String FACEBOOK_GETFRIENDS_URL = "https://graph.facebook.com/me/friends?access_token=";
     public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";
@@ -75,11 +77,6 @@ public class VueConstants {
     public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_DESCRIPTION = "DataentryTopAddImageAisleDescription";
     public static final String LOAD_DATAENTRY_SCREEN_FLAG = "LoadDataentryScreenFlag";
     public static final String AISLE_IMAGE_PATH_LIST_FILE_NAME = "AisleImagePathListFileName";
-    public static final String ETSY_PACKAGE_NAME = "com.etsy.android";
-    public static final String FANCY_PACKAGE_NAME = "com.thefancy.app";
-    public static final String ETSY_ACTIVITY_NAME = "com.etsy.android.ui.HomeActivity";
-    public static final String FANCY_ACTIVITY_NAME = "com.thefancy.app.common.Main";
-    public static final String DATAENTRY_SCREEN_AISLE_ID = "DataentryScreenAisleId";
     public static final String USER_PROFILE_IMAGE_FILE_NAME = "VueUserProfileImage";
     public static final String AISLE_ORDER = "aisleOrder";
     // Column names for aisles table.

@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue.ui;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +15,11 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.lateralthoughts.vue.CreateAisleSelectionActivity;
 import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class ArcMenu extends RelativeLayout {
@@ -25,8 +28,9 @@ public class ArcMenu extends RelativeLayout {
     public RelativeLayout cameraLayout;
     public RelativeLayout galleryLayout;
     public RelativeLayout etsyLayout;
-    public RelativeLayout fancyLayout;
+    public RelativeLayout browserLayout;
     public RelativeLayout moreLayout;
+    public TextView etsyText;
     
     public ImageView hintView;
     
@@ -52,16 +56,24 @@ public class ArcMenu extends RelativeLayout {
         arcLayout = (ArcLayout) findViewById(R.id.item_layout);
         arcLayout.setVisibility(View.INVISIBLE);
         
-        fancyLayout = (RelativeLayout) findViewById(R.id.fancy_layout);
+        browserLayout = (RelativeLayout) findViewById(R.id.browser_layout);
         cameraLayout = (RelativeLayout) findViewById(R.id.camera_layout);
         galleryLayout = (RelativeLayout) findViewById(R.id.gallery_layout);
         moreLayout = (RelativeLayout) findViewById(R.id.more_layout);
         etsyLayout = (RelativeLayout) findViewById(R.id.etsy_layout);
+        etsyText = (TextView) findViewById(R.id.etsy_text);
         
-        fancyLayout.setOnClickListener(new OnClickListener() {
+        if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
+                && VueApplication.getInstance().mShoppingApplicationDetailsList
+                        .size() > 0) {
+            etsyText.setText(VueApplication.getInstance().mShoppingApplicationDetailsList
+                    .get(0).getAppName());
+        }
+        
+        browserLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                itemClickFunctionality(fancyLayout, 2);
+                itemClickFunctionality(browserLayout, 2);
             }
         });
         cameraLayout.setOnClickListener(new OnClickListener() {
@@ -226,27 +238,39 @@ public class ArcMenu extends RelativeLayout {
             break;
         // Etsy
         case 1:
-            if (Utils
-                    .appInstalledOrNot(VueConstants.ETSY_PACKAGE_NAME, context)) {
-                createAisleSelectionActivity.loadShoppingApplication(
-                        VueConstants.ETSY_ACTIVITY_NAME,
-                        VueConstants.ETSY_PACKAGE_NAME, "Etsy");
+            if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
+                    && VueApplication.getInstance().mShoppingApplicationDetailsList
+                            .size() > 0) {
+                createAisleSelectionActivity
+                        .loadShoppingApplication(
+                                VueApplication.getInstance().mShoppingApplicationDetailsList
+                                        .get(0).getActivityName(),
+                                VueApplication.getInstance().mShoppingApplicationDetailsList
+                                        .get(0).getPackageName(),
+                                VueApplication.getInstance().mShoppingApplicationDetailsList
+                                        .get(0).getAppName());
             } else {
-                createAisleSelectionActivity.showAlertMessageForAppInstalation(
-                        VueConstants.ETSY_PACKAGE_NAME, "Etsy");
+                if (Utils.appInstalledOrNot(
+                        VueApplication.SHOPPINGAPP_PACKAGES_ARRAY[0], context)) {
+                    createAisleSelectionActivity.loadShoppingApplication(
+                            VueApplication.SHOPPINGAPP_ACTIVITIES_ARRAY[0],
+                            VueApplication.SHOPPINGAPP_PACKAGES_ARRAY[0],
+                            VueApplication.SHOPPINGAPP_NAMES_ARRAY[0]);
+                } else {
+                    createAisleSelectionActivity
+                            .showAlertMessageForAppInstalation(
+                                    VueApplication.SHOPPINGAPP_PACKAGES_ARRAY[0],
+                                    VueApplication.SHOPPINGAPP_NAMES_ARRAY[0]);
+                }
             }
             break;
-        // Fancy
+        // Browser
         case 2:
-            if (Utils.appInstalledOrNot(VueConstants.FANCY_PACKAGE_NAME,
-                    context)) {
-                createAisleSelectionActivity.loadShoppingApplication(
-                        VueConstants.FANCY_ACTIVITY_NAME,
-                        VueConstants.FANCY_PACKAGE_NAME, "Fancy");
-            } else {
-                createAisleSelectionActivity.showAlertMessageForAppInstalation(
-                        VueConstants.FANCY_PACKAGE_NAME, "Fancy");
-            }
+            Utils.setLoadDataentryScreenFlag(context, true);
+            // Load Browser...
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri
+                    .parse("http://www.google.com")));
+            createAisleSelectionActivity.finish();
             break;
         // Gallery
         case 4:
@@ -288,6 +312,4 @@ public class ArcMenu extends RelativeLayout {
         return animation;
     }
     
-    public void initArcMenu(ArcMenu menu, int[] itemDrawables) {
-    }
 }

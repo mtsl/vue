@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -110,6 +111,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private DetailImageClickListener detailsImageClickListenr;
     private Animation myFadeInAnimation;
     private boolean mSetPager = true;
+    private Bitmap profileUserBmp;
     
     @SuppressWarnings("unchecked")
     public AisleDetailsViewAdapterPager(Context c,
@@ -132,6 +134,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         pageListener = new PageListener();
         mswipeListner = swipeListner;
         mListCount = listCount;
+        profileUserBmp = BitmapFactory.decodeResource(mContext.getResources(),
+                R.drawable.new_profile);
         if (VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance()).getNetworkHandler()
                 .getUserId() != null) {
@@ -532,7 +536,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         
                         @Override
                         public void onClick(View v) {
-                            
+                            // handle the comment click here
                             mViewHolder.edtCommentLay
                                     .setVisibility(View.VISIBLE);
                             mViewHolder.enterCommentrellay
@@ -559,8 +563,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mViewHolder.userPic.setImageUrl(comment.mComenterUrl,
                             mImageLoader);
                 } else {
-                    mViewHolder.userPic
-                            .setImageResource(R.drawable.ic_launcher);
+                    // when no user profile set the default one
+                    if (profileUserBmp == null) {
+                        profileUserBmp = BitmapFactory
+                                .decodeResource(mContext.getResources(),
+                                        R.drawable.new_profile);
+                    }
+                    mViewHolder.userPic.setImageBitmap(profileUserBmp);
                 }
             }
             
@@ -891,6 +900,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     public void setAisleBrowserObjectsNull() {
+        profileUserBmp = null;
     }
     
     public void addAisleToContentWindow() {
@@ -1319,7 +1329,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 
                 @Override
                 public void onClick(View v) {
-                    // these listener does nothing. But inorder to give the
+                    // these listener does nothing. But to give the
                     // control to the
                     // listview when touch out side of the image in the browser.
                     detailsImageClickListenr.onImageClicked();
@@ -1457,15 +1467,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             ImageView starImage) {
         String loc = itemDetails.mImageUrl;
         String serverImageUrl = itemDetails.mImageUrl;
-        // if (cancelPotentialDownload(loc, imageView)) {
         BitmapWorkerTask task = new BitmapWorkerTask(itemDetails, imageView,
                 bestHeight, scrollIndex, progressBar, currentPosition, editLay,
                 starLay, starImage);
         
         String imagesArray[] = { loc, serverImageUrl };
         task.execute(imagesArray);
-        // }
-        
     }
     
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {

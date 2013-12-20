@@ -233,7 +233,6 @@ public class NetworkHandler {
     
     public void loadInitialData(boolean loadMore, Handler mHandler,
             String screenName) {
-        
         getBookmarkAisleByUser();
         getRatedImageList();
         
@@ -458,7 +457,6 @@ public class NetworkHandler {
             @Override
             public void run() {
                 try {
-                    
                     String userId = getUserId();
                     if (userId == null) {
                         return;
@@ -664,4 +662,5 @@ public class NetworkHandler {
     public void makeOffseZero() {
         offset = 0;
     }
+    
 }

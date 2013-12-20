@@ -14,7 +14,7 @@
         android:drawablePadding="8dp"
         android:gravity="center_vertical"
         android:paddingRight="20dp"
-        android:text="Skip"
+        android:text="Cancel"
         android:textColor="@color/black"
         android:textStyle="bold" />
 

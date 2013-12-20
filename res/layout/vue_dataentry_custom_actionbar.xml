@@ -37,6 +37,10 @@
             layout="@layout/include_close_screen" />
 
         <include
+            android:id="@+id/actionbar_next"
+            layout="@layout/include_next" />
+
+        <include
             android:id="@+id/actionbar_post"
             layout="@layout/include_post_layout" />
     </LinearLayout>
