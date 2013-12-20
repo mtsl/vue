@@ -21,6 +21,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1644,34 +1645,6 @@ public class DataEntryFragment extends Fragment {
                                                                 public void onAisleUpdated(
                                                                         String aisleId,
                                                                         String imageId) {
-                                                                    if (mAisleImagePathList != null
-                                                                            && mAisleImagePathList
-                                                                                    .size() > 0) {
-                                                                        for (int i = 0; i < mAisleImagePathList
-                                                                                .size(); i++) {
-                                                                            mAisleImagePathList
-                                                                                    .get(i)
-                                                                                    .setAisleId(
-                                                                                            aisleId);
-                                                                            if (mAisleImagePathList
-                                                                                    .get(i)
-                                                                                    .getImageId()
-                                                                                    .equals(offlineImageIdList
-                                                                                            .get(0))) {
-                                                                                mAisleImagePathList
-                                                                                        .get(i)
-                                                                                        .setImageId(
-                                                                                                imageId);
-                                                                            }
-                                                                        }
-                                                                        try {
-                                                                            Utils.writeAisleImagePathListToFile(
-                                                                                    getActivity(),
-                                                                                    VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
-                                                                                    mAisleImagePathList);
-                                                                        } catch (Exception e) {
-                                                                        }
-                                                                    }
                                                                     for (int j = 1; j < vueImageList
                                                                             .size(); j++) {
                                                                         vueImageList
@@ -1702,30 +1675,6 @@ public class DataEntryFragment extends Fragment {
                                     @Override
                                     public void onAisleUpdated(String aisleId,
                                             String imageId) {
-                                        if (mAisleImagePathList != null
-                                                && mAisleImagePathList.size() > 0) {
-                                            for (int i = 0; i < mAisleImagePathList
-                                                    .size(); i++) {
-                                                mAisleImagePathList.get(i)
-                                                        .setAisleId(aisleId);
-                                                if (mAisleImagePathList
-                                                        .get(i)
-                                                        .getImageId()
-                                                        .equals(offlineImageIdList
-                                                                .get(0))) {
-                                                    mAisleImagePathList
-                                                            .get(i)
-                                                            .setImageId(imageId);
-                                                }
-                                            }
-                                            try {
-                                                Utils.writeAisleImagePathListToFile(
-                                                        getActivity(),
-                                                        VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
-                                                        mAisleImagePathList);
-                                            } catch (Exception e) {
-                                            }
-                                        }
                                         for (int j = 1; j < vueImageList.size(); j++) {
                                             vueImageList
                                                     .get(j)
@@ -1786,30 +1735,6 @@ public class DataEntryFragment extends Fragment {
                                                             @Override
                                                             public void onImageAdded(
                                                                     String imageid) {
-                                                                if (mAisleImagePathList != null
-                                                                        && mAisleImagePathList
-                                                                                .size() > 0) {
-                                                                    for (int i = 0; i < mAisleImagePathList
-                                                                            .size(); i++) {
-                                                                        if (mAisleImagePathList
-                                                                                .get(i)
-                                                                                .getImageId()
-                                                                                .equals(imageId)) {
-                                                                            mAisleImagePathList
-                                                                                    .get(i)
-                                                                                    .setImageId(
-                                                                                            imageid);
-                                                                            try {
-                                                                                Utils.writeAisleImagePathListToFile(
-                                                                                        getActivity(),
-                                                                                        VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
-                                                                                        mAisleImagePathList);
-                                                                            } catch (Exception e) {
-                                                                            }
-                                                                            break;
-                                                                        }
-                                                                    }
-                                                                }
                                                             }
                                                         });
                                     }
@@ -1828,26 +1753,7 @@ public class DataEntryFragment extends Fragment {
                                 
                                 @Override
                                 public void onImageAdded(String imageid) {
-                                    if (mAisleImagePathList != null
-                                            && mAisleImagePathList.size() > 0) {
-                                        for (int i = 0; i < mAisleImagePathList
-                                                .size(); i++) {
-                                            if (mAisleImagePathList.get(i)
-                                                    .getImageId()
-                                                    .equals(imageId)) {
-                                                mAisleImagePathList.get(i)
-                                                        .setImageId(imageid);
-                                                try {
-                                                    Utils.writeAisleImagePathListToFile(
-                                                            getActivity(),
-                                                            VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
-                                                            mAisleImagePathList);
-                                                } catch (Exception e) {
-                                                }
-                                                break;
-                                            }
-                                        }
-                                    }
+ 
                                 }
                             });
         }

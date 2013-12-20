@@ -668,7 +668,6 @@ public class DataEntryActivity extends Activity {
                 FileCache fileCache = new FileCache(VueApplication
                         .getInstance());
                 fileCache.clearVueAppResizedPictures();
-                fileCache.clearVueAppCameraPictures();
                 finish();
             }
         });
@@ -716,7 +715,6 @@ public class DataEntryActivity extends Activity {
         }
         FileCache fileCache = new FileCache(VueApplication.getInstance());
         fileCache.clearVueAppResizedPictures();
-        fileCache.clearVueAppCameraPictures();
         finish();
     }
     

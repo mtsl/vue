@@ -105,14 +105,6 @@ public class FileCache {
             f.delete();
     }
     
-    public void clearVueAppCameraPictures() {
-        File[] files = mVueAppCameraPicsDir.listFiles();
-        if (files == null)
-            return;
-        for (File f : files)
-            f.delete();
-    }
-    
     public void clearVueAppResizedPictures() {
         File[] files = mVueAppResizedImagesDir.listFiles();
         if (files == null)

@@ -599,7 +599,6 @@ public class VueLandingPageActivity extends Activity implements
                 FileCache fileCache = new FileCache(
                         VueApplication.getInstance());
                 fileCache.clearVueAppResizedPictures();
-                fileCache.clearVueAppCameraPictures();
                 fileCache.clearTwoDaysOldPictures();
                 mOtherSourceImagePath = null;
                 mOtherSourceImageLookingFor = null;
@@ -808,9 +807,10 @@ public class VueLandingPageActivity extends Activity implements
                 AisleWindowContentFactory.getInstance(
                         VueApplication.getInstance()).clearObjectsInUse();
                 for (AisleWindowContent content : windowContent) {
-                    if(content.getImageList() != null && content.getImageList().size() > 0){
-                    VueTrendingAislesDataModel.getInstance(this).addItemToList(
-                            content.getAisleId(), content);
+                    if (content.getImageList() != null
+                            && content.getImageList().size() > 0) {
+                        VueTrendingAislesDataModel.getInstance(this)
+                                .addItemToList(content.getAisleId(), content);
                     }
                 }
                 getActionBar()
@@ -1184,7 +1184,6 @@ public class VueLandingPageActivity extends Activity implements
         }
         FileCache fileCache = new FileCache(VueApplication.getInstance());
         fileCache.clearVueAppResizedPictures();
-        fileCache.clearVueAppCameraPictures();
     }
     
     private void getTrendingAislesFromDb(String screenName, boolean fromServer,
@@ -1220,7 +1219,7 @@ public class VueLandingPageActivity extends Activity implements
             image.setOwnerAisleId(Long.valueOf(aisleId));
             final String offlineImageId = String.valueOf(System
                     .currentTimeMillis());
-            //Camera or Gallery...
+            // Camera or Gallery...
             if (mOtherSourceImageUrl == null) {
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
