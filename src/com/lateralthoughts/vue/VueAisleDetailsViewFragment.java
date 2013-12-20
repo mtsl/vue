@@ -9,6 +9,8 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -185,7 +188,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 .getInstance(getActivity())
                 .getAisleItem(VueApplication.getInstance().getClickedWindowID())
                 .getAisleContext().mAisleOwnerImageURL;
-        if (profileUrl != null) {
+        if (profileUrl != null && profileUrl.length() > 5) {
             mVueUserPic.setImageUrl(profileUrl, mImageLoader);
         }
         mEditTextFindAt.setOnClickListener(new OnClickListener() {

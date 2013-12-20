@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -96,7 +97,6 @@ public class VueLandingAislesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        
         // synchronized list view approach
         View v = inflater.inflate(R.layout.aisles_view_fragment, container,
                 false);
