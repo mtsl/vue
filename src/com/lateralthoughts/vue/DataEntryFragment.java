@@ -21,7 +21,6 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -220,9 +219,6 @@ public class DataEntryFragment extends Fragment {
                 && savedOccasion != null && savedOccasion.trim().length() > 0) {
             mOccasionText.setText(savedOccasion);
             mOccasion = savedOccasion;
-        } else if (mOccassionAisleKeywordsList != null) {
-            mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
-            mOccasion = mOccassionAisleKeywordsList.get(0);
         }
         if (mLookingFor != null) {
             mMainHeadingRow.setVisibility(View.VISIBLE);
@@ -1753,7 +1749,7 @@ public class DataEntryFragment extends Fragment {
                                 
                                 @Override
                                 public void onImageAdded(String imageid) {
- 
+                                    
                                 }
                             });
         }
