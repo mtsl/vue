@@ -1,7 +1,5 @@
 package com.lateralthoughts.vue;
 
-import gcm.com.vue.android.gcmclient.RegisterGCMClient;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -29,7 +27,6 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.SortBasedOnAppName;
-import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class VueApplication extends Application {
@@ -142,8 +139,10 @@ public class VueApplication extends Application {
         
         sInstance = this;
         mVueApplicationContext = this;
-        RegisterGCMClient.registerClient(VueApplication.getInstance(),
-                UrlConstants.CURRENT_SERVER_PROJECT_ID);
+        /*
+         * RegisterGCMClient.registerClient(VueApplication.getInstance(),
+         * UrlConstants.CURRENT_SERVER_PROJECT_ID);
+         */
         ScaledImageViewFactory.getInstance(this);
         AisleWindowContentFactory.getInstance(this);
         mHttpClient = new DefaultHttpClient();
