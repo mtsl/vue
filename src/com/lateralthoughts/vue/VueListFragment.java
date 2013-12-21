@@ -439,9 +439,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 getString(R.string.sidemenu_option_Invite_Friends),
                 R.drawable.invite, getInviteFriendsChildren());
         groups.add(item);
-        item = new ListOptionItem(getString(R.string.sidemenu_option_Help),
-                R.drawable.help, null);
-        groups.add(item);
         item = new ListOptionItem(getString(R.string.sidemenu_option_About),
                 R.drawable.about, null);
         groups.add(item);
