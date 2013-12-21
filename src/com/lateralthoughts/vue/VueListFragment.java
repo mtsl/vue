@@ -301,7 +301,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
                                     Toast.LENGTH_LONG).show();
                         }
                     }
-                    
                     return false;
                 } else {
                     try {

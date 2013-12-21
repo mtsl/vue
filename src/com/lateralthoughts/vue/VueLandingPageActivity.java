@@ -15,8 +15,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,7 +31,6 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -101,7 +98,6 @@ public class VueLandingPageActivity extends Activity implements
     public static String mLandingScreenName = null;
     private boolean mHideDefaultActionbar = false;
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
-    private SearchView mSearchView;
     public static boolean mIsMyAilseCallEnable = false;
     public static String notification = null;
     
@@ -299,9 +295,6 @@ public class VueLandingPageActivity extends Activity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.landing_actionbar, menu);
         getActionBar().setHomeButtonEnabled(true);
-        // Configure the search info and add any event listeners
-        mSearchView = (SearchView) menu.findItem(R.id.menu_search)
-                .getActionView();
         return true;
     }
     
@@ -1396,47 +1389,19 @@ public class VueLandingPageActivity extends Activity implements
         }
     }
     
-    private void setupSearchView() {
-        
-        mSearchView.setIconifiedByDefault(true);
-        
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        if (searchManager != null) {
-            List<SearchableInfo> searchables = searchManager
-                    .getSearchablesInGlobalSearch();
-            
-            // Try to use the "applications" global search provider
-            SearchableInfo info = searchManager
-                    .getSearchableInfo(getComponentName());
-            for (SearchableInfo inf : searchables) {
-                if (inf.getSuggestAuthority() != null
-                        && inf.getSuggestAuthority().startsWith("applications")) {
-                    info = inf;
-                }
-            }
-            mSearchView.setSearchableInfo(info);
-        }
-        
-        mSearchView.setOnQueryTextListener(this);
-        mSearchView.setOnCloseListener(this);
-    }
-    
     public boolean onQueryTextChange(String newText) {
         
         return false;
     }
     
     public boolean onQueryTextSubmit(String query) {
-        // mStatusView.setText("Query = " + query + " : submitted");
         return false;
     }
     
     public boolean onClose() {
-        // mStatusView.setText("Closed!");
         return false;
     }
     
     public void onClick(View view) {
     }
-    
 }
