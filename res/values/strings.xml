@@ -129,7 +129,7 @@
     <string name="contact_us_text">Please provide feedback by writing to us at</string>
     <string name="email_id">vue@thesilverlabs.com</string>
     <string name="vue_content">Privacy Policy</string>
-    <string name="about_tabel_Content_text">1. Introduction \n2. Private Policy \n3. Contact us</string>
+    <string name="about_tabel_Content_text">1. Introduction \n2. Privacy Policy \n3. Contact us</string>
     <string name="feedback_form_text_info">Please write to us about how we might improve fashionwrap to suit your needs. Whether you would like us to cover more topics, improve the user experiences, or do something else better, please write to us. We will appreciate it very much!</string>
     <string name="aboutedittext">Type your message here</string>
     <string name="clear">Clear</string>

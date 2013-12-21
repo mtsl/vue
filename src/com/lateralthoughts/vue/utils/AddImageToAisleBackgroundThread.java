@@ -140,6 +140,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                             .parseAisleImageData(new JSONObject(
                                                     mResponseMessage));
                                     if (aisleImageDetails != null) {
+                                      
                                         mImageAddedCallback
                                                 .onImageAdded(aisleImageDetails.mId);
                                         if (VueLandingPageActivity.mLandingScreenName != null

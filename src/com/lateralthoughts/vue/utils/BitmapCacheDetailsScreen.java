@@ -33,7 +33,7 @@ public class BitmapCacheDetailsScreen extends LruCache<String, Bitmap>
     protected void entryRemoved(boolean evicted, String key, Bitmap oldValue,
             Bitmap newValue) {
         if (!oldValue.isRecycled()) {
-            oldValue.recycle();
+            oldValue.recycle(); //
             oldValue = null;
         }
     }

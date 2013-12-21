@@ -14,7 +14,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -108,7 +107,7 @@ public class AisleCreationBackgroundThread implements Runnable,
                 mNotificationManager.notify(
                         VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
                         mNotification);
-                mResponseMessage = EntityUtils.toString(response.getEntity());
+                mResponseMessage = EntityUtils.toString(response.getEntity()); 
             } else {
                 mNotification.setLatestEventInfo(
                         VueApplication.getInstance(),

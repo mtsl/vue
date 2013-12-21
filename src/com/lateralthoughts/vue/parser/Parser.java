@@ -1,13 +1,7 @@
 package com.lateralthoughts.vue.parser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 
 import org.apache.http.HttpResponse;
@@ -17,9 +11,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.os.Environment;
-import android.util.Log;
 
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -207,23 +198,6 @@ public class Parser {
                 try {
                     JSONObject mainJsonObject = new JSONObject(responseMessage);
                     JSONArray jsonArray = mainJsonObject.getJSONArray("images");
-                    if ("6131493164285952".equalsIgnoreCase(aisleId)
-                            || "6608546993012736".equalsIgnoreCase(aisleId)) {
-                        if (jsonArray != null) {
-                            
-                            writeToSdcard(aisleId + " : " + jsonArray + "\n"); // TODO
-                                                                               // delete
-                                                                               // this
-                                                                               // line
-                            
-                        } else {
-                            writeToSdcard("No images for this aisle : "
-                                    + aisleId); // TODO
-                            // delete
-                            // this
-                            // lline
-                        }
-                    }
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         AisleImageDetails aisleImageDetails = parseAisleImageData(jsonObject);
@@ -495,32 +469,5 @@ public class Parser {
             }
         }
         return bookmarkedAisles;
-    }
-    
-    private void writeToSdcard(String message) {
-        
-        String path = Environment.getExternalStorageDirectory().toString();
-        File dir = new File(path + "/vueimagemissingissue/");
-        if (!dir.isDirectory()) {
-            dir.mkdir();
-        }
-        File file = new File(dir, "/"
-                + Calendar.getInstance().get(Calendar.DATE) + ".txt");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        try {
-            PrintWriter out = new PrintWriter(new BufferedWriter(
-                    new FileWriter(file, true)));
-            out.write("\n" + message + "\n");
-            out.flush();
-            out.close();
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
