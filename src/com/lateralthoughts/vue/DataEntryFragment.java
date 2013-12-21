@@ -219,9 +219,6 @@ public class DataEntryFragment extends Fragment {
                 && savedOccasion != null && savedOccasion.trim().length() > 0) {
             mOccasionText.setText(savedOccasion);
             mOccasion = savedOccasion;
-        } else if (mOccassionAisleKeywordsList != null) {
-            mOccasionText.setText(mOccassionAisleKeywordsList.get(0));
-            mOccasion = mOccassionAisleKeywordsList.get(0);
         }
         if (mLookingFor != null) {
             mMainHeadingRow.setVisibility(View.VISIBLE);
@@ -1752,7 +1749,7 @@ public class DataEntryFragment extends Fragment {
                                 
                                 @Override
                                 public void onImageAdded(String imageid) {
- 
+                                    
                                 }
                             });
         }

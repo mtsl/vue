@@ -16,6 +16,7 @@ public class VueConstants {
     public static final String LANDING_SCREEN_RECEIVER_KEY = "LandingScreenReceiverKey";
     public static final String FACEBOOK = "Facebook";
     public static final String GOOGLEPLUS = "Googleplus";
+    public static final String HelpSCREEN_FROM_LANDING = "HelpScreenFromLanding";
     public static final String FACEBOOK_LOGIN = "FacebookLoginFlag";
     public static final String INSTAGRAM_LOGIN = "InstagramLoginFlag";
     public static final String GOOGLEPLUS_LOGIN = "GoogleplusLoginFlag";
@@ -34,6 +35,7 @@ public class VueConstants {
     public static final String FACEBOOK_FRIENDS_DETAILS = "&fields=id,name,picture";
     public static final int SHARE_INTENT_REQUEST_CODE = 1;
     public static final int AMAZON_APP_REQUEST_CODE = 39;
+    public static final String FIRST_TIME_OPENS_THEAPP = "FirstTimeOpenstheApp";
     public static final String GOOGLEPLUS_AUTOMATIC_LOGIN = "googleplusautomaticlogin";
     public static final String FACEBOOK_APP_NAME = "Facebook";
     public static final String TWITTER_APP_NAME = "Twitter";
