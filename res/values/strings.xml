@@ -152,11 +152,12 @@
           We will use this information to make the experience better for you. 
 
 We may change this privacy policy from time to time.  Please check back to see if there have been any updates.  </string>
-   <string name ="terms_of_service">You retain all rights in, and are solely responsible for, the content you post to Vue. You grant PintVueerest and its users a non-exclusive, royalty-free, transferable, sublicensable, worldwide license to use, store, display, reproduce, re-pin, modify, create derivative works, perform, and distribute your content on Vue solely for the purposes of operating, developing, providing, and using the products. We reserve the right to remove or modify content for any reason, including content that we believe violates these Terms or our policies.</string>
-    
+    <string name="terms_of_service">You retain all rights in, and are solely responsible for, the content you post to Vue. You grant PintVueerest and its users a non-exclusive, royalty-free, transferable, sublicensable, worldwide license to use, store, display, reproduce, re-pin, modify, create derivative works, perform, and distribute your content on Vue solely for the purposes of operating, developing, providing, and using the products. We reserve the right to remove or modify content for any reason, including content that we believe violates these Terms or our policies.</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    <string name="helptext">Create an aisle around something you are looking for.  Add one or more images of your choices.  Let others help you pick.  Or, perhaps even suggest the best things to get.  Do it together with friends!</string>
+    <string name="frombezel">FromBezel</string>
 
 </resources>

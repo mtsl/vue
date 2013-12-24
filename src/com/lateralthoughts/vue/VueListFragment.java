@@ -300,6 +300,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
                                             R.string.already_logged_in_msg),
                                     Toast.LENGTH_LONG).show();
                         }
+                    } else if (s
+                            .equals(getString(R.string.sidemenu_option_Help))) {
+                        Intent i = new Intent(getActivity(), Help.class);
+                        i.putExtra("helpScreen", getString(R.string.frombezel));
+                        startActivity(i);
                     }
                     return false;
                 } else {
@@ -447,6 +452,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
         groups.add(item);
         item = new ListOptionItem(getString(R.string.sidemenu_option_Login),
                 R.drawable.login, null);
+        groups.add(item);
+        item = new ListOptionItem(getString(R.string.sidemenu_option_Help),
+                R.drawable.help, null);
         groups.add(item);
         return groups;
     }

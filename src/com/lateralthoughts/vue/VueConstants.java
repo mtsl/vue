@@ -9,6 +9,7 @@ import android.net.Uri;
 public class VueConstants {
     
     public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
+    public static final String HELP_SCREEN_ACCES = "HelpScreenAccess";
     public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
     public static final String VUE_LOGIN = "VueLoginFlag";
     public static final String GCM_REGISTRATION_ID = "GCMRegistrationId";
@@ -135,6 +136,7 @@ public class VueConstants {
     public static final String FACEBOOK_USER_PROFILE_PICTURE_SUB_URL = "/picture";
     public static final String USER_lOCATION = "name";
     public static final String VUE_APP_CAMERAPICTURES_FOLDER = "VueAppCameraPictures";
+    public static final String VUE_APP_HELP_FOLDER = "VueHelpPictures";
     public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
     public static final String VUE_APP_USER_PROFILE_PICTURES_FOLDER = "VueAppProfilePicture";
     public static final String VUE_APP_USEROBJECT__FILENAME = "vueuser.ser";

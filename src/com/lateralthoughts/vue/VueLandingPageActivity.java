@@ -18,6 +18,7 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -181,6 +182,16 @@ public class VueLandingPageActivity extends Activity implements
         } else {
             showLogInDialog(false);
         }
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        boolean isHelpOpend = sharedPreferencesObj.getBoolean(
+                VueConstants.HELP_SCREEN_ACCES, false);
+        if (!isHelpOpend) {
+            Intent i = new Intent(this, Help.class);
+            i.putExtra("helpScreen", "FromLanding");
+            startActivity(i);
+        }
+        
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
