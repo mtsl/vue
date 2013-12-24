@@ -28,5 +28,5 @@ public interface IAisleContentAdapter {
     public String getAisleId();
     
     public boolean hasSameLikes(int position);
-  
+    
 }
