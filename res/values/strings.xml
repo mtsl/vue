@@ -129,7 +129,8 @@
     <string name="contact_us_text">Please provide feedback by writing to us at</string>
     <string name="email_id">vue@thesilverlabs.com</string>
     <string name="vue_content">Privacy Policy</string>
-    <string name="about_tabel_Content_text">1. Introduction \n2. Privacy Policy \n3. Contact us</string>
+    <string name="vue_terms">Terms of Service</string>
+    <string name="about_tabel_Content_text">1. Introduction \n2. Terms of Service \n3. Privacy Policy \n4. Contact us</string>
     <string name="feedback_form_text_info">Please write to us about how we might improve fashionwrap to suit your needs. Whether you would like us to cover more topics, improve the user experiences, or do something else better, please write to us. We will appreciate it very much!</string>
     <string name="aboutedittext">Type your message here</string>
     <string name="clear">Clear</string>
@@ -151,6 +152,8 @@
           We will use this information to make the experience better for you. 
 
 We may change this privacy policy from time to time.  Please check back to see if there have been any updates.  </string>
+   <string name ="terms_of_service">You retain all rights in, and are solely responsible for, the content you post to Vue. You grant PintVueerest and its users a non-exclusive, royalty-free, transferable, sublicensable, worldwide license to use, store, display, reproduce, re-pin, modify, create derivative works, perform, and distribute your content on Vue solely for the purposes of operating, developing, providing, and using the products. We reserve the right to remove or modify content for any reason, including content that we believe violates these Terms or our policies.</string>
+    
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>

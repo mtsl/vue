@@ -15,7 +15,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -86,7 +85,6 @@ public class VueUserManager {
             public void onResponse(String jsonArray) {
                 
                 if (null != jsonArray) {
-                    Log.i("New user", "GCM Response : " + jsonArray);
                     VueUser vueUser = new Parser().parseUserData(jsonArray);
                     if (vueUser != null) {
                         VueApplication.getInstance().setmUserInitials(
@@ -142,7 +140,6 @@ public class VueUserManager {
             newUser.setLastName("");
             newUser.setDeviceId(deviceId);
             String userAsString = mapper.writeValueAsString(newUser);
-            Log.i("New user", "GCM Request : " + userAsString);
             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                     userAsString, UrlConstants.CREATE_USER_RESTURL, listener,
                     errorListener);
@@ -316,7 +313,6 @@ public class VueUserManager {
     public void createGooglePlusIdentifiedUser(
             final String userProfileImageUrl, final VueUser vueUser,
             final UserUpdateCallback callback) {
-        Log.i("INFo", "GCMonGoogle+UserUpdate create Google+");
         // lets throw an exception if the current user is not NULL.
         if (null != mCurrentUser)
             throw new RuntimeException(
@@ -378,9 +374,6 @@ public class VueUserManager {
             @Override
             public void onResponse(String jsonArray) {
                 if (null != jsonArray) {
-                    Log.i("INFo",
-                            "GCMonGoogle+UserUpdate create Google+ response : "
-                                    + jsonArray);
                     VueUser vueUser1 = new Parser().parseUserData(jsonArray);
                     if (vueUser1 != null) {
                         if ((vueUser1.getUserImageURL() != null && vueUser1

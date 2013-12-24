@@ -96,6 +96,41 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/orange" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/contentheading2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/vue_terms"
+                android:textColor="@color/orange"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/contenttext2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/terms_of_service"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/secondheading"
             android:layout_width="wrap_content"

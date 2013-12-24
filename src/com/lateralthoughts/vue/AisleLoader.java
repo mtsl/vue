@@ -205,5 +205,6 @@ public class AisleLoader {
                 itemDetails.mTrendingImageWidth,
                 itemDetails.mTrendingImageHeight,
                 NetworkImageView.BitmapProfile.ProfileLandingView);
+       
     }
 }
