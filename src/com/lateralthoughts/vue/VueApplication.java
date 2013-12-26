@@ -1,7 +1,6 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -26,7 +25,6 @@ import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
-import com.lateralthoughts.vue.utils.SortBasedOnAppName;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class VueApplication extends Application {
@@ -187,10 +185,6 @@ public class VueApplication extends Application {
         
         mMoreInstalledApplicationDetailsList = Utils
                 .getInstalledApplicationsList(getApplicationContext());
-        if (mMoreInstalledApplicationDetailsList != null) {
-            Collections.sort(mMoreInstalledApplicationDetailsList,
-                    new SortBasedOnAppName());
-        }
         
         Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
                 crittercismConfig);
