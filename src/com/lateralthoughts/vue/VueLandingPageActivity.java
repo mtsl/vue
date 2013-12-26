@@ -187,9 +187,9 @@ public class VueLandingPageActivity extends Activity implements
         boolean isHelpOpend = sharedPreferencesObj.getBoolean(
                 VueConstants.HELP_SCREEN_ACCES, false);
         if (!isHelpOpend) {
-            Intent i = new Intent(this, Help.class);
-            i.putExtra("helpScreen", "FromLanding");
-            startActivity(i);
+            Intent intent = new Intent(this, Help.class);
+            intent.putExtra(VueConstants.HELP_KEY, VueConstants.HelpSCREEN_FROM_LANDING);
+            startActivity(intent);
         }
         
         Intent intent = getIntent();

@@ -303,7 +303,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     } else if (s
                             .equals(getString(R.string.sidemenu_option_Help))) {
                         Intent i = new Intent(getActivity(), Help.class);
-                        i.putExtra("helpScreen", getString(R.string.frombezel));
+                        i.putExtra(VueConstants.HELP_KEY, getString(R.string.frombezel));
                         startActivity(i);
                     }
                     return false;

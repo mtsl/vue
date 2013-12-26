@@ -45,9 +45,10 @@ public class Help extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.helpscree);
+        mHelpScreens = helpScreens.length;
         SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
-        mFromWhere = getIntent().getStringExtra("helpScreen");
+        mFromWhere = getIntent().getStringExtra(VueConstants.HELP_KEY);
         mFileCache = new FileCache(this);
         boolean isHelpOpend = sharedPreferencesObj.getBoolean(
                 VueConstants.HELP_SCREEN_ACCES, false);
@@ -66,7 +67,6 @@ public class Help extends Activity {
         display.getSize(size);
         mScreenWidth = size.x;
         mScreenHeight = size.y;
-        // getActionBar().hide();
         mHelpPager = (ViewPager) findViewById(R.id.pager);
         HelpPagerAdapter helpAdapter = new HelpPagerAdapter();
         mHelpPager.setAdapter(helpAdapter);
@@ -132,6 +132,7 @@ public class Help extends Activity {
         
         @Override
         public int getCount() {
+            // +1 is for the help text
             return mHelpScreens + 1;
         }
         
