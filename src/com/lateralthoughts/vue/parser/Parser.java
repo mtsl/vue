@@ -1,13 +1,7 @@
 package com.lateralthoughts.vue.parser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 
 import org.apache.http.HttpResponse;
@@ -18,8 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Environment;
-
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -29,7 +21,6 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.domain.AisleBookmark;
-import com.lateralthoughts.vue.utils.AisleCreationBackgroundThread;
 import com.lateralthoughts.vue.utils.UrlConstants;
 
 public class Parser {

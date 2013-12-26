@@ -1,13 +1,7 @@
 package com.lateralthoughts.vue.utils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -20,7 +14,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.os.Environment;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -45,7 +38,6 @@ public class AisleCreationBackgroundThread implements Runnable,
     private Aisle mAisle = null;
     private String mResponseMessage = null;
     private AisleUpdateCallback mAisleUpdateCallback = null;
-    public static String sTestAilseId = null;
     
     @SuppressWarnings("static-access")
     public AisleCreationBackgroundThread(Aisle aisle,
@@ -138,7 +130,6 @@ public class AisleCreationBackgroundThread implements Runnable,
                             try {
                                 AisleWindowContent aileItem = new Parser()
                                         .getAisleCotent(mResponseMessage);
-                                sTestAilseId = aileItem.getAisleId();
                                 if (VueLandingPageActivity.mLandingScreenName != null
                                         && VueLandingPageActivity.mLandingScreenName
                                                 .equalsIgnoreCase("Trending")
