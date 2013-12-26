@@ -90,7 +90,7 @@ public class FileCache {
     }
     
     public File getHelpFile(String imageName) {
-        File f = new File(mVueAppCameraPicsDir, imageName + ".jpg");
+        File f = new File(mHelpPicDir, imageName + ".jpg");
         return f;
     }
     

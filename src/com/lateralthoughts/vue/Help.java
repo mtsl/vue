@@ -52,7 +52,14 @@ public class Help extends Activity {
         boolean isHelpOpend = sharedPreferencesObj.getBoolean(
                 VueConstants.HELP_SCREEN_ACCES, false);
         if (!isHelpOpend) {
-            convertDrawableToBitmap();
+            new Thread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    convertDrawableToBitmap();
+                }
+            }).start();
+            
         }
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -82,19 +89,26 @@ public class Help extends Activity {
             
             @Override
             public void onPageScrollStateChanged(int arg0) {
-                if (endReached) {
-                    if (mCurrentPosition == mHelpScreens
-                            && !mFromWhere
-                                    .equalsIgnoreCase(getString(R.string.frombezel))) {
-                        // TODO go to login activity.
-                        finish();
+                if (arg0 == ViewPager.SCROLL_STATE_IDLE) {
+                    if (endReached) {
+                        if (mCurrentPosition == mHelpScreens
+                                && !mFromWhere
+                                        .equalsIgnoreCase(getString(R.string.frombezel))) {
+                            finish();
+                        }
+                    } else {
+                        endReached = true;
                     }
-                } else {
-                    endReached = true;
                 }
                 
             }
         });
+        
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
     }
     
     private class HelpPagerAdapter extends PagerAdapter implements
@@ -210,7 +224,7 @@ public class Help extends Activity {
         File f = mFileCache.getHelpFile(helpScreens[position]);
         Bitmap bmp = decodeFile(f, mScreenHeight, mScreenWidth);
         if (bmp == null) {
-            convertDrawableToBitmap();
+            f = drawableToBitmap(position);
             bmp = decodeFile(f, mScreenHeight, mScreenWidth);
         }
         BitmapLoaderUtils.getInstance().mAisleImagesCache.putBitmap(
@@ -220,22 +234,30 @@ public class Help extends Activity {
     
     private void convertDrawableToBitmap() {
         for (int i = 0; i < helpScreens.length; i++) {
-            int drawable = 0;
-            if (helpScreens[i].equalsIgnoreCase("imageOne")) {
-                drawable = R.drawable.helpone;
-            } else if (helpScreens[i].equalsIgnoreCase("imageTwo")) {
-                drawable = R.drawable.helptwo;
-            } else if (helpScreens[i].equalsIgnoreCase("imageThree")) {
-                drawable = R.drawable.helpthree;
-            } else if (helpScreens[i].equalsIgnoreCase("imageFour")) {
-                drawable = R.drawable.helpfour;
-            }
-            Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
-                    drawable);
-            File f = mFileCache.getHelpFile(helpScreens[i]);
-            Utils.saveBitmap(largeIcon, f);
-            largeIcon.recycle();
+            drawableToBitmap(i);
         }
+        
+    }
+    
+    private File drawableToBitmap(int position) {
+        
+        int drawable = 0;
+        if (helpScreens[position].equalsIgnoreCase("imageOne")) {
+            drawable = R.drawable.helpone;
+        } else if (helpScreens[position].equalsIgnoreCase("imageTwo")) {
+            drawable = R.drawable.helptwo;
+        } else if (helpScreens[position].equalsIgnoreCase("imageThree")) {
+            drawable = R.drawable.helpthree;
+        } else if (helpScreens[position].equalsIgnoreCase("imageFour")) {
+            drawable = R.drawable.helpfour;
+        }
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+                drawable);
+        File f = mFileCache.getHelpFile(helpScreens[position]);
+        Utils.saveBitmap(largeIcon, f);
+        largeIcon.recycle();
+        return f;
+        
     }
     
     public Bitmap decodeFile(File f, int bestHeight, int bestWidth) {
