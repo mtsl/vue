@@ -17,9 +17,9 @@ public class FileCache {
         return mVueAppCameraPicsDir;
     }
     
-   /* public void setmVueAppCameraPicsDir(File mVueAppCameraPicsDir) {
+    public void setmVueAppCameraPicsDir(File mVueAppCameraPicsDir) {
         this.mVueAppCameraPicsDir = mVueAppCameraPicsDir;
-    }*/
+    }
     
     public File getmVueAppResizedImagesDir() {
         return mVueAppResizedImagesDir;
@@ -50,7 +50,6 @@ public class FileCache {
                     VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
             mHelpPicDir = new File(context.getExternalFilesDir(null),
                     VueConstants.VUE_APP_HELP_FOLDER);
-            
             
             mVueAppResizedImagesDir = new File(
                     context.getExternalFilesDir(null),
@@ -89,10 +88,12 @@ public class FileCache {
         return f;
         
     }
-   public File getHelpFile(String imageName){
-       File f = new File(mVueAppCameraPicsDir, imageName + ".jpg");
-    return f;
-   }
+    
+    public File getHelpFile(String imageName) {
+        File f = new File(mVueAppCameraPicsDir, imageName + ".jpg");
+        return f;
+    }
+    
     public File getVueAppCameraPictureFile(String cameraImageName) {
         File f = new File(mVueAppCameraPicsDir, cameraImageName + ".jpg");
         return f;
