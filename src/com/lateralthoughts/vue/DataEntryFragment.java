@@ -1670,6 +1670,7 @@ public class DataEntryFragment extends Fragment {
                                     @Override
                                     public void onAisleUpdated(String aisleId,
                                             String imageId) {
+                                        
                                         for (int j = 0; j < vueImageList.size(); j++) {
                                             vueImageList
                                                     .get(j)
@@ -1680,6 +1681,7 @@ public class DataEntryFragment extends Fragment {
                                                 vueImageList,
                                                 offlineImageIdList,
                                                 originalImagePathList);
+                                        
                                     }
                                 });
             }
@@ -1761,6 +1763,7 @@ public class DataEntryFragment extends Fragment {
                                                 offlineImageIdList,
                                                 originalImagePathList);
                                     }
+                                    
                                 }
                             });
         }
@@ -2234,4 +2237,5 @@ public class DataEntryFragment extends Fragment {
         }
         
     }
+    
 }

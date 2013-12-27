@@ -131,13 +131,19 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                         }
                                     });
                             if (VueLandingPageActivity.landingPageActivity != null
-                                    && VueLandingPageActivity.mLandingScreenName != null
-                                    && (VueLandingPageActivity.mLandingScreenName
-                                            .equals(VueApplication
-                                                    .getInstance()
-                                                    .getString(
-                                                            R.string.sidemenu_sub_option_My_Aisles)))) {
-                                refreshListFlag = false;
+                                    && VueLandingPageActivity.mLandingScreenName != null) {
+                                if (VueLandingPageActivity.mLandingScreenName
+                                        .equals(VueApplication
+                                                .getInstance()
+                                                .getString(
+                                                        R.string.sidemenu_sub_option_My_Aisles))
+                                        || VueLandingPageActivity.mLandingScreenName
+                                                .equals(VueApplication
+                                                        .getInstance()
+                                                        .getString(
+                                                                R.string.sidemenu_sub_option_Recently_Viewed_Aisles))) {
+                                    refreshListFlag = false;
+                                }
                             }
                             
                             if (refreshListFlag) {
@@ -159,7 +165,8 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                                     if (VueLandingPageActivity.notification != null
                                                             && VueLandingPageActivity.notification
                                                                     .equalsIgnoreCase("MyAisles")) {
-                                                        
+                                                        //do not refresh trending screen when user access from notification click
+                                                        //do nothing here.
                                                     } else {
                                                         VueTrendingAislesDataModel
                                                                 .getInstance(VueApplication
