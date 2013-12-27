@@ -17,6 +17,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -24,7 +25,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
@@ -33,9 +33,8 @@ import com.lateralthoughts.vue.utils.Utils;
 public class Help extends Activity {
     ViewPager mHelpPager;
     private LayoutInflater mInflater;
-    private int mHelpScreens = 4;
-    private String helpScreens[] = { "imageOne", "imageTwo", "imageThree",
-            "imageFour" };
+    private int mHelpScreens;
+    private String helpScreens[] = { "imageOne", "imageTwo", "imageThree" };
     FileCache mFileCache;
     int mScreenWidth, mScreenHeight, mCurrentPosition;
     String mFromWhere;
@@ -90,8 +89,9 @@ public class Help extends Activity {
             @Override
             public void onPageScrollStateChanged(int arg0) {
                 if (arg0 == ViewPager.SCROLL_STATE_IDLE) {
+                    Log.i("help", "help endReached: " + endReached);
                     if (endReached) {
-                        if (mCurrentPosition == mHelpScreens
+                        if (mCurrentPosition == mHelpScreens - 1
                                 && !mFromWhere
                                         .equalsIgnoreCase(getString(R.string.frombezel))) {
                             finish();
@@ -132,8 +132,8 @@ public class Help extends Activity {
         
         @Override
         public int getCount() {
-            // +1 is for the help text
-            return mHelpScreens + 1;
+            
+            return mHelpScreens;
         }
         
         @Override
@@ -145,22 +145,15 @@ public class Help extends Activity {
             View myView = mInflater.inflate(R.layout.help_inflater, null);
             ImageView helpImage = (ImageView) myView
                     .findViewById(R.id.pager_image);
-            TextView helpText = (TextView) myView.findViewById(R.id.pager_text);
-            if (position == 0) {
-                helpImage.setVisibility(View.GONE);
-                helpText.setVisibility(View.VISIBLE);
-                helpText.setTextSize(Utils.LARGE_TEXT_SIZE);
+            helpImage.setVisibility(View.VISIBLE);
+            Bitmap bmp = BitmapLoaderUtils.getInstance().mAisleImagesCache
+                    .get(helpScreens[position]);
+            if (bmp != null) {
+                helpImage.setImageBitmap(bmp);
             } else {
-                helpImage.setVisibility(View.VISIBLE);
-                helpText.setVisibility(View.GONE);
-                Bitmap bmp = BitmapLoaderUtils.getInstance().mAisleImagesCache
-                        .get(helpScreens[position - 1]);
-                if (bmp != null) {
-                    helpImage.setImageBitmap(bmp);
-                } else {
-                    setImageResource(position - 1, helpImage);
-                }
+                setImageResource(position, helpImage);
             }
+            
             ((ViewPager) view).addView(myView);
             return myView;
         }
@@ -249,8 +242,6 @@ public class Help extends Activity {
             drawable = R.drawable.helptwo;
         } else if (helpScreens[position].equalsIgnoreCase("imageThree")) {
             drawable = R.drawable.helpthree;
-        } else if (helpScreens[position].equalsIgnoreCase("imageFour")) {
-            drawable = R.drawable.helpfour;
         }
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
                 drawable);
@@ -261,7 +252,7 @@ public class Help extends Activity {
         
     }
     
-    public Bitmap decodeFile(File f, int bestHeight, int bestWidth) {
+    private Bitmap decodeFile(File f, int bestHeight, int bestWidth) {
         try {
             // decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();

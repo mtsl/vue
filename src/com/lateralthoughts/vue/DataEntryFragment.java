@@ -1,7 +1,12 @@
 package com.lateralthoughts.vue;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -15,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -1662,7 +1668,7 @@ public class DataEntryFragment extends Fragment {
                                     }
                                 });
             } else {
-                aisle.setAisleImage(vueImageList.get(0));
+                aisle.setAisleImage(vueImageList.remove(0));
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
@@ -1671,17 +1677,20 @@ public class DataEntryFragment extends Fragment {
                                     @Override
                                     public void onAisleUpdated(String aisleId,
                                             String imageId) {
-                                        for (int j = 1; j < vueImageList.size(); j++) {
+                                        //
+                                        for (int j = 0; j < vueImageList.size(); j++) {
                                             vueImageList
                                                     .get(j)
                                                     .setOwnerAisleId(
                                                             Long.valueOf(aisleId));
-                                            addSingleImageToServer(vueImageList
+                                    /*        addSingleImageToServer(vueImageList
                                                     .get(j),
                                                     originalImagePathList
                                                             .get(j), false,
-                                                    offlineImageIdList.get(j));
+                                                    offlineImageIdList.get(j));*/
                                         }
+                                        // TODO test
+                                        addMultipleImageToServer(vueImageList);
                                     }
                                 });
             }
@@ -1749,11 +1758,32 @@ public class DataEntryFragment extends Fragment {
                                 
                                 @Override
                                 public void onImageAdded(String imageid) {
-                                    
+                                    //
                                 }
                             });
         }
     }
+    // TODO test
+    private void addMultipleImageToServer(final ArrayList<VueImage> vueImageList) { 
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .getNetworkHandler()
+                    .requestForAddImage(false, "0",
+                            vueImageList.remove(0), new ImageAddedCallback() {
+                                
+                                @Override
+                                public void onImageAdded(String imageid) {
+                                    //
+                                    if(vueImageList.size() > 0){
+                                        addMultipleImageToServer(vueImageList);   
+                                    }
+                                }
+                            });
+        
+    }
+    
+    
+    
     
     public void addImageToAisleToServer(VueUser storedVueUser,
             String ownerAisleId) {
@@ -2224,5 +2254,31 @@ public class DataEntryFragment extends Fragment {
                     .getInstance(VueApplication.getInstance()).dataObserver();
         }
         
+    }
+    private void writeToSdcard2(String message) {
+        
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/AILECREATIONRESPONSE/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/"
+                + Calendar.getInstance().get(Calendar.DATE) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
