@@ -17,7 +17,6 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -89,7 +88,6 @@ public class Help extends Activity {
             @Override
             public void onPageScrollStateChanged(int arg0) {
                 if (arg0 == ViewPager.SCROLL_STATE_IDLE) {
-                    Log.i("help", "help endReached: " + endReached);
                     if (endReached) {
                         if (mCurrentPosition == mHelpScreens - 1
                                 && !mFromWhere
