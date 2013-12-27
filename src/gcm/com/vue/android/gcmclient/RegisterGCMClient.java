@@ -1,8 +1,11 @@
 package gcm.com.vue.android.gcmclient;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.google.android.gcm.GCMRegistrar;
+import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
 
 public class RegisterGCMClient {
     
@@ -11,7 +14,7 @@ public class RegisterGCMClient {
     // from the GCM cloud. If there is no registration id, GCMRegistrar will
     // register this device for the specified project, which will return a
     // registration id.
-    public static String registerClient(Context context, String projectId) {
+    public static void registerClient(Context context, String projectId) {
         
         try {
             // Check that the device supports GCM (should be in a try / catch)
@@ -30,11 +33,16 @@ public class RegisterGCMClient {
             
             // Get the registration id
             regId = GCMRegistrar.getRegistrationId(context);
-            return regId;
-            
+            if (regId != null && regId.trim().length() > 0) {
+                SharedPreferences sharedPreferencesObj = VueApplication
+                        .getInstance().getSharedPreferences(
+                                VueConstants.SHAREDPREFERENCE_NAME, 0);
+                SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+                editor.putString(VueConstants.GCM_REGISTRATION_ID, regId);
+                editor.commit();
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
     }
 }
