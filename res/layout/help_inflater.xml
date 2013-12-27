@@ -4,6 +4,7 @@
     android:layout_height="fill_parent" >
     <ImageView
         android:id="@+id/pager_image"
+        android:layout_centerInParent="true"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
