@@ -1602,7 +1602,9 @@ public class DataEntryFragment extends Fragment {
                         .getOriginalImagePath());
                 String offlineImageId = String.valueOf(System
                         .currentTimeMillis() + i);
-                offlineImageIdList.add(offlineImageId);
+                if (i != 0) {
+                    offlineImageIdList.add(offlineImageId);
+                }
                 mAisleImagePathList.get(i).setImageId(offlineImageId);
                 mAisleImagePathList.get(i).setAisleId(offlineAisleId);
                 mAisleImagePathList.get(i).setAddedToServerFlag(true);
@@ -1614,13 +1616,13 @@ public class DataEntryFragment extends Fragment {
             } catch (Exception e) {
             }
             FlurryAgent.logEvent("New_Aisle_Creation");
+            String originalImagePath = originalImagePathList.remove(0);
             // Camera or Gallery...
             if (vueImageList.get(0).getImageUrl() == null) {
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
-                        .requestForUploadImage(
-                                new File(originalImagePathList.get(0)),
+                        .requestForUploadImage(new File(originalImagePath),
                                 new ImageUploadCallback() {
                                     @Override
                                     public void onImageUploaded(String imageUrl) {
@@ -1628,7 +1630,7 @@ public class DataEntryFragment extends Fragment {
                                             vueImageList.get(0).setImageUrl(
                                                     imageUrl);
                                             aisle.setAisleImage(vueImageList
-                                                    .get(0));
+                                                    .remove(0));
                                             VueTrendingAislesDataModel
                                                     .getInstance(
                                                             VueApplication
@@ -1641,28 +1643,25 @@ public class DataEntryFragment extends Fragment {
                                                                 public void onAisleUpdated(
                                                                         String aisleId,
                                                                         String imageId) {
-                                                                    for (int j = 1; j < vueImageList
+                                                                    for (int j = 0; j < vueImageList
                                                                             .size(); j++) {
                                                                         vueImageList
                                                                                 .get(j)
                                                                                 .setOwnerAisleId(
                                                                                         Long.valueOf(aisleId));
-                                                                        addSingleImageToServer(
-                                                                                vueImageList
-                                                                                        .get(j),
-                                                                                originalImagePathList
-                                                                                        .get(j),
-                                                                                false,
-                                                                                offlineImageIdList
-                                                                                        .get(j));
                                                                     }
+                                                                    addMultipleImageToServer(
+                                                                            false,
+                                                                            vueImageList,
+                                                                            offlineImageIdList,
+                                                                            originalImagePathList);
                                                                 }
                                                             });
                                         }
                                     }
                                 });
             } else {
-                aisle.setAisleImage(vueImageList.get(0));
+                aisle.setAisleImage(vueImageList.remove(0));
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
@@ -1671,17 +1670,16 @@ public class DataEntryFragment extends Fragment {
                                     @Override
                                     public void onAisleUpdated(String aisleId,
                                             String imageId) {
-                                        for (int j = 1; j < vueImageList.size(); j++) {
+                                        for (int j = 0; j < vueImageList.size(); j++) {
                                             vueImageList
                                                     .get(j)
                                                     .setOwnerAisleId(
                                                             Long.valueOf(aisleId));
-                                            addSingleImageToServer(vueImageList
-                                                    .get(j),
-                                                    originalImagePathList
-                                                            .get(j), false,
-                                                    offlineImageIdList.get(j));
                                         }
+                                        addMultipleImageToServer(false,
+                                                vueImageList,
+                                                offlineImageIdList,
+                                                originalImagePathList);
                                     }
                                 });
             }
@@ -1699,10 +1697,14 @@ public class DataEntryFragment extends Fragment {
         }
     }
     
-    private void addSingleImageToServer(final VueImage vueImage,
-            final String originalImagePath, final boolean fromDetailsScreen,
-            final String imageId) { // Camera or Gallery...
-        if (vueImage.getImageUrl() == null) {
+    private void addMultipleImageToServer(final boolean fromDetailsScreenFlag,
+            final ArrayList<VueImage> vueImageList,
+            final ArrayList<String> offlineImageIdList,
+            final ArrayList<String> originalImagePathList) {
+        String originalImagePath = originalImagePathList.remove(0);
+        // Camera or Gallery...
+        if (vueImageList.get(0).getImageUrl() == null) {
+            
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())
                     .getNetworkHandler()
@@ -1712,44 +1714,53 @@ public class DataEntryFragment extends Fragment {
                                 @Override
                                 public void onImageUploaded(String imageUrl) {
                                     if (imageUrl != null) {
-                                        vueImage.setImageUrl(imageUrl);
-                                        String offlimeImageId = null;
-                                        if (fromDetailsScreen) {
-                                            offlimeImageId = imageId;
-                                        }
+                                        vueImageList.get(0).setImageUrl(
+                                                imageUrl);
                                         VueTrendingAislesDataModel
                                                 .getInstance(
                                                         VueApplication
                                                                 .getInstance())
                                                 .getNetworkHandler()
                                                 .requestForAddImage(
-                                                        fromDetailsScreen,
-                                                        offlimeImageId,
-                                                        vueImage,
+                                                        fromDetailsScreenFlag,
+                                                        offlineImageIdList
+                                                                .remove(0),
+                                                        vueImageList.remove(0),
                                                         new ImageAddedCallback() {
                                                             
                                                             @Override
-                                                            public void onImageAdded(
-                                                                    String imageid) {
+                                                            public void onImageAdded() {
+                                                                if (vueImageList
+                                                                        .size() > 0) {
+                                                                    addMultipleImageToServer(
+                                                                            fromDetailsScreenFlag,
+                                                                            vueImageList,
+                                                                            offlineImageIdList,
+                                                                            originalImagePathList);
+                                                                }
                                                             }
                                                         });
                                     }
                                 }
                             });
+            
         } else {
-            String offlimeImageId = null;
-            if (fromDetailsScreen) {
-                offlimeImageId = imageId;
-            }
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())
                     .getNetworkHandler()
-                    .requestForAddImage(fromDetailsScreen, offlimeImageId,
-                            vueImage, new ImageAddedCallback() {
+                    .requestForAddImage(fromDetailsScreenFlag,
+                            offlineImageIdList.remove(0),
+                            vueImageList.remove(0), new ImageAddedCallback() {
                                 
                                 @Override
-                                public void onImageAdded(String imageid) {
-                                    
+                                public void onImageAdded() {
+                                    if (vueImageList.size() > 0) {
+                                        addMultipleImageToServer(
+                                                fromDetailsScreenFlag,
+                                                vueImageList,
+                                                offlineImageIdList,
+                                                originalImagePathList);
+                                    }
                                 }
                             });
         }
@@ -1798,6 +1809,7 @@ public class DataEntryFragment extends Fragment {
                     imageHeight
                             .add(mAisleImagePathList.get(i).getImageHeight());
                     imageStore.add(mAisleImagePathList.get(i).getImageStore());
+                    
                 }
             }
             if (vueImageList != null && vueImageList.size() > 0) {
@@ -1846,11 +1858,8 @@ public class DataEntryFragment extends Fragment {
                 if (mDataEntryActivity == null) {
                     mDataEntryActivity = (DataEntryActivity) getActivity();
                 }
-                for (int j = 0; j < vueImageList.size(); j++) {
-                    addSingleImageToServer(vueImageList.get(j),
-                            originalImagePathList.get(j), true,
-                            offlineImageIdList.get(j));
-                }
+                addMultipleImageToServer(true, vueImageList,
+                        offlineImageIdList, originalImagePathList);
                 mDataEntryActivity.shareViaVueClicked();
             } else {
                 Toast.makeText(

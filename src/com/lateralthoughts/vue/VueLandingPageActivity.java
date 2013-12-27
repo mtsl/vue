@@ -18,10 +18,10 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -188,7 +188,8 @@ public class VueLandingPageActivity extends Activity implements
                 VueConstants.HELP_SCREEN_ACCES, false);
         if (!isHelpOpend) {
             Intent intent = new Intent(this, Help.class);
-            intent.putExtra(VueConstants.HELP_KEY, VueConstants.HelpSCREEN_FROM_LANDING);
+            intent.putExtra(VueConstants.HELP_KEY,
+                    VueConstants.HelpSCREEN_FROM_LANDING);
             startActivity(intent);
         }
         
@@ -1255,8 +1256,7 @@ public class VueLandingPageActivity extends Activity implements
                                                             new ImageAddedCallback() {
                                                                 
                                                                 @Override
-                                                                public void onImageAdded(
-                                                                        String imageId) {
+                                                                public void onImageAdded() {
                                                                     
                                                                 }
                                                             });
@@ -1272,7 +1272,7 @@ public class VueLandingPageActivity extends Activity implements
                                 new ImageAddedCallback() {
                                     
                                     @Override
-                                    public void onImageAdded(String imageId) {
+                                    public void onImageAdded() {
                                         
                                     }
                                 });
