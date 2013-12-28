@@ -120,6 +120,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                                     .setContentText(
                                                             notificationMessage);
                                             builder.setContentIntent(contentIntent);
+                                            builder.setAutoCancel(true);
                                             notificationManager
                                                     .notify(VueConstants.GCM_NOTIFICATION_ID,
                                                             builder.build());
