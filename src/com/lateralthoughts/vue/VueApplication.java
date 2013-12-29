@@ -3,7 +3,6 @@ package com.lateralthoughts.vue;
 import gcm.com.vue.android.gcmclient.RegisterGCMClient;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -28,7 +27,6 @@ import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
-import com.lateralthoughts.vue.utils.SortBasedOnAppName;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -135,15 +133,16 @@ public class VueApplication extends Application {
     public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
     private final int MAX_BITMAP_COUNT = 512;
     
-    @SuppressWarnings("unchecked")
     @Override
     public void onCreate() {
         super.onCreate();
         
         sInstance = this;
         mVueApplicationContext = this;
+        
         RegisterGCMClient.registerClient(VueApplication.getInstance(),
                 UrlConstants.CURRENT_SERVER_PROJECT_ID);
+        
         ScaledImageViewFactory.getInstance(this);
         AisleWindowContentFactory.getInstance(this);
         mHttpClient = new DefaultHttpClient();
@@ -188,10 +187,6 @@ public class VueApplication extends Application {
         
         mMoreInstalledApplicationDetailsList = Utils
                 .getInstalledApplicationsList(getApplicationContext());
-        if (mMoreInstalledApplicationDetailsList != null) {
-            Collections.sort(mMoreInstalledApplicationDetailsList,
-                    new SortBasedOnAppName());
-        }
         
         Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
                 crittercismConfig);

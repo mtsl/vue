@@ -397,6 +397,7 @@ public class NetworkHandler {
                                                         Toast.LENGTH_LONG)
                                                         .show();
                                             }
+                                            VueLandingPageActivity.notification = null;
                                             VueTrendingAislesDataModel
                                                     .getInstance(
                                                             VueApplication

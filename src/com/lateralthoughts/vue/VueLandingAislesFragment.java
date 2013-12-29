@@ -96,7 +96,6 @@ public class VueLandingAislesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        
         // synchronized list view approach
         View v = inflater.inflate(R.layout.aisles_view_fragment, container,
                 false);

@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
 
@@ -41,7 +42,9 @@ import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.Logging;
+import com.lateralthoughts.vue.utils.RecentlyViewedAisle;
 import com.lateralthoughts.vue.utils.UrlConstants;
+import com.lateralthoughts.vue.utils.UsedKeywordsOnUpgrade;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class DataBaseManager {
@@ -63,7 +66,7 @@ public class DataBaseManager {
     private int mMaxPoolSize = 1;
     private long mKeepAliveTime = 10;
     private ThreadPoolExecutor threadPool;
-
+    
     private final LinkedBlockingQueue<Runnable> mThreadsQueue = new LinkedBlockingQueue<Runnable>();
     private static DataBaseManager sManager;
     private HashMap<String, Integer> mAislesOrderMap;
@@ -822,12 +825,12 @@ public class DataBaseManager {
                     + bookmarkedAisleId;
             
             Response.Listener listener = new Response.Listener<JSONObject>() {
-
+                
                 @Override
                 public void onResponse(final JSONObject jsonObject) {
                     if (jsonObject != null) {
                         Thread t = new Thread(new Runnable() {
-
+                            
                             @Override
                             public void run() {
                                 try {
@@ -836,24 +839,27 @@ public class DataBaseManager {
                                             .parseAisleData(jsonObject);
                                     ArrayList<AisleImageDetails> imageDetails = parser
                                             .getImagesForAisleId(retrievedAisle.mAisleId);
-                                    if(imageDetails.size() > 0) {
+                                    if (imageDetails.size() > 0) {
                                         AisleWindowContent aisleItem = new AisleWindowContent(
                                                 retrievedAisle.mAisleId);
-                                        aisleItem.addAisleContent(retrievedAisle,
-                                                imageDetails);
+                                        aisleItem.addAisleContent(
+                                                retrievedAisle, imageDetails);
                                         ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
                                         aisleContentArray.add(aisleItem);
-
+                                        
                                         addBookmarkedAisles(mContext,
-                                                aisleContentArray, 0, BOOKMARK);                                        
+                                                aisleContentArray, 0, BOOKMARK);
                                     } else {
-                                        Logging.d("DataBaseManager", "Bookmarked aislesId with no images: " +retrievedAisle.mAisleId);
+                                        Logging.d(
+                                                "DataBaseManager",
+                                                "Bookmarked aislesId with no images: "
+                                                        + retrievedAisle.mAisleId);
                                     }
-
+                                    
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-
+                                
                             }
                         });
                         t.start();
@@ -929,6 +935,21 @@ public class DataBaseManager {
         }
     }
     
+    public void addAisleMetaDataToDBOnUpgrade(String tableName,
+            ArrayList<UsedKeywordsOnUpgrade> usedKeywords, SQLiteDatabase db) {
+        if (usedKeywords != null && usedKeywords.size() > 0) {
+            for (UsedKeywordsOnUpgrade usedKeywordsOnUpgrade : usedKeywords) {
+                ContentValues values = new ContentValues();
+                values.put(VueConstants.KEYWORD, usedKeywordsOnUpgrade.keyWord);
+                values.put(VueConstants.LAST_USED_TIME,
+                        usedKeywordsOnUpgrade.lastUsedTime);
+                values.put(VueConstants.NUMBER_OF_TIMES_USED,
+                        usedKeywordsOnUpgrade.numberOfTimesUsed);
+                db.insert(tableName, null, values);
+            }
+        }
+    }
+    
     public ArrayList<String> getAisleKeywords(String tableName) {
         ArrayList<UsedKeywords> aisleKeywordsList = null;
         Uri uri = null;
@@ -981,6 +1002,28 @@ public class DataBaseManager {
             finalList.add(key.keyWord);
         }
         return finalList;
+    }
+    
+    public ArrayList<UsedKeywordsOnUpgrade> getAisleKeywordsOnUpgrade(
+            String tableName, SQLiteDatabase db) {
+        ArrayList<UsedKeywordsOnUpgrade> aisleKeywordsList = null;
+        Cursor cursor = db.query(tableName, null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            aisleKeywordsList = new ArrayList<UsedKeywordsOnUpgrade>();
+            UsedKeywordsOnUpgrade keywords;
+            do {
+                keywords = new UsedKeywordsOnUpgrade(
+                        cursor.getString(cursor
+                                .getColumnIndex(VueConstants.KEYWORD)),
+                        cursor.getString(cursor
+                                .getColumnIndex(VueConstants.LAST_USED_TIME)),
+                        cursor.getString(cursor
+                                .getColumnIndex(VueConstants.NUMBER_OF_TIMES_USED)));
+                aisleKeywordsList.add(keywords);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return aisleKeywordsList;
     }
     
     public AisleData getAisleMetaDataForKeyword(String keyWord, String tableName) {
@@ -1212,7 +1255,7 @@ public class DataBaseManager {
             if (aislesCursor.getCount() == 0) {
                 aislesCursor = mContext.getContentResolver().query(
                         VueConstants.MY_BOOKMARKED_AISLES_URI, null,
-                        searchBy + "=?", new String[] {searchString},
+                        searchBy + "=?", new String[] { searchString },
                         VueConstants.ID + " ASC");
             }
         }
@@ -1296,6 +1339,27 @@ public class DataBaseManager {
         return aisleIds;
     }
     
+    public ArrayList<RecentlyViewedAisle> getRecentlyViewedAislesOnUpgrade(
+            SQLiteDatabase db) {
+        ArrayList<RecentlyViewedAisle> recentlyViewedAisles = null;
+        Cursor cursor = db.query(
+                DbHelper.DATABASE_TABLE_RECENTLY_VIEWED_AISLES, null, null,
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
+            recentlyViewedAisles = new ArrayList<RecentlyViewedAisle>();
+            do {
+                RecentlyViewedAisle recentlyViewedAisle = new RecentlyViewedAisle(
+                        cursor.getString(cursor
+                                .getColumnIndex(VueConstants.RECENTLY_VIEWED_AISLE_ID)),
+                        cursor.getString(cursor
+                                .getColumnIndex(VueConstants.VIEW_TIME)));
+                recentlyViewedAisles.add(recentlyViewedAisle);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return recentlyViewedAisles;
+    }
+    
     private void updateOrAddRecentlyViewedAislesList(String aisleId) {
         boolean isAisleViewed = false;
         String viewedId = null;
@@ -1326,6 +1390,22 @@ public class DataBaseManager {
             values.put(VueConstants.VIEW_TIME, System.currentTimeMillis());
             mContext.getContentResolver().insert(
                     VueConstants.RECENTLY_VIEW_AISLES_URI, values);
+        }
+    }
+    
+    public void insertRecentlyViewedAislesOnUpgrade(
+            ArrayList<RecentlyViewedAisle> recentlyViewedAisles,
+            SQLiteDatabase db) {
+        if (recentlyViewedAisles != null && recentlyViewedAisles.size() > 0) {
+            for (RecentlyViewedAisle recentlyViewedAisle : recentlyViewedAisles) {
+                ContentValues values = new ContentValues();
+                values.put(VueConstants.RECENTLY_VIEWED_AISLE_ID,
+                        recentlyViewedAisle.getmAisleId());
+                values.put(VueConstants.VIEW_TIME,
+                        recentlyViewedAisle.getmTime());
+                db.insert(DbHelper.DATABASE_TABLE_RECENTLY_VIEWED_AISLES, null,
+                        values);
+            }
         }
     }
     

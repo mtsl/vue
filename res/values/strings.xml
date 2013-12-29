@@ -128,8 +128,9 @@
     <string name="publish_actions">publish_actions</string>
     <string name="contact_us_text">Please provide feedback by writing to us at</string>
     <string name="email_id">vue@thesilverlabs.com</string>
-    <string name="vue_content">Private Policy</string>
-    <string name="about_tabel_Content_text">1. Introduction \n2. Private Policy \n3. Contact us</string>
+    <string name="vue_content">Privacy Policy</string>
+    <string name="vue_terms">Terms of Service</string>
+    <string name="about_tabel_Content_text">1. Introduction \n2. Terms of Service \n3. Privacy Policy \n4. Contact us</string>
     <string name="feedback_form_text_info">Please write to us about how we might improve fashionwrap to suit your needs. Whether you would like us to cover more topics, improve the user experiences, or do something else better, please write to us. We will appreciate it very much!</string>
     <string name="aboutedittext">Type your message here</string>
     <string name="clear">Clear</string>
@@ -140,22 +141,23 @@
     <string name="abouttextfedbacktext">\nPlease write to us about how we might improve</string>
     <string name="abouttextfedbacktexttwo">to suit your needs. We will appreciate it very much!</string>
     <string name="abouttextfedbacktextt">Email will be sent using gmail. Your phone model, dimensions, resolutions and OS version are included with this message.</string>
-    <string name="about_content">Welcome to Android application development!
+    <string name="about_content">Thank you for trying out Vue. This is about shopping when you want, however you want and still having 
+        friends and experts help you along when you are looking for something. 
+         Just ask our users what looks good or what to wear for that first date or even help you find a pair of shoes 
+         that goes with that perfect dress!  Come and be an early member of our community and help us get your friends on too so you
+          have people you care about giving you suggestions!</string>
+    <string name="about_privacy_text">By signing up, you may provide some personal information such as your profile photo, likes, comments, 
+        email address and potentially some other data about yourself. You may also choose to give us permission to access your Facebook and/or Google+ profile. 
+         The aisles you create, the images you add, your likes and comments will be saved on our servers so that other users can see them. 
+          We will use this information to make the experience better for you. 
 
-This class teaches you how to build your first Android app. You’ll learn how to create an Android project and run a debuggable version of the app. You\'ll also learn some fundamentals of Android app design, including how to build a simple user interface and handle user input.
-
-Before you start this class, be sure you have your development environment set up. You need to:
-
-    Download the Android SDK.
-    Install the ADT plugin for Eclipse (if you’ll use the Eclipse IDE).
-    Download the latest SDK tools and platforms using the SDK Manager.
-
-If you haven\'t already done these tasks, start by downloading the Android SDK and following the install steps. Once you\'ve finished the setup, you\'re ready to begin this class.
-
-This class uses a tutorial format that incrementally builds a small Android app that teaches you some fundamental concepts about Android development, so it\'s important that you follow each step.</string>
+We may change this privacy policy from time to time.  Please check back to see if there have been any updates.  </string>
+    <string name="terms_of_service">You retain all rights in, and are solely responsible for, the content you post to Vue. You grant PintVueerest and its users a non-exclusive, royalty-free, transferable, sublicensable, worldwide license to use, store, display, reproduce, re-pin, modify, create derivative works, perform, and distribute your content on Vue solely for the purposes of operating, developing, providing, and using the products. We reserve the right to remove or modify content for any reason, including content that we believe violates these Terms or our policies.</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    <string name="helptext">Create an aisle around something you are looking for.  Add one or more images of your choices.  Let others help you pick.  Or, perhaps even suggest the best things to get.  Do it together with friends!</string>
+    <string name="frombezel">FromBezel</string>
 
 </resources>

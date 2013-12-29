@@ -22,7 +22,7 @@ public class ArcLayout extends ViewGroup {
     /**
      * children will be set the same size.
      */
-    public static int sChildSize = 48;
+    public static int sChildSize = 56;
     
     private int mChildPadding = 5;
     
@@ -54,7 +54,7 @@ public class ArcLayout extends ViewGroup {
         
         mContext = context;
         
-        sChildSize = 48;
+        sChildSize = 56;
         sMinRadius = 76;
         mChildPadding = 5;
         mLayoutPadding = 10;

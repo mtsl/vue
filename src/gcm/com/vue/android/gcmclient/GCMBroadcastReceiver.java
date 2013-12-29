@@ -93,16 +93,16 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                                     .getInstance()
                                                     .getSystemService(
                                                             Context.NOTIFICATION_SERVICE);
-                                            
+                                            Intent notificationIntent = new Intent(
+                                                    VueApplication
+                                                            .getInstance(),
+                                                    VueLandingPageActivity.class);
+                                            notificationIntent.putExtra(
+                                                    "notfication", "MyAisles");
                                             PendingIntent contentIntent = PendingIntent
-                                                    .getActivity(
-                                                            VueApplication
-                                                                    .getInstance(),
-                                                            0,
-                                                            new Intent(
-                                                                    VueApplication
-                                                                            .getInstance(),
-                                                                    VueLandingPageActivity.class),
+                                                    .getActivity(VueApplication
+                                                            .getInstance(), 0,
+                                                            notificationIntent,
                                                             0);
                                             NotificationCompat.Builder builder = new NotificationCompat.Builder(
                                                     VueApplication
@@ -120,6 +120,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                                     .setContentText(
                                                             notificationMessage);
                                             builder.setContentIntent(contentIntent);
+                                            builder.setAutoCancel(true);
                                             notificationManager
                                                     .notify(VueConstants.GCM_NOTIFICATION_ID,
                                                             builder.build());
@@ -144,5 +145,4 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
         }
         
     }
-    
 }

@@ -231,6 +231,7 @@ public class VueUserManager {
                                 listener, errorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
+                        
                     } else {
                         try {
                             user.setUserImageURL(userProfileImageUrl);
@@ -498,6 +499,8 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
+                        showNotificationForSwitchingUser(String
+                                .valueOf(vueUser2.getId()));
                         vueUser2.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
@@ -516,6 +519,7 @@ public class VueUserManager {
                                 listener, errorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
+                        
                     } else {
                         try {
                             user.setUserImageURL(userProfileImageUrl);
@@ -636,6 +640,8 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
+                        showNotificationForSwitchingUser(String
+                                .valueOf(vueUser2.getId()));
                         vueUser2.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
@@ -654,6 +660,7 @@ public class VueUserManager {
                                 listener, errorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
+                        
                     } else {
                         try {
                             vueUser.setUserImageURL(userProfileImageUrl);

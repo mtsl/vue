@@ -14,14 +14,15 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -33,7 +34,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.SlidingDrawer;
 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -53,7 +53,6 @@ public class AisleDetailsViewActivity extends Activity {
     private int mComparisionDelay = 500;
     private int mScreenTotalHeight;
     private int mComparisionScreenHeight;
-    private SlidingDrawer mSlidingDrawer;
     private ArrayList<AisleImageDetails> mImageDetailsArr = null;
     private BitmapLoaderUtils mBitmapLoaderUtils;
     private int mLikeImageShowTime = 1000;
@@ -67,54 +66,25 @@ public class AisleDetailsViewActivity extends Activity {
     private ComparisionAdapter mBottomAdapter, mTopAdapter;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private FrameLayout mContent_frame2;
+    private FrameLayout mDrawerLeft, mDrawerRight;
     private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
     
-    @SuppressWarnings("deprecation")
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         
         setContentView(R.layout.aisle_details_activity_landing);
+        mDrawerRight = (FrameLayout) findViewById(R.id.drawer_right);
         initialize();
-        mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
+        mDrawerLeft = (FrameLayout) findViewById(R.id.content_frame2);
+        
         mSlidListFrag = (VueListFragment) getFragmentManager()
                 .findFragmentById(R.id.listfrag);
         mCurrentapiVersion = android.os.Build.VERSION.SDK_INT;
         if (mCurrentapiVersion >= 11) {
             getActionBar().hide();
         }
-        mSlidingDrawer = (SlidingDrawer) findViewById(R.id.drawer2);
-        mSlidingDrawer
-                .setOnDrawerScrollListener(new SlidingDrawer.OnDrawerScrollListener() {
-                    private Runnable mRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            // While the SlidingDrawer is moving; do nothing.
-                            while (mSlidingDrawer.isMoving()) {
-                                // Allow another thread to process its
-                                // instructions.
-                                Thread.yield();
-                            }
-                            // When the SlidingDrawer is no longer moving;
-                            // trigger mHandler.
-                            mHandler.sendEmptyMessage(0);
-                        }
-                    };
-                    
-                    @Override
-                    public void onScrollStarted() {
-                        mDrawerLayout
-                                .setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                    }
-                    
-                    @Override
-                    public void onScrollEnded() {
-                        new Thread(mRunnable).start();
-                        
-                    }
-                });
         mContentLinearLay = (LinearLayout) findViewById(R.id.content2);
         mTopScroller = (HorizontalListView) findViewById(R.id.topscroller);
         mBottomScroller = (HorizontalListView) findViewById(R.id.bottomscroller);
@@ -123,6 +93,51 @@ public class AisleDetailsViewActivity extends Activity {
         mComparisionScreenHeight = mScreenTotalHeight - mStatusbarHeight;
         getActionBar().hide();
         
+        mTopScroller.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    // Disallow Drawer to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+                
+                case MotionEvent.ACTION_UP:
+                    // Allow Drawer to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+                }
+                
+                // Handle Horizontal touch events.
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
+        
+        mBottomScroller.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    // Disallow Drawer to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+                
+                case MotionEvent.ACTION_UP:
+                    // Allow Drawer to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+                }
+                
+                // Handle Horizontal touch events.
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
         mTopScroller.setOnItemClickListener(new OnItemClickListener() {
             
             @Override
@@ -234,6 +249,48 @@ public class AisleDetailsViewActivity extends Activity {
                 invalidateOptionsMenu(); // creates call to
                                          // onPrepareOptionsMenu()
             }
+            
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                super.onDrawerStateChanged(newState);
+                
+                if (newState == DrawerLayout.STATE_DRAGGING) {
+                    
+                } else if (newState == DrawerLayout.STATE_IDLE) {
+                    try {
+                        if (mDrawerLayout.isDrawerOpen(mDrawerRight)
+                                && mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
+                            // should never happens this case
+                        } else if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
+                            mDrawerLayout.setDrawerLockMode(
+                                    DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
+                                    mDrawerRight);
+                        } else if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
+                            mDrawerLayout.setDrawerLockMode(
+                                    DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
+                                    mDrawerLeft);
+                        } else {
+                            mDrawerLayout.setDrawerLockMode(
+                                    DrawerLayout.LOCK_MODE_UNLOCKED,
+                                    mDrawerRight);
+                            mDrawerLayout.setDrawerLockMode(
+                                    DrawerLayout.LOCK_MODE_UNLOCKED,
+                                    mDrawerLeft);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else if (newState == DrawerLayout.STATE_SETTLING) {
+                }
+            }
+            
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                if (drawerView == mDrawerRight) {
+                } else if (drawerView == mDrawerLeft) {
+                }
+            }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mVueAiselFragment = new VueAisleDetailsViewFragment();
@@ -304,7 +361,6 @@ public class AisleDetailsViewActivity extends Activity {
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 params2.addRule(RelativeLayout.CENTER_IN_PARENT);
                 mViewHolder.likeImage.setLayoutParams(params2);
-                
                 convertView.setTag(mViewHolder);
             }
             mViewHolder = (ViewHolder) convertView.getTag();
@@ -378,41 +434,25 @@ public class AisleDetailsViewActivity extends Activity {
         }
     }
     
-    private Handler mHandler = new Handler() {
-        
-        @SuppressWarnings("deprecation")
-        @SuppressLint("HandlerLeak")
-        public void handleMessage(Message msg) {
-            // when comparison screen opened deactivate the left bezel
-            // other wise activate the right left bezel.
-            if (mSlidingDrawer.isOpened()) {
-                mDrawerLayout
-                        .setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            } else {
-                mDrawerLayout
-                        .setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            }
-        }
-    };
-    
     @Override
     public void onPause() {
         super.onPause();
         
     }
     
-    @SuppressWarnings("deprecation")
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             
-            if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
+            if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
                 
                 if (!mSlidListFrag.listener.onBackPressed()) {
-                    mDrawerLayout.closeDrawer(mContent_frame2);
+                    mDrawerLayout.closeDrawer(mDrawerLeft);
                 }
-            } else if (mSlidingDrawer.isOpened()) {
-                mSlidingDrawer.close();
+            } else if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
+                if (!mSlidListFrag.listener.onBackPressed()) {
+                    mDrawerLayout.closeDrawer(mDrawerRight);
+                }
             } else {
                 mVueAiselFragment.setAisleContentListenerNull();
                 mContentLinearLay.removeAllViews();

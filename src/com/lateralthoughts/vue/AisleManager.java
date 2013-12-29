@@ -38,7 +38,7 @@ public class AisleManager {
     }
     
     public interface ImageAddedCallback {
-        public void onImageAdded(String imageId);
+        public void onImageAdded();
     }
     
     private static AisleManager sAisleManager = null;

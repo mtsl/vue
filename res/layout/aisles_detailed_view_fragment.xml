@@ -79,7 +79,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="4dp"
             android:contentDescription="@string/Image"
-            android:src="@drawable/new_profile" />
+            android:background="@drawable/new_profile" />
 
         <TextView
             android:id="@+id/vue_user_name"

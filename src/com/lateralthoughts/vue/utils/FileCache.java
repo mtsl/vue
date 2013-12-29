@@ -11,6 +11,7 @@ public class FileCache {
     private File mCacheDir;
     private long mTwoDaysOldTime = 2 * 24 * 60 * 60 * 1000;
     private File mVueAppCameraPicsDir;
+    private File mHelpPicDir;
     
     public File getmVueAppCameraPicsDir() {
         return mVueAppCameraPicsDir;
@@ -47,6 +48,9 @@ public class FileCache {
             mCacheDir = new File(context.getExternalCacheDir(), "LazyList");
             mVueAppCameraPicsDir = new File(context.getExternalFilesDir(null),
                     VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
+            mHelpPicDir = new File(context.getExternalFilesDir(null),
+                    VueConstants.VUE_APP_HELP_FOLDER);
+            
             mVueAppResizedImagesDir = new File(
                     context.getExternalFilesDir(null),
                     VueConstants.VUE_APP_RESIZED_PICTURES_FOLDER);
@@ -57,6 +61,8 @@ public class FileCache {
             mCacheDir = context.getCacheDir();
             mVueAppCameraPicsDir = new File(context.getFilesDir(),
                     VueConstants.VUE_APP_CAMERAPICTURES_FOLDER);
+            mHelpPicDir = new File(context.getFilesDir(),
+                    VueConstants.VUE_APP_HELP_FOLDER);
             mVueAppResizedImagesDir = new File(context.getFilesDir(),
                     VueConstants.VUE_APP_RESIZED_PICTURES_FOLDER);
             mVueUserProfileImageDir = new File(context.getFilesDir(),
@@ -71,6 +77,8 @@ public class FileCache {
             mVueAppResizedImagesDir.mkdirs();
         if (!mVueUserProfileImageDir.exists())
             mVueUserProfileImageDir.mkdirs();
+        if (!mHelpPicDir.exists())
+            mHelpPicDir.mkdirs();
     }
     
     public File getFile(String url) {
@@ -79,6 +87,11 @@ public class FileCache {
         File f = new File(mCacheDir, filename + ".jpg");
         return f;
         
+    }
+    
+    public File getHelpFile(String imageName) {
+        File f = new File(mHelpPicDir, imageName + ".jpg");
+        return f;
     }
     
     public File getVueAppCameraPictureFile(String cameraImageName) {
@@ -99,14 +112,6 @@ public class FileCache {
     @Deprecated
     public void clear() {
         File[] files = mCacheDir.listFiles();
-        if (files == null)
-            return;
-        for (File f : files)
-            f.delete();
-    }
-    
-    public void clearVueAppCameraPictures() {
-        File[] files = mVueAppCameraPicsDir.listFiles();
         if (files == null)
             return;
         for (File f : files)

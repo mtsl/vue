@@ -68,17 +68,4 @@
         <item name="android:layout_marginLeft">2dp</item>
         <item name="android:layout_marginRight">2dp</item>
     </style>
-
-    <declare-styleable name="MySlider">
-        <attr name="SlidingDrawer_orientation" format="integer" />
-        <attr name="SlidingDrawer_bottomOffset" format="dimension" />
-        <attr name="SlidingDrawer_topOffset" format="dimension" />
-        <attr name="SlidingDrawer_allowSingleTap" format="boolean" />
-        <attr name="SlidingDrawer_animateOnClick" format="boolean" />
-        <attr name="SlidingDrawer_handle" format="reference" />
-        <attr name="SlidingDrawer_content" format="reference" />
-        <!-- and we are going to add a new styleable resource maxHeight -->
-        <attr name="SlidingDrawer_maxHeight" format="dimension" />
-    </declare-styleable>
-
 </resources>

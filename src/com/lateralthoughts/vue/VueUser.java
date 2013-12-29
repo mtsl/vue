@@ -24,6 +24,7 @@ public class VueUser implements Serializable {
     private Long joinTime;
     private String deviceId;
     private String userImageURL;
+    
     private String gcmRegistrationId;
     
     public String getUserImageURL() {
@@ -128,4 +129,5 @@ public class VueUser implements Serializable {
     public void setGcmRegistrationId(String gcmRegistrationId) {
         this.gcmRegistrationId = gcmRegistrationId;
     }
+    
 }

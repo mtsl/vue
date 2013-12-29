@@ -80,7 +80,6 @@ import com.google.android.gms.plus.model.people.PersonBuffer;
 import com.googleplus.MomentUtil;
 import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
-
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
@@ -993,11 +992,7 @@ public class VueLoginActivity extends FragmentActivity implements
     
     @Override
     public void onSignedFail() {
-        boolean fbloginflag = mSharedPreferencesObj.getBoolean(
-                VueConstants.FACEBOOK_LOGIN, false);
         SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
-        if (!fbloginflag)
-            editor.putBoolean(VueConstants.VUE_LOGIN, false);
         editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, false);
         editor.commit();
         if (mGooglePlusProgressDialog != null
@@ -1228,6 +1223,16 @@ public class VueLoginActivity extends FragmentActivity implements
                 new UserUpdateCallback() {
                     @Override
                     public void onUserUpdated(VueUser user) {
+                        getProfileImageChangeListenor(
+                                String.valueOf(user.getId()),
+                                user.getUserImageURL());
+                        mSharedPreferencesObj = VueLoginActivity.this
+                                .getSharedPreferences(
+                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
+                        final SharedPreferences.Editor editor = mSharedPreferencesObj
+                                .edit();
+                        editor.putBoolean(VueConstants.VUE_LOGIN, true);
+                        editor.commit();
                         try {
                             Utils.writeUserObjectToFile(VueLoginActivity.this,
                                     VueConstants.VUE_APP_USEROBJECT__FILENAME,

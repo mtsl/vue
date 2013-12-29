@@ -300,8 +300,12 @@ public class VueListFragment extends Fragment implements TextWatcher {
                                             R.string.already_logged_in_msg),
                                     Toast.LENGTH_LONG).show();
                         }
+                    } else if (s
+                            .equals(getString(R.string.sidemenu_option_Help))) {
+                        Intent i = new Intent(getActivity(), Help.class);
+                        i.putExtra(VueConstants.HELP_KEY, getString(R.string.frombezel));
+                        startActivity(i);
                     }
-                    
                     return false;
                 } else {
                     try {
@@ -440,9 +444,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 getString(R.string.sidemenu_option_Invite_Friends),
                 R.drawable.invite, getInviteFriendsChildren());
         groups.add(item);
-        item = new ListOptionItem(getString(R.string.sidemenu_option_Help),
-                R.drawable.help, null);
-        groups.add(item);
         item = new ListOptionItem(getString(R.string.sidemenu_option_About),
                 R.drawable.about, null);
         groups.add(item);
@@ -451,6 +452,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
         groups.add(item);
         item = new ListOptionItem(getString(R.string.sidemenu_option_Login),
                 R.drawable.login, null);
+        groups.add(item);
+        item = new ListOptionItem(getString(R.string.sidemenu_option_Help),
+                R.drawable.help, null);
         groups.add(item);
         return groups;
     }
@@ -498,12 +502,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
     private List<ListOptionItem> getInviteFriendsChildren() {
         List<ListOptionItem> inviteFriendsChildren = new ArrayList<VueListFragment.ListOptionItem>();
         ListOptionItem item = new ListOptionItem(
-                getString(R.string.sidemenu_sub_option_Facebook),
-                R.drawable.comment, null);
+                getString(R.string.sidemenu_sub_option_Facebook), 0, null);
         inviteFriendsChildren.add(item);
         item = new ListOptionItem(
-                getString(R.string.sidemenu_sub_option_Googleplus),
-                R.drawable.comment, null);
+                getString(R.string.sidemenu_sub_option_Googleplus), 0, null);
         inviteFriendsChildren.add(item);
         return inviteFriendsChildren;
     }

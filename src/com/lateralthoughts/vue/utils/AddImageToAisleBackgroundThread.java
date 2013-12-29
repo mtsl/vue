@@ -133,6 +133,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                 .runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mImageAddedCallback.onImageAdded();
+                        
                         if (null != mResponseMessage) {
                             if (!mFromDetailsScreenFlag) {
                                 try {
@@ -140,8 +142,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                             .parseAisleImageData(new JSONObject(
                                                     mResponseMessage));
                                     if (aisleImageDetails != null) {
-                                        mImageAddedCallback
-                                                .onImageAdded(aisleImageDetails.mId);
                                         if (VueLandingPageActivity.mLandingScreenName != null
                                                 && VueLandingPageActivity.mLandingScreenName
                                                         .equalsIgnoreCase("Trending")

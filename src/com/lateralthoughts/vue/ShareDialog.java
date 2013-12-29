@@ -65,6 +65,7 @@ public class ShareDialog {
     private boolean mLoadAllApplications = false;
     private VueAisleDetailsViewFragment.ShareViaVueListner mDetailsScreenShareViaVueListner;
     private DataEntryFragment.ShareViaVueListner mDataentryScreenShareViaVueListner;
+    private ListView mListview = null;
     
     public void dismisDialog() {
         mShareDialog.dismiss();
@@ -98,12 +99,10 @@ public class ShareDialog {
         openScreenDialog();
     }
     
-    public void showAllInstalledApplications() {
+    private void showAllInstalledApplications() {
         mLoadAllApplications = true;
-        if (mAppNames.size() == 0) {
-            prepareDisplayData(VueApplication.getInstance().mMoreInstalledApplicationDetailsList);
-        }
-        openScreenDialog();
+        prepareDisplayData(VueApplication.getInstance().mMoreInstalledApplicationDetailsList);
+        mListview.setAdapter(new CustomAdapter());
     }
     
     public void loadShareApplications(
@@ -126,33 +125,31 @@ public class ShareDialog {
         mDialog.setContentView(R.layout.sharedialogue);
         TextView dialogtitle = (TextView) mDialog
                 .findViewById(R.id.dialogtitle);
-        ListView listview = (ListView) mDialog.findViewById(R.id.networklist);
+        mListview = (ListView) mDialog.findViewById(R.id.networklist);
         TextView okbuton = (TextView) mDialog.findViewById(R.id.shownetworkok);
         if (mFromCreateAislePopupFlag || mLoadAllApplications) {
             dialogtitle.setText("Open ...");
         }
-        listview.setAdapter(new CustomAdapter());
-        listview.setDivider(mContext.getResources().getDrawable(
+        mListview.setAdapter(new CustomAdapter());
+        mListview.setDivider(mContext.getResources().getDrawable(
                 R.drawable.share_dialog_divider));
-        listview.setOnItemClickListener(new OnItemClickListener() {
+        mListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
                     int position, long id) {
                 FlurryAgent.logEvent("Ailse_share");
                 if (mFromCreateAislePopupFlag) {
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
                     if (createAisleSelectionActivity != null) {
-                        mDialog.dismiss();
                         if (mPackageNames.get(position) == null) {
                             if (mAppNames.get(position).equals(
                                     mContext.getResources().getString(
                                             R.string.more))) {
                                 // show another dialog for displaying installed
                                 // apps...
-                                ShareDialog shareDialog = new ShareDialog(
-                                        mContext, mActivity);
-                                shareDialog.showAllInstalledApplications();
+                                showAllInstalledApplications();
                             }
                         } else {
+                            mDialog.dismiss();
                             createAisleSelectionActivity
                                     .loadShoppingApplication(
                                             mActivityNames.get(position),
@@ -175,6 +172,13 @@ public class ShareDialog {
         mDialog.setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface arg0) {
+                try {
+                    mAppNames.clear();
+                    mActivityNames.clear();
+                    mAppIcons.clear();
+                    mPackageNames.clear();
+                } catch (Exception e) {
+                }
                 mShareIntentObj = null;
             }
         });
@@ -380,6 +384,10 @@ public class ShareDialog {
             ArrayList<ShoppingApplicationDetails> dataEntryShoppingApplicationsList) {
         if (dataEntryShoppingApplicationsList != null
                 && dataEntryShoppingApplicationsList.size() > 0) {
+            mAppNames.clear();
+            mActivityNames.clear();
+            mAppIcons.clear();
+            mPackageNames.clear();
             for (int i = 0; i < dataEntryShoppingApplicationsList.size(); i++) {
                 mAppNames.add(dataEntryShoppingApplicationsList.get(i)
                         .getAppName());

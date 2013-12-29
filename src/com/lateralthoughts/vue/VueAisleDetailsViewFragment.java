@@ -185,7 +185,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 .getInstance(getActivity())
                 .getAisleItem(VueApplication.getInstance().getClickedWindowID())
                 .getAisleContext().mAisleOwnerImageURL;
-        if (profileUrl != null) {
+        if (profileUrl != null && profileUrl.length() > 5) {
             mVueUserPic.setImageUrl(profileUrl, mImageLoader);
         }
         mEditTextFindAt.setOnClickListener(new OnClickListener() {

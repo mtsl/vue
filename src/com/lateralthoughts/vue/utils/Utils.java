@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -739,13 +740,26 @@ public class Utils {
         dialog.show();
     }
     
+    @SuppressWarnings("unchecked")
     public static ArrayList<ShoppingApplicationDetails> getInstalledApplicationsList(
             Context context) {
         ArrayList<ShoppingApplicationDetails> installedApplicationdetailsList = new ArrayList<ShoppingApplicationDetails>();
+        if (VueApplication.getInstance().mShoppingApplicationDetailsList != null
+                && VueApplication.getInstance().mShoppingApplicationDetailsList
+                        .size() > 1) {
+            for (int i = 1; i < VueApplication.getInstance().mShoppingApplicationDetailsList
+                    .size(); i++) {
+                installedApplicationdetailsList.add(VueApplication
+                        .getInstance().mShoppingApplicationDetailsList.get(i));
+            }
+        }
         Intent intent = new Intent("android.intent.action.MAIN", null);
         intent.addCategory("android.intent.category.LAUNCHER");
         List<ResolveInfo> activities = context.getPackageManager()
                 .queryIntentActivities(intent, 0);
+        if (activities != null) {
+            Collections.sort(activities, new SortResolveInfoBasedOnAppName());
+        }
         PackageManager pm = context.getPackageManager();
         final Object a[] = activities.toArray();
         for (int i = 0; i < activities.size(); i++) {

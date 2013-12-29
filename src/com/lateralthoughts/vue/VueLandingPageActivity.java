@@ -15,14 +15,13 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -100,12 +99,13 @@ public class VueLandingPageActivity extends Activity implements
     public static String mLandingScreenName = null;
     private boolean mHideDefaultActionbar = false;
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
-    private SearchView mSearchView;
     public static boolean mIsMyAilseCallEnable = false;
+    public static String notification = null;
     
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        notification = (String) getIntent().getStringExtra("notfication");
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
                 VueConstants.LANDING_SCREEN_RECEIVER);
@@ -182,6 +182,17 @@ public class VueLandingPageActivity extends Activity implements
         } else {
             showLogInDialog(false);
         }
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        boolean isHelpOpend = sharedPreferencesObj.getBoolean(
+                VueConstants.HELP_SCREEN_ACCES, false);
+        if (!isHelpOpend) {
+            Intent intent = new Intent(this, Help.class);
+            intent.putExtra(VueConstants.HELP_KEY,
+                    VueConstants.HelpSCREEN_FROM_LANDING);
+            startActivity(intent);
+        }
+        
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
@@ -296,9 +307,6 @@ public class VueLandingPageActivity extends Activity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.landing_actionbar, menu);
         getActionBar().setHomeButtonEnabled(true);
-        // Configure the search info and add any event listeners
-        mSearchView = (SearchView) menu.findItem(R.id.menu_search)
-                .getActionView();
         return true;
     }
     
@@ -599,7 +607,6 @@ public class VueLandingPageActivity extends Activity implements
                 FileCache fileCache = new FileCache(
                         VueApplication.getInstance());
                 fileCache.clearVueAppResizedPictures();
-                fileCache.clearVueAppCameraPictures();
                 fileCache.clearTwoDaysOldPictures();
                 mOtherSourceImagePath = null;
                 mOtherSourceImageLookingFor = null;
@@ -684,6 +691,12 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (VueLandingPageActivity.notification != null
+                && VueLandingPageActivity.notification
+                        .equalsIgnoreCase("MyAisles")) {
+            callForNewView(getString(R.string.sidemenu_sub_option_My_Aisles),
+                    false);
+        }
     }
     
     @Override
@@ -808,9 +821,10 @@ public class VueLandingPageActivity extends Activity implements
                 AisleWindowContentFactory.getInstance(
                         VueApplication.getInstance()).clearObjectsInUse();
                 for (AisleWindowContent content : windowContent) {
-                    if(content.getImageList() != null && content.getImageList().size() > 0){
-                    VueTrendingAislesDataModel.getInstance(this).addItemToList(
-                            content.getAisleId(), content);
+                    if (content.getImageList() != null
+                            && content.getImageList().size() > 0) {
+                        VueTrendingAislesDataModel.getInstance(this)
+                                .addItemToList(content.getAisleId(), content);
                     }
                 }
                 getActionBar()
@@ -1184,7 +1198,6 @@ public class VueLandingPageActivity extends Activity implements
         }
         FileCache fileCache = new FileCache(VueApplication.getInstance());
         fileCache.clearVueAppResizedPictures();
-        fileCache.clearVueAppCameraPictures();
     }
     
     private void getTrendingAislesFromDb(String screenName, boolean fromServer,
@@ -1220,7 +1233,7 @@ public class VueLandingPageActivity extends Activity implements
             image.setOwnerAisleId(Long.valueOf(aisleId));
             final String offlineImageId = String.valueOf(System
                     .currentTimeMillis());
-            //Camera or Gallery...
+            // Camera or Gallery...
             if (mOtherSourceImageUrl == null) {
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
@@ -1243,8 +1256,7 @@ public class VueLandingPageActivity extends Activity implements
                                                             new ImageAddedCallback() {
                                                                 
                                                                 @Override
-                                                                public void onImageAdded(
-                                                                        String imageId) {
+                                                                public void onImageAdded() {
                                                                     
                                                                 }
                                                             });
@@ -1260,7 +1272,7 @@ public class VueLandingPageActivity extends Activity implements
                                 new ImageAddedCallback() {
                                     
                                     @Override
-                                    public void onImageAdded(String imageId) {
+                                    public void onImageAdded() {
                                         
                                     }
                                 });
@@ -1388,47 +1400,19 @@ public class VueLandingPageActivity extends Activity implements
         }
     }
     
-    private void setupSearchView() {
-        
-        mSearchView.setIconifiedByDefault(true);
-        
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        if (searchManager != null) {
-            List<SearchableInfo> searchables = searchManager
-                    .getSearchablesInGlobalSearch();
-            
-            // Try to use the "applications" global search provider
-            SearchableInfo info = searchManager
-                    .getSearchableInfo(getComponentName());
-            for (SearchableInfo inf : searchables) {
-                if (inf.getSuggestAuthority() != null
-                        && inf.getSuggestAuthority().startsWith("applications")) {
-                    info = inf;
-                }
-            }
-            mSearchView.setSearchableInfo(info);
-        }
-        
-        mSearchView.setOnQueryTextListener(this);
-        mSearchView.setOnCloseListener(this);
-    }
-    
     public boolean onQueryTextChange(String newText) {
         
         return false;
     }
     
     public boolean onQueryTextSubmit(String query) {
-        // mStatusView.setText("Query = " + query + " : submitted");
         return false;
     }
     
     public boolean onClose() {
-        // mStatusView.setText("Closed!");
         return false;
     }
     
     public void onClick(View view) {
     }
-    
 }

@@ -8,24 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <SlidingDrawer
-        android:id="@+id/drawer2"
-        android:layout_width="fill_parent"
+    <FrameLayout
+        android:id="@+id/drawer_right"
+        android:layout_width="320dp"
         android:layout_height="fill_parent"
-        android:content="@+id/content2"
-        android:handle="@+id/handler2"
-        android:orientation="horizontal" >
+        android:layout_gravity="end" >
 
         <LinearLayout
-            android:id="@+id/handler2"
-            android:layout_width="1dip"
-            android:layout_height="fill_parent"
-            android:orientation="vertical"
-            android:visibility="invisible" >
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@id/content2"
+            android:id="@+id/content2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/whitbgshade"
@@ -53,7 +43,7 @@
                 android:scrollbars="none" >
             </com.lateralthoughts.vue.ui.HorizontalListView>
         </LinearLayout>
-    </SlidingDrawer>
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/content_frame2"
