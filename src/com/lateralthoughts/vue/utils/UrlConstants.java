@@ -73,4 +73,6 @@ public class UrlConstants {
     
     public static final String DELETE_IMAGE_RESTURL = SERVER_BASE_URL
             + "api/imagedelete";
+    public static final String GET_IMAGE_RESTURL = SERVER_BASE_URL
+            + "api/imageget/id/";
 }

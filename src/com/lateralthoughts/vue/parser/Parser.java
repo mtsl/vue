@@ -217,6 +217,36 @@ public class Parser {
         return imageList;
     }
     
+    public AisleImageDetails getImageForImageId(String imageId) {
+        try {
+            AisleImageDetails aisleImageDetails = null;
+            URL url = new URL(UrlConstants.GET_IMAGE_RESTURL + imageId);
+            HttpGet httpGet = new HttpGet(url.toString());
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpResponse response = httpClient.execute(httpGet);
+            if (response.getEntity() != null
+                    && response.getStatusLine().getStatusCode() == 200) {
+                String responseMessage = EntityUtils.toString(response
+                        .getEntity());
+                if (responseMessage != null) {
+                    JSONObject jsonObject = new JSONObject(responseMessage);
+                    aisleImageDetails = parseAisleImageData(jsonObject);
+                    if (aisleImageDetails.mImageUrl != null
+                            && (!aisleImageDetails.mImageUrl
+                                    .contains("randomurl.com"))
+                            && aisleImageDetails.mImageUrl.trim().length() > 0
+                            && aisleImageDetails.mAvailableHeight != 0
+                            && aisleImageDetails.mAvailableWidth != 0) {
+                        return aisleImageDetails;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
     private ArrayList<AisleWindowContent> parseAisleInformation(
             JSONArray jsonArray) throws JSONException {
         ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();

@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.android.volley.Response;
@@ -70,24 +71,33 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                                     .getFirstName()
                                                     + " "
                                                     + vueUser.getLastName();
-                                            String notificationMessage = null;
+                                            String notificationMessage = null, imageId = null, commentId = null, ratingId = null;
                                             // Commented On Image...
                                             if (lastReceivedNotification
                                                     .getNotification() == NotificationType.IMAGE_COMMENT_NOTIFICATION_TYPE) {
                                                 notificationMessage = userName
                                                         + " commented on your image";
+                                                commentId = String
+                                                        .valueOf(lastReceivedNotification
+                                                                .getIdOfModifiedObject());
                                             }
                                             // Likes the image...
                                             else if (lastReceivedNotification
                                                     .getNotification() == NotificationType.IMAGE_RATING_NOTIFICATION_TYPE) {
                                                 notificationMessage = userName
                                                         + " likes your image";
+                                                ratingId = String
+                                                        .valueOf(lastReceivedNotification
+                                                                .getIdOfModifiedObject());
                                             }
                                             // Added new image for an aisle...
                                             else if (lastReceivedNotification
                                                     .getNotification() == NotificationType.IMAGE_NOTIFICATION_TYPE) {
                                                 notificationMessage = userName
                                                         + " added image to your aisle";
+                                                imageId = String
+                                                        .valueOf(lastReceivedNotification
+                                                                .getIdOfModifiedObject());
                                             }
                                             NotificationManager notificationManager = (NotificationManager) VueApplication
                                                     .getInstance()
@@ -97,8 +107,20 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                                     VueApplication
                                                             .getInstance(),
                                                     VueLandingPageActivity.class);
-                                            notificationIntent.putExtra(
-                                                    "notfication", "MyAisles");
+                                            Bundle bundle = new Bundle();
+                                            bundle.putString("notfication",
+                                                    "MyAisles");
+                                            bundle.putString(
+                                                    "notficationratingId",
+                                                    ratingId);
+                                            bundle.putString(
+                                                    "notficationimageId",
+                                                    imageId);
+                                            bundle.putString(
+                                                    "notficationcommentId",
+                                                    commentId);
+                                            notificationIntent
+                                                    .putExtras(bundle);
                                             PendingIntent contentIntent = PendingIntent
                                                     .getActivity(VueApplication
                                                             .getInstance(), 0,

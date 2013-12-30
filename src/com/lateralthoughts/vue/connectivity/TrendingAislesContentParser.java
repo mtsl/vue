@@ -162,11 +162,12 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                                             .getInstance(VueApplication
                                                                     .getInstance()).loadOnRequest = false;
                                                 } else {
-                                                    if (VueLandingPageActivity.notification != null
-                                                            && VueLandingPageActivity.notification
-                                                                    .equalsIgnoreCase("MyAisles")) {
-                                                        //do not refresh trending screen when user access from notification click
-                                                        //do nothing here.
+                                                    if (VueLandingPageActivity.mNotificationBundle != null) {
+                                                        // do not refresh
+                                                        // trending screen when
+                                                        // user access from
+                                                        // notification click
+                                                        // do nothing here.
                                                     } else {
                                                         VueTrendingAislesDataModel
                                                                 .getInstance(VueApplication
