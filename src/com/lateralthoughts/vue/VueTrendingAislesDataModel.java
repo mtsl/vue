@@ -360,4 +360,20 @@ public class VueTrendingAislesDataModel {
             mNotifyProgress.dismissProgress(mRequestToServer);
         }
     }
+    
+    public int getImagePositionInAisle(String imageId, String aisleId) {
+        if (imageId != null && aisleId != null) {
+            AisleWindowContent aisleWindowContent = getAisleAt(aisleId);
+            if (aisleWindowContent != null
+                    && aisleWindowContent.getImageList() != null) {
+                for (int i = 0; i < aisleWindowContent.getImageList().size(); i++) {
+                    if (aisleWindowContent.getImageList().get(i).mId
+                            .equals(imageId)) {
+                        return i;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
 }

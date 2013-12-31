@@ -271,7 +271,7 @@ public class NetworkHandler {
     
     public void requestAislesByUser(boolean fromServer,
             final NotifyProgress progress, final String screenName,
-            final String aisleId) {
+            final String aisleId, final String notificationImageId) {
         
         offset = 0;
         if (!fromServer) {
@@ -332,7 +332,14 @@ public class NetworkHandler {
                                 aisleWindowContent.getAisleId());
                         VueApplication.getInstance().setClickedWindowCount(
                                 aisleWindowContent.getImageList().size());
-                        VueApplication.getInstance().setmAisleImgCurrentPos(0);
+                        VueApplication.getInstance()
+                                .setmAisleImgCurrentPos(
+                                        VueTrendingAislesDataModel.getInstance(
+                                                VueApplication.getInstance())
+                                                .getImagePositionInAisle(
+                                                        notificationImageId,
+                                                        aisleWindowContent
+                                                                .getAisleId()));
                         VueLandingPageActivity.landingPageActivity
                                 .startActivity(intent1);
                     }
@@ -488,7 +495,14 @@ public class NetworkHandler {
                                                     VueApplication
                                                             .getInstance()
                                                             .setmAisleImgCurrentPos(
-                                                                    0);
+                                                                    VueTrendingAislesDataModel
+                                                                            .getInstance(
+                                                                                    VueApplication
+                                                                                            .getInstance())
+                                                                            .getImagePositionInAisle(
+                                                                                    notificationImageId,
+                                                                                    aisleWindowContent
+                                                                                            .getAisleId()));
                                                     VueLandingPageActivity.landingPageActivity
                                                             .startActivity(intent1);
                                                 }
@@ -500,6 +514,7 @@ public class NetworkHandler {
                                                         Toast.LENGTH_LONG)
                                                         .show();
                                             }
+                                            VueLandingPageActivity.mNotificationBundle = null;
                                             VueTrendingAislesDataModel
                                                     .getInstance(
                                                             VueApplication

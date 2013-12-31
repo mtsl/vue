@@ -43,6 +43,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -644,6 +645,15 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 toggleRatingImage();
+            }
+        });
+        mViewHolder.likelay.setOnLongClickListener(new OnLongClickListener() {
+            
+            @Override
+            public boolean onLongClick(View arg0) {
+                Toast.makeText(mContext, "You clicked.", Toast.LENGTH_LONG)
+                        .show();
+                return false;
             }
         });
         return convertView;

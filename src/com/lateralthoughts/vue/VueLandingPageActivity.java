@@ -740,7 +740,7 @@ public class VueLandingPageActivity extends Activity implements
         @Override
         public void run() {
             if (!mDrawerLayout.isDrawerOpen(mContent_frame2)) {
-                callForNewView(mCatName, mFromDialog, null);
+                callForNewView(mCatName, mFromDialog, null, null);
             } else {
                 mHandler.postDelayed(r, 100);
             }
@@ -748,8 +748,8 @@ public class VueLandingPageActivity extends Activity implements
     };
     
     private void callForNewView(final String catName, boolean fromDialog,
-            String aisleId) {
-        if (mLandingScreenName != null
+            String aisleId, String notificationImageId) {
+        if (aisleId == null && mLandingScreenName != null
                 && mLandingScreenName.equalsIgnoreCase(catName)) {
             return;
         }
@@ -778,7 +778,7 @@ public class VueLandingPageActivity extends Activity implements
                     .getInstance(VueApplication.getInstance())
                     .getNetworkHandler()
                     .requestAislesByUser(fromServer, new ProgresStatus(),
-                            catName, aisleId);
+                            catName, aisleId, notificationImageId);
         } else if (catName.trim().equalsIgnoreCase(
                 getString(R.string.sidemenu_option_Trending_Aisles))) {
             mLandingScreenName = catName;
@@ -899,7 +899,7 @@ public class VueLandingPageActivity extends Activity implements
                     .getInstance(VueLandingPageActivity.this)
                     .getNetworkHandler()
                     .requestAislesByUser(fromServer, new ProgresStatus(),
-                            screenName, null);
+                            screenName, null, null);
         } else if (screenName
                 .equalsIgnoreCase(getString(R.string.sidemenu_sub_option_Bookmarks))) {
             
@@ -1416,16 +1416,18 @@ public class VueLandingPageActivity extends Activity implements
     
     private void loadDetailsScreenForNotificationClick() {
         if (mNotificationBundle != null) {
-            if (mNotificationBundle.getString("notficationimageId", null) != null) {
+            final String notificationImageId = mNotificationBundle.getString(
+                    VueConstants.NOTIFICATION_IMAGE_ID, null);
+            final String notificationAisleId = mNotificationBundle.getString(
+                    VueConstants.NOTIFICATION_AISLE_ID, null);
+            if (notificationImageId != null) {
                 final ProgressDialog progressDialog = ProgressDialog.show(this,
                         "", "Loading...");
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         final AisleImageDetails aisleImageDetails = new Parser()
-                                .getImageForImageId(mNotificationBundle
-                                        .getString("notficationimageId", null));
-                        mNotificationBundle = null;
+                                .getImageForImageId(notificationImageId);
                         VueLandingPageActivity.this
                                 .runOnUiThread(new Runnable() {
                                     @Override
@@ -1544,6 +1546,7 @@ public class VueLandingPageActivity extends Activity implements
                                                 if (progressDialog != null) {
                                                     progressDialog.dismiss();
                                                 }
+                                                mNotificationBundle = null;
                                                 Intent intent = new Intent();
                                                 intent.setClass(
                                                         VueApplication
@@ -1563,7 +1566,13 @@ public class VueLandingPageActivity extends Activity implements
                                                 VueApplication
                                                         .getInstance()
                                                         .setmAisleImgCurrentPos(
-                                                                0);
+                                                                VueTrendingAislesDataModel
+                                                                        .getInstance(
+                                                                                VueLandingPageActivity.this)
+                                                                        .getImagePositionInAisle(
+                                                                                notificationImageId,
+                                                                                aisleWindowContent
+                                                                                        .getAisleId()));
                                                 startActivity(intent);
                                             } else {
                                                 if (progressDialog != null) {
@@ -1572,7 +1581,8 @@ public class VueLandingPageActivity extends Activity implements
                                                 callForNewView(
                                                         getString(R.string.sidemenu_sub_option_My_Aisles),
                                                         false,
-                                                        aisleImageDetails.mOwnerAisleId);
+                                                        aisleImageDetails.mOwnerAisleId,
+                                                        notificationImageId);
                                             }
                                         } else {
                                             if (progressDialog != null) {
@@ -1580,17 +1590,17 @@ public class VueLandingPageActivity extends Activity implements
                                             }
                                             callForNewView(
                                                     getString(R.string.sidemenu_sub_option_My_Aisles),
-                                                    false, null);
+                                                    false, notificationAisleId,
+                                                    null);
                                         }
                                     }
                                 });
                     }
                 }).start();
             } else {
-                mNotificationBundle = null;
                 callForNewView(
                         getString(R.string.sidemenu_sub_option_My_Aisles),
-                        false, null);
+                        false, null, null);
             }
         }
     }
