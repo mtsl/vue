@@ -376,6 +376,12 @@ public class DataBaseManager {
                                 commnts.mComment);
                         commentValues.put(VueConstants.COMMENTER_URL,
                                 commnts.mCommenterUrl);
+                        commentValues.put(
+                                VueConstants.AISLE_IMAGE_COMMENTER_FIRST_NAME,
+                                commnts.mCommenterFirstName);
+                        commentValues.put(
+                                VueConstants.AISLE_IMAGE_COMMENTER_LAST_NAME,
+                                commnts.mCommenterLastName);
                         commentValues
                                 .put(VueConstants.LAST_MODIFIED_TIME,
                                         (commnts.mLastModifiedTimestamp != null) ? commnts.mLastModifiedTimestamp
@@ -639,6 +645,9 @@ public class DataBaseManager {
                                     comments.mCommenterUrl = imgCommentCursor
                                             .getString(imgCommentCursor
                                                     .getColumnIndex(VueConstants.COMMENTER_URL));
+                                    comments.mCommenterFirstName = VueConstants.AISLE_IMAGE_COMMENTER_FIRST_NAME;
+                                    comments.mCommenterLastName = VueConstants.AISLE_IMAGE_COMMENTER_LAST_NAME;
+                                    
                                     imageItemDetails.mCommentsList
                                             .add(comments);
                                 }
@@ -1166,6 +1175,12 @@ public class DataBaseManager {
                                     comments.mLastModifiedTimestamp = Long
                                             .parseLong(imgCommentCursor.getString(imgCommentCursor
                                                     .getColumnIndex(VueConstants.LAST_MODIFIED_TIME)));
+                                    comments.mCommenterFirstName = imgCommentCursor
+                                            .getString(imgCommentCursor
+                                                    .getColumnIndex(VueConstants.AISLE_IMAGE_COMMENTER_FIRST_NAME));
+                                    comments.mCommenterLastName = imgCommentCursor
+                                            .getString(imgCommentCursor
+                                                    .getColumnIndex(VueConstants.AISLE_IMAGE_COMMENTER_LAST_NAME));
                                     imageItemDetails.mCommentsList
                                             .add(comments);
                                 }

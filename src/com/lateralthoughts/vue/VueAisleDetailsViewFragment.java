@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -329,21 +330,21 @@ public class VueAisleDetailsViewFragment extends Fragment {
                         int rightMargin = VueApplication.getInstance()
                                 .getPixel(14);
                         int topBottomMargin = VueApplication.getInstance()
-                                .getPixel(6);
-                        params.setMargins(leftMargin, topBottomMargin,
-                                rightMargin, topBottomMargin);
+                                .getPixel(12);
+                        params.setMargins(leftMargin, 0, rightMargin,
+                                topBottomMargin);
                         v.setLayoutParams(params);
                         v.setMaxLines(Integer.MAX_VALUE);
                     } else {
                         v.setMaxLines(maxLinesCount);
                     }
                 } else if (arg2 == 0) {
-                    int descriptionMaxCount = 3;
                     mAisleDetailsAdapter.closeKeyboard();
                     // will be called when press on the description, description
                     // text will be expand and collapse for
                     // alternative clicks
                     // get the pixel equivalent to given dp value
+                    int descriptionMaxCount = 3;
                     int leftRightMargin = VueApplication.getInstance()
                             .getPixel(8);
                     int topBottomMargin = VueApplication.getInstance()

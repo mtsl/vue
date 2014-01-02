@@ -233,6 +233,8 @@ public class VueConstants {
     public static final String AISLE_IMAGE_COMMENTS_COMMENT = "comment";
     public static final String AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME = "lastModifiedTimestamp";
     public static final String AISLE_IMAGE_COMMENTS_CREATED_TIME = "createdTimestamp";
+    public static final String AISLE_IMAGE_COMMENTER_LAST_NAME = "imageCommentOwnerLastName";
+    public static final String AISLE_IMAGE_COMMENTER_FIRST_NAME = "imageCommentOwnerFirstName";
     
     // User response Keys
     public static final String USER_RESPONSE_ID = "id";

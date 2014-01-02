@@ -167,6 +167,10 @@ public class Parser {
                 }
                 imgComments.mCommenterUrl = commnetObj
                         .getString(VueConstants.IMAGE_COMMENT_OWNER_IMAGE_URL);
+                imgComments.mCommenterLastName = commnetObj
+                        .getString(VueConstants.AISLE_IMAGE_COMMENTER_LAST_NAME);
+                imgComments.mCommenterFirstName = commnetObj
+                        .getString(VueConstants.AISLE_IMAGE_COMMENTER_FIRST_NAME);
                 commentList.add(imgComments);
             }
         }

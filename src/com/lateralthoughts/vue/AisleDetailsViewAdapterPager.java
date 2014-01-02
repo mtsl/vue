@@ -24,6 +24,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -44,6 +45,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RelativeLayout.LayoutParams;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -271,7 +273,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         LinearLayout aisleContentBrowser;
         TextView aisleDescription;
         TextView aisleOwnersName;
-        TextView aisleContext, commentCount, likeCount, textcount;
+        TextView aisleContext, commentCount, likeCount, textcount,
+                commentername;
         TextView bookMarkCount;
         ImageView profileThumbnail;
         ImageView vueWindowBookmarkImg;
@@ -350,6 +353,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .findViewById(R.id.vue_user_img);
             mViewHolder.userComment = (TextView) convertView
                     .findViewById(R.id.vue_user_comment);
+            mViewHolder.commentername = (TextView) convertView
+                    .findViewById(R.id.commentername);
             mViewHolder.commentCount = (TextView) convertView
                     .findViewById(R.id.vuewndow_comment_count);
             mViewHolder.bookMarkCount = (TextView) convertView
@@ -365,9 +370,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             mViewHolder.edtCommentLay = (FrameLayout) convertView
                     .findViewById(R.id.edtcommentlay);
-            mViewHolder.userComment.setTextSize(VueApplication.getInstance()
-                    .getmTextSize());
-            mViewHolder.userComment.setTextSize(Utils.SMALL_TEXT_SIZE);
             mViewHolder.myPager = (ViewPager) convertView
                     .findViewById(R.id.myfivepanelpager);
             mViewHolder.textcount = (TextView) convertView
@@ -457,6 +459,45 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mViewHolder.aisleDescription
                             .setText(getItem(mCurrentAislePosition)
                                     .getAisleContext().mDescription);
+                    mViewHolder.aisleDescription
+                            .setOnClickListener(new OnClickListener() {
+                                
+                                @Override
+                                public void onClick(View v) {
+                                    closeKeyboard();
+                                    // will be called when press on the
+                                    // description, description
+                                    // text will be expand and collapse for
+                                    // alternative clicks
+                                    // get the pixel equivalent to given dp
+                                    // value
+                                    int descriptionMaxCount = 3;
+                                    int leftRightMargin = VueApplication
+                                            .getInstance().getPixel(8);
+                                    int topBottomMargin = VueApplication
+                                            .getInstance().getPixel(6);
+                                    TextView expandView = (TextView) v
+                                            .findViewById(R.id.vue_details_descreption);
+                                    int descLineCount = expandView
+                                            .getLineCount();
+                                    if (descLineCount == descriptionMaxCount) {
+                                        LinearLayout.LayoutParams params;
+                                        params = new LinearLayout.LayoutParams(
+                                                LayoutParams.MATCH_PARENT,
+                                                LayoutParams.WRAP_CONTENT);
+                                        params.setMargins(leftRightMargin,
+                                                topBottomMargin,
+                                                leftRightMargin,
+                                                topBottomMargin);
+                                        expandView
+                                                .setMaxLines(Integer.MAX_VALUE);
+                                    } else {
+                                        expandView
+                                                .setMaxLines(descriptionMaxCount);
+                                    }
+                                    
+                                }
+                            });
                 } else {
                     mViewHolder.descriptionlay.setVisibility(View.GONE);
                 }
@@ -557,7 +598,20 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .size()) {
                 Comment comment = mShowingCommentList.get(position
                         - mInitialCommentsToShowSize);
+                if (comment.mComment.length() > 2) {
+                    comment.mComment = comment.mComment.substring(0, 1)
+                            .toUpperCase() + comment.mComment.substring(1);
+                }
                 mViewHolder.userComment.setText(comment.mComment);
+                String commenterName = "";
+                if (comment.mCommenterFirstName != null
+                        && !comment.mCommenterFirstName.equals("")) {
+                    commenterName = comment.mCommenterFirstName;
+                } else if (comment.mCommenterLastName != null
+                        && !comment.mCommenterLastName.equals("")) {
+                    commenterName = comment.mCommenterLastName;
+                }
+                mViewHolder.commentername.setText(commenterName);
                 int urlLength = 5;
                 if (comment.mComenterUrl != null
                         && comment.mComenterUrl.length() > urlLength) {
@@ -1153,6 +1207,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     
     public void createComment(String commentString) {
         VueUser storedVueUser = null;
+        String firstName = "";
+        String lastName = "";
         try {
             storedVueUser = Utils.readUserObjectFromFile(
                     VueApplication.getInstance(),
@@ -1163,6 +1219,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         String commenterUrl = null;
         if (storedVueUser != null) {
             commenterUrl = storedVueUser.getUserImageURL();
+            firstName = storedVueUser.getFirstName();
+            lastName = storedVueUser.getLastName();
         }
         if (commenterUrl != null && commenterUrl.length() < 6) {
             commenterUrl = null;
@@ -1173,6 +1231,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         ImageComments comments = new ImageComments();
         comments.mComment = commentString;
         comments.mCommenterUrl = commenterUrl;
+        comments.mCommenterFirstName = firstName;
+        comments.mCommenterLastName = lastName;
         
         if (commentString == null || commentString.length() < 1) {
             return;
@@ -1244,6 +1304,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             Comment showComment = new Comment();
             showComment.mComment = comment.mComment;
             showComment.mComenterUrl = comment.mCommenterUrl;
+            showComment.mCommenterFirstName = comment.mCommenterFirstName;
+            showComment.mCommenterLastName = comment.mCommenterLastName;
             mShowingCommentList.add(showComment);
         }
     }
