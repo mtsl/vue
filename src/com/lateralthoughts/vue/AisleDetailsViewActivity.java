@@ -454,6 +454,39 @@ public class AisleDetailsViewActivity extends Activity {
                     mDrawerLayout.closeDrawer(mDrawerRight);
                 }
             } else {
+                try {
+                    if (VueLandingPageActivity.landingPageActivity != null
+                            && VueLandingPageActivity.mLandingScreenName != null
+                            && (VueLandingPageActivity.mLandingScreenName
+                                    .equals(VueApplication
+                                            .getInstance()
+                                            .getString(
+                                                    R.string.sidemenu_sub_option_Bookmarks)))) {
+                        if (!(VueTrendingAislesDataModel.getInstance(this)
+                                .getAisleAt(
+                                        VueApplication.getInstance()
+                                                .getClickedWindowID())
+                                .getWindowBookmarkIndicator())) {
+                            VueTrendingAislesDataModel
+                                    .getInstance(this)
+                                    .removeAisleFromList(
+                                            VueTrendingAislesDataModel
+                                                    .getInstance(this)
+                                                    .getAilsePosition(
+                                                            VueTrendingAislesDataModel
+                                                                    .getInstance(
+                                                                            this)
+                                                                    .getAisleAt(
+                                                                            VueApplication
+                                                                                    .getInstance()
+                                                                                    .getClickedWindowID())));
+                            VueTrendingAislesDataModel.getInstance(this)
+                                    .dataObserver();
+                        }
+                    }
+                } catch (Exception e) {
+                    
+                }
                 mVueAiselFragment.setAisleContentListenerNull();
                 mContentLinearLay.removeAllViews();
                 clearBitmaps();

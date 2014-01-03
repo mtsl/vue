@@ -39,7 +39,7 @@ public class UrlConstants {
     public static final String GET_USER_GOOGLEPLUS_ID_RESTURL = SERVER_BASE_URL
             + "api/userget/googleplus/";
     public static final String GET_AISLE_RESTURL = SERVER_BASE_URL
-            + "api/aisleget/id";
+            + "api/aisleget/id/";
     public static final String GET_AISLELIST_BYUSER_RESTURL = SERVER_BASE_URL
             + "api/aislesget/user";
     public static final String GET_IMAGELIST_RESTURL = SERVER_BASE_URL
