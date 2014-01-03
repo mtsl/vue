@@ -1,23 +1,18 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.BitmapLruCache;
-import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ImageDimension;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -52,6 +47,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     
     private ImageDimension mImageDimension;
     Animation myFadeInAnimation;
+    private ImageLoader mImageLoader;
     
     public AisleContentAdapter(Context context) {
         mContext = context;
@@ -60,6 +56,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         mImageViewFactory = ScaledImageViewFactory.getInstance(mContext);
         myFadeInAnimation = AnimationUtils.loadAnimation(
                 VueApplication.getInstance(), R.anim.fadein);
+        mImageLoader = new ImageLoader(VueApplication.getInstance()
+                .getRequestQueue(), BitmapLruCache.getInstance(mContext));
     }
     
     // ========================= Methods from the inherited IAisleContentAdapter
@@ -129,13 +127,13 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             Bitmap bitmap = null;
             if (contentBrowser.getmSourceName() != null
                     && contentBrowser.getmSourceName().equalsIgnoreCase(
-                            AisleDetailsViewAdapter.TAG)) {
+                            AisleDetailsViewAdapterPager.TAG)) {
                 bitmap = getCachedBitmap(itemDetails.mImageUrl);
             }
             if (bitmap != null) {
                 if (contentBrowser.getmSourceName() != null
                         && contentBrowser.getmSourceName().equalsIgnoreCase(
-                                AisleDetailsViewAdapter.TAG)) {
+                                AisleDetailsViewAdapterPager.TAG)) {
                     mImageDimension = Utils.getScalledImage(bitmap,
                             itemDetails.mAvailableWidth,
                             itemDetails.mAvailableHeight);
@@ -149,7 +147,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
             } else {
                 if (contentBrowser.getmSourceName() != null
                         && contentBrowser.getmSourceName().equalsIgnoreCase(
-                                AisleDetailsViewAdapter.TAG)) {
+                                AisleDetailsViewAdapterPager.TAG)) {
                     int bestHeight = mWindowContent
                             .getBestLargetHeightForWindow();
                     loadBitmap(itemDetails, bestHeight, contentBrowser,
@@ -172,7 +170,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     public void loadBitmap(AisleImageDetails itemDetails, int bestHeight,
             AisleContentBrowser flipper, ImageView imageView, int wantedIndex) {
         ((NetworkImageView) imageView).setImageUrl(itemDetails.mImageUrl,
-                VueApplication.getInstance().getImageCacheLoader(),
+                mImageLoader,
                 itemDetails.mTrendingImageWidth,
                 itemDetails.mTrendingImageHeight,
                 NetworkImageView.BitmapProfile.ProfileLandingView);

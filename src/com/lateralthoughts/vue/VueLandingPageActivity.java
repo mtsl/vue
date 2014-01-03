@@ -164,24 +164,6 @@ public class VueLandingPageActivity extends Activity implements
                 invalidateOptionsMenu();
             }
         });
-        VueUser storedVueUser = null;
-        try {
-            storedVueUser = Utils.readUserObjectFromFile(this,
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
-        
-        if (storedVueUser != null) {
-            VueApplication.getInstance().setmUserInitials(
-                    storedVueUser.getFirstName());
-            VueApplication.getInstance().setmUserId(storedVueUser.getId());
-            VueApplication.getInstance().setmUserName(
-                    storedVueUser.getFirstName() + " "
-                            + storedVueUser.getLastName());
-        } else {
-            showLogInDialog(false);
-        }
         SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         boolean isHelpOpend = sharedPreferencesObj.getBoolean(
@@ -191,6 +173,25 @@ public class VueLandingPageActivity extends Activity implements
             intent.putExtra(VueConstants.HELP_KEY,
                     VueConstants.HelpSCREEN_FROM_LANDING);
             startActivity(intent);
+        } else {
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(this,
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            
+            if (storedVueUser != null) {
+                VueApplication.getInstance().setmUserInitials(
+                        storedVueUser.getFirstName());
+                VueApplication.getInstance().setmUserId(storedVueUser.getId());
+                VueApplication.getInstance().setmUserName(
+                        storedVueUser.getFirstName() + " "
+                                + storedVueUser.getLastName());
+            } else {
+                showLogInDialog(false);
+            }
         }
         
         Intent intent = getIntent();
