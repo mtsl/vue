@@ -1446,8 +1446,12 @@ public class VueLandingPageActivity extends Activity implements
                                                             VueApplication
                                                                     .getInstance(),
                                                             aisleList,
-                                                            0,
-                                                            DataBaseManager.TRENDING);
+                                                            VueTrendingAislesDataModel
+                                                                    .getInstance(
+                                                                            VueApplication
+                                                                                    .getInstance())
+                                                                    .getNetworkHandler().offset,
+                                                            DataBaseManager.AISLE_CREATED);
                                             Map<String, String> articleParams = new HashMap<String, String>();
                                             VueUser storedVueUser = null;
                                             try {
