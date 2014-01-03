@@ -1,13 +1,7 @@
 package com.lateralthoughts.vue.parser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 
 import org.apache.http.HttpResponse;
@@ -17,9 +11,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.os.Environment;
-import android.util.Log;
 
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -230,10 +221,9 @@ public class Parser {
         return imageList;
     }
     
-    public AisleImageDetails getImageForImageId(String imageId) {
+    public AisleWindowContent getAisleForAisleId(String aisleId) {
         try {
-            AisleImageDetails aisleImageDetails = null;
-            URL url = new URL(UrlConstants.GET_IMAGE_RESTURL + imageId);
+            URL url = new URL(UrlConstants.GET_AISLE_RESTURL + aisleId);
             HttpGet httpGet = new HttpGet(url.toString());
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpResponse response = httpClient.execute(httpGet);
@@ -241,16 +231,30 @@ public class Parser {
                     && response.getStatusLine().getStatusCode() == 200) {
                 String responseMessage = EntityUtils.toString(response
                         .getEntity());
-                if (responseMessage != null) {
-                    JSONObject jsonObject = new JSONObject(responseMessage);
-                    aisleImageDetails = parseAisleImageData(jsonObject);
-                    if (aisleImageDetails.mImageUrl != null
-                            && (!aisleImageDetails.mImageUrl
-                                    .contains("randomurl.com"))
-                            && aisleImageDetails.mImageUrl.trim().length() > 0
-                            && aisleImageDetails.mAvailableHeight != 0
-                            && aisleImageDetails.mAvailableWidth != 0) {
-                        return aisleImageDetails;
+                if (responseMessage.length() > 0) {
+                    AisleContext aisleContext = parseAisleData(new JSONObject(
+                            responseMessage));
+                    ArrayList<AisleImageDetails> aisleImageDetailsList = null;
+                    try {
+                        aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (aisleImageDetailsList != null
+                            && aisleImageDetailsList.size() > 0) {
+                        AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getAisleItem(aisleContext.mAisleId);
+                        aisleWindowContent.addAisleContent(aisleContext,
+                                aisleImageDetailsList);
+                        aisleWindowContent
+                                .setmAisleBookmarksCount(aisleContext.mBookmarkCount);
+                        VueTrendingAislesDataModel.getInstance(
+                                VueApplication.getInstance()).addItemToList(
+                                aisleWindowContent.getAisleContext().mAisleId,
+                                aisleWindowContent);
+                        
+                        return aisleWindowContent;
                     }
                 }
             }

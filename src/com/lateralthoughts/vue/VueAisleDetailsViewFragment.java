@@ -109,7 +109,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
         // adding test comment
         // without much ado lets get started with retrieving the trending aisles
         // list
-        
         mSwipeListener = new AisleDetailsSwipeListner();
         mAisleDetailsAdapter = new AisleDetailsViewAdapterPager(mContext,
                 mSwipeListener, mListCount, null, new ShareViaVueListner());

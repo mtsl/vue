@@ -2,14 +2,6 @@ package gcm.com.vue.android.gcmclient;
 
 import gcm.com.vue.gcm.notifications.GCMClientNotification;
 import gcm.com.vue.gcm.notifications.GCMClientNotification.NotificationType;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Calendar;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -17,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -64,14 +55,6 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                             userName = lastReceivedNotification
                                     .getFirstNameOfObjectModifier();
                         }
-                        if (lastReceivedNotification
-                                .getLastNameOfObjectModifier() != null
-                                && !(lastReceivedNotification
-                                        .getLastNameOfObjectModifier()
-                                        .equals("null"))) {
-                            userName += lastReceivedNotification
-                                    .getLastNameOfObjectModifier();
-                        }
                         String notificationMessage = null;
                         // Commented On Image...
                         if (lastReceivedNotification.getNotification() == NotificationType.IMAGE_COMMENT_NOTIFICATION_TYPE) {
@@ -81,12 +64,12 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                         // Likes the image...
                         else if (lastReceivedNotification.getNotification() == NotificationType.IMAGE_RATING_NOTIFICATION_TYPE) {
                             notificationMessage = userName
-                                    + " likes your image";
+                                    + " liked your image";
                         }
                         // Added new image for an aisle...
                         else if (lastReceivedNotification.getNotification() == NotificationType.IMAGE_NOTIFICATION_TYPE) {
                             notificationMessage = userName
-                                    + " added image to your aisle";
+                                    + " added an image to your aisle";
                         }
                         NotificationManager notificationManager = (NotificationManager) VueApplication
                                 .getInstance().getSystemService(
@@ -103,7 +86,8 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                         .getCorrespondingOwnerAisleId()));
                         notificationIntent.putExtras(bundle);
                         PendingIntent contentIntent = PendingIntent
-                                .getActivity(VueApplication.getInstance(), 0,
+                                .getActivity(VueApplication.getInstance(),
+                                        (int) System.currentTimeMillis(),
                                         notificationIntent, 0);
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                                 VueApplication.getInstance())
