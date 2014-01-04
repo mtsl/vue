@@ -22,12 +22,9 @@ import com.lateralthoughts.vue.VueApplication;
 public class BitmapLoaderUtils {
     private static BitmapLoaderUtils sBitmapLoaderUtils;
     private FileCache mFileCache;
-    private BitmapLruCache mAisleImagesCache;
     
     private BitmapLoaderUtils() {
         mFileCache = VueApplication.getInstance().getFileCache();
-        mAisleImagesCache = BitmapLruCache.getInstance(VueApplication
-                .getInstance());
     }
     
     public static BitmapLoaderUtils getInstance() {
@@ -53,9 +50,6 @@ public class BitmapLoaderUtils {
         // from SD cache
         Bitmap b = decodeFile(f, bestHeight, bestWidth, source);
         if (b != null) {
-            
-            if (cacheBitmap)
-                mAisleImagesCache.putBitmap(url, b);
             return b;
         }
         
@@ -190,10 +184,6 @@ public class BitmapLoaderUtils {
         canvas.drawBitmap(originalImage, transformation, paint);
         originalImage.recycle();
         return newBitmap;
-    }
-    
-    public Bitmap getCachedBitmap(String url) {
-        return mAisleImagesCache.get(url);
     }
     
     @Deprecated
