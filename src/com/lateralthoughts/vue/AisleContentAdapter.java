@@ -47,7 +47,8 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     
     private ImageDimension mImageDimension;
     Animation myFadeInAnimation;
-    private ImageLoader mImageLoader;
+    
+    // private ImageLoader mImageLoader;
     
     public AisleContentAdapter(Context context) {
         mContext = context;
@@ -56,8 +57,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         mImageViewFactory = ScaledImageViewFactory.getInstance(mContext);
         myFadeInAnimation = AnimationUtils.loadAnimation(
                 VueApplication.getInstance(), R.anim.fadein);
-        mImageLoader = new ImageLoader(VueApplication.getInstance()
-                .getRequestQueue(), BitmapLruCache.getInstance(mContext));
+        /*
+         * mImageLoader = new ImageLoader(VueApplication.getInstance()
+         * .getRequestQueue(), BitmapLruCache.getInstance(mContext));
+         */
     }
     
     // ========================= Methods from the inherited IAisleContentAdapter
