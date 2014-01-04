@@ -480,6 +480,11 @@ public class VueLandingPageActivity extends Activity implements
     }
     
     private void handleSendImage(Intent intent, boolean fromOnCreateMethodFlag) {
+        String sourceUrl = null;
+        try {
+            sourceUrl = intent.getStringExtra(Intent.EXTRA_TEXT);
+        } catch (Exception e) {
+        }
         Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageUri != null) {
             if (Utils.isLoadDataentryScreenFlag(this)) {
@@ -499,6 +504,10 @@ public class VueLandingPageActivity extends Activity implements
                                 VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
                                 imageUrisList);
                         b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+                        if (sourceUrl != null) {
+                            b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+                                    sourceUrl);
+                        }
                         i.putExtras(b);
                         startActivity(i);
                     } else {
@@ -506,7 +515,7 @@ public class VueLandingPageActivity extends Activity implements
                         imageUriList.add(imageUri);
                         showOtherSourcesGridview(
                                 convertImageUrisToOtherSourceImageDetails(imageUriList),
-                                null);
+                                sourceUrl);
                     }
                 } else {
                     Intent i = new Intent(this, DataEntryActivity.class);
@@ -517,6 +526,10 @@ public class VueLandingPageActivity extends Activity implements
                             VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
                             imageUrisList);
                     b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+                    if (sourceUrl != null) {
+                        b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+                                sourceUrl);
+                    }
                     i.putExtras(b);
                     startActivity(i);
                 }
@@ -525,13 +538,18 @@ public class VueLandingPageActivity extends Activity implements
                 imageUriList.add(imageUri);
                 showOtherSourcesGridview(
                         convertImageUrisToOtherSourceImageDetails(imageUriList),
-                        null);
+                        sourceUrl);
             }
         }
     }
     
     private void handleSendMultipleImages(Intent intent,
             boolean fromOnCreateMethodFlag) {
+        String sourceUrl = null;
+        try {
+            sourceUrl = intent.getStringExtra(Intent.EXTRA_TEXT);
+        } catch (Exception e) {
+        }
         ArrayList<Uri> imageUris = intent
                 .getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         if (imageUris != null) {
@@ -550,12 +568,16 @@ public class VueLandingPageActivity extends Activity implements
                                 VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
                                 imageUris);
                         b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+                        if (sourceUrl != null) {
+                            b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+                                    sourceUrl);
+                        }
                         i.putExtras(b);
                         startActivity(i);
                     } else {
                         showOtherSourcesGridview(
                                 convertImageUrisToOtherSourceImageDetails(imageUris),
-                                null);
+                                sourceUrl);
                     }
                 } else {
                     Intent i = new Intent(this, DataEntryActivity.class);
@@ -565,13 +587,17 @@ public class VueLandingPageActivity extends Activity implements
                             VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
                             imageUris);
                     b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+                    if (sourceUrl != null) {
+                        b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+                                sourceUrl);
+                    }
                     i.putExtras(b);
                     startActivity(i);
                 }
             } else {
                 showOtherSourcesGridview(
                         convertImageUrisToOtherSourceImageDetails(imageUris),
-                        null);
+                        sourceUrl);
             }
         }
         
