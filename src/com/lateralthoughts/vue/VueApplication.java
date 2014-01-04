@@ -290,7 +290,9 @@ public class VueApplication extends Application {
         if (mVolleyRequestQueue != null) {
             return mVolleyRequestQueue;
         } else {
-            throw new IllegalStateException("RequestQueue not initialized");
+            mVolleyRequestQueue = Volley.newRequestQueue(this);
+            return mVolleyRequestQueue;
+            // throw new IllegalStateException("RequestQueue not initialized");
         }
     }
     

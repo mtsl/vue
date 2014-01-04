@@ -5,8 +5,8 @@ import java.io.Serializable;
 public class GCMClientNotification implements Serializable {
     
     /**
-	 * 
-	 */
+    *
+    */
     private static final long serialVersionUID = 1L;
     
     public enum NotificationType {
@@ -17,11 +17,19 @@ public class GCMClientNotification implements Serializable {
     
     private RestOperationTypeEnum operation;
     
+    private Long correspondingOwnerAisleId;
+    
+    private Long correspondingOwnerImageId;
+    
     private Long userIdOfIntendedNotificationReceipient;
     
     private Long idOfModifiedObject;
     
     private Long userIdOfObjectModifier;
+    
+    private String firstNameOfObjectModifier;
+    
+    private String lastNameOfObjectModifier;
     
     private long modifiedTime;
     
@@ -68,6 +76,38 @@ public class GCMClientNotification implements Serializable {
     
     public Long getUserIdOfObjectModifier() {
         return userIdOfObjectModifier;
+    }
+    
+    public Long getCorrespondingOwnerAisleId() {
+        return correspondingOwnerAisleId;
+    }
+    
+    public void setCorrespondingOwnerAisleId(Long correspondingOwnerAisleId) {
+        this.correspondingOwnerAisleId = correspondingOwnerAisleId;
+    }
+    
+    public Long getCorrespondingOwnerImageId() {
+        return correspondingOwnerImageId;
+    }
+    
+    public void setCorrespondingOwnerImageId(Long correspondingOwnerImageId) {
+        this.correspondingOwnerImageId = correspondingOwnerImageId;
+    }
+    
+    public String getFirstNameOfObjectModifier() {
+        return firstNameOfObjectModifier;
+    }
+    
+    public void setFirstNameOfObjectModifier(String firstNameOfObjectModifier) {
+        this.firstNameOfObjectModifier = firstNameOfObjectModifier;
+    }
+    
+    public String getLastNameOfObjectModifier() {
+        return lastNameOfObjectModifier;
+    }
+    
+    public void setLastNameOfObjectModifier(String lastNameOfObjectModifier) {
+        this.lastNameOfObjectModifier = lastNameOfObjectModifier;
     }
     
     public void setUserIdOfObjectModifier(Long userIdOfObjectModifier) {

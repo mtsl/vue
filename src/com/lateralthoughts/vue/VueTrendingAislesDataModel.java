@@ -31,10 +31,10 @@ public class VueTrendingAislesDataModel {
     // the following strings are pre-defined to help with JSON parsing
     // the tags defined here should be in sync the API documentation for the
     // backend
-    private ArrayList<AisleWindowContent> mAisleContentList;
+    public ArrayList<AisleWindowContent> mAisleContentList;
     NotifyProgress mNotifyProgress;
     boolean mRequestToServer;
-    private HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
+    public HashMap<String, AisleWindowContent> mAisleContentListMap = new HashMap<String, AisleWindowContent>();
     private int mPoolSize = 1;
     private int mMaxPoolSize = 1;
     private long mKeepAliveTime = 10;
@@ -116,7 +116,6 @@ public class VueTrendingAislesDataModel {
         } else {
             aisleItem = mAisleWindowContentFactory.getEmptyAisleWindow();
         }
-        ;
         return aisleItem;
     }
     
@@ -134,6 +133,8 @@ public class VueTrendingAislesDataModel {
     }
     
     public AisleWindowContent removeAisleFromList(int position) {
+        mAisleContentListMap.remove(mAisleContentList.get(position)
+                .getAisleId());
         return mAisleContentList.remove(position);
     }
     
@@ -359,5 +360,22 @@ public class VueTrendingAislesDataModel {
         if (mNotifyProgress != null) {
             mNotifyProgress.dismissProgress(mRequestToServer);
         }
+    }
+    
+    public int getImagePositionInAisle(AisleWindowContent aisleWindowContent,
+            String imageId) {
+        int position = 0;
+        if (aisleWindowContent != null
+                && aisleWindowContent.getImageList() != null) {
+            ArrayList<AisleImageDetails> imageList = aisleWindowContent
+                    .getImageList();
+            for (int i = 0; i < imageList.size(); i++) {
+                if (imageList.get(i).mId.equals(imageId)) {
+                    position = i;
+                    break;
+                }
+            }
+        }
+        return position;
     }
 }

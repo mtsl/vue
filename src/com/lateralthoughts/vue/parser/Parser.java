@@ -158,6 +158,10 @@ public class Parser {
                 }
                 imgComments.mCommenterUrl = commnetObj
                         .getString(VueConstants.IMAGE_COMMENT_OWNER_IMAGE_URL);
+                imgComments.mCommenterLastName = commnetObj
+                        .getString(VueConstants.AISLE_IMAGE_COMMENTER_LAST_NAME);
+                imgComments.mCommenterFirstName = commnetObj
+                        .getString(VueConstants.AISLE_IMAGE_COMMENTER_FIRST_NAME);
                 commentList.add(imgComments);
             }
         }
@@ -215,6 +219,49 @@ public class Parser {
             }
         }
         return imageList;
+    }
+    
+    public AisleWindowContent getAisleForAisleId(String aisleId) {
+        try {
+            URL url = new URL(UrlConstants.GET_AISLE_RESTURL + aisleId);
+            HttpGet httpGet = new HttpGet(url.toString());
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpResponse response = httpClient.execute(httpGet);
+            if (response.getEntity() != null
+                    && response.getStatusLine().getStatusCode() == 200) {
+                String responseMessage = EntityUtils.toString(response
+                        .getEntity());
+                if (responseMessage.length() > 0) {
+                    AisleContext aisleContext = parseAisleData(new JSONObject(
+                            responseMessage));
+                    ArrayList<AisleImageDetails> aisleImageDetailsList = null;
+                    try {
+                        aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (aisleImageDetailsList != null
+                            && aisleImageDetailsList.size() > 0) {
+                        AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getAisleItem(aisleContext.mAisleId);
+                        aisleWindowContent.addAisleContent(aisleContext,
+                                aisleImageDetailsList);
+                        aisleWindowContent
+                                .setmAisleBookmarksCount(aisleContext.mBookmarkCount);
+                        VueTrendingAislesDataModel.getInstance(
+                                VueApplication.getInstance()).addItemToList(
+                                aisleWindowContent.getAisleContext().mAisleId,
+                                aisleWindowContent);
+                        
+                        return aisleWindowContent;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
     private ArrayList<AisleWindowContent> parseAisleInformation(

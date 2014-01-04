@@ -2,9 +2,9 @@ package com.lateralthoughts.vue.utils;
 
 public class UrlConstants {
     
-    public static final String SERVER_BASE_URL = "http://2dot7-java.vueapi-canary.appspot.com/";
+    public static final String SERVER_BASE_URL = "http://2dot8-java.vueapi-canary.appspot.com/";
     // public static final String SERVER_BASE_URL =
-    // "http://2dot7-java.vueapi-canary-development.appspot.com/";
+    // "http://2dot8-java.vueapi-canary-development.appspot.com/";
     // curated
     // server
     
@@ -39,7 +39,7 @@ public class UrlConstants {
     public static final String GET_USER_GOOGLEPLUS_ID_RESTURL = SERVER_BASE_URL
             + "api/userget/googleplus/";
     public static final String GET_AISLE_RESTURL = SERVER_BASE_URL
-            + "api/aisleget/id";
+            + "api/aisleget/id/";
     public static final String GET_AISLELIST_BYUSER_RESTURL = SERVER_BASE_URL
             + "api/aislesget/user";
     public static final String GET_IMAGELIST_RESTURL = SERVER_BASE_URL
@@ -73,4 +73,6 @@ public class UrlConstants {
     
     public static final String DELETE_IMAGE_RESTURL = SERVER_BASE_URL
             + "api/imagedelete";
+    public static final String GET_IMAGE_RESTURL = SERVER_BASE_URL
+            + "api/imageget/id/";
 }

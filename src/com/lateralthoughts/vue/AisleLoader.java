@@ -9,13 +9,11 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
 
 public class AisleLoader {
     Handler handler = new Handler();
@@ -25,7 +23,6 @@ public class AisleLoader {
     private static AisleLoader sAisleLoaderInstance = null;
     private ScaledImageViewFactory mViewFactory = null;
     AisleContentClickListener mListener;
-    private ImageLoader mImageLoader;
     
     // private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String,
     // ViewHolder>();
@@ -79,8 +76,6 @@ public class AisleLoader {
         mContext = context;
         mViewFactory = ScaledImageViewFactory.getInstance(context);
         mContentAdapterFactory = ContentAdapterFactory.getInstance(mContext);
-        mImageLoader = new ImageLoader(VueApplication.getInstance()
-                .getRequestQueue(), BitmapLruCache.getInstance(mContext));
     }
     
     // This method adds the intelligence to fetch the contents of this aisle
@@ -190,7 +185,8 @@ public class AisleLoader {
                 loadBitmap(itemDetails.mCustomImageUrl, itemDetails.mImageUrl,
                         contentBrowser, imageView, bestHeight,
                         windowContent.getAisleId(), itemDetails, listener);
-                holder.profileThumbnail.setImageUrl(profleUrl, mImageLoader);
+                holder.profileThumbnail.setImageUrl(profleUrl, VueApplication
+                        .getInstance().getImageCacheLoader());
             }
         }
     }

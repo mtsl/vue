@@ -45,12 +45,10 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -85,6 +83,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
     private ListView mAisleDetailsList;
     EditTextBackEvent mEditTextFindAt;
     private LinearLayout mDetailsFindAtPopup;
+    private LinearLayout mLikeStatusImageLay;
+    private ImageView mLikeIconView;
     private TextView vueAisleHeading;
     private String mOccasion;
     private String mFindAtUrl;
@@ -108,7 +108,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
         // adding test comment
         // without much ado lets get started with retrieving the trending aisles
         // list
-        
         mSwipeListener = new AisleDetailsSwipeListner();
         mAisleDetailsAdapter = new AisleDetailsViewAdapterPager(mContext,
                 mSwipeListener, mListCount, null, new ShareViaVueListner());
@@ -144,6 +143,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 .findViewById(R.id.vue_user_pic);
         mEditIconLay = (LinearLayout) mDetailsContentView
                 .findViewById(R.id.editImage);
+        mLikeStatusImageLay = (LinearLayout) mDetailsContentView
+                .findViewById(R.id.starImage);
+        mLikeIconView = (ImageView) mDetailsContentView
+                .findViewById(R.id.staricon);
         mEditIconLay.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -177,16 +180,14 @@ public class VueAisleDetailsViewFragment extends Fragment {
             mEditTextFindAt.setText("");
             mFindAtUrl = "";
         }
-        
-        ImageLoader mImageLoader = new ImageLoader(VueApplication.getInstance()
-                .getRequestQueue(), BitmapLruCache.getInstance(mContext));
         String profileUrl = null;
         profileUrl = VueTrendingAislesDataModel
                 .getInstance(getActivity())
                 .getAisleItem(VueApplication.getInstance().getClickedWindowID())
                 .getAisleContext().mAisleOwnerImageURL;
         if (profileUrl != null && profileUrl.length() > 5) {
-            mVueUserPic.setImageUrl(profileUrl, mImageLoader);
+            mVueUserPic.setImageUrl(profileUrl, VueApplication.getInstance()
+                    .getImageCacheLoader());
         }
         mEditTextFindAt.setOnClickListener(new OnClickListener() {
             
@@ -329,21 +330,21 @@ public class VueAisleDetailsViewFragment extends Fragment {
                         int rightMargin = VueApplication.getInstance()
                                 .getPixel(14);
                         int topBottomMargin = VueApplication.getInstance()
-                                .getPixel(6);
-                        params.setMargins(leftMargin, topBottomMargin,
-                                rightMargin, topBottomMargin);
+                                .getPixel(12);
+                        params.setMargins(leftMargin, 0, rightMargin,
+                                topBottomMargin);
                         v.setLayoutParams(params);
                         v.setMaxLines(Integer.MAX_VALUE);
                     } else {
                         v.setMaxLines(maxLinesCount);
                     }
                 } else if (arg2 == 0) {
-                    int descriptionMaxCount = 3;
                     mAisleDetailsAdapter.closeKeyboard();
                     // will be called when press on the description, description
                     // text will be expand and collapse for
                     // alternative clicks
                     // get the pixel equivalent to given dp value
+                    int descriptionMaxCount = 3;
                     int leftRightMargin = VueApplication.getInstance()
                             .getPixel(8);
                     int topBottomMargin = VueApplication.getInstance()
@@ -517,8 +518,20 @@ public class VueAisleDetailsViewFragment extends Fragment {
         }
         
         @Override
-        public void onAisleSwipe(String direction, int position) {
+        public void onAisleSwipe(String direction, int position,
+                boolean editLayVisibility, boolean starLayVisibility,
+                boolean isMostLikedImage) {
             upDatePageDots(position, direction);
+            showEditIcon(editLayVisibility);
+            showLikeStatus(starLayVisibility, isMostLikedImage);
+        }
+        
+        @Override
+        public void onUpdateLikeStatus(boolean editLayVisibility,
+                boolean starLayVisibility, boolean isMostLikedImage) {
+            showEditIcon(editLayVisibility);
+            showLikeStatus(starLayVisibility, isMostLikedImage);
+            
         }
         
         public void onReceiveImageCount(int count) {
@@ -1013,6 +1026,28 @@ public class VueAisleDetailsViewFragment extends Fragment {
             mDotTen.setImageResource(R.drawable.inactive_dot);
         }
         
+    }
+    
+    private void showLikeStatus(boolean showStarLay, boolean isMostLikeImage) {
+        if (showStarLay) {
+            mLikeStatusImageLay.setVisibility(View.VISIBLE);
+            if (isMostLikeImage) {
+                mLikeIconView.setImageResource(R.drawable.vue_star_light);
+            } else {
+                mLikeIconView.setImageResource(R.drawable.vue_star_theme);
+            }
+        } else {
+            mLikeStatusImageLay.setVisibility(View.GONE);
+        }
+        
+    }
+    
+    private void showEditIcon(boolean showEditIcon) {
+        if (showEditIcon) {
+            mEditIconLay.setVisibility(View.VISIBLE);
+        } else {
+            mEditIconLay.setVisibility(View.GONE);
+        }
     }
     
     private void showDots(int dotsCount) {

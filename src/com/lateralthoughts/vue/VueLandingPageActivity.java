@@ -53,6 +53,7 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
@@ -100,12 +101,10 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mHideDefaultActionbar = false;
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
     public static boolean mIsMyAilseCallEnable = false;
-    public static String notification = null;
     
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        notification = (String) getIntent().getStringExtra("notfication");
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
                 VueConstants.LANDING_SCREEN_RECEIVER);
@@ -164,24 +163,6 @@ public class VueLandingPageActivity extends Activity implements
                 invalidateOptionsMenu();
             }
         });
-        VueUser storedVueUser = null;
-        try {
-            storedVueUser = Utils.readUserObjectFromFile(this,
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
-        
-        if (storedVueUser != null) {
-            VueApplication.getInstance().setmUserInitials(
-                    storedVueUser.getFirstName());
-            VueApplication.getInstance().setmUserId(storedVueUser.getId());
-            VueApplication.getInstance().setmUserName(
-                    storedVueUser.getFirstName() + " "
-                            + storedVueUser.getLastName());
-        } else {
-            showLogInDialog(false);
-        }
         SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         boolean isHelpOpend = sharedPreferencesObj.getBoolean(
@@ -191,6 +172,25 @@ public class VueLandingPageActivity extends Activity implements
             intent.putExtra(VueConstants.HELP_KEY,
                     VueConstants.HelpSCREEN_FROM_LANDING);
             startActivity(intent);
+        } else {
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(this,
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            
+            if (storedVueUser != null) {
+                VueApplication.getInstance().setmUserInitials(
+                        storedVueUser.getFirstName());
+                VueApplication.getInstance().setmUserId(storedVueUser.getId());
+                VueApplication.getInstance().setmUserName(
+                        storedVueUser.getFirstName() + " "
+                                + storedVueUser.getLastName());
+            } else {
+                showLogInDialog(false);
+            }
         }
         
         Intent intent = getIntent();
@@ -207,6 +207,7 @@ public class VueLandingPageActivity extends Activity implements
                 handleSendMultipleImages(intent, true);
             }
         }
+        loadDetailsScreenForNotificationClick(getIntent().getExtras());
     }
     
     @Override
@@ -479,6 +480,11 @@ public class VueLandingPageActivity extends Activity implements
     }
     
     private void handleSendImage(Intent intent, boolean fromOnCreateMethodFlag) {
+        String sourceUrl = null;
+        try {
+            sourceUrl = intent.getStringExtra(Intent.EXTRA_TEXT);
+        } catch (Exception e) {
+        }
         Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageUri != null) {
             if (Utils.isLoadDataentryScreenFlag(this)) {
@@ -498,6 +504,10 @@ public class VueLandingPageActivity extends Activity implements
                                 VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
                                 imageUrisList);
                         b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+                        if (sourceUrl != null) {
+                            b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+                                    sourceUrl);
+                        }
                         i.putExtras(b);
                         startActivity(i);
                     } else {
@@ -505,7 +515,7 @@ public class VueLandingPageActivity extends Activity implements
                         imageUriList.add(imageUri);
                         showOtherSourcesGridview(
                                 convertImageUrisToOtherSourceImageDetails(imageUriList),
-                                null);
+                                sourceUrl);
                     }
                 } else {
                     Intent i = new Intent(this, DataEntryActivity.class);
@@ -516,6 +526,10 @@ public class VueLandingPageActivity extends Activity implements
                             VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
                             imageUrisList);
                     b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+                    if (sourceUrl != null) {
+                        b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+                                sourceUrl);
+                    }
                     i.putExtras(b);
                     startActivity(i);
                 }
@@ -524,13 +538,18 @@ public class VueLandingPageActivity extends Activity implements
                 imageUriList.add(imageUri);
                 showOtherSourcesGridview(
                         convertImageUrisToOtherSourceImageDetails(imageUriList),
-                        null);
+                        sourceUrl);
             }
         }
     }
     
     private void handleSendMultipleImages(Intent intent,
             boolean fromOnCreateMethodFlag) {
+        String sourceUrl = null;
+        try {
+            sourceUrl = intent.getStringExtra(Intent.EXTRA_TEXT);
+        } catch (Exception e) {
+        }
         ArrayList<Uri> imageUris = intent
                 .getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         if (imageUris != null) {
@@ -549,12 +568,16 @@ public class VueLandingPageActivity extends Activity implements
                                 VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
                                 imageUris);
                         b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+                        if (sourceUrl != null) {
+                            b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+                                    sourceUrl);
+                        }
                         i.putExtras(b);
                         startActivity(i);
                     } else {
                         showOtherSourcesGridview(
                                 convertImageUrisToOtherSourceImageDetails(imageUris),
-                                null);
+                                sourceUrl);
                     }
                 } else {
                     Intent i = new Intent(this, DataEntryActivity.class);
@@ -564,13 +587,17 @@ public class VueLandingPageActivity extends Activity implements
                             VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS,
                             imageUris);
                     b.putBoolean(VueConstants.FROM_OTHER_SOURCES_FLAG, true);
+                    if (sourceUrl != null) {
+                        b.putString(VueConstants.FROM_OTHER_SOURCES_URL,
+                                sourceUrl);
+                    }
                     i.putExtras(b);
                     startActivity(i);
                 }
             } else {
                 showOtherSourcesGridview(
                         convertImageUrisToOtherSourceImageDetails(imageUris),
-                        null);
+                        sourceUrl);
             }
         }
         
@@ -691,12 +718,6 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        if (VueLandingPageActivity.notification != null
-                && VueLandingPageActivity.notification
-                        .equalsIgnoreCase("MyAisles")) {
-            callForNewView(getString(R.string.sidemenu_sub_option_My_Aisles),
-                    false);
-        }
     }
     
     @Override
@@ -724,7 +745,7 @@ public class VueLandingPageActivity extends Activity implements
                                                          // images
             }
         } else {
-            // Handle other intents, such as being started from the home screen
+            loadDetailsScreenForNotificationClick(intent.getExtras());
         }
     }
     
@@ -1414,5 +1435,112 @@ public class VueLandingPageActivity extends Activity implements
     }
     
     public void onClick(View view) {
+    }
+    
+    private void loadDetailsScreenForNotificationClick(Bundle notificationBundle) {
+        if (notificationBundle != null) {
+            final String notificationImageId = notificationBundle.getString(
+                    VueConstants.NOTIFICATION_IMAGE_ID, null);
+            final String notificationAisleId = notificationBundle.getString(
+                    VueConstants.NOTIFICATION_AISLE_ID, null);
+            if (notificationAisleId != null) {
+                final ProgressDialog progressDialog = ProgressDialog.show(this,
+                        "", "Loading...");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final AisleWindowContent aisleWindowContent = new Parser()
+                                .getAisleForAisleId(notificationAisleId);
+                        VueLandingPageActivity.this
+                                .runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (progressDialog != null) {
+                                            progressDialog.dismiss();
+                                        }
+                                        if (aisleWindowContent != null) {
+                                            VueTrendingAislesDataModel
+                                                    .getInstance(
+                                                            VueLandingPageActivity.this)
+                                                    .dataObserver();
+                                            List<AisleWindowContent> aisleList = new ArrayList<AisleWindowContent>();
+                                            aisleList.add(aisleWindowContent);
+                                            DataBaseManager
+                                                    .getInstance(
+                                                            VueApplication
+                                                                    .getInstance())
+                                                    .addTrentingAislesFromServerToDB(
+                                                            VueApplication
+                                                                    .getInstance(),
+                                                            aisleList,
+                                                            VueTrendingAislesDataModel
+                                                                    .getInstance(
+                                                                            VueApplication
+                                                                                    .getInstance())
+                                                                    .getNetworkHandler().offset,
+                                                            DataBaseManager.AISLE_CREATED);
+                                            Map<String, String> articleParams = new HashMap<String, String>();
+                                            VueUser storedVueUser = null;
+                                            try {
+                                                storedVueUser = Utils
+                                                        .readUserObjectFromFile(
+                                                                VueLandingPageActivity.this,
+                                                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                                            } catch (Exception e2) {
+                                                e2.printStackTrace();
+                                            }
+                                            if (storedVueUser != null) {
+                                                articleParams
+                                                        .put("User_Id",
+                                                                Long.valueOf(
+                                                                        storedVueUser
+                                                                                .getId())
+                                                                        .toString());
+                                            } else {
+                                                articleParams.put("User_Id",
+                                                        "anonymous");
+                                            }
+                                            
+                                            DataBaseManager
+                                                    .getInstance(
+                                                            VueLandingPageActivity.this)
+                                                    .updateOrAddRecentlyViewedAisles(
+                                                            aisleWindowContent
+                                                                    .getAisleId());
+                                            FlurryAgent.logEvent(
+                                                    "User_Select_Aisle",
+                                                    articleParams);
+                                            Intent intent = new Intent();
+                                            intent.setClass(
+                                                    VueLandingPageActivity.this,
+                                                    AisleDetailsViewActivity.class);
+                                            VueApplication
+                                                    .getInstance()
+                                                    .setClickedWindowID(
+                                                            aisleWindowContent
+                                                                    .getAisleId());
+                                            VueApplication
+                                                    .getInstance()
+                                                    .setClickedWindowCount(
+                                                            aisleWindowContent
+                                                                    .getImageList()
+                                                                    .size());
+                                            VueApplication
+                                                    .getInstance()
+                                                    .setmAisleImgCurrentPos(
+                                                            VueTrendingAislesDataModel
+                                                                    .getInstance(
+                                                                            VueLandingPageActivity.this)
+                                                                    .getImagePositionInAisle(
+                                                                            aisleWindowContent,
+                                                                            notificationImageId));
+                                            startActivity(intent);
+                                        }
+                                    }
+                                });
+                    }
+                }).start();
+            }
+        }
     }
 }

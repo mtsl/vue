@@ -19,7 +19,6 @@ import android.widget.ViewFlipper;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
 import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.VueAisleDetailsViewFragment;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -243,11 +242,11 @@ public class AisleContentBrowser extends ViewFlipper {
                                         mSwipeListener.onAllowListResponse();
                                     }
                                     if (mSwipeListener != null) {
-                                        mSwipeListener
+                                   /*     mSwipeListener
                                                 .onAisleSwipe(
                                                         VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT,
-                                                        currentIndex + 1);
-                                        // mSwipeListener.onDissAllowListResponse();
+                                                        currentIndex + 1);*/
+                                        
                                     }
                                     mCurrentIndex = currentIndex + 1;
                                     if (detailImgClickListenr != null) {
@@ -359,11 +358,10 @@ public class AisleContentBrowser extends ViewFlipper {
                                     }
                                     mCurrentIndex = currentIndex - 1;
                                     if (mSwipeListener != null) {
-                                        mSwipeListener
+                                      /*  mSwipeListener
                                                 .onAisleSwipe(
                                                         VueAisleDetailsViewFragment.SWIPE_RIGHT_TO_LEFT,
-                                                        currentIndex - 1);
-                                        // mSwipeListener.onDissAllowListResponse();
+                                                        currentIndex - 1);*/
                                     }
                                     if (detailImgClickListenr != null) {
                                         detailImgClickListenr
@@ -507,8 +505,8 @@ public class AisleContentBrowser extends ViewFlipper {
         mClickListener = listener;
     }
     
-    public interface AisleDetailSwipeListener {
-        public void onAisleSwipe(String id, int position);
+    public interface AisleDetailSwipeListener {  
+        public void onAisleSwipe(String id, int position,boolean editLayVisibility ,boolean starLayVisibility,boolean isMostLikedImage);
         
         public void onReceiveImageCount(int count);
         
@@ -529,6 +527,7 @@ public class AisleContentBrowser extends ViewFlipper {
         public void hasToShowEditIcon(boolean hasToShow);
         
         public void onEditAisle();
+        public void onUpdateLikeStatus(boolean editLayVisibility ,boolean starLayVisibility,boolean isMostLikedImage);
         
     }
     public void setAisleDetailSwipeListener(

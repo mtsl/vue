@@ -4,14 +4,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -19,13 +22,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Display;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -48,18 +52,6 @@ public class Help extends Activity {
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         mFromWhere = getIntent().getStringExtra(VueConstants.HELP_KEY);
         mFileCache = new FileCache(this);
-        boolean isHelpOpend = sharedPreferencesObj.getBoolean(
-                VueConstants.HELP_SCREEN_ACCES, false);
-        if (!isHelpOpend) {
-            new Thread(new Runnable() {
-                
-                @Override
-                public void run() {
-                    convertDrawableToBitmap();
-                }
-            }).start();
-            
-        }
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -93,6 +85,19 @@ public class Help extends Activity {
                                 && !mFromWhere
                                         .equalsIgnoreCase(getString(R.string.frombezel))) {
                             finish();
+                            Intent i = new Intent(Help.this,
+                                    VueLoginActivity.class);
+                            Bundle b = new Bundle();
+                            b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
+                                    false);
+                            b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+                            b.putBoolean(
+                                    VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
+                                    false);
+                            b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
+                                    false);
+                            i.putExtras(b);
+                            startActivity(i);
                         }
                     } else {
                         endReached = true;
@@ -107,6 +112,45 @@ public class Help extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+    }
+    
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (!mFromWhere.equalsIgnoreCase(getString(R.string.frombezel))) {
+                VueUser storedVueUser = null;
+                try {
+                    storedVueUser = Utils.readUserObjectFromFile(this,
+                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+                
+                if (storedVueUser != null) {
+                    VueApplication.getInstance().setmUserInitials(
+                            storedVueUser.getFirstName());
+                    VueApplication.getInstance().setmUserId(
+                            storedVueUser.getId());
+                    VueApplication.getInstance().setmUserName(
+                            storedVueUser.getFirstName() + " "
+                                    + storedVueUser.getLastName());
+                } else {
+                    Intent i = new Intent(Help.this, VueLoginActivity.class);
+                    Bundle b = new Bundle();
+                    b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+                    b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+                    b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+                    b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+                    i.putExtras(b);
+                    startActivity(i);
+                }
+                
+            }
+            
+        }
+        super.onBackPressed();
+        return false;
     }
     
     private class HelpPagerAdapter extends PagerAdapter implements
@@ -143,15 +187,11 @@ public class Help extends Activity {
             View myView = mInflater.inflate(R.layout.help_inflater, null);
             ImageView helpImage = (ImageView) myView
                     .findViewById(R.id.pager_image);
+            ProgressBar pb = (ProgressBar) myView
+                    .findViewById(R.id.progressBar1);
+            pb.setVisibility(View.GONE);
             helpImage.setVisibility(View.VISIBLE);
-            Bitmap bmp = BitmapLoaderUtils.getInstance().mAisleImagesCache
-                    .get(helpScreens[position]);
-            if (bmp != null) {
-                helpImage.setImageBitmap(bmp);
-            } else {
-                setImageResource(position, helpImage);
-            }
-            
+            setImageResource(position, helpImage, pb);
             ((ViewPager) view).addView(myView);
             return myView;
         }
@@ -212,23 +252,12 @@ public class Help extends Activity {
         }
     }
     
-    private void setImageResource(int position, ImageView helpImage) {
-        File f = mFileCache.getHelpFile(helpScreens[position]);
-        Bitmap bmp = decodeFile(f, mScreenHeight, mScreenWidth);
-        if (bmp == null) {
-            f = drawableToBitmap(position);
-            bmp = decodeFile(f, mScreenHeight, mScreenWidth);
-        }
-        BitmapLoaderUtils.getInstance().mAisleImagesCache.putBitmap(
-                helpScreens[position], bmp);
-        helpImage.setImageBitmap(bmp);
-    }
-    
-    private void convertDrawableToBitmap() {
-        for (int i = 0; i < helpScreens.length; i++) {
-            drawableToBitmap(i);
-        }
+    private void setImageResource(int position, ImageView helpImage,
+            ProgressBar progressBar) {
         
+        BitmapWorkerTask task = new BitmapWorkerTask(helpImage, progressBar,
+                position);
+        task.execute();
     }
     
     private File drawableToBitmap(int position) {
@@ -246,8 +275,61 @@ public class Help extends Activity {
         File f = mFileCache.getHelpFile(helpScreens[position]);
         Utils.saveBitmap(largeIcon, f);
         largeIcon.recycle();
+        largeIcon = null;
         return f;
         
+    }
+    
+    class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+        private final WeakReference<ProgressBar> progressBarReference;
+        int mCurrentPosition;
+        
+        public BitmapWorkerTask(ImageView imageView, ProgressBar progressBar,
+                int currentPosition) {
+            // Use a WeakReference to ensure the ImageView can be garbage
+            // collected
+            imageViewReference = new WeakReference<ImageView>(imageView);
+            progressBarReference = new WeakReference<ProgressBar>(progressBar);
+            mCurrentPosition = currentPosition;
+        }
+        
+        @Override
+        protected void onPreExecute() {
+            ProgressBar pb = progressBarReference.get();
+            if (pb != null)
+                pb.setVisibility(View.VISIBLE);
+            super.onPreExecute();
+        }
+        
+        // Decode image in background.
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+            File f = mFileCache.getHelpFile(helpScreens[mCurrentPosition]);
+            Bitmap bmp = decodeFile(f, mScreenHeight, mScreenWidth);
+            if (bmp == null) {
+                f = drawableToBitmap(mCurrentPosition);
+                bmp = decodeFile(f, mScreenHeight, mScreenWidth);
+            }
+            return bmp;
+        }
+        
+        // Once complete, see if ImageView is still around and set bitmap.
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            
+            final ImageView imageView = imageViewReference.get();
+            
+            ProgressBar pb = progressBarReference.get();
+            if (pb != null) {
+                pb.setVisibility(View.GONE);
+            }
+            if (imageView != null && bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+            }
+            
+        }
     }
     
     private Bitmap decodeFile(File f, int bestHeight, int bestWidth) {

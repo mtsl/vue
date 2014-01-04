@@ -1,13 +1,8 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -15,11 +10,6 @@ import android.widget.ImageView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.ScaleImageView;
-import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
-import com.lateralthoughts.vue.utils.FileCache;
-import com.lateralthoughts.vue.utils.ImageDimension;
-import com.lateralthoughts.vue.utils.Utils;
 
 /**
  * The AisleContentAdapter object will be associated with aisles on a per-aisle
@@ -42,7 +32,7 @@ import com.lateralthoughts.vue.utils.Utils;
  */
 public class AisleContentAdapter implements IAisleContentAdapter {
     
-    private BitmapLruCache mContentImagesCache;
+    // private BitmapLruCache mContentImagesCache;
     
     private ArrayList<AisleImageDetails> mAisleImageDetails;
     private AisleWindowContent mWindowContent;
@@ -50,13 +40,12 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     private Context mContext;
     private ScaledImageViewFactory mImageViewFactory;
     
-    private ImageDimension mImageDimension;
     Animation myFadeInAnimation;
+    
+    // private ImageLoader mImageLoader;
     
     public AisleContentAdapter(Context context) {
         mContext = context;
-        mContentImagesCache = BitmapLruCache.getInstance(VueApplication
-                .getInstance());
         mImageViewFactory = ScaledImageViewFactory.getInstance(mContext);
         myFadeInAnimation = AnimationUtils.loadAnimation(
                 VueApplication.getInstance(), R.anim.fadein);
@@ -126,47 +115,21 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         if (null != mAisleImageDetails && mAisleImageDetails.size() != 0) {
             itemDetails = mAisleImageDetails.get(wantedIndex);
             imageView = mImageViewFactory.getEmptyImageView();
-            Bitmap bitmap = null;
             if (contentBrowser.getmSourceName() != null
                     && contentBrowser.getmSourceName().equalsIgnoreCase(
-                            AisleDetailsViewAdapter.TAG)) {
-                bitmap = getCachedBitmap(itemDetails.mImageUrl);
-            }
-            if (bitmap != null) {
-                if (contentBrowser.getmSourceName() != null
-                        && contentBrowser.getmSourceName().equalsIgnoreCase(
-                                AisleDetailsViewAdapter.TAG)) {
-                    mImageDimension = Utils.getScalledImage(bitmap,
-                            itemDetails.mAvailableWidth,
-                            itemDetails.mAvailableHeight);
-                    if (bitmap.getHeight() < mImageDimension.mImgHeight) {
-                        loadBitmap(itemDetails, mImageDimension.mImgHeight,
-                                contentBrowser, imageView, wantedIndex);
-                    }
-                }
-                imageView.setImageBitmap(bitmap);
+                            AisleDetailsViewAdapterPager.TAG)) {
+                int bestHeight = mWindowContent.getBestLargetHeightForWindow();
+                loadBitmap(itemDetails, bestHeight, contentBrowser, imageView,
+                        wantedIndex);
                 contentBrowser.addView(imageView);
             } else {
-                if (contentBrowser.getmSourceName() != null
-                        && contentBrowser.getmSourceName().equalsIgnoreCase(
-                                AisleDetailsViewAdapter.TAG)) {
-                    int bestHeight = mWindowContent
-                            .getBestLargetHeightForWindow();
-                    loadBitmap(itemDetails, bestHeight, contentBrowser,
-                            imageView, wantedIndex);
-                    contentBrowser.addView(imageView);
-                } else {
-                    loadBitmap(itemDetails, itemDetails.mTrendingImageHeight,
-                            contentBrowser, imageView, wantedIndex);
-                    contentBrowser.addView(imageView);
-                }
+                loadBitmap(itemDetails, itemDetails.mTrendingImageHeight,
+                        contentBrowser, imageView, wantedIndex);
+                contentBrowser.addView(imageView);
             }
+            
         }
         return true;
-    }
-    
-    public Bitmap getCachedBitmap(String url) {
-        return mContentImagesCache.get(url);
     }
     
     public void loadBitmap(AisleImageDetails itemDetails, int bestHeight,

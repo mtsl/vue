@@ -414,11 +414,7 @@ public class DataEntryActivity extends Activity {
                     mDataEntryFragment.mCategoryheadingLayout
                             .setVisibility(View.VISIBLE);
                 }
-                if (b.getString(VueConstants.FROM_OTHER_SOURCES_URL) != null) {
-                    mDataEntryFragment.getImagesFromUrl(b
-                            .getString(VueConstants.FROM_OTHER_SOURCES_URL));
-                } else if (b
-                        .getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS) != null) {
+                if (b.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS) != null) {
                     ArrayList<Uri> imageUrisList = b
                             .getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS);
                     ArrayList<OtherSourceImageDetails> otherSourcesImageDetailsList = new ArrayList<OtherSourceImageDetails>();
@@ -428,8 +424,16 @@ public class DataEntryActivity extends Activity {
                         otherSourcesImageDetailsList
                                 .add(otherSourceImageDetails);
                     }
+                    String sourceUrl = "";
+                    if (b.getString(VueConstants.FROM_OTHER_SOURCES_URL) != null) {
+                        sourceUrl = b
+                                .getString(VueConstants.FROM_OTHER_SOURCES_URL);
+                    }
                     mDataEntryFragment.showOtherSourcesGridview(
-                            otherSourcesImageDetailsList, "");
+                            otherSourcesImageDetailsList, sourceUrl);
+                } else if (b.getString(VueConstants.FROM_OTHER_SOURCES_URL) != null) {
+                    mDataEntryFragment.getImagesFromUrl(b
+                            .getString(VueConstants.FROM_OTHER_SOURCES_URL));
                 }
             }
         }

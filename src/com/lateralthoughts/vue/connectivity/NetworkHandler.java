@@ -296,7 +296,6 @@ public class NetworkHandler {
                     VueApplication.getInstance().sendBroadcast(i);
                     VueTrendingAislesDataModel.getInstance(
                             VueApplication.getInstance()).dataObserver();
-                    
                 } else {
                     
                     StackViews.getInstance().pull();
@@ -397,7 +396,6 @@ public class NetworkHandler {
                                                         Toast.LENGTH_LONG)
                                                         .show();
                                             }
-                                            VueLandingPageActivity.notification = null;
                                             VueTrendingAislesDataModel
                                                     .getInstance(
                                                             VueApplication

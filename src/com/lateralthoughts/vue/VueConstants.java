@@ -16,6 +16,8 @@ public class VueConstants {
     public static final String GCM_REGISTRATION_ID = "GCMRegistrationId";
     public static final String LANDING_SCREEN_RECEIVER = "LandingscreenReceiver";
     public static final String LANDING_SCREEN_RECEIVER_KEY = "LandingScreenReceiverKey";
+    public static final String NOTIFICATION_IMAGE_ID = "notficationImageId";
+    public static final String NOTIFICATION_AISLE_ID = "notficationAisleId";
     public static final String FACEBOOK = "Facebook";
     public static final String GOOGLEPLUS = "Googleplus";
     public static final String HelpSCREEN_FROM_LANDING = "HelpScreenFromLanding";
@@ -231,6 +233,8 @@ public class VueConstants {
     public static final String AISLE_IMAGE_COMMENTS_COMMENT = "comment";
     public static final String AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME = "lastModifiedTimestamp";
     public static final String AISLE_IMAGE_COMMENTS_CREATED_TIME = "createdTimestamp";
+    public static final String AISLE_IMAGE_COMMENTER_LAST_NAME = "imageCommentOwnerLastName";
+    public static final String AISLE_IMAGE_COMMENTER_FIRST_NAME = "imageCommentOwnerFirstName";
     
     // User response Keys
     public static final String USER_RESPONSE_ID = "id";

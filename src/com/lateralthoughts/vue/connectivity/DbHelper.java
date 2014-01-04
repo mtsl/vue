@@ -59,7 +59,9 @@ public class DbHelper extends SQLiteOpenHelper {
             + " integer, " + VueConstants.DELETE_FLAG + " integer, "
             + VueConstants.LAST_MODIFIED_TIME + " long, "
             + VueConstants.COMMENTER_URL + " text, " + VueConstants.COMMENTS
-            + " text);";
+            + " text, " + VueConstants.AISLE_IMAGE_COMMENTER_FIRST_NAME
+            + " text, " + VueConstants.AISLE_IMAGE_COMMENTER_LAST_NAME
+            + " text );";
     
     private String mCreateLookingForTable = "create table if not exists "
             + DATABASE_TABLE_LOOKINGFOR + " (" + VueConstants.ID

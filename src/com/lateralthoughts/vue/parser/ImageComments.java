@@ -6,4 +6,6 @@ public class ImageComments {
     public Long mImageId;
     public Long mLastModifiedTimestamp;
     public String mCommenterUrl;
+    public String mCommenterLastName;
+    public String mCommenterFirstName;
 }
