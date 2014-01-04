@@ -30,7 +30,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -53,16 +52,6 @@ public class Help extends Activity {
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         mFromWhere = getIntent().getStringExtra(VueConstants.HELP_KEY);
         mFileCache = new FileCache(this);
-        /*
-         * boolean isHelpOpend = sharedPreferencesObj.getBoolean(
-         * VueConstants.HELP_SCREEN_ACCES, false); if (!isHelpOpend) { new
-         * Thread(new Runnable() {
-         * 
-         * @Override public void run() { convertDrawableToBitmap(); }
-         * }).start();
-         * 
-         * }
-         */
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -202,14 +191,7 @@ public class Help extends Activity {
                     .findViewById(R.id.progressBar1);
             pb.setVisibility(View.GONE);
             helpImage.setVisibility(View.VISIBLE);
-            Bitmap bmp = BitmapLoaderUtils.getInstance().mAisleImagesCache
-                    .get(helpScreens[position]);
-            if (bmp != null) {
-                helpImage.setImageBitmap(bmp);
-            } else {
-                setImageResource(position, helpImage, pb);
-            }
-            
+            setImageResource(position, helpImage, pb);
             ((ViewPager) view).addView(myView);
             return myView;
         }
@@ -276,22 +258,6 @@ public class Help extends Activity {
         BitmapWorkerTask task = new BitmapWorkerTask(helpImage, progressBar,
                 position);
         task.execute();
-        /*
-         * 
-         * File f = mFileCache.getHelpFile(helpScreens[position]); Bitmap bmp =
-         * decodeFile(f, mScreenHeight, mScreenWidth); if (bmp == null) { f =
-         * drawableToBitmap(position); bmp = decodeFile(f, mScreenHeight,
-         * mScreenWidth); }
-         * BitmapLoaderUtils.getInstance().mAisleImagesCache.putBitmap(
-         * helpScreens[position], bmp); helpImage.setImageBitmap(bmp);
-         */
-    }
-    
-    private void convertDrawableToBitmap() {
-        for (int i = 0; i < helpScreens.length; i++) {
-            drawableToBitmap(i);
-        }
-        
     }
     
     private File drawableToBitmap(int position) {
@@ -346,11 +312,6 @@ public class Help extends Activity {
                 f = drawableToBitmap(mCurrentPosition);
                 bmp = decodeFile(f, mScreenHeight, mScreenWidth);
             }
-            if (bmp != null) {
-                BitmapLoaderUtils.getInstance().mAisleImagesCache.putBitmap(
-                        helpScreens[mCurrentPosition], bmp);
-            }
-            
             return bmp;
         }
         

@@ -22,7 +22,7 @@ import com.lateralthoughts.vue.VueApplication;
 public class BitmapLoaderUtils {
     private static BitmapLoaderUtils sBitmapLoaderUtils;
     private FileCache mFileCache;
-    public BitmapLruCache mAisleImagesCache;
+    private BitmapLruCache mAisleImagesCache;
     
     private BitmapLoaderUtils() {
         mFileCache = VueApplication.getInstance().getFileCache();
