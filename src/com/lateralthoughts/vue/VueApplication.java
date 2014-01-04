@@ -13,11 +13,14 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.LruCache;
 import android.util.TypedValue;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
@@ -188,16 +191,19 @@ public class VueApplication extends Application {
         Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
                 crittercismConfig);
         
-        /*
-         * mImageLoader = new NetworkImageLoader(mVolleyRequestQueue, new
-         * ImageLoader.ImageCache() { private final LruCache<String, Bitmap>
-         * mCache = new LruCache<String, Bitmap>( MAX_BITMAP_COUNT);
-         * 
-         * public void putBitmap(String url, Bitmap bitmap) { mCache.put(url,
-         * bitmap); }
-         * 
-         * public Bitmap getBitmap(String url) { return mCache.get(url); } });
-         */
+        mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
+                new ImageLoader.ImageCache() {
+                    private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(
+                            MAX_BITMAP_COUNT);
+                    
+                    public void putBitmap(String url, Bitmap bitmap) {
+                        mCache.put(url, bitmap);
+                    }
+                    
+                    public Bitmap getBitmap(String url) {
+                        return mCache.get(url);
+                    }
+                });
         
     }
     
@@ -290,10 +296,10 @@ public class VueApplication extends Application {
         }
     }
     
-    /*
-     * public ImageLoader getImageCacheLoader() { return mImageLoader; }
-     * 
-     * private ImageLoader mImageLoader;
-     */
+    public ImageLoader getImageCacheLoader() {
+        return mImageLoader;
+    }
+    
+    private ImageLoader mImageLoader;
     
 }

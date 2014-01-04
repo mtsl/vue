@@ -178,15 +178,15 @@ public class VueAisleDetailsViewFragment extends Fragment {
             mFindAtUrl = "";
         }
         
-        ImageLoader mImageLoader = new ImageLoader(VueApplication.getInstance()
-                .getRequestQueue(), BitmapLruCache.getInstance(mContext));
+       /* ImageLoader mImageLoader = new ImageLoader(VueApplication.getInstance()
+                .getRequestQueue(), BitmapLruCache.getInstance(mContext));*/
         String profileUrl = null;
         profileUrl = VueTrendingAislesDataModel
                 .getInstance(getActivity())
                 .getAisleItem(VueApplication.getInstance().getClickedWindowID())
                 .getAisleContext().mAisleOwnerImageURL;
         if (profileUrl != null && profileUrl.length() > 5) {
-            mVueUserPic.setImageUrl(profileUrl, mImageLoader);
+            mVueUserPic.setImageUrl(profileUrl, VueApplication.getInstance().getImageCacheLoader());
         }
         mEditTextFindAt.setOnClickListener(new OnClickListener() {
             

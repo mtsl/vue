@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.lateralthoughts.vue.utils.BitmapLruCache;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 
 public class InviteFriendsAdapter extends BaseAdapter {
@@ -30,8 +29,7 @@ public class InviteFriendsAdapter extends BaseAdapter {
             boolean fromDataentryScreen) {
         this.mContext = context;
         mItems = objects;
-        mImageLoader = new ImageLoader(VueApplication.getInstance()
-                .getRequestQueue(), BitmapLruCache.getInstance(mContext));
+        mImageLoader = VueApplication.getInstance().getImageCacheLoader();
         mFromDataentryScreen = fromDataentryScreen;
     }
     

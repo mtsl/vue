@@ -170,7 +170,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     public void loadBitmap(AisleImageDetails itemDetails, int bestHeight,
             AisleContentBrowser flipper, ImageView imageView, int wantedIndex) {
         ((NetworkImageView) imageView).setImageUrl(itemDetails.mImageUrl,
-                mImageLoader,
+                VueApplication.getInstance().getImageCacheLoader(),
                 itemDetails.mTrendingImageWidth,
                 itemDetails.mTrendingImageHeight,
                 NetworkImageView.BitmapProfile.ProfileLandingView);

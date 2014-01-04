@@ -200,7 +200,7 @@ public class AisleLoader {
             String asileId, AisleImageDetails itemDetails,
             AisleContentClickListener listener) {
         ((NetworkImageView) imageView).setImageUrl(itemDetails.mImageUrl,
-                mImageLoader, itemDetails.mTrendingImageWidth,
+                VueApplication.getInstance().getImageCacheLoader(), itemDetails.mTrendingImageWidth,
                 itemDetails.mTrendingImageHeight,
                 NetworkImageView.BitmapProfile.ProfileLandingView);
         

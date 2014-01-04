@@ -129,8 +129,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         myFadeInAnimation = AnimationUtils.loadAnimation(
                 VueApplication.getInstance(), R.anim.fadein);
         mBitmapLoaderUtils = BitmapLoaderUtils.getInstance();
-        mImageLoader = new ImageLoader(VueApplication.getInstance()
-                .getRequestQueue(), BitmapLruCache.getInstance(mContext));
+        mImageLoader = VueApplication.getInstance().getImageCacheLoader();
         mTopBottomMargin = VueApplication.getInstance().getPixel(
                 mTopBottomMargin);
         pageListener = new PageListener();
