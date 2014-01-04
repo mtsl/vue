@@ -1349,11 +1349,16 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         @Override
         public void destroyItem(View view, int arg1, Object object) {
             ((ViewPager) view).removeView((RelativeLayout) object);
+            
+        }
+        
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            super.destroyItem(container, position, object);
         }
         
         @Override
         public void finishUpdate(View arg0) {
-            
         }
         
         @Override
