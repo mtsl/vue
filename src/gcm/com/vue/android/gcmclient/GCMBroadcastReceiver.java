@@ -46,63 +46,75 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                             .getUserIdOfIntendedNotificationReceipient()
                             .equals(lastReceivedNotification
                                     .getUserIdOfObjectModifier()))) {
-                        String userName = "";
                         if (lastReceivedNotification
-                                .getFirstNameOfObjectModifier() != null
-                                && !(lastReceivedNotification
-                                        .getFirstNameOfObjectModifier()
-                                        .equals("null"))) {
-                            userName = lastReceivedNotification
-                                    .getFirstNameOfObjectModifier();
+                                .getCorrespondingOwnerAisleId() != null
+                                && lastReceivedNotification
+                                        .getCorrespondingOwnerImageId() != null
+                                && (lastReceivedNotification
+                                        .getFirstNameOfObjectModifier() != null || lastReceivedNotification
+                                        .getLastNameOfObjectModifier() != null)) {
+                            String userName = "";
+                            if (lastReceivedNotification
+                                    .getFirstNameOfObjectModifier() != null
+                                    && !(lastReceivedNotification
+                                            .getFirstNameOfObjectModifier()
+                                            .equals("null"))) {
+                                userName = lastReceivedNotification
+                                        .getFirstNameOfObjectModifier();
+                            }
+                            String notificationMessage = null;
+                            // Commented On Image...
+                            if (lastReceivedNotification.getNotification() == NotificationType.IMAGE_COMMENT_NOTIFICATION_TYPE) {
+                                notificationMessage = userName
+                                        + " commented on your image";
+                            }
+                            // Likes the image...
+                            else if (lastReceivedNotification.getNotification() == NotificationType.IMAGE_RATING_NOTIFICATION_TYPE) {
+                                notificationMessage = userName
+                                        + " liked your image";
+                            }
+                            // Added new image for an aisle...
+                            else if (lastReceivedNotification.getNotification() == NotificationType.IMAGE_NOTIFICATION_TYPE) {
+                                notificationMessage = userName
+                                        + " added an image to your aisle";
+                            }
+                            NotificationManager notificationManager = (NotificationManager) VueApplication
+                                    .getInstance().getSystemService(
+                                            Context.NOTIFICATION_SERVICE);
+                            Intent notificationIntent = new Intent(
+                                    VueApplication.getInstance(),
+                                    VueLandingPageActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(
+                                    VueConstants.NOTIFICATION_IMAGE_ID,
+                                    String.valueOf(lastReceivedNotification
+                                            .getCorrespondingOwnerImageId()));
+                            bundle.putString(
+                                    VueConstants.NOTIFICATION_AISLE_ID,
+                                    String.valueOf(lastReceivedNotification
+                                            .getCorrespondingOwnerAisleId()));
+                            notificationIntent.putExtras(bundle);
+                            PendingIntent contentIntent = PendingIntent
+                                    .getActivity(VueApplication.getInstance(),
+                                            (int) System.currentTimeMillis(),
+                                            notificationIntent, 0);
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                                    VueApplication.getInstance())
+                                    .setContentTitle(
+                                            VueApplication
+                                                    .getInstance()
+                                                    .getResources()
+                                                    .getString(
+                                                            R.string.app_name))
+                                    .setSmallIcon(
+                                            R.drawable.vue_notification_icon)
+                                    .setContentText(notificationMessage);
+                            builder.setContentIntent(contentIntent);
+                            builder.setAutoCancel(true);
+                            notificationManager.notify(
+                                    VueConstants.GCM_NOTIFICATION_ID,
+                                    builder.build());
                         }
-                        String notificationMessage = null;
-                        // Commented On Image...
-                        if (lastReceivedNotification.getNotification() == NotificationType.IMAGE_COMMENT_NOTIFICATION_TYPE) {
-                            notificationMessage = userName
-                                    + " commented on your image";
-                        }
-                        // Likes the image...
-                        else if (lastReceivedNotification.getNotification() == NotificationType.IMAGE_RATING_NOTIFICATION_TYPE) {
-                            notificationMessage = userName
-                                    + " liked your image";
-                        }
-                        // Added new image for an aisle...
-                        else if (lastReceivedNotification.getNotification() == NotificationType.IMAGE_NOTIFICATION_TYPE) {
-                            notificationMessage = userName
-                                    + " added an image to your aisle";
-                        }
-                        NotificationManager notificationManager = (NotificationManager) VueApplication
-                                .getInstance().getSystemService(
-                                        Context.NOTIFICATION_SERVICE);
-                        Intent notificationIntent = new Intent(
-                                VueApplication.getInstance(),
-                                VueLandingPageActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(VueConstants.NOTIFICATION_IMAGE_ID,
-                                String.valueOf(lastReceivedNotification
-                                        .getCorrespondingOwnerImageId()));
-                        bundle.putString(VueConstants.NOTIFICATION_AISLE_ID,
-                                String.valueOf(lastReceivedNotification
-                                        .getCorrespondingOwnerAisleId()));
-                        notificationIntent.putExtras(bundle);
-                        PendingIntent contentIntent = PendingIntent
-                                .getActivity(VueApplication.getInstance(),
-                                        (int) System.currentTimeMillis(),
-                                        notificationIntent, 0);
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                                VueApplication.getInstance())
-                                .setContentTitle(
-                                        VueApplication.getInstance()
-                                                .getResources()
-                                                .getString(R.string.app_name))
-                                .setSmallIcon(R.drawable.vue_notification_icon)
-                                .setStyle(new NotificationCompat.BigTextStyle())
-                                .setContentText(notificationMessage);
-                        builder.setContentIntent(contentIntent);
-                        builder.setAutoCancel(true);
-                        notificationManager.notify(
-                                VueConstants.GCM_NOTIFICATION_ID,
-                                builder.build());
                     }
                 }
             }
