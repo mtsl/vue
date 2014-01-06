@@ -2,9 +2,9 @@ package com.lateralthoughts.vue.utils;
 
 public class UrlConstants {
     
-    public static final String SERVER_BASE_URL = "http://2dot8-java.vueapi-canary.appspot.com/";
     // public static final String SERVER_BASE_URL =
-    // "http://2dot8-java.vueapi-canary-development.appspot.com/";
+    // "http://2dot8-java.vueapi-canary.appspot.com/";
+    public static final String SERVER_BASE_URL = "http://2dot8-java.vueapi-canary-development.appspot.com/";
     // curated
     // server
     
@@ -12,7 +12,7 @@ public class UrlConstants {
     private static final String DEVELOPMENT_SERVER_PROJECT_ID = "477960328185";
     private static final String DEVELOPMENT1_SERVER_PROJECT_ID = "341676083313";
     
-    public static final String CURRENT_SERVER_PROJECT_ID = CANARY_SERVER_PROJECT_ID;
+    public static final String CURRENT_SERVER_PROJECT_ID = DEVELOPMENT_SERVER_PROJECT_ID;
     
     /**
      * (C)reate routine URL's
