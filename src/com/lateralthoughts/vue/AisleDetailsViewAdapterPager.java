@@ -689,7 +689,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             @Override
             public void onClick(View v) {
+                mSetPager = false;
                 toggleRatingImage();
+                setmSetPagerToTrue();
             }
         });
         mViewHolder.likelay.setOnLongClickListener(new OnLongClickListener() {
@@ -1106,7 +1108,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         if (position == mCurrentDispImageIndex) {
             mLikes = getItem(mCurrentAislePosition).getImageList()
                     .get(position).mLikesCount;
+            mSetPager = false;
             notifyAdapter();
+            setmSetPagerToTrue();
         }
     }
     
@@ -1127,7 +1131,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         if (position == mCurrentDispImageIndex) {
             mLikes = getItem(mCurrentAislePosition).getImageList()
                     .get(position).mLikesCount;
+            mSetPager = false;
             notifyAdapter();
+            setmSetPagerToTrue();
         }
     }
     
@@ -1520,11 +1526,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     
     private class PageListener extends SimpleOnPageChangeListener {
         public void onPageSelected(int position) {
-            
+            mSetPager = false;
             mCurrentDispImageIndex = position;
             if (detailsImageClickListenr != null)
                 detailsImageClickListenr.onImageSwipe(position);
-            mSetPager = false;
             mswipeListner.onAllowListResponse();
             setmSetPagerToTrue();
             if (getItem(mCurrentAislePosition).getImageList().size() == position) {
