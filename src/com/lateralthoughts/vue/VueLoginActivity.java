@@ -141,11 +141,6 @@ public class VueLoginActivity extends FragmentActivity implements
         mUiHelper = new UiLifecycleHelper(this, mCallback);
         mUiHelper.onCreate(savedInstanceState);
         mTrendingbg = (ImageView) findViewById(R.id.trendingbg);
-        try {
-            mTrendingbg.setBackgroundResource(R.drawable.trendingbg);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
         RelativeLayout googleplusign_in_buttonlayout = (RelativeLayout) findViewById(R.id.googleplusign_in_buttonlayout);
         RelativeLayout instagramSignInButtonLayout = (RelativeLayout) findViewById(R.id.instagramsign_in_buttonlayout);
         RelativeLayout fblog_in_buttonlayout = (RelativeLayout) findViewById(R.id.fblog_in_buttonlayout);
