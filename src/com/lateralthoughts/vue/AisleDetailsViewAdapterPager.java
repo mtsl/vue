@@ -75,6 +75,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private VueUser mStoredVueUser = null;
     public static final int SWIPE_MIN_DISTANCE = 30;
     private LayoutInflater mInflater;
+    MyPagerAdapter mPagerAdapter;
     // we need to customize the layout depending on screen height & width which
     // we will get on the fly
     private int mListCount;
@@ -105,7 +106,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private int mPrevPosition;
     private PageListener pageListener;
     private DetailImageClickListener detailsImageClickListenr;
-    private boolean mSetPager = true;
+    public boolean mSetPager = true;
     private Bitmap profileUserBmp;
     
     @SuppressWarnings("unchecked")
@@ -245,6 +246,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         }
         mBestHeight = Utils.modifyHeightForDetailsView(getItem(
                 mCurrentAislePosition).getImageList());
+        mPagerAdapter = new MyPagerAdapter();
+        
     }
     
     @Override
@@ -405,7 +408,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             mViewHolder.separator.setVisibility(View.GONE);
             mViewHolder.edtCommentLay.setVisibility(View.GONE);
             if (mSetPager) {
-                mViewHolder.myPager.setAdapter(new MyPagerAdapter());
+                mViewHolder.myPager.setAdapter(mPagerAdapter);
                 mViewHolder.myPager.setOnPageChangeListener(pageListener);
                 setParams(mViewHolder.aisleContentBrowser, mBestHeight);
                 mViewHolder.myPager.setPageTransformer(true,
@@ -689,15 +692,15 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             @Override
             public void onClick(View v) {
+                mSetPager = false;
                 toggleRatingImage();
+                setmSetPagerToTrue();
             }
         });
         mViewHolder.likelay.setOnLongClickListener(new OnLongClickListener() {
             
             @Override
             public boolean onLongClick(View arg0) {
-                Toast.makeText(mContext, "You clicked.", Toast.LENGTH_LONG)
-                        .show();
                 return false;
             }
         });
@@ -1106,7 +1109,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         if (position == mCurrentDispImageIndex) {
             mLikes = getItem(mCurrentAislePosition).getImageList()
                     .get(position).mLikesCount;
+            mSetPager = false;
             notifyAdapter();
+            setmSetPagerToTrue();
         }
     }
     
@@ -1127,7 +1132,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         if (position == mCurrentDispImageIndex) {
             mLikes = getItem(mCurrentAislePosition).getImageList()
                     .get(position).mLikesCount;
+            mSetPager = false;
             notifyAdapter();
+            setmSetPagerToTrue();
         }
     }
     
@@ -1139,7 +1146,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
         mViewHolder.enterCommentrellay.setVisibility(View.GONE);
         mCloseKeyboard = true;
+        mSetPager = false;
         notifyAdapter();
+        setmSetPagerToTrue();
     }
     
     private void handleBookmark(boolean isBookmarked, String aisleId) {
@@ -1520,11 +1529,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     
     private class PageListener extends SimpleOnPageChangeListener {
         public void onPageSelected(int position) {
-            
+            mSetPager = false;
             mCurrentDispImageIndex = position;
             if (detailsImageClickListenr != null)
                 detailsImageClickListenr.onImageSwipe(position);
-            mSetPager = false;
             mswipeListner.onAllowListResponse();
             setmSetPagerToTrue();
             if (getItem(mCurrentAislePosition).getImageList().size() == position) {
@@ -1609,7 +1617,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     
     int mLikePageDelay = 1000;
     
-    private void setmSetPagerToTrue() {
+    public void setmSetPagerToTrue() {
         new Handler().postDelayed(new Runnable() {
             
             @Override
