@@ -478,7 +478,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 return false;
             }
         });
-        mAisleDetailsAdapter.notifyDataSetChanged();
         return mDetailsContentView;
     }
     
@@ -486,7 +485,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
     public void onResume() {
         super.onResume();
         upDatePageDots(mHighlightPosition, "right");
-        mAisleDetailsAdapter.notifyDataSetChanged();
         ViewTreeObserver vto = mVueUserName.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
             
@@ -618,8 +616,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
                                     
                                     @Override
                                     public void run() {
+                                        mAisleDetailsAdapter.mSetPager = false;
                                         mAisleDetailsAdapter
                                                 .notifyDataSetChanged();
+                                        mAisleDetailsAdapter.setmSetPagerToTrue();
                                     }
                                 }, mAdapterNotifyDelay);
                                 return;
@@ -836,7 +836,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void run() {
+                mAisleDetailsAdapter.mSetPager = false;
                 mAisleDetailsAdapter.notifyDataSetChanged();
+                mAisleDetailsAdapter.setmSetPagerToTrue();
                 
             }
         }, mAdapterNotifyDelay);
