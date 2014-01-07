@@ -33,9 +33,7 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -71,7 +69,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     public static final String CHANGE_COMMENT = "COMMENT";
     private static final String CHANGE_LIKES = "LIKES";
     private AisleDetailSwipeListener mswipeListner;
-    private boolean mCloseKeyboard = false;
     private VueUser mStoredVueUser = null;
     public static final int SWIPE_MIN_DISTANCE = 30;
     private LayoutInflater mInflater;
@@ -88,17 +85,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private int mInitialCommentsToShowSize = 2;
     public String mVueusername;
     ShareDialog mShare;
-    public int mCurrentAislePosition;
-    public ArrayList<String> mImageDetailsArr = null;
+    private int mCurrentAislePosition;
     @SuppressLint("UseSparseArrays")
     Map<Integer, ArrayList<ImageComments>> mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
     private ArrayList<Comment> mShowingCommentList = new ArrayList<Comment>();
     private int mBestHeight;
-    private int mTopBottomMargin = 24;
     private ViewHolder mViewHolder;
     private static final int mWaitTime = 1000;
     private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
-    public ArrayList<String> mCustomUrls = new ArrayList<String>();
     private LoginWarningMessage mLoginWarningMessage = null;
     private long mUserId;
     private ImageLoader mImageLoader;
@@ -108,8 +102,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private DetailImageClickListener detailsImageClickListenr;
     public boolean mSetPager = true;
     private Bitmap profileUserBmp;
-    
-    @SuppressWarnings("unchecked")
+     
     public AisleDetailsViewAdapterPager(Context c,
             AisleDetailSwipeListener swipeListner, int listCount,
             ArrayList<AisleWindowContent> content,
@@ -121,8 +114,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 .getmAisleImgCurrentPos();
         mContext = c;
         mImageLoader = VueApplication.getInstance().getImageCacheLoader();
-        mTopBottomMargin = VueApplication.getInstance().getPixel(
-                mTopBottomMargin);
         pageListener = new PageListener();
         mswipeListner = swipeListner;
         mListCount = listCount;
@@ -141,6 +132,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
             if (getItem(i).getAisleId().equalsIgnoreCase(
                     VueApplication.getInstance().getClickedWindowID())) {
+                //get the clicked window position.
                 mCurrentAislePosition = i;
                 break;
             }
@@ -177,9 +169,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
                     .size(); i++) {
-                mCustomUrls.add(getItem(mCurrentAislePosition).getImageList()
-                        .get(i).mCustomImageUrl);
                 if (getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight > mBestHeight) {
+                    //find the best height among all images.
                     mBestHeight = getItem(mCurrentAislePosition).getImageList()
                             .get(i).mAvailableHeight;
                 }
@@ -187,8 +178,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 mCommentsMapList.put(i, getItem(mCurrentAislePosition)
                         .getImageList().get(i).mCommentsList);
             }
-            
-            mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
             ArrayList<ImageComments> imgComments = getItem(
                     mCurrentAislePosition).getImageList().get(
                     VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
@@ -274,17 +263,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         String uniqueContentId;
         LinearLayout aisleDescriptor;
         LinearLayout imgContentlay, commentContentlay;
-        LinearLayout vueCommentheader, addCommentlay, descriptionlay;
+        LinearLayout vueCommentheader, descriptionlay;
         TextView userComment, enterComment;
         ImageView commentImg, likeImg;
         NetworkImageView userPic;
         RelativeLayout exapandHolder;
-        EditText edtComment;
         View separator;
-        RelativeLayout enterCommentrellay;
         RelativeLayout likelay, bookmarklay;
-        FrameLayout edtCommentLay;
-        ImageView commentSend;
         LinearLayout starImage;
         ViewPager myPager;
         String tag;
@@ -327,17 +312,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .findViewById(R.id.likelay);
             mViewHolder.bookmarklay = (RelativeLayout) convertView
                     .findViewById(R.id.bookmarklay);
-            mViewHolder.enterCommentrellay = (RelativeLayout) convertView
-                    .findViewById(R.id.entercmentrellay);
-            
-            mViewHolder.edtComment = (EditText) convertView
-                    .findViewById(R.id.edtcomment);
             mViewHolder.likeImg = (ImageView) convertView
                     .findViewById(R.id.vuewndow_lik_img);
             mViewHolder.likeCount = (TextView) convertView
                     .findViewById(R.id.vuewndow_lik_count);
-            mViewHolder.addCommentlay = (LinearLayout) convertView
-                    .findViewById(R.id.addcommentlay);
             mViewHolder.exapandHolder = (RelativeLayout) convertView
                     .findViewById(R.id.exapandholder);
             mViewHolder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
@@ -357,11 +335,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             mViewHolder.commentImg = (ImageView) convertView
                     .findViewById(R.id.vuewndow_comment_img);
-            mViewHolder.commentSend = (ImageView) convertView
-                    .findViewById(R.id.sendcomment);
-            
-            mViewHolder.edtCommentLay = (FrameLayout) convertView
-                    .findViewById(R.id.edtcommentlay);
             mViewHolder.myPager = (ViewPager) convertView
                     .findViewById(R.id.myfivepanelpager);
             mViewHolder.textcount = (TextView) convertView
@@ -401,13 +374,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         mViewHolder.imgContentlay.setVisibility(View.VISIBLE);
         mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
         mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
-        mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
         if (position == 0) {
             mViewHolder.commentContentlay.setVisibility(View.GONE);
             mViewHolder.vueCommentheader.setVisibility(View.GONE);
-            mViewHolder.addCommentlay.setVisibility(View.GONE);
             mViewHolder.separator.setVisibility(View.GONE);
-            mViewHolder.edtCommentLay.setVisibility(View.GONE);
             if (mSetPager) {
                 mViewHolder.myPager.setAdapter(mPagerAdapter);
                 mViewHolder.myPager.setOnPageChangeListener(pageListener);
@@ -459,7 +429,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                                 
                                 @Override
                                 public void onClick(View v) {
-                                    closeKeyboard();
+                                    mswipeListner.onCloseKeyBoard();
                                     // will be called when press on the
                                     // description, description
                                     // text will be expand and collapse for
@@ -551,41 +521,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             mViewHolder.imgContentlay.setVisibility(View.GONE);
             mViewHolder.commentContentlay.setVisibility(View.GONE);
-            mViewHolder.addCommentlay.setVisibility(View.GONE);
-            mViewHolder.edtCommentLay.setVisibility(View.GONE);
             // image content gone
         } else if (position == mListCount - 1) {
-            
             mViewHolder.separator.setVisibility(View.GONE);
             mViewHolder.imgContentlay.setVisibility(View.GONE);
             mViewHolder.vueCommentheader.setVisibility(View.GONE);
             mViewHolder.commentContentlay.setVisibility(View.GONE);
-            if (mViewHolder.enterCommentrellay.getVisibility() == View.VISIBLE) {
-                mViewHolder.commentSend.setVisibility(View.GONE);
-            }
-            if (mCloseKeyboard) {
-                mCloseKeyboard = false;
-                mViewHolder.edtCommentLay.setVisibility(View.GONE);
-                mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
-            }
-            mViewHolder.enterCommentrellay
-                    .setOnClickListener(new OnClickListener() {
-                        
-                        @Override
-                        public void onClick(View v) {
-                            // handle the comment click here
-                            mViewHolder.edtCommentLay
-                                    .setVisibility(View.VISIBLE);
-                            mViewHolder.enterCommentrellay
-                                    .setVisibility(View.GONE);
-                            mswipeListner.onAddCommentClick(
-                                    mViewHolder.enterCommentrellay,
-                                    mViewHolder.edtComment,
-                                    mViewHolder.commentSend,
-                                    mViewHolder.edtCommentLay, mListCount - 1,
-                                    mViewHolder.textcount);
-                        }
-                    });
         } else {
             // first two views are image and comment layout. so use position - 2
             // to display all the comments from start
@@ -625,7 +566,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             mViewHolder.imgContentlay.setVisibility(View.GONE);
             mViewHolder.vueCommentheader.setVisibility(View.GONE);
-            mViewHolder.addCommentlay.setVisibility(View.GONE);
             mViewHolder.separator.setVisibility(View.VISIBLE);
             if (position == mListCount - 2) {
                 mViewHolder.separator.setVisibility(View.GONE);
@@ -659,7 +599,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                                 + mShowFixedRowCount;
                     }
                 }
-                mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
                 notifyDataSetChanged();
                 setmSetPagerToTrue();
             }
@@ -1149,19 +1088,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             notifyAdapter();
             setmSetPagerToTrue();
         }
-    }
-    
-    public void closeKeyboard() {
-        final InputMethodManager mInputMethodManager = (InputMethodManager) mContext
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        mInputMethodManager.hideSoftInputFromWindow(
-                mViewHolder.edtComment.getWindowToken(), 0);
-        mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
-        mViewHolder.enterCommentrellay.setVisibility(View.GONE);
-        mCloseKeyboard = true;
-        mSetPager = false;
-        notifyAdapter();
-        setmSetPagerToTrue();
     }
     
     private void handleBookmark(boolean isBookmarked, String aisleId) {

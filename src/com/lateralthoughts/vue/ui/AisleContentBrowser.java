@@ -12,7 +12,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -512,7 +511,7 @@ public class AisleContentBrowser extends ViewFlipper {
         
         public void onResetAdapter();
         
-        public void onAddCommentClick(RelativeLayout view, EditText editText,
+        public void onAddCommentClick(EditText editText,
                 ImageView commentSend, FrameLayout editLay, int position,
                 TextView textCount);
         
@@ -528,6 +527,7 @@ public class AisleContentBrowser extends ViewFlipper {
         
         public void onEditAisle();
         public void onUpdateLikeStatus(boolean editLayVisibility ,boolean starLayVisibility,boolean isMostLikedImage);
+        public void onCloseKeyBoard();
         
     }
     public void setAisleDetailSwipeListener(

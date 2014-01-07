@@ -132,10 +132,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <include
-        android:id="@+id/addcommentlay"
-        layout="@layout/addcomment" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

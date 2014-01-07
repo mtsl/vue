@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -92,6 +93,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
     private AisleDetailsViewActivity mAisleDetailsActivity = null;
     private InputMethodManager mInputMethodManager;
     int mAdapterNotifyDelay = 500;
+    EditTextBackEvent edtCommentView;
     
     // TODO: define a public interface that can be implemented by the parent
     // activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -255,6 +257,246 @@ public class VueAisleDetailsViewFragment extends Fragment {
         });
         mAisleDetailsList = (ListView) mDetailsContentView
                 .findViewById(R.id.aisle_details_list);
+        
+        View footerView = ((LayoutInflater) getActivity().getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.addcomment,
+                null, false);
+        mAisleDetailsList.addFooterView(footerView);
+        
+        final RelativeLayout enterComentStaticTextLay = (RelativeLayout) footerView
+                .findViewById(R.id.entercmentrellay);
+        final FrameLayout edtCommentFrameLay = (FrameLayout) footerView
+                .findViewById(R.id.edtcommentlay);
+        edtCommentView = (EditTextBackEvent) footerView
+                .findViewById(R.id.edtcomment);
+        final ImageView sendCommentButon = (ImageView) footerView
+                .findViewById(R.id.sendcomment);
+        final TextView textCount = (TextView) footerView
+                .findViewById(R.id.textcount);
+        enterComentStaticTextLay.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                mAisleDetailsList
+                        .setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+                mAisleDetailsList.setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        edtCommentView.getParent()
+                                .requestDisallowInterceptTouchEvent(false);
+                        return false;
+                    }
+                });
+                edtCommentView.setOnTouchListener(new OnTouchListener() {
+                    
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        // to provide touch scroll for edit text
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        return false;
+                    }
+                });
+                final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInputFromWindow(
+                        edtCommentView.getApplicationWindowToken(),
+                        InputMethodManager.SHOW_FORCED, 0);
+                enterComentStaticTextLay.setVisibility(View.GONE);
+                edtCommentView.requestFocus();
+                mInputMethodManager = (InputMethodManager) getActivity()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                mInputMethodManager.showSoftInput(edtCommentView, 0);
+                
+                edtCommentFrameLay.setVisibility(View.VISIBLE);
+                edtCommentView.setVisibility(View.VISIBLE);
+                edtCommentView.setCursorVisible(true);
+                edtCommentView.setTextColor(Color.parseColor(getResources()
+                        .getString(R.color.black)));
+                edtCommentView.requestFocus();
+                edtCommentFrameLay.setVisibility(View.VISIBLE);
+                edtCommentView.setonInterceptListen(new OnInterceptListener() {
+                    
+                    @Override
+                    public void setFlag(boolean flag) {
+                        
+                    }
+                    
+                    @Override
+                    public void onKeyBackPressed() {
+                        if (edtCommentView.getText().toString().length() < 1) {
+                            edtCommentView.setText("");
+                            edtCommentFrameLay.setVisibility(View.GONE);
+                            enterComentStaticTextLay
+                                    .setVisibility(View.VISIBLE);
+                            mInputMethodManager.hideSoftInputFromWindow(
+                                    edtCommentView.getWindowToken(), 0);
+                            // notify the adapter after keybord gone
+                            new Handler().postDelayed(new Runnable() {
+                                
+                                @Override
+                                public void run() {
+                                    mAisleDetailsAdapter.mSetPager = false;
+                                    mAisleDetailsAdapter.notifyDataSetChanged();
+                                    mAisleDetailsAdapter.setmSetPagerToTrue();
+                                }
+                            }, mAdapterNotifyDelay);
+                            return;
+                        }
+                        
+                        final Dialog dialog = new Dialog(getActivity(),
+                                R.style.Theme_Dialog_Translucent);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.vue_popup);
+                        final TextView noButton = (TextView) dialog
+                                .findViewById(R.id.nobutton);
+                        TextView yesButton = (TextView) dialog
+                                .findViewById(R.id.okbutton);
+                        TextView messagetext = (TextView) dialog
+                                .findViewById(R.id.messagetext);
+                        messagetext.setText(getResources().getString(
+                                R.string.discard_comment));
+                        yesButton.setText("Discard");
+                        noButton.setText("Continue");
+                        yesButton.setOnClickListener(new OnClickListener() {
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                edtCommentView.setText("");
+                                edtCommentFrameLay.setVisibility(View.GONE);
+                                enterComentStaticTextLay
+                                        .setVisibility(View.VISIBLE);
+                                // notify the adapter after keybord gone
+                                new Handler().postDelayed(new Runnable() {
+                                    
+                                    @Override
+                                    public void run() {
+                                        mInputMethodManager.hideSoftInputFromWindow(
+                                                edtCommentView.getWindowToken(),
+                                                0);
+                                        mAisleDetailsAdapter
+                                                .notifyDataSetChanged();
+                                        
+                                    }
+                                }, mAdapterNotifyDelay);
+                            }
+                        });
+                        noButton.setOnClickListener(new OnClickListener() {
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                mInputMethodManager.showSoftInput(
+                                        edtCommentView, 0);
+                            }
+                        });
+                        dialog.show();
+                        
+                    }
+                    
+                    @Override
+                    public boolean getFlag() {
+                        
+                        return false;
+                    }
+                });
+                
+            }
+        });
+        edtCommentView.setFocusable(true);
+        edtCommentView.setImeOptions(EditorInfo.IME_ACTION_GO);
+        edtCommentView.setScroller(new Scroller(getActivity()));
+        edtCommentView.setVerticalScrollBarEnabled(true);
+        edtCommentView.setMovementMethod(new ScrollingMovementMethod());
+        edtCommentView.setVisibility(View.GONE);
+        
+        edtCommentView.addTextChangedListener(new TextWatcher() {
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,
+                    int count) {
+                if (s != null && s.length() >= 1) {
+                    sendCommentButon.setVisibility(View.VISIBLE);
+                    textCount.setText(s.length() + "");
+                } else {
+                    sendCommentButon.setVisibility(View.GONE);
+                    textCount.setText("");
+                }
+            }
+            
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                    int after) {
+                
+            }
+            
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s != null && s.length() >= 1) {
+                    sendCommentButon.setVisibility(View.VISIBLE);
+                    textCount.setText(s.length() + "");
+                } else {
+                    sendCommentButon.setVisibility(View.GONE);
+                    textCount.setText("");
+                }
+            }
+        });
+        sendCommentButon.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                FlurryAgent.logEvent("ADD_COMMENTS_DETAILSVIEW");
+                String etText = edtCommentView.getText().toString();
+                
+                if (etText != null && etText.length() >= 1) {
+                    if (mAisleDetailsAdapter.checkLimitForLoginDialog()) {
+                        if (mLoginWarningMessage == null) {
+                            mLoginWarningMessage = new LoginWarningMessage(
+                                    mContext);
+                        }
+                        mLoginWarningMessage.showLoginWarningMessageDialog(
+                                "You need to Login with the app to Comment.",
+                                true, false, 0, null, null);
+                    } else {
+                        // Updating Comments Count in Preference to show
+                        // LoginDialog.
+                        SharedPreferences sharedPreferencesObj = getActivity()
+                                .getSharedPreferences(
+                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
+                        int commentsCount = sharedPreferencesObj.getInt(
+                                VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
+                        boolean isUserLoggedInFlag = sharedPreferencesObj
+                                .getBoolean(VueConstants.VUE_LOGIN, false);
+                        if (commentsCount == 8 && !isUserLoggedInFlag) {
+                            if (mLoginWarningMessage == null) {
+                                mLoginWarningMessage = new LoginWarningMessage(
+                                        getActivity());
+                            }
+                            mLoginWarningMessage
+                                    .showLoginWarningMessageDialog(
+                                            "You have 2 aisle left to comment without logging in.",
+                                            false, false, 8, edtCommentView,
+                                            null);
+                        } else if (commentsCount == 9 && !isUserLoggedInFlag) {
+                            if (mLoginWarningMessage == null) {
+                                mLoginWarningMessage = new LoginWarningMessage(
+                                        getActivity());
+                            }
+                            mLoginWarningMessage
+                                    .showLoginWarningMessageDialog(
+                                            "You have 1 aisle left to comment without logging in.",
+                                            false, false, 9, edtCommentView,
+                                            null);
+                        } else {
+                            SharedPreferences.Editor editor = sharedPreferencesObj
+                                    .edit();
+                            editor.putInt(
+                                    VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
+                                    commentsCount + 1);
+                            editor.commit();
+                            addComment(edtCommentView, enterComentStaticTextLay);
+                        }
+                    }
+                }
+            }
+        });
+        
         mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
         mVueUserName = (TextView) mDetailsContentView
                 .findViewById(R.id.vue_user_name);
@@ -312,12 +554,16 @@ public class VueAisleDetailsViewFragment extends Fragment {
                     long arg3) {
                 if (arg2 != 0 && arg2 != 1) {
                     int maxLinesCount = 2;
-                    mAisleDetailsAdapter.closeKeyboard();
+                    closeKeyboard();
                     // will be called when press on the user comment,
                     // comment text will be expand and collapse for
                     // alternative clicks
                     TextView v = (TextView) arg1
                             .findViewById(R.id.vue_user_comment);
+                    if (v == null) {
+                        return;
+                    }
+                    
                     int x = v.getLineCount();
                     if (x <= maxLinesCount) {
                         LinearLayout.LayoutParams params;
@@ -339,7 +585,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                         v.setMaxLines(maxLinesCount);
                     }
                 } else if (arg2 == 0) {
-                    mAisleDetailsAdapter.closeKeyboard();
+                    closeKeyboard();
                     // will be called when press on the description, description
                     // text will be expand and collapse for
                     // alternative clicks
@@ -382,7 +628,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
             @Override
             public void onClick(View arg0) {
                 FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
-                mAisleDetailsAdapter.closeKeyboard();
+                closeKeyboard();
                 // to smoothen the touch response
                 new Handler().postDelayed(new Runnable() {
                     
@@ -412,7 +658,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
                 String url = mFindAtUrl;
                 if (url != null && url.startsWith("http")) {
-                    mAisleDetailsAdapter.closeKeyboard();
+                    closeKeyboard();
                     Uri uriUrl = Uri.parse(url.trim());
                     
                     Intent launchBrowser = new Intent(Intent.ACTION_VIEW,
@@ -441,7 +687,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
-                mAisleDetailsAdapter.closeKeyboard();
+                closeKeyboard();
                 // to smoothen the touch response
                 int addAilseDelay = 200;
                 new Handler().postDelayed(new Runnable() {
@@ -557,222 +803,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
          * the top.
          */
         @Override
-        public void onAddCommentClick(final RelativeLayout view,
-                final EditText editText, final ImageView sendComment,
-                final FrameLayout edtCommentLay, int position,
-                final TextView textCount) {
-            mAisleDetailsList
-                    .setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-            mAisleDetailsList.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    editText.getParent().requestDisallowInterceptTouchEvent(
-                            false);
-                    return false;
-                }
-            });
-            editText.setOnTouchListener(new OnTouchListener() {
-                
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    // to provide touch scroll for edit text
-                    v.getParent().requestDisallowInterceptTouchEvent(true);
-                    return false;
-                }
-            });
-            final InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.toggleSoftInputFromWindow(
-                    editText.getApplicationWindowToken(),
-                    InputMethodManager.SHOW_FORCED, 0);
-            editText.requestFocus();
-            mInputMethodManager = (InputMethodManager) getActivity()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-            mInputMethodManager.showSoftInput(editText, 0);
-            edtCommentLay.setVisibility(View.VISIBLE);
-            editText.setVisibility(View.VISIBLE);
-            editText.setCursorVisible(true);
-            editText.setTextColor(Color.parseColor(getResources().getString(
-                    R.color.black)));
-            editText.requestFocus();
-            ((EditTextBackEvent) editText)
-                    .setonInterceptListen(new OnInterceptListener() {
-                        
-                        @Override
-                        public void setFlag(boolean flag) {
-                            
-                        }
-                        
-                        @Override
-                        public void onKeyBackPressed() {
-                            if (editText.getText().toString().length() < 1) {
-                                editText.setText("");
-                                edtCommentLay.setVisibility(View.GONE);
-                                view.setVisibility(View.VISIBLE);
-                                mInputMethodManager.hideSoftInputFromWindow(
-                                        editText.getWindowToken(), 0);
-                                // notify the adapter after keybord gone
-                                new Handler().postDelayed(new Runnable() {
-                                    
-                                    @Override
-                                    public void run() {
-                                        mAisleDetailsAdapter.mSetPager = false;
-                                        mAisleDetailsAdapter
-                                                .notifyDataSetChanged();
-                                        mAisleDetailsAdapter.setmSetPagerToTrue();
-                                    }
-                                }, mAdapterNotifyDelay);
-                                return;
-                            }
-                            
-                            final Dialog dialog = new Dialog(getActivity(),
-                                    R.style.Theme_Dialog_Translucent);
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            dialog.setContentView(R.layout.vue_popup);
-                            final TextView noButton = (TextView) dialog
-                                    .findViewById(R.id.nobutton);
-                            TextView yesButton = (TextView) dialog
-                                    .findViewById(R.id.okbutton);
-                            TextView messagetext = (TextView) dialog
-                                    .findViewById(R.id.messagetext);
-                            messagetext.setText(getResources().getString(
-                                    R.string.discard_comment));
-                            yesButton.setText("Discard");
-                            noButton.setText("Continue");
-                            yesButton.setOnClickListener(new OnClickListener() {
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-                                    editText.setText("");
-                                    edtCommentLay.setVisibility(View.GONE);
-                                    view.setVisibility(View.VISIBLE);
-                                    mInputMethodManager
-                                            .hideSoftInputFromWindow(
-                                                    editText.getWindowToken(),
-                                                    0);
-                                    // notify the adapter after keybord gone
-                                    new Handler().postDelayed(new Runnable() {
-                                        
-                                        @Override
-                                        public void run() {
-                                            mAisleDetailsAdapter
-                                                    .notifyDataSetChanged();
-                                        }
-                                    }, mAdapterNotifyDelay);
-                                }
-                            });
-                            noButton.setOnClickListener(new OnClickListener() {
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-                                    mInputMethodManager.showSoftInput(editText,
-                                            0);
-                                }
-                            });
-                            dialog.show();
-                        }
-                        
-                        @Override
-                        public boolean getFlag() {
-                            return false;
-                        }
-                    });
-            editText.setFocusable(true);
-            editText.setImeOptions(EditorInfo.IME_ACTION_GO);
-            editText.setScroller(new Scroller(getActivity()));
-            editText.setVerticalScrollBarEnabled(true);
-            editText.setMovementMethod(new ScrollingMovementMethod());
-            sendComment.setVisibility(View.GONE);
-            sendComment.setOnClickListener(new OnClickListener() {
-                
-                @Override
-                public void onClick(View v) {
-                    FlurryAgent.logEvent("ADD_COMMENTS_DETAILSVIEW");
-                    String etText = editText.getText().toString();
-                    
-                    if (etText != null && etText.length() >= 1) {
-                        if (mAisleDetailsAdapter.checkLimitForLoginDialog()) {
-                            if (mLoginWarningMessage == null) {
-                                mLoginWarningMessage = new LoginWarningMessage(
-                                        mContext);
-                            }
-                            mLoginWarningMessage
-                                    .showLoginWarningMessageDialog(
-                                            "You need to Login with the app to Comment.",
-                                            true, false, 0, null, null);
-                        } else {
-                            // Updating Comments Count in Preference to show
-                            // LoginDialog.
-                            SharedPreferences sharedPreferencesObj = getActivity()
-                                    .getSharedPreferences(
-                                            VueConstants.SHAREDPREFERENCE_NAME,
-                                            0);
-                            int commentsCount = sharedPreferencesObj.getInt(
-                                    VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
-                                    0);
-                            boolean isUserLoggedInFlag = sharedPreferencesObj
-                                    .getBoolean(VueConstants.VUE_LOGIN, false);
-                            if (commentsCount == 8 && !isUserLoggedInFlag) {
-                                if (mLoginWarningMessage == null) {
-                                    mLoginWarningMessage = new LoginWarningMessage(
-                                            getActivity());
-                                }
-                                mLoginWarningMessage
-                                        .showLoginWarningMessageDialog(
-                                                "You have 2 aisle left to comment without logging in.",
-                                                false, false, 8, editText, view);
-                            } else if (commentsCount == 9
-                                    && !isUserLoggedInFlag) {
-                                if (mLoginWarningMessage == null) {
-                                    mLoginWarningMessage = new LoginWarningMessage(
-                                            getActivity());
-                                }
-                                mLoginWarningMessage
-                                        .showLoginWarningMessageDialog(
-                                                "You have 1 aisle left to comment without logging in.",
-                                                false, false, 9, editText, view);
-                            } else {
-                                SharedPreferences.Editor editor = sharedPreferencesObj
-                                        .edit();
-                                editor.putInt(
-                                        VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
-                                        commentsCount + 1);
-                                editor.commit();
-                                addComment(editText, view);
-                            }
-                        }
-                    }
-                }
-            });
-            editText.addTextChangedListener(new TextWatcher() {
-                
-                @Override
-                public void onTextChanged(CharSequence s, int start,
-                        int before, int count) {
-                    if (s != null && s.length() >= 1) {
-                        sendComment.setVisibility(View.VISIBLE);
-                        textCount.setText(s.length() + "");
-                    } else {
-                        sendComment.setVisibility(View.GONE);
-                        textCount.setText("");
-                    }
-                }
-                
-                @Override
-                public void beforeTextChanged(CharSequence s, int start,
-                        int count, int after) {
-                    
-                }
-                
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if (s != null && s.length() >= 1) {
-                        sendComment.setVisibility(View.VISIBLE);
-                        textCount.setText(s.length() + "");
-                    } else {
-                        sendComment.setVisibility(View.GONE);
-                        textCount.setText("");
-                    }
-                }
-            });
+        public void onAddCommentClick(final EditText editText,
+                final ImageView sendComment, final FrameLayout edtCommentLay,
+                int position, final TextView textCount) {
         }
         
         @Override
@@ -815,9 +848,15 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
         }
         
+        @Override
+        public void onCloseKeyBoard() {
+            closeKeyboard();
+            
+        }
+        
     }
     
-    public void addComment(EditText editText, RelativeLayout view) {
+    private void addComment(EditText editText, RelativeLayout view) {
         String etText = editText.getText().toString().trim();
         InputMethodManager inputMethodManager = (InputMethodManager) getActivity()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1119,5 +1158,15 @@ public class VueAisleDetailsViewFragment extends Fragment {
             mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
         }
         mAisleDetailsActivity.sendDataToDataentryScreen(null);
+    }
+    
+    public void closeKeyboard() {
+        final InputMethodManager mInputMethodManager = (InputMethodManager) mContext
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        mInputMethodManager.hideSoftInputFromWindow(
+                edtCommentView.getWindowToken(), 0);
+        mAisleDetailsAdapter.mSetPager = false;
+        notifyAdapter();
+        mAisleDetailsAdapter.setmSetPagerToTrue();
     }
 }
