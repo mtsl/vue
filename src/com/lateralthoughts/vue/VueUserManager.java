@@ -1,17 +1,12 @@
 package com.lateralthoughts.vue;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
@@ -20,7 +15,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.facebook.model.GraphUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.UrlConstants;
@@ -499,8 +493,7 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
-                        showNotificationForSwitchingUser(String
-                                .valueOf(vueUser2.getId()));
+                        showToastForSwitchingUser("Facebook");
                         vueUser2.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
@@ -640,8 +633,7 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
-                        showNotificationForSwitchingUser(String
-                                .valueOf(vueUser2.getId()));
+                        showToastForSwitchingUser("G+");
                         vueUser2.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
@@ -796,62 +788,10 @@ public class VueUserManager {
         return vueUser;
     }
     
-    private void showNotificationForSwitchingUser(final String userId) {
-        new Thread(new Runnable() {
-            
-            @Override
-            public void run() {
-                try {
-                    final ArrayList<AisleWindowContent> aislesList = new NetworkHandler(
-                            VueApplication.getInstance())
-                            .getAislesByUser(userId);
-                    try {
-                        VueLandingPageActivity.landingPageActivity
-                                .runOnUiThread(new Runnable() {
-                                    
-                                    @SuppressWarnings("deprecation")
-                                    @Override
-                                    public void run() {
-                                        if (aislesList != null
-                                                && aislesList.size() > 0) {
-                                            NotificationManager notificationManager = (NotificationManager) VueLandingPageActivity.landingPageActivity
-                                                    .getSystemService(Context.NOTIFICATION_SERVICE);
-                                            Notification mNotification = new Notification(
-                                                    R.drawable.vue_notification_icon,
-                                                    "You are Switched the account.",
-                                                    System.currentTimeMillis());
-                                            Intent MyIntent = new Intent(
-                                                    Intent.ACTION_VIEW);
-                                            PendingIntent StartIntent = PendingIntent
-                                                    .getActivity(
-                                                            VueApplication
-                                                                    .getInstance()
-                                                                    .getApplicationContext(),
-                                                            0,
-                                                            MyIntent,
-                                                            PendingIntent.FLAG_CANCEL_CURRENT);
-                                            mNotification.flags = Notification.FLAG_AUTO_CANCEL;
-                                            mNotification
-                                                    .setLatestEventInfo(
-                                                            VueApplication
-                                                                    .getInstance()
-                                                                    .getApplicationContext(),
-                                                            "User Account is Switched.",
-                                                            "You are Switched the account.",
-                                                            StartIntent);
-                                            notificationManager
-                                                    .notify(VueConstants.CHANGE_USER_NOTIFICATION_ID,
-                                                            mNotification);
-                                        }
-                                    }
-                                });
-                    } catch (Exception e) {
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    private void showToastForSwitchingUser(String accountName) {
+        Toast.makeText(VueApplication.getInstance(),
+                "You are now logged in using " + accountName, Toast.LENGTH_LONG)
+                .show();
     }
     
 }
