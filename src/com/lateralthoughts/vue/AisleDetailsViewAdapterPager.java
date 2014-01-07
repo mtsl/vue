@@ -8,6 +8,7 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +42,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -193,6 +193,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mCurrentAislePosition).getImageList().get(
                     VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
             prepareCommentList(imgComments);
+            Collections.reverse(mShowingCommentList);
             int imgPosition = 0;
             if (VueApplication.getInstance().getmAisleImgCurrentPos() < getItem(
                     mCurrentAislePosition).getImageList().size()) {
@@ -636,9 +637,20 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             public void onClick(View v) {
                 mSetPager = false;
                 if (mListCount == (mShowFixedRowCount + mInitialCommentsToShowSize)) {
+                    // expand the comments when user clicks on comment to view
+                    // all.
+                    // show the comments in the same order as the users entered
+                    // in expand view.
+                    ArrayList<ImageComments> imgComments = getItem(
+                            mCurrentAislePosition).getImageList().get(
+                            mCurrentDispImageIndex).mCommentsList;
+                    prepareCommentList(imgComments);
                     mListCount = mShowingCommentList.size()
                             + mShowFixedRowCount;
                 } else {
+                    // shrink the comments and show only recently adde 2
+                    // comments only.
+                    Collections.reverse(mShowingCommentList);
                     if (mShowingCommentList.size() > 2) {
                         mListCount = mShowFixedRowCount
                                 + mInitialCommentsToShowSize;
@@ -814,6 +826,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         mCurrentAislePosition).getImageList().get(
                         mCurrentDispImageIndex).mCommentsList;
                 prepareCommentList(imgComments);
+                Collections.reverse(mShowingCommentList);
                 
                 if (mShowingCommentList.size() < mShowFixedRowCount) {
                     
@@ -1205,10 +1218,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         mListCount = mListCount + 1;
     }
     
+    // create the comment for the image
     public void createComment(String commentString) {
         VueUser storedVueUser = null;
         String firstName = "";
         String lastName = "";
+        String userId = null;
         try {
             storedVueUser = Utils.readUserObjectFromFile(
                     VueApplication.getInstance(),
@@ -1221,13 +1236,11 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             commenterUrl = storedVueUser.getUserImageURL();
             firstName = storedVueUser.getFirstName();
             lastName = storedVueUser.getLastName();
+            userId = Long.valueOf(storedVueUser.getId()).toString();
         }
         if (commenterUrl != null && commenterUrl.length() < 6) {
             commenterUrl = null;
-        } else if (commenterUrl == null) {
-            commenterUrl = null;
         }
-        
         ImageComments comments = new ImageComments();
         comments.mComment = commentString;
         comments.mCommenterUrl = commenterUrl;
@@ -1238,7 +1251,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             return;
         }
         getItem(mCurrentAislePosition).getImageList().get(
-                mCurrentDispImageIndex).mCommentsList.add(0, comments);
+                mCurrentDispImageIndex).mCommentsList.add(comments);
         if (mCommentsMapList == null) {
             getCommentList();
         }
@@ -1249,19 +1262,18 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         
         ArrayList<ImageComments> imgComments = mCommentsMapList
                 .get(mCurrentDispImageIndex);
-        
         prepareCommentList(imgComments);
+        Collections.reverse(mShowingCommentList);
         if (mShowingCommentList.size() < mShowFixedRowCount) {
             mListCount = mShowingCommentList.size() + mShowFixedRowCount;
         } else {
             mListCount = mShowFixedRowCount + mInitialCommentsToShowSize;
         }
+        // send the created comment to the server.
         final ImageCommentRequest imgComment = new ImageCommentRequest();
         imgComment.setComment(commentString);
         imgComment.setLastModifiedTimestamp(System.currentTimeMillis());
-        imgComment.setOwnerUserId(Long.parseLong(VueTrendingAislesDataModel
-                .getInstance(VueApplication.getInstance()).getNetworkHandler()
-                .getUserId()));
+        imgComment.setOwnerUserId(Long.parseLong(userId));
         imgComment.setOwnerImageId(Long
                 .parseLong(getItem(mCurrentAislePosition).getImageList().get(
                         mCurrentDispImageIndex).mId));
