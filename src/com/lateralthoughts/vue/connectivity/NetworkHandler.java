@@ -360,7 +360,8 @@ public class NetworkHandler {
                                                 VueApplication.getInstance()
                                                         .sendBroadcast(intent);
                                                 clearList(progress);
-                                                Collections.reverse(mAislesList);
+                                                Collections
+                                                        .reverse(mAislesList);
                                                 for (int i = 0; i < mAislesList
                                                         .size(); i++) {
                                                     VueTrendingAislesDataModel
@@ -648,7 +649,7 @@ public class NetworkHandler {
         VueApplication.getInstance().getRequestQueue().add(vueRequest);
     }
     
-    private void clearList(NotifyProgress progress) {
+    public void clearList(NotifyProgress progress) {
         if (progress != null) {
             progress.clearBrowsers();
         }

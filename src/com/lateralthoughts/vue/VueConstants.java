@@ -10,6 +10,7 @@ public class VueConstants {
     
     public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
     public static final String HELP_SCREEN_ACCES = "HelpScreenAccess";
+    public static final String SCREEN_REFRESH_TIME = "TrendingRefreshTimeInMinutes";
     public static final String HELP_KEY = "helpScreen";
     public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
     public static final String VUE_LOGIN = "VueLoginFlag";

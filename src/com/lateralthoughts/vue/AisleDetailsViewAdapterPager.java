@@ -102,7 +102,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private DetailImageClickListener detailsImageClickListenr;
     public boolean mSetPager = true;
     private Bitmap profileUserBmp;
-     
+    
     public AisleDetailsViewAdapterPager(Context c,
             AisleDetailSwipeListener swipeListner, int listCount,
             ArrayList<AisleWindowContent> content,
@@ -132,7 +132,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
             if (getItem(i).getAisleId().equalsIgnoreCase(
                     VueApplication.getInstance().getClickedWindowID())) {
-                //get the clicked window position.
+                // get the clicked window position.
                 mCurrentAislePosition = i;
                 break;
             }
@@ -170,7 +170,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
                     .size(); i++) {
                 if (getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight > mBestHeight) {
-                    //find the best height among all images.
+                    // find the best height among all images.
                     mBestHeight = getItem(mCurrentAislePosition).getImageList()
                             .get(i).mAvailableHeight;
                 }

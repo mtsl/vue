@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -784,6 +783,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         
         @Override
         public void onResetAdapter() {
+            VueApplication.getInstance().saveTrendingRefreshTime(0);
             if (VueApplication.getInstance().getClickedWindowCount() != 0) {
                 upDatePageDots(0, "right");
                 mAisleDetailsAdapter = new AisleDetailsViewAdapterPager(
