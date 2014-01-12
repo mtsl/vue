@@ -98,8 +98,8 @@
                 android:id="@+id/vue_user_img"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:layout_marginTop="18dp"
                 android:layout_marginLeft="14dp"
+                android:layout_marginTop="18dp"
                 android:background="@drawable/new_profile" />
 
             <LinearLayout
@@ -131,10 +131,6 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
-    <include
-        android:id="@+id/addcommentlay"
-        layout="@layout/addcomment" />
 
     <LinearLayout
         android:layout_width="match_parent"

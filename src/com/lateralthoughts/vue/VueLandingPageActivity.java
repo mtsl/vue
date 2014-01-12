@@ -101,6 +101,9 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mHideDefaultActionbar = false;
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
     public static boolean mIsMyAilseCallEnable = false;
+    // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
+    public static final long SCREEN_REFRESH_TIME = 2 * 60;//120 mins.
+    public static long mLastRefreshTime;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -213,6 +216,7 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        VueApplication.getInstance().saveTrendingRefreshTime(0);
         try {
             if (mLandingScreenTitleReceiver != null) {
                 VueApplication.getInstance().unregisterReceiver(
@@ -718,10 +722,34 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        mLastRefreshTime = sharedPreferencesObj.getLong(
+                VueConstants.SCREEN_REFRESH_TIME, 0);
+        if (mLastRefreshTime != 0) {
+            long currentTime = System.currentTimeMillis();
+            long currentMins = Utils.getMins(currentTime);
+            long difMins = currentMins - mLastRefreshTime;
+            if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
+                // Clean the data and fetch from server again.
+                Toast.makeText(this, "Syncing with server", Toast.LENGTH_SHORT)
+                        .show();
+                StackViews.getInstance().clearStack();
+                VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler().clearList(null);
+                VueTrendingAislesDataModel.getInstance(
+                        VueApplication.getInstance()).getFreshDataFromServer();
+                mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
+            }
+        }
     }
     
     @Override
     public void onPause() {
+        
+        long time_in_mins = Utils.getMins(System.currentTimeMillis());
+        VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
         super.onPause();
         
     }
@@ -1543,4 +1571,5 @@ public class VueLandingPageActivity extends Activity implements
             }
         }
     }
+    
 }

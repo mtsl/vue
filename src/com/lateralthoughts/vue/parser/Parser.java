@@ -165,7 +165,6 @@ public class Parser {
                 commentList.add(imgComments);
             }
         }
-        Collections.reverse(commentList);
         aisleImageDetails.mCommentsList = commentList;
         return aisleImageDetails;
     }

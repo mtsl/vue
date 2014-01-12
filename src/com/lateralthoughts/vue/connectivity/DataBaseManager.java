@@ -657,6 +657,8 @@ public class DataBaseManager {
                                 }
                                 
                             } while (imgCommentCursor.moveToNext());
+                            if(imageItemDetails.mCommentsList != null)
+                                Collections.reverse(imageItemDetails.mCommentsList);
                         }
                         imageItemsArray.add(imageItemDetails);
                         
@@ -1190,6 +1192,8 @@ public class DataBaseManager {
                                 }
                                 
                             } while (imgCommentCursor.moveToNext());
+                            if(imageItemDetails.mCommentsList != null)
+                            Collections.reverse(imageItemDetails.mCommentsList);
                         }
                         
                         imageItemsArray.add(imageItemDetails);

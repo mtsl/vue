@@ -3,6 +3,7 @@ package com.lateralthoughts.vue.connectivity;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -359,6 +360,8 @@ public class NetworkHandler {
                                                 VueApplication.getInstance()
                                                         .sendBroadcast(intent);
                                                 clearList(progress);
+                                                Collections
+                                                        .reverse(mAislesList);
                                                 for (int i = 0; i < mAislesList
                                                         .size(); i++) {
                                                     VueTrendingAislesDataModel
@@ -646,7 +649,7 @@ public class NetworkHandler {
         VueApplication.getInstance().getRequestQueue().add(vueRequest);
     }
     
-    private void clearList(NotifyProgress progress) {
+    public void clearList(NotifyProgress progress) {
         if (progress != null) {
             progress.clearBrowsers();
         }

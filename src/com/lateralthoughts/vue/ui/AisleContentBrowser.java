@@ -12,7 +12,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -242,10 +241,12 @@ public class AisleContentBrowser extends ViewFlipper {
                                         mSwipeListener.onAllowListResponse();
                                     }
                                     if (mSwipeListener != null) {
-                                   /*     mSwipeListener
-                                                .onAisleSwipe(
-                                                        VueAisleDetailsViewFragment.SWIPE_LEFT_TO_RIGHT,
-                                                        currentIndex + 1);*/
+                                        /*
+                                         * mSwipeListener .onAisleSwipe(
+                                         * VueAisleDetailsViewFragment
+                                         * .SWIPE_LEFT_TO_RIGHT, currentIndex +
+                                         * 1);
+                                         */
                                         
                                     }
                                     mCurrentIndex = currentIndex + 1;
@@ -358,10 +359,12 @@ public class AisleContentBrowser extends ViewFlipper {
                                     }
                                     mCurrentIndex = currentIndex - 1;
                                     if (mSwipeListener != null) {
-                                      /*  mSwipeListener
-                                                .onAisleSwipe(
-                                                        VueAisleDetailsViewFragment.SWIPE_RIGHT_TO_LEFT,
-                                                        currentIndex - 1);*/
+                                        /*
+                                         * mSwipeListener .onAisleSwipe(
+                                         * VueAisleDetailsViewFragment
+                                         * .SWIPE_RIGHT_TO_LEFT, currentIndex -
+                                         * 1);
+                                         */
                                     }
                                     if (detailImgClickListenr != null) {
                                         detailImgClickListenr
@@ -405,7 +408,7 @@ public class AisleContentBrowser extends ViewFlipper {
         }
         return super.onTouchEvent(event);
     }
- 
+    
     public void setCurrentImage() {
         Utils.sAinmate = false;
         for (int i = 0; i < VueApplication.getInstance()
@@ -419,6 +422,7 @@ public class AisleContentBrowser extends ViewFlipper {
         Utils.sAinmate = true;
         
     }
+    
     public void setCustomAdapter(IAisleContentAdapter adapter) {
         mSpecialNeedsAdapter = adapter;
     }
@@ -479,6 +483,10 @@ public class AisleContentBrowser extends ViewFlipper {
         public boolean onDoubleTap(String id);
         
         public void refreshList();
+        
+        public void hideProgressBar();
+        
+        public void showProgressBar();
     }
     
     public interface DetailClickListener {
@@ -505,16 +513,17 @@ public class AisleContentBrowser extends ViewFlipper {
         mClickListener = listener;
     }
     
-    public interface AisleDetailSwipeListener {  
-        public void onAisleSwipe(String id, int position,boolean editLayVisibility ,boolean starLayVisibility,boolean isMostLikedImage);
+    public interface AisleDetailSwipeListener {
+        public void onAisleSwipe(String id, int position,
+                boolean editLayVisibility, boolean starLayVisibility,
+                boolean isMostLikedImage);
         
         public void onReceiveImageCount(int count);
         
         public void onResetAdapter();
         
-        public void onAddCommentClick(RelativeLayout view, EditText editText,
-                ImageView commentSend, FrameLayout editLay, int position,
-                TextView textCount);
+        public void onAddCommentClick(EditText editText, ImageView commentSend,
+                FrameLayout editLay, int position, TextView textCount);
         
         public void onDissAllowListResponse();
         
@@ -527,9 +536,14 @@ public class AisleContentBrowser extends ViewFlipper {
         public void hasToShowEditIcon(boolean hasToShow);
         
         public void onEditAisle();
-        public void onUpdateLikeStatus(boolean editLayVisibility ,boolean starLayVisibility,boolean isMostLikedImage);
+        
+        public void onUpdateLikeStatus(boolean editLayVisibility,
+                boolean starLayVisibility, boolean isMostLikedImage);
+        
+        public void onCloseKeyBoard();
         
     }
+    
     public void setAisleDetailSwipeListener(
             AisleDetailSwipeListener swipListener) {
         mSwipeListener = swipListener;
