@@ -11,6 +11,7 @@ public class VueConstants {
     public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
     public static final String HELP_SCREEN_ACCES = "HelpScreenAccess";
     public static final String SCREEN_REFRESH_TIME = "TrendingRefreshTimeInMinutes";
+    public static final String VERSION_CODE_CHANGE = "VersionCode";
     public static final String HELP_KEY = "helpScreen";
     public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
     public static final String VUE_LOGIN = "VueLoginFlag";
@@ -59,6 +60,7 @@ public class VueConstants {
     public static final String GMAIL_ACTIVITY_NAME = "com.google.android.gm.ComposeActivityGmail";
     public static final String GOOGLEPLUS_ACTIVITY_NAME = "com.google.android.apps.plus.phone.SignOnActivity";
     public static final String CANCEL_BTN_DISABLE_FLAG = "cancelbuttondisableflag";
+    public static final String GUEST_LOGIN_MESSAGE = "guestLoginMesage";
     public static final String FROM_INVITEFRIENDS = "frominvitefriends";
     public static final String FROM_BEZELMENU_LOGIN = "frombezelmenulogin";
     public static final String FBLOGIN_FROM_DETAILS_SHARE = "FBLOGIN_FROM_DETAILS_SHARE";
