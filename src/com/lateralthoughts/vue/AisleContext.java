@@ -1,6 +1,5 @@
 package com.lateralthoughts.vue;
 
-
 public class AisleContext {
     
     public String mFirstName;

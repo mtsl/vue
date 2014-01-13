@@ -122,6 +122,8 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
         LinearLayout aisleDescriptor;
         AisleWindowContent mWindowContent;
         LinearLayout aisleselectlay;
+        View viewBar;
+        TextView likeCount, bookMarkCount;
     }
     
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -17,6 +18,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     private AisleLoader mLoader;
     private Context mContext;
     AisleContentClickListener mClickListener;
+    private static final String AISLE_STAGE_FOUR = "completed";
     
     public LandingPageViewAdapter(Context context,
             AisleContentClickListener clickListener) {
@@ -52,6 +54,11 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
                     .findViewById(R.id.aisle_content_flipper);
             holder.starIcon = (ImageView) convertView
                     .findViewById(R.id.staricon);
+            holder.viewBar = (View) convertView.findViewById(R.id.greenbar);
+            holder.likeCount = (TextView) convertView
+                    .findViewById(R.id.like_count);
+            holder.bookMarkCount = (TextView) convertView
+                    .findViewById(R.id.bookmark_count);
             holder.aisleDescriptor = (LinearLayout) convertView
                     .findViewById(R.id.aisle_descriptor);
             holder.profileThumbnail = (NetworkImageView) holder.aisleDescriptor
@@ -134,6 +141,25 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
             title = title + lookingFor;
         }
         holder.aisleContext.setText(title);
+        int cardWidh = VueApplication.getInstance().getVueDetailsCardWidth() / 2;
+        if (holder.mWindowContent.mAisleCureentStage
+                .equals(VueConstants.AISLE_STATGE_ONE)) {
+            cardWidh = cardWidh * 25 / 100;
+        } else if (holder.mWindowContent.mAisleCureentStage
+                .equals(VueConstants.AISLE_STAGE_TWO)) {
+            cardWidh = cardWidh * 50 / 100;
+        } else if (holder.mWindowContent.mAisleCureentStage
+                .equals(VueConstants.AISLE_STAGE_THREE)) {
+            cardWidh = cardWidh * 75 / 100;
+        }
+        final RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                cardWidh, VueApplication.getInstance().getPixel(2));
+        holder.viewBar.setLayoutParams(layoutParams);
+        holder.likeCount.setText(String
+                .valueOf(holder.mWindowContent.mTotalLikesCount));
+        holder.bookMarkCount.setText(String
+                .valueOf(holder.mWindowContent.mTotalBookmarkCount));
+        
         return convertView;
     }
 }

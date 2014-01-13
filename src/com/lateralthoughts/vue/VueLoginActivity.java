@@ -159,7 +159,7 @@ public class VueLoginActivity extends FragmentActivity implements
             cancellayout.setVisibility(View.GONE);
             mIsAlreadyLoggedInWithVue = true;
         }
-       // cancellayout.setVisibility(View.GONE);
+        cancellayout.setVisibility(View.GONE);
         mContext = this;
         mSharedPreferencesObj = this.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -193,7 +193,7 @@ public class VueLoginActivity extends FragmentActivity implements
             mGoogleplusAutomaticLogin = mBundle
                     .getBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN);
         }
-        if(mGuestUserMessage != null){
+        if (mGuestUserMessage != null) {
             Toast.makeText(this, mGuestUserMessage, Toast.LENGTH_LONG).show();
         }
         // Facebook Invite friend

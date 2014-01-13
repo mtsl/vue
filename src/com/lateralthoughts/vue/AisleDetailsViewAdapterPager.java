@@ -68,9 +68,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private static final String CHANGE_BOOKMARK = "BOOKMARK";
     public static final String CHANGE_COMMENT = "COMMENT";
     private static final String CHANGE_LIKES = "LIKES";
-    private static final String AISLE_STATGE_ONE = "frist_staage";
-    private static final String AISLE_STAGE_TWO = "second_stage";
-    private static final String AISLE_STAGE_THREE = "third_stage";
     private static final String AISLE_STAGE_FOUR = "completed";
     private String mAisleCureentStage;
     private AisleDetailSwipeListener mswipeListner;
@@ -107,7 +104,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private DetailImageClickListener detailsImageClickListenr;
     public boolean mSetPager = true;
     private Bitmap profileUserBmp;
-     
     
     public AisleDetailsViewAdapterPager(Context c,
             AisleDetailSwipeListener swipeListner, int listCount,
@@ -355,11 +351,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             findAisleStage();
             int cardWidh = VueApplication.getInstance()
                     .getVueDetailsCardWidth();
-            if (mAisleCureentStage.equals(AISLE_STATGE_ONE)) {
+            if (mAisleCureentStage.equals(VueConstants.AISLE_STATGE_ONE)) {
                 cardWidh = cardWidh * 25 / 100;
-            } else if (mAisleCureentStage.equals(AISLE_STAGE_TWO)) {
+            } else if (mAisleCureentStage.equals(VueConstants.AISLE_STAGE_TWO)) {
                 cardWidh = cardWidh * 50 / 100;
-            } else if (mAisleCureentStage.equals(AISLE_STAGE_THREE)) {
+            } else if (mAisleCureentStage
+                    .equals(VueConstants.AISLE_STAGE_THREE)) {
                 cardWidh = cardWidh * 75 / 100;
             }
             final RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -407,21 +404,25 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             mViewHolder.decisionLay.setVisibility(View.VISIBLE);
             String descisionText = " ";
             if (Long.parseLong(getItem(mCurrentAislePosition).getAisleContext().mUserId) == mUserId) {
-                if (mAisleCureentStage.endsWith(AISLE_STATGE_ONE)) {
+                if (mAisleCureentStage.endsWith(VueConstants.AISLE_STATGE_ONE)) {
                     descisionText = "Just posted - ask for opinions by sharing";
-                } else if (mAisleCureentStage.endsWith(AISLE_STAGE_TWO)) {
+                } else if (mAisleCureentStage
+                        .endsWith(VueConstants.AISLE_STAGE_TWO)) {
                     descisionText = "Opinions in progress";
-                } else if (mAisleCureentStage.endsWith(AISLE_STAGE_THREE)) {
+                } else if (mAisleCureentStage
+                        .endsWith(VueConstants.AISLE_STAGE_THREE)) {
                     descisionText = " Opinions received - decide now";
                 } else if (mAisleCureentStage.endsWith(AISLE_STAGE_FOUR)) {
                     descisionText = "Decision complete ";
                 }
             } else {
-                if (mAisleCureentStage.endsWith(AISLE_STATGE_ONE)) {
+                if (mAisleCureentStage.endsWith(VueConstants.AISLE_STATGE_ONE)) {
                     descisionText = "Just posted - please add your opinion";
-                } else if (mAisleCureentStage.endsWith(AISLE_STAGE_TWO)) {
+                } else if (mAisleCureentStage
+                        .endsWith(VueConstants.AISLE_STAGE_TWO)) {
                     descisionText = "Still collecting opinions - please add yours";
-                } else if (mAisleCureentStage.endsWith(AISLE_STAGE_THREE)) {
+                } else if (mAisleCureentStage
+                        .endsWith(VueConstants.AISLE_STAGE_THREE)) {
                     descisionText = "Opinions received, decision pending";
                 } else if (mAisleCureentStage.endsWith(AISLE_STAGE_FOUR)) {
                     descisionText = " Decision complete";
@@ -554,9 +555,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }   
-            // gone comment layoutgone }
-           else if (position == 1) {
+        }
+        // gone comment layoutgone }
+        else if (position == 1) {
             if (mIsLikeImageClicked) {
                 mIsLikeImageClicked = false;
                 Animation rotate = AnimationUtils.loadAnimation(mContext,
@@ -668,6 +669,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
                     if (mBookmarksCount > 0) {
                         mBookmarksCount--;
+                        getItem(mCurrentAislePosition).mTotalBookmarkCount = getItem(mCurrentAislePosition).mTotalBookmarkCount - 1;
                         getItem(mCurrentAislePosition).setmAisleBookmarksCount(
                                 mBookmarksCount);
                     }
@@ -681,6 +683,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     bookmarkStatus = true;
                     FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
                     mBookmarksCount++;
+                    getItem(mCurrentAislePosition).mTotalBookmarkCount = getItem(mCurrentAislePosition).mTotalBookmarkCount + 1;
                     getItem(mCurrentAislePosition).setmAisleBookmarksCount(
                             mBookmarksCount);
                     getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
@@ -997,6 +1000,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     
     public void sendDataToDb(int imgPosition, String reqType,
             boolean likeOrDislike) {
+        getItem(mCurrentAislePosition).findAisleStage(
+                getItem(mCurrentAislePosition).getImageList());
         String aisleId = null;
         String imageId = null;
         AisleImageDetails itemDetails;
@@ -1109,6 +1114,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
                     mCurrentAislePosition).getImageList().get(position).mLikesCount + 1;
             getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+            getItem(mCurrentAislePosition).mTotalLikesCount = getItem(mCurrentAislePosition).mTotalLikesCount + 1;
+            
             sendDataToDb(position, CHANGE_LIKES, true);
         }
         findMostLikesImage();
@@ -1129,6 +1136,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             if (getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount > 0) {
                 getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
                         mCurrentAislePosition).getImageList().get(position).mLikesCount - 1;
+                getItem(mCurrentAislePosition).mTotalLikesCount = getItem(mCurrentAislePosition).mTotalLikesCount - 1;
             }
             sendDataToDb(position, CHANGE_LIKES, false);
         } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
@@ -1640,13 +1648,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         
         totalCount = likesCount + commentsCount;
         if (totalCount == 0) {
-            mAisleCureentStage = AISLE_STATGE_ONE;
+            mAisleCureentStage = VueConstants.AISLE_STATGE_ONE;
         } else if (totalCount < 3) {
-            mAisleCureentStage = AISLE_STAGE_TWO;
+            mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
         } else if ((totalCount >= 3)) {
-            mAisleCureentStage = AISLE_STAGE_THREE;
+            mAisleCureentStage = VueConstants.AISLE_STAGE_THREE;
         } else {
-            //TODO: AISLE_STAGE_COMPLETED yet to be confirmed.
+            // TODO: AISLE_STAGE_COMPLETED yet to be confirmed.
         }
     }
 }

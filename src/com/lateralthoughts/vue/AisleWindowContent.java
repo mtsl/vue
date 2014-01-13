@@ -26,6 +26,11 @@ public class AisleWindowContent {
     public int mTrendingBestHeight = 0;
     public int mAisleCardHeight;
     
+    private static final String AISLE_STAGE_FOUR = "completed";
+    public int mTotalBookmarkCount;
+    public int mTotalLikesCount;
+    public String mAisleCureentStage;
+    
     public boolean getWindowBookmarkIndicator() {
         return mAisleBookmarkIndicator;
     }
@@ -88,6 +93,8 @@ public class AisleWindowContent {
         // lets parse through the image urls and update the image resolution
         // VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
         findMostLikesImage(mAisleImagesList);
+        findAisleStage(mAisleImagesList);
+        mTotalBookmarkCount = context.mBookmarkCount;
         udpateImageUrlsForDevice();
     }
     
@@ -274,6 +281,27 @@ public class AisleWindowContent {
                 itemsList.get(i).mHasMostLikes = true;
                 itemsList.get(mostLikePosition).mSameMostLikes = true;
             }
+        }
+    }
+    
+    public void findAisleStage(ArrayList<AisleImageDetails> itemsList) {
+        int likesCount = 0, commentsCount = 0, totalCount;
+        for (int index = 0; index < itemsList.size(); index++) {
+            AisleImageDetails imageDetails = itemsList.get(index);
+            likesCount = likesCount + imageDetails.mLikesCount;
+            commentsCount = commentsCount + imageDetails.mCommentsList.size();
+        }
+        mTotalLikesCount = likesCount;
+        int totalCommentCount = commentsCount;
+        totalCount = likesCount + totalCommentCount;
+        if (totalCount == 0) {
+            mAisleCureentStage = VueConstants.AISLE_STATGE_ONE;
+        } else if (totalCount < 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
+        } else if ((totalCount >= 3)) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_THREE;
+        } else {
+            // TODO: AISLE_STAGE_COMPLETED yet to be confirmed.
         }
     }
     

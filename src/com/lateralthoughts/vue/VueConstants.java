@@ -7,7 +7,9 @@ import android.net.Uri;
  * 
  */
 public class VueConstants {
-    
+    public static final String AISLE_STATGE_ONE = "frist_staage";
+    public static final String AISLE_STAGE_TWO = "second_stage";
+    public static final String AISLE_STAGE_THREE = "third_stage";
     public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
     public static final String HELP_SCREEN_ACCES = "HelpScreenAccess";
     public static final String SCREEN_REFRESH_TIME = "TrendingRefreshTimeInMinutes";
