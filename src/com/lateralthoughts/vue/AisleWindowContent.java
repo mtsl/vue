@@ -95,6 +95,18 @@ public class AisleWindowContent {
         findMostLikesImage(mAisleImagesList);
         findAisleStage(mAisleImagesList);
         mTotalBookmarkCount = context.mBookmarkCount;
+        this.mAisleBookmarkIndicator = VueTrendingAislesDataModel
+                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+                .checkIsAisleBookmarked(mAisleId);
+        for (int index = 0; index < mAisleImagesList.size(); index++) {
+            boolean status = VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .getNetworkHandler()
+                    .getImageRateStatus(mAisleImagesList.get(index).mId);
+            if (status) {
+                mAisleImagesList.get(index).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
+            }
+        }
         udpateImageUrlsForDevice();
     }
     
@@ -288,20 +300,24 @@ public class AisleWindowContent {
         int likesCount = 0, commentsCount = 0, totalCount;
         for (int index = 0; index < itemsList.size(); index++) {
             AisleImageDetails imageDetails = itemsList.get(index);
-            likesCount = likesCount + imageDetails.mLikesCount;
-            commentsCount = commentsCount + imageDetails.mCommentsList.size();
+            int tempLikesCount = imageDetails.mLikesCount;
+            if (tempLikesCount > likesCount) {
+                likesCount = tempLikesCount;
+            }
+            int tempCommentsCount = imageDetails.mCommentsList.size();
+            if (tempCommentsCount > commentsCount) {
+                commentsCount = tempCommentsCount;
+            }
         }
         mTotalLikesCount = likesCount;
         int totalCommentCount = commentsCount;
         totalCount = likesCount + totalCommentCount;
         if (totalCount == 0) {
             mAisleCureentStage = VueConstants.AISLE_STATGE_ONE;
-        } else if (totalCount < 3) {
-            mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
-        } else if ((totalCount >= 3)) {
+        } else if (likesCount >= 3 || commentsCount >= 3) {
             mAisleCureentStage = VueConstants.AISLE_STAGE_THREE;
-        } else {
-            // TODO: AISLE_STAGE_COMPLETED yet to be confirmed.
+        } else if (likesCount < 3 || commentsCount < 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
         }
     }
     

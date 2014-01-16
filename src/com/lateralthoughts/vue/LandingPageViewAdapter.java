@@ -59,6 +59,10 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
                     .findViewById(R.id.like_count);
             holder.bookMarkCount = (TextView) convertView
                     .findViewById(R.id.bookmark_count);
+            holder.bookmarkImageView = (ImageView) convertView
+                    .findViewById(R.id.bookmarkImage);
+            holder.socialCard = (RelativeLayout) convertView
+                    .findViewById(R.id.social_card);
             holder.aisleDescriptor = (LinearLayout) convertView
                     .findViewById(R.id.aisle_descriptor);
             holder.profileThumbnail = (NetworkImageView) holder.aisleDescriptor
@@ -88,7 +92,8 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
             holder.aisleselectlay.setVisibility(View.GONE);
         }
         mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
-                false, mClickListener, "left", holder.starIcon);
+                false, mClickListener, "left", holder.starIcon,
+                holder.socialCard);
         AisleContext context = holder.mWindowContent.getAisleContext();
         String mVueusername = null;
         if (context.mFirstName != null && context.mLastName != null) {
@@ -155,11 +160,15 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         final RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 cardWidh, VueApplication.getInstance().getPixel(2));
         holder.viewBar.setLayoutParams(layoutParams);
-        holder.likeCount.setText(String
-                .valueOf(holder.mWindowContent.mTotalLikesCount));
-        holder.bookMarkCount.setText(String
-                .valueOf(holder.mWindowContent.mTotalBookmarkCount));
         
+        holder.bookMarkCount.setText(String.valueOf(holder.mWindowContent
+                .getmAisleBookmarksCount()));
+        if (holder.mWindowContent.getWindowBookmarkIndicator()) {
+            holder.bookmarkImageView.setImageResource(R.drawable.save);
+        } else {
+            holder.bookmarkImageView
+                    .setImageResource(R.drawable.save_dark_small);
+        }
         return convertView;
     }
 }

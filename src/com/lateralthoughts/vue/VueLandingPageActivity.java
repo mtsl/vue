@@ -202,7 +202,7 @@ public class VueLandingPageActivity extends Activity implements
                                 versionCode);
                         editor.commit();
                         if (storedVueUser != null
-                                && storedVueUser.getUserImageURL().equals("null")) {
+                                && storedVueUser.getGooglePlusId().equals(VueUser.DEFAULT_GOOGLEPLUS_ID) && storedVueUser.getFacebookId().equals(VueUser.DEFAULT_FACEBOOK_ID)) {
                             // TODO: start the LoginActivity
                             Intent i = new Intent(this, VueLoginActivity.class);
                             Bundle b = new Bundle();

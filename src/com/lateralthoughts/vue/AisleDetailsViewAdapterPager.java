@@ -63,8 +63,6 @@ import com.lateralthoughts.vue.utils.clsShare;
 public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private Context mContext;
     public static final String TAG = "AisleDetailsViewAdapter";
-    public static final int IMG_LIKE_STATUS = 1;
-    public static final int IMG_NONE_STATUS = 0;
     private static final String CHANGE_BOOKMARK = "BOOKMARK";
     public static final String CHANGE_COMMENT = "COMMENT";
     private static final String CHANGE_LIKES = "LIKES";
@@ -379,7 +377,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .setImageResource(R.drawable.comment_light);
         }
         if (getItem(mCurrentAislePosition).getImageList().get(
-                mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+                mCurrentDispImageIndex).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             mViewHolder.likeImg.setImageResource(R.drawable.heart);
         } else {
             mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
@@ -692,6 +690,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     handleBookmark(bookmarkStatus,
                             getItem(mCurrentAislePosition).getAisleId());
                 }
+                VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler()
+                        .modifyBookmarkList(
+                                getItem(mCurrentAislePosition).getAisleId(),
+                                bookmarkStatus);
                 notifyDataSetChanged();
                 setmSetPagerToTrue();
             }
@@ -869,9 +873,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     && mCurrentDispImageIndex < getItem(mCurrentAislePosition)
                             .getImageList().size()) {
                 if (getItem(mCurrentAislePosition).getImageList().get(
-                        mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+                        mCurrentDispImageIndex).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
                     getItem(mCurrentAislePosition).getImageList().get(
-                            mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
+                            mCurrentDispImageIndex).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
                     if (getItem(mCurrentAislePosition).getImageList().get(
                             mCurrentDispImageIndex).mLikesCount > 0) {
                         getItem(mCurrentAislePosition).getImageList().get(
@@ -884,7 +888,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     
                 } else {
                     getItem(mCurrentAislePosition).getImageList().get(
-                            mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
+                            mCurrentDispImageIndex).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
                     getItem(mCurrentAislePosition).getImageList().get(
                             mCurrentDispImageIndex).mLikesCount = getItem(
                             mCurrentAislePosition).getImageList().get(
@@ -1096,8 +1100,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             articleParams.put("Unique_User_Like", "anonymous");
         }
         FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
-        if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+        if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
+            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
             
             Map<String, String> articleParams1 = new HashMap<String, String>();
             articleParams1.put("Unique_Aisle_Likes",
@@ -1109,11 +1113,11 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 articleParams1.put("Unique_User_Like", "anonymous");
             }
             FlurryAgent.logEvent("Aisle_Likes", articleParams1);
-        } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
+        } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_NONE_STATUS) {
             
             getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
                     mCurrentAislePosition).getImageList().get(position).mLikesCount + 1;
-            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
             getItem(mCurrentAislePosition).mTotalLikesCount = getItem(mCurrentAislePosition).mTotalLikesCount + 1;
             
             sendDataToDb(position, CHANGE_LIKES, true);
@@ -1130,17 +1134,17 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     
     private void onChangeDislikesCount(int position) {
         FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
-        if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+        if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             // false
-            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
+            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
             if (getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount > 0) {
                 getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
                         mCurrentAislePosition).getImageList().get(position).mLikesCount - 1;
                 getItem(mCurrentAislePosition).mTotalLikesCount = getItem(mCurrentAislePosition).mTotalLikesCount - 1;
             }
             sendDataToDb(position, CHANGE_LIKES, false);
-        } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
-            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
+        } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_NONE_STATUS) {
+            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
         }
         findMostLikesImage();
         if (position == mCurrentDispImageIndex) {
@@ -1196,7 +1200,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             for (ImageRating imgRating : imgRatingList) {
                 
                 if (imgRating.getImageId() == Long.parseLong(imgDetail.mId)) {
-                    imgDetail.mLikeDislikeStatus = IMG_LIKE_STATUS;
+                    imgDetail.mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
                 }
             }
         }
@@ -1642,19 +1646,23 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 mCurrentAislePosition).getImageList();
         for (int index = 0; index < imageDetailsList.size(); index++) {
             AisleImageDetails imageDetails = imageDetailsList.get(index);
-            likesCount = likesCount + imageDetails.mLikesCount;
-            commentsCount = commentsCount + imageDetails.mCommentsList.size();
+            int tempLikesCount = imageDetails.mLikesCount;
+            if (tempLikesCount > likesCount) {
+                likesCount = tempLikesCount;
+            }
+            int tempCommentsCount = imageDetails.mCommentsList.size();
+            if (tempCommentsCount > commentsCount) {
+                commentsCount = tempCommentsCount;
+            }
         }
         
         totalCount = likesCount + commentsCount;
         if (totalCount == 0) {
             mAisleCureentStage = VueConstants.AISLE_STATGE_ONE;
-        } else if (totalCount < 3) {
-            mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
-        } else if ((totalCount >= 3)) {
+        } else if (likesCount >= 3 || commentsCount >= 3) {
             mAisleCureentStage = VueConstants.AISLE_STAGE_THREE;
-        } else {
-            // TODO: AISLE_STAGE_COMPLETED yet to be confirmed.
+        } else if (likesCount < 3 || commentsCount < 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
         }
     }
 }
