@@ -657,8 +657,9 @@ public class DataBaseManager {
                                 }
                                 
                             } while (imgCommentCursor.moveToNext());
-                            if(imageItemDetails.mCommentsList != null)
-                                Collections.reverse(imageItemDetails.mCommentsList);
+                            if (imageItemDetails.mCommentsList != null)
+                                Collections
+                                        .reverse(imageItemDetails.mCommentsList);
                         }
                         imageItemsArray.add(imageItemDetails);
                         
@@ -1192,8 +1193,9 @@ public class DataBaseManager {
                                 }
                                 
                             } while (imgCommentCursor.moveToNext());
-                            if(imageItemDetails.mCommentsList != null)
-                            Collections.reverse(imageItemDetails.mCommentsList);
+                            if (imageItemDetails.mCommentsList != null)
+                                Collections
+                                        .reverse(imageItemDetails.mCommentsList);
                         }
                         
                         imageItemsArray.add(imageItemDetails);
@@ -1537,7 +1539,31 @@ public class DataBaseManager {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        copydbToSdcard();
+        // copydbToSdcard();
+        return imgRatingList;
+    }
+    
+    public ArrayList<ImageRating> getAllRatedImagesList() {
+        ArrayList<ImageRating> imgRatingList = new ArrayList<ImageRating>();
+        Cursor cursor = mContext.getContentResolver().query(
+                VueConstants.RATED_IMAGES_URI, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                ImageRating imgRating = new ImageRating();
+                imgRating.setId(Long.parseLong(cursor.getString(cursor
+                        .getColumnIndex(VueConstants.ID))));
+                imgRating.setImageId(Long.parseLong(cursor.getString(cursor
+                        .getColumnIndex(VueConstants.IMAGE_ID))));
+                imgRating.setAisleId(Long.parseLong(cursor.getString(cursor
+                        .getColumnIndex(VueConstants.AISLE_ID))));
+                long bookmark = Long.parseLong(cursor.getString(cursor
+                        .getColumnIndex(VueConstants.IS_LIKED_OR_BOOKMARKED)));
+                imgRating.setLiked((bookmark == 1) ? true : false);
+                imgRatingList.add(imgRating);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        // copydbToSdcard();
         return imgRatingList;
     }
     

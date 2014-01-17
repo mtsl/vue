@@ -73,6 +73,8 @@ public class NetworkHandler {
     public int offset;
     ArrayList<AisleWindowContent> mAislesList = null;
     private SharedPreferences mSharedPreferencesObj;
+    public ArrayList<String> bookmarkedList = new ArrayList<String>();
+    private ArrayList<String> ratedImageList = new ArrayList<String>();
     
     public NetworkHandler(Context context) {
         mContext = context;
@@ -360,7 +362,8 @@ public class NetworkHandler {
                                                 VueApplication.getInstance()
                                                         .sendBroadcast(intent);
                                                 clearList(progress);
-                                                Collections.reverse(mAislesList);
+                                                Collections
+                                                        .reverse(mAislesList);
                                                 for (int i = 0; i < mAislesList
                                                         .size(); i++) {
                                                     VueTrendingAislesDataModel
@@ -480,6 +483,7 @@ public class NetworkHandler {
                                                 Long.toString(aB.getAisleId()),
                                                 aB.getBookmarked());
                             }
+                            getAllBookmarks();
                         }
                     }
                 } catch (Exception e) {
@@ -632,6 +636,7 @@ public class NetworkHandler {
                                     DataBaseManager.getInstance(mContext)
                                             .insertRatedImages(
                                                     retrievedImageRating);
+                                    getAllRatedImagesList();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -648,7 +653,7 @@ public class NetworkHandler {
         VueApplication.getInstance().getRequestQueue().add(vueRequest);
     }
     
-    private void clearList(NotifyProgress progress) {
+    public void clearList(NotifyProgress progress) {
         if (progress != null) {
             progress.clearBrowsers();
         }
@@ -664,4 +669,53 @@ public class NetworkHandler {
         offset = 0;
     }
     
+    private void getAllBookmarks() {
+        bookmarkedList.clear();
+        Cursor cursor = mContext.getContentResolver().query(
+                VueConstants.BOOKMARKER_AISLES_URI, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                if (cursor.getInt(cursor
+                        .getColumnIndex(VueConstants.IS_LIKED_OR_BOOKMARKED)) == 1) {
+                    bookmarkedList.add(cursor.getString(cursor
+                            .getColumnIndex(VueConstants.AISLE_ID)));
+                    
+                }
+                
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+    }
+    
+    public boolean checkIsAisleBookmarked(String aisleId) {
+        boolean isBookmarked = bookmarkedList.contains(aisleId);
+        return isBookmarked;
+    }
+    
+    public void modifyBookmarkList(String aisleId, boolean isAddRequest) {
+        if (isAddRequest) {
+            bookmarkedList.add(aisleId);
+        } else {
+            bookmarkedList.remove(aisleId);
+        }
+    }
+    
+    private void getAllRatedImagesList() {
+        ratedImageList.clear();
+        ArrayList<ImageRating> imageRatingList = DataBaseManager.getInstance(
+                mContext).getAllRatedImagesList();
+        if (imageRatingList != null && imageRatingList.size() > 0) {
+            for (ImageRating imgRate : imageRatingList) {
+                ratedImageList.add(String.valueOf(imgRate.getImageId()));
+            }
+        }
+    }
+    
+    public boolean getImageRateStatus(String imageId) {
+        boolean isImageRated = false;
+        if (ratedImageList.contains(imageId)) {
+            isImageRated = true;
+        }
+        return isImageRated;
+    }
 }

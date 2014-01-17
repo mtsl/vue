@@ -36,6 +36,7 @@ import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 /**
  * 
@@ -66,6 +67,7 @@ public class ShareDialog {
     private VueAisleDetailsViewFragment.ShareViaVueListner mDetailsScreenShareViaVueListner;
     private DataEntryFragment.ShareViaVueListner mDataentryScreenShareViaVueListner;
     private ListView mListview = null;
+    private MixpanelAPI mixpanel;
     
     public void dismisDialog() {
         mShareDialog.dismiss();
@@ -77,6 +79,7 @@ public class ShareDialog {
      *            Context
      */
     public ShareDialog(Context context, Activity activity) {
+        mixpanel = MixpanelAPI.getInstance(activity, VueApplication.getInstance().MIXPANEL_TOKEN);
         this.mContext = context;
         this.mActivity = activity;
         mLayoutInflater = (LayoutInflater) context
@@ -136,6 +139,7 @@ public class ShareDialog {
         mListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
                     int position, long id) {
+                mixpanel.track("Ailse_shared", null);
                 FlurryAgent.logEvent("Ailse_share");
                 if (mFromCreateAislePopupFlag) {
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;

@@ -49,16 +49,16 @@
         android:id="@+id/entercmentrellay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp" >
+        android:layout_marginBottom="16dp" >
 
         <TextView
             android:id="@+id/vue_user_entercomment"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="48dp"
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="28dp"
             android:layout_marginRight="12dp"
-            android:gravity="center_vertical"
+            android:gravity="bottom"
             android:text="@string/add_comment"
             android:textColor="@color/black" />
 
@@ -89,10 +89,4 @@
             android:layout_marginRight="48dp"
             android:background="@color/grey" />
     </RelativeLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="56dp"
-        android:background="@color/transperent" />
-
 </LinearLayout>

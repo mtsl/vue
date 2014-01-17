@@ -125,6 +125,8 @@ public class VueLoginActivity extends FragmentActivity implements
     private MixpanelAPI mixpanel;
     private MixpanelAPI.People people;
     JSONObject loginSelectedProps, loginActivity;
+    private String mGuestUserMessage = null;
+
     private enum PendingAction {
         NONE, POST_PHOTO, POST_STATUS_UPDATE
     }
@@ -172,6 +174,7 @@ public class VueLoginActivity extends FragmentActivity implements
             cancellayout.setVisibility(View.GONE);
             mIsAlreadyLoggedInWithVue = true;
         }
+        cancellayout.setVisibility(View.GONE);
         mContext = this;
         mSharedPreferencesObj = this.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -188,6 +191,8 @@ public class VueLoginActivity extends FragmentActivity implements
         
         mBundle = getIntent().getExtras();
         if (mBundle != null) {
+            mGuestUserMessage = mBundle
+                    .getString(VueConstants.GUEST_LOGIN_MESSAGE);
             mHideCancelButton = mBundle
                     .getBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG);
             mFromBezelMenuLogin = mBundle
@@ -203,7 +208,9 @@ public class VueLoginActivity extends FragmentActivity implements
             mGoogleplusAutomaticLogin = mBundle
                     .getBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN);
         }
-        
+        if (mGuestUserMessage != null) {
+            Toast.makeText(this, mGuestUserMessage, Toast.LENGTH_LONG).show();
+        }
         // Facebook Invite friend
         if (mFbFriendId != null) {
             mSocialIntegrationMainLayout.setVisibility(View.GONE);

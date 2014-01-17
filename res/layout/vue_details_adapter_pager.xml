@@ -67,6 +67,29 @@
                 android:maxLines="3"
                 android:textColor="@color/black" />
         </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/decisionlay"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="1dp"
+            android:background="@android:color/white" >
+
+            <View
+                android:id="@+id/greenbar"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#2B8925" />
+
+            <TextView
+                android:id="@+id/decisiontext"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center_vertical" />
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -131,10 +154,6 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
-    <include
-        android:id="@+id/addcommentlay"
-        layout="@layout/addcomment" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -29,4 +29,22 @@ public interface IAisleContentAdapter {
     
     public boolean hasSameLikes(int position);
     
+    public String getImageLikesCount(int i);
+    
+    public boolean getBookmarkIndicator();
+    
+    public int getBookmarkCount();
+    
+    public void setAisleBookmarkIndicator(boolean b);
+    
+    public void setBookmarkCount(int mBookmarksCount);
+    
+    public boolean getImageLikeStatus(int i);
+    
+    public void setImageLikeStatus(boolean b, int mCurrentIndex);
+    
+    public void setImageLikesCount(int mCurrentIndex, int likesCount);
+    
+    public String getImageId(int mCurrentIndex);
+    
 }

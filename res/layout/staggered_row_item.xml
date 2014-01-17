@@ -92,4 +92,59 @@
         </LinearLayout>
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp" >
+
+        <View
+            android:id="@+id/greenbar"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#2B8925" />
+
+        <RelativeLayout
+            android:id="@+id/social_card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/greenbar"
+            android:background="#FFFFFF" >
+
+            <ImageView
+                android:id="@+id/bookmarkImage"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@+id/bookmark_count"
+                android:src="@drawable/save_dark_small" />
+
+            <TextView
+                android:id="@+id/bookmark_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="12dp"
+                android:layout_toLeftOf="@+id/like_img"
+                android:text="2" />
+
+            <ImageView
+                android:id="@+id/like_img"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@+id/like_count"
+                android:src="@drawable/heart" />
+
+            <TextView
+                android:id="@+id/like_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:text="4" />
+        </RelativeLayout>
+    </RelativeLayout>
+
 </LinearLayout>

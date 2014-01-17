@@ -25,6 +25,8 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -107,6 +109,10 @@ public class VueLandingPageActivity extends Activity implements
     public static boolean mIsMyAilseCallEnable = false;
     private MixpanelAPI mixpanel;
     private MixpanelAPI.People people;
+
+    // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
+    public static final long SCREEN_REFRESH_TIME = 2 * 60;//120 mins.
+    public static long mLastRefreshTime;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -187,19 +193,60 @@ public class VueLandingPageActivity extends Activity implements
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            people = mixpanel.getPeople();
-            if (storedVueUser != null) {
-                mixpanel.identify(storedVueUser.getEmail());
-                people.identify(storedVueUser.getEmail());
-                VueApplication.getInstance().setmUserInitials(
-                        storedVueUser.getFirstName());
-                VueApplication.getInstance().setmUserId(storedVueUser.getId());
-                VueApplication.getInstance().setmUserName(
-                        storedVueUser.getFirstName() + " "
-                                + storedVueUser.getLastName());
-            } else {
-                showLogInDialog(false);
-                
+          
+            // TODO:
+            PackageInfo packageInfo;
+            try {
+                packageInfo = this.getPackageManager().getPackageInfo(
+                        VueLandingPageActivity.this.getPackageName(), 0);
+                int versionCode = packageInfo.versionCode;
+                if (storedVueUser != null) {
+                    sharedPreferencesObj = this.getSharedPreferences(
+                            VueConstants.SHAREDPREFERENCE_NAME, 0);
+                    int preVersionCode = sharedPreferencesObj.getInt(
+                            VueConstants.VERSION_CODE_CHANGE, 0);
+                    if (versionCode != preVersionCode) {
+                        Editor editor = sharedPreferencesObj.edit();
+                        editor.putLong(VueConstants.SCREEN_REFRESH_TIME,
+                                versionCode);
+                        editor.commit();
+                        if (storedVueUser != null
+                                && storedVueUser.getGooglePlusId().equals(VueUser.DEFAULT_GOOGLEPLUS_ID) && storedVueUser.getFacebookId().equals(VueUser.DEFAULT_FACEBOOK_ID)) {
+                            mixpanel.identify(storedVueUser.getEmail());
+                            people = mixpanel.getPeople();
+                            people.identify(storedVueUser.getEmail());
+                            // TODO: start the LoginActivity
+                            Intent i = new Intent(this, VueLoginActivity.class);
+                            Bundle b = new Bundle();
+                            b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
+                                    true);
+                            b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+                            b.putBoolean(
+                                    VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
+                                    false);
+                            b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
+                                    false);
+                            b.putString(
+                                    VueConstants.GUEST_LOGIN_MESSAGE,
+                                    getResources().getString(
+                                            R.string.guest_login_message));
+                            i.putExtras(b);
+                            startActivity(i);
+                        }
+                    }
+                    VueApplication.getInstance().setmUserInitials(
+                            storedVueUser.getFirstName());
+                    VueApplication.getInstance().setmUserId(storedVueUser.getId());
+                    VueApplication.getInstance().setmUserName(
+                            storedVueUser.getFirstName() + " "
+                                    + storedVueUser.getLastName());
+                } else {
+                    showLogInDialog(false);
+                }
+                // check whether user is guest or not.
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
         
@@ -223,6 +270,7 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        VueApplication.getInstance().saveTrendingRefreshTime(0);
         try {
             if (mLandingScreenTitleReceiver != null) {
                 VueApplication.getInstance().unregisterReceiver(
@@ -735,10 +783,34 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        mLastRefreshTime = sharedPreferencesObj.getLong(
+                VueConstants.SCREEN_REFRESH_TIME, 0);
+        if (mLastRefreshTime != 0) {
+            long currentTime = System.currentTimeMillis();
+            long currentMins = Utils.getMins(currentTime);
+            long difMins = currentMins - mLastRefreshTime;
+            if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
+                // Clean the data and fetch from server again.
+                Toast.makeText(this, "Syncing with server", Toast.LENGTH_SHORT)
+                        .show();
+                StackViews.getInstance().clearStack();
+                VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler().clearList(null);
+                VueTrendingAislesDataModel.getInstance(
+                        VueApplication.getInstance()).getFreshDataFromServer();
+                mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
+            }
+        }
     }
     
     @Override
     public void onPause() {
+        
+        long time_in_mins = Utils.getMins(System.currentTimeMillis());
+        VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
         super.onPause();
         
     }

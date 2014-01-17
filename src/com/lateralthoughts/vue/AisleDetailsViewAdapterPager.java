@@ -36,9 +36,7 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -69,13 +67,12 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private Context mContext;
     public static final String TAG = "AisleDetailsViewAdapter";
-    public static final int IMG_LIKE_STATUS = 1;
-    public static final int IMG_NONE_STATUS = 0;
     private static final String CHANGE_BOOKMARK = "BOOKMARK";
     public static final String CHANGE_COMMENT = "COMMENT";
     private static final String CHANGE_LIKES = "LIKES";
+    private static final String AISLE_STAGE_FOUR = "completed";
+    private String mAisleCureentStage;
     private AisleDetailSwipeListener mswipeListner;
-    private boolean mCloseKeyboard = false;
     private VueUser mStoredVueUser = null;
     public static final int SWIPE_MIN_DISTANCE = 30;
     private LayoutInflater mInflater;
@@ -92,17 +89,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private int mInitialCommentsToShowSize = 2;
     public String mVueusername;
     ShareDialog mShare;
-    public int mCurrentAislePosition;
-    public ArrayList<String> mImageDetailsArr = null;
+    private int mCurrentAislePosition;
     @SuppressLint("UseSparseArrays")
     Map<Integer, ArrayList<ImageComments>> mCommentsMapList = new HashMap<Integer, ArrayList<ImageComments>>();
     private ArrayList<Comment> mShowingCommentList = new ArrayList<Comment>();
     private int mBestHeight;
-    private int mTopBottomMargin = 24;
     private ViewHolder mViewHolder;
     private static final int mWaitTime = 1000;
     private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
-    public ArrayList<String> mCustomUrls = new ArrayList<String>();
     private LoginWarningMessage mLoginWarningMessage = null;
     private long mUserId;
     private ImageLoader mImageLoader;
@@ -114,7 +108,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private Bitmap profileUserBmp;
     private MixpanelAPI mixpanel;
     
-    @SuppressWarnings("unchecked")
     public AisleDetailsViewAdapterPager(Context c,
             AisleDetailSwipeListener swipeListner, int listCount,
             ArrayList<AisleWindowContent> content,
@@ -127,8 +120,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 .getmAisleImgCurrentPos();
         mContext = c;
         mImageLoader = VueApplication.getInstance().getImageCacheLoader();
-        mTopBottomMargin = VueApplication.getInstance().getPixel(
-                mTopBottomMargin);
         pageListener = new PageListener();
         mswipeListner = swipeListner;
         mListCount = listCount;
@@ -147,6 +138,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {
             if (getItem(i).getAisleId().equalsIgnoreCase(
                     VueApplication.getInstance().getClickedWindowID())) {
+                // get the clicked window position.
                 mCurrentAislePosition = i;
                 break;
             }
@@ -156,10 +148,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             VueApplication.getInstance().setmAisleImgCurrentPos(
                     getItem(mCurrentAislePosition).getImageList().size() - 1);
         }
-        if (getItem(mCurrentAislePosition).getAisleContext().mCommentList == null) {
-            getItem(mCurrentAislePosition).getAisleContext().mCommentList = new ArrayList<String>();
-        }
-        
         setImageRating();
         if (getItem(mCurrentAislePosition) != null) {
             String occasion = getItem(mCurrentAislePosition).getAisleContext().mOccasion;
@@ -183,9 +171,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             for (int i = 0; i < getItem(mCurrentAislePosition).getImageList()
                     .size(); i++) {
-                mCustomUrls.add(getItem(mCurrentAislePosition).getImageList()
-                        .get(i).mCustomImageUrl);
                 if (getItem(mCurrentAislePosition).getImageList().get(i).mAvailableHeight > mBestHeight) {
+                    // find the best height among all images.
                     mBestHeight = getItem(mCurrentAislePosition).getImageList()
                             .get(i).mAvailableHeight;
                 }
@@ -193,8 +180,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 mCommentsMapList.put(i, getItem(mCurrentAislePosition)
                         .getImageList().get(i).mCommentsList);
             }
-            
-            mImageDetailsArr = (ArrayList<String>) mCustomUrls.clone();
             ArrayList<ImageComments> imgComments = getItem(
                     mCurrentAislePosition).getImageList().get(
                     VueApplication.getInstance().getmAisleImgCurrentPos()).mCommentsList;
@@ -294,20 +279,19 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         String uniqueContentId;
         LinearLayout aisleDescriptor;
         LinearLayout imgContentlay, commentContentlay;
-        LinearLayout vueCommentheader, addCommentlay, descriptionlay;
+        LinearLayout vueCommentheader, descriptionlay;
         TextView userComment, enterComment;
         ImageView commentImg, likeImg;
         NetworkImageView userPic;
         RelativeLayout exapandHolder;
-        EditText edtComment;
         View separator;
-        RelativeLayout enterCommentrellay;
         RelativeLayout likelay, bookmarklay;
-        FrameLayout edtCommentLay;
-        ImageView commentSend;
         LinearLayout starImage;
+        RelativeLayout decisionLay;
+        TextView decisonText;
         ViewPager myPager;
         String tag;
+        View greenbar;
     }
     
     @Override
@@ -327,6 +311,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .findViewById(R.id.showpieceadapter);
             mViewHolder.starImage = (LinearLayout) convertView
                     .findViewById(R.id.starImage);
+            mViewHolder.decisionLay = (RelativeLayout) convertView
+                    .findViewById(R.id.decisionlay);
+            mViewHolder.decisonText = (TextView) convertView
+                    .findViewById(R.id.decisiontext);
+            mViewHolder.greenbar = (View) convertView
+                    .findViewById(R.id.greenbar);
+            
             mViewHolder.imgContentlay = (LinearLayout) convertView
                     .findViewById(R.id.vueimagcontent);
             mViewHolder.commentContentlay = (LinearLayout) convertView
@@ -347,17 +338,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .findViewById(R.id.likelay);
             mViewHolder.bookmarklay = (RelativeLayout) convertView
                     .findViewById(R.id.bookmarklay);
-            mViewHolder.enterCommentrellay = (RelativeLayout) convertView
-                    .findViewById(R.id.entercmentrellay);
-            
-            mViewHolder.edtComment = (EditText) convertView
-                    .findViewById(R.id.edtcomment);
             mViewHolder.likeImg = (ImageView) convertView
                     .findViewById(R.id.vuewndow_lik_img);
             mViewHolder.likeCount = (TextView) convertView
                     .findViewById(R.id.vuewndow_lik_count);
-            mViewHolder.addCommentlay = (LinearLayout) convertView
-                    .findViewById(R.id.addcommentlay);
             mViewHolder.exapandHolder = (RelativeLayout) convertView
                     .findViewById(R.id.exapandholder);
             mViewHolder.aisleDescription.setTextSize(Utils.SMALL_TEXT_SIZE);
@@ -377,16 +361,25 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             mViewHolder.commentImg = (ImageView) convertView
                     .findViewById(R.id.vuewndow_comment_img);
-            mViewHolder.commentSend = (ImageView) convertView
-                    .findViewById(R.id.sendcomment);
-            
-            mViewHolder.edtCommentLay = (FrameLayout) convertView
-                    .findViewById(R.id.edtcommentlay);
             mViewHolder.myPager = (ViewPager) convertView
                     .findViewById(R.id.myfivepanelpager);
             mViewHolder.textcount = (TextView) convertView
                     .findViewById(R.id.textcount);
             mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+            findAisleStage();
+            int cardWidh = VueApplication.getInstance()
+                    .getVueDetailsCardWidth();
+            if (mAisleCureentStage.equals(VueConstants.AISLE_STATGE_ONE)) {
+                cardWidh = cardWidh * 25 / 100;
+            } else if (mAisleCureentStage.equals(VueConstants.AISLE_STAGE_TWO)) {
+                cardWidh = cardWidh * 50 / 100;
+            } else if (mAisleCureentStage
+                    .equals(VueConstants.AISLE_STAGE_THREE)) {
+                cardWidh = cardWidh * 75 / 100;
+            }
+            final RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    cardWidh, VueApplication.getInstance().getPixel(2));
+            mViewHolder.greenbar.setLayoutParams(layoutParams);
             convertView.setTag(mViewHolder);
         } else {
             mViewHolder = (ViewHolder) convertView.getTag();
@@ -404,7 +397,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .setImageResource(R.drawable.comment_light);
         }
         if (getItem(mCurrentAislePosition).getImageList().get(
-                mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+                mCurrentDispImageIndex).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             mViewHolder.likeImg.setImageResource(R.drawable.heart);
         } else {
             mViewHolder.likeImg.setImageResource(R.drawable.heart_dark);
@@ -421,13 +414,40 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         mViewHolder.imgContentlay.setVisibility(View.VISIBLE);
         mViewHolder.commentContentlay.setVisibility(View.VISIBLE);
         mViewHolder.vueCommentheader.setVisibility(View.VISIBLE);
-        mViewHolder.addCommentlay.setVisibility(View.VISIBLE);
+        mViewHolder.decisionLay.setVisibility(View.VISIBLE);
         if (position == 0) {
             mViewHolder.commentContentlay.setVisibility(View.GONE);
             mViewHolder.vueCommentheader.setVisibility(View.GONE);
-            mViewHolder.addCommentlay.setVisibility(View.GONE);
             mViewHolder.separator.setVisibility(View.GONE);
-            mViewHolder.edtCommentLay.setVisibility(View.GONE);
+            mViewHolder.decisionLay.setVisibility(View.VISIBLE);
+            String descisionText = " ";
+            if (Long.parseLong(getItem(mCurrentAislePosition).getAisleContext().mUserId) == mUserId) {
+                if (mAisleCureentStage.endsWith(VueConstants.AISLE_STATGE_ONE)) {
+                    descisionText = "Just posted - ask for opinions by sharing";
+                } else if (mAisleCureentStage
+                        .endsWith(VueConstants.AISLE_STAGE_TWO)) {
+                    descisionText = "Opinions in progress";
+                } else if (mAisleCureentStage
+                        .endsWith(VueConstants.AISLE_STAGE_THREE)) {
+                    descisionText = " Opinions received - decide now";
+                } else if (mAisleCureentStage.endsWith(AISLE_STAGE_FOUR)) {
+                    descisionText = "Decision complete ";
+                }
+            } else {
+                if (mAisleCureentStage.endsWith(VueConstants.AISLE_STATGE_ONE)) {
+                    descisionText = "Just posted - please add your opinion";
+                } else if (mAisleCureentStage
+                        .endsWith(VueConstants.AISLE_STAGE_TWO)) {
+                    descisionText = "Still collecting opinions - please add yours";
+                } else if (mAisleCureentStage
+                        .endsWith(VueConstants.AISLE_STAGE_THREE)) {
+                    descisionText = "Opinions received, decision pending";
+                } else if (mAisleCureentStage.endsWith(AISLE_STAGE_FOUR)) {
+                    descisionText = " Decision complete";
+                }
+            }
+            mViewHolder.decisonText.setText(descisionText);
+            
             if (mSetPager) {
                 mViewHolder.myPager.setAdapter(mPagerAdapter);
                 mViewHolder.myPager.setOnPageChangeListener(pageListener);
@@ -479,7 +499,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                                 
                                 @Override
                                 public void onClick(View v) {
-                                    closeKeyboard();
+                                    mswipeListner.onCloseKeyBoard();
                                     // will be called when press on the
                                     // description, description
                                     // text will be expand and collapse for
@@ -553,8 +573,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // gone comment layoutgone
-        } else if (position == 1) {
+        }
+        // gone comment layoutgone }
+        else if (position == 1) {
             if (mIsLikeImageClicked) {
                 mIsLikeImageClicked = false;
                 Animation rotate = AnimationUtils.loadAnimation(mContext,
@@ -571,41 +592,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             mViewHolder.imgContentlay.setVisibility(View.GONE);
             mViewHolder.commentContentlay.setVisibility(View.GONE);
-            mViewHolder.addCommentlay.setVisibility(View.GONE);
-            mViewHolder.edtCommentLay.setVisibility(View.GONE);
             // image content gone
         } else if (position == mListCount - 1) {
-            
             mViewHolder.separator.setVisibility(View.GONE);
             mViewHolder.imgContentlay.setVisibility(View.GONE);
             mViewHolder.vueCommentheader.setVisibility(View.GONE);
             mViewHolder.commentContentlay.setVisibility(View.GONE);
-            if (mViewHolder.enterCommentrellay.getVisibility() == View.VISIBLE) {
-                mViewHolder.commentSend.setVisibility(View.GONE);
-            }
-            if (mCloseKeyboard) {
-                mCloseKeyboard = false;
-                mViewHolder.edtCommentLay.setVisibility(View.GONE);
-                mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
-            }
-            mViewHolder.enterCommentrellay
-                    .setOnClickListener(new OnClickListener() {
-                        
-                        @Override
-                        public void onClick(View v) {
-                            // handle the comment click here
-                            mViewHolder.edtCommentLay
-                                    .setVisibility(View.VISIBLE);
-                            mViewHolder.enterCommentrellay
-                                    .setVisibility(View.GONE);
-                            mswipeListner.onAddCommentClick(
-                                    mViewHolder.enterCommentrellay,
-                                    mViewHolder.edtComment,
-                                    mViewHolder.commentSend,
-                                    mViewHolder.edtCommentLay, mListCount - 1,
-                                    mViewHolder.textcount);
-                        }
-                    });
+            mViewHolder.decisionLay.setVisibility(View.GONE);
         } else {
             // first two views are image and comment layout. so use position - 2
             // to display all the comments from start
@@ -645,7 +638,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             mViewHolder.imgContentlay.setVisibility(View.GONE);
             mViewHolder.vueCommentheader.setVisibility(View.GONE);
-            mViewHolder.addCommentlay.setVisibility(View.GONE);
+            mViewHolder.decisionLay.setVisibility(View.GONE);
             mViewHolder.separator.setVisibility(View.VISIBLE);
             if (position == mListCount - 2) {
                 mViewHolder.separator.setVisibility(View.GONE);
@@ -679,7 +672,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                                 + mShowFixedRowCount;
                     }
                 }
-                mViewHolder.enterCommentrellay.setVisibility(View.VISIBLE);
                 notifyDataSetChanged();
                 setmSetPagerToTrue();
             }
@@ -710,6 +702,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
                     if (mBookmarksCount > 0) {
                         mBookmarksCount--;
+                        getItem(mCurrentAislePosition).mTotalBookmarkCount = getItem(mCurrentAislePosition).mTotalBookmarkCount - 1;
                         getItem(mCurrentAislePosition).setmAisleBookmarksCount(
                                 mBookmarksCount);
                     }
@@ -738,6 +731,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mixpanel.track("Aisle-Bookmarked", aisleUnbookmarkProps);
                     FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
                     mBookmarksCount++;
+                    getItem(mCurrentAislePosition).mTotalBookmarkCount = getItem(mCurrentAislePosition).mTotalBookmarkCount + 1;
                     getItem(mCurrentAislePosition).setmAisleBookmarksCount(
                             mBookmarksCount);
                     getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
@@ -746,6 +740,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     handleBookmark(bookmarkStatus,
                             getItem(mCurrentAislePosition).getAisleId());
                 }
+                VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler()
+                        .modifyBookmarkList(
+                                getItem(mCurrentAislePosition).getAisleId(),
+                                bookmarkStatus);
                 notifyDataSetChanged();
                 setmSetPagerToTrue();
             }
@@ -923,9 +923,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     && mCurrentDispImageIndex < getItem(mCurrentAislePosition)
                             .getImageList().size()) {
                 if (getItem(mCurrentAislePosition).getImageList().get(
-                        mCurrentDispImageIndex).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+                        mCurrentDispImageIndex).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
                     getItem(mCurrentAislePosition).getImageList().get(
-                            mCurrentDispImageIndex).mLikeDislikeStatus = IMG_NONE_STATUS;
+                            mCurrentDispImageIndex).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
                     if (getItem(mCurrentAislePosition).getImageList().get(
                             mCurrentDispImageIndex).mLikesCount > 0) {
                         getItem(mCurrentAislePosition).getImageList().get(
@@ -938,7 +938,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     
                 } else {
                     getItem(mCurrentAislePosition).getImageList().get(
-                            mCurrentDispImageIndex).mLikeDislikeStatus = IMG_LIKE_STATUS;
+                            mCurrentDispImageIndex).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
                     getItem(mCurrentAislePosition).getImageList().get(
                             mCurrentDispImageIndex).mLikesCount = getItem(
                             mCurrentAislePosition).getImageList().get(
@@ -1054,6 +1054,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     
     public void sendDataToDb(int imgPosition, String reqType,
             boolean likeOrDislike) {
+        getItem(mCurrentAislePosition).findAisleStage(
+                getItem(mCurrentAislePosition).getImageList());
         String aisleId = null;
         String imageId = null;
         AisleImageDetails itemDetails;
@@ -1162,8 +1164,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             articleParams.put("Unique_User_Like", "anonymous");
         }
         FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
-        if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
-            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+        if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
+            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
             
             Map<String, String> articleParams1 = new HashMap<String, String>();
             articleParams1.put("Unique_Aisle_Likes",
@@ -1175,11 +1177,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 articleParams1.put("Unique_User_Like", "anonymous");
             }
             FlurryAgent.logEvent("Aisle_Likes", articleParams1);
-        } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
+        } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_NONE_STATUS) {
             
             getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
                     mCurrentAislePosition).getImageList().get(position).mLikesCount + 1;
-            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_LIKE_STATUS;
+            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
+            getItem(mCurrentAislePosition).mTotalLikesCount = getItem(mCurrentAislePosition).mTotalLikesCount + 1;
+            
             sendDataToDb(position, CHANGE_LIKES, true);
         }
         findMostLikesImage();
@@ -1208,16 +1212,17 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         }
         mixpanel.track("Aisle-Unliked", aisleUnLikedProps);
         FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
-        if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
+        if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             // false
-            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
+            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
             if (getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount > 0) {
                 getItem(mCurrentAislePosition).getImageList().get(position).mLikesCount = getItem(
                         mCurrentAislePosition).getImageList().get(position).mLikesCount - 1;
+                getItem(mCurrentAislePosition).mTotalLikesCount = getItem(mCurrentAislePosition).mTotalLikesCount - 1;
             }
             sendDataToDb(position, CHANGE_LIKES, false);
-        } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_NONE_STATUS) {
-            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = IMG_NONE_STATUS;
+        } else if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_NONE_STATUS) {
+            getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
         }
         findMostLikesImage();
         if (position == mCurrentDispImageIndex) {
@@ -1227,19 +1232,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             notifyAdapter();
             setmSetPagerToTrue();
         }
-    }
-    
-    public void closeKeyboard() {
-        final InputMethodManager mInputMethodManager = (InputMethodManager) mContext
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        mInputMethodManager.hideSoftInputFromWindow(
-                mViewHolder.edtComment.getWindowToken(), 0);
-        mViewHolder.edtCommentLay.setVisibility(View.VISIBLE);
-        mViewHolder.enterCommentrellay.setVisibility(View.GONE);
-        mCloseKeyboard = true;
-        mSetPager = false;
-        notifyAdapter();
-        setmSetPagerToTrue();
     }
     
     private void handleBookmark(boolean isBookmarked, String aisleId) {
@@ -1286,7 +1278,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             for (ImageRating imgRating : imgRatingList) {
                 
                 if (imgRating.getImageId() == Long.parseLong(imgDetail.mId)) {
-                    imgDetail.mLikeDislikeStatus = IMG_LIKE_STATUS;
+                    imgDetail.mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
                 }
             }
         }
@@ -1724,5 +1716,31 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         ((NetworkImageView) imageView).setImageUrl(url, VueApplication
                 .getInstance().getImageCacheLoader(), width, height,
                 NetworkImageView.BitmapProfile.ProfileDetailsView);
+    }
+    
+    private void findAisleStage() {
+        int likesCount = 0, commentsCount = 0, totalCount;
+        ArrayList<AisleImageDetails> imageDetailsList = getItem(
+                mCurrentAislePosition).getImageList();
+        for (int index = 0; index < imageDetailsList.size(); index++) {
+            AisleImageDetails imageDetails = imageDetailsList.get(index);
+            int tempLikesCount = imageDetails.mLikesCount;
+            if (tempLikesCount > likesCount) {
+                likesCount = tempLikesCount;
+            }
+            int tempCommentsCount = imageDetails.mCommentsList.size();
+            if (tempCommentsCount > commentsCount) {
+                commentsCount = tempCommentsCount;
+            }
+        }
+        
+        totalCount = likesCount + commentsCount;
+        if (totalCount == 0) {
+            mAisleCureentStage = VueConstants.AISLE_STATGE_ONE;
+        } else if (likesCount >= 3 || commentsCount >= 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_THREE;
+        } else if (likesCount < 3 || commentsCount < 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
+        }
     }
 }

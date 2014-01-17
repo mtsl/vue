@@ -48,4 +48,14 @@ public class StackViews {
         }
         return flag;
     }
+    
+    public boolean clearStack() {
+        int size = 0;
+        size = mViewStack.size();
+        mViewStack.clear();
+        if (size > 0) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -29,6 +29,7 @@ import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.parser.Parser;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class AisleUpdateBackgroundThread implements Runnable,
         CountingStringEntity.UploadListener {
@@ -37,6 +38,7 @@ public class AisleUpdateBackgroundThread implements Runnable,
     private int mLastPercent = 0;
     private Aisle mAisle = null;
     private String mResponseMessage = null;
+    private MixpanelAPI mixpanel;
     
     @SuppressWarnings("static-access")
     public AisleUpdateBackgroundThread(Aisle aisle) {
@@ -61,6 +63,8 @@ public class AisleUpdateBackgroundThread implements Runnable,
     @SuppressWarnings("deprecation")
     @Override
     public void run() {
+        mixpanel = MixpanelAPI.getInstance(VueApplication
+                .getInstance(), VueApplication.getInstance().MIXPANEL_TOKEN);
         try {
             Intent notificationIntent = new Intent();
             PendingIntent contentIntent = PendingIntent.getActivity(
@@ -155,6 +159,7 @@ public class AisleUpdateBackgroundThread implements Runnable,
                                     DataBaseManager.getInstance(
                                             VueApplication.getInstance())
                                             .aisleUpdateToDB(aisleContext);
+                                    mixpanel.track("Update_Aisle_Success", null);
                                     FlurryAgent
                                             .logEvent("Update_Aisle_Success");
                                 }

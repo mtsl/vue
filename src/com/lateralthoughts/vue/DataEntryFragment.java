@@ -53,6 +53,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 /**
  * Fragment for creating Aisle, Updating Ailse and AddingImageToAisle
@@ -112,6 +113,7 @@ public class DataEntryFragment extends Fragment {
     private Context mContext;
     RelativeLayout mOccasionLayout = null;
     RelativeLayout mFindatLayout = null;
+    private MixpanelAPI mixpanel;
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -122,6 +124,7 @@ public class DataEntryFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mContext = activity;
+        mixpanel = MixpanelAPI.getInstance(activity, VueApplication.getInstance().MIXPANEL_TOKEN);
     }
     
     @Override
@@ -1551,6 +1554,7 @@ public class DataEntryFragment extends Fragment {
             } else {
                 aisle.setDescription("");
             }
+            mixpanel.track("Update_Aisle", null);
             FlurryAgent.logEvent("Update_Aisle");
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())
@@ -1615,6 +1619,7 @@ public class DataEntryFragment extends Fragment {
                         mAisleImagePathList);
             } catch (Exception e) {
             }
+            mixpanel.track("New_Aisle_Created", null);
             FlurryAgent.logEvent("New_Aisle_Creation");
             String originalImagePath = originalImagePathList.remove(0);
             // Camera or Gallery...

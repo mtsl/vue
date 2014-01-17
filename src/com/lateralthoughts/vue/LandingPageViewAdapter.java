@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -17,6 +18,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     private AisleLoader mLoader;
     private Context mContext;
     AisleContentClickListener mClickListener;
+    private static final String AISLE_STAGE_FOUR = "completed";
     
     public LandingPageViewAdapter(Context context,
             AisleContentClickListener clickListener) {
@@ -28,7 +30,13 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     
     @Override
     public int getCount() {
-        return mVueTrendingAislesDataModel.getAisleCount();
+        int count = mVueTrendingAislesDataModel.getAisleCount();
+        if (count == 0) {
+            mClickListener.showProgressBar();
+        } else {
+            mClickListener.hideProgressBar();
+        }
+        return count;
     }
     
     @Override
@@ -46,6 +54,15 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
                     .findViewById(R.id.aisle_content_flipper);
             holder.starIcon = (ImageView) convertView
                     .findViewById(R.id.staricon);
+            holder.viewBar = (View) convertView.findViewById(R.id.greenbar);
+            holder.likeCount = (TextView) convertView
+                    .findViewById(R.id.like_count);
+            holder.bookMarkCount = (TextView) convertView
+                    .findViewById(R.id.bookmark_count);
+            holder.bookmarkImageView = (ImageView) convertView
+                    .findViewById(R.id.bookmarkImage);
+            holder.socialCard = (RelativeLayout) convertView
+                    .findViewById(R.id.social_card);
             holder.aisleDescriptor = (LinearLayout) convertView
                     .findViewById(R.id.aisle_descriptor);
             holder.profileThumbnail = (NetworkImageView) holder.aisleDescriptor
@@ -75,7 +92,8 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
             holder.aisleselectlay.setVisibility(View.GONE);
         }
         mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
-                false, mClickListener, "left", holder.starIcon);
+                false, mClickListener, "left", holder.starIcon,
+                holder.socialCard);
         AisleContext context = holder.mWindowContent.getAisleContext();
         String mVueusername = null;
         if (context.mFirstName != null && context.mLastName != null) {
@@ -128,6 +146,29 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
             title = title + lookingFor;
         }
         holder.aisleContext.setText(title);
+        int cardWidh = VueApplication.getInstance().getVueDetailsCardWidth() / 2;
+        if (holder.mWindowContent.mAisleCureentStage
+                .equals(VueConstants.AISLE_STATGE_ONE)) {
+            cardWidh = cardWidh * 25 / 100;
+        } else if (holder.mWindowContent.mAisleCureentStage
+                .equals(VueConstants.AISLE_STAGE_TWO)) {
+            cardWidh = cardWidh * 50 / 100;
+        } else if (holder.mWindowContent.mAisleCureentStage
+                .equals(VueConstants.AISLE_STAGE_THREE)) {
+            cardWidh = cardWidh * 75 / 100;
+        }
+        final RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                cardWidh, VueApplication.getInstance().getPixel(2));
+        holder.viewBar.setLayoutParams(layoutParams);
+        
+        holder.bookMarkCount.setText(String.valueOf(holder.mWindowContent
+                .getmAisleBookmarksCount()));
+        if (holder.mWindowContent.getWindowBookmarkIndicator()) {
+            holder.bookmarkImageView.setImageResource(R.drawable.save);
+        } else {
+            holder.bookmarkImageView
+                    .setImageResource(R.drawable.save_dark_small);
+        }
         return convertView;
     }
 }

@@ -26,6 +26,11 @@ public class AisleWindowContent {
     public int mTrendingBestHeight = 0;
     public int mAisleCardHeight;
     
+    private static final String AISLE_STAGE_FOUR = "completed";
+    public int mTotalBookmarkCount;
+    public int mTotalLikesCount;
+    public String mAisleCureentStage;
+    
     public boolean getWindowBookmarkIndicator() {
         return mAisleBookmarkIndicator;
     }
@@ -88,6 +93,20 @@ public class AisleWindowContent {
         // lets parse through the image urls and update the image resolution
         // VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
         findMostLikesImage(mAisleImagesList);
+        findAisleStage(mAisleImagesList);
+        mTotalBookmarkCount = context.mBookmarkCount;
+        this.mAisleBookmarkIndicator = VueTrendingAislesDataModel
+                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+                .checkIsAisleBookmarked(mAisleId);
+        for (int index = 0; index < mAisleImagesList.size(); index++) {
+            boolean status = VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .getNetworkHandler()
+                    .getImageRateStatus(mAisleImagesList.get(index).mId);
+            if (status) {
+                mAisleImagesList.get(index).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
+            }
+        }
         udpateImageUrlsForDevice();
     }
     
@@ -274,6 +293,31 @@ public class AisleWindowContent {
                 itemsList.get(i).mHasMostLikes = true;
                 itemsList.get(mostLikePosition).mSameMostLikes = true;
             }
+        }
+    }
+    
+    public void findAisleStage(ArrayList<AisleImageDetails> itemsList) {
+        int likesCount = 0, commentsCount = 0, totalCount;
+        for (int index = 0; index < itemsList.size(); index++) {
+            AisleImageDetails imageDetails = itemsList.get(index);
+            int tempLikesCount = imageDetails.mLikesCount;
+            if (tempLikesCount > likesCount) {
+                likesCount = tempLikesCount;
+            }
+            int tempCommentsCount = imageDetails.mCommentsList.size();
+            if (tempCommentsCount > commentsCount) {
+                commentsCount = tempCommentsCount;
+            }
+        }
+        mTotalLikesCount = likesCount;
+        int totalCommentCount = commentsCount;
+        totalCount = likesCount + totalCommentCount;
+        if (totalCount == 0) {
+            mAisleCureentStage = VueConstants.AISLE_STATGE_ONE;
+        } else if (likesCount >= 3 || commentsCount >= 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_THREE;
+        } else if (likesCount < 3 || commentsCount < 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
         }
     }
     

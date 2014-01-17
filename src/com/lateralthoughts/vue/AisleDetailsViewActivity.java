@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,6 +19,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -445,6 +447,21 @@ public class AisleDetailsViewActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        long currentTime = System.currentTimeMillis();
+        long mLastRefreshTime = sharedPreferencesObj.getLong(
+                VueConstants.SCREEN_REFRESH_TIME, 0);
+        long currentMins = Utils.getMins(currentTime);
+        long refresMins = Utils.getMins(mLastRefreshTime);
+        long difMins = currentMins - refresMins;
+        
+        if (mLastRefreshTime == 0) {
+            VueApplication.getInstance().saveTrendingRefreshTime(
+                    Utils.getMins(System.currentTimeMillis()));
+        } else if (difMins < VueLandingPageActivity.SCREEN_REFRESH_TIME) {
+            VueApplication.getInstance().saveTrendingRefreshTime(0);
+        }
         
     }
     
