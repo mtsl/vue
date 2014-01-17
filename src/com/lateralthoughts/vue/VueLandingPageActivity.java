@@ -104,7 +104,7 @@ public class VueLandingPageActivity extends Activity implements
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
     public static boolean mIsMyAilseCallEnable = false;
     // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
-    public static final long SCREEN_REFRESH_TIME = 2 * 60;//120 mins.
+    public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
     
     @Override
@@ -194,15 +194,18 @@ public class VueLandingPageActivity extends Activity implements
                 if (storedVueUser != null) {
                     sharedPreferencesObj = this.getSharedPreferences(
                             VueConstants.SHAREDPREFERENCE_NAME, 0);
-                    int preVersionCode = sharedPreferencesObj.getInt(
+                    long preVersionCode = sharedPreferencesObj.getLong(
                             VueConstants.VERSION_CODE_CHANGE, 0);
                     if (versionCode != preVersionCode) {
                         Editor editor = sharedPreferencesObj.edit();
-                        editor.putLong(VueConstants.SCREEN_REFRESH_TIME,
+                        editor.putLong(VueConstants.VERSION_CODE_CHANGE,
                                 versionCode);
                         editor.commit();
                         if (storedVueUser != null
-                                && storedVueUser.getGooglePlusId().equals(VueUser.DEFAULT_GOOGLEPLUS_ID) && storedVueUser.getFacebookId().equals(VueUser.DEFAULT_FACEBOOK_ID)) {
+                                && storedVueUser.getGooglePlusId().equals(
+                                        VueUser.DEFAULT_GOOGLEPLUS_ID)
+                                && storedVueUser.getFacebookId().equals(
+                                        VueUser.DEFAULT_FACEBOOK_ID)) {
                             // TODO: start the LoginActivity
                             Intent i = new Intent(this, VueLoginActivity.class);
                             Bundle b = new Bundle();
@@ -224,7 +227,8 @@ public class VueLandingPageActivity extends Activity implements
                     }
                     VueApplication.getInstance().setmUserInitials(
                             storedVueUser.getFirstName());
-                    VueApplication.getInstance().setmUserId(storedVueUser.getId());
+                    VueApplication.getInstance().setmUserId(
+                            storedVueUser.getId());
                     VueApplication.getInstance().setmUserName(
                             storedVueUser.getFirstName() + " "
                                     + storedVueUser.getLastName());
@@ -955,7 +959,11 @@ public class VueLandingPageActivity extends Activity implements
                 .getInstance(VueLandingPageActivity.this).getAislesFromDB(
                         bookmarked, true);
         for (AisleWindowContent w : windowContentTemp) {
-            windowContent.add(w);
+            // TODO: HERE THE LIST SHOULD NOT BE NULL BUT WE GOT NULL SOME TIMES
+            // LIST NEED TO CHECK THIS CODE BY SURENDRA.
+            if (w.getImageList() != null) {
+                windowContent.add(w);
+            }
         }
         if (windowContent != null && windowContent.size() > 0) {
             getActionBar().setTitle(screenName);

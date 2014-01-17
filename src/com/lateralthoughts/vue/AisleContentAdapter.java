@@ -95,7 +95,6 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     }
     
     public void setBookmarkCount(int bookmarkCount) {
-        mWindowContent.setmAisleBookmarksCount(bookmarkCount);
         mWindowContent.getAisleContext().mBookmarkCount = bookmarkCount;
     }
     

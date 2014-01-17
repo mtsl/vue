@@ -158,8 +158,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             }
             
             mBookmarksCount = getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount;
-            getItem(mCurrentAislePosition).setmAisleBookmarksCount(
-                    mBookmarksCount);
             VueApplication.getInstance().setClickedWindowCount(
                     getItem(mCurrentAislePosition).getImageList().size());
             
@@ -189,6 +187,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .getmAisleImgCurrentPos();
             mLikes = getItem(mCurrentAislePosition).getImageList().get(
                     imgPosition).mLikesCount;
+            // to the aisle is bookmarked already or not.
             boolean isBookmarked = VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())
                     .getNetworkHandler()
@@ -346,6 +345,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             mViewHolder.textcount = (TextView) convertView
                     .findViewById(R.id.textcount);
             mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
+            // to show the green bar based on count of the likes and comments.
             findAisleStage();
             int cardWidh = VueApplication.getInstance()
                     .getVueDetailsCardWidth();
@@ -364,6 +364,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         } else {
             mViewHolder = (ViewHolder) convertView.getTag();
         }
+        // if the current user bookmarked the aisle show theme color icon.
         if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
             mViewHolder.vueWindowBookmarkImg.setImageResource(R.drawable.save);
         } else {
@@ -668,8 +669,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     if (mBookmarksCount > 0) {
                         mBookmarksCount--;
                         getItem(mCurrentAislePosition).mTotalBookmarkCount = getItem(mCurrentAislePosition).mTotalBookmarkCount - 1;
-                        getItem(mCurrentAislePosition).setmAisleBookmarksCount(
-                                mBookmarksCount);
                     }
                     getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
                     
@@ -682,8 +681,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
                     mBookmarksCount++;
                     getItem(mCurrentAislePosition).mTotalBookmarkCount = getItem(mCurrentAislePosition).mTotalBookmarkCount + 1;
-                    getItem(mCurrentAislePosition).setmAisleBookmarksCount(
-                            mBookmarksCount);
                     getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
                     getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
                             bookmarkStatus);
@@ -1191,6 +1188,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private void setImageRating() {
         ArrayList<AisleImageDetails> aisleImgDetais = getItem(
                 mCurrentAislePosition).getImageList();
+        // get the rated images by this user from the db.
+        // this table contains all the rated image list by this user.
+        // if any image id exist in the table means it is a rated image by this
+        // user.
         ArrayList<ImageRating> imgRatingList = DataBaseManager.getInstance(
                 mContext).getRatedImagesList(
                 getItem(mCurrentAislePosition).getAisleId());

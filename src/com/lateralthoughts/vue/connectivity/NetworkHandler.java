@@ -477,13 +477,21 @@ public class NetworkHandler {
                         if (responseMessage != null) {
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                                     .parseBookmarkedAisles(responseMessage);
+                            bookmarkedList.clear();
                             for (AisleBookmark aB : bookmarkedAisles) {
                                 DataBaseManager.getInstance(mContext)
                                         .updateBookmarkAisles(aB.getId(),
                                                 Long.toString(aB.getAisleId()),
                                                 aB.getBookmarked());
+                                
+                                if (aB.getBookmarked()) {
+                                    bookmarkedList.add(String.valueOf(aB
+                                            .getAisleId()));
+                                }
                             }
-                            getAllBookmarks();
+                            VueTrendingAislesDataModel.getInstance(
+                                    VueApplication.getInstance())
+                                    .updateBookmarkAisleStatus(bookmarkedList);
                         }
                     }
                 } catch (Exception e) {
@@ -615,6 +623,9 @@ public class NetworkHandler {
         
     }
     
+    /*
+     * to retrieve all the rated images by this user.
+     */
     public void getRatedImageList() {
         String userId = getUserId();
         if (userId == null) {
@@ -633,10 +644,25 @@ public class NetworkHandler {
                                     retrievedImageRating = Parser
                                             .parseRatedImages(response
                                                     .toString());
+                                    
+                                    if (retrievedImageRating != null
+                                            && retrievedImageRating.size() > 0) {
+                                        ratedImageList.clear();
+                                        for (int index = 0; index < retrievedImageRating
+                                                .size(); index++) {
+                                            ratedImageList.add(String
+                                                    .valueOf(retrievedImageRating
+                                                            .get(index)
+                                                            .getImageId()));
+                                        }
+                                    }
                                     DataBaseManager.getInstance(mContext)
                                             .insertRatedImages(
                                                     retrievedImageRating);
-                                    getAllRatedImagesList();
+                                    VueTrendingAislesDataModel.getInstance(
+                                            VueApplication.getInstance())
+                                            .updateImageRatingStatus(
+                                                    ratedImageList);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -669,24 +695,6 @@ public class NetworkHandler {
         offset = 0;
     }
     
-    private void getAllBookmarks() {
-        bookmarkedList.clear();
-        Cursor cursor = mContext.getContentResolver().query(
-                VueConstants.BOOKMARKER_AISLES_URI, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                if (cursor.getInt(cursor
-                        .getColumnIndex(VueConstants.IS_LIKED_OR_BOOKMARKED)) == 1) {
-                    bookmarkedList.add(cursor.getString(cursor
-                            .getColumnIndex(VueConstants.AISLE_ID)));
-                    
-                }
-                
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-    }
-    
     public boolean checkIsAisleBookmarked(String aisleId) {
         boolean isBookmarked = bookmarkedList.contains(aisleId);
         return isBookmarked;
@@ -697,17 +705,6 @@ public class NetworkHandler {
             bookmarkedList.add(aisleId);
         } else {
             bookmarkedList.remove(aisleId);
-        }
-    }
-    
-    private void getAllRatedImagesList() {
-        ratedImageList.clear();
-        ArrayList<ImageRating> imageRatingList = DataBaseManager.getInstance(
-                mContext).getAllRatedImagesList();
-        if (imageRatingList != null && imageRatingList.size() > 0) {
-            for (ImageRating imgRate : imageRatingList) {
-                ratedImageList.add(String.valueOf(imgRate.getImageId()));
-            }
         }
     }
     
