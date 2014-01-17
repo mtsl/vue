@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -235,6 +234,11 @@ public class DataBaseManager {
         for (int i = 0; i < aislesCount; i++) {
             AisleWindowContent content = contentList.get(i);
             AisleContext info = content.getAisleContext();
+            ArrayList<AisleImageDetails> imageItemsArray = content
+                    .getImageList();
+            if (imageItemsArray == null || imageItemsArray.size() == 0) {
+                continue;
+            }
             if (whichScreen == TRENDING && mAislesOrderMap.isEmpty()) {
                 mAislesOrderMap.put(info.mAisleId, THOUSAND);
             } else if (whichScreen == TRENDING && !mAislesOrderMap.isEmpty()) {
@@ -255,8 +259,7 @@ public class DataBaseManager {
                 cur.close();
                 mBookmarkedAislesOrderMap.put(info.mAisleId, count);
             }
-            ArrayList<AisleImageDetails> imageItemsArray = content
-                    .getImageList();
+            
             ContentValues values = new ContentValues();
             values.put(VueConstants.FIRST_NAME, info.mFirstName);
             values.put(VueConstants.LAST_NAME, info.mLastName);

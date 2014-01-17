@@ -21,8 +21,7 @@ public class AisleWindowContent {
                                                                // pattern we
                                                                // look for
     private String mImageFormatSpecifier = "._SY%d.jpg";
-    private int mAisleBookmarksCount = 0;
-    private boolean mAisleBookmarkIndicator = false;
+    boolean mAisleBookmarkIndicator = false;
     public int mTrendingBestHeight = 0;
     public int mAisleCardHeight;
     
@@ -38,15 +37,6 @@ public class AisleWindowContent {
     public void setWindowBookmarkIndicator(boolean windowBookmarkIndicator) {
         this.mAisleBookmarkIndicator = windowBookmarkIndicator;
     }
-    
-    public int getmAisleBookmarksCount() {
-        return mAisleBookmarksCount;
-    }
-    
-    public void setmAisleBookmarksCount(int mAisleBookmarksCount) {
-        this.mAisleBookmarksCount = mAisleBookmarksCount;
-    }
-    
     // these two should be based on device with & height
     private String mAisleId;
     
@@ -63,7 +53,6 @@ public class AisleWindowContent {
         if (createPlaceHolders) {
             mContext = new AisleContext();
             mAisleImagesList = new ArrayList<AisleImageDetails>();
-            mAisleBookmarksCount = mContext.mBookmarkCount;
         }
     }
     

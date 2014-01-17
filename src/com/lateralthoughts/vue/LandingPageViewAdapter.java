@@ -160,9 +160,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         final RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 cardWidh, VueApplication.getInstance().getPixel(2));
         holder.viewBar.setLayoutParams(layoutParams);
-        
-        holder.bookMarkCount.setText(String.valueOf(holder.mWindowContent
-                .getmAisleBookmarksCount()));
+        holder.bookMarkCount.setText(String.valueOf(holder.mWindowContent.getAisleContext().mBookmarkCount));
         if (holder.mWindowContent.getWindowBookmarkIndicator()) {
             holder.bookmarkImageView.setImageResource(R.drawable.save);
         } else {
