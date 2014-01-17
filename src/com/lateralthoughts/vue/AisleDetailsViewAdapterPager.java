@@ -12,6 +12,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -60,6 +63,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 @SuppressLint("UseSparseArrays")
 public class AisleDetailsViewAdapterPager extends BaseAdapter {
@@ -108,12 +112,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private DetailImageClickListener detailsImageClickListenr;
     public boolean mSetPager = true;
     private Bitmap profileUserBmp;
+    private MixpanelAPI mixpanel;
     
     @SuppressWarnings("unchecked")
     public AisleDetailsViewAdapterPager(Context c,
             AisleDetailSwipeListener swipeListner, int listCount,
             ArrayList<AisleWindowContent> content,
             ShareViaVueListner shareViaVueListner) {
+        mixpanel = MixpanelAPI.getInstance(c, VueApplication.getInstance().MIXPANEL_TOKEN);
         mShareViaVueListner = shareViaVueListner;
         mVueTrendingAislesDataModel = VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance());
@@ -228,6 +234,20 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 
                 @Override
                 public void run() {
+                    JSONObject aisleViewedProps = new JSONObject();
+                    try {
+                        aisleViewedProps.put("AisleId", getItem(mCurrentAislePosition).getAisleId());
+                        aisleViewedProps.put("Category", getItem(mCurrentAislePosition)
+                                .getAisleContext().mCategory);
+                        aisleViewedProps.put("Lookingfor", getItem(mCurrentAislePosition)
+                                .getAisleContext().mLookingForItem);
+                        aisleViewedProps.put("Occasion", getItem(mCurrentAislePosition)
+                                .getAisleContext().mOccasion);
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    mixpanel.track("AisleViewed", aisleViewedProps);
                     Map<String, String> articleParams = new HashMap<String, String>();
                     articleParams
                             .put("Category", getItem(mCurrentAislePosition)
@@ -672,6 +692,21 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 mIsBookImageClciked = true;
                 boolean bookmarkStatus = false;
                 if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
+                    JSONObject aisleBookmarkProps = new JSONObject();
+                    try {
+                        aisleBookmarkProps.put("AisleId", getItem(mCurrentAislePosition).getAisleId());
+                        aisleBookmarkProps.put("Category", getItem(mCurrentAislePosition)
+                                .getAisleContext().mCategory);
+                        aisleBookmarkProps.put("Lookingfor", getItem(mCurrentAislePosition)
+                                .getAisleContext().mLookingForItem);
+                        aisleBookmarkProps.put("Occasion", getItem(mCurrentAislePosition)
+                                .getAisleContext().mOccasion);
+                        aisleBookmarkProps.put("ScreenName", "Detail View Screen");
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    mixpanel.track("Aisle-UnBookmarked", aisleBookmarkProps);
                     FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
                     if (mBookmarksCount > 0) {
                         mBookmarksCount--;
@@ -686,6 +721,21 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                             getItem(mCurrentAislePosition).getAisleId());
                 } else {
                     bookmarkStatus = true;
+                    JSONObject aisleUnbookmarkProps = new JSONObject();
+                    try {
+                        aisleUnbookmarkProps.put("AisleId", getItem(mCurrentAislePosition).getAisleId());
+                        aisleUnbookmarkProps.put("Category", getItem(mCurrentAislePosition)
+                                .getAisleContext().mCategory);
+                        aisleUnbookmarkProps.put("Lookingfor", getItem(mCurrentAislePosition)
+                                .getAisleContext().mLookingForItem);
+                        aisleUnbookmarkProps.put("Occasion", getItem(mCurrentAislePosition)
+                                .getAisleContext().mOccasion);
+                        aisleUnbookmarkProps.put("ScreenName", "Detail View Screen");
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    mixpanel.track("Aisle-Bookmarked", aisleUnbookmarkProps);
                     FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
                     mBookmarksCount++;
                     getItem(mCurrentAislePosition).setmAisleBookmarksCount(
@@ -1085,6 +1135,20 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 e2.printStackTrace();
             }
         }
+        JSONObject aisleLikedProps = new JSONObject();
+        try {
+            aisleLikedProps.put("AisleId", getItem(mCurrentAislePosition).getAisleId());
+            aisleLikedProps.put("Category", getItem(mCurrentAislePosition)
+                    .getAisleContext().mCategory);
+            aisleLikedProps.put("Lookingfor", getItem(mCurrentAislePosition)
+                    .getAisleContext().mLookingForItem);
+            aisleLikedProps.put("Occasion", getItem(mCurrentAislePosition)
+                    .getAisleContext().mOccasion);
+            aisleLikedProps.put("ScreenName", "Detail View Screen");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mixpanel.track("Aisle-Liked", aisleLikedProps);
         Map<String, String> articleParams = new HashMap<String, String>();
         articleParams.put("Category", getItem(mCurrentAislePosition)
                 .getAisleContext().mCategory);
@@ -1129,6 +1193,20 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     private void onChangeDislikesCount(int position) {
+        JSONObject aisleUnLikedProps = new JSONObject();
+        try {
+            aisleUnLikedProps.put("AisleId", getItem(mCurrentAislePosition).getAisleId());
+            aisleUnLikedProps.put("Category", getItem(mCurrentAislePosition)
+                    .getAisleContext().mCategory);
+            aisleUnLikedProps.put("Lookingfor", getItem(mCurrentAislePosition)
+                    .getAisleContext().mLookingForItem);
+            aisleUnLikedProps.put("Occasion", getItem(mCurrentAislePosition)
+                    .getAisleContext().mOccasion);
+            aisleUnLikedProps.put("ScreenName", "Detail View Screen");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mixpanel.track("Aisle-Unliked", aisleUnLikedProps);
         FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
         if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == IMG_LIKE_STATUS) {
             // false

@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -64,6 +67,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueLandingPageActivity extends Activity implements
         SearchView.OnQueryTextListener, SearchView.OnCloseListener {
@@ -101,10 +105,13 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mHideDefaultActionbar = false;
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
     public static boolean mIsMyAilseCallEnable = false;
+    private MixpanelAPI mixpanel;
+    private MixpanelAPI.People people;
     
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
                 VueConstants.LANDING_SCREEN_RECEIVER);
@@ -180,8 +187,10 @@ public class VueLandingPageActivity extends Activity implements
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            
+            people = mixpanel.getPeople();
             if (storedVueUser != null) {
+                mixpanel.identify(storedVueUser.getEmail());
+                people.identify(storedVueUser.getEmail());
                 VueApplication.getInstance().setmUserInitials(
                         storedVueUser.getFirstName());
                 VueApplication.getInstance().setmUserId(storedVueUser.getId());
@@ -190,6 +199,7 @@ public class VueLandingPageActivity extends Activity implements
                                 + storedVueUser.getLastName());
             } else {
                 showLogInDialog(false);
+                
             }
         }
         
@@ -285,6 +295,13 @@ public class VueLandingPageActivity extends Activity implements
             return true;
         } else if (item.getItemId() == R.id.menu_create_aisle) {
             if (mOtherSourceImagePath == null) {
+                JSONObject createAisleButtonProps = new JSONObject();
+                try {
+                    createAisleButtonProps.put("Create_Aisle_Button_Click", "Create aisle clicked");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mixpanel.track("Create_Aisle_Button_Click", createAisleButtonProps);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);
@@ -863,6 +880,14 @@ public class VueLandingPageActivity extends Activity implements
             
         }
         
+        JSONObject categorySelectedProps = new JSONObject();
+        try {
+            categorySelectedProps.put("CategorySelected", catName);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        mixpanel.track("bezelCategorySelected", categorySelectedProps);
         FlurryAgent.logEvent(catName);
     }
     
@@ -1507,6 +1532,7 @@ public class VueLandingPageActivity extends Activity implements
                                                     .updateOrAddRecentlyViewedAisles(
                                                             aisleWindowContent
                                                                     .getAisleId());
+                                            
                                             FlurryAgent.logEvent(
                                                     "User_Select_Aisle",
                                                     articleParams);
