@@ -55,6 +55,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 /**
  * Fragment for creating Aisle, Updating Ailse and AddingImageToAisle

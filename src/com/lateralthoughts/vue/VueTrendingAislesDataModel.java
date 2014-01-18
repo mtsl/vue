@@ -419,6 +419,12 @@ public class VueTrendingAislesDataModel {
         return position;
     }
     
+    public void getFreshDataFromServer() {
+        boolean loadMore = true;
+        mNetworkHandler.loadInitialData(loadMore, mHandler, mContext
+                .getResources().getString(R.string.trending));
+    }
+    
     public void setImageLikeOrDisLikeForImage(
             AisleImageDetails aisleImageDetails, Long ratingId,
             boolean likeOrDislike) {

@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -36,6 +37,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -62,6 +65,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 @SuppressLint("UseSparseArrays")
 public class AisleDetailsViewAdapterPager extends BaseAdapter {
@@ -1787,6 +1791,32 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         ((NetworkImageView) imageView).setImageUrl(url, VueApplication
                 .getInstance().getImageCacheLoader(), width, height,
                 NetworkImageView.BitmapProfile.ProfileDetailsView);
+    }
+    
+    private void findAisleStage() {
+        int likesCount = 0, commentsCount = 0, totalCount;
+        ArrayList<AisleImageDetails> imageDetailsList = getItem(
+                mCurrentAislePosition).getImageList();
+        for (int index = 0; index < imageDetailsList.size(); index++) {
+            AisleImageDetails imageDetails = imageDetailsList.get(index);
+            int tempLikesCount = imageDetails.mLikesCount;
+            if (tempLikesCount > likesCount) {
+                likesCount = tempLikesCount;
+            }
+            int tempCommentsCount = imageDetails.mCommentsList.size();
+            if (tempCommentsCount > commentsCount) {
+                commentsCount = tempCommentsCount;
+            }
+        }
+        
+        totalCount = likesCount + commentsCount;
+        if (totalCount == 0) {
+            mAisleCureentStage = VueConstants.AISLE_STATGE_ONE;
+        } else if (likesCount >= 3 || commentsCount >= 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_THREE;
+        } else if (likesCount < 3 || commentsCount < 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
+        }
     }
     
     private void showUserNamesOfImageLikes(Context context,

@@ -30,6 +30,7 @@ import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.parser.Parser;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class AisleUpdateBackgroundThread implements Runnable,
         CountingStringEntity.UploadListener {
