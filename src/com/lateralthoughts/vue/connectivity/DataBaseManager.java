@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -137,7 +136,6 @@ public class DataBaseManager {
      * @param AisleContext
      *            context.
      * */
-    @Deprecated
     public void aisleUpdateToDB(final AisleContext context) {
         runTask(new Runnable() {
             
@@ -267,6 +265,7 @@ public class DataBaseManager {
             values.put(VueConstants.BOOKMARK_COUNT, info.mBookmarkCount);
             values.put(VueConstants.CATEGORY, info.mCategory);
             values.put(VueConstants.AISLE_DESCRIPTION, info.mDescription);
+            values.put(VueConstants.AISLE_ANCHOT_IMAGE_ID, info.mAnchorImageId);
             values.put(VueConstants.AISLE_OWNER_IMAGE_URL,
                     info.mAisleOwnerImageURL);
             values.put(VueConstants.DELETE_FLAG, 0);
@@ -403,7 +402,7 @@ public class DataBaseManager {
                 }
             }
         }
-        copydbToSdcard();
+        
     }
     
     /**
@@ -412,7 +411,6 @@ public class DataBaseManager {
      * @param AisleContext
      *            context.
      * */
-    @Deprecated
     private void aisleUpdate(AisleContext context) {
         boolean isAisle = false;
         if (mAislesOrderMap != null && mAislesOrderMap.isEmpty()) {
@@ -459,6 +457,7 @@ public class DataBaseManager {
         values.put(VueConstants.AISLE_Id, context.mAisleId);
         values.put(VueConstants.BOOKMARK_COUNT, context.mBookmarkCount);
         values.put(VueConstants.CATEGORY, context.mCategory);
+        values.put(VueConstants.AISLE_ANCHOT_IMAGE_ID, context.mAnchorImageId);
         values.put(VueConstants.AISLE_DESCRIPTION, context.mDescription);
         values.put(VueConstants.DELETE_FLAG, 0);
         int order = mAislesOrderMap.get(context.mAisleId);
@@ -573,6 +572,8 @@ public class DataBaseManager {
                         .getColumnIndex(VueConstants.CATEGORY));
                 userInfo.mDescription = aislesCursor.getString(aislesCursor
                         .getColumnIndex(VueConstants.AISLE_DESCRIPTION));
+                userInfo.mAnchorImageId = aislesCursor.getString(aislesCursor
+                        .getColumnIndex(VueConstants.AISLE_ANCHOT_IMAGE_ID));
                 userInfo.mAisleOwnerImageURL = aislesCursor
                         .getString(aislesCursor
                                 .getColumnIndex(VueConstants.AISLE_OWNER_IMAGE_URL));
@@ -690,15 +691,14 @@ public class DataBaseManager {
         });
     }
     
-    public void addLikeOrDisLike(final int likeStatus, final int likeCount,
-            final Long id, final String imageID, final String aisleID,
-            final boolean dirtyFlag) {
+    public void addLikeOrDisLike(final int likeCount, final boolean dirtyFlag,
+            final ImageRating imageRating, final boolean isUserRating) {
         runTask(new Runnable() {
             
             @Override
             public void run() {
-                addLikeOrDisLikeToDb(likeStatus, likeCount, id, imageID,
-                        aisleID, dirtyFlag);
+                addLikeOrDisLikeToDb(likeCount, dirtyFlag, imageRating,
+                        isUserRating);
             }
         });
     }
@@ -728,12 +728,13 @@ public class DataBaseManager {
     }
     
     public void insertRatedImages(
-            final ArrayList<ImageRating> retrievedImageRating) {
+            final ArrayList<ImageRating> retrievedImageRating,
+            final boolean isUserRating) {
         runTask(new Runnable() {
             
             @Override
             public void run() {
-                insertRatedImagesToDB(retrievedImageRating);
+                insertRatedImagesToDB(retrievedImageRating, isUserRating);
             }
         });
     }
@@ -793,18 +794,21 @@ public class DataBaseManager {
                 VueConstants.COMMENTS_ON_IMAGE_URI, commentValues);
     }
     
-    private void addLikeOrDisLikeToDb(int likeStatus, int likeCount, Long id,
-            String imageID, String aisleID, boolean dirtyFlag) {
+    private void addLikeOrDisLikeToDb(int likeCount, boolean dirtyFlag,
+            ImageRating imageRating, boolean isUserRating) {
         ContentValues aisleValues = new ContentValues();
-        aisleValues.put(VueConstants.LIKE_OR_DISLIKE, likeStatus);
+        aisleValues.put(VueConstants.LIKE_OR_DISLIKE, imageRating.mLiked ? 1
+                : 0);
         aisleValues.put(VueConstants.LIKES_COUNT, likeCount);
         aisleValues.put(VueConstants.DIRTY_FLAG, (dirtyFlag == true) ? 1 : 0);
         mContext.getContentResolver().update(
                 VueConstants.IMAGES_CONTENT_URI,
                 aisleValues,
                 VueConstants.AISLE_Id + "=? AND " + VueConstants.IMAGE_ID
-                        + "=?", new String[] { aisleID, imageID });
-        updateRatedImages(id, imageID, aisleID, likeStatus);
+                        + "=?",
+                new String[] { String.valueOf(imageRating.mAisleId),
+                        String.valueOf(imageRating.mImageId) });
+        updateRatedImages(imageRating, isUserRating);
     }
     
     /**
@@ -1104,6 +1108,8 @@ public class DataBaseManager {
                         .getColumnIndex(VueConstants.LOOKING_FOR));
                 userInfo.mOccasion = aislesCursor.getString(aislesCursor
                         .getColumnIndex(VueConstants.OCCASION));
+                userInfo.mAnchorImageId = aislesCursor.getString(aislesCursor
+                        .getColumnIndex(VueConstants.AISLE_ANCHOT_IMAGE_ID));
                 userInfo.mBookmarkCount = Integer.parseInt(aislesCursor
                         .getString(aislesCursor
                                 .getColumnIndex(VueConstants.BOOKMARK_COUNT)));
@@ -1236,7 +1242,7 @@ public class DataBaseManager {
     public ArrayList<ImageRating> getDirtyImages(String dirtyFlag) {
         ArrayList<ImageRating> images = new ArrayList<ImageRating>();
         Cursor cursor = mContext.getContentResolver().query(
-                VueConstants.IMAGES_CONTENT_URI, null,
+                VueConstants.RATED_IMAGES_URI, null,
                 VueConstants.DIRTY_FLAG + "=?", new String[] { dirtyFlag },
                 null);
         if (cursor.moveToFirst()) {
@@ -1244,14 +1250,13 @@ public class DataBaseManager {
                 if (cursor.getInt(cursor
                         .getColumnIndex(VueConstants.DIRTY_FLAG)) == 1) {
                     ImageRating imgRating = new ImageRating();
-                    imgRating.setImageId((long) cursor.getInt(cursor
-                            .getColumnIndex(VueConstants.IMAGE_ID)));
-                    imgRating.setAisleId((long) cursor.getInt(cursor
-                            .getColumnIndex(VueConstants.AISLE_Id)));
-                    imgRating
-                            .setLiked((cursor.getInt(cursor
-                                    .getColumnIndex(VueConstants.LIKE_OR_DISLIKE)) == 1) ? true
-                                    : false);
+                    imgRating.mImageId = (long) cursor.getInt(cursor
+                            .getColumnIndex(VueConstants.IMAGE_ID));
+                    imgRating.mAisleId = (long) cursor.getInt(cursor
+                            .getColumnIndex(VueConstants.AISLE_Id));
+                    imgRating.mLiked = (cursor.getInt(cursor
+                            .getColumnIndex(VueConstants.LIKE_OR_DISLIKE)) == 1) ? true
+                            : false;
                     images.add(imgRating);
                 }
             } while (cursor.moveToNext());
@@ -1429,7 +1434,7 @@ public class DataBaseManager {
     }
     
     private void insertRatedImagesToDB(
-            ArrayList<ImageRating> retrievedImageRating) {
+            ArrayList<ImageRating> retrievedImageRating, boolean isUserRating) {
         boolean isMatched = false;
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.RATED_IMAGES_URI, null, null, null, null);
@@ -1437,27 +1442,42 @@ public class DataBaseManager {
         for (ImageRating imageRating : retrievedImageRating) {
             isMatched = false;
             ContentValues values = new ContentValues();
-            values.put(VueConstants.AISLE_ID, imageRating.getAisleId());
-            values.put(VueConstants.IMAGE_ID, imageRating.getImageId());
+            values.put(VueConstants.AISLE_ID, imageRating.mAisleId);
+            values.put(VueConstants.IMAGE_ID, imageRating.mImageId);
             values.put(VueConstants.IS_LIKED_OR_BOOKMARKED,
-                    imageRating.getLiked());
-            String imId = Long.toString(imageRating.getImageId().longValue());
+                    imageRating.mLiked ? 1 : 0);
+            values.put(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME,
+                    imageRating.mImageRatingOwnerFirstName);
+            values.put(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME,
+                    imageRating.mImageRatingOwnerLastName);
+            values.put(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME,
+                    imageRating.mLastModifiedTimestamp);
+            if (imageRating.mLiked) {
+                values.put(VueConstants.AISLE_IMAGE_USER_RATING,
+                        isUserRating ? 1 : 0);
+            }
+            String mId = Long.toString(imageRating.mId.longValue());
             
             if (cursor.moveToFirst()) {
                 do {
-                    String imgId = cursor.getString(cursor
-                            .getColumnIndex(VueConstants.IMAGE_ID));
-                    if (imgId.equals(imId)) {
+                    String id = cursor.getString(cursor
+                            .getColumnIndex(VueConstants.ID));
+                    if (id.equals(mId)) {
+                        if (!isUserRating) {
+                            values.put(
+                                    VueConstants.AISLE_IMAGE_USER_RATING,
+                                    cursor.getInt(cursor
+                                            .getColumnIndex(VueConstants.AISLE_IMAGE_USER_RATING)));
+                        }
+                        if (!imageRating.mLiked) {
+                            values.put(VueConstants.AISLE_IMAGE_USER_RATING, 0);
+                        }
                         mContext.getContentResolver()
                                 .update(VueConstants.RATED_IMAGES_URI,
                                         values,
-                                        VueConstants.IMAGE_ID + "=? AND "
-                                                + VueConstants.AISLE_ID + "=?",
-                                        new String[] {
-                                                Long.toString(imageRating
-                                                        .getImageId()),
-                                                Long.toString(imageRating
-                                                        .getAisleId()) });
+                                        VueConstants.ID + "=? ",
+                                        new String[] { Long
+                                                .toString(imageRating.mId) });
                         isMatched = true;
                         break;
                     }
@@ -1465,7 +1485,7 @@ public class DataBaseManager {
                 } while (cursor.moveToNext());
             }
             if (!isMatched) {
-                values.put(VueConstants.ID, imageRating.getId());
+                values.put(VueConstants.ID, imageRating.mId);
                 mContext.getContentResolver().insert(
                         VueConstants.RATED_IMAGES_URI, values);
             }
@@ -1473,30 +1493,47 @@ public class DataBaseManager {
         cursor.close();
     }
     
-    private void updateRatedImages(Long id, String imageID, String aisleID,
-            int likeStatus) {
-        if (id == null) {
+    private void updateRatedImages(ImageRating imagerating, boolean isUserRating) {
+        if (imagerating == null || imagerating.mId == null) {
             return;
         }
+        
         boolean isMatched = false;
         ContentValues values = new ContentValues();
-        values.put(VueConstants.ID, id.longValue());
-        values.put(VueConstants.IMAGE_ID, imageID);
-        values.put(VueConstants.AISLE_ID, aisleID);
-        values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, likeStatus);
+        values.put(VueConstants.ID, imagerating.mId.longValue());
+        values.put(VueConstants.IMAGE_ID, imagerating.mImageId);
+        values.put(VueConstants.AISLE_ID, imagerating.mAisleId);
+        values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, imagerating.mLiked ? 1
+                : 0);
+        values.put(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME,
+                imagerating.mImageRatingOwnerFirstName);
+        values.put(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME,
+                imagerating.mImageRatingOwnerLastName);
+        values.put(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME,
+                imagerating.mLastModifiedTimestamp);
+        if (imagerating.mLiked) {
+            values.put(VueConstants.AISLE_IMAGE_USER_RATING, isUserRating ? 1
+                    : 0);
+        }
         Cursor c = mContext.getContentResolver().query(
                 VueConstants.RATED_IMAGES_URI, null, null, null, null);
         if (c.moveToFirst()) {
             do {
-                String imgId = c.getString(c
-                        .getColumnIndex(VueConstants.IMAGE_ID));
-                if (imgId.equals(imageID)) {
+                String id = c.getString(c.getColumnIndex(VueConstants.ID));
+                if (id.equals(String.valueOf(imagerating.mId))) {
+                    if (!isUserRating) {
+                        values.put(
+                                VueConstants.AISLE_IMAGE_USER_RATING,
+                                c.getInt(c
+                                        .getColumnIndex(VueConstants.AISLE_IMAGE_USER_RATING)));
+                    }
+                    if (!imagerating.mLiked) {
+                        values.put(VueConstants.AISLE_IMAGE_USER_RATING, 0);
+                    }
                     mContext.getContentResolver().update(
-                            VueConstants.RATED_IMAGES_URI,
-                            values,
-                            VueConstants.IMAGE_ID + "=? AND "
-                                    + VueConstants.AISLE_ID + "=?",
-                            new String[] { imageID, aisleID });
+                            VueConstants.RATED_IMAGES_URI, values,
+                            VueConstants.ID + "=? ",
+                            new String[] { String.valueOf(imagerating.mId) });
                     isMatched = true;
                     break;
                 }
@@ -1512,28 +1549,39 @@ public class DataBaseManager {
     public ArrayList<ImageRating> getRatedImagesList(String aisleId) {
         ArrayList<ImageRating> imgRatingList = new ArrayList<ImageRating>();
         Cursor cursor = mContext.getContentResolver().query(
-                VueConstants.RATED_IMAGES_URI,
-                null,
-                VueConstants.AISLE_ID + "=? AND "
-                        + VueConstants.IS_LIKED_OR_BOOKMARKED + "=?",
-                new String[] { aisleId, "1" }, null);
+                VueConstants.RATED_IMAGES_URI, null,
+                VueConstants.AISLE_ID + "=? ", new String[] { aisleId }, null);
         if (cursor.moveToFirst()) {
             do {
                 ImageRating imgRating = new ImageRating();
-                imgRating.setId(Long.parseLong(cursor.getString(cursor
-                        .getColumnIndex(VueConstants.ID))));
-                imgRating.setImageId(Long.parseLong(cursor.getString(cursor
-                        .getColumnIndex(VueConstants.IMAGE_ID))));
-                imgRating.setAisleId(Long.parseLong(cursor.getString(cursor
-                        .getColumnIndex(VueConstants.AISLE_ID))));
-                long bookmark = Long.parseLong(cursor.getString(cursor
+                imgRating.mId = Long.parseLong(cursor.getString(cursor
+                        .getColumnIndex(VueConstants.ID)));
+                imgRating.mImageId = Long.parseLong(cursor.getString(cursor
+                        .getColumnIndex(VueConstants.IMAGE_ID)));
+                imgRating.mAisleId = Long.parseLong(cursor.getString(cursor
+                        .getColumnIndex(VueConstants.AISLE_ID)));
+                long like = Long.parseLong(cursor.getString(cursor
                         .getColumnIndex(VueConstants.IS_LIKED_OR_BOOKMARKED)));
-                imgRating.setLiked((bookmark == 1) ? true : false);
+                imgRating.mLiked = (like == 1) ? true : false;
+                imgRating.mImageRatingOwnerFirstName = cursor
+                        .getString(cursor
+                                .getColumnIndex(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME));
+                imgRating.mIsUserRating = cursor.getInt(cursor
+                        .getColumnIndex(VueConstants.AISLE_IMAGE_USER_RATING));
+                imgRating.mImageRatingOwnerLastName = cursor
+                        .getString(cursor
+                                .getColumnIndex(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME));
+                try {
+                    imgRating.mLastModifiedTimestamp = Long
+                            .parseLong(cursor.getString(cursor
+                                    .getColumnIndex(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME)));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
                 imgRatingList.add(imgRating);
             } while (cursor.moveToNext());
         }
         cursor.close();
-        copydbToSdcard();
         return imgRatingList;
     }
     
@@ -1662,7 +1710,7 @@ public class DataBaseManager {
      * FOR TESTING PERPOES ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS
      * CALLING AFTER TESTING, to copy FishWrap.db to sdCard.
      */
-    private void copydbToSdcard() {
+    public void copydbToSdcard() {
         try {
             File sd = Environment.getExternalStorageDirectory();
             File data = Environment.getDataDirectory();

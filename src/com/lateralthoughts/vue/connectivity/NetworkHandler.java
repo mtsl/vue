@@ -32,6 +32,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleManager;
+import com.lateralthoughts.vue.AisleManager.AisleAddCallback;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -149,13 +150,13 @@ public class NetworkHandler {
         
     }
     
-    public void requestUpdateAisle(Aisle aisle) {
-        AisleManager.getAisleManager().updateAisle(aisle);
+    public void requestUpdateAisle(Aisle aisle,
+            AisleUpdateCallback aisleUpdateCallback) {
+        AisleManager.getAisleManager().updateAisle(aisle, aisleUpdateCallback);
     }
     
     // request the server to create an empty aisle.
-    public void requestCreateAisle(Aisle aisle,
-            final AisleUpdateCallback callback) {
+    public void requestCreateAisle(Aisle aisle, final AisleAddCallback callback) {
         AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
     }
     
@@ -629,7 +630,7 @@ public class NetworkHandler {
                                                     .toString());
                                     DataBaseManager.getInstance(mContext)
                                             .insertRatedImages(
-                                                    retrievedImageRating);
+                                                    retrievedImageRating, true);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

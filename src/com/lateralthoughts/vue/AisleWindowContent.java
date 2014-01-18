@@ -248,6 +248,9 @@ public class AisleWindowContent {
      * show star to most likes on the image.
      */
     private void findMostLikesImage(ArrayList<AisleImageDetails> itemsList) {
+        if (itemsList == null) {
+            return;
+        }
         int mostLikePosition = 0, mLikes = 0;
         boolean hasLikes = false;
         for (int i = 0; i < itemsList.size(); i++) {

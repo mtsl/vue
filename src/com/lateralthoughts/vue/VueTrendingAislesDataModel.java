@@ -378,4 +378,18 @@ public class VueTrendingAislesDataModel {
         }
         return position;
     }
+    
+    public void setImageLikeOrDisLikeForImage(
+            AisleImageDetails aisleImageDetails, Long ratingId,
+            boolean likeOrDislike) {
+        if (aisleImageDetails != null && aisleImageDetails.mRatingsList != null
+                && aisleImageDetails.mRatingsList.size() > 0) {
+            for (int i = 0; i < aisleImageDetails.mRatingsList.size(); i++) {
+                if (aisleImageDetails.mRatingsList.get(i).mId.equals(ratingId)) {
+                    aisleImageDetails.mRatingsList.get(i).mLiked = likeOrDislike;
+                    break;
+                }
+            }
+        }
+    }
 }

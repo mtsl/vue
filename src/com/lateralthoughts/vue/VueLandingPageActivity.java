@@ -1277,7 +1277,8 @@ public class VueLandingPageActivity extends Activity implements
                                                             new ImageAddedCallback() {
                                                                 
                                                                 @Override
-                                                                public void onImageAdded() {
+                                                                public void onImageAdded(
+                                                                        String imageId) {
                                                                     
                                                                 }
                                                             });
@@ -1293,7 +1294,7 @@ public class VueLandingPageActivity extends Activity implements
                                 new ImageAddedCallback() {
                                     
                                     @Override
-                                    public void onImageAdded() {
+                                    public void onImageAdded(String imageId) {
                                         
                                     }
                                 });
