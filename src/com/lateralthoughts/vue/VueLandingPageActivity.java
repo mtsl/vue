@@ -271,6 +271,7 @@ public class VueLandingPageActivity extends Activity implements
         loadDetailsScreenForNotificationClick(getIntent().getExtras());
     }
     
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -354,6 +355,7 @@ public class VueLandingPageActivity extends Activity implements
                     e.printStackTrace();
                 }
                 mixpanel.track("Create_Aisle_Button_Click", createAisleButtonProps);
+                people.append("Create_Aisle_Button_Click", createAisleButtonProps);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);
@@ -452,7 +454,7 @@ public class VueLandingPageActivity extends Activity implements
             FlurryAgent.logEvent("Login_Time_Ends", articleParams, true);
         }
         FlurryAgent.onPageView();
-        
+        mixpanel.flush();
         super.onStart();
     }
     
