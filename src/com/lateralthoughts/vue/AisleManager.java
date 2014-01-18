@@ -1,18 +1,13 @@
 package com.lateralthoughts.vue;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import org.apache.http.client.ClientProtocolException;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.os.Environment;
 
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
