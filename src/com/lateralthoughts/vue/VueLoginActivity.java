@@ -380,7 +380,11 @@ public class VueLoginActivity extends FragmentActivity implements
             
         }
     }
-    
+    @Override
+    protected void onStop() {
+        mixpanel.flush();
+        super.onStop();
+    }
     private static class NullX509TrustManager implements X509TrustManager {
         
         public void checkClientTrusted(X509Certificate[] cert, String authType) {
@@ -781,7 +785,19 @@ public class VueLoginActivity extends FragmentActivity implements
                 Utils.writeUserProfileObjectToFile(VueLoginActivity.this,
                         VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
                         vueUserProfile);
+                /*JSONObject createUser = new JSONObject();
+                try {
+                    createUser.put("$first_name", vueUserProfile.getUserName());
+                    createUser.put("$$last_name", "");
+                    createUser.put("Gender", vueUserProfile.getUserGender());
+                    createUser.put("$email", vueUserProfile.getUserEmail());
+                    createUser.put("Current location", vueUserProfile.getUserLocation());
+                    createUser.put("loggedIn with", "Facebook");
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }*/
                 people.identify(vueUserProfile.getUserEmail());
+                
                 people.set("$first_name", vueUserProfile.getUserName());
                 people.set("$last_name", "");
                 people.set("Gender", vueUserProfile.getUserGender());
