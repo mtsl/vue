@@ -41,6 +41,8 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.lateralthoughts.vue.ui.ScaleImageView;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -1294,9 +1296,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
          */
         
         @Override
-        public void destroyItem(View view, int arg1, Object object) {
+        public void destroyItem(View view, int position, Object object) {
+
+            RelativeLayout detailsBrowser = (RelativeLayout) object;
+            ScaleImageView browserImage = (ScaleImageView)detailsBrowser.findViewById(R.id.browserimage);
+            ScaledImageViewFactory imageViewFactory = ScaledImageViewFactory.getInstance(mContext);
+            imageViewFactory.returnUsedImageView(browserImage);
             ((ViewPager) view).removeView((RelativeLayout) object);
-            
         }
         
         @Override
