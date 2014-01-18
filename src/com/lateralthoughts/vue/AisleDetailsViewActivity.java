@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,6 +19,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,6 +42,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class AisleDetailsViewActivity extends Activity {
     Fragment mFragRight;
@@ -68,12 +71,13 @@ public class AisleDetailsViewActivity extends Activity {
     private ActionBarDrawerToggle mDrawerToggle;
     private FrameLayout mDrawerLeft, mDrawerRight;
     private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
+    private MixpanelAPI mixpanel;
     
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        
+        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.aisle_details_activity_landing);
         mDrawerRight = (FrameLayout) findViewById(R.id.drawer_right);
         initialize();
@@ -221,6 +225,11 @@ public class AisleDetailsViewActivity extends Activity {
                 });
     }
     
+    @Override
+    public void onBackPressed() {
+        mixpanel.flush();
+        super.onBackPressed();
+    }
     private void initialize() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the main content when the drawer
@@ -302,6 +311,7 @@ public class AisleDetailsViewActivity extends Activity {
     
     @Override
     protected void onStart() {
+        mixpanel.track(DETAILS_SCREEN_VISITOR, null);
         FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
         FlurryAgent.logEvent(DETAILS_SCREEN_VISITOR);
@@ -437,6 +447,21 @@ public class AisleDetailsViewActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        long currentTime = System.currentTimeMillis();
+        long mLastRefreshTime = sharedPreferencesObj.getLong(
+                VueConstants.SCREEN_REFRESH_TIME, 0);
+        long currentMins = Utils.getMins(currentTime);
+        long refresMins = Utils.getMins(mLastRefreshTime);
+        long difMins = currentMins - refresMins;
+        
+        if (mLastRefreshTime == 0) {
+            VueApplication.getInstance().saveTrendingRefreshTime(
+                    Utils.getMins(System.currentTimeMillis()));
+        } else if (difMins < VueLandingPageActivity.SCREEN_REFRESH_TIME) {
+            VueApplication.getInstance().saveTrendingRefreshTime(0);
+        }
         
     }
     

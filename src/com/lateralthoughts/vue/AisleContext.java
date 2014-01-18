@@ -1,7 +1,5 @@
 package com.lateralthoughts.vue;
 
-import java.util.ArrayList;
-
 public class AisleContext {
     
     public String mFirstName;
@@ -20,5 +18,4 @@ public class AisleContext {
     public int mBookmarkCount;
     public String mAnchorImageId;
     public ArrayList<String> mCommentList;
-    
 }

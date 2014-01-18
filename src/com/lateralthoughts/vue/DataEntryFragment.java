@@ -114,6 +114,7 @@ public class DataEntryFragment extends Fragment {
     private Context mContext;
     RelativeLayout mOccasionLayout = null;
     RelativeLayout mFindatLayout = null;
+    private MixpanelAPI mixpanel;
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -124,6 +125,8 @@ public class DataEntryFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mContext = activity;
+        mixpanel = MixpanelAPI.getInstance(activity,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
     }
     
     @Override
@@ -1581,6 +1584,7 @@ public class DataEntryFragment extends Fragment {
                         mAisleImagePathList);
             } catch (Exception e) {
             }
+            mixpanel.track("New_Aisle_Created", null);
             FlurryAgent.logEvent("New_Aisle_Creation");
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())

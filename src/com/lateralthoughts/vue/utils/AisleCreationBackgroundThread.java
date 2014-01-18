@@ -18,7 +18,6 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.AisleAddCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
@@ -38,6 +37,7 @@ public class AisleCreationBackgroundThread implements Runnable,
     private Aisle mAisle = null;
     private String mResponseMessage = null;
     private AisleAddCallback mAisleAddCallback = null;
+    private MixpanelAPI mixpanel;
     
     @SuppressWarnings("static-access")
     public AisleCreationBackgroundThread(Aisle aisle, AisleAddCallback callback) {
@@ -63,6 +63,8 @@ public class AisleCreationBackgroundThread implements Runnable,
     @SuppressWarnings("deprecation")
     @Override
     public void run() {
+        mixpanel = MixpanelAPI.getInstance(VueApplication.getInstance(),
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         try {
             Intent notificationIntent = new Intent();
             PendingIntent contentIntent = PendingIntent.getActivity(
@@ -167,7 +169,7 @@ public class AisleCreationBackgroundThread implements Runnable,
                                 aisle.setId(Long.valueOf(aileItem
                                         .getAisleContext().mAisleId));
                                 mAisleAddCallback.onAisleAdded(aisle);
-                                FlurryAgent.logEvent("Create_Aisle_Success");
+                                mixpanel.track("Create_Aisle_Success", null);
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }

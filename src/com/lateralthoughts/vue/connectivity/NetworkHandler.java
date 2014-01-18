@@ -3,6 +3,7 @@ package com.lateralthoughts.vue.connectivity;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,6 +74,8 @@ public class NetworkHandler {
     public int offset;
     ArrayList<AisleWindowContent> mAislesList = null;
     private SharedPreferences mSharedPreferencesObj;
+    public ArrayList<String> bookmarkedList = new ArrayList<String>();
+    private ArrayList<String> ratedImageList = new ArrayList<String>();
     
     public NetworkHandler(Context context) {
         mContext = context;
@@ -360,6 +363,8 @@ public class NetworkHandler {
                                                 VueApplication.getInstance()
                                                         .sendBroadcast(intent);
                                                 clearList(progress);
+                                                Collections
+                                                        .reverse(mAislesList);
                                                 for (int i = 0; i < mAislesList
                                                         .size(); i++) {
                                                     VueTrendingAislesDataModel
@@ -473,12 +478,21 @@ public class NetworkHandler {
                         if (responseMessage != null) {
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                                     .parseBookmarkedAisles(responseMessage);
+                            bookmarkedList.clear();
                             for (AisleBookmark aB : bookmarkedAisles) {
                                 DataBaseManager.getInstance(mContext)
                                         .updateBookmarkAisles(aB.getId(),
                                                 Long.toString(aB.getAisleId()),
                                                 aB.getBookmarked());
+                                
+                                if (aB.getBookmarked()) {
+                                    bookmarkedList.add(String.valueOf(aB
+                                            .getAisleId()));
+                                }
                             }
+                            VueTrendingAislesDataModel.getInstance(
+                                    VueApplication.getInstance())
+                                    .updateBookmarkAisleStatus(bookmarkedList);
                         }
                     }
                 } catch (Exception e) {
@@ -610,6 +624,9 @@ public class NetworkHandler {
         
     }
     
+    /*
+     * to retrieve all the rated images by this user.
+     */
     public void getRatedImageList() {
         String userId = getUserId();
         if (userId == null) {
@@ -628,6 +645,18 @@ public class NetworkHandler {
                                     retrievedImageRating = Parser
                                             .parseRatedImages(response
                                                     .toString());
+                                    
+                                    if (retrievedImageRating != null
+                                            && retrievedImageRating.size() > 0) {
+                                        ratedImageList.clear();
+                                        for (int index = 0; index < retrievedImageRating
+                                                .size(); index++) {
+                                            ratedImageList.add(String
+                                                    .valueOf(retrievedImageRating
+                                                            .get(index)
+                                                            .getImageId()));
+                                        }
+                                    }
                                     DataBaseManager.getInstance(mContext)
                                             .insertRatedImages(
                                                     retrievedImageRating, true);
@@ -647,7 +676,7 @@ public class NetworkHandler {
         VueApplication.getInstance().getRequestQueue().add(vueRequest);
     }
     
-    private void clearList(NotifyProgress progress) {
+    public void clearList(NotifyProgress progress) {
         if (progress != null) {
             progress.clearBrowsers();
         }
@@ -663,4 +692,24 @@ public class NetworkHandler {
         offset = 0;
     }
     
+    public boolean checkIsAisleBookmarked(String aisleId) {
+        boolean isBookmarked = bookmarkedList.contains(aisleId);
+        return isBookmarked;
+    }
+    
+    public void modifyBookmarkList(String aisleId, boolean isAddRequest) {
+        if (isAddRequest) {
+            bookmarkedList.add(aisleId);
+        } else {
+            bookmarkedList.remove(aisleId);
+        }
+    }
+    
+    public boolean getImageRateStatus(String imageId) {
+        boolean isImageRated = false;
+        if (ratedImageList.contains(imageId)) {
+            isImageRated = true;
+        }
+        return isImageRated;
+    }
 }

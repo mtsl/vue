@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -22,6 +25,8 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -64,6 +69,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueLandingPageActivity extends Activity implements
         SearchView.OnQueryTextListener, SearchView.OnCloseListener {
@@ -101,10 +107,17 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mHideDefaultActionbar = false;
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
     public static boolean mIsMyAilseCallEnable = false;
+    private MixpanelAPI mixpanel;
+    private MixpanelAPI.People people;
+
+    // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
+    public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
+    public static long mLastRefreshTime;
     
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
                 VueConstants.LANDING_SCREEN_RECEIVER);
@@ -180,16 +193,64 @@ public class VueLandingPageActivity extends Activity implements
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            
-            if (storedVueUser != null) {
-                VueApplication.getInstance().setmUserInitials(
-                        storedVueUser.getFirstName());
-                VueApplication.getInstance().setmUserId(storedVueUser.getId());
-                VueApplication.getInstance().setmUserName(
-                        storedVueUser.getFirstName() + " "
-                                + storedVueUser.getLastName());
-            } else {
-                showLogInDialog(false);
+          
+            // TODO:
+            PackageInfo packageInfo;
+            try {
+                packageInfo = this.getPackageManager().getPackageInfo(
+                        VueLandingPageActivity.this.getPackageName(), 0);
+                int versionCode = packageInfo.versionCode;
+                if (storedVueUser != null) {
+                    sharedPreferencesObj = this.getSharedPreferences(
+                            VueConstants.SHAREDPREFERENCE_NAME, 0);
+                    long preVersionCode = sharedPreferencesObj.getLong(
+                            VueConstants.VERSION_CODE_CHANGE, 0);
+                    if (versionCode != preVersionCode) {
+                        Editor editor = sharedPreferencesObj.edit();
+                        editor.putLong(VueConstants.VERSION_CODE_CHANGE,
+                                versionCode);
+                        editor.commit();
+                        if (storedVueUser != null
+                                && storedVueUser.getGooglePlusId().equals(
+                                        VueUser.DEFAULT_GOOGLEPLUS_ID)
+                                && storedVueUser.getFacebookId().equals(
+                                        VueUser.DEFAULT_FACEBOOK_ID)) {
+                            mixpanel.identify(storedVueUser.getEmail());
+                            people = mixpanel.getPeople();
+                            people.identify(storedVueUser.getEmail());
+                            // TODO: start the LoginActivity
+                            Intent i = new Intent(this, VueLoginActivity.class);
+                            Bundle b = new Bundle();
+                            b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
+                                    true);
+                            b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+                            b.putBoolean(
+                                    VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
+                                    false);
+                            b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
+                                    false);
+                            b.putString(
+                                    VueConstants.GUEST_LOGIN_MESSAGE,
+                                    getResources().getString(
+                                            R.string.guest_login_message));
+                            i.putExtras(b);
+                            startActivity(i);
+                        }
+                    }
+                    VueApplication.getInstance().setmUserInitials(
+                            storedVueUser.getFirstName());
+                    VueApplication.getInstance().setmUserId(
+                            storedVueUser.getId());
+                    VueApplication.getInstance().setmUserName(
+                            storedVueUser.getFirstName() + " "
+                                    + storedVueUser.getLastName());
+                } else {
+                    showLogInDialog(false);
+                }
+                // check whether user is guest or not.
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
         
@@ -213,6 +274,7 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        VueApplication.getInstance().saveTrendingRefreshTime(0);
         try {
             if (mLandingScreenTitleReceiver != null) {
                 VueApplication.getInstance().unregisterReceiver(
@@ -285,6 +347,13 @@ public class VueLandingPageActivity extends Activity implements
             return true;
         } else if (item.getItemId() == R.id.menu_create_aisle) {
             if (mOtherSourceImagePath == null) {
+                JSONObject createAisleButtonProps = new JSONObject();
+                try {
+                    createAisleButtonProps.put("Create_Aisle_Button_Click", "Create aisle clicked");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mixpanel.track("Create_Aisle_Button_Click", createAisleButtonProps);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);
@@ -718,10 +787,34 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        mLastRefreshTime = sharedPreferencesObj.getLong(
+                VueConstants.SCREEN_REFRESH_TIME, 0);
+        if (mLastRefreshTime != 0) {
+            long currentTime = System.currentTimeMillis();
+            long currentMins = Utils.getMins(currentTime);
+            long difMins = currentMins - mLastRefreshTime;
+            if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
+                // Clean the data and fetch from server again.
+                Toast.makeText(this, "Syncing with server", Toast.LENGTH_SHORT)
+                        .show();
+                StackViews.getInstance().clearStack();
+                VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler().clearList(null);
+                VueTrendingAislesDataModel.getInstance(
+                        VueApplication.getInstance()).getFreshDataFromServer();
+                mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
+            }
+        }
     }
     
     @Override
     public void onPause() {
+        
+        long time_in_mins = Utils.getMins(System.currentTimeMillis());
+        VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
         super.onPause();
         
     }
@@ -863,6 +956,14 @@ public class VueLandingPageActivity extends Activity implements
             
         }
         
+        JSONObject categorySelectedProps = new JSONObject();
+        try {
+            categorySelectedProps.put("CategorySelected", catName);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        mixpanel.track("bezelCategorySelected", categorySelectedProps);
         FlurryAgent.logEvent(catName);
     }
     
@@ -885,7 +986,11 @@ public class VueLandingPageActivity extends Activity implements
                 .getInstance(VueLandingPageActivity.this).getAislesFromDB(
                         bookmarked, true);
         for (AisleWindowContent w : windowContentTemp) {
-            windowContent.add(w);
+            // TODO: HERE THE LIST SHOULD NOT BE NULL BUT WE GOT NULL SOME TIMES
+            // LIST NEED TO CHECK THIS CODE BY SURENDRA.
+            if (w.getImageList() != null) {
+                windowContent.add(w);
+            }
         }
         if (windowContent != null && windowContent.size() > 0) {
             getActionBar().setTitle(screenName);
@@ -1508,6 +1613,7 @@ public class VueLandingPageActivity extends Activity implements
                                                     .updateOrAddRecentlyViewedAisles(
                                                             aisleWindowContent
                                                                     .getAisleId());
+                                            
                                             FlurryAgent.logEvent(
                                                     "User_Select_Aisle",
                                                     articleParams);

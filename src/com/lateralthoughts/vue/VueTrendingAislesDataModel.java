@@ -237,6 +237,46 @@ public class VueTrendingAislesDataModel {
         
     }
     
+    /**
+     * 
+     * @param ratedList
+     *            update the user image rating status in aisle window list.
+     */
+    public void updateImageRatingStatus(ArrayList<String> ratedList) {
+        for (int aisleIndex = 0; aisleIndex < mAisleContentList.size(); aisleIndex++) {
+            if (mAisleContentList.get(aisleIndex).getImageList() != null) {
+                for (int imageIndex = 0; imageIndex < mAisleContentList
+                        .get(aisleIndex).getImageList().size(); imageIndex++) {
+                    if (ratedList.contains(mAisleContentList.get(aisleIndex)
+                            .getImageList().get(imageIndex).mId)) {
+                        mAisleContentList.get(aisleIndex).getImageList()
+                                .get(imageIndex).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
+                        break;
+                    }
+                }
+            }
+        }
+        dataObserver();
+    }
+    
+    /**
+     * 
+     * @param bookmarkList
+     *            update the user bookmark status in aisle window list.
+     */
+    public void updateBookmarkAisleStatus(ArrayList<String> bookmarkList) {
+        for (int i = 0; i < bookmarkList.size(); i++) {
+            String bookmarkAisleId = bookmarkList.get(i);
+            for (int j = 0; j < mAisleContentList.size(); j++) {
+                if (mAisleContentList.get(j).getAisleContext().mAisleId
+                        .equals(bookmarkAisleId)) {
+                    mAisleContentList.get(j).mAisleBookmarkIndicator = true;
+                    break;
+                }
+            }
+        }
+    }
+    
     public Handler mHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             @SuppressWarnings("unchecked")

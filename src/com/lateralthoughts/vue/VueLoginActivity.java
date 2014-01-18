@@ -37,6 +37,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -87,6 +88,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueLoginActivity extends FragmentActivity implements
         OnSignedInListener, OnPeopleLoadedListener, OnPersonLoadedListener {
@@ -120,7 +122,11 @@ public class VueLoginActivity extends FragmentActivity implements
     private PendingAction mPendingAction = PendingAction.NONE;
     private boolean mIsAlreadyLoggedInWithVue = false;
     public static boolean mIsLogInScreenIsVisible = false;
-    
+    private MixpanelAPI mixpanel;
+    private MixpanelAPI.People people;
+    JSONObject loginSelectedProps, loginActivity;
+    private String mGuestUserMessage = null;
+
     private enum PendingAction {
         NONE, POST_PHOTO, POST_STATUS_UPDATE
     }
@@ -135,6 +141,16 @@ public class VueLoginActivity extends FragmentActivity implements
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
+        people = mixpanel.getPeople();
+        loginActivity = new JSONObject();
+        try {
+            loginActivity.put("loginPage", "displayed");
+        } catch (JSONException e2) {
+            // TODO Auto-generated catch block
+            e2.printStackTrace();
+        }
+        mixpanel.track("loginPage", loginActivity);
         mIsLogInScreenIsVisible = true;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vue_login_screen);
@@ -158,6 +174,7 @@ public class VueLoginActivity extends FragmentActivity implements
             cancellayout.setVisibility(View.GONE);
             mIsAlreadyLoggedInWithVue = true;
         }
+        cancellayout.setVisibility(View.GONE);
         mContext = this;
         mSharedPreferencesObj = this.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -174,6 +191,8 @@ public class VueLoginActivity extends FragmentActivity implements
         
         mBundle = getIntent().getExtras();
         if (mBundle != null) {
+            mGuestUserMessage = mBundle
+                    .getString(VueConstants.GUEST_LOGIN_MESSAGE);
             mHideCancelButton = mBundle
                     .getBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG);
             mFromBezelMenuLogin = mBundle
@@ -189,7 +208,9 @@ public class VueLoginActivity extends FragmentActivity implements
             mGoogleplusAutomaticLogin = mBundle
                     .getBoolean(VueConstants.GOOGLEPLUS_AUTOMATIC_LOGIN);
         }
-        
+        if (mGuestUserMessage != null) {
+            Toast.makeText(this, mGuestUserMessage, Toast.LENGTH_LONG).show();
+        }
         // Facebook Invite friend
         if (mFbFriendId != null) {
             mSocialIntegrationMainLayout.setVisibility(View.GONE);
@@ -274,6 +295,14 @@ public class VueLoginActivity extends FragmentActivity implements
                         .setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View arg0) {
+                                loginSelectedProps = new JSONObject();
+                                try {
+                                    loginSelectedProps.put("login selected", "google Plus");
+                                } catch (JSONException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
+                                mixpanel.track("login selected", loginSelectedProps);
                                 if (VueConnectivityManager
                                         .isNetworkConnected(VueLoginActivity.this)) {
                                     if (Utils
@@ -567,7 +596,16 @@ public class VueLoginActivity extends FragmentActivity implements
             @Override
             public void onCompleted(final GraphUser user,
                     com.facebook.Response response) {
+                loginSelectedProps = new JSONObject();
+                try {
+                    loginSelectedProps.put("login selected", "Facebook");
+                } catch (JSONException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                mixpanel.track("login selected", loginSelectedProps);
                 if (user != null) {
+                    
                     FlurryAgent.logEvent("Facebook_Logins");
                     FlurryAgent.endTimedEvent("Login_Time_Ends");
                     FlurryAgent.logEvent("Login_Success");
@@ -743,6 +781,21 @@ public class VueLoginActivity extends FragmentActivity implements
                 Utils.writeUserProfileObjectToFile(VueLoginActivity.this,
                         VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
                         vueUserProfile);
+                people.identify(vueUserProfile.getUserEmail());
+                people.set("$first_name", vueUserProfile.getUserName());
+                people.set("$last_name", "");
+                people.set("Gender", vueUserProfile.getUserGender());
+                people.set("$email", vueUserProfile.getUserEmail());
+                people.set("Current location", vueUserProfile.getUserLocation());
+                people.set("loggedIn with", "Facebook");
+              
+                JSONObject loginprops = new JSONObject();
+                try {
+                    loginprops.put("login success", "Facebook");
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+                mixpanel.track("login success", loginprops);
             }
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -1060,7 +1113,13 @@ public class VueLoginActivity extends FragmentActivity implements
     public void onPersonLoaded(ConnectionResult connectionresult,
             final Person person) {
         if (connectionresult.getErrorCode() == ConnectionResult.SUCCESS) {
-            
+            JSONObject loginprops = new JSONObject();
+            try {
+                loginprops.put("login success", "GooglePlus");
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+            mixpanel.track("login success", loginprops);
             FlurryAgent.logEvent("GooglePlus_Logins");
             FlurryAgent.endTimedEvent("Login_Time_Ends");
             FlurryAgent.logEvent("Login_Success");
@@ -1154,18 +1213,25 @@ public class VueLoginActivity extends FragmentActivity implements
                 new FileCache(VueLoginActivity.this)
                         .getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
         if (storedUserProfile == null) {
-            VueUserProfile vueUserProfile = new VueUserProfile(person
+            storedUserProfile = new VueUserProfile(person
                     .getImage().getUrl(), mSharedPreferencesObj.getString(
                     VueConstants.GOOGLEPLUS_USER_EMAIL, null),
                     person.getDisplayName(), null, null, null, false);
             try {
                 Utils.writeUserProfileObjectToFile(this,
                         VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
-                        vueUserProfile);
+                        storedUserProfile);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        people.identify(storedUserProfile.getUserEmail());
+        people.set("$first_name", storedUserProfile.getUserName());
+        people.set("$last_name", "");
+        people.set("Gender", storedUserProfile.getUserGender());
+        people.set("$email", storedUserProfile.getUserEmail());
+        people.set("Current location", storedUserProfile.getUserLocation());
+        people.set("loggedIn with", "GooglePlus");
     }
     
     private void showDialogForEnterUserInitials() {

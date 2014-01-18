@@ -2,7 +2,6 @@ package com.lateralthoughts.vue.parser;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -206,7 +205,6 @@ public class Parser {
                 commentList.add(imgComments);
             }
         }
-        Collections.reverse(commentList);
         aisleImageDetails.mCommentsList = commentList;
         return aisleImageDetails;
     }
@@ -288,8 +286,6 @@ public class Parser {
                                 .getAisleItem(aisleContext.mAisleId);
                         aisleWindowContent.addAisleContent(aisleContext,
                                 aisleImageDetailsList);
-                        aisleWindowContent
-                                .setmAisleBookmarksCount(aisleContext.mBookmarkCount);
                         VueTrendingAislesDataModel.getInstance(
                                 VueApplication.getInstance()).addItemToList(
                                 aisleWindowContent.getAisleContext().mAisleId,
@@ -324,8 +320,6 @@ public class Parser {
                         .getAisleItem(aisleContext.mAisleId);
                 aisleWindowContent.addAisleContent(aisleContext,
                         aisleImageDetailsList);
-                aisleWindowContent
-                        .setmAisleBookmarksCount(aisleContext.mBookmarkCount);
                 aisleWindowContentList.add(aisleWindowContent);
             }
         }
@@ -540,7 +534,7 @@ public class Parser {
                 break;
             }
             
-            for (int j = 0; j < i; ++j) {
+            for (int j = 0; j < i; j++) {
                 AisleBookmark previous;
                 if (bookmarkedAisles.size() > j) {
                     previous = bookmarkedAisles.get(j);

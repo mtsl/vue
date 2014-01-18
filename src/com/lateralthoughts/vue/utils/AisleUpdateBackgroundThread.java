@@ -39,6 +39,7 @@ public class AisleUpdateBackgroundThread implements Runnable,
     private Aisle mAisle = null;
     private String mResponseMessage = null;
     private AisleUpdateCallback mAisleUpdateCallback = null;
+    private MixpanelAPI mixpanel;
     
     @SuppressWarnings("static-access")
     public AisleUpdateBackgroundThread(Aisle aisle,
@@ -65,6 +66,8 @@ public class AisleUpdateBackgroundThread implements Runnable,
     @SuppressWarnings("deprecation")
     @Override
     public void run() {
+        mixpanel = MixpanelAPI.getInstance(VueApplication.getInstance(),
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         try {
             Intent notificationIntent = new Intent();
             PendingIntent contentIntent = PendingIntent.getActivity(
@@ -156,6 +159,7 @@ public class AisleUpdateBackgroundThread implements Runnable,
                                     DataBaseManager.getInstance(
                                             VueApplication.getInstance())
                                             .aisleUpdateToDB(aisleContext);
+                                    mixpanel.track("Update_Aisle_Success", null);
                                     FlurryAgent
                                             .logEvent("Update_Aisle_Success");
                                 }

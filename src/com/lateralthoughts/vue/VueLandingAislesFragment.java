@@ -10,6 +10,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -25,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
@@ -54,6 +58,7 @@ public class VueLandingAislesFragment extends Fragment {
     public boolean mIsFlingCalled;
     
     public boolean mIsIdleState;
+    private ProgressBar mTrendingLoad;
     
     // TODO: define a public interface that can be implemented by the parent
     // activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -100,6 +105,7 @@ public class VueLandingAislesFragment extends Fragment {
         View v = inflater.inflate(R.layout.aisles_view_fragment, container,
                 false);
         mStaggeredView = (StaggeredGridView) v.findViewById(R.id.aisles_grid);
+        mTrendingLoad = (ProgressBar) v.findViewById(R.id.trending_load);
         int margin = getResources().getDimensionPixelSize(R.dimen.margin);
         mStaggeredView.setItemMargin(margin); // set the GridView margin
         
@@ -135,6 +141,10 @@ public class VueLandingAislesFragment extends Fragment {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                     int visibleItemCount, int totalItemCount) {
+                if (totalItemCount > 0
+                        && mTrendingLoad.getVisibility() == View.VISIBLE) {
+                    mTrendingLoad.setVisibility(View.GONE);
+                }
                 if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
                         && VueLandingPageActivity.mLandingScreenName != null
                         && VueLandingPageActivity.mLandingScreenName
@@ -164,6 +174,7 @@ public class VueLandingAislesFragment extends Fragment {
         @Override
         public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
             if (VueLandingPageActivity.mOtherSourceImagePath == null) {
+                VueApplication.getInstance().saveTrendingRefreshTime(0);
                 Map<String, String> articleParams = new HashMap<String, String>();
                 VueUser storedVueUser = null;
                 try {
@@ -181,6 +192,7 @@ public class VueLandingAislesFragment extends Fragment {
                 
                 DataBaseManager.getInstance(mContext)
                         .updateOrAddRecentlyViewedAisles(id);
+                
                 FlurryAgent.logEvent("User_Select_Aisle", articleParams);
                 Intent intent = new Intent();
                 intent.setClass(VueApplication.getInstance(),
@@ -267,6 +279,21 @@ public class VueLandingAislesFragment extends Fragment {
         @Override
         public void refreshList() {
             mStaggeredAdapter.notifyDataSetChanged();
+        }
+        
+        @Override
+        public void hideProgressBar() {
+            if (mTrendingLoad.getVisibility() == View.VISIBLE) {
+                mTrendingLoad.setVisibility(View.GONE);
+            }
+        }
+        
+        @Override
+        public void showProgressBar() {
+            if (mTrendingLoad.getVisibility() == View.GONE) {
+                mTrendingLoad.setVisibility(View.VISIBLE);
+            }
+            
         }
     }
     

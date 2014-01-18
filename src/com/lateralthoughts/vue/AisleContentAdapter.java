@@ -69,6 +69,55 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         return mWindowContent.getImageList().get(position).mSameMostLikes;
     }
     
+    public void setImageLikesCount(int position, int count) {
+        mWindowContent.getImageList().get(position).mLikesCount = count;
+    }
+    
+    public String getImageLikesCount(int position) {
+        int count = mWindowContent.getImageList().get(position).mLikesCount;
+        return String.valueOf(count);
+    }
+    
+    public void setBookmarkIndicator(boolean bookmarkIndicator) {
+        mWindowContent.setWindowBookmarkIndicator(bookmarkIndicator);
+    }
+    
+    public boolean getBookmarkIndicator() {
+        return mWindowContent.getWindowBookmarkIndicator();
+    }
+    
+    public void setAisleBookmarkIndicator(boolean bookmarkIndicator) {
+        mWindowContent.setWindowBookmarkIndicator(bookmarkIndicator);
+    }
+    
+    public int getBookmarkCount() {
+        return mWindowContent.getAisleContext().mBookmarkCount;
+    }
+    
+    public void setBookmarkCount(int bookmarkCount) {
+        mWindowContent.getAisleContext().mBookmarkCount = bookmarkCount;
+    }
+    
+    public boolean getImageLikeStatus(int position) {
+        if (mWindowContent.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public void setImageLikeStatus(boolean status, int position) {
+        if (status) {
+            mWindowContent.getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
+        } else {
+            mWindowContent.getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
+        }
+    }
+    
+    public String getImageId(int position) {
+        return mWindowContent.getImageList().get(position).mId;
+    }
+    
     public String getAisleId() {
         return mWindowContent.getAisleId();
     }

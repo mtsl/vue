@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -52,6 +54,7 @@ public class VueApplication extends Application {
     public long mLaunchTime;
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
+    public String MIXPANEL_TOKEN = "d5ac13097eaf8acefc264d21457307a1";
     
     public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
     public static final String LOAD_IMAGES_REQUEST_TAG = "LoadImagesTag";
@@ -302,4 +305,11 @@ public class VueApplication extends Application {
     
     private ImageLoader mImageLoader;
     
+    public void saveTrendingRefreshTime(long time_in_mins) {
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        Editor editor = sharedPreferencesObj.edit();
+        editor.putLong(VueConstants.SCREEN_REFRESH_TIME, time_in_mins);
+        editor.commit();
+    }
 }

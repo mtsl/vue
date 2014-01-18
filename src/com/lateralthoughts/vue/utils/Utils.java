@@ -796,4 +796,8 @@ public class Utils {
                 : false;
     }
     
+    public static long getMins(long millis) {
+        long minutes = (millis / (1000 * 60));
+        return minutes;
+    }
 }

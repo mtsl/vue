@@ -233,6 +233,11 @@ public class DataBaseManager {
         for (int i = 0; i < aislesCount; i++) {
             AisleWindowContent content = contentList.get(i);
             AisleContext info = content.getAisleContext();
+            ArrayList<AisleImageDetails> imageItemsArray = content
+                    .getImageList();
+            if (imageItemsArray == null || imageItemsArray.size() == 0) {
+                continue;
+            }
             if (whichScreen == TRENDING && mAislesOrderMap.isEmpty()) {
                 mAislesOrderMap.put(info.mAisleId, THOUSAND);
             } else if (whichScreen == TRENDING && !mAislesOrderMap.isEmpty()) {
@@ -253,8 +258,7 @@ public class DataBaseManager {
                 cur.close();
                 mBookmarkedAislesOrderMap.put(info.mAisleId, count);
             }
-            ArrayList<AisleImageDetails> imageItemsArray = content
-                    .getImageList();
+            
             ContentValues values = new ContentValues();
             values.put(VueConstants.FIRST_NAME, info.mFirstName);
             values.put(VueConstants.LAST_NAME, info.mLastName);
@@ -658,6 +662,9 @@ public class DataBaseManager {
                                 }
                                 
                             } while (imgCommentCursor.moveToNext());
+                            if (imageItemDetails.mCommentsList != null)
+                                Collections
+                                        .reverse(imageItemDetails.mCommentsList);
                         }
                         imageItemsArray.add(imageItemDetails);
                         
@@ -1196,6 +1203,9 @@ public class DataBaseManager {
                                 }
                                 
                             } while (imgCommentCursor.moveToNext());
+                            if (imageItemDetails.mCommentsList != null)
+                                Collections
+                                        .reverse(imageItemDetails.mCommentsList);
                         }
                         
                         imageItemsArray.add(imageItemDetails);

@@ -149,7 +149,7 @@ public class TrendingAislesRightColumnAdapter extends
             holder.aisleselectlay.setVisibility(View.GONE);
         }
         mLoader.getAisleContentIntoView(holder, scrollIndex, position, false,
-                listener, "RightAdapter", holder.starIcon);
+                listener, "RightAdapter", holder.starIcon,null);
         AisleContext context = holder.mWindowContent.getAisleContext();
         String mVueusername = null;
         if (context.mFirstName != null && context.mLastName != null) {
