@@ -10,6 +10,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -189,6 +192,7 @@ public class VueLandingAislesFragment extends Fragment {
                 
                 DataBaseManager.getInstance(mContext)
                         .updateOrAddRecentlyViewedAisles(id);
+                
                 FlurryAgent.logEvent("User_Select_Aisle", articleParams);
                 Intent intent = new Intent();
                 intent.setClass(VueApplication.getInstance(),

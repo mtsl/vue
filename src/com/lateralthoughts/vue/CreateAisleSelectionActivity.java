@@ -31,6 +31,7 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class CreateAisleSelectionActivity extends Activity {
     
@@ -41,6 +42,7 @@ public class CreateAisleSelectionActivity extends Activity {
     private static final String CAMERA_INTENT_NAME = "android.media.action.IMAGE_CAPTURE";
     private ArrayList<ShoppingApplicationDetails> mDataEntryShoppingApplicationsList = new ArrayList<ShoppingApplicationDetails>();
     private static final String CREATE_AISLE_POPUP = "Selection_Popup";
+    private static final String CREATE_AISLE_POPUP_SELECTION = "CreateAisle_Selection_Popup";
     public static boolean isActivityShowing = false;
     private ArcMenu mDataentryArcMenu = null;
     private static final int ANIM_DELAY = 100;
@@ -49,10 +51,12 @@ public class CreateAisleSelectionActivity extends Activity {
     private Dialog mDialog;
     private Button mDataentryPopupCancelBtn;
     private TextView mDataentryPopupScreenTitle;
+    private MixpanelAPI mixpanel;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         isActivityShowing = true;
+        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_asilse_selection);
         Bundle b = getIntent().getExtras();
@@ -112,6 +116,7 @@ public class CreateAisleSelectionActivity extends Activity {
     
     @Override
     protected void onStart() {
+        mixpanel.track(CREATE_AISLE_POPUP_SELECTION, null);
         FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
         FlurryAgent.logEvent(CREATE_AISLE_POPUP);
@@ -122,6 +127,7 @@ public class CreateAisleSelectionActivity extends Activity {
     protected void onStop() {
         super.onStop();
         FlurryAgent.onEndSession(this);
+        mixpanel.flush();
         
     }
     
@@ -137,6 +143,7 @@ public class CreateAisleSelectionActivity extends Activity {
     }
     
     private void galleryIntent() {
+        mixpanel.track("ADD_IMAGE_GALLERY", null);
         FlurryAgent.logEvent("ADD_IMAGE_GALLERY");
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -145,6 +152,7 @@ public class CreateAisleSelectionActivity extends Activity {
     }
     
     private void cameraIntent() {
+        mixpanel.track("ADD_IMAGE_CAMERA", null);
         FlurryAgent.logEvent("ADD_IMAGE_CAMERA");
         mCameraImageName = Utils
                 .vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
@@ -166,6 +174,7 @@ public class CreateAisleSelectionActivity extends Activity {
     }
     
     public void moreClickFunctionality() {
+        mixpanel.track("ADD_IMAGE_MORE", null);
         FlurryAgent.logEvent("ADD_IMAGE_MORE");
         if (mDataEntryShoppingApplicationsList != null
                 && mDataEntryShoppingApplicationsList.size() > 0) {

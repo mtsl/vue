@@ -30,6 +30,7 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class DataEntryActivity extends Activity {
     
@@ -50,11 +51,13 @@ public class DataEntryActivity extends Activity {
     private FrameLayout mContentFrame;
     private boolean mHideDefaultActionbar = false;
     private boolean mShowSkipButton = false;
+    private MixpanelAPI mixpanel;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.date_entry_main);
+        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
         initialize();
         mContentFrame = (FrameLayout) findViewById(R.id.content_frame2);
         mSlidListFrag = (VueListFragment) getFragmentManager()
@@ -542,6 +545,7 @@ public class DataEntryActivity extends Activity {
     
     @Override
     protected void onStart() {
+        mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
         FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
         FlurryAgent.logEvent(CREATE_AISLE_SCREEN_VISITORS);
@@ -552,6 +556,7 @@ public class DataEntryActivity extends Activity {
     protected void onStop() {
         super.onStop();
         FlurryAgent.onEndSession(this);
+        mixpanel.flush();
         
     }
     

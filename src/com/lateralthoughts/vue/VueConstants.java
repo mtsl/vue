@@ -213,6 +213,7 @@ public class VueConstants {
     public static final String AISLE_CATEGORY = "category";
     public static final String AISLE_LOOKINGFOR = "lookingFor";
     public static final String AISLE_NAME = "name";
+    public static final String AISLE_ANCHOT_IMAGE_ID = "anchorImageId";
     public static final String AISLE_OCCASSION = "occassion";
     public static final String AISLE_OWNER_USER_ID = "ownerUserId";
     public static final String AISLE_DESCRIPTION = "description";
@@ -232,6 +233,7 @@ public class VueConstants {
     public static final String AISLE_IMAGE_STORE = "store";
     public static final String AISLE_IMAGE_TITLE = "title";
     public static final String AISLE_IMAGE_COMMENTS = "comments";
+    public static final String AISLE_IMAGE_RATINGS = "ratings";
     public static final String AISLE_IMAGE_COMMENTS_ID = "id";
     public static final String AISLE_IMAGE_COMMENTS_IMAGEID = "ownerImageId";
     public static final String AISLE_IMAGE_COMMENTS_USERID = "ownerUserId";
@@ -242,7 +244,14 @@ public class VueConstants {
     public static final String AISLE_IMAGE_COMMENTS_CREATED_TIME = "createdTimestamp";
     public static final String AISLE_IMAGE_COMMENTER_LAST_NAME = "imageCommentOwnerLastName";
     public static final String AISLE_IMAGE_COMMENTER_FIRST_NAME = "imageCommentOwnerFirstName";
-    
+    public static final String AISLE_IMAGE_RATING_ID = "id";
+    public static final String AISLE_IMAGE_RATING_LIKED = "liked";
+    public static final String AISLE_IMAGE_RATING_AISLEID = "aisleId";
+    public static final String AISLE_IMAGE_RATING_IMAGEID = "imageId";
+    public static final String AISLE_IMAGE_RATING_OWNER_FIRST_NAME = "ratingOwnerFirstName";
+    public static final String AISLE_IMAGE_RATING_OWNER_LAST_NAME = "ratingOwnerLastName";
+    public static final String AISLE_IMAGE_RATING_LASTMODIFIED_TIME = "lastModifiedTimestamp";
+    public static final String AISLE_IMAGE_USER_RATING = "userRating";
     // User response Keys
     public static final String USER_RESPONSE_ID = "id";
     public static final String USER_JOINTIME = "joinTime";

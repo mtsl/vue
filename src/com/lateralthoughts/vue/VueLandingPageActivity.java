@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -66,6 +69,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueLandingPageActivity extends Activity implements
         SearchView.OnQueryTextListener, SearchView.OnCloseListener {
@@ -103,6 +107,9 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mHideDefaultActionbar = false;
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
     public static boolean mIsMyAilseCallEnable = false;
+    private MixpanelAPI mixpanel;
+    private MixpanelAPI.People people;
+
     // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
     public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
@@ -110,6 +117,7 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
                 VueConstants.LANDING_SCREEN_RECEIVER);
@@ -185,6 +193,7 @@ public class VueLandingPageActivity extends Activity implements
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
+          
             // TODO:
             PackageInfo packageInfo;
             try {
@@ -206,6 +215,9 @@ public class VueLandingPageActivity extends Activity implements
                                         VueUser.DEFAULT_GOOGLEPLUS_ID)
                                 && storedVueUser.getFacebookId().equals(
                                         VueUser.DEFAULT_FACEBOOK_ID)) {
+                            mixpanel.identify(storedVueUser.getEmail());
+                            people = mixpanel.getPeople();
+                            people.identify(storedVueUser.getEmail());
                             // TODO: start the LoginActivity
                             Intent i = new Intent(this, VueLoginActivity.class);
                             Bundle b = new Bundle();
@@ -258,6 +270,7 @@ public class VueLandingPageActivity extends Activity implements
         }
         loadDetailsScreenForNotificationClick(getIntent().getExtras());
     }
+    
     
     @Override
     protected void onDestroy() {
@@ -335,6 +348,14 @@ public class VueLandingPageActivity extends Activity implements
             return true;
         } else if (item.getItemId() == R.id.menu_create_aisle) {
             if (mOtherSourceImagePath == null) {
+                JSONObject createAisleButtonProps = new JSONObject();
+                try {
+                    createAisleButtonProps.put("Create_Aisle_Button_Click", "Create aisle clicked");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mixpanel.track("Create_Aisle_Button_Click", createAisleButtonProps);
+                people.append("Create_Aisle_Button_Click", createAisleButtonProps);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);
@@ -433,7 +454,7 @@ public class VueLandingPageActivity extends Activity implements
             FlurryAgent.logEvent("Login_Time_Ends", articleParams, true);
         }
         FlurryAgent.onPageView();
-        
+        mixpanel.flush();
         super.onStart();
     }
     
@@ -937,6 +958,14 @@ public class VueLandingPageActivity extends Activity implements
             
         }
         
+        JSONObject categorySelectedProps = new JSONObject();
+        try {
+            categorySelectedProps.put("CategorySelected", catName);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        mixpanel.track("bezelCategorySelected", categorySelectedProps);
         FlurryAgent.logEvent(catName);
     }
     
@@ -1355,7 +1384,8 @@ public class VueLandingPageActivity extends Activity implements
                                                             new ImageAddedCallback() {
                                                                 
                                                                 @Override
-                                                                public void onImageAdded() {
+                                                                public void onImageAdded(
+                                                                        String imageId) {
                                                                     
                                                                 }
                                                             });
@@ -1371,7 +1401,7 @@ public class VueLandingPageActivity extends Activity implements
                                 new ImageAddedCallback() {
                                     
                                     @Override
-                                    public void onImageAdded() {
+                                    public void onImageAdded(String imageId) {
                                         
                                     }
                                 });
@@ -1585,6 +1615,7 @@ public class VueLandingPageActivity extends Activity implements
                                                     .updateOrAddRecentlyViewedAisles(
                                                             aisleWindowContent
                                                                     .getAisleId());
+                                            
                                             FlurryAgent.logEvent(
                                                     "User_Select_Aisle",
                                                     articleParams);

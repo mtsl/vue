@@ -133,8 +133,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                 .runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mImageAddedCallback.onImageAdded();
-                        
                         if (null != mResponseMessage) {
                             if (!mFromDetailsScreenFlag) {
                                 try {
@@ -142,6 +140,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                             .parseAisleImageData(new JSONObject(
                                                     mResponseMessage));
                                     if (aisleImageDetails != null) {
+                                        mImageAddedCallback
+                                                .onImageAdded(aisleImageDetails.mId);
                                         if (VueLandingPageActivity.mLandingScreenName != null
                                                 && VueLandingPageActivity.mLandingScreenName
                                                         .equalsIgnoreCase("Trending")
@@ -158,13 +158,16 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                             VueApplication
                                                                     .getInstance())
                                                     .dataObserver();
-                                            aisleWindowContent.getImageList()
-                                                    .add(aisleImageDetails);
+                                            ArrayList<AisleImageDetails> aisleImages = aisleWindowContent
+                                                    .getImageList();
+                                            if (aisleImages == null) {
+                                                aisleImages = new ArrayList<AisleImageDetails>();
+                                            }
+                                            aisleImages.add(aisleImageDetails);
                                             aisleWindowContent.addAisleContent(
                                                     aisleWindowContent
                                                             .getAisleContext(),
-                                                    aisleWindowContent
-                                                            .getImageList());
+                                                    aisleImages);
                                             
                                             Utils.sIsAisleChanged = true;
                                             Utils.mChangeAilseId = aisleWindowContent
@@ -192,7 +195,12 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                                 .getInstance())
                                                 .getAislesFromDB(s, false);
                                         if (list != null) {
-                                            list.get(0).getImageList()
+                                            ArrayList<AisleImageDetails> aisleImageList = list
+                                                    .get(0).getImageList();
+                                            if (aisleImageList == null) {
+                                                aisleImageList = new ArrayList<AisleImageDetails>();
+                                            }
+                                            aisleImageList
                                                     .add(aisleImageDetails);
                                             DataBaseManager
                                                     .getInstance(
@@ -210,8 +218,11 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                             DataBaseManager.MY_AISLES);
                                         }
                                         
+                                    } else {
+                                        mImageAddedCallback.onImageAdded(null);
                                     }
                                 } catch (JSONException e) {
+                                    mImageAddedCallback.onImageAdded(null);
                                     e.printStackTrace();
                                 }
                             } else {
@@ -223,6 +234,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                 } catch (JSONException e) {
                                 }
                                 if (aisleImageDetails != null) {
+                                    mImageAddedCallback
+                                            .onImageAdded(aisleImageDetails.mId);
                                     AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
                                             .getInstance(
                                                     VueApplication
@@ -284,9 +297,12 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                             }
                                         }
                                     }
+                                } else {
+                                    mImageAddedCallback.onImageAdded(null);
                                 }
                             }
                         } else {
+                            mImageAddedCallback.onImageAdded(null);
                             Toast.makeText(
                                     VueApplication.getInstance(),
                                     VueApplication

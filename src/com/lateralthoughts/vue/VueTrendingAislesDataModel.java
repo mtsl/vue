@@ -14,7 +14,6 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.DbHelper;
@@ -424,5 +423,19 @@ public class VueTrendingAislesDataModel {
         boolean loadMore = true;
         mNetworkHandler.loadInitialData(loadMore, mHandler, mContext
                 .getResources().getString(R.string.trending));
+    }
+    
+    public void setImageLikeOrDisLikeForImage(
+            AisleImageDetails aisleImageDetails, Long ratingId,
+            boolean likeOrDislike) {
+        if (aisleImageDetails != null && aisleImageDetails.mRatingsList != null
+                && aisleImageDetails.mRatingsList.size() > 0) {
+            for (int i = 0; i < aisleImageDetails.mRatingsList.size(); i++) {
+                if (aisleImageDetails.mRatingsList.get(i).mId.equals(ratingId)) {
+                    aisleImageDetails.mRatingsList.get(i).mLiked = likeOrDislike;
+                    break;
+                }
+            }
+        }
     }
 }
