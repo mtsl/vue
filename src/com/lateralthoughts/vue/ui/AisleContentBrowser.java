@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lateralthoughts.vue.AisleManager;
@@ -56,8 +57,23 @@ public class AisleContentBrowser extends ViewFlipper {
                     .findViewById(R.id.like_img);
             final ImageView bookmarkImage = (ImageView) this.mSocialCard
                     .findViewById(R.id.bookmarkImage);
+            RelativeLayout shareLayout = (RelativeLayout) this.mSocialCard
+                    .findViewById(R.id.share_layout);
+            RelativeLayout bookmarkLayout = (RelativeLayout) this.mSocialCard
+                    .findViewById(R.id.bookmark_layout);
+            RelativeLayout rateLayout = (RelativeLayout) this.mSocialCard
+                    .findViewById(R.id.rate_layout);
+            shareLayout.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(VueApplication.getInstance(), "share",
+                            Toast.LENGTH_SHORT);
+                    
+                }
+            });
             // like image click function in Trending screen
-            likesImage.setOnClickListener(new OnClickListener() {
+            rateLayout.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View v) {
@@ -99,7 +115,7 @@ public class AisleContentBrowser extends ViewFlipper {
                 }
             });
             // bookmrk image clikc function in Trending screen
-            bookmarkImage.setOnClickListener(new OnClickListener() {
+            bookmarkLayout.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View v) {

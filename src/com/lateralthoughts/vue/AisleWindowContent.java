@@ -37,6 +37,7 @@ public class AisleWindowContent {
     public void setWindowBookmarkIndicator(boolean windowBookmarkIndicator) {
         this.mAisleBookmarkIndicator = windowBookmarkIndicator;
     }
+    
     // these two should be based on device with & height
     private String mAisleId;
     
