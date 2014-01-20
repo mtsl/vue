@@ -20,6 +20,7 @@ import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -430,6 +431,34 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             mViewHolder.vueCommentheader.setVisibility(View.GONE);
             mViewHolder.separator.setVisibility(View.GONE);
             mViewHolder.decisionLay.setVisibility(View.VISIBLE);
+            mViewHolder.decisionLay.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    VueUser storedVueUser = null;
+                    boolean isUserAisleFlag = false;
+                    try {
+                        storedVueUser = Utils.readUserObjectFromFile(mContext,
+                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                        if (getItem(mCurrentAislePosition).getAisleContext().mUserId
+                                .equals(String.valueOf(storedVueUser.getId()))) {
+                            isUserAisleFlag = true;
+                        }
+                    } catch (Exception e2) {
+                        e2.printStackTrace();
+                    }
+                    if (isUserAisleFlag) {
+                        Intent intent = new Intent(mContext,
+                                DecisionScreen.class);
+                        
+                        mContext.startActivity(intent);
+                    } else {
+                        Toast.makeText(
+                                mContext,
+                                "Sorry, You can't make decision on another person aisle.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
             String descisionText = " ";
             if (Long.parseLong(getItem(mCurrentAislePosition).getAisleContext().mUserId) == mUserId) {
                 if (mAisleCureentStage.endsWith(VueConstants.AISLE_STATGE_ONE)) {
