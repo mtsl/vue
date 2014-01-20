@@ -219,6 +219,16 @@ public class VueLandingPageActivity extends Activity implements
                             mixpanel.identify(storedVueUser.getEmail());
                             people = mixpanel.getPeople();
                             people.identify(storedVueUser.getEmail());
+                            JSONObject nameTag = new JSONObject();
+                            try {
+                                // Set an "mp_name_tag" super property 
+                                // for Streams if you find it useful.
+                                //TODO:  Check how it works.
+                                nameTag.put("mp_name_tag", storedVueUser.getFirstName() + " " + storedVueUser.getLastName());
+                                mixpanel.registerSuperProperties(nameTag);
+                            } catch(JSONException e) {
+                                e.printStackTrace();
+                            }
                             // TODO: start the LoginActivity
                             Intent i = new Intent(this, VueLoginActivity.class);
                             Bundle b = new Bundle();
@@ -355,10 +365,7 @@ public class VueLandingPageActivity extends Activity implements
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mixpanel.track("Create_Aisle_Button_Click",
-                        createAisleButtonProps);
-                // people.append("Create_Aisle_Button_Click",
-                // createAisleButtonProps);
+                mixpanel.track("Create_Aisle_Button_Click", createAisleButtonProps);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);

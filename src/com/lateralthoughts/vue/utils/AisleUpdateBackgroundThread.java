@@ -160,9 +160,6 @@ public class AisleUpdateBackgroundThread implements Runnable,
                                     DataBaseManager.getInstance(
                                             VueApplication.getInstance())
                                             .aisleUpdateToDB(aisleContext);
-                                    mixpanel.track("Update_Aisle_Success", null);
-                                    FlurryAgent
-                                            .logEvent("Update_Aisle_Success");
                                 }
                             } catch (Exception ex) {
                                 ex.printStackTrace();
