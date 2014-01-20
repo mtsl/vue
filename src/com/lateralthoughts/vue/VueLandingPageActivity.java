@@ -1381,6 +1381,7 @@ public class VueLandingPageActivity extends Activity implements
                                                                     .getInstance())
                                                     .getNetworkHandler()
                                                     .requestForAddImage(
+                                                            null,
                                                             true,
                                                             offlineImageId,
                                                             image,
@@ -1400,7 +1401,7 @@ public class VueLandingPageActivity extends Activity implements
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
-                        .requestForAddImage(true, offlineImageId, image,
+                        .requestForAddImage(null, true, offlineImageId, image,
                                 new ImageAddedCallback() {
                                     
                                     @Override

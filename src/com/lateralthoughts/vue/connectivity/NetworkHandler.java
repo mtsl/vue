@@ -37,6 +37,7 @@ import com.lateralthoughts.vue.AisleManager.AisleAddCallback;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
+import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.AisleWindowContentFactory;
 import com.lateralthoughts.vue.ImageRating;
@@ -167,11 +168,11 @@ public class NetworkHandler {
         AisleManager.getAisleManager().deleteImage(image, aisleId);
     }
     
-    public void requestForAddImage(boolean fromDetailsScreenFlag,
-            String imageId, VueImage image,
+    public void requestForAddImage(AisleContext aisleContext,
+            boolean fromDetailsScreenFlag, String imageId, VueImage image,
             ImageAddedCallback imageAddedCallback) {
-        AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag,
-                imageId, image, imageAddedCallback);
+        AisleManager.getAisleManager().addImageToAisle(aisleContext,
+                fromDetailsScreenFlag, imageId, image, imageAddedCallback);
     }
     
     public void requestForUploadImage(File imageFile,
