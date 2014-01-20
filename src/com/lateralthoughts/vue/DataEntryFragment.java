@@ -1969,6 +1969,7 @@ public class DataEntryFragment extends Fragment {
                     "Please wait...");
         }
         mOtherSourceSelectedImageStore = Utils.getStoreNameFromUrl(sourceUrl);
+        // TODO: Image source
         GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
                 sourceUrl, getActivity(), false);
         getImagesTask.execute();

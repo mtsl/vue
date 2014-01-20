@@ -2,6 +2,9 @@ package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -559,7 +562,8 @@ public class DataEntryActivity extends Activity {
         mixpanel.flush();
         
     }
-    
+    JSONObject loginprops = new JSONObject();
+   
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -567,7 +571,21 @@ public class DataEntryActivity extends Activity {
             if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
                 Bundle b = data.getExtras();
                 if (b != null) {
-                    String imagePath = b
+                    String imagePath;
+                    if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.GALLERY_IMAGE)) {
+                        try {
+                            loginprops.put(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    } else if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.CAMERA_IMAGE)) {
+                        try {
+                            loginprops.put(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                    imagePath = b
                             .getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
                     if (Utils.getTouchToChangeFlag(DataEntryActivity.this)) {
                         Utils.putTouchToChnageImagePosition(

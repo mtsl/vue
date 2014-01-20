@@ -1136,6 +1136,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         }
         JSONObject aisleLikedProps = new JSONObject();
         try {
+            aisleLikedProps.put("ImageId", getItem(mCurrentAislePosition).getImageList().get(position).mId);
             aisleLikedProps.put("AisleId", getItem(mCurrentAislePosition).getAisleId());
             aisleLikedProps.put("Category", getItem(mCurrentAislePosition)
                     .getAisleContext().mCategory);
@@ -1147,7 +1148,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mixpanel.track("Aisle-Liked", aisleLikedProps);
+        mixpanel.track("Image-Liked", aisleLikedProps);
         Map<String, String> articleParams = new HashMap<String, String>();
         articleParams.put("Category", getItem(mCurrentAislePosition)
                 .getAisleContext().mCategory);
@@ -1196,6 +1197,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private void onChangeDislikesCount(int position) {
         JSONObject aisleUnLikedProps = new JSONObject();
         try {
+            aisleUnLikedProps.put("ImageId", getItem(mCurrentAislePosition).getImageList().get(position).mId);
             aisleUnLikedProps.put("AisleId", getItem(mCurrentAislePosition).getAisleId());
             aisleUnLikedProps.put("Category", getItem(mCurrentAislePosition)
                     .getAisleContext().mCategory);
@@ -1207,7 +1209,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mixpanel.track("Aisle-Unliked", aisleUnLikedProps);
+        mixpanel.track("Image-Unliked", aisleUnLikedProps);
         FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
         if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             // false

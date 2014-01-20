@@ -121,7 +121,16 @@ public class VueConstants {
     public static final String COMMENT = "comment";
     public static final int INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE = 24;
     public static final String INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY = "invitefriendsloginactivitybundlestringkey";
+    @Deprecated
+    /**
+     * deprecated, use CREATE_AISLE_CAMERA_IMAGE_PATH_BUNDLE_KEY and/or CREATE_AISLE_GALLERY_IMAGE_PATH_BUNDLE_KEY instead.
+     * */
     public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
+    
+    public static final String IMAGE_FROM = "IMAGE_FROM";
+    public static final String CAMERA_IMAGE = "CAMERA_IMAGE";
+    public static final String GALLERY_IMAGE = "GALLERY_IMAGE";
+    
     public static final String EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG = "EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG";
     public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
     public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG = "fromDetailsscreentoCreateAilseScreenflag";
