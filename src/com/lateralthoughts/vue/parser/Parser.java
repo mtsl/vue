@@ -91,27 +91,9 @@ public class Parser {
                     arrayList.add(aisleImageDetails);
                     aisleWindowContent = VueTrendingAislesDataModel
                             .getInstance(VueApplication.getInstance())
-                            .getAisle(aisleContext.mUserId);
+                            .getAisle(aisleContext.mAisleId);
                     aisleWindowContent.addAisleContent(aisleContext, arrayList);
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        return aisleWindowContent;
-    }
-    
-    public AisleWindowContent parseCreateAisleResponse(String response) {
-        AisleWindowContent aisleWindowContent = null;
-        AisleContext aisleContext = null;
-        if (null != response) {
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                aisleContext = parseAisleData(jsonObject);
-                aisleWindowContent = VueTrendingAislesDataModel.getInstance(
-                        VueApplication.getInstance()).getAisle(
-                        aisleContext.mUserId);
-                aisleWindowContent.addAisleContent(aisleContext, null);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

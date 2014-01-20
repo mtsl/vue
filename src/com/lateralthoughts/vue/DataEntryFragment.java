@@ -1592,14 +1592,15 @@ public class DataEntryFragment extends Fragment {
                     .getNetworkHandler()
                     .requestCreateAisle(aisle, new AisleAddCallback() {
                         @Override
-                        public void onAisleAdded(Aisle aisle) {
+                        public void onAisleAdded(Aisle aisle,
+                                AisleContext aisleContext) {
                             for (int j = 0; j < vueImageList.size(); j++) {
                                 vueImageList.get(j).setOwnerAisleId(
                                         aisle.getId());
                             }
                             addMultipleImageToServer(false, vueImageList,
                                     offlineImageIdList, originalImagePathList,
-                                    aisle);
+                                    aisle, aisleContext);
                         }
                     });
             if (mDataEntryActivity == null) {
@@ -1619,7 +1620,8 @@ public class DataEntryFragment extends Fragment {
     private void addMultipleImageToServer(final boolean fromDetailsScreenFlag,
             final ArrayList<VueImage> vueImageList,
             final ArrayList<String> offlineImageIdList,
-            final ArrayList<String> originalImagePathList, final Aisle aisle) {
+            final ArrayList<String> originalImagePathList, final Aisle aisle,
+            final AisleContext aisleContext) {
         String originalImagePath = originalImagePathList.remove(0);
         // Camera or Gallery...
         if (vueImageList.get(0).getImageUrl() == null) {
@@ -1641,6 +1643,7 @@ public class DataEntryFragment extends Fragment {
                                                                 .getInstance())
                                                 .getNetworkHandler()
                                                 .requestForAddImage(
+                                                        aisleContext,
                                                         fromDetailsScreenFlag,
                                                         offlineImageIdList
                                                                 .remove(0),
@@ -1671,6 +1674,7 @@ public class DataEntryFragment extends Fragment {
                                                                                                             vueImageList,
                                                                                                             offlineImageIdList,
                                                                                                             originalImagePathList,
+                                                                                                            null,
                                                                                                             null);
                                                                                                 }
                                                                                             }
@@ -1683,6 +1687,7 @@ public class DataEntryFragment extends Fragment {
                                                                                     vueImageList,
                                                                                     offlineImageIdList,
                                                                                     originalImagePathList,
+                                                                                    null,
                                                                                     null);
                                                                         }
                                                                     }
@@ -1694,6 +1699,7 @@ public class DataEntryFragment extends Fragment {
                                                                                 vueImageList,
                                                                                 offlineImageIdList,
                                                                                 originalImagePathList,
+                                                                                null,
                                                                                 null);
                                                                     }
                                                                 }
@@ -1707,7 +1713,7 @@ public class DataEntryFragment extends Fragment {
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())
                     .getNetworkHandler()
-                    .requestForAddImage(fromDetailsScreenFlag,
+                    .requestForAddImage(aisleContext, fromDetailsScreenFlag,
                             offlineImageIdList.remove(0),
                             vueImageList.remove(0), new ImageAddedCallback() {
                                 
@@ -1734,6 +1740,7 @@ public class DataEntryFragment extends Fragment {
                                                                                 vueImageList,
                                                                                 offlineImageIdList,
                                                                                 originalImagePathList,
+                                                                                null,
                                                                                 null);
                                                                     }
                                                                 }
@@ -1745,7 +1752,7 @@ public class DataEntryFragment extends Fragment {
                                                         vueImageList,
                                                         offlineImageIdList,
                                                         originalImagePathList,
-                                                        null);
+                                                        null, null);
                                             }
                                         }
                                     } else {
@@ -1754,7 +1761,8 @@ public class DataEntryFragment extends Fragment {
                                                     fromDetailsScreenFlag,
                                                     vueImageList,
                                                     offlineImageIdList,
-                                                    originalImagePathList, null);
+                                                    originalImagePathList,
+                                                    null, null);
                                         }
                                     }
                                 }
@@ -1855,7 +1863,7 @@ public class DataEntryFragment extends Fragment {
                     mDataEntryActivity = (DataEntryActivity) getActivity();
                 }
                 addMultipleImageToServer(true, vueImageList,
-                        offlineImageIdList, originalImagePathList, null);
+                        offlineImageIdList, originalImagePathList, null, null);
                 mDataEntryActivity.shareViaVueClicked();
             } else {
                 Toast.makeText(

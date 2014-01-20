@@ -30,7 +30,7 @@ import com.lateralthoughts.vue.utils.Utils;
 public class AisleManager {
     
     public interface AisleAddCallback {
-        public void onAisleAdded(Aisle aisle);
+        public void onAisleAdded(Aisle aisle, AisleContext aisleContext);
     }
     
     public interface AisleUpdateCallback {
@@ -100,16 +100,16 @@ public class AisleManager {
     }
     
     // issues a request to add an image to the aisle.
-    public void addImageToAisle(final boolean fromDetailsScreenFlag,
-            String imageId, VueImage image,
-            ImageAddedCallback imageAddedCallback) {
+    public void addImageToAisle(AisleContext aisleContext,
+            final boolean fromDetailsScreenFlag, String imageId,
+            VueImage image, ImageAddedCallback imageAddedCallback) {
         if (null == image) {
             throw new RuntimeException(
                     "Can't create Aisle without a non null aisle object");
         }
         
-        Thread t = new Thread(new AddImageToAisleBackgroundThread(image,
-                fromDetailsScreenFlag, imageId, imageAddedCallback));
+        Thread t = new Thread(new AddImageToAisleBackgroundThread(aisleContext,
+                image, fromDetailsScreenFlag, imageId, imageAddedCallback));
         t.start();
     }
     
