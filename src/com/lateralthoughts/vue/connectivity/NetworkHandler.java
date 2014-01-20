@@ -661,6 +661,10 @@ public class NetworkHandler {
                                     DataBaseManager.getInstance(mContext)
                                             .insertRatedImages(
                                                     retrievedImageRating, true);
+                                    VueTrendingAislesDataModel.getInstance(
+                                            VueApplication.getInstance())
+                                            .updateImageRatingStatus(
+                                                    ratedImageList);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
