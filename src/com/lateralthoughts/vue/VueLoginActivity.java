@@ -798,6 +798,7 @@ public class VueLoginActivity extends FragmentActivity implements
                  * createUser.put("loggedIn with", "Facebook"); } catch
                  * (JSONException e1) { e1.printStackTrace(); }
                  */
+                mixpanel.identify(storedUserProfile.getUserEmail());
                 people.identify(vueUserProfile.getUserEmail());
                 people.set("$first_name", user.getFirstName());
                 people.set("$last_name", user.getLastName());
@@ -1251,6 +1252,7 @@ public class VueLoginActivity extends FragmentActivity implements
                 e.printStackTrace();
             }
         }
+        mixpanel.identify(storedUserProfile.getUserEmail()); 
         people.identify(storedUserProfile.getUserEmail());
         people.set("$first_name", storedUserProfile.getUserName());
         people.set("$last_name", "");

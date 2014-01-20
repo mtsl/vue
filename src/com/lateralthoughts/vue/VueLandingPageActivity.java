@@ -109,7 +109,7 @@ public class VueLandingPageActivity extends Activity implements
     public static boolean mIsMyAilseCallEnable = false;
     private MixpanelAPI mixpanel;
     private MixpanelAPI.People people;
-
+    
     // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
     public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
@@ -117,8 +117,8 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
-
+        mixpanel = MixpanelAPI.getInstance(this,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
                 VueConstants.LANDING_SCREEN_RECEIVER);
@@ -194,7 +194,7 @@ public class VueLandingPageActivity extends Activity implements
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-          
+            
             // TODO:
             PackageInfo packageInfo;
             try {
@@ -224,7 +224,7 @@ public class VueLandingPageActivity extends Activity implements
                                 // Set an "mp_name_tag" super property 
                                 // for Streams if you find it useful.
                                 //TODO:  Check how it works.
-                                nameTag.put("mp_name_tag", storedVueUser.getFirstName());
+                                nameTag.put("mp_name_tag", storedVueUser.getFirstName() + " " + storedVueUser.getLastName());
                                 mixpanel.registerSuperProperties(nameTag);
                             } catch(JSONException e) {
                                 e.printStackTrace();
@@ -281,7 +281,6 @@ public class VueLandingPageActivity extends Activity implements
         }
         loadDetailsScreenForNotificationClick(getIntent().getExtras());
     }
-    
     
     @Override
     protected void onDestroy() {
@@ -361,12 +360,12 @@ public class VueLandingPageActivity extends Activity implements
             if (mOtherSourceImagePath == null) {
                 JSONObject createAisleButtonProps = new JSONObject();
                 try {
-                    createAisleButtonProps.put("Create_Aisle_Button_Click", "Create aisle clicked");
+                    createAisleButtonProps.put("Create_Aisle_Button_Click",
+                            "Create aisle clicked");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 mixpanel.track("Create_Aisle_Button_Click", createAisleButtonProps);
-                //people.append("Create_Aisle_Button_Click", createAisleButtonProps);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);
@@ -1389,6 +1388,7 @@ public class VueLandingPageActivity extends Activity implements
                                                                     .getInstance())
                                                     .getNetworkHandler()
                                                     .requestForAddImage(
+                                                            null,
                                                             true,
                                                             offlineImageId,
                                                             image,
@@ -1408,7 +1408,7 @@ public class VueLandingPageActivity extends Activity implements
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
-                        .requestForAddImage(true, offlineImageId, image,
+                        .requestForAddImage(null, true, offlineImageId, image,
                                 new ImageAddedCallback() {
                                     
                                     @Override

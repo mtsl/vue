@@ -37,6 +37,7 @@ public class AisleWindowContent {
     public void setWindowBookmarkIndicator(boolean windowBookmarkIndicator) {
         this.mAisleBookmarkIndicator = windowBookmarkIndicator;
     }
+    
     // these two should be based on device with & height
     private String mAisleId;
     
@@ -87,13 +88,15 @@ public class AisleWindowContent {
         this.mAisleBookmarkIndicator = VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance()).getNetworkHandler()
                 .checkIsAisleBookmarked(mAisleId);
-        for (int index = 0; index < mAisleImagesList.size(); index++) {
-            boolean status = VueTrendingAislesDataModel
-                    .getInstance(VueApplication.getInstance())
-                    .getNetworkHandler()
-                    .getImageRateStatus(mAisleImagesList.get(index).mId);
-            if (status) {
-                mAisleImagesList.get(index).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
+        if (mAisleImagesList != null) {
+            for (int index = 0; index < mAisleImagesList.size(); index++) {
+                boolean status = VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler()
+                        .getImageRateStatus(mAisleImagesList.get(index).mId);
+                if (status) {
+                    mAisleImagesList.get(index).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
+                }
             }
         }
         udpateImageUrlsForDevice();
@@ -289,6 +292,9 @@ public class AisleWindowContent {
     }
     
     public void findAisleStage(ArrayList<AisleImageDetails> itemsList) {
+        if (itemsList == null) {
+            return;
+        }
         int likesCount = 0, commentsCount = 0, totalCount;
         for (int index = 0; index < itemsList.size(); index++) {
             AisleImageDetails imageDetails = itemsList.get(index);

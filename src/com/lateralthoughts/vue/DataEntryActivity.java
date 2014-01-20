@@ -445,6 +445,21 @@ public class DataEntryActivity extends Activity {
                 }
             }
         }
+        if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.GALLERY_IMAGE)) {
+            try {
+                createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
+            } catch (JSONException e1) {
+                Log.e("DataentryActivity", "Surendra 2 exception");
+                e1.printStackTrace();
+            }
+        } else if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.CAMERA_IMAGE)) {
+            try {
+                createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
+            } catch (JSONException e1) {
+                Log.e("DataentryActivity", "Surendra 4 exception");
+                e1.printStackTrace();
+            }
+        }
     }
     
     private void initialize() {
@@ -576,28 +591,11 @@ public class DataEntryActivity extends Activity {
         }
         
         try {
+            Log.e("DataentryActivity", "Surendra 0");
             if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
                 Bundle b = data.getExtras();
                 if (b != null) {
-                    String imagePath;
-                    Log.e("DataentryActivity", "Surendra 1");
-                    if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.GALLERY_IMAGE)) {
-                        try {
-                            createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
-                        } catch (JSONException e1) {
-                            Log.e("DataentryActivity", "Surendra 2 exception");
-                            e1.printStackTrace();
-                        }
-                    } else if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.CAMERA_IMAGE)) {
-                        Log.e("DataentryActivity", "Surendra 3");
-                        try {
-                            createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
-                        } catch (JSONException e1) {
-                            Log.e("DataentryActivity", "Surendra 4 exception");
-                            e1.printStackTrace();
-                        }
-                    }
-                    imagePath = b
+                    String imagePath = b
                             .getString(VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY);
                     if (Utils.getTouchToChangeFlag(DataEntryActivity.this)) {
                         Utils.putTouchToChnageImagePosition(
