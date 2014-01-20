@@ -224,7 +224,7 @@ public class VueLandingPageActivity extends Activity implements
                                 // Set an "mp_name_tag" super property 
                                 // for Streams if you find it useful.
                                 //TODO:  Check how it works.
-                                nameTag.put("mp_name_tag", storedVueUser.getUserImageURL());
+                                nameTag.put("mp_name_tag", storedVueUser.getFirstName());
                                 mixpanel.registerSuperProperties(nameTag);
                             } catch(JSONException e) {
                                 e.printStackTrace();
@@ -1395,7 +1395,8 @@ public class VueLandingPageActivity extends Activity implements
                                                             new ImageAddedCallback() {
                                                                 
                                                                 @Override
-                                                                public void onImageAdded() {
+                                                                public void onImageAdded(
+                                                                        String imageId) {
                                                                     
                                                                 }
                                                             });
@@ -1411,7 +1412,7 @@ public class VueLandingPageActivity extends Activity implements
                                 new ImageAddedCallback() {
                                     
                                     @Override
-                                    public void onImageAdded() {
+                                    public void onImageAdded(String imageId) {
                                         
                                     }
                                 });

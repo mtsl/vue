@@ -15,8 +15,8 @@ public class Aisle {
     String mLookingFor;
     String mName;
     String mOccassion;
-    VueImage mAisleImage;
     String mDescription;
+    Long manchorImageId;
     
     public String getDescription() {
         return mDescription;
@@ -26,20 +26,12 @@ public class Aisle {
         this.mDescription = description;
     }
     
-    public VueImage getAisleImage() {
-        return mAisleImage;
-    }
-    
-    public void setAisleImage(VueImage mAisleImage) {
-        this.mAisleImage = mAisleImage;
-    }
-    
     public Aisle() {
     }
     
     public Aisle(Long id, String category, String lookingFor, String name,
             String occassion, Long ownerUserId, String descreption,
-            VueImage aisleImage) {
+            Long anchorImageId, VueImage aisleImage) {
         super();
         this.id = id;
         this.mCategory = category;
@@ -47,8 +39,8 @@ public class Aisle {
         this.mName = name;
         this.mOccassion = occassion;
         this.mOwnerUserId = ownerUserId;
-        this.mAisleImage = aisleImage;
         this.mDescription = descreption;
+        this.manchorImageId = anchorImageId;
     }
     
     public String getCategory() {
@@ -89,5 +81,13 @@ public class Aisle {
     
     public void setOwnerUserId(Long ownerUserId) {
         this.mOwnerUserId = ownerUserId;
+    }
+    
+    public Long getAnchorImageId() {
+        return manchorImageId;
+    }
+    
+    public void setAnchorImageId(Long anchorImageId) {
+        this.manchorImageId = anchorImageId;
     }
 }

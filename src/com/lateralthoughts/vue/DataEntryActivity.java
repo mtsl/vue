@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -562,26 +564,36 @@ public class DataEntryActivity extends Activity {
         mixpanel.flush();
         
     }
-    JSONObject loginprops = new JSONObject();
+    JSONObject createAisleProps = new JSONObject();
    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Iterator<?> keys = createAisleProps.keys();
+        while( keys.hasNext() ){
+            String key = (String)keys.next();
+            createAisleProps.remove(key);
+        }
+        
         try {
             if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
                 Bundle b = data.getExtras();
                 if (b != null) {
                     String imagePath;
+                    Log.e("DataentryActivity", "Surendra 1");
                     if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.GALLERY_IMAGE)) {
                         try {
-                            loginprops.put(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
+                            createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
                         } catch (JSONException e1) {
+                            Log.e("DataentryActivity", "Surendra 2 exception");
                             e1.printStackTrace();
                         }
                     } else if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.CAMERA_IMAGE)) {
+                        Log.e("DataentryActivity", "Surendra 3");
                         try {
-                            loginprops.put(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
+                            createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
                         } catch (JSONException e1) {
+                            Log.e("DataentryActivity", "Surendra 4 exception");
                             e1.printStackTrace();
                         }
                     }

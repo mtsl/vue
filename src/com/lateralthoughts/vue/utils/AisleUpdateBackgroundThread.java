@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleContext;
+import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
@@ -38,14 +39,17 @@ public class AisleUpdateBackgroundThread implements Runnable,
     private int mLastPercent = 0;
     private Aisle mAisle = null;
     private String mResponseMessage = null;
+    private AisleUpdateCallback mAisleUpdateCallback = null;
     private MixpanelAPI mixpanel;
     
     @SuppressWarnings("static-access")
-    public AisleUpdateBackgroundThread(Aisle aisle) {
+    public AisleUpdateBackgroundThread(Aisle aisle,
+            AisleUpdateCallback aisleUpdateCallback) {
         mNotificationManager = (NotificationManager) VueApplication
                 .getInstance().getSystemService(
                         VueApplication.getInstance().NOTIFICATION_SERVICE);
         mAisle = aisle;
+        mAisleUpdateCallback = aisleUpdateCallback;
     }
     
     @Override
@@ -63,8 +67,8 @@ public class AisleUpdateBackgroundThread implements Runnable,
     @SuppressWarnings("deprecation")
     @Override
     public void run() {
-        mixpanel = MixpanelAPI.getInstance(VueApplication
-                .getInstance(), VueApplication.getInstance().MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(VueApplication.getInstance(),
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         try {
             Intent notificationIntent = new Intent();
             PendingIntent contentIntent = PendingIntent.getActivity(
@@ -127,6 +131,7 @@ public class AisleUpdateBackgroundThread implements Runnable,
                 .runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mAisleUpdateCallback.onAisleUpdated();
                         if (null != mResponseMessage) {
                             try {
                                 JSONObject jsonObject = new JSONObject(
@@ -146,11 +151,7 @@ public class AisleUpdateBackgroundThread implements Runnable,
                                                 .getAisleAt(
                                                         aisleContext.mAisleId);
                                         if (existedAisle != null) {
-                                            existedAisle.getAisleContext().mCategory = aisleContext.mCategory;
-                                            existedAisle.getAisleContext().mDescription = aisleContext.mDescription;
-                                            existedAisle.getAisleContext().mName = aisleContext.mName;
-                                            existedAisle.getAisleContext().mLookingForItem = aisleContext.mLookingForItem;
-                                            existedAisle.getAisleContext().mOccasion = aisleContext.mOccasion;
+                                            existedAisle.getAisleContext().mAnchorImageId = aisleContext.mAnchorImageId;
                                         }
                                         VueTrendingAislesDataModel.getInstance(
                                                 VueApplication.getInstance())
