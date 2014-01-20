@@ -119,7 +119,7 @@ public class AisleContentAdapter implements IAisleContentAdapter {
     }
     
     public String getAisleId() {
-        return mWindowContent.getAisleId();
+        return mWindowContent.getAisleContext().mAisleId;
     }
     
     @Override

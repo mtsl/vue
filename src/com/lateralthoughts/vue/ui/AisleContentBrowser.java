@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lateralthoughts.vue.AisleManager;
@@ -56,8 +57,23 @@ public class AisleContentBrowser extends ViewFlipper {
                     .findViewById(R.id.like_img);
             final ImageView bookmarkImage = (ImageView) this.mSocialCard
                     .findViewById(R.id.bookmarkImage);
+            RelativeLayout shareLayout = (RelativeLayout) this.mSocialCard
+                    .findViewById(R.id.share_layout);
+            RelativeLayout bookmarkLayout = (RelativeLayout) this.mSocialCard
+                    .findViewById(R.id.bookmark_layout);
+            RelativeLayout rateLayout = (RelativeLayout) this.mSocialCard
+                    .findViewById(R.id.rate_layout);
+            shareLayout.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(VueApplication.getInstance(), "share",
+                            Toast.LENGTH_SHORT);
+                    
+                }
+            });
             // like image click function in Trending screen
-            likesImage.setOnClickListener(new OnClickListener() {
+            rateLayout.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View v) {
@@ -99,7 +115,7 @@ public class AisleContentBrowser extends ViewFlipper {
                 }
             });
             // bookmrk image clikc function in Trending screen
-            bookmarkImage.setOnClickListener(new OnClickListener() {
+            bookmarkLayout.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View v) {
@@ -109,8 +125,6 @@ public class AisleContentBrowser extends ViewFlipper {
                     if (mSpecialNeedsAdapter.getBookmarkIndicator()) {
                         // deduct the bookmark count by one.
                         bookMarkIndicator = false;
-                        mSpecialNeedsAdapter
-                                .setAisleBookmarkIndicator(bookMarkIndicator);
                         bookmarkImage
                                 .setImageResource(R.drawable.save_dark_small);
                         if (mBookmarksCount > 0) {
@@ -118,18 +132,12 @@ public class AisleContentBrowser extends ViewFlipper {
                         }
                     } else {
                         // increase the bookmark count by one.
-                        boolean isBookmarked = VueTrendingAislesDataModel
-                                .getInstance(VueApplication.getInstance())
-                                .getNetworkHandler()
-                                .isAisleBookmarked(
-                                        mSpecialNeedsAdapter.getAisleId());
-                        // increase the bookmark count by one.
                         bookMarkIndicator = true;
-                        mSpecialNeedsAdapter
-                                .setAisleBookmarkIndicator(bookMarkIndicator);
-                        mBookmarksCount = mBookmarksCount + 1;
                         bookmarkImage.setImageResource(R.drawable.save);
+                        mBookmarksCount = mBookmarksCount + 1;
                     }
+                    mSpecialNeedsAdapter
+                    .setAisleBookmarkIndicator(bookMarkIndicator);
                     VueTrendingAislesDataModel
                             .getInstance(VueApplication.getInstance())
                             .getNetworkHandler()
@@ -709,7 +717,8 @@ public class AisleContentBrowser extends ViewFlipper {
     public AisleDetailSwipeListener mSwipeListener;
     
     private void handleBookmark(boolean isBookmarked, String aisleId) {
-        
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+                .getNetworkHandler().modifyBookmarkList(aisleId, isBookmarked);
         AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
                 Long.parseLong(aisleId));
         ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager
@@ -738,6 +747,9 @@ public class AisleContentBrowser extends ViewFlipper {
     private void handleLike_Dislike_Events(String aisleId, String imageId,
             boolean likeOrDislike, int likesCount) {
         // aisleId,imageId,likesCount,likeStatus
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+                .getNetworkHandler()
+                .modifyImageRatedStatus(imageId, likeOrDislike);
         ArrayList<ImageRating> imgRatingList = DataBaseManager.getInstance(
                 mContext).getRatedImagesList(aisleId);
         ImageRating mImgRating = new ImageRating();

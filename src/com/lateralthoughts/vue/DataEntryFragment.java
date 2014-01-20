@@ -2,6 +2,9 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.json.JSONException;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -1585,7 +1588,16 @@ public class DataEntryFragment extends Fragment {
                         mAisleImagePathList);
             } catch (Exception e) {
             }
-            mixpanel.track("New_Aisle_Created", null);
+            if (mDataEntryActivity == null) {
+                mDataEntryActivity = (DataEntryActivity) getActivity();
+            }
+            try {
+                mDataEntryActivity.createAisleProps.put("AisleId", aisle.getId());
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            mixpanel.track("New_Aisle_Created", mDataEntryActivity.createAisleProps);
             FlurryAgent.logEvent("New_Aisle_Creation");
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())
@@ -1603,9 +1615,7 @@ public class DataEntryFragment extends Fragment {
                                     aisle, aisleContext);
                         }
                     });
-            if (mDataEntryActivity == null) {
-                mDataEntryActivity = (DataEntryActivity) getActivity();
-            }
+            
             mDataEntryActivity.shareViaVueClicked();
         } else {
             Toast.makeText(
@@ -1965,6 +1975,19 @@ public class DataEntryFragment extends Fragment {
                     "Please wait...");
         }
         mOtherSourceSelectedImageStore = Utils.getStoreNameFromUrl(sourceUrl);
+        Iterator<?> keys = mDataEntryActivity.createAisleProps.keys();
+        while(keys.hasNext()) {
+            String key = (String)keys.next();
+            mDataEntryActivity.createAisleProps.remove(key);
+            
+        }
+        try {
+            mDataEntryActivity.createAisleProps.put(VueConstants.IMAGE_FROM,
+                    mOtherSourceSelectedImageStore);
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }
+        // TODO: Image source
         GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
                 sourceUrl, getActivity(), false);
         getImagesTask.execute();

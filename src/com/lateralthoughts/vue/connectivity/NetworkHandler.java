@@ -32,12 +32,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleManager.AisleAddCallback;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
-import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.AisleWindowContentFactory;
 import com.lateralthoughts.vue.ImageRating;
@@ -661,6 +661,10 @@ public class NetworkHandler {
                                     DataBaseManager.getInstance(mContext)
                                             .insertRatedImages(
                                                     retrievedImageRating, true);
+                                    VueTrendingAislesDataModel.getInstance(
+                                            VueApplication.getInstance())
+                                            .updateImageRatingStatus(
+                                                    ratedImageList);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -712,5 +716,13 @@ public class NetworkHandler {
             isImageRated = true;
         }
         return isImageRated;
+    }
+    public void modifyImageRatedStatus(String imageId,boolean isAddRequest) {
+       
+          if(isAddRequest) {
+              ratedImageList.add(imageId);
+          } else {
+              ratedImageList.remove(imageId);
+          }
     }
 }

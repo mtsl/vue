@@ -26,7 +26,6 @@ public class AisleWindowContent {
     public int mAisleCardHeight;
     
     private static final String AISLE_STAGE_FOUR = "completed";
-    public int mTotalBookmarkCount;
     public int mTotalLikesCount;
     public String mAisleCureentStage;
     
@@ -84,7 +83,6 @@ public class AisleWindowContent {
         // VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
         findMostLikesImage(mAisleImagesList);
         findAisleStage(mAisleImagesList);
-        mTotalBookmarkCount = context.mBookmarkCount;
         this.mAisleBookmarkIndicator = VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance()).getNetworkHandler()
                 .checkIsAisleBookmarked(mAisleId);
