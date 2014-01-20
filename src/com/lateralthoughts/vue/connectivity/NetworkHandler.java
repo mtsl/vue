@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -716,5 +717,13 @@ public class NetworkHandler {
             isImageRated = true;
         }
         return isImageRated;
+    }
+    public void modifyImageRatedStatus(String imageId,boolean isAddRequest) {
+       
+          if(isAddRequest) {
+              ratedImageList.add(imageId);
+          } else {
+              ratedImageList.remove(imageId);
+          }
     }
 }

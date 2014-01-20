@@ -725,7 +725,8 @@ public class AisleContentBrowser extends ViewFlipper {
     public AisleDetailSwipeListener mSwipeListener;
     
     private void handleBookmark(boolean isBookmarked, String aisleId) {
-        
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+                .getNetworkHandler().modifyBookmarkList(aisleId, isBookmarked);
         AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
                 Long.parseLong(aisleId));
         ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager
@@ -754,6 +755,9 @@ public class AisleContentBrowser extends ViewFlipper {
     private void handleLike_Dislike_Events(String aisleId, String imageId,
             boolean likeOrDislike, int likesCount) {
         // aisleId,imageId,likesCount,likeStatus
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+                .getNetworkHandler()
+                .modifyImageRatedStatus(imageId, likeOrDislike);
         ArrayList<ImageRating> imgRatingList = DataBaseManager.getInstance(
                 mContext).getRatedImagesList(aisleId);
         ImageRating mImgRating = new ImageRating();

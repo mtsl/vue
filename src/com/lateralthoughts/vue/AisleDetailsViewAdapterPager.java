@@ -1122,6 +1122,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 }
             } else if (reqType.equals(CHANGE_LIKES)) {
                 // aisleId,imageId,likesCount,likeStatus
+                VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler()
+                        .modifyImageRatedStatus(imageId, likeOrDislike);
                 mLikeCount = itemDetails.mLikesCount;
                 ArrayList<ImageRating> imgRatingList = DataBaseManager
                         .getInstance(mContext).getRatedImagesList(aisleId);
