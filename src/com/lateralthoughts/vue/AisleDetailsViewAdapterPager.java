@@ -167,7 +167,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         + lookingFor.substring(1).toLowerCase();
                 mswipeListner.setOccasion(occasion + " " + lookingFor);
             }
-            
             mBookmarksCount = getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount;
             VueApplication.getInstance().setClickedWindowCount(
                     getItem(mCurrentAislePosition).getImageList().size());
@@ -203,6 +202,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .getInstance(VueApplication.getInstance())
                     .getNetworkHandler()
                     .isAisleBookmarked(
+                            getItem(mCurrentAislePosition).getAisleId());
+            
+            isBookmarked = VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .getNetworkHandler()
+                    .checkIsAisleBookmarked(
                             getItem(mCurrentAislePosition).getAisleId());
             
             if (isBookmarked) {
@@ -717,10 +722,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
                     if (mBookmarksCount > 0) {
                         mBookmarksCount--;
-                        getItem(mCurrentAislePosition).mTotalBookmarkCount = getItem(mCurrentAislePosition).mTotalBookmarkCount - 1;
                     }
-                    getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
-                    
                     getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
                             bookmarkStatus);
                     handleBookmark(bookmarkStatus,
@@ -749,13 +751,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mixpanel.track("Aisle-Bookmarked", aisleUnbookmarkProps);
                     FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
                     mBookmarksCount++;
-                    getItem(mCurrentAislePosition).mTotalBookmarkCount = getItem(mCurrentAislePosition).mTotalBookmarkCount + 1;
-                    getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
                     getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
                             bookmarkStatus);
                     handleBookmark(bookmarkStatus,
                             getItem(mCurrentAislePosition).getAisleId());
                 }
+                getItem(mCurrentAislePosition).getAisleContext().mBookmarkCount = mBookmarksCount;
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
@@ -1212,8 +1213,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         }
         JSONObject aisleLikedProps = new JSONObject();
         try {
-            aisleLikedProps.put("ImageId", getItem(mCurrentAislePosition).getImageList().get(position).mId);
-            aisleLikedProps.put("AisleId", getItem(mCurrentAislePosition).getAisleId());
+            aisleLikedProps.put("ImageId", getItem(mCurrentAislePosition)
+                    .getImageList().get(position).mId);
+            aisleLikedProps.put("AisleId", getItem(mCurrentAislePosition)
+                    .getAisleId());
             aisleLikedProps.put("Category", getItem(mCurrentAislePosition)
                     .getAisleContext().mCategory);
             aisleLikedProps.put("Lookingfor", getItem(mCurrentAislePosition)
@@ -1273,8 +1276,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private void onChangeDislikesCount(int position) {
         JSONObject aisleUnLikedProps = new JSONObject();
         try {
-            aisleUnLikedProps.put("ImageId", getItem(mCurrentAislePosition).getImageList().get(position).mId);
-            aisleUnLikedProps.put("AisleId", getItem(mCurrentAislePosition).getAisleId());
+            aisleUnLikedProps.put("ImageId", getItem(mCurrentAislePosition)
+                    .getImageList().get(position).mId);
+            aisleUnLikedProps.put("AisleId", getItem(mCurrentAislePosition)
+                    .getAisleId());
             aisleUnLikedProps.put("Category", getItem(mCurrentAislePosition)
                     .getAisleContext().mCategory);
             aisleUnLikedProps.put("Lookingfor", getItem(mCurrentAislePosition)

@@ -125,8 +125,6 @@ public class AisleContentBrowser extends ViewFlipper {
                     if (mSpecialNeedsAdapter.getBookmarkIndicator()) {
                         // deduct the bookmark count by one.
                         bookMarkIndicator = false;
-                        mSpecialNeedsAdapter
-                                .setAisleBookmarkIndicator(bookMarkIndicator);
                         bookmarkImage
                                 .setImageResource(R.drawable.save_dark_small);
                         if (mBookmarksCount > 0) {
@@ -134,18 +132,12 @@ public class AisleContentBrowser extends ViewFlipper {
                         }
                     } else {
                         // increase the bookmark count by one.
-                        boolean isBookmarked = VueTrendingAislesDataModel
-                                .getInstance(VueApplication.getInstance())
-                                .getNetworkHandler()
-                                .isAisleBookmarked(
-                                        mSpecialNeedsAdapter.getAisleId());
-                        // increase the bookmark count by one.
                         bookMarkIndicator = true;
-                        mSpecialNeedsAdapter
-                                .setAisleBookmarkIndicator(bookMarkIndicator);
-                        mBookmarksCount = mBookmarksCount + 1;
                         bookmarkImage.setImageResource(R.drawable.save);
+                        mBookmarksCount = mBookmarksCount + 1;
                     }
+                    mSpecialNeedsAdapter
+                    .setAisleBookmarkIndicator(bookMarkIndicator);
                     VueTrendingAislesDataModel
                             .getInstance(VueApplication.getInstance())
                             .getNetworkHandler()
