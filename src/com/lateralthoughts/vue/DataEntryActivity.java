@@ -449,14 +449,12 @@ public class DataEntryActivity extends Activity {
             try {
                 createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
             } catch (JSONException e1) {
-                Log.e("DataentryActivity", "Surendra 2 exception");
                 e1.printStackTrace();
             }
         } else if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.CAMERA_IMAGE)) {
             try {
                 createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
             } catch (JSONException e1) {
-                Log.e("DataentryActivity", "Surendra 4 exception");
                 e1.printStackTrace();
             }
         }
@@ -591,7 +589,6 @@ public class DataEntryActivity extends Activity {
         }
         
         try {
-            Log.e("DataentryActivity", "Surendra 0");
             if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
                 Bundle b = data.getExtras();
                 if (b != null) {
