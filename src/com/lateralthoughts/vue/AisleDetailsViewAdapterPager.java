@@ -852,6 +852,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     public void share(final Context context, Activity activity) {
+        getItem(mCurrentAislePosition).getAisleContext().mShareCount = getItem(
+                mCurrentAislePosition).getAisleContext().mShareCount + 1;
+        getItem(mCurrentAislePosition).setmShareIndicator(true);
         mShare = new ShareDialog(context, activity);
         FileCache ObjFileCache = new FileCache(context);
         ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
@@ -886,7 +889,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     (getItem(mCurrentAislePosition).getAisleContext().mFirstName
                             + " " + getItem(mCurrentAislePosition)
                             .getAisleContext().mLastName),
-                    mCurrentDispImageIndex, mShareViaVueListner, null);
+                    mCurrentDispImageIndex, mShareViaVueListner, null, null);
         }
         if (getItem(mCurrentAislePosition).getImageList() != null
                 && getItem(mCurrentAislePosition).getImageList().size() > 0) {

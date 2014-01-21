@@ -52,5 +52,7 @@ public interface IAisleContentAdapter {
     public int getShareCount();
     
     public void setShareIdicator();
+
+    public AisleWindowContent getWindowContent();
     
 }

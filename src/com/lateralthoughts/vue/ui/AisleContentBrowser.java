@@ -25,6 +25,7 @@ import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
@@ -76,7 +77,12 @@ public class AisleContentBrowser extends ViewFlipper {
                     shareImage.setImageResource(R.drawable.share);
                     mSpecialNeedsAdapter.setShareCount(count);
                     mSpecialNeedsAdapter.setShareIdicator();
-                    
+                    if (VueLandingPageActivity.landingPageActivity != null) {
+                        VueLandingPageActivity landingPage = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
+                        landingPage.share(
+                                mSpecialNeedsAdapter.getWindowContent(),
+                                mCurrentIndex);
+                    }
                 }
             });
             // like image click function in Trending screen
@@ -776,4 +782,5 @@ public class AisleContentBrowser extends ViewFlipper {
             e.printStackTrace();
         }
     }
+    
 }

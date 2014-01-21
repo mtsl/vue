@@ -134,6 +134,10 @@ public class AisleContentAdapter implements IAisleContentAdapter {
         mWindowContent.setmShareIndicator(true);
     }
     
+    public AisleWindowContent getWindowContent() {
+        return mWindowContent;
+    }
+    
     public void setShareCount(int shareCount) {
         mWindowContent.getAisleContext().mShareCount = shareCount;
     }
