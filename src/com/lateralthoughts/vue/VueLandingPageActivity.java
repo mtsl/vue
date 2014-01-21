@@ -1081,6 +1081,9 @@ public class VueLandingPageActivity extends Activity implements
             } else {
                 // mFragment.moveListToPosition(mCurentScreenPosition);
             }
+            if (mLandingAilsesFrag != null) {
+                ((VueLandingAislesFragment) mLandingAilsesFrag).notifyAdapters();
+            }
         }
         
         @Override

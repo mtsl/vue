@@ -787,17 +787,6 @@ public class VueLoginActivity extends FragmentActivity implements
                 Utils.writeUserProfileObjectToFile(VueLoginActivity.this,
                         VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
                         vueUserProfile);
-                /*
-                 * JSONObject createUser = new JSONObject(); try {
-                 * createUser.put("$first_name", vueUserProfile.getUserName());
-                 * createUser.put("$$last_name", ""); createUser.put("Gender",
-                 * vueUserProfile.getUserGender()); createUser.put("$email",
-                 * vueUserProfile.getUserEmail());
-                 * createUser.put("Current location",
-                 * vueUserProfile.getUserLocation());
-                 * createUser.put("loggedIn with", "Facebook"); } catch
-                 * (JSONException e1) { e1.printStackTrace(); }
-                 */
                 mixpanel.identify(storedUserProfile.getUserEmail());
                 people.identify(vueUserProfile.getUserEmail());
                 people.set("$first_name", user.getFirstName());

@@ -445,6 +445,7 @@ public class DataEntryActivity extends Activity {
                             .getString(VueConstants.FROM_OTHER_SOURCES_URL));
                 }
             }
+<<<<<<< HEAD
             if (b.getString(VueConstants.IMAGE_FROM) != null
                     && b.getString(VueConstants.IMAGE_FROM).equals(
                             VueConstants.GALLERY_IMAGE)) {
@@ -463,6 +464,20 @@ public class DataEntryActivity extends Activity {
                 } catch (JSONException e1) {
                     e1.printStackTrace();
                 }
+=======
+        }
+        if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.GALLERY_IMAGE)) {
+            try {
+                createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+        } else if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.CAMERA_IMAGE)) {
+            try {
+                createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+>>>>>>> a0410ca9b0149a51ea3dc27c3a248a0b4d2a4ffd
             }
         }
     }
@@ -597,7 +612,6 @@ public class DataEntryActivity extends Activity {
         }
         
         try {
-            Log.e("DataentryActivity", "Surendra 0");
             if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
                 Bundle b = data.getExtras();
                 if (b != null) {
