@@ -18,5 +18,6 @@ public class AisleContext {
     public String mDescription;
     public String mAisleOwnerImageURL;
     public int mBookmarkCount;
+    public int mShareCount;
     public ArrayList<String> mCommentList;
 }

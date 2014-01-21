@@ -11,6 +11,7 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -24,10 +25,19 @@ public class AisleWindowContent {
     boolean mAisleBookmarkIndicator = false;
     public int mTrendingBestHeight = 0;
     public int mAisleCardHeight;
-    
+    private Random randomNumGenerator = new Random();
     private static final String AISLE_STAGE_FOUR = "completed";
     public int mTotalLikesCount;
     public String mAisleCureentStage;
+    private boolean mShareIndicator = false;
+    
+    public boolean ismShareIndicator() {
+        return mShareIndicator;
+    }
+    
+    public void setmShareIndicator(boolean mShareIndicator) {
+        this.mShareIndicator = mShareIndicator;
+    }
     
     public boolean getWindowBookmarkIndicator() {
         return mAisleBookmarkIndicator;
@@ -78,7 +88,7 @@ public class AisleWindowContent {
         }
         mAisleId = context.mAisleId;
         mContext = context;
-        
+        context.mShareCount = getRandomNumber();
         // lets parse through the image urls and update the image resolution
         // VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
         findMostLikesImage(mAisleImagesList);
@@ -315,6 +325,12 @@ public class AisleWindowContent {
         } else if (likesCount < 3 || commentsCount < 3) {
             mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
         }
+    }
+    
+    private int getRandomNumber() {
+        
+        int i1 = randomNumGenerator.nextInt(10 - 0) + 0;
+        return i1;
     }
     
     private AisleContext mContext;

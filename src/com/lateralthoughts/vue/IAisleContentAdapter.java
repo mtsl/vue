@@ -47,4 +47,10 @@ public interface IAisleContentAdapter {
     
     public String getImageId(int mCurrentIndex);
     
+    public void setShareCount(int i);
+    
+    public int getShareCount();
+    
+    public void setShareIdicator();
+    
 }

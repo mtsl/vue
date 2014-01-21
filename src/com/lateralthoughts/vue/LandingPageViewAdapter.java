@@ -59,6 +59,10 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
                     .findViewById(R.id.like_count);
             holder.bookMarkCount = (TextView) convertView
                     .findViewById(R.id.bookmark_count);
+            holder.share_count = (TextView) convertView
+                    .findViewById(R.id.share_count);
+            holder.shareImage = (ImageView) convertView
+                    .findViewById(R.id.shareImage);
             holder.bookmarkImageView = (ImageView) convertView
                     .findViewById(R.id.bookmarkImage);
             holder.socialCard = (RelativeLayout) convertView
@@ -160,13 +164,21 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         final RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 cardWidh, VueApplication.getInstance().getPixel(2));
         holder.viewBar.setLayoutParams(layoutParams);
-        holder.bookMarkCount.setText(String.valueOf(holder.mWindowContent.getAisleContext().mBookmarkCount));
+        holder.bookMarkCount.setText(String.valueOf(holder.mWindowContent
+                .getAisleContext().mBookmarkCount));
         if (holder.mWindowContent.getWindowBookmarkIndicator()) {
             holder.bookmarkImageView.setImageResource(R.drawable.save);
         } else {
             holder.bookmarkImageView
                     .setImageResource(R.drawable.save_dark_small);
         }
+        if (holder.mWindowContent.ismShareIndicator()) {
+            holder.shareImage.setImageResource(R.drawable.share);
+        } else {
+            holder.shareImage.setImageResource(R.drawable.share_gray);
+        }
+        holder.share_count.setText(String.valueOf(holder.mWindowContent
+                .getAisleContext().mShareCount));
         return convertView;
     }
 }

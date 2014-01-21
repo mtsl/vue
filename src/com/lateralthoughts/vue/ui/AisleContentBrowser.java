@@ -16,7 +16,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lateralthoughts.vue.AisleManager;
@@ -59,6 +58,10 @@ public class AisleContentBrowser extends ViewFlipper {
                     .findViewById(R.id.bookmarkImage);
             RelativeLayout shareLayout = (RelativeLayout) this.mSocialCard
                     .findViewById(R.id.share_layout);
+            final TextView shareCount = (TextView) this.mSocialCard
+                    .findViewById(R.id.share_count);
+            final ImageView shareImage = (ImageView) this.mSocialCard
+                    .findViewById(R.id.shareImage);
             RelativeLayout bookmarkLayout = (RelativeLayout) this.mSocialCard
                     .findViewById(R.id.bookmark_layout);
             RelativeLayout rateLayout = (RelativeLayout) this.mSocialCard
@@ -67,8 +70,12 @@ public class AisleContentBrowser extends ViewFlipper {
                 
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(VueApplication.getInstance(), "share",
-                            Toast.LENGTH_SHORT);
+                    int count = mSpecialNeedsAdapter.getShareCount();
+                    count = count + 1;
+                    shareCount.setText("" + count);
+                    shareImage.setImageResource(R.drawable.share);
+                    mSpecialNeedsAdapter.setShareCount(count);
+                    mSpecialNeedsAdapter.setShareIdicator();
                     
                 }
             });
@@ -137,7 +144,7 @@ public class AisleContentBrowser extends ViewFlipper {
                         mBookmarksCount = mBookmarksCount + 1;
                     }
                     mSpecialNeedsAdapter
-                    .setAisleBookmarkIndicator(bookMarkIndicator);
+                            .setAisleBookmarkIndicator(bookMarkIndicator);
                     VueTrendingAislesDataModel
                             .getInstance(VueApplication.getInstance())
                             .getNetworkHandler()

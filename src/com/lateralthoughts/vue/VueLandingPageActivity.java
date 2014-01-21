@@ -221,12 +221,14 @@ public class VueLandingPageActivity extends Activity implements
                             people.identify(storedVueUser.getEmail());
                             JSONObject nameTag = new JSONObject();
                             try {
-                                // Set an "mp_name_tag" super property 
+                                // Set an "mp_name_tag" super property
                                 // for Streams if you find it useful.
-                                //TODO:  Check how it works.
-                                nameTag.put("mp_name_tag", storedVueUser.getFirstName() + " " + storedVueUser.getLastName());
+                                // TODO: Check how it works.
+                                nameTag.put("mp_name_tag",
+                                        storedVueUser.getFirstName() + " "
+                                                + storedVueUser.getLastName());
                                 mixpanel.registerSuperProperties(nameTag);
-                            } catch(JSONException e) {
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                             // TODO: start the LoginActivity
@@ -365,7 +367,8 @@ public class VueLandingPageActivity extends Activity implements
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mixpanel.track("Create_Aisle_Button_Click", createAisleButtonProps);
+                mixpanel.track("Create_Aisle_Button_Click",
+                        createAisleButtonProps);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);
@@ -1082,7 +1085,8 @@ public class VueLandingPageActivity extends Activity implements
                 // mFragment.moveListToPosition(mCurentScreenPosition);
             }
             if (mLandingAilsesFrag != null) {
-                ((VueLandingAislesFragment) mLandingAilsesFrag).notifyAdapters();
+                ((VueLandingAislesFragment) mLandingAilsesFrag)
+                        .notifyAdapters();
             }
         }
         
