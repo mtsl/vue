@@ -317,8 +317,6 @@ public class Parser {
             aisleContext.mLookingForItem = josnObject
                     .getString(VueConstants.AISLE_LOOKINGFOR);
             aisleContext.mName = josnObject.getString(VueConstants.AISLE_NAME);
-            aisleContext.mAnchorImageId = josnObject
-                    .getString(VueConstants.AISLE_ANCHOT_IMAGE_ID);
             String occasion = josnObject
                     .getString(VueConstants.AISLE_OCCASSION);
             if (occasion == null || occasion.equals("null")) {

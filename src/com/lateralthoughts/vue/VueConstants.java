@@ -218,7 +218,6 @@ public class VueConstants {
     public static final String AISLE_CATEGORY = "category";
     public static final String AISLE_LOOKINGFOR = "lookingFor";
     public static final String AISLE_NAME = "name";
-    public static final String AISLE_ANCHOT_IMAGE_ID = "anchorImageId";
     public static final String AISLE_OCCASSION = "occassion";
     public static final String AISLE_OWNER_USER_ID = "ownerUserId";
     public static final String AISLE_DESCRIPTION = "description";

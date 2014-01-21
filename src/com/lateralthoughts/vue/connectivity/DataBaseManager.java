@@ -269,7 +269,6 @@ public class DataBaseManager {
             values.put(VueConstants.BOOKMARK_COUNT, info.mBookmarkCount);
             values.put(VueConstants.CATEGORY, info.mCategory);
             values.put(VueConstants.AISLE_DESCRIPTION, info.mDescription);
-            values.put(VueConstants.AISLE_ANCHOT_IMAGE_ID, info.mAnchorImageId);
             values.put(VueConstants.AISLE_OWNER_IMAGE_URL,
                     info.mAisleOwnerImageURL);
             values.put(VueConstants.DELETE_FLAG, 0);
@@ -461,7 +460,6 @@ public class DataBaseManager {
         values.put(VueConstants.AISLE_Id, context.mAisleId);
         values.put(VueConstants.BOOKMARK_COUNT, context.mBookmarkCount);
         values.put(VueConstants.CATEGORY, context.mCategory);
-        values.put(VueConstants.AISLE_ANCHOT_IMAGE_ID, context.mAnchorImageId);
         values.put(VueConstants.AISLE_DESCRIPTION, context.mDescription);
         values.put(VueConstants.DELETE_FLAG, 0);
         int order = mAislesOrderMap.get(context.mAisleId);
@@ -576,8 +574,6 @@ public class DataBaseManager {
                         .getColumnIndex(VueConstants.CATEGORY));
                 userInfo.mDescription = aislesCursor.getString(aislesCursor
                         .getColumnIndex(VueConstants.AISLE_DESCRIPTION));
-                userInfo.mAnchorImageId = aislesCursor.getString(aislesCursor
-                        .getColumnIndex(VueConstants.AISLE_ANCHOT_IMAGE_ID));
                 userInfo.mAisleOwnerImageURL = aislesCursor
                         .getString(aislesCursor
                                 .getColumnIndex(VueConstants.AISLE_OWNER_IMAGE_URL));
@@ -1115,8 +1111,6 @@ public class DataBaseManager {
                         .getColumnIndex(VueConstants.LOOKING_FOR));
                 userInfo.mOccasion = aislesCursor.getString(aislesCursor
                         .getColumnIndex(VueConstants.OCCASION));
-                userInfo.mAnchorImageId = aislesCursor.getString(aislesCursor
-                        .getColumnIndex(VueConstants.AISLE_ANCHOT_IMAGE_ID));
                 userInfo.mBookmarkCount = Integer.parseInt(aislesCursor
                         .getString(aislesCursor
                                 .getColumnIndex(VueConstants.BOOKMARK_COUNT)));

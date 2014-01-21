@@ -1,5 +1,12 @@
 package gcm.com.vue.android.gcmclient;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Calendar;
+
 import gcm.com.vue.gcm.notifications.GCMClientNotification;
 import gcm.com.vue.gcm.notifications.GCMClientNotification.NotificationType;
 import android.app.NotificationManager;
@@ -9,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +24,7 @@ import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class GCMBroadcastReceiver extends BroadcastReceiver {
     
@@ -38,6 +47,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                     .getString("data");
             if (broadcastMessage != null
                     && broadcastMessage.trim().length() > 0) {
+                writeToSdcard(broadcastMessage);
                 final GCMClientNotification lastReceivedNotification = (new ObjectMapper())
                         .readValue(broadcastMessage,
                                 GCMClientNotification.class);
@@ -123,4 +133,34 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
         }
         
     }
+   private void writeToSdcard(String message) {
+        
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/VueNotificationsOn21jan/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/"
+                + Calendar.getInstance().get(Calendar.DATE)
+                + "-"
+                + Utils.getWeekDay(Calendar.getInstance().get(
+                        Calendar.DAY_OF_WEEK)) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

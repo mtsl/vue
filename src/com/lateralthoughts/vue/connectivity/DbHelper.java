@@ -35,7 +35,6 @@ public class DbHelper extends SQLiteOpenHelper {
             + " text, " + VueConstants.USER_ID + " text, "
             + VueConstants.BOOKMARK_COUNT + " text, "
             + VueConstants.IS_BOOKMARKED + " integer, "
-            + VueConstants.AISLE_ANCHOT_IMAGE_ID + " text, "
             + VueConstants.DIRTY_FLAG + " integer, " + VueConstants.DELETE_FLAG
             + " integer, " + VueConstants.AISLE_DESCRIPTION + " text, "
             + VueConstants.AISLE_OWNER_IMAGE_URL + " text, " + VueConstants.ID
