@@ -1592,12 +1592,14 @@ public class DataEntryFragment extends Fragment {
                 mDataEntryActivity = (DataEntryActivity) getActivity();
             }
             try {
-                mDataEntryActivity.createAisleProps.put("AisleId", aisle.getId());
+                mDataEntryActivity.createAisleProps.put("AisleId",
+                        aisle.getId());
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            mixpanel.track("New_Aisle_Created", mDataEntryActivity.createAisleProps);
+            mixpanel.track("New_Aisle_Created",
+                    mDataEntryActivity.createAisleProps);
             FlurryAgent.logEvent("New_Aisle_Creation");
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())
@@ -1975,11 +1977,17 @@ public class DataEntryFragment extends Fragment {
                     "Please wait...");
         }
         mOtherSourceSelectedImageStore = Utils.getStoreNameFromUrl(sourceUrl);
+        if (mDataEntryActivity == null) {
+            mDataEntryActivity = (DataEntryActivity) getActivity();
+        }
         Iterator<?> keys = mDataEntryActivity.createAisleProps.keys();
-        while(keys.hasNext()) {
-            String key = (String)keys.next();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
             mDataEntryActivity.createAisleProps.remove(key);
             
+        }
+        if (mDataEntryActivity == null) {
+            mDataEntryActivity = (DataEntryActivity) getActivity();
         }
         try {
             mDataEntryActivity.createAisleProps.put(VueConstants.IMAGE_FROM,

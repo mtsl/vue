@@ -62,7 +62,8 @@ public class DataEntryActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.date_entry_main);
-        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(this,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         initialize();
         mContentFrame = (FrameLayout) findViewById(R.id.content_frame2);
         mSlidListFrag = (VueListFragment) getFragmentManager()
@@ -444,20 +445,24 @@ public class DataEntryActivity extends Activity {
                             .getString(VueConstants.FROM_OTHER_SOURCES_URL));
                 }
             }
-        }
-        if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.GALLERY_IMAGE)) {
-            try {
-                createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
-            } catch (JSONException e1) {
-                Log.e("DataentryActivity", "Surendra 2 exception");
-                e1.printStackTrace();
-            }
-        } else if(b.getString(VueConstants.IMAGE_FROM).equals(VueConstants.CAMERA_IMAGE)) {
-            try {
-                createAisleProps.put(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
-            } catch (JSONException e1) {
-                Log.e("DataentryActivity", "Surendra 4 exception");
-                e1.printStackTrace();
+            if (b.getString(VueConstants.IMAGE_FROM) != null
+                    && b.getString(VueConstants.IMAGE_FROM).equals(
+                            VueConstants.GALLERY_IMAGE)) {
+                try {
+                    createAisleProps.put(VueConstants.IMAGE_FROM,
+                            VueConstants.GALLERY_IMAGE);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+            } else if (b.getString(VueConstants.IMAGE_FROM) != null
+                    && b.getString(VueConstants.IMAGE_FROM).equals(
+                            VueConstants.CAMERA_IMAGE)) {
+                try {
+                    createAisleProps.put(VueConstants.IMAGE_FROM,
+                            VueConstants.CAMERA_IMAGE);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }
@@ -579,14 +584,15 @@ public class DataEntryActivity extends Activity {
         mixpanel.flush();
         
     }
+    
     JSONObject createAisleProps = new JSONObject();
-   
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Iterator<?> keys = createAisleProps.keys();
-        while( keys.hasNext() ){
-            String key = (String)keys.next();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
             createAisleProps.remove(key);
         }
         
