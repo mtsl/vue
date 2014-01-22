@@ -65,6 +65,7 @@ public class ShareDialog {
     private boolean mFromCreateAislePopupFlag = false;
     private boolean mLoadAllApplications = false;
     private VueAisleDetailsViewFragment.ShareViaVueListner mDetailsScreenShareViaVueListner;
+    private VueLandingPageActivity.ShareViaVueListner mLandingScreenShareViaVueListner;
     private DataEntryFragment.ShareViaVueListner mDataentryScreenShareViaVueListner;
     private ListView mListview = null;
     private MixpanelAPI mixpanel;
@@ -79,7 +80,8 @@ public class ShareDialog {
      *            Context
      */
     public ShareDialog(Context context, Activity activity) {
-        mixpanel = MixpanelAPI.getInstance(activity, VueApplication.getInstance().MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(activity,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         this.mContext = context;
         this.mActivity = activity;
         mLayoutInflater = (LayoutInflater) context
@@ -92,10 +94,12 @@ public class ShareDialog {
             String name,
             int currentAislePosition,
             VueAisleDetailsViewFragment.ShareViaVueListner detailsScreenShareViaVueListner,
-            DataEntryFragment.ShareViaVueListner dataentryScreenShareViaVueListner) {
+            DataEntryFragment.ShareViaVueListner dataentryScreenShareViaVueListner,
+            VueLandingPageActivity.ShareViaVueListner landingScreenShareViaVueListner) {
         mShareIntentCalled = false;
         mDetailsScreenShareViaVueListner = detailsScreenShareViaVueListner;
         mDataentryScreenShareViaVueListner = dataentryScreenShareViaVueListner;
+        mLandingScreenShareViaVueListner = landingScreenShareViaVueListner;
         this.mImagePathArray = imagePathArray;
         mCurrentAislePosition = currentAislePosition;
         prepareShareIntentData();
@@ -419,6 +423,8 @@ public class ShareDialog {
             mDataentryScreenShareViaVueListner.onAisleShareToVue();
         } else if (mDetailsScreenShareViaVueListner != null) {
             mDetailsScreenShareViaVueListner.onAisleShareToVue();
+        } else if (mLandingScreenShareViaVueListner != null) {
+            mLandingScreenShareViaVueListner.onAisleShareToVue();
         }
     }
     

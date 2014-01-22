@@ -51,9 +51,13 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
+import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
@@ -69,6 +73,7 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.clsShare;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueLandingPageActivity extends Activity implements
@@ -113,6 +118,7 @@ public class VueLandingPageActivity extends Activity implements
     // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
     public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
+    private ShareDialog mShare = null;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -221,12 +227,14 @@ public class VueLandingPageActivity extends Activity implements
                             people.identify(storedVueUser.getEmail());
                             JSONObject nameTag = new JSONObject();
                             try {
-                                // Set an "mp_name_tag" super property 
+                                // Set an "mp_name_tag" super property
                                 // for Streams if you find it useful.
-                                //TODO:  Check how it works.
-                                nameTag.put("mp_name_tag", storedVueUser.getFirstName() + " " + storedVueUser.getLastName());
+                                // TODO: Check how it works.
+                                nameTag.put("mp_name_tag",
+                                        storedVueUser.getFirstName() + " "
+                                                + storedVueUser.getLastName());
                                 mixpanel.registerSuperProperties(nameTag);
-                            } catch(JSONException e) {
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                             // TODO: start the LoginActivity
@@ -365,7 +373,8 @@ public class VueLandingPageActivity extends Activity implements
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mixpanel.track("Create_Aisle_Button_Click", createAisleButtonProps);
+                mixpanel.track("Create_Aisle_Button_Click",
+                        createAisleButtonProps);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);
@@ -519,6 +528,11 @@ public class VueLandingPageActivity extends Activity implements
                             .getFriendsList(data
                                     .getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
                 }
+            }
+        } else {
+            if (mShare != null && mShare.mShareIntentCalled) {
+                mShare.mShareIntentCalled = false;
+                mShare.dismisDialog();
             }
         }
     }
@@ -1082,7 +1096,8 @@ public class VueLandingPageActivity extends Activity implements
                 // mFragment.moveListToPosition(mCurentScreenPosition);
             }
             if (mLandingAilsesFrag != null) {
-                ((VueLandingAislesFragment) mLandingAilsesFrag).notifyAdapters();
+                ((VueLandingAislesFragment) mLandingAilsesFrag)
+                        .notifyAdapters();
             }
         }
         
@@ -1663,6 +1678,115 @@ public class VueLandingPageActivity extends Activity implements
                                 });
                     }
                 }).start();
+            }
+        }
+    }
+    
+    public void share(AisleWindowContent aisleWindowContent,
+            int currentDispImageIndex) {
+        mShare = new ShareDialog(this, this);
+        FileCache ObjFileCache = new FileCache(this);
+        ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
+        if (aisleWindowContent.getImageList() != null
+                && aisleWindowContent.getImageList().size() > 0) {
+            String isUserAisle = "0";
+            if (String.valueOf(VueApplication.getInstance().getmUserId())
+                    .equals(aisleWindowContent.getAisleContext().mUserId)) {
+                isUserAisle = "1";
+            }
+            for (int i = 0; i < aisleWindowContent.getImageList().size(); i++) {
+                clsShare obj = new clsShare(
+                        aisleWindowContent.getImageList().get(i).mCustomImageUrl,
+                        ObjFileCache
+                                .getFile(
+                                        aisleWindowContent.getImageList()
+                                                .get(i).mCustomImageUrl)
+                                .getPath(),
+                        aisleWindowContent.getAisleContext().mLookingForItem,
+                        aisleWindowContent.getAisleContext().mFirstName
+                                + " "
+                                + aisleWindowContent.getAisleContext().mLastName,
+                        isUserAisle,
+                        aisleWindowContent.getAisleContext().mAisleId,
+                        aisleWindowContent.getImageList().get(i).mId);
+                imageUrlList.add(obj);
+            }
+            mShare.share(
+                    imageUrlList,
+                    aisleWindowContent.getAisleContext().mOccasion,
+                    (aisleWindowContent.getAisleContext().mFirstName + " " + aisleWindowContent
+                            .getAisleContext().mLastName),
+                    currentDispImageIndex, null, null, new ShareViaVueListner());
+        }
+        if (aisleWindowContent.getImageList() != null
+                && aisleWindowContent.getImageList().size() > 0) {
+            FileCache ObjFileCache1 = new FileCache(this);
+            for (int i = 0; i < aisleWindowContent.getImageList().size(); i++) {
+                final File f = ObjFileCache1.getFile(aisleWindowContent
+                        .getImageList().get(i).mCustomImageUrl);
+                if (!f.exists()) {
+                    @SuppressWarnings("rawtypes")
+                    Response.Listener listener = new Response.Listener<Bitmap>() {
+                        @Override
+                        public void onResponse(Bitmap bmp) {
+                            Utils.saveBitmap(bmp, f);
+                        }
+                    };
+                    Response.ErrorListener errorListener = new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError arg0) {
+                        }
+                    };
+                    if (aisleWindowContent.getImageList().get(i).mCustomImageUrl != null) {
+                        @SuppressWarnings("unchecked")
+                        ImageRequest imagerequestObj = new ImageRequest(
+                                aisleWindowContent.getImageList().get(i).mCustomImageUrl,
+                                listener, 0, 0, null, errorListener);
+                        VueApplication.getInstance().getRequestQueue()
+                                .add(imagerequestObj);
+                    }
+                }
+            }
+        }
+    }
+    
+    public class ShareViaVueListner implements ShareViaVueClickedListner {
+        @Override
+        public void onAisleShareToVue() {
+            if (mShare != null) {
+                if (mShare.mShareIntentCalled) {
+                    mShare.mShareIntentCalled = false;
+                }
+                mShare.dismisDialog();
+            }
+            // ShareViaVue...
+            if (VueApplication.getInstance().mShareViaVueClickedFlag) {
+                VueApplication.getInstance().mShareViaVueClickedFlag = false;
+                if (VueApplication.getInstance().mShareViaVueClickedImageId != null) {
+                    String imageId = VueApplication.getInstance().mShareViaVueClickedImageId;
+                    String aisleId = VueApplication.getInstance().mShareViaVueClickedAisleId;
+                    VueApplication.getInstance().mShareViaVueClickedAisleId = null;
+                    VueApplication.getInstance().mShareViaVueClickedImageId = null;
+                    AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
+                            .getInstance(VueLandingPageActivity.this)
+                            .getAisleImageForImageId(imageId, aisleId, true);
+                    if (aisleImageDetails != null) {
+                        String originalUrl = aisleImageDetails.mImageUrl;
+                        String sourceUrl = aisleImageDetails.mDetalsUrl;
+                        int width = aisleImageDetails.mAvailableWidth;
+                        int height = aisleImageDetails.mAvailableHeight;
+                        int widthandHeightMultipliedValue = width * height;
+                        OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails();
+                        otherSourceImageDetails.setHeight(height);
+                        otherSourceImageDetails.setWidth(width);
+                        otherSourceImageDetails
+                                .setWidthHeightMultipliedValue(widthandHeightMultipliedValue);
+                        otherSourceImageDetails.setOriginUrl(originalUrl);
+                        ArrayList<OtherSourceImageDetails> imagesList = new ArrayList<OtherSourceImageDetails>();
+                        imagesList.add(otherSourceImageDetails);
+                        showOtherSourcesGridview(imagesList, sourceUrl);
+                    }
+                }
             }
         }
     }

@@ -16,7 +16,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lateralthoughts.vue.AisleManager;
@@ -26,6 +25,7 @@ import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
@@ -59,6 +59,10 @@ public class AisleContentBrowser extends ViewFlipper {
                     .findViewById(R.id.bookmarkImage);
             RelativeLayout shareLayout = (RelativeLayout) this.mSocialCard
                     .findViewById(R.id.share_layout);
+            final TextView shareCount = (TextView) this.mSocialCard
+                    .findViewById(R.id.share_count);
+            final ImageView shareImage = (ImageView) this.mSocialCard
+                    .findViewById(R.id.shareImage);
             RelativeLayout bookmarkLayout = (RelativeLayout) this.mSocialCard
                     .findViewById(R.id.bookmark_layout);
             RelativeLayout rateLayout = (RelativeLayout) this.mSocialCard
@@ -67,9 +71,18 @@ public class AisleContentBrowser extends ViewFlipper {
                 
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(VueApplication.getInstance(), "share",
-                            Toast.LENGTH_SHORT);
-                    
+                    int count = mSpecialNeedsAdapter.getShareCount();
+                    count = count + 1;
+                    shareCount.setText("" + count);
+                    shareImage.setImageResource(R.drawable.share);
+                    mSpecialNeedsAdapter.setShareCount(count);
+                    mSpecialNeedsAdapter.setShareIdicator();
+                    if (VueLandingPageActivity.landingPageActivity != null) {
+                        VueLandingPageActivity landingPage = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
+                        landingPage.share(
+                                mSpecialNeedsAdapter.getWindowContent(),
+                                mCurrentIndex);
+                    }
                 }
             });
             // like image click function in Trending screen
@@ -137,7 +150,7 @@ public class AisleContentBrowser extends ViewFlipper {
                         mBookmarksCount = mBookmarksCount + 1;
                     }
                     mSpecialNeedsAdapter
-                    .setAisleBookmarkIndicator(bookMarkIndicator);
+                            .setAisleBookmarkIndicator(bookMarkIndicator);
                     VueTrendingAislesDataModel
                             .getInstance(VueApplication.getInstance())
                             .getNetworkHandler()
@@ -769,4 +782,5 @@ public class AisleContentBrowser extends ViewFlipper {
             e.printStackTrace();
         }
     }
+    
 }

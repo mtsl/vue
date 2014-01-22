@@ -120,7 +120,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mixpanel = MixpanelAPI.getInstance(mContext, VueApplication.getInstance().MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(mContext,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         // TODO: any particular state that we want to restore?
         
     }

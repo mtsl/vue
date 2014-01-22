@@ -149,7 +149,7 @@ public class NetworkImageLoader extends ImageLoader {
         // only fulfill requests that were initiated from the main thread.
         throwIfNotOnMainThread();
         
-        final String cacheKey = getCacheKey(requestUrl, maxWidth, maxHeight);
+        final String cacheKey = getCacheKey(requestUrl, 0, 0);
         
         // Try to look up the request in the cache of remote images.
         Bitmap cachedBitmap = mCache.getBitmap(cacheKey);
@@ -185,7 +185,7 @@ public class NetworkImageLoader extends ImageLoader {
                     public void onResponse(Bitmap response) {
                         onGetImageSuccess(cacheKey, response);
                     }
-                }, maxWidth, maxHeight, Config.RGB_565,
+                }, 0, 0, Config.RGB_565,
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
