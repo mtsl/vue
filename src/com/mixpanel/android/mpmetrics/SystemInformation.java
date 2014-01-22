@@ -154,7 +154,7 @@ import android.view.WindowManager;
         if (android.os.Build.VERSION.SDK_INT >= 8) {
             bluetoothVersion = "none";
             if(android.os.Build.VERSION.SDK_INT >= 18 &&
-                    mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+                    mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) {
                 bluetoothVersion = "ble";
             } else if(mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) {
                 bluetoothVersion = "classic";
