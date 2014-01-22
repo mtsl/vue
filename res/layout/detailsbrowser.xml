@@ -10,7 +10,7 @@
     </ImageView>
 
     <com.lateralthoughts.vue.ui.ScaleImageView
-        android:id="@+id/browserimage"
+        android:id="@id/details_view_image_identifier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />

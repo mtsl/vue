@@ -6,5 +6,6 @@
     <item name="descriptor_aisle_owner_name" type="id"/>
     <item name="descriptor_aisle_context" type="id"/>
     <item name="selected_view" type="id"/>
+    <item name="details_view_image_identifier" type="id"/>
 
 </resources>
