@@ -52,6 +52,7 @@ import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 //java utils
 
@@ -93,6 +94,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
     private InputMethodManager mInputMethodManager;
     int mAdapterNotifyDelay = 500;
     EditTextBackEvent edtCommentView;
+    private MixpanelAPI mixpanel;
     
     // TODO: define a public interface that can be implemented by the parent
     // activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -118,6 +120,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mixpanel = MixpanelAPI.getInstance(mContext,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         // TODO: any particular state that we want to restore?
         
     }
@@ -440,6 +444,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
+                mixpanel.track("ADDED_COMMENTS_FROM_DETAILSVIEW", null);
                 FlurryAgent.logEvent("ADD_COMMENTS_DETAILSVIEW");
                 String etText = edtCommentView.getText().toString();
                 
@@ -626,6 +631,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         vueShareLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                mixpanel.track("SHARED_AISLE_FROM_DETAILSVIEW", null);
                 FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
                 closeKeyboard();
                 // to smoothen the touch response
@@ -654,6 +660,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
+                mixpanel.track("FINDAT_FROM_DETAILSVIEW", null);
                 FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
                 String url = mFindAtUrl;
                 if (url != null && url.startsWith("http")) {
@@ -685,6 +692,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
+                mixpanel.track("ADD_IMAGE_TO_AISLE_FROM_DETAILSVIEW", null);
                 FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
                 closeKeyboard();
                 // to smoothen the touch response

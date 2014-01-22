@@ -54,6 +54,7 @@ public class VueApplication extends Application {
     public long mLaunchTime;
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
+    public String MIXPANEL_TOKEN = "d5ac13097eaf8acefc264d21457307a1";
     
     public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
     public static final String LOAD_IMAGES_REQUEST_TAG = "LoadImagesTag";

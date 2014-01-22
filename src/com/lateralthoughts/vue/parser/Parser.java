@@ -2,7 +2,6 @@ package com.lateralthoughts.vue.parser;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -92,7 +91,7 @@ public class Parser {
                     arrayList.add(aisleImageDetails);
                     aisleWindowContent = VueTrendingAislesDataModel
                             .getInstance(VueApplication.getInstance())
-                            .getAisle(aisleContext.mUserId);
+                            .getAisle(aisleContext.mAisleId);
                     aisleWindowContent.addAisleContent(aisleContext, arrayList);
                 }
             } catch (Exception ex) {
@@ -120,14 +119,37 @@ public class Parser {
         aisleImageDetails.mImageUrl = jsonObject
                 .getString(VueConstants.AISLE_IMAGE_IMAGE_URL);
         
-        if (jsonObject.getString(VueConstants.AISLE_IMAGE_RATING) == null
-                || jsonObject.getString(VueConstants.AISLE_IMAGE_RATING)
-                        .equalsIgnoreCase("null")) {
-            aisleImageDetails.mLikesCount = 0;
-        } else {
-            aisleImageDetails.mLikesCount = Integer.parseInt(jsonObject
-                    .getString(VueConstants.AISLE_IMAGE_RATING));
+        JSONArray ratingJsonArray = jsonObject
+                .getJSONArray(VueConstants.AISLE_IMAGE_RATINGS);
+        ArrayList<ImageRating> ratingList = new ArrayList<ImageRating>();
+        int ratingLikeCount = 0;
+        if (ratingJsonArray != null) {
+            ImageRating imgRatings;
+            for (int i = 0; i < ratingJsonArray.length(); i++) {
+                JSONObject ratingObj = ratingJsonArray.getJSONObject(i);
+                imgRatings = new ImageRating();
+                imgRatings.mId = ratingObj
+                        .getLong(VueConstants.AISLE_IMAGE_RATING_ID);
+                imgRatings.mImageId = ratingObj
+                        .getLong(VueConstants.AISLE_IMAGE_RATING_IMAGEID);
+                imgRatings.mAisleId = ratingObj
+                        .getLong(VueConstants.AISLE_IMAGE_RATING_AISLEID);
+                imgRatings.mLastModifiedTimestamp = ratingObj
+                        .getLong(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME);
+                imgRatings.mImageRatingOwnerFirstName = ratingObj
+                        .getString(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME);
+                imgRatings.mImageRatingOwnerLastName = ratingObj
+                        .getString(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME);
+                imgRatings.mLiked = ratingObj
+                        .getBoolean(VueConstants.AISLE_IMAGE_RATING_LIKED);
+                if (imgRatings.mLiked) {
+                    ratingLikeCount++;
+                }
+                ratingList.add(imgRatings);
+            }
         }
+        aisleImageDetails.mRatingsList = ratingList;
+        aisleImageDetails.mLikesCount = ratingLikeCount;
         aisleImageDetails.mStore = jsonObject
                 .getString(VueConstants.AISLE_IMAGE_STORE);
         aisleImageDetails.mTitle = jsonObject
@@ -246,8 +268,6 @@ public class Parser {
                                 .getAisleItem(aisleContext.mAisleId);
                         aisleWindowContent.addAisleContent(aisleContext,
                                 aisleImageDetailsList);
-                        aisleWindowContent
-                                .setmAisleBookmarksCount(aisleContext.mBookmarkCount);
                         VueTrendingAislesDataModel.getInstance(
                                 VueApplication.getInstance()).addItemToList(
                                 aisleWindowContent.getAisleContext().mAisleId,
@@ -282,8 +302,6 @@ public class Parser {
                         .getAisleItem(aisleContext.mAisleId);
                 aisleWindowContent.addAisleContent(aisleContext,
                         aisleImageDetailsList);
-                aisleWindowContent
-                        .setmAisleBookmarksCount(aisleContext.mBookmarkCount);
                 aisleWindowContentList.add(aisleWindowContent);
             }
         }
@@ -423,18 +441,25 @@ public class Parser {
             if (jsonArray != null && jsonArray.length() > 0) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     imgRating = new ImageRating();
-                    imgRating.setId(Long.parseLong(jsonArray.getJSONObject(i)
-                            .getString(VueConstants.JSON_OBJ_ID)));
-                    imgRating
-                            .setImageId(Long.parseLong(jsonArray.getJSONObject(
-                                    i).getString(VueConstants.IMAGE_ID)));
-                    imgRating
-                            .setAisleId(Long.parseLong(jsonArray.getJSONObject(
-                                    i).getString(VueConstants.AISLE_Id)));
-                    imgRating.setLastModifiedTimestamp(jsonArray.getJSONObject(
-                            i).getLong(VueConstants.LAST_MODIFIED_TIME));
-                    imgRating.setLiked((jsonArray.getJSONObject(i).getString(
-                            VueConstants.LIKED).equals("true")) ? true : false);
+                    imgRating.mId = jsonArray.getJSONObject(i).getLong(
+                            VueConstants.AISLE_IMAGE_RATING_ID);
+                    imgRating.mImageId = jsonArray.getJSONObject(i).getLong(
+                            VueConstants.AISLE_IMAGE_RATING_IMAGEID);
+                    imgRating.mAisleId = jsonArray.getJSONObject(i).getLong(
+                            VueConstants.AISLE_IMAGE_RATING_AISLEID);
+                    imgRating.mLastModifiedTimestamp = jsonArray.getJSONObject(
+                            i).getLong(
+                            VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME);
+                    imgRating.mImageRatingOwnerFirstName = jsonArray
+                            .getJSONObject(i)
+                            .getString(
+                                    VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME);
+                    imgRating.mImageRatingOwnerLastName = jsonArray
+                            .getJSONObject(i)
+                            .getString(
+                                    VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME);
+                    imgRating.mLiked = jsonArray.getJSONObject(i).getBoolean(
+                            VueConstants.AISLE_IMAGE_RATING_LIKED);
                     imgRatingList.add(imgRating);
                 }
                 imgRatingList = removeDuplicateImageRating(imgRatingList);
@@ -465,8 +490,8 @@ public class Parser {
                 }
                 final boolean relation = previous.compareTo(current);
                 if (relation) {
-                    int isGrater = previous.compareTime(current
-                            .getLastModifiedTimestamp().longValue());
+                    int isGrater = previous
+                            .compareTime(current.mLastModifiedTimestamp);
                     if (isGrater == ImageRating.NEW_TIME_STAMP) {
                         imgRatingList.remove(i);
                     } else {
@@ -489,7 +514,7 @@ public class Parser {
                 break;
             }
             
-            for (int j = 0; j < i; ++j) {
+            for (int j = 0; j < i; j++) {
                 AisleBookmark previous;
                 if (bookmarkedAisles.size() > j) {
                     previous = bookmarkedAisles.get(j);

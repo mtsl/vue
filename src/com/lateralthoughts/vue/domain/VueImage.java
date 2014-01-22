@@ -8,7 +8,6 @@ public class VueImage {
     Integer height;
     Integer width;
     String imageUrl;
-    Integer rating;
     String store;
     String title;
     
@@ -23,7 +22,6 @@ public class VueImage {
         this.height = height;
         this.width = width;
         this.imageUrl = imageUrl;
-        this.rating = rating;
         this.store = store;
         this.title = title;
         this.ownerAisleId = ownerAisleId;
@@ -60,14 +58,6 @@ public class VueImage {
     
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-    
-    public Integer getRating() {
-        return rating;
-    }
-    
-    public void setRating(Integer rating) {
-        this.rating = rating;
     }
     
     public String getStore() {

@@ -36,6 +36,7 @@ import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 /**
  * 
@@ -64,8 +65,10 @@ public class ShareDialog {
     private boolean mFromCreateAislePopupFlag = false;
     private boolean mLoadAllApplications = false;
     private VueAisleDetailsViewFragment.ShareViaVueListner mDetailsScreenShareViaVueListner;
+    private VueLandingPageActivity.ShareViaVueListner mLandingScreenShareViaVueListner;
     private DataEntryFragment.ShareViaVueListner mDataentryScreenShareViaVueListner;
     private ListView mListview = null;
+    private MixpanelAPI mixpanel;
     
     public void dismisDialog() {
         mShareDialog.dismiss();
@@ -77,6 +80,8 @@ public class ShareDialog {
      *            Context
      */
     public ShareDialog(Context context, Activity activity) {
+        mixpanel = MixpanelAPI.getInstance(activity,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         this.mContext = context;
         this.mActivity = activity;
         mLayoutInflater = (LayoutInflater) context
@@ -89,10 +94,12 @@ public class ShareDialog {
             String name,
             int currentAislePosition,
             VueAisleDetailsViewFragment.ShareViaVueListner detailsScreenShareViaVueListner,
-            DataEntryFragment.ShareViaVueListner dataentryScreenShareViaVueListner) {
+            DataEntryFragment.ShareViaVueListner dataentryScreenShareViaVueListner,
+            VueLandingPageActivity.ShareViaVueListner landingScreenShareViaVueListner) {
         mShareIntentCalled = false;
         mDetailsScreenShareViaVueListner = detailsScreenShareViaVueListner;
         mDataentryScreenShareViaVueListner = dataentryScreenShareViaVueListner;
+        mLandingScreenShareViaVueListner = landingScreenShareViaVueListner;
         this.mImagePathArray = imagePathArray;
         mCurrentAislePosition = currentAislePosition;
         prepareShareIntentData();
@@ -136,6 +143,7 @@ public class ShareDialog {
         mListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
                     int position, long id) {
+                mixpanel.track("Ailse_shared", null);
                 FlurryAgent.logEvent("Ailse_share");
                 if (mFromCreateAislePopupFlag) {
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
@@ -415,6 +423,8 @@ public class ShareDialog {
             mDataentryScreenShareViaVueListner.onAisleShareToVue();
         } else if (mDetailsScreenShareViaVueListner != null) {
             mDetailsScreenShareViaVueListner.onAisleShareToVue();
+        } else if (mLandingScreenShareViaVueListner != null) {
+            mLandingScreenShareViaVueListner.onAisleShareToVue();
         }
     }
     

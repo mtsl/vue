@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lateralthoughts.vue.ImageRating;
 
 public class Image {
     
@@ -14,11 +15,11 @@ public class Image {
     Integer height;
     Integer width;
     String imageUrl;
-    Integer rating;
     String store;
     String title;
     private int likeRatingCount;
     List<ImageComment> comments;
+    List<ImageRating> ratings;
     
     public Image() {
     }
@@ -61,14 +62,6 @@ public class Image {
     
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-    
-    public Integer getRating() {
-        return rating;
-    }
-    
-    public void setRating(Integer rating) {
-        this.rating = rating;
     }
     
     public String getStore() {
@@ -129,5 +122,19 @@ public class Image {
     @JsonProperty
     public void setComments(List<ImageComment> comments) {
         this.comments = comments;
+    }
+    
+    /**
+     * Ratings are a read-only field for the client. So getter should be
+     * disabled. This will disable serialization of the field.
+     */
+    @JsonIgnore
+    public List<ImageRating> getRatings() {
+        return ratings;
+    }
+    
+    @JsonProperty
+    public void setRatings(List<ImageRating> ratings) {
+        this.ratings = ratings;
     }
 }

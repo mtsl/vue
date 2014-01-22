@@ -7,10 +7,15 @@ import android.net.Uri;
  * 
  */
 public class VueConstants {
-    
+    public static final int IMG_LIKE_STATUS = 1;
+    public static final int IMG_NONE_STATUS = 0;
+    public static final String AISLE_STATGE_ONE = "frist_staage";
+    public static final String AISLE_STAGE_TWO = "second_stage";
+    public static final String AISLE_STAGE_THREE = "third_stage";
     public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
     public static final String HELP_SCREEN_ACCES = "HelpScreenAccess";
     public static final String SCREEN_REFRESH_TIME = "TrendingRefreshTimeInMinutes";
+    public static final String VERSION_CODE_CHANGE = "VersionCode";
     public static final String HELP_KEY = "helpScreen";
     public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
     public static final String VUE_LOGIN = "VueLoginFlag";
@@ -59,6 +64,7 @@ public class VueConstants {
     public static final String GMAIL_ACTIVITY_NAME = "com.google.android.gm.ComposeActivityGmail";
     public static final String GOOGLEPLUS_ACTIVITY_NAME = "com.google.android.apps.plus.phone.SignOnActivity";
     public static final String CANCEL_BTN_DISABLE_FLAG = "cancelbuttondisableflag";
+    public static final String GUEST_LOGIN_MESSAGE = "guestLoginMesage";
     public static final String FROM_INVITEFRIENDS = "frominvitefriends";
     public static final String FROM_BEZELMENU_LOGIN = "frombezelmenulogin";
     public static final String FBLOGIN_FROM_DETAILS_SHARE = "FBLOGIN_FROM_DETAILS_SHARE";
@@ -116,6 +122,11 @@ public class VueConstants {
     public static final int INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE = 24;
     public static final String INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY = "invitefriendsloginactivitybundlestringkey";
     public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
+    
+    public static final String IMAGE_FROM = "IMAGE_FROM";
+    public static final String CAMERA_IMAGE = "CAMERA_IMAGE";
+    public static final String GALLERY_IMAGE = "GALLERY_IMAGE";
+    
     public static final String EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG = "EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG";
     public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";
     public static final String FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG = "fromDetailsscreentoCreateAilseScreenflag";
@@ -226,6 +237,7 @@ public class VueConstants {
     public static final String AISLE_IMAGE_STORE = "store";
     public static final String AISLE_IMAGE_TITLE = "title";
     public static final String AISLE_IMAGE_COMMENTS = "comments";
+    public static final String AISLE_IMAGE_RATINGS = "ratings";
     public static final String AISLE_IMAGE_COMMENTS_ID = "id";
     public static final String AISLE_IMAGE_COMMENTS_IMAGEID = "ownerImageId";
     public static final String AISLE_IMAGE_COMMENTS_USERID = "ownerUserId";
@@ -236,7 +248,14 @@ public class VueConstants {
     public static final String AISLE_IMAGE_COMMENTS_CREATED_TIME = "createdTimestamp";
     public static final String AISLE_IMAGE_COMMENTER_LAST_NAME = "imageCommentOwnerLastName";
     public static final String AISLE_IMAGE_COMMENTER_FIRST_NAME = "imageCommentOwnerFirstName";
-    
+    public static final String AISLE_IMAGE_RATING_ID = "id";
+    public static final String AISLE_IMAGE_RATING_LIKED = "liked";
+    public static final String AISLE_IMAGE_RATING_AISLEID = "aisleId";
+    public static final String AISLE_IMAGE_RATING_IMAGEID = "imageId";
+    public static final String AISLE_IMAGE_RATING_OWNER_FIRST_NAME = "ratingOwnerFirstName";
+    public static final String AISLE_IMAGE_RATING_OWNER_LAST_NAME = "ratingOwnerLastName";
+    public static final String AISLE_IMAGE_RATING_LASTMODIFIED_TIME = "lastModifiedTimestamp";
+    public static final String AISLE_IMAGE_USER_RATING = "userRating";
     // User response Keys
     public static final String USER_RESPONSE_ID = "id";
     public static final String USER_JOINTIME = "joinTime";

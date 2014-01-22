@@ -1,18 +1,13 @@
 package com.lateralthoughts.vue;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import org.apache.http.client.ClientProtocolException;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.os.Environment;
 
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
@@ -34,8 +29,12 @@ import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleManager {
     
+    public interface AisleAddCallback {
+        public void onAisleAdded(Aisle aisle, AisleContext aisleContext);
+    }
+    
     public interface AisleUpdateCallback {
-        public void onAisleUpdated(String id, String imageId);
+        public void onAisleUpdated();
     }
     
     public interface ImageUploadCallback {
@@ -43,7 +42,7 @@ public class AisleManager {
     }
     
     public interface ImageAddedCallback {
-        public void onImageAdded();
+        public void onImageAdded(String imageId);
     }
     
     private static AisleManager sAisleManager = null;
@@ -70,14 +69,16 @@ public class AisleManager {
     // UserUpdateCallback's onUserUpdated API will
     // be invoked and the VueUser object is created and set at that point.
     public void createEmptyAisle(final Aisle aisle,
-            final AisleUpdateCallback callback) {
+            final AisleAddCallback callback) {
         Thread t = new Thread(
                 new AisleCreationBackgroundThread(aisle, callback));
         t.start();
     }
     
-    public void updateAisle(final Aisle aisle) {
-        Thread t = new Thread(new AisleUpdateBackgroundThread(aisle));
+    public void updateAisle(final Aisle aisle,
+            AisleUpdateCallback aisleUpdateCallback) {
+        Thread t = new Thread(new AisleUpdateBackgroundThread(aisle,
+                aisleUpdateCallback));
         t.start();
     }
     
@@ -99,16 +100,16 @@ public class AisleManager {
     }
     
     // issues a request to add an image to the aisle.
-    public void addImageToAisle(final boolean fromDetailsScreenFlag,
-            String imageId, VueImage image,
-            ImageAddedCallback imageAddedCallback) {
+    public void addImageToAisle(AisleContext aisleContext,
+            final boolean fromDetailsScreenFlag, String imageId,
+            VueImage image, ImageAddedCallback imageAddedCallback) {
         if (null == image) {
             throw new RuntimeException(
                     "Can't create Aisle without a non null aisle object");
         }
         
-        Thread t = new Thread(new AddImageToAisleBackgroundThread(image,
-                fromDetailsScreenFlag, imageId, imageAddedCallback));
+        Thread t = new Thread(new AddImageToAisleBackgroundThread(aisleContext,
+                image, fromDetailsScreenFlag, imageId, imageAddedCallback));
         t.start();
     }
     
@@ -268,7 +269,7 @@ public class AisleManager {
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
         String url;
-        if (imageRating.getId() == null) {
+        if (imageRating.mId == null) {
             url = UrlConstants.CREATE_RATING_RESTURL + "/";
         } else {
             url = UrlConstants.UPDATE_RATING_RESTURL + "/";
@@ -285,7 +286,15 @@ public class AisleManager {
                 e.printStackTrace();
             }
             ObjectMapper mapper = new ObjectMapper();
-            String imageRatingString = mapper.writeValueAsString(imageRating);
+            com.lateralthoughts.vue.domain.ImageRating imageRatingRequestObject = new com.lateralthoughts.vue.domain.ImageRating();
+            imageRatingRequestObject.setId(imageRating.getId());
+            imageRatingRequestObject.setAisleId(imageRating.getAisleId());
+            imageRatingRequestObject.setImageId(imageRating.getImageId());
+            imageRatingRequestObject.setLiked(imageRating.getLiked());
+            imageRatingRequestObject.setLastModifiedTimestamp(imageRating
+                    .getLastModifiedTimestamp());
+            String imageRatingString = mapper
+                    .writeValueAsString(imageRatingRequestObject);
             
             @SuppressWarnings("rawtypes")
             Response.Listener listener = new Response.Listener<String>() {
@@ -300,6 +309,18 @@ public class AisleManager {
                             editor.putBoolean(VueConstants.IS_IMAGE_DIRTY,
                                     false);
                             editor.commit();
+                            AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getAisleImageForImageId(
+                                            String.valueOf(imgRating.mImageId),
+                                            String.valueOf(imgRating.mAisleId),
+                                            false);
+                            if (aisleImageDetails != null) {
+                                if (imageRating.mId == null) {
+                                    aisleImageDetails.mRatingsList
+                                            .add(imgRating);
+                                }
+                            }
                             updateImageRatingToDb(imgRating, likeCount, false);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -312,7 +333,7 @@ public class AisleManager {
                 
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    imageRating.setId(0001L);
+                    imageRating.mId = 0001L;
                     updateImageRatingToDb(imageRating, likeCount, true);
                     Editor editor = mSharedPreferencesObj.edit();
                     editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
@@ -326,7 +347,7 @@ public class AisleManager {
                             + storedVueUser.getId());
             VueApplication.getInstance().getRequestQueue().add(request);
         } else {
-            imageRating.setId(0001L);
+            imageRating.mId = 0001L;
             updateImageRatingToDb(imageRating, likeCount, true);
             Editor editor = mSharedPreferencesObj.edit();
             editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
@@ -337,9 +358,6 @@ public class AisleManager {
     private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
             boolean isDirty) {
         DataBaseManager.getInstance(VueApplication.getInstance())
-                .addLikeOrDisLike((imgRating.getLiked()) ? 1 : 0, likeCount,
-                        imgRating.getId(),
-                        Long.toString(imgRating.getImageId()),
-                        Long.toString(imgRating.getAisleId()), isDirty);
+                .addLikeOrDisLike(likeCount, isDirty, imgRating, true);
     }
 }

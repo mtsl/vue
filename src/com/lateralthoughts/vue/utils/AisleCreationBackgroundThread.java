@@ -1,7 +1,6 @@
 package com.lateralthoughts.vue.utils;
 
 import java.net.URL;
-import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -9,6 +8,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -18,17 +18,15 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flurry.android.FlurryAgent;
-import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
-import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.AisleContext;
+import com.lateralthoughts.vue.AisleManager.AisleAddCallback;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
-import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.parser.Parser;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class AisleCreationBackgroundThread implements Runnable,
         CountingStringEntity.UploadListener {
@@ -37,16 +35,16 @@ public class AisleCreationBackgroundThread implements Runnable,
     private int mLastPercent = 0;
     private Aisle mAisle = null;
     private String mResponseMessage = null;
-    private AisleUpdateCallback mAisleUpdateCallback = null;
+    private AisleAddCallback mAisleAddCallback = null;
+    private MixpanelAPI mixpanel;
     
     @SuppressWarnings("static-access")
-    public AisleCreationBackgroundThread(Aisle aisle,
-            AisleUpdateCallback callback) {
+    public AisleCreationBackgroundThread(Aisle aisle, AisleAddCallback callback) {
         mNotificationManager = (NotificationManager) VueApplication
                 .getInstance().getSystemService(
                         VueApplication.getInstance().NOTIFICATION_SERVICE);
         mAisle = aisle;
-        mAisleUpdateCallback = callback;
+        mAisleAddCallback = callback;
     }
     
     @Override
@@ -64,6 +62,8 @@ public class AisleCreationBackgroundThread implements Runnable,
     @SuppressWarnings("deprecation")
     @Override
     public void run() {
+        mixpanel = MixpanelAPI.getInstance(VueApplication.getInstance(),
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         try {
             Intent notificationIntent = new Intent();
             PendingIntent contentIntent = PendingIntent.getActivity(
@@ -128,43 +128,21 @@ public class AisleCreationBackgroundThread implements Runnable,
                     public void run() {
                         if (null != mResponseMessage) {
                             try {
-                                AisleWindowContent aileItem = new Parser()
-                                        .getAisleCotent(mResponseMessage);
-                                if (VueLandingPageActivity.mLandingScreenName != null
-                                        && VueLandingPageActivity.mLandingScreenName
-                                                .equalsIgnoreCase("Trending")
-                                        || (VueLandingPageActivity.mLandingScreenName != null && VueLandingPageActivity.mLandingScreenName
-                                                .equalsIgnoreCase("My Aisles"))) {
-                                    VueTrendingAislesDataModel
-                                            .getInstance(
-                                                    VueApplication
-                                                            .getInstance())
-                                            .addItemToListAt(
-                                                    aileItem.getAisleContext().mAisleId,
-                                                    aileItem, 0);
-                                    VueTrendingAislesDataModel.getInstance(
-                                            VueApplication.getInstance())
-                                            .dataObserver();
-                                }
-                                ArrayList<AisleWindowContent> list = new ArrayList<AisleWindowContent>();
-                                list.add(aileItem);
-                                DataBaseManager
-                                        .getInstance(
-                                                VueApplication.getInstance())
-                                        .addTrentingAislesFromServerToDB(
-                                                VueApplication.getInstance(),
-                                                list,
-                                                VueTrendingAislesDataModel
-                                                        .getInstance(
-                                                                VueApplication
-                                                                        .getInstance())
-                                                        .getNetworkHandler().offset,
-                                                DataBaseManager.AISLE_CREATED);
-                                mAisleUpdateCallback.onAisleUpdated(
-                                        aileItem.getAisleContext().mAisleId,
-                                        aileItem.getImageList().get(0).mId);
-                                
-                                FlurryAgent.logEvent("Create_Aisle_Success");
+                                AisleContext aisleContext = new Parser()
+                                        .parseAisleData(new JSONObject(
+                                                mResponseMessage));
+                                Aisle aisle = new Aisle();
+                                aisle.setCategory(aisleContext.mCategory);
+                                aisle.setLookingFor(aisleContext.mLookingForItem);
+                                aisle.setName(aisleContext.mName);
+                                aisle.setOccassion(aisleContext.mOccasion);
+                                aisle.setOwnerUserId(Long
+                                        .valueOf(aisleContext.mUserId));
+                                aisle.setDescription(aisleContext.mDescription);
+                                aisle.setId(Long.valueOf(aisleContext.mAisleId));
+                                mAisleAddCallback.onAisleAdded(aisle,
+                                        aisleContext);
+                                mixpanel.track("Create_Aisle_Success", null);
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }

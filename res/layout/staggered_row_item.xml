@@ -92,4 +92,100 @@
         </LinearLayout>
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp" >
+
+        <View
+            android:id="@+id/greenbar"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#2B8925" />
+
+        <RelativeLayout
+            android:id="@+id/social_card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/greenbar"
+            android:background="#FFFFFF" >
+
+            <RelativeLayout
+                android:id="@+id/share_layout"
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/vue_button_selector" >
+
+                <ImageView
+                    android:id="@+id/shareImage"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="4dp"
+                    android:src="@drawable/share_gray" />
+
+                <TextView
+                    android:id="@+id/share_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/shareImage"
+                    android:text="0" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/bookmark_layout"
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="@drawable/vue_button_selector" >
+
+                <ImageView
+                    android:id="@+id/bookmarkImage"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="4dp"
+                    android:src="@drawable/save_dark_small" />
+
+                <TextView
+                    android:id="@+id/bookmark_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/bookmarkImage"
+                    android:text="2" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rate_layout"
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/vue_button_selector" >
+
+                <ImageView
+                    android:id="@+id/like_img"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_toLeftOf="@+id/like_count"
+                    android:src="@drawable/heart" />
+
+                <TextView
+                    android:id="@+id/like_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="8dp"
+                    android:text="4" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
 </LinearLayout>

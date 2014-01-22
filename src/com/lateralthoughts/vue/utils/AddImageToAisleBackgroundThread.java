@@ -20,6 +20,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -42,10 +43,11 @@ public class AddImageToAisleBackgroundThread implements Runnable,
     private boolean mFromDetailsScreenFlag;
     private String mImageId;
     private ImageAddedCallback mImageAddedCallback;
+    private AisleContext mAisleContext;
     
     @SuppressWarnings("static-access")
-    public AddImageToAisleBackgroundThread(VueImage vueImage,
-            boolean fromDetailsScreenFlag, String imageId,
+    public AddImageToAisleBackgroundThread(AisleContext aisleContext,
+            VueImage vueImage, boolean fromDetailsScreenFlag, String imageId,
             ImageAddedCallback imageAddedCallback) {
         mNotificationManager = (NotificationManager) VueApplication
                 .getInstance().getSystemService(
@@ -54,6 +56,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
         mFromDetailsScreenFlag = fromDetailsScreenFlag;
         mImageId = imageId;
         mImageAddedCallback = imageAddedCallback;
+        mAisleContext = aisleContext;
     }
     
     @Override
@@ -133,8 +136,6 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                 .runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mImageAddedCallback.onImageAdded();
-                        
                         if (null != mResponseMessage) {
                             if (!mFromDetailsScreenFlag) {
                                 try {
@@ -142,58 +143,87 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                             .parseAisleImageData(new JSONObject(
                                                     mResponseMessage));
                                     if (aisleImageDetails != null) {
+                                        mImageAddedCallback
+                                                .onImageAdded(aisleImageDetails.mId);
+                                        AisleWindowContent aisleItem = null;
+                                        if (mAisleContext != null) {
+                                            ArrayList<AisleImageDetails> arrayList = new ArrayList<AisleImageDetails>();
+                                            arrayList.add(aisleImageDetails);
+                                            aisleItem = VueTrendingAislesDataModel
+                                                    .getInstance(
+                                                            VueApplication
+                                                                    .getInstance())
+                                                    .getAisle(
+                                                            mAisleContext.mAisleId);
+                                            aisleItem.addAisleContent(
+                                                    mAisleContext, arrayList);
+                                        }
                                         if (VueLandingPageActivity.mLandingScreenName != null
                                                 && VueLandingPageActivity.mLandingScreenName
                                                         .equalsIgnoreCase("Trending")
                                                 || (VueLandingPageActivity.mLandingScreenName != null && VueLandingPageActivity.mLandingScreenName
                                                         .equalsIgnoreCase("My Aisles"))) {
-                                            AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
-                                                    .getInstance(
-                                                            VueApplication
-                                                                    .getInstance())
-                                                    .removeAisleFromList(0);
-                                            
-                                            VueTrendingAislesDataModel
-                                                    .getInstance(
-                                                            VueApplication
-                                                                    .getInstance())
-                                                    .dataObserver();
-                                            aisleWindowContent.getImageList()
-                                                    .add(aisleImageDetails);
-                                            aisleWindowContent.addAisleContent(
-                                                    aisleWindowContent
-                                                            .getAisleContext(),
-                                                    aisleWindowContent
-                                                            .getImageList());
-                                            
-                                            Utils.sIsAisleChanged = true;
-                                            Utils.mChangeAilseId = aisleWindowContent
-                                                    .getAisleId();
-                                            
-                                            VueTrendingAislesDataModel
-                                                    .getInstance(
-                                                            VueApplication
-                                                                    .getInstance())
-                                                    .addItemToListAt(
-                                                            aisleWindowContent
-                                                                    .getAisleId(),
-                                                            aisleWindowContent,
-                                                            0);
-                                            VueTrendingAislesDataModel
-                                                    .getInstance(
-                                                            VueApplication
-                                                                    .getInstance())
-                                                    .dataObserver();
+                                            if (mAisleContext != null) {
+                                                VueTrendingAislesDataModel
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .addItemToListAt(
+                                                                aisleItem
+                                                                        .getAisleContext().mAisleId,
+                                                                aisleItem, 0);
+                                                VueTrendingAislesDataModel
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .dataObserver();
+                                            } else {
+                                                AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .removeAisleFromList(0);
+                                                
+                                                VueTrendingAislesDataModel
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .dataObserver();
+                                                ArrayList<AisleImageDetails> aisleImages = aisleWindowContent
+                                                        .getImageList();
+                                                if (aisleImages == null) {
+                                                    aisleImages = new ArrayList<AisleImageDetails>();
+                                                }
+                                                aisleImages
+                                                        .add(aisleImageDetails);
+                                                aisleWindowContent.addAisleContent(
+                                                        aisleWindowContent
+                                                                .getAisleContext(),
+                                                        aisleImages);
+                                                
+                                                Utils.sIsAisleChanged = true;
+                                                Utils.mChangeAilseId = aisleWindowContent
+                                                        .getAisleId();
+                                                
+                                                VueTrendingAislesDataModel
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .addItemToListAt(
+                                                                aisleWindowContent
+                                                                        .getAisleId(),
+                                                                aisleWindowContent,
+                                                                0);
+                                                VueTrendingAislesDataModel
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .dataObserver();
+                                            }
                                         }
-                                        String s[] = { aisleImageDetails.mOwnerAisleId };
-                                        ArrayList<AisleWindowContent> list = DataBaseManager
-                                                .getInstance(
-                                                        VueApplication
-                                                                .getInstance())
-                                                .getAislesFromDB(s, false);
-                                        if (list != null) {
-                                            list.get(0).getImageList()
-                                                    .add(aisleImageDetails);
+                                        if (mAisleContext != null) {
+                                            ArrayList<AisleWindowContent> list = new ArrayList<AisleWindowContent>();
+                                            list.add(aisleItem);
                                             DataBaseManager
                                                     .getInstance(
                                                             VueApplication
@@ -207,11 +237,43 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                                             VueApplication
                                                                                     .getInstance())
                                                                     .getNetworkHandler().offset,
-                                                            DataBaseManager.MY_AISLES);
+                                                            DataBaseManager.AISLE_CREATED);
+                                        } else {
+                                            String s[] = { aisleImageDetails.mOwnerAisleId };
+                                            ArrayList<AisleWindowContent> list = DataBaseManager
+                                                    .getInstance(
+                                                            VueApplication
+                                                                    .getInstance())
+                                                    .getAislesFromDB(s, false);
+                                            if (list != null) {
+                                                ArrayList<AisleImageDetails> aisleImageList = list
+                                                        .get(0).getImageList();
+                                                if (aisleImageList == null) {
+                                                    aisleImageList = new ArrayList<AisleImageDetails>();
+                                                }
+                                                aisleImageList
+                                                        .add(aisleImageDetails);
+                                                DataBaseManager
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .addTrentingAislesFromServerToDB(
+                                                                VueApplication
+                                                                        .getInstance(),
+                                                                list,
+                                                                VueTrendingAislesDataModel
+                                                                        .getInstance(
+                                                                                VueApplication
+                                                                                        .getInstance())
+                                                                        .getNetworkHandler().offset,
+                                                                DataBaseManager.MY_AISLES);
+                                            }
                                         }
-                                        
+                                    } else {
+                                        mImageAddedCallback.onImageAdded(null);
                                     }
                                 } catch (JSONException e) {
+                                    mImageAddedCallback.onImageAdded(null);
                                     e.printStackTrace();
                                 }
                             } else {
@@ -223,6 +285,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                 } catch (JSONException e) {
                                 }
                                 if (aisleImageDetails != null) {
+                                    mImageAddedCallback
+                                            .onImageAdded(aisleImageDetails.mId);
                                     AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
                                             .getInstance(
                                                     VueApplication
@@ -284,9 +348,12 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                             }
                                         }
                                     }
+                                } else {
+                                    mImageAddedCallback.onImageAdded(null);
                                 }
                             }
                         } else {
+                            mImageAddedCallback.onImageAdded(null);
                             Toast.makeText(
                                     VueApplication.getInstance(),
                                     VueApplication

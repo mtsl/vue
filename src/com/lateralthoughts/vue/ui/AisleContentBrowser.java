@@ -1,5 +1,7 @@
 package com.lateralthoughts.vue.ui;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -12,13 +14,22 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
+import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.VueTrendingAislesDataModel;
+import com.lateralthoughts.vue.VueUser;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleContentBrowser extends ViewFlipper {
@@ -26,6 +37,134 @@ public class AisleContentBrowser extends ViewFlipper {
     private String mSourceName;
     int mCurrentIndex;
     private ImageView mStarIcon;
+    TextView mLikesCountView;
+    TextView mBookmarksCountView;
+    ImageView likesImage;
+    private RelativeLayout mSocialCard;
+    
+    public RelativeLayout getmSocialCard() {
+        return mSocialCard;
+    }
+    
+    public void setmSocialCard(RelativeLayout mSocialCard) {
+        this.mSocialCard = mSocialCard;
+        if (this.mSocialCard != null) {
+            mLikesCountView = (TextView) this.mSocialCard
+                    .findViewById(R.id.like_count);
+            mBookmarksCountView = (TextView) this.mSocialCard
+                    .findViewById(R.id.bookmark_count);
+            likesImage = (ImageView) this.mSocialCard
+                    .findViewById(R.id.like_img);
+            final ImageView bookmarkImage = (ImageView) this.mSocialCard
+                    .findViewById(R.id.bookmarkImage);
+            RelativeLayout shareLayout = (RelativeLayout) this.mSocialCard
+                    .findViewById(R.id.share_layout);
+            final TextView shareCount = (TextView) this.mSocialCard
+                    .findViewById(R.id.share_count);
+            final ImageView shareImage = (ImageView) this.mSocialCard
+                    .findViewById(R.id.shareImage);
+            RelativeLayout bookmarkLayout = (RelativeLayout) this.mSocialCard
+                    .findViewById(R.id.bookmark_layout);
+            RelativeLayout rateLayout = (RelativeLayout) this.mSocialCard
+                    .findViewById(R.id.rate_layout);
+            shareLayout.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    int count = mSpecialNeedsAdapter.getShareCount();
+                    count = count + 1;
+                    shareCount.setText("" + count);
+                    shareImage.setImageResource(R.drawable.share);
+                    mSpecialNeedsAdapter.setShareCount(count);
+                    mSpecialNeedsAdapter.setShareIdicator();
+                    if (VueLandingPageActivity.landingPageActivity != null) {
+                        VueLandingPageActivity landingPage = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
+                        landingPage.share(
+                                mSpecialNeedsAdapter.getWindowContent(),
+                                mCurrentIndex);
+                    }
+                }
+            });
+            // like image click function in Trending screen
+            rateLayout.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    boolean imageLikeStatus = mSpecialNeedsAdapter
+                            .getImageLikeStatus(mCurrentIndex);
+                    int likesCount = Integer.parseInt(mSpecialNeedsAdapter
+                            .getImageLikesCount(mCurrentIndex));
+                    if (imageLikeStatus) {
+                        mSpecialNeedsAdapter.setImageLikeStatus(false,
+                                mCurrentIndex);
+                        if (likesCount > 0) {
+                            likesCount = likesCount - 1;
+                            mSpecialNeedsAdapter.setImageLikesCount(
+                                    mCurrentIndex, likesCount);
+                        }
+                        
+                        handleLike_Dislike_Events(
+                                mSpecialNeedsAdapter.getAisleId(),
+                                mSpecialNeedsAdapter.getImageId(mCurrentIndex),
+                                false, likesCount);
+                        likesImage.setImageResource(R.drawable.heart_dark);
+                        
+                    } else {
+                        mSpecialNeedsAdapter.setImageLikeStatus(true,
+                                mCurrentIndex);
+                        likesCount = likesCount + 1;
+                        mSpecialNeedsAdapter.setImageLikesCount(mCurrentIndex,
+                                likesCount);
+                        handleLike_Dislike_Events(
+                                mSpecialNeedsAdapter.getAisleId(),
+                                mSpecialNeedsAdapter.getImageId(mCurrentIndex),
+                                true, likesCount);
+                        likesImage.setImageResource(R.drawable.heart);
+                        
+                    }
+                    if (mLikesCountView != null) {
+                        mLikesCountView.setText(String.valueOf(likesCount));
+                    }
+                }
+            });
+            // bookmrk image clikc function in Trending screen
+            bookmarkLayout.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    int mBookmarksCount = mSpecialNeedsAdapter
+                            .getBookmarkCount();
+                    boolean bookMarkIndicator;
+                    if (mSpecialNeedsAdapter.getBookmarkIndicator()) {
+                        // deduct the bookmark count by one.
+                        bookMarkIndicator = false;
+                        bookmarkImage
+                                .setImageResource(R.drawable.save_dark_small);
+                        if (mBookmarksCount > 0) {
+                            mBookmarksCount = mBookmarksCount - 1;
+                        }
+                    } else {
+                        // increase the bookmark count by one.
+                        bookMarkIndicator = true;
+                        bookmarkImage.setImageResource(R.drawable.save);
+                        mBookmarksCount = mBookmarksCount + 1;
+                    }
+                    mSpecialNeedsAdapter
+                            .setAisleBookmarkIndicator(bookMarkIndicator);
+                    VueTrendingAislesDataModel
+                            .getInstance(VueApplication.getInstance())
+                            .getNetworkHandler()
+                            .modifyBookmarkList(
+                                    mSpecialNeedsAdapter.getAisleId(),
+                                    bookMarkIndicator);
+                    mSpecialNeedsAdapter.setBookmarkCount(mBookmarksCount);
+                    mBookmarksCountView.setText("" + mBookmarksCount);
+                    handleBookmark(bookMarkIndicator,
+                            mSpecialNeedsAdapter.getAisleId());
+                }
+            });
+        }
+    }
     
     public ImageView getmStarIcon() {
         return mStarIcon;
@@ -256,6 +395,21 @@ public class AisleContentBrowser extends ViewFlipper {
                                     }
                                     
                                     if (null != mSpecialNeedsAdapter) {
+                                        String imgLikesCount = mSpecialNeedsAdapter
+                                                .getImageLikesCount(currentIndex + 1);
+                                        if (mLikesCountView != null) {
+                                            mLikesCountView
+                                                    .setText(imgLikesCount);
+                                        }
+                                        boolean likeStatus = mSpecialNeedsAdapter
+                                                .getImageLikeStatus(currentIndex + 1);
+                                        if (likeStatus) {
+                                            likesImage
+                                                    .setImageResource(R.drawable.heart);
+                                        } else {
+                                            likesImage
+                                                    .setImageResource(R.drawable.heart_dark);
+                                        }
                                         if (mSpecialNeedsAdapter
                                                 .hasMostLikes(currentIndex + 1)) {
                                             if (mSpecialNeedsAdapter
@@ -372,6 +526,21 @@ public class AisleContentBrowser extends ViewFlipper {
                                     }
                                     
                                     if (null != mSpecialNeedsAdapter) {
+                                        String imgLikesCount = mSpecialNeedsAdapter
+                                                .getImageLikesCount(currentIndex - 1);
+                                        if (mLikesCountView != null) {
+                                            mLikesCountView
+                                                    .setText(imgLikesCount);
+                                        }
+                                        boolean likeStatus = mSpecialNeedsAdapter
+                                                .getImageLikeStatus(currentIndex - 1);
+                                        if (likeStatus) {
+                                            likesImage
+                                                    .setImageResource(R.drawable.heart);
+                                        } else {
+                                            likesImage
+                                                    .setImageResource(R.drawable.heart_dark);
+                                        }
                                         if (mSpecialNeedsAdapter
                                                 .hasMostLikes(currentIndex - 1)) {
                                             if (mSpecialNeedsAdapter
@@ -559,5 +728,59 @@ public class AisleContentBrowser extends ViewFlipper {
     
     private AisleContentClickListener mClickListener;
     public AisleDetailSwipeListener mSwipeListener;
+    
+    private void handleBookmark(boolean isBookmarked, String aisleId) {
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+                .getNetworkHandler().modifyBookmarkList(aisleId, isBookmarked);
+        AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
+                Long.parseLong(aisleId));
+        ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager
+                .getInstance(VueApplication.getInstance())
+                .getBookmarkAisleIdsList();
+        
+        for (AisleBookmark b : aisleBookmarkList) {
+            if (aisleId.equals(Long.toString(b.getAisleId().longValue()))) {
+                aisleBookmark.setId(b.getId());
+                
+                break;
+            }
+        }
+        VueUser storedVueUser = null;
+        try {
+            
+            storedVueUser = Utils.readUserObjectFromFile(mContext,
+                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
+                    Long.valueOf(storedVueUser.getId()).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void handleLike_Dislike_Events(String aisleId, String imageId,
+            boolean likeOrDislike, int likesCount) {
+        // aisleId,imageId,likesCount,likeStatus
+        VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
+                .getNetworkHandler()
+                .modifyImageRatedStatus(imageId, likeOrDislike);
+        ArrayList<ImageRating> imgRatingList = DataBaseManager.getInstance(
+                mContext).getRatedImagesList(aisleId);
+        ImageRating mImgRating = new ImageRating();
+        mImgRating.setAisleId(Long.parseLong(aisleId));
+        mImgRating.setImageId(Long.parseLong(imageId));
+        mImgRating.setLiked(likeOrDislike);
+        for (ImageRating imgRat : imgRatingList) {
+            if (mImgRating.getImageId().longValue() == imgRat.getImageId()
+                    .longValue()) {
+                mImgRating.setId(imgRat.getId().longValue());
+                break;
+            }
+        }
+        try {
+            AisleManager.getAisleManager().updateRating(mImgRating, likesCount);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
 }

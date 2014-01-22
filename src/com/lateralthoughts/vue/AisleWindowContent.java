@@ -11,6 +11,7 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -21,10 +22,22 @@ public class AisleWindowContent {
                                                                // pattern we
                                                                // look for
     private String mImageFormatSpecifier = "._SY%d.jpg";
-    private int mAisleBookmarksCount = 0;
-    private boolean mAisleBookmarkIndicator = false;
+    boolean mAisleBookmarkIndicator = false;
     public int mTrendingBestHeight = 0;
     public int mAisleCardHeight;
+    private Random randomNumGenerator = new Random();
+    private static final String AISLE_STAGE_FOUR = "completed";
+    public int mTotalLikesCount;
+    public String mAisleCureentStage;
+    private boolean mShareIndicator = false;
+    
+    public boolean ismShareIndicator() {
+        return mShareIndicator;
+    }
+    
+    public void setmShareIndicator(boolean mShareIndicator) {
+        this.mShareIndicator = mShareIndicator;
+    }
     
     public boolean getWindowBookmarkIndicator() {
         return mAisleBookmarkIndicator;
@@ -32,14 +45,6 @@ public class AisleWindowContent {
     
     public void setWindowBookmarkIndicator(boolean windowBookmarkIndicator) {
         this.mAisleBookmarkIndicator = windowBookmarkIndicator;
-    }
-    
-    public int getmAisleBookmarksCount() {
-        return mAisleBookmarksCount;
-    }
-    
-    public void setmAisleBookmarksCount(int mAisleBookmarksCount) {
-        this.mAisleBookmarksCount = mAisleBookmarksCount;
     }
     
     // these two should be based on device with & height
@@ -58,7 +63,6 @@ public class AisleWindowContent {
         if (createPlaceHolders) {
             mContext = new AisleContext();
             mAisleImagesList = new ArrayList<AisleImageDetails>();
-            mAisleBookmarksCount = mContext.mBookmarkCount;
         }
     }
     
@@ -84,10 +88,25 @@ public class AisleWindowContent {
         }
         mAisleId = context.mAisleId;
         mContext = context;
-        
+        context.mShareCount = getRandomNumber();
         // lets parse through the image urls and update the image resolution
         // VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
         findMostLikesImage(mAisleImagesList);
+        findAisleStage(mAisleImagesList);
+        this.mAisleBookmarkIndicator = VueTrendingAislesDataModel
+                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+                .checkIsAisleBookmarked(mAisleId);
+        if (mAisleImagesList != null) {
+            for (int index = 0; index < mAisleImagesList.size(); index++) {
+                boolean status = VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler()
+                        .getImageRateStatus(mAisleImagesList.get(index).mId);
+                if (status) {
+                    mAisleImagesList.get(index).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
+                }
+            }
+        }
         udpateImageUrlsForDevice();
     }
     
@@ -248,6 +267,9 @@ public class AisleWindowContent {
      * show star to most likes on the image.
      */
     private void findMostLikesImage(ArrayList<AisleImageDetails> itemsList) {
+        if (itemsList == null) {
+            return;
+        }
         int mostLikePosition = 0, mLikes = 0;
         boolean hasLikes = false;
         for (int i = 0; i < itemsList.size(); i++) {
@@ -275,6 +297,40 @@ public class AisleWindowContent {
                 itemsList.get(mostLikePosition).mSameMostLikes = true;
             }
         }
+    }
+    
+    public void findAisleStage(ArrayList<AisleImageDetails> itemsList) {
+        if (itemsList == null) {
+            return;
+        }
+        int likesCount = 0, commentsCount = 0, totalCount;
+        for (int index = 0; index < itemsList.size(); index++) {
+            AisleImageDetails imageDetails = itemsList.get(index);
+            int tempLikesCount = imageDetails.mLikesCount;
+            if (tempLikesCount > likesCount) {
+                likesCount = tempLikesCount;
+            }
+            int tempCommentsCount = imageDetails.mCommentsList.size();
+            if (tempCommentsCount > commentsCount) {
+                commentsCount = tempCommentsCount;
+            }
+        }
+        mTotalLikesCount = likesCount;
+        int totalCommentCount = commentsCount;
+        totalCount = likesCount + totalCommentCount;
+        if (totalCount == 0) {
+            mAisleCureentStage = VueConstants.AISLE_STATGE_ONE;
+        } else if (likesCount >= 3 || commentsCount >= 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_THREE;
+        } else if (likesCount < 3 || commentsCount < 3) {
+            mAisleCureentStage = VueConstants.AISLE_STAGE_TWO;
+        }
+    }
+    
+    private int getRandomNumber() {
+        
+        int i1 = randomNumGenerator.nextInt(10 - 0) + 0;
+        return i1;
     }
     
     private AisleContext mContext;

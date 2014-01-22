@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -22,6 +25,8 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -46,9 +51,13 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
+import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
@@ -64,6 +73,8 @@ import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.utils.clsShare;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueLandingPageActivity extends Activity implements
         SearchView.OnQueryTextListener, SearchView.OnCloseListener {
@@ -101,13 +112,19 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mHideDefaultActionbar = false;
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
     public static boolean mIsMyAilseCallEnable = false;
+    private MixpanelAPI mixpanel;
+    private MixpanelAPI.People people;
+    
     // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
-    public static final long SCREEN_REFRESH_TIME = 2 * 60;//120 mins.
+    public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
+    private ShareDialog mShare = null;
     
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        mixpanel = MixpanelAPI.getInstance(this,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
                 VueConstants.LANDING_SCREEN_RECEIVER);
@@ -184,15 +201,75 @@ public class VueLandingPageActivity extends Activity implements
                 e1.printStackTrace();
             }
             
-            if (storedVueUser != null) {
-                VueApplication.getInstance().setmUserInitials(
-                        storedVueUser.getFirstName());
-                VueApplication.getInstance().setmUserId(storedVueUser.getId());
-                VueApplication.getInstance().setmUserName(
-                        storedVueUser.getFirstName() + " "
-                                + storedVueUser.getLastName());
-            } else {
-                showLogInDialog(false);
+            // TODO:
+            PackageInfo packageInfo;
+            try {
+                packageInfo = this.getPackageManager().getPackageInfo(
+                        VueLandingPageActivity.this.getPackageName(), 0);
+                int versionCode = packageInfo.versionCode;
+                if (storedVueUser != null) {
+                    sharedPreferencesObj = this.getSharedPreferences(
+                            VueConstants.SHAREDPREFERENCE_NAME, 0);
+                    long preVersionCode = sharedPreferencesObj.getLong(
+                            VueConstants.VERSION_CODE_CHANGE, 0);
+                    if (versionCode != preVersionCode) {
+                        Editor editor = sharedPreferencesObj.edit();
+                        editor.putLong(VueConstants.VERSION_CODE_CHANGE,
+                                versionCode);
+                        editor.commit();
+                        if (storedVueUser != null
+                                && storedVueUser.getGooglePlusId().equals(
+                                        VueUser.DEFAULT_GOOGLEPLUS_ID)
+                                && storedVueUser.getFacebookId().equals(
+                                        VueUser.DEFAULT_FACEBOOK_ID)) {
+                            mixpanel.identify(storedVueUser.getEmail());
+                            people = mixpanel.getPeople();
+                            people.identify(storedVueUser.getEmail());
+                            JSONObject nameTag = new JSONObject();
+                            try {
+                                // Set an "mp_name_tag" super property
+                                // for Streams if you find it useful.
+                                // TODO: Check how it works.
+                                nameTag.put("mp_name_tag",
+                                        storedVueUser.getFirstName() + " "
+                                                + storedVueUser.getLastName());
+                                mixpanel.registerSuperProperties(nameTag);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            // TODO: start the LoginActivity
+                            Intent i = new Intent(this, VueLoginActivity.class);
+                            Bundle b = new Bundle();
+                            b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
+                                    true);
+                            b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+                            b.putBoolean(
+                                    VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
+                                    false);
+                            b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
+                                    false);
+                            b.putString(
+                                    VueConstants.GUEST_LOGIN_MESSAGE,
+                                    getResources().getString(
+                                            R.string.guest_login_message));
+                            i.putExtras(b);
+                            startActivity(i);
+                        }
+                    }
+                    VueApplication.getInstance().setmUserInitials(
+                            storedVueUser.getFirstName());
+                    VueApplication.getInstance().setmUserId(
+                            storedVueUser.getId());
+                    VueApplication.getInstance().setmUserName(
+                            storedVueUser.getFirstName() + " "
+                                    + storedVueUser.getLastName());
+                } else {
+                    showLogInDialog(false);
+                }
+                // check whether user is guest or not.
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
         
@@ -289,6 +366,15 @@ public class VueLandingPageActivity extends Activity implements
             return true;
         } else if (item.getItemId() == R.id.menu_create_aisle) {
             if (mOtherSourceImagePath == null) {
+                JSONObject createAisleButtonProps = new JSONObject();
+                try {
+                    createAisleButtonProps.put("Create_Aisle_Button_Click",
+                            "Create aisle clicked");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mixpanel.track("Create_Aisle_Button_Click",
+                        createAisleButtonProps);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);
@@ -387,7 +473,7 @@ public class VueLandingPageActivity extends Activity implements
             FlurryAgent.logEvent("Login_Time_Ends", articleParams, true);
         }
         FlurryAgent.onPageView();
-        
+        mixpanel.flush();
         super.onStart();
     }
     
@@ -442,6 +528,11 @@ public class VueLandingPageActivity extends Activity implements
                             .getFriendsList(data
                                     .getStringExtra(VueConstants.INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY));
                 }
+            }
+        } else {
+            if (mShare != null && mShare.mShareIntentCalled) {
+                mShare.mShareIntentCalled = false;
+                mShare.dismisDialog();
             }
         }
     }
@@ -891,6 +982,14 @@ public class VueLandingPageActivity extends Activity implements
             
         }
         
+        JSONObject categorySelectedProps = new JSONObject();
+        try {
+            categorySelectedProps.put("CategorySelected", catName);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        mixpanel.track("bezelCategorySelected", categorySelectedProps);
         FlurryAgent.logEvent(catName);
     }
     
@@ -913,7 +1012,11 @@ public class VueLandingPageActivity extends Activity implements
                 .getInstance(VueLandingPageActivity.this).getAislesFromDB(
                         bookmarked, true);
         for (AisleWindowContent w : windowContentTemp) {
-            windowContent.add(w);
+            // TODO: HERE THE LIST SHOULD NOT BE NULL BUT WE GOT NULL SOME TIMES
+            // LIST NEED TO CHECK THIS CODE BY SURENDRA.
+            if (w.getImageList() != null) {
+                windowContent.add(w);
+            }
         }
         if (windowContent != null && windowContent.size() > 0) {
             getActionBar().setTitle(screenName);
@@ -991,6 +1094,10 @@ public class VueLandingPageActivity extends Activity implements
                 // mFragment.moveListToPosition(0);
             } else {
                 // mFragment.moveListToPosition(mCurentScreenPosition);
+            }
+            if (mLandingAilsesFrag != null) {
+                ((VueLandingAislesFragment) mLandingAilsesFrag)
+                        .notifyAdapters();
             }
         }
         
@@ -1299,13 +1406,15 @@ public class VueLandingPageActivity extends Activity implements
                                                                     .getInstance())
                                                     .getNetworkHandler()
                                                     .requestForAddImage(
+                                                            null,
                                                             true,
                                                             offlineImageId,
                                                             image,
                                                             new ImageAddedCallback() {
                                                                 
                                                                 @Override
-                                                                public void onImageAdded() {
+                                                                public void onImageAdded(
+                                                                        String imageId) {
                                                                     
                                                                 }
                                                             });
@@ -1317,11 +1426,11 @@ public class VueLandingPageActivity extends Activity implements
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
-                        .requestForAddImage(true, offlineImageId, image,
+                        .requestForAddImage(null, true, offlineImageId, image,
                                 new ImageAddedCallback() {
                                     
                                     @Override
-                                    public void onImageAdded() {
+                                    public void onImageAdded(String imageId) {
                                         
                                     }
                                 });
@@ -1535,6 +1644,7 @@ public class VueLandingPageActivity extends Activity implements
                                                     .updateOrAddRecentlyViewedAisles(
                                                             aisleWindowContent
                                                                     .getAisleId());
+                                            
                                             FlurryAgent.logEvent(
                                                     "User_Select_Aisle",
                                                     articleParams);
@@ -1572,4 +1682,112 @@ public class VueLandingPageActivity extends Activity implements
         }
     }
     
+    public void share(AisleWindowContent aisleWindowContent,
+            int currentDispImageIndex) {
+        mShare = new ShareDialog(this, this);
+        FileCache ObjFileCache = new FileCache(this);
+        ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
+        if (aisleWindowContent.getImageList() != null
+                && aisleWindowContent.getImageList().size() > 0) {
+            String isUserAisle = "0";
+            if (String.valueOf(VueApplication.getInstance().getmUserId())
+                    .equals(aisleWindowContent.getAisleContext().mUserId)) {
+                isUserAisle = "1";
+            }
+            for (int i = 0; i < aisleWindowContent.getImageList().size(); i++) {
+                clsShare obj = new clsShare(
+                        aisleWindowContent.getImageList().get(i).mCustomImageUrl,
+                        ObjFileCache
+                                .getFile(
+                                        aisleWindowContent.getImageList()
+                                                .get(i).mCustomImageUrl)
+                                .getPath(),
+                        aisleWindowContent.getAisleContext().mLookingForItem,
+                        aisleWindowContent.getAisleContext().mFirstName
+                                + " "
+                                + aisleWindowContent.getAisleContext().mLastName,
+                        isUserAisle,
+                        aisleWindowContent.getAisleContext().mAisleId,
+                        aisleWindowContent.getImageList().get(i).mId);
+                imageUrlList.add(obj);
+            }
+            mShare.share(
+                    imageUrlList,
+                    aisleWindowContent.getAisleContext().mOccasion,
+                    (aisleWindowContent.getAisleContext().mFirstName + " " + aisleWindowContent
+                            .getAisleContext().mLastName),
+                    currentDispImageIndex, null, null, new ShareViaVueListner());
+        }
+        if (aisleWindowContent.getImageList() != null
+                && aisleWindowContent.getImageList().size() > 0) {
+            FileCache ObjFileCache1 = new FileCache(this);
+            for (int i = 0; i < aisleWindowContent.getImageList().size(); i++) {
+                final File f = ObjFileCache1.getFile(aisleWindowContent
+                        .getImageList().get(i).mCustomImageUrl);
+                if (!f.exists()) {
+                    @SuppressWarnings("rawtypes")
+                    Response.Listener listener = new Response.Listener<Bitmap>() {
+                        @Override
+                        public void onResponse(Bitmap bmp) {
+                            Utils.saveBitmap(bmp, f);
+                        }
+                    };
+                    Response.ErrorListener errorListener = new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError arg0) {
+                        }
+                    };
+                    if (aisleWindowContent.getImageList().get(i).mCustomImageUrl != null) {
+                        @SuppressWarnings("unchecked")
+                        ImageRequest imagerequestObj = new ImageRequest(
+                                aisleWindowContent.getImageList().get(i).mCustomImageUrl,
+                                listener, 0, 0, null, errorListener);
+                        VueApplication.getInstance().getRequestQueue()
+                                .add(imagerequestObj);
+                    }
+                }
+            }
+        }
+    }
+    
+    public class ShareViaVueListner implements ShareViaVueClickedListner {
+        @Override
+        public void onAisleShareToVue() {
+            if (mShare != null) {
+                if (mShare.mShareIntentCalled) {
+                    mShare.mShareIntentCalled = false;
+                }
+                mShare.dismisDialog();
+            }
+            // ShareViaVue...
+            if (VueApplication.getInstance().mShareViaVueClickedFlag) {
+                VueApplication.getInstance().mShareViaVueClickedFlag = false;
+                if (VueApplication.getInstance().mShareViaVueClickedImageId != null) {
+                    String imageId = VueApplication.getInstance().mShareViaVueClickedImageId;
+                    String aisleId = VueApplication.getInstance().mShareViaVueClickedAisleId;
+                    VueApplication.getInstance().mShareViaVueClickedAisleId = null;
+                    VueApplication.getInstance().mShareViaVueClickedImageId = null;
+                    AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
+                            .getInstance(VueLandingPageActivity.this)
+                            .getAisleImageForImageId(imageId, aisleId, true);
+                    if (aisleImageDetails != null) {
+                        String originalUrl = aisleImageDetails.mImageUrl;
+                        String sourceUrl = aisleImageDetails.mDetalsUrl;
+                        int width = aisleImageDetails.mAvailableWidth;
+                        int height = aisleImageDetails.mAvailableHeight;
+                        int widthandHeightMultipliedValue = width * height;
+                        OtherSourceImageDetails otherSourceImageDetails = new OtherSourceImageDetails();
+                        otherSourceImageDetails.setHeight(height);
+                        otherSourceImageDetails.setWidth(width);
+                        otherSourceImageDetails
+                                .setWidthHeightMultipliedValue(widthandHeightMultipliedValue);
+                        otherSourceImageDetails.setOriginUrl(originalUrl);
+                        ArrayList<OtherSourceImageDetails> imagesList = new ArrayList<OtherSourceImageDetails>();
+                        imagesList.add(otherSourceImageDetails);
+                        showOtherSourcesGridview(imagesList, sourceUrl);
+                    }
+                }
+            }
+        }
+    }
 }

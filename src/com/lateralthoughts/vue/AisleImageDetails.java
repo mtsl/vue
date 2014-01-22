@@ -18,8 +18,9 @@ public class AisleImageDetails {
     public String mOwnerUserId;
     public String mOwnerAisleId;
     public String mRating;
-    public int mLikeDislikeStatus = AisleDetailsViewAdapterPager.IMG_NONE_STATUS;
+    public int mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
     public ArrayList<ImageComments> mCommentsList = new ArrayList<ImageComments>();
+    public ArrayList<ImageRating> mRatingsList = new ArrayList<ImageRating>();
     public int mTrendingImageHeight;
     public int mTrendingImageWidth;
     public int mDetailsImageWidth;
