@@ -1574,12 +1574,11 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         }
         
         @Override
-        public Object instantiateItem(View view, int position) {
+        public Object instantiateItem(ViewGroup view, int position) {
             if (mInflater == null) {
                 mInflater = (LayoutInflater) view.getContext()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             }
-            
             View myView = mInflater.inflate(R.layout.detailsbrowser, null);
             NetworkImageView browserImage = (NetworkImageView) myView
                     .findViewById(R.id.browserimage);
