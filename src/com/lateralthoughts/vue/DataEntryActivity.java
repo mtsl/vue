@@ -1,6 +1,10 @@
 package com.lateralthoughts.vue;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -30,6 +34,7 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class DataEntryActivity extends Activity {
     
@@ -50,11 +55,14 @@ public class DataEntryActivity extends Activity {
     private FrameLayout mContentFrame;
     private boolean mHideDefaultActionbar = false;
     private boolean mShowSkipButton = false;
+    private MixpanelAPI mixpanel;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.date_entry_main);
+        mixpanel = MixpanelAPI.getInstance(this,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         initialize();
         mContentFrame = (FrameLayout) findViewById(R.id.content_frame2);
         mSlidListFrag = (VueListFragment) getFragmentManager()
@@ -436,6 +444,25 @@ public class DataEntryActivity extends Activity {
                             .getString(VueConstants.FROM_OTHER_SOURCES_URL));
                 }
             }
+            if (b.getString(VueConstants.IMAGE_FROM) != null
+                    && b.getString(VueConstants.IMAGE_FROM).equals(
+                            VueConstants.GALLERY_IMAGE)) {
+                try {
+                    createAisleProps.put(VueConstants.IMAGE_FROM,
+                            VueConstants.GALLERY_IMAGE);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+            } else if (b.getString(VueConstants.IMAGE_FROM) != null
+                    && b.getString(VueConstants.IMAGE_FROM).equals(
+                            VueConstants.CAMERA_IMAGE)) {
+                try {
+                    createAisleProps.put(VueConstants.IMAGE_FROM,
+                            VueConstants.CAMERA_IMAGE);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
     
@@ -542,6 +569,7 @@ public class DataEntryActivity extends Activity {
     
     @Override
     protected void onStart() {
+        mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
         FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
         FlurryAgent.logEvent(CREATE_AISLE_SCREEN_VISITORS);
@@ -552,12 +580,21 @@ public class DataEntryActivity extends Activity {
     protected void onStop() {
         super.onStop();
         FlurryAgent.onEndSession(this);
+        mixpanel.flush();
         
     }
+    
+    JSONObject createAisleProps = new JSONObject();
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Iterator<?> keys = createAisleProps.keys();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            createAisleProps.remove(key);
+        }
+        
         try {
             if (requestCode == VueConstants.CREATE_AILSE_ACTIVITY_RESULT) {
                 Bundle b = data.getExtras();

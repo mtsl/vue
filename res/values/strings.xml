@@ -91,6 +91,7 @@
     <string name="add_comment">Add Comment</string>
     <string name=" already_logged_in_msg"> Already Logged in</string>
     <string name="create_aisle_screen_title">Create Aisle</string>
+    <string name="decision_screen_title">Select your choice</string>
     <string name="hint_search">Search</string>
     <string name="sidemenu_option_Trending_Aisles">Trending</string>
     <string name="sidemenu_option_Me">Me</string>
@@ -159,5 +160,14 @@ We may change this privacy policy from time to time.  Please check back to see i
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="helptext">Create an aisle around something you are looking for.  Add one or more images of your choices.  Let others help you pick.  Or, perhaps even suggest the best things to get.  Do it together with friends!</string>
     <string name="frombezel">FromBezel</string>
+    <string name="guest_login_message">We hope you are enjoying Vue. Please login so we that we can make your experience better.</string>
+    <!-- MixPanel -->
+    <string name="com_mixpanel_android_next">Next question</string>
+    <string name="com_mixpanel_android_previous">Previous question</string>
+    <string name="com_mixpanel_android_logo">By Mixpanel</string>
+    <string name="com_mixpanel_android_exit">Exit</string>
+
+    <color name="com_mixpanel_android_selected">#66ffffff</color>
+    <!-- MixPanel -->
 
 </resources>

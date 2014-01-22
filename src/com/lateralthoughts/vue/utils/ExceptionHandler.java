@@ -37,14 +37,16 @@ public class ExceptionHandler implements
     }
     
     private void writeToSdcard(String message) {
-        
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/vueExceptions/");
         if (!dir.isDirectory()) {
             dir.mkdir();
         }
         File file = new File(dir, "/"
-                + Calendar.getInstance().get(Calendar.DATE) + ".txt");
+                + Calendar.getInstance().get(Calendar.DATE)
+                + "-"
+                + Utils.getWeekDay(Calendar.getInstance().get(
+                        Calendar.DAY_OF_WEEK)) + ".txt");
         try {
             file.createNewFile();
         } catch (IOException e) {

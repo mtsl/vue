@@ -800,4 +800,25 @@ public class Utils {
         long minutes = (millis / (1000 * 60));
         return minutes;
     }
+    
+    public static String getWeekDay(int dayNo) {
+        switch (dayNo) {
+        case 1:
+            return "SUN";
+        case 2:
+            return "MON";
+        case 3:
+            return "TUE";
+        case 4:
+            return "WED";
+        case 5:
+            return "THU";
+        case 6:
+            return "FRI";
+        case 7:
+            return "SAT";
+        default:
+            return "SAT";
+        }
+    }
 }

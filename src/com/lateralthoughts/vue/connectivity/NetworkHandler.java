@@ -32,7 +32,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleManager;
+import com.lateralthoughts.vue.AisleManager.AisleAddCallback;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -73,6 +75,8 @@ public class NetworkHandler {
     public int offset;
     ArrayList<AisleWindowContent> mAislesList = null;
     private SharedPreferences mSharedPreferencesObj;
+    public ArrayList<String> bookmarkedList = new ArrayList<String>();
+    private ArrayList<String> ratedImageList = new ArrayList<String>();
     
     public NetworkHandler(Context context) {
         mContext = context;
@@ -150,13 +154,13 @@ public class NetworkHandler {
         
     }
     
-    public void requestUpdateAisle(Aisle aisle) {
-        AisleManager.getAisleManager().updateAisle(aisle);
+    public void requestUpdateAisle(Aisle aisle,
+            AisleUpdateCallback aisleUpdateCallback) {
+        AisleManager.getAisleManager().updateAisle(aisle, aisleUpdateCallback);
     }
     
     // request the server to create an empty aisle.
-    public void requestCreateAisle(Aisle aisle,
-            final AisleUpdateCallback callback) {
+    public void requestCreateAisle(Aisle aisle, final AisleAddCallback callback) {
         AisleManager.getAisleManager().createEmptyAisle(aisle, callback);
     }
     
@@ -164,11 +168,11 @@ public class NetworkHandler {
         AisleManager.getAisleManager().deleteImage(image, aisleId);
     }
     
-    public void requestForAddImage(boolean fromDetailsScreenFlag,
-            String imageId, VueImage image,
+    public void requestForAddImage(AisleContext aisleContext,
+            boolean fromDetailsScreenFlag, String imageId, VueImage image,
             ImageAddedCallback imageAddedCallback) {
-        AisleManager.getAisleManager().addImageToAisle(fromDetailsScreenFlag,
-                imageId, image, imageAddedCallback);
+        AisleManager.getAisleManager().addImageToAisle(aisleContext,
+                fromDetailsScreenFlag, imageId, image, imageAddedCallback);
     }
     
     public void requestForUploadImage(File imageFile,
@@ -475,12 +479,21 @@ public class NetworkHandler {
                         if (responseMessage != null) {
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                                     .parseBookmarkedAisles(responseMessage);
+                            bookmarkedList.clear();
                             for (AisleBookmark aB : bookmarkedAisles) {
                                 DataBaseManager.getInstance(mContext)
                                         .updateBookmarkAisles(aB.getId(),
                                                 Long.toString(aB.getAisleId()),
                                                 aB.getBookmarked());
+                                
+                                if (aB.getBookmarked()) {
+                                    bookmarkedList.add(String.valueOf(aB
+                                            .getAisleId()));
+                                }
                             }
+                            VueTrendingAislesDataModel.getInstance(
+                                    VueApplication.getInstance())
+                                    .updateBookmarkAisleStatus(bookmarkedList);
                         }
                     }
                 } catch (Exception e) {
@@ -612,6 +625,9 @@ public class NetworkHandler {
         
     }
     
+    /*
+     * to retrieve all the rated images by this user.
+     */
     public void getRatedImageList() {
         String userId = getUserId();
         if (userId == null) {
@@ -630,9 +646,25 @@ public class NetworkHandler {
                                     retrievedImageRating = Parser
                                             .parseRatedImages(response
                                                     .toString());
+                                    
+                                    if (retrievedImageRating != null
+                                            && retrievedImageRating.size() > 0) {
+                                        ratedImageList.clear();
+                                        for (int index = 0; index < retrievedImageRating
+                                                .size(); index++) {
+                                            ratedImageList.add(String
+                                                    .valueOf(retrievedImageRating
+                                                            .get(index)
+                                                            .getImageId()));
+                                        }
+                                    }
                                     DataBaseManager.getInstance(mContext)
                                             .insertRatedImages(
-                                                    retrievedImageRating);
+                                                    retrievedImageRating, true);
+                                    VueTrendingAislesDataModel.getInstance(
+                                            VueApplication.getInstance())
+                                            .updateImageRatingStatus(
+                                                    ratedImageList);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -665,4 +697,32 @@ public class NetworkHandler {
         offset = 0;
     }
     
+    public boolean checkIsAisleBookmarked(String aisleId) {
+        boolean isBookmarked = bookmarkedList.contains(aisleId);
+        return isBookmarked;
+    }
+    
+    public void modifyBookmarkList(String aisleId, boolean isAddRequest) {
+        if (isAddRequest) {
+            bookmarkedList.add(aisleId);
+        } else {
+            bookmarkedList.remove(aisleId);
+        }
+    }
+    
+    public boolean getImageRateStatus(String imageId) {
+        boolean isImageRated = false;
+        if (ratedImageList.contains(imageId)) {
+            isImageRated = true;
+        }
+        return isImageRated;
+    }
+    public void modifyImageRatedStatus(String imageId,boolean isAddRequest) {
+       
+          if(isAddRequest) {
+              ratedImageList.add(imageId);
+          } else {
+              ratedImageList.remove(imageId);
+          }
+    }
 }

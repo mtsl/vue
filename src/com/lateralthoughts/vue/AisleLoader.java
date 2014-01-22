@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.TrendingAislesGenericAdapter.ViewHolder;
@@ -102,7 +104,7 @@ public class AisleLoader {
     public void getAisleContentIntoView(ViewHolder holder, int scrollIndex,
             int position, boolean placeholderOnly,
             AisleContentClickListener listener, String whichAdapter,
-            ImageView startImageLay) {
+            ImageView startImageLay, RelativeLayout socialCard) {
         ScaleImageView imageView = null;
         ArrayList<AisleImageDetails> imageDetailsArr = null;
         AisleImageDetails itemDetails = null;
@@ -146,6 +148,7 @@ public class AisleLoader {
             holder.uniqueContentId = desiredContentId;
             holder.aisleContentBrowser.removeAllViews();
             holder.aisleContentBrowser.setmStarIcon(null);
+            holder.aisleContentBrowser.setmSocialCard(null);
             holder.aisleContentBrowser.setUniqueId(desiredContentId);
             holder.aisleContentBrowser.setScrollIndex(scrollIndex);
             holder.aisleContentBrowser.setCustomAdapter(adapter);
@@ -160,8 +163,16 @@ public class AisleLoader {
         if (null != imageDetailsArr && imageDetailsArr.size() != 0) {
             ImageView image = (ImageView) startImageLay
                     .findViewById(R.id.staricon);
+            holder.aisleContentBrowser.setmSocialCard(socialCard);
             holder.aisleContentBrowser.setmStarIcon(image);
             itemDetails = imageDetailsArr.get(0);
+            ImageView likeImage = (ImageView) socialCard
+                    .findViewById(R.id.like_img);
+            if (itemDetails.mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
+                likeImage.setImageResource(R.drawable.heart);
+            } else {
+                likeImage.setImageResource(R.drawable.heart_dark);
+            }
             if (itemDetails.mHasMostLikes) {
                 
                 if (itemDetails.mSameMostLikes) {
@@ -173,6 +184,9 @@ public class AisleLoader {
             } else {
                 startImageLay.setVisibility(View.GONE);
             }
+            TextView likesCount = (TextView) socialCard
+                    .findViewById(R.id.like_count);
+            likesCount.setText("" + itemDetails.mLikesCount);
             imageView = mViewFactory.getPreconfiguredImageView(position);
             imageView.setContainerObject(holder);
             int bestHeight = windowContent.getBestHeightForWindow();

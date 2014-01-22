@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -122,6 +123,10 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
         LinearLayout aisleDescriptor;
         AisleWindowContent mWindowContent;
         LinearLayout aisleselectlay;
+        View viewBar;
+        TextView likeCount, bookMarkCount,share_count;
+        ImageView bookmarkImageView,shareImage;
+        RelativeLayout socialCard;
     }
     
 }

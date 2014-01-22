@@ -10,12 +10,16 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -189,6 +193,7 @@ public class VueLandingAislesFragment extends Fragment {
                 
                 DataBaseManager.getInstance(mContext)
                         .updateOrAddRecentlyViewedAisles(id);
+                
                 FlurryAgent.logEvent("User_Select_Aisle", articleParams);
                 Intent intent = new Intent();
                 intent.setClass(VueApplication.getInstance(),
@@ -326,7 +331,10 @@ public class VueLandingAislesFragment extends Fragment {
             dir.mkdir();
         }
         File file = new File(dir, "/"
-                + Calendar.getInstance().get(Calendar.DATE) + ".txt");
+                + Calendar.getInstance().get(Calendar.DATE)
+                + "-"
+                + Utils.getWeekDay(Calendar.getInstance().get(
+                        Calendar.DAY_OF_WEEK)) + ".txt");
         try {
             file.createNewFile();
         } catch (IOException e) {

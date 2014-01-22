@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -153,7 +154,7 @@ public class TrendingAislesLeftColumnAdapter extends
             holder.aisleselectlay.setVisibility(View.GONE);
         }
         mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
-                false, listener, "LeftAdapter", holder.starIcon);
+                false, listener, "LeftAdapter", holder.starIcon,null);
         AisleContext context = holder.mWindowContent.getAisleContext();
         String mVueusername = null;
         if (context.mFirstName != null && context.mLastName != null) {

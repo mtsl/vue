@@ -7,28 +7,20 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flurry.android.FlurryAgent;
-import com.lateralthoughts.vue.AisleContext;
-import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
-import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
-import com.lateralthoughts.vue.parser.Parser;
 
 public class AisleUpdateBackgroundThread implements Runnable,
         CountingStringEntity.UploadListener {
@@ -36,14 +28,16 @@ public class AisleUpdateBackgroundThread implements Runnable,
     private Notification mNotification;
     private int mLastPercent = 0;
     private Aisle mAisle = null;
-    private String mResponseMessage = null;
+    private AisleUpdateCallback mAisleUpdateCallback = null;
     
     @SuppressWarnings("static-access")
-    public AisleUpdateBackgroundThread(Aisle aisle) {
+    public AisleUpdateBackgroundThread(Aisle aisle,
+            AisleUpdateCallback aisleUpdateCallback) {
         mNotificationManager = (NotificationManager) VueApplication
                 .getInstance().getSystemService(
                         VueApplication.getInstance().NOTIFICATION_SERVICE);
         mAisle = aisle;
+        mAisleUpdateCallback = aisleUpdateCallback;
     }
     
     @Override
@@ -104,7 +98,6 @@ public class AisleUpdateBackgroundThread implements Runnable,
                 mNotificationManager.notify(
                         VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
                         mNotification);
-                mResponseMessage = EntityUtils.toString(response.getEntity());
             } else {
                 mNotification.setLatestEventInfo(
                         VueApplication.getInstance(),
@@ -123,55 +116,7 @@ public class AisleUpdateBackgroundThread implements Runnable,
                 .runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (null != mResponseMessage) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(
-                                        mResponseMessage);
-                                AisleContext aisleContext = new Parser()
-                                        .parseAisleData(jsonObject);
-                                if (aisleContext != null) {
-                                    if (VueLandingPageActivity.mLandingScreenName != null
-                                            && VueLandingPageActivity.mLandingScreenName
-                                                    .equalsIgnoreCase("Trending")
-                                            || (VueLandingPageActivity.mLandingScreenName != null && VueLandingPageActivity.mLandingScreenName
-                                                    .equalsIgnoreCase("My Aisles"))) {
-                                        AisleWindowContent existedAisle = VueTrendingAislesDataModel
-                                                .getInstance(
-                                                        VueApplication
-                                                                .getInstance())
-                                                .getAisleAt(
-                                                        aisleContext.mAisleId);
-                                        if (existedAisle != null) {
-                                            existedAisle.getAisleContext().mCategory = aisleContext.mCategory;
-                                            existedAisle.getAisleContext().mDescription = aisleContext.mDescription;
-                                            existedAisle.getAisleContext().mName = aisleContext.mName;
-                                            existedAisle.getAisleContext().mLookingForItem = aisleContext.mLookingForItem;
-                                            existedAisle.getAisleContext().mOccasion = aisleContext.mOccasion;
-                                        }
-                                        VueTrendingAislesDataModel.getInstance(
-                                                VueApplication.getInstance())
-                                                .dataObserver();
-                                    }
-                                    DataBaseManager.getInstance(
-                                            VueApplication.getInstance())
-                                            .aisleUpdateToDB(aisleContext);
-                                    FlurryAgent
-                                            .logEvent("Update_Aisle_Success");
-                                }
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        } else {
-                            Toast.makeText(
-                                    VueApplication.getInstance(),
-                                    VueApplication
-                                            .getInstance()
-                                            .getResources()
-                                            .getString(
-                                                    R.string.upload_failed_mesg),
-                                    Toast.LENGTH_LONG).show();
-                            
-                        }
+                        mAisleUpdateCallback.onAisleUpdated();
                     }
                 });
     }
