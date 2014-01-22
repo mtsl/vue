@@ -69,6 +69,7 @@ public class ShareDialog {
     private DataEntryFragment.ShareViaVueListner mDataentryScreenShareViaVueListner;
     private ListView mListview = null;
     private MixpanelAPI mixpanel;
+    private static final String APPLINK = "https://play.google.com/store/apps/details?id=com.lateralthoughts.vue";
     
     public void dismisDialog() {
         mShareDialog.dismiss();

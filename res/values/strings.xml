@@ -166,6 +166,7 @@ We may change this privacy policy from time to time.  Please check back to see i
     <string name="com_mixpanel_android_previous">Previous question</string>
     <string name="com_mixpanel_android_logo">By Mixpanel</string>
     <string name="com_mixpanel_android_exit">Exit</string>
+    <string name="app_link">https://play.google.com/store/search?q=Silverlabs%20Vue</string>
 
     <color name="com_mixpanel_android_selected">#66ffffff</color>
     <!-- MixPanel -->
