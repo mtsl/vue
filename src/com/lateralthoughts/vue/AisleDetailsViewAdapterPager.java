@@ -48,6 +48,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lateralthoughts.vue.ui.ScaleImageView;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -1554,9 +1556,15 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
          */
         
         @Override
-        public void destroyItem(View view, int arg1, Object object) {
+        public void destroyItem(View view, int position, Object object) {
+
+            RelativeLayout detailsBrowser = (RelativeLayout) object;
+            ScaleImageView browserImage = (ScaleImageView)detailsBrowser.findViewById(R.id.details_view_image_identifier);
+            ScaledImageViewFactory imageViewFactory = ScaledImageViewFactory.getInstance(mContext);
+
+            browserImage = null;
+            //imageViewFactory.returnUsedImageView(browserImage);
             ((ViewPager) view).removeView((RelativeLayout) object);
-            
         }
         
         @Override
@@ -1580,11 +1588,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             }
             
-            View myView = mInflater.inflate(R.layout.detailsbrowser, null);
-            NetworkImageView browserImage = (NetworkImageView) myView
-                    .findViewById(R.id.browserimage);
+            RelativeLayout detailsViewLayout = (RelativeLayout)mInflater.inflate(R.layout.detailsbrowser, null);
+            NetworkImageView browserImage = (NetworkImageView)detailsViewLayout.findViewById(R.id.details_view_image_identifier);
+            //NetworkImageView existingView = (NetworkImageView)detailsViewLayout.findViewById(R.id.details_view_image_identifier);
+            //if(null != existingView)
+            //    detailsViewLayout.removeView(existingView);
+            //detailsViewLayout.addView(browserImage);
             browserImage.setOnClickListener(new OnClickListener() {
-                
+
                 @Override
                 public void onClick(View v) {
                     detailsImageClickListenr.onImageClicked();
@@ -1598,7 +1609,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     return false;
                 }
             });
-            ImageView full_bg_image = (ImageView) myView
+            ImageView full_bg_image = (ImageView) detailsViewLayout
                     .findViewById(R.id.full_bg_image);
             full_bg_image.setOnClickListener(new OnClickListener() {
                 
@@ -1653,8 +1664,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             loadBitmap(browserImage, getItem(mCurrentAislePosition)
                     .getImageList().get(position).mImageUrl, VueApplication
                     .getInstance().getVueDetailsCardWidth(), mBestHeight);
-            ((ViewPager) view).addView(myView);
-            return myView;
+            ((ViewPager) view).addView(detailsViewLayout);
+            return detailsViewLayout;
         }
         
         @Override
