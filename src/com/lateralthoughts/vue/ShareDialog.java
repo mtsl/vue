@@ -3,6 +3,9 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -144,7 +147,6 @@ public class ShareDialog {
         mListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
                     int position, long id) {
-                mixpanel.track("Ailse_shared", null);
                 FlurryAgent.logEvent("Ailse_share");
                 if (mFromCreateAislePopupFlag) {
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
@@ -174,7 +176,16 @@ public class ShareDialog {
                             mPackageNames.get(position),
                             mAppNames.get(position));
                 } else {
-                    shareIntent(position);
+                    String sharedVia = shareIntent(position);
+                    JSONObject aisleShareProps = new JSONObject();
+                    try {
+                        aisleShareProps.put("Aisle_Id",
+                                VueApplication.getInstance().getClickedWindowID());
+                        aisleShareProps.put("Shared_Via", sharedVia);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mixpanel.track("Aisle_Shared_Success", aisleShareProps);
                 }
             }
         });
@@ -285,11 +296,13 @@ public class ShareDialog {
         }
     }
     
-    private void shareIntent(final int position) {
+    private String shareIntent(final int position) {
         mShareDialog.show();
+        String shareVia = null;
         try {
             if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.FACEBOOK_APP_NAME)) {
+                shareVia = "Facebook";
                 mDialog.dismiss();
                 mShareDialog.dismiss();
                 String shareText = "";
@@ -319,15 +332,19 @@ public class ShareDialog {
                 mContext.startActivity(i);
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.GOOGLEPLUS_APP_NAME)) {
+                shareVia = "GooglePlus";
                 shareImageAndText(position);
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.GMAIL_APP_NAME)) {
+                shareVia = "Gmail";
                 shareImageAndText(position);
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.INSTAGRAM_APP_NAME)) {
+                shareVia = "Instagram";
                 shareSingleImage(position, mCurrentAislePosition);
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.TWITTER_APP_NAME)) {
+                shareVia = "Twitter";
                 shareText(position);
             } else if (mAppNames.get(position)
                     .equalsIgnoreCase(
@@ -335,6 +352,7 @@ public class ShareDialog {
                                     .getApplicationInfo()
                                     .loadLabel(mContext.getPackageManager())
                                     .toString())) {
+                shareVia = "Vue";
                 if (mImagePathArray.get(mCurrentAislePosition).getAisleId() != null
                         && mImagePathArray.get(mCurrentAislePosition)
                                 .getImageId() != null) {
@@ -352,6 +370,7 @@ public class ShareDialog {
             mShareDialog.dismiss();
             showAlertMessageShareError(mAppNames.get(position), false);
         }
+        return shareVia;
     }
     
     private void showAlertMessageShareError(String appName, boolean fberror) {
