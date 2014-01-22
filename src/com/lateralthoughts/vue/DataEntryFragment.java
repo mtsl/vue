@@ -1638,6 +1638,7 @@ public class DataEntryFragment extends Fragment {
 
                                 @Override
                                 public void onImageUploaded(String imageUrl) {
+                                    
                                     if (imageUrl != null) {
                                         vueImageList.get(0).setImageUrl(
                                                 imageUrl);

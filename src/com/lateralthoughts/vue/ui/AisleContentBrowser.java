@@ -2,6 +2,9 @@ package com.lateralthoughts.vue.ui;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -31,6 +34,7 @@ import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class AisleContentBrowser extends ViewFlipper {
     private String mAisleUniqueId;
@@ -41,12 +45,15 @@ public class AisleContentBrowser extends ViewFlipper {
     TextView mBookmarksCountView;
     ImageView likesImage;
     private RelativeLayout mSocialCard;
+    private MixpanelAPI mixpanel;
     
     public RelativeLayout getmSocialCard() {
         return mSocialCard;
     }
     
     public void setmSocialCard(RelativeLayout mSocialCard) {
+        mixpanel = MixpanelAPI.getInstance(VueApplication.getInstance(),
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         this.mSocialCard = mSocialCard;
         if (this.mSocialCard != null) {
             mLikesCountView = (TextView) this.mSocialCard
@@ -68,7 +75,6 @@ public class AisleContentBrowser extends ViewFlipper {
             RelativeLayout rateLayout = (RelativeLayout) this.mSocialCard
                     .findViewById(R.id.rate_layout);
             shareLayout.setOnClickListener(new OnClickListener() {
-                
                 @Override
                 public void onClick(View v) {
                     int count = mSpecialNeedsAdapter.getShareCount();
@@ -82,6 +88,15 @@ public class AisleContentBrowser extends ViewFlipper {
                         landingPage.share(
                                 mSpecialNeedsAdapter.getWindowContent(),
                                 mCurrentIndex);
+                        JSONObject aisleShareProps = new JSONObject();
+                        try {
+                            aisleShareProps.put("Aisle_Id",
+                                    mSpecialNeedsAdapter.getAisleId());
+                            aisleShareProps.put("Activity_Shared_From", "LandingPageActivity");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mixpanel.track("LandingPage_Aisle_Shared", aisleShareProps);
                     }
                 }
             });
@@ -125,6 +140,15 @@ public class AisleContentBrowser extends ViewFlipper {
                     if (mLikesCountView != null) {
                         mLikesCountView.setText(String.valueOf(likesCount));
                     }
+                    JSONObject aisleRateProps = new JSONObject();
+                    try {
+                        aisleRateProps.put("Aisle_Id",
+                                mSpecialNeedsAdapter.getAisleId());
+                        aisleRateProps.put("Activity_Rated_From", "LandingPageActivity");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mixpanel.track("LandingPage_Aisle_Rated", aisleRateProps);
                 }
             });
             // bookmrk image clikc function in Trending screen
@@ -161,6 +185,15 @@ public class AisleContentBrowser extends ViewFlipper {
                     mBookmarksCountView.setText("" + mBookmarksCount);
                     handleBookmark(bookMarkIndicator,
                             mSpecialNeedsAdapter.getAisleId());
+                    JSONObject aisleBookmarkedProps = new JSONObject();
+                    try {
+                        aisleBookmarkedProps.put("Aisle_Id",
+                                mSpecialNeedsAdapter.getAisleId());
+                        aisleBookmarkedProps.put("Activity_Bookmarked_From", "LandingPageActivity");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mixpanel.track("LandingPage_Aisle_Bookmarked", aisleBookmarkedProps);
                 }
             });
         }

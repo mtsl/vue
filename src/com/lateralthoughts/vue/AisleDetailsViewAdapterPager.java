@@ -744,7 +744,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                                 getItem(mCurrentAislePosition)
                                         .getAisleContext().mOccasion);
                         aisleBookmarkProps.put("ScreenName",
-                                "Detail View Screen");
+                                "DetailViewActivity");
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -774,7 +774,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                                 getItem(mCurrentAislePosition)
                                         .getAisleContext().mOccasion);
                         aisleUnbookmarkProps.put("ScreenName",
-                                "Detail View Screen");
+                                "DetailViewActivity");
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -854,6 +854,15 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     public void share(final Context context, Activity activity) {
+        JSONObject aisleSharedProps = new JSONObject();
+        try {
+            aisleSharedProps.put("Aisle_Id",
+                    getItem(mCurrentAislePosition).getAisleId());
+            aisleSharedProps.put("Activity_Shared_From", "DetailViewActivity");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mixpanel.track("DetailView_Aisle_Shared", aisleSharedProps);
         getItem(mCurrentAislePosition).getAisleContext().mShareCount = getItem(
                 mCurrentAislePosition).getAisleContext().mShareCount + 1;
         getItem(mCurrentAislePosition).setmShareIndicator(true);
@@ -1157,6 +1166,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 }
             } else if (reqType.equals(CHANGE_LIKES)) {
                 // aisleId,imageId,likesCount,likeStatus
+                
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
@@ -1202,6 +1212,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                
             }
         }
         
@@ -1257,7 +1268,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .getAisleContext().mLookingForItem);
             aisleLikedProps.put("Occasion", getItem(mCurrentAislePosition)
                     .getAisleContext().mOccasion);
-            aisleLikedProps.put("ScreenName", "Detail View Screen");
+            aisleLikedProps.put("ScreenName", "DetailViewActivity");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1320,7 +1331,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .getAisleContext().mLookingForItem);
             aisleUnLikedProps.put("Occasion", getItem(mCurrentAislePosition)
                     .getAisleContext().mOccasion);
-            aisleUnLikedProps.put("ScreenName", "Detail View Screen");
+            aisleUnLikedProps.put("ScreenName", "DetailViewActivity");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1349,7 +1360,15 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     private void handleBookmark(boolean isBookmarked, String aisleId) {
-        
+        JSONObject aisleBookmarkProps = new JSONObject();
+        try {
+            aisleBookmarkProps.put("Aisle_Id",
+                    getItem(mCurrentAislePosition).getAisleId());
+            aisleBookmarkProps.put("Activity_Bookmarked_From", "DetailViewActivity");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mixpanel.track("DetailView_Aisle_Bookmarked", aisleBookmarkProps);
         AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
                 Long.parseLong(aisleId));
         ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager
