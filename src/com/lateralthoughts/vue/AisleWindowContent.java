@@ -102,6 +102,9 @@ public class AisleWindowContent {
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
                         .getImageRateStatus(mAisleImagesList.get(index).mId);
+                if(mAisleImagesList.get(index).mLikesCount == 0) {
+                    status = false;
+                }
                 if (status) {
                     mAisleImagesList.get(index).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
                 }
