@@ -1595,20 +1595,27 @@ public class DataEntryFragment extends Fragment {
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())
                     .getNetworkHandler()
-                    .requestCreateAisle(aisle, new CallbackAisleUpload(mDataEntryActivity.createAisleProps) {
-                        @Override
-                        public void onAisleAdded(Aisle aisle,
-                                AisleContext aisleContext) {
-                            super.onAisleAdded(aisle, aisleContext);
-                            for (int j = 0; j < vueImageList.size(); j++) {
-                                vueImageList.get(j).setOwnerAisleId(
-                                        aisle.getId());
-                            }
-                            addMultipleImageToServer(false, vueImageList,
-                                    offlineImageIdList, originalImagePathList,
-                                    aisle, aisleContext);
-                        }
-                    });
+                    .requestCreateAisle(
+                            aisle,
+                            new CallbackAisleUpload(
+                                    mDataEntryActivity.createAisleProps) {
+                                @Override
+                                public void onAisleAdded(Aisle aisle,
+                                        AisleContext aisleContext) {
+                                    super.onAisleAdded(aisle, aisleContext);
+                                    for (int j = 0; j < vueImageList.size(); j++) {
+                                        vueImageList.get(j).setOwnerAisleId(
+                                                aisle.getId());
+                                    }
+                                    addMultipleImageToServer(false,
+                                            vueImageList, offlineImageIdList,
+                                            originalImagePathList, aisle,
+                                            aisleContext, String.valueOf(aisle
+                                                    .getOwnerUserId()), String
+                                                    .valueOf(aisle
+                                                            .getOwnerUserId()));
+                                }
+                            });
 
             mDataEntryActivity.shareViaVueClicked();
         } else {
@@ -1625,7 +1632,8 @@ public class DataEntryFragment extends Fragment {
             final ArrayList<VueImage> vueImageList,
             final ArrayList<String> offlineImageIdList,
             final ArrayList<String> originalImagePathList, final Aisle aisle,
-            final AisleContext aisleContext) {
+            final AisleContext aisleContext, final String userId,
+            final String aisleOwnerUserId) {
         String originalImagePath = originalImagePathList.remove(0);
         // Camera or Gallery...
         if (vueImageList.get(0).getImageUrl() == null) {
@@ -1638,7 +1646,7 @@ public class DataEntryFragment extends Fragment {
 
                                 @Override
                                 public void onImageUploaded(String imageUrl) {
-                                    
+
                                     if (imageUrl != null) {
                                         vueImageList.get(0).setImageUrl(
                                                 imageUrl);
@@ -1653,11 +1661,29 @@ public class DataEntryFragment extends Fragment {
                                                         offlineImageIdList
                                                                 .remove(0),
                                                         vueImageList.remove(0),
-                                                        new ImageAddedCallback() {
+                                                        new AddedImageCallback(mDataEntryActivity.createAisleProps) {
 
                                                             @Override
                                                             public void onImageAdded(
-                                                                    String imageId) {
+                                                                    String aisleId, String imageId) {
+                                                                // TODO image
+                                                                // added track
+                                                                // event
+                                                                
+                                                                if (userId.equals(aisleOwnerUserId)) {
+                                                                    try {
+                                                                        this.imageUploadProps.put("isOwnerOfAisle", true);
+                                                                    } catch (JSONException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                } else {
+                                                                    try {
+                                                                        this.imageUploadProps.put("isOwnerOfAisle", false);
+                                                                    } catch (JSONException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                }
+                                                               super.onImageAdded(aisleId, imageId);
                                                                 if (aisle != null) {
                                                                     try {
                                                                         aisle.setAnchorImageId(Long
@@ -1680,7 +1706,9 @@ public class DataEntryFragment extends Fragment {
                                                                                                             offlineImageIdList,
                                                                                                             originalImagePathList,
                                                                                                             null,
-                                                                                                            null);
+                                                                                                            null,
+                                                                                                            userId,
+                                                                                                            aisleOwnerUserId);
                                                                                                 }
                                                                                             }
                                                                                         });
@@ -1693,7 +1721,9 @@ public class DataEntryFragment extends Fragment {
                                                                                     offlineImageIdList,
                                                                                     originalImagePathList,
                                                                                     null,
-                                                                                    null);
+                                                                                    null,
+                                                                                    userId,
+                                                                                    aisleOwnerUserId);
                                                                         }
                                                                     }
                                                                 } else {
@@ -1705,7 +1735,9 @@ public class DataEntryFragment extends Fragment {
                                                                                 offlineImageIdList,
                                                                                 originalImagePathList,
                                                                                 null,
-                                                                                null);
+                                                                                null,
+                                                                                userId,
+                                                                                aisleOwnerUserId);
                                                                     }
                                                                 }
                                                             }
@@ -1720,10 +1752,30 @@ public class DataEntryFragment extends Fragment {
                     .getNetworkHandler()
                     .requestForAddImage(aisleContext, fromDetailsScreenFlag,
                             offlineImageIdList.remove(0),
-                            vueImageList.remove(0), new ImageAddedCallback() {
+                            vueImageList.remove(0), new AddedImageCallback((mDataEntryActivity.createAisleProps)) {
 
                                 @Override
-                                public void onImageAdded(String imageId) {
+                                public void onImageAdded(String aisleId, String imageId) {
+                                    // TODO image
+                                    // added track
+                                    // event
+                                    
+                                    if (userId.equals(aisleOwnerUserId)) {
+                                        try {
+                                            this.imageUploadProps.put("isOwnerOfAisle", true);
+                                        } catch (JSONException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+                                    } else {
+                                        try {
+                                            this.imageUploadProps.put("isOwnerOfAisle", false);
+                                        } catch (JSONException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    super.onImageAdded(aisleId, imageId);
                                     if (aisle != null) {
                                         try {
                                             aisle.setAnchorImageId(Long
@@ -1746,7 +1798,9 @@ public class DataEntryFragment extends Fragment {
                                                                                 offlineImageIdList,
                                                                                 originalImagePathList,
                                                                                 null,
-                                                                                null);
+                                                                                null,
+                                                                                userId,
+                                                                                aisleOwnerUserId);
                                                                     }
                                                                 }
                                                             });
@@ -1757,7 +1811,8 @@ public class DataEntryFragment extends Fragment {
                                                         vueImageList,
                                                         offlineImageIdList,
                                                         originalImagePathList,
-                                                        null, null);
+                                                        null, null, userId,
+                                                        aisleOwnerUserId);
                                             }
                                         }
                                     } else {
@@ -1767,7 +1822,8 @@ public class DataEntryFragment extends Fragment {
                                                     vueImageList,
                                                     offlineImageIdList,
                                                     originalImagePathList,
-                                                    null, null);
+                                                    null, null, userId,
+                                                    aisleOwnerUserId);
                                         }
                                     }
                                 }
@@ -1867,8 +1923,17 @@ public class DataEntryFragment extends Fragment {
                 if (mDataEntryActivity == null) {
                     mDataEntryActivity = (DataEntryActivity) getActivity();
                 }
-                addMultipleImageToServer(true, vueImageList,
-                        offlineImageIdList, originalImagePathList, null, null);
+                addMultipleImageToServer(
+                        true,
+                        vueImageList,
+                        offlineImageIdList,
+                        originalImagePathList,
+                        null,
+                        null,
+                        String.valueOf(storedVueUser.getId()),
+                        VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getAisleAt(ownerAisleId).getAisleContext().mUserId);
                 mDataEntryActivity.shareViaVueClicked();
             } else {
                 Toast.makeText(
@@ -2266,27 +2331,51 @@ public class DataEntryFragment extends Fragment {
     private class CallbackAisleUpload implements AisleAddCallback {
 
         JSONObject createAisleProps;
-        
+
         public CallbackAisleUpload(JSONObject createAisleProps) {
-                 this.createAisleProps = createAisleProps;    
+            this.createAisleProps = createAisleProps;
         }
 
         @Override
         public void onAisleAdded(Aisle aisle, AisleContext aisleContext) {
             try {
-                this.createAisleProps.put("AisleId",
-                        aisle.getId());
+                this.createAisleProps.put("AisleId", aisle.getId());
             } catch (JSONException e) {
-                
+
                 e.printStackTrace();
             }
-            mixpanel.track("New_Aisle_Created",
-                    this.createAisleProps);
+            mixpanel.track("New_Aisle_Created", this.createAisleProps);
             FlurryAgent.logEvent("New_Aisle_Creation");
         }
-        
-       
-        
+
     }
     
+    private class AddedImageCallback implements ImageAddedCallback {
+
+        JSONObject imageUploadProps;
+        
+        public AddedImageCallback (JSONObject imageUploadProps) {
+              this.imageUploadProps = imageUploadProps;
+        }
+        
+        @Override
+        public void onImageAdded(String aisleId, String imageId) {
+            if(aisleId == null || imageId == null) {
+                return;
+            }
+            try {
+                this.imageUploadProps.put("AisleId", aisleId);
+                this.imageUploadProps.put("imageId", imageId);
+                
+               
+            } catch (JSONException e) {
+
+                e.printStackTrace();
+            }
+            mixpanel.track("New_Image_Uploaded", this.imageUploadProps);
+            
+        }
+        
+    }
+
 }
