@@ -75,7 +75,7 @@
             android:background="@drawable/dataentry_title_bg"
             android:orientation="horizontal"
             android:padding="16dp"
-            android:visibility="gone" >
+            android:visibility="visible" >
 
             <TextView
                 android:id="@+id/category_heading_textview"
