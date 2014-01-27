@@ -643,6 +643,17 @@ public class DataEntryFragment extends Fragment {
                 }
             }
         });
+        mMainHeadingRow.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                if (mCategoryListviewLayout.getVisibility() == View.GONE
+                        && mFindAtPopUp.getVisibility() == View.GONE
+                        && mOccasionPopup.getVisibility() == View.GONE) {
+                    lookingForTextClickFunctionality();
+                }
+            }
+        });
         addImageToViewPager(true);
         return mDataEntryFragmentView;
     }
@@ -1001,6 +1012,8 @@ public class DataEntryFragment extends Fragment {
                         .setVisibility(View.VISIBLE);
                 mDataEntryActivity.mVueDataentryKeyboardCancel
                         .setVisibility(View.GONE);
+                mDataEntryActivity.mVueDataentryPostLayout
+                        .setVisibility(View.GONE);
                 mDataEntryActivity.hideDefaultActionbar();
             }
             
@@ -1292,7 +1305,7 @@ public class DataEntryFragment extends Fragment {
         } else {
             mOccasionLayout.setVisibility(View.GONE);
             mFindatLayout.setVisibility(View.GONE);
-            mSaySomethingAboutAisle.setVisibility(View.GONE);
+            mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
             mSaysomethingClose.setVisibility(View.GONE);
             if (mDataEntryActivity == null) {
                 mDataEntryActivity = (DataEntryActivity) getActivity();
@@ -1756,7 +1769,8 @@ public class DataEntryFragment extends Fragment {
                                                                                                             aisleOwnerUserId);
                                                                                                 }
                                                                                             }
-                                                                                        });
+                                                                                        },
+                                                                                        false);
                                                                     } catch (NumberFormatException e) {
                                                                         if (vueImageList
                                                                                 .size() > 0) {
@@ -1855,7 +1869,7 @@ public class DataEntryFragment extends Fragment {
                                                                                 aisleOwnerUserId);
                                                                     }
                                                                 }
-                                                            });
+                                                            }, false);
                                         } catch (NumberFormatException e) {
                                             if (vueImageList.size() > 0) {
                                                 addMultipleImageToServer(
@@ -1883,8 +1897,8 @@ public class DataEntryFragment extends Fragment {
         }
     }
     
-    public void addImageToAisleToServer(VueUser storedVueUser,
-            String ownerAisleId) {
+    public void addImageToAisleToServer(final VueUser storedVueUser,
+            final String ownerAisleId) {
         if (mAisleImagePathList != null && mAisleImagePathList.size() > 0) {
             final ArrayList<VueImage> vueImageList = new ArrayList<VueImage>();
             ArrayList<String> detailsUrl = new ArrayList<String>();
@@ -1975,17 +1989,95 @@ public class DataEntryFragment extends Fragment {
                 if (mDataEntryActivity == null) {
                     mDataEntryActivity = (DataEntryActivity) getActivity();
                 }
-                addMultipleImageToServer(
-                        true,
-                        vueImageList,
-                        offlineImageIdList,
-                        originalImagePathList,
-                        null,
-                        null,
-                        String.valueOf(storedVueUser.getId()),
-                        VueTrendingAislesDataModel
-                                .getInstance(VueApplication.getInstance())
-                                .getAisleAt(ownerAisleId).getAisleContext().mUserId);
+                if (checkForAisleUpdate()) {
+                    AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                            .getInstance(VueApplication.getInstance())
+                            .getAisleAt(
+                                    VueApplication.getInstance()
+                                            .getClickedWindowID());
+                    if (aisleWindowContent != null) {
+                        AisleContext aisleContext = aisleWindowContent
+                                .getAisleContext();
+                        if (aisleContext != null) {
+                            Aisle aisle = new Aisle();
+                            aisle.setCategory(aisleContext.mCategory);
+                            aisle.setLookingFor(mLookingFor);
+                            aisle.setName(aisleContext.mName);
+                            aisle.setOccassion(aisleContext.mOccasion);
+                            aisle.setOwnerUserId(Long
+                                    .valueOf(aisleContext.mUserId));
+                            aisle.setDescription(mSaySomethingAboutAisle
+                                    .getText().toString());
+                            aisle.setId(Long.valueOf(aisleContext.mAisleId));
+                            VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getNetworkHandler()
+                                    .requestUpdateAisle(aisle,
+                                            new AisleUpdateCallback() {
+                                                @Override
+                                                public void onAisleUpdated() {
+                                                    addMultipleImageToServer(
+                                                            true,
+                                                            vueImageList,
+                                                            offlineImageIdList,
+                                                            originalImagePathList,
+                                                            null,
+                                                            null,
+                                                            String.valueOf(storedVueUser
+                                                                    .getId()),
+                                                            VueTrendingAislesDataModel
+                                                                    .getInstance(
+                                                                            VueApplication
+                                                                                    .getInstance())
+                                                                    .getAisleAt(
+                                                                            ownerAisleId)
+                                                                    .getAisleContext().mUserId);
+                                                }
+                                            }, true);
+                        } else {
+                            addMultipleImageToServer(
+                                    true,
+                                    vueImageList,
+                                    offlineImageIdList,
+                                    originalImagePathList,
+                                    null,
+                                    null,
+                                    String.valueOf(storedVueUser.getId()),
+                                    VueTrendingAislesDataModel
+                                            .getInstance(
+                                                    VueApplication
+                                                            .getInstance())
+                                            .getAisleAt(ownerAisleId)
+                                            .getAisleContext().mUserId);
+                        }
+                    } else {
+                        addMultipleImageToServer(
+                                true,
+                                vueImageList,
+                                offlineImageIdList,
+                                originalImagePathList,
+                                null,
+                                null,
+                                String.valueOf(storedVueUser.getId()),
+                                VueTrendingAislesDataModel
+                                        .getInstance(
+                                                VueApplication.getInstance())
+                                        .getAisleAt(ownerAisleId)
+                                        .getAisleContext().mUserId);
+                    }
+                } else {
+                    addMultipleImageToServer(
+                            true,
+                            vueImageList,
+                            offlineImageIdList,
+                            originalImagePathList,
+                            null,
+                            null,
+                            String.valueOf(storedVueUser.getId()),
+                            VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getAisleAt(ownerAisleId).getAisleContext().mUserId);
+                }
                 mDataEntryActivity.shareViaVueClicked();
             } else {
                 Toast.makeText(
@@ -2482,5 +2574,23 @@ public class DataEntryFragment extends Fragment {
             mDataEntryActivity.mVueDataentryPostLayout.setVisibility(View.GONE);
             mDataEntryActivity.hideDefaultActionbar();
         }
+    }
+    
+    private boolean checkForAisleUpdate() {
+        if (VueApplication.getInstance().getClickedWindowID() != null) {
+            AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance()).getAisleAt(
+                            VueApplication.getInstance().getClickedWindowID());
+            if (aisleWindowContent != null) {
+                if (!(aisleWindowContent.getAisleContext().mLookingForItem
+                        .equals(mLookingFor))
+                        || !(aisleWindowContent.getAisleContext().mDescription
+                                .equals(mSaySomethingAboutAisle.getText()
+                                        .toString()))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
