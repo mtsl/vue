@@ -20,6 +20,7 @@ import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -48,8 +49,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lateralthoughts.vue.ui.ScaleImageView;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -64,6 +63,7 @@ import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
+import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
@@ -439,31 +439,39 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             mViewHolder.decisionLay.setVisibility(View.VISIBLE);
             mViewHolder.decisionLay.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {/*
-                                              * VueUser storedVueUser = null;
-                                              * boolean isUserAisleFlag = false;
-                                              * try { storedVueUser =
-                                              * Utils.readUserObjectFromFile
-                                              * (mContext, VueConstants.
-                                              * VUE_APP_USEROBJECT__FILENAME);
-                                              * if
-                                              * (getItem(mCurrentAislePosition
-                                              * ).getAisleContext().mUserId
-                                              * .equals
-                                              * (String.valueOf(storedVueUser
-                                              * .getId()))) { isUserAisleFlag =
-                                              * true; } } catch (Exception e2) {
-                                              * e2.printStackTrace(); } if
-                                              * (isUserAisleFlag) { Intent
-                                              * intent = new Intent(mContext,
-                                              * DecisionScreen.class);
-                                              * 
-                                              * mContext.startActivity(intent);
-                                              * } else { Toast.makeText(
-                                              * mContext,
-                                              * "Sorry, You can't make decision on another person aisle."
-                                              * , Toast.LENGTH_LONG).show(); }
-                                              */
+                public void onClick(View v) {
+                    VueUser storedVueUser = null;
+                    boolean isUserAisleFlag = false;
+                    try {
+                        storedVueUser = Utils.readUserObjectFromFile(mContext,
+                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                        if (getItem(mCurrentAislePosition).getAisleContext().mUserId
+                                .equals(String.valueOf(storedVueUser.getId()))) {
+                            isUserAisleFlag = true;
+                        }
+                    } catch (Exception e2) {
+                        e2.printStackTrace();
+                    }
+                    if (isUserAisleFlag) {
+                        if (mAisleCureentStage
+                                .equals(VueConstants.AISLE_STAGE_THREE)) {
+                            Intent intent = new Intent(mContext,
+                                    DecisionScreen.class);
+                            
+                            mContext.startActivity(intent);
+                        } else {
+                            Toast.makeText(
+                                    mContext,
+                                    "Sorry, You can't make decision on this aisle presently.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(
+                                mContext,
+                                "Sorry, You can't make decision on another person aisle.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                    
                 }
             });
             String descisionText = " ";
@@ -856,8 +864,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     public void share(final Context context, Activity activity) {
         JSONObject aisleSharedProps = new JSONObject();
         try {
-            aisleSharedProps.put("Aisle_Id",
-                    getItem(mCurrentAislePosition).getAisleId());
+            aisleSharedProps.put("Aisle_Id", getItem(mCurrentAislePosition)
+                    .getAisleId());
             aisleSharedProps.put("Activity_Shared_From", "DetailViewActivity");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1362,9 +1370,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private void handleBookmark(boolean isBookmarked, String aisleId) {
         JSONObject aisleBookmarkProps = new JSONObject();
         try {
-            aisleBookmarkProps.put("Aisle_Id",
-                    getItem(mCurrentAislePosition).getAisleId());
-            aisleBookmarkProps.put("Activity_Bookmarked_From", "DetailViewActivity");
+            aisleBookmarkProps.put("Aisle_Id", getItem(mCurrentAislePosition)
+                    .getAisleId());
+            aisleBookmarkProps.put("Activity_Bookmarked_From",
+                    "DetailViewActivity");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1576,13 +1585,15 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         
         @Override
         public void destroyItem(View view, int position, Object object) {
-
+            
             RelativeLayout detailsBrowser = (RelativeLayout) object;
-            ScaleImageView browserImage = (ScaleImageView)detailsBrowser.findViewById(R.id.details_view_image_identifier);
-            ScaledImageViewFactory imageViewFactory = ScaledImageViewFactory.getInstance(mContext);
-
+            ScaleImageView browserImage = (ScaleImageView) detailsBrowser
+                    .findViewById(R.id.details_view_image_identifier);
+            ScaledImageViewFactory imageViewFactory = ScaledImageViewFactory
+                    .getInstance(mContext);
+            
             browserImage = null;
-            //imageViewFactory.returnUsedImageView(browserImage);
+            // imageViewFactory.returnUsedImageView(browserImage);
             ((ViewPager) view).removeView((RelativeLayout) object);
         }
         
@@ -1607,14 +1618,17 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             }
             
-            RelativeLayout detailsViewLayout = (RelativeLayout)mInflater.inflate(R.layout.detailsbrowser, null);
-            NetworkImageView browserImage = (NetworkImageView)detailsViewLayout.findViewById(R.id.details_view_image_identifier);
-            //NetworkImageView existingView = (NetworkImageView)detailsViewLayout.findViewById(R.id.details_view_image_identifier);
-            //if(null != existingView)
-            //    detailsViewLayout.removeView(existingView);
-            //detailsViewLayout.addView(browserImage);
+            RelativeLayout detailsViewLayout = (RelativeLayout) mInflater
+                    .inflate(R.layout.detailsbrowser, null);
+            NetworkImageView browserImage = (NetworkImageView) detailsViewLayout
+                    .findViewById(R.id.details_view_image_identifier);
+            // NetworkImageView existingView =
+            // (NetworkImageView)detailsViewLayout.findViewById(R.id.details_view_image_identifier);
+            // if(null != existingView)
+            // detailsViewLayout.removeView(existingView);
+            // detailsViewLayout.addView(browserImage);
             browserImage.setOnClickListener(new OnClickListener() {
-
+                
                 @Override
                 public void onClick(View v) {
                     detailsImageClickListenr.onImageClicked();

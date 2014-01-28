@@ -3,41 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/dataentry_row_aisele_image"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/decision_screen_image_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="8dip"
-        android:layout_marginLeft="8dip"
-        android:layout_marginRight="8dip"
-        android:layout_marginTop="8dip"
-        android:adjustViewBounds="true"
-        android:background="@drawable/image_bg" />
+        android:background="@android:color/white" >
 
-    <LinearLayout
-        android:id="@+id/image_delete_btn"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_alignBottom="@+id/dataentry_row_aisele_image"
-        android:layout_alignRight="@+id/dataentry_row_aisele_image"
-        android:layout_marginBottom="12dp"
-        android:layout_marginRight="12dp"
-        android:background="@drawable/rectangle"
-        android:clickable="true" >
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/decision_screen_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:adjustViewBounds="true" />
 
         <ImageView
-            android:id="@+id/staricon"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/aisle_bg_progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:indeterminateDrawable="@drawable/aisle_bg_progressbar_drawable" />
+            android:id="@+id/decision_screen_selection_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/gallery_image_bg"
+            android:visibility="gone" />
+    </RelativeLayout>
 
 </RelativeLayout>
