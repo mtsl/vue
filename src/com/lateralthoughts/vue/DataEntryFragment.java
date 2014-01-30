@@ -19,7 +19,6 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
@@ -120,6 +119,7 @@ public class DataEntryFragment extends Fragment {
     RelativeLayout mOccasionLayout = null;
     RelativeLayout mFindatLayout = null;
     private MixpanelAPI mixpanel;
+    TextView mAddAnItemToAisle;
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -160,6 +160,8 @@ public class DataEntryFragment extends Fragment {
                 .findViewById(R.id.findat_layout);
         mCategoryheadingLayout = (LinearLayout) mDataEntryFragmentView
                 .findViewById(R.id.categoryheading);
+        mAddAnItemToAisle = (TextView) mDataEntryFragmentView
+                .findViewById(R.id.add_an_item_to_aisle);
         mCategoryheading = (TextView) mDataEntryFragmentView
                 .findViewById(R.id.category_heading_textview);
         mOccasionClose = (ImageView) mDataEntryFragmentView
@@ -651,6 +653,19 @@ public class DataEntryFragment extends Fragment {
                         && mFindAtPopUp.getVisibility() == View.GONE
                         && mOccasionPopup.getVisibility() == View.GONE) {
                     lookingForTextClickFunctionality();
+                }
+            }
+        });
+        mAddAnItemToAisle.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFindAtPopUp.getVisibility() == View.GONE
+                        && mLookingForPopup.getVisibility() == View.GONE
+                        && mOccasionPopup.getVisibility() == View.GONE) {
+                    Utils.putTouchToChnageImagePosition(getActivity(), -1);
+                    Utils.putTouchToChnageImageTempPosition(getActivity(), -1);
+                    Utils.putTouchToChnageImageFlag(getActivity(), false);
+                    addImageToAisleButtonClickFunctionality(true);
                 }
             }
         });
@@ -1294,33 +1309,19 @@ public class DataEntryFragment extends Fragment {
     
     public void setGalleryORCameraImage(String picturePath,
             boolean dontResizeImageFlag, Context context) {
-        if (!Utils.getDataentryTopAddImageAisleFlag(context)
-                && !mFromDetailsScreenFlag) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    lookingForTextClickFunctionality();
-                }
-            }, 200);
-        } else {
-            mOccasionLayout.setVisibility(View.GONE);
-            mFindatLayout.setVisibility(View.GONE);
-            mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
-            mSaysomethingClose.setVisibility(View.GONE);
-            if (mDataEntryActivity == null) {
-                mDataEntryActivity = (DataEntryActivity) getActivity();
-            }
-            mDataEntryActivity.mVueDataentryKeyboardLayout
-                    .setVisibility(View.GONE);
-            mDataEntryActivity.mVueDataentryKeyboardDone
-                    .setVisibility(View.GONE);
-            mDataEntryActivity.mVueDataentryKeyboardCancel
-                    .setVisibility(View.GONE);
-            mDataEntryActivity.mVueDataentryPostLayout
-                    .setVisibility(View.VISIBLE);
-            mDataEntryActivity.hideDefaultActionbar();
-            showFindAtToastandDialogForNoFindatUrl();
+        mOccasionLayout.setVisibility(View.GONE);
+        mFindatLayout.setVisibility(View.GONE);
+        mSaySomethingAboutAisle.setVisibility(View.VISIBLE);
+        mSaysomethingClose.setVisibility(View.GONE);
+        if (mDataEntryActivity == null) {
+            mDataEntryActivity = (DataEntryActivity) getActivity();
         }
+        mDataEntryActivity.mVueDataentryKeyboardLayout.setVisibility(View.GONE);
+        mDataEntryActivity.mVueDataentryKeyboardDone.setVisibility(View.GONE);
+        mDataEntryActivity.mVueDataentryKeyboardCancel.setVisibility(View.GONE);
+        mDataEntryActivity.mVueDataentryPostLayout.setVisibility(View.VISIBLE);
+        mDataEntryActivity.hideDefaultActionbar();
+        showFindAtToastandDialogForNoFindatUrl();
         try {
             mImagePath = picturePath;
             if (dontResizeImageFlag) {
@@ -1592,23 +1593,24 @@ public class DataEntryFragment extends Fragment {
     
     // Create ailse and send to server.
     public void addAisleToServer(VueUser vueUser) {
-        if (mAisleImagePathList != null && mAisleImagePathList.size() > 0) {
-            String categoery = mCategoryheading.getText().toString().trim();
-            String lookingFor = mLookingFor.trim();
-            String occassion = mOccasion;
-            String description = mSaySomethingAboutAisle.getText().toString()
-                    .trim();
-            final Aisle aisle = new Aisle();
-            aisle.setCategory(categoery);
-            aisle.setLookingFor(lookingFor);
-            aisle.setName("Super Aisle"); // TODO By Krishna
-            aisle.setOccassion(occassion);
-            aisle.setOwnerUserId(Long.valueOf(vueUser.getId()));
-            if (description.length() > 0) {
-                aisle.setDescription(description);
-            } else {
-                aisle.setDescription("");
-            }
+        String categoery = mCategoryheading.getText().toString().trim();
+        String lookingFor = mLookingFor.trim();
+        String occassion = mOccasion;
+        String description = mSaySomethingAboutAisle.getText().toString()
+                .trim();
+        final Aisle aisle = new Aisle();
+        aisle.setCategory(categoery);
+        aisle.setLookingFor(lookingFor);
+        aisle.setName("Super Aisle"); // TODO By Krishna
+        aisle.setOccassion(occassion);
+        aisle.setOwnerUserId(Long.valueOf(vueUser.getId()));
+        if (description.length() > 0) {
+            aisle.setDescription(description);
+        } else {
+            aisle.setDescription("");
+        }
+        // Aisle with images...
+        if (mAisleImagePathList != null) {
             final ArrayList<VueImage> vueImageList = new ArrayList<VueImage>();
             final ArrayList<String> originalImagePathList = new ArrayList<String>();
             String offlineAisleId = String.valueOf(System.currentTimeMillis());
@@ -1665,16 +1667,24 @@ public class DataEntryFragment extends Fragment {
                                                             .getOwnerUserId()));
                                 }
                             });
-            
-            mDataEntryActivity.shareViaVueClicked();
-        } else {
-            Toast.makeText(
-                    getActivity(),
-                    getResources()
-                            .getString(
-                                    R.string.dataentry_mandtory_field_add_aisleimage_mesg),
-                    Toast.LENGTH_LONG).show();
         }
+        // Aisle without images...
+        else {
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .getNetworkHandler()
+                    .requestCreateAisle(
+                            aisle,
+                            new CallbackAisleUpload(
+                                    mDataEntryActivity.createAisleProps) {
+                                @Override
+                                public void onAisleAdded(Aisle aisle,
+                                        AisleContext aisleContext) {
+                                    super.onAisleAdded(aisle, aisleContext);
+                                }
+                            });
+        }
+        mDataEntryActivity.shareViaVueClicked();
     }
     
     private void addMultipleImageToServer(final boolean fromDetailsScreenFlag,

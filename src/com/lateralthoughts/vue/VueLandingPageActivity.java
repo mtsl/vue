@@ -379,14 +379,9 @@ public class VueLandingPageActivity extends Activity implements
                         createAisleButtonProps);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
-                        CreateAisleSelectionActivity.class);
-                Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-                        VueLandingPageActivity.this, false);
+                        DataEntryActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                if (!CreateAisleSelectionActivity.isActivityShowing) {
-                    CreateAisleSelectionActivity.isActivityShowing = true;
-                    startActivity(intent);
-                }
+                startActivity(intent);
             } else {
                 showDiscardOtherAppImageDialog();
             }
