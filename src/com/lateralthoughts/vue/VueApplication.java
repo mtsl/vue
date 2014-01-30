@@ -94,6 +94,16 @@ public class VueApplication extends Application {
     private boolean mFinishDetailsScreenFlag;
     
     private Long mUserId = null;
+    private String mUserEmail = null;
+    
+    public String getmUserEmail() {
+        return mUserEmail;
+    }
+    
+    public void setmUserEmail(String mUserEmail) {
+        this.mUserEmail = mUserEmail;
+    }
+    
     private String mUserName = null;
     
     public String getmUserName() {

@@ -19,7 +19,6 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -77,7 +76,8 @@ public class AisleDetailsViewActivity extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(this,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.aisle_details_activity_landing);
         mDrawerRight = (FrameLayout) findViewById(R.id.drawer_right);
         initialize();
@@ -230,6 +230,7 @@ public class AisleDetailsViewActivity extends Activity {
         mixpanel.flush();
         super.onBackPressed();
     }
+    
     private void initialize() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the main content when the drawer
@@ -700,9 +701,6 @@ public class AisleDetailsViewActivity extends Activity {
         } catch (Exception e2) {
             e2.printStackTrace();
         }
-        b1.putBoolean(
-                VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
-                isUserAisleFlag);
         b1.putString(
                 VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
                 lookingFor);
@@ -730,9 +728,23 @@ public class AisleDetailsViewActivity extends Activity {
                     imagePath);
             b1.putBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG,
                     false);
+            b1.putBoolean(
+                    VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
+                    isUserAisleFlag);
         } else {
             b1.putBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG,
                     true);
+            if (VueApplication.getInstance().getmUserEmail() != null
+                    && VueApplication.getInstance().getmUserEmail()
+                            .equals(VueConstants.ADMIN_MAIL_ADDRESS)) {
+                b1.putBoolean(
+                        VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
+                        true);
+            } else {
+                b1.putBoolean(
+                        VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
+                        isUserAisleFlag);
+            }
         }
         intent.putExtras(b1);
         this.startActivityForResult(
