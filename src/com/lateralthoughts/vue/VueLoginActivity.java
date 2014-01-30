@@ -797,7 +797,7 @@ public class VueLoginActivity extends FragmentActivity implements
                 people.set("loggedIn with", "Facebook");
                 JSONObject nameTag = new JSONObject();
                 try {
-                    // Set an "mp_name_tag" super property 
+                    // Set an "mp_name_tag" super property
                     // for Streams if you find it useful.
                     nameTag.put("mp_name_tag", user.getFirstName());
                     mixpanel.registerSuperProperties(nameTag);

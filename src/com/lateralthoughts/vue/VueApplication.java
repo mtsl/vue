@@ -342,10 +342,9 @@ public class VueApplication extends Application {
         try {
             storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
                     VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            mixpanel.unregisterSuperProperty(storedVueUser.getFirstName());
         } catch (Exception e2) {
             e2.printStackTrace();
         }
-        if(storedVueUser != null)
-           mixpanel.unregisterSuperProperty(storedVueUser.getFirstName());
     }
 }

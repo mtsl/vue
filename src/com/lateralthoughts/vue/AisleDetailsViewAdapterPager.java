@@ -1379,7 +1379,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         try {
             aisleBookmarkProps.put("Aisle_Id", getItem(mCurrentAislePosition)
                     .getAisleId());
-            aisleBookmarkProps.put("Activity_Bookmarked_From",
+            aisleBookmarkProps.put("Activity Bookmarked From",
                     "DetailViewActivity");
         } catch (JSONException e) {
             e.printStackTrace();

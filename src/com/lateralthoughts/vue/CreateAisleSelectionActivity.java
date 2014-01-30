@@ -42,7 +42,7 @@ public class CreateAisleSelectionActivity extends Activity {
     private static final String CAMERA_INTENT_NAME = "android.media.action.IMAGE_CAPTURE";
     private ArrayList<ShoppingApplicationDetails> mDataEntryShoppingApplicationsList = new ArrayList<ShoppingApplicationDetails>();
     private static final String CREATE_AISLE_POPUP = "Selection_Popup";
-    private static final String CREATE_AISLE_POPUP_SELECTION = "CreateAisle_Selection_Popup";
+    private static final String CREATE_AISLE_POPUP_SELECTION = "CreateAisle Selection Popup";
     public static boolean isActivityShowing = false;
     private ArcMenu mDataentryArcMenu = null;
     private static final int ANIM_DELAY = 100;

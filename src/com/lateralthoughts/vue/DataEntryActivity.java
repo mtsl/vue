@@ -569,7 +569,7 @@ public class DataEntryActivity extends Activity {
     
     @Override
     protected void onStart() {
-        mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
+        //mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
         FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
         FlurryAgent.logEvent(CREATE_AISLE_SCREEN_VISITORS);
