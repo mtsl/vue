@@ -284,4 +284,5 @@ public class VueConstants {
     public static final String LIKED = "liked";
     public static final String BOOKMARKED = "bookmarked";
     public static final String COMMENTER_URL = "commenterUrl";
+    public static final String ADMIN_MAIL_ADDRESS = "admin@thesilverlabs.com";
 }

@@ -81,6 +81,8 @@ public class VueUserManager {
                         VueUserManager.this.setCurrentUser(vueUser);
                         VueApplication.getInstance()
                                 .setmUserId(vueUser.getId());
+                        VueApplication.getInstance().setmUserEmail(
+                                vueUser.getEmail());
                         callback.onUserUpdated(vueUser);
                         try {
                             VueTrendingAislesDataModel.getInstance(
@@ -165,6 +167,8 @@ public class VueUserManager {
                         }
                         VueApplication.getInstance()
                                 .setmUserId(vueUser.getId());
+                        VueApplication.getInstance().setmUserEmail(
+                                vueUser.getEmail());
                         VueApplication.getInstance().setmUserName(
                                 vueUser.getFirstName() + " "
                                         + vueUser.getLastName());
@@ -309,6 +313,8 @@ public class VueUserManager {
                         }
                         VueApplication.getInstance().setmUserId(
                                 vueUser2.getId());
+                        VueApplication.getInstance().setmUserEmail(
+                                vueUser2.getEmail());
                         VueApplication.getInstance().setmUserName(
                                 vueUser2.getFirstName() + " "
                                         + vueUser2.getLastName());
@@ -451,6 +457,8 @@ public class VueUserManager {
                         }
                         VueApplication.getInstance().setmUserId(
                                 vueUser1.getId());
+                        VueApplication.getInstance().setmUserEmail(
+                                vueUser1.getEmail());
                         VueApplication.getInstance().setmUserName(
                                 vueUser1.getFirstName() + " "
                                         + vueUser1.getLastName());
@@ -589,6 +597,8 @@ public class VueUserManager {
                         }
                         VueApplication.getInstance().setmUserId(
                                 vueUser1.getId());
+                        VueApplication.getInstance().setmUserEmail(
+                                vueUser1.getEmail());
                         VueApplication.getInstance().setmUserName(
                                 vueUser1.getFirstName() + " "
                                         + vueUser1.getLastName());

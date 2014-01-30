@@ -454,18 +454,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         e2.printStackTrace();
                     }
                     if (isUserAisleFlag) {
-                        if (mAisleCureentStage
-                                .equals(VueConstants.AISLE_STAGE_THREE)) {
-                            Intent intent = new Intent(mContext,
-                                    DecisionScreen.class);
-                            
-                            mContext.startActivity(intent);
-                        } else {
-                            Toast.makeText(
-                                    mContext,
-                                    "Sorry, You can't make decision on this aisle presently.",
-                                    Toast.LENGTH_LONG).show();
-                        }
+                        Intent intent = new Intent(mContext,
+                                DecisionScreen.class);
+                        
+                        mContext.startActivity(intent);
                     } else {
                         Toast.makeText(
                                 mContext,
@@ -520,7 +512,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     if (Long.parseLong(getItem(mCurrentAislePosition)
                             .getImageList().get(position).mOwnerUserId) == mUserId
                             || Long.parseLong(getItem(mCurrentAislePosition)
-                                    .getAisleContext().mUserId) == mUserId) {
+                                    .getAisleContext().mUserId) == mUserId
+                            || (VueApplication.getInstance().getmUserEmail() != null && VueApplication
+                                    .getInstance().getmUserEmail()
+                                    .equals(VueConstants.ADMIN_MAIL_ADDRESS))) {
                         editLayVisibility = true;
                         
                     } else {
