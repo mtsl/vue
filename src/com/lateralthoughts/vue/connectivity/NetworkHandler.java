@@ -155,8 +155,10 @@ public class NetworkHandler {
     }
     
     public void requestUpdateAisle(Aisle aisle,
-            AisleUpdateCallback aisleUpdateCallback) {
-        AisleManager.getAisleManager().updateAisle(aisle, aisleUpdateCallback);
+            AisleUpdateCallback aisleUpdateCallback,
+            boolean fromDetailsScreenFlag) {
+        AisleManager.getAisleManager().updateAisle(aisle, aisleUpdateCallback,
+                fromDetailsScreenFlag);
     }
     
     // request the server to create an empty aisle.
@@ -717,12 +719,13 @@ public class NetworkHandler {
         }
         return isImageRated;
     }
-    public void modifyImageRatedStatus(String imageId,boolean isAddRequest) {
-       
-          if(isAddRequest) {
-              ratedImageList.add(imageId);
-          } else {
-              ratedImageList.remove(imageId);
-          }
+    
+    public void modifyImageRatedStatus(String imageId, boolean isAddRequest) {
+        
+        if (isAddRequest) {
+            ratedImageList.add(imageId);
+        } else {
+            ratedImageList.remove(imageId);
+        }
     }
 }

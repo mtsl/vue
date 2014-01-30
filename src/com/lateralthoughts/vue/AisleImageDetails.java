@@ -29,4 +29,5 @@ public class AisleImageDetails {
     public int mTempResizeBitmapwidth;
     public int mTempResizedBitmapHeight;
     public boolean mHasMostLikes, mSameMostLikes;
+    public boolean mIsChoosen;
 }
