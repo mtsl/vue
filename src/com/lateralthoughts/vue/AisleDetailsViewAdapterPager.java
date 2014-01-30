@@ -230,6 +230,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 
                 @Override
                 public void run() {
+                    VueApplication.getInstance().unregisterUser(mixpanel);
                     JSONObject aisleViewedProps = new JSONObject();
                     try {
                         aisleViewedProps.put("AisleId",
@@ -247,7 +248,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    mixpanel.track("AisleViewed", aisleViewedProps);
+                    mixpanel.track("Aisle Viewed", aisleViewedProps);
                     Map<String, String> articleParams = new HashMap<String, String>();
                     articleParams
                             .put("Category", getItem(mCurrentAislePosition)
@@ -733,6 +734,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 mIsBookImageClciked = true;
                 boolean bookmarkStatus = false;
                 if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
+                    VueApplication.getInstance().registerUser(mixpanel);
                     JSONObject aisleBookmarkProps = new JSONObject();
                     try {
                         aisleBookmarkProps.put("AisleId",
@@ -752,7 +754,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    mixpanel.track("Aisle-UnBookmarked", aisleBookmarkProps);
+                    mixpanel.track("Aisle UnBookmarked", aisleBookmarkProps);
                     FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
                     if (mBookmarksCount > 0) {
                         mBookmarksCount--;
@@ -762,6 +764,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     handleBookmark(bookmarkStatus,
                             getItem(mCurrentAislePosition).getAisleId());
                 } else {
+                    VueApplication.getInstance().registerUser(mixpanel);
                     bookmarkStatus = true;
                     JSONObject aisleUnbookmarkProps = new JSONObject();
                     try {
@@ -782,7 +785,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    mixpanel.track("Aisle-Bookmarked", aisleUnbookmarkProps);
+                    mixpanel.track("Aisle Bookmarked", aisleUnbookmarkProps);
                     FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
                     mBookmarksCount++;
                     getItem(mCurrentAislePosition).setWindowBookmarkIndicator(
@@ -857,6 +860,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     public void share(final Context context, Activity activity) {
+        VueApplication.getInstance().registerUser(mixpanel);
         JSONObject aisleSharedProps = new JSONObject();
         try {
             aisleSharedProps.put("Aisle_Id", getItem(mCurrentAislePosition)
@@ -865,7 +869,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mixpanel.track("DetailView_Aisle_Shared", aisleSharedProps);
+        mixpanel.track("Aisle Shared", aisleSharedProps);
         getItem(mCurrentAislePosition).getAisleContext().mShareCount = getItem(
                 mCurrentAislePosition).getAisleContext().mShareCount + 1;
         getItem(mCurrentAislePosition).setmShareIndicator(true);
@@ -1275,7 +1279,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mixpanel.track("Image-Liked", aisleLikedProps);
+        VueApplication.getInstance().registerUser(mixpanel);
+        mixpanel.track("Image Liked", aisleLikedProps);
         Map<String, String> articleParams = new HashMap<String, String>();
         articleParams.put("Category", getItem(mCurrentAislePosition)
                 .getAisleContext().mCategory);
@@ -1338,7 +1343,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mixpanel.track("Image-Unliked", aisleUnLikedProps);
+        VueApplication.getInstance().registerUser(mixpanel);
+        mixpanel.track("Image Unliked", aisleUnLikedProps);
         FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
         if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             // false
@@ -1363,16 +1369,17 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     private void handleBookmark(boolean isBookmarked, String aisleId) {
+        VueApplication.getInstance().registerUser(mixpanel);
         JSONObject aisleBookmarkProps = new JSONObject();
         try {
             aisleBookmarkProps.put("Aisle_Id", getItem(mCurrentAislePosition)
                     .getAisleId());
-            aisleBookmarkProps.put("Activity_Bookmarked_From",
+            aisleBookmarkProps.put("Activity Bookmarked From",
                     "DetailViewActivity");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mixpanel.track("DetailView_Aisle_Bookmarked", aisleBookmarkProps);
+        mixpanel.track("Aisle Bookmarked", aisleBookmarkProps);
         AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
                 Long.parseLong(aisleId));
         ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager

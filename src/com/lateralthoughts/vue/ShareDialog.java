@@ -185,7 +185,8 @@ public class ShareDialog {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    mixpanel.track("Aisle_Shared_Success", aisleShareProps);
+                    VueApplication.getInstance().unregisterUser(mixpanel);
+                    mixpanel.track("Aisle Shared Success", aisleShareProps);
                 }
             }
         });

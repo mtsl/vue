@@ -312,7 +312,6 @@ public class AisleDetailsViewActivity extends Activity {
     
     @Override
     protected void onStart() {
-        mixpanel.track(DETAILS_SCREEN_VISITOR, null);
         FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
         FlurryAgent.logEvent(DETAILS_SCREEN_VISITOR);
