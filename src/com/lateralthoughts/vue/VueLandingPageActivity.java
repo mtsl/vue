@@ -54,6 +54,8 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.fasterxml.jackson.databind.deser.impl.NullProvider;
+import com.fasterxml.jackson.databind.deser.std.NullifyingDeserializer;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -366,15 +368,9 @@ public class VueLandingPageActivity extends Activity implements
             return true;
         } else if (item.getItemId() == R.id.menu_create_aisle) {
             if (mOtherSourceImagePath == null) {
-                JSONObject createAisleButtonProps = new JSONObject();
-                try {
-                    createAisleButtonProps.put("Create_Aisle_Button_Click",
-                            "Create aisle clicked");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                mixpanel.track("Create_Aisle_Button_Click",
-                        createAisleButtonProps);
+                VueApplication.getInstance().unregisterUser(mixpanel);
+                mixpanel.track("Create Aisle Button Click",
+                        null);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);
@@ -981,15 +977,14 @@ public class VueLandingPageActivity extends Activity implements
         } else {
 
         }
-
+        VueApplication.getInstance().unregisterUser(mixpanel);
         JSONObject categorySelectedProps = new JSONObject();
         try {
-            categorySelectedProps.put("CategorySelected", catName);
+            categorySelectedProps.put("Category Selected", catName);
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        mixpanel.track("bezelCategorySelected", categorySelectedProps);
+        mixpanel.track("Bezel Category Selected", categorySelectedProps);
         FlurryAgent.logEvent(catName);
     }
 
@@ -1466,8 +1461,9 @@ public class VueLandingPageActivity extends Activity implements
 
                                                                         e.printStackTrace();
                                                                     }
+                                                                    VueApplication.getInstance().registerUser(mixpanel);
                                                                     mixpanel.track(
-                                                                            "New_Image_Uploaded",
+                                                                            "New Image Uploaded",
                                                                             imageUploadProps);
 
                                                                 }
@@ -1533,7 +1529,8 @@ public class VueLandingPageActivity extends Activity implements
 
                                             e.printStackTrace();
                                         }
-                                        mixpanel.track("New_Image_Uploaded",
+                                        VueApplication.getInstance().registerUser(mixpanel);
+                                        mixpanel.track("New Image Uploaded",
                                                 imageUploadProps);
                                     }
                                 });
