@@ -312,11 +312,14 @@ public class VueApplication extends Application {
         editor.putLong(VueConstants.SCREEN_REFRESH_TIME, time_in_mins);
         editor.commit();
     }
+    
     AisleWindowContent mAisleWindow;
-    public void setPendingAisle(AisleWindowContent aisleWindow){
+    
+    public void setPendingAisle(AisleWindowContent aisleWindow) {
         mAisleWindow = aisleWindow;
     }
-    public AisleWindowContent getPedningAisle(){
+    
+    public AisleWindowContent getPedningAisle() {
         return mAisleWindow;
         
     }
