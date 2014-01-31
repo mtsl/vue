@@ -20,6 +20,7 @@ import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -241,6 +242,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 
                 @Override
                 public void run() {
+                    VueApplication.getInstance().unregisterUser(mixpanel);
                     JSONObject aisleViewedProps = new JSONObject();
                     try {
                         aisleViewedProps.put("AisleId",
@@ -255,7 +257,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    mixpanel.track("AisleViewed", aisleViewedProps);
+                    mixpanel.track("Aisle Viewed", aisleViewedProps);
                     Map<String, String> articleParams = new HashMap<String, String>();
                     articleParams.put("Category",
                             mCurrentAisle.getAisleContext().mCategory);
@@ -444,31 +446,31 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             mViewHolder.decisionLay.setVisibility(View.VISIBLE);
             mViewHolder.decisionLay.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {/*
-                                              * VueUser storedVueUser = null;
-                                              * boolean isUserAisleFlag = false;
-                                              * try { storedVueUser =
-                                              * Utils.readUserObjectFromFile
-                                              * (mContext, VueConstants.
-                                              * VUE_APP_USEROBJECT__FILENAME);
-                                              * if
-                                              * (getItem(mCurrentAislePosition
-                                              * ).getAisleContext().mUserId
-                                              * .equals
-                                              * (String.valueOf(storedVueUser
-                                              * .getId()))) { isUserAisleFlag =
-                                              * true; } } catch (Exception e2) {
-                                              * e2.printStackTrace(); } if
-                                              * (isUserAisleFlag) { Intent
-                                              * intent = new Intent(mContext,
-                                              * DecisionScreen.class);
-                                              * 
-                                              * mContext.startActivity(intent);
-                                              * } else { Toast.makeText(
-                                              * mContext,
-                                              * "Sorry, You can't make decision on another person aisle."
-                                              * , Toast.LENGTH_LONG).show(); }
-                                              */
+                public void onClick(View v) {
+                    VueUser storedVueUser = null;
+                    boolean isUserAisleFlag = false;
+                    try {
+                        storedVueUser = Utils.readUserObjectFromFile(mContext,
+                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                        if (getItem(mCurrentAislePosition).getAisleContext().mUserId
+                                .equals(String.valueOf(storedVueUser.getId()))) {
+                            isUserAisleFlag = true;
+                        }
+                    } catch (Exception e2) {
+                        e2.printStackTrace();
+                    }
+                    if (isUserAisleFlag) {
+                        Intent intent = new Intent(mContext,
+                                DecisionScreen.class);
+                        
+                        mContext.startActivity(intent);
+                    } else {
+                        Toast.makeText(
+                                mContext,
+                                "Sorry, You can't make decision on another person aisle.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                    
                 }
             });
             String descisionText = " ";
@@ -515,7 +517,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         && mCurrentAisle.getAisleContext().mUserId != null) {
                     if (Long.parseLong(mCurrentAisle.getImageList().get(
                             position).mOwnerUserId) == mUserId
-                            || Long.parseLong(mCurrentAisle.getAisleContext().mUserId) == mUserId) {
+                            || Long.parseLong(mCurrentAisle.getAisleContext().mUserId) == mUserId
+                            || (VueApplication.getInstance().getmUserEmail() != null && VueApplication
+                                    .getInstance().getmUserEmail()
+                                    .equals(VueConstants.ADMIN_MAIL_ADDRESS))) {
                         editLayVisibility = true;
                         
                     } else {
@@ -744,7 +749,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    mixpanel.track("Aisle-UnBookmarked", aisleBookmarkProps);
+                    mixpanel.track("Aisle UnBookmarked", aisleBookmarkProps);
                     FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
                     if (mBookmarksCount > 0) {
                         mBookmarksCount--;
@@ -752,6 +757,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mCurrentAisle.setWindowBookmarkIndicator(bookmarkStatus);
                     handleBookmark(bookmarkStatus, mCurrentAisle.getAisleId());
                 } else {
+                    VueApplication.getInstance().registerUser(mixpanel);
                     bookmarkStatus = true;
                     JSONObject aisleUnbookmarkProps = new JSONObject();
                     try {
@@ -769,7 +775,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    mixpanel.track("Aisle-Bookmarked", aisleUnbookmarkProps);
+                    mixpanel.track("Aisle Bookmarked", aisleUnbookmarkProps);
                     FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
                     mBookmarksCount++;
                     mCurrentAisle.setWindowBookmarkIndicator(bookmarkStatus);
@@ -840,9 +846,11 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     public void share(final Context context, Activity activity) {
+        VueApplication.getInstance().registerUser(mixpanel);
         JSONObject aisleSharedProps = new JSONObject();
         try {
-            aisleSharedProps.put("Aisle_Id", mCurrentAisle.getAisleId());
+            aisleSharedProps.put("Aisle_Id", getItem(mCurrentAislePosition)
+                    .getAisleId());
             aisleSharedProps.put("Activity_Shared_From", "DetailViewActivity");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1230,7 +1238,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mixpanel.track("Image-Liked", aisleLikedProps);
+        VueApplication.getInstance().registerUser(mixpanel);
+        mixpanel.track("Image Liked", aisleLikedProps);
         Map<String, String> articleParams = new HashMap<String, String>();
         articleParams
                 .put("Category", mCurrentAisle.getAisleContext().mCategory);
@@ -1291,7 +1300,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mixpanel.track("Image-Unliked", aisleUnLikedProps);
+        VueApplication.getInstance().registerUser(mixpanel);
+        mixpanel.track("Image Unliked", aisleUnLikedProps);
         FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
         if (mCurrentAisle.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             // false
@@ -1315,15 +1325,17 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     private void handleBookmark(boolean isBookmarked, String aisleId) {
+        VueApplication.getInstance().registerUser(mixpanel);
         JSONObject aisleBookmarkProps = new JSONObject();
         try {
-            aisleBookmarkProps.put("Aisle_Id", mCurrentAisle.getAisleId());
-            aisleBookmarkProps.put("Activity_Bookmarked_From",
+            aisleBookmarkProps.put("Aisle_Id", getItem(mCurrentAislePosition)
+                    .getAisleId());
+            aisleBookmarkProps.put("Activity Bookmarked From",
                     "DetailViewActivity");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mixpanel.track("DetailView_Aisle_Bookmarked", aisleBookmarkProps);
+        mixpanel.track("Aisle Bookmarked", aisleBookmarkProps);
         AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
                 Long.parseLong(aisleId));
         ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager

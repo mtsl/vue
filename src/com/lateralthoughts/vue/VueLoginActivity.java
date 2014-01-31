@@ -297,13 +297,13 @@ public class VueLoginActivity extends FragmentActivity implements
                             public void onClick(View arg0) {
                                 loginSelectedProps = new JSONObject();
                                 try {
-                                    loginSelectedProps.put("login selected",
+                                    loginSelectedProps.put("Login Selected",
                                             "google Plus");
                                 } catch (JSONException e) {
                                     // TODO Auto-generated catch block
                                     e.printStackTrace();
                                 }
-                                mixpanel.track("login selected",
+                                mixpanel.track("Login Selected",
                                         loginSelectedProps);
                                 if (VueConnectivityManager
                                         .isNetworkConnected(VueLoginActivity.this)) {
@@ -605,17 +605,17 @@ public class VueLoginActivity extends FragmentActivity implements
                     com.facebook.Response response) {
                 loginSelectedProps = new JSONObject();
                 try {
-                    loginSelectedProps.put("login selected", "Facebook");
+                    loginSelectedProps.put("Login Selected", "Facebook");
                 } catch (JSONException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-                mixpanel.track("login selected", loginSelectedProps);
+                mixpanel.track("Login Selected", loginSelectedProps);
                 if (user != null) {
 
                     FlurryAgent.logEvent("Facebook_Logins");
                     FlurryAgent.endTimedEvent("Login_Time_Ends");
-                    FlurryAgent.logEvent("Login_Success");
+                    FlurryAgent.logEvent("Login Success");
                     VueUserManager userManager = VueUserManager
                             .getUserManager();
                     VueUser storedVueUser = null;
@@ -796,9 +796,8 @@ public class VueLoginActivity extends FragmentActivity implements
                 people.set("loggedIn with", "Facebook");
                 JSONObject nameTag = new JSONObject();
                 try {
-                    // Set an "mp_name_tag" super property 
+                    // Set an "mp_name_tag" super property
                     // for Streams if you find it useful.
-                    //TODO:  Check how it works.
                     nameTag.put("mp_name_tag", user.getFirstName());
                     mixpanel.registerSuperProperties(nameTag);
                 } catch(JSONException e) {
@@ -810,7 +809,7 @@ public class VueLoginActivity extends FragmentActivity implements
                 } catch (JSONException e1) {
                     e1.printStackTrace();
                 }
-                mixpanel.track("login success", loginprops);
+                mixpanel.track("Login Success", loginprops);
             }
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -1134,10 +1133,10 @@ public class VueLoginActivity extends FragmentActivity implements
             } catch (JSONException e1) {
                 e1.printStackTrace();
             }
-            mixpanel.track("login success", loginprops);
+            mixpanel.track("Login Success", loginprops);
             FlurryAgent.logEvent("GooglePlus_Logins");
             FlurryAgent.endTimedEvent("Login_Time_Ends");
-            FlurryAgent.logEvent("Login_Success");
+            FlurryAgent.logEvent("Login Success");
             mSharedPreferencesObj = this.getSharedPreferences(
                     VueConstants.SHAREDPREFERENCE_NAME, 0);
             VueUserManager userManager = VueUserManager.getUserManager();

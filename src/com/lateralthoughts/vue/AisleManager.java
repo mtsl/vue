@@ -42,7 +42,7 @@ public class AisleManager {
     }
     
     public interface ImageAddedCallback {
-        public void onImageAdded(String imageId);
+        public void onImageAdded(String aisleId, String imageId);
     }
     
     private static AisleManager sAisleManager = null;
@@ -76,9 +76,10 @@ public class AisleManager {
     }
     
     public void updateAisle(final Aisle aisle,
-            AisleUpdateCallback aisleUpdateCallback) {
+            AisleUpdateCallback aisleUpdateCallback,
+            boolean fromDetailsScreenFlag) {
         Thread t = new Thread(new AisleUpdateBackgroundThread(aisle,
-                aisleUpdateCallback));
+                aisleUpdateCallback, fromDetailsScreenFlag));
         t.start();
     }
     

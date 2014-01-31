@@ -54,6 +54,8 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.fasterxml.jackson.databind.deser.impl.NullProvider;
+import com.fasterxml.jackson.databind.deser.std.NullifyingDeserializer;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -260,6 +262,8 @@ public class VueLandingPageActivity extends Activity implements
                             storedVueUser.getFirstName());
                     VueApplication.getInstance().setmUserId(
                             storedVueUser.getId());
+                    VueApplication.getInstance().setmUserEmail(
+                            storedVueUser.getEmail());
                     VueApplication.getInstance().setmUserName(
                             storedVueUser.getFirstName() + " "
                                     + storedVueUser.getLastName());
@@ -366,25 +370,14 @@ public class VueLandingPageActivity extends Activity implements
             return true;
         } else if (item.getItemId() == R.id.menu_create_aisle) {
             if (mOtherSourceImagePath == null) {
-                JSONObject createAisleButtonProps = new JSONObject();
-                try {
-                    createAisleButtonProps.put("Create_Aisle_Button_Click",
-                            "Create aisle clicked");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                mixpanel.track("Create_Aisle_Button_Click",
-                        createAisleButtonProps);
+                VueApplication.getInstance().unregisterUser(mixpanel);
+                mixpanel.track("Create Aisle Button Click",
+                        null);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
-                        CreateAisleSelectionActivity.class);
-                Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-                        VueLandingPageActivity.this, false);
+                        DataEntryActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                if (!CreateAisleSelectionActivity.isActivityShowing) {
-                    CreateAisleSelectionActivity.isActivityShowing = true;
-                    startActivity(intent);
-                }
+                startActivity(intent);
             } else {
                 showDiscardOtherAppImageDialog();
             }
@@ -983,15 +976,14 @@ public class VueLandingPageActivity extends Activity implements
         } else {
             
         }
-        
+        VueApplication.getInstance().unregisterUser(mixpanel);
         JSONObject categorySelectedProps = new JSONObject();
         try {
-            categorySelectedProps.put("CategorySelected", catName);
+            categorySelectedProps.put("Category Selected", catName);
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        mixpanel.track("bezelCategorySelected", categorySelectedProps);
+        mixpanel.track("Bezel Category Selected", categorySelectedProps);
         FlurryAgent.logEvent(catName);
     }
     
@@ -1416,7 +1408,66 @@ public class VueLandingPageActivity extends Activity implements
                                                                 
                                                                 @Override
                                                                 public void onImageAdded(
+                                                                        String aisleId,
                                                                         String imageId) {
+                                                                    JSONObject imageUploadProps = new JSONObject();
+                                                                    AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                                                                            .getInstance(
+                                                                                    VueLandingPageActivity.this)
+                                                                            .getAisleAt(
+                                                                                    aisleId);
+                                                                    if (aisleWindowContent != null) {
+                                                                        VueUser storedVueUser = null;
+                                                                        try {
+                                                                            storedVueUser = Utils
+                                                                                    .readUserObjectFromFile(
+                                                                                            VueLandingPageActivity.this,
+                                                                                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                                                                        } catch (Exception e2) {
+                                                                            e2.printStackTrace();
+                                                                        }
+                                                                        if (storedVueUser != null) {
+                                                                            if (String
+                                                                                    .valueOf(
+                                                                                            storedVueUser
+                                                                                                    .getId())
+                                                                                    .equals(aisleWindowContent
+                                                                                            .getAisleContext().mUserId)) {
+                                                                                try {
+                                                                                    imageUploadProps
+                                                                                            .put("isOwnerOfAisle",
+                                                                                                    true);
+                                                                                } catch (JSONException e) {
+                                                                                    e.printStackTrace();
+                                                                                }
+                                                                            } else {
+                                                                                try {
+                                                                                    imageUploadProps
+                                                                                            .put("isOwnerOfAisle",
+                                                                                                    false);
+                                                                                } catch (JSONException e) {
+                                                                                    e.printStackTrace();
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    
+                                                                    try {
+                                                                        imageUploadProps
+                                                                                .put("AisleId",
+                                                                                        aisleId);
+                                                                        imageUploadProps
+                                                                                .put("imageId",
+                                                                                        imageId);
+                                                                        
+                                                                    } catch (JSONException e) {
+                                                                        
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                    VueApplication.getInstance().registerUser(mixpanel);
+                                                                    mixpanel.track(
+                                                                            "New Image Uploaded",
+                                                                            imageUploadProps);
                                                                     
                                                                 }
                                                             });
@@ -1432,8 +1483,62 @@ public class VueLandingPageActivity extends Activity implements
                                 new ImageAddedCallback() {
                                     
                                     @Override
-                                    public void onImageAdded(String imageId) {
+                                    public void onImageAdded(String aisleId,
+                                            String imageId) {
+                                        JSONObject imageUploadProps = new JSONObject();
+                                        AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                                                .getInstance(
+                                                        VueLandingPageActivity.this)
+                                                .getAisleAt(aisleId);
+                                        if (aisleWindowContent != null) {
+                                            VueUser storedVueUser = null;
+                                            try {
+                                                storedVueUser = Utils
+                                                        .readUserObjectFromFile(
+                                                                VueLandingPageActivity.this,
+                                                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                                            } catch (Exception e2) {
+                                                e2.printStackTrace();
+                                            }
+                                            if (storedVueUser != null) {
+                                                if (String
+                                                        .valueOf(
+                                                                storedVueUser
+                                                                        .getId())
+                                                        .equals(aisleWindowContent
+                                                                .getAisleContext().mUserId)) {
+                                                    try {
+                                                        imageUploadProps
+                                                                .put("isOwnerOfAisle",
+                                                                        true);
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                } else {
+                                                    try {
+                                                        imageUploadProps
+                                                                .put("isOwnerOfAisle",
+                                                                        false);
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }
+                                        }
                                         
+                                        try {
+                                            imageUploadProps.put("AisleId",
+                                                    aisleId);
+                                            imageUploadProps.put("imageId",
+                                                    imageId);
+                                            
+                                        } catch (JSONException e) {
+                                            
+                                            e.printStackTrace();
+                                        }
+                                        VueApplication.getInstance().registerUser(mixpanel);
+                                        mixpanel.track("New Image Uploaded",
+                                                imageUploadProps);
                                     }
                                 });
             }

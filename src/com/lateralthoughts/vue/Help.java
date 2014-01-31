@@ -132,6 +132,8 @@ public class Help extends Activity {
                             storedVueUser.getFirstName());
                     VueApplication.getInstance().setmUserId(
                             storedVueUser.getId());
+                    VueApplication.getInstance().setmUserEmail(
+                            storedVueUser.getEmail());
                     VueApplication.getInstance().setmUserName(
                             storedVueUser.getFirstName() + " "
                                     + storedVueUser.getLastName());

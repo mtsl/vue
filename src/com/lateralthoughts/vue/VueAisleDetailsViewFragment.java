@@ -3,6 +3,9 @@ package com.lateralthoughts.vue;
 //generic android & java goodies
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -444,7 +447,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                mixpanel.track("ADDED_COMMENTS_FROM_DETAILSVIEW", null);
+                VueApplication.getInstance().registerUser(mixpanel);
+                mixpanel.track("Added Comment", null);
                 FlurryAgent.logEvent("ADD_COMMENTS_DETAILSVIEW");
                 String etText = edtCommentView.getText().toString();
                 
@@ -631,7 +635,14 @@ public class VueAisleDetailsViewFragment extends Fragment {
         vueShareLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                mixpanel.track("SHARED_AISLE_FROM_DETAILSVIEW", null);
+                VueApplication.getInstance().registerUser(mixpanel);
+                JSONObject aisleSharedprops = new JSONObject();
+                try {
+                    aisleSharedprops.put("Aisle Shared From Screen", "DetailView Activity");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mixpanel.track("Shared Aisle", aisleSharedprops);
                 FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
                 closeKeyboard();
                 // to smoothen the touch response
@@ -660,7 +671,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                mixpanel.track("FINDAT_FROM_DETAILSVIEW", null);
+                VueApplication.getInstance().unregisterUser(mixpanel);
+                mixpanel.track("Find At", null);
                 FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
                 String url = mFindAtUrl;
                 if (url != null && url.startsWith("http")) {
@@ -692,7 +704,15 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                mixpanel.track("ADD_IMAGE_TO_AISLE_FROM_DETAILSVIEW", null);
+                VueApplication.getInstance().registerUser(mixpanel);
+                JSONObject imgAddedProps = new JSONObject();
+                try {
+                    imgAddedProps.put("Added Image From Screen", "DetailView Activity");
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                mixpanel.track("Added Image to Aisle", imgAddedProps);
                 FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
                 closeKeyboard();
                 // to smoothen the touch response

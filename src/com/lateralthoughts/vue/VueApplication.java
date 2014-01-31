@@ -31,6 +31,7 @@ import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueApplication extends Application {
     private static VueApplication sInstance;
@@ -58,6 +59,9 @@ public class VueApplication extends Application {
     
     public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
     public static final String LOAD_IMAGES_REQUEST_TAG = "LoadImagesTag";
+    public static final int LOG_LOW = 0;
+    public static final int LOG_MED = 1;
+    public static final int LOG_HIGH = 2;
     
     public int getmStatusBarHeight() {
         return mStatusBarHeight;
@@ -94,6 +98,16 @@ public class VueApplication extends Application {
     private boolean mFinishDetailsScreenFlag;
     
     private Long mUserId = null;
+    private String mUserEmail = null;
+    
+    public String getmUserEmail() {
+        return mUserEmail;
+    }
+    
+    public void setmUserEmail(String mUserEmail) {
+        this.mUserEmail = mUserEmail;
+    }
+    
     private String mUserName = null;
     
     public String getmUserName() {
@@ -321,6 +335,40 @@ public class VueApplication extends Application {
     
     public AisleWindowContent getPedningAisle() {
         return mAisleWindow;
+    }
+    
+    public void registerUser(MixpanelAPI mixpanel) {
+        VueUser storedVueUser = null;
+        try {
+            storedVueUser = Utils.readUserObjectFromFile(
+                    VueApplication.getInstance(),
+                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+        } catch (Exception e2) {
+            e2.printStackTrace();
+        }
+        if (storedVueUser != null)
+            ;
+        JSONObject nameTag = new JSONObject();
+        try {
+            // Set an "mp_name_tag" super property
+            // for Streams if you find it useful.
+            nameTag.put("mp_name_tag", storedVueUser.getFirstName());
+            mixpanel.registerSuperProperties(nameTag);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void unregisterUser(MixpanelAPI mixpanel) {
+        VueUser storedVueUser = null;
+        try {
+            storedVueUser = Utils.readUserObjectFromFile(
+                    VueApplication.getInstance(),
+                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            mixpanel.unregisterSuperProperty(storedVueUser.getFirstName());
+        } catch (Exception e2) {
+            e2.printStackTrace();
+        }
         
     }
 }

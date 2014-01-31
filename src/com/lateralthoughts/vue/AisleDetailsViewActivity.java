@@ -312,7 +312,6 @@ public class AisleDetailsViewActivity extends Activity {
     
     @Override
     protected void onStart() {
-        mixpanel.track(DETAILS_SCREEN_VISITOR, null);
         FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
         FlurryAgent.logEvent(DETAILS_SCREEN_VISITOR);
@@ -706,9 +705,6 @@ public class AisleDetailsViewActivity extends Activity {
         } catch (Exception e2) {
             e2.printStackTrace();
         }
-        b1.putBoolean(
-                VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
-                isUserAisleFlag);
         b1.putString(
                 VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
                 lookingFor);
@@ -736,9 +732,23 @@ public class AisleDetailsViewActivity extends Activity {
                     imagePath);
             b1.putBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG,
                     false);
+            b1.putBoolean(
+                    VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
+                    isUserAisleFlag);
         } else {
             b1.putBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG,
                     true);
+            if (VueApplication.getInstance().getmUserEmail() != null
+                    && VueApplication.getInstance().getmUserEmail()
+                            .equals(VueConstants.ADMIN_MAIL_ADDRESS)) {
+                b1.putBoolean(
+                        VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
+                        true);
+            } else {
+                b1.putBoolean(
+                        VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
+                        isUserAisleFlag);
+            }
         }
         intent.putExtras(b1);
         this.startActivityForResult(

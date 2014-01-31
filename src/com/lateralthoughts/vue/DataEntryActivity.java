@@ -338,6 +338,24 @@ public class DataEntryActivity extends Activity {
                                 R.string.add_imae_to_aisle_screen_title));
                 if (b.getBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG)) {
                     getActionBar().setTitle("Delete Images");
+                    mDataEntryFragment.mOccasionLayout.setVisibility(View.GONE);
+                    mDataEntryFragment.mFindatLayout.setVisibility(View.GONE);
+                    mDataEntryFragment.mSaySomethingAboutAisle
+                            .setVisibility(View.GONE);
+                    mDataEntryFragment.mSaysomethingClose
+                            .setVisibility(View.GONE);
+                    mDataEntryFragment.mLookingForPopup
+                            .setVisibility(View.GONE);
+                    mDataEntryFragment.mLookingForListviewLayout
+                            .setVisibility(View.GONE);
+                    mDataEntryFragment.mMainHeadingRow.setClickable(false);
+                    mDataEntryFragment.mMainHeadingRow.setEnabled(false);
+                    mVueDataentryKeyboardLayout.setVisibility(View.GONE);
+                    mVueDataentryKeyboardDone.setVisibility(View.GONE);
+                    mVueDataentryKeyboardCancel.setVisibility(View.GONE);
+                    mVueDataentryPostLayout.setVisibility(View.GONE);
+                    mVueDataentryDeleteLayout.setVisibility(View.GONE);
+                    showDefaultActionbar();
                     mDataEntryFragment.mDataEntryAislesViewpager
                             .setVisibility(View.VISIBLE);
                     try {
@@ -463,6 +481,12 @@ public class DataEntryActivity extends Activity {
                     e1.printStackTrace();
                 }
             }
+        } else {
+            if (mDataEntryFragment.mAisleImagePathList.size() == 0) {
+                mDataEntryFragment.mAddAnItemToAisle
+                        .setVisibility(View.VISIBLE);
+                mDataEntryFragment.lookingForTextClickFunctionality();
+            }
         }
     }
     
@@ -569,7 +593,7 @@ public class DataEntryActivity extends Activity {
     
     @Override
     protected void onStart() {
-        mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
+        //mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
         FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
         FlurryAgent.logEvent(CREATE_AISLE_SCREEN_VISITORS);
@@ -609,6 +633,8 @@ public class DataEntryActivity extends Activity {
                     mDataEntryFragment.mFindAtText.setText("");
                     mDataEntryFragment.mOtherSourceSelectedImageStore = "UnKnown";
                     mDataEntryFragment.mOtherSourceSelectedImageUrl = null;
+                    mDataEntryFragment.mAddAnItemToAisle
+                            .setVisibility(View.GONE);
                     mDataEntryFragment.setGalleryORCameraImage(imagePath,
                             false, this);
                 }
