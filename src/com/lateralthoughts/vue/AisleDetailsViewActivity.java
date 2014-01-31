@@ -19,7 +19,6 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -77,7 +76,8 @@ public class AisleDetailsViewActivity extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(this,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.aisle_details_activity_landing);
         mDrawerRight = (FrameLayout) findViewById(R.id.drawer_right);
         initialize();
@@ -230,6 +230,7 @@ public class AisleDetailsViewActivity extends Activity {
         mixpanel.flush();
         super.onBackPressed();
     }
+    
     private void initialize() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the main content when the drawer
@@ -352,7 +353,7 @@ public class AisleDetailsViewActivity extends Activity {
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
                 convertView = minflater.inflate(R.layout.vuecompareimg, null);
-                mViewHolder.img = (ImageView) convertView
+                mViewHolder.compareImage = (ImageView) convertView
                         .findViewById(R.id.vue_compareimg);
                 mViewHolder.likeImage = (ImageView) convertView
                         .findViewById(R.id.compare_like_dislike);
@@ -364,8 +365,8 @@ public class AisleDetailsViewActivity extends Activity {
                 params.addRule(RelativeLayout.CENTER_IN_PARENT);
                 params.setMargins(VueApplication.getInstance().getPixel(10), 0,
                         0, 0);
-                mViewHolder.img.setLayoutParams(params);
-                mViewHolder.img.setBackgroundColor(Color
+                mViewHolder.compareImage.setLayoutParams(params);
+                mViewHolder.compareImage.setBackgroundColor(Color
                         .parseColor(getResources().getString(R.color.white)));
                 RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -376,9 +377,10 @@ public class AisleDetailsViewActivity extends Activity {
             mViewHolder = (ViewHolder) convertView.getTag();
             mViewHolder.likeImage.setVisibility(View.INVISIBLE);
             mViewHolder.likeImage.setImageResource(R.drawable.thumb_up);
-            mViewHolder.img.setImageResource(R.drawable.no_image);
-            BitmapWorkerTask task = new BitmapWorkerTask(null, mViewHolder.img,
-                    mComparisionScreenHeight / 2, mViewHolder.pb);
+            mViewHolder.compareImage.setImageResource(R.drawable.no_image);
+            BitmapWorkerTask task = new BitmapWorkerTask(null,
+                    mViewHolder.compareImage, mComparisionScreenHeight / 2,
+                    mViewHolder.pb);
             String[] imagesArray = {
                     mImageDetailsArr.get(position).mCustomImageUrl,
                     mImageDetailsArr.get(position).mImageUrl };
@@ -390,7 +392,7 @@ public class AisleDetailsViewActivity extends Activity {
     }
     
     private class ViewHolder {
-        ImageView img;
+        ImageView compareImage;
         ImageView likeImage;
         ProgressBar pb;
     }
@@ -557,6 +559,7 @@ public class AisleDetailsViewActivity extends Activity {
                         .getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE);
                 String category = b
                         .getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY);
+                if(VueApplication.getInstance().getPedningAisle() == null){
                 if (lookingfor != null && lookingfor.trim().length() > 0
                         && !lookingfor.equals("Looking")) {
                     VueTrendingAislesDataModel
@@ -590,6 +593,9 @@ public class AisleDetailsViewActivity extends Activity {
                                     VueApplication.getInstance()
                                             .getClickedWindowID())
                             .getAisleContext().mDescription = description;
+                }
+                } else {
+                   //TODO: add image to the pending aisle. 
                 }
                 mVueAiselFragment.notifyAdapter();
                 ArrayList<String> findAtArrayList = b

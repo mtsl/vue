@@ -170,15 +170,17 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                                                     .size() > 0) {
                                                         for (int i = 0; i < aislesList
                                                                 .size(); i++) {
-                                                            VueTrendingAislesDataModel model = VueTrendingAislesDataModel
-                                                                    .getInstance(VueApplication
-                                                                            .getInstance());
+                                                          /*  if(aislesList.get(i).getImageList() != null) {*/
+                                                                VueTrendingAislesDataModel model = VueTrendingAislesDataModel
+                                                                        .getInstance(VueApplication
+                                                                                .getInstance());
                                                             model.addItemToList(
                                                                     aislesList
                                                                             .get(i)
                                                                             .getAisleContext().mAisleId,
                                                                     aislesList
                                                                             .get(i));
+                                                            /*}*/
                                                         }
                                                         
                                                         VueTrendingAislesDataModel

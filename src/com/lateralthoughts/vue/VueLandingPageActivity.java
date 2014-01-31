@@ -813,6 +813,7 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        if(VueConnectivityManager.isNetworkConnected(this)){
         SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         mLastRefreshTime = sharedPreferencesObj.getLong(
@@ -833,6 +834,7 @@ public class VueLandingPageActivity extends Activity implements
                         VueApplication.getInstance()).getFreshDataFromServer();
                 mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
             }
+        }
         }
     }
     

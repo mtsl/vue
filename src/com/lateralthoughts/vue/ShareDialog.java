@@ -311,13 +311,13 @@ public class ShareDialog {
                     shareText = mImagePathArray.get(0).getAisleOwnerName()
                             + " would like your opinion in finding "
                             + mImagePathArray.get(0).getLookingFor()
-                            + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more.";
+                            + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "+APPLINK;
                 } else {
                     shareText = VueApplication.getInstance().getmUserName()
                             + " would like you to check this aisle out on Vue - "
                             + mImagePathArray.get(0).getLookingFor() + " by "
                             + mImagePathArray.get(0).getAisleOwnerName()
-                            + ". Get Vue to create your own aisles!";
+                            + ". Get Vue to create your own aisles! "+APPLINK;
                 }
                 Intent i = new Intent(mContext, VueLoginActivity.class);
                 Bundle b = new Bundle();

@@ -1,7 +1,5 @@
 package com.mixpanel.android.mpmetrics;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI.InstanceProcessor;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,6 +10,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
+
+import com.mixpanel.android.mpmetrics.MixpanelAPI.InstanceProcessor;
 
 /**
 * BroadcastReciever for handling Google Cloud Messaging intents.

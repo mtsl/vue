@@ -235,9 +235,7 @@ public class DataBaseManager {
             AisleContext info = content.getAisleContext();
             ArrayList<AisleImageDetails> imageItemsArray = content
                     .getImageList();
-            if (imageItemsArray == null || imageItemsArray.size() == 0) {
-                continue;
-            }
+            
             if (whichScreen == TRENDING && mAislesOrderMap.isEmpty()) {
                 mAislesOrderMap.put(info.mAisleId, THOUSAND);
             } else if (whichScreen == TRENDING && !mAislesOrderMap.isEmpty()) {
@@ -322,6 +320,9 @@ public class DataBaseManager {
                     }
                 }
             }
+          /*  if (imageItemsArray == null || imageItemsArray.size() == 0) {
+                continue;
+            }*/
             if (imageItemsArray != null) {
                 for (AisleImageDetails imageDetails : imageItemsArray) {
                     Cursor imgCountCursor = context.getContentResolver().query(
@@ -1130,6 +1131,7 @@ public class DataBaseManager {
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry) it.next();
+            
             if (aisleImagesCursor.moveToFirst()) {
                 do {
                     if (aisleImagesCursor.getString(
@@ -1708,6 +1710,82 @@ public class DataBaseManager {
             }
             return LESS_TIMES_USED;
         }
+    }
+    public ArrayList<AisleWindowContent> getPendingAisles(){
+
+        AisleContext userInfo;
+        AisleImageDetails imageItemDetails;
+        AisleWindowContent aisleItem = null;
+        
+        LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
+        ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
+        ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
+        AisleImageDetails imageDetails = new AisleImageDetails();
+        imageItemsArray.add(imageDetails);
+         imageDetails.mImageUrl = VueConstants.NO_IMAGE_URL;
+         imageDetails.mAvailableWidth = VueApplication.getInstance().getPixel(VueConstants.NO_IMAGE_WIDTH);
+         imageDetails.mAvailableHeight = VueApplication.getInstance().getPixel(VueConstants.NO_IMAGE_HEIGHT);
+        Cursor aislesCursor = mContext.getContentResolver().query(VueConstants.CONTENT_URI, null, null, null, null);
+        if (aislesCursor.moveToFirst()) {
+            do {
+                userInfo = new AisleContext();
+                userInfo.mAisleId = aislesCursor.getString(aislesCursor
+                        .getColumnIndex(VueConstants.AISLE_Id));
+                userInfo.mUserId = aislesCursor.getString(aislesCursor
+                        .getColumnIndex(VueConstants.USER_ID));
+                userInfo.mFirstName = aislesCursor.getString(aislesCursor
+                        .getColumnIndex(VueConstants.FIRST_NAME));
+                userInfo.mLastName = aislesCursor.getString(aislesCursor
+                        .getColumnIndex(VueConstants.LAST_NAME));
+                userInfo.mJoinTime = Long.parseLong(aislesCursor
+                        .getString(aislesCursor
+                                .getColumnIndex(VueConstants.JOIN_TIME)));
+                userInfo.mLookingForItem = aislesCursor.getString(aislesCursor
+                        .getColumnIndex(VueConstants.LOOKING_FOR));
+                userInfo.mOccasion = aislesCursor.getString(aislesCursor
+                        .getColumnIndex(VueConstants.OCCASION));
+                userInfo.mBookmarkCount = Integer.parseInt(aislesCursor
+                        .getString(aislesCursor
+                                .getColumnIndex(VueConstants.BOOKMARK_COUNT)));
+                userInfo.mAisleOwnerImageURL = aislesCursor
+                        .getString(aislesCursor
+                                .getColumnIndex(VueConstants.AISLE_OWNER_IMAGE_URL));
+                map.put(userInfo.mAisleId, userInfo);
+            } while (aislesCursor.moveToNext());
+        }
+        Cursor aisleImagesCursor = mContext.getContentResolver().query(
+                VueConstants.IMAGES_CONTENT_URI, null, null, null,
+                VueConstants.ID + " ASC");
+       
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pairs = (Map.Entry) it.next();
+            boolean hasImage = false;
+            if (aisleImagesCursor.moveToFirst()) {
+               /* do {*/
+                    
+                    if (!aisleImagesCursor.getString(
+                            aisleImagesCursor
+                                    .getColumnIndex(VueConstants.AISLE_Id))
+                            .equals((String) pairs.getKey())) {
+                       // hasImage = true;
+                       // continue;
+                    }
+                    if(!hasImage) {
+                        userInfo = (AisleContext) pairs.getValue();
+                        aisleItem = new AisleWindowContent(userInfo.mAisleId);
+                        aisleItem.addAisleContent(userInfo, imageItemsArray);
+                        aisleContentArray.add(aisleItem);
+                    }
+          
+           /*     } while (aisleImagesCursor.moveToNext());*/
+                it.remove(); 
+            }
+            
+        }
+        aislesCursor.close();
+        aisleImagesCursor.close();
+        return aisleContentArray;
     }
     
     /**

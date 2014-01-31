@@ -91,8 +91,10 @@ public class AisleWindowContent {
         context.mShareCount = getRandomNumber();
         // lets parse through the image urls and update the image resolution
         // VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
+        if(mAisleImagesList != null){
         findMostLikesImage(mAisleImagesList);
         findAisleStage(mAisleImagesList);
+        }
         this.mAisleBookmarkIndicator = VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance()).getNetworkHandler()
                 .checkIsAisleBookmarked(mAisleId);
@@ -110,7 +112,9 @@ public class AisleWindowContent {
                 }
             }
         }
+        if(mAisleImagesList != null){
         udpateImageUrlsForDevice();
+        }
     }
     
     public ArrayList<AisleImageDetails> getImageList() {

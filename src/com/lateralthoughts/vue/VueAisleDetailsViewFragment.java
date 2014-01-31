@@ -701,23 +701,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                     
                     @Override
                     public void run() {
-                        Intent intent = new Intent(getActivity(),
-                                CreateAisleSelectionActivity.class);
-                        Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-                                getActivity(), true);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        Bundle b = new Bundle();
-                        b.putBoolean(
-                                VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
-                                true);
-                        intent.putExtras(b);
-                        if (!CreateAisleSelectionActivity.isActivityShowing) {
-                            CreateAisleSelectionActivity.isActivityShowing = true;
-                            getActivity()
-                                    .startActivityForResult(
-                                            intent,
-                                            VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
-                        }
+                        addImageToAisle();
                     }
                 }, addAilseDelay);
             }
@@ -862,6 +846,12 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
         }
         
+        @Override
+        public void onImageAddEvent() {
+            addImageToAisle();
+            
+        }
+        
     }
     
     private void addComment(EditText editText, RelativeLayout view) {
@@ -920,7 +910,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
     
     public void addAisleToWindow() {
         mAisleDetailsAdapter.addAisleToContentWindow();
-        
     }
     
     public AisleContext getAisleContext() {
@@ -1157,7 +1146,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
     }
     
     public void updateAisleScreen() {
-        
         mAisleDetailsAdapter.updateAisleListAdapter();
     }
     
@@ -1176,5 +1164,25 @@ public class VueAisleDetailsViewFragment extends Fragment {
         mAisleDetailsAdapter.mSetPager = false;
         notifyAdapter();
         mAisleDetailsAdapter.setmSetPagerToTrue();
+    }
+    
+    private void addImageToAisle() {
+        Intent intent = new Intent(getActivity(),
+                CreateAisleSelectionActivity.class);
+        Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+                getActivity(), true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        Bundle b = new Bundle();
+        b.putBoolean(
+                VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
+                true);
+        intent.putExtras(b);
+        if (!CreateAisleSelectionActivity.isActivityShowing) {
+            CreateAisleSelectionActivity.isActivityShowing = true;
+            getActivity()
+                    .startActivityForResult(
+                            intent,
+                            VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
+        }
     }
 }

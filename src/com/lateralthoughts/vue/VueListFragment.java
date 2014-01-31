@@ -60,6 +60,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.pendingaisles.PendingAisles;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
@@ -233,6 +234,23 @@ public class VueListFragment extends Fragment implements TextWatcher {
                         }
                         
                     } else if (s
+                            .equals(getString(R.string.pending_aisle_option))) {
+                        if (getActivity() instanceof VueLandingPageActivity) {
+                            startActivity(new Intent(
+                                    (VueLandingPageActivity) getActivity(),
+                                    PendingAisles.class));
+                        }
+                        if (getActivity() instanceof AisleDetailsViewActivity) {
+                            startActivity(new Intent(
+                                    (AisleDetailsViewActivity) getActivity(),
+                                    PendingAisles.class));
+                        } else if (getActivity() instanceof DataEntryActivity) {
+                            startActivity(new Intent(
+                                    (DataEntryActivity) getActivity(),
+                                    PendingAisles.class));
+                        }
+                        
+                    } else if (s
                             .equals(getString(R.string.sidemenu_option_About))) {
                         inflateAboutLayout();
                     } else if (s
@@ -303,7 +321,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     } else if (s
                             .equals(getString(R.string.sidemenu_option_Help))) {
                         Intent i = new Intent(getActivity(), Help.class);
-                        i.putExtra(VueConstants.HELP_KEY, getString(R.string.frombezel));
+                        i.putExtra(VueConstants.HELP_KEY,
+                                getString(R.string.frombezel));
                         startActivity(i);
                     }
                     return false;
@@ -412,7 +431,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 getString(R.string.sidemenu_option_Trending_Aisles),
                 R.drawable.trending, null);
         groups.add(item);
-        
+        item = new ListOptionItem(
+                getString(R.string.pending_aisle_option),
+                R.drawable.trending, null);
+        groups.add(item);
         String userName = getUserId();
         if (userName == null || userName.isEmpty()) {
             userName = getString(R.string.sidemenu_option_Me);
@@ -610,11 +632,14 @@ public class VueListFragment extends Fragment implements TextWatcher {
         
         @Override
         public int getChildrenCount(int groupPosition) {
+            if(groups.get(groupPosition).tag.equals(getActivity().getString(R.string.pending_aisle_option))){
+                return 0;
+            }
             if (groups.get(groupPosition).tag.equals("Categories")
                     || (groups.get(groupPosition).tag
                             .equals(getString(R.string.sidemenu_option_Invite_Friends)))
                     || groups.get(groupPosition).tag.equals("Settings")
-                    || groupPosition == 1) {
+                    || groupPosition == 2) {
                 return groups.get(groupPosition).children.size();
             }
             return 0;
@@ -653,7 +678,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
             } else {
                 holder = (Holder) convertView.getTag();
             }
-            if (groupPosition == 1) {
+            if (groupPosition == 2) {
                 if (groups.get(groupPosition).userPic != null) {
                     holder.icon
                             .setImageBitmap(groups.get(groupPosition).userPic);
