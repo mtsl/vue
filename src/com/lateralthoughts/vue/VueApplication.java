@@ -62,6 +62,7 @@ public class VueApplication extends Application {
     public static final int LOG_LOW = 0;
     public static final int LOG_MED = 1;
     public static final int LOG_HIGH = 2;
+    private AisleWindowContent mAisleWindow;
     
     public int getmStatusBarHeight() {
         return mStatusBarHeight;
@@ -326,16 +327,26 @@ public class VueApplication extends Application {
         editor.putLong(VueConstants.SCREEN_REFRESH_TIME, time_in_mins);
         editor.commit();
     }
+    public void setPendingAisle(AisleWindowContent aisleWindow) {
+        mAisleWindow = aisleWindow;
+    }
+    
+    public AisleWindowContent getPedningAisle() {
+        return mAisleWindow;
+    }
+    
     
    /* public void registerUser(MixpanelAPI mixpanel) {
         VueUser storedVueUser = null;
         try {
-            storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
+            storedVueUser = Utils.readUserObjectFromFile(
+                    VueApplication.getInstance(),
                     VueConstants.VUE_APP_USEROBJECT__FILENAME);
         } catch (Exception e2) {
             e2.printStackTrace();
         }
-        if(storedVueUser != null);
+        if (storedVueUser != null)
+            ;
         JSONObject nameTag = new JSONObject();
         try {
             // Set an "mp_name_tag" super property
@@ -343,15 +354,16 @@ public class VueApplication extends Application {
             nameTag.put("mp_name_tag", storedVueUser.getFirstName() + " "
                     + storedVueUser.getLastName());
             mixpanel.registerSuperProperties(nameTag);
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
-        } 
+        }
     }
     
     public void unregisterUser(MixpanelAPI mixpanel) {
         VueUser storedVueUser = null;
         try {
-            storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
+            storedVueUser = Utils.readUserObjectFromFile(
+                    VueApplication.getInstance(),
                     VueConstants.VUE_APP_USEROBJECT__FILENAME);
             mixpanel.unregisterSuperProperty(storedVueUser.getFirstName() + " "
                     + storedVueUser.getLastName());
@@ -360,4 +372,5 @@ public class VueApplication extends Application {
             e2.printStackTrace();
         }
     }*/
+
 }

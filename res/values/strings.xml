@@ -94,6 +94,7 @@
     <string name="decision_screen_title">Select your choice</string>
     <string name="hint_search">Search</string>
     <string name="sidemenu_option_Trending_Aisles">Trending</string>
+      <string name="pending_aisle_option">Pending Aisles</string>
     <string name="sidemenu_option_Me">Me</string>
     <string name="sidemenu_option_Categories">Categories</string>
     <string name="sidemeun_option_Settings">Settings</string>
@@ -166,6 +167,9 @@ We may change this privacy policy from time to time.  Please check back to see i
     <string name="com_mixpanel_android_previous">Previous question</string>
     <string name="com_mixpanel_android_logo">By Mixpanel</string>
     <string name="com_mixpanel_android_exit">Exit</string>
+    <string name="app_link">https://play.google.com/store/search?q=Silverlabs%20Vue</string>
+    <string name="suggest_something_owner">Add an item to this aisle</string>
+     <string name="suggest_something_guest">Suggest something</string>
 
     <color name="com_mixpanel_android_selected">#66ffffff</color>
     <!-- MixPanel -->

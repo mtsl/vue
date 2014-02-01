@@ -792,10 +792,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
             showLikeStatus(starLayVisibility, isMostLikedImage);
             
         }
-        
-        public void onReceiveImageCount(int count) {
-            
-        }
+    
         
         @Override
         public void onResetAdapter() {
@@ -867,6 +864,18 @@ public class VueAisleDetailsViewFragment extends Fragment {
         @Override
         public void onCloseKeyBoard() {
             closeKeyboard();
+            
+        }
+
+        @Override
+        public void onImageAddEvent() {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onReceiveImageCount(int count) {
+            // TODO Auto-generated method stub
             
         }
         

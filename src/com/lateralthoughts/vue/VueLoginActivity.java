@@ -37,7 +37,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -754,11 +753,9 @@ public class VueLoginActivity extends FragmentActivity implements
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-        Log.e("VueLoginActivity", "Facebook login -1");
         if (storedUserProfile == null
                 || (storedUserProfile != null && !storedUserProfile
                         .isUserDetailsModified())) {
-            Log.e("VueLoginActivity", "Facebook login 0");
             VueUserProfile vueUserProfile = new VueUserProfile(
                     VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
                             + user.getId()

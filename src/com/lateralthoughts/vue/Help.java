@@ -311,8 +311,12 @@ public class Help extends Activity {
             File f = mFileCache.getHelpFile(helpScreens[mCurrentPosition]);
             Bitmap bmp = decodeFile(f, mScreenHeight, mScreenWidth);
             if (bmp == null) {
+                try{
                 f = drawableToBitmap(mCurrentPosition);
                 bmp = decodeFile(f, mScreenHeight, mScreenWidth);
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
             }
             return bmp;
         }

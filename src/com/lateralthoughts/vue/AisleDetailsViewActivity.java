@@ -352,7 +352,7 @@ public class AisleDetailsViewActivity extends Activity {
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
                 convertView = minflater.inflate(R.layout.vuecompareimg, null);
-                mViewHolder.img = (ImageView) convertView
+                mViewHolder.compareImage = (ImageView) convertView
                         .findViewById(R.id.vue_compareimg);
                 mViewHolder.likeImage = (ImageView) convertView
                         .findViewById(R.id.compare_like_dislike);
@@ -364,8 +364,8 @@ public class AisleDetailsViewActivity extends Activity {
                 params.addRule(RelativeLayout.CENTER_IN_PARENT);
                 params.setMargins(VueApplication.getInstance().getPixel(10), 0,
                         0, 0);
-                mViewHolder.img.setLayoutParams(params);
-                mViewHolder.img.setBackgroundColor(Color
+                mViewHolder.compareImage.setLayoutParams(params);
+                mViewHolder.compareImage.setBackgroundColor(Color
                         .parseColor(getResources().getString(R.color.white)));
                 RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -376,9 +376,10 @@ public class AisleDetailsViewActivity extends Activity {
             mViewHolder = (ViewHolder) convertView.getTag();
             mViewHolder.likeImage.setVisibility(View.INVISIBLE);
             mViewHolder.likeImage.setImageResource(R.drawable.thumb_up);
-            mViewHolder.img.setImageResource(R.drawable.no_image);
-            BitmapWorkerTask task = new BitmapWorkerTask(null, mViewHolder.img,
-                    mComparisionScreenHeight / 2, mViewHolder.pb);
+            mViewHolder.compareImage.setImageResource(R.drawable.no_image);
+            BitmapWorkerTask task = new BitmapWorkerTask(null,
+                    mViewHolder.compareImage, mComparisionScreenHeight / 2,
+                    mViewHolder.pb);
             String[] imagesArray = {
                     mImageDetailsArr.get(position).mCustomImageUrl,
                     mImageDetailsArr.get(position).mImageUrl };
@@ -390,7 +391,7 @@ public class AisleDetailsViewActivity extends Activity {
     }
     
     private class ViewHolder {
-        ImageView img;
+        ImageView compareImage;
         ImageView likeImage;
         ProgressBar pb;
     }
@@ -557,39 +558,43 @@ public class AisleDetailsViewActivity extends Activity {
                         .getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE);
                 String category = b
                         .getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY);
-                if (lookingfor != null && lookingfor.trim().length() > 0
-                        && !lookingfor.equals("Looking")) {
-                    VueTrendingAislesDataModel
-                            .getInstance(AisleDetailsViewActivity.this)
-                            .getAisleAt(
-                                    VueApplication.getInstance()
-                                            .getClickedWindowID())
-                            .getAisleContext().mLookingForItem = lookingfor;
-                }
-                if (occasion != null && occasion.trim().length() > 0
-                        && !occasion.trim().equals("Occasion")) {
-                    VueTrendingAislesDataModel
-                            .getInstance(AisleDetailsViewActivity.this)
-                            .getAisleAt(
-                                    VueApplication.getInstance()
-                                            .getClickedWindowID())
-                            .getAisleContext().mOccasion = occasion;
-                }
-                if (category != null && category.trim().length() > 0) {
-                    VueTrendingAislesDataModel
-                            .getInstance(AisleDetailsViewActivity.this)
-                            .getAisleAt(
-                                    VueApplication.getInstance()
-                                            .getClickedWindowID())
-                            .getAisleContext().mCategory = category;
-                }
-                if (description != null && description.trim().length() > 0) {
-                    VueTrendingAislesDataModel
-                            .getInstance(AisleDetailsViewActivity.this)
-                            .getAisleAt(
-                                    VueApplication.getInstance()
-                                            .getClickedWindowID())
-                            .getAisleContext().mDescription = description;
+                if (VueApplication.getInstance().getPedningAisle() == null) {
+                    if (lookingfor != null && lookingfor.trim().length() > 0
+                            && !lookingfor.equals("Looking")) {
+                        VueTrendingAislesDataModel
+                                .getInstance(AisleDetailsViewActivity.this)
+                                .getAisleAt(
+                                        VueApplication.getInstance()
+                                                .getClickedWindowID())
+                                .getAisleContext().mLookingForItem = lookingfor;
+                    }
+                    if (occasion != null && occasion.trim().length() > 0
+                            && !occasion.trim().equals("Occasion")) {
+                        VueTrendingAislesDataModel
+                                .getInstance(AisleDetailsViewActivity.this)
+                                .getAisleAt(
+                                        VueApplication.getInstance()
+                                                .getClickedWindowID())
+                                .getAisleContext().mOccasion = occasion;
+                    }
+                    if (category != null && category.trim().length() > 0) {
+                        VueTrendingAislesDataModel
+                                .getInstance(AisleDetailsViewActivity.this)
+                                .getAisleAt(
+                                        VueApplication.getInstance()
+                                                .getClickedWindowID())
+                                .getAisleContext().mCategory = category;
+                    }
+                    if (description != null && description.trim().length() > 0) {
+                        VueTrendingAislesDataModel
+                                .getInstance(AisleDetailsViewActivity.this)
+                                .getAisleAt(
+                                        VueApplication.getInstance()
+                                                .getClickedWindowID())
+                                .getAisleContext().mDescription = description;
+                    }
+                } else {
+                    // TODO: add image to the pending aisle.
                 }
                 mVueAiselFragment.notifyAdapter();
                 ArrayList<String> findAtArrayList = b

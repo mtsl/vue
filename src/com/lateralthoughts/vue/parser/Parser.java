@@ -33,6 +33,7 @@ public class Parser {
     // imageItemsArray. Instead the called function clones and keeps a copy.
     // This is pretty inconsistent.
     // Let the allocation happen in one place for both items. Fix this!
+    private boolean isEmptyAilseCached = false;
     
     public ArrayList<AisleWindowContent> parseTrendingAislesResultData(
             String resultString, boolean loadMore) {
@@ -46,7 +47,9 @@ public class Parser {
             return aisleWindowContentList;
         }
         try {
-            aisleWindowContentList = parseAisleInformation(contentArray);
+            isEmptyAilseCached = true;
+            aisleWindowContentList = parseAisleInformation(contentArray,
+                    isEmptyAilseCached);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -199,7 +202,9 @@ public class Parser {
             JSONArray aisleArray = jsonResponse.getJSONArray("aisles");
             
             if (aisleArray != null) {
-                aisleWindowContentList = parseAisleInformation(aisleArray);
+                isEmptyAilseCached = true;
+                aisleWindowContentList = parseAisleInformation(aisleArray,
+                        isEmptyAilseCached);
             }
             
         } catch (Exception e) {
@@ -284,7 +289,8 @@ public class Parser {
     }
     
     private ArrayList<AisleWindowContent> parseAisleInformation(
-            JSONArray jsonArray) throws JSONException {
+            JSONArray jsonArray, boolean isEmptyAilseCached)
+            throws JSONException {
         ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject ailseItem = jsonArray.getJSONObject(i);
@@ -303,6 +309,14 @@ public class Parser {
                 aisleWindowContent.addAisleContent(aisleContext,
                         aisleImageDetailsList);
                 aisleWindowContentList.add(aisleWindowContent);
+            } else if (isEmptyAilseCached) {
+                // TODO: add a dummy imageDetails object.
+                /*
+                 * AisleWindowContent aisleWindowContent = new
+                 * AisleWindowContent(aisleContext.mAisleId);
+                 * aisleWindowContent.addAisleContent(aisleContext,null);
+                 * aisleWindowContentList.add(aisleWindowContent);
+                 */
             }
         }
         return aisleWindowContentList;

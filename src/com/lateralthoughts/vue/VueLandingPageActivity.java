@@ -374,14 +374,9 @@ public class VueLandingPageActivity extends Activity implements
                         null);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
-                        CreateAisleSelectionActivity.class);
-                Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-                        VueLandingPageActivity.this, false);
+                        DataEntryActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                if (!CreateAisleSelectionActivity.isActivityShowing) {
-                    CreateAisleSelectionActivity.isActivityShowing = true;
-                    startActivity(intent);
-                }
+                startActivity(intent);
             } else {
                 showDiscardOtherAppImageDialog();
             }
@@ -810,6 +805,7 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        if(VueConnectivityManager.isNetworkConnected(this)){
         SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         mLastRefreshTime = sharedPreferencesObj.getLong(
@@ -830,6 +826,7 @@ public class VueLandingPageActivity extends Activity implements
                         VueApplication.getInstance()).getFreshDataFromServer();
                 mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
             }
+        }
         }
     }
     

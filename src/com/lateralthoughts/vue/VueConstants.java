@@ -7,6 +7,9 @@ import android.net.Uri;
  * 
  */
 public class VueConstants {
+    public static final String NO_IMAGE_URL = "noimageurl";
+    public static final int NO_IMAGE_WIDTH = 200;
+    public static final int NO_IMAGE_HEIGHT = 200;
     public static final int IMG_LIKE_STATUS = 1;
     public static final int IMG_NONE_STATUS = 0;
     public static final String AISLE_STATGE_ONE = "frist_staage";
