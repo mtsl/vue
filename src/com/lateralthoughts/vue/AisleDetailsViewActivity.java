@@ -9,6 +9,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -19,6 +20,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -71,6 +73,7 @@ public class AisleDetailsViewActivity extends Activity {
     private FrameLayout mDrawerLeft, mDrawerRight;
     private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
     private MixpanelAPI mixpanel;
+    private boolean mHasToHelpShow;
     
     @SuppressLint("NewApi")
     @Override
@@ -80,7 +83,14 @@ public class AisleDetailsViewActivity extends Activity {
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.aisle_details_activity_landing);
         mDrawerRight = (FrameLayout) findViewById(R.id.drawer_right);
+        mHasToHelpShow = isDetailsHelpShown();
         initialize();
+        if (!mHasToHelpShow) {
+            DrawerLayout.LayoutParams layoutParams = new DrawerLayout.LayoutParams(
+                    VueApplication.getInstance().getPixel(320),
+                    LinearLayout.LayoutParams.MATCH_PARENT, Gravity.END);
+            mDrawerRight.setLayoutParams(layoutParams);
+        }
         mDrawerLeft = (FrameLayout) findViewById(R.id.content_frame2);
         
         mSlidListFrag = (VueListFragment) getFragmentManager()
@@ -443,6 +453,58 @@ public class AisleDetailsViewActivity extends Activity {
                 
             }, mComparisionDelay);
         }
+        if (VueApplication.getInstance().getClickedWindowCount() > 1) {
+            
+            // For the first time when user opens the details screen
+            // open a comparison screen after completion of ui
+            // and close it in 1 sec.
+            if (mHasToHelpShow) {
+                final int waitDelay = 2000;
+                final int comparisonShowTime = 1000;
+                new Handler().postDelayed(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        mDrawerLayout.openDrawer(mDrawerRight);
+                        new Handler().postDelayed(new Runnable() {
+                            
+                            @Override
+                            public void run() {
+                                mDrawerLayout.closeDrawer(mDrawerRight);
+                                new Handler().postDelayed(new Runnable() {
+                                    
+                                    @Override
+                                    public void run() {
+                                        DrawerLayout.LayoutParams layoutParams = new DrawerLayout.LayoutParams(
+                                                VueApplication.getInstance()
+                                                        .getPixel(320),
+                                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                                Gravity.END);
+                                        mDrawerRight
+                                                .setLayoutParams(layoutParams);
+                                        if (null != mImageDetailsArr
+                                                && mImageDetailsArr.size() != 0) {
+                                            mBottomAdapter = new ComparisionAdapter(
+                                                    AisleDetailsViewActivity.this);
+                                            mTopAdapter = new ComparisionAdapter(
+                                                    AisleDetailsViewActivity.this);
+                                            mBottomScroller
+                                                    .setAdapter(mBottomAdapter);
+                                            mTopScroller
+                                                    .setAdapter(mTopAdapter);
+                                            
+                                        }
+                                        
+                                    }
+                                }, 1000);
+                            }
+                        }, comparisonShowTime);
+                        
+                    }
+                }, waitDelay);
+                
+            }
+        }
     }
     
     @Override
@@ -518,6 +580,12 @@ public class AisleDetailsViewActivity extends Activity {
                 clearBitmaps();
                 super.onBackPressed();
             }
+            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+            Editor editor = sharedPreferencesObj.edit();
+            editor.putLong(VueConstants.DETAIALS_HELP_SHOWN_TIME,
+                    System.currentTimeMillis());
+            editor.commit();
         }
         return false;
         
@@ -594,7 +662,24 @@ public class AisleDetailsViewActivity extends Activity {
                                 .getAisleContext().mDescription = description;
                     }
                 } else {
-                    // TODO: add image to the pending aisle.
+                    if (lookingfor != null && lookingfor.trim().length() > 0
+                            && !lookingfor.equals("Looking")) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mLookingForItem = lookingfor;
+                    }
+                    if (occasion != null && occasion.trim().length() > 0
+                            && !occasion.trim().equals("Occasion")) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mOccasion = occasion;
+                    }
+                    if (category != null && category.trim().length() > 0) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mCategory = category;
+                    }
+                    if (description != null && description.trim().length() > 0) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mDescription = description;
+                    }
                 }
                 mVueAiselFragment.notifyAdapter();
                 ArrayList<String> findAtArrayList = b
@@ -818,4 +903,39 @@ public class AisleDetailsViewActivity extends Activity {
         }
     }
     
+    public boolean isDetailsHelpShown() {
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        boolean isHelpBlocked = sharedPreferencesObj.getBoolean(
+                VueConstants.DETAIALS_HELP_BLOCK, false);
+        boolean hasToShowHelp = sharedPreferencesObj.getBoolean(
+                VueConstants.DETAIALS_HELP_SHOWN, false);
+        Editor editor = sharedPreferencesObj.edit();
+        if (isHelpBlocked) {
+            return false;
+        } else if (!hasToShowHelp) {
+            editor.putBoolean(VueConstants.DETAIALS_HELP_SHOWN, true);
+            editor.putBoolean(VueConstants.DETAIALS_HELP_BLOCK, true);
+            editor.commit();
+            return true;
+        } else {
+            long currentTime = System.currentTimeMillis();
+            long savedTime = sharedPreferencesObj.getLong(
+                    VueConstants.DETAIALS_HELP_SHOWN_TIME, 0);
+            long millies = currentTime - savedTime;
+            int secs = (int) (millies / 1000);
+            int mins = secs / 60;
+            int hours = mins / 60;
+            if (hours > 48) {
+                // after two days if not seen the comparison screen
+                // show it once and blocked the help.
+                editor.putBoolean(VueConstants.DETAIALS_HELP_BLOCK, true);
+                editor.commit();
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+    }
 }

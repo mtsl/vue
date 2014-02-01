@@ -821,4 +821,15 @@ public class Utils {
             return "SAT";
         }
     }
+    
+    public static long dateDifference(long date) {
+        try {
+            long differenceInHours = (System.currentTimeMillis() - date)
+                    / (1000 * 60 * 60);
+            return differenceInHours;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

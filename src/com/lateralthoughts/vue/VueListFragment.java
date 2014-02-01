@@ -431,10 +431,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 getString(R.string.sidemenu_option_Trending_Aisles),
                 R.drawable.trending, null);
         groups.add(item);
-        item = new ListOptionItem(
+    /*    item = new ListOptionItem(
                 getString(R.string.pending_aisle_option),
                 R.drawable.trending, null);
-        groups.add(item);
+        groups.add(item);*/
         String userName = getUserId();
         if (userName == null || userName.isEmpty()) {
             userName = getString(R.string.sidemenu_option_Me);
@@ -639,7 +639,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     || (groups.get(groupPosition).tag
                             .equals(getString(R.string.sidemenu_option_Invite_Friends)))
                     || groups.get(groupPosition).tag.equals("Settings")
-                    || groupPosition == 2) {
+                    || groupPosition == 1) {
                 return groups.get(groupPosition).children.size();
             }
             return 0;
@@ -678,7 +678,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
             } else {
                 holder = (Holder) convertView.getTag();
             }
-            if (groupPosition == 2) {
+            if (groupPosition == 1) {
                 if (groups.get(groupPosition).userPic != null) {
                     holder.icon
                             .setImageBitmap(groups.get(groupPosition).userPic);

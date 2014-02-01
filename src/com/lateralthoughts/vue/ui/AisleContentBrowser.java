@@ -92,11 +92,13 @@ public class AisleContentBrowser extends ViewFlipper {
                         try {
                             aisleShareProps.put("Aisle_Id",
                                     mSpecialNeedsAdapter.getAisleId());
-                            aisleShareProps.put("Activity_Shared_From", "LandingPageActivity");
+                            aisleShareProps.put("Activity_Shared_From",
+                                    "LandingPageActivity");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        mixpanel.track("LandingPage_Aisle_Shared", aisleShareProps);
+                        mixpanel.track("LandingPage_Aisle_Shared",
+                                aisleShareProps);
                     }
                 }
             });
@@ -144,7 +146,8 @@ public class AisleContentBrowser extends ViewFlipper {
                     try {
                         aisleRateProps.put("Aisle_Id",
                                 mSpecialNeedsAdapter.getAisleId());
-                        aisleRateProps.put("Activity_Rated_From", "LandingPageActivity");
+                        aisleRateProps.put("Activity_Rated_From",
+                                "LandingPageActivity");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -189,11 +192,13 @@ public class AisleContentBrowser extends ViewFlipper {
                     try {
                         aisleBookmarkedProps.put("Aisle_Id",
                                 mSpecialNeedsAdapter.getAisleId());
-                        aisleBookmarkedProps.put("Activity_Bookmarked_From", "LandingPageActivity");
+                        aisleBookmarkedProps.put("Activity_Bookmarked_From",
+                                "LandingPageActivity");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    mixpanel.track("LandingPage_Aisle_Bookmarked", aisleBookmarkedProps);
+                    mixpanel.track("LandingPage_Aisle_Bookmarked",
+                            aisleBookmarkedProps);
                 }
             });
         }
@@ -339,6 +344,7 @@ public class AisleContentBrowser extends ViewFlipper {
                 return super.onTouchEvent(event);
             }
             if (mFirstX - mLastX > SWIPE_MIN_DISTANCE) {
+                VueApplication.getInstance().isUserSwipeAisle = true;
                 // In this case, the user is moving the finger right to left
                 // The current image needs to slide out left and the "next"
                 // image
@@ -476,6 +482,7 @@ public class AisleContentBrowser extends ViewFlipper {
                     return super.onTouchEvent(event);
                 }
             } else if (mLastX - mFirstX > SWIPE_MIN_DISTANCE) {
+                VueApplication.getInstance().isUserSwipeAisle = true;
                 requestDisallowInterceptTouchEvent(true);
                 mTouchMoved = true;
                 if (false == mAnimationInProgress) {
@@ -742,6 +749,7 @@ public class AisleContentBrowser extends ViewFlipper {
                 boolean starLayVisibility, boolean isMostLikedImage);
         
         public void onCloseKeyBoard();
+        
         public void onImageAddEvent();
         
     }

@@ -309,7 +309,7 @@ public class DataEntryActivity extends Activity {
                 mDataEntryFragment.mOccasionLayout.setVisibility(View.GONE);
                 mDataEntryFragment.mFindatLayout.setVisibility(View.GONE);
                 mDataEntryFragment.mSaySomethingAboutAisle
-                        .setVisibility(View.GONE);
+                        .setVisibility(View.VISIBLE);
                 mDataEntryFragment.mSaysomethingClose.setVisibility(View.GONE);
                 mDataEntryFragment.mIsUserAisleFlag = b
                         .getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG);
@@ -330,8 +330,10 @@ public class DataEntryActivity extends Activity {
                     firstTimeFlag = true;
                 }
                 if (firstTimeFlag) {
-                    mDataEntryFragment
-                            .showDetailsScreenImagesInDataentryScreen();
+                    if (VueApplication.getInstance().getPedningAisle() == null) {
+                        mDataEntryFragment
+                                .showDetailsScreenImagesInDataentryScreen();
+                    }
                 }
                 getActionBar().setTitle(
                         getResources().getString(
@@ -593,7 +595,7 @@ public class DataEntryActivity extends Activity {
     
     @Override
     protected void onStart() {
-        //mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
+        // mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
         FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
         FlurryAgent.logEvent(CREATE_AISLE_SCREEN_VISITORS);

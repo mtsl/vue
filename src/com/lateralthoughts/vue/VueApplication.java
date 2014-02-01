@@ -62,6 +62,7 @@ public class VueApplication extends Application {
     public static final int LOG_LOW = 0;
     public static final int LOG_MED = 1;
     public static final int LOG_HIGH = 2;
+    public boolean isUserSwipeAisle = false;
     
     public int getmStatusBarHeight() {
         return mStatusBarHeight;
