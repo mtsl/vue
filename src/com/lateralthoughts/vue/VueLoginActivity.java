@@ -794,7 +794,8 @@ public class VueLoginActivity extends FragmentActivity implements
             try {
                 // Set an "mp_name_tag" super property
                 // for Streams if you find it useful.
-                nameTag.put("mp_name_tag", user.getFirstName());
+                nameTag.put("mp_name_tag", user.getFirstName() + " "
+                        + user.getLastName());
                 mixpanel.registerSuperProperties(nameTag);
             } catch (JSONException e) {
                 e.printStackTrace();
