@@ -44,7 +44,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
     private String mImageId;
     private ImageAddedCallback mImageAddedCallback;
     private AisleContext mAisleContext;
-    
+
     @SuppressWarnings("static-access")
     public AddImageToAisleBackgroundThread(AisleContext aisleContext,
             VueImage vueImage, boolean fromDetailsScreenFlag, String imageId,
@@ -58,7 +58,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
         mImageAddedCallback = imageAddedCallback;
         mAisleContext = aisleContext;
     }
-    
+
     @Override
     public void onChange(int percent) {
         if (percent > mLastPercent) {
@@ -70,7 +70,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
             mLastPercent = percent;
         }
     }
-    
+
     @SuppressWarnings("deprecation")
     @Override
     public void run() {
@@ -103,7 +103,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
                     "application/json;charset=UTF-8"));
             httpPut.setEntity(entity);
-            
+
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpResponse response = httpClient.execute(httpPut);
             if (response.getEntity() != null
@@ -144,7 +144,10 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                     mResponseMessage));
                                     if (aisleImageDetails != null) {
                                         mImageAddedCallback
-                                                .onImageAdded(aisleImageDetails.mOwnerAisleId,aisleImageDetails.mId);
+                                                .onImageAdded(
+                                                        aisleImageDetails.mOwnerAisleId,
+                                                        aisleImageDetails.mId,
+                                                        mFromDetailsScreenFlag);
                                         AisleWindowContent aisleItem = null;
                                         if (mAisleContext != null) {
                                             ArrayList<AisleImageDetails> arrayList = new ArrayList<AisleImageDetails>();
@@ -183,7 +186,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                                 VueApplication
                                                                         .getInstance())
                                                         .removeAisleFromList(0);
-                                                
+
                                                 VueTrendingAislesDataModel
                                                         .getInstance(
                                                                 VueApplication
@@ -200,11 +203,11 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                         aisleWindowContent
                                                                 .getAisleContext(),
                                                         aisleImages);
-                                                
+
                                                 Utils.sIsAisleChanged = true;
                                                 Utils.mChangeAilseId = aisleWindowContent
                                                         .getAisleId();
-                                                
+
                                                 VueTrendingAislesDataModel
                                                         .getInstance(
                                                                 VueApplication
@@ -239,7 +242,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                                     .getNetworkHandler().offset,
                                                             DataBaseManager.AISLE_CREATED);
                                         } else {
-                                            String s[] = { aisleImageDetails.mOwnerAisleId };
+                                            String s[] = {aisleImageDetails.mOwnerAisleId};
                                             ArrayList<AisleWindowContent> list = DataBaseManager
                                                     .getInstance(
                                                             VueApplication
@@ -270,10 +273,12 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                             }
                                         }
                                     } else {
-                                        mImageAddedCallback.onImageAdded(null, null);
+                                        mImageAddedCallback.onImageAdded(null,
+                                                null, mFromDetailsScreenFlag);
                                     }
                                 } catch (JSONException e) {
-                                    mImageAddedCallback.onImageAdded(null, null);
+                                    mImageAddedCallback.onImageAdded(null,
+                                            null, mFromDetailsScreenFlag);
                                     e.printStackTrace();
                                 }
                             } else {
@@ -285,8 +290,10 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                 } catch (JSONException e) {
                                 }
                                 if (aisleImageDetails != null) {
-                                    mImageAddedCallback
-                                            .onImageAdded(aisleImageDetails.mOwnerAisleId, aisleImageDetails.mId);
+                                    mImageAddedCallback.onImageAdded(
+                                            aisleImageDetails.mOwnerAisleId,
+                                            aisleImageDetails.mId,
+                                            mFromDetailsScreenFlag);
                                     AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
                                             .getInstance(
                                                     VueApplication
@@ -317,7 +324,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                                     .getInstance())
                                                     .dataObserver();
                                             try {
-                                                String s[] = { aisleImageDetails.mOwnerAisleId };
+                                                String s[] = {aisleImageDetails.mOwnerAisleId};
                                                 ArrayList<AisleWindowContent> list = DataBaseManager
                                                         .getInstance(
                                                                 VueApplication
@@ -349,11 +356,13 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                         }
                                     }
                                 } else {
-                                    mImageAddedCallback.onImageAdded(null, null);
+                                    mImageAddedCallback.onImageAdded(null,
+                                            null, mFromDetailsScreenFlag);
                                 }
                             }
                         } else {
-                            mImageAddedCallback.onImageAdded(null, null);
+                            mImageAddedCallback.onImageAdded(null, null,
+                                    mFromDetailsScreenFlag);
                             Toast.makeText(
                                     VueApplication.getInstance(),
                                     VueApplication
@@ -362,7 +371,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                             .getString(
                                                     R.string.upload_failed_mesg),
                                     Toast.LENGTH_LONG).show();
-                            
+
                         }
                     }
                 });

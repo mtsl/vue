@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -895,7 +896,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
         JSONArray dataArray = mainJsonObj.getJSONArray("data");
         if (dataArray != null && dataArray.length() > 0) {
             facebookFriendsDetailsList = new ArrayList<FbGPlusDetails>();
-            
             for (int i = 0; i < dataArray.length(); i++) {
                 
                 JSONObject jsonObj = dataArray.getJSONObject(i);

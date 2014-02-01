@@ -73,6 +73,7 @@ public class ArcMenu extends RelativeLayout {
         browserLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                
                 itemClickFunctionality(browserLayout, 2);
             }
         });

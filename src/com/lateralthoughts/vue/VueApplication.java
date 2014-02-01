@@ -55,7 +55,7 @@ public class VueApplication extends Application {
     public long mLaunchTime;
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
-    public String MIXPANEL_TOKEN = "d5ac13097eaf8acefc264d21457307a1";
+    public String MIXPANEL_TOKEN = "0b560991fe02d44932efedeff66e54f5";//"d5ac13097eaf8acefc264d21457307a1";
     
     public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
     public static final String LOAD_IMAGES_REQUEST_TAG = "LoadImagesTag";
@@ -327,7 +327,7 @@ public class VueApplication extends Application {
         editor.commit();
     }
     
-    public void registerUser(MixpanelAPI mixpanel) {
+   /* public void registerUser(MixpanelAPI mixpanel) {
         VueUser storedVueUser = null;
         try {
             storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
@@ -338,9 +338,10 @@ public class VueApplication extends Application {
         if(storedVueUser != null);
         JSONObject nameTag = new JSONObject();
         try {
-            // Set an "mp_name_tag" super property 
+            // Set an "mp_name_tag" super property
             // for Streams if you find it useful.
-            nameTag.put("mp_name_tag", storedVueUser.getFirstName());
+            nameTag.put("mp_name_tag", storedVueUser.getFirstName() + " "
+                    + storedVueUser.getLastName());
             mixpanel.registerSuperProperties(nameTag);
         } catch(JSONException e) {
             e.printStackTrace();
@@ -352,9 +353,11 @@ public class VueApplication extends Application {
         try {
             storedVueUser = Utils.readUserObjectFromFile(VueApplication.getInstance(),
                     VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            mixpanel.unregisterSuperProperty(storedVueUser.getFirstName());
+            mixpanel.unregisterSuperProperty(storedVueUser.getFirstName() + " "
+                    + storedVueUser.getLastName());
+            //mixpanel.clearSuperProperties();
         } catch (Exception e2) {
             e2.printStackTrace();
         }
-    }
+    }*/
 }

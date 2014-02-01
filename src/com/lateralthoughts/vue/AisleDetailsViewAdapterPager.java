@@ -57,6 +57,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueAisleDetailsViewFragment.ShareViaVueListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.Comment;
 import com.lateralthoughts.vue.domain.ImageCommentRequest;
@@ -230,22 +231,32 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 
                 @Override
                 public void run() {
-                    VueApplication.getInstance().unregisterUser(mixpanel);
                     JSONObject aisleViewedProps = new JSONObject();
                     try {
-                        aisleViewedProps.put("AisleId",
+                        aisleViewedProps.put("Aisle Id",
                                 getItem(mCurrentAislePosition).getAisleId());
+                        aisleViewedProps.put("Owner Id",
+                                getItem(mCurrentAislePosition)
+                                        .getAisleContext().mUserId);
+                        aisleViewedProps.put("Owner Name",
+                                getItem(mCurrentAislePosition)
+                                        .getAisleContext().mFirstName);
+                        aisleViewedProps.put("Share Count",
+                                getItem(mCurrentAislePosition)
+                                        .getAisleContext().mShareCount);
+                        aisleViewedProps.put("Images Count",
+                                getItem(mCurrentAislePosition)
+                                        .getImageList().size());
                         aisleViewedProps.put("Category",
                                 getItem(mCurrentAislePosition)
                                         .getAisleContext().mCategory);
-                        aisleViewedProps.put("Lookingfor",
+                        aisleViewedProps.put("Looking For",
                                 getItem(mCurrentAislePosition)
                                         .getAisleContext().mLookingForItem);
                         aisleViewedProps.put("Occasion",
                                 getItem(mCurrentAislePosition)
                                         .getAisleContext().mOccasion);
                     } catch (JSONException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                     mixpanel.track("Aisle Viewed", aisleViewedProps);
@@ -734,27 +745,42 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 mIsBookImageClciked = true;
                 boolean bookmarkStatus = false;
                 if (getItem(mCurrentAislePosition).getWindowBookmarkIndicator()) {
-                    VueApplication.getInstance().registerUser(mixpanel);
+                    String imgOwnerId = getItem(mCurrentAislePosition).getAisleContext().mAisleOwnerImageURL;
+                    String userId = VueTrendingAislesDataModel.getInstance(mContext).getNetworkHandler().getUserId();
+                    boolean isOwner = false;
+                    if(imgOwnerId == userId) {
+                        isOwner = true;
+                    }
                     JSONObject aisleBookmarkProps = new JSONObject();
                     try {
                         aisleBookmarkProps.put("AisleId",
                                 getItem(mCurrentAislePosition).getAisleId());
+                        aisleBookmarkProps.put("Is Aisle Owner", isOwner);
+                        aisleBookmarkProps.put("Owner Name",
+                                getItem(mCurrentAislePosition)
+                                        .getAisleContext().mFirstName);
+                        aisleBookmarkProps.put("Share Count",
+                                getItem(mCurrentAislePosition)
+                                        .getAisleContext().mShareCount);
+                        aisleBookmarkProps.put("Images Count",
+                                getItem(mCurrentAislePosition)
+                                        .getImageList().size());
                         aisleBookmarkProps.put("Category",
                                 getItem(mCurrentAislePosition)
                                         .getAisleContext().mCategory);
-                        aisleBookmarkProps.put("Lookingfor",
+                        aisleBookmarkProps.put("Looking For",
                                 getItem(mCurrentAislePosition)
                                         .getAisleContext().mLookingForItem);
                         aisleBookmarkProps.put("Occasion",
                                 getItem(mCurrentAislePosition)
                                         .getAisleContext().mOccasion);
-                        aisleBookmarkProps.put("ScreenName",
-                                "DetailViewActivity");
+                        aisleBookmarkProps.put("Shared From",
+                                "Detail View Screen");
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    mixpanel.track("Aisle UnBookmarked", aisleBookmarkProps);
+                    mixpanel.track("Bookmark Removed", aisleBookmarkProps);
                     FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
                     if (mBookmarksCount > 0) {
                         mBookmarksCount--;
@@ -764,12 +790,28 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     handleBookmark(bookmarkStatus,
                             getItem(mCurrentAislePosition).getAisleId());
                 } else {
-                    VueApplication.getInstance().registerUser(mixpanel);
                     bookmarkStatus = true;
+                    String imgOwnerId = getItem(mCurrentAislePosition).getAisleContext().mAisleOwnerImageURL;
+                    String userId = VueTrendingAislesDataModel.getInstance(mContext).getNetworkHandler().getUserId();
+                    boolean isOwner = false;
+                    if(imgOwnerId == userId) {
+                        isOwner = true;
+                    }
                     JSONObject aisleUnbookmarkProps = new JSONObject();
                     try {
                         aisleUnbookmarkProps.put("AisleId",
                                 getItem(mCurrentAislePosition).getAisleId());
+                        aisleUnbookmarkProps.put("Is Aisle Owner",
+                                isOwner);
+                        aisleUnbookmarkProps.put("Owner Name",
+                                getItem(mCurrentAislePosition)
+                                        .getAisleContext().mFirstName);
+                        aisleUnbookmarkProps.put("Share Count",
+                                getItem(mCurrentAislePosition)
+                                        .getAisleContext().mShareCount);
+                        aisleUnbookmarkProps.put("Images Count",
+                                getItem(mCurrentAislePosition)
+                                        .getImageList().size());
                         aisleUnbookmarkProps.put("Category",
                                 getItem(mCurrentAislePosition)
                                         .getAisleContext().mCategory);
@@ -779,10 +821,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         aisleUnbookmarkProps.put("Occasion",
                                 getItem(mCurrentAislePosition)
                                         .getAisleContext().mOccasion);
-                        aisleUnbookmarkProps.put("ScreenName",
-                                "DetailViewActivity");
+                        aisleUnbookmarkProps.put("Bookmarked From",
+                                "Detail View Screen");
                     } catch (JSONException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                     mixpanel.track("Aisle Bookmarked", aisleUnbookmarkProps);
@@ -860,20 +901,34 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     public void share(final Context context, Activity activity) {
-        VueApplication.getInstance().registerUser(mixpanel);
+        String imgOwnerId = getItem(mCurrentAislePosition).getAisleContext().mAisleOwnerImageURL;
+        String userId = VueTrendingAislesDataModel.getInstance(mContext).getNetworkHandler().getUserId();
+        boolean isOwner = false;
+        if(imgOwnerId == userId) {
+            isOwner = true;
+        }
         JSONObject aisleSharedProps = new JSONObject();
         try {
-            aisleSharedProps.put("Aisle_Id", getItem(mCurrentAislePosition)
+            aisleSharedProps.put("Aisle Id", getItem(mCurrentAislePosition)
                     .getAisleId());
-            aisleSharedProps.put("Activity_Shared_From", "DetailViewActivity");
+            aisleSharedProps.put("Is Aisle Owner", isOwner);
+            aisleSharedProps.put("Owner Name",
+                    getItem(mCurrentAislePosition)
+                            .getAisleContext().mFirstName);
+            aisleSharedProps.put("Share Count",
+                    getItem(mCurrentAislePosition)
+                            .getAisleContext().mShareCount);
+            aisleSharedProps.put("Images Count",
+                    getItem(mCurrentAislePosition)
+                            .getImageList().size());
+            aisleSharedProps.put("Shared From", "Detail View Screen");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mixpanel.track("Aisle Shared", aisleSharedProps);
         getItem(mCurrentAislePosition).getAisleContext().mShareCount = getItem(
                 mCurrentAislePosition).getAisleContext().mShareCount + 1;
         getItem(mCurrentAislePosition).setmShareIndicator(true);
-        mShare = new ShareDialog(context, activity);
+        mShare = new ShareDialog(context, activity, mixpanel, aisleSharedProps);
         FileCache ObjFileCache = new FileCache(context);
         ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
         if (getItem(mCurrentAislePosition).getImageList() != null
@@ -1034,6 +1089,34 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES,
                                 false);
                     }
+                    String imgOwnerId = getItem(mCurrentAislePosition).getAisleContext().mAisleOwnerImageURL;
+                    String userId = VueTrendingAislesDataModel.getInstance(mContext).getNetworkHandler().getUserId();
+                    boolean isOwner = false;
+                    if(imgOwnerId == userId) {
+                        isOwner = true;
+                    }
+                    JSONObject aisleLikedProps = new JSONObject();
+                    try {
+                        aisleLikedProps.put("Image Id", getItem(mCurrentAislePosition)
+                                .getImageList().get(mCurrentDispImageIndex).mId);
+                        aisleLikedProps.put("Aisle Id", getItem(mCurrentAislePosition)
+                                .getAisleId());
+                        aisleLikedProps.put("Is Aisle Owner", isOwner);
+                        aisleLikedProps.put("Owner Name", getItem(mCurrentAislePosition)
+                                .getAisleContext().mFirstName);
+                        aisleLikedProps.put("Like Count", getItem(mCurrentAislePosition)
+                                .getImageList().get(mCurrentDispImageIndex).mLikesCount);
+                        aisleLikedProps.put("Category", getItem(mCurrentAislePosition)
+                                .getAisleContext().mCategory);
+                        aisleLikedProps.put("Looking For", getItem(mCurrentAislePosition)
+                                .getAisleContext().mLookingForItem);
+                        aisleLikedProps.put("Occasion", getItem(mCurrentAislePosition)
+                                .getAisleContext().mOccasion);
+                        aisleLikedProps.put("Unliked From", "Detail View Screen");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mixpanel.track("Image Unliked", aisleLikedProps);
                     
                 } else {
                     getItem(mCurrentAislePosition).getImageList().get(
@@ -1043,6 +1126,34 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                             mCurrentAislePosition).getImageList().get(
                             mCurrentDispImageIndex).mLikesCount + 1;
                     sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, true);
+                    String imgOwnerId = getItem(mCurrentAislePosition).getAisleContext().mAisleOwnerImageURL;
+                    String userId = VueTrendingAislesDataModel.getInstance(mContext).getNetworkHandler().getUserId();
+                    boolean isOwner = false;
+                    if(imgOwnerId == userId) {
+                        isOwner = true;
+                    }
+                    JSONObject aisleLikedProps = new JSONObject();
+                    try {
+                        aisleLikedProps.put("Image Id", getItem(mCurrentAislePosition)
+                                .getImageList().get(mCurrentDispImageIndex).mId);
+                        aisleLikedProps.put("Aisle Id", getItem(mCurrentAislePosition)
+                                .getAisleId());
+                        aisleLikedProps.put("Is Aisle Owner", isOwner);
+                        aisleLikedProps.put("Owner Name", getItem(mCurrentAislePosition)
+                                .getAisleContext().mFirstName);
+                        aisleLikedProps.put("Like Count", getItem(mCurrentAislePosition)
+                                .getImageList().get(mCurrentDispImageIndex).mLikesCount);
+                        aisleLikedProps.put("Category", getItem(mCurrentAislePosition)
+                                .getAisleContext().mCategory);
+                        aisleLikedProps.put("LookingfFor", getItem(mCurrentAislePosition)
+                                .getAisleContext().mLookingForItem);
+                        aisleLikedProps.put("Occasion", getItem(mCurrentAislePosition)
+                                .getAisleContext().mOccasion);
+                        aisleLikedProps.put("Liked From", "Detail View Screen");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mixpanel.track("Image Liked", aisleLikedProps);
                     
                 }
                 mLikes = getItem(mCurrentAislePosition).getImageList().get(
@@ -1263,23 +1374,33 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 e2.printStackTrace();
             }
         }
+        String imgOwnerId = getItem(mCurrentAislePosition).getAisleContext().mAisleOwnerImageURL;
+        String userId = VueTrendingAislesDataModel.getInstance(mContext).getNetworkHandler().getUserId();
+        boolean isOwner = false;
+        if(imgOwnerId == userId) {
+            isOwner = true;
+        }
         JSONObject aisleLikedProps = new JSONObject();
         try {
-            aisleLikedProps.put("ImageId", getItem(mCurrentAislePosition)
+            aisleLikedProps.put("Image Id", getItem(mCurrentAislePosition)
                     .getImageList().get(position).mId);
-            aisleLikedProps.put("AisleId", getItem(mCurrentAislePosition)
+            aisleLikedProps.put("Aisle Id", getItem(mCurrentAislePosition)
                     .getAisleId());
+            aisleLikedProps.put("Is Aisle Owner", isOwner);
+            aisleLikedProps.put("Owner Name", getItem(mCurrentAislePosition)
+                    .getAisleContext().mFirstName);
+            aisleLikedProps.put("Like Count", getItem(mCurrentAislePosition)
+                    .getImageList().get(mCurrentDispImageIndex).mLikesCount);
             aisleLikedProps.put("Category", getItem(mCurrentAislePosition)
                     .getAisleContext().mCategory);
-            aisleLikedProps.put("Lookingfor", getItem(mCurrentAislePosition)
+            aisleLikedProps.put("Looking For", getItem(mCurrentAislePosition)
                     .getAisleContext().mLookingForItem);
             aisleLikedProps.put("Occasion", getItem(mCurrentAislePosition)
                     .getAisleContext().mOccasion);
-            aisleLikedProps.put("ScreenName", "DetailViewActivity");
+            aisleLikedProps.put("Liked From", "Detail View Screen");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        VueApplication.getInstance().registerUser(mixpanel);
         mixpanel.track("Image Liked", aisleLikedProps);
         Map<String, String> articleParams = new HashMap<String, String>();
         articleParams.put("Category", getItem(mCurrentAislePosition)
@@ -1327,23 +1448,33 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     private void onChangeDislikesCount(int position) {
+        String imgOwnerId = getItem(mCurrentAislePosition).getAisleContext().mAisleOwnerImageURL;
+        String userId = VueTrendingAislesDataModel.getInstance(mContext).getNetworkHandler().getUserId();
+        boolean isOwner = false;
+        if(imgOwnerId == userId) {
+            isOwner = true;
+        }
         JSONObject aisleUnLikedProps = new JSONObject();
         try {
-            aisleUnLikedProps.put("ImageId", getItem(mCurrentAislePosition)
+            aisleUnLikedProps.put("Image Id", getItem(mCurrentAislePosition)
                     .getImageList().get(position).mId);
-            aisleUnLikedProps.put("AisleId", getItem(mCurrentAislePosition)
+            aisleUnLikedProps.put("Aisle Id", getItem(mCurrentAislePosition)
                     .getAisleId());
+            aisleUnLikedProps.put("Is Aisle Owner", isOwner);
+            aisleUnLikedProps.put("Owner Name", getItem(mCurrentAislePosition)
+                    .getAisleContext().mFirstName);
+            aisleUnLikedProps.put("Like Count", getItem(mCurrentAislePosition)
+                    .getImageList().get(mCurrentDispImageIndex).mLikesCount);
             aisleUnLikedProps.put("Category", getItem(mCurrentAislePosition)
                     .getAisleContext().mCategory);
-            aisleUnLikedProps.put("Lookingfor", getItem(mCurrentAislePosition)
+            aisleUnLikedProps.put("Looking For", getItem(mCurrentAislePosition)
                     .getAisleContext().mLookingForItem);
             aisleUnLikedProps.put("Occasion", getItem(mCurrentAislePosition)
                     .getAisleContext().mOccasion);
-            aisleUnLikedProps.put("ScreenName", "DetailViewActivity");
+            aisleUnLikedProps.put("Unlike From", "Detail View Screen");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        VueApplication.getInstance().registerUser(mixpanel);
         mixpanel.track("Image Unliked", aisleUnLikedProps);
         FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
         if (getItem(mCurrentAislePosition).getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
@@ -1369,17 +1500,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     private void handleBookmark(boolean isBookmarked, String aisleId) {
-        VueApplication.getInstance().registerUser(mixpanel);
-        JSONObject aisleBookmarkProps = new JSONObject();
-        try {
-            aisleBookmarkProps.put("Aisle_Id", getItem(mCurrentAislePosition)
-                    .getAisleId());
-            aisleBookmarkProps.put("Activity Bookmarked From",
-                    "DetailViewActivity");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mixpanel.track("Aisle Bookmarked", aisleBookmarkProps);
         AisleBookmark aisleBookmark = new AisleBookmark(null, isBookmarked,
                 Long.parseLong(aisleId));
         ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager

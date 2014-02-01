@@ -73,7 +73,7 @@ public class ShareDialog {
     private ListView mListview = null;
     private MixpanelAPI mixpanel;
     private static final String APPLINK = "https://play.google.com/store/apps/details?id=com.lateralthoughts.vue";
-    
+    private JSONObject aisleSharedProps;
     public void dismisDialog() {
         mShareDialog.dismiss();
     }
@@ -83,11 +83,11 @@ public class ShareDialog {
      * @param context
      *            Context
      */
-    public ShareDialog(Context context, Activity activity) {
-        mixpanel = MixpanelAPI.getInstance(activity,
-                VueApplication.getInstance().MIXPANEL_TOKEN);
+    public ShareDialog(Context context, Activity activity, MixpanelAPI mixpanel, JSONObject aisleSharedProps) {
+        this.mixpanel = mixpanel;
         this.mContext = context;
         this.mActivity = activity;
+        this.aisleSharedProps = aisleSharedProps;
         mLayoutInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -177,16 +177,15 @@ public class ShareDialog {
                             mAppNames.get(position));
                 } else {
                     String sharedVia = shareIntent(position);
-                    JSONObject aisleShareProps = new JSONObject();
+                   
                     try {
-                        aisleShareProps.put("Aisle_Id", VueApplication
-                                .getInstance().getClickedWindowID());
-                        aisleShareProps.put("Shared_Via", sharedVia);
+                        if(aisleSharedProps != null)
+                        aisleSharedProps.put("Shared Via", sharedVia);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    VueApplication.getInstance().unregisterUser(mixpanel);
-                    mixpanel.track("Aisle Shared Success", aisleShareProps);
+                    if(mixpanel != null)
+                    mixpanel.track("Aisle Shared", aisleSharedProps);
                 }
             }
         });

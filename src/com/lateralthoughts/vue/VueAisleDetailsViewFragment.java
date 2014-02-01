@@ -447,7 +447,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                VueApplication.getInstance().registerUser(mixpanel);
                 mixpanel.track("Added Comment", null);
                 FlurryAgent.logEvent("ADD_COMMENTS_DETAILSVIEW");
                 String etText = edtCommentView.getText().toString();
@@ -635,7 +634,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
         vueShareLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                VueApplication.getInstance().registerUser(mixpanel);
                 JSONObject aisleSharedprops = new JSONObject();
                 try {
                     aisleSharedprops.put("Aisle Shared From Screen", "DetailView Activity");
@@ -671,7 +669,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                VueApplication.getInstance().unregisterUser(mixpanel);
                 mixpanel.track("Find At", null);
                 FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
                 String url = mFindAtUrl;
@@ -704,15 +701,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                VueApplication.getInstance().registerUser(mixpanel);
-                JSONObject imgAddedProps = new JSONObject();
-                try {
-                    imgAddedProps.put("Added Image From Screen", "DetailView Activity");
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                mixpanel.track("Added Image to Aisle", imgAddedProps);
                 FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
                 closeKeyboard();
                 // to smoothen the touch response
