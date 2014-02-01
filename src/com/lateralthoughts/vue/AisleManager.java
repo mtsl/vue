@@ -42,7 +42,7 @@ public class AisleManager {
     }
     
     public interface ImageAddedCallback {
-        public void onImageAdded(String aisleId, String imageId);
+        public void onImageAdded(String aisleId, String imageId, boolean fromDetailScreen);
     }
     
     private static AisleManager sAisleManager = null;

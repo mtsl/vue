@@ -132,9 +132,9 @@ public class VueConstants {
     public static final String INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY = "invitefriendsloginactivitybundlestringkey";
     public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
     
-    public static final String IMAGE_FROM = "IMAGE_FROM";
-    public static final String CAMERA_IMAGE = "CAMERA_IMAGE";
-    public static final String GALLERY_IMAGE = "GALLERY_IMAGE";
+    public static final String IMAGE_FROM = "Image From";
+    public static final String CAMERA_IMAGE = "Camera";
+    public static final String GALLERY_IMAGE = "Gallery";
     
     public static final String EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG = "EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG";
     public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";

@@ -447,7 +447,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                VueApplication.getInstance().registerUser(mixpanel);
                 mixpanel.track("Added Comment", null);
                 FlurryAgent.logEvent("ADD_COMMENTS_DETAILSVIEW");
                 String etText = edtCommentView.getText().toString();
@@ -635,7 +634,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
         vueShareLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                VueApplication.getInstance().registerUser(mixpanel);
                 JSONObject aisleSharedprops = new JSONObject();
                 try {
                     aisleSharedprops.put("Aisle Shared From Screen", "DetailView Activity");
@@ -671,7 +669,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                VueApplication.getInstance().unregisterUser(mixpanel);
                 mixpanel.track("Find At", null);
                 FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
                 String url = mFindAtUrl;
@@ -704,15 +701,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                VueApplication.getInstance().registerUser(mixpanel);
-                JSONObject imgAddedProps = new JSONObject();
-                try {
-                    imgAddedProps.put("Added Image From Screen", "DetailView Activity");
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                mixpanel.track("Added Image to Aisle", imgAddedProps);
                 FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
                 closeKeyboard();
                 // to smoothen the touch response
@@ -721,7 +709,23 @@ public class VueAisleDetailsViewFragment extends Fragment {
                     
                     @Override
                     public void run() {
-                        addImageToAisle();
+                        Intent intent = new Intent(getActivity(),
+                                CreateAisleSelectionActivity.class);
+                        Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+                                getActivity(), true);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        Bundle b = new Bundle();
+                        b.putBoolean(
+                                VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
+                                true);
+                        intent.putExtras(b);
+                        if (!CreateAisleSelectionActivity.isActivityShowing) {
+                            CreateAisleSelectionActivity.isActivityShowing = true;
+                            getActivity()
+                                    .startActivityForResult(
+                                            intent,
+                                            VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
+                        }
                     }
                 }, addAilseDelay);
             }
@@ -788,10 +792,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
             showLikeStatus(starLayVisibility, isMostLikedImage);
             
         }
-        
-        public void onReceiveImageCount(int count) {
-            
-        }
+    
         
         @Override
         public void onResetAdapter() {
@@ -865,10 +866,16 @@ public class VueAisleDetailsViewFragment extends Fragment {
             closeKeyboard();
             
         }
-        
+
         @Override
         public void onImageAddEvent() {
-            addImageToAisle();
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onReceiveImageCount(int count) {
+            // TODO Auto-generated method stub
             
         }
         
@@ -930,6 +937,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
     
     public void addAisleToWindow() {
         mAisleDetailsAdapter.addAisleToContentWindow();
+        
     }
     
     public AisleContext getAisleContext() {
@@ -1166,6 +1174,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
     }
     
     public void updateAisleScreen() {
+        
         mAisleDetailsAdapter.updateAisleListAdapter();
     }
     
@@ -1184,25 +1193,5 @@ public class VueAisleDetailsViewFragment extends Fragment {
         mAisleDetailsAdapter.mSetPager = false;
         notifyAdapter();
         mAisleDetailsAdapter.setmSetPagerToTrue();
-    }
-    
-    private void addImageToAisle() {
-        Intent intent = new Intent(getActivity(),
-                CreateAisleSelectionActivity.class);
-        Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-                getActivity(), true);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        Bundle b = new Bundle();
-        b.putBoolean(
-                VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
-                true);
-        intent.putExtras(b);
-        if (!CreateAisleSelectionActivity.isActivityShowing) {
-            CreateAisleSelectionActivity.isActivityShowing = true;
-            getActivity()
-                    .startActivityForResult(
-                            intent,
-                            VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
-        }
     }
 }

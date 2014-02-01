@@ -1738,7 +1738,8 @@ public class DataEntryFragment extends Fragment {
                                                             @Override
                                                             public void onImageAdded(
                                                                     String aisleId,
-                                                                    String imageId) {
+                                                                    String imageId,
+                                                                    boolean fromDetailsScreen) {
                                                                 // TODO image
                                                                 // added track
                                                                 // event
@@ -1763,7 +1764,8 @@ public class DataEntryFragment extends Fragment {
                                                                 }
                                                                 super.onImageAdded(
                                                                         aisleId,
-                                                                        imageId);
+                                                                        imageId,
+                                                                        fromDetailsScreen);
                                                                 if (aisle != null) {
                                                                     try {
                                                                         aisle.setAnchorImageId(Long
@@ -1841,7 +1843,8 @@ public class DataEntryFragment extends Fragment {
                                 
                                 @Override
                                 public void onImageAdded(String aisleId,
-                                        String imageId) {
+                                        String imageId,
+                                        boolean fromDetailsScreen) {
                                     // TODO image
                                     // added track
                                     // event
@@ -1863,7 +1866,8 @@ public class DataEntryFragment extends Fragment {
                                             e.printStackTrace();
                                         }
                                     }
-                                    super.onImageAdded(aisleId, imageId);
+                                    super.onImageAdded(aisleId, imageId,
+                                            fromDetailsScreen);
                                     if (aisle != null) {
                                         try {
                                             aisle.setAnchorImageId(Long
@@ -2555,7 +2559,7 @@ public class DataEntryFragment extends Fragment {
                 
                 e.printStackTrace();
             }
-            mixpanel.track("New_Aisle_Created", this.createAisleProps);
+            mixpanel.track("New Aisle Created", this.createAisleProps);
             FlurryAgent.logEvent("New_Aisle_Creation");
         }
         
@@ -2570,10 +2574,12 @@ public class DataEntryFragment extends Fragment {
         }
         
         @Override
-        public void onImageAdded(String aisleId, String imageId) {
+        public void onImageAdded(String aisleId, String imageId,
+                boolean fromDetailScreen) {
             if (aisleId == null || imageId == null) {
                 return;
             }
+            
             try {
                 this.imageUploadProps.put("AisleId", aisleId);
                 this.imageUploadProps.put("imageId", imageId);
@@ -2582,7 +2588,13 @@ public class DataEntryFragment extends Fragment {
                 
                 e.printStackTrace();
             }
-            mixpanel.track("New_Image_Uploaded", this.imageUploadProps);
+            if (fromDetailScreen) {
+                mixpanel.track("Added Image To Existing Aisle",
+                        this.imageUploadProps);
+            } else {
+                mixpanel.track("Added Image To New Aisle",
+                        this.imageUploadProps);
+            }
             
         }
         
