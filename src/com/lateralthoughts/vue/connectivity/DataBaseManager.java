@@ -1757,6 +1757,10 @@ public class DataBaseManager {
                 userInfo.mAisleOwnerImageURL = aislesCursor
                         .getString(aislesCursor
                                 .getColumnIndex(VueConstants.AISLE_OWNER_IMAGE_URL));
+                userInfo.mDescription = aislesCursor.getString(aislesCursor
+                        .getColumnIndex(VueConstants.AISLE_DESCRIPTION));
+                userInfo.mCategory = aislesCursor.getString(aislesCursor
+                        .getColumnIndex(VueConstants.AISLE_CATEGORY));
                 map.put(userInfo.mAisleId, userInfo);
             } while (aislesCursor.moveToNext());
         }

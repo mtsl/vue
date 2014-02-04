@@ -1,6 +1,8 @@
 package com.lateralthoughts.vue;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -16,6 +18,11 @@ public class SwipeHelp extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.swipe_help);
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        Editor editor = sharedPreferencesObj.edit();
+        editor.putBoolean(VueConstants.AISLE_SWIPE, true);
+        editor.commit();
         mHelpScreenForSwipping = (LinearLayout) findViewById(R.id.help_screen_for_swipping);
         mHelpScreenForSwipping.setOnTouchListener(new OnTouchListener() {
             

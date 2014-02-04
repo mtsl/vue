@@ -2017,7 +2017,7 @@ public class DataEntryFragment extends Fragment {
                                                 .getClickedWindowID());
                     }
                     if (aisleWindowContent != null) {
-                        AisleContext aisleContext = aisleWindowContent
+                        final AisleContext aisleContext = aisleWindowContent
                                 .getAisleContext();
                         if (aisleContext != null) {
                             Aisle aisle = new Aisle();
@@ -2046,13 +2046,7 @@ public class DataEntryFragment extends Fragment {
                                                             null,
                                                             String.valueOf(storedVueUser
                                                                     .getId()),
-                                                            VueTrendingAislesDataModel
-                                                                    .getInstance(
-                                                                            VueApplication
-                                                                                    .getInstance())
-                                                                    .getAisleAt(
-                                                                            ownerAisleId)
-                                                                    .getAisleContext().mUserId);
+                                                            aisleContext.mUserId);
                                                 }
                                             }, true);
                         } else {
@@ -2064,40 +2058,36 @@ public class DataEntryFragment extends Fragment {
                                     null,
                                     null,
                                     String.valueOf(storedVueUser.getId()),
-                                    VueTrendingAislesDataModel
-                                            .getInstance(
-                                                    VueApplication
-                                                            .getInstance())
-                                            .getAisleAt(ownerAisleId)
-                                            .getAisleContext().mUserId);
+                                    aisleWindowContent.getAisleContext().mUserId);
                         }
                     } else {
-                        addMultipleImageToServer(
-                                true,
-                                vueImageList,
-                                offlineImageIdList,
-                                originalImagePathList,
-                                null,
-                                null,
-                                String.valueOf(storedVueUser.getId()),
-                                VueTrendingAislesDataModel
-                                        .getInstance(
-                                                VueApplication.getInstance())
-                                        .getAisleAt(ownerAisleId)
-                                        .getAisleContext().mUserId);
+                        addMultipleImageToServer(true, vueImageList,
+                                offlineImageIdList, originalImagePathList,
+                                null, null,
+                                String.valueOf(storedVueUser.getId()), "");
                     }
                 } else {
-                    addMultipleImageToServer(
-                            true,
-                            vueImageList,
-                            offlineImageIdList,
-                            originalImagePathList,
-                            null,
-                            null,
-                            String.valueOf(storedVueUser.getId()),
-                            VueTrendingAislesDataModel
-                                    .getInstance(VueApplication.getInstance())
-                                    .getAisleAt(ownerAisleId).getAisleContext().mUserId);
+                    AisleWindowContent aisleWindowContent = VueApplication
+                            .getInstance().getPedningAisle();
+                    if (aisleWindowContent == null) {
+                        aisleWindowContent = VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getAisleAt(
+                                        VueApplication.getInstance()
+                                                .getClickedWindowID());
+                    }
+                    if (aisleWindowContent != null) {
+                        addMultipleImageToServer(true, vueImageList,
+                                offlineImageIdList, originalImagePathList,
+                                null, null,
+                                String.valueOf(storedVueUser.getId()),
+                                aisleWindowContent.getAisleContext().mUserId);
+                    } else {
+                        addMultipleImageToServer(true, vueImageList,
+                                offlineImageIdList, originalImagePathList,
+                                null, null,
+                                String.valueOf(storedVueUser.getId()), "");
+                    }
                 }
                 mDataEntryActivity.shareViaVueClicked();
             } else {
