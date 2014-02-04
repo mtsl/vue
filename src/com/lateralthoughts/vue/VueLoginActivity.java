@@ -91,7 +91,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueLoginActivity extends FragmentActivity implements
         OnSignedInListener, OnPeopleLoadedListener, OnPersonLoadedListener {
-
+    
     private boolean mHideCancelButton = false;
     private boolean mFromBezelMenuLogin = false;
     private String mFromInviteFriends = null;
@@ -125,11 +125,12 @@ public class VueLoginActivity extends FragmentActivity implements
     private MixpanelAPI.People people;
     JSONObject loginSelectedProps, loginActivity;
     private String mGuestUserMessage = null;
-
+    private boolean mShowAisleSwipeHelpLayoutFlag = false;
+    
     private enum PendingAction {
         NONE, POST_PHOTO, POST_STATUS_UPDATE
     }
-
+    
     private UiLifecycleHelper mUiHelper;
     private Session.StatusCallback mCallback = new Session.StatusCallback() {
         public void call(Session session, SessionState state,
@@ -137,7 +138,7 @@ public class VueLoginActivity extends FragmentActivity implements
             onSessionStateChange(session, state, exception);
         }
     };
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mixpanel = MixpanelAPI.getInstance(this,
@@ -145,12 +146,11 @@ public class VueLoginActivity extends FragmentActivity implements
         people = mixpanel.getPeople();
         loginActivity = new JSONObject();
         try {
-            loginActivity.put("loginPage", "displayed");
+            loginActivity.put("Social", "Facebook, GooglePlus");
         } catch (JSONException e2) {
-            // TODO Auto-generated catch block
             e2.printStackTrace();
         }
-        mixpanel.track("loginPage", loginActivity);
+        mixpanel.track("Login Page Displayed", loginActivity);
         mIsLogInScreenIsVisible = true;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vue_login_screen);
@@ -188,9 +188,11 @@ public class VueLoginActivity extends FragmentActivity implements
                 getResources().getString(R.string.loading_mesg), true);
         mGooglePlusProgressDialog.dismiss();
         mFacebookProgressDialog.dismiss();
-
+        
         mBundle = getIntent().getExtras();
         if (mBundle != null) {
+            mShowAisleSwipeHelpLayoutFlag = mBundle
+                    .getBoolean(VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG);
             mGuestUserMessage = mBundle
                     .getString(VueConstants.GUEST_LOGIN_MESSAGE);
             mHideCancelButton = mBundle
@@ -295,16 +297,8 @@ public class VueLoginActivity extends FragmentActivity implements
                         .setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View arg0) {
-                                loginSelectedProps = new JSONObject();
-                                try {
-                                    loginSelectedProps.put("Login Selected",
-                                            "google Plus");
-                                } catch (JSONException e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                }
-                                mixpanel.track("Login Selected",
-                                        loginSelectedProps);
+                                mixpanel.track("GooglePlus Login Selected",
+                                        null);
                                 if (VueConnectivityManager
                                         .isNetworkConnected(VueLoginActivity.this)) {
                                     if (Utils
@@ -361,7 +355,7 @@ public class VueLoginActivity extends FragmentActivity implements
                         if (storedVueUser == null) {
                             showDialogForEnterUserInitials();
                         } else {
-                            finish();
+                            showAisleSwipeHelp();
                         }
                     }
                 });
@@ -372,66 +366,67 @@ public class VueLoginActivity extends FragmentActivity implements
                     .setDefaultHostnameVerifier(new NullHostNameVerifier());
             SSLContext context = SSLContext.getInstance("TLS");
             context.init(null,
-                    new X509TrustManager[] {new NullX509TrustManager()},
+                    new X509TrustManager[] { new NullX509TrustManager() },
                     new SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(context
                     .getSocketFactory());
         } catch (NoSuchAlgorithmException ex) {
-
+            
         } catch (KeyManagementException ex2) {
-
+            
         }
     }
-
+    
     @Override
     protected void onStop() {
         mixpanel.flush();
         super.onStop();
     }
-
+    
     private static class NullX509TrustManager implements X509TrustManager {
-
+        
         public void checkClientTrusted(X509Certificate[] cert, String authType) {
         }
-
+        
         public void checkServerTrusted(X509Certificate[] cert, String authType) {
         }
-
+        
         public X509Certificate[] getAcceptedIssuers() {
             return null;
         }
     }
-
+    
     private class NullHostNameVerifier implements HostnameVerifier {
-
+        
         public boolean verify(String hostname, SSLSession session) {
             return true;
         }
     }
-
+    
     @Override
     public void onDestroy() {
         mIsLogInScreenIsVisible = false;
         super.onDestroy();
         mUiHelper.onDestroy();
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
         mUiHelper.onPause();
     }
-
+    
     @Override
     protected void onResume() {
         super.onResume();
         mUiHelper.onResume();
     }
-
+    
     private void onSessionStateChange(Session session, SessionState state,
             Exception exception) {
         if (mPendingAction != PendingAction.NONE
                 && (exception instanceof FacebookOperationCanceledException || exception instanceof FacebookAuthorizationException)) {
+            mixpanel.track("Facebook Login Fail", null);
             new AlertDialog.Builder(VueLoginActivity.this)
                     .setTitle(R.string.cancelled)
                     .setMessage(R.string.permission_not_granted)
@@ -441,7 +436,7 @@ public class VueLoginActivity extends FragmentActivity implements
             handlePendingAction(null, null);
         }
     }
-
+    
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -451,17 +446,17 @@ public class VueLoginActivity extends FragmentActivity implements
         outState.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
                 mFromDetailsFbShare);
     }
-
+    
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        
         // From Googleplus app to send the invitation to friend
         if (requestCode == REQUEST_CODE_INTERACTIVE_POST) {
             if (mGooglePlusProgressDialog != null)
                 if (mGooglePlusProgressDialog.isShowing())
                     mGooglePlusProgressDialog.dismiss();
-            finish();
+            showAisleSwipeHelp();
         }
         try {
             mUiHelper.onActivityResult(requestCode, resultCode, data);
@@ -478,7 +473,7 @@ public class VueLoginActivity extends FragmentActivity implements
             e.printStackTrace();
         }
     }
-
+    
     @Override
     public void onSignedIn(PlusClient plusClient) {
         SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
@@ -500,7 +495,7 @@ public class VueLoginActivity extends FragmentActivity implements
         }
         // To show Google+ App install dialog after login with Google+
         if (mGoogleplusLoggedinDialogFlag) {
-
+            
             if (!Utils.appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME,
                     this)) {
                 if (mGooglePlusProgressDialog != null
@@ -510,7 +505,7 @@ public class VueLoginActivity extends FragmentActivity implements
                         VueConstants.GOOGLEPLUS_PACKAGE_NAME);
             }
         }
-
+        
         if (mGoogleplusFriendInvite) {
             share(plusClient,
                     this,
@@ -520,7 +515,7 @@ public class VueLoginActivity extends FragmentActivity implements
             plusClient.loadPeople(this, Person.Collection.VISIBLE);
         }
     }
-
+    
     @SuppressWarnings("unchecked")
     @Override
     public void onPeopleLoaded(ConnectionResult status,
@@ -551,16 +546,17 @@ public class VueLoginActivity extends FragmentActivity implements
                     setResult(
                             VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE,
                             resultIntent);
-                    finish();
+                    showAisleSwipeHelp();
                 }
             }
         }
         if (mGooglePlusProgressDialog != null
                 && mGooglePlusProgressDialog.isShowing())
             mGooglePlusProgressDialog.dismiss();
-        if (!mFacebookFlag) finish();
+        if (!mFacebookFlag)
+            showAisleSwipeHelp();
     }
-
+    
     private void showAlertMessageForAppInstalation(String appName,
             final String packageName) {
         final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
@@ -590,11 +586,11 @@ public class VueLoginActivity extends FragmentActivity implements
         dialog.setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface arg0) {
-                finish();
+                showAisleSwipeHelp();
             }
         });
     }
-
+    
     private void saveFBLoginDetails(final Session session) {
         mSharedPreferencesObj = this.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -603,16 +599,9 @@ public class VueLoginActivity extends FragmentActivity implements
             @Override
             public void onCompleted(final GraphUser user,
                     com.facebook.Response response) {
-                loginSelectedProps = new JSONObject();
-                try {
-                    loginSelectedProps.put("Login Selected", "Facebook");
-                } catch (JSONException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-                mixpanel.track("Login Selected", loginSelectedProps);
+                mixpanel.track("Facebook Login Selected", null);
                 if (user != null) {
-
+                    
                     FlurryAgent.logEvent("Facebook_Logins");
                     FlurryAgent.endTimedEvent("Login_Time_Ends");
                     FlurryAgent.logEvent("Login Success");
@@ -634,7 +623,7 @@ public class VueLoginActivity extends FragmentActivity implements
                                                 + VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
                                         user, storedVueUser,
                                         new UserUpdateCallback() {
-
+                                            
                                             @Override
                                             public void onUserUpdated(
                                                     VueUser vueUser) {
@@ -698,12 +687,13 @@ public class VueLoginActivity extends FragmentActivity implements
                             setResult(
                                     VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE,
                                     resultIntent);
-                            finish();
+                            showAisleSwipeHelp();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                    if (!mFromDetailsFbShare) finish();
+                    if (!mFromDetailsFbShare)
+                        showAisleSwipeHelp();
                 } else {
                     editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
                             session.getAccessToken());
@@ -725,12 +715,13 @@ public class VueLoginActivity extends FragmentActivity implements
                             setResult(
                                     VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE,
                                     resultIntent);
-                            finish();
+                            showAisleSwipeHelp();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                    if (!mFromDetailsFbShare) finish();
+                    if (!mFromDetailsFbShare)
+                        showAisleSwipeHelp();
                 }
             }
         }).executeAsync();
@@ -741,7 +732,7 @@ public class VueLoginActivity extends FragmentActivity implements
             e.printStackTrace();
         }
     }
-
+    
     private void saveFacebookProfileDetails(GraphUser user, String userId) {
         refreshBezelMenu(
                 userId,
@@ -760,62 +751,68 @@ public class VueLoginActivity extends FragmentActivity implements
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
-
+        VueUserProfile storedUserProfile = null;
         try {
-            VueUserProfile storedUserProfile = null;
-            try {
-                storedUserProfile = Utils.readUserProfileObjectFromFile(
-                        VueLoginActivity.this,
-                        VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (storedUserProfile == null
-                    || (storedUserProfile != null && !storedUserProfile
-                            .isUserDetailsModified())) {
-                VueUserProfile vueUserProfile = new VueUserProfile(
-                        VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
-                                + user.getId()
-                                + VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
-                        user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY)
-                                + "",
-                        user.getName(),
-                        user.getBirthday(),
-                        user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_GENDER_KEY)
-                                + "", location, false);
-                Utils.writeUserProfileObjectToFile(VueLoginActivity.this,
-                        VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
-                        vueUserProfile);
-                mixpanel.identify(storedUserProfile.getUserEmail());
-                people.identify(vueUserProfile.getUserEmail());
-                people.set("$first_name", user.getFirstName());
-                people.set("$last_name", user.getLastName());
-                people.set("Gender", vueUserProfile.getUserGender());
-                people.set("$email", vueUserProfile.getUserEmail());
-                people.set("Current location", vueUserProfile.getUserLocation());
-                people.set("loggedIn with", "Facebook");
-                JSONObject nameTag = new JSONObject();
-                try {
-                    // Set an "mp_name_tag" super property
-                    // for Streams if you find it useful.
-                    nameTag.put("mp_name_tag", user.getFirstName());
-                    mixpanel.registerSuperProperties(nameTag);
-                } catch(JSONException e) {
-                    e.printStackTrace();
-                }
-                JSONObject loginprops = new JSONObject();
-                try {
-                    loginprops.put("login success", "Facebook");
-                } catch (JSONException e1) {
-                    e1.printStackTrace();
-                }
-                mixpanel.track("Login Success", loginprops);
-            }
+            storedUserProfile = Utils.readUserProfileObjectFromFile(
+                    VueApplication.getInstance(),
+                    VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-    }
+        if (storedUserProfile == null
+                || (storedUserProfile != null && !storedUserProfile
+                        .isUserDetailsModified())) {
+            VueUserProfile vueUserProfile = new VueUserProfile(
+                    VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
+                            + user.getId()
+                            + VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
+                    user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY)
+                            + "",
+                    user.getName(),
+                    user.getBirthday(),
+                    user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_GENDER_KEY)
+                            + "", location, false);
+            try {
+                Utils.writeUserProfileObjectToFile(VueLoginActivity.this,
+                        VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
+                        vueUserProfile);
+                storedUserProfile = Utils.readUserProfileObjectFromFile(
+                        VueApplication.getInstance(),
+                        VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            mixpanel.identify(storedUserProfile.getUserEmail());
+            people.identify(vueUserProfile.getUserEmail());
+            people.set("$first_name", user.getFirstName());
+            people.set("$last_name", user.getLastName());
+            people.set("Gender", vueUserProfile.getUserGender());
+            people.set("$email", vueUserProfile.getUserEmail());
+            people.set("Current location", vueUserProfile.getUserLocation());
+            people.set("loggedIn with", "Facebook");
+            JSONObject nameTag = new JSONObject();
+            try {
+                // Set an "mp_name_tag" super property
+                // for Streams if you find it useful.
+                nameTag.put("mp_name_tag", user.getFirstName() + " "
+                        + user.getLastName());
+                mixpanel.registerSuperProperties(nameTag);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
+            JSONObject loginprops = new JSONObject();
+            try {
+                loginprops.put("Email", vueUserProfile.getUserEmail());
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+
+            }
+            mixpanel.track("Facebook Login Success", loginprops);
+        }
+
+    }
+    
     private void updateUI(boolean fromOnActivityResult) {
         Session session = Session.getActiveSession();
         boolean fbloggedin = (session != null && session.isOpened());
@@ -837,17 +834,17 @@ public class VueLoginActivity extends FragmentActivity implements
                     Toast.makeText(VueLoginActivity.this,
                             "Please login with Facebook to share.",
                             Toast.LENGTH_LONG);
-                    finish();
+                    showAisleSwipeHelp();
                 }
             }
         }
     }
-
+    
     private void shareToFacebook(ArrayList<clsShare> fileList,
             String articledesc) {
         performPublish(PendingAction.POST_PHOTO, fileList, articledesc);
     }
-
+    
     private void performPublish(PendingAction action,
             ArrayList<clsShare> fileList, String articledesc) {
         Session session = Session.getActiveSession();
@@ -860,19 +857,19 @@ public class VueLoginActivity extends FragmentActivity implements
             }
         }
     }
-
+    
     private boolean hasPublishPermission() {
         Session session = Session.getActiveSession();
         return session != null
                 && session.getPermissions().contains(
                         getResources().getString(R.string.publish_actions));
     }
-
+    
     private void handlePendingAction(ArrayList<clsShare> fileList,
             String articledesc) {
         postPhoto(fileList, articledesc);
     }
-
+    
     private void postPhoto(final ArrayList<clsShare> fileList,
             final String articledesc) {
         if (hasPublishPermission()) {
@@ -882,7 +879,7 @@ public class VueLoginActivity extends FragmentActivity implements
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
-
+                        
                         for (int i = 0; i < fileList.size(); i++) {
                             final File f = new File(fileList.get(i)
                                     .getFilepath());
@@ -964,7 +961,7 @@ public class VueLoginActivity extends FragmentActivity implements
             }
         }
     }
-
+    
     private void showPublishResult(String message, GraphObject result,
             FacebookRequestError error) {
         String alertMessage = null;
@@ -1007,11 +1004,11 @@ public class VueLoginActivity extends FragmentActivity implements
         dialog.setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface arg0) {
-                finish();
+                showAisleSwipeHelp();
             }
         });
     }
-
+    
     private void publishFeedDialog(String friend_uid, String friendname) {
         Bundle params = new Bundle();
         params.putString("to", friend_uid);
@@ -1047,22 +1044,23 @@ public class VueLoginActivity extends FragmentActivity implements
         feedDialog.setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface arg0) {
-                finish();
+                showAisleSwipeHelp();
             }
         });
     }
-
+    
     @Override
     public void onSignedFail() {
+        mixpanel.track("GooglePlus Login Failed", null);
         SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
         editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, false);
         editor.commit();
         if (mGooglePlusProgressDialog != null
                 && mGooglePlusProgressDialog.isShowing())
             mGooglePlusProgressDialog.dismiss();
-        finish();
+        showAisleSwipeHelp();
     }
-
+    
     private Intent getInteractivePostIntent(PlusClient plusClient,
             Activity activity, String post, ArrayList<Integer> personIndexList) {
         String action = "/?view=true";
@@ -1104,7 +1102,7 @@ public class VueLoginActivity extends FragmentActivity implements
         builder.setType("text/plain");
         return builder.getIntent();
     }
-
+    
     private void share(PlusClient plusClient, Activity activity, String post,
             ArrayList<Integer> personIndexList) {
         if (Utils.appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME, this)) {
@@ -1120,23 +1118,14 @@ public class VueLoginActivity extends FragmentActivity implements
             showAlertMessageForAppInstalation("Google+",
                     VueConstants.GOOGLEPLUS_PACKAGE_NAME);
         }
-
+        
     }
-
+    
     @Override
     public void onPersonLoaded(ConnectionResult connectionresult,
             final Person person) {
+        VueUser vueUser = null;
         if (connectionresult.getErrorCode() == ConnectionResult.SUCCESS) {
-            JSONObject loginprops = new JSONObject();
-            try {
-                loginprops.put("login success", "GooglePlus");
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-            }
-            mixpanel.track("Login Success", loginprops);
-            FlurryAgent.logEvent("GooglePlus_Logins");
-            FlurryAgent.endTimedEvent("Login_Time_Ends");
-            FlurryAgent.logEvent("Login Success");
             mSharedPreferencesObj = this.getSharedPreferences(
                     VueConstants.SHAREDPREFERENCE_NAME, 0);
             VueUserManager userManager = VueUserManager.getUserManager();
@@ -1152,9 +1141,8 @@ public class VueLoginActivity extends FragmentActivity implements
                 googleplusId = mSharedPreferencesObj.getString(
                         VueConstants.GOOGLEPLUS_USER_EMAIL, null);
             }
-            VueUser vueUser = new VueUser(null,
-                    mSharedPreferencesObj.getString(
-                            VueConstants.GOOGLEPLUS_USER_EMAIL, null),
+            vueUser = new VueUser(null, mSharedPreferencesObj.getString(
+                    VueConstants.GOOGLEPLUS_USER_EMAIL, null),
                     person.getDisplayName(), "", null, Utils.getDeviceId(),
                     VueUser.DEFAULT_FACEBOOK_ID, googleplusId, null);
             VueUser storedVueUser = null;
@@ -1210,9 +1198,19 @@ public class VueLoginActivity extends FragmentActivity implements
                             }
                         });
             }
+            JSONObject loginprops = new JSONObject();
+            try {
+                loginprops.put("Email", vueUser.getEmail());
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+            mixpanel.track("GooglePlus Login Success", loginprops);
+            FlurryAgent.logEvent("GooglePlus_Logins");
+            FlurryAgent.endTimedEvent("Login_Time_Ends");
+            FlurryAgent.logEvent("Login Success");
         }
     }
-
+    
     private void saveGooglePlusUserProfile(Person person, String userId) {
         VueUserProfile storedUserProfile = null;
         try {
@@ -1239,7 +1237,7 @@ public class VueLoginActivity extends FragmentActivity implements
                 e.printStackTrace();
             }
         }
-        mixpanel.identify(storedUserProfile.getUserEmail()); 
+        mixpanel.identify(storedUserProfile.getUserEmail());
         people.identify(storedUserProfile.getUserEmail());
         people.set("$first_name", storedUserProfile.getUserName());
         people.set("$last_name", "");
@@ -1249,16 +1247,16 @@ public class VueLoginActivity extends FragmentActivity implements
         people.set("loggedIn with", "GooglePlus");
         JSONObject nameTag = new JSONObject();
         try {
-            // Set an "mp_name_tag" super property 
+            // Set an "mp_name_tag" super property
             // for Streams if you find it useful.
-            //TODO:  Check how it works.
+            // TODO: Check how it works.
             nameTag.put("mp_name_tag", storedUserProfile.getUserName());
             mixpanel.registerSuperProperties(nameTag);
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-
+    
     private void showDialogForEnterUserInitials() {
         final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1302,7 +1300,7 @@ public class VueLoginActivity extends FragmentActivity implements
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
     }
-
+    
     private void createUserInServer(String userInitials) {
         VueUserManager userManager = VueUserManager.getUserManager();
         userManager.createUnidentifiedUser(userInitials, Utils.getDeviceId(),
@@ -1328,9 +1326,9 @@ public class VueLoginActivity extends FragmentActivity implements
                         }
                     }
                 });
-        finish();
+        showAisleSwipeHelp();
     }
-
+    
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -1339,14 +1337,14 @@ public class VueLoginActivity extends FragmentActivity implements
             }
         }
         return false;
-
+        
     }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void refreshBezelMenu(final String userId, final String imageUrl,
             final File filePath) {
         Response.Listener listener = new Response.Listener<Bitmap>() {
-
+            
             @Override
             public void onResponse(Bitmap bmp) {
                 Utils.saveBitmap(bmp, filePath);
@@ -1354,20 +1352,30 @@ public class VueLoginActivity extends FragmentActivity implements
             }
         };
         Response.ErrorListener errorListener = new Response.ErrorListener() {
-
+            
             @Override
             public void onErrorResponse(VolleyError arg0) {
             }
         };
-
+        
         ImageRequest imagerequestObj = new ImageRequest(imageUrl, listener, 0,
                 0, null, errorListener);
         VueApplication.getInstance().getRequestQueue().add(imagerequestObj);
-
+        
     }
-
+    
     public void getProfileImageChangeListenor(String userId, String imageUrl) {
         Intent i = new Intent("RefreshBezelMenuReciver");
         VueApplication.getInstance().sendBroadcast(i);
+    }
+    
+    private void showAisleSwipeHelp() {
+        if (mShowAisleSwipeHelpLayoutFlag) {
+            finish();
+            Intent swipeHelpIntent = new Intent(this, SwipeHelp.class);
+            startActivity(swipeHelpIntent);
+        } else {
+            finish();
+        }
     }
 }

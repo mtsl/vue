@@ -73,7 +73,7 @@ public class AisleDetailsViewActivity extends Activity {
     private FrameLayout mDrawerLeft, mDrawerRight;
     private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
     private MixpanelAPI mixpanel;
-    boolean hasToHelpShow;
+    private boolean mHasToHelpShow;
     
     @SuppressLint("NewApi")
     @Override
@@ -83,11 +83,9 @@ public class AisleDetailsViewActivity extends Activity {
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.aisle_details_activity_landing);
         mDrawerRight = (FrameLayout) findViewById(R.id.drawer_right);
-        if (VueApplication.getInstance().getClickedWindowCount() > 1) {
-            hasToHelpShow = isDetailsHelpShown();
-        }
+        mHasToHelpShow = isDetailsHelpShown();
         initialize();
-        if (!hasToHelpShow) {
+        if (!mHasToHelpShow) {
             DrawerLayout.LayoutParams layoutParams = new DrawerLayout.LayoutParams(
                     VueApplication.getInstance().getPixel(320),
                     LinearLayout.LayoutParams.MATCH_PARENT, Gravity.END);
@@ -460,7 +458,8 @@ public class AisleDetailsViewActivity extends Activity {
             // For the first time when user opens the details screen
             // open a comparison screen after completion of ui
             // and close it in 1 sec.
-            if (hasToHelpShow) {
+ 
+            if (mHasToHelpShow) {
                 final int waitDelay = 2000;
                 final int comparisonShowTime = 1000;
                 new Handler().postDelayed(new Runnable() {
@@ -665,7 +664,24 @@ public class AisleDetailsViewActivity extends Activity {
                                 .getAisleContext().mDescription = description;
                     }
                 } else {
-                    // TODO: add image to the pending aisle.
+                    if (lookingfor != null && lookingfor.trim().length() > 0
+                            && !lookingfor.equals("Looking")) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mLookingForItem = lookingfor;
+                    }
+                    if (occasion != null && occasion.trim().length() > 0
+                            && !occasion.trim().equals("Occasion")) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mOccasion = occasion;
+                    }
+                    if (category != null && category.trim().length() > 0) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mCategory = category;
+                    }
+                    if (description != null && description.trim().length() > 0) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mDescription = description;
+                    }
                 }
                 mVueAiselFragment.notifyAdapter();
                 ArrayList<String> findAtArrayList = b
@@ -924,5 +940,4 @@ public class AisleDetailsViewActivity extends Activity {
         }
         
     }
-    
 }

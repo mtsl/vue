@@ -88,6 +88,9 @@ public class Help extends Activity {
                             Intent i = new Intent(Help.this,
                                     VueLoginActivity.class);
                             Bundle b = new Bundle();
+                            b.putBoolean(
+                                    VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG,
+                                    true);
                             b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
                                     false);
                             b.putString(VueConstants.FROM_INVITEFRIENDS, null);
@@ -140,6 +143,9 @@ public class Help extends Activity {
                 } else {
                     Intent i = new Intent(Help.this, VueLoginActivity.class);
                     Bundle b = new Bundle();
+                    b.putBoolean(
+                            VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG,
+                            true);
                     b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
                     b.putString(VueConstants.FROM_INVITEFRIENDS, null);
                     b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
@@ -311,10 +317,10 @@ public class Help extends Activity {
             File f = mFileCache.getHelpFile(helpScreens[mCurrentPosition]);
             Bitmap bmp = decodeFile(f, mScreenHeight, mScreenWidth);
             if (bmp == null) {
-                try{
-                f = drawableToBitmap(mCurrentPosition);
-                bmp = decodeFile(f, mScreenHeight, mScreenWidth);
-                } catch(Exception e){
+                try {
+                    f = drawableToBitmap(mCurrentPosition);
+                    bmp = decodeFile(f, mScreenHeight, mScreenWidth);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

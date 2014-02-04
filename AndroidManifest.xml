@@ -147,6 +147,11 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
         <activity
+            android:name="com.lateralthoughts.vue.SwipeHelp"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+        <activity
             android:name=".CrashActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Dialog" />
@@ -166,7 +171,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|" />
-             <activity
+        <activity
             android:name="com.lateralthoughts.vue.pendingaisles.PendingAisles"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

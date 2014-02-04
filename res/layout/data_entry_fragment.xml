@@ -410,7 +410,7 @@
             android:singleLine="true"
             android:textColor="@color/grey"
             android:textSize="15sp"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <ImageView
             android:id="@+id/saysomethingclose"

@@ -374,13 +374,14 @@ public class Utils {
         return null;
     }
     
-    public static void writeUserObjectToFile(Context context, String fileName,
+    public static VueUser writeUserObjectToFile(Context context, String fileName,
             VueUser vueUser) throws Exception {
         FileOutputStream fos = context.openFileOutput(fileName,
                 Context.MODE_PRIVATE);
         ObjectOutputStream os = new ObjectOutputStream(fos);
         os.writeObject(vueUser);
         os.close();
+        return vueUser;
     }
     
     public static VueUser readUserObjectFromFile(Context context,
@@ -820,5 +821,16 @@ public class Utils {
         default:
             return "SAT";
         }
+    }
+    
+    public static long dateDifference(long date) {
+        try {
+            long differenceInHours = (System.currentTimeMillis() - date)
+                    / (1000 * 60 * 60);
+            return differenceInHours;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

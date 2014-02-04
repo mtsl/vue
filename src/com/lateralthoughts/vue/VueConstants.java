@@ -7,6 +7,9 @@ import android.net.Uri;
  * 
  */
 public class VueConstants {
+    public static final String DETAIALS_HELP_SHOWN = "DetailsHelp";
+    public static final String DETAIALS_HELP_SHOWN_TIME = "DetailsHelpTime";
+    public static final String DETAIALS_HELP_BLOCK = "DetailsHelpBlock";
     public static final String NO_IMAGE_URL = "noimageurl";
     public static final int NO_IMAGE_WIDTH = 200;
     public static final int NO_IMAGE_HEIGHT = 200;
@@ -17,11 +20,10 @@ public class VueConstants {
     public static final String AISLE_STAGE_THREE = "third_stage";
     public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
     public static final String HELP_SCREEN_ACCES = "HelpScreenAccess";
+    public static final String AISLE_SWIPE = "AISLESWIPE";
+    public static final String APP_FIRST_TIME_OPENED_TIME = "AppFirstTimeOpenedTime";
     public static final String SCREEN_REFRESH_TIME = "TrendingRefreshTimeInMinutes";
     public static final String VERSION_CODE_CHANGE = "VersionCode";
-    public static final String DETAIALS_HELP_SHOWN = "DetailsHelp";
-    public static final String DETAIALS_HELP_SHOWN_TIME = "DetailsHelpTime";
-    public static final String DETAIALS_HELP_BLOCK = "DetailsHelpBlock";
     public static final String HELP_KEY = "helpScreen";
     public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
     public static final String VUE_LOGIN = "VueLoginFlag";
@@ -71,6 +73,7 @@ public class VueConstants {
     public static final String GOOGLEPLUS_ACTIVITY_NAME = "com.google.android.apps.plus.phone.SignOnActivity";
     public static final String CANCEL_BTN_DISABLE_FLAG = "cancelbuttondisableflag";
     public static final String GUEST_LOGIN_MESSAGE = "guestLoginMesage";
+    public static final String SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG = "ShowAisleSwipeHelpLayoutFlag";
     public static final String FROM_INVITEFRIENDS = "frominvitefriends";
     public static final String FROM_BEZELMENU_LOGIN = "frombezelmenulogin";
     public static final String FBLOGIN_FROM_DETAILS_SHARE = "FBLOGIN_FROM_DETAILS_SHARE";
@@ -129,9 +132,9 @@ public class VueConstants {
     public static final String INVITE_FRIENDS_LOGINACTIVITY_BUNDLE_STRING_KEY = "invitefriendsloginactivitybundlestringkey";
     public static final String CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY = "CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY";
     
-    public static final String IMAGE_FROM = "IMAGE_FROM";
-    public static final String CAMERA_IMAGE = "CAMERA_IMAGE";
-    public static final String GALLERY_IMAGE = "GALLERY_IMAGE";
+    public static final String IMAGE_FROM = "Image From";
+    public static final String CAMERA_IMAGE = "Camera";
+    public static final String GALLERY_IMAGE = "Gallery";
     
     public static final String EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG = "EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG";
     public static final String FROMCREATEAILSESCREENFLAG = "fromCreateAilseScreenflag";

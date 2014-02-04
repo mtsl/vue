@@ -42,7 +42,7 @@ public class CreateAisleSelectionActivity extends Activity {
     private static final String CAMERA_INTENT_NAME = "android.media.action.IMAGE_CAPTURE";
     private ArrayList<ShoppingApplicationDetails> mDataEntryShoppingApplicationsList = new ArrayList<ShoppingApplicationDetails>();
     private static final String CREATE_AISLE_POPUP = "Selection_Popup";
-    private static final String CREATE_AISLE_POPUP_SELECTION = "CreateAisle Selection Popup";
+    private static final String CREATE_AISLE_POPUP_SELECTION = "Source Selection options presented";
     public static boolean isActivityShowing = false;
     private ArcMenu mDataentryArcMenu = null;
     private static final int ANIM_DELAY = 100;
@@ -116,7 +116,6 @@ public class CreateAisleSelectionActivity extends Activity {
     
     @Override
     protected void onStart() {
-        VueApplication.getInstance().unregisterUser(mixpanel);
         mixpanel.track(CREATE_AISLE_POPUP_SELECTION, null);
         FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
@@ -144,8 +143,7 @@ public class CreateAisleSelectionActivity extends Activity {
     }
     
     private void galleryIntent() {
-        VueApplication.getInstance().registerUser(mixpanel);
-        mixpanel.track("Added Image From Gallery", null);
+        mixpanel.track("Selected Gallery", null);
         FlurryAgent.logEvent("ADD_IMAGE_GALLERY");
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -154,8 +152,7 @@ public class CreateAisleSelectionActivity extends Activity {
     }
     
     private void cameraIntent() {
-        VueApplication.getInstance().registerUser(mixpanel);
-        mixpanel.track("Added Image From Camera", null);
+        mixpanel.track("Selected Camera", null);
         FlurryAgent.logEvent("ADD_IMAGE_CAMERA");
         mCameraImageName = Utils
                 .vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
@@ -177,13 +174,12 @@ public class CreateAisleSelectionActivity extends Activity {
     }
     
     public void moreClickFunctionality() {
-        VueApplication.getInstance().registerUser(mixpanel);
-        mixpanel.track("Added Image From Other Source", null);
+        mixpanel.track("Selected Other Source", null);
         FlurryAgent.logEvent("ADD_IMAGE_MORE");
         if (mDataEntryShoppingApplicationsList != null
                 && mDataEntryShoppingApplicationsList.size() > 0) {
             if (mShareDialog == null) {
-                mShareDialog = new ShareDialog(this, this);
+                mShareDialog = new ShareDialog(this, this, null, null);
             }
             mShareDialog
                     .loadShareApplications(mDataEntryShoppingApplicationsList);

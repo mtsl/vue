@@ -120,6 +120,7 @@ public class VueLandingPageActivity extends Activity implements
     public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
     private ShareDialog mShare = null;
+    private boolean mShowSwipeHelp = false;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -189,11 +190,29 @@ public class VueLandingPageActivity extends Activity implements
         boolean isHelpOpend = sharedPreferencesObj.getBoolean(
                 VueConstants.HELP_SCREEN_ACCES, false);
         if (!isHelpOpend) {
+            Editor editor = sharedPreferencesObj.edit();
+            editor.putLong(VueConstants.APP_FIRST_TIME_OPENED_TIME,
+                    System.currentTimeMillis());
+            editor.commit();
             Intent intent = new Intent(this, Help.class);
             intent.putExtra(VueConstants.HELP_KEY,
                     VueConstants.HelpSCREEN_FROM_LANDING);
             startActivity(intent);
         } else {
+            sharedPreferencesObj = this.getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+            boolean aisleSwipe = sharedPreferencesObj.getBoolean(
+                    VueConstants.AISLE_SWIPE, false);
+            if (!aisleSwipe) {
+                long hours = Utils.dateDifference(sharedPreferencesObj.getLong(
+                        VueConstants.APP_FIRST_TIME_OPENED_TIME, 0));
+                if (hours != -1 && hours >= 48) {
+                    mShowSwipeHelp = true;
+                    Editor editor = sharedPreferencesObj.edit();
+                    editor.putBoolean(VueConstants.AISLE_SWIPE, true);
+                    editor.commit();
+                }
+            }
             VueUser storedVueUser = null;
             try {
                 storedVueUser = Utils.readUserObjectFromFile(this,
@@ -249,12 +268,21 @@ public class VueLandingPageActivity extends Activity implements
                                     false);
                             b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
                                     false);
+                            b.putBoolean(
+                                    VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG,
+                                    mShowSwipeHelp);
                             b.putString(
                                     VueConstants.GUEST_LOGIN_MESSAGE,
                                     getResources().getString(
                                             R.string.guest_login_message));
                             i.putExtras(b);
                             startActivity(i);
+                        }
+                    } else {
+                        if (mShowSwipeHelp) {
+                            Intent swipeHelpIntent = new Intent(this,
+                                    SwipeHelp.class);
+                            startActivity(swipeHelpIntent);
                         }
                     }
                     VueApplication.getInstance().setmUserInitials(
@@ -369,14 +397,18 @@ public class VueLandingPageActivity extends Activity implements
             return true;
         } else if (item.getItemId() == R.id.menu_create_aisle) {
             if (mOtherSourceImagePath == null) {
-                VueApplication.getInstance().unregisterUser(mixpanel);
-                mixpanel.track("Create Aisle Button Click",
+                mixpanel.track("Create Aisle Selected",
                         null);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
-                        DataEntryActivity.class);
+                        CreateAisleSelectionActivity.class);
+                Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+                        VueLandingPageActivity.this, false);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
+                if (!CreateAisleSelectionActivity.isActivityShowing) {
+                    CreateAisleSelectionActivity.isActivityShowing = true;
+                    startActivity(intent);
+                }
             } else {
                 showDiscardOtherAppImageDialog();
             }
@@ -713,6 +745,18 @@ public class VueLandingPageActivity extends Activity implements
                     mLandingScreenName = viewInfo.mVueName;
                     showPreviousScreen(viewInfo.mVueName);
                 } else {
+                    if (VueApplication.getInstance().isUserSwipeAisle) {
+                        SharedPreferences sharedPreferencesObj = this
+                                .getSharedPreferences(
+                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
+                        boolean isAisleAlreadySwipped = sharedPreferencesObj
+                                .getBoolean(VueConstants.AISLE_SWIPE, false);
+                        if (!isAisleAlreadySwipped) {
+                            Editor editor = sharedPreferencesObj.edit();
+                            editor.putBoolean(VueConstants.AISLE_SWIPE, true);
+                            editor.commit();
+                        }
+                    }
                     super.onBackPressed();
                 }
             } else {
@@ -742,9 +786,11 @@ public class VueLandingPageActivity extends Activity implements
         return false;
     }
     
-    public void showLogInDialog(boolean hideCancelButton) {
+    private void showLogInDialog(boolean hideCancelButton) {
         Intent i = new Intent(this, VueLoginActivity.class);
         Bundle b = new Bundle();
+        b.putBoolean(VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG,
+                mShowSwipeHelp);
         b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, hideCancelButton);
         b.putString(VueConstants.FROM_INVITEFRIENDS, null);
         b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
@@ -810,28 +856,29 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        if(VueConnectivityManager.isNetworkConnected(this)){
-        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
-                VueConstants.SHAREDPREFERENCE_NAME, 0);
-        mLastRefreshTime = sharedPreferencesObj.getLong(
-                VueConstants.SCREEN_REFRESH_TIME, 0);
-        if (mLastRefreshTime != 0) {
-            long currentTime = System.currentTimeMillis();
-            long currentMins = Utils.getMins(currentTime);
-            long difMins = currentMins - mLastRefreshTime;
-            if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
-                // Clean the data and fetch from server again.
-                Toast.makeText(this, "Syncing with server", Toast.LENGTH_SHORT)
-                        .show();
-                StackViews.getInstance().clearStack();
-                VueTrendingAislesDataModel
-                        .getInstance(VueApplication.getInstance())
-                        .getNetworkHandler().clearList(null);
-                VueTrendingAislesDataModel.getInstance(
-                        VueApplication.getInstance()).getFreshDataFromServer();
-                mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
+        if (VueConnectivityManager.isNetworkConnected(this)) {
+            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+            mLastRefreshTime = sharedPreferencesObj.getLong(
+                    VueConstants.SCREEN_REFRESH_TIME, 0);
+            if (mLastRefreshTime != 0) {
+                long currentTime = System.currentTimeMillis();
+                long currentMins = Utils.getMins(currentTime);
+                long difMins = currentMins - mLastRefreshTime;
+                if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
+                    // Clean the data and fetch from server again.
+                    Toast.makeText(this, "Syncing with server",
+                            Toast.LENGTH_SHORT).show();
+                    StackViews.getInstance().clearStack();
+                    VueTrendingAislesDataModel
+                            .getInstance(VueApplication.getInstance())
+                            .getNetworkHandler().clearList(null);
+                    VueTrendingAislesDataModel.getInstance(
+                            VueApplication.getInstance())
+                            .getFreshDataFromServer();
+                    mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
+                }
             }
-        }
         }
     }
     
@@ -980,7 +1027,6 @@ public class VueLandingPageActivity extends Activity implements
         } else {
             
         }
-        VueApplication.getInstance().unregisterUser(mixpanel);
         JSONObject categorySelectedProps = new JSONObject();
         try {
             categorySelectedProps.put("Category Selected", catName);
@@ -1413,7 +1459,7 @@ public class VueLandingPageActivity extends Activity implements
                                                                 @Override
                                                                 public void onImageAdded(
                                                                         String aisleId,
-                                                                        String imageId) {
+                                                                        String imageId, boolean fromDetailScreen) {
                                                                     JSONObject imageUploadProps = new JSONObject();
                                                                     AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
                                                                             .getInstance(
@@ -1468,9 +1514,8 @@ public class VueLandingPageActivity extends Activity implements
                                                                         
                                                                         e.printStackTrace();
                                                                     }
-                                                                    VueApplication.getInstance().registerUser(mixpanel);
                                                                     mixpanel.track(
-                                                                            "New Image Uploaded",
+                                                                            "Added Image To Existing Aisle",
                                                                             imageUploadProps);
                                                                     
                                                                 }
@@ -1488,7 +1533,7 @@ public class VueLandingPageActivity extends Activity implements
                                     
                                     @Override
                                     public void onImageAdded(String aisleId,
-                                            String imageId) {
+                                            String imageId, boolean fromDetailScreen) {
                                         JSONObject imageUploadProps = new JSONObject();
                                         AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
                                                 .getInstance(
@@ -1540,8 +1585,8 @@ public class VueLandingPageActivity extends Activity implements
                                             
                                             e.printStackTrace();
                                         }
-                                        VueApplication.getInstance().registerUser(mixpanel);
-                                        mixpanel.track("New Image Uploaded",
+
+                                        mixpanel.track("Added Image To Existing Aisle",
                                                 imageUploadProps);
                                     }
                                 });
@@ -1795,7 +1840,7 @@ public class VueLandingPageActivity extends Activity implements
     
     public void share(AisleWindowContent aisleWindowContent,
             int currentDispImageIndex) {
-        mShare = new ShareDialog(this, this);
+        mShare = new ShareDialog(this, this, null, null);
         FileCache ObjFileCache = new FileCache(this);
         ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
         if (aisleWindowContent.getImageList() != null
