@@ -24,6 +24,7 @@ import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.parser.Parser;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -127,7 +128,7 @@ public class AisleCreationBackgroundThread implements Runnable,
                     @Override
                     public void run() {
                         if (null != mResponseMessage) {
-                            // TODO insert aisle for 
+                            // TODO insert aisle for
                             try {
                                 AisleContext aisleContext = new Parser()
                                         .parseAisleData(new JSONObject(
@@ -144,6 +145,9 @@ public class AisleCreationBackgroundThread implements Runnable,
                                 mAisleAddCallback.onAisleAdded(aisle,
                                         aisleContext);
                                 mixpanel.track("Create_Aisle_Success", null);
+                                DataBaseManager.getInstance(
+                                        VueApplication.getInstance())
+                                        .aisleUpdateToDB(aisleContext);
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }

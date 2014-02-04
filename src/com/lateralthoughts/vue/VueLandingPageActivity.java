@@ -397,18 +397,12 @@ public class VueLandingPageActivity extends Activity implements
             return true;
         } else if (item.getItemId() == R.id.menu_create_aisle) {
             if (mOtherSourceImagePath == null) {
-                mixpanel.track("Create Aisle Selected",
-                        null);
+                mixpanel.track("Create Aisle Selected", null);
                 FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
-                        CreateAisleSelectionActivity.class);
-                Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-                        VueLandingPageActivity.this, false);
+                        DataEntryActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                if (!CreateAisleSelectionActivity.isActivityShowing) {
-                    CreateAisleSelectionActivity.isActivityShowing = true;
-                    startActivity(intent);
-                }
+                startActivity(intent);
             } else {
                 showDiscardOtherAppImageDialog();
             }
@@ -1459,7 +1453,8 @@ public class VueLandingPageActivity extends Activity implements
                                                                 @Override
                                                                 public void onImageAdded(
                                                                         String aisleId,
-                                                                        String imageId, boolean fromDetailScreen) {
+                                                                        String imageId,
+                                                                        boolean fromDetailScreen) {
                                                                     JSONObject imageUploadProps = new JSONObject();
                                                                     AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
                                                                             .getInstance(
@@ -1533,7 +1528,8 @@ public class VueLandingPageActivity extends Activity implements
                                     
                                     @Override
                                     public void onImageAdded(String aisleId,
-                                            String imageId, boolean fromDetailScreen) {
+                                            String imageId,
+                                            boolean fromDetailScreen) {
                                         JSONObject imageUploadProps = new JSONObject();
                                         AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
                                                 .getInstance(
@@ -1585,8 +1581,9 @@ public class VueLandingPageActivity extends Activity implements
                                             
                                             e.printStackTrace();
                                         }
-
-                                        mixpanel.track("Added Image To Existing Aisle",
+                                        
+                                        mixpanel.track(
+                                                "Added Image To Existing Aisle",
                                                 imageUploadProps);
                                     }
                                 });
