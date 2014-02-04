@@ -195,12 +195,19 @@ public class AisleLoader {
             contentBrowser.setLayoutParams(mShowpieceParams2);
             String profleUrl = windowContent.getAisleContext().mAisleOwnerImageURL;
             contentBrowser.addView(imageView);
-            if (!placeholderOnly) {
-                loadBitmap(itemDetails.mCustomImageUrl, itemDetails.mImageUrl,
-                        contentBrowser, imageView, bestHeight,
-                        windowContent.getAisleId(), itemDetails, listener);
-                holder.profileThumbnail.setImageUrl(profleUrl, VueApplication
-                        .getInstance().getImageCacheLoader());
+            if (itemDetails.mImageUrl
+                    .equalsIgnoreCase(VueConstants.NO_IMAGE_URL)) {
+                imageView.setImageResource(R.drawable.about);
+            }
+            {
+                if (!placeholderOnly) {
+                    loadBitmap(itemDetails.mCustomImageUrl,
+                            itemDetails.mImageUrl, contentBrowser, imageView,
+                            bestHeight, windowContent.getAisleId(),
+                            itemDetails, listener);
+                    holder.profileThumbnail.setImageUrl(profleUrl,
+                            VueApplication.getInstance().getImageCacheLoader());
+                }
             }
         }
     }
@@ -209,11 +216,13 @@ public class AisleLoader {
             AisleContentBrowser flipper, ImageView imageView, int bestHeight,
             String asileId, AisleImageDetails itemDetails,
             AisleContentClickListener listener) {
-        ((NetworkImageView) imageView).setImageUrl(itemDetails.mImageUrl,
-                VueApplication.getInstance().getImageCacheLoader(),
-                itemDetails.mTrendingImageWidth,
-                itemDetails.mTrendingImageHeight,
-                NetworkImageView.BitmapProfile.ProfileLandingView);
+        if (!itemDetails.mImageUrl.equalsIgnoreCase(VueConstants.NO_IMAGE_URL)) {
+            ((NetworkImageView) imageView).setImageUrl(itemDetails.mImageUrl,
+                    VueApplication.getInstance().getImageCacheLoader(),
+                    itemDetails.mTrendingImageWidth,
+                    itemDetails.mTrendingImageHeight,
+                    NetworkImageView.BitmapProfile.ProfileLandingView);
+        }
         
     }
 }

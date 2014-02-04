@@ -7,11 +7,13 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -300,7 +302,7 @@ public class DataBaseManager {
                     int order = mAislesOrderMap.get(info.mAisleId);
                     values.put(VueConstants.ID, String.format(FORMATE, order));
                     values.put(VueConstants.AISLE_Id, info.mAisleId);
-                    context.getContentResolver().insert(
+                    Uri uri = context.getContentResolver().insert(
                             VueConstants.CONTENT_URI, values);
                 } else {
                     int order = mBookmarkedAislesOrderMap.get(info.mAisleId);
@@ -320,9 +322,10 @@ public class DataBaseManager {
                     }
                 }
             }
-          /*  if (imageItemsArray == null || imageItemsArray.size() == 0) {
-                continue;
-            }*/
+            /*
+             * if (imageItemsArray == null || imageItemsArray.size() == 0) {
+             * continue; }
+             */
             if (imageItemsArray != null) {
                 for (AisleImageDetails imageDetails : imageItemsArray) {
                     Cursor imgCountCursor = context.getContentResolver().query(
@@ -406,7 +409,7 @@ public class DataBaseManager {
                 }
             }
         }
-        
+        // copydbToSdcard();
     }
     
     /**
@@ -1711,10 +1714,11 @@ public class DataBaseManager {
             return LESS_TIMES_USED;
         }
     }
-    public ArrayList<AisleWindowContent> getPendingAisles(){
-
+    
+    public ArrayList<AisleWindowContent> getPendingAisles() {
+        
         AisleContext userInfo;
-        AisleImageDetails imageItemDetails;
+        // AisleImageDetails imageItemDetails;
         AisleWindowContent aisleItem = null;
         
         LinkedHashMap<String, AisleContext> map = new LinkedHashMap<String, AisleContext>();
@@ -1722,10 +1726,13 @@ public class DataBaseManager {
         ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
         AisleImageDetails imageDetails = new AisleImageDetails();
         imageItemsArray.add(imageDetails);
-         imageDetails.mImageUrl = VueConstants.NO_IMAGE_URL;
-         imageDetails.mAvailableWidth = VueApplication.getInstance().getPixel(VueConstants.NO_IMAGE_WIDTH);
-         imageDetails.mAvailableHeight = VueApplication.getInstance().getPixel(VueConstants.NO_IMAGE_HEIGHT);
-        Cursor aislesCursor = mContext.getContentResolver().query(VueConstants.CONTENT_URI, null, null, null, null);
+        imageDetails.mImageUrl = VueConstants.NO_IMAGE_URL;
+        imageDetails.mAvailableWidth = VueApplication.getInstance().getPixel(
+                VueConstants.NO_IMAGE_WIDTH);
+        imageDetails.mAvailableHeight = VueApplication.getInstance().getPixel(
+                VueConstants.NO_IMAGE_HEIGHT);
+        Cursor aislesCursor = mContext.getContentResolver().query(
+                VueConstants.CONTENT_URI, null, null, null, null);
         if (aislesCursor.moveToFirst()) {
             do {
                 userInfo = new AisleContext();
@@ -1756,32 +1763,26 @@ public class DataBaseManager {
         Cursor aisleImagesCursor = mContext.getContentResolver().query(
                 VueConstants.IMAGES_CONTENT_URI, null, null, null,
                 VueConstants.ID + " ASC");
-       
-        Iterator it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry) it.next();
-            boolean hasImage = false;
-            if (aisleImagesCursor.moveToFirst()) {
-               /* do {*/
-                    
-                    if (!aisleImagesCursor.getString(
-                            aisleImagesCursor
-                                    .getColumnIndex(VueConstants.AISLE_Id))
-                            .equals((String) pairs.getKey())) {
-                       // hasImage = true;
-                       // continue;
-                    }
-                    if(!hasImage) {
-                        userInfo = (AisleContext) pairs.getValue();
-                        aisleItem = new AisleWindowContent(userInfo.mAisleId);
-                        aisleItem.addAisleContent(userInfo, imageItemsArray);
-                        aisleContentArray.add(aisleItem);
-                    }
-          
-           /*     } while (aisleImagesCursor.moveToNext());*/
-                it.remove(); 
+        
+        Set<String> imgAisleId = new HashSet<String>();
+        if (aisleImagesCursor.moveToFirst()) {
+            do {
+                imgAisleId.add(aisleImagesCursor.getString(aisleImagesCursor
+                        .getColumnIndex(VueConstants.AISLE_Id)));
+                
+            } while (aisleImagesCursor.moveToNext());
+            Iterator it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pairs = (Map.Entry) it.next();
+                String tempAisleId = (String) pairs.getKey();
+                if (!imgAisleId.contains(tempAisleId)) {
+                    userInfo = (AisleContext) pairs.getValue();
+                    aisleItem = new AisleWindowContent(userInfo.mAisleId);
+                    aisleItem.addAisleContent(userInfo, imageItemsArray);
+                    aisleContentArray.add(aisleItem);
+                }
+                it.remove();
             }
-            
         }
         aislesCursor.close();
         aisleImagesCursor.close();
@@ -1789,7 +1790,7 @@ public class DataBaseManager {
     }
     
     /**
-     * FOR TESTING PERPOES ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS
+     * FOR TESTING PURPOSE ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS
      * CALLING AFTER TESTING, to copy FishWrap.db to sdCard.
      */
     public void copydbToSdcard() {

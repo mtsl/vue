@@ -170,17 +170,24 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                                                     .size() > 0) {
                                                         for (int i = 0; i < aislesList
                                                                 .size(); i++) {
-                                                          /*  if(aislesList.get(i).getImageList() != null) {*/
+                                                            
+                                                            if (aislesList
+                                                                    .get(i)
+                                                                    .getImageList() != null
+                                                                    && aislesList
+                                                                            .get(i)
+                                                                            .getImageList()
+                                                                            .size() > 0) {
                                                                 VueTrendingAislesDataModel model = VueTrendingAislesDataModel
                                                                         .getInstance(VueApplication
                                                                                 .getInstance());
-                                                            model.addItemToList(
-                                                                    aislesList
-                                                                            .get(i)
-                                                                            .getAisleContext().mAisleId,
-                                                                    aislesList
-                                                                            .get(i));
-                                                            /*}*/
+                                                                model.addItemToList(
+                                                                        aislesList
+                                                                                .get(i)
+                                                                                .getAisleContext().mAisleId,
+                                                                        aislesList
+                                                                                .get(i));
+                                                            }
                                                         }
                                                         
                                                         VueTrendingAislesDataModel

@@ -1847,7 +1847,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     
     private void loadBitmap(NetworkImageView imageView, String url, int width,
             int height) {
-        if (!isFromPendingScreen) {
+        if (!isFromPendingScreen
+                && (!url.equalsIgnoreCase(VueConstants.NO_IMAGE_URL))) {
             ((NetworkImageView) imageView).setImageUrl(url, VueApplication
                     .getInstance().getImageCacheLoader(), width, height,
                     NetworkImageView.BitmapProfile.ProfileDetailsView);

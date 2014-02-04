@@ -189,10 +189,16 @@ public class VueAisleDetailsViewFragment extends Fragment {
             mFindAtUrl = "";
         }
         String profileUrl = null;
-        profileUrl = VueTrendingAislesDataModel
-                .getInstance(getActivity())
-                .getAisleItem(VueApplication.getInstance().getClickedWindowID())
-                .getAisleContext().mAisleOwnerImageURL;
+        if (VueApplication.getInstance().getPedningAisle() != null) {
+            profileUrl = VueApplication.getInstance().getPedningAisle()
+                    .getAisleContext().mAisleOwnerImageURL;
+        } else {
+            profileUrl = VueTrendingAislesDataModel
+                    .getInstance(getActivity())
+                    .getAisleItem(
+                            VueApplication.getInstance().getClickedWindowID())
+                    .getAisleContext().mAisleOwnerImageURL;
+        }
         if (profileUrl != null && profileUrl.length() > 5) {
             mVueUserPic.setImageUrl(profileUrl, VueApplication.getInstance()
                     .getImageCacheLoader());
@@ -638,7 +644,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 VueApplication.getInstance().registerUser(mixpanel);
                 JSONObject aisleSharedprops = new JSONObject();
                 try {
-                    aisleSharedprops.put("Aisle Shared From Screen", "DetailView Activity");
+                    aisleSharedprops.put("Aisle Shared From Screen",
+                            "DetailView Activity");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -707,7 +714,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 VueApplication.getInstance().registerUser(mixpanel);
                 JSONObject imgAddedProps = new JSONObject();
                 try {
-                    imgAddedProps.put("Added Image From Screen", "DetailView Activity");
+                    imgAddedProps.put("Added Image From Screen",
+                            "DetailView Activity");
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

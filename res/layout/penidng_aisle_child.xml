@@ -12,22 +12,23 @@
         <RelativeLayout
             android:layout_width="64dp"
             android:layout_height="match_parent"
-            android:background="#F2D7D7" >
+              >
 
             <TextView
                 android:id="@+id/initial"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                 android:textStyle="bold"
                 android:layout_centerInParent="true"
-                android:background="#2a3a42"
                 android:gravity="center"
                 android:text="A"
-                android:textSize="18sp" />
+                android:textSize="48dp" />
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/lookingfor_lay"
             android:orientation="vertical" >
 
             <TextView
@@ -35,7 +36,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
             <TextView

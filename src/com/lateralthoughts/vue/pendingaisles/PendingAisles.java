@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,13 +30,6 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 
 public class PendingAisles extends Activity {
     SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
-    String[] values = { "Card one", "Card two", "Card three", "Card four",
-            "Card six", "Card seven", "Card eight", "Card nine", "Card ten",
-            "Card eleven", "Card twelve" };
-    String[] initials = { "Looking for Shirt", "Looking for Belt",
-            "Looking for Top", "Looking for Pants", "Looking for Jeans",
-            "Looking for Watch", "Looking for Mobile", "Looking for Ring",
-            "Looking for Sofa", "Looking for Watch", "Looking for Fashion" };
     Colors colors;
     private LayoutInflater mInflater;
     ArrayList<AisleWindowContent> mWindowList = null;
@@ -51,7 +44,7 @@ public class PendingAisles extends Activity {
                 .getPendingAisles();
         if (mWindowList != null && mWindowList.size() > 0) {
             ListView mListView = (ListView) findViewById(R.id.listview);
-            SampleAdapter vAdapter = new SampleAdapter(this, values);
+            SampleAdapter vAdapter = new SampleAdapter(this);
             swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                     vAdapter);
             swingBottomInAnimationAdapter.setListView(mListView);
@@ -83,13 +76,14 @@ public class PendingAisles extends Activity {
         // ready
         menu.findItem(R.id.menu_search).setVisible(false);
         menu.findItem(R.id.menu_create_aisle).setVisible(false);
+        menu.findItem(R.id.menu_pending_aisle).setVisible(false);
         return super.onPrepareOptionsMenu(menu);
     }
     
     private class SampleAdapter extends BaseAdapter {
         Context mContext;
         
-        public SampleAdapter(Context context, String values[]) {
+        public SampleAdapter(Context context) {
             mContext = context;
         }
         
@@ -130,6 +124,8 @@ public class PendingAisles extends Activity {
                         .findViewById(R.id.initial);
                 holder.lookinf_for = (TextView) convertView
                         .findViewById(R.id.looking_for);
+                holder.lookingfor_lay = (LinearLayout) convertView
+                        .findViewById(R.id.lookingfor_lay);
                 convertView.setTag(holder);
             }
             String test = mWindowList.get(position).getAisleContext().mLookingForItem;
@@ -137,12 +133,22 @@ public class PendingAisles extends Activity {
             lastWord = lastWord.toUpperCase();
             char firstChar = lastWord.charAt(0);
             holder = (ViewHOldr) convertView.getTag();
-            holder.textView.setText("Apparel");
+            String userName = getUserName(mWindowList.get(position)
+                    .getAisleContext().mFirstName, mWindowList.get(position)
+                    .getAisleContext().mLastName);
+            if (userName != null && userName.length() > 2) {
+                userName = userName.substring(0, 1).toUpperCase()
+                        + userName.substring(1);
+            }
+            holder.textView.setText(userName);
             holder.initial.setText(String.valueOf(firstChar));
-            holder.initial.setBackgroundColor(Color.parseColor(colors
+            holder.lookingfor_lay.setBackgroundColor(Color.parseColor(colors
                     .getColorCode(position)));
-            holder.lookinf_for.setText(mWindowList.get(position)
-                    .getAisleContext().mLookingForItem);
+            holder.initial.setTextColor(Color.parseColor(colors
+                    .getColorCode(position)));
+            holder.lookinf_for
+                    .setText("Looking for "
+                            + mWindowList.get(position).getAisleContext().mLookingForItem);
             convertView.setOnClickListener(new OnClickListener() {
                 
                 @Override
@@ -165,10 +171,33 @@ public class PendingAisles extends Activity {
         
     }
     
+    private String getUserName(String firstName, String lastName) {
+        String mVueusername = " ";
+        if (firstName != null && lastName != null) {
+            mVueusername = firstName + " " + lastName;
+        } else if (firstName != null) {
+            if (firstName.equals("Anonymous")) {
+                mVueusername = VueApplication.getInstance().getmUserInitials();
+            } else {
+                mVueusername = firstName;
+            }
+        } else if (lastName != null) {
+            mVueusername = lastName;
+        }
+        if (mVueusername != null
+                && mVueusername.trim().equalsIgnoreCase("Anonymous")) {
+            if (VueApplication.getInstance().getmUserInitials() != null) {
+                mVueusername = VueApplication.getInstance().getmUserInitials();
+            }
+        }
+        return mVueusername;
+    }
+    
     private class ViewHOldr {
         TextView textView;
         TextView initial;
         TextView lookinf_for;
+        LinearLayout lookingfor_lay;
     }
     
     @Override

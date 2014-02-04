@@ -127,6 +127,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
         TextView likeCount, bookMarkCount,share_count;
         ImageView bookmarkImageView,shareImage;
         RelativeLayout socialCard;
+        LinearLayout no_image_lay;
     }
     
 }

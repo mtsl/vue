@@ -28,7 +28,7 @@ public class AisleWindowContent {
     private Random randomNumGenerator = new Random();
     private static final String AISLE_STAGE_FOUR = "completed";
     public int mTotalLikesCount;
-    public String mAisleCureentStage;
+    public String mAisleCureentStage = VueConstants.AISLE_STATGE_ONE;
     private boolean mShareIndicator = false;
     
     public boolean ismShareIndicator() {
@@ -91,9 +91,9 @@ public class AisleWindowContent {
         context.mShareCount = getRandomNumber();
         // lets parse through the image urls and update the image resolution
         // VueApplication.getInstance().getResources().getString(R.id.image_res_placeholder);
-        if(mAisleImagesList != null){
-        findMostLikesImage(mAisleImagesList);
-        findAisleStage(mAisleImagesList);
+        if (mAisleImagesList != null) {
+            findMostLikesImage(mAisleImagesList);
+            findAisleStage(mAisleImagesList);
         }
         this.mAisleBookmarkIndicator = VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance()).getNetworkHandler()
@@ -104,7 +104,7 @@ public class AisleWindowContent {
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
                         .getImageRateStatus(mAisleImagesList.get(index).mId);
-                if(mAisleImagesList.get(index).mLikesCount == 0) {
+                if (mAisleImagesList.get(index).mLikesCount == 0) {
                     status = false;
                 }
                 if (status) {
@@ -112,8 +112,8 @@ public class AisleWindowContent {
                 }
             }
         }
-        if(mAisleImagesList != null){
-        udpateImageUrlsForDevice();
+        if (mAisleImagesList != null) {
+            udpateImageUrlsForDevice();
         }
     }
     

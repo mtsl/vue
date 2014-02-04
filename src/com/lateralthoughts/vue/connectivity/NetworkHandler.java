@@ -33,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleContext;
+import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleManager.AisleAddCallback;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
@@ -370,6 +371,47 @@ public class NetworkHandler {
                                                         .reverse(mAislesList);
                                                 for (int i = 0; i < mAislesList
                                                         .size(); i++) {
+                                                    if (mAislesList.get(i)
+                                                            .getImageList() == null) {
+                                                        /*
+                                                         * mAislesList.remove(i);
+                                                         * continue;
+                                                         */
+                                                        // Empty ailse handling.
+                                                        ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
+                                                        AisleImageDetails imageDetails = new AisleImageDetails();
+                                                        imageItemsArray
+                                                                .add(imageDetails);
+                                                        imageDetails.mImageUrl = VueConstants.NO_IMAGE_URL;
+                                                        imageDetails.mAvailableWidth = VueApplication
+                                                                .getInstance()
+                                                                .getPixel(
+                                                                        VueConstants.NO_IMAGE_WIDTH);
+                                                        imageDetails.mAvailableHeight = VueApplication
+                                                                .getInstance()
+                                                                .getPixel(
+                                                                        VueConstants.NO_IMAGE_HEIGHT);
+                                                        AisleWindowContent aisleWindow = VueTrendingAislesDataModel
+                                                                .getInstance(
+                                                                        VueApplication
+                                                                                .getInstance())
+                                                                .getAisleItem(
+                                                                        mAislesList
+                                                                                .get(i)
+                                                                                .getAisleContext().mAisleId);
+                                                        AisleContext userInfo = mAislesList
+                                                                .get(i)
+                                                                .getAisleContext();
+                                                        userInfo.mIsEmptyAisle = true;
+                                                        aisleWindow
+                                                                .addAisleContent(
+                                                                        userInfo,
+                                                                        imageItemsArray);
+                                                        mAislesList.remove(i);
+                                                        mAislesList.add(i,
+                                                                aisleWindow);
+                                                        
+                                                    }
                                                     VueTrendingAislesDataModel
                                                             .getInstance(
                                                                     VueApplication
@@ -387,6 +429,36 @@ public class NetworkHandler {
                                                                         .getInstance())
                                                         .dataObserver();
                                                 // adding my aisle to db.
+                                                for (int index = 0; index < mAislesList
+                                                        .size(); index++) {
+                                                    if (mAislesList.get(index)
+                                                            .getImageList()
+                                                            .size() == 1) {
+                                                        AisleImageDetails imageDetails = mAislesList
+                                                                .get(index)
+                                                                .getImageList()
+                                                                .get(0);
+                                                        if (imageDetails.mImageUrl
+                                                                .equalsIgnoreCase(VueConstants.NO_IMAGE_URL)) {
+                                                            AisleWindowContent aisleWindow = new AisleWindowContent(
+                                                                    mAislesList
+                                                                            .get(index)
+                                                                            .getAisleContext().mAisleId);
+                                                            aisleWindow
+                                                                    .addAisleContent(
+                                                                            mAislesList
+                                                                                    .get(index)
+                                                                                    .getAisleContext(),
+                                                                            null);
+                                                            mAislesList
+                                                                    .remove(index);
+                                                            mAislesList
+                                                                    .add(index,
+                                                                            aisleWindow);
+                                                        }
+                                                    }
+                                                    
+                                                }
                                                 DataBaseManager
                                                         .getInstance(
                                                                 VueApplication

@@ -8,6 +8,11 @@
         android:showAsAction="ifRoom|collapseActionView"
         android:title="Search Category"/>
     <item
+        android:id="@+id/menu_pending_aisle"
+        android:icon="@drawable/new_save"
+        android:showAsAction="always"
+        android:title="@string/pending_aisle"/>
+    <item
         android:id="@+id/menu_create_aisle"
         android:icon="@drawable/new_save"
         android:showAsAction="always"

@@ -54,8 +54,6 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.fasterxml.jackson.databind.deser.impl.NullProvider;
-import com.fasterxml.jackson.databind.deser.std.NullifyingDeserializer;
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -65,6 +63,7 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.pendingaisles.PendingAisles;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.ViewInfo;
@@ -382,6 +381,8 @@ public class VueLandingPageActivity extends Activity implements
                 showDiscardOtherAppImageDialog();
             }
             
+        } else if (item.getItemId() == R.id.menu_pending_aisle) {
+            startActivity(new Intent(this, PendingAisles.class));
         }
         // Handle your other action bar items...
         return super.onOptionsItemSelected(item);
@@ -408,6 +409,7 @@ public class VueLandingPageActivity extends Activity implements
             // ready
             menu.findItem(R.id.menu_search).setVisible(false);
             menu.findItem(R.id.menu_create_aisle).setVisible(false);
+            menu.findItem(R.id.menu_pending_aisle).setVisible(false);
         } else {
             if (mHideDefaultActionbar) {
                 getActionBar().setDisplayShowTitleEnabled(false);
@@ -417,10 +419,12 @@ public class VueLandingPageActivity extends Activity implements
                 getActionBar().setCustomView(mVueLandingActionbarView);
                 menu.findItem(R.id.menu_search).setVisible(false);
                 menu.findItem(R.id.menu_create_aisle).setVisible(false);
+                menu.findItem(R.id.menu_pending_aisle).setVisible(false);
             } else {
                 menu.findItem(R.id.menu_search).setVisible(false);
                 menu.findItem(R.id.menu_search).collapseActionView();
                 menu.findItem(R.id.menu_create_aisle).setVisible(true);
+                menu.findItem(R.id.menu_pending_aisle).setVisible(true);
             }
         }
         return super.onPrepareOptionsMenu(menu);

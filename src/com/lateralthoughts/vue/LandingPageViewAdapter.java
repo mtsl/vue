@@ -1,13 +1,16 @@
 package com.lateralthoughts.vue;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -77,6 +80,8 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
                     .findViewById(R.id.descriptor_aisle_context);
             holder.aisleselectlay = (LinearLayout) convertView
                     .findViewById(R.id.aisleselectlay);
+            holder.no_image_lay = (LinearLayout) convertView
+                    .findViewById(R.id.no_image_lay);
             holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
             convertView.setTag(holder);
         }
@@ -95,10 +100,38 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         } else {
             holder.aisleselectlay.setVisibility(View.GONE);
         }
-        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
-                false, mClickListener, "left", holder.starIcon,
-                holder.socialCard);
         AisleContext context = holder.mWindowContent.getAisleContext();
+        if (context.mIsEmptyAisle) {
+            final AisleWindowContent mWindowContent = holder.mWindowContent;
+            holder.no_image_lay.setVisibility(View.VISIBLE);
+            holder.aisleContentBrowser.setVisibility(View.GONE);
+            holder.starIcon.setVisibility(View.GONE);
+            holder.no_image_lay.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, "click received",
+                            Toast.LENGTH_SHORT).show();
+                    VueApplication.getInstance()
+                            .setPendingAisle(mWindowContent);
+                    Intent intent = new Intent();
+                    intent.setClass(VueApplication.getInstance(),
+                            AisleDetailsViewActivity.class);
+                    VueApplication.getInstance().setClickedWindowID(
+                            mWindowContent.getAisleContext().mAisleId);
+                    VueApplication.getInstance().setClickedWindowCount(0);
+                    VueApplication.getInstance().setmAisleImgCurrentPos(0);
+                    mContext.startActivity(intent);
+                }
+            });
+        } else {
+            holder.no_image_lay.setVisibility(View.GONE);
+            holder.aisleContentBrowser.setVisibility(View.VISIBLE);
+            holder.starIcon.setVisibility(View.VISIBLE);
+            mLoader.getAisleContentIntoView(holder, scrollIndex,
+                    actualPosition, false, mClickListener, "left",
+                    holder.starIcon, holder.socialCard);
+        }
         String mVueusername = null;
         if (context.mFirstName != null && context.mLastName != null) {
             mVueusername = context.mFirstName + " " + context.mLastName;

@@ -19,6 +19,9 @@ public class VueConstants {
     public static final String HELP_SCREEN_ACCES = "HelpScreenAccess";
     public static final String SCREEN_REFRESH_TIME = "TrendingRefreshTimeInMinutes";
     public static final String VERSION_CODE_CHANGE = "VersionCode";
+    public static final String DETAIALS_HELP_SHOWN = "DetailsHelp";
+    public static final String DETAIALS_HELP_SHOWN_TIME = "DetailsHelpTime";
+    public static final String DETAIALS_HELP_BLOCK = "DetailsHelpBlock";
     public static final String HELP_KEY = "helpScreen";
     public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
     public static final String VUE_LOGIN = "VueLoginFlag";

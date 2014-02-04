@@ -301,6 +301,7 @@ public class Parser {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            
             if (aisleImageDetailsList != null
                     && aisleImageDetailsList.size() > 0) {
                 AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
@@ -311,12 +312,10 @@ public class Parser {
                 aisleWindowContentList.add(aisleWindowContent);
             } else if (isEmptyAilseCached) {
                 // TODO: add a dummy imageDetails object.
-                /*
-                 * AisleWindowContent aisleWindowContent = new
-                 * AisleWindowContent(aisleContext.mAisleId);
-                 * aisleWindowContent.addAisleContent(aisleContext,null);
-                 * aisleWindowContentList.add(aisleWindowContent);
-                 */
+                AisleWindowContent aisleWindowContent = new AisleWindowContent(
+                        aisleContext.mAisleId);
+                aisleWindowContent.addAisleContent(aisleContext, null);
+                aisleWindowContentList.add(aisleWindowContent);
             }
         }
         return aisleWindowContentList;

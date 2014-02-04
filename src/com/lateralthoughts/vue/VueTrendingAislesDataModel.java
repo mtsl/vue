@@ -284,11 +284,14 @@ public class VueTrendingAislesDataModel {
             mIsFromDb = true;
             
             for (AisleWindowContent content : aisleContentArray) {
-                AisleWindowContent aisleItem = getAisleItem(content
-                        .getAisleId());
-                aisleItem.addAisleContent(content.getAisleContext(),
-                        content.getImageList());
-                addItemToList(aisleItem.getAisleId(), aisleItem);
+                
+                if (content.getImageList() != null
+                        && content.getImageList().size() > 0) {
+                    
+                    content.addAisleContent(content.getAisleContext(),
+                            content.getImageList());
+                    addItemToList(content.getAisleId(), content);
+                }
             }
             for (IAisleDataObserver observer : mAisleDataObserver) {
                 observer.onAisleDataUpdated(mAisleContentList.size());
