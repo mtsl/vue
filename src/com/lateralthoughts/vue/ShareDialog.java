@@ -74,6 +74,7 @@ public class ShareDialog {
     private MixpanelAPI mixpanel;
     private static final String APPLINK = "https://play.google.com/store/apps/details?id=com.lateralthoughts.vue";
     private JSONObject aisleSharedProps;
+    
     public void dismisDialog() {
         mShareDialog.dismiss();
     }
@@ -83,7 +84,8 @@ public class ShareDialog {
      * @param context
      *            Context
      */
-    public ShareDialog(Context context, Activity activity, MixpanelAPI mixpanel, JSONObject aisleSharedProps) {
+    public ShareDialog(Context context, Activity activity,
+            MixpanelAPI mixpanel, JSONObject aisleSharedProps) {
         this.mixpanel = mixpanel;
         this.mContext = context;
         this.mActivity = activity;
@@ -177,15 +179,15 @@ public class ShareDialog {
                             mAppNames.get(position));
                 } else {
                     String sharedVia = shareIntent(position);
-                   
+                    
                     try {
-                        if(aisleSharedProps != null)
-                        aisleSharedProps.put("Shared Via", sharedVia);
+                        if (aisleSharedProps != null)
+                            aisleSharedProps.put("Shared Via", sharedVia);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if(mixpanel != null)
-                    mixpanel.track("Aisle Shared", aisleSharedProps);
+                    if (mixpanel != null)
+                        mixpanel.track("Aisle Shared", aisleSharedProps);
                 }
             }
         });
@@ -319,7 +321,7 @@ public class ShareDialog {
                             + " would like you to check this aisle out on Vue - "
                             + mImagePathArray.get(0).getLookingFor() + " by "
                             + mImagePathArray.get(0).getAisleOwnerName()
-                            + ". Get Vue to create your own aisles!" + APPLINK;
+                            + ". Get Vue to create your own aisles! " + APPLINK;
                 }
                 Intent i = new Intent(mContext, VueLoginActivity.class);
                 Bundle b = new Bundle();
@@ -494,13 +496,14 @@ public class ShareDialog {
                     shareText = mImagePathArray.get(0).getAisleOwnerName()
                             + " would like your opinion in finding "
                             + mImagePathArray.get(0).getLookingFor()
-                            + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more.";
+                            + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
+                            + APPLINK;
                 } else {
                     shareText = VueApplication.getInstance().getmUserName()
                             + " would like you to check this aisle out on Vue - "
                             + mImagePathArray.get(0).getLookingFor() + " by "
                             + mImagePathArray.get(0).getAisleOwnerName()
-                            + ". Get Vue to create your own aisles!";
+                            + ". Get Vue to create your own aisles! " + APPLINK;
                 }
                 mSendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
                 mSendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("mailto:"));
@@ -618,13 +621,14 @@ public class ShareDialog {
             shareText = mImagePathArray.get(0).getAisleOwnerName()
                     + " would like your opinion in finding "
                     + mImagePathArray.get(0).getLookingFor()
-                    + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more.";
+                    + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
+                    + APPLINK;
         } else {
             shareText = VueApplication.getInstance().getmUserName()
                     + " would like you to check this aisle out on Vue - "
                     + mImagePathArray.get(0).getLookingFor() + " by "
                     + mImagePathArray.get(0).getAisleOwnerName()
-                    + ". Get Vue to create your own aisles!";
+                    + ". Get Vue to create your own aisles! " + APPLINK;
         }
         mSendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
         String activityname = null;

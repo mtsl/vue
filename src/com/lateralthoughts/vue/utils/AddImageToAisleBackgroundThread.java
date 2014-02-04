@@ -323,37 +323,61 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                             VueApplication
                                                                     .getInstance())
                                                     .dataObserver();
-                                            try {
-                                                String s[] = { aisleImageDetails.mOwnerAisleId };
-                                                ArrayList<AisleWindowContent> list = DataBaseManager
-                                                        .getInstance(
-                                                                VueApplication
-                                                                        .getInstance())
-                                                        .getAislesFromDB(s,
-                                                                false);
-                                                if (list != null) {
-                                                    list.get(0)
-                                                            .getImageList()
-                                                            .add(aisleImageDetails);
-                                                    DataBaseManager
-                                                            .getInstance(
-                                                                    VueApplication
-                                                                            .getInstance())
-                                                            .addTrentingAislesFromServerToDB(
-                                                                    VueApplication
-                                                                            .getInstance(),
-                                                                    list,
-                                                                    VueTrendingAislesDataModel
-                                                                            .getInstance(
-                                                                                    VueApplication
-                                                                                            .getInstance())
-                                                                            .getNetworkHandler().offset,
-                                                                    DataBaseManager.MY_AISLES);
-                                                }
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
                                         }
+                                    }
+                                    if (VueApplication.getInstance()
+                                            .getPedningAisle() != null) {
+                                        
+                                        VueApplication
+                                                .getInstance()
+                                                .getPedningAisle()
+                                                .getAisleImageForImageId(
+                                                        mImageId,
+                                                        aisleImageDetails.mImageUrl,
+                                                        aisleImageDetails.mId);
+                                        VueApplication
+                                                .getInstance()
+                                                .getPedningAisle()
+                                                .addAisleContent(
+                                                        VueApplication
+                                                                .getInstance()
+                                                                .getPedningAisle()
+                                                                .getAisleContext(),
+                                                        VueApplication
+                                                                .getInstance()
+                                                                .getPedningAisle()
+                                                                .getImageList());
+                                        VueTrendingAislesDataModel.getInstance(
+                                                VueApplication.getInstance())
+                                                .dataObserver();
+                                    }
+                                    try {
+                                        String s[] = { aisleImageDetails.mOwnerAisleId };
+                                        ArrayList<AisleWindowContent> list = DataBaseManager
+                                                .getInstance(
+                                                        VueApplication
+                                                                .getInstance())
+                                                .getAislesFromDB(s, false);
+                                        if (list != null) {
+                                            list.get(0).getImageList()
+                                                    .add(aisleImageDetails);
+                                            DataBaseManager
+                                                    .getInstance(
+                                                            VueApplication
+                                                                    .getInstance())
+                                                    .addTrentingAislesFromServerToDB(
+                                                            VueApplication
+                                                                    .getInstance(),
+                                                            list,
+                                                            VueTrendingAislesDataModel
+                                                                    .getInstance(
+                                                                            VueApplication
+                                                                                    .getInstance())
+                                                                    .getNetworkHandler().offset,
+                                                            DataBaseManager.MY_AISLES);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
                                 } else {
                                     mImageAddedCallback.onImageAdded(null,

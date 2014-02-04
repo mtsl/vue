@@ -55,7 +55,7 @@ public class VueApplication extends Application {
     public long mLaunchTime;
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
-    public String MIXPANEL_TOKEN = "0b560991fe02d44932efedeff66e54f5";//"d5ac13097eaf8acefc264d21457307a1";
+    public String MIXPANEL_TOKEN = /* "0b560991fe02d44932efedeff66e54f5"; */"d5ac13097eaf8acefc264d21457307a1";
     
     public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
     public static final String LOAD_IMAGES_REQUEST_TAG = "LoadImagesTag";
@@ -328,6 +328,7 @@ public class VueApplication extends Application {
         editor.putLong(VueConstants.SCREEN_REFRESH_TIME, time_in_mins);
         editor.commit();
     }
+    
     public void setPendingAisle(AisleWindowContent aisleWindow) {
         mAisleWindow = aisleWindow;
     }
@@ -336,42 +337,23 @@ public class VueApplication extends Application {
         return mAisleWindow;
     }
     
+    /*
+     * public void registerUser(MixpanelAPI mixpanel) { VueUser storedVueUser =
+     * null; try { storedVueUser = Utils.readUserObjectFromFile(
+     * VueApplication.getInstance(), VueConstants.VUE_APP_USEROBJECT__FILENAME);
+     * } catch (Exception e2) { e2.printStackTrace(); } if (storedVueUser !=
+     * null) ; JSONObject nameTag = new JSONObject(); try { // Set an
+     * "mp_name_tag" super property // for Streams if you find it useful.
+     * nameTag.put("mp_name_tag", storedVueUser.getFirstName() + " " +
+     * storedVueUser.getLastName()); mixpanel.registerSuperProperties(nameTag);
+     * } catch (JSONException e) { e.printStackTrace(); } }
+     * 
+     * public void unregisterUser(MixpanelAPI mixpanel) { VueUser storedVueUser
+     * = null; try { storedVueUser = Utils.readUserObjectFromFile(
+     * VueApplication.getInstance(), VueConstants.VUE_APP_USEROBJECT__FILENAME);
+     * mixpanel.unregisterSuperProperty(storedVueUser.getFirstName() + " " +
+     * storedVueUser.getLastName()); //mixpanel.clearSuperProperties(); } catch
+     * (Exception e2) { e2.printStackTrace(); } }
+     */
     
-   /* public void registerUser(MixpanelAPI mixpanel) {
-        VueUser storedVueUser = null;
-        try {
-            storedVueUser = Utils.readUserObjectFromFile(
-                    VueApplication.getInstance(),
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
-        } catch (Exception e2) {
-            e2.printStackTrace();
-        }
-        if (storedVueUser != null)
-            ;
-        JSONObject nameTag = new JSONObject();
-        try {
-            // Set an "mp_name_tag" super property
-            // for Streams if you find it useful.
-            nameTag.put("mp_name_tag", storedVueUser.getFirstName() + " "
-                    + storedVueUser.getLastName());
-            mixpanel.registerSuperProperties(nameTag);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void unregisterUser(MixpanelAPI mixpanel) {
-        VueUser storedVueUser = null;
-        try {
-            storedVueUser = Utils.readUserObjectFromFile(
-                    VueApplication.getInstance(),
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            mixpanel.unregisterSuperProperty(storedVueUser.getFirstName() + " "
-                    + storedVueUser.getLastName());
-            //mixpanel.clearSuperProperties();
-        } catch (Exception e2) {
-            e2.printStackTrace();
-        }
-    }*/
-
 }

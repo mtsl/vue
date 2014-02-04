@@ -302,8 +302,6 @@ public class DataEntryActivity extends Activity {
                 mDataEntryFragment.mCategoryheading
                         .setText(b
                                 .getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY));
-                mDataEntryFragment.mCategoryheadingLayout
-                        .setVisibility(View.VISIBLE);
             }
             if (mDataEntryFragment.mFromDetailsScreenFlag) {
                 mDataEntryFragment.mOccasionLayout.setVisibility(View.GONE);
@@ -438,8 +436,6 @@ public class DataEntryActivity extends Activity {
                             getResources().getString(
                                     R.string.add_imae_to_aisle_screen_title));
                     mDataEntryFragment.mMainHeadingRow
-                            .setVisibility(View.VISIBLE);
-                    mDataEntryFragment.mCategoryheadingLayout
                             .setVisibility(View.VISIBLE);
                 }
                 if (b.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS) != null) {

@@ -83,7 +83,9 @@ public class AisleDetailsViewActivity extends Activity {
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.aisle_details_activity_landing);
         mDrawerRight = (FrameLayout) findViewById(R.id.drawer_right);
-        mHasToHelpShow = isDetailsHelpShown();
+        if (VueApplication.getInstance().getClickedWindowCount() > 1) {
+            mHasToHelpShow = isDetailsHelpShown();
+        }
         initialize();
         if (!mHasToHelpShow) {
             DrawerLayout.LayoutParams layoutParams = new DrawerLayout.LayoutParams(
