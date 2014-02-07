@@ -1389,8 +1389,8 @@ public class VueLoginActivity extends FragmentActivity implements
 	private void showAisleSwipeHelp() {
 		if (mShowAisleSwipeHelpLayoutFlag) {
 			finish();
-			Intent swipeHelpIntent = new Intent(this, SwipeHelp.class);
-			startActivity(swipeHelpIntent);
+	/*		Intent swipeHelpIntent = new Intent(this, SwipeHelp.class);
+			startActivity(swipeHelpIntent);*/
 		} else {
 			finish();
 		}

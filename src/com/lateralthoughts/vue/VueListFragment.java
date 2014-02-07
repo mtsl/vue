@@ -220,9 +220,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                     int groupPosition, long id) {
-                if(groupPosition == 1){
+               /* if(groupPosition == 1){
                     refreshBezelMenu();
-                }
+                }*/
                 if (VueLandingPageActivity.mOtherSourceImagePath == null) {
                     TextView textView = (TextView) v
                             .findViewById(R.id.vue_list_fragment_itemTextview);
@@ -553,11 +553,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles),
                 R.drawable.new_recently_viewed, null);
         meChildren.add(item);
-        item = new ListOptionItem(
+    /*    item = new ListOptionItem(
                 getString(R.string.sidemenu_sub_option_My_Pointss) + " "
                         + Utils.getUserPoints(),
                 R.drawable.new_recently_viewed, null);
-        meChildren.add(item);
+        meChildren.add(item);*/
         return meChildren;
     }
     

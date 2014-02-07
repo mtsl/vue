@@ -206,7 +206,8 @@ public class VueLandingPageActivity extends Activity implements
 				long hours = Utils.dateDifference(sharedPreferencesObj.getLong(
 						VueConstants.APP_FIRST_TIME_OPENED_TIME, 0));
 				if (hours != -1 && hours >= 48) {
-					mShowSwipeHelp = true;
+					//mShowSwipeHelp = true;
+				    mShowSwipeHelp = false;
 					Editor editor = sharedPreferencesObj.edit();
 					editor.putBoolean(VueConstants.AISLE_SWIPE, true);
 					editor.commit();
@@ -277,9 +278,9 @@ public class VueLandingPageActivity extends Activity implements
 						}
 					} else {
 						if (mShowSwipeHelp) {
-							Intent swipeHelpIntent = new Intent(this,
+							/*Intent swipeHelpIntent = new Intent(this,
 									SwipeHelp.class);
-							startActivity(swipeHelpIntent);
+							startActivity(swipeHelpIntent);*/
 						}
 					}
 					VueApplication.getInstance().setmUserInitials(
