@@ -220,6 +220,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                     int groupPosition, long id) {
+                if(groupPosition == 1){
+                    refreshBezelMenu();
+                }
                 if (VueLandingPageActivity.mOtherSourceImagePath == null) {
                     TextView textView = (TextView) v
                             .findViewById(R.id.vue_list_fragment_itemTextview);
