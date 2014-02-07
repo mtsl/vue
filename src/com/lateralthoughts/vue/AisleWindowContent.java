@@ -262,6 +262,7 @@ public class AisleWindowContent {
                         mAisleImagesList.get(i).mId = newServerResponseImageId;
                         if (mAisleImagesList.get(i).mIsFromLocalSystem) {
                             mAisleImagesList.get(i).mImageUrl = imageUrl;
+                            mAisleImagesList.get(i).mIsFromLocalSystem = false;
                         }
                         break;
                     }

@@ -391,7 +391,7 @@ public class AisleDetailsViewActivity extends Activity {
             mViewHolder.compareImage.setImageResource(R.drawable.no_image);
             BitmapWorkerTask task = new BitmapWorkerTask(null,
                     mViewHolder.compareImage, mComparisionScreenHeight / 2,
-                    mViewHolder.pb);
+                    mViewHolder.pb, mImageDetailsArr.get(position).mIsFromLocalSystem);
             String[] imagesArray = {
                     mImageDetailsArr.get(position).mCustomImageUrl,
                     mImageDetailsArr.get(position).mImageUrl };
@@ -724,14 +724,16 @@ public class AisleDetailsViewActivity extends Activity {
         private String url = null;
         private int mBestHeight;
         private ProgressBar progressBar;
+        boolean sdCardFlag = false;
         
         public BitmapWorkerTask(AisleContentBrowser vFlipper,
-                ImageView imageView, int bestHeight, ProgressBar bp) {
+                ImageView imageView, int bestHeight, ProgressBar bp,boolean flag) {
             // Use a WeakReference to ensure the ImageView can be garbage
             // collected
             progressBar = bp;
             imageViewReference = new WeakReference<ImageView>(imageView);
             mBestHeight = bestHeight;
+            sdCardFlag = flag; 
         }
         
         @Override
@@ -746,11 +748,13 @@ public class AisleDetailsViewActivity extends Activity {
             url = params[0];
             Bitmap bmp = null;
             // we want to get the bitmap and also add it into the memory cache
+            if(!url.equalsIgnoreCase(VueConstants.NO_IMAGE_URL)) {
             bmp = mBitmapLoaderUtils
                     .getBitmap(url, params[1], true, mBestHeight,
                             VueApplication.getInstance()
                                     .getVueDetailsCardWidth() / 2,
-                            Utils.DETAILS_SCREEN);
+                            Utils.DETAILS_SCREEN,sdCardFlag);
+            }
             return bmp;
         }
         

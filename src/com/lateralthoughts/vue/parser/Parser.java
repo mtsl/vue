@@ -311,11 +311,11 @@ public class Parser {
                         aisleImageDetailsList);
                 aisleWindowContentList.add(aisleWindowContent);
             } else if (isEmptyAilseCached) {
-                // TODO: add a dummy imageDetails object.
-                AisleWindowContent aisleWindowContent = new AisleWindowContent(
+                // TODO: UNCOMMENT  THIS CODE WHEN NO IMAGE AISLE FEATURE ENABLED.
+   /*             AisleWindowContent aisleWindowContent = new AisleWindowContent(
                         aisleContext.mAisleId);
                 aisleWindowContent.addAisleContent(aisleContext, null);
-                aisleWindowContentList.add(aisleWindowContent);
+                aisleWindowContentList.add(aisleWindowContent);*/
             }
         }
         return aisleWindowContentList;
@@ -553,5 +553,22 @@ public class Parser {
             }
         }
         return bookmarkedAisles;
+    }
+    //return my aisles list count for rewards.
+    public int getUserAilseCount(String jsonArray) {
+        int count = 0;
+        try {
+            
+            JSONObject jsonResponse = new JSONObject(new String(jsonArray));
+            JSONArray aisleArray = jsonResponse.getJSONArray("aisles");
+            
+            if (aisleArray != null) {
+                count = aisleArray.length();
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 }

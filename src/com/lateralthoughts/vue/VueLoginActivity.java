@@ -35,6 +35,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
@@ -636,6 +637,7 @@ public class VueLoginActivity extends FragmentActivity implements
                                                             user,
                                                             String.valueOf(vueUser
                                                                     .getId()));
+                                                    loadRewardPoints();
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
@@ -661,6 +663,7 @@ public class VueLoginActivity extends FragmentActivity implements
                                                             user,
                                                             String.valueOf(vueUser
                                                                     .getId()));
+                                                    loadRewardPoints();
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
@@ -794,23 +797,23 @@ public class VueLoginActivity extends FragmentActivity implements
             try {
                 // Set an "mp_name_tag" super property
                 // for Streams if you find it useful.
-                nameTag.put("mp_name_tag", user.getFirstName() + " "
-                        + user.getLastName());
+                nameTag.put("mp_name_tag",
+                        user.getFirstName() + " " + user.getLastName());
                 mixpanel.registerSuperProperties(nameTag);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            
             JSONObject loginprops = new JSONObject();
             try {
                 loginprops.put("Email", vueUserProfile.getUserEmail());
             } catch (JSONException e1) {
                 e1.printStackTrace();
-
+                
             }
             mixpanel.track("Facebook Login Success", loginprops);
         }
-
+        
     }
     
     private void updateUI(boolean fromOnActivityResult) {
@@ -1173,6 +1176,7 @@ public class VueLoginActivity extends FragmentActivity implements
                                                 user);
                                         saveGooglePlusUserProfile(person,
                                                 String.valueOf(user.getId()));
+                                        loadRewardPoints();
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -1192,6 +1196,7 @@ public class VueLoginActivity extends FragmentActivity implements
                                             user);
                                     saveGooglePlusUserProfile(person,
                                             String.valueOf(user.getId()));
+                                    loadRewardPoints();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -1321,6 +1326,7 @@ public class VueLoginActivity extends FragmentActivity implements
                             Utils.writeUserObjectToFile(VueLoginActivity.this,
                                     VueConstants.VUE_APP_USEROBJECT__FILENAME,
                                     user);
+                            loadRewardPoints();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1377,5 +1383,28 @@ public class VueLoginActivity extends FragmentActivity implements
         } else {
             finish();
         }
+    }
+    
+    private void loadRewardPoints() {
+        int userPointsExecuteTime = 60000;
+        // load lazily after completion of all trending inital data
+        // need to improve this code so that it should start exactly after
+        // completion of trending ailse download.
+        new Handler().postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+                new Thread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getNetworkHandler().getMyAislesPoints();
+                    }
+                });
+                
+            }
+        }, userPointsExecuteTime);
     }
 }

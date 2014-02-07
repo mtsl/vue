@@ -80,7 +80,9 @@
     <string name="pendingActionBundleKey">com.example.learnfb:PendingAction</string>
     <string name="cancelled">Cancelled</string>
     <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
-    <string name="ok">Ok</string>
+    <string name="ok">Ok</string> 
+    <string name="continue_earning">Continue earning</string> 
+    <string name="redeem_it_now">Redeem it now</string>
     <string name="cache_dirname">GoogleImgApp_Cache</string>
     <string name="profile">Profile</string>
     <string name="create_aisle">Create Aisle</string>
@@ -95,7 +97,7 @@
     <string name="decision_screen_title">Select your choice</string>
     <string name="hint_search">Search</string>
     <string name="sidemenu_option_Trending_Aisles">Trending</string>
-      <string name="pending_aisle_option">Pending Aisles</string>
+    <string name="pending_aisle_option">Pending Aisles</string>
     <string name="sidemenu_option_Me">Me</string>
     <string name="sidemenu_option_Categories">Categories</string>
     <string name="sidemeun_option_Settings">Settings</string>
@@ -119,6 +121,7 @@
     <string name="sidemenu_sub_option_Interactions">Interactions</string>
     <string name="sidemenu_sub_option_Bookmarks">Bookmarks</string>
     <string name="sidemenu_sub_option_Recently_Viewed_Aisles">Recently viewed</string>
+    <string name="sidemenu_sub_option_My_Pointss">My Points</string> 
     <string name="done">Done</string>
     <string name="more">More</string>
     <string name="browser">Browser</string>
@@ -133,7 +136,7 @@
     <string name="email_id">vue@thesilverlabs.com</string>
     <string name="vue_content">Privacy Policy</string>
     <string name="vue_terms">Terms of Service</string>
-    <string name="about_tabel_Content_text">1. Introduction \n2. Terms of Service \n3. Privacy Policy \n4. Contact us</string>
+    <string name="about_tabel_Content_text">1. Introduction \n2. Privacy Policy \n3. Terms of Service \n4. Contact us</string>
     <string name="feedback_form_text_info">Please write to us about how we might improve fashionwrap to suit your needs. Whether you would like us to cover more topics, improve the user experiences, or do something else better, please write to us. We will appreciate it very much!</string>
     <string name="aboutedittext">Type your message here</string>
     <string name="clear">Clear</string>
@@ -155,7 +158,7 @@
           We will use this information to make the experience better for you. 
 
 We may change this privacy policy from time to time.  Please check back to see if there have been any updates.  </string>
-    <string name="terms_of_service">You retain all rights in, and are solely responsible for, the content you post to Vue. You grant PintVueerest and its users a non-exclusive, royalty-free, transferable, sublicensable, worldwide license to use, store, display, reproduce, re-pin, modify, create derivative works, perform, and distribute your content on Vue solely for the purposes of operating, developing, providing, and using the products. We reserve the right to remove or modify content for any reason, including content that we believe violates these Terms or our policies.</string>
+    <string name="terms_of_service">You retain all rights in, and are solely responsible for, the content you post to Vue. You grant Vue and its users a non-exclusive, royalty-free, transferable, sublicensable, worldwide license to use, store, display, reproduce, share, modify, create derivative works, perform, and distribute your content on Vue solely for the purposes of operating, developing, providing, and using the products. We reserve the right to remove or modify content for any reason, including content that we believe is inappropriate, violates these Terms or our policies.</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
@@ -170,7 +173,7 @@ We may change this privacy policy from time to time.  Please check back to see i
     <string name="com_mixpanel_android_exit">Exit</string>
     <string name="app_link">https://play.google.com/store/search?q=Silverlabs%20Vue</string>
     <string name="suggest_something_owner">Add an item to this aisle</string>
-     <string name="suggest_something_guest">Suggest something</string>
+    <string name="suggest_something_guest">Suggest something</string>
 
     <color name="com_mixpanel_android_selected">#66ffffff</color>
     <!-- MixPanel -->

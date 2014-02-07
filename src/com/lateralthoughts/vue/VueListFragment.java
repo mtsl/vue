@@ -12,10 +12,14 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -26,7 +30,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -37,6 +40,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -65,6 +69,7 @@ import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
 import com.lateralthoughts.vue.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 @SuppressLint("ValidFragment")
 public class VueListFragment extends Fragment implements TextWatcher {
@@ -90,6 +95,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
     private RelativeLayout vue_list_fragment_actionbar;
     private BezelMenuRefreshReciever mBezelMenuRefreshReciever = null;
     View mView = null;
+    private MixpanelAPI mixpanel;
     
     @Override
     public void onDestroy() {
@@ -120,6 +126,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         setRetainInstance(true);
+        mixpanel = mixpanel = MixpanelAPI.getInstance(getActivity(),
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         if (getActivity() instanceof VueLandingPageActivity) {
             VueApplication.getInstance().landingPage = (VueLandingPageActivity) getActivity();
         }
@@ -364,6 +372,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 } else if (s.trim().equals(
                         getString(R.string.sidemenu_sub_option_Interactions))) {
                     return true;
+                } else if (s
+                        .contains(getString(R.string.sidemenu_sub_option_My_Pointss))) {
+                    int pointsEarned = Utils.getUserPoints();
+                    showRewardsDialog("Silver", pointsEarned);
+                    return true;
                 }
                 if (VueLandingPageActivity.mOtherSourceImagePath == null) {
                     if (s.equals(getString(R.string.sidemenu_option_Profile))) {
@@ -373,6 +386,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
                             .equals(getString(R.string.sidemenu_sub_option_Facebook))
                             || s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
                         FlurryAgent.logEvent("InviteFriends_" + s);
+                        Utils.saveUserPoints(
+                                VueConstants.USER_INVITE_FRIEND_POINTS, 5,
+                                getActivity());
                         getFriendsList(s);
                     }
                     return false;
@@ -532,6 +548,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
         meChildren.add(item);
         item = new ListOptionItem(
                 getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles),
+                R.drawable.new_recently_viewed, null);
+        meChildren.add(item);
+        item = new ListOptionItem(
+                getString(R.string.sidemenu_sub_option_My_Pointss) + " "
+                        + Utils.getUserPoints(),
                 R.drawable.new_recently_viewed, null);
         meChildren.add(item);
         return meChildren;
@@ -1130,6 +1151,118 @@ public class VueListFragment extends Fragment implements TextWatcher {
         mInputMethodManager.hideSoftInputFromWindow(
                 mSideMenuSearchBar.getWindowToken(), 0);
         
+    }
+    
+    private void showRewardsDialog(String userType, int pointsEarned) {
+        int pointsRequired = 0;
+        String nextUserType = "silver";
+        if (pointsEarned < 100) {
+            userType = "bronze";
+            nextUserType = "silver";
+            pointsRequired = 100 - pointsEarned;
+        } else {
+            userType = "silver";
+        }
+        if (userType.endsWith("bronze")) {
+            
+            StringBuilder sb = new StringBuilder("You are a ");
+            sb.append(userType);
+            sb.append(" user with ");
+            sb.append("" + pointsEarned);
+            sb.append(" points! Only ");
+            sb.append(pointsRequired);
+            sb.append(" points to go to become a ");
+            sb.append(nextUserType);
+            sb.append(" user");
+            final Dialog dialog = new Dialog(getActivity(),
+                    R.style.Theme_Dialog_Translucent);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.networkdialogue);
+            TextView messagetext = (TextView) dialog
+                    .findViewById(R.id.messagetext);
+            TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
+            View networkdialogline = dialog
+                    .findViewById(R.id.networkdialogline);
+            networkdialogline.setVisibility(View.GONE);
+            TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
+            nobutton.setVisibility(View.GONE);
+            okbutton.setText(getResources().getString(R.string.ok));
+            messagetext.setText(sb);
+            okbutton.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.setOnCancelListener(new OnCancelListener() {
+                public void onCancel(DialogInterface dialog) {
+                }
+            });
+            dialog.show();
+            dialog.setOnDismissListener(new OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface arg0) {
+                }
+            });
+        } else if (userType.equals("silver")) {
+            StringBuilder sb = new StringBuilder(
+                    "Congratulations! You are now a Silver Vuer! As a thank you, we will gladly send you $5 to shop online.");
+            
+            final Dialog dialog = new Dialog(getActivity(),
+                    R.style.Theme_Dialog_Translucent);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.networkdialogue);
+            TextView messagetext = (TextView) dialog
+                    .findViewById(R.id.messagetext);
+            TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
+            View networkdialogline = dialog
+                    .findViewById(R.id.networkdialogline);
+            TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
+            nobutton.setText(getResources()
+                    .getString(R.string.continue_earning));
+            okbutton.setText(getResources().getString(R.string.redeem_it_now));
+            messagetext.setText(sb);
+            nobutton.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            okbutton.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    VueUser storedVueUser = null;
+                    try {
+                        storedVueUser = Utils.readUserObjectFromFile(
+                                getActivity(),
+                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                        if (storedVueUser != null) {
+                            JSONObject nameTag = new JSONObject();
+                            nameTag.put("Redeem", "RedeemItNow");
+                            nameTag.put("Id", storedVueUser.getId());
+                            nameTag.put("Email", storedVueUser.getEmail());
+                            // TODO: mix panel log.
+                            mixpanel.track("Coupon", nameTag);
+                        }
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    
+                    Toast.makeText(
+                            getActivity(),
+                            "Thank you for being such an awesome Vuer! Expect to see the rewards from us shortly in your email inbox.",
+                            Toast.LENGTH_LONG).show();
+                    dialog.dismiss();
+                }
+            });
+            dialog.setOnCancelListener(new OnCancelListener() {
+                public void onCancel(DialogInterface dialog) {
+                }
+            });
+            dialog.show();
+            dialog.setOnDismissListener(new OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface arg0) {
+                }
+            });
+        }
     }
     
 }

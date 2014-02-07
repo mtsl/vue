@@ -31,7 +31,6 @@ import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueApplication extends Application {
     private static VueApplication sInstance;
@@ -155,13 +154,10 @@ public class VueApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        
         sInstance = this;
         mVueApplicationContext = this;
-        
         RegisterGCMClient.registerClient(VueApplication.getInstance(),
                 UrlConstants.CURRENT_SERVER_PROJECT_ID);
-        
         ScaledImageViewFactory.getInstance(this);
         AisleWindowContentFactory.getInstance(this);
         mHttpClient = new DefaultHttpClient();
@@ -177,7 +173,6 @@ public class VueApplication extends Application {
                                                                 // and higher
         } catch (JSONException je) {
         }
-        
         mEmptyImageView = new ScaleImageView(this);
         Drawable d = getResources().getDrawable(R.drawable.aisle_content_empty);
         mEmptyImageView.setImageDrawable(d);
@@ -186,7 +181,6 @@ public class VueApplication extends Application {
         mScreenHeight = dm.heightPixels;
         mScreenWidth = dm.widthPixels;
         mVolleyRequestQueue = Volley.newRequestQueue(this);
-        
         mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
         for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
             if (Utils.appInstalledOrNot(SHOPPINGAPP_PACKAGES_ARRAY[i], this)) {
@@ -203,13 +197,10 @@ public class VueApplication extends Application {
                 mShoppingApplicationDetailsList.add(shoppingApplicationDetails);
             }
         }
-        
         mMoreInstalledApplicationDetailsList = Utils
                 .getInstalledApplicationsList(getApplicationContext());
-        
         Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
                 crittercismConfig);
-        
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(
@@ -223,7 +214,6 @@ public class VueApplication extends Application {
                         return mCache.get(url);
                     }
                 });
-        
     }
     
     public static VueApplication getInstance() {
@@ -231,10 +221,16 @@ public class VueApplication extends Application {
     }
     
     public HttpClient getHttpClient() {
+        if (mHttpClient == null) {
+            mHttpClient = new DefaultHttpClient();
+        }
         return mHttpClient;
     }
     
     public FileCache getFileCache() {
+        if (mFileCache == null) {
+            mFileCache = new FileCache(this);
+        }
         return mFileCache;
     }
     

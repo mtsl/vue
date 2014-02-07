@@ -33,6 +33,9 @@ public class PendingAisles extends Activity {
     Colors colors;
     private LayoutInflater mInflater;
     ArrayList<AisleWindowContent> mWindowList = null;
+    private  String clickedPendingAisleId = "";
+    public static boolean mIsImageAddedToPendingAisle = false;
+    SampleAdapter mAdapter;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +47,9 @@ public class PendingAisles extends Activity {
                 .getPendingAisles();
         if (mWindowList != null && mWindowList.size() > 0) {
             ListView mListView = (ListView) findViewById(R.id.listview);
-            SampleAdapter vAdapter = new SampleAdapter(this);
+            mAdapter = new SampleAdapter(this);
             swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
-                    vAdapter);
+                    mAdapter);
             swingBottomInAnimationAdapter.setListView(mListView);
             mListView.setAdapter(swingBottomInAnimationAdapter);
         } else {
@@ -54,7 +57,24 @@ public class PendingAisles extends Activity {
                     Toast.LENGTH_LONG).show();
         }
     }
-    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mWindowList != null && mWindowList.size() > 0){
+            for(int i =0;i<mWindowList.size(); i++){
+                if(clickedPendingAisleId.equalsIgnoreCase(mWindowList.get(i).getAisleContext().mAisleId)){
+                    if(mIsImageAddedToPendingAisle) {
+                    mWindowList.remove(i);
+                    mIsImageAddedToPendingAisle = false;
+                    }
+                    break;
+                }
+            }
+        }
+        if(mAdapter != null){
+            mAdapter.notifyDataSetChanged();
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -153,6 +173,7 @@ public class PendingAisles extends Activity {
                 
                 @Override
                 public void onClick(View v) {
+                    clickedPendingAisleId = mWindowList.get(pos).getAisleContext().mAisleId;
                     VueApplication.getInstance().setPendingAisle(
                             mWindowList.get(pos));
                     Intent intent = new Intent();

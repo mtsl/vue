@@ -141,7 +141,6 @@ public class VueLandingPageActivity extends Activity implements
         mPd = new ProgressDialog(this);
         mPd.setMessage("Loading...");
         mPd.setCancelable(false);
-        clearDataEntryData();
         getActionBar().setTitle(
                 getString(R.string.sidemenu_option_Trending_Aisles));
         VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
@@ -220,8 +219,6 @@ public class VueLandingPageActivity extends Activity implements
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            
-            // TODO:
             PackageInfo packageInfo;
             try {
                 packageInfo = this.getPackageManager().getPackageInfo(
@@ -309,16 +306,20 @@ public class VueLandingPageActivity extends Activity implements
         String type = intent.getType();
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
+                clearDataEntryData();
                 handleSendText(intent, true);
             } else if (type.startsWith("image/")) {
+                clearDataEntryData();
                 handleSendImage(intent, true);
             }
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
             if (type.startsWith("image/")) {
+                clearDataEntryData();
                 handleSendMultipleImages(intent, true);
             }
         }
         loadDetailsScreenForNotificationClick(getIntent().getExtras());
+        
     }
     
     @Override
@@ -374,6 +375,26 @@ public class VueLandingPageActivity extends Activity implements
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, mLandingAilsesFrag).commit();
         mDrawerLayout.setFocusableInTouchMode(false);
+        int userPointsExecuteTime = 60000;
+        // load lazily after completion of all trending inital data
+        // need to improve this code so that it should start exactly after
+        // completion of trending ailse download.
+        new Handler().postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+                new Thread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getNetworkHandler().getMyAislesPoints();
+                    }
+                });
+                
+            }
+        }, userPointsExecuteTime);
     }
     
     @Override
@@ -430,6 +451,7 @@ public class VueLandingPageActivity extends Activity implements
         getActionBar().setDisplayShowHomeEnabled(true);
         getActionBar().setCustomView(null);
         getActionBar().setDisplayShowTitleEnabled(true);
+        menu.findItem(R.id.menu_pending_aisle).setVisible(false);
         if (isdrawOpen) {
             // set menu search visibility to true when backend functionality is
             // ready
@@ -450,7 +472,9 @@ public class VueLandingPageActivity extends Activity implements
                 menu.findItem(R.id.menu_search).setVisible(false);
                 menu.findItem(R.id.menu_search).collapseActionView();
                 menu.findItem(R.id.menu_create_aisle).setVisible(true);
-                menu.findItem(R.id.menu_pending_aisle).setVisible(true);
+                // TODO: UNCOMMENT THIS CODE WHEN NO IMAGE AISLE FEATURE
+                // ENABLED.
+                // menu.findItem(R.id.menu_pending_aisle).setVisible(true);
             }
         }
         return super.onPrepareOptionsMenu(menu);
@@ -458,46 +482,60 @@ public class VueLandingPageActivity extends Activity implements
     
     @Override
     protected void onStart() {
-        FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
-        FlurryAgent.logEvent(TRENDING_SCREEN_VISITORS);
-        VueUser vueUser = null;
-        try {
-            vueUser = Utils.readUserObjectFromFile(this,
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (vueUser != null) {
-            Map<String, String> articleParams = new HashMap<String, String>();
-            if (vueUser.getFacebookId().equals(VueUser.DEFAULT_FACEBOOK_ID)
-                    && vueUser.getGooglePlusId().equals(
-                            VueUser.DEFAULT_GOOGLEPLUS_ID)) {
-                articleParams.put("User_Status", "Un_Registered");
-            } else {
-                articleParams.put("User_Status", "Registered");
-                if ((!vueUser.getFacebookId().equals(
-                        VueUser.DEFAULT_FACEBOOK_ID))
-                        && (!vueUser.getGooglePlusId().equals(
-                                VueUser.DEFAULT_GOOGLEPLUS_ID))) {
-                    articleParams.put("Registered_Source",
-                            "Registered with FB and GPLUS");
-                    
-                } else if ((!vueUser.getGooglePlusId().equals(
-                        VueUser.DEFAULT_GOOGLEPLUS_ID))) {
-                    articleParams.put("Registered_Source",
-                            "Registered with GPLUS");
-                } else if ((!vueUser.getFacebookId().equals(
-                        VueUser.DEFAULT_FACEBOOK_ID))) {
-                    articleParams
-                            .put("Registered_Source", "Registered with FB");
+        // TODO: 500 millis consumes this code
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                FlurryAgent.onStartSession(VueLandingPageActivity.this,
+                        Utils.FLURRY_APP_KEY);
+                FlurryAgent.logEvent(TRENDING_SCREEN_VISITORS);
+                VueUser vueUser = null;
+                try {
+                    vueUser = Utils.readUserObjectFromFile(
+                            VueLandingPageActivity.this,
+                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                if (vueUser != null) {
+                    Map<String, String> articleParams = new HashMap<String, String>();
+                    if (vueUser.getFacebookId().equals(
+                            VueUser.DEFAULT_FACEBOOK_ID)
+                            && vueUser.getGooglePlusId().equals(
+                                    VueUser.DEFAULT_GOOGLEPLUS_ID)) {
+                        articleParams.put("User_Status", "Un_Registered");
+                    } else {
+                        articleParams.put("User_Status", "Registered");
+                        if ((!vueUser.getFacebookId().equals(
+                                VueUser.DEFAULT_FACEBOOK_ID))
+                                && (!vueUser.getGooglePlusId().equals(
+                                        VueUser.DEFAULT_GOOGLEPLUS_ID))) {
+                            articleParams.put("Registered_Source",
+                                    "Registered with FB and GPLUS");
+                            
+                        } else if ((!vueUser.getGooglePlusId().equals(
+                                VueUser.DEFAULT_GOOGLEPLUS_ID))) {
+                            articleParams.put("Registered_Source",
+                                    "Registered with GPLUS");
+                        } else if ((!vueUser.getFacebookId().equals(
+                                VueUser.DEFAULT_FACEBOOK_ID))) {
+                            articleParams.put("Registered_Source",
+                                    "Registered with FB");
+                        }
+                    }
+                    FlurryAgent.logEvent("Rigestered_Users", articleParams);
+                    FlurryAgent
+                            .logEvent("Login_Time_Ends", articleParams, true);
+                }
+                FlurryAgent.onPageView();
+                
             }
-            FlurryAgent.logEvent("Rigestered_Users", articleParams);
-            FlurryAgent.logEvent("Login_Time_Ends", articleParams, true);
-        }
-        FlurryAgent.onPageView();
+        }).start();
+        
         mixpanel.flush();
         super.onStart();
+        
     }
     
     @Override
@@ -1849,12 +1887,11 @@ public class VueLandingPageActivity extends Activity implements
             }
             for (int i = 0; i < aisleWindowContent.getImageList().size(); i++) {
                 clsShare obj = new clsShare(
-                        aisleWindowContent.getImageList().get(i).mCustomImageUrl,
+                        aisleWindowContent.getImageList().get(i).mImageUrl,
                         ObjFileCache
                                 .getFile(
                                         aisleWindowContent.getImageList()
-                                                .get(i).mCustomImageUrl)
-                                .getPath(),
+                                                .get(i).mImageUrl).getPath(),
                         aisleWindowContent.getAisleContext().mLookingForItem,
                         aisleWindowContent.getAisleContext().mFirstName
                                 + " "
@@ -1876,7 +1913,7 @@ public class VueLandingPageActivity extends Activity implements
             FileCache ObjFileCache1 = new FileCache(this);
             for (int i = 0; i < aisleWindowContent.getImageList().size(); i++) {
                 final File f = ObjFileCache1.getFile(aisleWindowContent
-                        .getImageList().get(i).mCustomImageUrl);
+                        .getImageList().get(i).mImageUrl);
                 if (!f.exists()) {
                     @SuppressWarnings("rawtypes")
                     Response.Listener listener = new Response.Listener<Bitmap>() {
@@ -1890,10 +1927,10 @@ public class VueLandingPageActivity extends Activity implements
                         public void onErrorResponse(VolleyError arg0) {
                         }
                     };
-                    if (aisleWindowContent.getImageList().get(i).mCustomImageUrl != null) {
+                    if (aisleWindowContent.getImageList().get(i).mImageUrl != null) {
                         @SuppressWarnings("unchecked")
                         ImageRequest imagerequestObj = new ImageRequest(
-                                aisleWindowContent.getImageList().get(i).mCustomImageUrl,
+                                aisleWindowContent.getImageList().get(i).mImageUrl,
                                 listener, 0, 0, null, errorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(imagerequestObj);

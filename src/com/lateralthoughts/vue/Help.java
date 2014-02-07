@@ -37,7 +37,8 @@ public class Help extends Activity {
     ViewPager mHelpPager;
     private LayoutInflater mInflater;
     private int mHelpScreens;
-    private String helpScreens[] = { "imageOne", "imageTwo", "imageThree" };
+    private String helpScreens[] = { "imageOneNew", "imageTwoNew",
+            "imageThreeNew" };
     FileCache mFileCache;
     int mScreenWidth, mScreenHeight, mCurrentPosition;
     String mFromWhere;
@@ -271,11 +272,11 @@ public class Help extends Activity {
     private File drawableToBitmap(int position) {
         
         int drawable = 0;
-        if (helpScreens[position].equalsIgnoreCase("imageOne")) {
+        if (helpScreens[position].equalsIgnoreCase("imageOneNew")) {
             drawable = R.drawable.helpone;
-        } else if (helpScreens[position].equalsIgnoreCase("imageTwo")) {
+        } else if (helpScreens[position].equalsIgnoreCase("imageTwoNew")) {
             drawable = R.drawable.helptwo;
-        } else if (helpScreens[position].equalsIgnoreCase("imageThree")) {
+        } else if (helpScreens[position].equalsIgnoreCase("imageThreeNew")) {
             drawable = R.drawable.helpthree;
         }
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),

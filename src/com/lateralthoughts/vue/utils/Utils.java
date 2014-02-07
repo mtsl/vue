@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,6 +43,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.DataentryImage;
@@ -64,7 +66,7 @@ public class Utils {
     public static String mChangeAilseId;
     public static boolean sIsAisleChanged = false;
     public static boolean sAinmate = true;
-    
+    public static int sUserPoints;
     public static void CopyStream(InputStream is, OutputStream os) {
         final int buffer_size = 1024;
         try {
@@ -574,6 +576,7 @@ public class Utils {
         editor.putString(VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_LOOKINGFOR,
                 lookingfor);
         editor.commit();
+        
     }
     
     public static void putDataentryTopAddImageAisleOccasion(Context context,
@@ -832,5 +835,133 @@ public class Utils {
             e.printStackTrace();
         }
         return -1;
+    }
+    public static void saveUserPoints(String key,int value,Context context){
+        int prevPoints = getUserPoints();
+        SharedPreferences sharedPreferencesObj = VueApplication.getInstance().getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        int count = sharedPreferencesObj.getInt(
+                key, 0);
+        count = count + value;
+        Editor editor = sharedPreferencesObj.edit();
+        editor.putInt(key, value);
+        editor.commit();
+        int currentPoints = getUserPoints();
+         if(prevPoints < 100 && currentPoints >= 100) {
+             showRewardsDialog("",currentPoints,context);
+         }
+    }
+    public static int getUserPoints(){
+        SharedPreferences sharedPreferencesObj = VueApplication.getInstance().getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        int likesCount = sharedPreferencesObj.getInt(
+                VueConstants.USER_LIKES_POINTS, 0);
+        int  CommentsCount = sharedPreferencesObj.getInt(
+                VueConstants.USER_COMMENTS_POINTS, 0);
+        int  addImageCount = sharedPreferencesObj.getInt(
+                VueConstants.USER_ADD_IAMGE_POINTS, 0);
+        int  inviteFriends = sharedPreferencesObj.getInt(
+                VueConstants.USER_INVITE_FRIEND_POINTS, 0);
+        int totalCount = likesCount + CommentsCount + addImageCount + inviteFriends;
+        int installPoints = 5;
+        totalCount = totalCount + sUserPoints + installPoints;
+        
+        return totalCount;
+        
+    }
+    private static void showRewardsDialog(String userType, int pointsEarned,final Context context) {
+        int pointsRequired = 0;
+        String nextUserType = "silver";
+        if (pointsEarned < 100) {
+            userType = "bronze";
+            nextUserType = "silver";
+            pointsRequired = 100 - pointsEarned;
+        } else {
+            userType = "silver";
+        }
+        if (userType.endsWith("bronze")) {
+            
+            StringBuilder sb = new StringBuilder("You are a ");
+            sb.append(userType);
+            sb.append(" user with ");
+            sb.append("" + pointsEarned);
+            sb.append(" points! Only ");
+            sb.append(pointsRequired);
+            sb.append(" points to go to become a ");
+            sb.append(nextUserType);
+            sb.append(" user");
+            final Dialog dialog = new Dialog(context,
+                    R.style.Theme_Dialog_Translucent);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.networkdialogue);
+            TextView messagetext = (TextView) dialog
+                    .findViewById(R.id.messagetext);
+            TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
+            View networkdialogline = dialog
+                    .findViewById(R.id.networkdialogline);
+            networkdialogline.setVisibility(View.GONE);
+            TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
+            nobutton.setVisibility(View.GONE);
+            okbutton.setText(context.getResources().getString(R.string.ok));
+            messagetext.setText(sb);
+            okbutton.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.setOnCancelListener(new OnCancelListener() {
+                public void onCancel(DialogInterface dialog) {
+                }
+            });
+            dialog.show();
+            dialog.setOnDismissListener(new OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface arg0) {
+                }
+            });
+        } else if(userType.equals("silver")){
+            StringBuilder sb = new StringBuilder(
+                    "Congratulations! You are now a Silver Vuer! As a thank you, we will gladly send you $5 to shop online.");
+            
+            final Dialog dialog = new Dialog(context,
+                    R.style.Theme_Dialog_Translucent);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.networkdialogue);
+            TextView messagetext = (TextView) dialog
+                    .findViewById(R.id.messagetext);
+            TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
+            View networkdialogline = dialog
+                    .findViewById(R.id.networkdialogline);
+            TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
+            nobutton.setText(context.getResources()
+                    .getString(R.string.continue_earning));
+            okbutton.setText(context.getResources().getString(R.string.redeem_it_now));
+            messagetext.setText(sb);
+            nobutton.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            okbutton.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    // TODO: mix panel log.
+                    Toast.makeText(
+                            context,
+                            "Thank you for being such an awesome Vuer! Expect to see the rewards from us shortly in your email inbox.",
+                            Toast.LENGTH_LONG).show();
+                    dialog.dismiss();
+                }
+            });
+            dialog.setOnCancelListener(new OnCancelListener() {
+                public void onCancel(DialogInterface dialog) {
+                }
+            });
+            dialog.show();
+            dialog.setOnDismissListener(new OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface arg0) {
+                }
+            });
+        }
     }
 }

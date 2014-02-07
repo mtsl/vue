@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
@@ -110,8 +109,6 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
                 
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(mContext, "click received",
-                            Toast.LENGTH_SHORT).show();
                     VueApplication.getInstance()
                             .setPendingAisle(mWindowContent);
                     Intent intent = new Intent();

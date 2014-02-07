@@ -359,7 +359,12 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                                 .getInstance())
                                                 .getAislesFromDB(s, false);
                                         if (list != null) {
-                                            list.get(0).getImageList()
+                                            ArrayList<AisleImageDetails> aisleImageList = list
+                                                    .get(0).getImageList();
+                                            if (aisleImageList == null) {
+                                                aisleImageList = new ArrayList<AisleImageDetails>();
+                                            }
+                                            aisleImageList
                                                     .add(aisleImageDetails);
                                             DataBaseManager
                                                     .getInstance(

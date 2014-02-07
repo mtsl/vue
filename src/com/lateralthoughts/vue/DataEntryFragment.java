@@ -53,6 +53,7 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.pendingaisles.PendingAisles;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
@@ -1656,6 +1657,8 @@ public class DataEntryFragment extends Fragment {
                                 public void onAisleAdded(Aisle aisle,
                                         AisleContext aisleContext) {
                                     super.onAisleAdded(aisle, aisleContext);
+                                    // add 10 points for each aisle creation
+                                    Utils.sUserPoints += 10;
                                     for (int j = 0; j < vueImageList.size(); j++) {
                                         vueImageList.get(j).setOwnerAisleId(
                                                 aisle.getId());
@@ -1682,6 +1685,8 @@ public class DataEntryFragment extends Fragment {
                                 @Override
                                 public void onAisleAdded(Aisle aisle,
                                         AisleContext aisleContext) {
+                                    // add 10 points for each aisle creation
+                                    Utils.sUserPoints += 10;
                                     super.onAisleAdded(aisle, aisleContext);
                                 }
                             });
@@ -1730,10 +1735,14 @@ public class DataEntryFragment extends Fragment {
                                                                     String aisleId,
                                                                     String imageId,
                                                                     boolean fromDetailsScreen) {
+                                                                
                                                                 // TODO image
                                                                 // added track
                                                                 // event
-                                                                
+                                                                Utils.saveUserPoints(
+                                                                        VueConstants.USER_ADD_IAMGE_POINTS,
+                                                                        5,
+                                                                        getActivity());
                                                                 if (userId
                                                                         .equals(aisleOwnerUserId)) {
                                                                     try {
@@ -1838,7 +1847,9 @@ public class DataEntryFragment extends Fragment {
                                     // TODO image
                                     // added track
                                     // event
-                                    
+                                    Utils.saveUserPoints(
+                                            VueConstants.USER_ADD_IAMGE_POINTS,
+                                            5, getActivity());
                                     if (userId.equals(aisleOwnerUserId)) {
                                         try {
                                             this.imageUploadProps.put(
@@ -2474,9 +2485,10 @@ public class DataEntryFragment extends Fragment {
             imgDetails.mTrendingImageHeight = imgDetails.mAvailableHeight;
             imgDetails.mTrendingImageWidth = imgDetails.mAvailableWidth;
             imgDetails.mOwnerAisleId = aisleWindow.getAisleId();
-            imgDetails.mOwnerUserId = Long.toString(VueApplication
-                    .getInstance().getmUserId());
+            imgDetails.mOwnerUserId = userId;
             aisleWindow.getImageList().add(imgDetails);
+            aisleWindow.getAisleContext().mIsEmptyAisle = false;
+            PendingAisles.mIsImageAddedToPendingAisle = true;
             aisleWindow.addAisleContent(aisleWindow.getAisleContext(),
                     aisleWindow.getImageList());
             int bestHeight = Utils.modifyHeightForDetailsView(aisleWindow
@@ -2505,15 +2517,27 @@ public class DataEntryFragment extends Fragment {
                             break;
                         }
                     }
-                    aisleWindowContent.getImageList().add(imgDetails);
-                    aisleWindowContent.addAisleContent(
-                            aisleWindow.getAisleContext(),
-                            aisleWindowContent.getImageList());
-                    int bestHeight1 = Utils
-                            .modifyHeightForDetailsView(aisleWindowContent
-                                    .getImageList());
-                    aisleWindowContent
-                            .setBestLargestHeightForWindow(bestHeight1);
+                    boolean dontAddImage = false;
+                    // Deleting duplicate images...
+                    for (int i = 0; i < aisleWindowContent.getImageList()
+                            .size(); i++) {
+                        if (aisleWindowContent.getImageList().get(i).mId
+                                .equals(imageId)) {
+                            dontAddImage = true;
+                            break;
+                        }
+                    }
+                    if (!dontAddImage) {
+                        aisleWindowContent.getImageList().add(imgDetails);
+                        aisleWindowContent.addAisleContent(
+                                aisleWindow.getAisleContext(),
+                                aisleWindowContent.getImageList());
+                        int bestHeight1 = Utils
+                                .modifyHeightForDetailsView(aisleWindowContent
+                                        .getImageList());
+                        aisleWindowContent
+                                .setBestLargestHeightForWindow(bestHeight1);
+                    }
                     VueTrendingAislesDataModel.getInstance(
                             VueApplication.getInstance()).dataObserver();
                 } else {
@@ -2558,8 +2582,7 @@ public class DataEntryFragment extends Fragment {
                 imgDetails.mTrendingImageHeight = imgDetails.mAvailableHeight;
                 imgDetails.mTrendingImageWidth = imgDetails.mAvailableWidth;
                 imgDetails.mOwnerAisleId = aisleItem.getAisleId();
-                imgDetails.mOwnerUserId = Long.toString(VueApplication
-                        .getInstance().getmUserId());
+                imgDetails.mOwnerUserId = userId;
                 aisleItem.getImageList().add(imgDetails);
                 aisleItem.addAisleContent(aisleItem.getAisleContext(),
                         aisleItem.getImageList());

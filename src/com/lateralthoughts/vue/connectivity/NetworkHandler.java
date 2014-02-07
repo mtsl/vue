@@ -55,6 +55,7 @@ import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
@@ -78,6 +79,7 @@ public class NetworkHandler {
     private SharedPreferences mSharedPreferencesObj;
     public ArrayList<String> bookmarkedList = new ArrayList<String>();
     private ArrayList<String> ratedImageList = new ArrayList<String>();
+    private String userProfileUrl;
     
     public NetworkHandler(Context context) {
         mContext = context;
@@ -373,43 +375,71 @@ public class NetworkHandler {
                                                         .size(); i++) {
                                                     if (mAislesList.get(i)
                                                             .getImageList() == null) {
-                                                        /*
-                                                         * mAislesList.remove(i);
-                                                         * continue;
-                                                         */
-                                                        // Empty ailse handling.
-                                                        ArrayList<AisleImageDetails> imageItemsArray = new ArrayList<AisleImageDetails>();
-                                                        AisleImageDetails imageDetails = new AisleImageDetails();
-                                                        imageItemsArray
-                                                                .add(imageDetails);
-                                                        imageDetails.mImageUrl = VueConstants.NO_IMAGE_URL;
-                                                        imageDetails.mAvailableWidth = VueApplication
-                                                                .getInstance()
-                                                                .getPixel(
-                                                                        VueConstants.NO_IMAGE_WIDTH);
-                                                        imageDetails.mAvailableHeight = VueApplication
-                                                                .getInstance()
-                                                                .getPixel(
-                                                                        VueConstants.NO_IMAGE_HEIGHT);
-                                                        AisleWindowContent aisleWindow = VueTrendingAislesDataModel
-                                                                .getInstance(
-                                                                        VueApplication
-                                                                                .getInstance())
-                                                                .getAisleItem(
-                                                                        mAislesList
-                                                                                .get(i)
-                                                                                .getAisleContext().mAisleId);
-                                                        AisleContext userInfo = mAislesList
-                                                                .get(i)
-                                                                .getAisleContext();
-                                                        userInfo.mIsEmptyAisle = true;
-                                                        aisleWindow
-                                                                .addAisleContent(
-                                                                        userInfo,
-                                                                        imageItemsArray);
+                                                        
                                                         mAislesList.remove(i);
-                                                        mAislesList.add(i,
-                                                                aisleWindow);
+                                                        continue;
+                                                        
+                                                        // TODO: UNCOMMENT THIS
+                                                        // CODE WHEN NO IMAGE
+                                                        // AISLE FEATURE ENABLED
+                                                        // AND COMMENTED OUT
+                                                        // ABOUT TWO LINES.
+                                                        
+                                                        // Empty ailse handling.
+                                                        /*
+                                                         * ArrayList<
+                                                         * AisleImageDetails>
+                                                         * imageItemsArray = new
+                                                         * ArrayList
+                                                         * <AisleImageDetails
+                                                         * >();
+                                                         * AisleImageDetails
+                                                         * imageDetails = new
+                                                         * AisleImageDetails();
+                                                         * imageItemsArray
+                                                         * .add(imageDetails);
+                                                         * imageDetails
+                                                         * .mImageUrl =
+                                                         * VueConstants
+                                                         * .NO_IMAGE_URL;
+                                                         * imageDetails
+                                                         * .mAvailableWidth =
+                                                         * VueApplication
+                                                         * .getInstance()
+                                                         * .getPixel(
+                                                         * VueConstants
+                                                         * .NO_IMAGE_WIDTH);
+                                                         * imageDetails
+                                                         * .mAvailableHeight =
+                                                         * VueApplication
+                                                         * .getInstance()
+                                                         * .getPixel(
+                                                         * VueConstants
+                                                         * .NO_IMAGE_HEIGHT);
+                                                         * AisleWindowContent
+                                                         * aisleWindow =
+                                                         * VueTrendingAislesDataModel
+                                                         * .getInstance(
+                                                         * VueApplication
+                                                         * .getInstance())
+                                                         * .getAisleItem(
+                                                         * mAislesList .get(i)
+                                                         * .getAisleContext
+                                                         * ().mAisleId);
+                                                         * AisleContext userInfo
+                                                         * = mAislesList .get(i)
+                                                         * .getAisleContext();
+                                                         * userInfo
+                                                         * .mIsEmptyAisle =
+                                                         * true; aisleWindow
+                                                         * .addAisleContent(
+                                                         * userInfo,
+                                                         * imageItemsArray);
+                                                         * mAislesList
+                                                         * .remove(i);
+                                                         * mAislesList.add(i,
+                                                         * aisleWindow);
+                                                         */
                                                         
                                                     }
                                                     VueTrendingAislesDataModel
@@ -631,7 +661,7 @@ public class NetworkHandler {
         String userId = null;
         if (storedVueUser != null) {
             userId = Long.valueOf(storedVueUser.getId()).toString();
-            storedVueUser.getUserImageURL();
+            userProfileUrl = storedVueUser.getUserImageURL();
         }
         return userId;
     }
@@ -732,6 +762,15 @@ public class NetworkHandler {
                                                             .getImageId()));
                                         }
                                     }
+                                    // these likes are by the user add 2 points
+                                    // per each like.
+                                    int likesCount = 0;
+                                    if (ratedImageList != null) {
+                                        likesCount = ratedImageList.size();
+                                    }
+                                    likesCount = likesCount * 2;
+                                    Utils.sUserPoints += likesCount;
+                                    
                                     DataBaseManager.getInstance(mContext)
                                             .insertRatedImages(
                                                     retrievedImageRating, true);
@@ -798,6 +837,79 @@ public class NetworkHandler {
             ratedImageList.add(imageId);
         } else {
             ratedImageList.remove(imageId);
+        }
+    }
+    
+    public void getMyAislesPoints() {
+        try {
+            String userId = getUserId();
+            if (userId == null) {
+                return;
+            }
+            Utils.sUserPoints = 0;
+            int count = 0;
+            ArrayList<AisleWindowContent> windowList = getAislesByUser(userId);
+            if (windowList != null) {
+                count = windowList.size() * 10;
+                ArrayList<AisleImageDetails> imageList;
+                for (int i = 0; i < windowList.size(); i++) {
+                    imageList = windowList.get(i).getImageList();
+                    if (imageList != null) {
+                        for (AisleImageDetails imageDetails : imageList) {
+                            likesCountByOtherUsers(imageDetails);
+                            commentCountByOtherUsers(imageDetails);
+                            if (!imageDetails.mOwnerUserId.equals(userId)) {
+                                // if others add image to your aisle.
+                                Utils.sUserPoints += 4;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // caliculate all likes in your aisle other than your likes
+    private void likesCountByOtherUsers(AisleImageDetails imageDetails) {
+        int likesCount = imageDetails.mLikesCount;
+        boolean isImageInRatedList = false;
+        for (ImageRating imageRating : imageDetails.mRatingsList) {
+            isImageInRatedList = getImageRateStatus(String.valueOf(imageRating
+                    .getImageId()));
+            if (isImageInRatedList) {
+                break;
+            }
+        }
+        if (isImageInRatedList) {
+            // if this image is liked by you dont add that count it is already
+            // added
+            likesCount -= 1;
+        }
+        if (likesCount > 0) {
+            likesCount += likesCount * 2;
+            Utils.sUserPoints += likesCount;
+        }
+        
+    }
+    
+    // comments added by other users to your images in your aisle.
+    private void commentCountByOtherUsers(AisleImageDetails imageDetails) {
+        if (imageDetails.mCommentsList != null) {
+            int commentCount = 0;
+            for (ImageComments imageComment : imageDetails.mCommentsList) {
+                String commenterProfileUrl = imageComment.mCommenterUrl;
+                if (commenterProfileUrl != null && userProfileUrl != null
+                        && commenterProfileUrl.equalsIgnoreCase(userProfileUrl)) {
+                    // this comment is belongs to user in his own aisle.
+                } else {
+                    // commentcount belongs to other users.
+                    commentCount++;
+                }
+            }
+            commentCount = commentCount * 2;
+            Utils.sUserPoints += commentCount;
         }
     }
 }
