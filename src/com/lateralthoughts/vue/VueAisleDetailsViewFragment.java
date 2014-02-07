@@ -165,12 +165,19 @@ public class VueAisleDetailsViewFragment extends Fragment {
         
         String detailsUrl = null;
         try {
-            detailsUrl = VueTrendingAislesDataModel
-                    .getInstance(getActivity())
-                    .getAisleItem(
-                            VueApplication.getInstance().getClickedWindowID())
-                    .getImageList()
-                    .get(VueApplication.getInstance().getmAisleImgCurrentPos()).mDetalsUrl;
+            if (VueApplication.getInstance().getPedningAisle() != null) {
+                detailsUrl = VueApplication.getInstance().getPedningAisle()
+                        .getImageList().get(0).mDetailsUrl;
+            } else {
+                detailsUrl = VueTrendingAislesDataModel
+                        .getInstance(getActivity())
+                        .getAisleItem(
+                                VueApplication.getInstance()
+                                        .getClickedWindowID())
+                        .getImageList()
+                        .get(VueApplication.getInstance()
+                                .getmAisleImgCurrentPos()).mDetailsUrl;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -193,11 +200,29 @@ public class VueAisleDetailsViewFragment extends Fragment {
             profileUrl = VueApplication.getInstance().getPedningAisle()
                     .getAisleContext().mAisleOwnerImageURL;
         } else {
-            profileUrl = VueTrendingAislesDataModel
-                    .getInstance(getActivity())
+            if (VueTrendingAislesDataModel.getInstance(getActivity())
                     .getAisleItem(
-                            VueApplication.getInstance().getClickedWindowID())
-                    .getAisleContext().mAisleOwnerImageURL;
+                            VueApplication.getInstance().getClickedWindowID()) != null
+                    && VueTrendingAislesDataModel
+                            .getInstance(getActivity())
+                            .getAisleItem(
+                                    VueApplication.getInstance()
+                                            .getClickedWindowID())
+                            .getAisleContext() != null) {
+                profileUrl = VueTrendingAislesDataModel
+                        .getInstance(getActivity())
+                        .getAisleItem(
+                                VueApplication.getInstance()
+                                        .getClickedWindowID())
+                        .getAisleContext().mAisleOwnerImageURL;
+            } else {
+                // Some times when the user returning from the other apps or
+                // from the browser
+                // apps lost data to avoid force close checking the current
+                // ailse.
+                getActivity().finish();
+                
+            }
         }
         if (profileUrl != null && profileUrl.length() > 5) {
             mVueUserPic.setImageUrl(profileUrl, VueApplication.getInstance()
@@ -783,7 +808,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
             showLikeStatus(starLayVisibility, isMostLikedImage);
             
         }
-    
         
         @Override
         public void onResetAdapter() {
@@ -857,17 +881,22 @@ public class VueAisleDetailsViewFragment extends Fragment {
             closeKeyboard();
             
         }
-
+        
         @Override
         public void onImageAddEvent() {
             addImageToAisle();
             
         }
-
+        
         @Override
         public void onReceiveImageCount(int count) {
             // TODO Auto-generated method stub
             
+        }
+        
+        @Override
+        public void finishScreen() {
+            getActivity().finish();
         }
         
     }
@@ -1185,7 +1214,8 @@ public class VueAisleDetailsViewFragment extends Fragment {
         notifyAdapter();
         mAisleDetailsAdapter.setmSetPagerToTrue();
     }
-    private void addImageToAisle(){
+    
+    private void addImageToAisle() {
         Intent intent = new Intent(getActivity(),
                 CreateAisleSelectionActivity.class);
         Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(

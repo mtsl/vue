@@ -177,6 +177,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             }
             mCurrentAisle = getItem(mCurrentAislePosition);
         }
+        // Some times when the user returning from the other apps or from the
+        // browser
+        // apps lost data to avoid force close checking the current ailse.
+        if (mCurrentAisle == null || mCurrentAisle.getAisleContext() == null) {
+            mswipeListner.finishScreen();
+            return;
+        }
         if (mCurrentAisle.getAisleContext().mUserId
                 .equalsIgnoreCase(VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
@@ -940,9 +947,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             for (int i = 0; i < mCurrentAisle.getImageList().size(); i++) {
                 clsShare obj = new clsShare(
                         mCurrentAisle.getImageList().get(i).mImageUrl,
-                        ObjFileCache
-                                .getFile(
-                                        mCurrentAisle.getImageList().get(i).mImageUrl)
+                        ObjFileCache.getFile(
+                                mCurrentAisle.getImageList().get(i).mImageUrl)
                                 .getPath(),
                         mCurrentAisle.getAisleContext().mLookingForItem,
                         mCurrentAisle.getAisleContext().mFirstName + " "
@@ -1031,7 +1037,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 }
                 notifyDataSetChanged();
                 mswipeListner.setFindAtText(mCurrentAisle.getImageList().get(
-                        position).mDetalsUrl);
+                        position).mDetailsUrl);
             } else {
                 return;
             }
@@ -1272,12 +1278,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             } else if (reqType.equals(CHANGE_LIKES)) {
                 // aisleId,imageId,likesCount,likeStatus
                 int likeCountValue = 0;
-                 if(likeOrDislike){
-                     likeCountValue = 2;
-                 } else {
-                     likeCountValue = -2;
-                 }
-                Utils.saveUserPoints(VueConstants.USER_LIKES_POINTS, likeCountValue,mContext);
+                if (likeOrDislike) {
+                    likeCountValue = 2;
+                } else {
+                    likeCountValue = -2;
+                }
+                Utils.saveUserPoints(VueConstants.USER_LIKES_POINTS,
+                        likeCountValue, mContext);
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
@@ -1603,7 +1610,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         imgComment.setOwnerUserId(Long.parseLong(userId));
         imgComment.setOwnerImageId(Long.parseLong(mCurrentAisle.getImageList()
                 .get(mCurrentDispImageIndex).mId));
-        Utils.saveUserPoints(VueConstants.USER_COMMENTS_POINTS, 2,mContext);
+        Utils.saveUserPoints(VueConstants.USER_COMMENTS_POINTS, 2, mContext);
         /** Save the image comment and verify the save */
         new Thread(new Runnable() {
             

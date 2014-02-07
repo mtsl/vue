@@ -854,7 +854,7 @@ public class VueLandingPageActivity extends Activity implements
 								aisleId, true);
 				if (aisleImageDetails != null) {
 					String originalUrl = aisleImageDetails.mImageUrl;
-					String sourceUrl = aisleImageDetails.mDetalsUrl;
+					String sourceUrl = aisleImageDetails.mDetailsUrl;
 					int width = aisleImageDetails.mAvailableWidth;
 					int height = aisleImageDetails.mAvailableHeight;
 					int widthandHeightMultipliedValue = width * height;
@@ -1708,7 +1708,7 @@ public class VueLandingPageActivity extends Activity implements
 			}
 			imgDetails.mTitle = title;
 			imgDetails.mImageUrl = imageUrl;
-			imgDetails.mDetalsUrl = detailsUrl;
+			imgDetails.mDetailsUrl = detailsUrl;
 			imgDetails.mId = imageId; // offline imageid
 			imgDetails.mIsFromLocalSystem = isImageFromLocalSystem;
 			imgDetails.mStore = store;
@@ -1968,7 +1968,7 @@ public class VueLandingPageActivity extends Activity implements
 							.getAisleImageForImageId(imageId, aisleId, true);
 					if (aisleImageDetails != null) {
 						String originalUrl = aisleImageDetails.mImageUrl;
-						String sourceUrl = aisleImageDetails.mDetalsUrl;
+						String sourceUrl = aisleImageDetails.mDetailsUrl;
 						int width = aisleImageDetails.mAvailableWidth;
 						int height = aisleImageDetails.mAvailableHeight;
 						int widthandHeightMultipliedValue = width * height;

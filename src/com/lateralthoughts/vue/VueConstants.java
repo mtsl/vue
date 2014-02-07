@@ -7,7 +7,9 @@ import android.net.Uri;
  * 
  */
 public class VueConstants {
+    public static final String USER_REEDM_POINTS = "redeemPoints";
     public static final String USER_LIKES_POINTS = "userLikes";
+    public static final String USER_POINTS_DIALOG_SHOWN = "pointsDialog";
     public static final String USER_COMMENTS_POINTS = "userComments";
     public static final String USER_ADD_IAMGE_POINTS = "addImage";
     public static final String USER_INVITE_FRIEND_POINTS = "inviteFriends";

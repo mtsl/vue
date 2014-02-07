@@ -752,6 +752,8 @@ public class AisleContentBrowser extends ViewFlipper {
         
         public void onImageAddEvent();
         
+        public void finishScreen();
+        
     }
     
     public void setAisleDetailSwipeListener(
@@ -801,6 +803,14 @@ public class AisleContentBrowser extends ViewFlipper {
     private void handleLike_Dislike_Events(String aisleId, String imageId,
             boolean likeOrDislike, int likesCount) {
         // aisleId,imageId,likesCount,likeStatus
+        int likeCountValue = 0;
+        if (likeOrDislike) {
+            likeCountValue = 2;
+        } else {
+            likeCountValue = -2;
+        }
+        Utils.saveUserPoints(VueConstants.USER_LIKES_POINTS, likeCountValue,
+                mContext);
         VueTrendingAislesDataModel.getInstance(VueApplication.getInstance())
                 .getNetworkHandler()
                 .modifyImageRatedStatus(imageId, likeOrDislike);

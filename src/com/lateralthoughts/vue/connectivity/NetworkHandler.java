@@ -841,7 +841,7 @@ public class NetworkHandler {
     }
     
     public void getMyAislesPoints() {
-    /*    try {
+        try {
             String userId = getUserId();
             if (userId == null) {
                 return;
@@ -868,7 +868,7 @@ public class NetworkHandler {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
     }
     
     // caliculate all likes in your aisle other than your likes

@@ -122,7 +122,7 @@ public class Parser {
                 .getString(VueConstants.AISLE_IMAGE_OWNERUSER_ID);
         aisleImageDetails.mOwnerAisleId = jsonObject
                 .getString(VueConstants.AISLE_IMAGE_OWNER_AISLE_ID);
-        aisleImageDetails.mDetalsUrl = jsonObject
+        aisleImageDetails.mDetailsUrl = jsonObject
                 .getString(VueConstants.AISLE_IMAGE_DETAILS_URL);
         aisleImageDetails.mAvailableHeight = jsonObject
                 .getInt(VueConstants.AISLE_IMAGE_HEIGHT);

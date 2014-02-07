@@ -344,7 +344,7 @@ public class DataBaseManager {
                     imgValues.put(VueConstants.IMAGE_URL,
                             imageDetails.mImageUrl);
                     imgValues.put(VueConstants.DETAILS_URL,
-                            imageDetails.mDetalsUrl);
+                            imageDetails.mDetailsUrl);
                     imgValues.put(VueConstants.HEIGHT,
                             imageDetails.mAvailableHeight);
                     imgValues.put(VueConstants.WIDTH,
@@ -607,7 +607,7 @@ public class DataBaseManager {
                         imageItemDetails.mImageUrl = aisleImagesCursor
                                 .getString(aisleImagesCursor
                                         .getColumnIndex(VueConstants.IMAGE_URL));
-                        imageItemDetails.mDetalsUrl = aisleImagesCursor
+                        imageItemDetails.mDetailsUrl = aisleImagesCursor
                                 .getString(aisleImagesCursor
                                         .getColumnIndex(VueConstants.DETAILS_URL));
                         imageItemDetails.mStore = aisleImagesCursor
@@ -1148,7 +1148,7 @@ public class DataBaseManager {
                         imageItemDetails.mImageUrl = aisleImagesCursor
                                 .getString(aisleImagesCursor
                                         .getColumnIndex(VueConstants.IMAGE_URL));
-                        imageItemDetails.mDetalsUrl = aisleImagesCursor
+                        imageItemDetails.mDetailsUrl = aisleImagesCursor
                                 .getString(aisleImagesCursor
                                         .getColumnIndex(VueConstants.DETAILS_URL));
                         imageItemDetails.mStore = aisleImagesCursor

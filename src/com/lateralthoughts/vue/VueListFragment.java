@@ -23,6 +23,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -220,9 +221,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                     int groupPosition, long id) {
-               /* if(groupPosition == 1){
+                if (groupPosition == 1) {
                     refreshBezelMenu();
-                }*/
+                }
                 if (VueLandingPageActivity.mOtherSourceImagePath == null) {
                     TextView textView = (TextView) v
                             .findViewById(R.id.vue_list_fragment_itemTextview);
@@ -553,11 +554,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles),
                 R.drawable.new_recently_viewed, null);
         meChildren.add(item);
-    /*    item = new ListOptionItem(
+        item = new ListOptionItem(
                 getString(R.string.sidemenu_sub_option_My_Pointss) + " "
                         + Utils.getUserPoints(),
                 R.drawable.new_recently_viewed, null);
-        meChildren.add(item);*/
+        meChildren.add(item);
         return meChildren;
     }
     
@@ -1209,7 +1210,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
         } else if (userType.equals("silver")) {
             StringBuilder sb = new StringBuilder(
                     "Congratulations! You are now a Silver Vuer! As a thank you, we will gladly send you $5 to shop online.");
-            
+            final SharedPreferences sharedPreferencesObj = VueApplication
+                    .getInstance().getSharedPreferences(
+                            VueConstants.SHAREDPREFERENCE_NAME, 0);
             final Dialog dialog = new Dialog(getActivity(),
                     R.style.Theme_Dialog_Translucent);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1223,6 +1226,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
             nobutton.setText(getResources()
                     .getString(R.string.continue_earning));
             okbutton.setText(getResources().getString(R.string.redeem_it_now));
+            boolean isRedeemCoupon = sharedPreferencesObj.getBoolean(
+                    VueConstants.USER_REEDM_POINTS, false);
+            if (isRedeemCoupon) {
+                okbutton.setVisibility(View.GONE);
+            }
             messagetext.setText(sb);
             nobutton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
@@ -1241,6 +1249,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
                             nameTag.put("Redeem", "RedeemItNow");
                             nameTag.put("Id", storedVueUser.getId());
                             nameTag.put("Email", storedVueUser.getEmail());
+                            
+                            Editor editor = sharedPreferencesObj.edit();
+                            editor.putBoolean(VueConstants.USER_REEDM_POINTS,
+                                    true);
+                            editor.commit();
                             // TODO: mix panel log.
                             mixpanel.track("Coupon", nameTag);
                         }
