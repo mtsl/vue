@@ -1226,8 +1226,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
             nobutton.setText(getResources()
                     .getString(R.string.continue_earning));
             okbutton.setText(getResources().getString(R.string.redeem_it_now));
+ 
             boolean isRedeemCoupon = sharedPreferencesObj.getBoolean(
-                    VueConstants.USER_REEDM_POINTS, false);
+                    VueConstants.USER_POINTS_DIALOG_SHOWN, false);
             messagetext.setText(sb);
             if (isRedeemCoupon) {
                 okbutton.setVisibility(View.GONE);
@@ -1256,7 +1257,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
                             nameTag.put("Email", storedVueUser.getEmail());
                             
                             Editor editor = sharedPreferencesObj.edit();
-                            editor.putBoolean(VueConstants.USER_REEDM_POINTS,
+                            editor.putBoolean(VueConstants.USER_POINTS_DIALOG_SHOWN,
                                     true);
                             editor.commit();
                             // TODO: mix panel log.
