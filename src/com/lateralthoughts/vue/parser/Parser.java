@@ -1,13 +1,7 @@
 package com.lateralthoughts.vue.parser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -16,8 +10,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.os.Environment;
 
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -29,7 +21,6 @@ import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.utils.UrlConstants;
-import com.lateralthoughts.vue.utils.Utils;
 
 public class Parser {
     // ========================= START OF PARSING TAGS
@@ -50,7 +41,6 @@ public class Parser {
         ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
         
         JSONArray contentArray = null;
-        writeToSdcard(resultString);
         contentArray = handleResponse(resultString, loadMore);
         if (contentArray == null) {
             return aisleWindowContentList;
@@ -557,34 +547,4 @@ public class Parser {
         return bookmarkedAisles;
     }
     
-    // if we want to log any thing can use it.
-    private void writeToSdcard(String message) {
-        
-        String path = Environment.getExternalStorageDirectory().toString();
-        File dir = new File(path + "/vueAisles/");
-        if (!dir.isDirectory()) {
-            dir.mkdir();
-        }
-        File file = new File(dir, "/"
-                + Calendar.getInstance().get(Calendar.DATE)
-                + "-"
-                + Utils.getWeekDay(Calendar.getInstance().get(
-                        Calendar.DAY_OF_WEEK)) + ".txt");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        try {
-            PrintWriter out = new PrintWriter(new BufferedWriter(
-                    new FileWriter(file, true)));
-            out.write("\n" + message + "\n");
-            out.flush();
-            out.close();
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

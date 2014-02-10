@@ -1793,7 +1793,7 @@ public class Session implements Serializable {
             return this;
         }
         
-        List<String> getPermissions() {
+        public List<String> getPermissions() {
             return permissions;
         }
         
@@ -1805,7 +1805,7 @@ public class Session implements Serializable {
             return this;
         }
         
-        SessionDefaultAudience getDefaultAudience() {
+        public SessionDefaultAudience getDefaultAudience() {
             return defaultAudience;
         }
         

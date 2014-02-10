@@ -30,7 +30,7 @@ import android.text.TextUtils;
 
 import com.facebook.internal.Utility;
 
-final class NativeProtocol {
+public final class NativeProtocol {
     static final String KATANA_PACKAGE = "com.neem23.fishwrap";
     static final String KATANA_PROXY_AUTH_ACTIVITY = "com.neem23.fishwrap.ProxyAuth";
     static final String KATANA_TOKEN_REFRESH_ACTIVITY = "com.neem23.fishwrap.platform.TokenRefreshService";
@@ -196,7 +196,7 @@ final class NativeProtocol {
     static final String AUDIENCE_FRIENDS = "ALL_FRIENDS";
     static final String AUDIENCE_EVERYONE = "EVERYONE";
     
-    static Intent createLoginDialog20121101Intent(Context context,
+    public static Intent createLoginDialog20121101Intent(Context context,
             String applicationId, ArrayList<String> permissions, String audience) {
         Intent intent = new Intent()
                 .setAction(INTENT_ACTION_PLATFORM_ACTIVITY)
