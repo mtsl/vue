@@ -120,7 +120,6 @@ public class VueContentGateway {
             VueAislesRequest vueRequest = new VueAislesRequest(requestUrl,
                     listener, errorListener) {
             };
-            
             vueRequest.setRetryPolicy(new DefaultRetryPolicy(
                     DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

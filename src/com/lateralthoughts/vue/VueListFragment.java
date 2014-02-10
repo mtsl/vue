@@ -1228,10 +1228,15 @@ public class VueListFragment extends Fragment implements TextWatcher {
             okbutton.setText(getResources().getString(R.string.redeem_it_now));
             boolean isRedeemCoupon = sharedPreferencesObj.getBoolean(
                     VueConstants.USER_REEDM_POINTS, false);
+            messagetext.setText(sb);
             if (isRedeemCoupon) {
                 okbutton.setVisibility(View.GONE);
+                String message = "Thank you for being an awesome Silver Vuer. Keep up the good work and expect more surprises!";
+                String ok = "Okay, continue Vueing!";
+                okbutton.setText(ok);
+                messagetext.setText(message);
             }
-            messagetext.setText(sb);
+            
             nobutton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     dialog.dismiss();

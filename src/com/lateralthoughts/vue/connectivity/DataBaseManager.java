@@ -826,8 +826,8 @@ public class DataBaseManager {
      * @param String
      *            aisleID
      * */
-    private void bookMarkOrUnBookmarkAisleToDb(boolean isBookmarked,
-            int bookmarkCount, Long bookmarkId, String aisleID, boolean isDirty) {
+    public void bookMarkOrUnBookmarkAisleToDb(boolean isBookmarked, int bookmarkCount,
+            Long bookmarkId, String aisleID, boolean isDirty) {
         ContentValues values = new ContentValues();
         values.put(VueConstants.IS_BOOKMARKED, isBookmarked);
         values.put(VueConstants.BOOKMARK_COUNT, bookmarkCount);

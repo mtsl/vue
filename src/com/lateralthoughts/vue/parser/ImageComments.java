@@ -8,4 +8,5 @@ public class ImageComments {
     public String mCommenterUrl;
     public String mCommenterLastName;
     public String mCommenterFirstName;
+    public String mOwnerUserId;
 }

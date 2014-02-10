@@ -241,6 +241,8 @@ public class VueConstants {
     public static final String AISLE_OWNER_IMAGE_URL = "aisleOwnerImageURL";
     public static final String AISLE_BOOKMARK_COUNT = "bookmarkCount";
     // Aisle Images Response Keys
+    public static final String AISLE_IMAGE_OBJECT = "imageList";
+    public static final String AISLE_IMAGE_LIST = "images";
     public static final String AISLE_IMAGE_ID = "id";
     public static final String AISLE_IMAGE_OWNERUSER_ID = "ownerUserId";
     public static final String AISLE_IMAGE_OWNER_AISLE_ID = "ownerAisleId";

@@ -181,24 +181,7 @@ public class VueApplication extends Application {
         mScreenHeight = dm.heightPixels;
         mScreenWidth = dm.widthPixels;
         mVolleyRequestQueue = Volley.newRequestQueue(this);
-        mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
-        for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
-            if (Utils.appInstalledOrNot(SHOPPINGAPP_PACKAGES_ARRAY[i], this)) {
-                Drawable appIcon = null;
-                try {
-                    appIcon = this.getPackageManager().getApplicationIcon(
-                            SHOPPINGAPP_PACKAGES_ARRAY[i]);
-                } catch (NameNotFoundException e) {
-                }
-                ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
-                        SHOPPINGAPP_NAMES_ARRAY[i],
-                        SHOPPINGAPP_ACTIVITIES_ARRAY[i],
-                        SHOPPINGAPP_PACKAGES_ARRAY[i], appIcon);
-                mShoppingApplicationDetailsList.add(shoppingApplicationDetails);
-            }
-        }
-        mMoreInstalledApplicationDetailsList = Utils
-                .getInstalledApplicationsList(getApplicationContext());
+        getInstalledApplications(this);
         Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
                 crittercismConfig);
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
@@ -333,6 +316,37 @@ public class VueApplication extends Application {
         return mAisleWindow;
     }
     
+    private void getInstalledApplications(final Context context) {
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
+                for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
+                    if (Utils.appInstalledOrNot(SHOPPINGAPP_PACKAGES_ARRAY[i],
+                            context)) {
+                        Drawable appIcon = null;
+                        try {
+                            appIcon = context.getPackageManager()
+                                    .getApplicationIcon(
+                                            SHOPPINGAPP_PACKAGES_ARRAY[i]);
+                        } catch (NameNotFoundException e) {
+                        }
+                        ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
+                                SHOPPINGAPP_NAMES_ARRAY[i],
+                                SHOPPINGAPP_ACTIVITIES_ARRAY[i],
+                                SHOPPINGAPP_PACKAGES_ARRAY[i], appIcon);
+                        mShoppingApplicationDetailsList
+                                .add(shoppingApplicationDetails);
+                    }
+                }
+                mMoreInstalledApplicationDetailsList = Utils
+                        .getInstalledApplicationsList(getApplicationContext());
+                
+            }
+        }).start();
+        
+    }
     /*
      * public void registerUser(MixpanelAPI mixpanel) { VueUser storedVueUser =
      * null; try { storedVueUser = Utils.readUserObjectFromFile(
