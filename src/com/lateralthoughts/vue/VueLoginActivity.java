@@ -33,6 +33,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -64,6 +65,7 @@ import com.facebook.Request;
 import com.facebook.Request.Callback;
 import com.facebook.Request.GraphUserCallback;
 import com.facebook.Session;
+import com.facebook.Session.AuthorizationRequest;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
@@ -256,6 +258,19 @@ public class VueLoginActivity extends FragmentActivity implements
                     instagramSignInButtonLayout.setVisibility(View.GONE);
                     fblog_in_buttonlayout.setVisibility(View.INVISIBLE);
                     cancellayout.setVisibility(View.GONE);
+                    AuthorizationRequest request = new Session.NewPermissionsRequest(
+                            this, PUBLISH_PERMISSIONS);
+                    Intent intent = com.facebook.NativeProtocol
+                            .createLoginDialog20121101Intent(
+                                    this,
+                                    getResources().getString(R.string.app_id),
+                                    new ArrayList<String>(request
+                                            .getPermissions()), request
+                                            .getDefaultAudience()
+                                            .getNativeProtocolAudience());
+                    if (!resolveIntent(intent)) {
+                        login_button.setPublishPermissions(PUBLISH_PERMISSIONS);
+                    }
                     login_button.performClick();
                 }
             } else {
@@ -333,6 +348,18 @@ public class VueLoginActivity extends FragmentActivity implements
                                         VueLoginActivity.this, false);
                             }
                         });
+                AuthorizationRequest request = new Session.NewPermissionsRequest(
+                        this, PUBLISH_PERMISSIONS);
+                Intent intent = com.facebook.NativeProtocol
+                        .createLoginDialog20121101Intent(
+                                this,
+                                getResources().getString(R.string.app_id),
+                                new ArrayList<String>(request.getPermissions()),
+                                request.getDefaultAudience()
+                                        .getNativeProtocolAudience());
+                if (!resolveIntent(intent)) {
+                    login_button.setPublishPermissions(PUBLISH_PERMISSIONS);
+                }
                 login_button
                         .setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
                             public void onUserInfoFetched(GraphUser user) {
@@ -375,6 +402,20 @@ public class VueLoginActivity extends FragmentActivity implements
         } catch (KeyManagementException ex2) {
             
         }
+    }
+    
+    private boolean resolveIntent(Intent intent) {
+        try {
+            ResolveInfo resolveInfo = VueApplication.getInstance().mVueApplicationContext
+                    .getPackageManager().resolveActivity(intent, 0);
+            if (resolveInfo == null) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     
     @Override
