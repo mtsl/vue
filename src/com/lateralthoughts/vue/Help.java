@@ -117,7 +117,25 @@ public class Help extends Activity {
     public void onResume() {
         super.onResume();
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                int drawable = R.drawable.helpfour;
+                Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+                        drawable);
+                File f = mFileCache.getHelpFile("imageFourNew");
+                Utils.saveBitmap(largeIcon, f);
+                largeIcon.recycle();
+                largeIcon = null;
+                
+            }
+        }).start();
     
+    }
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         
