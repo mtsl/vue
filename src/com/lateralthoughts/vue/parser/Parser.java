@@ -18,7 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Environment;
-import android.util.Log;
 
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -58,14 +57,12 @@ public class Parser {
         try {
             writeToSdcard("\n\n\nRESPONSE: "+contentArray.toString());
             isEmptyAilseCached = true;
-            Log.i("aislesCount", "aislesCount  parsing started " );
             aisleWindowContentList = parseAisleInformation(contentArray,
                     isEmptyAilseCached);
             
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.i("aislesCount", "aislesCount aisles response retunr from parser: aisle count is "+aisleWindowContentList.size());
         return aisleWindowContentList;
     }
     

@@ -2,7 +2,6 @@ package com.lateralthoughts.vue;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,7 +43,6 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.i("getViewTime", "getViewTime start**********");
         ViewHolder holder;
         
         int actualPosition = position;
@@ -213,7 +211,6 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         }
         holder.share_count.setText(String.valueOf(holder.mWindowContent
                 .getAisleContext().mShareCount));
-        Log.i("getViewTime", "getViewTime end################");
         return convertView;
     }
 }
