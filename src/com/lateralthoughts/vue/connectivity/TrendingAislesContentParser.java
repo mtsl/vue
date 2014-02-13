@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.os.ResultReceiver;
+import android.util.Log;
 
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
@@ -204,6 +205,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                                         // notify the data
                                                         // set
                                                         // changed
+                                                        Log.i("aislesCount", "aislesCount: adapter notified from centerparser file");
                                                         VueTrendingAislesDataModel
                                                                 .getInstance(
                                                                         VueApplication

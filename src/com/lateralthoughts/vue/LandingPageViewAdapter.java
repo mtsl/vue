@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,14 +37,14 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         if (count == 0) {
             mClickListener.showProgressBar();
         } else {
-            mClickListener.hideProgressBar();
+            mClickListener.hideProgressBar(count);
         }
         return count;
     }
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        
+        Log.i("getViewTime", "getViewTime start**********");
         ViewHolder holder;
         
         int actualPosition = position;
@@ -85,6 +86,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
             convertView.setTag(holder);
         }
         holder = (ViewHolder) convertView.getTag();
+       
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         holder.mWindowContent = (AisleWindowContent) getItem(position);
         int scrollIndex = 0;
@@ -99,6 +101,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         } else {
             holder.aisleselectlay.setVisibility(View.GONE);
         }
+       
         AisleContext context = holder.mWindowContent.getAisleContext();
         if (context.mIsEmptyAisle) {
             final AisleWindowContent mWindowContent = holder.mWindowContent;
@@ -129,6 +132,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
                     actualPosition, false, mClickListener, "left",
                     holder.starIcon, holder.socialCard);
         }
+       
         String mVueusername = null;
         if (context.mFirstName != null && context.mLastName != null) {
             mVueusername = context.mFirstName + " " + context.mLastName;
@@ -209,6 +213,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         }
         holder.share_count.setText(String.valueOf(holder.mWindowContent
                 .getAisleContext().mShareCount));
+        Log.i("getViewTime", "getViewTime end################");
         return convertView;
     }
 }

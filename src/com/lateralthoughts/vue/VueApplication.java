@@ -18,6 +18,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.LruCache;
 import android.util.TypedValue;
 
@@ -154,6 +155,7 @@ public class VueApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.i("aislesCount", "aislesCount: vueApplication oncreate started");
         sInstance = this;
         mVueApplicationContext = this;
         RegisterGCMClient.registerClient(VueApplication.getInstance(),

@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -89,6 +90,7 @@ public class VueContentGateway {
             Response.Listener listener = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
+                    Log.i("aislesCount", "aislesCount aisles Response from server");
                     if (null != jsonArray) {
                         Bundle responseBundle = new Bundle();
                         responseBundle
@@ -123,6 +125,7 @@ public class VueContentGateway {
             vueRequest.setRetryPolicy(new DefaultRetryPolicy(
                     DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            Log.i("aislesCount", "aislesCount aisles Request sent");
             VueApplication.getInstance().getRequestQueue().add(vueRequest);
         }
         return status;

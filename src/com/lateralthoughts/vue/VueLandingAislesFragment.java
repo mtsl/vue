@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -279,9 +280,12 @@ public class VueLandingAislesFragment extends Fragment {
         }
         
         @Override
-        public void hideProgressBar() {
+        public void hideProgressBar(int count) {
+            Log.i("aislesCount", "aislesCount: "+count);
             if (mTrendingLoad.getVisibility() == View.VISIBLE) {
                 mTrendingLoad.setVisibility(View.GONE);
+                notifyAdapters();
+                Log.i("aislesCount", "aislesCount: adapter notified ");
             }
         }
         

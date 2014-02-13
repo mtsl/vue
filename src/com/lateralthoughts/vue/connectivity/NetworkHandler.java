@@ -250,14 +250,14 @@ public class NetworkHandler {
         if (!VueConnectivityManager.isNetworkConnected(mContext)) {
             Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
                     .show();
-            ArrayList<AisleWindowContent> aisleContentArray = dbManager
+/*            ArrayList<AisleWindowContent> aisleContentArray = dbManager
                     .getAislesFromDB(null, false);
             if (aisleContentArray.size() == 0) {
                 return;
             }
             Message msg = new Message();
             msg.obj = aisleContentArray;
-            mHandler.sendMessage(msg);
+            mHandler.sendMessage(msg);*/
             
         } else {
             mLimit = 30;

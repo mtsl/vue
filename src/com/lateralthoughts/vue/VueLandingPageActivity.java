@@ -1194,7 +1194,9 @@ public class VueLandingPageActivity extends Activity implements
         
         @Override
         public void dismissProgress(boolean fromWhere) {
+            if(mPd != null){
             mPd.dismiss();
+            }
             if (fromWhere) {
                 // mFragment.moveListToPosition(0);
             } else {

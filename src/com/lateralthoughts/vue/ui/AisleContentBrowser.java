@@ -692,7 +692,7 @@ public class AisleContentBrowser extends ViewFlipper {
         
         public void refreshList();
         
-        public void hideProgressBar();
+        public void hideProgressBar(int count);
         
         public void showProgressBar();
     }
