@@ -592,34 +592,4 @@ public class Parser {
         }
         return bookmarkedAisles;
     }
-    
-    private void writeToSdcard(String message) {
-        
-        String path = Environment.getExternalStorageDirectory().toString();
-        File dir = new File(path + "/vueAisleseResponse/");
-        if (!dir.isDirectory()) {
-            dir.mkdir();
-        }
-        File file = new File(dir, "/"
-                + Calendar.getInstance().get(Calendar.DATE)
-                + "-"
-                + Utils.getWeekDay(Calendar.getInstance().get(
-                        Calendar.DAY_OF_WEEK)) + ".txt");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        try {
-            PrintWriter out = new PrintWriter(new BufferedWriter(
-                    new FileWriter(file, true)));
-            out.write("\n" + message + "\n");
-            out.flush();
-            out.close();
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

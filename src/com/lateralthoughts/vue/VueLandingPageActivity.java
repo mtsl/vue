@@ -919,28 +919,6 @@ public class VueLandingPageActivity extends Activity implements
                 }
             }
         }
-        try {
-            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
-                    VueConstants.SHAREDPREFERENCE_NAME, 0);
-            boolean isHelpShown = sharedPreferencesObj.getBoolean(
-                    VueConstants.HELP_SCREEN_ACCES, false);
-            if (isHelpShown) {
-                int count = sharedPreferencesObj.getInt(
-                        VueConstants.USER_FINDFRIENDS_OPEN_COUNT, 0);
-                final int SHOW_LIMIT = 3;
-                if (count < SHOW_LIMIT) {
-                    long showedTime = sharedPreferencesObj.getLong(
-                            VueConstants.USER_FINDFRIENDS_OPEN_TIME, 0);
-                    int hours = (int) Utils.dateDifference(showedTime);
-                    final int DAY_LATER = 24;
-                    if (hours > DAY_LATER) {
-                        showInviteFriendsDialog();
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
     
     @Override

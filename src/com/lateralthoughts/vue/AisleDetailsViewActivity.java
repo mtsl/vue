@@ -68,9 +68,9 @@ public class AisleDetailsViewActivity extends Activity {
     private LinearLayout mContentLinearLay;
     private boolean mIsSlidePanleLoaded = false;
     private ComparisionAdapter mBottomAdapter, mTopAdapter;
-    private DrawerLayout mDrawerLayout;
+    public DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private FrameLayout mDrawerLeft, mDrawerRight;
+    public FrameLayout mDrawerLeft, mDrawerRight;
     private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
     private MixpanelAPI mixpanel;
     private boolean mHasToHelpShow;
