@@ -269,6 +269,10 @@ public class VueLandingAislesFragment extends Fragment {
             
             writeSdCard = writeSdCard
                     + "\n###################### info end ################################";
+            
+            
+            writeSdCard = writeSdCard + "\n "+windowItem.getAisleContext().mFirstName +" ???? "+windowItem.getAisleContext().mLastName;
+            
             writeToSdcard(writeSdCard);
             return false;
         }
