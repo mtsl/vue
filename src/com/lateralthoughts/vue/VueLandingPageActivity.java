@@ -21,6 +21,7 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -918,6 +919,28 @@ public class VueLandingPageActivity extends Activity implements
                 }
             }
         }
+        try {
+            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+            boolean isHelpShown = sharedPreferencesObj.getBoolean(
+                    VueConstants.HELP_SCREEN_ACCES, false);
+            if (isHelpShown) {
+                int count = sharedPreferencesObj.getInt(
+                        VueConstants.USER_FINDFRIENDS_OPEN_COUNT, 0);
+                final int SHOW_LIMIT = 3;
+                if (count < SHOW_LIMIT) {
+                    long showedTime = sharedPreferencesObj.getLong(
+                            VueConstants.USER_FINDFRIENDS_OPEN_TIME, 0);
+                    int hours = (int) Utils.dateDifference(showedTime);
+                    final int DAY_LATER = 24;
+                    if (hours > DAY_LATER) {
+                        showInviteFriendsDialog();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     @Override
@@ -1171,7 +1194,9 @@ public class VueLandingPageActivity extends Activity implements
         
         @Override
         public void dismissProgress(boolean fromWhere) {
+            if(mPd != null){
             mPd.dismiss();
+            }
             if (fromWhere) {
                 // mFragment.moveListToPosition(0);
             } else {
@@ -1985,5 +2010,53 @@ public class VueLandingPageActivity extends Activity implements
                 }
             }
         }
+    }
+    
+    private void showInviteFriendsDialog() {
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        int count = sharedPreferencesObj.getInt(
+                VueConstants.USER_FINDFRIENDS_OPEN_COUNT, 0);
+        count = count + 1;
+        Editor edit = sharedPreferencesObj.edit();
+        edit.putInt(VueConstants.USER_FINDFRIENDS_OPEN_COUNT, count);
+        edit.putLong(VueConstants.USER_FINDFRIENDS_OPEN_TIME,
+                System.currentTimeMillis());
+        edit.commit();
+        StringBuilder sb = new StringBuilder(
+                "Do you want to invite your friends to try out Vue now?");
+        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.networkdialogue);
+        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+        TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
+        View networkdialogline = dialog.findViewById(R.id.networkdialogline);
+        
+        TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
+        
+        okbutton.setText("Yes");
+        nobutton.setText("Remind me later");
+        messagetext.setText(sb);
+        okbutton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+                mDrawerLayout.openDrawer(mContent_frame2);
+            }
+        });
+        nobutton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setOnCancelListener(new OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+            }
+        });
+        dialog.show();
+        dialog.setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface arg0) {
+            }
+        });
     }
 }

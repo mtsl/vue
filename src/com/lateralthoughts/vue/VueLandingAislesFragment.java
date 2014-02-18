@@ -283,9 +283,10 @@ public class VueLandingAislesFragment extends Fragment {
         }
         
         @Override
-        public void hideProgressBar() {
+        public void hideProgressBar(int count) {
             if (mTrendingLoad.getVisibility() == View.VISIBLE) {
                 mTrendingLoad.setVisibility(View.GONE);
+                notifyAdapters();
             }
         }
         

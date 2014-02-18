@@ -849,20 +849,22 @@ public class Utils {
         editor.commit();
         int currentPoints = getUserPoints();
         if (prevPoints < 100 && currentPoints >= 100) {
-            if (context != null) {
-                showRewardDialogu(currentPoints, context);
+            boolean isDialogShown = sharedPreferencesObj.getBoolean(
+                    VueConstants.USER_POINTS_DIALOG_SHOWN, false);
+            if (context != null && !isDialogShown) {
+                showRewardDialog(currentPoints, context);
             } else {
             }
         } else if (currentPoints >= 100) {
             boolean isDialogShown = sharedPreferencesObj.getBoolean(
                     VueConstants.USER_POINTS_DIALOG_SHOWN, false);
             if (!isDialogShown && context != null) {
-                showRewardDialogu(currentPoints, context);
+                showRewardDialog(currentPoints, context);
             }
         }
     }
     
-    private static void showRewardDialogu(int currentPoints, Context context) {
+    private static void showRewardDialog(int currentPoints, Context context) {
         showRewardsDialog("", currentPoints, context);
         SharedPreferences sharedPreferencesObj = VueApplication.getInstance()
                 .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);

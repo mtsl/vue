@@ -104,7 +104,7 @@
             android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
-            android:name=".BezelTestActivity"
+            android:name=".HelpOnTrending"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
