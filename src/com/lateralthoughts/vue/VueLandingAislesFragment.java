@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,6 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,7 +31,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
@@ -403,43 +405,101 @@ public class VueLandingAislesFragment extends Fragment {
 		edit.putLong(VueConstants.USER_FINDFRIENDS_OPEN_TIME,
 				System.currentTimeMillis());
 		edit.commit();
-		StringBuilder sb = new StringBuilder(
-				"Use vue for your shopping decisions\nGet your friends to join the fun\nEarn $$ rewards. ");
-		final Dialog dialog = new Dialog(mContext,
+		final Dialog dialog = new Dialog(getActivity(),
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.help_popup);
-		TextView title = (TextView) dialog.findViewById(R.id.dialogtitle);
-		title.setText("Make vue your own");
-		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-		TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
-		View networkdialogline = dialog.findViewById(R.id.networkdialogline);
-		TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-		okbutton.setText(getString(R.string.ok));
-		nobutton.setVisibility(View.GONE);
-
-		messagetext.setText(sb);
-		messagetext.setTextSize(Utils.MEDIUM_TEXT_SIZE);
-		okbutton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
-		nobutton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
-		dialog.setOnCancelListener(new OnCancelListener() {
-			public void onCancel(DialogInterface dialog) {
-			}
-		});
+		dialog.setContentView(R.layout.hintdialog);
+		dialog.setCanceledOnTouchOutside(false);
+		dialog.setCancelable(false);
+		View hintPopupVerticalline = dialog
+				.findViewById(R.id.hint_popup_verticalline);
+		hintPopupVerticalline.setVisibility(View.GONE);
+		TextView dialogtitle = (TextView) dialog.findViewById(R.id.dialogtitle);
+		ListView listview = (ListView) dialog.findViewById(R.id.networklist);
+		listview.setDivider(getResources().getDrawable(
+				R.drawable.share_dialog_divider));
+		TextView dontshow = (TextView) dialog.findViewById(R.id.dontshow);
+		TextView proceed = (TextView) dialog.findViewById(R.id.proceed);
+		ArrayList<String> hint_array_list = new ArrayList<String>();
+		dialogtitle.setText("Make vue your own");
+		hint_array_list.add("1. Use vue for your shopping decisions");
+		hint_array_list.add("2. Get your friends to join the fun");
+		hint_array_list.add("3. Earn $$ rewards");
 		dialog.show();
+		dontshow.setVisibility(View.GONE);
+		proceed.setText("OK");
 		dialog.setOnDismissListener(new OnDismissListener() {
+
 			@Override
 			public void onDismiss(DialogInterface arg0) {
 			}
 		});
+		proceed.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		listview.setAdapter(new HintAdapter(hint_array_list));
+	}
+
+	private class HintAdapter extends BaseAdapter {
+		ArrayList<String> mHintList;
+
+		public HintAdapter(ArrayList<String> hintList) {
+			mHintList = hintList;
+		}
+
+		@Override
+		public int getCount() {
+			return mHintList.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			Holder holder = null;
+			if (convertView == null) {
+
+				holder = new Holder();
+				LayoutInflater mLayoutInflater = (LayoutInflater) getActivity()
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				convertView = mLayoutInflater.inflate(R.layout.hintpopup, null);
+				holder.textone = (TextView) convertView
+						.findViewById(R.id.gmail);
+				holder.texttwo = (TextView) convertView.findViewById(R.id.vue);
+				holder.imageone = (ImageView) convertView
+						.findViewById(R.id.shareicon);
+				holder.imagetwo = (ImageView) convertView
+						.findViewById(R.id.shareicon2);
+				convertView.setTag(holder);
+			} else {
+				holder = (Holder) convertView.getTag();
+			}
+			holder.textone.setTextSize(16);
+			String text = mHintList.get(position);
+			holder.imageone.setVisibility(View.GONE);
+			holder.imagetwo.setVisibility(View.GONE);
+			holder.texttwo.setVisibility(View.GONE);
+			holder.textone.setText(text);
+			return convertView;
+		}
+	}
+
+	private class Holder {
+		TextView textone, texttwo;
+		ImageView imageone, imagetwo;
 	}
 
 }

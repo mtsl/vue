@@ -11,7 +11,6 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,6 +39,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -1272,25 +1272,43 @@ public class VueAisleDetailsViewFragment extends Fragment {
 		edit.putLong(VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_TIME,
 				System.currentTimeMillis());
 		edit.commit();
-		StringBuilder sb = new StringBuilder(
-				"Help Friends make their shopping decisions\nInvite them to join Vue\nEarn $$ rewards. ");
-		final Dialog dialog = new Dialog(mContext,
+		final Dialog dialog = new Dialog(getActivity(),
 				R.style.Theme_Dialog_Translucent);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.help_popup);
-		TextView title = (TextView) dialog.findViewById(R.id.dialogtitle);
-		title.setText(getResources().getString(R.string.app_name));
-		TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-		TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
-		View networkdialogline = dialog.findViewById(R.id.networkdialogline);
-		TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-		okbutton.setText("Invite Friends");
-		nobutton.setText("Skip for now");
+		dialog.setContentView(R.layout.hintdialog);
+		dialog.setCanceledOnTouchOutside(false);
+		dialog.setCancelable(false);
+		TextView dialogtitle = (TextView) dialog.findViewById(R.id.dialogtitle);
+		ListView listview = (ListView) dialog.findViewById(R.id.networklist);
+		listview.setDivider(getResources().getDrawable(
+				R.drawable.share_dialog_divider));
+		TextView dontshow = (TextView) dialog.findViewById(R.id.dontshow);
+		TextView proceed = (TextView) dialog.findViewById(R.id.proceed);
+		ArrayList<String> hint_array_list = new ArrayList<String>();
+		dialogtitle.setText(getResources().getString(R.string.app_name));
+		hint_array_list.add("1. Help Friends make their shopping decisions");
+		hint_array_list.add("2. Invite them to join Vue");
+		hint_array_list.add("3. Earn $$ rewards");
+		dialog.show();
+		proceed.setText("Invite Friends");
+		dontshow.setText("Skip for now");
+		dialog.setOnDismissListener(new OnDismissListener() {
 
-		messagetext.setText(sb);
-		messagetext.setTextSize(Utils.MEDIUM_TEXT_SIZE);
-		okbutton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onDismiss(DialogInterface arg0) {
+			}
+		});
+		dontshow.setOnClickListener(new OnClickListener() {
+
+			@Override
 			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		proceed.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
 				dialog.dismiss();
 				if (mAisleDetailsActivity == null) {
 					mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
@@ -1299,20 +1317,64 @@ public class VueAisleDetailsViewFragment extends Fragment {
 						.openDrawer(mAisleDetailsActivity.mDrawerLeft);
 			}
 		});
-		nobutton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				dialog.dismiss();
+		listview.setAdapter(new HintAdapter(hint_array_list));
+	}
+
+	private class HintAdapter extends BaseAdapter {
+		ArrayList<String> mHintList;
+
+		public HintAdapter(ArrayList<String> hintList) {
+			mHintList = hintList;
+		}
+
+		@Override
+		public int getCount() {
+			return mHintList.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			Holder holder = null;
+			if (convertView == null) {
+
+				holder = new Holder();
+				LayoutInflater mLayoutInflater = (LayoutInflater) getActivity()
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				convertView = mLayoutInflater.inflate(R.layout.hintpopup, null);
+				holder.textone = (TextView) convertView
+						.findViewById(R.id.gmail);
+				holder.texttwo = (TextView) convertView.findViewById(R.id.vue);
+				holder.imageone = (ImageView) convertView
+						.findViewById(R.id.shareicon);
+				holder.imagetwo = (ImageView) convertView
+						.findViewById(R.id.shareicon2);
+				convertView.setTag(holder);
+			} else {
+				holder = (Holder) convertView.getTag();
 			}
-		});
-		dialog.setOnCancelListener(new OnCancelListener() {
-			public void onCancel(DialogInterface dialog) {
-			}
-		});
-		dialog.show();
-		dialog.setOnDismissListener(new OnDismissListener() {
-			@Override
-			public void onDismiss(DialogInterface arg0) {
-			}
-		});
+			holder.textone.setTextSize(16);
+			String text = mHintList.get(position);
+			holder.imageone.setVisibility(View.GONE);
+			holder.imagetwo.setVisibility(View.GONE);
+			holder.texttwo.setVisibility(View.GONE);
+			holder.textone.setText(text);
+			return convertView;
+		}
+	}
+
+	private class Holder {
+		TextView textone, texttwo;
+		ImageView imageone, imagetwo;
 	}
 }
