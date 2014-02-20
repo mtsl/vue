@@ -59,6 +59,7 @@
                 android:textStyle="bold" />
 
             <View
+                android:id="@+id/hint_popup_verticalline"
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="@color/popupbgcolor" />

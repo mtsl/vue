@@ -80,7 +80,6 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueLandingPageActivity extends Activity implements
         SearchView.OnQueryTextListener, SearchView.OnCloseListener {
-    
     private static final int DELAY_TIME = 500;
     public static List<FbGPlusDetails> mGooglePlusFriendsDetailsList = null;
     private ProgressDialog mProgressDialog;
@@ -158,7 +157,20 @@ public class VueLandingPageActivity extends Activity implements
         mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                addImageToExistingAisle(mOtherSourceAddImageAisleId);
+                String lookingfor = "";
+                if (VueTrendingAislesDataModel.getInstance(
+                        VueLandingPageActivity.this).getAisleAt(
+                        mOtherSourceAddImageAisleId) != null
+                        && VueTrendingAislesDataModel
+                                .getInstance(VueLandingPageActivity.this)
+                                .getAisleAt(mOtherSourceAddImageAisleId)
+                                .getAisleContext() != null) {
+                    lookingfor = VueTrendingAislesDataModel
+                            .getInstance(VueLandingPageActivity.this)
+                            .getAisleAt(mOtherSourceAddImageAisleId)
+                            .getAisleContext().mLookingForItem;
+                }
+                addImageToExistingAisle(mOtherSourceAddImageAisleId, lookingfor);
                 mOtherSourceAddImageAisleId = null;
                 ((VueLandingAislesFragment) mLandingAilsesFrag)
                         .notifyAdapters();
@@ -919,28 +931,6 @@ public class VueLandingPageActivity extends Activity implements
                 }
             }
         }
-        try {
-            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
-                    VueConstants.SHAREDPREFERENCE_NAME, 0);
-            boolean isHelpShown = sharedPreferencesObj.getBoolean(
-                    VueConstants.HELP_SCREEN_ACCES, false);
-            if (isHelpShown) {
-                int count = sharedPreferencesObj.getInt(
-                        VueConstants.USER_FINDFRIENDS_OPEN_COUNT, 0);
-                final int SHOW_LIMIT = 3;
-                if (count < SHOW_LIMIT) {
-                    long showedTime = sharedPreferencesObj.getLong(
-                            VueConstants.USER_FINDFRIENDS_OPEN_TIME, 0);
-                    int hours = (int) Utils.dateDifference(showedTime);
-                    final int DAY_LATER = 24;
-                    if (hours > DAY_LATER) {
-                       // showInviteFriendsDialog();
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
     
     @Override
@@ -1483,7 +1473,7 @@ public class VueLandingPageActivity extends Activity implements
                         loadMore, screenName);
     }
     
-    private void addImageToExistingAisle(String aisleId) {
+    private void addImageToExistingAisle(String aisleId, final String lookingfor) {
         if (mOtherSourceImagePath != null) {
             final VueImage image = new VueImage();
             image.setDetailsUrl(mOtherSourceImageDetailsUrl);
@@ -1504,9 +1494,13 @@ public class VueLandingPageActivity extends Activity implements
                         .requestForUploadImage(new File(mOtherSourceImagePath),
                                 new ImageUploadCallback() {
                                     @Override
-                                    public void onImageUploaded(String imageUrl) {
+                                    public void onImageUploaded(
+                                            String imageUrl, int width,
+                                            int height) {
                                         if (imageUrl != null) {
                                             image.setImageUrl(imageUrl);
+                                            image.setWidth(width);
+                                            image.setHeight(height);
                                             VueTrendingAislesDataModel
                                                     .getInstance(
                                                             VueApplication
@@ -1516,6 +1510,7 @@ public class VueLandingPageActivity extends Activity implements
                                                             null,
                                                             true,
                                                             offlineImageId,
+                                                            lookingfor,
                                                             image,
                                                             new ImageAddedCallback() {
                                                                 
@@ -1523,6 +1518,10 @@ public class VueLandingPageActivity extends Activity implements
                                                                 public void onImageAdded(
                                                                         String aisleId,
                                                                         String imageId,
+                                                                        String lookingFor,
+                                                                        String findAt,
+                                                                        String size,
+                                                                        String source,
                                                                         boolean fromDetailScreen) {
                                                                     JSONObject imageUploadProps = new JSONObject();
                                                                     AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
@@ -1573,7 +1572,18 @@ public class VueLandingPageActivity extends Activity implements
                                                                         imageUploadProps
                                                                                 .put("imageId",
                                                                                         imageId);
-                                                                        
+                                                                        imageUploadProps
+                                                                                .put("Source",
+                                                                                        source);
+                                                                        imageUploadProps
+                                                                                .put("Size",
+                                                                                        size);
+                                                                        imageUploadProps
+                                                                                .put("Looking for",
+                                                                                        lookingFor);
+                                                                        imageUploadProps
+                                                                                .put("Find it at",
+                                                                                        findAt);
                                                                     } catch (JSONException e) {
                                                                         
                                                                         e.printStackTrace();
@@ -1592,12 +1602,14 @@ public class VueLandingPageActivity extends Activity implements
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
-                        .requestForAddImage(null, true, offlineImageId, image,
-                                new ImageAddedCallback() {
+                        .requestForAddImage(null, true, offlineImageId,
+                                lookingfor, image, new ImageAddedCallback() {
                                     
                                     @Override
                                     public void onImageAdded(String aisleId,
-                                            String imageId,
+                                            String imageId, String lookingFor,
+                                            String findAt, String size,
+                                            String source,
                                             boolean fromDetailScreen) {
                                         JSONObject imageUploadProps = new JSONObject();
                                         AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
@@ -1645,7 +1657,13 @@ public class VueLandingPageActivity extends Activity implements
                                                     aisleId);
                                             imageUploadProps.put("imageId",
                                                     imageId);
-                                            
+                                            imageUploadProps.put("Source",
+                                                    source);
+                                            imageUploadProps.put("Size", size);
+                                            imageUploadProps.put("Looking for",
+                                                    lookingFor);
+                                            imageUploadProps.put("Find it at",
+                                                    findAt);
                                         } catch (JSONException e) {
                                             
                                             e.printStackTrace();
@@ -2024,19 +2042,18 @@ public class VueLandingPageActivity extends Activity implements
                 System.currentTimeMillis());
         edit.commit();
         StringBuilder sb = new StringBuilder(
-                "For a limited time, you can earn up to $20 by becoming a Silver, Gold or Platinum Vuer. "
-                        + "Just use Vue for your shopping decisions and ask your friends to come help you with it - "
-                        + "the more help you get, the more you earn! The more you help others, the more you earn too!"
-                        + " Lets get started!");
+                "Do you want to invite your friends to try out Vue now?");
         final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.help_popup);
+        dialog.setContentView(R.layout.networkdialogue);
         TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
         TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
         View networkdialogline = dialog.findViewById(R.id.networkdialogline);
+        
         TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-        okbutton.setText(getString(R.string.invite_friends));
-        nobutton.setText(getString(R.string.remind_later));
+        
+        okbutton.setText("Yes");
+        nobutton.setText("Remind me later");
         messagetext.setText(sb);
         okbutton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {

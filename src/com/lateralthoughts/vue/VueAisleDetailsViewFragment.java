@@ -10,8 +10,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,6 +39,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -474,6 +478,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 }
             }
         });
+        
         sendCommentButon.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -536,7 +541,37 @@ public class VueAisleDetailsViewFragment extends Fragment {
         });
         
         mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
-        // TODO
+        try {
+            SharedPreferences sharedPreferencesObj = getActivity()
+                    .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+            boolean isHelpShown = sharedPreferencesObj.getBoolean(
+                    VueConstants.HELP_SCREEN_ACCES, false);
+            boolean isAlreadyDetailsScreenShown = sharedPreferencesObj
+                    .getBoolean(VueConstants.IS_ALREADY_VIEWED_DETAILS_SCREEN,
+                            false);
+            if (isHelpShown && isAlreadyDetailsScreenShown) {
+                int count = sharedPreferencesObj.getInt(
+                        VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_COUNT, 0);
+                final int SHOW_LIMIT = 3;
+                if (count < SHOW_LIMIT) {
+                    long showedTime = sharedPreferencesObj.getLong(
+                            VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_TIME, 0);
+                    int hours = (int) Utils.dateDifference(showedTime);
+                    final int DAY_LATER = 24;
+                    if (hours > DAY_LATER) {
+                        showInviteFriendsDialog();
+                    }
+                }
+            } else {
+                Editor edit = sharedPreferencesObj.edit();
+                edit.putBoolean(VueConstants.IS_ALREADY_VIEWED_DETAILS_SCREEN,
+                        true);
+                edit.commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+ 
         mVueUserName = (TextView) mDetailsContentView
                 .findViewById(R.id.vue_user_name);
         mVueUserName.setTextSize(Utils.MEDIUM_TEXT_SIZE);
@@ -1234,5 +1269,122 @@ public class VueAisleDetailsViewFragment extends Fragment {
                             intent,
                             VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
         }
+    }
+    
+    private void showInviteFriendsDialog() {
+        SharedPreferences sharedPreferencesObj = mContext.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        int count = sharedPreferencesObj.getInt(
+                VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_COUNT, 0);
+        count = count + 1;
+        Editor edit = sharedPreferencesObj.edit();
+        edit.putInt(VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_COUNT, count);
+        edit.putLong(VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_TIME,
+                System.currentTimeMillis());
+        edit.commit();
+        final Dialog dialog = new Dialog(getActivity(),
+                R.style.Theme_Dialog_Translucent);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.hintdialog);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        TextView dialogtitle = (TextView) dialog.findViewById(R.id.dialogtitle);
+        ListView listview = (ListView) dialog.findViewById(R.id.networklist);
+        listview.setDivider(getResources().getDrawable(
+                R.drawable.share_dialog_divider));
+        TextView dontshow = (TextView) dialog.findViewById(R.id.dontshow);
+        TextView proceed = (TextView) dialog.findViewById(R.id.proceed);
+        ArrayList<String> hint_array_list = new ArrayList<String>();
+        dialogtitle.setText(getResources().getString(R.string.app_name));
+        hint_array_list.add("1. Help Friends make their shopping decisions");
+        hint_array_list.add("2. Invite them to join Vue");
+        hint_array_list.add("3. Earn $$ rewards");
+        dialog.show();
+        proceed.setText("Invite Friends");
+        dontshow.setText("Skip for now");
+        dialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface arg0) {
+            }
+        });
+        dontshow.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        proceed.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                dialog.dismiss();
+                if (mAisleDetailsActivity == null) {
+                    mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
+                }
+                mAisleDetailsActivity.mDrawerLayout
+                        .openDrawer(mAisleDetailsActivity.mDrawerLeft);
+            }
+        });
+        listview.setAdapter(new HintAdapter(hint_array_list));
+    }
+    
+    private class HintAdapter extends BaseAdapter {
+        ArrayList<String> mHintList;
+        
+        public HintAdapter(ArrayList<String> hintList) {
+            mHintList = hintList;
+        }
+        
+        @Override
+        public int getCount() {
+            return mHintList.size();
+        }
+        
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+        
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+        
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            
+            Holder holder = null;
+            if (convertView == null) {
+                
+                holder = new Holder();
+                LayoutInflater mLayoutInflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = mLayoutInflater.inflate(R.layout.hintpopup, null);
+                holder.textone = (TextView) convertView
+                        .findViewById(R.id.gmail);
+                holder.texttwo = (TextView) convertView.findViewById(R.id.vue);
+                holder.imageone = (ImageView) convertView
+                        .findViewById(R.id.shareicon);
+                holder.imagetwo = (ImageView) convertView
+                        .findViewById(R.id.shareicon2);
+                convertView.setTag(holder);
+            } else {
+                holder = (Holder) convertView.getTag();
+            }
+            holder.textone.setTextSize(16);
+            String text = mHintList.get(position);
+            holder.imageone.setVisibility(View.GONE);
+            holder.imagetwo.setVisibility(View.GONE);
+            holder.texttwo.setVisibility(View.GONE);
+            holder.textone.setText(text);
+            return convertView;
+        }
+    }
+    
+    private class Holder {
+        TextView textone, texttwo;
+        ImageView imageone, imagetwo;
     }
 }
