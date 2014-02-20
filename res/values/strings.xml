@@ -162,6 +162,8 @@ We may change this privacy policy from time to time.  Please check back to see i
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
+    <string name="invite_friends">Invite friends now</string>
+    <string name="remind_later">Remind me later</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="helptext">Create an aisle around something you are looking for.  Add one or more images of your choices.  Let others help you pick.  Or, perhaps even suggest the best things to get.  Do it together with friends!</string>
     <string name="frombezel">FromBezel</string>

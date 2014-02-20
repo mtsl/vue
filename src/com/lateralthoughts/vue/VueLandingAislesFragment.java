@@ -11,9 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -22,11 +28,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
@@ -56,6 +64,7 @@ public class VueLandingAislesFragment extends Fragment {
     
     public boolean mIsIdleState;
     private ProgressBar mTrendingLoad;
+  
     
     // TODO: define a public interface that can be implemented by the parent
     // activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -158,12 +167,14 @@ public class VueLandingAislesFragment extends Fragment {
                                         true,
                                         getResources().getString(
                                                 R.string.trending));
+                        //showInviteFriendsDialog();
                     }
                 }
                 
             }
         });
-        mStaggeredView.setAdapter(mStaggeredAdapter);
+                mStaggeredView.setAdapter(mStaggeredAdapter);
+      
         return v;
     }
     
@@ -349,5 +360,52 @@ public class VueLandingAislesFragment extends Fragment {
             e.printStackTrace();
         }
     }
-    
+    private void showInviteFriendsDialog() {
+        SharedPreferences sharedPreferencesObj = mContext.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        int count = sharedPreferencesObj.getInt(
+                VueConstants.USER_FINDFRIENDS_OPEN_COUNT, 0);
+        count = count + 1;
+        Editor edit = sharedPreferencesObj.edit();
+        edit.putInt(VueConstants.USER_FINDFRIENDS_OPEN_COUNT, count);
+        edit.putLong(VueConstants.USER_FINDFRIENDS_OPEN_TIME,
+                System.currentTimeMillis());
+        edit.commit();
+        StringBuilder sb = new StringBuilder(
+                "Use vue for your shopping decisions\nGet your friends to join the fun\nEarn $$ rewards. ");
+        final Dialog dialog = new Dialog(mContext, R.style.Theme_Dialog_Translucent);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.help_popup);
+        TextView title = (TextView) dialog.findViewById(R.id.dialogtitle);
+        title.setText("Make vue your own");
+        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+        TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
+        View networkdialogline = dialog.findViewById(R.id.networkdialogline);
+        TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
+        okbutton.setText(getString(R.string.ok));
+        nobutton.setVisibility(View.GONE);
+         
+        messagetext.setText(sb);
+        messagetext.setTextSize(Utils.MEDIUM_TEXT_SIZE);
+        okbutton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        nobutton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setOnCancelListener(new OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+            }
+        });
+        dialog.show();
+        dialog.setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface arg0) {
+            }
+        });
+    }
 }

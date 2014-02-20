@@ -934,7 +934,7 @@ public class VueLandingPageActivity extends Activity implements
                     int hours = (int) Utils.dateDifference(showedTime);
                     final int DAY_LATER = 24;
                     if (hours > DAY_LATER) {
-                        showInviteFriendsDialog();
+                       // showInviteFriendsDialog();
                     }
                 }
             }
@@ -1194,8 +1194,8 @@ public class VueLandingPageActivity extends Activity implements
         
         @Override
         public void dismissProgress(boolean fromWhere) {
-            if(mPd != null){
-            mPd.dismiss();
+            if (mPd != null) {
+                mPd.dismiss();
             }
             if (fromWhere) {
                 // mFragment.moveListToPosition(0);
@@ -2024,18 +2024,19 @@ public class VueLandingPageActivity extends Activity implements
                 System.currentTimeMillis());
         edit.commit();
         StringBuilder sb = new StringBuilder(
-                "Do you want to invite your friends to try out Vue now?");
+                "For a limited time, you can earn up to $20 by becoming a Silver, Gold or Platinum Vuer. "
+                        + "Just use Vue for your shopping decisions and ask your friends to come help you with it - "
+                        + "the more help you get, the more you earn! The more you help others, the more you earn too!"
+                        + " Lets get started!");
         final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.networkdialogue);
+        dialog.setContentView(R.layout.help_popup);
         TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
         TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
         View networkdialogline = dialog.findViewById(R.id.networkdialogline);
-        
         TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-        
-        okbutton.setText("Yes");
-        nobutton.setText("Remind me later");
+        okbutton.setText(getString(R.string.invite_friends));
+        nobutton.setText(getString(R.string.remind_later));
         messagetext.setText(sb);
         okbutton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {

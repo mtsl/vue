@@ -536,6 +536,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         });
         
         mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+        // TODO
         mVueUserName = (TextView) mDetailsContentView
                 .findViewById(R.id.vue_user_name);
         mVueUserName.setTextSize(Utils.MEDIUM_TEXT_SIZE);
