@@ -110,7 +110,7 @@ public class ScaledImageViewFactory {
         
         synchronized (this) {
             view = mObjectsInUse.remove(index);
-            // view.setImageBitmap(null);
+            view.setImageBitmap(null);
             view.setImageDrawable(null);
             mAvailableObjects.add(view);
             // TODO: we have a way to expand the pool once the initial objects
