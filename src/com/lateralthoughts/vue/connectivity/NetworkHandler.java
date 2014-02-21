@@ -63,7 +63,6 @@ import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class NetworkHandler {
-
 	Context mContext;
 	private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
 	public DataBaseManager dbManager;
@@ -242,21 +241,31 @@ public class NetworkHandler {
 
 	}
 
-	public void loadInitialData(boolean loadMore, Handler mHandler,
+	public void loadInitialData(boolean loadMore, final Handler mHandler,
 			String screenName) {
 		getBookmarkAisleByUser();
 		getRatedImageList();
 
 		offset = 0;
 		if (!VueConnectivityManager.isNetworkConnected(mContext)) {
-			Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
-					.show();
-			/*
-			 * ArrayList<AisleWindowContent> aisleContentArray = dbManager
-			 * .getAislesFromDB(null, false); if (aisleContentArray.size() == 0)
-			 * { return; } Message msg = new Message(); msg.obj =
-			 * aisleContentArray; mHandler.sendMessage(msg);
-			 */
+	           Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
+               .show();
+       new Handler().postDelayed(new Runnable() {
+           
+           @Override
+           public void run() {
+               //context is not ready initallly so use some delay.
+               ArrayList<AisleWindowContent> aisleContentArray = dbManager
+                       .getAislesFromDB(null, false);
+               if (aisleContentArray.size() == 0) {
+                   return;
+               }
+               Message msg = new Message();
+               msg.obj = aisleContentArray;
+               mHandler.sendMessage(msg);
+               
+           }
+       }, 1000);
 
 		} else {
 			mLimit = 30;
@@ -911,4 +920,5 @@ public class NetworkHandler {
 			Utils.sUserPoints += commentCount;
 		}
 	}
+ 
 }
