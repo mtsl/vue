@@ -28,6 +28,7 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -56,8 +57,15 @@ public class Parser {
 		}
 		try {
 			isEmptyAilseCached = true;
+			if(Utils.sIsLoged){
+	            Logging.i("profile", "profile aisle parsing started");
+	        }
 			aisleWindowContentList = parseAisleInformation(contentArray,
 					isEmptyAilseCached);
+			if(Utils.sIsLoged){
+			    if(aisleWindowContentList != null)
+	            Logging.i("profile", "profile aisle parsing ended: count is "+aisleWindowContentList.size());
+	        }
 
 		} catch (JSONException e) {
 			e.printStackTrace();

@@ -10,7 +10,7 @@ public class Logging {
     }
     
     public static void i(String tag, String message) {
-        
+        Log.i(tag, message);
     }
     
     public static void w(String tag, String message) {

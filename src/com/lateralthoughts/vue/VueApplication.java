@@ -28,6 +28,7 @@ import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
@@ -159,6 +160,9 @@ public class VueApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		if(Utils.sIsLoged){
+		    Logging.i("profile", "profile app oncreate started");
+		}
 		sInstance = this;
 		mVueApplicationContext = this;
 		RegisterGCMClient.registerClient(VueApplication.getInstance(),
@@ -202,6 +206,9 @@ public class VueApplication extends Application {
 						return mCache.get(url);
 					}
 				});
+		if(Utils.sIsLoged){
+            Logging.i("profile", "profile app oncreate ended");
+        }
 	}
 
 	public static VueApplication getInstance() {

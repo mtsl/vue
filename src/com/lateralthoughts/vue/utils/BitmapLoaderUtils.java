@@ -64,6 +64,9 @@ public class BitmapLoaderUtils {
                 
                 return null;
             }
+            if(Utils.sIsLoged){
+                Logging.i("profile", "profile image download started");
+            }
             Bitmap bitmap = null;
             URL imageUrl = new URL(serverUrl);
             HttpURLConnection conn = (HttpURLConnection) imageUrl
@@ -76,6 +79,9 @@ public class BitmapLoaderUtils {
             Utils.CopyStream(is, os);
             os.close();
             bitmap = decodeFile(f, bestHeight, bestWidth, source);
+            if(Utils.sIsLoged){
+                Logging.i("profile", "profile image download started");
+            }
             return bitmap;
         } catch (Throwable ex) {
             ex.printStackTrace();

@@ -67,6 +67,7 @@ public class Utils {
     public static boolean sIsAisleChanged = false;
     public static boolean sAinmate = true;
     public static int sUserPoints;
+    public static boolean sIsLoged = true;
     
     public static void CopyStream(InputStream is, OutputStream os) {
         final int buffer_size = 1024;

@@ -27,6 +27,7 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
@@ -89,6 +90,9 @@ public class VueContentGateway {
             Response.Listener listener = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
+                    if(Utils.sIsLoged){
+                        Logging.i("profile", "profile aisles successfull response");
+                    }
                     if (null != jsonArray) {
                         Bundle responseBundle = new Bundle();
                         responseBundle
@@ -108,6 +112,9 @@ public class VueContentGateway {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    if(Utils.sIsLoged){
+                        Logging.i("profile", "profile aisles fail response");
+                    }
                     Bundle responseBundle = new Bundle();
                     responseBundle.putString("result", "error");
                     receiver.send(1, responseBundle);
@@ -123,6 +130,9 @@ public class VueContentGateway {
             vueRequest.setRetryPolicy(new DefaultRetryPolicy(
                     DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            if(Utils.sIsLoged){
+                Logging.i("profile", "profile aisles request started");
+            }
             VueApplication.getInstance().getRequestQueue().add(vueRequest);
         }
         return status;
@@ -144,7 +154,7 @@ public class VueContentGateway {
         mParams.add(new ParcelableNameValuePair(name, value));
     }
     
-    private class VueAislesRequest extends JsonArrayRequest {
+    private  class VueAislesRequest extends JsonArrayRequest {
         
         /**
          * Creates a new request.
