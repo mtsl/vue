@@ -155,7 +155,7 @@ public class VueApplication extends Application {
 			"com.amazon.mShop.android", "com.pinterest" };
 
 	public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
-	private final int MAX_BITMAP_COUNT = 512;
+	private final int MAX_BITMAP_COUNT = 128;
 
 	@Override
 	public void onCreate() {
