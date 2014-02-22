@@ -86,6 +86,7 @@
     <string name="cache_dirname">GoogleImgApp_Cache</string>
     <string name="profile">Profile</string>
     <string name="create_aisle">Create Aisle</string>
+    <string name="rfresh_aisle">Refresh Aisles</string>
     <string name="pending_aisle">Pending Aisles</string>
     <string name="edit_aisle">Edit Aisle</string>
     <string name="add_image">Add Image</string>
