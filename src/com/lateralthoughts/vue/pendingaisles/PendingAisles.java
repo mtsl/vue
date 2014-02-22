@@ -96,7 +96,7 @@ public class PendingAisles extends Activity {
         // ready
         menu.findItem(R.id.menu_search).setVisible(false);
         menu.findItem(R.id.menu_create_aisle).setVisible(false);
-        menu.findItem(R.id.menu_pending_aisle).setVisible(false);
+       // menu.findItem(R.id.menu_pending_aisle).setVisible(false);
         return super.onPrepareOptionsMenu(menu);
     }
     

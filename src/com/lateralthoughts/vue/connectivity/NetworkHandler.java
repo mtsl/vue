@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,6 +61,8 @@ import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
+import com.lateralthoughts.vue.ui.TrendingRefreshReceiver;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -920,5 +924,84 @@ public class NetworkHandler {
 			Utils.sUserPoints += commentCount;
 		}
 	}
- 
+ public void getLatestTrendingAisles(final TrendingRefreshReceiver receiver){
+     int limit = 10,offset = 0;
+     final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL
+             + "/" + limit + "/" + offset;
+     @SuppressWarnings("rawtypes")
+     Response.Listener listener = new Response.Listener<JSONArray>() {
+         @Override
+         public void onResponse(JSONArray jsonArray) {
+             if(Utils.sIsLoged){
+                 Logging.i("profile", "profile aisles successfull response");
+             }
+             if (null != jsonArray) {
+             ArrayList<AisleWindowContent> refreshList =  new Parser().parseTrendingAislesResultData(jsonArray.toString(), true);
+             ArrayList<AisleWindowContent> newList = new ArrayList<AisleWindowContent>();
+             for(AisleWindowContent aisle : refreshList){
+              boolean isAisleExist =  VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).isAisleExists(aisle);
+              if(!isAisleExist) {
+                  newList.add(aisle);
+              }
+             }
+             if(newList.size() > 0){
+                 for(AisleWindowContent aisle : newList){
+                     VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).addItemToListAt(aisle.getAisleId(), aisle, 0);
+                 }
+                 VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).dataObserver();
+                 receiver.onResultReceived(true);
+             } else {
+                 receiver.onResultReceived(false);
+                 //no updated list.
+             }
+             }
+         }
+     };
+     Response.ErrorListener errorListener = new Response.ErrorListener() {
+         @Override
+         public void onErrorResponse(VolleyError error) {
+             receiver.onResultReceived(false);
+             if(Utils.sIsLoged){
+                 Logging.i("profile", "profile aisles fail response");
+             }
+         
+             
+         }
+     };
+     @SuppressWarnings("unchecked")
+     VueAislesRequest vueRequest = new VueAislesRequest(requestUrl,
+             listener, errorListener) {
+     };
+     vueRequest.setRetryPolicy(new DefaultRetryPolicy(
+             DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
+             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+     if(Utils.sIsLoged){
+         Logging.i("profile", "profile aisles request started");
+     }
+     VueApplication.getInstance().getRequestQueue().add(vueRequest);
+ }
+ private  class VueAislesRequest extends JsonArrayRequest {
+     
+     /**
+      * Creates a new request.
+      * 
+      * @param url
+      *            URL to fetch the JSON from
+      * @param listener
+      *            Listener to receive the JSON response
+      * @param errorListener
+      *            Error listener, or null to ignore errors.
+      */
+     private Priority mPriority = Priority.HIGH;
+     
+     @Override
+     public Priority getPriority() {
+         return mPriority;
+     }
+     
+     public VueAislesRequest(String url, Listener<JSONArray> listener,
+             ErrorListener errorListener) {
+         super(url, listener, errorListener);
+     }
+ }
 }

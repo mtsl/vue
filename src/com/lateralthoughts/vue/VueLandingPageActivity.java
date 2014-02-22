@@ -64,15 +64,16 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
-import com.lateralthoughts.vue.pendingaisles.PendingAisles;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
+import com.lateralthoughts.vue.ui.TrendingRefreshReceiver;
 import com.lateralthoughts.vue.ui.ViewInfo;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.ExceptionHandler;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
 import com.lateralthoughts.vue.utils.clsShare;
@@ -115,6 +116,8 @@ public class VueLandingPageActivity extends Activity implements
     public static boolean mIsMyAilseCallEnable = false;
     private MixpanelAPI mixpanel;
     private MixpanelAPI.People people;
+    private boolean mRefreshFalg;
+    private boolean mShowRefreshIcon = true;
     
     // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
     public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
@@ -125,6 +128,9 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        if (Utils.sIsLoged) {
+            Logging.i("profile", "profile Landing oncreate started");
+        }
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
@@ -334,6 +340,9 @@ public class VueLandingPageActivity extends Activity implements
             }
         }
         loadDetailsScreenForNotificationClick(getIntent().getExtras());
+        if (Utils.sIsLoged) {
+            Logging.i("profile", "profile Landing oncreate ended");
+        }
     }
     
     @Override
@@ -428,6 +437,7 @@ public class VueLandingPageActivity extends Activity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
+        mRefreshFalg = false;
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         } else if (item.getItemId() == R.id.menu_create_aisle) {
@@ -445,13 +455,54 @@ public class VueLandingPageActivity extends Activity implements
                 }
             } else {
                 showDiscardOtherAppImageDialog();
+                
             }
-            
-        } else if (item.getItemId() == R.id.menu_pending_aisle) {
-            startActivity(new Intent(this, PendingAisles.class));
+        } /*
+           * else if (item.getItemId() == R.id.menu_pending_aisle) {
+           * startActivity(new Intent(this, PendingAisles.class)); }
+           */else if (item.getItemId() == R.id.menu_refrsh_aisles) {
+            mRefreshFalg = true;
+            invalidateOptionsMenu();
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .getNetworkHandler()
+                    .getLatestTrendingAisles(new TrendingRefreshReceiver() {
+                        
+                        @Override
+                        public boolean onResultReceived(boolean status) {
+                            mRefreshFalg = false;
+                            invalidateOptionsMenu();
+                            if (status) {
+                                Toast.makeText(VueLandingPageActivity.this,
+                                        "New aisles received",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(VueLandingPageActivity.this,
+                                        "Up to date", Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                            return false;
+                        }
+                    });
         }
         // Handle your other action bar items...
         return super.onOptionsItemSelected(item);
+    }
+    
+    public void setRefreshActionButtonState(Menu optionsMenu,
+            final boolean refreshing) {
+        if (optionsMenu != null) {
+            final MenuItem refreshItem = optionsMenu
+                    .findItem(R.id.menu_refrsh_aisles);
+            if (refreshItem != null) {
+                if (refreshing) {
+                    refreshItem
+                            .setActionView(R.layout.actionbar_indeterminate_progress);
+                } else {
+                    refreshItem.setActionView(null);
+                }
+            }
+        }
     }
     
     @Override
@@ -470,13 +521,14 @@ public class VueLandingPageActivity extends Activity implements
         getActionBar().setDisplayShowHomeEnabled(true);
         getActionBar().setCustomView(null);
         getActionBar().setDisplayShowTitleEnabled(true);
-        menu.findItem(R.id.menu_pending_aisle).setVisible(false);
+        // menu.findItem(R.id.menu_pending_aisle).setVisible(false);
         if (isdrawOpen) {
             // set menu search visibility to true when backend functionality is
             // ready
-            menu.findItem(R.id.menu_search).setVisible(false);
+            // menu.findItem(R.id.menu_search).setVisible(false);
             menu.findItem(R.id.menu_create_aisle).setVisible(false);
-            menu.findItem(R.id.menu_pending_aisle).setVisible(false);
+            // menu.findItem(R.id.menu_pending_aisle).setVisible(false);
+            menu.findItem(R.id.menu_refrsh_aisles).setVisible(false);
         } else {
             if (mHideDefaultActionbar) {
                 getActionBar().setDisplayShowTitleEnabled(false);
@@ -484,17 +536,29 @@ public class VueLandingPageActivity extends Activity implements
                 getActionBar().setDisplayShowCustomEnabled(true);
                 getActionBar().setDisplayShowHomeEnabled(false);
                 getActionBar().setCustomView(mVueLandingActionbarView);
-                menu.findItem(R.id.menu_search).setVisible(false);
+                // menu.findItem(R.id.menu_search).setVisible(false);
                 menu.findItem(R.id.menu_create_aisle).setVisible(false);
-                menu.findItem(R.id.menu_pending_aisle).setVisible(false);
+                menu.findItem(R.id.menu_refrsh_aisles).setVisible(false);
+                // menu.findItem(R.id.menu_pending_aisle).setVisible(false);
             } else {
-                menu.findItem(R.id.menu_search).setVisible(false);
-                menu.findItem(R.id.menu_search).collapseActionView();
+                // menu.findItem(R.id.menu_search).setVisible(false);
+                // menu.findItem(R.id.menu_search).collapseActionView();
                 menu.findItem(R.id.menu_create_aisle).setVisible(true);
+                if (getActionBar().getTitle().equals(
+                        getResources().getString(R.string.trending))) {
+                    menu.findItem(R.id.menu_refrsh_aisles).setVisible(true);
+                } else {
+                    menu.findItem(R.id.menu_refrsh_aisles).setVisible(false);
+                }
                 // TODO: UNCOMMENT THIS CODE WHEN NO IMAGE AISLE FEATURE
                 // ENABLED.
                 // menu.findItem(R.id.menu_pending_aisle).setVisible(true);
             }
+        }
+        if (mRefreshFalg) {
+            setRefreshActionButtonState(menu, true);
+        } else {
+            setRefreshActionButtonState(menu, false);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -795,6 +859,13 @@ public class VueLandingPageActivity extends Activity implements
                     getActionBar().setTitle(viewInfo.mVueName);
                     mLandingScreenName = viewInfo.mVueName;
                     showPreviousScreen(viewInfo.mVueName);
+                    if (viewInfo.mVueName.equals(getResources().getString(
+                            R.string.trending))) {
+                        mShowRefreshIcon = true;
+                    } else {
+                        mShowRefreshIcon = false;
+                    }
+                    invalidateOptionsMenu();
                 } else {
                     if (VueApplication.getInstance().isUserSwipeAisle) {
                         SharedPreferences sharedPreferencesObj = this
@@ -853,6 +924,9 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onResume() {
         super.onResume();
+        if (Utils.sIsLoged) {
+            Logging.i("profile", "profile Landing onresume started");
+        }
         mSlidListFrag.setEditTextVisible(false);
         // ShareViaVue...
         if (VueApplication.getInstance().mShareViaVueClickedFlag) {
@@ -930,6 +1004,9 @@ public class VueLandingPageActivity extends Activity implements
                     mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
                 }
             }
+        }
+        if (Utils.sIsLoged) {
+            Logging.i("profile", "profile Landing Onresume ended");
         }
     }
     
@@ -1195,6 +1272,15 @@ public class VueLandingPageActivity extends Activity implements
             if (mLandingAilsesFrag != null) {
                 ((VueLandingAislesFragment) mLandingAilsesFrag)
                         .notifyAdapters();
+            }
+            if (StackViews.getInstance().getStackCount() > 0) {
+                if (StackViews.getInstance().getTop()
+                        .equals(getResources().getString(R.string.trending))) {
+                    mShowRefreshIcon = true;
+                } else {
+                    mShowRefreshIcon = false;
+                }
+                invalidateOptionsMenu();
             }
         }
         

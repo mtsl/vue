@@ -14,11 +14,13 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.StackView;
 
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.ui.NotifyProgress;
+import com.lateralthoughts.vue.ui.StackViews;
 
 public class VueTrendingAislesDataModel {
     
@@ -202,7 +204,13 @@ public class VueTrendingAislesDataModel {
         }
         return null;
     }
-    
+    public boolean isAisleExists(AisleWindowContent aisleItem) {
+        boolean exist = false;
+         if(mAisleContentList.contains(aisleItem)){
+             exist = true; 
+         }
+         return exist;
+    }
     public int getAilsePosition(AisleWindowContent aisleItem) {
         return mAisleContentList.indexOf(aisleItem);
     }
