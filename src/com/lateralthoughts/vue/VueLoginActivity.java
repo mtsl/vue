@@ -130,6 +130,7 @@ public class VueLoginActivity extends FragmentActivity implements
     JSONObject loginSelectedProps, loginActivity;
     private String mGuestUserMessage = null;
     private boolean mShowAisleSwipeHelpLayoutFlag = false;
+    private boolean mIsGplusButtonClicked = false;
     
     private enum PendingAction {
         NONE, POST_PHOTO, POST_STATUS_UPDATE
@@ -315,6 +316,7 @@ public class VueLoginActivity extends FragmentActivity implements
                             public void onClick(View arg0) {
                                 mixpanel.track("GooglePlus Login Selected",
                                         null);
+                                mIsGplusButtonClicked = true;
                                 if (VueConnectivityManager
                                         .isNetworkConnected(VueLoginActivity.this)) {
                                     if (Utils
@@ -517,6 +519,7 @@ public class VueLoginActivity extends FragmentActivity implements
     
     @Override
     public void onSignedIn(PlusClient plusClient) {
+        if(mIsGplusButtonClicked) {
         SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
         editor.putBoolean(VueConstants.VUE_LOGIN, true);
         editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, true);
@@ -555,6 +558,7 @@ public class VueLoginActivity extends FragmentActivity implements
         } else {
             plusClient.loadPeople(this, Person.Collection.VISIBLE);
         }
+    }
     }
     
     @SuppressWarnings("unchecked")

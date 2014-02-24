@@ -16,13 +16,14 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,6 +45,7 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.Utils;
 import com.origamilabs.library.views.StaggeredGridView;
 
@@ -67,6 +69,8 @@ public class VueLandingAislesFragment extends Fragment {
 
 	public boolean mIsIdleState;
 	private ProgressBar mTrendingLoad;
+	private boolean mHelpDialogShown = false;
+	private boolean mIsMyPointsDownLoadDone = false;
 
 	// TODO: define a public interface that can be implemented by the parent
 	// activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -149,10 +153,10 @@ public class VueLandingAislesFragment extends Fragment {
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
-				if (totalItemCount > 0
+			/*	if (totalItemCount > 0
 						&& mTrendingLoad.getVisibility() == View.VISIBLE) {
 					mTrendingLoad.setVisibility(View.GONE);
-				}
+				}*/
 				if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
 						&& VueLandingPageActivity.mLandingScreenName != null
 						&& VueLandingPageActivity.mLandingScreenName
@@ -169,7 +173,9 @@ public class VueLandingAislesFragment extends Fragment {
 										true,
 										getResources().getString(
 												R.string.trending));
+						if(!mHelpDialogShown) {
 						try {
+						    mHelpDialogShown = true;
 							SharedPreferences sharedPreferencesObj = getActivity()
 									.getSharedPreferences(
 											VueConstants.SHAREDPREFERENCE_NAME,
@@ -198,6 +204,7 @@ public class VueLandingAislesFragment extends Fragment {
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
+					}
 					}
 				}
 
@@ -328,6 +335,19 @@ public class VueLandingAislesFragment extends Fragment {
 			if (mTrendingLoad.getVisibility() == View.VISIBLE) {
 				mTrendingLoad.setVisibility(View.GONE);
 				notifyAdapters();
+				 if(!mIsMyPointsDownLoadDone){
+				     // load lazily after completion of all trending initial data loading
+				     int waitTime = 10000;
+				     new Handler().postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            MyPoints points = new MyPoints();
+                            points.execute();
+                        }
+                    }, waitTime);
+		
+				 }
 			}
 		}
 
@@ -501,5 +521,32 @@ public class VueLandingAislesFragment extends Fragment {
 	private class Holder {
 		TextView textone, texttwo;
 		ImageView imageone, imagetwo;
+	}
+	private class MyPoints extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            VueLandingPageActivity.sMyPointsAvailable = false;
+            if (Utils.sIsLoged) {
+                Logging.i("myPointsDownLoad", "myPointsDownLoad started");
+            }
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+            mIsMyPointsDownLoadDone = true;
+            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .getNetworkHandler().getMyAislesPoints();
+            VueLandingPageActivity.sMyPointsAvailable = true;
+            return null;
+        }
+	    @Override
+	    protected void onPostExecute(Void result) {
+	        super.onPostExecute(result);
+	        if (Utils.sIsLoged) {
+                Logging.i("myPointsDownLoad", "myPointsDownLoad ended");
+            }
+	    }
 	}
 }

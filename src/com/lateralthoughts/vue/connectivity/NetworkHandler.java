@@ -862,6 +862,7 @@ public class NetworkHandler {
 			int count = 0;
 			ArrayList<AisleWindowContent> windowList = getAislesByUser(userId);
 			if (windowList != null) {
+			    //for each aisle add 10 points
 				count = windowList.size() * 10;
 				ArrayList<AisleImageDetails> imageList;
 				for (int i = 0; i < windowList.size(); i++) {

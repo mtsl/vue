@@ -378,8 +378,12 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     return true;
                 } else if (s
                         .contains(getString(R.string.sidemenu_sub_option_My_Pointss))) {
+                    if(VueLandingPageActivity.sMyPointsAvailable){
                     int pointsEarned = Utils.getUserPoints();
                     showRewardsDialog("Silver", pointsEarned);
+                    } else {
+                        Toast.makeText(VueApplication.getInstance(), "Wait your points are loading...", Toast.LENGTH_SHORT).show();
+                    }
                     return true;
                 }
                 if (VueLandingPageActivity.mOtherSourceImagePath == null) {

@@ -118,6 +118,9 @@ public class VueLandingPageActivity extends Activity implements
     private MixpanelAPI.People people;
     private boolean mRefreshFalg;
     private boolean mShowRefreshIcon = true;
+    private boolean mIsFromOncreate = true;
+    public static boolean sMyPointsAvailable = false;
+    
     
     // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
     public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
@@ -133,13 +136,14 @@ public class VueLandingPageActivity extends Activity implements
         }
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
+        setContentView(R.layout.vue_landing_main);
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
                 VueConstants.LANDING_SCREEN_RECEIVER);
         VueApplication.getInstance().registerReceiver(
                 mLandingScreenTitleReceiver, ifiltercategory);
-        setContentView(R.layout.vue_landing_main);
         landingPageActivity = this;
+        mIsFromOncreate = true;
         initialize();
         mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
         mSlidListFrag = (VueListFragment) getFragmentManager()
@@ -152,7 +156,6 @@ public class VueLandingPageActivity extends Activity implements
         VueApplication.getInstance().mLaunchTime = System.currentTimeMillis();
         VueApplication.getInstance().mLastRecordedTime = System
                 .currentTimeMillis();
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         invalidateOptionsMenu();
         mVueLandingActionbarView = LayoutInflater.from(this).inflate(
                 R.layout.vue_landing_custom_actionbar, null);
@@ -203,146 +206,6 @@ public class VueLandingPageActivity extends Activity implements
                 invalidateOptionsMenu();
             }
         });
-        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
-                VueConstants.SHAREDPREFERENCE_NAME, 0);
-        boolean isHelpOpend = sharedPreferencesObj.getBoolean(
-                VueConstants.HELP_SCREEN_ACCES, false);
-        if (!isHelpOpend) {
-            Editor editor = sharedPreferencesObj.edit();
-            editor.putLong(VueConstants.APP_FIRST_TIME_OPENED_TIME,
-                    System.currentTimeMillis());
-            editor.commit();
-            Intent intent = new Intent(this, Help.class);
-            intent.putExtra(VueConstants.HELP_KEY,
-                    VueConstants.HelpSCREEN_FROM_LANDING);
-            startActivity(intent);
-        } else {
-            sharedPreferencesObj = this.getSharedPreferences(
-                    VueConstants.SHAREDPREFERENCE_NAME, 0);
-            boolean aisleSwipe = sharedPreferencesObj.getBoolean(
-                    VueConstants.AISLE_SWIPE, false);
-            if (!aisleSwipe) {
-                long hours = Utils.dateDifference(sharedPreferencesObj.getLong(
-                        VueConstants.APP_FIRST_TIME_OPENED_TIME, 0));
-                if (hours != -1 && hours >= 48) {
-                    // mShowSwipeHelp = true;
-                    mShowSwipeHelp = false;
-                    Editor editor = sharedPreferencesObj.edit();
-                    editor.putBoolean(VueConstants.AISLE_SWIPE, true);
-                    editor.commit();
-                }
-            }
-            VueUser storedVueUser = null;
-            try {
-                storedVueUser = Utils.readUserObjectFromFile(this,
-                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-            PackageInfo packageInfo;
-            try {
-                packageInfo = this.getPackageManager().getPackageInfo(
-                        VueLandingPageActivity.this.getPackageName(), 0);
-                int versionCode = packageInfo.versionCode;
-                if (storedVueUser != null) {
-                    sharedPreferencesObj = this.getSharedPreferences(
-                            VueConstants.SHAREDPREFERENCE_NAME, 0);
-                    long preVersionCode = sharedPreferencesObj.getLong(
-                            VueConstants.VERSION_CODE_CHANGE, 0);
-                    if (versionCode != preVersionCode) {
-                        Editor editor = sharedPreferencesObj.edit();
-                        editor.putLong(VueConstants.VERSION_CODE_CHANGE,
-                                versionCode);
-                        editor.commit();
-                        if (storedVueUser != null
-                                && storedVueUser.getGooglePlusId().equals(
-                                        VueUser.DEFAULT_GOOGLEPLUS_ID)
-                                && storedVueUser.getFacebookId().equals(
-                                        VueUser.DEFAULT_FACEBOOK_ID)) {
-                            mixpanel.identify(storedVueUser.getEmail());
-                            people = mixpanel.getPeople();
-                            people.identify(storedVueUser.getEmail());
-                            JSONObject nameTag = new JSONObject();
-                            try {
-                                // Set an "mp_name_tag" super property
-                                // for Streams if you find it useful.
-                                // TODO: Check how it works.
-                                nameTag.put("mp_name_tag",
-                                        storedVueUser.getFirstName() + " "
-                                                + storedVueUser.getLastName());
-                                mixpanel.registerSuperProperties(nameTag);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            // TODO: start the LoginActivity
-                            Intent i = new Intent(this, VueLoginActivity.class);
-                            Bundle b = new Bundle();
-                            b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
-                                    true);
-                            b.putString(VueConstants.FROM_INVITEFRIENDS, null);
-                            b.putBoolean(
-                                    VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
-                                    false);
-                            b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
-                                    false);
-                            b.putBoolean(
-                                    VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG,
-                                    mShowSwipeHelp);
-                            b.putString(
-                                    VueConstants.GUEST_LOGIN_MESSAGE,
-                                    getResources().getString(
-                                            R.string.guest_login_message));
-                            i.putExtras(b);
-                            startActivity(i);
-                        }
-                    } else {
-                        if (mShowSwipeHelp) {
-                            /*
-                             * Intent swipeHelpIntent = new Intent(this,
-                             * SwipeHelp.class); startActivity(swipeHelpIntent);
-                             */
-                        }
-                    }
-                    VueApplication.getInstance().setmUserInitials(
-                            storedVueUser.getFirstName());
-                    VueApplication.getInstance().setmUserId(
-                            storedVueUser.getId());
-                    VueApplication.getInstance().setmUserEmail(
-                            storedVueUser.getEmail());
-                    VueApplication.getInstance().setmUserName(
-                            storedVueUser.getFirstName() + " "
-                                    + storedVueUser.getLastName());
-                } else {
-                    showLogInDialog(false);
-                }
-                // check whether user is guest or not.
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if ("text/plain".equals(type)) {
-                clearDataEntryData();
-                handleSendText(intent, true);
-            } else if (type.startsWith("image/")) {
-                clearDataEntryData();
-                handleSendImage(intent, true);
-            }
-        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-            if (type.startsWith("image/")) {
-                clearDataEntryData();
-                handleSendMultipleImages(intent, true);
-            }
-        }
-        loadDetailsScreenForNotificationClick(getIntent().getExtras());
-        if (Utils.sIsLoged) {
-            Logging.i("profile", "profile Landing oncreate ended");
-        }
     }
     
     @Override
@@ -398,26 +261,6 @@ public class VueLandingPageActivity extends Activity implements
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, mLandingAilsesFrag).commit();
         mDrawerLayout.setFocusableInTouchMode(false);
-        int userPointsExecuteTime = 60000;
-        // load lazily after completion of all trending inital data
-        // need to improve this code so that it should start exactly after
-        // completion of trending ailse download.
-        new Handler().postDelayed(new Runnable() {
-            
-            @Override
-            public void run() {
-                new Thread(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        VueTrendingAislesDataModel
-                                .getInstance(VueApplication.getInstance())
-                                .getNetworkHandler().getMyAislesPoints();
-                    }
-                });
-                
-            }
-        }, userPointsExecuteTime);
     }
     
     @Override
@@ -977,33 +820,35 @@ public class VueLandingPageActivity extends Activity implements
                 int statusBarHeight = rect.top;
                 VueApplication.getInstance().setmStatusBarHeight(
                         statusBarHeight);
-                
+                if (VueConnectivityManager.isNetworkConnected(VueLandingPageActivity.this)) {
+                    SharedPreferences sharedPreferencesObj = VueLandingPageActivity.this.getSharedPreferences(
+                            VueConstants.SHAREDPREFERENCE_NAME, 0);
+                    mLastRefreshTime = sharedPreferencesObj.getLong(
+                            VueConstants.SCREEN_REFRESH_TIME, 0);
+                    if (mLastRefreshTime != 0) {
+                        long currentTime = System.currentTimeMillis();
+                        long currentMins = Utils.getMins(currentTime);
+                        long difMins = currentMins - mLastRefreshTime;
+                        if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
+                            // Clean the data and fetch from server again.
+                            Toast.makeText(VueLandingPageActivity.this, "Syncing with server",
+                                    Toast.LENGTH_SHORT).show();
+                            StackViews.getInstance().clearStack();
+                            VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getNetworkHandler().clearList(null);
+                            VueTrendingAislesDataModel.getInstance(
+                                    VueApplication.getInstance())
+                                    .getFreshDataFromServer();
+                            mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
+                        }
+                    }
+                }
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        if (VueConnectivityManager.isNetworkConnected(this)) {
-            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
-                    VueConstants.SHAREDPREFERENCE_NAME, 0);
-            mLastRefreshTime = sharedPreferencesObj.getLong(
-                    VueConstants.SCREEN_REFRESH_TIME, 0);
-            if (mLastRefreshTime != 0) {
-                long currentTime = System.currentTimeMillis();
-                long currentMins = Utils.getMins(currentTime);
-                long difMins = currentMins - mLastRefreshTime;
-                if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
-                    // Clean the data and fetch from server again.
-                    Toast.makeText(this, "Syncing with server",
-                            Toast.LENGTH_SHORT).show();
-                    StackViews.getInstance().clearStack();
-                    VueTrendingAislesDataModel
-                            .getInstance(VueApplication.getInstance())
-                            .getNetworkHandler().clearList(null);
-                    VueTrendingAislesDataModel.getInstance(
-                            VueApplication.getInstance())
-                            .getFreshDataFromServer();
-                    mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
-                }
-            }
+        if(mIsFromOncreate) {
+            openHelpTask();    
         }
         if (Utils.sIsLoged) {
             Logging.i("profile", "profile Landing Onresume ended");
@@ -2162,5 +2007,193 @@ public class VueLandingPageActivity extends Activity implements
             public void onDismiss(DialogInterface arg0) {
             }
         });
+    }
+    private void openHelpTask(){
+        if (Utils.sIsLoged) {
+            Logging.i("profile", "help code started");
+        }
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+        mIsFromOncreate = false;
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        boolean isHelpOpend = sharedPreferencesObj.getBoolean(
+                VueConstants.HELP_SCREEN_ACCES, false);
+        if (!isHelpOpend) {
+            Editor editor = sharedPreferencesObj.edit();
+            editor.putLong(VueConstants.APP_FIRST_TIME_OPENED_TIME,
+                    System.currentTimeMillis());
+            editor.commit();
+            Intent intent = new Intent(this, Help.class);
+            intent.putExtra(VueConstants.HELP_KEY,
+                    VueConstants.HelpSCREEN_FROM_LANDING);
+            startActivity(intent);
+        } else {
+            sharedPreferencesObj = this.getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+            boolean aisleSwipe = sharedPreferencesObj.getBoolean(
+                    VueConstants.AISLE_SWIPE, false);
+            if (!aisleSwipe) {
+                long hours = Utils.dateDifference(sharedPreferencesObj.getLong(
+                        VueConstants.APP_FIRST_TIME_OPENED_TIME, 0));
+                if (hours != -1 && hours >= 48) {
+                    // mShowSwipeHelp = true;
+                    mShowSwipeHelp = false;
+                    Editor editor = sharedPreferencesObj.edit();
+                    editor.putBoolean(VueConstants.AISLE_SWIPE, true);
+                    editor.commit();
+                }
+            }
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(this,
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            VueUserProfile storedUserProfile = null;
+            try {
+                storedUserProfile = Utils.readUserProfileObjectFromFile(this,
+                        VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // TODO: This is to register old users in mixpanel. Remove this code after 2 months.
+            if(storedVueUser != null && storedUserProfile != null) {
+            mixpanel.identify(storedVueUser.getEmail());
+            people = mixpanel.getPeople();
+            people.identify(storedVueUser.getEmail());
+            
+            people.set("$first_name", storedVueUser.getFirstName());
+            people.set("$last_name", storedVueUser.getLastName());
+            people.set("Gender", storedUserProfile.getUserGender());
+            people.set("$email", storedVueUser.getEmail());
+            people.set("Current location", storedUserProfile.getUserLocation());
+            String loginWith;
+            if(!storedVueUser.getFacebookId().equals(VueUser.DEFAULT_FACEBOOK_ID)) {
+                loginWith = "Facebook";
+            } else if (!storedVueUser.getGooglePlusId().equals(VueUser.DEFAULT_GOOGLEPLUS_ID)) {
+                loginWith = "GooglePlus";
+            } else {
+                loginWith = "Guest";
+            }
+            people.set("loggedIn with", loginWith);
+            JSONObject nameTag = new JSONObject();
+            try {
+                // Set an "mp_name_tag" super property
+                // for Streams if you find it useful.
+                // TODO: Check how it works.
+                nameTag.put("mp_name_tag",
+                        storedVueUser.getFirstName() + " "
+                                + storedVueUser.getLastName());
+                mixpanel.registerSuperProperties(nameTag);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            }
+            PackageInfo packageInfo;
+            try {
+                packageInfo = this.getPackageManager().getPackageInfo(
+                        VueLandingPageActivity.this.getPackageName(), 0);
+                int versionCode = packageInfo.versionCode;
+                if (storedVueUser != null) {
+                    sharedPreferencesObj = this.getSharedPreferences(
+                            VueConstants.SHAREDPREFERENCE_NAME, 0);
+                    long preVersionCode = sharedPreferencesObj.getLong(
+                            VueConstants.VERSION_CODE_CHANGE, 0);
+                    if (versionCode != preVersionCode) {
+                        Editor editor = sharedPreferencesObj.edit();
+                        editor.putLong(VueConstants.VERSION_CODE_CHANGE,
+                                versionCode);
+                        editor.commit();
+                        if (storedVueUser != null
+                                && storedVueUser.getGooglePlusId().equals(
+                                        VueUser.DEFAULT_GOOGLEPLUS_ID)
+                                && storedVueUser.getFacebookId().equals(
+                                        VueUser.DEFAULT_FACEBOOK_ID)) {
+                            mixpanel.identify(storedVueUser.getEmail());
+                            people = mixpanel.getPeople();
+                            people.identify(storedVueUser.getEmail());
+                            JSONObject nameTag = new JSONObject();
+                            try {
+                                // Set an "mp_name_tag" super property
+                                // for Streams if you find it useful.
+                                // TODO: Check how it works.
+                                nameTag.put("mp_name_tag",
+                                        storedVueUser.getFirstName() + " "
+                                                + storedVueUser.getLastName());
+                                mixpanel.registerSuperProperties(nameTag);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            // TODO: start the LoginActivity
+                            Intent i = new Intent(this, VueLoginActivity.class);
+                            Bundle b = new Bundle();
+                            b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
+                                    true);
+                            b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+                            b.putBoolean(
+                                    VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
+                                    false);
+                            b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
+                                    false);
+                            b.putBoolean(
+                                    VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG,
+                                    mShowSwipeHelp);
+                            b.putString(
+                                    VueConstants.GUEST_LOGIN_MESSAGE,
+                                    getResources().getString(
+                                            R.string.guest_login_message));
+                            i.putExtras(b);
+                            startActivity(i);
+                        }
+                    } else {
+                        if (mShowSwipeHelp) {
+                            
+                           /*   Intent swipeHelpIntent = new Intent(this,
+                              SwipeHelp.class); startActivity(swipeHelpIntent);*/
+                             
+                        }
+                    }
+                    VueApplication.getInstance().setmUserInitials(
+                            storedVueUser.getFirstName());
+                    VueApplication.getInstance().setmUserId(
+                            storedVueUser.getId());
+                    VueApplication.getInstance().setmUserEmail(
+                            storedVueUser.getEmail());
+                    VueApplication.getInstance().setmUserName(
+                            storedVueUser.getFirstName() + " "
+                                    + storedVueUser.getLastName());
+                } else {
+                    showLogInDialog(false);
+                }
+                // check whether user is guest or not.
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                clearDataEntryData();
+                handleSendText(intent, true);
+            } else if (type.startsWith("image/")) {
+                clearDataEntryData();
+                handleSendImage(intent, true);
+            }
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+            if (type.startsWith("image/")) {
+                clearDataEntryData();
+                handleSendMultipleImages(intent, true);
+            }
+        }
+        loadDetailsScreenForNotificationClick(getIntent().getExtras());
+        if (Utils.sIsLoged) {
+            Logging.i("profile", "help code ended");
+        }
+      
     }
 }
