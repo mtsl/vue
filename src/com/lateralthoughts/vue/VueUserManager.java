@@ -1,11 +1,19 @@
 package com.lateralthoughts.vue;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
 
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -202,7 +210,7 @@ public class VueUserManager {
         final Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                
+                writeToSdcard("After server login failure : " + new Date());
             }
         };
         Response.Listener getListener = new Response.Listener<String>() {
@@ -281,6 +289,7 @@ public class VueUserManager {
         Response.ErrorListener getErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                writeToSdcard("After server login failure : " + new Date());
             }
         };
         UserGetRequest userGetRequest = new UserGetRequest(
@@ -802,6 +811,36 @@ public class VueUserManager {
         Toast.makeText(VueApplication.getInstance(),
                 "You are now logged in using " + accountName, Toast.LENGTH_LONG)
                 .show();
+    }
+    
+    private void writeToSdcard(String message) {
+        
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/vueLoginTimes/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/"
+                + Calendar.getInstance().get(Calendar.DATE)
+                + "-"
+                + Utils.getWeekDay(Calendar.getInstance().get(
+                        Calendar.DAY_OF_WEEK)) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
 }

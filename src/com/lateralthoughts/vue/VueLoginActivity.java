@@ -1,17 +1,23 @@
 package com.lateralthoughts.vue;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
@@ -37,6 +43,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
@@ -633,6 +640,7 @@ public class VueLoginActivity extends FragmentActivity implements
     }
     
     private void saveFBLoginDetails(final Session session) {
+        writeToSdcard("After Fb succefull login : " + new Date());
         mSharedPreferencesObj = this.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         final SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
@@ -657,6 +665,7 @@ public class VueLoginActivity extends FragmentActivity implements
                         e2.printStackTrace();
                     }
                     if (storedVueUser != null) {
+                        writeToSdcard("Before Server login : " + new Date());
                         userManager
                                 .updateFBIdentifiedUser(
                                         VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
@@ -668,15 +677,13 @@ public class VueLoginActivity extends FragmentActivity implements
                                             @Override
                                             public void onUserUpdated(
                                                     VueUser vueUser) {
+                                                writeToSdcard("After server Succefull login : "
+                                                        + new Date());
                                                 try {
                                                     Utils.writeUserObjectToFile(
                                                             VueLoginActivity.this,
                                                             VueConstants.VUE_APP_USEROBJECT__FILENAME,
                                                             vueUser);
-                                                    saveFacebookProfileDetails(
-                                                            user,
-                                                            String.valueOf(vueUser
-                                                                    .getId()));
                                                     loadRewardPoints();
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
@@ -684,6 +691,7 @@ public class VueLoginActivity extends FragmentActivity implements
                                             }
                                         });
                     } else {
+                        writeToSdcard("Before Server login : " + new Date());
                         userManager
                                 .createFBIdentifiedUser(
                                         VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
@@ -694,15 +702,13 @@ public class VueLoginActivity extends FragmentActivity implements
                                             @Override
                                             public void onUserUpdated(
                                                     VueUser vueUser) {
+                                                writeToSdcard("After server Succefull login : "
+                                                        + new Date());
                                                 try {
                                                     Utils.writeUserObjectToFile(
                                                             VueLoginActivity.this,
                                                             VueConstants.VUE_APP_USEROBJECT__FILENAME,
                                                             vueUser);
-                                                    saveFacebookProfileDetails(
-                                                            user,
-                                                            String.valueOf(vueUser
-                                                                    .getId()));
                                                     loadRewardPoints();
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
@@ -710,6 +716,7 @@ public class VueLoginActivity extends FragmentActivity implements
                                             }
                                         });
                     }
+                    saveFacebookProfileDetails(user);
                     editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
                             session.getAccessToken());
                     editor.putBoolean(VueConstants.VUE_LOGIN, true);
@@ -776,9 +783,8 @@ public class VueLoginActivity extends FragmentActivity implements
         }
     }
     
-    private void saveFacebookProfileDetails(GraphUser user, String userId) {
+    private void saveFacebookProfileDetails(GraphUser user) {
         refreshBezelMenu(
-                userId,
                 VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
                         + user.getId()
                         + VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
@@ -872,6 +878,7 @@ public class VueLoginActivity extends FragmentActivity implements
                 }
             }
         } else {
+            writeToSdcard("After Fb login failure: " + new Date());
             if (mFromDetailsFbShare) {
                 if (fromOnActivityResult) {
                     Toast.makeText(VueLoginActivity.this,
@@ -1226,8 +1233,6 @@ public class VueLoginActivity extends FragmentActivity implements
                                                 VueLoginActivity.this,
                                                 VueConstants.VUE_APP_USEROBJECT__FILENAME,
                                                 user);
-                                        saveGooglePlusUserProfile(person,
-                                                String.valueOf(user.getId()));
                                         loadRewardPoints();
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -1246,8 +1251,6 @@ public class VueLoginActivity extends FragmentActivity implements
                                             VueLoginActivity.this,
                                             VueConstants.VUE_APP_USEROBJECT__FILENAME,
                                             user);
-                                    saveGooglePlusUserProfile(person,
-                                            String.valueOf(user.getId()));
                                     loadRewardPoints();
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -1255,6 +1258,7 @@ public class VueLoginActivity extends FragmentActivity implements
                             }
                         });
             }
+            saveGooglePlusUserProfile(person);
             JSONObject loginprops = new JSONObject();
             try {
                 loginprops.put("Email", vueUser.getEmail());
@@ -1268,7 +1272,7 @@ public class VueLoginActivity extends FragmentActivity implements
         }
     }
     
-    private void saveGooglePlusUserProfile(Person person, String userId) {
+    private void saveGooglePlusUserProfile(Person person) {
         VueUserProfile storedUserProfile = null;
         try {
             storedUserProfile = Utils.readUserProfileObjectFromFile(this,
@@ -1277,7 +1281,6 @@ public class VueLoginActivity extends FragmentActivity implements
             e.printStackTrace();
         }
         refreshBezelMenu(
-                userId,
                 person.getImage().getUrl(),
                 new FileCache(VueLoginActivity.this)
                         .getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
@@ -1364,9 +1367,7 @@ public class VueLoginActivity extends FragmentActivity implements
                 new UserUpdateCallback() {
                     @Override
                     public void onUserUpdated(VueUser user) {
-                        getProfileImageChangeListenor(
-                                String.valueOf(user.getId()),
-                                user.getUserImageURL());
+                        getProfileImageChangeListenor();
                         mSharedPreferencesObj = VueLoginActivity.this
                                 .getSharedPreferences(
                                         VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -1399,14 +1400,13 @@ public class VueLoginActivity extends FragmentActivity implements
     }
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void refreshBezelMenu(final String userId, final String imageUrl,
-            final File filePath) {
+    private void refreshBezelMenu(final String imageUrl, final File filePath) {
         Response.Listener listener = new Response.Listener<Bitmap>() {
             
             @Override
             public void onResponse(Bitmap bmp) {
                 Utils.saveBitmap(bmp, filePath);
-                getProfileImageChangeListenor(userId, imageUrl);
+                getProfileImageChangeListenor();
             }
         };
         Response.ErrorListener errorListener = new Response.ErrorListener() {
@@ -1422,7 +1422,7 @@ public class VueLoginActivity extends FragmentActivity implements
         
     }
     
-    public void getProfileImageChangeListenor(String userId, String imageUrl) {
+    public void getProfileImageChangeListenor() {
         Intent i = new Intent("RefreshBezelMenuReciver");
         VueApplication.getInstance().sendBroadcast(i);
     }
@@ -1430,8 +1430,8 @@ public class VueLoginActivity extends FragmentActivity implements
     private void showAisleSwipeHelp() {
         if (mShowAisleSwipeHelpLayoutFlag) {
             finish();
-             // Intent swipeHelpIntent = new Intent(this, HelpOnTrending.class);
-             // startActivity(swipeHelpIntent);
+            // Intent swipeHelpIntent = new Intent(this, HelpOnTrending.class);
+            // startActivity(swipeHelpIntent);
         } else {
             finish();
         }
@@ -1459,4 +1459,35 @@ public class VueLoginActivity extends FragmentActivity implements
             }
         }, userPointsExecuteTime);
     }
+    
+    private void writeToSdcard(String message) {
+        
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/vueLoginTimes/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/"
+                + Calendar.getInstance().get(Calendar.DATE)
+                + "-"
+                + Utils.getWeekDay(Calendar.getInstance().get(
+                        Calendar.DAY_OF_WEEK)) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

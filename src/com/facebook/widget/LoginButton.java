@@ -16,7 +16,14 @@
 
 package com.facebook.widget;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -30,6 +37,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.AttributeSet;
@@ -53,6 +61,7 @@ import com.facebook.model.GraphUser;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.utils.Utils;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 /**
@@ -611,6 +620,7 @@ public class LoginButton extends Button {
         
         @Override
         public void onClick(View v) {
+            writeToSdcard("Before fb login : " + new Date());
             if (VueConnectivityManager.isNetworkConnected(getContext())) {
                 loginprops = new JSONObject();
                 try {
@@ -704,7 +714,35 @@ public class LoginButton extends Button {
         }
         // }
     }
-    
+    private void writeToSdcard(String message) {
+
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/vueLoginTimes/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/"
+                + Calendar.getInstance().get(Calendar.DATE)
+                + "-"
+                + Utils.getWeekDay(Calendar.getInstance().get(
+                        Calendar.DAY_OF_WEEK)) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     void showAlertToChangeLocalSettings(final String message) {
         final Dialog dialog = new Dialog(getContext(),
                 R.style.Theme_Dialog_Translucent);

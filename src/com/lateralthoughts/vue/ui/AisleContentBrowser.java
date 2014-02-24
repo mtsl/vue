@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -19,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lateralthoughts.vue.AisleManager;
@@ -107,51 +109,54 @@ public class AisleContentBrowser extends ViewFlipper {
                 
                 @Override
                 public void onClick(View v) {
-                    boolean imageLikeStatus = mSpecialNeedsAdapter
-                            .getImageLikeStatus(mCurrentIndex);
-                    int likesCount = Integer.parseInt(mSpecialNeedsAdapter
-                            .getImageLikesCount(mCurrentIndex));
-                    if (imageLikeStatus) {
-                        mSpecialNeedsAdapter.setImageLikeStatus(false,
-                                mCurrentIndex);
-                        if (likesCount > 0) {
-                            likesCount = likesCount - 1;
+                    if (loginChcecking()) {
+                        boolean imageLikeStatus = mSpecialNeedsAdapter
+                                .getImageLikeStatus(mCurrentIndex);
+                        int likesCount = Integer.parseInt(mSpecialNeedsAdapter
+                                .getImageLikesCount(mCurrentIndex));
+                        if (imageLikeStatus) {
+                            mSpecialNeedsAdapter.setImageLikeStatus(false,
+                                    mCurrentIndex);
+                            if (likesCount > 0) {
+                                likesCount = likesCount - 1;
+                                mSpecialNeedsAdapter.setImageLikesCount(
+                                        mCurrentIndex, likesCount);
+                            }
+                            
+                            handleLike_Dislike_Events(mSpecialNeedsAdapter
+                                    .getAisleId(), mSpecialNeedsAdapter
+                                    .getImageId(mCurrentIndex), false,
+                                    likesCount);
+                            likesImage.setImageResource(R.drawable.heart_dark);
+                            
+                        } else {
+                            mSpecialNeedsAdapter.setImageLikeStatus(true,
+                                    mCurrentIndex);
+                            likesCount = likesCount + 1;
                             mSpecialNeedsAdapter.setImageLikesCount(
                                     mCurrentIndex, likesCount);
+                            handleLike_Dislike_Events(mSpecialNeedsAdapter
+                                    .getAisleId(), mSpecialNeedsAdapter
+                                    .getImageId(mCurrentIndex), true,
+                                    likesCount);
+                            likesImage.setImageResource(R.drawable.heart);
+                            
                         }
-                        
-                        handleLike_Dislike_Events(
-                                mSpecialNeedsAdapter.getAisleId(),
-                                mSpecialNeedsAdapter.getImageId(mCurrentIndex),
-                                false, likesCount);
-                        likesImage.setImageResource(R.drawable.heart_dark);
-                        
-                    } else {
-                        mSpecialNeedsAdapter.setImageLikeStatus(true,
-                                mCurrentIndex);
-                        likesCount = likesCount + 1;
-                        mSpecialNeedsAdapter.setImageLikesCount(mCurrentIndex,
-                                likesCount);
-                        handleLike_Dislike_Events(
-                                mSpecialNeedsAdapter.getAisleId(),
-                                mSpecialNeedsAdapter.getImageId(mCurrentIndex),
-                                true, likesCount);
-                        likesImage.setImageResource(R.drawable.heart);
-                        
+                        if (mLikesCountView != null) {
+                            mLikesCountView.setText(String.valueOf(likesCount));
+                        }
+                        JSONObject aisleRateProps = new JSONObject();
+                        try {
+                            aisleRateProps.put("Aisle_Id",
+                                    mSpecialNeedsAdapter.getAisleId());
+                            aisleRateProps.put("Activity_Rated_From",
+                                    "LandingPageActivity");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mixpanel.track("LandingPage_Aisle_Rated",
+                                aisleRateProps);
                     }
-                    if (mLikesCountView != null) {
-                        mLikesCountView.setText(String.valueOf(likesCount));
-                    }
-                    JSONObject aisleRateProps = new JSONObject();
-                    try {
-                        aisleRateProps.put("Aisle_Id",
-                                mSpecialNeedsAdapter.getAisleId());
-                        aisleRateProps.put("Activity_Rated_From",
-                                "LandingPageActivity");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    mixpanel.track("LandingPage_Aisle_Rated", aisleRateProps);
                 }
             });
             // bookmrk image clikc function in Trending screen
@@ -159,46 +164,49 @@ public class AisleContentBrowser extends ViewFlipper {
                 
                 @Override
                 public void onClick(View v) {
-                    int mBookmarksCount = mSpecialNeedsAdapter
-                            .getBookmarkCount();
-                    boolean bookMarkIndicator;
-                    if (mSpecialNeedsAdapter.getBookmarkIndicator()) {
-                        // deduct the bookmark count by one.
-                        bookMarkIndicator = false;
-                        bookmarkImage
-                                .setImageResource(R.drawable.save_dark_small);
-                        if (mBookmarksCount > 0) {
-                            mBookmarksCount = mBookmarksCount - 1;
+                    if (loginChcecking()) {
+                        int mBookmarksCount = mSpecialNeedsAdapter
+                                .getBookmarkCount();
+                        boolean bookMarkIndicator;
+                        if (mSpecialNeedsAdapter.getBookmarkIndicator()) {
+                            // deduct the bookmark count by one.
+                            bookMarkIndicator = false;
+                            bookmarkImage
+                                    .setImageResource(R.drawable.save_dark_small);
+                            if (mBookmarksCount > 0) {
+                                mBookmarksCount = mBookmarksCount - 1;
+                            }
+                        } else {
+                            // increase the bookmark count by one.
+                            bookMarkIndicator = true;
+                            bookmarkImage.setImageResource(R.drawable.save);
+                            mBookmarksCount = mBookmarksCount + 1;
                         }
-                    } else {
-                        // increase the bookmark count by one.
-                        bookMarkIndicator = true;
-                        bookmarkImage.setImageResource(R.drawable.save);
-                        mBookmarksCount = mBookmarksCount + 1;
-                    }
-                    mSpecialNeedsAdapter
-                            .setAisleBookmarkIndicator(bookMarkIndicator);
-                    VueTrendingAislesDataModel
-                            .getInstance(VueApplication.getInstance())
-                            .getNetworkHandler()
-                            .modifyBookmarkList(
-                                    mSpecialNeedsAdapter.getAisleId(),
-                                    bookMarkIndicator);
-                    mSpecialNeedsAdapter.setBookmarkCount(mBookmarksCount);
-                    mBookmarksCountView.setText("" + mBookmarksCount);
-                    handleBookmark(bookMarkIndicator,
-                            mSpecialNeedsAdapter.getAisleId());
-                    JSONObject aisleBookmarkedProps = new JSONObject();
-                    try {
-                        aisleBookmarkedProps.put("Aisle_Id",
+                        mSpecialNeedsAdapter
+                                .setAisleBookmarkIndicator(bookMarkIndicator);
+                        VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getNetworkHandler()
+                                .modifyBookmarkList(
+                                        mSpecialNeedsAdapter.getAisleId(),
+                                        bookMarkIndicator);
+                        mSpecialNeedsAdapter.setBookmarkCount(mBookmarksCount);
+                        mBookmarksCountView.setText("" + mBookmarksCount);
+                        handleBookmark(bookMarkIndicator,
                                 mSpecialNeedsAdapter.getAisleId());
-                        aisleBookmarkedProps.put("Activity_Bookmarked_From",
-                                "LandingPageActivity");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        JSONObject aisleBookmarkedProps = new JSONObject();
+                        try {
+                            aisleBookmarkedProps.put("Aisle_Id",
+                                    mSpecialNeedsAdapter.getAisleId());
+                            aisleBookmarkedProps.put(
+                                    "Activity_Bookmarked_From",
+                                    "LandingPageActivity");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mixpanel.track("LandingPage_Aisle_Bookmarked",
+                                aisleBookmarkedProps);
                     }
-                    mixpanel.track("LandingPage_Aisle_Bookmarked",
-                            aisleBookmarkedProps);
                 }
             });
         }
@@ -832,6 +840,38 @@ public class AisleContentBrowser extends ViewFlipper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    private boolean loginChcecking() {
+        SharedPreferences sharedPreferencesObj = mContext.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+                VueConstants.VUE_LOGIN, false);
+        if (isUserLoggedInFlag) {
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(mContext,
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            if (storedVueUser != null && storedVueUser.getId() != null) {
+                return true;
+            } else {
+                Toast.makeText(
+                        mContext,
+                        mContext.getResources().getString(
+                                R.string.vue_server_login_mesg),
+                        Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(
+                    mContext,
+                    mContext.getResources().getString(
+                            R.string.vue_fb_gplus_login_mesg),
+                    Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
     
 }
