@@ -478,6 +478,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 }
             }
         });
+        
         sendCommentButon.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -570,6 +571,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+ 
         mVueUserName = (TextView) mDetailsContentView
                 .findViewById(R.id.vue_user_name);
         mVueUserName.setTextSize(Utils.MEDIUM_TEXT_SIZE);

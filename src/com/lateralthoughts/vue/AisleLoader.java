@@ -216,7 +216,7 @@ public class AisleLoader {
             AisleContentBrowser flipper, ImageView imageView, int bestHeight,
             String asileId, AisleImageDetails itemDetails,
             AisleContentClickListener listener) {
-        if (!itemDetails.mImageUrl.equalsIgnoreCase(VueConstants.NO_IMAGE_URL)) {
+        if (!itemDetails.mImageUrl.equalsIgnoreCase(VueConstants.NO_IMAGE_URL) && itemDetails.mImageUrl != null) {
             ((NetworkImageView) imageView).setImageUrl(itemDetails.mImageUrl,
                     VueApplication.getInstance().getImageCacheLoader(),
                     itemDetails.mTrendingImageWidth,

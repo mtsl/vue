@@ -44,7 +44,6 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        
         int actualPosition = position;
         if (null == convertView) {
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
