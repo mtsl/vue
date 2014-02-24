@@ -249,15 +249,19 @@ public class NetworkHandler {
         offset = 0;
         if (!VueConnectivityManager.isNetworkConnected(mContext)) {
             Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
-                    .show();
-/*            ArrayList<AisleWindowContent> aisleContentArray = dbManager
+                    .show();  
+    DataBaseManager.getInstance(VueApplication.getInstance())
+    .resetDbParams();
+            ArrayList<AisleWindowContent> aisleContentArray = dbManager
                     .getAislesFromDB(null, false);
             if (aisleContentArray.size() == 0) {
+                VueTrendingAislesDataModel.getInstance(VueApplication
+                        .getInstance()).mIsFromDb = false;
                 return;
             }
             Message msg = new Message();
             msg.obj = aisleContentArray;
-            mHandler.sendMessage(msg);*/
+            mHandler.sendMessage(msg);
             
         } else {
             mLimit = 30;
