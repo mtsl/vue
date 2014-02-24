@@ -1,13 +1,7 @@
 package com.lateralthoughts.vue.parser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -16,8 +10,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.os.Environment;
 
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -101,7 +93,6 @@ public class Parser {
 				.getString(VueConstants.AISLE_IMAGE_STORE);
 		aisleImageDetails.mImageUrl = jsonObject
 				.getString(VueConstants.AISLE_IMAGE_IMAGE_URL);
-		writeToSdcard(aisleImageDetails.mImageUrl);
 		aisleImageDetails.mAvailableWidth = jsonObject
 				.getInt(VueConstants.AISLE_IMAGE_WIDTH);
 		aisleImageDetails.mDetailsUrl = jsonObject
@@ -390,37 +381,6 @@ public class Parser {
 		}
 		return aisleContext;
 	}
-
-	private void writeToSdcard(String message) {
-
-		String path = Environment.getExternalStorageDirectory().toString();
-		File dir = new File(path + "/vueParsedImages/");
-		if (!dir.isDirectory()) {
-			dir.mkdir();
-		}
-		File file = new File(dir, "/"
-				+ Calendar.getInstance().get(Calendar.DATE)
-				+ "-"
-				+ Utils.getWeekDay(Calendar.getInstance().get(
-						Calendar.DAY_OF_WEEK)) + ".txt");
-		try {
-			file.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			PrintWriter out = new PrintWriter(new BufferedWriter(
-					new FileWriter(file, true)));
-			out.write("\n" + message + "\n");
-			out.flush();
-			out.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public ArrayList<AisleBookmark> parseBookmarkedAisles(String response) {
 		ArrayList<AisleBookmark> aisleIdList = new ArrayList<AisleBookmark>();
 		AisleBookmark bookmarkAisle = null;

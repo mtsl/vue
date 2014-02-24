@@ -82,7 +82,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
     private int mListCount = 3;
     AisleDetailsViewAdapterPager mAisleDetailsAdapter;
     private AisleDetailsSwipeListner mSwipeListener;
-    private LoginWarningMessage mLoginWarningMessage = null;
     private View mDetailsContentView = null;
     private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
             mDotSeven, mDotEight, mDotNine, mDotTen;
@@ -488,54 +487,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 String etText = edtCommentView.getText().toString();
                 
                 if (etText != null && etText.length() >= 1) {
-                    if (mAisleDetailsAdapter.checkLimitForLoginDialog()) {
-                        if (mLoginWarningMessage == null) {
-                            mLoginWarningMessage = new LoginWarningMessage(
-                                    mContext);
-                        }
-                        mLoginWarningMessage.showLoginWarningMessageDialog(
-                                "You need to Login with the app to Comment.",
-                                true, false, 0, null, null);
-                    } else {
-                        // Updating Comments Count in Preference to show
-                        // LoginDialog.
-                        SharedPreferences sharedPreferencesObj = getActivity()
-                                .getSharedPreferences(
-                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
-                        int commentsCount = sharedPreferencesObj.getInt(
-                                VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
-                        boolean isUserLoggedInFlag = sharedPreferencesObj
-                                .getBoolean(VueConstants.VUE_LOGIN, false);
-                        if (commentsCount == 8 && !isUserLoggedInFlag) {
-                            if (mLoginWarningMessage == null) {
-                                mLoginWarningMessage = new LoginWarningMessage(
-                                        getActivity());
-                            }
-                            mLoginWarningMessage
-                                    .showLoginWarningMessageDialog(
-                                            "You have 2 aisle left to comment without logging in.",
-                                            false, false, 8, edtCommentView,
-                                            null);
-                        } else if (commentsCount == 9 && !isUserLoggedInFlag) {
-                            if (mLoginWarningMessage == null) {
-                                mLoginWarningMessage = new LoginWarningMessage(
-                                        getActivity());
-                            }
-                            mLoginWarningMessage
-                                    .showLoginWarningMessageDialog(
-                                            "You have 1 aisle left to comment without logging in.",
-                                            false, false, 9, edtCommentView,
-                                            null);
-                        } else {
-                            SharedPreferences.Editor editor = sharedPreferencesObj
-                                    .edit();
-                            editor.putInt(
-                                    VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
-                                    commentsCount + 1);
-                            editor.commit();
-                            addComment(edtCommentView, enterComentStaticTextLay);
-                        }
-                    }
+                    addComment(edtCommentView, enterComentStaticTextLay);
                 }
             }
         });
@@ -571,7 +523,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
- 
+        
         mVueUserName = (TextView) mDetailsContentView
                 .findViewById(R.id.vue_user_name);
         mVueUserName.setTextSize(Utils.MEDIUM_TEXT_SIZE);
@@ -945,8 +897,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 editText.getApplicationWindowToken(),
                 InputMethodManager.SHOW_FORCED, 0);
         if (etText != null) {
-            mAisleDetailsAdapter.updateListCount(etText);
-            mAisleDetailsAdapter.createComment(etText);
+            if (loginChcecking()) {
+                mAisleDetailsAdapter.updateListCount(etText);
+                mAisleDetailsAdapter.createComment(etText);
+            }
         }
         editText.setVisibility(View.GONE);
         editText.setText("");
@@ -1386,5 +1340,37 @@ public class VueAisleDetailsViewFragment extends Fragment {
     private class Holder {
         TextView textone, texttwo;
         ImageView imageone, imagetwo;
+    }
+    
+    private boolean loginChcecking() {
+        SharedPreferences sharedPreferencesObj = mContext.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+                VueConstants.VUE_LOGIN, false);
+        if (isUserLoggedInFlag) {
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(mContext,
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            if (storedVueUser != null && storedVueUser.getId() != null) {
+                return true;
+            } else {
+                Toast.makeText(
+                        mContext,
+                        mContext.getResources().getString(
+                                R.string.vue_server_login_mesg),
+                        Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(
+                    mContext,
+                    mContext.getResources().getString(
+                            R.string.vue_fb_gplus_login_mesg),
+                    Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 }

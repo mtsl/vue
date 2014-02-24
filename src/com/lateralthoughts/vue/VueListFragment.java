@@ -343,25 +343,85 @@ public class VueListFragment extends Fragment implements TextWatcher {
                         .findViewById(R.id.child_itemTextview);
                 String s = textView.getText().toString();
                 if (s.equals(getString(R.string.sidemenu_sub_option_My_Aisles))) {
-                    VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
-                    if (getActivity() instanceof VueLandingPageActivity) {
-                        ((VueLandingPageActivity) getActivity()).showCategory(
-                                s, false);
+                    SharedPreferences sharedPreferencesObj = getActivity()
+                            .getSharedPreferences(
+                                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+                    boolean isUserLoggedInFlag = sharedPreferencesObj
+                            .getBoolean(VueConstants.VUE_LOGIN, false);
+                    if (isUserLoggedInFlag) {
+                        VueUser storedVueUser = null;
+                        try {
+                            storedVueUser = Utils.readUserObjectFromFile(
+                                    getActivity(),
+                                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
+                        }
+                        if (storedVueUser != null
+                                && storedVueUser.getId() != null) {
+                            VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = false;
+                            if (getActivity() instanceof VueLandingPageActivity) {
+                                ((VueLandingPageActivity) getActivity())
+                                        .showCategory(s, false);
+                            } else {
+                                creatingNewViewFromaOtherActivity(s);
+                            }
+                        } else {
+                            Toast.makeText(
+                                    getActivity(),
+                                    getResources().getString(
+                                            R.string.vue_server_login_mesg),
+                                    Toast.LENGTH_LONG).show();
+                        }
                     } else {
-                        creatingNewViewFromaOtherActivity(s);
+                        Toast.makeText(
+                                getActivity(),
+                                getResources().getString(
+                                        R.string.vue_fb_gplus_login_mesg),
+                                Toast.LENGTH_LONG).show();
                     }
-                    
                     return true;
                 } else if (s
                         .equals(getString(R.string.sidemenu_sub_option_Bookmarks))) {
-                    if (getActivity() instanceof VueLandingPageActivity) {
-                        VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
-                        activity.startActivity(new Intent(getActivity(),
-                                VueLandingPageActivity.class));
-                        VueApplication.getInstance().landingPage.showCategory(
-                                s, false);
+                    SharedPreferences sharedPreferencesObj = getActivity()
+                            .getSharedPreferences(
+                                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+                    boolean isUserLoggedInFlag = sharedPreferencesObj
+                            .getBoolean(VueConstants.VUE_LOGIN, false);
+                    if (isUserLoggedInFlag) {
+                        VueUser storedVueUser = null;
+                        try {
+                            storedVueUser = Utils.readUserObjectFromFile(
+                                    getActivity(),
+                                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
+                        }
+                        if (storedVueUser != null
+                                && storedVueUser.getId() != null) {
+                            if (getActivity() instanceof VueLandingPageActivity) {
+                                VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
+                                activity.startActivity(new Intent(
+                                        getActivity(),
+                                        VueLandingPageActivity.class));
+                                VueApplication.getInstance().landingPage
+                                        .showCategory(s, false);
+                            } else {
+                                creatingNewViewFromaOtherActivity(s);
+                            }
+                        } else {
+                            Toast.makeText(
+                                    getActivity(),
+                                    getResources().getString(
+                                            R.string.vue_server_login_mesg),
+                                    Toast.LENGTH_LONG).show();
+                        }
                     } else {
-                        creatingNewViewFromaOtherActivity(s);
+                        Toast.makeText(
+                                getActivity(),
+                                getResources().getString(
+                                        R.string.vue_fb_gplus_login_mesg),
+                                Toast.LENGTH_LONG).show();
                     }
                     return true;
                 } else if (s
@@ -1109,21 +1169,19 @@ public class VueListFragment extends Fragment implements TextWatcher {
     }
     
     public String getUserId() {
-        VueUser storedVueUser = null;
+        VueUserProfile storedUserProfile = null;
         try {
-            storedVueUser = Utils.readUserObjectFromFile(
-                    VueApplication.getInstance(),
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            storedUserProfile = Utils.readUserProfileObjectFromFile(
+                    getActivity(),
+                    VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
         } catch (Exception e) {
             e.printStackTrace();
         }
         String userName = null;
-        if (storedVueUser != null) {
-            userName = storedVueUser.getFirstName() + " "
-                    + storedVueUser.getLastName();
+        if (storedUserProfile != null) {
+            userName = storedUserProfile.getUserName();
         }
         return userName;
-        
     }
     
     public void refreshBezelMenu() {
@@ -1230,7 +1288,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
             nobutton.setText(getResources()
                     .getString(R.string.continue_earning));
             okbutton.setText(getResources().getString(R.string.redeem_it_now));
- 
+            
             boolean isRedeemCoupon = sharedPreferencesObj.getBoolean(
                     VueConstants.USER_POINTS_DIALOG_SHOWN, false);
             messagetext.setText(sb);
@@ -1261,8 +1319,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
                             nameTag.put("Email", storedVueUser.getEmail());
                             
                             Editor editor = sharedPreferencesObj.edit();
-                            editor.putBoolean(VueConstants.USER_POINTS_DIALOG_SHOWN,
-                                    true);
+                            editor.putBoolean(
+                                    VueConstants.USER_POINTS_DIALOG_SHOWN, true);
                             editor.commit();
                             // TODO: mix panel log.
                             mixpanel.track("Coupon", nameTag);
