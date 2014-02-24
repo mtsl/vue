@@ -850,14 +850,6 @@ public class VueLoginActivity extends FragmentActivity implements
                 e.printStackTrace();
             }
             
-            JSONObject loginprops = new JSONObject();
-            try {
-                loginprops.put("Email", vueUserProfile.getUserEmail());
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-                
-            }
-            mixpanel.track("Facebook Login Success", loginprops);
         }
         
     }

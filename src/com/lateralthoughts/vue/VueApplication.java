@@ -54,12 +54,12 @@ public class VueApplication extends Application {
 	public long mLaunchTime;
 	public long mLastRecordedTime;
 	ListFragementObj mListRefresobj;
-	public String MIXPANEL_TOKEN = "178a869c17a98b1f044ae5548ad9f4c4"; // Vidya
+	public String MIXPANEL_TOKEN = "d5ac13097eaf8acefc264d21457307a1";//"178a869c17a98b1f044ae5548ad9f4c4"; // Vidya
 																		// token
 																		// new
 	/*
 	 * "0b560991fe02d44932efedeff66e54f5" Vidya token old not working ;
-	 *//* "d5ac13097eaf8acefc264d21457307a1" Surendra token working */;
+	 *//* "d5ac13097eaf8acefc264d21457307a1" Surendra token working */
 
 	public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
 	public static final String LOAD_IMAGES_REQUEST_TAG = "LoadImagesTag";

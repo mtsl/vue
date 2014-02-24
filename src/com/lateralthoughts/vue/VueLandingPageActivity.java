@@ -227,11 +227,54 @@ public class VueLandingPageActivity extends Activity implements
                 }
             }
             VueUser storedVueUser = null;
+            
             try {
                 storedVueUser = Utils.readUserObjectFromFile(this,
                         VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                
             } catch (Exception e1) {
                 e1.printStackTrace();
+            }
+            
+            VueUserProfile storedUserProfile = null;
+            try {
+                storedUserProfile = Utils.readUserProfileObjectFromFile(this,
+                        VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // TODO: This is to register old users in mixpanel. Remove this code after 2 months.
+            if(storedVueUser != null && storedUserProfile != null) {
+            mixpanel.identify(storedVueUser.getEmail());
+            people = mixpanel.getPeople();
+            people.identify(storedVueUser.getEmail());
+            
+            people.set("$first_name", storedVueUser.getFirstName());
+            people.set("$last_name", storedVueUser.getLastName());
+            people.set("Gender", storedUserProfile.getUserGender());
+            people.set("$email", storedVueUser.getEmail());
+            people.set("Current location", storedUserProfile.getUserLocation());
+            String loginWith;
+            if(!storedVueUser.getFacebookId().equals(VueUser.DEFAULT_FACEBOOK_ID)) {
+                loginWith = "Facebook";
+            } else if (!storedVueUser.getGooglePlusId().equals(VueUser.DEFAULT_GOOGLEPLUS_ID)) {
+                loginWith = "GooglePlus";
+            } else {
+                loginWith = "Guest";
+            }
+            people.set("loggedIn with", loginWith);
+            JSONObject nameTag = new JSONObject();
+            try {
+                // Set an "mp_name_tag" super property
+                // for Streams if you find it useful.
+                // TODO: Check how it works.
+                nameTag.put("mp_name_tag",
+                        storedVueUser.getFirstName() + " "
+                                + storedVueUser.getLastName());
+                mixpanel.registerSuperProperties(nameTag);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             }
             PackageInfo packageInfo;
             try {
@@ -253,21 +296,6 @@ public class VueLandingPageActivity extends Activity implements
                                         VueUser.DEFAULT_GOOGLEPLUS_ID)
                                 && storedVueUser.getFacebookId().equals(
                                         VueUser.DEFAULT_FACEBOOK_ID)) {
-                            mixpanel.identify(storedVueUser.getEmail());
-                            people = mixpanel.getPeople();
-                            people.identify(storedVueUser.getEmail());
-                            JSONObject nameTag = new JSONObject();
-                            try {
-                                // Set an "mp_name_tag" super property
-                                // for Streams if you find it useful.
-                                // TODO: Check how it works.
-                                nameTag.put("mp_name_tag",
-                                        storedVueUser.getFirstName() + " "
-                                                + storedVueUser.getLastName());
-                                mixpanel.registerSuperProperties(nameTag);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
                             // TODO: start the LoginActivity
                             Intent i = new Intent(this, VueLoginActivity.class);
                             Bundle b = new Bundle();
