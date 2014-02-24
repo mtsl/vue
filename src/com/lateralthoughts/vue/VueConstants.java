@@ -9,6 +9,9 @@ import android.net.Uri;
 public class VueConstants {
     public static final String USER_FINDFRIENDS_OPEN_COUNT = "openCount";
     public static final String USER_FINDFRIENDS_OPEN_TIME = "opendTime";
+    public static final String DETAILS_USER_FINDFRIENDS_OPEN_COUNT = "detailsopenCount";
+    public static final String IS_ALREADY_VIEWED_DETAILS_SCREEN = "isAlreadyViewedDetailsScreen";
+    public static final String DETAILS_USER_FINDFRIENDS_OPEN_TIME = "detailsopendTime";
     public static final String USER_REEDM_POINTS = "redeemPoints";
     public static final String USER_LIKES_POINTS = "userLikes";
     public static final String USER_POINTS_DIALOG_SHOWN = "pointsDialog";

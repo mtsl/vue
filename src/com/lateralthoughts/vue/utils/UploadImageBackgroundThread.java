@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.URL;
 
 import org.apache.http.HttpResponse;
@@ -17,6 +18,12 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.widget.RemoteViews;
 
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
@@ -32,6 +39,8 @@ public class UploadImageBackgroundThread implements Runnable,
     private File mImageFile;
     private ImageUploadCallback mImageUploadCallback;
     private String mImageUrl;
+    private static final int IMAGE_MAX_SIZE = 1024;
+    private int mImageWidth, mImageHeight;
     
     @SuppressWarnings("static-access")
     public UploadImageBackgroundThread(File imageFile,
@@ -77,6 +86,7 @@ public class UploadImageBackgroundThread implements Runnable,
             mNotificationManager.notify(
                     VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
                     mNotification);
+            resizeImageToUpload(mImageFile);
             mImageUrl = uploadImage(mImageFile, getImageUploadURL());
             if (mImageUrl != null) {
                 mImageUrl = UrlConstants.GET_IMAGE_FILE_RESTURL + "?blob_key="
@@ -109,7 +119,8 @@ public class UploadImageBackgroundThread implements Runnable,
         }
         
         if (null != mImageUrl) {
-            mImageUploadCallback.onImageUploaded(mImageUrl);
+            mImageUploadCallback.onImageUploaded(mImageUrl, mImageWidth,
+                    mImageHeight);
         }
     }
     
@@ -147,5 +158,82 @@ public class UploadImageBackgroundThread implements Runnable,
         } else
             return null;
     }
-
+    
+    private void resizeImageToUpload(File file) {
+        try {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            FileInputStream stream1 = new FileInputStream(file);
+            BitmapFactory.decodeStream(stream1, null, o);
+            stream1.close();
+            int height = o.outHeight;
+            int width = o.outWidth;
+            int scale = 1;
+            if (height > IMAGE_MAX_SIZE || width > IMAGE_MAX_SIZE) {
+                scale = (int) Math.pow(
+                        2,
+                        (int) Math.round(Math.log(IMAGE_MAX_SIZE
+                                / (double) Math.max(o.outHeight, o.outWidth))
+                                / Math.log(0.5)));
+            } else {
+                mImageWidth = width;
+                mImageHeight = height;
+                return;
+            }
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            FileInputStream stream2 = new FileInputStream(file);
+            Bitmap bitmap = BitmapFactory.decodeStream(stream2, null, o2);
+            stream2.close();
+            
+            int resizedBitmapHeight = bitmap.getHeight();
+            int resizedBitmapWidth = bitmap.getWidth();
+            if (resizedBitmapHeight > resizedBitmapWidth) {
+                if (resizedBitmapHeight > IMAGE_MAX_SIZE) {
+                    height = IMAGE_MAX_SIZE;
+                    width = (resizedBitmapWidth * height) / resizedBitmapHeight;
+                    mImageWidth = width;
+                    mImageHeight = height;
+                    Utils.saveBitmap(getModifiedBitmap(bitmap, width, height),
+                            file);
+                } else {
+                    mImageWidth = resizedBitmapWidth;
+                    mImageHeight = resizedBitmapHeight;
+                }
+            } else {
+                if (resizedBitmapWidth > IMAGE_MAX_SIZE) {
+                    width = IMAGE_MAX_SIZE;
+                    height = (resizedBitmapHeight * width) / resizedBitmapWidth;
+                    mImageWidth = width;
+                    mImageHeight = height;
+                    Utils.saveBitmap(getModifiedBitmap(bitmap, width, height),
+                            file);
+                } else {
+                    mImageWidth = resizedBitmapWidth;
+                    mImageHeight = resizedBitmapHeight;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private Bitmap getModifiedBitmap(Bitmap originalImage, int width, int height) {
+        Bitmap newBitmap = Bitmap.createBitmap((int) width, (int) height,
+                Config.ARGB_8888);
+        float originalWidth = originalImage.getWidth(), originalHeight = originalImage
+                .getHeight();
+        Canvas canvas = new Canvas(newBitmap);
+        float scale = width / originalWidth;
+        float xTranslation = 0.0f, yTranslation = (height - originalHeight
+                * scale) / 2.0f;
+        Matrix transformation = new Matrix();
+        transformation.postTranslate(xTranslation, yTranslation);
+        transformation.preScale(scale, scale);
+        Paint paint = new Paint();
+        paint.setFilterBitmap(true);
+        canvas.drawBitmap(originalImage, transformation, paint);
+        originalImage.recycle();
+        return newBitmap;
+    }
 }

@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
 
+import com.mail.SendMail;
+
 import android.app.Activity;
 import android.os.Environment;
 
@@ -33,7 +35,8 @@ public class ExceptionHandler implements
     public void uncaughtException(Thread thread, Throwable exception) {
         final StringWriter stackTrace = new StringWriter();
         exception.printStackTrace(new PrintWriter(stackTrace));
-        writeToSdcard(stackTrace.toString());
+        new SendMail().sendMail(stackTrace.toString());
+        // writeToSdcard(stackTrace.toString());
     }
     
     private void writeToSdcard(String message) {

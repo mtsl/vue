@@ -844,14 +844,6 @@ public class VueLoginActivity extends FragmentActivity implements
                 e.printStackTrace();
             }
             
-            JSONObject loginprops = new JSONObject();
-            try {
-                loginprops.put("Email", vueUserProfile.getUserEmail());
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-                
-            }
-            mixpanel.track("Facebook Login Success", loginprops);
         }
         
     }
@@ -1430,10 +1422,8 @@ public class VueLoginActivity extends FragmentActivity implements
     private void showAisleSwipeHelp() {
         if (mShowAisleSwipeHelpLayoutFlag) {
             finish();
-            
-              Intent swipeHelpIntent = new Intent(this, HelpOnTrending.class);
-              startActivity(swipeHelpIntent);
-             
+             // Intent swipeHelpIntent = new Intent(this, HelpOnTrending.class);
+             // startActivity(swipeHelpIntent);
         } else {
             finish();
         }
