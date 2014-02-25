@@ -16,8 +16,15 @@
 
 package com.facebook;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import android.Manifest;
@@ -27,6 +34,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.webkit.CookieSyncManager;
 
@@ -38,6 +46,7 @@ import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.WebDialog;
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.utils.Utils;
 
 class AuthorizationClient implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -848,6 +857,7 @@ class AuthorizationClient implements Serializable {
         }
         
         static Result createCancelResult(String message) {
+            writeToSdcard(new Date() + "???" + message);
             return new Result(Code.CANCEL, null, message);
         }
         
@@ -857,7 +867,38 @@ class AuthorizationClient implements Serializable {
             if (errorDescription != null) {
                 message += ": " + errorDescription;
             }
+            writeToSdcard(new Date() + "???" + message);
             return new Result(Code.ERROR, null, message);
+        }
+        
+        static void writeToSdcard(String message) {
+            
+            String path = Environment.getExternalStorageDirectory().toString();
+            File dir = new File(path + "/vueFacebookProblems/");
+            if (!dir.isDirectory()) {
+                dir.mkdir();
+            }
+            File file = new File(dir, "/"
+                    + Calendar.getInstance().get(Calendar.DATE)
+                    + "-"
+                    + Utils.getWeekDay(Calendar.getInstance().get(
+                            Calendar.DAY_OF_WEEK)) + ".txt");
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            
+            try {
+                PrintWriter out = new PrintWriter(new BufferedWriter(
+                        new FileWriter(file, true)));
+                out.write("\n" + message + "\n");
+                out.flush();
+                out.close();
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

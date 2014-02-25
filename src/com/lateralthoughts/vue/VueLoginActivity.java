@@ -321,6 +321,8 @@ public class VueLoginActivity extends FragmentActivity implements
                         .setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View arg0) {
+                                writeToSdcard("Before google+ login : "
+                                        + new Date());
                                 mixpanel.track("GooglePlus Login Selected",
                                         null);
                                 mIsGplusButtonClicked = true;
@@ -526,46 +528,47 @@ public class VueLoginActivity extends FragmentActivity implements
     
     @Override
     public void onSignedIn(PlusClient plusClient) {
-        if(mIsGplusButtonClicked) {
-        SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
-        editor.putBoolean(VueConstants.VUE_LOGIN, true);
-        editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, true);
-        editor.putString(VueConstants.GOOGLEPLUS_USER_EMAIL,
-                plusClient.getAccountName());
-        editor.commit();
-        plusClient.loadPerson(this, "me");
-        if (!mGoogleplusFriendInvite && !mFacebookFlag
-                && !mGoogleplusAutomaticLogin) {
-            Toast.makeText(
-                    this,
-                    plusClient.getAccountName()
-                            + " "
-                            + getResources().getString(
-                                    R.string.isconnected_mesg),
-                    Toast.LENGTH_LONG).show();
-        }
-        // To show Google+ App install dialog after login with Google+
-        if (mGoogleplusLoggedinDialogFlag) {
+        if (mIsGplusButtonClicked) {
+            writeToSdcard("After google+ succefull login : " + new Date());
+            SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
+            editor.putBoolean(VueConstants.VUE_LOGIN, true);
+            editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, true);
+            editor.putString(VueConstants.GOOGLEPLUS_USER_EMAIL,
+                    plusClient.getAccountName());
+            editor.commit();
+            plusClient.loadPerson(this, "me");
+            if (!mGoogleplusFriendInvite && !mFacebookFlag
+                    && !mGoogleplusAutomaticLogin) {
+                Toast.makeText(
+                        this,
+                        plusClient.getAccountName()
+                                + " "
+                                + getResources().getString(
+                                        R.string.isconnected_mesg),
+                        Toast.LENGTH_LONG).show();
+            }
+            // To show Google+ App install dialog after login with Google+
+            if (mGoogleplusLoggedinDialogFlag) {
+                
+                if (!Utils.appInstalledOrNot(
+                        VueConstants.GOOGLEPLUS_PACKAGE_NAME, this)) {
+                    if (mGooglePlusProgressDialog != null
+                            && mGooglePlusProgressDialog.isShowing())
+                        mGooglePlusProgressDialog.dismiss();
+                    showAlertMessageForAppInstalation("Google+",
+                            VueConstants.GOOGLEPLUS_PACKAGE_NAME);
+                }
+            }
             
-            if (!Utils.appInstalledOrNot(VueConstants.GOOGLEPLUS_PACKAGE_NAME,
-                    this)) {
-                if (mGooglePlusProgressDialog != null
-                        && mGooglePlusProgressDialog.isShowing())
-                    mGooglePlusProgressDialog.dismiss();
-                showAlertMessageForAppInstalation("Google+",
-                        VueConstants.GOOGLEPLUS_PACKAGE_NAME);
+            if (mGoogleplusFriendInvite) {
+                share(plusClient,
+                        this,
+                        VueConstants.INVITATION_MESG,
+                        mBundle.getIntegerArrayList(VueConstants.GOOGLEPLUS_FRIEND_INDEX));
+            } else {
+                plusClient.loadPeople(this, Person.Collection.VISIBLE);
             }
         }
-        
-        if (mGoogleplusFriendInvite) {
-            share(plusClient,
-                    this,
-                    VueConstants.INVITATION_MESG,
-                    mBundle.getIntegerArrayList(VueConstants.GOOGLEPLUS_FRIEND_INDEX));
-        } else {
-            plusClient.loadPeople(this, Person.Collection.VISIBLE);
-        }
-    }
     }
     
     @SuppressWarnings("unchecked")
@@ -669,7 +672,8 @@ public class VueLoginActivity extends FragmentActivity implements
                         e2.printStackTrace();
                     }
                     if (storedVueUser != null) {
-                        writeToSdcard("Before Server login : " + new Date());
+                        writeToSdcard("Before Server login for Facebook : "
+                                + new Date());
                         userManager
                                 .updateFBIdentifiedUser(
                                         VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
@@ -681,7 +685,7 @@ public class VueLoginActivity extends FragmentActivity implements
                                             @Override
                                             public void onUserUpdated(
                                                     VueUser vueUser) {
-                                                writeToSdcard("After server Succefull login : "
+                                                writeToSdcard("After server Succefull login Facebook: "
                                                         + new Date());
                                                 try {
                                                     Utils.writeUserObjectToFile(
@@ -695,7 +699,8 @@ public class VueLoginActivity extends FragmentActivity implements
                                             }
                                         });
                     } else {
-                        writeToSdcard("Before Server login : " + new Date());
+                        writeToSdcard("Before Server login for Facebook : "
+                                + new Date());
                         userManager
                                 .createFBIdentifiedUser(
                                         VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
@@ -706,7 +711,7 @@ public class VueLoginActivity extends FragmentActivity implements
                                             @Override
                                             public void onUserUpdated(
                                                     VueUser vueUser) {
-                                                writeToSdcard("After server Succefull login : "
+                                                writeToSdcard("After server Succefull login for Facebook : "
                                                         + new Date());
                                                 try {
                                                     Utils.writeUserObjectToFile(
@@ -1070,6 +1075,7 @@ public class VueLoginActivity extends FragmentActivity implements
         }
         jsonArray.put(j);
         params.putString("actions", jsonArray.toString());
+        VueApplication.getInstance().isPostingOnFriendsWallFlag = true;
         WebDialog feedDialog = (new WebDialog.FeedDialogBuilder(
                 VueLoginActivity.this, Session.getActiveSession(), params))
                 .setOnCompleteListener(new OnCompleteListener() {
@@ -1109,6 +1115,7 @@ public class VueLoginActivity extends FragmentActivity implements
     
     @Override
     public void onSignedFail() {
+        writeToSdcard("After google+ failure login : " + new Date());
         mixpanel.track("GooglePlus Login Failed", null);
         SharedPreferences.Editor editor = mSharedPreferencesObj.edit();
         editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, false);
@@ -1219,11 +1226,15 @@ public class VueLoginActivity extends FragmentActivity implements
                     vueUser.setFacebookId(storedVueUser.getFacebookId());
                     vueUser.setId(storedVueUser.getId());
                     vueUser.setJoinTime(storedVueUser.getJoinTime());
+                    writeToSdcard("Before Server login for Google+ : "
+                            + new Date());
                     userManager.updateGooglePlusIdentifiedUser(person
                             .getImage().getUrl(), vueUser,
                             new UserUpdateCallback() {
                                 @Override
                                 public void onUserUpdated(VueUser user) {
+                                    writeToSdcard("After server Succefull login Google+: "
+                                            + new Date());
                                     try {
                                         Utils.writeUserObjectToFile(
                                                 VueLoginActivity.this,
@@ -1237,11 +1248,14 @@ public class VueLoginActivity extends FragmentActivity implements
                             });
                 }
             } else {
+                writeToSdcard("Before Server login for Google+ : " + new Date());
                 userManager.createGooglePlusIdentifiedUser(person.getImage()
                         .getUrl(), vueUser,
                         new VueUserManager.UserUpdateCallback() {
                             @Override
                             public void onUserUpdated(VueUser user) {
+                                writeToSdcard("After server Succefull login Google+: "
+                                        + new Date());
                                 try {
                                     Utils.writeUserObjectToFile(
                                             VueLoginActivity.this,

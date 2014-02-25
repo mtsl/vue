@@ -210,7 +210,12 @@ public class VueUserManager {
         final Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                writeToSdcard("After server login failure : " + new Date());
+                String errorMesg = "";
+                if (error != null && error.getMessage() != null) {
+                    errorMesg = error.getMessage();
+                }
+                writeToSdcard("After server login failure for facebook : "
+                        + new Date() + "???" + errorMesg);
             }
         };
         Response.Listener getListener = new Response.Listener<String>() {
@@ -289,7 +294,12 @@ public class VueUserManager {
         Response.ErrorListener getErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                writeToSdcard("After server login failure : " + new Date());
+                String errorMesg = "";
+                if (error != null && error.getMessage() != null) {
+                    errorMesg = error.getMessage();
+                }
+                writeToSdcard("After server login failure for facebook: "
+                        + new Date() + "???" + errorMesg);
             }
         };
         UserGetRequest userGetRequest = new UserGetRequest(
@@ -358,6 +368,12 @@ public class VueUserManager {
         final Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                String errorMesg = "";
+                if (error != null && error.getMessage() != null) {
+                    errorMesg = error.getMessage();
+                }
+                writeToSdcard("After server login failure for google+: "
+                        + new Date() + "????" + errorMesg);
             }
         };
         
@@ -440,6 +456,12 @@ public class VueUserManager {
         Response.ErrorListener getErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                String errorMesg = "";
+                if (error != null && error.getMessage() != null) {
+                    errorMesg = error.getMessage();
+                }
+                writeToSdcard("After server login failure for google+: "
+                        + new Date() + "????" + errorMesg);
             }
         };
         UserGetRequest userGetRequest = new UserGetRequest(
@@ -501,6 +523,12 @@ public class VueUserManager {
         final Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                String errorMesg = "";
+                if (error != null && error.getMessage() != null) {
+                    errorMesg = error.getMessage();
+                }
+                writeToSdcard("After server login failure for facebook: "
+                        + new Date() + "????" + errorMesg);
             }
         };
         
@@ -581,6 +609,12 @@ public class VueUserManager {
         Response.ErrorListener getErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                String errorMesg = "";
+                if (error != null && error.getMessage() != null) {
+                    errorMesg = error.getMessage();
+                }
+                writeToSdcard("After server login failure for facebook: "
+                        + new Date() + "???" + errorMesg);
             }
         };
         UserGetRequest userGetRequest = new UserGetRequest(
@@ -643,6 +677,12 @@ public class VueUserManager {
         final Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                String errorMesg = "";
+                if (error != null && error.getMessage() != null) {
+                    errorMesg = error.getMessage();
+                }
+                writeToSdcard("After server login failure for google+: "
+                        + new Date() + "???" + errorMesg);
             }
         };
         
@@ -723,6 +763,12 @@ public class VueUserManager {
         Response.ErrorListener getErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                String errorMesg = "";
+                if (error != null && error.getMessage() != null) {
+                    errorMesg = error.getMessage();
+                }
+                writeToSdcard("After server login failure for google+: "
+                        + new Date() + "???" + errorMesg);
             }
         };
         UserGetRequest userGetRequest = new UserGetRequest(
