@@ -56,7 +56,7 @@ public class VueApplication extends Application {
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
     public boolean mInstalledAppsLoadStatus = false;
-    public String MIXPANEL_TOKEN = "d5ac13097eaf8acefc264d21457307a1";// "178a869c17a98b1f044ae5548ad9f4c4";
+    public String MIXPANEL_TOKEN = "178a869c17a98b1f044ae5548ad9f4c4";// "178a869c17a98b1f044ae5548ad9f4c4";
                                                                       // //
                                                                       // Vidya
                                                                       // token
