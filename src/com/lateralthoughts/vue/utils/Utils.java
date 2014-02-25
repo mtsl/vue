@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,6 +69,7 @@ public class Utils {
     public static boolean sAinmate = true;
     public static int sUserPoints;
     public static boolean sIsLoged = true;
+    public static int sAisleParserCount = -1;
     
     public static void CopyStream(InputStream is, OutputStream os) {
         final int buffer_size = 1024;
@@ -827,7 +829,15 @@ public class Utils {
             return "SAT";
         }
     }
-    
+  public static  String getMonthForInt(int num) {
+        String month = "wrong";
+        DateFormatSymbols dfs = new DateFormatSymbols();
+        String[] months = dfs.getMonths();
+        if (num >= 0 && num <= 11 ) {
+            month = months[num];
+        }
+        return month;
+    }
     public static long dateDifference(long date) {
         try {
             long differenceInHours = (System.currentTimeMillis() - date)

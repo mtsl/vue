@@ -42,7 +42,6 @@ import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
-import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.Utils;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 

@@ -310,6 +310,14 @@ public class VueLandingPageActivity extends Activity implements
            */else if (item.getItemId() == R.id.menu_refrsh_aisles) {
             mRefreshFalg = true;
             invalidateOptionsMenu();
+            JSONObject categorySelectedProps = new JSONObject();
+            try {
+                categorySelectedProps.put("Refresh Trending",
+                        "Trening button clicked");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mixpanel.track("Bezel Category Selected", categorySelectedProps);
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance())
                     .getNetworkHandler()
