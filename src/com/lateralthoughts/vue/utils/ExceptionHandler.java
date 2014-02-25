@@ -35,8 +35,7 @@ public class ExceptionHandler implements
     public void uncaughtException(Thread thread, Throwable exception) {
         final StringWriter stackTrace = new StringWriter();
         exception.printStackTrace(new PrintWriter(stackTrace));
-        new SendMail().sendMail(stackTrace.toString());
-        // writeToSdcard(stackTrace.toString());
+        writeToSdcard(stackTrace.toString());
     }
     
     private void writeToSdcard(String message) {

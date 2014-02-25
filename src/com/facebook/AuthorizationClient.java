@@ -46,7 +46,6 @@ import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.WebDialog;
 import com.lateralthoughts.vue.R;
-import com.lateralthoughts.vue.utils.Utils;
 
 class AuthorizationClient implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -878,11 +877,10 @@ class AuthorizationClient implements Serializable {
             if (!dir.isDirectory()) {
                 dir.mkdir();
             }
-            File file = new File(dir, "/"
-                    + Calendar.getInstance().get(Calendar.DATE)
-                    + "-"
-                    + Utils.getWeekDay(Calendar.getInstance().get(
-                            Calendar.DAY_OF_WEEK)) + ".txt");
+            File file = new File(dir, "/" + "vueFacebookProblems_"
+                    + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                    + Calendar.getInstance().get(Calendar.DATE) + "_"
+                    + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
             try {
                 file.createNewFile();
             } catch (IOException e) {

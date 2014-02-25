@@ -90,6 +90,7 @@ public class LoginButton extends Button {
     private MixpanelAPI mixpanel;
     private JSONObject loginprops;
     private MixpanelAPI.People people;
+    
     static class LoginButtonProperties {
         private SessionDefaultAudience defaultAudience = SessionDefaultAudience.FRIENDS;
         private List<String> permissions = Collections.<String> emptyList();
@@ -232,7 +233,8 @@ public class LoginButton extends Button {
      */
     public LoginButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mixpanel = MixpanelAPI.getInstance(context, VueApplication.getInstance().MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(context,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         people = mixpanel.getPeople();
         if (attrs.getStyleAttribute() == 0) {
             // apparently there's no method of setting a default style in xml,
@@ -260,7 +262,8 @@ public class LoginButton extends Button {
      */
     public LoginButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mixpanel = MixpanelAPI.getInstance(context, VueApplication.getInstance().MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(context,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         people = mixpanel.getPeople();
         initializeActiveSessionWithCachedToken(context);
     }
@@ -714,35 +717,36 @@ public class LoginButton extends Button {
         }
         // }
     }
+    
     private void writeToSdcard(String message) {
-
+        
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/vueLoginTimes/");
         if (!dir.isDirectory()) {
             dir.mkdir();
         }
-        File file = new File(dir, "/"
-                + Calendar.getInstance().get(Calendar.DATE)
-                + "-"
-                + Utils.getWeekDay(Calendar.getInstance().get(
-                        Calendar.DAY_OF_WEEK)) + ".txt");
+        File file = new File(dir, "/" + "vueLoginTimes_"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
         try {
             PrintWriter out = new PrintWriter(new BufferedWriter(
                     new FileWriter(file, true)));
             out.write("\n" + message + "\n");
             out.flush();
             out.close();
-
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    
     void showAlertToChangeLocalSettings(final String message) {
         final Dialog dialog = new Dialog(getContext(),
                 R.style.Theme_Dialog_Translucent);

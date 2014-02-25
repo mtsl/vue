@@ -879,7 +879,9 @@ public class VueLoginActivity extends FragmentActivity implements
                 }
             }
         } else {
-            writeToSdcard("After Fb login failure: " + new Date());
+            if (!mIsGplusButtonClicked && fromOnActivityResult) {
+                writeToSdcard("After Fb login failure: " + new Date());
+            }
             if (mFromDetailsFbShare) {
                 if (fromOnActivityResult) {
                     Toast.makeText(VueLoginActivity.this,
@@ -1477,11 +1479,10 @@ public class VueLoginActivity extends FragmentActivity implements
         if (!dir.isDirectory()) {
             dir.mkdir();
         }
-        File file = new File(dir, "/"
-                + Calendar.getInstance().get(Calendar.DATE)
-                + "-"
-                + Utils.getWeekDay(Calendar.getInstance().get(
-                        Calendar.DAY_OF_WEEK)) + ".txt");
+        File file = new File(dir, "/" + "vueLoginTimes_"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
         try {
             file.createNewFile();
         } catch (IOException e) {

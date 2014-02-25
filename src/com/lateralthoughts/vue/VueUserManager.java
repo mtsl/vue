@@ -12,8 +12,12 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -31,6 +35,26 @@ import com.lateralthoughts.vue.utils.UserGetRequest;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class VueUserManager {
+    
+    private Response.ErrorListener mCreateFBGetUserErrorListener,
+            mCreateFBCreateUserErrorListener, mCreateFBUpdateUserErrorListener,
+            mUpdateFBGetUserErrorListener, mUpdateFBUpdateUserErrorListener,
+            mCreateGPGetUserErrorListener, mCreateGPCreateUserErrorListener,
+            mCreateGPUpdateUserErrorListener, mUpdateGPGetUserErrorListener,
+            mUpdateGPUpdateUserErrorListener;
+    private int mRetryCountForCreateFbGetUser,
+            mRetryCountForCreateFbCreateUser, mRetryCountForCreateFbUpdateUser,
+            mRetryCountForUpdateFbGetUser, mRetryCountForUpdateFbUpdateUser,
+            mRetryCountForCreateGPGetUser, mRetryCountForCreateGPCreateUser,
+            mRetryCountForCreateGPUpdateUser, mRetryCountForUpdateGPGetUser,
+            mRetryCountForUpdateGPUpdateUser;
+    private String mCreateFbCreateUserReq, mCreateFbUpdateUserReq,
+            mUpdateFbUpdateUserReq, mCreateGPCreateUserReq,
+            mCreateGPUpdateUserReq, mUpdateGPUpdateUserReq;
+    private static final int MAX_LOGIN_RETRY_COUNT = 5;
+    private static final String SERVER_ERROR_MESG_FOR_MAX_RETRY = "We seem to be having problems reaching the server. Please try again later.";
+    private static final int DELAY_TIME = 60000;
+    
     public interface UserUpdateCallback {
         public void onUserUpdated(VueUser user);
     }
@@ -207,18 +231,65 @@ public class VueUserManager {
                 }
             }
         };
-        final Response.ErrorListener errorListener = new Response.ErrorListener() {
+        mCreateFBCreateUserErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mRetryCountForCreateFbCreateUser++;
                 String errorMesg = "";
-                if (error != null && error.getMessage() != null) {
-                    errorMesg = error.getMessage();
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
                 }
-                writeToSdcard("After server login failure for facebook : "
-                        + new Date() + "???" + errorMesg);
+                writeToSdcard("After server login failure for create facebook create user: "
+                        + new Date() + "???" + errorMesg + "???");
+                if (mRetryCountForCreateFbCreateUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                    mCreateFbCreateUserReq,
+                                    UrlConstants.CREATE_USER_RESTURL, listener,
+                                    mCreateFBCreateUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(request);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForCreateFbCreateUser = 0;
+                    showServerMesgForMaxTries();
+                }
             }
         };
-        Response.Listener getListener = new Response.Listener<String>() {
+        mCreateFBUpdateUserErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mRetryCountForCreateFbUpdateUser++;
+                String errorMesg = "";
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
+                }
+                writeToSdcard("After server login failure for create facebook update user: "
+                        + new Date() + "???" + errorMesg);
+                if (mRetryCountForCreateFbUpdateUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                    mCreateFbUpdateUserReq,
+                                    UrlConstants.UPDATE_USER_RESTURL, listener,
+                                    mCreateFBUpdateUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(request);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForCreateFbUpdateUser = 0;
+                    showServerMesgForMaxTries();
+                }
+            }
+        };
+        final Response.Listener getListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonArray) {
                 if (null != jsonArray) {
@@ -237,9 +308,10 @@ public class VueUserManager {
                             userAsString = mapper.writeValueAsString(vueUser);
                         } catch (JsonProcessingException e) {
                         }
+                        mCreateFbUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                 userAsString, UrlConstants.UPDATE_USER_RESTURL,
-                                listener, errorListener);
+                                listener, mCreateFBUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
                         
@@ -257,10 +329,11 @@ public class VueUserManager {
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(user);
+                            mCreateFbCreateUserReq = userAsString;
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
                                     UrlConstants.CREATE_USER_RESTURL, listener,
-                                    errorListener);
+                                    mCreateFBCreateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
                         } catch (Exception e) {
@@ -279,32 +352,51 @@ public class VueUserManager {
                                         null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = mapper.writeValueAsString(user);
+                        mCreateFbCreateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                 userAsString, UrlConstants.CREATE_USER_RESTURL,
-                                listener, errorListener);
+                                listener, mCreateFBCreateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
                     } catch (Exception e) {
                         
                     }
-                    
                 }
             }
         };
-        Response.ErrorListener getErrorListener = new Response.ErrorListener() {
+        mCreateFBGetUserErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mRetryCountForCreateFbGetUser++;
                 String errorMesg = "";
-                if (error != null && error.getMessage() != null) {
-                    errorMesg = error.getMessage();
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
                 }
-                writeToSdcard("After server login failure for facebook: "
+                writeToSdcard("After server login failure for create facebook get user : "
                         + new Date() + "???" + errorMesg);
+                if (mRetryCountForCreateFbGetUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserGetRequest userGetRequest = new UserGetRequest(
+                                    UrlConstants.GET_USER_FACEBOOK_ID_RESTURL
+                                            + user.getFacebookId(),
+                                    getListener, mCreateFBGetUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(userGetRequest);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForCreateFbGetUser = 0;
+                    showServerMesgForMaxTries();
+                }
             }
         };
         UserGetRequest userGetRequest = new UserGetRequest(
                 UrlConstants.GET_USER_FACEBOOK_ID_RESTURL
-                        + user.getFacebookId(), getListener, getErrorListener);
+                        + user.getFacebookId(), getListener,
+                mCreateFBGetUserErrorListener);
         VueApplication.getInstance().getRequestQueue().add(userGetRequest);
     }
     
@@ -364,20 +456,65 @@ public class VueUserManager {
                 }
             }
         };
-        
-        final Response.ErrorListener errorListener = new Response.ErrorListener() {
+        mCreateGPCreateUserErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mRetryCountForCreateGPCreateUser++;
                 String errorMesg = "";
-                if (error != null && error.getMessage() != null) {
-                    errorMesg = error.getMessage();
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
                 }
-                writeToSdcard("After server login failure for google+: "
-                        + new Date() + "????" + errorMesg);
+                writeToSdcard("After server login failure for create google+ create user: "
+                        + new Date() + "???" + errorMesg);
+                if (mRetryCountForCreateGPCreateUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                    mCreateGPCreateUserReq,
+                                    UrlConstants.CREATE_USER_RESTURL, listener,
+                                    mCreateGPCreateUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(request);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForCreateGPCreateUser = 0;
+                    showServerMesgForMaxTries();
+                }
             }
         };
-        
-        Response.Listener getListener = new Response.Listener<String>() {
+        mCreateGPUpdateUserErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mRetryCountForCreateGPUpdateUser++;
+                String errorMesg = "";
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
+                }
+                writeToSdcard("After server login failure for create google+ update user: "
+                        + new Date() + "???" + errorMesg);
+                if (mRetryCountForCreateGPUpdateUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                    mCreateGPUpdateUserReq,
+                                    UrlConstants.UPDATE_USER_RESTURL, listener,
+                                    mCreateGPUpdateUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(request);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForCreateGPUpdateUser = 0;
+                    showServerMesgForMaxTries();
+                }
+            }
+        };
+        final Response.Listener getListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonArray) {
                 if (null != jsonArray) {
@@ -400,9 +537,10 @@ public class VueUserManager {
                         } catch (JsonProcessingException e) {
                             e.printStackTrace();
                         }
+                        mCreateGPUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                 userAsString, UrlConstants.UPDATE_USER_RESTURL,
-                                listener, errorListener);
+                                listener, mCreateGPUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
                     } else {
@@ -419,10 +557,11 @@ public class VueUserManager {
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(vueUser);
+                            mCreateGPCreateUserReq = userAsString;
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
                                     UrlConstants.CREATE_USER_RESTURL, listener,
-                                    errorListener);
+                                    mCreateGPCreateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
                         } catch (Exception e) {
@@ -441,9 +580,10 @@ public class VueUserManager {
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = mapper
                                 .writeValueAsString(vueUser);
+                        mCreateGPCreateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                 userAsString, UrlConstants.CREATE_USER_RESTURL,
-                                listener, errorListener);
+                                listener, mCreateGPCreateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
                     } catch (Exception e) {
@@ -453,21 +593,41 @@ public class VueUserManager {
                 
             }
         };
-        Response.ErrorListener getErrorListener = new Response.ErrorListener() {
+        
+        mCreateGPGetUserErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mRetryCountForCreateGPGetUser++;
                 String errorMesg = "";
-                if (error != null && error.getMessage() != null) {
-                    errorMesg = error.getMessage();
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
                 }
-                writeToSdcard("After server login failure for google+: "
-                        + new Date() + "????" + errorMesg);
+                writeToSdcard("After server login failure for create google+ get user : "
+                        + new Date() + "???" + errorMesg);
+                if (mRetryCountForCreateGPGetUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            UserGetRequest userGetRequest = new UserGetRequest(
+                                    UrlConstants.GET_USER_GOOGLEPLUS_ID_RESTURL
+                                            + vueUser.getGooglePlusId(),
+                                    getListener, mCreateGPGetUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(userGetRequest);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForCreateGPGetUser = 0;
+                    showServerMesgForMaxTries();
+                }
             }
         };
         UserGetRequest userGetRequest = new UserGetRequest(
                 UrlConstants.GET_USER_GOOGLEPLUS_ID_RESTURL
                         + vueUser.getGooglePlusId(), getListener,
-                getErrorListener);
+                mCreateGPGetUserErrorListener);
         VueApplication.getInstance().getRequestQueue().add(userGetRequest);
     }
     
@@ -520,19 +680,38 @@ public class VueUserManager {
                 }
             }
         };
-        final Response.ErrorListener errorListener = new Response.ErrorListener() {
+        
+        mUpdateFBUpdateUserErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mRetryCountForUpdateFbUpdateUser++;
                 String errorMesg = "";
-                if (error != null && error.getMessage() != null) {
-                    errorMesg = error.getMessage();
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
                 }
-                writeToSdcard("After server login failure for facebook: "
-                        + new Date() + "????" + errorMesg);
+                writeToSdcard("After server login failure for Update facebook update user: "
+                        + new Date() + "???" + errorMesg);
+                if (mRetryCountForUpdateFbUpdateUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                    mUpdateFbUpdateUserReq,
+                                    UrlConstants.UPDATE_USER_RESTURL, listener,
+                                    mCreateFBUpdateUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(request);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForUpdateFbUpdateUser = 0;
+                    showServerMesgForMaxTries();
+                }
             }
         };
         
-        Response.Listener getListener = new Response.Listener<String>() {
+        final Response.Listener getListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonArray) {
                 if (null != jsonArray) {
@@ -552,9 +731,10 @@ public class VueUserManager {
                             userAsString = mapper.writeValueAsString(vueUser2);
                         } catch (JsonProcessingException e) {
                         }
+                        mUpdateFbUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                 userAsString, UrlConstants.UPDATE_USER_RESTURL,
-                                listener, errorListener);
+                                listener, mUpdateFBUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
                         
@@ -572,10 +752,11 @@ public class VueUserManager {
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(user);
+                            mUpdateFbUpdateUserReq = userAsString;
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
                                     UrlConstants.UPDATE_USER_RESTURL, listener,
-                                    errorListener);
+                                    mUpdateFBUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
                         } catch (Exception e) {
@@ -594,9 +775,10 @@ public class VueUserManager {
                                         null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = mapper.writeValueAsString(user);
+                        mUpdateFbUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                 userAsString, UrlConstants.UPDATE_USER_RESTURL,
-                                listener, errorListener);
+                                listener, mUpdateFBUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
                     } catch (Exception e) {
@@ -606,20 +788,39 @@ public class VueUserManager {
                 }
             }
         };
-        Response.ErrorListener getErrorListener = new Response.ErrorListener() {
+        mUpdateFBGetUserErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mRetryCountForUpdateFbGetUser++;
                 String errorMesg = "";
-                if (error != null && error.getMessage() != null) {
-                    errorMesg = error.getMessage();
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
                 }
-                writeToSdcard("After server login failure for facebook: "
+                writeToSdcard("After server login failure for update facebook get user : "
                         + new Date() + "???" + errorMesg);
+                if (mRetryCountForUpdateFbGetUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserGetRequest userGetRequest = new UserGetRequest(
+                                    UrlConstants.GET_USER_FACEBOOK_ID_RESTURL
+                                            + user.getFacebookId(),
+                                    getListener, mUpdateFBGetUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(userGetRequest);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForUpdateFbGetUser = 0;
+                    showServerMesgForMaxTries();
+                }
             }
         };
         UserGetRequest userGetRequest = new UserGetRequest(
                 UrlConstants.GET_USER_FACEBOOK_ID_RESTURL
-                        + user.getFacebookId(), getListener, getErrorListener);
+                        + user.getFacebookId(), getListener,
+                mUpdateFBGetUserErrorListener);
         VueApplication.getInstance().getRequestQueue().add(userGetRequest);
     }
     
@@ -674,19 +875,37 @@ public class VueUserManager {
             }
         };
         
-        final Response.ErrorListener errorListener = new Response.ErrorListener() {
+        mUpdateGPUpdateUserErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mRetryCountForUpdateGPUpdateUser++;
                 String errorMesg = "";
-                if (error != null && error.getMessage() != null) {
-                    errorMesg = error.getMessage();
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
                 }
-                writeToSdcard("After server login failure for google+: "
+                writeToSdcard("After server login failure for Update google+ update user: "
                         + new Date() + "???" + errorMesg);
+                if (mRetryCountForUpdateGPUpdateUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                    mUpdateGPUpdateUserReq,
+                                    UrlConstants.UPDATE_USER_RESTURL, listener,
+                                    mUpdateGPUpdateUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(request);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForUpdateGPUpdateUser = 0;
+                    showServerMesgForMaxTries();
+                }
             }
         };
         
-        Response.Listener getListener = new Response.Listener<String>() {
+        final Response.Listener getListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonArray) {
                 if (null != jsonArray) {
@@ -706,9 +925,10 @@ public class VueUserManager {
                             userAsString = mapper.writeValueAsString(vueUser2);
                         } catch (JsonProcessingException e) {
                         }
+                        mUpdateGPUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                 userAsString, UrlConstants.UPDATE_USER_RESTURL,
-                                listener, errorListener);
+                                listener, mUpdateGPUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
                         
@@ -726,10 +946,11 @@ public class VueUserManager {
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(vueUser);
+                            mUpdateGPUpdateUserReq = userAsString;
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
                                     UrlConstants.UPDATE_USER_RESTURL, listener,
-                                    errorListener);
+                                    mUpdateGPUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
                         } catch (Exception e) {
@@ -748,9 +969,10 @@ public class VueUserManager {
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = mapper
                                 .writeValueAsString(vueUser);
+                        mUpdateGPUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                 userAsString, UrlConstants.UPDATE_USER_RESTURL,
-                                listener, errorListener);
+                                listener, mUpdateGPUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
                     } catch (Exception e) {
@@ -759,22 +981,39 @@ public class VueUserManager {
                 }
             }
         };
-        
-        Response.ErrorListener getErrorListener = new Response.ErrorListener() {
+        mUpdateGPGetUserErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mRetryCountForUpdateGPGetUser++;
                 String errorMesg = "";
-                if (error != null && error.getMessage() != null) {
-                    errorMesg = error.getMessage();
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
                 }
-                writeToSdcard("After server login failure for google+: "
+                writeToSdcard("After server login failure for update google+ get user : "
                         + new Date() + "???" + errorMesg);
+                if (mRetryCountForUpdateGPGetUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserGetRequest userGetRequest = new UserGetRequest(
+                                    UrlConstants.GET_USER_GOOGLEPLUS_ID_RESTURL
+                                            + vueUser.getGooglePlusId(),
+                                    getListener, mUpdateGPGetUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(userGetRequest);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForUpdateGPGetUser = 0;
+                    showServerMesgForMaxTries();
+                }
             }
         };
         UserGetRequest userGetRequest = new UserGetRequest(
                 UrlConstants.GET_USER_GOOGLEPLUS_ID_RESTURL
                         + vueUser.getGooglePlusId(), getListener,
-                getErrorListener);
+                mUpdateGPGetUserErrorListener);
         VueApplication.getInstance().getRequestQueue().add(userGetRequest);
     }
     
@@ -866,11 +1105,10 @@ public class VueUserManager {
         if (!dir.isDirectory()) {
             dir.mkdir();
         }
-        File file = new File(dir, "/"
-                + Calendar.getInstance().get(Calendar.DATE)
-                + "-"
-                + Utils.getWeekDay(Calendar.getInstance().get(
-                        Calendar.DAY_OF_WEEK)) + ".txt");
+        File file = new File(dir, "/" + "vueLoginTimes_"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -889,4 +1127,25 @@ public class VueUserManager {
         }
     }
     
+    private void showServerMesgForMaxTries() {
+        SharedPreferences sharedPreferencesObj = VueApplication.getInstance()
+                .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+        Editor editor = sharedPreferencesObj.edit();
+        editor.putBoolean(VueConstants.VUE_LOGIN, false);
+        editor.putBoolean(VueConstants.FACEBOOK_LOGIN, false);
+        editor.putBoolean(VueConstants.GOOGLEPLUS_LOGIN, false);
+        editor.commit();
+        Toast.makeText(VueApplication.getInstance(),
+                SERVER_ERROR_MESG_FOR_MAX_RETRY, Toast.LENGTH_LONG).show();
+        Intent i = new Intent(VueApplication.getInstance(),
+                VueLoginActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle b = new Bundle();
+        b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+        b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+        b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+        b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+        i.putExtras(b);
+        VueApplication.getInstance().startActivity(i);
+    }
 }
