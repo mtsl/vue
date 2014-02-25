@@ -55,6 +55,7 @@ public class VueApplication extends Application {
     public long mLaunchTime;
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
+    public boolean mInstalledAppsLoadStatus = false;
     public String MIXPANEL_TOKEN = "d5ac13097eaf8acefc264d21457307a1";// "178a869c17a98b1f044ae5548ad9f4c4";
                                                                       // //
                                                                       // Vidya
@@ -193,7 +194,6 @@ public class VueApplication extends Application {
         mScreenHeight = dm.heightPixels;
         mScreenWidth = dm.widthPixels;
         mVolleyRequestQueue = Volley.newRequestQueue(this);
-        getInstalledApplications(this);
         Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
                 crittercismConfig);
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
@@ -331,11 +331,12 @@ public class VueApplication extends Application {
         return mAisleWindow;
     }
     
-    private void getInstalledApplications(final Context context) {
+    public void getInstalledApplications(final Context context) {
         new Thread(new Runnable() {
             
             @Override
             public void run() {
+                mInstalledAppsLoadStatus = false;
                 mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
                 for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
                     if (Utils.appInstalledOrNot(SHOPPINGAPP_PACKAGES_ARRAY[i],
@@ -357,6 +358,7 @@ public class VueApplication extends Application {
                 }
                 mMoreInstalledApplicationDetailsList = Utils
                         .getInstalledApplicationsList(getApplicationContext());
+                mInstalledAppsLoadStatus = true;
                 
             }
         }).start();

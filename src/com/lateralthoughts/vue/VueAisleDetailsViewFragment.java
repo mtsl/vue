@@ -721,17 +721,23 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
-                closeKeyboard();
-                // to smoothen the touch response
-                int addAilseDelay = 200;
-                new Handler().postDelayed(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        addImageToAisle();
-                    }
-                }, addAilseDelay);
+                if (!VueApplication.getInstance().mInstalledAppsLoadStatus) {
+                    Toast.makeText(getActivity(),
+                            "Please try again... Installed apps are loading.",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
+                    closeKeyboard();
+                    // to smoothen the touch response
+                    int addAilseDelay = 200;
+                    new Handler().postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            addImageToAisle();
+                        }
+                    }, addAilseDelay);
+                }
             }
         });
         detailsAddImageLayout.setOnLongClickListener(new OnLongClickListener() {
