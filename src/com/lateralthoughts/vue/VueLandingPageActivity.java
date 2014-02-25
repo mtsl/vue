@@ -121,7 +121,6 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mIsFromOncreate = true;
     public static boolean sMyPointsAvailable = false;
     
-    
     // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
     public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
@@ -820,9 +819,11 @@ public class VueLandingPageActivity extends Activity implements
                 int statusBarHeight = rect.top;
                 VueApplication.getInstance().setmStatusBarHeight(
                         statusBarHeight);
-                if (VueConnectivityManager.isNetworkConnected(VueLandingPageActivity.this)) {
-                    SharedPreferences sharedPreferencesObj = VueLandingPageActivity.this.getSharedPreferences(
-                            VueConstants.SHAREDPREFERENCE_NAME, 0);
+                if (VueConnectivityManager
+                        .isNetworkConnected(VueLandingPageActivity.this)) {
+                    SharedPreferences sharedPreferencesObj = VueLandingPageActivity.this
+                            .getSharedPreferences(
+                                    VueConstants.SHAREDPREFERENCE_NAME, 0);
                     mLastRefreshTime = sharedPreferencesObj.getLong(
                             VueConstants.SCREEN_REFRESH_TIME, 0);
                     if (mLastRefreshTime != 0) {
@@ -831,8 +832,9 @@ public class VueLandingPageActivity extends Activity implements
                         long difMins = currentMins - mLastRefreshTime;
                         if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
                             // Clean the data and fetch from server again.
-                            Toast.makeText(VueLandingPageActivity.this, "Syncing with server",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(VueLandingPageActivity.this,
+                                    "Syncing with server", Toast.LENGTH_SHORT)
+                                    .show();
                             StackViews.getInstance().clearStack();
                             VueTrendingAislesDataModel
                                     .getInstance(VueApplication.getInstance())
@@ -847,8 +849,9 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        if(mIsFromOncreate) {
-            openHelpTask();    
+        if (mIsFromOncreate) {
+            openHelpTask();
+            VueApplication.getInstance().getInstalledApplications(this);
         }
         if (Utils.sIsLoged) {
             Logging.i("profile", "profile Landing Onresume ended");
@@ -2008,7 +2011,8 @@ public class VueLandingPageActivity extends Activity implements
             }
         });
     }
-    private void openHelpTask(){
+    
+    private void openHelpTask() {
         if (Utils.sIsLoged) {
             Logging.i("profile", "help code started");
         }
@@ -2028,21 +2032,18 @@ public class VueLandingPageActivity extends Activity implements
                     VueConstants.HelpSCREEN_FROM_LANDING);
             startActivity(intent);
         } else {
-            sharedPreferencesObj = this.getSharedPreferences(
-                    VueConstants.SHAREDPREFERENCE_NAME, 0);
-            boolean aisleSwipe = sharedPreferencesObj.getBoolean(
-                    VueConstants.AISLE_SWIPE, false);
-            if (!aisleSwipe) {
-                long hours = Utils.dateDifference(sharedPreferencesObj.getLong(
-                        VueConstants.APP_FIRST_TIME_OPENED_TIME, 0));
-                if (hours != -1 && hours >= 48) {
-                    // mShowSwipeHelp = true;
-                    mShowSwipeHelp = false;
-                    Editor editor = sharedPreferencesObj.edit();
-                    editor.putBoolean(VueConstants.AISLE_SWIPE, true);
-                    editor.commit();
-                }
-            }
+            /*
+             * sharedPreferencesObj = this.getSharedPreferences(
+             * VueConstants.SHAREDPREFERENCE_NAME, 0); boolean aisleSwipe =
+             * sharedPreferencesObj.getBoolean( VueConstants.AISLE_SWIPE,
+             * false); if (!aisleSwipe) { long hours =
+             * Utils.dateDifference(sharedPreferencesObj.getLong(
+             * VueConstants.APP_FIRST_TIME_OPENED_TIME, 0)); if (hours != -1 &&
+             * hours >= 48) { // mShowSwipeHelp = true; mShowSwipeHelp = false;
+             * Editor editor = sharedPreferencesObj.edit();
+             * editor.putBoolean(VueConstants.AISLE_SWIPE, true);
+             * editor.commit(); } }
+             */
             VueUser storedVueUser = null;
             try {
                 storedVueUser = Utils.readUserObjectFromFile(this,
@@ -2057,101 +2058,108 @@ public class VueLandingPageActivity extends Activity implements
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // TODO: This is to register old users in mixpanel. Remove this code after 2 months.
-            if(storedVueUser != null && storedUserProfile != null) {
-            mixpanel.identify(storedVueUser.getEmail());
-            people = mixpanel.getPeople();
-            people.identify(storedVueUser.getEmail());
-            
-            people.set("$first_name", storedVueUser.getFirstName());
-            people.set("$last_name", storedVueUser.getLastName());
-            people.set("Gender", storedUserProfile.getUserGender());
-            people.set("$email", storedVueUser.getEmail());
-            people.set("Current location", storedUserProfile.getUserLocation());
-            String loginWith;
-            if(!storedVueUser.getFacebookId().equals(VueUser.DEFAULT_FACEBOOK_ID)) {
-                loginWith = "Facebook";
-            } else if (!storedVueUser.getGooglePlusId().equals(VueUser.DEFAULT_GOOGLEPLUS_ID)) {
-                loginWith = "GooglePlus";
-            } else {
-                loginWith = "Guest";
+            // TODO: This is to register old users in mixpanel. Remove this code
+            // after 2 months.
+            if (storedVueUser != null && storedUserProfile != null) {
+                mixpanel.identify(storedVueUser.getEmail());
+                people = mixpanel.getPeople();
+                people.identify(storedVueUser.getEmail());
+                
+                people.set("$first_name", storedVueUser.getFirstName());
+                people.set("$last_name", storedVueUser.getLastName());
+                people.set("Gender", storedUserProfile.getUserGender());
+                people.set("$email", storedVueUser.getEmail());
+                people.set("Current location",
+                        storedUserProfile.getUserLocation());
+                String loginWith;
+                if (!storedVueUser.getFacebookId().equals(
+                        VueUser.DEFAULT_FACEBOOK_ID)) {
+                    loginWith = "Facebook";
+                } else if (!storedVueUser.getGooglePlusId().equals(
+                        VueUser.DEFAULT_GOOGLEPLUS_ID)) {
+                    loginWith = "GooglePlus";
+                } else {
+                    loginWith = "Guest";
+                }
+                people.set("loggedIn with", loginWith);
+                JSONObject nameTag = new JSONObject();
+                try {
+                    // Set an "mp_name_tag" super property
+                    // for Streams if you find it useful.
+                    // TODO: Check how it works.
+                    nameTag.put("mp_name_tag", storedVueUser.getFirstName()
+                            + " " + storedVueUser.getLastName());
+                    mixpanel.registerSuperProperties(nameTag);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-            people.set("loggedIn with", loginWith);
-            JSONObject nameTag = new JSONObject();
+            // PackageInfo packageInfo;
             try {
-                // Set an "mp_name_tag" super property
-                // for Streams if you find it useful.
-                // TODO: Check how it works.
-                nameTag.put("mp_name_tag",
-                        storedVueUser.getFirstName() + " "
-                                + storedVueUser.getLastName());
-                mixpanel.registerSuperProperties(nameTag);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            }
-            PackageInfo packageInfo;
-            try {
-                packageInfo = this.getPackageManager().getPackageInfo(
-                        VueLandingPageActivity.this.getPackageName(), 0);
-                int versionCode = packageInfo.versionCode;
+                /*
+                 * packageInfo = this.getPackageManager().getPackageInfo(
+                 * VueLandingPageActivity.this.getPackageName(), 0); int
+                 * versionCode = packageInfo.versionCode;
+                 */
                 if (storedVueUser != null) {
-                    sharedPreferencesObj = this.getSharedPreferences(
-                            VueConstants.SHAREDPREFERENCE_NAME, 0);
-                    long preVersionCode = sharedPreferencesObj.getLong(
-                            VueConstants.VERSION_CODE_CHANGE, 0);
-                    if (versionCode != preVersionCode) {
-                        Editor editor = sharedPreferencesObj.edit();
-                        editor.putLong(VueConstants.VERSION_CODE_CHANGE,
-                                versionCode);
-                        editor.commit();
-                        if (storedVueUser != null
-                                && storedVueUser.getGooglePlusId().equals(
-                                        VueUser.DEFAULT_GOOGLEPLUS_ID)
-                                && storedVueUser.getFacebookId().equals(
-                                        VueUser.DEFAULT_FACEBOOK_ID)) {
-                            mixpanel.identify(storedVueUser.getEmail());
-                            people = mixpanel.getPeople();
-                            people.identify(storedVueUser.getEmail());
-                            JSONObject nameTag = new JSONObject();
-                            try {
-                                // Set an "mp_name_tag" super property
-                                // for Streams if you find it useful.
-                                // TODO: Check how it works.
-                                nameTag.put("mp_name_tag",
-                                        storedVueUser.getFirstName() + " "
-                                                + storedVueUser.getLastName());
-                                mixpanel.registerSuperProperties(nameTag);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            // TODO: start the LoginActivity
-                            Intent i = new Intent(this, VueLoginActivity.class);
-                            Bundle b = new Bundle();
-                            b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
-                                    true);
-                            b.putString(VueConstants.FROM_INVITEFRIENDS, null);
-                            b.putBoolean(
-                                    VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
-                                    false);
-                            b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
-                                    false);
-                            b.putBoolean(
-                                    VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG,
-                                    mShowSwipeHelp);
-                            b.putString(
-                                    VueConstants.GUEST_LOGIN_MESSAGE,
-                                    getResources().getString(
-                                            R.string.guest_login_message));
-                            i.putExtras(b);
-                            startActivity(i);
+                    /*
+                     * sharedPreferencesObj = this.getSharedPreferences(
+                     * VueConstants.SHAREDPREFERENCE_NAME, 0);
+                     */
+                    /*
+                     * long preVersionCode = sharedPreferencesObj.getLong(
+                     * VueConstants.VERSION_CODE_CHANGE, 0); if (versionCode !=
+                     * preVersionCode) { Editor editor =
+                     * sharedPreferencesObj.edit();
+                     * editor.putLong(VueConstants.VERSION_CODE_CHANGE,
+                     * versionCode); editor.commit();
+                     */
+                    if (storedVueUser != null
+                            && storedVueUser.getGooglePlusId().equals(
+                                    VueUser.DEFAULT_GOOGLEPLUS_ID)
+                            && storedVueUser.getFacebookId().equals(
+                                    VueUser.DEFAULT_FACEBOOK_ID)) {
+                        mixpanel.identify(storedVueUser.getEmail());
+                        people = mixpanel.getPeople();
+                        people.identify(storedVueUser.getEmail());
+                        JSONObject nameTag = new JSONObject();
+                        try {
+                            // Set an "mp_name_tag" super property
+                            // for Streams if you find it useful.
+                            // TODO: Check how it works.
+                            nameTag.put("mp_name_tag",
+                                    storedVueUser.getFirstName() + " "
+                                            + storedVueUser.getLastName());
+                            mixpanel.registerSuperProperties(nameTag);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+                        // TODO: start the LoginActivity
+                        Intent i = new Intent(this, VueLoginActivity.class);
+                        Bundle b = new Bundle();
+                        b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, true);
+                        b.putString(VueConstants.FROM_INVITEFRIENDS, null);
+                        b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
+                                false);
+                        b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+                        b.putBoolean(
+                                VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG,
+                                mShowSwipeHelp);
+                        b.putString(
+                                VueConstants.GUEST_LOGIN_MESSAGE,
+                                getResources().getString(
+                                        R.string.guest_login_message));
+                        i.putExtras(b);
+                        startActivity(i);
+                        /* } */
                     } else {
                         if (mShowSwipeHelp) {
                             
-                           /*   Intent swipeHelpIntent = new Intent(this,
-                              SwipeHelp.class); startActivity(swipeHelpIntent);*/
-                             
+                            /*
+                             * Intent swipeHelpIntent = new Intent(this,
+                             * SwipeHelp.class); startActivity(swipeHelpIntent);
+                             */
+                            
                         }
                     }
                     VueApplication.getInstance().setmUserInitials(
@@ -2194,6 +2202,6 @@ public class VueLandingPageActivity extends Activity implements
         if (Utils.sIsLoged) {
             Logging.i("profile", "help code ended");
         }
-      
+        
     }
 }
