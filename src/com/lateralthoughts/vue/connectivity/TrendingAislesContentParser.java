@@ -17,6 +17,8 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.utils.Logging;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class TrendingAislesContentParser extends ResultReceiver {
     private int mState;
@@ -100,8 +102,24 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                     .parseTrendingAislesResultData(
                                             resultData.getString("result"),
                                             resultData.getBoolean("loadMore"));
+                            if(aislesList != null && aislesList.size() <= 4) {
+                                int listCount = VueTrendingAislesDataModel
+                                        .getInstance(VueApplication.getInstance()).listSize();
+                            if(  listCount <= 5 && VueLandingPageActivity.mLandingScreenName
+                                    .equalsIgnoreCase("Trending")) {
+                                if (Utils.sIsLoged) {
+                                    Logging.i("profile", "profile aisle parse automatic request: ");
+                                }
+                                Utils.sAisleParserCount = -1;
+                                VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getNetworkHandler()
+                                .requestMoreAisle(
+                                        true,
+                                         "Trending");
+                            }
+                            } 
                             int offset = resultData.getInt("offset");
-                            
                             if (VueLandingPageActivity.landingPageActivity != null
                                     && VueLandingPageActivity.mLandingScreenName != null
                                     && (VueLandingPageActivity.mLandingScreenName

@@ -14,13 +14,11 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.StackView;
 
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.DbHelper;
 import com.lateralthoughts.vue.connectivity.NetworkHandler;
 import com.lateralthoughts.vue.ui.NotifyProgress;
-import com.lateralthoughts.vue.ui.StackViews;
 
 public class VueTrendingAislesDataModel {
     

@@ -91,7 +91,7 @@ public class VueContentGateway {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
                     if(Utils.sIsLoged){
-                        Logging.i("profile", "profile aisles successfull response");
+                        Logging.i("profile", "profile aislesinitial successfull response");
                     }
                     if (null != jsonArray) {
                         Bundle responseBundle = new Bundle();
@@ -131,7 +131,7 @@ public class VueContentGateway {
                     DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             if(Utils.sIsLoged){
-                Logging.i("profile", "profile aisles request started");
+                Logging.i("profile", "profile aislesinitial request started");
             }
             VueApplication.getInstance().getRequestQueue().add(vueRequest);
         }

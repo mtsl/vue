@@ -1,7 +1,13 @@
 package com.lateralthoughts.vue.parser;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -10,6 +16,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.os.Environment;
 
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -57,8 +65,9 @@ public class Parser {
             if (Utils.sIsLoged) {
                 if (aisleWindowContentList != null)
                     Logging.i("profile",
-                            "profile aisle parsing ended: count is "
+                            "profile aislesinitial request started : "
                                     + aisleWindowContentList.size());
+                
             }
             
         } catch (JSONException e) {
@@ -73,6 +82,7 @@ public class Parser {
             if (Utils.sIsLoged) {
                 Logging.i("profile", "profile aisle parsing string: "
                         + resultString);
+               // writeToSdcard(resultString + "\n");
             }
             contentArray = new JSONArray(resultString);
             if (!loadMore) {
@@ -560,5 +570,35 @@ public class Parser {
             }
         }
         return bookmarkedAisles;
+    }
+    
+    private void writeToSdcard(String message) {
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/AisleResponse/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/" + "AisleResponse"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+        
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            
+            e.printStackTrace();
+        }
     }
 }
