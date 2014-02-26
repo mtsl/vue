@@ -826,8 +826,8 @@ public class DataBaseManager {
      * @param String
      *            aisleID
      * */
-    public void bookMarkOrUnBookmarkAisleToDb(boolean isBookmarked, int bookmarkCount,
-            Long bookmarkId, String aisleID, boolean isDirty) {
+    public void bookMarkOrUnBookmarkAisleToDb(boolean isBookmarked,
+            int bookmarkCount, Long bookmarkId, String aisleID, boolean isDirty) {
         ContentValues values = new ContentValues();
         values.put(VueConstants.IS_BOOKMARKED, isBookmarked);
         values.put(VueConstants.BOOKMARK_COUNT, bookmarkCount);
@@ -845,8 +845,7 @@ public class DataBaseManager {
         values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, isBookmarked);
         values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
         if (isBookmarked) {
-            String url = UrlConstants.GET_AISLE_RESTURL + "/"
-                    + bookmarkedAisleId;
+            String url = UrlConstants.GET_AISLE_RESTURL + bookmarkedAisleId;
             
             Response.Listener listener = new Response.Listener<JSONObject>() {
                 

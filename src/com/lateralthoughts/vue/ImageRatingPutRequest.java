@@ -34,7 +34,8 @@ public class ImageRatingPutRequest extends Request<String> {
             mEntity.setContentType("application/json;charset=UTF-8");
             mEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
                     "application/json;charset=UTF-8"));
-        } catch (UnsupportedEncodingException ex) {
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
     
