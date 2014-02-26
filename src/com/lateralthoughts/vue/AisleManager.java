@@ -16,7 +16,6 @@ import org.apache.http.util.EntityUtils;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
@@ -228,8 +227,6 @@ public class AisleManager {
                 }
                 
             };
-            Log.e("Aisle Manager", "bookmark request : "
-                    + bookmarkAisleAsString);
             @SuppressWarnings("unchecked")
             BookmarkPutRequest request = new BookmarkPutRequest(
                     bookmarkAisleAsString, listener, errorListener, url
@@ -372,7 +369,6 @@ public class AisleManager {
                     + userId);
             HttpPut httpPut = new HttpPut(url.toString());
             StringEntity entity = new StringEntity(ratingString);
-            System.out.println("ImageRating create request: " + ratingString);
             entity.setContentType("application/json;charset=UTF-8");
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
                     "application/json;charset=UTF-8"));
@@ -384,7 +380,6 @@ public class AisleManager {
                     && response.getStatusLine().getStatusCode() == 200) {
                 String responseMessage = EntityUtils.toString(response
                         .getEntity());
-                System.out.println("Response: " + responseMessage);
                 if (responseMessage != null && responseMessage.length() > 0) {
                     try {
                         ImageRating imgRating = (new ObjectMapper()).readValue(
