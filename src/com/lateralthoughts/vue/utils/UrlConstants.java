@@ -10,7 +10,7 @@ public class UrlConstants {
     private static final String CANARY_SERVER_PROJECT_ID = "876955216873";
     private static final String DEVELOPMENT_SERVER_PROJECT_ID = "477960328185";
     private static final String DEVELOPMENT1_SERVER_PROJECT_ID = "341676083313";
-    public static final String CURRENT_SERVER_PROJECT_ID = DEVELOPMENT1_SERVER_PROJECT_ID;
+    public static final String CURRENT_SERVER_PROJECT_ID = CANARY_SERVER_PROJECT_ID;
     
     /**
      * (C)reate routine URL's
