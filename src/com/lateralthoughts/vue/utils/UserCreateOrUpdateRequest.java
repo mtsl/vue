@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -31,7 +33,10 @@ public class UserCreateOrUpdateRequest extends Request<String> {
         muserAsString = userAsString;
         try {
             mEntity = new StringEntity(muserAsString);
-        } catch (UnsupportedEncodingException ex) {
+            mEntity.setContentType("application/json;charset=UTF-8");
+            mEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+                    "application/json;charset=UTF-8"));
+        } catch (Exception ex) {
         }
     }
     

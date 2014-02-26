@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -29,6 +31,9 @@ public class BookmarkPutRequest extends Request<String> {
         mBookmarkString = aisleAsString;
         try {
             mEntity = new StringEntity(mBookmarkString);
+            mEntity.setContentType("application/json;charset=UTF-8");
+            mEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+                    "application/json;charset=UTF-8"));
         } catch (UnsupportedEncodingException ex) {
         }
     }

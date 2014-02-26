@@ -466,7 +466,11 @@ public class VueUserManager {
                             + error.networkResponse.statusCode;
                 }
                 writeToSdcard("After server login failure for create google+ create user: "
-                        + new Date() + "???" + errorMesg);
+                        + new Date()
+                        + "???"
+                        + errorMesg
+                        + "???"
+                        + mCreateGPCreateUserReq);
                 if (mRetryCountForCreateGPCreateUser < MAX_LOGIN_RETRY_COUNT) {
                     new Handler().postDelayed(new Runnable() {
                         @Override

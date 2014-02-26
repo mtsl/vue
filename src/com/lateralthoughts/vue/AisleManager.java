@@ -8,6 +8,7 @@ import org.apache.http.client.ClientProtocolException;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
@@ -300,7 +301,6 @@ public class AisleManager {
                     .getLastModifiedTimestamp());
             String imageRatingString = mapper
                     .writeValueAsString(imageRatingRequestObject);
-            
             @SuppressWarnings("rawtypes")
             Response.Listener listener = new Response.Listener<String>() {
                 
