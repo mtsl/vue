@@ -128,6 +128,7 @@ public class AisleContentBrowser extends ViewFlipper {
                                     .getImageId(mCurrentIndex), false,
                                     likesCount);
                             likesImage.setImageResource(R.drawable.heart_dark);
+                            mixpanelTrackImgLikeDislike(false, likesCount);
                             
                         } else {
                             mSpecialNeedsAdapter.setImageLikeStatus(true,
@@ -141,21 +142,14 @@ public class AisleContentBrowser extends ViewFlipper {
                                     likesCount);
                             likesImage.setImageResource(R.drawable.heart);
                             
+                            mixpanelTrackImgLikeDislike(true, likesCount);
+                         
+                            
                         }
                         if (mLikesCountView != null) {
                             mLikesCountView.setText(String.valueOf(likesCount));
                         }
-                        JSONObject aisleRateProps = new JSONObject();
-                        try {
-                            aisleRateProps.put("Aisle_Id",
-                                    mSpecialNeedsAdapter.getAisleId());
-                            aisleRateProps.put("Activity_Rated_From",
-                                    "LandingPageActivity");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        mixpanel.track("LandingPage_Aisle_Rated",
-                                aisleRateProps);
+                        
                     }
                 }
             });
@@ -210,6 +204,59 @@ public class AisleContentBrowser extends ViewFlipper {
                 }
             });
         }
+    }
+    
+    private void mixpanelTrackImgLikeDislike(boolean isliked, int likesCount) {
+        JSONObject aisleLikedProps = new JSONObject();
+        try {
+            AisleWindowContent ailseWindow = mSpecialNeedsAdapter.getWindowContent();
+            String imgOwnerId = ailseWindow.getAisleContext().mAisleOwnerImageURL;
+            String userId = VueTrendingAislesDataModel.getInstance(mContext)
+                    .getNetworkHandler().getUserId();
+            boolean isOwner = false;
+            if (imgOwnerId == userId) {
+                isOwner = true;
+            }
+            
+            aisleLikedProps.put("Image Id",
+                    mSpecialNeedsAdapter.getImageId(mCurrentIndex));
+            aisleLikedProps.put("Aisle Id", mSpecialNeedsAdapter
+                    .getAisleId());
+            aisleLikedProps.put("Image Position",mCurrentIndex);
+            aisleLikedProps.put("Is Aisle Owner", isOwner);
+            aisleLikedProps.put("Owner Name",
+                    ailseWindow.getAisleContext().mFirstName);
+            aisleLikedProps.put("Like Count", likesCount);
+            aisleLikedProps.put("Category",
+                    ailseWindow.getAisleContext().mCategory);
+            aisleLikedProps.put("Looking For",
+                    ailseWindow.getAisleContext().mLookingForItem);
+            aisleLikedProps.put("Occasion",
+                    ailseWindow.getAisleContext().mOccasion);
+            aisleLikedProps.put("Liked From", "Landing Screen");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        VueUser storedVueUser = null;
+        try {
+            storedVueUser = Utils.readUserObjectFromFile(
+                    VueApplication.getInstance(),
+                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            String userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
+            if(isliked) {
+                aisleLikedProps.put("Image Liked By",
+                        userName);
+                mixpanel.track("Image Liked", aisleLikedProps);
+            } else if(!isliked) {
+                aisleLikedProps.put("Image Unliked By",
+                        userName);
+                mixpanel.track("Image Unliked", aisleLikedProps);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+       
     }
     
     public ImageView getmStarIcon() {

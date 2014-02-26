@@ -64,4 +64,6 @@ public class UrlConstants {
             + "api/imagedelete";
     public static final String GET_IMAGE_RESTURL = SERVER_BASE_URL
             + "api/imageget/id/";
+ 
+ 
 }

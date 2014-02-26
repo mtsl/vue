@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -597,6 +598,7 @@ public class NetworkHandler {
                                     .parseBookmarkedAisles(responseMessage);
                             bookmarkedList.clear();
                             for (AisleBookmark aB : bookmarkedAisles) {
+                                Log.i("Bookmarked aisle ", "Bookmarked aisle by user: "+aB.getAisleId());
                                 DataBaseManager.getInstance(mContext)
                                         .updateBookmarkAisles(aB.getId(),
                                                 Long.toString(aB.getAisleId()),
@@ -692,7 +694,6 @@ public class NetworkHandler {
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
                     "application/json;charset=UTF-8"));
             httpPut.setEntity(entity);
-            
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpResponse response = httpClient.execute(httpPut);
             if (response.getEntity() != null
