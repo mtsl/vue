@@ -692,7 +692,6 @@ public class NetworkHandler {
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
                     "application/json;charset=UTF-8"));
             httpPut.setEntity(entity);
-            
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpResponse response = httpClient.execute(httpPut);
             if (response.getEntity() != null

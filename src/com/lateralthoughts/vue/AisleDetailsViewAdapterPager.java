@@ -1089,12 +1089,19 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 if (imgOwnerId == userId) {
                     isOwner = true;
                 }
+               
                 JSONObject aisleLikedProps = new JSONObject();
                 try {
+                    VueUser storedVueUser = null;
+                    storedVueUser = Utils.readUserObjectFromFile(
+                            VueApplication.getInstance(),
+                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                    String userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
                     aisleLikedProps.put("Image Id", mCurrentAisle
                             .getImageList().get(mCurrentDispImageIndex).mId);
                     aisleLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
                     aisleLikedProps.put("Is Aisle Owner", isOwner);
+                    aisleLikedProps.put("Image Position",mCurrentDispImageIndex);
                     aisleLikedProps.put("Owner Name",
                             mCurrentAisle.getAisleContext().mFirstName);
                     aisleLikedProps.put(
@@ -1108,7 +1115,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     aisleLikedProps.put("Occasion",
                             mCurrentAisle.getAisleContext().mOccasion);
                     aisleLikedProps.put("Unliked From", "Detail View Screen");
-                } catch (JSONException e) {
+                    aisleLikedProps.put("Image Unliked By", userName);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 mixpanel.track("Image Unliked", aisleLikedProps);
@@ -1127,9 +1135,15 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 }
                 JSONObject aisleLikedProps = new JSONObject();
                 try {
+                    VueUser storedVueUser = null;
+                    storedVueUser = Utils.readUserObjectFromFile(
+                            VueApplication.getInstance(),
+                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                    String userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
                     aisleLikedProps.put("Image Id", mCurrentAisle
                             .getImageList().get(mCurrentDispImageIndex).mId);
                     aisleLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
+                    aisleLikedProps.put("Image Position", mCurrentDispImageIndex);
                     aisleLikedProps.put("Is Aisle Owner", isOwner);
                     aisleLikedProps.put("Owner Name",
                             mCurrentAisle.getAisleContext().mFirstName);
@@ -1144,7 +1158,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     aisleLikedProps.put("Occasion",
                             mCurrentAisle.getAisleContext().mOccasion);
                     aisleLikedProps.put("Liked From", "Detail View Screen");
-                } catch (JSONException e) {
+                    aisleLikedProps.put("Image Liked By", userName);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 mixpanel.track("Image Liked", aisleLikedProps);
@@ -1318,9 +1333,15 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         }
         JSONObject aisleLikedProps = new JSONObject();
         try {
+            VueUser storedVueUser = null;
+            storedVueUser = Utils.readUserObjectFromFile(
+                    VueApplication.getInstance(),
+                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            String userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
             aisleLikedProps.put("Image Id",
                     mCurrentAisle.getImageList().get(position).mId);
             aisleLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
+            aisleLikedProps.put("Image Position", position);
             aisleLikedProps.put("Is Aisle Owner", isOwner);
             aisleLikedProps.put("Owner Name",
                     mCurrentAisle.getAisleContext().mFirstName);
@@ -1335,7 +1356,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             aisleLikedProps.put("Occasion",
                     mCurrentAisle.getAisleContext().mOccasion);
             aisleLikedProps.put("Liked From", "Detail View Screen");
-        } catch (JSONException e) {
+            aisleLikedProps.put("Image Liked By", userName);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         mixpanel.track("Image Liked", aisleLikedProps);
@@ -1392,10 +1414,16 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             isOwner = true;
         }
         JSONObject aisleUnLikedProps = new JSONObject();
+        VueUser storedVueUser = null;
         try {
+            storedVueUser = Utils.readUserObjectFromFile(
+                    VueApplication.getInstance(),
+                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            String userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
             aisleUnLikedProps.put("Image Id",
                     mCurrentAisle.getImageList().get(position).mId);
             aisleUnLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
+            aisleUnLikedProps.put("Image Position",mCurrentDispImageIndex);
             aisleUnLikedProps.put("Is Aisle Owner", isOwner);
             aisleUnLikedProps.put("Owner Name",
                     mCurrentAisle.getAisleContext().mFirstName);
@@ -1408,7 +1436,10 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             aisleUnLikedProps.put("Occasion",
                     mCurrentAisle.getAisleContext().mOccasion);
             aisleUnLikedProps.put("Unlike From", "Detail View Screen");
-        } catch (JSONException e) {
+            aisleUnLikedProps.put("Image Unliked By",
+                    userName);
+            
+        } catch (Exception e) {
             e.printStackTrace();
         }
         mixpanel.track("Image Unliked", aisleUnLikedProps);
