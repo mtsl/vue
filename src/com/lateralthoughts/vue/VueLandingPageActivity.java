@@ -864,7 +864,14 @@ public class VueLandingPageActivity extends Activity implements
         getActionBar().setDisplayHomeAsUpEnabled(true);
         if (mIsFromOncreate) {
             openHelpTask();
-            VueApplication.getInstance().getInstalledApplications(this);
+            new Handler().postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+                    VueApplication.getInstance().getInstalledApplications(VueLandingPageActivity.this);
+                }
+            }, 500);
+           
         }
         if (Utils.sIsLoged) {
             Logging.i("profile", "profile Landing Onresume ended");
@@ -1008,6 +1015,7 @@ public class VueLandingPageActivity extends Activity implements
                 mLandingScreenName = getString(R.string.sidemenu_sub_option_Recently_Viewed_Aisles);
                 VueTrendingAislesDataModel.getInstance(
                         VueApplication.getInstance()).dataObserver();
+                invalidateOptionsMenu();
             } else {
                 Toast.makeText(this, "No Recently Viewed aisles",
                         Toast.LENGTH_LONG).show();
@@ -1064,6 +1072,7 @@ public class VueLandingPageActivity extends Activity implements
             }
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).dataObserver();
+            invalidateOptionsMenu();
         } else {
             Toast.makeText(this, "No Bookmarked aisles", Toast.LENGTH_LONG)
                     .show();
@@ -1740,6 +1749,7 @@ public class VueLandingPageActivity extends Activity implements
                                     intent.getStringExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY));
                     mLandingScreenName = intent
                             .getStringExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY);
+                    invalidateOptionsMenu();
                 }
             }
         }

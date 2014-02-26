@@ -88,7 +88,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                         };
                         BookmarkPutRequest request = new BookmarkPutRequest(
                                 bookmarkAisleAsString, listener, errorListener,
-                                UrlConstants.CREATE_BOOKMARK_RESTURL + "/"
+                                UrlConstants.BOOKMARK_PUT_RESTURL + "/"
                                         + storedVueUser.getId());
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);

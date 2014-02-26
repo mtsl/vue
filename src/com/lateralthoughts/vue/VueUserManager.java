@@ -169,7 +169,7 @@ public class VueUserManager {
                     VueConstants.GCM_REGISTRATION_ID, null));
             String userAsString = mapper.writeValueAsString(newUser);
             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                    userAsString, UrlConstants.CREATE_USER_RESTURL, listener,
+                    userAsString, UrlConstants.USER_PUT_RESTURL, listener,
                     errorListener);
             VueApplication.getInstance().getRequestQueue().add(request);
         } catch (Exception e) {
@@ -248,7 +248,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mCreateFbCreateUserReq,
-                                    UrlConstants.CREATE_USER_RESTURL, listener,
+                                    UrlConstants.USER_PUT_RESTURL, listener,
                                     mCreateFBCreateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -277,7 +277,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mCreateFbUpdateUserReq,
-                                    UrlConstants.UPDATE_USER_RESTURL, listener,
+                                    UrlConstants.USER_PUT_RESTURL, listener,
                                     mCreateFBUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -310,7 +310,7 @@ public class VueUserManager {
                         }
                         mCreateFbUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.UPDATE_USER_RESTURL,
+                                userAsString, UrlConstants.USER_PUT_RESTURL,
                                 listener, mCreateFBUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -332,7 +332,7 @@ public class VueUserManager {
                             mCreateFbCreateUserReq = userAsString;
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
-                                    UrlConstants.CREATE_USER_RESTURL, listener,
+                                    UrlConstants.USER_PUT_RESTURL, listener,
                                     mCreateFBCreateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -354,7 +354,7 @@ public class VueUserManager {
                         String userAsString = mapper.writeValueAsString(user);
                         mCreateFbCreateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.CREATE_USER_RESTURL,
+                                userAsString, UrlConstants.USER_PUT_RESTURL,
                                 listener, mCreateFBCreateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -473,7 +473,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mCreateGPCreateUserReq,
-                                    UrlConstants.CREATE_USER_RESTURL, listener,
+                                    UrlConstants.USER_PUT_RESTURL, listener,
                                     mCreateGPCreateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -502,7 +502,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mCreateGPUpdateUserReq,
-                                    UrlConstants.UPDATE_USER_RESTURL, listener,
+                                    UrlConstants.USER_PUT_RESTURL, listener,
                                     mCreateGPUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -539,7 +539,7 @@ public class VueUserManager {
                         }
                         mCreateGPUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.UPDATE_USER_RESTURL,
+                                userAsString, UrlConstants.USER_PUT_RESTURL,
                                 listener, mCreateGPUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -560,7 +560,7 @@ public class VueUserManager {
                             mCreateGPCreateUserReq = userAsString;
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
-                                    UrlConstants.CREATE_USER_RESTURL, listener,
+                                    UrlConstants.USER_PUT_RESTURL, listener,
                                     mCreateGPCreateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -582,7 +582,7 @@ public class VueUserManager {
                                 .writeValueAsString(vueUser);
                         mCreateGPCreateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.CREATE_USER_RESTURL,
+                                userAsString, UrlConstants.USER_PUT_RESTURL,
                                 listener, mCreateGPCreateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -698,7 +698,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mUpdateFbUpdateUserReq,
-                                    UrlConstants.UPDATE_USER_RESTURL, listener,
+                                    UrlConstants.USER_PUT_RESTURL, listener,
                                     mCreateFBUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -733,7 +733,7 @@ public class VueUserManager {
                         }
                         mUpdateFbUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.UPDATE_USER_RESTURL,
+                                userAsString, UrlConstants.USER_PUT_RESTURL,
                                 listener, mUpdateFBUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -755,7 +755,7 @@ public class VueUserManager {
                             mUpdateFbUpdateUserReq = userAsString;
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
-                                    UrlConstants.UPDATE_USER_RESTURL, listener,
+                                    UrlConstants.USER_PUT_RESTURL, listener,
                                     mUpdateFBUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -777,7 +777,7 @@ public class VueUserManager {
                         String userAsString = mapper.writeValueAsString(user);
                         mUpdateFbUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.UPDATE_USER_RESTURL,
+                                userAsString, UrlConstants.USER_PUT_RESTURL,
                                 listener, mUpdateFBUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -892,7 +892,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mUpdateGPUpdateUserReq,
-                                    UrlConstants.UPDATE_USER_RESTURL, listener,
+                                    UrlConstants.USER_PUT_RESTURL, listener,
                                     mUpdateGPUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -927,7 +927,7 @@ public class VueUserManager {
                         }
                         mUpdateGPUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.UPDATE_USER_RESTURL,
+                                userAsString, UrlConstants.USER_PUT_RESTURL,
                                 listener, mUpdateGPUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -949,7 +949,7 @@ public class VueUserManager {
                             mUpdateGPUpdateUserReq = userAsString;
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
-                                    UrlConstants.UPDATE_USER_RESTURL, listener,
+                                    UrlConstants.USER_PUT_RESTURL, listener,
                                     mUpdateGPUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -971,7 +971,7 @@ public class VueUserManager {
                                 .writeValueAsString(vueUser);
                         mUpdateGPUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.UPDATE_USER_RESTURL,
+                                userAsString, UrlConstants.USER_PUT_RESTURL,
                                 listener, mUpdateGPUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);

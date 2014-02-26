@@ -96,7 +96,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
 					VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
 					mNotification);
 			ObjectMapper mapper = new ObjectMapper();
-			URL url = new URL(UrlConstants.CREATE_IMAGE_RESTURL);
+			URL url = new URL(UrlConstants.IMAGE_PUT_RESTURL);
 			HttpPut httpPut = new HttpPut(url.toString());
 			CountingStringEntity entity = new CountingStringEntity(
 					mapper.writeValueAsString(mVueImage));

@@ -6,7 +6,7 @@ public class UrlConstants {
     // "http://2dot10-java.vueapi-canary.appspot.com/";
     
     // Uncomment this to point to production content server
-    public static final String SERVER_BASE_URL = "http://2dot11-java.vueapi-canary-development1.appspot.com/";
+    public static final String SERVER_BASE_URL = "http://2dot12-restlet.vueapi-canary.appspot.com/";
     private static final String CANARY_SERVER_PROJECT_ID = "876955216873";
     private static final String DEVELOPMENT_SERVER_PROJECT_ID = "477960328185";
     private static final String DEVELOPMENT1_SERVER_PROJECT_ID = "341676083313";
@@ -15,20 +15,20 @@ public class UrlConstants {
     /**
      * (C)reate routine URL's
      */
-    public static final String CREATE_USER_RESTURL = SERVER_BASE_URL
-            + "api/usercreate";
-    public static final String CREATE_AISLE_RESTURL = SERVER_BASE_URL
-            + "api/aislecreate";
-    public static final String CREATE_IMAGE_RESTURL = SERVER_BASE_URL
-            + "api/imagecreate";
-    public static final String CREATE_BOOKMARK_RESTURL = SERVER_BASE_URL
-            + "api/aislebookmarksave";
-    public static final String CREATE_RATING_RESTURL = SERVER_BASE_URL
-            + "api/imageratingsave";
+    public static final String USER_PUT_RESTURL = SERVER_BASE_URL
+            + "api/userput";
+    public static final String AISLE_PUT_RESTURL = SERVER_BASE_URL
+            + "api/aisleput";
+    public static final String IMAGE_PUT_RESTURL = SERVER_BASE_URL
+            + "api/imageput";
+    public static final String BOOKMARK_PUT_RESTURL = SERVER_BASE_URL
+            + "api/aislebookmarkput";
+    public static final String IMAGE_RATING_PUT_RESTURL = SERVER_BASE_URL
+            + "api/imageratingput";
     public static final String CREATE_AISLECOMMENT_RESTURL = SERVER_BASE_URL
             + "api/aislecommentcreate";
-    public static final String CREATE_IMAGECOMMENT_RESTURL = SERVER_BASE_URL
-            + "api/imagecommentcreate";
+    public static final String IMAGECOMMENT_PUT_RESTURL = SERVER_BASE_URL
+            + "api/imagecommentput";
     
     public static final String GET_USER_RESTURL = SERVER_BASE_URL
             + "api/userget/id/";
@@ -54,15 +54,6 @@ public class UrlConstants {
             + "api/getUrlToUploadImage";
     public static final String GET_IMAGE_FILE_RESTURL = SERVER_BASE_URL
             + "upload";
-    
-    public static final String UPDATE_RATING_RESTURL = SERVER_BASE_URL
-            + "api/imageratingupdate";
-    public static final String UPDATE_BOOKMARK_RESTURL = SERVER_BASE_URL
-            + "api/aislebookmarkupdate";
-    public static final String UPDATE_USER_RESTURL = SERVER_BASE_URL
-            + "api/userupdate";
-    public static final String UPDATE_AISLE_RESTURL = SERVER_BASE_URL
-            + "api/aisleupdate";
     
     public static final String SEARCH_BY_KEYWORD_BASE_URL = SERVER_BASE_URL
             + "api/getaisleswithmatchingoccassion/";

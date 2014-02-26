@@ -683,7 +683,7 @@ public class NetworkHandler {
         ImageComment createdImageComment = null;
         ObjectMapper mapper = new ObjectMapper();
         if (VueConnectivityManager.isNetworkConnected(mContext)) {
-            URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL + "/"
+            URL url = new URL(UrlConstants.IMAGECOMMENT_PUT_RESTURL + "/"
                     + Long.valueOf(getUserObj().getId()).toString());
             HttpPut httpPut = new HttpPut(url.toString());
             StringEntity entity = new StringEntity(
