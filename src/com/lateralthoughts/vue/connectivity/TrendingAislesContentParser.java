@@ -102,7 +102,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                     .parseTrendingAislesResultData(
                                             resultData.getString("result"),
                                             resultData.getBoolean("loadMore"));
-                            if(aislesList != null && aislesList.size() <= 4) {
+                   /*         if(aislesList != null && aislesList.size() <= 4) {
                                 int listCount = VueTrendingAislesDataModel
                                         .getInstance(VueApplication.getInstance()).listSize();
                             if(  listCount <= 5 && VueLandingPageActivity.mLandingScreenName
@@ -118,7 +118,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                         true,
                                          "Trending");
                             }
-                            } 
+                            }*/ 
                             int offset = resultData.getInt("offset");
                             if (VueLandingPageActivity.landingPageActivity != null
                                     && VueLandingPageActivity.mLandingScreenName != null
