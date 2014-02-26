@@ -278,7 +278,12 @@ public class AisleManager {
                 }
                 
             };
+<<<<<<< HEAD
            
+=======
+            Log.e("Aisle Manager", "bookmark request : "
+                    + bookmarkAisleAsString);
+>>>>>>> 35c6c717e936d812f5a713ce493c1e01d2ff340c
             @SuppressWarnings("unchecked")
             BookmarkPutRequest request = new BookmarkPutRequest(
                     bookmarkAisleAsString, listener, errorListener, url
@@ -334,23 +339,10 @@ public class AisleManager {
     
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
-        String url;
-        if (imageRating.mId == null) {
-            url = UrlConstants.IMAGE_RATING_PUT_RESTURL + "/";
-        } else {
-            url = UrlConstants.IMAGE_RATING_PUT_RESTURL + "/";
-        }
         
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
-            VueUser storedVueUser = null;
-            try {
-                storedVueUser = Utils.readUserObjectFromFile(
-                        VueApplication.getInstance(),
-                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            
             ObjectMapper mapper = new ObjectMapper();
             com.lateralthoughts.vue.domain.ImageRating imageRatingRequestObject = new com.lateralthoughts.vue.domain.ImageRating();
             imageRatingRequestObject.setId(imageRating.getId());
@@ -359,58 +351,60 @@ public class AisleManager {
             imageRatingRequestObject.setLiked(imageRating.getLiked());
             imageRatingRequestObject.setLastModifiedTimestamp(imageRating
                     .getLastModifiedTimestamp());
-            String imageRatingString = mapper
+            final String imageRatingString = mapper
                     .writeValueAsString(imageRatingRequestObject);
-            @SuppressWarnings("rawtypes")
-            Response.Listener listener = new Response.Listener<String>() {
-                
-                @Override
-                public void onResponse(String jsonArray) {
-                    if (jsonArray != null) {
-                        try {
-                            ImageRating imgRating = (new ObjectMapper())
-                                    .readValue(jsonArray, ImageRating.class);
-                            Editor editor = mSharedPreferencesObj.edit();
-                            editor.putBoolean(VueConstants.IS_IMAGE_DIRTY,
-                                    false);
-                            editor.commit();
-                            AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
-                                    .getInstance(VueApplication.getInstance())
-                                    .getAisleImageForImageId(
-                                            String.valueOf(imgRating.mImageId),
-                                            String.valueOf(imgRating.mAisleId),
-                                            false);
-                            if (aisleImageDetails != null) {
-                                if (imageRating.mId == null) {
-                                    aisleImageDetails.mRatingsList
-                                            .add(imgRating);
-                                }
-                            }
-                            updateImageRatingToDb(imgRating, likeCount, false);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+            try {
+                final VueUser storedVueUser = Utils.readUserObjectFromFile(
+                        VueApplication.getInstance(),
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                new Thread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        imageRatingPutRequest(imageRating, imageRatingString,
+                                storedVueUser.getId(), likeCount);
                     }
-                }
-            };
+                }).start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             
-            Response.ErrorListener errorListener = new ErrorListener() {
-                
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    imageRating.mId = 0001L;
-                    updateImageRatingToDb(imageRating, likeCount, true);
-                    Editor editor = mSharedPreferencesObj.edit();
-                    editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
-                    editor.commit();
-                }
-                
-            };
-            @SuppressWarnings("unchecked")
-            ImageRatingPutRequest request = new ImageRatingPutRequest(
-                    imageRatingString, listener, errorListener, url
-                            + storedVueUser.getId());
-            VueApplication.getInstance().getRequestQueue().add(request);
+            /*
+             * @SuppressWarnings("rawtypes") Response.Listener listener = new
+             * Response.Listener<String>() {
+             * 
+             * @Override public void onResponse(String jsonArray) { if
+             * (jsonArray != null) { try { ImageRating imgRating = (new
+             * ObjectMapper()) .readValue(jsonArray, ImageRating.class); Editor
+             * editor = mSharedPreferencesObj.edit();
+             * editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, false);
+             * editor.commit(); AisleImageDetails aisleImageDetails =
+             * VueTrendingAislesDataModel
+             * .getInstance(VueApplication.getInstance())
+             * .getAisleImageForImageId( String.valueOf(imgRating.mImageId),
+             * String.valueOf(imgRating.mAisleId), false); if (aisleImageDetails
+             * != null) { if (imageRating.mId == null) {
+             * aisleImageDetails.mRatingsList .add(imgRating); } }
+             * updateImageRatingToDb(imgRating, likeCount, false); } catch
+             * (Exception e) { e.printStackTrace(); } } } };
+             * 
+             * Response.ErrorListener errorListener = new ErrorListener() {
+             * 
+             * @Override public void onErrorResponse(VolleyError error) {
+             * imageRating.mId = 0001L; updateImageRatingToDb(imageRating,
+             * likeCount, true); Editor editor = mSharedPreferencesObj.edit();
+             * editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+             * editor.commit(); }
+             * 
+             * }; Log.e("Aisle Manager", "rating request : " +
+             * imageRatingString);
+             * 
+             * @SuppressWarnings("unchecked") ImageRatingPutRequest request =
+             * new ImageRatingPutRequest( imageRatingString, listener,
+             * errorListener, url + storedVueUser.getId());
+             * VueApplication.getInstance().getRequestQueue().add(request);
+             */
+            
         } else {
             imageRating.mId = 0001L;
             updateImageRatingToDb(imageRating, likeCount, true);
@@ -425,7 +419,7 @@ public class AisleManager {
         DataBaseManager.getInstance(VueApplication.getInstance())
                 .addLikeOrDisLike(likeCount, isDirty, imgRating, true);
     }
-    ///////////////////////////////////////////////////////////////////////////
+ 
     public   AisleBookmark testCreateAisleBookmark(AisleBookmark bookmark, Long long1) throws Exception{
         AisleBookmark createdAisleBookmark = null;
         ObjectMapper mapper = 
@@ -549,7 +543,62 @@ public class AisleManager {
         }
         updateBookmartToDb(windowList, aisleBookmark, mIsDirty);
     }
+ 
     
-    
-    ////////////////////////////////////////////////////////////////////////////
+    private void imageRatingPutRequest(ImageRating imageRating,
+            String ratingString, Long userId, final int likeCount) {
+        try {
+            URL url = new URL(UrlConstants.IMAGE_RATING_PUT_RESTURL + "/"
+                    + userId);
+            HttpPut httpPut = new HttpPut(url.toString());
+            StringEntity entity = new StringEntity(ratingString);
+            System.out.println("ImageRating create request: " + ratingString);
+            entity.setContentType("application/json;charset=UTF-8");
+            entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+                    "application/json;charset=UTF-8"));
+            httpPut.setEntity(entity);
+            
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpResponse response = httpClient.execute(httpPut);
+            if (response.getEntity() != null
+                    && response.getStatusLine().getStatusCode() == 200) {
+                String responseMessage = EntityUtils.toString(response
+                        .getEntity());
+                System.out.println("Response: " + responseMessage);
+                if (responseMessage != null && responseMessage.length() > 0) {
+                    try {
+                        ImageRating imgRating = (new ObjectMapper()).readValue(
+                                responseMessage, ImageRating.class);
+                        Editor editor = mSharedPreferencesObj.edit();
+                        editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, false);
+                        editor.commit();
+                        AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getAisleImageForImageId(
+                                        String.valueOf(imgRating.mImageId),
+                                        String.valueOf(imgRating.mAisleId),
+                                        false);
+                        if (aisleImageDetails != null) {
+                            if (imageRating.mId == null) {
+                                aisleImageDetails.mRatingsList.add(imgRating);
+                            }
+                        }
+                        updateImageRatingToDb(imgRating, likeCount, false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    
+                } else {
+                    imageRating.mId = 0001L;
+                    updateImageRatingToDb(imageRating, likeCount, true);
+                    Editor editor = mSharedPreferencesObj.edit();
+                    editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+                    editor.commit();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+ 
 }

@@ -4,10 +4,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Notification;
@@ -94,18 +92,11 @@ public class DeleteImageFromAisle implements Runnable,
                     false);
             mNotificationManager.notify(
                     VueConstants.IMAGE_DELETE_NOTIFICATION_ID, mNotification);
-            ObjectMapper mapper = new ObjectMapper();
-            URL url = new URL(UrlConstants.DELETE_IMAGE_RESTURL);
-            HttpPut httpPut = new HttpPut(url.toString());
-            String request = mapper.writeValueAsString(mImage);
-            CountingStringEntity entity = new CountingStringEntity(request);
-            entity.setUploadListener(this);
-            entity.setContentType("application/json;charset=UTF-8");
-            entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
-                    "application/json;charset=UTF-8"));
-            httpPut.setEntity(entity);
+            URL url = new URL(UrlConstants.DELETE_IMAGE_RESTURL + "/"
+                    + mImage.getId());
+            HttpDelete httpDelete = new HttpDelete(url.toString());
             DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpResponse response = httpClient.execute(httpPut);
+            HttpResponse response = httpClient.execute(httpDelete);
             boolean result = false;
             if (response.getEntity() != null) {
                 String responseMessage = EntityUtils.toString(response
