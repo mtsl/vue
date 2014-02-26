@@ -29,6 +29,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -176,6 +177,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             }
             mCurrentAisle = getItem(mCurrentAislePosition);
         }
+        Log.i("Bookmarked aisle ", "Bookmarked aisle by user clicked: "+mCurrentAisle.getAisleId() );
         // Some times when the user returning from the other apps or from the
         // browser
         // apps lost data to avoid force close checking the current ailse.
