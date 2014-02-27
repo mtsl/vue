@@ -21,7 +21,6 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -37,15 +36,20 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -125,6 +129,9 @@ public class VueLandingPageActivity extends Activity implements
     public static long mLastRefreshTime;
     private ShareDialog mShare = null;
     private boolean mShowSwipeHelp = false;
+    private boolean mHelpDialogShown = false;
+    private int mTrendingRequstCount = 0;
+    private boolean mLandingScreenActive = false;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -209,6 +216,7 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mLandingScreenActive = false;
         VueApplication.getInstance().saveTrendingRefreshTime(0);
         try {
             if (mLandingScreenTitleReceiver != null) {
@@ -328,13 +336,17 @@ public class VueLandingPageActivity extends Activity implements
                             mRefreshFalg = false;
                             invalidateOptionsMenu();
                             if (status) {
+                                if(mLandingScreenActive) {
                                 Toast.makeText(VueLandingPageActivity.this,
                                         "New aisles received",
                                         Toast.LENGTH_SHORT).show();
-                            } else {
+                                }
+                            } else { 
+                                if(mLandingScreenActive) {
                                 Toast.makeText(VueLandingPageActivity.this,
                                         "Up to date", Toast.LENGTH_SHORT)
                                         .show();
+                                }
                             }
                             return false;
                         }
@@ -779,6 +791,7 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onResume() {
         super.onResume();
+        mLandingScreenActive = true;
         if (Utils.sIsLoged) {
             Logging.i("profile", "profile Landing onresume started");
         }
@@ -880,7 +893,7 @@ public class VueLandingPageActivity extends Activity implements
     
     @Override
     public void onPause() {
-        
+        mLandingScreenActive = false;
         long time_in_mins = Utils.getMins(System.currentTimeMillis());
         VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
         super.onPause();
@@ -1750,6 +1763,45 @@ public class VueLandingPageActivity extends Activity implements
                     mLandingScreenName = intent
                             .getStringExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY);
                     invalidateOptionsMenu();
+                    Log.i("receiver", "receiver 1");
+                    if(mLandingScreenName.equalsIgnoreCase("Trending")){
+                        mTrendingRequstCount++;
+                     if(mTrendingRequstCount> 2 && mLandingScreenActive){
+                     if (!mHelpDialogShown) {
+                         try {
+                             mHelpDialogShown = true;
+                             SharedPreferences sharedPreferencesObj =  
+                                     getSharedPreferences(
+                                             VueConstants.SHAREDPREFERENCE_NAME,
+                                             0);
+                             boolean isHelpShown = sharedPreferencesObj
+                                     .getBoolean(
+                                             VueConstants.HELP_SCREEN_ACCES,
+                                             false);
+                             if (isHelpShown) {
+                                 int count = sharedPreferencesObj
+                                         .getInt(VueConstants.USER_FINDFRIENDS_OPEN_COUNT,
+                                                 0);
+                                 final int SHOW_LIMIT = 3;
+                                 if (count < SHOW_LIMIT) {
+                                     long showedTime = sharedPreferencesObj
+                                             .getLong(
+                                                     VueConstants.USER_FINDFRIENDS_OPEN_TIME,
+                                                     0);
+                                     int hours = (int) Utils
+                                             .dateDifference(showedTime);
+                                     final int DAY_LATER = 24;
+                                     if (hours > DAY_LATER) {
+                                         showInviteFriendsDialog();
+                                     }
+                                 }
+                             }
+                         } catch (Exception e) {
+                             e.printStackTrace();
+                         }
+                     }
+                     }
+                    }
                 }
             }
         }
@@ -1987,8 +2039,10 @@ public class VueLandingPageActivity extends Activity implements
         }
     }
     
+  
+    
     private void showInviteFriendsDialog() {
-        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+        SharedPreferences sharedPreferencesObj = getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         int count = sharedPreferencesObj.getInt(
                 VueConstants.USER_FINDFRIENDS_OPEN_COUNT, 0);
@@ -1998,43 +2052,103 @@ public class VueLandingPageActivity extends Activity implements
         edit.putLong(VueConstants.USER_FINDFRIENDS_OPEN_TIME,
                 System.currentTimeMillis());
         edit.commit();
-        StringBuilder sb = new StringBuilder(
-                "Do you want to invite your friends to try out Vue now?");
-        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+        final Dialog dialog = new Dialog(this,
+                R.style.Theme_Dialog_Translucent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.networkdialogue);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
-        View networkdialogline = dialog.findViewById(R.id.networkdialogline);
-        
-        TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-        
-        okbutton.setText("Yes");
-        nobutton.setText("Remind me later");
-        messagetext.setText(sb);
-        okbutton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-                mDrawerLayout.openDrawer(mContent_frame2);
-            }
-        });
-        nobutton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.setOnCancelListener(new OnCancelListener() {
-            public void onCancel(DialogInterface dialog) {
-            }
-        });
+        dialog.setContentView(R.layout.hintdialog);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        View hintPopupVerticalline = dialog
+                .findViewById(R.id.hint_popup_verticalline);
+        hintPopupVerticalline.setVisibility(View.GONE);
+        TextView dialogtitle = (TextView) dialog.findViewById(R.id.dialogtitle);
+        ListView listview = (ListView) dialog.findViewById(R.id.networklist);
+        listview.setDivider(getResources().getDrawable(
+                R.drawable.share_dialog_divider));
+        TextView dontshow = (TextView) dialog.findViewById(R.id.dontshow);
+        TextView proceed = (TextView) dialog.findViewById(R.id.proceed);
+        ArrayList<String> hint_array_list = new ArrayList<String>();
+        dialogtitle.setText("Make vue your own");
+        hint_array_list.add("1. Use vue for your shopping decisions");
+        hint_array_list.add("2. Get your friends to join the fun");
+        hint_array_list.add("3. Earn $$ rewards");
         dialog.show();
+        dontshow.setVisibility(View.GONE);
+        proceed.setText("OK");
         dialog.setOnDismissListener(new OnDismissListener() {
+            
             @Override
             public void onDismiss(DialogInterface arg0) {
             }
         });
+        proceed.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        listview.setAdapter(new HintAdapter(hint_array_list));
     }
     
+    private class HintAdapter extends BaseAdapter {
+        ArrayList<String> mHintList;
+        
+        public HintAdapter(ArrayList<String> hintList) {
+            mHintList = hintList;
+        }
+        
+        @Override
+        public int getCount() {
+            return mHintList.size();
+        }
+        
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+        
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+        
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            
+            Holder holder = null;
+            if (convertView == null) {
+                
+                holder = new Holder();
+                LayoutInflater mLayoutInflater = (LayoutInflater)  
+                        getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = mLayoutInflater.inflate(R.layout.hintpopup, null);
+                holder.textone = (TextView) convertView
+                        .findViewById(R.id.gmail);
+                holder.texttwo = (TextView) convertView.findViewById(R.id.vue);
+                holder.imageone = (ImageView) convertView
+                        .findViewById(R.id.shareicon);
+                holder.imagetwo = (ImageView) convertView
+                        .findViewById(R.id.shareicon2);
+                convertView.setTag(holder);
+            } else {
+                holder = (Holder) convertView.getTag();
+            }
+            holder.textone.setTextSize(16);
+            String text = mHintList.get(position);
+            holder.imageone.setVisibility(View.GONE);
+            holder.imagetwo.setVisibility(View.GONE);
+            holder.texttwo.setVisibility(View.GONE);
+            holder.textone.setText(text);
+            return convertView;
+        }
+    }
+    
+    private class Holder {
+        TextView textone, texttwo;
+        ImageView imageone, imagetwo;
+    }
+   
     private void openHelpTask() {
         if (Utils.sIsLoged) {
             Logging.i("profile", "help code started");

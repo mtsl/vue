@@ -1,9 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lateralthoughts.vue"
-    android:versionCode="8"
-    android:versionName="1.7" >
-
-    <uses-sdk
+    android:versionCode="9"
+    android:versionName="1.8_prerelease_test" >
+<!-- 1.8_prerelease_curated
+1.8_prerelease_test -->
+    <uses-sdk 
         android:minSdkVersion="14"
         android:targetSdkVersion="18" />
 
@@ -58,7 +59,7 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Light" >
+       >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
