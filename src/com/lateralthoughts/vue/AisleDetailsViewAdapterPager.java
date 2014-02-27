@@ -177,7 +177,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             }
             mCurrentAisle = getItem(mCurrentAislePosition);
         }
-        Log.i("Bookmarked aisle ", "Bookmarked aisle by user clicked: "+mCurrentAisle.getAisleId() );
+        Log.i("Bookmarked aisle ", "Bookmarked aisle by user clicked: "
+                + mCurrentAisle.getAisleId());
         // Some times when the user returning from the other apps or from the
         // browser
         // apps lost data to avoid force close checking the current ailse.
@@ -1096,19 +1097,21 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 if (imgOwnerId == userId) {
                     isOwner = true;
                 }
-               
+                
                 JSONObject aisleLikedProps = new JSONObject();
                 try {
                     VueUser storedVueUser = null;
                     storedVueUser = Utils.readUserObjectFromFile(
                             VueApplication.getInstance(),
                             VueConstants.VUE_APP_USEROBJECT__FILENAME);
-                    String userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
+                    String userName = storedVueUser.getFirstName() + " "
+                            + storedVueUser.getLastName();
                     aisleLikedProps.put("Image Id", mCurrentAisle
                             .getImageList().get(mCurrentDispImageIndex).mId);
                     aisleLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
                     aisleLikedProps.put("Is Aisle Owner", isOwner);
-                    aisleLikedProps.put("Image Position",mCurrentDispImageIndex);
+                    aisleLikedProps.put("Image Position",
+                            mCurrentDispImageIndex);
                     aisleLikedProps.put("Owner Name",
                             mCurrentAisle.getAisleContext().mFirstName);
                     aisleLikedProps.put(
@@ -1146,11 +1149,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     storedVueUser = Utils.readUserObjectFromFile(
                             VueApplication.getInstance(),
                             VueConstants.VUE_APP_USEROBJECT__FILENAME);
-                    String userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
+                    String userName = storedVueUser.getFirstName() + " "
+                            + storedVueUser.getLastName();
                     aisleLikedProps.put("Image Id", mCurrentAisle
                             .getImageList().get(mCurrentDispImageIndex).mId);
                     aisleLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
-                    aisleLikedProps.put("Image Position", mCurrentDispImageIndex);
+                    aisleLikedProps.put("Image Position",
+                            mCurrentDispImageIndex);
                     aisleLikedProps.put("Is Aisle Owner", isOwner);
                     aisleLikedProps.put("Owner Name",
                             mCurrentAisle.getAisleContext().mFirstName);
@@ -1344,7 +1349,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             storedVueUser = Utils.readUserObjectFromFile(
                     VueApplication.getInstance(),
                     VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            String userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
+            String userName = storedVueUser.getFirstName() + " "
+                    + storedVueUser.getLastName();
             aisleLikedProps.put("Image Id",
                     mCurrentAisle.getImageList().get(position).mId);
             aisleLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
@@ -1426,11 +1432,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             storedVueUser = Utils.readUserObjectFromFile(
                     VueApplication.getInstance(),
                     VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            String userName = storedVueUser.getFirstName() + " " + storedVueUser.getLastName();
+            String userName = storedVueUser.getFirstName() + " "
+                    + storedVueUser.getLastName();
             aisleUnLikedProps.put("Image Id",
                     mCurrentAisle.getImageList().get(position).mId);
             aisleUnLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
-            aisleUnLikedProps.put("Image Position",mCurrentDispImageIndex);
+            aisleUnLikedProps.put("Image Position", mCurrentDispImageIndex);
             aisleUnLikedProps.put("Is Aisle Owner", isOwner);
             aisleUnLikedProps.put("Owner Name",
                     mCurrentAisle.getAisleContext().mFirstName);
@@ -1443,8 +1450,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             aisleUnLikedProps.put("Occasion",
                     mCurrentAisle.getAisleContext().mOccasion);
             aisleUnLikedProps.put("Unlike From", "Detail View Screen");
-            aisleUnLikedProps.put("Image Unliked By",
-                    userName);
+            aisleUnLikedProps.put("Image Unliked By", userName);
             
         } catch (Exception e) {
             e.printStackTrace();

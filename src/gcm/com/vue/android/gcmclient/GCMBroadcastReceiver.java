@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.R;
@@ -36,6 +37,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
         try {
             final String broadcastMessage = intent.getExtras()
                     .getString("data");
+            Log.e("GCM", "message for GCM :" + broadcastMessage);
             if (broadcastMessage != null
                     && broadcastMessage.trim().length() > 0) {
                 final GCMClientNotification lastReceivedNotification = (new ObjectMapper())
