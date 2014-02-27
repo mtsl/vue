@@ -84,6 +84,7 @@ public class NetworkHandler {
     public ArrayList<String> bookmarkedList = new ArrayList<String>();
     private ArrayList<String> ratedImageList = new ArrayList<String>();
     private String userProfileUrl;
+    private boolean mPointsLoaded = false;
     
     public NetworkHandler(Context context) {
         mContext = context;
@@ -861,6 +862,10 @@ public class NetworkHandler {
             }
             Utils.sUserPoints = 0;
             int count = 0;
+            if(mPointsLoaded){
+                return;
+            }
+            mPointsLoaded = true;
             ArrayList<AisleWindowContent> windowList = getAislesByUser(userId);
             if (windowList != null) {
                 // for each aisle add 10 points

@@ -1,6 +1,12 @@
 package com.lateralthoughts.vue.utils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -14,6 +20,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Environment;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -126,9 +133,15 @@ public class AisleCreationBackgroundThread implements Runnable,
         VueLandingPageActivity.landingPageActivity
                 .runOnUiThread(new Runnable() {
                     @Override
-                    public void run() {
+                    public void run() { 
+                       
                         if (null != mResponseMessage) {
                             // TODO insert aisle for
+                            if(mResponseMessage.length() <10){
+                            writeToSdcard("AisleCreation Failed got empty response from server\n response message is: "+mResponseMessage);
+                            } else {
+                                writeToSdcard("AisleCreation Success");
+                            }
                             try {
                                 AisleContext aisleContext = new Parser()
                                         .parseAisleData(new JSONObject(
@@ -164,5 +177,34 @@ public class AisleCreationBackgroundThread implements Runnable,
                         }
                     }
                 });
+    }
+    private void writeToSdcard(String message) {
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/AisleCreationResponse/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/" + "AisleCreationResponse"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+        
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            
+            e.printStackTrace();
+        }
     }
 }

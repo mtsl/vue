@@ -90,16 +90,42 @@ public class AisleContentBrowser extends ViewFlipper {
                         landingPage.share(
                                 mSpecialNeedsAdapter.getWindowContent(),
                                 mCurrentIndex);
+                        
+                        
+                        AisleWindowContent windowContext = mSpecialNeedsAdapter.getWindowContent();
+                        String imgOwnerId = windowContext.getAisleContext().mAisleOwnerImageURL;
+                        String userId = VueTrendingAislesDataModel
+                                .getInstance(mContext).getNetworkHandler()
+                                .getUserId();
+                        boolean isOwner = false;
+                        if (imgOwnerId == userId) {
+                            isOwner = true;
+                        }
                         JSONObject aisleShareProps = new JSONObject();
                         try {
                             aisleShareProps.put("Aisle_Id",
                                     mSpecialNeedsAdapter.getAisleId());
-                            aisleShareProps.put("Activity_Shared_From",
-                                    "LandingPageActivity");
+                            aisleShareProps.put("Is Aisle Owner", isOwner);
+                            aisleShareProps.put("Owner Name",
+                                    windowContext.getAisleContext().mFirstName);
+                            aisleShareProps.put("Share Count",
+                                    windowContext.getAisleContext().mShareCount);
+                            aisleShareProps.put("Images Count",
+                                    windowContext.getImageList().size());
+                            
+                            aisleShareProps.put("Category",
+                                    windowContext.getAisleContext().mCategory);
+                            aisleShareProps.put(
+                                    "Lookingfor",
+                                    windowContext.getAisleContext().mLookingForItem);
+                            aisleShareProps.put("Occasion",
+                                    windowContext.getAisleContext().mOccasion);
+                            aisleShareProps.put("Shared From",
+                                    "LandingPage Screen");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        mixpanel.track("LandingPage_Aisle_Shared",
+                        mixpanel.track("Aisle Shared",
                                 aisleShareProps);
                     }
                 }
@@ -188,18 +214,59 @@ public class AisleContentBrowser extends ViewFlipper {
                         mBookmarksCountView.setText("" + mBookmarksCount);
                         handleBookmark(bookMarkIndicator,
                                 mSpecialNeedsAdapter.getAisleId());
-                        JSONObject aisleBookmarkedProps = new JSONObject();
+                       /* JSONObject aisleBookmarkedProps = new JSONObject();
                         try {
                             aisleBookmarkedProps.put("Aisle_Id",
                                     mSpecialNeedsAdapter.getAisleId());
                             aisleBookmarkedProps.put(
-                                    "Activity_Bookmarked_From",
-                                    "LandingPageActivity");
+                                    "Bookmarked From",
+                                    "LandingPage Screen");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        mixpanel.track("LandingPage_Aisle_Bookmarked",
-                                aisleBookmarkedProps);
+                        mixpanel.track("Aisle Bookmarked",
+                                aisleBookmarkedProps);*/
+                        
+                        
+                        
+                        AisleWindowContent windowContext = mSpecialNeedsAdapter.getWindowContent();
+                        String imgOwnerId = windowContext.getAisleContext().mAisleOwnerImageURL;
+                        String userId = VueTrendingAislesDataModel
+                                .getInstance(mContext).getNetworkHandler()
+                                .getUserId();
+                        boolean isOwner = false;
+                        if (imgOwnerId == userId) {
+                            isOwner = true;
+                        }
+                        JSONObject aisleUnbookmarkProps = new JSONObject();
+                        try {
+                           
+                            aisleUnbookmarkProps.put("AisleId",
+                            
+                                    windowContext.getAisleId());
+                            aisleUnbookmarkProps.put("Is Aisle Owner", isOwner);
+                            aisleUnbookmarkProps.put("Owner Name",
+                                    windowContext.getAisleContext().mFirstName);
+                            aisleUnbookmarkProps.put("Share Count",
+                                    windowContext.getAisleContext().mShareCount);
+                            aisleUnbookmarkProps.put("Images Count",
+                                    windowContext.getImageList().size());
+                            
+                            aisleUnbookmarkProps.put("Category",
+                                    windowContext.getAisleContext().mCategory);
+                            aisleUnbookmarkProps.put(
+                                    "Lookingfor",
+                                    windowContext.getAisleContext().mLookingForItem);
+                            aisleUnbookmarkProps.put("Occasion",
+                            
+                                    windowContext.getAisleContext().mOccasion);
+                            aisleUnbookmarkProps.put("Bookmarked From",
+                                    "LandingPage Screen");
+                            
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mixpanel.track("Aisle Bookmarked", aisleUnbookmarkProps);
                     }
                 }
             });

@@ -36,6 +36,7 @@ public class VueContentGateway {
     private final String TAG = "VueContentGateway";
     private static VueContentGateway sInstance;
     private Context mContext; // application context;
+    public static boolean mNomoreTrendingAilse = false;
     
     private ArrayList<ParcelableNameValuePair> mHeaders;
     private ArrayList<ParcelableNameValuePair> mParams;
@@ -94,6 +95,9 @@ public class VueContentGateway {
                         Logging.i("profile", "profile aislesinitial successfull response");
                     }
                     if (null != jsonArray) {
+                        if(jsonArray.length() < 5 && screenName.equalsIgnoreCase("Trending")){
+                            mNomoreTrendingAilse = true;
+                        }
                         Bundle responseBundle = new Bundle();
                         responseBundle
                                 .putString("result", jsonArray.toString());

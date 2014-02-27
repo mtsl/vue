@@ -395,9 +395,9 @@ public class VueLoginActivity extends FragmentActivity implements
                         } else {
                             showAisleSwipeHelp();
                         }
-                    }
-                });
-            }
+                    } 
+                }); 
+            } 
         }
         try {
             HttpsURLConnection
