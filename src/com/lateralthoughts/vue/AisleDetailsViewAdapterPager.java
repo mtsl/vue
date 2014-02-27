@@ -934,8 +934,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mCurrentAisle.getAisleContext().mFirstName);
             aisleSharedProps.put("Share Count",
                     mCurrentAisle.getAisleContext().mShareCount);
-            aisleSharedProps.put("Images Count", mCurrentAisle.getImageList()
-                    .size());
+            aisleSharedProps.put("Images Count", mCurrentAisle.getImageList().size());
+            aisleSharedProps.put("Category",
+                    mCurrentAisle.getAisleContext().mCategory);
+            aisleSharedProps.put("Lookingfor",
+                    mCurrentAisle.getAisleContext().mLookingForItem);
+            aisleSharedProps.put("Occasion",
+                    mCurrentAisle.getAisleContext().mOccasion);
             aisleSharedProps.put("Shared From", "Detail View Screen");
         } catch (JSONException e) {
             e.printStackTrace();

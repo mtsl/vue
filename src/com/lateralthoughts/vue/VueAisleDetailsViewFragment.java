@@ -653,14 +653,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
         vueShareLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                JSONObject aisleSharedprops = new JSONObject();
-                try {
-                    aisleSharedprops.put("Aisle Shared From Screen",
-                            "DetailView Activity");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                mixpanel.track("Shared Aisle", aisleSharedprops);
                 FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
                 closeKeyboard();
                 // to smoothen the touch response
