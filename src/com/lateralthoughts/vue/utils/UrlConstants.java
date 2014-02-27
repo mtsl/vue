@@ -14,7 +14,7 @@ public class UrlConstants {
     
     /**
      * (C)reate routine URL's
-     */
+     */ 
     public static final String USER_PUT_RESTURL = SERVER_BASE_URL
             + "api/userput";
     public static final String AISLE_PUT_RESTURL = SERVER_BASE_URL
@@ -64,6 +64,5 @@ public class UrlConstants {
             + "api/imagedelete";
     public static final String GET_IMAGE_RESTURL = SERVER_BASE_URL
             + "api/imageget/id/";
- 
- 
+    
 }
