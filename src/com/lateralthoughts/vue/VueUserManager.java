@@ -5,11 +5,23 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import android.content.Intent;
@@ -18,6 +30,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -569,7 +582,6 @@ public class VueUserManager {
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
                         } catch (Exception e) {
-                            
                         }
                     }
                 } else {
@@ -890,21 +902,23 @@ public class VueUserManager {
                 }
                 writeToSdcard("After server login failure for Update google+ update user: "
                         + new Date() + "???" + errorMesg);
-                if (mRetryCountForUpdateGPUpdateUser < MAX_LOGIN_RETRY_COUNT) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                    mUpdateGPUpdateUserReq,
-                                    UrlConstants.USER_PUT_RESTURL, listener,
-                                    mUpdateGPUpdateUserErrorListener);
-                            VueApplication.getInstance().getRequestQueue()
-                                    .add(request);
-                        }
-                    }, DELAY_TIME);
-                } else {
-                    mRetryCountForUpdateGPUpdateUser = 0;
-                    showServerMesgForMaxTries();
+                /*
+                 * if (mRetryCountForUpdateGPUpdateUser < MAX_LOGIN_RETRY_COUNT)
+                 * { new Handler().postDelayed(new Runnable() {
+                 * 
+                 * @Override public void run() { UserCreateOrUpdateRequest
+                 * request = new UserCreateOrUpdateRequest(
+                 * mUpdateGPUpdateUserReq, UrlConstants.USER_PUT_RESTURL,
+                 * listener, mUpdateGPUpdateUserErrorListener);
+                 * VueApplication.getInstance().getRequestQueue() .add(request);
+                 * } }, DELAY_TIME); } else { mRetryCountForUpdateGPUpdateUser =
+                 * 0; showServerMesgForMaxTries(); }
+                 */
+                try {
+                    testUpdateUser(mUpdateGPUpdateUserReq);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
             }
         };
@@ -1151,5 +1165,67 @@ public class VueUserManager {
         b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
         i.putExtras(b);
         VueApplication.getInstance().startActivity(i);
+    }
+    
+    public void testUpdateUser(final String request) throws Exception {
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL(UrlConstants.USER_PUT_RESTURL);
+                    HttpPut httpPut = new HttpPut(url.toString());
+                    
+                    ObjectMapper mapper = new ObjectMapper();
+                    DefaultHttpClient httpClient = new DefaultHttpClient();
+                    StringEntity entity = new StringEntity(request);
+                    System.out.println("User update request: " + request);
+                    entity.setContentType("application/json;charset=UTF-8");
+                    entity.setContentEncoding(new BasicHeader(
+                            HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
+                    httpPut.setEntity(entity);
+                    
+                    HttpResponse response = httpClient.execute(httpPut);
+                    if (response.getEntity() != null
+                            && response.getStatusLine().getStatusCode() == 200) {
+                        String responseMessage = EntityUtils.toString(response
+                                .getEntity());
+                        if(Utils.sIsLoged) {
+                        Log.i("UserUpdate REsponse", "UserUpdate REsponse"
+                                + responseMessage);
+                        }
+                        if (responseMessage.length() > 0) {
+                            if(Utils.sIsLoged) {
+                            Log.i("UserUpdate REsponse",
+                                    "UserUpdate REsponse Success");
+                            }
+                        }
+                    } else {
+                        if(Utils.sIsLoged) {
+                        Log.i("UserUpdate REsponse", "UserUpdate REsponse"
+                                + response.getStatusLine().getStatusCode());
+                        }
+                    }
+                } catch (MalformedURLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (JsonProcessingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (ClientProtocolException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
