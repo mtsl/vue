@@ -599,7 +599,9 @@ public class NetworkHandler {
                                     .parseBookmarkedAisles(responseMessage);
                             bookmarkedList.clear();
                             for (AisleBookmark aB : bookmarkedAisles) {
-                                Log.i("Bookmarked aisle ", "Bookmarked aisle by user: "+aB.getAisleId());
+                                Log.i("Bookmarked aisle ",
+                                        "Bookmarked aisle by user: "
+                                                + aB.getAisleId());
                                 DataBaseManager.getInstance(mContext)
                                         .updateBookmarkAisles(aB.getId(),
                                                 Long.toString(aB.getAisleId()),
@@ -787,7 +789,8 @@ public class NetworkHandler {
                                     
                                     DataBaseManager.getInstance(mContext)
                                             .insertRatedImages(
-                                                    retrievedImageRating, true);
+                                                    retrievedImageRating, true,
+                                                    false);
                                     VueTrendingAislesDataModel.getInstance(
                                             VueApplication.getInstance())
                                             .updateImageRatingStatus(
@@ -862,7 +865,7 @@ public class NetworkHandler {
             }
             Utils.sUserPoints = 0;
             int count = 0;
-            if(mPointsLoaded){
+            if (mPointsLoaded) {
                 return;
             }
             mPointsLoaded = true;

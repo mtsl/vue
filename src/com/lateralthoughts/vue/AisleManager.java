@@ -368,7 +368,7 @@ public class AisleManager {
     private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
             boolean isDirty) {
         DataBaseManager.getInstance(VueApplication.getInstance())
-                .addLikeOrDisLike(likeCount, isDirty, imgRating, true);
+                .addLikeOrDisLike(likeCount, isDirty, imgRating, true, isDirty);
     }
     
     public AisleBookmark testCreateAisleBookmark(AisleBookmark bookmark,
