@@ -1262,7 +1262,7 @@ public class DataBaseManager {
                     ImageRating imgRating = new ImageRating();
                     imgRating.mImageId = (long) cursor.getInt(cursor
                             .getColumnIndex(VueConstants.IMAGE_ID));
-                    imgRating.mAisleId =  Long.parseLong(cursor.getString(cursor
+                    imgRating.mAisleId = Long.parseLong(cursor.getString(cursor
                             .getColumnIndex(VueConstants.AISLE_ID)));
                     imgRating.mLiked = (cursor.getInt(cursor
                             .getColumnIndex(VueConstants.LIKE_OR_DISLIKE)) == 1) ? true
@@ -1455,8 +1455,7 @@ public class DataBaseManager {
             ContentValues values = new ContentValues();
             values.put(VueConstants.AISLE_ID, imageRating.mAisleId);
             values.put(VueConstants.IMAGE_ID, imageRating.mImageId);
-            values.put(VueConstants.IS_LIKED_OR_BOOKMARKED,
-                    imageRating.mLiked ? 1 : 0);
+            values.put(VueConstants.LIKE_OR_DISLIKE, imageRating.mLiked ? 1 : 0);
             values.put(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME,
                     imageRating.mImageRatingOwnerFirstName);
             values.put(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME,
@@ -1516,7 +1515,7 @@ public class DataBaseManager {
         values.put(VueConstants.ID, imagerating.mId.longValue());
         values.put(VueConstants.IMAGE_ID, imagerating.mImageId);
         values.put(VueConstants.AISLE_ID, imagerating.mAisleId);
-        values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, imagerating.mLiked ? 1
+        values.put(VueConstants.LIKE_OR_DISLIKE, imagerating.mLiked ? 1
                 : 0);
         values.put(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME,
                 imagerating.mImageRatingOwnerFirstName);
@@ -1575,7 +1574,7 @@ public class DataBaseManager {
                 imgRating.mAisleId = Long.parseLong(cursor.getString(cursor
                         .getColumnIndex(VueConstants.AISLE_ID)));
                 long like = Long.parseLong(cursor.getString(cursor
-                        .getColumnIndex(VueConstants.IS_LIKED_OR_BOOKMARKED)));
+                        .getColumnIndex(VueConstants.LIKE_OR_DISLIKE)));
                 imgRating.mLiked = (like == 1) ? true : false;
                 imgRating.mImageRatingOwnerFirstName = cursor
                         .getString(cursor
