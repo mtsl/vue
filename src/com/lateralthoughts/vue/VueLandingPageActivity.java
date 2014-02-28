@@ -1065,14 +1065,20 @@ public class VueLandingPageActivity extends Activity implements
         ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager
                 .getInstance(VueLandingPageActivity.this).getAislesFromDB(
                         bookmarked, true);
+        if(Utils.sIsLoged){
+        Log.i("bookemarkAislesCount", "bookemarkAislesCount1: "+windowContentTemp.size());
+        }
         for (AisleWindowContent w : windowContentTemp) {
-            // TODO: HERE THE LIST SHOULD NOT BE NULL BUT WE GOT NULL SOME TIMES
+            // TODO: THERE THE LIST SHOULD NOT BE NULL BUT WE GOT NULL SOME TIMES
             // LIST NEED TO CHECK THIS CODE BY SURENDRA.
             if (w.getImageList() != null) {
                 windowContent.add(w);
             }
         }
         if (windowContent != null && windowContent.size() > 0) {
+            if(Utils.sIsLoged){
+            Log.i("bookemarkAislesCount", "bookemarkAislesCount2: "+windowContentTemp.size());
+            }
             getActionBar().setTitle(screenName);
             mLandingScreenName = screenName;
             // ((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
@@ -1082,6 +1088,9 @@ public class VueLandingPageActivity extends Activity implements
             for (AisleWindowContent content : windowContent) {
                 VueTrendingAislesDataModel.getInstance(this).addItemToList(
                         content.getAisleId(), content);
+                if(Utils.sIsLoged){
+                Log.i("bookemarkAislesCount", "bookemarkAislesCount2 adde aisleIds: "+ content.getAisleId());
+                }
             }
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).dataObserver();

@@ -26,6 +26,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -859,14 +860,21 @@ public class DataBaseManager {
                             @Override
                             public void run() {
                                 try {
-                                    Parser parser = new Parser();
+                                  
+                                     Parser parser = new Parser();
                                     AisleContext retrievedAisle = parser
                                             .parseAisleData(jsonObject);
                                     ArrayList<AisleImageDetails> imageDetails = parser
                                             .getImagesForAisleId(retrievedAisle.mAisleId);
+                                    if(Utils.sIsLoged){
+                                    Log.i("bookemarkAislesCount", "bookemarkAislesCount from server: "+retrievedAisle.mAisleId);
+                                    }
                                     if (imageDetails.size() > 0) {
                                         AisleWindowContent aisleItem = new AisleWindowContent(
                                                 retrievedAisle.mAisleId);
+                                        if(Utils.sIsLoged){
+                                        Log.i("bookemarkAislesCount", "bookemarkAislesCount from server adding to db: "+retrievedAisle.mAisleId);
+                                        }
                                         aisleItem.addAisleContent(
                                                 retrievedAisle, imageDetails);
                                         ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
