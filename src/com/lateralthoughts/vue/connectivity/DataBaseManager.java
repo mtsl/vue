@@ -699,13 +699,14 @@ public class DataBaseManager {
     }
     
     public void addLikeOrDisLike(final int likeCount, final boolean dirtyFlag,
-            final ImageRating imageRating, final boolean isUserRating) {
+            final ImageRating imageRating, final boolean isUserRating,
+            final boolean isDirty) {
         runTask(new Runnable() {
             
             @Override
             public void run() {
                 addLikeOrDisLikeToDb(likeCount, dirtyFlag, imageRating,
-                        isUserRating);
+                        isUserRating, isDirty);
             }
         });
     }
@@ -736,12 +737,13 @@ public class DataBaseManager {
     
     public void insertRatedImages(
             final ArrayList<ImageRating> retrievedImageRating,
-            final boolean isUserRating) {
+            final boolean isUserRating, final boolean isDirty) {
         runTask(new Runnable() {
             
             @Override
             public void run() {
-                insertRatedImagesToDB(retrievedImageRating, isUserRating);
+                insertRatedImagesToDB(retrievedImageRating, isUserRating,
+                        isDirty);
             }
         });
     }
@@ -802,7 +804,7 @@ public class DataBaseManager {
     }
     
     private void addLikeOrDisLikeToDb(int likeCount, boolean dirtyFlag,
-            ImageRating imageRating, boolean isUserRating) {
+            ImageRating imageRating, boolean isUserRating, final boolean isDirty) {
         ContentValues aisleValues = new ContentValues();
         aisleValues.put(VueConstants.LIKE_OR_DISLIKE, imageRating.mLiked ? 1
                 : 0);
@@ -815,7 +817,7 @@ public class DataBaseManager {
                         + "=?",
                 new String[] { String.valueOf(imageRating.mAisleId),
                         String.valueOf(imageRating.mImageId) });
-        updateRatedImages(imageRating, isUserRating);
+        updateRatedImages(imageRating, isUserRating, isDirty);
     }
     
     /**
@@ -1260,8 +1262,8 @@ public class DataBaseManager {
                     ImageRating imgRating = new ImageRating();
                     imgRating.mImageId = (long) cursor.getInt(cursor
                             .getColumnIndex(VueConstants.IMAGE_ID));
-                    imgRating.mAisleId = (long) cursor.getInt(cursor
-                            .getColumnIndex(VueConstants.AISLE_Id));
+                    imgRating.mAisleId =  Long.parseLong(cursor.getString(cursor
+                            .getColumnIndex(VueConstants.AISLE_ID)));
                     imgRating.mLiked = (cursor.getInt(cursor
                             .getColumnIndex(VueConstants.LIKE_OR_DISLIKE)) == 1) ? true
                             : false;
@@ -1442,7 +1444,8 @@ public class DataBaseManager {
     }
     
     private void insertRatedImagesToDB(
-            ArrayList<ImageRating> retrievedImageRating, boolean isUserRating) {
+            ArrayList<ImageRating> retrievedImageRating, boolean isUserRating,
+            boolean isDirty) {
         boolean isMatched = false;
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.RATED_IMAGES_URI, null, null, null, null);
@@ -1460,6 +1463,7 @@ public class DataBaseManager {
                     imageRating.mImageRatingOwnerLastName);
             values.put(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME,
                     imageRating.mLastModifiedTimestamp);
+            values.put(VueConstants.DIRTY_FLAG, isDirty ? 1 : 0);
             if (imageRating.mLiked) {
                 values.put(VueConstants.AISLE_IMAGE_USER_RATING,
                         isUserRating ? 1 : 0);
@@ -1501,7 +1505,8 @@ public class DataBaseManager {
         cursor.close();
     }
     
-    private void updateRatedImages(ImageRating imagerating, boolean isUserRating) {
+    private void updateRatedImages(ImageRating imagerating,
+            boolean isUserRating, boolean isDirty) {
         if (imagerating == null || imagerating.mId == null) {
             return;
         }
@@ -1519,6 +1524,7 @@ public class DataBaseManager {
                 imagerating.mImageRatingOwnerLastName);
         values.put(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME,
                 imagerating.mLastModifiedTimestamp);
+        values.put(VueConstants.DIRTY_FLAG, isDirty ? 1 : 0);
         if (imagerating.mLiked) {
             values.put(VueConstants.AISLE_IMAGE_USER_RATING, isUserRating ? 1
                     : 0);
