@@ -223,7 +223,7 @@ public class VueConstants {
             + AUTHORITY + "/" + RATED_IMAGES);
     public static final Uri BOOKMARKER_AISLES_URI = Uri.parse("content://"
             + AUTHORITY + "/" + BOOKMARKER_AISLES);
-    public static final Uri MY_BOOKMARKED_AISLES_URI = Uri.parse("content://"
+    public static final Uri MY_BOOKMARKED_AISLES_URI = Uri.parse("content://" 
             + AUTHORITY + "/" + MY_BOOKMARKED_AISLES);
     
     public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";

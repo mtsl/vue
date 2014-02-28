@@ -610,6 +610,11 @@ public class NetworkHandler {
                                 if (aB.getBookmarked()) {
                                     bookmarkedList.add(String.valueOf(aB
                                             .getAisleId()));
+                                    if(Utils.sIsLoged){
+                                        Log.i("bookemarkAislesCount", "bookemarkAislesCounttrue By User2 true value: "+aB
+                                                .getAisleId());
+                                        }
+                                    
                                 }
                             }
                             if(Utils.sIsLoged){

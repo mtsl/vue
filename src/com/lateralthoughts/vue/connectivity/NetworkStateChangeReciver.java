@@ -33,7 +33,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public void onReceive(Context context, Intent inetent) {
+    public void onReceive(Context context, Intent inetent) {/*
         if (VueConnectivityManager.isNetworkConnected(context)) {
             // TODO: if Database is dirty use shared preference here.
             mSharedPreferencesObj = context.getSharedPreferences(
@@ -135,6 +135,6 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                 }
             }
         }
-    }
+    */}
     
 }
