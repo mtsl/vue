@@ -597,9 +597,6 @@ public class NetworkHandler {
                         if (responseMessage != null) {
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                                     .parseBookmarkedAisles(responseMessage);
-                            if(Utils.sIsLoged){
-                            Log.i("bookemarkAislesCount", "bookemarkAislesCount By User1: "+bookmarkedAisles.size());
-                            }
                             bookmarkedList.clear();
                             for (AisleBookmark aB : bookmarkedAisles) {
                                 DataBaseManager.getInstance(mContext)
@@ -611,9 +608,6 @@ public class NetworkHandler {
                                     bookmarkedList.add(String.valueOf(aB
                                             .getAisleId()));
                                 }
-                            }
-                            if(Utils.sIsLoged){
-                            Log.i("bookemarkAislesCount", "bookemarkAislesCount By User2: "+bookmarkedAisles.size());
                             }
                             VueTrendingAislesDataModel.getInstance(
                                     VueApplication.getInstance())

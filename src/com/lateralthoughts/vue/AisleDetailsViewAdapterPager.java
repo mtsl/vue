@@ -177,9 +177,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             }
             mCurrentAisle = getItem(mCurrentAislePosition);
         }
-        if(Utils.sIsLoged){
-            Log.i("bookemarkAislesCount", "bookemarkAisles clicked id: "+mCurrentAisle.getAisleId());
-            }
         // Some times when the user returning from the other apps or from the
         // browser
         // apps lost data to avoid force close checking the current ailse.
@@ -936,7 +933,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mCurrentAisle.getAisleContext().mFirstName);
             aisleSharedProps.put("Share Count",
                     mCurrentAisle.getAisleContext().mShareCount);
-            aisleSharedProps.put("Images Count", mCurrentAisle.getImageList().size());
+            aisleSharedProps.put("Images Count", mCurrentAisle.getImageList()
+                    .size());
             aisleSharedProps.put("Category",
                     mCurrentAisle.getAisleContext().mCategory);
             aisleSharedProps.put("Lookingfor",
