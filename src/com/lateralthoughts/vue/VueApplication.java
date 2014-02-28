@@ -73,6 +73,7 @@ public class VueApplication extends Application {
     public boolean isUserSwipeAisle = false;
     private AisleWindowContent mAisleWindow;
     public boolean isPostingOnFriendsWallFlag = false;
+    public String twitterActivityName = "com.twitter.android.StartActivity";
     
     public int getmStatusBarHeight() {
         return mStatusBarHeight;

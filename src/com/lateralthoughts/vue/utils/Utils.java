@@ -793,7 +793,36 @@ public class Utils {
                         ((ResolveInfo) a[i]).activityInfo.name, packageName,
                         ((ResolveInfo) a[i]).activityInfo.applicationInfo
                                 .loadIcon(context.getPackageManager()));
+                if (packageName.equals(VueConstants.TWITTER_PACKAGE_NAME)) {
+                    VueApplication.getInstance().twitterActivityName = ((ResolveInfo) a[i]).activityInfo.name;
+                }
                 installedApplicationdetailsList.add(shoppingApplicationDetails);
+            }
+        }
+        
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        List<ResolveInfo> activities1 = context.getPackageManager()
+                .queryIntentActivities(shareIntent, 0);
+        PackageManager pm1 = context.getPackageManager();
+        final Object a1[] = activities1.toArray();
+        for (int i = 0; i < activities1.size(); i++) {
+            boolean isSystemApp = false;
+            try {
+                isSystemApp = isSystemPackage(pm1
+                        .getPackageInfo(
+                                ((ResolveInfo) a1[i]).activityInfo.applicationInfo.packageName,
+                                PackageManager.GET_ACTIVITIES));
+            } catch (NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            String packageName = ((ResolveInfo) a1[i]).activityInfo.applicationInfo.packageName;
+            if (!isSystemApp
+                    && (packageName.equals(VueConstants.TWITTER_PACKAGE_NAME))) {
+                if (packageName.equals(VueConstants.TWITTER_PACKAGE_NAME)) {
+                    VueApplication.getInstance().twitterActivityName = ((ResolveInfo) a1[i]).activityInfo.name;
+                    break;
+                }
             }
         }
         return installedApplicationdetailsList;
@@ -829,15 +858,17 @@ public class Utils {
             return "SAT";
         }
     }
-  public static  String getMonthForInt(int num) {
+    
+    public static String getMonthForInt(int num) {
         String month = "wrong";
         DateFormatSymbols dfs = new DateFormatSymbols();
         String[] months = dfs.getMonths();
-        if (num >= 0 && num <= 11 ) {
+        if (num >= 0 && num <= 11) {
             month = months[num];
         }
         return month;
     }
+    
     public static long dateDifference(long date) {
         try {
             long differenceInHours = (System.currentTimeMillis() - date)
