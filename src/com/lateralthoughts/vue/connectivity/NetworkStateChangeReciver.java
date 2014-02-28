@@ -86,10 +86,13 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                                 mIsDirty = true;
                             }
                         };
+                        String bookmarkUrl = UrlConstants.CREATE_BOOKMARK_RESTURL;
+                        if (mAisleBookmark.getId() != null) {
+                            bookmarkUrl = UrlConstants.UPDATE_BOOKMARK_RESTURL;
+                        }
                         BookmarkPutRequest request = new BookmarkPutRequest(
                                 bookmarkAisleAsString, listener, errorListener,
-                                UrlConstants.BOOKMARK_PUT_RESTURL + "/"
-                                        + storedVueUser.getId());
+                                bookmarkUrl + "/" + storedVueUser.getId());
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
                     } catch (Exception e) {

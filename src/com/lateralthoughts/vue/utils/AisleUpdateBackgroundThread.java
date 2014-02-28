@@ -87,7 +87,7 @@ public class AisleUpdateBackgroundThread implements Runnable,
                     VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
                     mNotification);
             ObjectMapper mapper = new ObjectMapper();
-            URL url = new URL(UrlConstants.AISLE_PUT_RESTURL);
+            URL url = new URL(UrlConstants.UPDATE_AISLE_RESTURL);
             HttpPut httpPut = new HttpPut(url.toString());
             CountingStringEntity entity = new CountingStringEntity(
                     mapper.writeValueAsString(mAisle));

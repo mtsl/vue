@@ -92,10 +92,11 @@ public class AisleCreationBackgroundThread implements Runnable,
                     VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
                     mNotification);
             ObjectMapper mapper = new ObjectMapper();
-            URL url = new URL(UrlConstants.AISLE_PUT_RESTURL);
+            URL url = new URL(UrlConstants.CREATE_AISLE_RESTURL);
             HttpPut httpPut = new HttpPut(url.toString());
             CountingStringEntity entity = new CountingStringEntity(
                     mapper.writeValueAsString(mAisle));
+            writeToSdcard("\nAilseCreationgRequest is:  "+mapper.writeValueAsString(mAisle)+"\n");
             entity.setUploadListener(this);
             entity.setContentType("application/json;charset=UTF-8");
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,

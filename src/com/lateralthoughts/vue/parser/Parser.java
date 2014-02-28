@@ -82,7 +82,7 @@ public class Parser {
             if (Utils.sIsLoged) {
                 Logging.i("profile", "profile aisle parsing string: "
                         + resultString);
-               // writeToSdcard(resultString + "\n");
+                // writeToSdcard(resultString + "\n");
             }
             contentArray = new JSONArray(resultString);
             if (!loadMore) {
@@ -214,7 +214,7 @@ public class Parser {
     public ArrayList<AisleImageDetails> getImagesForAisleId(String aisleId)
             throws Exception {
         ArrayList<AisleImageDetails> imageList = new ArrayList<AisleImageDetails>();
-        String imageRequestUrl = UrlConstants.GET_IMAGES_FOR_AISLE + aisleId;
+        String imageRequestUrl = UrlConstants.GET_IMAGELIST_RESTURL + aisleId;
         URL url = new URL(imageRequestUrl);
         HttpGet httpGet = new HttpGet(url.toString());
         DefaultHttpClient httpClient = new DefaultHttpClient();

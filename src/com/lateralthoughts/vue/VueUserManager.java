@@ -5,10 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
- 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
- 
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,10 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
- 
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
- 
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -186,7 +178,7 @@ public class VueUserManager {
                     VueConstants.GCM_REGISTRATION_ID, null));
             String userAsString = mapper.writeValueAsString(newUser);
             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                    userAsString, UrlConstants.USER_PUT_RESTURL, listener,
+                    userAsString, UrlConstants.CREATE_USER_RESTURL, listener,
                     errorListener);
             VueApplication.getInstance().getRequestQueue().add(request);
         } catch (Exception e) {
@@ -265,7 +257,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mCreateFbCreateUserReq,
-                                    UrlConstants.USER_PUT_RESTURL, listener,
+                                    UrlConstants.CREATE_USER_RESTURL, listener,
                                     mCreateFBCreateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -294,7 +286,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mCreateFbUpdateUserReq,
-                                    UrlConstants.USER_PUT_RESTURL, listener,
+                                    UrlConstants.UPDATE_USER_RESTURL, listener,
                                     mCreateFBUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -327,7 +319,7 @@ public class VueUserManager {
                         }
                         mCreateFbUpdateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.USER_PUT_RESTURL,
+                                userAsString, UrlConstants.UPDATE_USER_RESTURL,
                                 listener, mCreateFBUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -349,7 +341,7 @@ public class VueUserManager {
                             mCreateFbCreateUserReq = userAsString;
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
-                                    UrlConstants.USER_PUT_RESTURL, listener,
+                                    UrlConstants.CREATE_USER_RESTURL, listener,
                                     mCreateFBCreateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -371,7 +363,7 @@ public class VueUserManager {
                         String userAsString = mapper.writeValueAsString(user);
                         mCreateFbCreateUserReq = userAsString;
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.USER_PUT_RESTURL,
+                                userAsString, UrlConstants.CREATE_USER_RESTURL,
                                 listener, mCreateFBCreateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -494,7 +486,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mCreateGPCreateUserReq,
-                                    UrlConstants.USER_PUT_RESTURL, listener,
+                                    UrlConstants.CREATE_USER_RESTURL, listener,
                                     mCreateGPCreateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -523,7 +515,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mCreateGPUpdateUserReq,
-                                    UrlConstants.USER_PUT_RESTURL, listener,
+                                    UrlConstants.UPDATE_USER_RESTURL, listener,
                                     mCreateGPUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -565,7 +557,7 @@ public class VueUserManager {
                                 "update Google+ user request 1 : "
                                         + userAsString);
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.USER_PUT_RESTURL,
+                                userAsString, UrlConstants.UPDATE_USER_RESTURL,
                                 listener, mCreateGPUpdateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -589,7 +581,7 @@ public class VueUserManager {
                                             + userAsString);
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
-                                    UrlConstants.USER_PUT_RESTURL, listener,
+                                    UrlConstants.CREATE_USER_RESTURL, listener,
                                     mCreateGPCreateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -613,7 +605,7 @@ public class VueUserManager {
                                 "update Google+ user request 3 : "
                                         + userAsString);
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
-                                userAsString, UrlConstants.USER_PUT_RESTURL,
+                                userAsString, UrlConstants.CREATE_USER_RESTURL,
                                 listener, mCreateGPCreateUserErrorListener);
                         VueApplication.getInstance().getRequestQueue()
                                 .add(request);
@@ -729,7 +721,7 @@ public class VueUserManager {
                         public void run() {
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     mUpdateFbUpdateUserReq,
-                                    UrlConstants.USER_PUT_RESTURL, listener,
+                                    UrlConstants.UPDATE_USER_RESTURL, listener,
                                     mCreateFBUpdateUserErrorListener);
                             VueApplication.getInstance().getRequestQueue()
                                     .add(request);
@@ -1364,13 +1356,12 @@ public class VueUserManager {
         VueApplication.getInstance().startActivity(i);
     }
     
- 
     public String[] testUpdateUser(final String request) throws Exception {
         String responseArray[] = new String[2];
         responseArray[0] = "";
         responseArray[1] = "status code";
         try {
-            URL url = new URL(UrlConstants.USER_PUT_RESTURL);
+            URL url = new URL(UrlConstants.UPDATE_USER_RESTURL);
             HttpPut httpPut = new HttpPut(url.toString());
             DefaultHttpClient httpClient = new DefaultHttpClient();
             StringEntity entity = new StringEntity(request);
@@ -1414,6 +1405,6 @@ public class VueUserManager {
             e.printStackTrace();
         }
         return responseArray;
- 
+        
     }
 }

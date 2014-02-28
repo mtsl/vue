@@ -14,21 +14,19 @@ public class UrlConstants {
     
     /**
      * (C)reate routine URL's
-     */ 
-    public static final String USER_PUT_RESTURL = SERVER_BASE_URL
-            + "api/userput";
-    public static final String AISLE_PUT_RESTURL = SERVER_BASE_URL
-            + "api/aisleput";
-    public static final String IMAGE_PUT_RESTURL = SERVER_BASE_URL
-            + "api/imageput";
-    public static final String BOOKMARK_PUT_RESTURL = SERVER_BASE_URL
-            + "api/aislebookmarkput";
-    public static final String IMAGE_RATING_PUT_RESTURL = SERVER_BASE_URL
-            + "api/imageratingput";
-    public static final String CREATE_AISLECOMMENT_RESTURL = SERVER_BASE_URL
-            + "api/aislecommentcreate";
-    public static final String IMAGECOMMENT_PUT_RESTURL = SERVER_BASE_URL
-            + "api/imagecommentput";
+     */
+    public static final String CREATE_USER_RESTURL = SERVER_BASE_URL
+            + "api/usercreate";
+    public static final String CREATE_AISLE_RESTURL = SERVER_BASE_URL
+            + "api/aislecreate";
+    public static final String CREATE_IMAGE_RESTURL = SERVER_BASE_URL
+            + "api/imagecreate";
+    public static final String CREATE_BOOKMARK_RESTURL = SERVER_BASE_URL
+            + "api/aislebookmarkcreate";
+    public static final String CREATE_RATING_RESTURL = SERVER_BASE_URL
+            + "api/imageratingcreate";
+    public static final String CREATE_IMAGECOMMENT_RESTURL = SERVER_BASE_URL
+            + "api/imagecommentcreate";
     
     public static final String GET_USER_RESTURL = SERVER_BASE_URL
             + "api/userget/id/";
@@ -41,15 +39,13 @@ public class UrlConstants {
     public static final String GET_AISLELIST_BYUSER_RESTURL = SERVER_BASE_URL
             + "api/aislesget/user";
     public static final String GET_IMAGELIST_RESTURL = SERVER_BASE_URL
-            + "api/imagesget/aisle";
+            + "api/imagesget/aisle/";
     public static final String GET_TRENDINGAISLES_RESTURL = SERVER_BASE_URL
             + "api/trendingaislesgetorderedbytime";
     public static final String GET_BOOKMARK_Aisles = SERVER_BASE_URL
             + "api/aislebookmarksgetall";
     public static final String GET_RATINGS_RESTURL = SERVER_BASE_URL
             + "api/imageratingsgetall";
-    public static final String GET_IMAGES_FOR_AISLE = SERVER_BASE_URL
-            + "api/imagesget/aisle/";
     public static final String GET_UNIQUE_ONETIME_IMAGE_UPLOAD_RESTURL = SERVER_BASE_URL
             + "api/getUrlToUploadImage";
     public static final String GET_IMAGE_FILE_RESTURL = SERVER_BASE_URL
@@ -64,5 +60,95 @@ public class UrlConstants {
             + "api/imagedelete";
     public static final String GET_IMAGE_RESTURL = SERVER_BASE_URL
             + "api/imageget/id/";
+    
+    public static final String UPDATE_USER_RESTURL = SERVER_BASE_URL
+            + "api/userupdate";
+    public static final String UPDATE_AISLE_RESTURL = SERVER_BASE_URL
+            + "api/aisleupdate";
+    public static final String UPDATE_BOOKMARK_RESTURL = SERVER_BASE_URL
+            + "api/aislebookmarkupdate";
+    public static final String UPDATE_RATING_RESTURL = SERVER_BASE_URL
+            + "api/imageratingupdate";
+    
+    // ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*
+     * public static final String CREATE_USER_RESTURL =
+     * SERVER_BASE_URL+"api/usercreate"; public static final String
+     * CREATE_AISLE_RESTURL = SERVER_BASE_URL+"api/aislecreate"; public static
+     * final String CREATE_IMAGECOMMENT_RESTURL =
+     * SERVER_BASE_URL+"api/imagecommentcreate"; public static final String
+     * CREATE_IMAGE_RESTURL = SERVER_BASE_URL+"api/imagecreate"; public static
+     * final String CREATE_BOOKMARK_RESTURL =
+     * SERVER_BASE_URL+"api/aislebookmarkcreate"; public static final String
+     * CREATE_RATING_RESTURL = SERVER_BASE_URL+"api/imageratingcreate"; public
+     * static final String CREATE_WEBSIGNUPUSER_RESTURL =
+     * SERVER_BASE_URL+"api/websignupusersave";
+     *//**
+     * (R)ead routine URL's
+     */
+    /*
+     * public static final String GET_USER_RESTURL =
+     * SERVER_BASE_URL+"api/userget/id"; public static final String
+     * GET_USER_FACEBOOK_ID_RESTURL = SERVER_BASE_URL+"api/userget/facebook";
+     * public static final String GET_AISLE_RESTURL =
+     * SERVER_BASE_URL+"api/aisleget/id"; public static final String
+     * GET_AISLELIST_RESTURL = SERVER_BASE_URL+"api/aislesget/user"; public
+     * static final String GET_IMAGELIST_RESTURL =
+     * SERVER_BASE_URL+"api/imagesget/aisle"; public static final String
+     * GET_IMAGE_RESTURL = SERVER_BASE_URL+"api/imageget/id"; public static
+     * final String GET_BOOKMARKS_RESTURL =
+     * SERVER_BASE_URL+"api/aislebookmarksgetall"; public static final String
+     * GET_RATINGS_RESTURL = SERVER_BASE_URL+"api/imageratingsgetall"; public
+     * static final String GET_WEBSIGNUPUSER_RESTURL =
+     * SERVER_BASE_URL+"api/websignupuserget"; public static final String
+     * GET_TRENDINGAISLES_RESTURL =
+     * SERVER_BASE_URL+"api/trendingaislesgetorderedbytime"; public static final
+     * String GET_TRENDINGAISLESWITHIMAGES_RESTURL =
+     * SERVER_BASE_URL+"api/trendingaislesgetorderedbytime/withimages"; public
+     * static final String GET_UNIQUE_ONETIME_IMAGE_UPLOAD_RESTURL =
+     * SERVER_BASE_URL+"api/getUrlToUploadImage"; public static final String
+     * GET_IMAGE_FILE_RESTURL = SERVER_BASE_URL+"upload";
+     *//**
+     * (U)pdate routine URL's
+     */
+    /*
+     * public static final String UPDATE_AISLE_RESTURL =
+     * SERVER_BASE_URL+"api/aisleupdate"; public static final String
+     * UPDATE_BOOKMARK_RESTURL = SERVER_BASE_URL+"api/aislebookmarkupdate";
+     * public static final String UPDATE_RATING_RESTURL =
+     * SERVER_BASE_URL+"api/imageratingupdate"; public static final String
+     * UPDATE_USER_RESTURL = SERVER_BASE_URL+"api/userupdate"; public static
+     * final String UPDATE_IMAGECOMMENT_RESTURL =
+     * SERVER_BASE_URL+"api/imagecommentupdate";
+     *//**
+     * (D)elete routine URL's
+     */
+    /*
+     * public static final String DELETE_IMAGECOMMENT_RESTURL =
+     * SERVER_BASE_URL+"api/imagecommentdelete"; public static final String
+     * DELETE_USER_RESTURL = SERVER_BASE_URL+"api/testdeleteusertree"; public
+     * static final String DELETE_WEBSIGNUPUSER_RESTURL =
+     * SERVER_BASE_URL+"api/testwebsignupuserdelete"; public static final String
+     * DELETE_AISLE_RESTURL = SERVER_BASE_URL+"api/aisledelete"; public static
+     * final String DELETE_IMAGE_RESTURL = SERVER_BASE_URL+"api/imagedelete";
+     *//**
+     * Search URL's
+     */
+    /*
+     * public static final String SEARCH_BY_KEYWORD_BASE_URL =
+     * SERVER_BASE_URL+"api/getaisleswithmatchingoccassion/"; public static
+     * final String SEARCH_BY_USER =
+     * SERVER_BASE_URL+"api/getaisleswithmatchingfacebookORGPlus/"; public
+     * static final String SEARCH_BY_FIRSTNAME_OR_LASTNAME_BASE_URL =
+     * SERVER_BASE_URL+"api/getaisleswithmatchinguserName/";
+     *//**
+     * Upload URL's
+     */
+    /*
+     * public static final String IMAGE_UPLOAD_RESTURL =
+     * SERVER_BASE_URL+"upload";
+     */
+    
+    // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
 }
