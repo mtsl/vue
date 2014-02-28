@@ -1065,7 +1065,11 @@ public class VueLandingPageActivity extends Activity implements
                 .resetDbParams();
         ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager
                 .getInstance(VueLandingPageActivity.this).getAislesFromDB(
-                        bookmarked, true);
+                        null, true);
+        if(Utils.sIsLoged){
+        Log.i("bookemarkAislesCount", "bookemarkAislesCount1: "+windowContentTemp.size());
+        }
+ 
         for (AisleWindowContent w : windowContentTemp) {
             // TODO: THERE THE LIST SHOULD NOT BE NULL BUT WE GOT NULL SOME
             // TIMES

@@ -410,7 +410,7 @@ public class DataBaseManager {
                 }
             }
         }
-        // copydbToSdcard();
+         copydbToSdcard();
     }
     
     /**
@@ -496,6 +496,7 @@ public class DataBaseManager {
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.CONTENT_URI, new String[] { VueConstants.ID },
                 null, null, VueConstants.ID + " ASC");
+        if(!isBookmarked) {
         if (mStartPosition == 0) {
             if (cursor.moveToFirst()) {
                 mStartPosition = Integer.parseInt(cursor.getString(cursor
@@ -504,6 +505,8 @@ public class DataBaseManager {
                 mStartPosition = 1000;
             }
         }
+      
+        
         if (mEndPosition == 0) {
             if (cursor.moveToFirst()) {
                 if (cursor.getString(cursor.getColumnIndex(VueConstants.ID)) != null) {
@@ -516,7 +519,7 @@ public class DataBaseManager {
                 mEndPosition = 1000;
             }
         }
-        
+        }
         cursor.close();
         mEndPosition = mEndPosition + mLocalAislesLimit;
         AisleContext userInfo;
@@ -547,8 +550,8 @@ public class DataBaseManager {
         Cursor aislesCursor = null;
         if (isBookmarked) {
             aislesCursor = mContext.getContentResolver().query(
-                    VueConstants.MY_BOOKMARKED_AISLES_URI, null, selection,
-                    args, VueConstants.ID + " ASC");
+                    VueConstants.MY_BOOKMARKED_AISLES_URI, null, null,
+                    null, VueConstants.ID + " ASC");
         } else {
             aislesCursor = mContext.getContentResolver().query(
                     VueConstants.CONTENT_URI, null, selection, args,
@@ -845,8 +848,37 @@ public class DataBaseManager {
             String bookmarkedAisleId, boolean isBookmarked) {
         boolean isMatched = false;
         ContentValues values = new ContentValues();
-        values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, isBookmarked);
+        values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, isBookmarked ? 1:0);
         values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
+        if(Utils.sIsLoged){
+            Log.i("boookmarked writing", "boookmarked writing: aisle id:  "+bookmarkedAisleId+"  status: "+isBookmarked);
+        }
+        Cursor cursor = mContext.getContentResolver().query(
+                VueConstants.BOOKMARKER_AISLES_URI, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                String aisleId = cursor.getString(cursor
+                        .getColumnIndex(VueConstants.AISLE_ID));
+                if (bookmarkedAisleId.equals(aisleId)) {
+                    mContext.getContentResolver().update(
+                            VueConstants.BOOKMARKER_AISLES_URI, values, null, null);
+                    isMatched = true;
+                    if(Utils.sIsLoged){
+                        Log.i("boookmarked writing", "boookmarked writing: aisle id MATCHED:  "+bookmarkedAisleId+" status: "+values.get(VueConstants.IS_LIKED_OR_BOOKMARKED) );
+                    }
+                    break;
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        if (!isMatched) {
+            values.put(VueConstants.ID, bookmarkId);
+            mContext.getContentResolver().insert(
+                    VueConstants.BOOKMARKER_AISLES_URI, values);
+            if(Utils.sIsLoged){
+                Log.i("boookmarked writing", "boookmarked writing: aisle id NOT INSERT:  "+bookmarkedAisleId+" status: "+values.get(VueConstants.IS_LIKED_OR_BOOKMARKED) );
+            }
+        }
         if (isBookmarked) {
             String url = UrlConstants.GET_AISLE_RESTURL + bookmarkedAisleId;
             
@@ -913,28 +945,7 @@ public class DataBaseManager {
                     new String[] { bookmarkedAisleId });
             
         }
-        Cursor cursor = mContext.getContentResolver().query(
-                VueConstants.BOOKMARKER_AISLES_URI, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                String aisleId = cursor.getString(cursor
-                        .getColumnIndex(VueConstants.AISLE_ID));
-                if (bookmarkedAisleId.equals(aisleId)) {
-                    mContext.getContentResolver().update(
-                            VueConstants.BOOKMARKER_AISLES_URI, values,
-                            VueConstants.AISLE_ID + "=?",
-                            new String[] { bookmarkedAisleId });
-                    isMatched = true;
-                    break;
-                }
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        if (!isMatched) {
-            values.put(VueConstants.ID, bookmarkId);
-            mContext.getContentResolver().insert(
-                    VueConstants.BOOKMARKER_AISLES_URI, values);
-        }
+
         
     }
     
