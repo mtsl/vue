@@ -290,10 +290,8 @@ public class AisleManager {
     
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
-        
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
-            
             ObjectMapper mapper = new ObjectMapper();
             com.lateralthoughts.vue.domain.ImageRating imageRatingRequestObject = new com.lateralthoughts.vue.domain.ImageRating();
             imageRatingRequestObject.setId(imageRating.getId());

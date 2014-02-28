@@ -26,6 +26,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -840,7 +841,7 @@ public class DataBaseManager {
     }
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void updateBookmarkAislesToBDb(Long bookmarkId,
+    private void updateBookmarkAislesToBDb(Long bookmarkId,
             String bookmarkedAisleId, boolean isBookmarked) {
         boolean isMatched = false;
         ContentValues values = new ContentValues();
@@ -1509,7 +1510,6 @@ public class DataBaseManager {
         if (imagerating == null || imagerating.mId == null) {
             return;
         }
-        
         boolean isMatched = false;
         ContentValues values = new ContentValues();
         values.put(VueConstants.ID, imagerating.mId.longValue());
