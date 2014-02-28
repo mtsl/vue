@@ -177,8 +177,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             }
             mCurrentAisle = getItem(mCurrentAislePosition);
         }
-        Log.i("Bookmarked aisle ", "Bookmarked aisle by user clicked: "
-                + mCurrentAisle.getAisleId());
+        if(Utils.sIsLoged){
+            Log.i("bookemarkAislesCount", "bookemarkAisles clicked id: "+mCurrentAisle.getAisleId());
+            }
         // Some times when the user returning from the other apps or from the
         // browser
         // apps lost data to avoid force close checking the current ailse.

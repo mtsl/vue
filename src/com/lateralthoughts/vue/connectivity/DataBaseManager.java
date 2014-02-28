@@ -860,14 +860,21 @@ public class DataBaseManager {
                             @Override
                             public void run() {
                                 try {
-                                    Parser parser = new Parser();
+                                  
+                                     Parser parser = new Parser();
                                     AisleContext retrievedAisle = parser
                                             .parseAisleData(jsonObject);
                                     ArrayList<AisleImageDetails> imageDetails = parser
                                             .getImagesForAisleId(retrievedAisle.mAisleId);
+                                    if(Utils.sIsLoged){
+                                    Log.i("bookemarkAislesCount", "bookemarkAislesCount from server: "+retrievedAisle.mAisleId);
+                                    }
                                     if (imageDetails.size() > 0) {
                                         AisleWindowContent aisleItem = new AisleWindowContent(
                                                 retrievedAisle.mAisleId);
+                                        if(Utils.sIsLoged){
+                                        Log.i("bookemarkAislesCount", "bookemarkAislesCount from server adding to db: "+retrievedAisle.mAisleId);
+                                        }
                                         aisleItem.addAisleContent(
                                                 retrievedAisle, imageDetails);
                                         ArrayList<AisleWindowContent> aisleContentArray = new ArrayList<AisleWindowContent>();
