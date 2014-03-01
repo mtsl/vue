@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.Logging;
@@ -156,14 +157,14 @@ public class VueLandingAislesFragment extends Fragment {
                     int lastVisiblePosition = firstVisibleItem
                             + visibleItemCount;
                     if ((totalItemCount - lastVisiblePosition) < 5) {
-                        if(!VueContentGateway.mNomoreTrendingAilse) {
-                        VueTrendingAislesDataModel
-                                .getInstance(mContext)
-                                .getNetworkHandler()
-                                .requestMoreAisle(
-                                        true,
-                                        getResources().getString(
-                                                R.string.trending));
+                        if (!VueContentGateway.mNomoreTrendingAilse) {
+                            VueTrendingAislesDataModel
+                                    .getInstance(mContext)
+                                    .getNetworkHandler()
+                                    .requestMoreAisle(
+                                            true,
+                                            getResources().getString(
+                                                    R.string.trending));
                         }
                     }
                 }
@@ -346,7 +347,9 @@ public class VueLandingAislesFragment extends Fragment {
     }
     
     private void writeToSdcard(String message) {
-        
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/vueImageDetails/");
         if (!dir.isDirectory()) {
@@ -373,6 +376,7 @@ public class VueLandingAislesFragment extends Fragment {
             e.printStackTrace();
         }
     }
+    
     private class MyPoints extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {

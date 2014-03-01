@@ -1,6 +1,12 @@
 package com.lateralthoughts.vue;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -1326,40 +1333,36 @@ public class VueUserManager {
                 .show();
     }
     
-    private void writeToSdcard(String message) {/*
-                                                 * 
-                                                 * String path = Environment.
-                                                 * getExternalStorageDirectory
-                                                 * ().toString(); File dir = new
-                                                 * File(path +
-                                                 * "/vueLoginTimes/"); if
-                                                 * (!dir.isDirectory()) {
-                                                 * dir.mkdir(); } File file =
-                                                 * new File(dir, "/" +
-                                                 * "vueLoginTimes_" +
-                                                 * (Calendar.getInstance
-                                                 * ().get(Calendar.MONTH) + 1) +
-                                                 * "-" +
-                                                 * Calendar.getInstance().get
-                                                 * (Calendar.DATE) + "_" +
-                                                 * Calendar
-                                                 * .getInstance().get(Calendar
-                                                 * .YEAR) + ".txt"); try {
-                                                 * file.createNewFile(); } catch
-                                                 * (IOException e) {
-                                                 * e.printStackTrace(); }
-                                                 * 
-                                                 * try { PrintWriter out = new
-                                                 * PrintWriter(new
-                                                 * BufferedWriter( new
-                                                 * FileWriter(file, true)));
-                                                 * out.write("\n" + message +
-                                                 * "\n"); out.flush();
-                                                 * out.close();
-                                                 * 
-                                                 * } catch (IOException e) {
-                                                 * e.printStackTrace(); }
-                                                 */
+    private void writeToSdcard(String message) {
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/vueLoginTimes/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/" + "vueLoginTimes_"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
     }
     
     private void showServerMesgForMaxTries() {

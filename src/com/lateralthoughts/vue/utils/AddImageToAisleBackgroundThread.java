@@ -38,6 +38,7 @@ import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.Parser;
 
 public class AddImageToAisleBackgroundThread implements Runnable,
@@ -441,6 +442,9 @@ public class AddImageToAisleBackgroundThread implements Runnable,
     }
     
     private void writeToSdcard(String message) {
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/ImageCreationResponse/");
         if (!dir.isDirectory()) {

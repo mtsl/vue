@@ -33,6 +33,7 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.Parser;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -96,7 +97,8 @@ public class AisleCreationBackgroundThread implements Runnable,
             HttpPut httpPut = new HttpPut(url.toString());
             CountingStringEntity entity = new CountingStringEntity(
                     mapper.writeValueAsString(mAisle));
-            writeToSdcard("\nAilseCreationgRequest is:  "+mapper.writeValueAsString(mAisle)+"\n");
+            writeToSdcard("\nAilseCreationgRequest is:  "
+                    + mapper.writeValueAsString(mAisle) + "\n");
             entity.setUploadListener(this);
             entity.setContentType("application/json;charset=UTF-8");
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
@@ -134,12 +136,13 @@ public class AisleCreationBackgroundThread implements Runnable,
         VueLandingPageActivity.landingPageActivity
                 .runOnUiThread(new Runnable() {
                     @Override
-                    public void run() { 
-                       
+                    public void run() {
+                        
                         if (null != mResponseMessage) {
                             // TODO insert aisle for
-                            if(mResponseMessage.length() <10){
-                            writeToSdcard("AisleCreation Failed got empty response from server\n response message is: "+mResponseMessage);
+                            if (mResponseMessage.length() < 10) {
+                                writeToSdcard("AisleCreation Failed got empty response from server\n response message is: "
+                                        + mResponseMessage);
                             } else {
                                 writeToSdcard("AisleCreation Success");
                             }
@@ -179,7 +182,11 @@ public class AisleCreationBackgroundThread implements Runnable,
                     }
                 });
     }
+    
     private void writeToSdcard(String message) {
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/AisleCreationResponse/");
         if (!dir.isDirectory()) {
