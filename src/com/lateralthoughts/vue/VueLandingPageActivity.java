@@ -36,7 +36,6 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -1066,11 +1065,6 @@ public class VueLandingPageActivity extends Activity implements
         ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager
                 .getInstance(VueLandingPageActivity.this).getAislesFromDB(null,
                         true);
-        if (Utils.sIsLoged) {
-            Log.i("bookemarkAislesCount", "bookemarkAislesCount1: "
-                    + windowContentTemp.size());
-        }
-        
         for (AisleWindowContent w : windowContentTemp) {
             // TODO: THERE THE LIST SHOULD NOT BE NULL BUT WE GOT NULL SOME
             // TIMES
